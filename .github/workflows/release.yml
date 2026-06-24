@@ -1,0 +1,128 @@
+name: Release standalone executables
+
+# Builds finance-tool: a single self-contained executable bundling
+# finance-init + finance-pipeline + finance-dashboard (see
+# packages/launcher/cli.py), for users who don't want to install
+# Python/Node/pipx at all -- see README's "Installation" section.
+#
+# Triggered either by pushing a version tag:
+#   git tag v0.2.0 && git push origin v0.2.0
+# or manually from the Actions tab (Run workflow), supplying the tag to
+# publish under.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v0.2.0)"
+        required: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset_name: finance-tool-linux
+          - os: windows-latest
+            asset_name: finance-tool-windows.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: packages/dashboard/package-lock.json
+
+      - name: Build dashboard frontend
+        working-directory: packages/dashboard
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install packages + PyInstaller
+        run: pip install ./packages/pipeline ./packages/dashboard pyinstaller
+
+      - name: Resolve bundled data paths
+        shell: bash
+        run: |
+          echo "SRC_SKILLS=$(python -c 'import src, os; print(os.path.join(os.path.dirname(src.__file__), "skills"))')" >> "$GITHUB_ENV"
+          echo "DASHBOARD_DIST=$(python -c 'import finance_dashboard, os; print(os.path.join(os.path.dirname(finance_dashboard.__file__), "dist"))')" >> "$GITHUB_ENV"
+
+      # PyInstaller can't cross-compile -- each OS builds its own binary.
+      # Non-.py data (the bundled Claude skill, the prebuilt dashboard
+      # frontend) needs explicit --add-data; everything else is picked up
+      # by static analysis except yfinance, which needs --collect-all for
+      # its dynamic imports.
+      - name: Build executable (Linux)
+        if: runner.os == 'Linux'
+        run: >
+          pyinstaller --name finance-tool --onefile
+          --add-data "${{ env.DASHBOARD_DIST }}:finance_dashboard/dist"
+          --add-data "${{ env.SRC_SKILLS }}:src/skills"
+          --collect-all yfinance
+          packages/launcher/cli.py
+
+      - name: Build executable (Windows)
+        if: runner.os == 'Windows'
+        run: >
+          pyinstaller --name finance-tool --onefile
+          --add-data "${{ env.DASHBOARD_DIST }};finance_dashboard/dist"
+          --add-data "${{ env.SRC_SKILLS }};src/skills"
+          --collect-all yfinance
+          packages/launcher/cli.py
+
+      - name: Rename artifact
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp dist/finance-tool.exe "${{ matrix.asset_name }}"
+          else
+            cp dist/finance-tool "${{ matrix.asset_name }}"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.tag.outputs.name }}" artifacts/* \
+            --title "${{ steps.tag.outputs.name }}" \
+            --notes "Standalone desktop executables — no Python, Node or pipx required.
+
+          - **Windows**: download \`finance-tool-windows.exe\`, then from PowerShell run \`.\\finance-tool-windows.exe init\`, then \`.\\finance-tool-windows.exe pipeline\` and \`.\\finance-tool-windows.exe dashboard\`.
+          - **Linux**: download \`finance-tool-linux\`, then \`chmod +x finance-tool-linux\` and run \`./finance-tool-linux init\` (same subcommands)."

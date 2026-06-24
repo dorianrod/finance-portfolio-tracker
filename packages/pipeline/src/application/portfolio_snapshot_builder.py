@@ -92,6 +92,8 @@ class PortfolioSnapshotBuilder:
         Must run before the snapshot so totals include cash.
         """
         cash_df = cash_snapshot(operations)
+        if cash_df.empty:
+            return cash_df, []
         brokerage_accounts = {
             acc
             for acc, cat in account_category_map.items()

@@ -8,57 +8,30 @@ Everything runs locally, on your own machine: there's no account to create and n
 
 ## Installation
 
-No coding experience needed — just follow the steps for your system. It takes about 5 minutes, and you only need to do it once.
+No coding experience needed — just download one file. It takes about a minute, and you only need to do it once.
 
-Pick (or create) a folder to hold your financial data, e.g. `my-finance`.
+Pick (or create) a folder to hold your financial data, e.g. `my-finance`, then go to the [latest release](https://github.com/dorianrod/finance-portfolio-tracker/releases/latest) and download the file for your system into that folder.
 
 ### Windows
 
-1. Install Python (≥ 3.12) from [python.org](https://www.python.org/downloads/) — tick **"Add python.exe to PATH"** during setup.
-2. Install [Node.js](https://nodejs.org/) (needed once, to build the dashboard).
-3. Open PowerShell and run:
+1. Download `finance-tool-windows.exe`.
+2. Open PowerShell in that folder and bootstrap it:
 
    ```powershell
-   py -m pip install --user pipx
-   py -m pipx ensurepath
-   ```
-
-4. Restart PowerShell, then run:
-
-   ```powershell
-   pipx install "git+https://github.com/dorianrod/finance-portfolio-tracker.git#subdirectory=packages/pipeline"
-   pipx install "git+https://github.com/dorianrod/finance-portfolio-tracker.git#subdirectory=packages/dashboard"
-   ```
-
-5. Bootstrap your folder:
-
-   ```powershell
-   finance-init
+   .\finance-tool-windows.exe init
    ```
 
 ### Ubuntu / Linux
 
-1. Install Python, pipx and Node.js, then run:
+1. Download `finance-tool-linux`.
+2. Open a terminal in that folder and bootstrap it:
 
    ```bash
-   sudo apt update && sudo apt install python3 pipx nodejs npm
-   pipx ensurepath
+   chmod +x finance-tool-linux
+   ./finance-tool-linux init
    ```
 
-2. Restart your terminal, then run:
-
-   ```bash
-   pipx install "git+https://github.com/dorianrod/finance-portfolio-tracker.git#subdirectory=packages/pipeline"
-   pipx install "git+https://github.com/dorianrod/finance-portfolio-tracker.git#subdirectory=packages/dashboard"
-   ```
-
-3. Bootstrap your folder:
-
-   ```bash
-   finance-init
-   ```
-
-`finance-init` bootstraps the expected `input/` layout (account_groups.csv + broker exports under `brokers/`) with a small example portfolio. Replace those example files with your own broker exports — see [packages/pipeline/README.md](packages/pipeline/README.md) for the exact format.
+`init` bootstraps the expected `input/` layout (account_groups.csv + broker exports under `brokers/`) with a small example portfolio. Replace those example files with your own broker exports — see [packages/pipeline/README.md](packages/pipeline/README.md) for the exact format.
 
 ## Use
 
@@ -67,29 +40,29 @@ Once `data/input/` contains your own exports, re-run these two commands from ins
 **Windows** — open PowerShell:
 
 ```powershell
-finance-pipeline      # fetches prices, writes output/
-finance-dashboard     # serves the dashboard, opens your browser
+.\finance-tool-windows.exe pipeline      # fetches prices, writes output/
+.\finance-tool-windows.exe dashboard     # serves the dashboard, opens your browser
 ```
 
 **Ubuntu / Linux** — open a terminal:
 
 ```bash
-finance-pipeline      # fetches prices, writes output/
-finance-dashboard     # serves the dashboard, opens your browser
+./finance-tool-linux pipeline      # fetches prices, writes output/
+./finance-tool-linux dashboard     # serves the dashboard, opens your browser
 ```
 
 The allocation breakdowns (sector, geography, currency, asset class) for each ETF/fund can be edited by hand in the allocation files, or kept up to date automatically: opening your data folder in Claude Code and using the `allocation-update` skill researches and fills in the allocation for you.
 
 ## Technical details
 
-- Requires Python ≥ 3.12. If your default `python3`/`py` resolves to an older version, point pipx at the right interpreter: `pipx install --python /path/to/python3.12 ...`.
-- Installing the dashboard also requires Node.js/npm to be on `PATH`: a hatchling build hook runs `npm ci && npm run build` automatically to compile its frontend before packaging — see [packages/dashboard/hatch_build.py](packages/dashboard/hatch_build.py).
+- The standalone executables (`finance-tool-*`) bundle Python, Node-built dashboard assets and every dependency — nothing else needs to be installed. They're built by [.github/workflows/release.yml](.github/workflows/release.yml) (PyInstaller, via [packages/launcher/cli.py](packages/launcher/cli.py)) and published to GitHub Releases whenever a `vX.Y.Z` tag is pushed.
 - Optional flags, defaults shown:
 
   ```bash
-  finance-init      [--data-dir .]
-  finance-pipeline  [--data-dir .]
-  finance-dashboard [--data-dir . --port 8787]
+  finance-tool init      [--data-dir .]
+  finance-tool pipeline  [--data-dir .]
+  finance-tool dashboard [--data-dir . --port 8787]
   ```
 
-- `finance-init` also (re-)installs the `allocation-update` Claude Code skill into `.claude/skills/` in the current directory every time it runs, so opening this folder in Claude Code lets you ask it to research and update an asset's allocation breakdown for you.
+- `finance-tool init` also (re-)installs the `allocation-update` Claude Code skill into `.claude/skills/` in the current directory every time it runs, so opening this folder in Claude Code lets you ask it to research and update an asset's allocation breakdown for you.
+- Building from source (contributing to the codebase rather than just using it) is covered in [packages/pipeline/README.md](packages/pipeline/README.md) and [packages/dashboard/README.md](packages/dashboard/README.md).
