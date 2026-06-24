@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "finance-pipeline"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas",
+    "pydantic",
+    "scipy",
+    "yfinance",
+    "openpyxl",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "pyright", "pandas-stubs"]
+
+[project.scripts]
+finance-pipeline = "src.ingest_portfolio:main"
+finance-init = "src.init_data_dir:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "golden: regression tests that run the real pipeline against personal data (local only)",
+]
+
+[tool.ruff]
+line-length = 79
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# Long lines here are literal example CSV rows, not code.
+"src/init_data_dir.py" = ["E501"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "basic"

@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+.bg-gray-850 {
+  background-color: var(--color-bg-850, rgb(24 24 27));
+}
+
+/* ── Semantic variables (dark defaults) ──────────────────────────── */
+:root {
+  --chart-grid: #374151;
+  --chart-tick: #9ca3af;
+  --chart-label: #d1d5db;
+  --tooltip-bg: #1f2937;
+  --tooltip-border: #374151;
+  --tooltip-text: #e5e7eb;
+  --tooltip-label: #ffffff;
+  --tooltip-dim: #9ca3af;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────── */
+[data-theme="light"] {
+  /* Invert the gray scale so dark classes become light and vice-versa */
+  --color-gray-50:  oklch(13% 0.028 261.692);
+  --color-gray-100: oklch(21% 0.034 264.665);
+  --color-gray-200: oklch(27.8% 0.033 256.848);
+  --color-gray-300: oklch(37.3% 0.034 259.733);
+  --color-gray-400: oklch(44.6% 0.03 256.802);
+  --color-gray-500: oklch(55.1% 0.027 264.364);
+  --color-gray-600: oklch(70.7% 0.022 261.325);
+  --color-gray-700: oklch(87.2% 0.01 258.338);
+  --color-gray-800: oklch(92.8% 0.006 264.531);
+  --color-gray-900: oklch(96.7% 0.003 264.542);
+  --color-gray-950: oklch(98.5% 0.002 247.839);
+  --color-white: oklch(13% 0.028 261.692);
+
+  --color-bg-850: rgb(243 244 246);
+
+  /* Tooltip & chart semantic vars */
+  --chart-grid: #e5e7eb;
+  --chart-tick: #6b7280;
+  --chart-label: #111827;
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb;
+  --tooltip-text: #374151;
+  --tooltip-label: #111827;
+  --tooltip-dim: #6b7280;
+
+  /* ─── Muted semantic colors for light backgrounds ─── */
+
+  /* Blue: light-mode "900" → pastel bg, "200/300" → dark readable text */
+  --color-blue-200: oklch(48.8% 0.243 264.376);    /* blue-700: dark text on white */
+  --color-blue-300: oklch(48.8% 0.243 264.376);    /* blue-700: group labels, deposits */
+  --color-blue-900: oklch(93.2% 0.032 255.585);    /* blue-100: light badge bg */
+
+  /* Purple: dividends */
+  --color-purple-300: oklch(49.6% 0.265 301.924);  /* purple-700: dark text */
+  --color-purple-400: oklch(49.6% 0.265 301.924);  /* purple-700 */
+  --color-purple-900: oklch(94.6% 0.033 307.174);  /* purple-100: light badge bg */
+
+  /* Orange: SELL operations */
+  --color-orange-300: oklch(55.3% 0.195 38.402);   /* orange-700: dark text */
+  --color-orange-400: oklch(55.3% 0.195 38.402);   /* orange-700 */
+  --color-orange-900: oklch(95.4% 0.038 75.164);   /* orange-100: light badge bg */
+
+  /* Red: losses & withdrawals */
+  --color-red-300: oklch(50.5% 0.213 27.518);      /* red-700: darker */
+  --color-red-400: oklch(57.7% 0.245 27.325);      /* red-600: darker */
+
+  /* Green: gains (slightly more muted on white) */
+  --color-emerald-400: oklch(59.6% 0.145 163.225); /* emerald-600 */
+}
+
+/* Active chip (bg-blue-600) → pastel in light mode */
+[data-theme="light"] .bg-blue-600 {
+  background-color: oklch(93.2% 0.032 255.585); /* blue-100 */
+}
+
+/* ── Recharts overrides for light mode ───────────────────────────── */
+[data-theme="light"] .recharts-cartesian-grid-horizontal line,
+[data-theme="light"] .recharts-cartesian-grid-vertical line {
+  stroke: #e5e7eb;
+}
+
+[data-theme="light"] .recharts-cartesian-axis-tick-value {
+  fill: #6b7280;
+}
+
+/* Native date picker light UI in light mode */
+[data-theme="light"] input[type="date"] {
+  color-scheme: light;
+}

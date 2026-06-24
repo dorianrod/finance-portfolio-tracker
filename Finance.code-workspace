@@ -1,0 +1,6 @@
+{
+  "folders": [
+    { "name": "pipeline", "path": "packages/pipeline" },
+    { "name": "dashboard", "path": "packages/dashboard" }
+  ]
+}

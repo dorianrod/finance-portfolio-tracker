@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Golden test snapshots derived from personal financial data — local only
+tests/golden/snapshots/
+
+# Test/pytest artifacts
+.pytest_cache/
+
+.mypy_cache
+
+**/*.pyc

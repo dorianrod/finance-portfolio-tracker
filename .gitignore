@@ -1,0 +1,13 @@
+.env
+
+# Output (generated — do not commit)
+data/output/
+
+# Input data (personal financial data — do not commit)
+data/input/
+
+# Keep asset_prices tracked but ignore OS noise
+.DS_Store
+Thumbs.db
+
+*.pdf

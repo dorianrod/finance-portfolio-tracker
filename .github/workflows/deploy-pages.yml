@@ -1,0 +1,81 @@
+name: Deploy demo to GitHub Pages
+
+# Publishes a public, read-only build of the dashboard backed ONLY by
+# `finance-init`'s synthetic example portfolio — never the maintainer's
+# real data/ (which isn't even present in this repo or its history).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install pipeline
+        working-directory: packages/pipeline
+        run: pip install .
+
+      - name: Generate the example portfolio (finance-init + finance-pipeline)
+        run: |
+          mkdir -p /tmp/demo-data
+          cd /tmp/demo-data
+          finance-init
+          echo n | finance-pipeline
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: packages/dashboard/package-lock.json
+
+      - name: Install dashboard dependencies
+        working-directory: packages/dashboard
+        run: npm ci
+
+      - name: Copy the example portfolio's output into the build
+        run: |
+          mkdir -p packages/dashboard/public/data
+          cp /tmp/demo-data/data/output/*.csv packages/dashboard/public/data/
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build (tsc + vite, project-site base path)
+        working-directory: packages/dashboard
+        run: |
+          npx tsc -b
+          npx vite build --base="${{ steps.pages.outputs.base_path }}/"
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: packages/dashboard/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
