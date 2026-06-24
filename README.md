@@ -1,5 +1,7 @@
 # Finance
 
+[![Latest release](https://img.shields.io/github/v/release/dorianrod/finance-portfolio-tracker)](https://github.com/dorianrod/finance-portfolio-tracker/releases/)
+
 When your investments are spread across several brokers, no single one of them can tell you what you actually own. Finance Portfolio Tracker pulls everything together into one place and gives you a 360° view of your allocations — by sector, geography, currency, asset class — so you can spot concentration risk and rebalance with the full picture, instead of piecing it together broker by broker.
 
 Everything runs locally, on your own machine: there's no account to create and no third-party platform to hand your brokerage data to.
@@ -10,7 +12,7 @@ Everything runs locally, on your own machine: there's no account to create and n
 
 No coding experience needed — just download one file. It takes about a minute, and you only need to do it once.
 
-Pick (or create) a folder to hold your financial data, e.g. `my-finance`, then go to the [latest release](https://github.com/dorianrod/finance-portfolio-tracker/releases/latest) and download the file for your system into that folder.
+Pick (or create) a folder to hold your financial data, e.g. `my-finance`, then go to the [Releases page](https://github.com/dorianrod/finance-portfolio-tracker/releases/) and download the file for your system into that folder.
 
 ### Windows
 

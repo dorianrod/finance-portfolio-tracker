@@ -25,7 +25,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          # Pinned to 22.04 (not ubuntu-latest): PyInstaller links against
+          # the build machine's glibc, and glibc is forward- but not
+          # backward-compatible -- a binary built on 24.04 (glibc 2.39)
+          # fails to even start on the still-widely-used 22.04 LTS
+          # (glibc 2.35). Building on the oldest LTS we want to support
+          # keeps the binary runnable on newer systems too.
+          - os: ubuntu-22.04
             asset_name: finance-tool-linux
           - os: windows-latest
             asset_name: finance-tool-windows.exe
