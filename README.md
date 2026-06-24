@@ -1,4 +1,4 @@
-# Finance
+# Finance Portfolio Tracker
 
 [![Latest release](https://img.shields.io/github/v/release/dorianrod/finance-portfolio-tracker)](https://github.com/dorianrod/finance-portfolio-tracker/releases/)
 
