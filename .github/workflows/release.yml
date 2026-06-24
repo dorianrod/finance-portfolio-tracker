@@ -121,6 +121,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.tag.outputs.name }}" artifacts/* \
+            --repo "${{ github.repository }}" \
             --title "${{ steps.tag.outputs.name }}" \
             --notes "Standalone desktop executables — no Python, Node or pipx required.
 
