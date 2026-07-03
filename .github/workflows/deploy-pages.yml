@@ -38,7 +38,7 @@ jobs:
           mkdir -p /tmp/demo-data
           cd /tmp/demo-data
           finance-init
-          echo n | finance-pipeline
+          finance-pipeline --update-current-month no --price-jump-policy fetched
 
       - uses: actions/setup-node@v6
         with:
