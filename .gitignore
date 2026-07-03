@@ -6,6 +6,8 @@ data/output/
 # Input data (personal financial data — do not commit)
 data/input/
 
+data
+
 # Keep asset_prices tracked but ignore OS noise
 .DS_Store
 Thumbs.db
