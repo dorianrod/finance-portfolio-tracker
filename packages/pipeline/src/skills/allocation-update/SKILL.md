@@ -61,6 +61,30 @@ if [ -n "$FINANCE_DATA_DIR" ]; then echo "$FINANCE_DATA_DIR"; elif [ -d "./input
 All paths below are written as `<data-dir>/input/allocations/...` —
 substitute the resolved value.
 
+## Resolving the finance tool command
+
+Prefer the standalone release executable when it is present in the working
+folder. If Claude Code is running from the source repository, use the
+repository `Makefile`.
+
+```bash
+if command -v finance-tool >/dev/null 2>&1; then echo "finance-tool"
+elif [ -x "./finance-tool-linux" ]; then echo "./finance-tool-linux"
+elif [ -x "./finance-tool-windows.exe" ]; then echo "./finance-tool-windows.exe"
+elif [ -f "./Makefile" ]; then echo "make"
+else echo ""; fi
+```
+
+Store the result as **`FINANCE_TOOL`**. If it is empty, ask the user where the
+`finance-tool` executable is; do not assume a source checkout exists.
+
+When `FINANCE_TOOL=make`, pass helper arguments through `ARGS`, for example:
+
+```bash
+make allocation-read ARGS='"EXACT ASSET NAME"'
+make allocation-build ARGS="--date YYYY-MM-DD"
+```
+
 ---
 
 ## Workflow A — Research an asset's allocation
@@ -89,10 +113,16 @@ Create the folder if it doesn't exist.
 
 ### Step A1 — Read the existing values from the workbook
 
-From the repository/workspace root:
+From the release data folder:
 
 ```bash
-python .claude/skills/allocation-update/scripts/read_allocation.py "EXACT ASSET NAME"
+{FINANCE_TOOL} allocation-read "EXACT ASSET NAME"
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make allocation-read ARGS='"EXACT ASSET NAME"'
 ```
 
 By default the script picks the most recent
@@ -363,7 +393,13 @@ runs — Workflow A only writes markdown reports.
 ### Step B1 — Run the build script
 
 ```bash
-python .claude/skills/allocation-update/scripts/build_allocation_xlsx.py --date YYYY-MM-DD
+{FINANCE_TOOL} allocation-build --date YYYY-MM-DD
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make allocation-build ARGS="--date YYYY-MM-DD"
 ```
 
 Defaults: `--date` is today, `--sheets-dir` is
