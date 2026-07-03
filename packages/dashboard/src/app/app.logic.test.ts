@@ -4,6 +4,7 @@ import type { PositionRow, GroupRow, OperationRow } from '@/types/domain'
 import type { Filters } from '@/types/filters'
 import type { PortfolioHistoryPoint } from '@/types/history'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 
 function baseFilters(overrides: Partial<Filters> = {}): Filters {
   return {
@@ -76,6 +77,19 @@ describe('applyPositionFilters', () => {
     const result = applyPositionFilters(positions, baseFilters({ accounts: new Set(['acc1']) }))
     expect(result.map((p) => p.id)).toEqual(['a'])
     expect(result[0].total_value).toBe(1000)
+  })
+
+  it('filters synthetic cash separately from positions in the same account', () => {
+    const positions = [
+      position({ id: 'asset', account: 'acc1', account_type: 'Bourse' }),
+      position({ id: 'cash', account: 'acc1', account_type: 'Bourse – Cash' }),
+    ]
+    const result = applyPositionFilters(
+      positions,
+      baseFilters({ accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]) }),
+    )
+
+    expect(result.map((p) => p.id)).toEqual(['cash'])
   })
 
   it('recomputes realized gain and dividends from only the operations within the date range', () => {
@@ -164,6 +178,20 @@ describe('applyAccountFilterToHistory', () => {
     expect(result[0].total_value).toBe(900)
     expect(result[0].total_cost_basis).toBe(750)
     expect(result[0].unrealized_gain).toBe(150)
+  })
+
+  it('rebuilds history for synthetic cash separately from the same account positions', () => {
+    const rows = [
+      rawRow({ account: 'acc1', account_type: 'Bourse', total_value: '600' }),
+      rawRow({ account: 'acc1', account_type: 'Bourse – Cash', total_value: '50' }),
+    ]
+    const result = applyAccountFilterToHistory(
+      rows,
+      enrichedHistory,
+      new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+    )
+
+    expect(result[0].total_value).toBe(50)
   })
 })
 

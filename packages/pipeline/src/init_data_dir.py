@@ -14,11 +14,11 @@ The data directory is resolved the same way as finance-pipeline: the
 --data-dir flag, the FINANCE_DATA_DIR environment variable, or a data/
 folder in the current working directory.
 
-Also installs the allocation-update Claude Code skill into
-.claude/skills/allocation-update/ in the current working directory (the
-folder you're running this command from), so it's available next time you
-work on that folder with Claude Code. This always re-syncs to the version
-bundled with the installed finance-pipeline, regardless of --force.
+Also installs the bundled Claude Code skills into .claude/skills/ in the
+current working directory (the folder you're running this command from),
+so they're available next time you work on that folder with Claude Code.
+This always re-syncs to the versions bundled with the installed
+finance-pipeline, regardless of --force.
 """
 
 import argparse
@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.data_dir import resolve_data_dir  # noqa: E402
 
-_BUNDLED_SKILL_DIR = Path(__file__).parent / "skills" / "allocation-update"
+_BUNDLED_SKILLS_DIR = Path(__file__).parent / "skills"
 
 # ---------------------------------------------------------------------------
 # account_groups.csv
@@ -405,19 +405,25 @@ def _write(path: Path, content: str) -> None:
     path.write_text(content)
 
 
-def _install_skill() -> Path:
-    """Sync the bundled allocation-update skill into the execution
-    folder's .claude/skills/, so Claude Code picks it up there.
+def _install_skills() -> list[Path]:
+    """Sync bundled skills into the execution folder's .claude/skills/,
+    so Claude Code picks them up there.
 
     Runs from the current working directory rather than --data-dir: the
-    skill is a tool asset for whoever opens this folder in Claude Code,
+    skills are tool assets for whoever opens this folder in Claude Code,
     not personal financial data, so it follows the project root.
     """
-    dest = Path.cwd() / ".claude" / "skills" / "allocation-update"
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.rmtree(dest, ignore_errors=True)
-    shutil.copytree(_BUNDLED_SKILL_DIR, dest)
-    return dest
+    skills_root = Path.cwd() / ".claude" / "skills"
+    skills_root.mkdir(parents=True, exist_ok=True)
+    installed: list[Path] = []
+    for source in sorted(_BUNDLED_SKILLS_DIR.iterdir()):
+        if not source.is_dir():
+            continue
+        dest = skills_root / source.name
+        shutil.rmtree(dest, ignore_errors=True)
+        shutil.copytree(source, dest)
+        installed.append(dest)
+    return installed
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -425,8 +431,9 @@ def main(argv: list[str] | None = None) -> None:
     data_dir = resolve_data_dir(args.data_dir)
     input_dir = data_dir / "input"
 
-    skill_dest = _install_skill()
-    print(f"  Skill installed : {skill_dest}/")
+    skill_dests = _install_skills()
+    for skill_dest in skill_dests:
+        print(f"  Skill installed : {skill_dest}/")
 
     if input_dir.exists() and not args.force:
         raise SystemExit(

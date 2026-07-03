@@ -27,7 +27,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.application.broker_data_collector import (
     BrokerDataCollector,  # noqa: E402
 )
-from src.application.fetch_prices import FetchPricesUseCase  # noqa: E402
+from src.application.fetch_prices import (  # noqa: E402
+    FetchPricesUseCase,
+    PriceDiscrepancy,
+)
 from src.application.ingest_portfolio import (
     IngestPortfolioUseCase,  # noqa: E402
 )
@@ -80,6 +83,34 @@ def _confirm_current_month_refetch(d: date) -> bool:
     return answer in ("y", "yes")
 
 
+def _resolve_price_discrepancy(discrepancy: PriceDiscrepancy) -> float:
+    print(
+        f"\n[ALERT] Price jump of {discrepancy.change_ratio:+.1%} detected"
+        f" for {discrepancy.name} ({discrepancy.key})"
+    )
+    print(
+        f"  Last known price ({discrepancy.previous_month}):"
+        f" {discrepancy.previous_price_eur:.4f} EUR"
+    )
+    print(
+        f"  Fetched price     ({discrepancy.new_month}):"
+        f" {discrepancy.new_price_eur:.4f} EUR"
+    )
+    while True:
+        answer = input(
+            "Which price should be used? [f]etched (default) /"
+            " [l]ast known / enter a custom value in EUR: "
+        ).strip().lower()
+        if answer in ("", "f", "fetched"):
+            return discrepancy.new_price_eur
+        if answer in ("l", "last"):
+            return discrepancy.previous_price_eur
+        try:
+            return float(answer.replace(",", "."))
+        except ValueError:
+            print(f"  Not a valid choice: '{answer}'. Try again.")
+
+
 def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     data_dir = resolve_data_dir(args.data_dir)
@@ -108,6 +139,7 @@ def main(argv: list[str] | None = None) -> None:
         allocation_repo=allocation_repo,
         output_writer=output_writer,
         confirm_current_month_refetch=_confirm_current_month_refetch,
+        resolve_price_discrepancy=_resolve_price_discrepancy,
     ).execute()
 
     use_case = IngestPortfolioUseCase(

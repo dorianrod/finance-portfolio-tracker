@@ -3,6 +3,7 @@ import type { AccountTypePoint } from '@/types/history'
 import type { PositionRow } from '@/types/domain'
 import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
+import { rawAccountSet } from '@/shared/filters/accountFilter'
 
 export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
   rolling_12m: number
@@ -60,10 +61,11 @@ export function buildAccountTypeLabels(accountTypeData?: AccountTypePoint[]): Ac
 
 export function filterMonthlyOpsByAccounts(allOps: MonthlyOpsMap, accounts?: Set<string>): MonthlyOpsMap {
   if (!accounts || accounts.size === 0) return allOps
+  const rawAccounts = rawAccountSet(accounts)
   return new Map<string, MonthlyOp[]>(
     [...allOps.entries()].map(([month, list]) => [
       month,
-      list.filter((o) => accounts.has(o.account)),
+      list.filter((o) => rawAccounts?.has(o.account)),
     ]),
   )
 }

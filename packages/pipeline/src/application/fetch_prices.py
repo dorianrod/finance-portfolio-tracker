@@ -21,6 +21,33 @@ from src.ports.broker_operations import BrokerOperationsReader
 from src.ports.market_data import MarketDataClient
 from src.ports.output_writer import PortfolioOutputWriter
 
+# Above this relative change vs. the previous month's price_eur, the user is
+# asked to confirm which value to keep instead of silently accepting the
+# fresh Yahoo quote (which can reflect a stock split, a data glitch, or a
+# genuine market move).
+PRICE_JUMP_ALERT_THRESHOLD = 0.10
+
+
+@dataclass(frozen=True)
+class PriceDiscrepancy:
+    """A fresh quote that moved more than the alert threshold vs. the last
+    known price for the same asset — passed to `resolve_price_discrepancy`
+    so the caller can ask the user which value to keep.
+    """
+
+    key: str  # isin, or ticker/yahoo_symbol when no isin is known
+    name: str
+    previous_month: str  # "YYYY-MM"
+    previous_price_eur: float
+    new_month: str  # "YYYY-MM"
+    new_price_eur: float
+
+    @property
+    def change_ratio(self) -> float:
+        return (self.new_price_eur - self.previous_price_eur) / abs(
+            self.previous_price_eur
+        )
+
 
 @dataclass
 class FetchPricesUseCase:
@@ -30,6 +57,7 @@ class FetchPricesUseCase:
     allocation_repo: AllocationRepository
     output_writer: PortfolioOutputWriter
     confirm_current_month_refetch: Callable[[date], bool]
+    resolve_price_discrepancy: Callable[[PriceDiscrepancy], float]
 
     def execute(self) -> None:
         collector = ErrorCollector()
@@ -243,6 +271,28 @@ class FetchPricesUseCase:
                 missing.append(d)
         return missing, snap_dates
 
+    def _month_price_eur_by_symbol(
+        self, year: int, month: int
+    ) -> dict[str, float]:
+        """price_eur per yahoo_symbol for an already-generated month, used
+        to detect month-over-month price jumps. Empty if the month has no
+        price file yet (e.g. the very first month fetched).
+        """
+        month_df = self.asset_price_repo.read_month(year, month)
+        if month_df.empty or "yahoo_symbol" not in month_df.columns:
+            return {}
+        prices: dict[str, float] = {}
+        for _, row in month_df.iterrows():
+            sym = row.get("yahoo_symbol")
+            price_eur = row.get("price_eur")
+            if pd.isna(sym) or pd.isna(price_eur):
+                continue
+            try:
+                prices[str(sym)] = float(price_eur)
+            except (TypeError, ValueError):
+                continue
+        return prices
+
     def _write_monthly_price_files(
         self,
         missing: list[date],
@@ -268,6 +318,14 @@ class FetchPricesUseCase:
                     for _, r in existing.iterrows()
                     if pd.notna(r.get("yahoo_symbol"))
                 }
+
+            prev_year, prev_month = (
+                (year - 1, 12) if month == 1 else (year, month - 1)
+            )
+            prev_month_label = f"{prev_year:04d}-{prev_month:02d}"
+            prev_price_eur_by_symbol = self._month_price_eur_by_symbol(
+                prev_year, prev_month
+            )
 
             close_index = cast(pd.DatetimeIndex, close.index)
             mask = (close_index.year == year) & (close_index.month == month)
@@ -341,6 +399,49 @@ class FetchPricesUseCase:
                     price_eur = (
                         round(raw_price / fx_rate, 4) if fx_rate else None
                     )
+
+                previous_price_eur = prev_price_eur_by_symbol.get(sym)
+                if (
+                    price_eur is not None
+                    and previous_price_eur is not None
+                    and previous_price_eur != 0
+                ):
+                    discrepancy = PriceDiscrepancy(
+                        key=meta["isin"] or meta["ticker"] or sym,
+                        name=meta["name"] or sym,
+                        previous_month=prev_month_label,
+                        previous_price_eur=previous_price_eur,
+                        new_month=f"{year:04d}-{month:02d}",
+                        new_price_eur=price_eur,
+                    )
+                    if (
+                        abs(discrepancy.change_ratio)
+                        > PRICE_JUMP_ALERT_THRESHOLD
+                    ):
+                        resolved_price_eur = self.resolve_price_discrepancy(
+                            discrepancy
+                        )
+                        collector.add(
+                            source="fetch_prices",
+                            level="warning",
+                            type="price_jump",
+                            date=f"{year:04d}-{month:02d}",
+                            isin=meta["isin"],
+                            ticker=meta["ticker"] or sym,
+                            name=meta["name"],
+                            message=(
+                                f"Price for {meta['name'] or sym} moved"
+                                f" {discrepancy.change_ratio:+.1%} vs"
+                                f" {prev_month_label}"
+                                f" ({previous_price_eur:.4f} EUR ->"
+                                f" {price_eur:.4f} EUR) — user confirmed"
+                                f" {resolved_price_eur:.4f} EUR"
+                            ),
+                        )
+                        if resolved_price_eur != price_eur:
+                            price_eur = round(resolved_price_eur, 4)
+                            if currency == "EUR":
+                                raw_price = resolved_price_eur
 
                 rows.append(
                     {

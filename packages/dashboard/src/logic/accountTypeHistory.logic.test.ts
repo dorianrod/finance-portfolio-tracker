@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { buildAccountTypeHistory } from './accountTypeHistory.logic'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 
 function row(overrides: Partial<RawPositionRow>): RawPositionRow {
   return {
@@ -36,6 +37,19 @@ describe('buildAccountTypeHistory', () => {
     ]
     const { data } = buildAccountTypeHistory(rows, new Set(['acc1']))
     expect(data).toEqual([{ date: '2024-01-01', PEA: 1000 }])
+  })
+
+  it('filters synthetic cash separately from other rows in the same account', () => {
+    const rows = [
+      row({ account: 'acc1', account_type: 'Bourse', total_value: '1000' }),
+      row({ account: 'acc1', account_type: 'Bourse – Cash', total_value: '50' }),
+    ]
+    const { data } = buildAccountTypeHistory(
+      rows,
+      new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+    )
+
+    expect(data).toEqual([{ date: '2024-01-01', 'Bourse – Cash': 50 }])
   })
 
   it('ignores rows with no account_type or no total_value', () => {

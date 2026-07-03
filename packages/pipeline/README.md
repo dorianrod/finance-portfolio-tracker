@@ -67,8 +67,9 @@ useful to try the pipeline/dashboard end-to-end before plugging in your
 own broker exports.
 
 Also installs (and re-syncs on every run, regardless of `--force`) the
-`allocation-update` Claude Code skill into `.claude/skills/` in the
-current working directory — the folder you ran `finance-init` from. It
+bundled Claude Code skills into `.claude/skills/` in the current working
+directory — the folder you ran `finance-init` from. `allocation-update`
 lets Claude research an asset's geo/sector/currency/asset-class
-allocation and write it into `allocations/*.xlsx` for you; see
-`.claude/skills/allocation-update/SKILL.md` once it's installed.
+allocation and write it into `allocations/*.xlsx`; `monthly-update`
+guides a full periodic refresh and checks pipeline errors after the run.
+See `.claude/skills/*/SKILL.md` once they're installed.

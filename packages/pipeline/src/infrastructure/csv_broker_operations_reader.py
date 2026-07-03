@@ -8,6 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.domain.models import Operation
+from src.infrastructure.broker_file_discovery import (
+    discover_prefixed_broker_groups,
+)
 from src.infrastructure.parsers.boursorama import (
     parse_operations as bourso_parse_ops,
 )
@@ -27,27 +30,17 @@ class CsvBrokerOperationsReader(BrokerOperationsReader):
 
     def read_all(self) -> list[Operation]:
         all_ops: list[Operation] = []
-        for account, path in [
-            (
-                "boursorama_pea",
-                self.input_dir / "brokers/boursorama/PEA/operations.csv",
-            ),
-            (
-                "boursorama_cto",
-                self.input_dir / "brokers/boursorama/CTO/operations.csv",
-            ),
-        ]:
-            if path.exists():
-                all_ops.extend(bourso_parse_ops(path, account))
+        brokers_dir = self.input_dir / "brokers"
 
-        revolut_path = next(
-            self.input_dir.glob(
-                "brokers/revolut/trading-account-statement_*.csv"
-            ),
-            None,
-        )
-        if revolut_path:
-            all_ops.extend(revolut_parse_ops(revolut_path))
+        for group in discover_prefixed_broker_groups(
+            brokers_dir, "boursorama"
+        ):
+            for csv_file in group.files:
+                all_ops.extend(bourso_parse_ops(csv_file, group.account))
+
+        for group in discover_prefixed_broker_groups(brokers_dir, "revolut"):
+            for csv_file in group.files:
+                all_ops.extend(revolut_parse_ops(csv_file, group.account))
 
         for direct_file in sorted(
             (self.input_dir / "brokers/direct").rglob("*.csv")

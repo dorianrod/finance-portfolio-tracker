@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { computeTopPerformers, computeTrailing12mSavings, buildAccountTypeLabels, filterMonthlyOpsByAccounts } from './portfolioCharts.logic'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 import type { PositionRow } from '@/types/domain'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
@@ -114,6 +115,17 @@ describe('filterMonthlyOpsByAccounts', () => {
 
   it('filters each month\'s operations down to the selected accounts', () => {
     const result = filterMonthlyOpsByAccounts(makeOps(), new Set(['a1']))
+    expect(result.get('2024-01')).toEqual([
+      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
+    ])
+  })
+
+  it('maps synthetic cash account ids back to raw operation accounts', () => {
+    const result = filterMonthlyOpsByAccounts(
+      makeOps(),
+      new Set([`a1${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+    )
+
     expect(result.get('2024-01')).toEqual([
       { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
     ])

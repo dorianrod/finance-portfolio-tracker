@@ -82,10 +82,10 @@ describe('buildPositionRows', () => {
     expect(rows[0].realized_gain).toBe(50)
   })
 
-  it('builds a synthetic "– Cash" pseudo-type for a brokerage account\'s uninvested cash row', () => {
-    const ops = [op({ isin: '', ticker: '', name: 'Cash', operation_type: 'DEPOSIT', total_amount: '1000' })]
-    const rows = buildPositionRows(ops, [pos({ isin: '', ticker: '', name: 'Cash', account_category: 'brokerage' })])
-    expect(rows[0].account_type).toBe('PEA – Cash')
+  it('passes through account_type from the pipeline CSV including "– Cash" suffix', () => {
+    const ops = [op({ isin: '', ticker: '', name: 'Cash CTO', operation_type: 'DEPOSIT', total_amount: '1000' })]
+    const rows = buildPositionRows(ops, [pos({ isin: '', ticker: '', name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage' })])
+    expect(rows[0].account_type).toBe('Bourse – Cash')
   })
 
   it('sorts active positions before closed ones', () => {

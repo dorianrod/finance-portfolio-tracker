@@ -32,6 +32,7 @@ class PortfolioErrorDetector:
         self._add_parse_failures(errors, parse_failures)
         self._add_ticker_map_errors(errors)
         self._add_missing_price_warnings(errors, asset_prices, positions)
+        self._add_missing_currency_warnings(errors, asset_prices)
         self._add_missing_fx_warnings(errors, asset_prices)
         return errors
 
@@ -141,6 +142,58 @@ class PortfolioErrorDetector:
                     ),
                 )
 
+    def _add_missing_currency_warnings(
+        self, errors: ErrorCollector, asset_prices: pd.DataFrame
+    ) -> None:
+        if asset_prices.empty or "currency" not in asset_prices.columns:
+            return
+
+        missing_currency = asset_prices[
+            asset_prices["isin"].notna()
+            & (asset_prices["isin"] != "")
+            & (
+                asset_prices["currency"].isna()
+                | (asset_prices["currency"].astype(str).str.strip() == "")
+                | (
+                    asset_prices["currency"]
+                    .astype(str)
+                    .str.strip()
+                    .str.lower()
+                    == "nan"
+                )
+            )
+        ]
+
+        seen_currency: set[tuple[str, int, int]] = set()
+        for _, _row in missing_currency.iterrows():
+            _d = pd.to_datetime(str(_row.get("date", "")), errors="coerce")
+            if pd.isna(_d):
+                continue
+            key_currency = (
+                str(_row["isin"]),
+                int(_d.year),
+                int(_d.month),
+            )
+            if key_currency in seen_currency:
+                continue
+            seen_currency.add(key_currency)
+            errors.add(
+                source="main",
+                level="warning",
+                type="missing_currency",
+                date=f"{_d.year}-{_d.month:02d}",
+                isin=str(_row["isin"]),
+                ticker=str(_row.get("ticker", "") or ""),
+                name=str(_row.get("name", "") or ""),
+                message=(
+                    "Currency missing for"
+                    f" {_row.get('name', _row['isin'])}"
+                    f" in {_d.year}-{_d.month:02d}"
+                    " — price_eur cannot be trusted; add currency in the"
+                    " allocation row or generated price file"
+                ),
+            )
+
     def _add_missing_fx_warnings(
         self, errors: ErrorCollector, asset_prices: pd.DataFrame
     ) -> None:
@@ -150,6 +203,15 @@ class PortfolioErrorDetector:
                 asset_prices["price_eur"].isna()
                 & asset_prices["isin"].notna()
                 & (asset_prices["isin"] != "")
+                & asset_prices["currency"].notna()
+                & (asset_prices["currency"].astype(str).str.strip() != "")
+                & (
+                    asset_prices["currency"]
+                    .astype(str)
+                    .str.strip()
+                    .str.lower()
+                    != "nan"
+                )
             ]
             seen_eur: set[tuple[str, int, int]] = set()
             for _, _row in missing_eur.iterrows():

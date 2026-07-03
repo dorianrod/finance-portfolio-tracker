@@ -26,6 +26,7 @@ class RevolutLoader(BrokerLoader):
     """
 
     filepaths: list[Path]
+    account: str = "revolut"
     label: str = "revolut"
 
     def load(
@@ -33,7 +34,8 @@ class RevolutLoader(BrokerLoader):
     ) -> tuple[list[Operation], list[Position]]:
         operations: list[Operation] = []
         for filepath in self.filepaths:
-            operations.extend(parse_operations(filepath))
+            operations.extend(parse_operations(filepath, account=self.account))
+        operations = _deduplicate(operations)
         _enrich_with_ticker_map(operations, ticker_map)
 
         if asset_prices.empty:
@@ -46,6 +48,7 @@ class RevolutLoader(BrokerLoader):
         positions = compute_positions(
             operations,
             asset_prices,
+            account=self.account,
             snapshot_dates=month_end_dates(operations),
         )
         return operations, positions
@@ -53,6 +56,23 @@ class RevolutLoader(BrokerLoader):
 
 # ---------------------------------------------------------------------------
 # Helpers
+
+
+def _deduplicate(operations: list[Operation]) -> list[Operation]:
+    """Remove exact duplicates that arise when Revolut export files overlap.
+
+    The historic file often includes the first few rows of the next monthly
+    export. Deduplication key: (date, type, ticker, amount) — the tuple that
+    uniquely identifies a transaction in Revolut's ledger.
+    """
+    seen: set[tuple] = set()
+    unique: list[Operation] = []
+    for op in operations:
+        key = (op.date, op.operation_type, op.ticker, op.total_amount)
+        if key not in seen:
+            seen.add(key)
+            unique.append(op)
+    return unique
 # ---------------------------------------------------------------------------
 
 _OPERATION_MAP: dict[str, OperationType] = {
@@ -101,7 +121,9 @@ def _enrich_with_ticker_map(
 # ---------------------------------------------------------------------------
 
 
-def parse_operations(filepath: str | Path) -> list[Operation]:
+def parse_operations(
+    filepath: str | Path, account: str = "revolut"
+) -> list[Operation]:
     """Parse a Revolut trading account statement CSV."""
     df = pd.read_csv(filepath, encoding="utf-8-sig", dtype=str)
     df.columns = [c.strip() for c in df.columns]
@@ -149,7 +171,7 @@ def parse_operations(filepath: str | Path) -> list[Operation]:
         operations.append(
             Operation(
                 date=dt,
-                account="revolut",
+                account=account,
                 isin=None,
                 ticker=ticker,
                 name=None,
@@ -167,6 +189,7 @@ def parse_operations(filepath: str | Path) -> list[Operation]:
 def compute_positions(
     operations: list[Operation],
     asset_prices: pd.DataFrame,
+    account: str = "revolut",
     snapshot_dates: list[date] | None = None,
 ) -> list[Position]:
     """Compute Revolut positions for each snapshot date by replaying
@@ -256,7 +279,7 @@ def compute_positions(
             positions.append(
                 Position(
                     snapshot_date=snap_date,
-                    account="revolut",
+                    account=account,
                     isin=isin,
                     ticker=ticker,
                     name=name,
