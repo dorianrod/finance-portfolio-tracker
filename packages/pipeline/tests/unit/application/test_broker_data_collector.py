@@ -32,11 +32,13 @@ def test_build_loaders_discovers_prefixed_broker_accounts(tmp_path: Path):
         BoursoramaLoader,
         RevolutLoader,
     ]
-    assert [loader.account for loader in loaders] == [
-        "boursorama_pea",
-        "revolut_trading",
-    ]
-    assert loaders[1].label == "revolut_trading"
+    boursorama_loader = loaders[0]
+    revolut_loader = loaders[1]
+    assert isinstance(boursorama_loader, BoursoramaLoader)
+    assert isinstance(revolut_loader, RevolutLoader)
+    assert boursorama_loader.account == "boursorama_pea"
+    assert revolut_loader.account == "revolut_trading"
+    assert revolut_loader.label == "revolut_trading"
 
 
 def test_collect_keeps_running_when_one_loader_fails(
