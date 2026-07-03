@@ -2,6 +2,8 @@
 
 Usage:
     finance-pipeline [--data-dir DATA_DIR]
+                     [--update-current-month ask|yes|no]
+                     [--price-jump-policy ask|fetched|last]
 
 Fetches missing month-end asset prices (FetchPricesUseCase), then reads all
 data files under <data-dir>/input/ and writes normalised CSVs to
@@ -58,6 +60,9 @@ from src.infrastructure.yahoo_market_data_client import (
     YahooMarketDataClient,  # noqa: E402
 )
 
+UpdateCurrentMonthPolicy = str
+PriceJumpPolicy = str
+
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -68,10 +73,34 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
             " or ./data)"
         ),
     )
+    parser.add_argument(
+        "--update-current-month",
+        choices=("ask", "yes", "no"),
+        default="ask",
+        help=(
+            "Whether to refetch an existing current-month price file. "
+            "Default: ask interactively."
+        ),
+    )
+    parser.add_argument(
+        "--price-jump-policy",
+        choices=("ask", "fetched", "last"),
+        default="ask",
+        help=(
+            "How to resolve large month-over-month price jumps. "
+            "Default: ask interactively."
+        ),
+    )
     return parser.parse_args(argv)
 
 
-def _confirm_current_month_refetch(d: date) -> bool:
+def _confirm_current_month_refetch(
+    d: date, policy: UpdateCurrentMonthPolicy = "ask"
+) -> bool:
+    if policy == "yes":
+        return True
+    if policy == "no":
+        return False
     answer = (
         input(
             f"\nThe current month's file ({d.year:04d}-{d.month:02d}.csv)"
@@ -83,7 +112,9 @@ def _confirm_current_month_refetch(d: date) -> bool:
     return answer in ("y", "yes")
 
 
-def _resolve_price_discrepancy(discrepancy: PriceDiscrepancy) -> float:
+def _resolve_price_discrepancy(
+    discrepancy: PriceDiscrepancy, policy: PriceJumpPolicy = "ask"
+) -> float:
     print(
         f"\n[ALERT] Price jump of {discrepancy.change_ratio:+.1%} detected"
         f" for {discrepancy.name} ({discrepancy.key})"
@@ -96,6 +127,12 @@ def _resolve_price_discrepancy(discrepancy: PriceDiscrepancy) -> float:
         f"  Fetched price     ({discrepancy.new_month}):"
         f" {discrepancy.new_price_eur:.4f} EUR"
     )
+    if policy == "fetched":
+        print("  Non-interactive policy: using fetched price.")
+        return discrepancy.new_price_eur
+    if policy == "last":
+        print("  Non-interactive policy: using last known price.")
+        return discrepancy.previous_price_eur
     while True:
         answer = input(
             "Which price should be used? [f]etched (default) /"
@@ -138,8 +175,14 @@ def main(argv: list[str] | None = None) -> None:
         market_data=YahooMarketDataClient(),
         allocation_repo=allocation_repo,
         output_writer=output_writer,
-        confirm_current_month_refetch=_confirm_current_month_refetch,
-        resolve_price_discrepancy=_resolve_price_discrepancy,
+        confirm_current_month_refetch=lambda d: _confirm_current_month_refetch(
+            d, args.update_current_month
+        ),
+        resolve_price_discrepancy=lambda discrepancy: (
+            _resolve_price_discrepancy(
+                discrepancy, args.price_jump_policy
+            )
+        ),
     ).execute()
 
     use_case = IngestPortfolioUseCase(

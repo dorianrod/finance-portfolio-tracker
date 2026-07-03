@@ -19,6 +19,18 @@ what is present in the data directory at runtime — never assume specific
 broker names or file structures. Sections run in order; each waits for user
 input before proceeding. Never invent or assume values.
 
+Default operating mode: apply mechanical edits directly and show a clear
+summary of changed files and rows for review. If the workspace is a git
+repository, `git diff` may be used as an additional review aid, but git must
+not be required: the workflow must also work for non-technical users and
+folders where git is not installed. Ask for confirmation only when user data
+is inconsistent, a value implies an unexpectedly large movement, a target-date
+row already exists, file ordering/format could change pipeline behavior, an
+external source choice is ambiguous, or a manual price source is weak/inferred.
+Do not ask before appending rows that exactly match user-provided values,
+copying the latest allocation workbook to `ALLOC_DATE`, or adding manual
+prices from a broker export/source already provided by the user.
+
 ## Resolving the data directory
 
 ```bash
@@ -124,76 +136,78 @@ now present. If a folder is still empty, warn but continue.
 
 ## Step 4 — Valuations
 
-Process each file in `VALUATION_FILES` one at a time.
+Read every file first, then collect all valuation updates in one paste.
 
-### 4a — Read the last entry
+### 4a — Read the last entries
 
 ```bash
-head -1 {file}        # header → detect columns
-tail -1 {file}        # last row → previous values
+for file in <data-dir>/input/brokers/valuations/*.csv; do
+  head -1 "$file"
+  tail -1 "$file"
+done
 ```
 
-Show a one-line summary:
+For each file, show a one-line summary:
 > **{name}** ({account}) — last value: **{value} {currency}** on {date},
 > invested: {invested}, tax_rate: {tax_rate if column exists}
 
-### 4b — Collect the new value
+### 4b — Collect values in bulk
 
-Ask in chat (free-form text, **not** AskUserQuestion — the user types a number):
+Ask the user to paste this template, prefilled with discovered accounts:
 
-> Value of **{name}** ({account}) as of {TARGET_DATE}?
-> _(type the amount, or `=` to keep {value} unchanged)_
+```text
+MONTHLY UPDATE INPUT
+target_date: {TARGET_DATE}
 
-If the user replies `=` or "unchanged", keep the previous value.
+valuations:
+  - account: {account}
+    name: {name}
+    value: {new value or unchanged}
+    invested_delta: {net contribution/withdrawal or 0}
+    tax_rate: unchanged
+    action: append
 
-### 4c — Collect investment delta
+direct_movements:
+  - account: {account}
+    name: {name}
+    movements: none
+```
 
-**Skip for current accounts** (detected in Step 2): for those, always set
-`invested = new_value`.
+Parsing rules:
+- `value: unchanged` or `value: =` keeps the previous value.
+- `invested_delta: 0`, `none`, or `no` keeps invested unchanged.
+- For current accounts, ignore `invested_delta` and set `invested = value`.
+- `action: skip` means do not append a row, even if the value is unchanged.
+- Missing `tax_rate` means keep the previous value, including blank.
+- If one row is ambiguous, ask only about that row.
 
-For all others, ask in chat:
+### 4c — Detect target-date duplicates
 
-> Any contributions/withdrawals on **{name}** since {last_date}?
-> _(net amount — positive for deposits, negative for withdrawals — or `no`)_
+Before appending a valuation row, check whether the file already contains
+`TARGET_DATE`:
 
-If yes: `new_invested = previous_invested + delta`.
-If no: `new_invested = previous_invested`.
+```bash
+grep -n '^TARGET_DATE,' {file}
+```
 
-### 4d — Confirm tax_rate
+If a target-date row exists, ask whether to replace, append anyway, or skip.
+Default to replace only when the existing row is clearly for the same
+account/name.
 
-Only for files whose header contains a `tax_rate` column. Use **AskUserQuestion**:
-- question: "Tax rate for {name}?"
-- option 1: `{previous_tax_rate} — unchanged (recommended)`
-- option 2: `Change`
+### 4d — Append rows
 
-If "Change", ask the user to type the new rate (e.g. `30%` or `17.2%`).
-
-If the column exists but was blank in the last row, keep it blank unless the
-user provides a value.
-
-### 4e — Confirm and append
-
-Show the full CSV row before writing:
-
-> New row for **{name}**:
-> `{TARGET_DATE},{account},,,{name},{new_value},{new_invested},{currency},{tax_rate}`
-> (omit tax_rate if the file has no tax_rate column)
-
-Use **AskUserQuestion**:
-- option 1: "Confirm"
-- option 2: "Edit" → ask what to change, then re-show
-- option 3: "Skip this account"
-
-Append the confirmed row using the **Edit** tool. Always:
+Append each unambiguous row using the **Edit** tool. Always:
 - Copy `account` and `name` verbatim from the last row of the file
 - Leave `isin` and `ticker` columns empty (bare commas)
 - Preserve the exact column order read from the file header
+- Summarize rows added/skipped for the final recap
 
 ---
 
 ## Step 5 — Direct-entry accounts
 
-For each file in `DIRECT_FILES`:
+Use the `direct_movements` block from the bulk paste. If it was omitted, read
+each file and ask once for all direct-entry movements.
 
 ### 5a — Read header and last rows
 
@@ -204,24 +218,46 @@ tail -3 {file}       # show recent context to the user
 
 Display the last few rows so the user has context.
 
-### 5b — Ask for movements
+### 5b — Interpret movements
 
-Ask in chat:
+Accepted values:
+- `movements: none`, `no`, or `0` means no rows are added.
+- Otherwise, the user must list each movement with date, operation type,
+  quantity if any, unit price if any, and total amount.
+- Common operation types: BUY / SELL / DIVIDEND / DEPOSIT / WITHDRAW /
+  INTEREST.
 
-> Any movements on **{name from last row}** ({account from last row})
-> since {last_date in the file}?
-> _(If yes, list each movement: date, operation type, quantity if any,
-> unit price if any, total amount. Common types: BUY / SELL / DIVIDEND /
-> DEPOSIT / WITHDRAW / INTEREST)_
-
-### 5c — Build and confirm rows
+### 5c — Build and append rows
 
 For each movement the user provides, construct a CSV row using the exact
 column order from the file header. Leave columns for which no value was
-given as empty (bare commas). Show the row and confirm with **AskUserQuestion**
-(Confirm / Edit / Skip) before appending.
+given as empty (bare commas). Append unambiguous rows directly; ask only about
+missing or inconsistent movement details.
 
 ---
+
+## Preflight new broker tickers
+
+After extraction files are confirmed and before running the pipeline, scan new
+broker exports for tickers/ISINs that are absent from allocation metadata or
+manual prices:
+
+```bash
+python .claude/skills/allocation-update/scripts/read_allocation.py --list-all
+find <data-dir>/input/asset_prices/others -maxdepth 1 -name '*.csv' -print
+```
+
+For Revolut-style exports, explicitly scan ticker-only buys:
+
+```bash
+rg -n 'BUY - MARKET|Ticker,Type,Quantity,Price per share,Total Amount,Currency' \
+  <data-dir>/input/brokers
+```
+
+List new tickers/ISINs, tickers absent from `asset_prices/others`, and entries
+not resolvable from allocation metadata. Decide immediately whether to map the
+ticker in the allocation workbook, add a manual price from the broker export,
+or leave full allocation research for later.
 
 ## Step 6 — Allocation file
 
@@ -237,8 +273,7 @@ Run the read script to list all assets and flag those missing a `ticker` or
 `yahoo_symbol`:
 
 ```bash
-python .claude/skills/allocation-update/scripts/read_allocation.py --list-all 2>/dev/null \
-  || python .claude/skills/allocation-update/scripts/read_allocation.py "" 2>&1 | head -60
+python .claude/skills/allocation-update/scripts/read_allocation.py --list-all
 ```
 
 Also check for any assets that appear in broker files but are absent from
@@ -285,12 +320,20 @@ Prefer the repo `Makefile` when present:
 make -C finance-portfolio-tracker pipeline
 ```
 
+For non-interactive refreshes, use:
+
+```bash
+make -C finance-portfolio-tracker pipeline-auto
+```
+
 If there is no usable `Makefile`, run the pipeline entry point directly:
 
 ```bash
 finance-portfolio-tracker/packages/pipeline/.venv/bin/python \
   finance-portfolio-tracker/packages/pipeline/src/ingest_portfolio.py \
-  --data-dir <data-dir>
+  --data-dir <data-dir> \
+  --update-current-month ask \
+  --price-jump-policy ask
 ```
 
 If the pipeline asks whether to refetch the current month:
@@ -329,11 +372,19 @@ If errors or warnings are present:
    - `unresolved_ticker`: asset needs a verified `yahoo_symbol`/ticker in the
      allocation workbook.
    - `parsing_error`: broker input format or CSV contents need inspection.
-3. Check local files first: generated price CSVs, allocation workbook metadata,
-   broker operations, and any existing research notes.
-4. Use online sources only when needed to verify ticker/ISIN/listing/currency;
-   cite the source in the work log or the chat summary.
-5. Present a concise plan to the user before editing:
+3. Check local files first: broker export ticker/ISIN/price/quantity/currency,
+   previous generated prices, allocation workbook metadata, and
+   `asset_prices/others`.
+4. If local data is insufficient, check reliable public sources in this order:
+   issuer site, JustETF profile and Bourse/Cotations tab, exchange listing
+   pages (XETRA, gettex, Euronext, LSE, SIX), then broker export price when it
+   is the only exact transaction-date source. Prefer a listing in the
+   portfolio trade currency. If Yahoo fails for an ISIN, try the exchange
+   ticker/RIC found via JustETF.
+5. If a price is needed only for a currently held manual/broker-only ticker,
+   add it to `data/input/asset_prices/others/*.csv` and record the source in
+   `data/input/asset_prices/others/SOURCES.md`. Do not invent prices.
+6. Present a concise plan to the user before editing:
 
 ```
 Pipeline errors found: {N}
@@ -347,8 +398,7 @@ Need confirmation for:
 ```
 
 Only apply fixes after the user confirms the plan, unless the fix is purely
-mechanical and already proven by local data (for example, a generated row has
-an empty currency while the allocation row explicitly says `EUR`).
+mechanical and already proven by local data.
 
 After any fixes, rerun Step 7, then repeat Step 8 until either:
 

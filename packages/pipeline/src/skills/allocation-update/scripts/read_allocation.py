@@ -4,6 +4,8 @@
 Usage:
     python read_allocation.py "ASSET NAME" [--file path/to/file.xlsx]
                                             [--data-dir path]
+    python read_allocation.py --list-all [--file path/to/file.xlsx]
+                                      [--data-dir path]
 
 Output:
     JSON with the current values for each category (geo, secteur,
@@ -53,6 +55,13 @@ KEY_COL_IDX = 0
 ID_COL_IDX = 1
 REFERENCE_HEADER = "reference"
 
+META_COLUMN_ALIASES = {
+    "reference": ("reference",),
+    "yahoo_symbol": ("yahoo_symbol", "yahoo"),
+    "currency": ("currency", "devise", "cur"),
+    "ticker": ("ticker", "revolut_ticker"),
+}
+
 
 def resolve_data_dir(cli_value: str | None) -> Path:
     """Same precedence as finance-pipeline's resolve_data_dir, with an
@@ -93,6 +102,48 @@ def _find_reference_col(headers_row1: "pd.Series") -> int:
     return len(headers_row1) - 1
 
 
+def _find_col(headers_row1: "pd.Series", aliases: tuple[str, ...]) -> int | None:
+    normalized = headers_row1.fillna("").astype(str).str.strip().str.lower()
+    for i, h in enumerate(normalized):
+        if h in aliases:
+            return i
+    return None
+
+
+def _clean_cell(raw) -> str:
+    if pd.isna(raw):
+        return ""
+    value = str(raw).strip()
+    return "" if value.lower() == "nan" else value
+
+
+def _list_all_assets(df_raw: "pd.DataFrame", file_path: Path) -> dict:
+    headers_row1 = df_raw.iloc[HEADER_ROW_IDX, :]
+    col_indexes = {
+        name: _find_col(headers_row1, aliases)
+        for name, aliases in META_COLUMN_ALIASES.items()
+    }
+    rows = []
+    for _, row in df_raw.iloc[DATA_START_IDX:].iterrows():
+        name = _clean_cell(row.iloc[KEY_COL_IDX])
+        asset_id = _clean_cell(row.iloc[ID_COL_IDX])
+        if not name and not asset_id:
+            continue
+        item = {
+            "nom_placement": name,
+            "ID": asset_id,
+            "reference": "",
+            "yahoo_symbol": "",
+            "currency": "",
+            "ticker": "",
+        }
+        for col_name, col_idx in col_indexes.items():
+            if col_idx is not None and col_idx < len(row):
+                item[col_name] = _clean_cell(row.iloc[col_idx])
+        rows.append(item)
+    return {"file": str(file_path.resolve()), "assets": rows}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
@@ -100,7 +151,19 @@ def main() -> None:
             "xlsx."
         )
     )
-    parser.add_argument("asset_name", help="Name of the asset to look up")
+    parser.add_argument(
+        "asset_name",
+        nargs="?",
+        help="Name of the asset to look up",
+    )
+    parser.add_argument(
+        "--list-all",
+        action="store_true",
+        help=(
+            "List allocation metadata columns for all assets "
+            "(nom_placement, ID, reference, yahoo_symbol, currency, ticker)."
+        ),
+    )
     parser.add_argument(
         "--file",
         default=None,
@@ -144,6 +207,19 @@ def main() -> None:
         sys.exit(1)
 
     df_raw = pd.read_excel(file_path, header=None)
+    if args.list_all:
+        print(
+            json.dumps(
+                _list_all_assets(df_raw, file_path),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        return
+
+    if not args.asset_name:
+        parser.error("asset_name is required unless --list-all is passed")
+
     norm_target = _norm_key(args.asset_name)
 
     data = df_raw.iloc[DATA_START_IDX:].reset_index(drop=True)
