@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from src.domain.reporting.positions_allocation import (
     build_positions_allocation,
@@ -201,7 +202,7 @@ def test_build_positions_allocation_classifies_synthetic_broker_cash():
     result = build_positions_allocation(positions_df, _repo())
 
     geo_df = result["geo"]
-    assert geo_df["france"].iloc[0] == 1200.0 + 1377.22
+    assert geo_df["france"].iloc[0] == pytest.approx(1200.0 + 1377.22)
     assert geo_df["usa"].iloc[0] == 800.0
 
 
