@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { rawAccountSet } from '@/shared/filters/accountFilter'
 import {
   mapSavingCapacity,
   aggregateSavingCapacityByAccount,
@@ -21,7 +22,7 @@ export function useSavingCapacity(accounts?: Set<string>): SavingCapacityPoint[]
 
   useEffect(() => {
     if (accountsKey) {
-      const accountSet = new Set(accountsKey.split(','))
+      const accountSet = rawAccountSet(new Set(accountsKey.split(','))) ?? new Set()
       parseCsv<RawSavingCapacityByAccountRow>(dataUrl('saving_capacity_by_account.csv')).then((rows) => {
         setData(aggregateSavingCapacityByAccount(rows, accountSet))
       })

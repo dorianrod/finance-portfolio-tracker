@@ -202,8 +202,7 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
     const account = lp?.account || assetOps[assetOps.length - 1].account
     const rawType = lp?.account_type || undefined
     const account_category = lp?.account_category || undefined
-    const isCashPosition = account_category === 'brokerage' && !lp?.isin && !lp?.ticker
-    const account_type = isCashPosition ? `${rawType} – Cash` : rawType
+    const account_type = rawType
 
     rows.push({
       kind: 'position',

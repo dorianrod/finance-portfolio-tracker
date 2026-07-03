@@ -12,6 +12,8 @@ import { AllocationCharts } from '@/features/allocation-charts/AllocationCharts'
 import { ErrorsTab } from '@/features/errors/ErrorsTab'
 import type { Filters, SortKey } from '@/types/filters'
 import type { PortfolioHistoryPoint } from '@/types/history'
+import { accountFilterId } from '@/shared/filters/accountFilter'
+import { accountLabel } from '@/features/filters/filterBar.logic'
 import {
   applyPositionFilters,
   applyAccountFilterToHistory,
@@ -46,14 +48,22 @@ export default function App() {
   const accountToType = useMemo(() => {
     const map: Record<string, string> = {}
     for (const p of positions) {
-      if (p.account_type) map[p.account] = p.account_type
+      if (p.account_type) map[accountFilterId(p)] = p.account_type
     }
     return map
   }, [positions])
   const allAccounts = useMemo(
-    () => [...new Set(positions.map((p) => p.account))].sort(),
+    () => [...new Set(positions.map(accountFilterId))].sort(),
     [positions]
   )
+  const accountFilterLabels = useMemo(() => {
+    const labels = { ...accountLabels }
+    for (const p of positions) {
+      const id = accountFilterId(p)
+      if (!labels[id]) labels[id] = accountLabel(p.account, accountLabels)
+    }
+    return labels
+  }, [positions, accountLabels])
   const allOperationTypes = useMemo(
     () => [...new Set(positions.flatMap((p) => [...p.operationTypes]))].sort(),
     [positions]
@@ -121,7 +131,7 @@ export default function App() {
               allAccountTypes={allAccountTypes}
               accountToType={accountToType}
               allAccounts={allAccounts}
-              accountLabels={accountLabels}
+              accountLabels={accountFilterLabels}
               allOperationTypes={allOperationTypes}
               filters={filters}
               onChange={setFilters}

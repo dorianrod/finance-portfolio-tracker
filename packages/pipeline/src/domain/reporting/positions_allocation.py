@@ -84,6 +84,56 @@ def _best_isin_match(
     return None
 
 
+def _clean_isin(pos_row: pd.Series) -> str:
+    """The position's ISIN, or "" when absent (pandas may store a missing
+    value as NaN rather than an empty string, and str(nan) == "nan" would
+    otherwise be mistaken for a real id).
+    """
+    raw = pos_row.get("isin")
+    return "" if pd.isna(raw) else str(raw).strip()
+
+
+def _is_synthetic_cash(pos_row: pd.Series) -> bool:
+    """True for the "Cash <label>" positions PortfolioSnapshotBuilder
+    synthesises for brokerage accounts' uninvested cash (see
+    application/portfolio_snapshot_builder.py). These have no ISIN and no
+    entry in the allocations xlsx -- there is nothing to research, it's
+    just cash.
+    """
+    name = str(pos_row.get("name", "") or "")
+    category = str(pos_row.get("account_category", "") or "")
+    return category == "brokerage" and name.startswith("Cash ")
+
+
+# Fixed 100% classification applied to synthetic broker cash positions,
+# mirroring how plain cash accounts (Livret A, LDDS, ...) are classified
+# by hand in the allocations xlsx -- but computed instead of requiring a
+# manually-maintained row for every brokerage account's cash label.
+_CASH_CATEGORY_TARGET: dict[str, str] = {
+    "classe": "cash / monétaire",
+    "geo": "france",
+    "secteur": "nc",
+    "currency": "eur",
+}
+
+
+def _cash_allocation_pct(
+    category: str, value_cols: list[str]
+) -> dict[str, float] | None:
+    target = _CASH_CATEGORY_TARGET.get(category)
+    if target is None or target not in value_cols:
+        return None
+    return {col: (100.0 if col == target else 0.0) for col in value_cols}
+
+
+def _isin_or_synthetic_key(isin: str, name: str) -> str:
+    """Stable per-asset key for the by-isin CSV when a position has no
+    real ISIN (bank cash accounts, broker uninvested cash): falling back
+    to "" would collide every such position under the same blank key.
+    """
+    return isin or f"NC-{name}"
+
+
 def build_positions_allocation_by_isin(
     positions_df: pd.DataFrame,
     allocation_repo: AllocationRepository,
@@ -147,7 +197,7 @@ def build_positions_allocation_by_isin(
                 if total_value <= 0:
                     continue
 
-                isin = str(pos_row.get("isin", "") or "").strip()
+                isin = _clean_isin(pos_row)
                 name = str(pos_row.get("name", "") or "").strip()
 
                 alloc_idx: int | None = None
@@ -162,18 +212,26 @@ def build_positions_allocation_by_isin(
                     if clean_name in clean_to_idx:
                         alloc_idx = clean_to_idx[clean_name]
 
-                if alloc_idx is None or not isin:
+                pct_map: dict[str, float] | None = None
+                if alloc_idx is not None and isin:
+                    alloc_row = cast(pd.Series, df_alloc.loc[alloc_idx])
+                    pct_map = {
+                        col: float(alloc_row.get(col, 0) or 0)
+                        for col in value_cols
+                    }
+                elif _is_synthetic_cash(pos_row):
+                    pct_map = _cash_allocation_pct(category, value_cols)
+
+                if pct_map is None:
                     continue
 
-                alloc_row = cast(pd.Series, df_alloc.loc[alloc_idx])
                 row_dict: dict[str, object] = {
                     "snapshot_date": snap_date.isoformat(),
-                    "isin": isin,
+                    "isin": _isin_or_synthetic_key(isin, name),
                     "name": name,
                 }
                 for col in value_cols:
-                    pct = float(alloc_row.get(col, 0) or 0)
-                    row_dict[col] = round(total_value * pct / 100, 2)
+                    row_dict[col] = round(total_value * pct_map[col] / 100, 2)
                 rows_by_cat.setdefault(category, []).append(row_dict)
 
     return {
@@ -247,7 +305,7 @@ def build_positions_allocation(
 
                 alloc_idx: int | None = None
 
-                isin = str(pos_row.get("isin", "") or "").strip()
+                isin = _clean_isin(pos_row)
                 if isin and isin in isin_to_idx:
                     alloc_idx = isin_to_idx[isin]
 
@@ -263,13 +321,21 @@ def build_positions_allocation(
                     if clean_name in clean_to_idx:
                         alloc_idx = clean_to_idx[clean_name]
 
-                if alloc_idx is None:
+                pct_map: dict[str, float] | None = None
+                if alloc_idx is not None:
+                    alloc_row = cast(pd.Series, df_alloc.loc[alloc_idx])
+                    pct_map = {
+                        col: float(alloc_row.get(col, 0) or 0)
+                        for col in value_cols
+                    }
+                elif _is_synthetic_cash(pos_row):
+                    pct_map = _cash_allocation_pct(category, value_cols)
+
+                if pct_map is None:
                     continue
 
-                alloc_row = cast(pd.Series, df_alloc.loc[alloc_idx])
                 for col in value_cols:
-                    pct = float(alloc_row.get(col, 0) or 0)
-                    montants[col] += total_value * pct / 100
+                    montants[col] += total_value * pct_map[col] / 100
 
             row_dict: dict[str, object] = {
                 "snapshot_date": snap_date.isoformat()

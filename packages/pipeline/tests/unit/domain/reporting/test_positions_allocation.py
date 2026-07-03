@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from src.domain.reporting.positions_allocation import (
     build_positions_allocation,
@@ -167,4 +168,61 @@ def test_build_positions_allocation_by_isin_requires_isin():
     assert row["isin"] == "FR1"
     assert row["name"] == "TestStock A"
     assert row["france"] == 1000.0
+    assert row["usa"] == 0.0
+
+
+def _cash_position(snap: date, label: str, total_value: float) -> dict:
+    """A synthetic broker-cash row as PortfolioSnapshotBuilder produces it:
+    no isin, name "Cash <label>", account_category "brokerage" -- and no
+    matching row in the allocations xlsx (nothing to research, it's cash).
+    """
+    return {
+        "snapshot_date": snap,
+        "isin": None,
+        "name": f"Cash {label}",
+        "account_category": "brokerage",
+        "total_value": total_value,
+    }
+
+
+def test_build_positions_allocation_classifies_synthetic_broker_cash():
+    """Uninvested brokerage cash has no entry in the allocations xlsx, so
+    it must be classified in code instead of dropped -- 100% to whichever
+    column _CASH_CATEGORY_TARGET maps "geo" to (here "france", which the
+    fake allocation table already defines).
+    """
+    positions_df = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
+        ignore_index=True,
+    )
+
+    result = build_positions_allocation(positions_df, _repo())
+
+    geo_df = result["geo"]
+    assert geo_df["france"].iloc[0] == pytest.approx(1200.0 + 1377.22)
+    assert geo_df["usa"].iloc[0] == 800.0
+
+
+def test_build_positions_allocation_by_isin_includes_synthetic_broker_cash():
+    positions_df = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
+        ignore_index=True,
+    )
+
+    result = build_positions_allocation_by_isin(positions_df, _repo())
+
+    geo_df = result["geo"]
+    cash_rows = geo_df[geo_df["name"] == "Cash CTO"]
+    assert len(cash_rows) == 1
+    row = cash_rows.iloc[0]
+    # no real isin -> falls back to a stable synthetic key instead of a
+    # blank/NaN one that would collide with other no-isin positions
+    assert row["isin"] == "NC-Cash CTO"
+    assert row["france"] == 1377.22
     assert row["usa"] == 0.0

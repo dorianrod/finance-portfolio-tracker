@@ -2,6 +2,7 @@ import type { PositionRow } from '@/types/domain'
 import type { Filters, SortKey } from '@/types/filters'
 import type { PortfolioHistoryPoint, AccountTypePoint } from '@/types/history'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import { accountFilterId } from '@/shared/filters/accountFilter'
 
 export function getSortValue(row: PositionRow, key: SortKey): number {
   switch (key) {
@@ -25,7 +26,7 @@ export function applyPositionFilters(positions: PositionRow[], filters: Filters)
   return positions
     .filter((p) => {
       if (filters.accountTypes.size > 0 && !filters.accountTypes.has(p.account_type ?? '')) return false
-      if (filters.accounts.size > 0 && !filters.accounts.has(p.account)) return false
+      if (filters.accounts.size > 0 && !filters.accounts.has(accountFilterId(p))) return false
       if (filters.operationTypes.size > 0) {
         const hasType = [...filters.operationTypes].some((t) => p.operationTypes.has(t))
         if (!hasType) return false
@@ -101,7 +102,7 @@ export function applyAccountFilterToHistory(
 
   const byDate = new Map<string, { tv: number; cb: number; ug: number }>()
   for (const p of allPositionRows) {
-    if (!accounts.has(p.account)) continue
+    if (!accounts.has(accountFilterId(p))) continue
     const tv = parseFloat(p.total_value) || 0
     const cb = (parseFloat(p.quantity) || 0) * (parseFloat(p.avg_buy_price) || 0)
     const ug = parseFloat(p.unrealized_gain) || 0

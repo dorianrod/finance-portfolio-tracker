@@ -35,9 +35,23 @@ Pick (or create) a folder to hold your financial data, e.g. `my-finance`, then g
 
 `init` bootstraps the expected `input/` layout (account_groups.csv + broker exports under `brokers/`) with a small example portfolio. Replace those example files with your own broker exports — see [packages/pipeline/README.md](packages/pipeline/README.md) for the exact format.
 
-## Use
 
-Once `data/input/` contains your own exports, re-run these two commands from inside your folder whenever you want an up-to-date view (e.g. every month, after adding a new broker export):
+## AI-Guided Monthly Update (recommanded)
+
+If you use Claude Code, `finance-tool init` installs local skills in
+`.claude/skills/`. Open your finance data folder in Claude Code and ask for a
+monthly update. The `monthly-update` skill guides the full refresh.
+
+The allocation breakdowns (sector, geography, currency, asset class) for each
+ETF/fund can also be kept up to date with the `allocation-update` skill, which
+researches and fills in allocation data for you.
+
+
+## Manual Use
+
+Once `data/input/` contains your own exports, re-run these two commands from
+inside your folder whenever you want an up-to-date view, for example every
+month after adding a new broker export.
 
 **Windows** — open PowerShell:
 
@@ -53,7 +67,13 @@ Once `data/input/` contains your own exports, re-run these two commands from ins
 ./finance-tool-linux dashboard     # serves the dashboard, opens your browser
 ```
 
-The allocation breakdowns (sector, geography, currency, asset class) for each ETF/fund can be edited by hand in the allocation files, or kept up to date automatically: opening your data folder in Claude Code and using the `allocation-update` skill researches and fills in the allocation for you.
+In manual mode, you update the files under `input/` yourself:
+- place new broker exports under `input/brokers/`
+- append account valuations and direct-entry movements to their CSV files
+- edit allocation workbooks by hand when ETF/fund metadata changes
+- run `pipeline`, then open the dashboard
+
+This mode does not require git, Claude Code, or any developer tooling.
 
 ## Technical details
 
@@ -66,5 +86,5 @@ The allocation breakdowns (sector, geography, currency, asset class) for each ET
   finance-tool dashboard [--data-dir . --port 8787]
   ```
 
-- `finance-tool init` also (re-)installs the `allocation-update` Claude Code skill into `.claude/skills/` in the current directory every time it runs, so opening this folder in Claude Code lets you ask it to research and update an asset's allocation breakdown for you.
+- `finance-tool init` also (re-)installs the bundled Claude Code skills into `.claude/skills/` in the current directory every time it runs, including `allocation-update` and `monthly-update`.
 - Building from source (contributing to the codebase rather than just using it) is covered in [packages/pipeline/README.md](packages/pipeline/README.md) and [packages/dashboard/README.md](packages/dashboard/README.md).

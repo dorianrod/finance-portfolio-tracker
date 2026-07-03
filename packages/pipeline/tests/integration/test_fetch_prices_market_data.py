@@ -10,7 +10,7 @@ from datetime import date, datetime
 
 import pandas as pd
 
-from src.application.fetch_prices import FetchPricesUseCase
+from src.application.fetch_prices import FetchPricesUseCase, PriceDiscrepancy
 from src.domain.errors import ErrorCollector
 from src.domain.models import Operation, OperationType
 from src.infrastructure.csv_asset_price_repository import (
@@ -50,6 +50,7 @@ def _use_case(market_data) -> FetchPricesUseCase:
         allocation_repo=None,  # pyright: ignore[reportArgumentType]
         output_writer=None,  # pyright: ignore[reportArgumentType]
         confirm_current_month_refetch=lambda d: False,
+        resolve_price_discrepancy=lambda disc: disc.new_price_eur,
     )
 
 
@@ -185,6 +186,7 @@ def test_execute_skips_yahoo_resolution_for_manually_priced_assets(
         allocation_repo=_FakeAllocationRepo(),  # pyright: ignore[reportArgumentType]
         output_writer=output_writer,  # pyright: ignore[reportArgumentType]
         confirm_current_month_refetch=lambda d: False,
+        resolve_price_discrepancy=lambda disc: disc.new_price_eur,
     )
 
     use_case.execute()
@@ -270,3 +272,134 @@ def test_write_monthly_price_files_keeps_existing_price_on_partial_failure(
     stale_warnings = errors[errors["type"] == "stale_price_kept"]
     assert len(stale_warnings) == 1
     assert stale_warnings.iloc[0]["isin"] == "FR000B"
+
+
+def _repo_with_previous_month(
+    tmp_path, year: int, month: int, price_eur: float
+):
+    repo = CsvAssetPriceRepository(
+        generated_dir=tmp_path / "generated",
+        others_dir=tmp_path / "others",
+        ticker_map_file=tmp_path / "ticker_map.csv",
+        ticker_map_error_file=tmp_path / "ticker_map_error.csv",
+    )
+    repo.write_month(
+        year,
+        month,
+        pd.DataFrame(
+            [
+                {
+                    "isin": "FR000A",
+                    "ticker": "",
+                    "yahoo_symbol": "A.PA",
+                    "name": "Asset A",
+                    "price": price_eur,
+                    "currency": "EUR",
+                    "price_eur": price_eur,
+                    "date": f"{year:04d}-{month:02d}-28",
+                }
+            ]
+        ),
+    )
+    return repo
+
+
+def test_write_monthly_price_files_asks_confirmation_on_large_jump(tmp_path):
+    """A >10% month-over-month move must not be accepted silently — the
+    user is asked to confirm which price to keep, and the resolved value
+    (not the raw Yahoo quote) is what actually gets written to disk.
+    """
+    repo = _repo_with_previous_month(tmp_path, 2026, 5, price_eur=10.0)
+
+    use_case = _use_case(None)
+    use_case.asset_price_repo = repo
+    close = pd.DataFrame(
+        {"A.PA": [12.5]},  # +25% vs. May's 10.0
+        index=pd.to_datetime(["2026-06-20"]),
+    )
+    sym_to_asset = {
+        "A.PA": {
+            "isin": "FR000A",
+            "ticker": "",
+            "name": "Asset A",
+            "currency": "EUR",
+        },
+    }
+    collector = ErrorCollector()
+
+    seen: list[PriceDiscrepancy] = []
+
+    def fake_resolver(disc: PriceDiscrepancy) -> float:
+        seen.append(disc)
+        return 11.0  # user overrides with their own value
+
+    use_case.resolve_price_discrepancy = fake_resolver
+
+    use_case._write_monthly_price_files(
+        missing=[date(2026, 6, 30)],
+        yahoo_symbols=["A.PA"],
+        close=close,
+        fx_rates={},
+        sym_to_asset=sym_to_asset,
+        collector=collector,
+    )
+
+    assert len(seen) == 1
+    assert seen[0].previous_month == "2026-05"
+    assert seen[0].previous_price_eur == 10.0
+    assert seen[0].new_month == "2026-06"
+    assert seen[0].new_price_eur == 12.5
+
+    written = repo.read_month(2026, 6)
+    row = written.iloc[0]
+    assert float(row["price_eur"]) == 11.0
+    assert float(row["price"]) == 11.0  # EUR asset: price mirrors price_eur
+
+    errors = collector.to_df()
+    jump_warnings = errors[errors["type"] == "price_jump"]
+    assert len(jump_warnings) == 1
+    assert jump_warnings.iloc[0]["isin"] == "FR000A"
+
+
+def test_write_monthly_price_files_skips_confirmation_under_threshold(
+    tmp_path,
+):
+    """A move at or below the 10% threshold is accepted without bothering
+    the user."""
+    repo = _repo_with_previous_month(tmp_path, 2026, 5, price_eur=10.0)
+
+    use_case = _use_case(None)
+    use_case.asset_price_repo = repo
+    close = pd.DataFrame(
+        {"A.PA": [10.5]},  # +5% vs. May's 10.0
+        index=pd.to_datetime(["2026-06-20"]),
+    )
+    sym_to_asset = {
+        "A.PA": {
+            "isin": "FR000A",
+            "ticker": "",
+            "name": "Asset A",
+            "currency": "EUR",
+        },
+    }
+    collector = ErrorCollector()
+
+    def fail_if_called(disc: PriceDiscrepancy) -> float:
+        raise AssertionError("resolver should not be called under threshold")
+
+    use_case.resolve_price_discrepancy = fail_if_called
+
+    use_case._write_monthly_price_files(
+        missing=[date(2026, 6, 30)],
+        yahoo_symbols=["A.PA"],
+        close=close,
+        fx_rates={},
+        sym_to_asset=sym_to_asset,
+        collector=collector,
+    )
+
+    written = repo.read_month(2026, 6)
+    assert float(written.iloc[0]["price_eur"]) == 10.5
+
+    errors = collector.to_df()
+    assert errors[errors["type"] == "price_jump"].empty

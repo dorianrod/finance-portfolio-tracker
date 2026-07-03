@@ -1,4 +1,5 @@
 import { CATEGORY_ORDER } from '@/shared/constants/accountCategories'
+import { accountFilterId } from '@/shared/filters/accountFilter'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
 
 export interface AccountTypeHistoryPoint {
@@ -19,7 +20,7 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
 
   for (const row of rows) {
     if (!row.account_type || !row.total_value) continue
-    if (accountSet && !accountSet.has(row.account)) continue
+    if (accountSet && !accountSet.has(accountFilterId(row))) continue
     const tv = parseFloat(row.total_value) || 0
     typeSet.add(row.account_type)
     if (row.account_category) typeCategories[row.account_type] = row.account_category

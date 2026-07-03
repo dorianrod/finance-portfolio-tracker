@@ -220,3 +220,31 @@ def test_revolut_loader_enriches_isin_and_name_from_ticker_map(
     op = operations[0]
     assert op.isin == "US0378331005"
     assert op.name == "Apple Inc"
+
+
+def test_revolut_loader_uses_custom_account_for_operations_and_positions(
+    tmp_path: Path,
+):
+    path = _write(
+        tmp_path,
+        "2024-01-05T00:00:00Z,AAPL,BUY - MARKET,1,USD 150,USD,USD 150",
+    )
+    loader = RevolutLoader(
+        filepaths=[path],
+        account="revolut_trading",
+        label="revolut_trading",
+    )
+    asset_prices = pd.DataFrame(
+        {
+            "ticker": ["AAPL"],
+            "price": [160.0],
+            "date": pd.to_datetime(["2024-01-31"]),
+        }
+    )
+
+    operations, positions = loader.load(
+        ticker_map={}, asset_prices=asset_prices
+    )
+
+    assert operations[0].account == "revolut_trading"
+    assert positions[0].account == "revolut_trading"

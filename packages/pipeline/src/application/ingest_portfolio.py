@@ -310,6 +310,22 @@ class IngestPortfolioUseCase:
                 _add_account_type(df, account_type_map), account_category_map
             )
 
+        def _tag_cash_positions(df: pd.DataFrame) -> pd.DataFrame:
+            """Append ' – Cash' to account_type for synthetic cash positions.
+
+            Synthetic cash rows are identified by their name convention
+            ("Cash <label>") AND brokerage category — both derived from
+            account_groups.csv, not from hardcoded account names.
+            """
+            is_cash = df["name"].str.startswith("Cash ", na=False) & (
+                df["account_category"] == "brokerage"
+            )
+            df = df.copy()
+            df.loc[is_cash, "account_type"] = (
+                df.loc[is_cash, "account_type"].fillna("") + " – Cash"
+            )
+            return df
+
         # Tag DEPOSIT/WITHDRAWAL ops for brokerage accounts so the dashboard
         # can link them to the corresponding cash position row.
         ops_df = _tag_account(_operations_to_df(all_operations))
@@ -331,16 +347,20 @@ class IngestPortfolioUseCase:
 
         self.output_writer.write_cash(_tag_account(cash_df))
         self.output_writer.write_positions(
-            _tag_account(
-                _enrich_with_returns(
-                    _positions_to_df(all_positions), all_operations
+            _tag_cash_positions(
+                _tag_account(
+                    _enrich_with_returns(
+                        _positions_to_df(all_positions), all_operations
+                    )
                 )
             )
         )
         self.output_writer.write_positions_aggregated(
-            _tag_account(
-                _enrich_with_returns(
-                    _positions_to_df(aggregated), all_operations
+            _tag_cash_positions(
+                _tag_account(
+                    _enrich_with_returns(
+                        _positions_to_df(aggregated), all_operations
+                    )
                 )
             )
         )

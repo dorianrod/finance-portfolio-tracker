@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { rawAccountSet } from '@/shared/filters/accountFilter'
 import { aggregatePassiveIncomeByYear, type RawPassiveIncomeOp, type PassiveIncomePoint } from '@/logic/passiveIncome.logic'
 
 export type { PassiveIncomePoint }
@@ -17,7 +18,9 @@ export function usePassiveIncome(
   )
 
   useEffect(() => {
-    const accountSet = accountsKey ? new Set(accountsKey.split(',')) : null
+    const accountSet = accountsKey
+      ? rawAccountSet(new Set(accountsKey.split(',')))
+      : null
 
     parseCsv<RawPassiveIncomeOp>(dataUrl('operations.csv')).then((rows) => {
       setData(aggregatePassiveIncomeByYear(rows, accountSet, dateFrom, dateTo))

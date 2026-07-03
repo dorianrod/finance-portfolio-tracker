@@ -6,6 +6,9 @@ from pathlib import Path
 import pandas as pd
 
 from src.domain.models import Operation, Position
+from src.infrastructure.broker_file_discovery import (
+    discover_prefixed_broker_groups,
+)
 from src.infrastructure.parsers.boursorama import BoursoramaLoader
 from src.infrastructure.parsers.direct import DirectLoader
 from src.infrastructure.parsers.revolut import RevolutLoader
@@ -63,30 +66,23 @@ class BrokerDataCollector:
 
     def _build_loaders(self) -> list[BrokerLoader]:
         loaders: list[BrokerLoader] = []
+        brokers_dir = self.input_dir / "brokers"
 
-        pea_files = sorted(
-            (self.input_dir / "brokers/boursorama/PEA").glob("*.csv")
-        )
-        if pea_files:
+        for group in discover_prefixed_broker_groups(
+            brokers_dir, "boursorama"
+        ):
             loaders.append(
-                BoursoramaLoader(pea_files, account="boursorama_pea")
+                BoursoramaLoader(group.files, account=group.account)
             )
 
-        cto_files = sorted(
-            (self.input_dir / "brokers/boursorama/CTO").glob("*.csv")
-        )
-        if cto_files:
+        for group in discover_prefixed_broker_groups(brokers_dir, "revolut"):
             loaders.append(
-                BoursoramaLoader(cto_files, account="boursorama_cto")
+                RevolutLoader(
+                    group.files,
+                    account=group.account,
+                    label=group.label,
+                )
             )
-
-        revolut_files = sorted(
-            self.input_dir.glob(
-                "brokers/revolut/trading-account-statement_*.csv"
-            )
-        )
-        if revolut_files:
-            loaders.append(RevolutLoader(revolut_files))
 
         for direct_file in sorted(
             (self.input_dir / "brokers/direct").rglob("*.csv")

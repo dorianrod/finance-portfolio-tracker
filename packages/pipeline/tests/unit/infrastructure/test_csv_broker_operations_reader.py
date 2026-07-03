@@ -44,6 +44,15 @@ def _write_revolut(input_dir: Path, ticker: str = "AAPL") -> None:
     )
 
 
+def _write_revolut_at(path: Path, ticker: str = "AAPL") -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        _REVOLUT_HEADER
+        + f"2024-01-05T00:00:00Z,{ticker},BUY - MARKET,1,USD 150,USD,"
+        "USD 150\n"
+    )
+
+
 _DIRECT_HEADER = (
     "date,account,isin,ticker,name,operation_type,quantity,"
     "price_per_unit,total_amount,currency\n"
@@ -89,6 +98,38 @@ def test_read_all_parses_boursorama_pea_and_cto(tmp_path: Path):
     assert ops[1].isin == "US0378331005"
 
 
+def test_read_all_discovers_case_insensitive_boursorama_folder(
+    tmp_path: Path,
+):
+    path = tmp_path / "brokers/Boursorama/PEA/operations.csv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        _BOURSORAMA_HEADER
+        + "01/01/2024,01/01/2024,TestStock,ACHAT,FR1,10,50.0,-500.0\n"
+    )
+    reader = CsvBrokerOperationsReader(input_dir=tmp_path)
+
+    ops = reader.read_all()
+
+    assert [op.account for op in ops] == ["boursorama_pea"]
+
+
+def test_read_all_uses_unsuffixed_boursorama_account_without_subfolders(
+    tmp_path: Path,
+):
+    path = tmp_path / "brokers/Boursorama/operations.csv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        _BOURSORAMA_HEADER
+        + "01/01/2024,01/01/2024,TestStock,ACHAT,FR1,10,50.0,-500.0\n"
+    )
+    reader = CsvBrokerOperationsReader(input_dir=tmp_path)
+
+    ops = reader.read_all()
+
+    assert [op.account for op in ops] == ["boursorama"]
+
+
 def test_read_all_skips_missing_boursorama_accounts(tmp_path: Path):
     _write_boursorama_pea(tmp_path)
     reader = CsvBrokerOperationsReader(input_dir=tmp_path)
@@ -110,6 +151,22 @@ def test_read_all_parses_revolut_when_present(tmp_path: Path):
     assert op.ticker == "AAPL"
     # BUY operations are forced negative regardless of the source sign
     assert op.total_amount == -150.0
+
+
+def test_read_all_discovers_revolut_subfolders_with_suffix(
+    tmp_path: Path,
+):
+    _write_revolut_at(
+        tmp_path / "brokers/Revolut/Trading/statement.csv",
+        ticker="MSFT",
+    )
+    reader = CsvBrokerOperationsReader(input_dir=tmp_path)
+
+    ops = reader.read_all()
+
+    assert len(ops) == 1
+    assert ops[0].account == "revolut_trading"
+    assert ops[0].ticker == "MSFT"
 
 
 def test_read_all_skips_revolut_when_no_matching_file(tmp_path: Path):
