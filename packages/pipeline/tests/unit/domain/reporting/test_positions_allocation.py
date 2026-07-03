@@ -191,7 +191,10 @@ def test_build_positions_allocation_classifies_synthetic_broker_cash():
     fake allocation table already defines).
     """
     positions_df = pd.concat(
-        [_positions_df(), pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)])],
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
         ignore_index=True,
     )
 
@@ -204,7 +207,10 @@ def test_build_positions_allocation_classifies_synthetic_broker_cash():
 
 def test_build_positions_allocation_by_isin_includes_synthetic_broker_cash():
     positions_df = pd.concat(
-        [_positions_df(), pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)])],
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
         ignore_index=True,
     )
 

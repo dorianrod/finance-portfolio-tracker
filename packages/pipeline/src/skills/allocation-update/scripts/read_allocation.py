@@ -102,7 +102,9 @@ def _find_reference_col(headers_row1: "pd.Series") -> int:
     return len(headers_row1) - 1
 
 
-def _find_col(headers_row1: "pd.Series", aliases: tuple[str, ...]) -> int | None:
+def _find_col(
+    headers_row1: "pd.Series", aliases: tuple[str, ...]
+) -> int | None:
     normalized = headers_row1.fillna("").astype(str).str.strip().str.lower()
     for i, h in enumerate(normalized):
         if h in aliases:
