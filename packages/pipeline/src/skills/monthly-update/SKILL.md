@@ -41,6 +41,33 @@ else echo "./data"; fi
 
 All paths below use `<data-dir>` as a placeholder for the resolved value.
 
+## Resolving the finance tool command
+
+Prefer the standalone release executable when it is present in the working
+folder. If Claude Code is running from the source repository, use the
+repository `Makefile`.
+
+```bash
+if command -v finance-tool >/dev/null 2>&1; then echo "finance-tool"
+elif [ -x "./finance-tool-linux" ]; then echo "./finance-tool-linux"
+elif [ -x "./finance-tool-windows.exe" ]; then echo "./finance-tool-windows.exe"
+elif [ -f "./Makefile" ]; then echo "make"
+else echo ""; fi
+```
+
+Store the result as **`FINANCE_TOOL`**. If it is empty, ask the user where the
+`finance-tool` executable is before any step that needs allocation helpers or
+the pipeline. Do not assume a source checkout is present in release installs.
+
+When `FINANCE_TOOL=make`, pass helper arguments through `ARGS`, for example:
+
+```bash
+make allocation-read ARGS="--list-all"
+make allocation-build ARGS="--date YYYY-MM-DD"
+make pipeline
+make pipeline-auto
+```
+
 ---
 
 ## Step 1 — Confirm the reference date
@@ -243,7 +270,14 @@ broker exports for tickers/ISINs that are absent from allocation metadata or
 manual prices:
 
 ```bash
-python .claude/skills/allocation-update/scripts/read_allocation.py --list-all
+{FINANCE_TOOL} allocation-read --list-all
+find <data-dir>/input/asset_prices/others -maxdepth 1 -name '*.csv' -print
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make allocation-read ARGS="--list-all"
 find <data-dir>/input/asset_prices/others -maxdepth 1 -name '*.csv' -print
 ```
 
@@ -273,7 +307,13 @@ Run the read script to list all assets and flag those missing a `ticker` or
 `yahoo_symbol`:
 
 ```bash
-python .claude/skills/allocation-update/scripts/read_allocation.py --list-all
+{FINANCE_TOOL} allocation-read --list-all
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make allocation-read ARGS="--list-all"
 ```
 
 Also check for any assets that appear in broker files but are absent from
@@ -293,8 +333,13 @@ The output allocation file must be dated **`ALLOC_DATE`** (computed in
 Step 1 as the last day of `TARGET_DATE`'s month):
 
 ```bash
-python .claude/skills/allocation-update/scripts/build_allocation_xlsx.py \
-  --date {ALLOC_DATE}
+{FINANCE_TOOL} allocation-build --date {ALLOC_DATE}
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make allocation-build ARGS="--date {ALLOC_DATE}"
 ```
 
 If no assets are missing, confirm that the existing workbook is up to date
@@ -314,26 +359,28 @@ Show the user what was done.
 Run the portfolio pipeline after all input files and the allocation workbook
 are updated.
 
-Prefer the repo `Makefile` when present:
+Prefer the standalone release executable:
 
 ```bash
-make -C finance-portfolio-tracker pipeline
+{FINANCE_TOOL} pipeline
 ```
 
-For non-interactive refreshes, use:
+If `FINANCE_TOOL=make`, use:
 
 ```bash
-make -C finance-portfolio-tracker pipeline-auto
+make pipeline
 ```
 
-If there is no usable `Makefile`, run the pipeline entry point directly:
+For non-interactive refreshes with the standalone executable, use:
 
 ```bash
-finance-portfolio-tracker/packages/pipeline/.venv/bin/python \
-  finance-portfolio-tracker/packages/pipeline/src/ingest_portfolio.py \
-  --data-dir <data-dir> \
-  --update-current-month ask \
-  --price-jump-policy ask
+{FINANCE_TOOL} pipeline --update-current-month yes --price-jump-policy fetched
+```
+
+If `FINANCE_TOOL=make`, use:
+
+```bash
+make pipeline-auto
 ```
 
 If the pipeline asks whether to refetch the current month:

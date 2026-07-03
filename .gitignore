@@ -8,6 +8,11 @@ data/input/
 
 data
 
+# Local PyInstaller builds
+/build/
+/dist/
+/*.spec
+
 # Keep asset_prices tracked but ignore OS noise
 .DS_Store
 Thumbs.db

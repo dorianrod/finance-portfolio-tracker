@@ -81,10 +81,13 @@ This mode does not require git, Claude Code, or any developer tooling.
 - Optional flags, defaults shown:
 
   ```bash
-  finance-tool init      [--data-dir .]
-  finance-tool pipeline  [--data-dir .]
-  finance-tool dashboard [--data-dir . --port 8787]
+  finance-tool init             [--data-dir .]
+  finance-tool pipeline         [--data-dir .]
+  finance-tool dashboard        [--data-dir . --port 8787]
+  finance-tool allocation-read  [--data-dir .] ...
+  finance-tool allocation-build [--data-dir .] ...
   ```
 
 - `finance-tool init` also (re-)installs the bundled Claude Code skills into `.claude/skills/` in the current directory every time it runs, including `allocation-update` and `monthly-update`.
+- From a source checkout, the same helper commands are available through `make`: `make allocation-read ARGS='--list-all'`, `make allocation-build ARGS='--date YYYY-MM-DD'`, `make pipeline`, and `make pipeline-auto`.
 - Building from source (contributing to the codebase rather than just using it) is covered in [packages/pipeline/README.md](packages/pipeline/README.md) and [packages/dashboard/README.md](packages/dashboard/README.md).
