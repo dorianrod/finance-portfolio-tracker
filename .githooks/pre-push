@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Blocks pushing any commit (message or diff) that mentions a personal
+# portfolio ticker/ISIN (see scan_personal_data.py) — the last line of
+# defense before anything reaches the public remote. Bypass (only if
+# this is a false positive) with `git push --no-verify`.
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+python="$repo_root/packages/pipeline/.venv/bin/python"
+[ -x "$python" ] || python="python3"
+
+zero="0000000000000000000000000000000000000000"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ "$local_sha" = "$zero" ] && continue  # deleting a remote ref
+
+    if [ "$remote_sha" = "$zero" ]; then
+        # New remote branch: scan only commits not already reachable from
+        # any known remote-tracking branch, so pushing a first branch off
+        # an up-to-date main doesn't rescan all of history.
+        range="$(git rev-list "$local_sha" --not --remotes 2>/dev/null || true)"
+        [ -z "$range" ] && continue
+        # shellcheck disable=SC2086 -- intentional word-splitting of a
+        # newline-separated list of commit SHAs into separate arguments.
+        content="$(git log -p --no-walk $range)"
+    else
+        content="$(git log -p "$remote_sha..$local_sha")"
+    fi
+
+    if ! printf '%s' "$content" | "$python" "$repo_root/.githooks/scan_personal_data.py"; then
+        echo "pre-push: aborting push of $local_ref to $2" >&2
+        exit 1
+    fi
+done
+
+exit 0

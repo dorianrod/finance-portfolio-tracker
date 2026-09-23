@@ -8,7 +8,10 @@ DATA_DIR        := $(CURDIR)/data
 ALLOCATION_READ_SCRIPT  := packages/pipeline/src/skills/allocation-update/scripts/read_allocation.py
 ALLOCATION_BUILD_SCRIPT := packages/pipeline/src/skills/allocation-update/scripts/build_allocation_xlsx.py
 
-.PHONY: pipeline pipeline-auto pipeline-reinstall allocation-read allocation-build dashboard lint lint-fix typecheck check help
+.PHONY: pipeline pipeline-auto pipeline-reinstall setup-hooks allocation-read allocation-build dashboard lint lint-fix typecheck check help
+
+setup-hooks: ## Enable the git hooks that block committing/pushing personal portfolio identifiers (tickers/ISINs).
+	git config core.hooksPath .githooks
 
 pipeline: ## Run the portfolio pipeline interactively. Prompts before refetching current-month prices and resolving large price jumps.
 	$(PIPELINE_PYTHON) $(PIPELINE_ENTRY) --data-dir $(DATA_DIR)
