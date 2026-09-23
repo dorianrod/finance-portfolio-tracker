@@ -238,7 +238,12 @@ def test_write_monthly_price_files_keeps_existing_price_on_partial_failure(
         ),
     )
 
-    use_case = _use_case(None)
+    use_case = _use_case(
+        FakeMarketDataClient(
+            known_symbols=set(),
+            currencies={"A.PA": "EUR", "B.PA": "EUR"},
+        )
+    )
     use_case.asset_price_repo = repo
     close = pd.DataFrame(
         {"A.PA": [11.0], "B.PA": [float("nan")]},
@@ -311,7 +316,9 @@ def test_write_monthly_price_files_asks_confirmation_on_large_jump(tmp_path):
     """
     repo = _repo_with_previous_month(tmp_path, 2026, 5, price_eur=10.0)
 
-    use_case = _use_case(None)
+    use_case = _use_case(
+        FakeMarketDataClient(known_symbols=set(), currencies={"A.PA": "EUR"})
+    )
     use_case.asset_price_repo = repo
     close = pd.DataFrame(
         {"A.PA": [12.5]},  # +25% vs. May's 10.0
@@ -368,7 +375,9 @@ def test_write_monthly_price_files_skips_confirmation_under_threshold(
     the user."""
     repo = _repo_with_previous_month(tmp_path, 2026, 5, price_eur=10.0)
 
-    use_case = _use_case(None)
+    use_case = _use_case(
+        FakeMarketDataClient(known_symbols=set(), currencies={"A.PA": "EUR"})
+    )
     use_case.asset_price_repo = repo
     close = pd.DataFrame(
         {"A.PA": [10.5]},  # +5% vs. May's 10.0
@@ -403,3 +412,49 @@ def test_write_monthly_price_files_skips_confirmation_under_threshold(
 
     errors = collector.to_df()
     assert errors[errors["type"] == "price_jump"].empty
+
+
+def test_write_monthly_price_files_reports_currency_mismatch(tmp_path):
+    """A symbol configured as EUR but actually quoted in USD by Yahoo (e.g.
+    an ISIN resolving to the wrong cross-listing) must raise an error
+    instead of silently treating the USD quote as EUR.
+    """
+    repo = CsvAssetPriceRepository(
+        generated_dir=tmp_path / "generated",
+        others_dir=tmp_path / "others",
+        ticker_map_file=tmp_path / "ticker_map.csv",
+        ticker_map_error_file=tmp_path / "ticker_map_error.csv",
+    )
+
+    use_case = _use_case(
+        FakeMarketDataClient(known_symbols=set(), currencies={"IE1": "USD"})
+    )
+    use_case.asset_price_repo = repo
+    close = pd.DataFrame(
+        {"IE1": [25.64]}, index=pd.to_datetime(["2026-09-23"])
+    )
+    sym_to_asset = {
+        "IE1": {
+            "isin": "IE1",
+            "ticker": "TEST",
+            "name": "Test ETF",
+            "currency": "EUR",
+        },
+    }
+    collector = ErrorCollector()
+
+    use_case._write_monthly_price_files(
+        missing=[date(2026, 9, 30)],
+        yahoo_symbols=["IE1"],
+        close=close,
+        fx_rates={},
+        sym_to_asset=sym_to_asset,
+        collector=collector,
+    )
+
+    errors = collector.to_df()
+    mismatches = errors[errors["type"] == "currency_mismatch"]
+    assert len(mismatches) == 1
+    assert mismatches.iloc[0]["isin"] == "IE1"
+    assert "EUR" in mismatches.iloc[0]["message"]
+    assert "USD" in mismatches.iloc[0]["message"]

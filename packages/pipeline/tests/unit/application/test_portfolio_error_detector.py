@@ -55,3 +55,58 @@ def test_detect_keeps_missing_fx_rate_when_currency_is_known():
 
     assert errors["type"].tolist() == ["missing_fx_rate"]
     assert "EUR/USD exchange rate not found" in errors.iloc[0]["message"]
+
+
+def test_detect_reports_manual_override_shadowing_a_fetched_price():
+    asset_prices = pd.DataFrame(
+        [
+            {
+                "isin": "IE00TEST",
+                "ticker": "TEST",
+                "name": "Test ETF",
+                "price": 25.0,
+                "currency": "EUR",
+                "price_eur": 25.0,
+                "date": "2026-09-23",
+                "source": "generated",
+            },
+            {
+                "isin": "IE00TEST",
+                "ticker": "TEST",
+                "name": "Test ETF",
+                "price": 24.28,
+                "currency": "EUR",
+                "price_eur": 24.28,
+                "date": "2026-09-30",
+                "source": "manual",
+            },
+        ]
+    )
+
+    errors = _detector().detect(asset_prices, [], []).to_df()
+
+    assert errors["type"].tolist() == ["manual_price_override_conflict"]
+    assert errors.iloc[0]["level"] == "error"
+    assert errors.iloc[0]["date"] == "2026-09"
+    assert "Test ETF" in errors.iloc[0]["message"]
+
+
+def test_detect_ignores_manual_override_when_no_fetched_price_overlaps():
+    asset_prices = pd.DataFrame(
+        [
+            {
+                "isin": "IE00TEST",
+                "ticker": "TEST",
+                "name": "Test ETF",
+                "price": 24.28,
+                "currency": "EUR",
+                "price_eur": 24.28,
+                "date": "2026-06-30",
+                "source": "manual",
+            }
+        ]
+    )
+
+    errors = _detector().detect(asset_prices, [], []).to_df()
+
+    assert errors.empty

@@ -34,6 +34,7 @@ class PortfolioErrorDetector:
         self._add_missing_price_warnings(errors, asset_prices, positions)
         self._add_missing_currency_warnings(errors, asset_prices)
         self._add_missing_fx_warnings(errors, asset_prices)
+        self._add_manual_override_conflict_errors(errors, asset_prices)
         return errors
 
     def _add_parse_failures(
@@ -191,6 +192,58 @@ class PortfolioErrorDetector:
                     f" in {_d.year}-{_d.month:02d}"
                     " — price_eur cannot be trusted; add currency in the"
                     " allocation row or generated price file"
+                ),
+            )
+
+    def _add_manual_override_conflict_errors(
+        self, errors: ErrorCollector, asset_prices: pd.DataFrame
+    ) -> None:
+        # A manual override in others/ and a fetched price in generated/
+        # covering the same (key, month): PriceLookup resolves this by
+        # last-row-wins (see get_row/get_row_or_latest), so the manual
+        # override silently shadows the real fetched price with no visible
+        # sign of it — an asset can then stay frozen at its override price
+        # for months after Yahoo starts returning real quotes for it.
+        if asset_prices.empty or "source" not in asset_prices.columns:
+            return
+
+        df = asset_prices[
+            asset_prices["isin"].notna() | asset_prices.get("ticker").notna()
+        ].copy()
+        isin = df["isin"].astype(str).str.strip()
+        ticker = df.get("ticker", pd.Series(index=df.index, dtype=str))
+        ticker = ticker.astype(str).str.strip()
+        df["_key"] = isin.where(isin.ne("") & isin.ne("nan"), ticker)
+        df = df[df["_key"].ne("") & df["_key"].ne("nan")]
+
+        dates = pd.to_datetime(df["date"], errors="coerce")
+        df = df[dates.notna()]
+        dates = dates.loc[df.index]
+
+        seen: set[tuple[str, int, int]] = set()
+        for (key, yr, mo), grp in df.groupby(
+            [df["_key"], dates.dt.year, dates.dt.month]
+        ):
+            if not {"generated", "manual"} <= set(grp["source"]):
+                continue
+            key_tuple = (str(key), int(yr), int(mo))
+            if key_tuple in seen:
+                continue
+            seen.add(key_tuple)
+            row = grp.iloc[-1]
+            errors.add(
+                source="main",
+                level="error",
+                type="manual_price_override_conflict",
+                date=f"{int(yr)}-{int(mo):02d}",
+                isin=str(row.get("isin", "") or ""),
+                ticker=str(row.get("ticker", "") or ""),
+                name=str(row.get("name", "") or ""),
+                message=(
+                    "Manual price override in asset_prices/others/ silently"
+                    f" shadows a fetched price for {row.get('name', key)}"
+                    f" in {int(yr)}-{int(mo):02d} — remove the override row"
+                    " or set its date_to so the fetched price is used"
                 ),
             )
 

@@ -302,6 +302,20 @@ class FetchPricesUseCase:
         sym_to_asset: dict[str, dict],
         collector: ErrorCollector,
     ) -> None:
+        # A configured yahoo_symbol (explicit, or defaulted to the bare
+        # ISIN when the allocations xlsx leaves it blank) can silently
+        # resolve to a different listing of the same instrument on another
+        # exchange, in a different currency (e.g. an ISIN resolving to a
+        # USD cross-listing on LSE instead of the EUR-denominated one
+        # held) — the configured currency is then wrong for the quote we
+        # actually got, and price_eur ends up off by the FX rate with no
+        # visible sign of it. Cross-check once per symbol per run, only
+        # when a fetch is actually happening this run.
+        verified_currency = {
+            sym: self.market_data.fetch_currency(sym) for sym in yahoo_symbols
+        }
+        reported_currency_mismatches: set[str] = set()
+
         for snap_date in missing:
             year, month = snap_date.year, snap_date.month
 
@@ -386,6 +400,34 @@ class FetchPricesUseCase:
                 meta = sym_to_asset[sym]
                 raw_price = float(last_row[sym])
                 currency = meta["currency"]
+
+                actual_currency = verified_currency.get(sym, "")
+                if (
+                    actual_currency
+                    and currency
+                    and actual_currency != currency
+                    and sym not in reported_currency_mismatches
+                ):
+                    reported_currency_mismatches.add(sym)
+                    collector.add(
+                        source="fetch_prices",
+                        level="error",
+                        type="currency_mismatch",
+                        date=f"{year:04d}-{month:02d}",
+                        isin=meta.get("isin", ""),
+                        ticker=meta.get("ticker", "") or sym,
+                        name=meta.get("name", ""),
+                        message=(
+                            f"'{sym}' is configured as {currency} but Yahoo"
+                            f" Finance reports it in {actual_currency} —"
+                            " the resolved symbol may be the wrong listing"
+                            " (e.g. a cross-listing on another exchange);"
+                            " price_eur is likely wrong. Set an explicit"
+                            " yahoo_symbol for the correct listing in the"
+                            " allocations xlsx"
+                        ),
+                    )
+
                 # Yahoo returns GBp (pence) for some London-listed ETFs.
                 # Normalise to GBP (divide by 100) before storing.
                 if currency == "GBp":

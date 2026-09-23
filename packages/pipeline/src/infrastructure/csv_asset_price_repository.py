@@ -20,8 +20,11 @@ class CsvAssetPriceRepository(AssetPriceRepository):
     def load_all(self) -> pd.DataFrame:
         asset_prices = self._load_generated()
         asset_prices = self._enrich_missing_names(asset_prices)
+        if not asset_prices.empty:
+            asset_prices["source"] = "generated"
         others_df = self._load_others()
         if not others_df.empty:
+            others_df["source"] = "manual"
             asset_prices = pd.concat(
                 [asset_prices, others_df], ignore_index=True
             )

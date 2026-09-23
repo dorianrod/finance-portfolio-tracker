@@ -18,8 +18,9 @@ class AssetPriceRepository(Protocol):
         """Return the consolidated asset_prices DataFrame.
 
         Columns: isin, ticker, yahoo_symbol, name, price, currency,
-        price_eur, date. Includes rows from data/input/asset_prices/others/
-        (expanded to one row per snapshot month) and names backfilled from
+        price_eur, date, source ("generated" or "manual"). Includes rows
+        from data/input/asset_prices/others/ (expanded to one row per
+        snapshot month, source="manual") and names backfilled from
         ticker_map.csv where missing.
         """
         ...
