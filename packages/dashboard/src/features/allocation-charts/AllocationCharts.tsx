@@ -2,15 +2,28 @@ import { useState, useMemo } from 'react'
 import { useAllocationData } from '@/hooks/useAllocationData'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
 import { computeMatchingIsins, aggregateFilteredPoints, computeTableRows } from './allocationCharts.logic'
+import { computeAllocationCoverageByAccount } from './allocationCoverage.logic'
+import { AllocationCoverageCard } from './AllocationCoverageCard'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
 import { FilterChipBar } from './FilterChipBar'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
 import type { AllocationFilter } from './allocationCharts.types'
+import type { PositionRow } from '@/types/domain'
 
-export function AllocationCharts() {
+interface AllocationChartsProps {
+  positions: PositionRow[]
+  accountLabels: Record<string, string>
+}
+
+export function AllocationCharts({ positions, accountLabels }: AllocationChartsProps) {
   const { geo, secteur, currency, classe, loading: loadingAgg } = useAllocationData()
   const rawData = useRawIsinData()
+
+  const coverage = useMemo(
+    () => (rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData)),
+    [positions, rawData],
+  )
 
   const [activeFilter, setActiveFilter] = useState<AllocationFilter | null>(null)
   const [showTable, setShowTable] = useState(false)
@@ -91,6 +104,9 @@ export function AllocationCharts() {
           tableOpen={showTable}
         />
       )}
+
+      {/* ── Coverage by account ───────────────────────────────────────── */}
+      {coverage.length > 0 && <AllocationCoverageCard coverage={coverage} accountLabels={accountLabels} />}
 
       {/* ── Current breakdown ─────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4">

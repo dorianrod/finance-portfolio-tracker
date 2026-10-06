@@ -8,7 +8,7 @@ import {
 import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/types/domain'
 import type { SortKey } from '@/types/filters'
-import { fmt, fmtDec, fmtPct } from '@/shared/format/money'
+import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
 import { gainClass } from './positionsTable.logic'
 import { GainCell, UnrealizedGainCell, RealizedGainCell } from './GainCells'
 import { ExpandBtn } from './ExpandBtn'
@@ -17,8 +17,16 @@ import { HoverChart, type ChartTarget } from '@/features/hover-charts/HoverChart
 import { HoverSavingsChart, type SavingsChartTarget } from '@/features/hover-charts/HoverSavingsChart'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/features/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/hooks/useAllocationByIsin'
+import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
 
 const col = createColumnHelper<TableRow>()
+
+function irrPeriodLabel(years: number | null): string {
+  if (years == null) return '3y'
+  if (years >= 3) return '3y'
+  if (years >= 1) return `${Math.floor(years * 10) / 10}y`
+  return `${Math.max(1, Math.round(years * 12))}mo`
+}
 
 interface Props {
   data: PositionRow[]
@@ -116,12 +124,60 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const hasAlloc = r.isin ? !!allocationData.get(r.isin) : false
-          return r.total_value != null ? (
-            <span className={`text-white font-medium ${hasAlloc ? 'underline decoration-dashed decoration-gray-500 underline-offset-2' : ''}`}>
-              {fmt.format(r.total_value)}
+          const allocKey = r.isin || `NC-${r.name}`
+          const allocation = allocationData.get(allocKey)
+          const showAllocation = (button: HTMLButtonElement) => {
+            if (!allocation) return
+            cancelHide()
+            setChart(null)
+            setSavingsChart(null)
+            setAllocationHover({
+              isin: allocKey,
+              name: r.name,
+              buttonRect: button.getBoundingClientRect(),
+              allocation,
+            })
+          }
+          const showQuantity = r.account_category === 'brokerage'
+            && !r.account_type?.endsWith(CASH_SUFFIX)
+            && r.quantity != null
+          return (
+            <span className="flex flex-col leading-tight">
+              <span className="flex items-center gap-1">
+                {r.total_value != null
+                  ? <span className="text-white font-medium">{fmt.format(r.total_value)}</span>
+                  : <span className="text-gray-500">—</span>}
+                {allocation && (
+                  <button
+                    type="button"
+                    aria-label={`View allocations for ${r.name}`}
+                    title="View asset allocations"
+                    className="shrink-0 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                    onMouseEnter={(event) => showAllocation(event.currentTarget)}
+                    onMouseLeave={scheduleHide}
+                    onFocus={(event) => showAllocation(event.currentTarget)}
+                    onBlur={scheduleHide}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      showAllocation(event.currentTarget)
+                    }}
+                  >
+                    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+                      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M8 1.75A6.25 6.25 0 0 1 14.25 8H8Z" fill="currentColor" />
+                      <path d="M8 8l-4.42 4.42" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </button>
+                )}
+              </span>
+              {showQuantity && (
+                <span className="text-[10px] text-gray-500 mt-0.5">
+                  {fmtQty.format(r.quantity!)}
+                  {r.last_price != null && <> · {fmtDec.format(r.last_price)}</>}
+                </span>
+              )}
             </span>
-          ) : <span className="text-gray-500">—</span>
+          )
         }
         if (r.kind === 'group' && r.total_invested != null) {
           return (
@@ -278,19 +334,28 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
     }),
     col.display({
       id: 'xirr',
-      header: () => <SortHeader label="Annualized IRR" tooltip="Annualized Internal Rate of Return (XIRR). Accounts for the exact timing of each cash flow: purchases = outflows (negative), sales + dividends = inflows (positive), current value = a fictitious inflow as of today. Solves NPV = 0 via the Newton-Raphson method. This is the standard measure portfolio managers use to compare positions with different investment profiles." col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label="Annualized IRR" tooltip="Annualized Internal Rate of Return (XIRR). The main value is calculated since inception. The smaller value measures the trailing three years, using the position value at the start of that window as a fictitious outflow. If less than three years of history are available, it uses and labels the full available period instead. Purchases are outflows; sales, dividends and current value are inflows." col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
-        if (r.kind !== 'position' || r.xirr == null) return null
+        if (r.kind !== 'position' || (r.xirr == null && r.xirr_rolling_3y == null)) return null
         return (
-          <span className={gainClass(r.xirr)}>
-            {fmtPct(r.xirr, 2)}
-            <span className="ml-0.5 text-xs opacity-60">/yr</span>
+          <span className="flex flex-col leading-tight">
+            {r.xirr != null && (
+              <span className={gainClass(r.xirr)}>
+                {fmtPct(r.xirr, 2)}
+                <span className="ml-0.5 text-xs opacity-60">/yr</span>
+              </span>
+            )}
+            {r.xirr != null && (
+              <span className="mt-0.5 text-[10px] text-gray-500">
+                {irrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
+                {r.xirr_rolling_3y != null ? `${fmtPct(r.xirr_rolling_3y, 2)}/yr` : '—'}
+              </span>
+            )}
           </span>
         )
       },
     }),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [setChart, sortKey, sortDir, onSort, allocationData])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
@@ -405,19 +470,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   }
                 })() : null
 
-                const allocationHandlers = (isPosition && r.kind === 'position' && r.isin) ? (() => {
-                  const alloc = allocationData.get(r.isin)
-                  if (!alloc) return null
-                  return {
-                    onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
-                      cancelHide()
-                      setChart(null); setSavingsChart(null)
-                      setAllocationHover({ isin: r.isin, name: r.name, buttonRect: e.currentTarget.getBoundingClientRect(), allocation: alloc })
-                    },
-                    onMouseLeave: scheduleHide,
-                  }
-                })() : null
-
                 let separator: React.ReactNode = null
                 if (groupByType && isPosition && row.depth === 0) {
                   const currentType = r.account_type ?? ''
@@ -474,7 +526,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                           className="px-3 py-2 overflow-hidden"
                           {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})}
                           {...(savingsHandlers && cell.column.id === 'value' ? savingsHandlers : {})}
-                          {...(allocationHandlers && cell.column.id === 'value' ? allocationHandlers : {})}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

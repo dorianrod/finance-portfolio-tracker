@@ -38,7 +38,7 @@ _SECTEUR_COLS = [
     "autre",
     "nc",
 ]
-_CURRENCY_COLS = ["EUR", "USD", "GBP", "autre"]
+_CURRENCY_COLS = ["EUR", "USD", "AUTRE", "nc"]
 _CLASSE_COLS = [
     "actions",
     "obligations",
@@ -307,6 +307,29 @@ def test_load_allocation_tables_fills_autre_and_filters_dirty_rows_per_category(
     is_test_a = classe_df["nom_placement"] == "TestStock A"
     total_classe = classe_df[is_test_a].iloc[0]
     assert total_classe["autre"] == 0.0
+
+
+def test_load_allocation_tables_keeps_autre_only_currency_as_known(
+    tmp_path: Path,
+):
+    rows = [
+        _row(
+            "Asia ex Japan",
+            "IE0000000001",
+            currency={"AUTRE": 100},
+        )
+    ]
+    _write_xlsx(tmp_path / "2024-01-01.xlsx", rows)
+    repo = XlsxAllocationRepository(allocations_dir=tmp_path)
+
+    tables = repo.load_allocation_tables(date(2024, 6, 1))
+    assert tables is not None
+    currency_df, _ = tables["currency"]
+    row = currency_df.iloc[0]
+
+    assert row["Autre"] == 100.0
+    assert row["nc"] == 0.0
+    assert row[["eur", "usd", "Autre", "nc"]].sum() == 100.0
 
 
 def test_load_allocation_tables_caches_parsed_file(tmp_path: Path):

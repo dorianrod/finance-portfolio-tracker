@@ -70,6 +70,22 @@ export function MonthlyTooltip({ active, payload, label, ops }: any) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function TriTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
+  const tri: number = payload[0]?.value ?? 0
+  return (
+    <TooltipBox>
+      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
+        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+      </div>
+      <div style={{ color: tri >= 0 ? '#4ade80' : '#f87171', fontWeight: 600 }}>
+        TRI (3y): {tri >= 0 ? '+' : ''}{tri.toFixed(2)}%
+      </div>
+    </TooltipBox>
+  )
+}
+
 interface TooltipPayloadItem { dataKey: string; value: number }
 
 export function AccountTypeTooltip({ active, payload, label }: {

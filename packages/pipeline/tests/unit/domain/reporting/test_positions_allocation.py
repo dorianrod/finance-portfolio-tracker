@@ -156,19 +156,38 @@ def test_build_positions_allocation_aggregates_via_matching_cascade():
     assert geo_df["usa"].iloc[0] == 800.0  # 500 + 300 (Global EM, both forms)
 
 
-def test_build_positions_allocation_by_isin_requires_isin():
-    result = build_positions_allocation_by_isin(_positions_df(), _repo())
+def test_build_positions_allocation_by_isin_includes_name_matched_positions():
+    """Name-matched rows without an isin (e.g. a fonds euros or a PEE/PER
+    held under a plain label in the allocations xlsx) must still appear
+    here under their stable synthetic "NC-<name>" key -- mirroring
+    build_positions_allocation, which already includes them in its
+    aggregate totals. Dashboard features (Allocation coverage by account,
+    per-position hover) key off this file, so silently excluding them
+    here made those features disagree with the totals shown elsewhere.
+    """
+    positions = _positions_df()
+    result = build_positions_allocation_by_isin(positions, _repo())
 
     geo_df = result["geo"]
-    # only the position with both a matching ISIN and total_value > 0
-    # survives -- name-matched rows without an isin are excluded here,
-    # unlike the aggregated build_positions_allocation
-    assert len(geo_df) == 1
-    row = geo_df.iloc[0]
-    assert row["isin"] == "FR1"
-    assert row["name"] == "TestStock A"
-    assert row["france"] == 1000.0
-    assert row["usa"] == 0.0
+    by_isin = {row["isin"]: row for _, row in geo_df.iterrows()}
+
+    assert len(geo_df) == 4
+    assert by_isin["FR1"]["name"] == "TestStock A"
+    assert by_isin["FR1"]["france"] == 1000.0
+    assert by_isin["FR1"]["usa"] == 0.0
+
+    # exact normalized-name match, no isin -> synthetic key from its name
+    assert by_isin["NC-Global EM UCITS ETF (Acc)"]["france"] == 0.0
+    assert by_isin["NC-Global EM UCITS ETF (Acc)"]["usa"] == 500.0
+
+    # "clean" name match (ticker suffix stripped), no isin -> its own
+    # synthetic key, distinct from the row above despite matching the
+    # same allocation row
+    clean_match_name = positions.iloc[2]["name"]
+    assert by_isin[f"NC-{clean_match_name}"]["usa"] == 300.0
+
+    assert by_isin["NC-cash eur"]["name"] == "cash eur"
+    assert by_isin["NC-cash eur"]["france"] == 200.0
 
 
 def _cash_position(snap: date, label: str, total_value: float) -> dict:

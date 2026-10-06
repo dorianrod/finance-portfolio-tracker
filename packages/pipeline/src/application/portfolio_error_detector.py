@@ -204,11 +204,19 @@ class PortfolioErrorDetector:
         # override silently shadows the real fetched price with no visible
         # sign of it — an asset can then stay frozen at its override price
         # for months after Yahoo starts returning real quotes for it.
-        if asset_prices.empty or "source" not in asset_prices.columns:
+        required_columns = {"date", "isin", "source"}
+        if asset_prices.empty or not required_columns <= set(
+            asset_prices.columns
+        ):
             return
 
+        ticker_source = (
+            asset_prices["ticker"]
+            if "ticker" in asset_prices.columns
+            else pd.Series(index=asset_prices.index, dtype=str)
+        )
         df = asset_prices[
-            asset_prices["isin"].notna() | asset_prices.get("ticker").notna()
+            asset_prices["isin"].notna() | ticker_source.notna()
         ].copy()
         isin = df["isin"].astype(str).str.strip()
         ticker = df.get("ticker", pd.Series(index=df.index, dtype=str))
@@ -226,7 +234,9 @@ class PortfolioErrorDetector:
         ):
             if not {"generated", "manual"} <= set(grp["source"]):
                 continue
-            key_tuple = (str(key), int(yr), int(mo))
+            year = int(str(yr))
+            month = int(str(mo))
+            key_tuple = (str(key), year, month)
             if key_tuple in seen:
                 continue
             seen.add(key_tuple)
@@ -235,14 +245,14 @@ class PortfolioErrorDetector:
                 source="main",
                 level="error",
                 type="manual_price_override_conflict",
-                date=f"{int(yr)}-{int(mo):02d}",
+                date=f"{year}-{month:02d}",
                 isin=str(row.get("isin", "") or ""),
                 ticker=str(row.get("ticker", "") or ""),
                 name=str(row.get("name", "") or ""),
                 message=(
                     "Manual price override in asset_prices/others/ silently"
                     f" shadows a fetched price for {row.get('name', key)}"
-                    f" in {int(yr)}-{int(mo):02d} — remove the override row"
+                    f" in {year}-{month:02d} — remove the override row"
                     " or set its date_to so the fetched price is used"
                 ),
             )

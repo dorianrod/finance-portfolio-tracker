@@ -51,6 +51,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     account: 'acc1',
     status: 'active',
     operationTypes: new Set(['BUY', 'SELL']),
+    quantity: 10,
+    last_price: 100,
     total_value: 1000,
     unrealized_gain: 100,
     unrealized_gain_net: 70,
@@ -66,6 +68,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     total_invested: 1000,
     total_return_pct: 12,
     xirr: 8,
+    xirr_rolling_3y: 6,
+    xirr_rolling_period_years: 3,
     subRows: [],
     ...overrides,
   }
@@ -130,7 +134,7 @@ describe('applyPositionFilters', () => {
 
 describe('applyAccountFilterToHistory', () => {
   const enrichedHistory: PortfolioHistoryPoint[] = [
-    { date: '2024-01-01', total_value: 999, total_cost_basis: 999, unrealized_gain: 999, net_cash_injected: 0, cash_delta: null, tri: 1.5, total_broker_cash: 50 },
+    { date: '2024-01-01', total_value: 999, total_cost_basis: 999, unrealized_gain: 999, net_cash_injected: 0, cash_delta: null, tri: 1.5, tri_rolling_3y: null, total_broker_cash: 50 },
   ]
 
   function rawRow(overrides: Partial<RawPositionRow>): RawPositionRow {
@@ -165,6 +169,7 @@ describe('applyAccountFilterToHistory', () => {
       net_cash_injected: 0,
       cash_delta: null,
       tri: null,
+      tri_rolling_3y: null,
       total_broker_cash: 0,
     }])
   })

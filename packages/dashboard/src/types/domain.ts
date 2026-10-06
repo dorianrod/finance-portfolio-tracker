@@ -35,6 +35,8 @@ export interface RawPosition {
   unrealized_gain_net: string
   realized_gain_net: string
   xirr: string
+  xirr_rolling_3y: string
+  xirr_rolling_period_years: string
   total_return_pct: string
 }
 
@@ -86,6 +88,8 @@ export interface PositionRow {
   account_category?: string
   status: 'active' | 'closed'
   operationTypes: Set<string>
+  quantity: number | null
+  last_price: number | null
   total_value: number | null
   unrealized_gain: number | null
   unrealized_gain_net: number | null
@@ -101,6 +105,8 @@ export interface PositionRow {
   total_invested: number
   total_return_pct: number | null
   xirr: number | null
+  xirr_rolling_3y: number | null
+  xirr_rolling_period_years: number | null
   subRows: GroupRow[]
 }
 

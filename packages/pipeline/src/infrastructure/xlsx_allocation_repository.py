@@ -154,10 +154,12 @@ def _load_allocation_xlsx(
 
         non_autre_cols = [c for c in value_cols if c != autre]
         non_autre_sum = df[non_autre_cols].sum(axis=1)
-        substantive_cols = [
-            c for c in value_cols if c not in (autre, _NC_LABEL)
-        ]
-        has_data = df[substantive_cols].sum(axis=1) > 0
+        # ``autre`` is a known allocation bucket, not an unknown value.
+        # In particular, a currency allocation can legitimately be 100%
+        # AUTRE (for example an Asia ex-Japan fund).  Treating that case as
+        # empty used to add NC=100 on top and produce a 200% allocation.
+        known_cols = [c for c in value_cols if c != _NC_LABEL]
+        has_data = df[known_cols].sum(axis=1) > 0
         clean_mask = non_autre_sum <= 100
 
         fill_autre = clean_mask & has_data

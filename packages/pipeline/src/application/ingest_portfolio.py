@@ -10,7 +10,7 @@ to execute().
 """
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 
@@ -89,35 +89,58 @@ def _xirr(cashflows: list[tuple[float, date]]) -> float | None:
     return _xirr_impl(cashflows)
 
 
+def _asset_keys(df: pd.DataFrame) -> pd.Series:
+    """Return a stable asset key using ISIN, then ticker, then name."""
+    keys = pd.Series(pd.NA, index=df.index, dtype="object")
+    for column in ("isin", "ticker", "name"):
+        if column not in df.columns:
+            continue
+        values = df[column]
+        present = values.notna() & values.astype(str).str.strip().ne("")
+        missing_key = keys.isna()
+        selected = values.loc[missing_key & present].astype(str).str.strip()
+        keys.loc[missing_key & present] = column + ":" + selected
+    return keys
+
+
 def _enrich_with_returns(
-    positions_df: pd.DataFrame, operations: list[Operation]
+    positions_df: pd.DataFrame,
+    operations: list[Operation],
+    account_type_map: dict[str, str] | None = None,
+    account_category_map: dict[str, str] | None = None,
 ) -> pd.DataFrame:
     """Add total_dividends, total_interest, total_realized_return,
     total_return_pct and xirr columns.
+
+    Operations are matched by account and by the first available asset
+    identifier (ISIN, ticker, then name).  This lets valuation-based products
+    such as PEE/PER participate even though they generally have no ISIN.
     """
     ops_df = pd.DataFrame([op.model_dump() for op in operations])
     ops_df["date"] = pd.to_datetime(ops_df["date"])
+    account_type_map = account_type_map or {}
+    account_category_map = account_category_map or {}
 
-    # Grouping key: isin if available, else name
-    ops_df["_key"] = ops_df["isin"].where(
-        ops_df["isin"].notna() & (ops_df["isin"] != ""), ops_df["name"]
-    )
+    ops_df["_key"] = _asset_keys(ops_df)
     positions_df = positions_df.copy()
-    positions_df["_key"] = positions_df["isin"].where(
-        positions_df["isin"].notna() & (positions_df["isin"] != ""),
-        positions_df["name"],
-    )
+    positions_df["_key"] = _asset_keys(positions_df)
+
+    def _operation_totals(operation_type: str) -> list[float]:
+        matching = ops_df[ops_df["operation_type"] == operation_type]
+        by_account = matching.groupby(["account", "_key"], dropna=True)[
+            "total_amount"
+        ].sum()
+        by_asset = matching.groupby("_key", dropna=True)["total_amount"].sum()
+        return [
+            float(by_asset.get(row["_key"], 0.0))
+            if row["account"] == "all"
+            else float(by_account.get((row["account"], row["_key"]), 0.0))
+            for _, row in positions_df.iterrows()
+        ]
 
     # --- dividends (lifetime, per asset) ---
-    divs = (
-        ops_df[ops_df["operation_type"] == "DIVIDEND"]
-        .groupby("_key", dropna=True)["total_amount"]
-        .sum()
-        .reset_index()
-        .rename(columns={"total_amount": "total_dividends"})
-    )
-    df = positions_df.merge(divs, on="_key", how="left")
-    df["total_dividends"] = df["total_dividends"].fillna(0.0)
+    df = positions_df
+    df["total_dividends"] = _operation_totals("DIVIDEND")
     div_tax = df["dividend_tax_rate"].where(
         df["dividend_tax_rate"].notna(), df["tax_rate"]
     )
@@ -126,40 +149,49 @@ def _enrich_with_returns(
     )
 
     # --- interest (lifetime, per asset) ---
-    ints = (
-        ops_df[ops_df["operation_type"] == "INTEREST"]
-        .groupby("_key", dropna=True)["total_amount"]
-        .sum()
-        .reset_index()
-        .rename(columns={"total_amount": "total_interest"})
-    )
-    df = df.merge(ints, on="_key", how="left")
-    df["total_interest"] = df["total_interest"].fillna(0.0)
+    df["total_interest"] = _operation_totals("INTEREST")
     df["total_interest_net"] = (
         df["total_interest"] * (1 - df["tax_rate"])
     ).round(2)
-    df = df.drop(columns=["_key"])
 
     df["total_realized_return"] = (
         df["realized_gain"] + df["total_dividends"] + df["total_interest"]
     )
 
+    # Historical values used as the opening outflow of each rolling window.
+    position_history: dict[tuple[str, str], list[tuple[date, float]]] = {}
+    for _, row in df.iterrows():
+        asset_key = row.get("_key")
+        if pd.isna(asset_key):
+            continue
+        history_key = (str(row.get("account", "")), str(asset_key))
+        position_history.setdefault(history_key, []).append(
+            (
+                pd.to_datetime(row["snapshot_date"]).date(),
+                float(row["total_value"]),
+            )
+        )
+    for history in position_history.values():
+        history.sort(key=lambda point: point[0])
+
     # --- per-row XIRR & total_return_pct ---
-    # Build cashflow lists per (isin, snapshot_date):
-    #   BUY  → negative (already stored as negative in total_amount)
+    # Build cashflow lists per (account, asset, snapshot_date):
+    #   BUY  → negative
     #   SELL + DIVIDEND + INTEREST → positive (abs value)
     #   terminal → total_value at snapshot_date (positive inflow)
     trade_op_types = ["BUY", "SELL", "DIVIDEND", "INTEREST"]
     trade_ops = ops_df[ops_df["operation_type"].isin(trade_op_types)].copy()
-    trade_ops = trade_ops[
-        trade_ops["isin"].notna() & (trade_ops["isin"] != "")
-    ]
+    trade_ops = trade_ops[trade_ops["_key"].notna()]
 
     xirr_vals: list[float | None] = []
+    rolling_xirr_vals: list[float | None] = []
+    rolling_period_years: list[float | None] = []
     ret_vals: list[float | None] = []
+    rolling_window = timedelta(days=round(3 * 365.25))
 
     for _, row in df.iterrows():
-        isin = row.get("isin")
+        account = str(row.get("account", ""))
+        asset_key = row.get("_key")
         snap_date = pd.to_datetime(row["snapshot_date"]).date()
         total_value = (
             float(row["total_value"])
@@ -167,14 +199,27 @@ def _enrich_with_returns(
             else 0.0
         )
 
-        asset_ops = (
-            trade_ops[
-                (trade_ops["isin"] == isin)
-                & (trade_ops["date"].dt.date <= snap_date)
-            ]
-            if isin
-            else pd.DataFrame()
-        )
+        asset_ops = trade_ops[
+            (trade_ops["_key"] == asset_key)
+            & (trade_ops["date"].dt.date <= snap_date)
+        ]
+        if account != "all":
+            asset_ops = asset_ops[asset_ops["account"] == account]
+
+        account_type = account_type_map.get(account, "")
+        account_category = account_category_map.get(account, "")
+        is_livret = account_type.strip().casefold() == "livret"
+        is_synthetic_cash = account_category == "brokerage" and str(
+            row.get("name", "")
+        ).startswith("Cash ")
+        returns_enabled = not is_livret and not is_synthetic_cash
+
+        if not returns_enabled:
+            xirr_vals.append(None)
+            rolling_xirr_vals.append(None)
+            rolling_period_years.append(None)
+            ret_vals.append(None)
+            continue
 
         flows: list[tuple[float, date]] = []
         total_invested = 0.0
@@ -184,12 +229,10 @@ def _enrich_with_returns(
             amt = float(op["total_amount"])
             d = op["date"].date()
             if op["operation_type"] == "BUY":
-                flows.append((amt, d))  # already negative
+                flows.append((-abs(amt), d))
                 total_invested += abs(amt)
             else:
-                flows.append(
-                    (abs(amt), d)
-                )  # SELL / DIVIDEND / INTEREST → positive
+                flows.append((abs(amt), d))
                 total_out += abs(amt)
 
         if total_value > 0:
@@ -199,20 +242,65 @@ def _enrich_with_returns(
         # Sort by date for XIRR
         flows.sort(key=lambda x: x[1])
 
-        xirr_vals.append(_xirr(flows) if flows else None)
+        since_inception_xirr = _xirr(flows) if flows else None
+        xirr_vals.append(since_inception_xirr)
         ret_vals.append(
             ((total_out - total_invested) / total_invested * 100)
             if total_invested > 0
             else None
         )
 
+        window_start = snap_date - rolling_window
+        history = position_history.get((account, str(asset_key)), [])
+        prior_positions = [
+            point for point in history if point[0] <= window_start
+        ]
+        if not prior_positions:
+            first_flow_date = None
+            if not asset_ops.empty:
+                first_flow_date = asset_ops["date"].dt.date.min()
+            available_years = (
+                (snap_date - first_flow_date).days / 365.25
+                if first_flow_date is not None
+                else None
+            )
+            rolling_xirr_vals.append(since_inception_xirr)
+            rolling_period_years.append(available_years)
+            continue
+
+        start_date, start_value = prior_positions[-1]
+        rolling_flows: list[tuple[float, date]] = []
+        if start_value > 0:
+            rolling_flows.append((-start_value, start_date))
+        for _, op in asset_ops[
+            asset_ops["date"].dt.date > start_date
+        ].iterrows():
+            amt = float(op["total_amount"])
+            op_date = op["date"].date()
+            if op["operation_type"] == "BUY":
+                rolling_flows.append((-abs(amt), op_date))
+            else:
+                rolling_flows.append((abs(amt), op_date))
+        if total_value > 0:
+            rolling_flows.append((total_value, snap_date))
+        rolling_flows.sort(key=lambda flow: flow[1])
+        rolling_xirr_vals.append(_xirr(rolling_flows))
+        rolling_period_years.append(3.0)
+
     df["xirr"] = [
         round(v * 100, 2) if v is not None else None for v in xirr_vals
+    ]
+    df["xirr_rolling_3y"] = [
+        round(v * 100, 2) if v is not None else None
+        for v in rolling_xirr_vals
+    ]
+    df["xirr_rolling_period_years"] = [
+        round(v, 2) if v is not None else None for v in rolling_period_years
     ]
     df["total_return_pct"] = [
         round(v, 2) if v is not None else None for v in ret_vals
     ]
-    return df
+    return df.drop(columns=["_key"])
 
 
 def _add_account_type(
@@ -350,7 +438,10 @@ class IngestPortfolioUseCase:
             _tag_cash_positions(
                 _tag_account(
                     _enrich_with_returns(
-                        _positions_to_df(all_positions), all_operations
+                        _positions_to_df(all_positions),
+                        all_operations,
+                        account_type_map,
+                        account_category_map,
                     )
                 )
             )
@@ -359,7 +450,10 @@ class IngestPortfolioUseCase:
             _tag_cash_positions(
                 _tag_account(
                     _enrich_with_returns(
-                        _positions_to_df(aggregated), all_operations
+                        _positions_to_df(aggregated),
+                        all_operations,
+                        account_type_map,
+                        account_category_map,
                     )
                 )
             )
@@ -403,7 +497,10 @@ class IngestPortfolioUseCase:
         # allocation_repo has no files, so no existence guard is needed here.
         positions_raw_df = _tag_account(
             _enrich_with_returns(
-                _positions_to_df(all_positions), all_operations
+                _positions_to_df(all_positions),
+                all_operations,
+                account_type_map,
+                account_category_map,
             )
         )
         alloc_dfs = build_positions_allocation(
@@ -436,6 +533,9 @@ class IngestPortfolioUseCase:
         # dashboard/public/data is hardlinked to data/output — no copy needed
 
         self.output_writer.write_errors(errors.to_df())
+        self.output_writer.write_manual_price_overrides(
+            self.asset_price_repo.load_manual_prices()
+        )
         if len(errors) > 0:
             n_err = sum(
                 1 for e in errors.to_df().itertuples() if e.level == "error"

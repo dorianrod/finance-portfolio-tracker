@@ -15,6 +15,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     account: 'acc1',
     status: 'active',
     operationTypes: new Set(),
+    quantity: 10,
+    last_price: 100,
     total_value: 1000,
     unrealized_gain: 100,
     unrealized_gain_net: 70,
@@ -30,6 +32,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     total_invested: 900,
     total_return_pct: 11.1,
     xirr: 10,
+    xirr_rolling_3y: 8,
+    xirr_rolling_period_years: 3,
     subRows: [],
     ...overrides,
   }

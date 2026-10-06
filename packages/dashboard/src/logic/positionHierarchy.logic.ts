@@ -6,6 +6,14 @@ function assetKey(op: RawOperation): string {
   return op.isin || op.ticker || op.name
 }
 
+// Same asset held in several accounts (e.g. the same ETF bought in both a
+// PEA and a CTO) gets one row per account, not one merged row: a merged row
+// has no single account/account_type to show, which drops it out of
+// per-account filters and mislabels it as "Other" in type breakdowns.
+function positionKey(asset: string, account: string): string {
+  return `${asset}|${account}`
+}
+
 export function buildAccountLabels(accountRows: { account: string; label: string }[]): Record<string, string> {
   const labels: Record<string, string> = {}
   for (const r of accountRows) {
@@ -23,19 +31,21 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
   rawPositions
     .filter((p) => p.snapshot_date === latestDateStr)
     .forEach((p) => {
-      const key = p.isin || p.ticker || p.name
-      // If same ISIN in multiple accounts, keep the row with highest total_value
+      const key = positionKey(p.isin || p.ticker || p.name, p.account)
+      // Defensive: keep the row with highest total_value on a key clash
       const existing = latestByKey.get(key)
       if (!existing || parseFloat(p.total_value) > parseFloat(existing.total_value)) {
         latestByKey.set(key, p)
       }
     })
 
-  // Group operations by asset, excluding pure cash ops (DEPOSIT/WITHDRAWAL with no isin/ticker/name)
+  // Group operations by (asset, account), excluding pure cash ops
+  // (DEPOSIT/WITHDRAWAL with no isin/ticker/name)
   const byAsset = new Map<string, RawOperation[]>()
   for (const op of ops) {
-    const key = assetKey(op)
-    if (!key) continue
+    const asset = assetKey(op)
+    if (!asset) continue
+    const key = positionKey(asset, op.account)
     if (!byAsset.has(key)) byAsset.set(key, [])
     byAsset.get(key)!.push(op)
   }
@@ -215,6 +225,8 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
       account_category,
       status: lp ? 'active' : 'closed',
       operationTypes: new Set(assetOps.map((o) => o.operation_type)),
+      quantity: lp ? parseNum(lp.quantity) : null,
+      last_price: lp ? parseNum(lp.last_price) : null,
       total_value: lp ? parseNum(lp.total_value) : null,
       unrealized_gain: lp ? parseNum(lp.unrealized_gain) : null,
       unrealized_gain_net: lp ? parseNum(lp.unrealized_gain_net) : null,
@@ -230,6 +242,8 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
       total_invested: totalInvested,
       total_return_pct: lp ? parseNum(lp.total_return_pct) : null,
       xirr: lp ? parseNum(lp.xirr) : null,
+      xirr_rolling_3y: lp ? parseNum(lp.xirr_rolling_3y) : null,
+      xirr_rolling_period_years: lp ? parseNum(lp.xirr_rolling_period_years) : null,
       subRows,
     })
   }

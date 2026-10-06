@@ -133,6 +133,42 @@ class CsvAssetPriceRepository(AssetPriceRepository):
                     keys.add(key)
         return keys
 
+    def load_manual_prices(self) -> pd.DataFrame:
+        columns = [
+            "name",
+            "ticker",
+            "isin",
+            "price",
+            "currency",
+            "date_from",
+            "date_to",
+            "source_file",
+        ]
+        if not self.others_dir.exists():
+            return pd.DataFrame(columns=columns)
+
+        rows: list[dict] = []
+        for others_file in sorted(self.others_dir.glob("*.csv")):
+            try:
+                odf = pd.read_csv(others_file, dtype=str).fillna("")
+            except Exception:
+                continue
+            for _, row in odf.iterrows():
+                rows.append(
+                    {
+                        "name": str(row.get("name", "")).strip(),
+                        "ticker": str(row.get("ticker", "")).strip(),
+                        "isin": str(row.get("isin", "")).strip(),
+                        "price": str(row.get("price", "")).strip(),
+                        "currency": str(row.get("currency", "EUR")).strip()
+                        or "EUR",
+                        "date_from": str(row.get("date_from", "")).strip(),
+                        "date_to": str(row.get("date_to", "")).strip(),
+                        "source_file": others_file.name,
+                    }
+                )
+        return pd.DataFrame(rows, columns=columns)
+
     def _load_others(self) -> pd.DataFrame:
         """Manual price overrides (private equity, etc.).
 

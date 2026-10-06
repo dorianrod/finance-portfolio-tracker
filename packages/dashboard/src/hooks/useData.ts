@@ -12,7 +12,7 @@ export function useData() {
   useEffect(() => {
     Promise.all([
       parseCsv<RawOperation>(dataUrl('operations.csv')),
-      parseCsv<RawPosition>(dataUrl('positions_aggregated.csv')),
+      parseCsv<RawPosition>(dataUrl('positions.csv')),
       parseCsv<{ account: string; label: string }>(dataUrl('accounts.csv')),
     ])
       .then(([ops, rawPositions, accountRows]) => {

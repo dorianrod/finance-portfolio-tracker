@@ -1,17 +1,61 @@
 #!/usr/bin/env bash
-# Blocks pushing any commit (message or diff) that mentions a personal
-# portfolio ticker/ISIN (see scan_personal_data.py) — the last line of
-# defense before anything reaches the public remote. Bypass (only if
-# this is a false positive) with `git push --no-verify`.
+# Runs the fast lint/type checks and blocks commits that mention a personal
+# portfolio ticker/ISIN (see scan_personal_data.py) before anything reaches
+# the public remote. Bypass only a confirmed false positive with
+# `git push --no-verify`.
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
 python="$repo_root/packages/pipeline/.venv/bin/python"
-[ -x "$python" ] || python="python3"
+
+if [ ! -x "$python" ]; then
+    echo "pre-push: missing packages/pipeline/.venv" >&2
+    echo "Run: python3.12 -m venv packages/pipeline/.venv &&" >&2
+    echo "     packages/pipeline/.venv/bin/pip install -e 'packages/pipeline[dev]'" >&2
+    exit 1
+fi
+
+node_is_compatible() {
+    local version major minor rest
+    version="$("$1" --version 2>/dev/null | sed 's/^v//')"
+    major="${version%%.*}"
+    rest="${version#*.}"
+    minor="${rest%%.*}"
+    [[ "$major" =~ ^[0-9]+$ && "$minor" =~ ^[0-9]+$ ]] || return 1
+    (( major > 22 || (major == 22 && minor >= 12) || (major == 20 && minor >= 19) ))
+}
+
+node_bin="$(command -v node || true)"
+if [ -z "$node_bin" ] || ! node_is_compatible "$node_bin"; then
+    node_bin=""
+    for candidate in "$HOME"/.nvm/versions/node/*/bin/node; do
+        if [ -x "$candidate" ] && node_is_compatible "$candidate"; then
+            node_bin="$candidate"
+        fi
+    done
+fi
+
+if [ -z "$node_bin" ]; then
+    echo "pre-push: Node 20.19+ or 22.12+ is required for dashboard checks" >&2
+    exit 1
+fi
+export PATH="$(dirname "$node_bin"):$PATH"
+
+if [ ! -x "$repo_root/packages/dashboard/node_modules/.bin/eslint" ]; then
+    echo "pre-push: dashboard dependencies are missing" >&2
+    echo "Run: cd packages/dashboard && npm ci" >&2
+    exit 1
+fi
+
+push_refs=()
+while IFS= read -r ref_line; do
+    push_refs+=("$ref_line")
+done
 
 zero="0000000000000000000000000000000000000000"
 
-while read -r local_ref local_sha remote_ref remote_sha; do
+for ref_line in "${push_refs[@]}"; do
+    read -r local_ref local_sha remote_ref remote_sha <<< "$ref_line"
     [ "$local_sha" = "$zero" ] && continue  # deleting a remote ref
 
     if [ "$remote_sha" = "$zero" ]; then
@@ -32,5 +76,19 @@ while read -r local_ref local_sha remote_ref remote_sha; do
         exit 1
     fi
 done
+
+echo "pre-push: running Python lint and type checks..."
+(
+    cd "$repo_root/packages/pipeline"
+    "$python" -m ruff check src tests
+    "$python" -m pyright
+)
+
+echo "pre-push: running dashboard lint and type checks..."
+(
+    cd "$repo_root/packages/dashboard"
+    npm run lint
+    npm run typecheck
+)
 
 exit 0

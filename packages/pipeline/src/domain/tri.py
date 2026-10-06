@@ -1,6 +1,6 @@
 """Global portfolio TRI (XIRR) computation."""
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import cast
 
 from src.domain.models import Operation, OperationType, Position
@@ -100,5 +100,74 @@ def monthly_tri_series(
         flows_sorted = sorted(flows, key=lambda x: x[1])
         tri = _xirr(flows_sorted)
         result[snap_d] = round(tri * 100, 2) if tri is not None else None
+
+    return result
+
+
+def rolling_tri_series(
+    positions: list[Position],
+    operations: list[Operation],
+    window_years: float = 3.0,
+) -> dict[date, float | None]:
+    """Trailing N-year annualised TRI for each monthly snapshot date.
+
+    Unlike monthly_tri_series (since-inception), this treats the portfolio's
+    value at the start of a fixed-length trailing window as a synthetic
+    outflow, so each point measures performance over a roughly constant
+    span. A since-inception XIRR evaluated shortly after the first deposit
+    annualises a tiny elapsed time and explodes to meaningless magnitudes
+    (e.g. a few % real gain over one month implies thousands of % per
+    year); a trailing window never has that short-elapsed-time problem once
+    it's full, so snapshots before a full window has elapsed return None
+    rather than show that same explosion.
+    """
+    snap_dates = sorted({_to_date(p.snapshot_date) for p in positions})
+    if not snap_dates:
+        return {}
+
+    value_by_date: dict[date, float] = {}
+    for p in positions:
+        d = _to_date(p.snapshot_date)
+        value_by_date[d] = value_by_date.get(d, 0.0) + p.total_value
+
+    ext_flows: list[tuple[float, date]] = []
+    for op in operations:
+        if op.operation_type in (
+            OperationType.DEPOSIT,
+            OperationType.WITHDRAWAL,
+        ):
+            ext_flows.append((-op.total_amount, _to_date(op.date)))
+    ext_flows.sort(key=lambda x: x[1])
+
+    if not ext_flows:
+        return {snap: None for snap in snap_dates}
+
+    first_flow_date = ext_flows[0][1]
+    window = timedelta(days=round(window_years * 365.25))
+
+    result: dict[date, float | None] = {}
+    for snap in snap_dates:
+        if snap - first_flow_date < window:
+            result[snap] = None
+            continue
+
+        window_start = snap - window
+        prior_snaps = [d for d in snap_dates if d <= window_start]
+        if not prior_snaps:
+            result[snap] = None
+            continue
+        start_snap = max(prior_snaps)
+        start_value = value_by_date.get(start_snap, 0.0)
+
+        flows = [(a, d) for a, d in ext_flows if start_snap < d <= snap]
+        if start_value > 0:
+            flows.append((-start_value, start_snap))
+        terminal = value_by_date.get(snap, 0.0)
+        if terminal > 0:
+            flows.append((terminal, snap))
+
+        flows_sorted = sorted(flows, key=lambda x: x[1])
+        tri = _xirr(flows_sorted)
+        result[snap] = round(tri * 100, 2) if tri is not None else None
 
     return result

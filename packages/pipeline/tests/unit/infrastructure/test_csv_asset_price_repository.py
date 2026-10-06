@@ -219,6 +219,30 @@ def test_load_manual_price_keys_uses_isin_when_present_else_ticker(
     assert repo.load_manual_price_keys() == {"FUNDZ", "FR9999999999"}
 
 
+def test_load_manual_prices_returns_raw_rows_with_source_file(tmp_path: Path):
+    repo = _repo(tmp_path)
+    repo.others_dir.mkdir(parents=True)
+    (repo.others_dir / "manual.csv").write_text(
+        "name,ticker,isin,price,currency,date_from,date_to\n"
+        "Fund X,,FR9999999999,42.0,EUR,2024-01-15,\n"
+    )
+
+    df = repo.load_manual_prices()
+
+    assert df.to_dict("records") == [
+        {
+            "name": "Fund X",
+            "ticker": "",
+            "isin": "FR9999999999",
+            "price": "42.0",
+            "currency": "EUR",
+            "date_from": "2024-01-15",
+            "date_to": "",
+            "source_file": "manual.csv",
+        }
+    ]
+
+
 def test_load_all_includes_others_overrides_expanded_per_month(
     tmp_path: Path,
 ):

@@ -10,7 +10,7 @@ ALLOCATION_BUILD_SCRIPT := packages/pipeline/src/skills/allocation-update/script
 
 .PHONY: pipeline pipeline-auto pipeline-reinstall setup-hooks allocation-read allocation-build dashboard lint lint-fix typecheck check help
 
-setup-hooks: ## Enable the git hooks that block committing/pushing personal portfolio identifiers (tickers/ISINs).
+setup-hooks: ## Enable git hooks for personal-data scanning and pre-push checks.
 	git config core.hooksPath .githooks
 
 pipeline: ## Run the portfolio pipeline interactively. Prompts before refetching current-month prices and resolving large price jumps.
@@ -39,8 +39,9 @@ lint-fix: ## Automatically fix lint issues where supported by Ruff and ESLint.
 	cd $(PIPELINE_DIR) && .venv/bin/python -m ruff check src tests --fix
 	cd $(DASHBOARD_DIR) && npm run lint -- --fix
 
-typecheck: ## Run Python static type checks with Pyright.
+typecheck: ## Run Python and dashboard static type checks.
 	cd $(PIPELINE_DIR) && .venv/bin/python -m pyright
+	cd $(DASHBOARD_DIR) && npm run typecheck
 
 check: lint typecheck ## Run lint and type checks.
 

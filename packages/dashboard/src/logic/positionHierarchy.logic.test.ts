@@ -43,6 +43,8 @@ function pos(overrides: Partial<RawPosition>): RawPosition {
     unrealized_gain_net: '140',
     realized_gain_net: '0',
     xirr: '12.5',
+    xirr_rolling_3y: '8.25',
+    xirr_rolling_period_years: '3',
     total_return_pct: '20',
     ...overrides,
   }
@@ -69,7 +71,11 @@ describe('buildPositionRows', () => {
     expect(rows).toHaveLength(1)
     const row = rows[0]
     expect(row.status).toBe('active')
+    expect(row.quantity).toBe(10)
+    expect(row.last_price).toBe(120)
     expect(row.total_value).toBe(1200)
+    expect(row.xirr_rolling_3y).toBe(8.25)
+    expect(row.xirr_rolling_period_years).toBe(3)
     // total_dividends comes from the latest position snapshot, not a recount of ops
     expect(row.total_dividends).toBe(50)
     expect(row.subRows.map((g) => g.label)).toEqual(['Dividends', 'Buys / Sells'])
@@ -92,6 +98,20 @@ describe('buildPositionRows', () => {
     const activeOp = op({ isin: 'ACTIVE', operation_type: 'BUY' })
     const closedOp = op({ isin: 'CLOSED', operation_type: 'SELL', total_amount: '100', realized_gain: '0' })
     const rows = buildPositionRows([closedOp, activeOp], [pos({ isin: 'ACTIVE' })])
-    expect(rows.map((r) => r.id)).toEqual(['ACTIVE', 'CLOSED'])
+    expect(rows.map((r) => r.id)).toEqual(['ACTIVE|acc1', 'CLOSED|acc1'])
+  })
+
+  it('gives the same asset held in two accounts one row per account, each with its own account_type', () => {
+    const ops = [
+      op({ isin: 'SPLIT', account: 'pea', operation_type: 'BUY', quantity: '10', total_amount: '-1000' }),
+      op({ isin: 'SPLIT', account: 'cto', operation_type: 'BUY', quantity: '5', total_amount: '-500' }),
+    ]
+    const rows = buildPositionRows(ops, [
+      pos({ isin: 'SPLIT', account: 'pea', account_type: 'Bourse' }),
+      pos({ isin: 'SPLIT', account: 'cto', account_type: 'Bourse' }),
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.account).sort()).toEqual(['cto', 'pea'])
+    expect(rows.every((r) => r.account_type === 'Bourse')).toBe(true)
   })
 })
