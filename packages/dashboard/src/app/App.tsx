@@ -60,7 +60,11 @@ export default function App() {
     const labels = { ...accountLabels }
     for (const p of positions) {
       const id = accountFilterId(p)
-      if (!labels[id]) labels[id] = accountLabel(p.account, accountLabels)
+      if (!labels[id]) {
+        labels[id] = id === p.account
+          ? accountLabel(p.account, accountLabels)
+          : p.name
+      }
     }
     return labels
   }, [positions, accountLabels])

@@ -133,8 +133,7 @@ class FetchPricesUseCase:
         self.output_writer.write_errors(collector.to_df())
         if len(collector) > 0:
             print(
-                f"\n[errors] {len(collector)} entries written to"
-                " errors.csv"
+                f"\n[errors] {len(collector)} entries written to" " errors.csv"
             )
 
         print("\nDone.")
@@ -352,18 +351,19 @@ class FetchPricesUseCase:
                     type="missing_data",
                     date=f"{year:04d}-{month:02d}",
                     message=(
-                        "No Yahoo Finance data for"
-                        f" {year:04d}-{month:02d}"
+                        "No Yahoo Finance data for" f" {year:04d}-{month:02d}"
                     ),
                 )
                 continue
 
-            last_row = month_close.iloc[-1]
-            price_date = month_close.index[-1].date().isoformat()
-
             rows = []
             for sym in yahoo_symbols:
-                if sym not in last_row.index or pd.isna(last_row[sym]):
+                sym_series = (
+                    month_close[sym].dropna()
+                    if sym in month_close.columns
+                    else pd.Series(dtype=float)
+                )
+                if sym_series.empty:
                     meta = sym_to_asset.get(sym, {})
                     kept = existing_by_symbol.get(sym)
                     if kept is not None:
@@ -397,8 +397,9 @@ class FetchPricesUseCase:
                             ),
                         )
                     continue
+                price_date = sym_series.index[-1].date().isoformat()
                 meta = sym_to_asset[sym]
-                raw_price = float(last_row[sym])
+                raw_price = float(sym_series.iloc[-1])
                 currency = meta["currency"]
 
                 actual_currency = verified_currency.get(sym, "")

@@ -92,6 +92,20 @@ describe('buildPositionRows', () => {
     const activeOp = op({ isin: 'ACTIVE', operation_type: 'BUY' })
     const closedOp = op({ isin: 'CLOSED', operation_type: 'SELL', total_amount: '100', realized_gain: '0' })
     const rows = buildPositionRows([closedOp, activeOp], [pos({ isin: 'ACTIVE' })])
-    expect(rows.map((r) => r.id)).toEqual(['ACTIVE', 'CLOSED'])
+    expect(rows.map((r) => r.id)).toEqual(['ACTIVE|acc1', 'CLOSED|acc1'])
+  })
+
+  it('gives the same asset held in two accounts one row per account, each with its own account_type', () => {
+    const ops = [
+      op({ isin: 'SPLIT', account: 'pea', operation_type: 'BUY', quantity: '10', total_amount: '-1000' }),
+      op({ isin: 'SPLIT', account: 'cto', operation_type: 'BUY', quantity: '5', total_amount: '-500' }),
+    ]
+    const rows = buildPositionRows(ops, [
+      pos({ isin: 'SPLIT', account: 'pea', account_type: 'Bourse' }),
+      pos({ isin: 'SPLIT', account: 'cto', account_type: 'Bourse' }),
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.account).sort()).toEqual(['cto', 'pea'])
+    expect(rows.every((r) => r.account_type === 'Bourse')).toBe(true)
   })
 })
