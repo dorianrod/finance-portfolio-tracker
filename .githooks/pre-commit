@@ -8,4 +8,6 @@ repo_root="$(git rev-parse --show-toplevel)"
 python="$repo_root/packages/pipeline/.venv/bin/python"
 [ -x "$python" ] || python="python3"
 
-git diff --cached | "$python" "$repo_root/.githooks/scan_personal_data.py"
+git diff --cached --unified=0 --diff-filter=ACMR \
+    | sed -n '/^+++ /d; /^+/s/^+//p' \
+    | "$python" "$repo_root/.githooks/scan_personal_data.py"
