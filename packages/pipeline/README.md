@@ -53,14 +53,17 @@ data/
 finance-init [--data-dir DATA_DIR] [--force]
 ```
 
-Scaffolds `<data-dir>/input/` with an example portfolio covering every
-supported broker format and account type — Boursorama (PEA + CTO),
-Revolut, `direct/` (flat file + a nested subfolder example), `valuations/`
-(two files), and an `allocations/*.xlsx` with a geo/secteur/currency/classe
-breakdown. Five real, Yahoo-Finance-tracked assets (AAPL, MSFT, LVMH, an
-Amundi CAC 40 ETF, an iShares S&P 500 ETF). Also writes
-`input/README.md` explaining what each subfolder is for and when to use
-`direct/` vs `valuations/`.
+Scaffolds `<data-dir>/input/` with a fully synthetic portfolio covering every
+supported broker format and all six account categories — brokerage, checking,
+employee savings, retirement, savings and private equity. It includes
+Boursorama (PEA + CTO), Revolut, `direct/`, `valuations/`, and an
+`allocations/*.xlsx` with a geo/sector/currency/asset-class breakdown.
+Five public Yahoo-Finance-tracked assets exercise automatic price fetching;
+all account names, amounts and valuations are fictional. Longer PEE and
+private-equity histories exercise trailing three-year IRR, while newer
+products exercise the available-period fallback. Also writes `input/README.md`
+explaining what each subfolder is for and when to use `direct/` vs
+`valuations/`.
 
 Refuses to run if `input/` already exists, unless `--force` is passed —
 useful to try the pipeline/dashboard end-to-end before plugging in your

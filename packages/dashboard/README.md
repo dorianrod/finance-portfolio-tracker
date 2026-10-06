@@ -47,6 +47,12 @@ in the runner, never the real `data/`). Data fetches go through
 under the `/<repo>/` base path GitHub Pages project sites are served
 from.
 
+The example covers all account categories and includes long fictional PEE and
+private-equity histories so both the trailing three-year IRR and the
+shorter-period fallback are visible. Publicly traded instruments are used only
+to demonstrate market-price fetching; the names, amounts and valuations of
+the example accounts are fictional.
+
 One-time setup on GitHub, after this repo has a remote: **Settings →
 Pages → Build and deployment → Source: "GitHub Actions"**. The workflow
 also runs on-demand from the Actions tab (`workflow_dispatch`).

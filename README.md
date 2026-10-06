@@ -6,7 +6,13 @@ When your investments are spread across several brokers, no single one of them c
 
 Everything runs locally, on your own machine: there's no account to create and no third-party platform to hand your brokerage data to.
 
-[**Live demo**](https://dorianrod.github.io/finance-portfolio-tracker/) (synthetic example portfolio)
+[**Live demo**](https://dorianrod.github.io/finance-portfolio-tracker/) (fully synthetic example portfolio)
+
+The demo covers brokerage accounts, PEA/CTO, PEE, PER, life insurance,
+private equity, a Livret and a checking account. Its fictional histories show
+allocation breakdowns, dividends and interest, realized and unrealized gains,
+IRR since inception, trailing three-year IRR and the shorter-period fallback.
+No account name, amount or valuation comes from a real personal portfolio.
 
 ## Installation
 
@@ -33,7 +39,7 @@ Pick (or create) a folder to hold your financial data, e.g. `my-finance`, then g
    ./finance-tool-linux init
    ```
 
-`init` bootstraps the expected `input/` layout (account_groups.csv + broker exports under `brokers/`) with a small example portfolio. Replace those example files with your own broker exports — see [packages/pipeline/README.md](packages/pipeline/README.md) for the exact format.
+`init` bootstraps the expected `input/` layout (account_groups.csv + broker exports under `brokers/`) with the same fully synthetic example portfolio used by the live demo. Replace those example files with your own broker exports — see [packages/pipeline/README.md](packages/pipeline/README.md) for the exact format.
 
 
 ## AI-Guided Monthly Update (recommanded)

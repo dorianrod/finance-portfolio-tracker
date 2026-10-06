@@ -47,8 +47,11 @@ brokerage,Brokerage,brokerage,Personal brokerage
 boursorama_pea,Brokerage,brokerage,Boursorama PEA
 boursorama_cto,Brokerage,brokerage,Boursorama CTO
 revolut,Brokerage,brokerage,Revolut Trading
+employee_plan,PEE,employer_savings,Demo employee savings plan
 per_fortuneo,Retirement,retirement,Fortuneo PER
 life_insurance,Life insurance,savings,Life insurance
+livret,Livret,savings,Demo savings account
+private_fund,Private equity,private_equity,Demo private equity fund
 """
 
 # ---------------------------------------------------------------------------
@@ -60,6 +63,17 @@ _DIRECT_CHECKING_ACCOUNT = """date,account,isin,ticker,name,operation_type,quant
 2025-06-30,checking_account,,,Checking account,DEPOSIT,,,2000,EUR
 2025-12-31,checking_account,,,Checking account,INTEREST,,,45.5,EUR
 2026-03-31,checking_account,,,Checking account,WITHDRAWAL,,,-800,EUR
+"""
+
+_DIRECT_LIVRET = """date,account,isin,ticker,name,operation_type,quantity,price_per_unit,total_amount,currency,tax_rate
+2022-01-31,livret,,,Demo savings account,DEPOSIT,,,8000,EUR,0%
+2022-12-31,livret,,,Demo savings account,INTEREST,,,80,EUR,0%
+2023-06-30,livret,,,Demo savings account,DEPOSIT,,,1200,EUR,0%
+2023-12-31,livret,,,Demo savings account,INTEREST,,,184,EUR,0%
+2024-08-31,livret,,,Demo savings account,WITHDRAWAL,,,-1500,EUR,0%
+2024-12-31,livret,,,Demo savings account,INTEREST,,,236,EUR,0%
+2025-12-31,livret,,,Demo savings account,INTEREST,,,246,EUR,0%
+2026-06-30,livret,,,Demo savings account,DEPOSIT,,,500,EUR,0%
 """
 
 # Nested under brokers/direct/brokerage/ on purpose: direct/ (like
@@ -123,6 +137,24 @@ _VALUATIONS_LIFE_INSURANCE = """date,account,isin,ticker,name,value,invested,cur
 2024-06-30,life_insurance,,,Life insurance,10000,10000,EUR,17.2%
 2025-06-30,life_insurance,,,Life insurance,11400,10500,EUR,17.2%
 2026-06-30,life_insurance,,,Life insurance,12100,11000,EUR,17.2%
+"""
+
+_VALUATIONS_EMPLOYEE_PLAN = """date,account,isin,ticker,name,value,invested,currency,tax_rate
+2021-12-31,employee_plan,,,Demo employee savings fund,4000,4000,EUR,17.2%
+2022-12-31,employee_plan,,,Demo employee savings fund,5500,5000,EUR,17.2%
+2023-12-31,employee_plan,,,Demo employee savings fund,7200,6000,EUR,17.2%
+2024-12-31,employee_plan,,,Demo employee savings fund,8900,7000,EUR,17.2%
+2025-12-31,employee_plan,,,Demo employee savings fund,10800,8000,EUR,17.2%
+2026-09-30,employee_plan,,,Demo employee savings fund,11600,8500,EUR,17.2%
+"""
+
+_VALUATIONS_PRIVATE_FUND = """date,account,isin,ticker,name,value,invested,currency,tax_rate
+2021-12-31,private_fund,,,Demo private equity fund,6000,6000,EUR,30%
+2022-12-31,private_fund,,,Demo private equity fund,7200,6000,EUR,30%
+2023-12-31,private_fund,,,Demo private equity fund,10500,9000,EUR,30%
+2024-12-31,private_fund,,,Demo private equity fund,13000,11000,EUR,30%
+2025-12-31,private_fund,,,Demo private equity fund,14200,11000,EUR,30%
+2026-09-30,private_fund,,,Demo private equity fund,12300,9000,EUR,30%
 """
 
 # ---------------------------------------------------------------------------
@@ -265,6 +297,70 @@ def _allocation_title_row(header_row: list[str]) -> list[str]:
     return title_row
 
 
+# Name-only assets show that allocations also work for products without an
+# ISIN or market ticker. All names and values below are deliberately fictional.
+_SYNTHETIC_ASSETS = [
+    {
+        "nom_placement": "Checking account",
+        "id": "",
+        "geo": {"europe": 100},
+        "secteur": {},
+        "currency_alloc": {"EUR": 100},
+        "classe": {"cash": 100},
+    },
+    {
+        "nom_placement": "Demo savings account",
+        "id": "",
+        "geo": {"europe": 100},
+        "secteur": {},
+        "currency_alloc": {"EUR": 100},
+        "classe": {"cash": 100},
+    },
+    {
+        "nom_placement": "Demo employee savings fund",
+        "id": "",
+        "geo": {"europe": 60, "north_america": 30, "emerging_markets": 10},
+        "secteur": {
+            "technology": 30,
+            "industrials": 25,
+            "financials": 20,
+            "healthcare": 15,
+            "consumer_staples": 10,
+        },
+        "currency_alloc": {"EUR": 70, "USD": 30},
+        "classe": {"equities": 70, "bonds": 25, "cash": 5},
+    },
+    {
+        "nom_placement": "PER Fortuneo",
+        "id": "",
+        "geo": {"europe": 55, "north_america": 35, "emerging_markets": 10},
+        "secteur": {},
+        "currency_alloc": {"EUR": 65, "USD": 35},
+        "classe": {"equities": 60, "bonds": 35, "cash": 5},
+    },
+    {
+        "nom_placement": "Life insurance",
+        "id": "",
+        "geo": {"europe": 70, "north_america": 30},
+        "secteur": {},
+        "currency_alloc": {"EUR": 80, "USD": 20},
+        "classe": {"equities": 35, "bonds": 50, "real_estate": 10, "cash": 5},
+    },
+    {
+        "nom_placement": "Demo private equity fund",
+        "id": "",
+        "geo": {"europe": 70, "north_america": 30},
+        "secteur": {
+            "technology": 40,
+            "industrials": 30,
+            "consumer_discretionary": 30,
+        },
+        "currency_alloc": {"EUR": 80, "USD": 20},
+        "classe": {"private_equity": 100},
+    },
+]
+
+
 def _allocation_data_row(asset: dict) -> list:
     return (
         [asset["nom_placement"], asset["id"]]
@@ -290,7 +386,7 @@ def _write_allocations_xlsx(path: Path) -> None:
     ws.title = "repartition"
     ws.append(_allocation_title_row(header_row))
     ws.append(header_row)
-    for asset in _ASSETS:
+    for asset in [*_ASSETS, *_SYNTHETIC_ASSETS]:
         ws.append(_allocation_data_row(asset))
     wb.save(path)
 
@@ -304,6 +400,16 @@ _INPUT_README = """# input/
 This is an example generated by `finance-init` — replace these files with
 your own exports once you understand the expected structure.
 Run `finance-pipeline` to turn it into a dashboard.
+
+Every account name, amount and valuation in this example is fictional. The
+listed shares and ETFs are public market instruments included only so the
+example can demonstrate automatic Yahoo Finance price fetching.
+
+The example spans all six account categories. Its longer PEE and Private
+Equity histories demonstrate the trailing three-year IRR; the newer PER and
+life-insurance histories demonstrate the fallback to the available period.
+The checking account, Livret and synthetic brokerage cash intentionally have
+no IRR.
 
 ## account_groups.csv
 
@@ -447,6 +553,7 @@ def main(argv: list[str] | None = None) -> None:
         input_dir / "brokers/direct/checking_account.csv",
         _DIRECT_CHECKING_ACCOUNT,
     )
+    _write(input_dir / "brokers/direct/livret.csv", _DIRECT_LIVRET)
     _write(
         input_dir / "brokers/direct/brokerage/history.csv",
         _DIRECT_BROKERAGE_HISTORY,
@@ -471,7 +578,15 @@ def main(argv: list[str] | None = None) -> None:
         input_dir / "brokers/valuations/life_insurance.csv",
         _VALUATIONS_LIFE_INSURANCE,
     )
-    allocations_path = input_dir / "allocations/2024-01-01.xlsx"
+    _write(
+        input_dir / "brokers/valuations/employee_plan.csv",
+        _VALUATIONS_EMPLOYEE_PLAN,
+    )
+    _write(
+        input_dir / "brokers/valuations/private_fund.csv",
+        _VALUATIONS_PRIVATE_FUND,
+    )
+    allocations_path = input_dir / "allocations/2021-01-01.xlsx"
     allocations_path.parent.mkdir(parents=True, exist_ok=True)
     _write_allocations_xlsx(allocations_path)
 
@@ -479,8 +594,8 @@ def main(argv: list[str] | None = None) -> None:
     print("  See input/README.md for details on each source.")
     print(
         "\n  Now run `finance-pipeline` to fetch real prices"
-        " (AAPL, MC.PA, MSFT, two ETFs...) from Yahoo Finance and"
-        " generate the dashboard."
+        " for the public shares and ETFs from Yahoo Finance and generate"
+        " the dashboard."
     )
 
 
