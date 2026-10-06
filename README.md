@@ -81,6 +81,21 @@ In manual mode, you update the files under `input/` yourself:
 
 This mode does not require git, Claude Code, or any developer tooling.
 
+## Updating to a new version
+
+A new version has been released when the [Releases page](https://github.com/dorianrod/finance-portfolio-tracker/releases/) shows a tag newer than the one you downloaded.
+
+**Windows / Ubuntu / Linux** — download the latest `finance-tool-windows.exe` / `finance-tool-linux` from that page and replace the old file in your data folder (same name, same folder). Your `data/` contents are untouched; only the executable is replaced. Re-run `init` only if the release notes say the skills changed.
+
+If you installed via `pipx` from source instead of the standalone executable, reinstall with `--force` to pick up the latest `main`:
+
+```bash
+pipx install --force "git+https://github.com/dorianrod/finance-portfolio-tracker.git@main#subdirectory=packages/pipeline"
+pipx install --force "git+https://github.com/dorianrod/finance-portfolio-tracker.git@main#subdirectory=packages/dashboard"
+```
+
+After reinstalling the dashboard, fully close any browser tab that was already showing it before relaunching `finance-dashboard` — the running tab holds the previous build in memory and won't pick up the new one just by itself.
+
 ## Technical details
 
 - The standalone executables (`finance-tool-*`) bundle Python, Node-built dashboard assets and every dependency — nothing else needs to be installed. They're built by [.github/workflows/release.yml](.github/workflows/release.yml) (PyInstaller, via [packages/launcher/cli.py](packages/launcher/cli.py)) and published to GitHub Releases whenever a `vX.Y.Z` tag is pushed.

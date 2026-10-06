@@ -45,6 +45,22 @@ def _make_handler(
                 self.directory = str(dist_dir)
             return super().translate_path(path)
 
+        def end_headers(self) -> None:
+            url_path = urlsplit(self.path).path
+            if url_path.startswith("/assets/"):
+                # Vite content-hashes these filenames, so a given URL
+                # never changes meaning -- safe to cache forever.
+                self.send_header(
+                    "Cache-Control", "public, max-age=31536000, immutable"
+                )
+            else:
+                # index.html (and CSVs under /data/) must be revalidated
+                # on every load, otherwise a browser that cached index.html
+                # keeps referencing a previous release's hashed asset
+                # filenames after a reinstall.
+                self.send_header("Cache-Control", "no-cache")
+            super().end_headers()
+
     return Handler
 
 
