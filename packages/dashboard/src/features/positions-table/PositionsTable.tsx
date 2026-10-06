@@ -118,14 +118,50 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         const r = row.original
         if (r.kind === 'position') {
           const allocKey = r.isin || `NC-${r.name}`
-          const hasAlloc = !!allocationData.get(allocKey)
+          const allocation = allocationData.get(allocKey)
+          const showAllocation = (button: HTMLButtonElement) => {
+            if (!allocation) return
+            cancelHide()
+            setChart(null)
+            setSavingsChart(null)
+            setAllocationHover({
+              isin: allocKey,
+              name: r.name,
+              buttonRect: button.getBoundingClientRect(),
+              allocation,
+            })
+          }
           const showQuantity = r.account_category === 'brokerage'
             && !r.account_type?.endsWith(CASH_SUFFIX)
             && r.quantity != null
-          return r.total_value != null ? (
+          return (
             <span className="flex flex-col leading-tight">
-              <span className={`text-white font-medium ${hasAlloc ? 'underline decoration-dashed decoration-gray-500 underline-offset-2' : ''}`}>
-                {fmt.format(r.total_value)}
+              <span className="flex items-center gap-1">
+                {r.total_value != null
+                  ? <span className="text-white font-medium">{fmt.format(r.total_value)}</span>
+                  : <span className="text-gray-500">—</span>}
+                {allocation && (
+                  <button
+                    type="button"
+                    aria-label={`View allocations for ${r.name}`}
+                    title="View asset allocations"
+                    className="shrink-0 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                    onMouseEnter={(event) => showAllocation(event.currentTarget)}
+                    onMouseLeave={scheduleHide}
+                    onFocus={(event) => showAllocation(event.currentTarget)}
+                    onBlur={scheduleHide}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      showAllocation(event.currentTarget)
+                    }}
+                  >
+                    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+                      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M8 1.75A6.25 6.25 0 0 1 14.25 8H8Z" fill="currentColor" />
+                      <path d="M8 8l-4.42 4.42" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </button>
+                )}
               </span>
               {showQuantity && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -134,7 +170,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                 </span>
               )}
             </span>
-          ) : <span className="text-gray-500">—</span>
+          )
         }
         if (r.kind === 'group' && r.total_invested != null) {
           return (
@@ -303,7 +339,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         )
       },
     }),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [setChart, sortKey, sortDir, onSort, allocationData])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
@@ -418,20 +453,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   }
                 })() : null
 
-                const allocationHandlers = (isPosition && r.kind === 'position') ? (() => {
-                  const allocKey = r.isin || `NC-${r.name}`
-                  const alloc = allocationData.get(allocKey)
-                  if (!alloc) return null
-                  return {
-                    onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
-                      cancelHide()
-                      setChart(null); setSavingsChart(null)
-                      setAllocationHover({ isin: allocKey, name: r.name, buttonRect: e.currentTarget.getBoundingClientRect(), allocation: alloc })
-                    },
-                    onMouseLeave: scheduleHide,
-                  }
-                })() : null
-
                 let separator: React.ReactNode = null
                 if (groupByType && isPosition && row.depth === 0) {
                   const currentType = r.account_type ?? ''
@@ -488,7 +509,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                           className="px-3 py-2 overflow-hidden"
                           {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})}
                           {...(savingsHandlers && cell.column.id === 'value' ? savingsHandlers : {})}
-                          {...(allocationHandlers && cell.column.id === 'value' ? allocationHandlers : {})}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
