@@ -201,7 +201,80 @@ def test_returns_use_name_when_valuation_position_has_no_isin_or_ticker():
     )
 
     assert enriched.loc[0, "xirr"] == pytest.approx(10.0, abs=0.05)
+    assert enriched.loc[0, "xirr_rolling_3y"] == pytest.approx(
+        10.0, abs=0.05
+    )
+    assert enriched.loc[0, "xirr_rolling_period_years"] == pytest.approx(
+        1.0, abs=0.01
+    )
     assert enriched.loc[0, "total_return_pct"] == 10.0
+
+
+def test_rolling_return_uses_three_year_start_value_and_later_flows():
+    start_date = date(2021, 12, 31)
+    contribution_date = date(2024, 1, 1)
+    end_date = date(2025, 1, 1)
+    annual_rate = 1.10
+    terminal_value = 1000 * annual_rate ** (
+        (end_date - start_date).days / 365.25
+    ) + 500 * annual_rate ** (
+        (end_date - contribution_date).days / 365.25
+    )
+    positions = [
+        Position(
+            snapshot_date=start_date,
+            account="retirement-plan",
+            name="Retirement plan",
+            quantity=1000.0,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=1000.0,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        ),
+        Position(
+            snapshot_date=end_date,
+            account="retirement-plan",
+            name="Retirement plan",
+            quantity=terminal_value,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=terminal_value,
+            unrealized_gain=terminal_value - 1500,
+            unrealized_gain_pct=(terminal_value - 1500) / 1500 * 100,
+        ),
+    ]
+    operations = [
+        Operation(
+            date=datetime(2021, 1, 1),
+            account="retirement-plan",
+            name="Retirement plan",
+            operation_type=OperationType.BUY,
+            quantity=1000.0,
+            price_per_unit=1.0,
+            total_amount=-1000.0,
+        ),
+        Operation(
+            date=datetime.combine(contribution_date, datetime.min.time()),
+            account="retirement-plan",
+            name="Retirement plan",
+            operation_type=OperationType.BUY,
+            quantity=500.0,
+            price_per_unit=1.0,
+            total_amount=-500.0,
+        ),
+    ]
+
+    enriched = _enrich_with_returns(
+        _positions_to_df(positions),
+        operations,
+        account_type_map={"retirement-plan": "PER / PERCO"},
+        account_category_map={"retirement-plan": "retirement"},
+    )
+    current = enriched[enriched["snapshot_date"] == end_date].iloc[0]
+
+    assert current["xirr_rolling_3y"] == pytest.approx(10.0, abs=0.01)
+    assert current["xirr_rolling_period_years"] == 3.0
 
 
 def test_returns_are_isolated_by_account_for_the_same_ticker():
@@ -295,4 +368,6 @@ def test_returns_are_disabled_for_livrets_and_synthetic_brokerage_cash():
     )
 
     assert enriched["xirr"].isna().all()
+    assert enriched["xirr_rolling_3y"].isna().all()
+    assert enriched["xirr_rolling_period_years"].isna().all()
     assert enriched["total_return_pct"].isna().all()

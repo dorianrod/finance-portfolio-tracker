@@ -242,6 +242,8 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
       total_invested: totalInvested,
       total_return_pct: lp ? parseNum(lp.total_return_pct) : null,
       xirr: lp ? parseNum(lp.xirr) : null,
+      xirr_rolling_3y: lp ? parseNum(lp.xirr_rolling_3y) : null,
+      xirr_rolling_period_years: lp ? parseNum(lp.xirr_rolling_period_years) : null,
       subRows,
     })
   }

@@ -21,6 +21,13 @@ import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
 
 const col = createColumnHelper<TableRow>()
 
+function irrPeriodLabel(years: number | null): string {
+  if (years == null) return '3y'
+  if (years >= 3) return '3y'
+  if (years >= 1) return `${Math.floor(years * 10) / 10}y`
+  return `${Math.max(1, Math.round(years * 12))}mo`
+}
+
 interface Props {
   data: PositionRow[]
   groupByType?: boolean
@@ -327,14 +334,24 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
     }),
     col.display({
       id: 'xirr',
-      header: () => <SortHeader label="Annualized IRR" tooltip="Annualized Internal Rate of Return (XIRR). Accounts for the exact timing of each cash flow: purchases = outflows (negative), sales + dividends = inflows (positive), current value = a fictitious inflow as of today. Solves NPV = 0 via the Newton-Raphson method. This is the standard measure portfolio managers use to compare positions with different investment profiles." col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label="Annualized IRR" tooltip="Annualized Internal Rate of Return (XIRR). The main value is calculated since inception. The smaller value measures the trailing three years, using the position value at the start of that window as a fictitious outflow. If less than three years of history are available, it uses and labels the full available period instead. Purchases are outflows; sales, dividends and current value are inflows." col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
-        if (r.kind !== 'position' || r.xirr == null) return null
+        if (r.kind !== 'position' || (r.xirr == null && r.xirr_rolling_3y == null)) return null
         return (
-          <span className={gainClass(r.xirr)}>
-            {fmtPct(r.xirr, 2)}
-            <span className="ml-0.5 text-xs opacity-60">/yr</span>
+          <span className="flex flex-col leading-tight">
+            {r.xirr != null && (
+              <span className={gainClass(r.xirr)}>
+                {fmtPct(r.xirr, 2)}
+                <span className="ml-0.5 text-xs opacity-60">/yr</span>
+              </span>
+            )}
+            {r.xirr != null && (
+              <span className="mt-0.5 text-[10px] text-gray-500">
+                {irrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
+                {r.xirr_rolling_3y != null ? `${fmtPct(r.xirr_rolling_3y, 2)}/yr` : '—'}
+              </span>
+            )}
           </span>
         )
       },

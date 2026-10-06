@@ -32,6 +32,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     total_invested: 900,
     total_return_pct: 11.1,
     xirr: 10,
+    xirr_rolling_3y: 8,
+    xirr_rolling_period_years: 3,
     subRows: [],
     ...overrides,
   }

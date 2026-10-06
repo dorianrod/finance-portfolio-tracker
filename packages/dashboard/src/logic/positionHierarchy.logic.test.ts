@@ -43,6 +43,8 @@ function pos(overrides: Partial<RawPosition>): RawPosition {
     unrealized_gain_net: '140',
     realized_gain_net: '0',
     xirr: '12.5',
+    xirr_rolling_3y: '8.25',
+    xirr_rolling_period_years: '3',
     total_return_pct: '20',
     ...overrides,
   }
@@ -72,6 +74,8 @@ describe('buildPositionRows', () => {
     expect(row.quantity).toBe(10)
     expect(row.last_price).toBe(120)
     expect(row.total_value).toBe(1200)
+    expect(row.xirr_rolling_3y).toBe(8.25)
+    expect(row.xirr_rolling_period_years).toBe(3)
     // total_dividends comes from the latest position snapshot, not a recount of ops
     expect(row.total_dividends).toBe(50)
     expect(row.subRows.map((g) => g.label)).toEqual(['Dividends', 'Buys / Sells'])

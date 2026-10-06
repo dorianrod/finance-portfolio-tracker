@@ -10,7 +10,7 @@ to execute().
 """
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 
@@ -158,6 +158,22 @@ def _enrich_with_returns(
         df["realized_gain"] + df["total_dividends"] + df["total_interest"]
     )
 
+    # Historical values used as the opening outflow of each rolling window.
+    position_history: dict[tuple[str, str], list[tuple[date, float]]] = {}
+    for _, row in df.iterrows():
+        asset_key = row.get("_key")
+        if pd.isna(asset_key):
+            continue
+        history_key = (str(row.get("account", "")), str(asset_key))
+        position_history.setdefault(history_key, []).append(
+            (
+                pd.to_datetime(row["snapshot_date"]).date(),
+                float(row["total_value"]),
+            )
+        )
+    for history in position_history.values():
+        history.sort(key=lambda point: point[0])
+
     # --- per-row XIRR & total_return_pct ---
     # Build cashflow lists per (account, asset, snapshot_date):
     #   BUY  → negative
@@ -168,7 +184,10 @@ def _enrich_with_returns(
     trade_ops = trade_ops[trade_ops["_key"].notna()]
 
     xirr_vals: list[float | None] = []
+    rolling_xirr_vals: list[float | None] = []
+    rolling_period_years: list[float | None] = []
     ret_vals: list[float | None] = []
+    rolling_window = timedelta(days=round(3 * 365.25))
 
     for _, row in df.iterrows():
         account = str(row.get("account", ""))
@@ -197,6 +216,8 @@ def _enrich_with_returns(
 
         if not returns_enabled:
             xirr_vals.append(None)
+            rolling_xirr_vals.append(None)
+            rolling_period_years.append(None)
             ret_vals.append(None)
             continue
 
@@ -221,15 +242,60 @@ def _enrich_with_returns(
         # Sort by date for XIRR
         flows.sort(key=lambda x: x[1])
 
-        xirr_vals.append(_xirr(flows) if flows else None)
+        since_inception_xirr = _xirr(flows) if flows else None
+        xirr_vals.append(since_inception_xirr)
         ret_vals.append(
             ((total_out - total_invested) / total_invested * 100)
             if total_invested > 0
             else None
         )
 
+        window_start = snap_date - rolling_window
+        history = position_history.get((account, str(asset_key)), [])
+        prior_positions = [
+            point for point in history if point[0] <= window_start
+        ]
+        if not prior_positions:
+            first_flow_date = None
+            if not asset_ops.empty:
+                first_flow_date = asset_ops["date"].dt.date.min()
+            available_years = (
+                (snap_date - first_flow_date).days / 365.25
+                if first_flow_date is not None
+                else None
+            )
+            rolling_xirr_vals.append(since_inception_xirr)
+            rolling_period_years.append(available_years)
+            continue
+
+        start_date, start_value = prior_positions[-1]
+        rolling_flows: list[tuple[float, date]] = []
+        if start_value > 0:
+            rolling_flows.append((-start_value, start_date))
+        for _, op in asset_ops[
+            asset_ops["date"].dt.date > start_date
+        ].iterrows():
+            amt = float(op["total_amount"])
+            op_date = op["date"].date()
+            if op["operation_type"] == "BUY":
+                rolling_flows.append((-abs(amt), op_date))
+            else:
+                rolling_flows.append((abs(amt), op_date))
+        if total_value > 0:
+            rolling_flows.append((total_value, snap_date))
+        rolling_flows.sort(key=lambda flow: flow[1])
+        rolling_xirr_vals.append(_xirr(rolling_flows))
+        rolling_period_years.append(3.0)
+
     df["xirr"] = [
         round(v * 100, 2) if v is not None else None for v in xirr_vals
+    ]
+    df["xirr_rolling_3y"] = [
+        round(v * 100, 2) if v is not None else None
+        for v in rolling_xirr_vals
+    ]
+    df["xirr_rolling_period_years"] = [
+        round(v, 2) if v is not None else None for v in rolling_period_years
     ]
     df["total_return_pct"] = [
         round(v, 2) if v is not None else None for v in ret_vals
