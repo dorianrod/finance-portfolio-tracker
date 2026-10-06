@@ -54,3 +54,6 @@ class PortfolioOutputWriter(Protocol):
 
     @abstractmethod
     def write_errors(self, df: pd.DataFrame) -> None: ...
+
+    @abstractmethod
+    def write_manual_price_overrides(self, df: pd.DataFrame) -> None: ...

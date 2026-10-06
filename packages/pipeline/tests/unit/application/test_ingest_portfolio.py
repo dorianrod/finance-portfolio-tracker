@@ -24,6 +24,11 @@ class _NoAccountsRepository:
         return None
 
 
+class _NoManualPricesRepository:
+    def load_manual_prices(self) -> pd.DataFrame:
+        return pd.DataFrame()
+
+
 class _OutputWriterSpy:
     def __init__(self) -> None:
         self.positions: pd.DataFrame | None = None
@@ -70,6 +75,9 @@ class _OutputWriterSpy:
     def write_errors(self, df: pd.DataFrame) -> None:
         pass
 
+    def write_manual_price_overrides(self, df: pd.DataFrame) -> None:
+        pass
+
 
 def _position(account: str, name: str, total_value: float) -> Position:
     return Position(
@@ -89,7 +97,7 @@ def _position(account: str, name: str, total_value: float) -> Position:
 def test_write_outputs_tags_only_brokerage_synthetic_cash_positions():
     output_writer = _OutputWriterSpy()
     use_case = IngestPortfolioUseCase(
-        asset_price_repo=None,  # pyright: ignore[reportArgumentType]
+        asset_price_repo=_NoManualPricesRepository(),  # pyright: ignore[reportArgumentType]
         allocation_repo=_NoAllocationFilesRepository(),  # pyright: ignore[reportArgumentType]
         account_groups_repo=_NoAccountsRepository(),  # pyright: ignore[reportArgumentType]
         broker_data_collector=None,  # pyright: ignore[reportArgumentType]

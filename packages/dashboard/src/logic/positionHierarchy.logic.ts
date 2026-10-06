@@ -225,6 +225,8 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
       account_category,
       status: lp ? 'active' : 'closed',
       operationTypes: new Set(assetOps.map((o) => o.operation_type)),
+      quantity: lp ? parseNum(lp.quantity) : null,
+      last_price: lp ? parseNum(lp.last_price) : null,
       total_value: lp ? parseNum(lp.total_value) : null,
       unrealized_gain: lp ? parseNum(lp.unrealized_gain) : null,
       unrealized_gain_net: lp ? parseNum(lp.unrealized_gain_net) : null,

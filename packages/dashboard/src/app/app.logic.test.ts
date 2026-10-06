@@ -51,6 +51,8 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     account: 'acc1',
     status: 'active',
     operationTypes: new Set(['BUY', 'SELL']),
+    quantity: 10,
+    last_price: 100,
     total_value: 1000,
     unrealized_gain: 100,
     unrealized_gain_net: 70,

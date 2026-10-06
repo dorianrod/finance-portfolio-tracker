@@ -8,7 +8,7 @@ import {
 import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/types/domain'
 import type { SortKey } from '@/types/filters'
-import { fmt, fmtDec, fmtPct } from '@/shared/format/money'
+import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
 import { gainClass } from './positionsTable.logic'
 import { GainCell, UnrealizedGainCell, RealizedGainCell } from './GainCells'
 import { ExpandBtn } from './ExpandBtn'
@@ -17,6 +17,7 @@ import { HoverChart, type ChartTarget } from '@/features/hover-charts/HoverChart
 import { HoverSavingsChart, type SavingsChartTarget } from '@/features/hover-charts/HoverSavingsChart'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/features/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/hooks/useAllocationByIsin'
+import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
 
 const col = createColumnHelper<TableRow>()
 
@@ -117,9 +118,20 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         const r = row.original
         if (r.kind === 'position') {
           const hasAlloc = r.isin ? !!allocationData.get(r.isin) : false
+          const showQuantity = r.account_category === 'brokerage'
+            && !r.account_type?.endsWith(CASH_SUFFIX)
+            && r.quantity != null
           return r.total_value != null ? (
-            <span className={`text-white font-medium ${hasAlloc ? 'underline decoration-dashed decoration-gray-500 underline-offset-2' : ''}`}>
-              {fmt.format(r.total_value)}
+            <span className="flex flex-col leading-tight">
+              <span className={`text-white font-medium ${hasAlloc ? 'underline decoration-dashed decoration-gray-500 underline-offset-2' : ''}`}>
+                {fmt.format(r.total_value)}
+              </span>
+              {showQuantity && (
+                <span className="text-[10px] text-gray-500 mt-0.5">
+                  {fmtQty.format(r.quantity!)}
+                  {r.last_price != null && <> · {fmtDec.format(r.last_price)}</>}
+                </span>
+              )}
             </span>
           ) : <span className="text-gray-500">—</span>
         }

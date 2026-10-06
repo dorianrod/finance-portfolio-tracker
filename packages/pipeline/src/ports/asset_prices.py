@@ -43,6 +43,16 @@ class AssetPriceRepository(Protocol):
         ...
 
     @abstractmethod
+    def load_manual_prices(self) -> pd.DataFrame:
+        """Return one row per configured manual price override.
+
+        Unlike load_all(), rows are not expanded month by month. The source
+        filename is included so the dashboard can make every override
+        visible and traceable.
+        """
+        ...
+
+    @abstractmethod
     def existing_months(self) -> set[tuple[int, int]]:
         """(year, month) pairs that already have a generated price file."""
         ...

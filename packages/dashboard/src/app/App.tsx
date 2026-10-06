@@ -4,6 +4,7 @@ import { usePortfolioHistory } from '@/hooks/usePortfolioHistory'
 import { useCashHistory } from '@/hooks/useCashHistory'
 import { useAllPositions } from '@/hooks/useAllPositions'
 import { useErrors } from '@/hooks/useErrors'
+import { useManualPriceOverrides } from '@/hooks/useManualPriceOverrides'
 import { PositionsTable } from '@/features/positions-table/PositionsTable'
 import { FilterBar } from '@/features/filters/FilterBar'
 import { KpiBar } from '@/features/kpis/KpiBar'
@@ -27,6 +28,7 @@ export default function App() {
   const { cashHistory } = useCashHistory()
   const allPositionRows = useAllPositions()
   const { errors: pipelineErrors } = useErrors()
+  const { manualPriceOverrides } = useManualPriceOverrides()
 
   const enrichedHistory = useMemo(() => {
     const cashByDate = new Map(cashHistory.map((c) => [c.date, c.total_broker_cash]))
@@ -177,6 +179,11 @@ export default function App() {
                     {pipelineErrors.length}
                   </span>
                 )}
+                {manualPriceOverrides.length > 0 && (
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-900/60 text-blue-300">
+                    {manualPriceOverrides.length} manual
+                  </span>
+                )}
               </button>
             </div>
             {activeTab === 'charts' && filteredHistory.length > 0 && (
@@ -189,7 +196,7 @@ export default function App() {
               <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
             )}
             {activeTab === 'errors' && (
-              <ErrorsTab errors={pipelineErrors} />
+              <ErrorsTab errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />
             )}
           </>
         )}

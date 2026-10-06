@@ -15,6 +15,7 @@ _SIMPLE_DF_METHODS = [
     ("write_saving_capacity_by_account", "saving_capacity_by_account.csv"),
     ("write_accounts", "accounts.csv"),
     ("write_errors", "errors.csv"),
+    ("write_manual_price_overrides", "manual_price_overrides.csv"),
 ]
 
 

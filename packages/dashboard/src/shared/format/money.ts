@@ -1,5 +1,6 @@
 export const fmt = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
 export const fmtDec = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 })
+export const fmtQty = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 })
 
 export function fmtEur(v: number): string {
   if (Math.abs(v) >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M€`

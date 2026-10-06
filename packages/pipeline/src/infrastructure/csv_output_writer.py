@@ -54,6 +54,9 @@ class CsvOutputWriter(PortfolioOutputWriter):
     def write_errors(self, df: pd.DataFrame) -> None:
         self._write(df, "errors.csv")
 
+    def write_manual_price_overrides(self, df: pd.DataFrame) -> None:
+        self._write(df, "manual_price_overrides.csv")
+
     def _write(self, df: pd.DataFrame, filename: str) -> None:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         df.to_csv(self.output_dir / filename, index=False)

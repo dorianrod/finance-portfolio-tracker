@@ -86,6 +86,8 @@ export interface PositionRow {
   account_category?: string
   status: 'active' | 'closed'
   operationTypes: Set<string>
+  quantity: number | null
+  last_price: number | null
   total_value: number | null
   unrealized_gain: number | null
   unrealized_gain_net: number | null

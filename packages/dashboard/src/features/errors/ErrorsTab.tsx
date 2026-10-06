@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { ErrorRow } from '@/hooks/useErrors'
+import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
 
 const TYPE_LABELS: Record<string, string> = {
   unresolved_ticker: 'Unresolved ticker',
@@ -18,6 +19,7 @@ type SortCol = 'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message
 
 interface Props {
   errors: ErrorRow[]
+  manualPriceOverrides: ManualPriceOverride[]
 }
 
 function SortIcon({ col, sortCol, dir }: { col: SortCol; sortCol: SortCol; dir: 'asc' | 'desc' }) {
@@ -25,7 +27,21 @@ function SortIcon({ col, sortCol, dir }: { col: SortCol; sortCol: SortCol; dir: 
   return <span className="ml-1 text-gray-400">{dir === 'asc' ? '↑' : '↓'}</span>
 }
 
-export function ErrorsTab({ errors }: Props) {
+function formatManualPrice(row: ManualPriceOverride): string {
+  const price = Number(row.price)
+  if (!Number.isFinite(price)) return `${row.price} ${row.currency}`.trim()
+  try {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: row.currency || 'EUR',
+      maximumFractionDigits: 4,
+    }).format(price)
+  } catch {
+    return `${row.price} ${row.currency}`.trim()
+  }
+}
+
+export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [sortCol, setSortCol] = useState<SortCol>('date')
@@ -68,20 +84,20 @@ export function ErrorsTab({ errors }: Props) {
   const errorCount   = errors.filter((e) => e.level === 'error').length
   const warningCount = errors.filter((e) => e.level === 'warning').length
 
-  if (errors.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-        <svg className="w-12 h-12 mb-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-        <p className="text-lg font-medium text-gray-300">No anomalies detected</p>
-        <p className="text-sm mt-1">All data was loaded correctly.</p>
-      </div>
-    )
-  }
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
+      {errors.length === 0 ? (
+        <div className="flex items-center gap-3 rounded-lg border border-green-900/50 bg-green-950/10 px-4 py-3 text-gray-500">
+          <svg className="w-7 h-7 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <p className="text-sm font-medium text-gray-300">No anomalies detected</p>
+            <p className="text-xs mt-0.5">All data was loaded correctly.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
       {/* Summary badges */}
       <div className="flex flex-wrap gap-3 items-center">
         <span className="text-sm text-gray-400">
@@ -219,6 +235,66 @@ export function ErrorsTab({ errors }: Props) {
           Showing {filtered.length} / {errors.length} anomalies
         </p>
       )}
+        </div>
+      )}
+
+      <section className="space-y-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-200">Manual price overrides</h2>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/60 text-blue-300">
+              {manualPriceOverrides.length}
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Prices forced from asset_prices/others. Open-ended overrides replace automatic market prices until removed or given an end date.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto rounded-lg border border-gray-800">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-gray-800 bg-gray-900/60 text-left text-gray-400">
+                <th className="px-3 py-2 font-medium w-24">Status</th>
+                <th className="px-3 py-2 font-medium">Asset</th>
+                <th className="px-3 py-2 font-medium w-28">ISIN / Ticker</th>
+                <th className="px-3 py-2 font-medium w-24">Forced price</th>
+                <th className="px-3 py-2 font-medium w-24">From</th>
+                <th className="px-3 py-2 font-medium w-24">Until</th>
+                <th className="px-3 py-2 font-medium w-36">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {manualPriceOverrides.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-8 text-gray-500">No manual price overrides</td>
+                </tr>
+              ) : manualPriceOverrides.map((row, index) => {
+                const openEnded = !row.date_to
+                return (
+                  <tr key={`${row.source_file}-${index}`} className="border-b border-gray-800/50 hover:bg-gray-900/40">
+                    <td className="px-3 py-2">
+                      <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                        openEnded
+                          ? 'bg-yellow-900/60 text-yellow-300'
+                          : 'bg-gray-800 text-gray-400'
+                      }`}>
+                        {openEnded ? 'Open-ended' : 'Bounded'}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-gray-300">{row.name || '—'}</td>
+                    <td className="px-3 py-2 text-gray-500 font-mono">{row.isin || row.ticker || '—'}</td>
+                    <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row)}</td>
+                    <td className="px-3 py-2 text-gray-400 font-mono">{row.date_from || '—'}</td>
+                    <td className="px-3 py-2 text-gray-400 font-mono">{row.date_to || '—'}</td>
+                    <td className="px-3 py-2 text-gray-500 font-mono">{row.source_file}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   )
 }

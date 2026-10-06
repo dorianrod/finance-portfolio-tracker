@@ -69,6 +69,8 @@ describe('buildPositionRows', () => {
     expect(rows).toHaveLength(1)
     const row = rows[0]
     expect(row.status).toBe('active')
+    expect(row.quantity).toBe(10)
+    expect(row.last_price).toBe(120)
     expect(row.total_value).toBe(1200)
     // total_dividends comes from the latest position snapshot, not a recount of ops
     expect(row.total_dividends).toBe(50)

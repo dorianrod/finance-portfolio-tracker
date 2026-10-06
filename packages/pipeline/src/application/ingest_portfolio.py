@@ -436,6 +436,9 @@ class IngestPortfolioUseCase:
         # dashboard/public/data is hardlinked to data/output — no copy needed
 
         self.output_writer.write_errors(errors.to_df())
+        self.output_writer.write_manual_price_overrides(
+            self.asset_price_repo.load_manual_prices()
+        )
         if len(errors) > 0:
             n_err = sum(
                 1 for e in errors.to_df().itertuples() if e.level == "error"
