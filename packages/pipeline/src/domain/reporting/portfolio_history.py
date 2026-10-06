@@ -84,6 +84,8 @@ def portfolio_history_snapshot(
     monthly["tri"] = monthly["snapshot_date"].map(tri_by_date)
 
     rolling_tri_by_date = rolling_tri_series(positions, operations)
-    monthly["tri_rolling_3y"] = monthly["snapshot_date"].map(rolling_tri_by_date)
+    monthly["tri_rolling_3y"] = monthly["snapshot_date"].map(
+        rolling_tri_by_date
+    )
 
     return monthly.reset_index(drop=True)
