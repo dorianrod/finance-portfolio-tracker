@@ -190,7 +190,7 @@ export default function App() {
               <PortfolioCharts history={filteredHistory} accounts={filters.accounts} accountTypeData={accountTypeData} positions={filtered} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />
             )}
             {activeTab === 'allocation' && (
-              <AllocationCharts />
+              <AllocationCharts positions={filtered} accountLabels={accountLabels} />
             )}
             {activeTab === 'table' && (
               <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
