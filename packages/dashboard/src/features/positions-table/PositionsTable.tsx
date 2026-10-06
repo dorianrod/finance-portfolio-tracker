@@ -117,7 +117,8 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const hasAlloc = r.isin ? !!allocationData.get(r.isin) : false
+          const allocKey = r.isin || `NC-${r.name}`
+          const hasAlloc = !!allocationData.get(allocKey)
           const showQuantity = r.account_category === 'brokerage'
             && !r.account_type?.endsWith(CASH_SUFFIX)
             && r.quantity != null
@@ -417,14 +418,15 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   }
                 })() : null
 
-                const allocationHandlers = (isPosition && r.kind === 'position' && r.isin) ? (() => {
-                  const alloc = allocationData.get(r.isin)
+                const allocationHandlers = (isPosition && r.kind === 'position') ? (() => {
+                  const allocKey = r.isin || `NC-${r.name}`
+                  const alloc = allocationData.get(allocKey)
                   if (!alloc) return null
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
                       setChart(null); setSavingsChart(null)
-                      setAllocationHover({ isin: r.isin, name: r.name, buttonRect: e.currentTarget.getBoundingClientRect(), allocation: alloc })
+                      setAllocationHover({ isin: allocKey, name: r.name, buttonRect: e.currentTarget.getBoundingClientRect(), allocation: alloc })
                     },
                     onMouseLeave: scheduleHide,
                   }

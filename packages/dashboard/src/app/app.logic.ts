@@ -120,6 +120,7 @@ export function applyAccountFilterToHistory(
       net_cash_injected: 0,
       cash_delta: null,
       tri: null,
+      tri_rolling_3y: null,
       total_broker_cash: 0,
     }))
 }

@@ -8,7 +8,7 @@ One row per month-end date, all accounts aggregated:
 import pandas as pd
 
 from src.domain.models import Operation, OperationType, Position
-from src.domain.tri import monthly_tri_series
+from src.domain.tri import monthly_tri_series, rolling_tri_series
 
 
 def portfolio_history_snapshot(
@@ -82,5 +82,8 @@ def portfolio_history_snapshot(
 
     tri_by_date = monthly_tri_series(positions, operations)
     monthly["tri"] = monthly["snapshot_date"].map(tri_by_date)
+
+    rolling_tri_by_date = rolling_tri_series(positions, operations)
+    monthly["tri_rolling_3y"] = monthly["snapshot_date"].map(rolling_tri_by_date)
 
     return monthly.reset_index(drop=True)

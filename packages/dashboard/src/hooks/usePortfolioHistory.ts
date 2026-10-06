@@ -18,6 +18,10 @@ export function usePortfolioHistory() {
           net_cash_injected: parseFloat(r.net_cash_injected) || 0,
           cash_delta: r.cash_delta !== '' ? parseFloat(r.cash_delta) : null,
           tri: r.tri !== '' && r.tri != null ? parseFloat(r.tri) : null,
+          tri_rolling_3y:
+            r.tri_rolling_3y !== '' && r.tri_rolling_3y != null
+              ? parseFloat(r.tri_rolling_3y)
+              : null,
         }))
         setHistory(points)
         setLoading(false)

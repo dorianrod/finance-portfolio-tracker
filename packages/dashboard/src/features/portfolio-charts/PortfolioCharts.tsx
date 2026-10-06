@@ -16,6 +16,7 @@ import { MonthlySavingsChart } from './MonthlySavingsChart'
 import { PassiveIncomeChart } from './PassiveIncomeChart'
 import { AccountTypeHistoryChart } from './AccountTypeHistoryChart'
 import { EvolutionChart } from './EvolutionChart'
+import { TriChart } from './TriChart'
 import { TopPerformersChart } from './TopPerformersChart'
 
 interface Props {
@@ -60,6 +61,9 @@ export function PortfolioCharts({ history, accounts, accountTypeData, positions,
 
       {/* ── Row 3: Portfolio value over time ────────────────────────────── */}
       <EvolutionChart history={history} />
+
+      {/* ── Row 3b: TRI over time ───────────────────────────────────────── */}
+      <TriChart history={history} />
 
       {/* ── Row 4: Performance by position ─────────────────────────────── */}
       {topPerformers.length > 0 && <TopPerformersChart data={topPerformers} height={topPerformersHeight} />}

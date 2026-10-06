@@ -29,6 +29,7 @@ function serveFinanceData(): Plugin {
       return
     }
     res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+    res.setHeader('Cache-Control', 'no-store')
     res.end(readFileSync(filePath))
   }
 

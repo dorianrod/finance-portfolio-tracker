@@ -213,7 +213,7 @@ def build_positions_allocation_by_isin(
                         alloc_idx = clean_to_idx[clean_name]
 
                 pct_map: dict[str, float] | None = None
-                if alloc_idx is not None and isin:
+                if alloc_idx is not None:
                     alloc_row = cast(pd.Series, df_alloc.loc[alloc_idx])
                     pct_map = {
                         col: float(alloc_row.get(col, 0) or 0)
