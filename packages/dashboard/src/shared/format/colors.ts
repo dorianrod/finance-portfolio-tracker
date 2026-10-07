@@ -6,6 +6,7 @@ const ALLOCATION_PALETTE = [
   '#a855f7', '#f43f5e',
 ]
 const NC_COLOR = '#374151'
+const NOT_CONCERNED_COLOR = '#94a3b8'
 const AUTRE_COLOR = '#6b7280'
 
 const ALLOCATION_CATEGORY_COLORS: Record<string, string> = {
@@ -30,6 +31,7 @@ function hashColor(name: string): string {
 
 export function catColor(name: string): string {
   if (name === 'nc') return NC_COLOR
+  if (name === 'Not concerned') return NOT_CONCERNED_COLOR
   if (name === 'autre' || name === 'Autre' || name.startsWith('others (')) return AUTRE_COLOR
   return ALLOCATION_CATEGORY_COLORS[name] ?? hashColor(name)
 }

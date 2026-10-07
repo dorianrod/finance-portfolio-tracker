@@ -2,6 +2,8 @@ import type { AllocationPoint } from '@/hooks/useAllocationData'
 import type { RawIsinRow, RawIsinData } from '@/hooks/useRawIsinData'
 import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'
 
+const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])
+
 export function groupTail(cats: Array<{ name: string; value: number }>): {
   main: Array<{ name: string; value: number }>
   grouped: Array<{ name: string; value: number }>
@@ -18,21 +20,24 @@ export function groupTail(cats: Array<{ name: string; value: number }>): {
     if (cumulative >= total * 0.85) break
   }
   const grouped = sorted.slice(splitIdx)
-  if (grouped.length <= 1) return { main: sorted, grouped: [] }
-  return { main: sorted.slice(0, splitIdx), grouped }
+  const pinned = grouped.filter((category) => PINNED_CATEGORIES.has(category.name))
+  const groupable = grouped.filter((category) => !PINNED_CATEGORIES.has(category.name))
+  if (groupable.length <= 1) return { main: sorted, grouped: [] }
+  return { main: [...sorted.slice(0, splitIdx), ...pinned], grouped: groupable }
 }
 
 export function computeMatchingIsins(rawData: RawIsinData, filter: AllocationFilter | null): Set<string> {
   if (!filter) return new Set()
   const rows = rawData[filter.type]
-  const latestByIsin = new Map<string, RawIsinRow>()
-  for (const row of rows) {
-    const cur = latestByIsin.get(row.isin)
-    if (!cur || row.snapshot_date > cur.snapshot_date) latestByIsin.set(row.isin, row)
-  }
+  const latestDate = rows.reduce(
+    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    '',
+  )
   const result = new Set<string>()
-  for (const [isin, row] of latestByIsin) {
-    if ((row.values[filter.value] ?? 0) > 0) result.add(isin)
+  for (const row of rows) {
+    if (row.snapshot_date === latestDate && (row.values[filter.value] ?? 0) > 0) {
+      result.add(row.isin)
+    }
   }
   return result
 }
@@ -72,36 +77,26 @@ export function computeTableRows(
   matchingIsins: Set<string>,
   filter: AllocationFilter,
 ): MatchingIsinRow[] {
-  // Total value per ISIN (from any dimension, latest snapshot)
-  const byIsin = new Map<string, { name: string; totalValue: number; date: string }>()
-  for (const dim of ['geo', 'secteur', 'currency', 'classe'] as const) {
-    for (const row of rawData[dim]) {
-      if (!matchingIsins.has(row.isin)) continue
-      const cur = byIsin.get(row.isin)
-      if (!cur || row.snapshot_date > cur.date) {
-        const total = Object.values(row.values).reduce((s, v) => s + v, 0)
-        byIsin.set(row.isin, { name: row.name, totalValue: total, date: row.snapshot_date })
-      }
+  const rows = rawData[filter.type]
+  const latestDate = rows.reduce(
+    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    '',
+  )
+  const byIsin = new Map<string, MatchingIsinRow>()
+  for (const row of rows) {
+    if (row.snapshot_date !== latestDate || !matchingIsins.has(row.isin)) continue
+    const totalValue = Object.values(row.values).reduce((sum, value) => sum + value, 0)
+    const filteredValue = row.values[filter.value] ?? 0
+    const current = byIsin.get(row.isin)
+    if (current) {
+      current.totalValue += totalValue
+      current.filteredValue += filteredValue
+    } else {
+      byIsin.set(row.isin, { isin: row.isin, name: row.name, totalValue, filteredValue })
     }
   }
 
-  // Filtered category value per ISIN (from the filter dimension, latest snapshot)
-  const latestFilterDim = new Map<string, Record<string, number>>()
-  const latestFilterDate = new Map<string, string>()
-  for (const row of rawData[filter.type]) {
-    if (!matchingIsins.has(row.isin)) continue
-    const curDate = latestFilterDate.get(row.isin)
-    if (!curDate || row.snapshot_date > curDate) {
-      latestFilterDim.set(row.isin, row.values)
-      latestFilterDate.set(row.isin, row.snapshot_date)
-    }
-  }
-
-  return [...byIsin.entries()]
-    .map(([isin, { name, totalValue }]) => {
-      const filteredValue = latestFilterDim.get(isin)?.[filter.value] ?? 0
-      return { isin, name, totalValue, filteredValue }
-    })
+  return [...byIsin.values()]
     .sort((a, b) => b.filteredValue - a.filteredValue)
 }
 

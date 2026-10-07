@@ -37,6 +37,22 @@ describe('groupTail', () => {
     expect(grouped).toEqual([])
     expect(main.map((c) => c.name)).toEqual(['a', 'b', 'c', 'd', 'e'])
   })
+
+  it('keeps Not concerned and nc visible instead of folding them into others', () => {
+    const cats = [
+      { name: 'a', value: 85 },
+      { name: 'b', value: 5 },
+      { name: 'c', value: 4 },
+      { name: 'Not concerned', value: 3 },
+      { name: 'nc', value: 2 },
+      { name: 'd', value: 1 },
+    ]
+    const { main, grouped } = groupTail(cats)
+    expect(main.map((c) => c.name)).toContain('Not concerned')
+    expect(main.map((c) => c.name)).toContain('nc')
+    expect(grouped.map((c) => c.name)).not.toContain('Not concerned')
+    expect(grouped.map((c) => c.name)).not.toContain('nc')
+  })
 })
 
 describe('computeMatchingIsins', () => {
@@ -46,6 +62,7 @@ describe('computeMatchingIsins', () => {
         { snapshot_date: '2024-01-01', isin: 'A', name: 'A', values: { france: 100 } },
         { snapshot_date: '2024-02-01', isin: 'A', name: 'A', values: { france: 0, europe: 50 } },
         { snapshot_date: '2024-02-01', isin: 'B', name: 'B', values: { france: 30 } },
+        { snapshot_date: '2024-01-01', isin: 'OLD', name: 'Closed position', values: { france: 500 } },
       ],
     })
     expect(computeMatchingIsins(data, { type: 'geo', value: 'france' })).toEqual(new Set(['B']))
@@ -57,18 +74,20 @@ describe('computeMatchingIsins', () => {
 })
 
 describe('computeTableRows', () => {
-  it('pairs each matching isin\'s total value with its filtered-category value, sorted desc', () => {
+  it('uses only the global latest snapshot and combines duplicate isin rows', () => {
     const data = rawData({
       geo: [
-        { snapshot_date: '2024-01-01', isin: 'A', name: 'Asset A', values: { france: 100, europe: 50 } },
-        { snapshot_date: '2024-01-01', isin: 'B', name: 'Asset B', values: { france: 20 } },
+        { snapshot_date: '2024-01-01', isin: 'OLD', name: 'Closed asset', values: { france: 500 } },
+        { snapshot_date: '2024-02-01', isin: 'A', name: 'Asset A', values: { france: 100, europe: 50 } },
+        { snapshot_date: '2024-02-01', isin: 'B', name: 'Asset B', values: { france: 20 } },
+        { snapshot_date: '2024-02-01', isin: 'B', name: 'Asset B', values: { france: 5, europe: 5 } },
       ],
     })
-    const matching = new Set(['A', 'B'])
+    const matching = new Set(['OLD', 'A', 'B'])
     const rows = computeTableRows(data, matching, { type: 'geo', value: 'france' })
     expect(rows).toEqual([
       { isin: 'A', name: 'Asset A', totalValue: 150, filteredValue: 100 },
-      { isin: 'B', name: 'Asset B', totalValue: 20, filteredValue: 20 },
+      { isin: 'B', name: 'Asset B', totalValue: 30, filteredValue: 25 },
     ])
   })
 })
