@@ -77,20 +77,26 @@ export function TriTooltip({ active, payload, label }: any) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tri1y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_1y')?.value ?? null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tri1yBackfill: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_1y_backfill')?.value ?? null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tri3y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_3y')?.value ?? null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tri3yBackfill: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_3y_backfill')?.value ?? null
+  const showTri1y = tri1y !== null || tri1yBackfill !== null
+  const showTri3y = tri3y !== null || tri3yBackfill !== null
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
-      {tri1y != null && (
+      {showTri1y && (
         <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
-          IRR (1y): {tri1y >= 0 ? '+' : ''}{tri1y.toFixed(2)}%
+          IRR (1y): {tri1y === null ? 'Not yet available' : `${tri1y >= 0 ? '+' : ''}${tri1y.toFixed(2)}%`}
         </div>
       )}
-      {tri3y != null && (
-        <div style={{ color: SEMANTIC_COLORS.returnRate, fontWeight: 600, marginTop: tri1y == null ? 0 : 4 }}>
-          IRR (3y): {tri3y >= 0 ? '+' : ''}{tri3y.toFixed(2)}%
+      {showTri3y && (
+        <div style={{ color: SEMANTIC_COLORS.returnRate, fontWeight: 600, marginTop: showTri1y ? 4 : 0 }}>
+          IRR (3y): {tri3y === null ? 'Not yet available' : `${tri3y >= 0 ? '+' : ''}${tri3y.toFixed(2)}%`}
         </div>
       )}
     </TooltipBox>

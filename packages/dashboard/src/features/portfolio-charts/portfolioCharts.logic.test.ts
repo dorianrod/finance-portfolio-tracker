@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   buildAccountTypeLabels,
+  buildTriChartData,
   buildCumulativeWealthDrivers,
   computeConcentration,
   computePerformanceSummary,
@@ -16,6 +17,48 @@ import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 import type { PositionRow } from '@/types/domain'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
+import type { PortfolioHistoryPoint } from '@/types/history'
+
+function historyPoint(
+  date: string,
+  tri1y: number | null,
+  tri3y: number | null,
+): PortfolioHistoryPoint {
+  return {
+    date,
+    total_value: 0,
+    total_cost_basis: 0,
+    unrealized_gain: 0,
+    net_cash_injected: 0,
+    cash_delta: null,
+    tri: null,
+    tri_rolling_1y: tri1y,
+    tri_rolling_3y: tri3y,
+  }
+}
+
+describe('buildTriChartData', () => {
+  it('starts at the first history point and backfills each missing rolling span with its first value', () => {
+    const result = buildTriChartData([
+      historyPoint('2021-01-01', null, null),
+      historyPoint('2022-01-01', 8, null),
+      historyPoint('2023-01-01', 10, null),
+      historyPoint('2024-01-01', 12, 7),
+      historyPoint('2025-01-01', 9, 6),
+    ])
+
+    expect(result.map((point) => point.date)).toEqual([
+      '2021-01-01', '2022-01-01', '2023-01-01', '2024-01-01', '2025-01-01',
+    ])
+    expect(result.map((point) => point.tri_rolling_1y_backfill)).toEqual([8, 8, null, null, null])
+    expect(result.map((point) => point.tri_rolling_3y_backfill)).toEqual([7, 7, 7, 7, null])
+    expect(result.map((point) => point.tri_rolling_3y)).toEqual([null, null, null, 7, 6])
+  })
+
+  it('returns no chart data when no rolling IRR exists', () => {
+    expect(buildTriChartData([historyPoint('2021-01-01', null, null)])).toEqual([])
+  })
+})
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {

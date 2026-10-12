@@ -49,14 +49,10 @@ export function PerformanceTab({ history, passiveIncome, positions, performance,
         </section>
       </div>
       {(history.length > 0 || passiveIncome.length > 0) && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {history.length > 0 && <UnrealizedPnlChart history={history} />}
           {history.length > 0 && <TriChart history={history} />}
-          {passiveIncome.length > 0 && (
-            <div className="lg:col-span-2">
-              <PassiveIncomeChart data={passiveIncome} />
-            </div>
-          )}
+          {passiveIncome.length > 0 && <PassiveIncomeChart data={passiveIncome} />}
         </div>
       )}
       {performers.length > 0 && <TopPerformersChart data={performers} height={Math.max(260, performers.length * 26)} />}
