@@ -1,8 +1,11 @@
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from src.application.broker_data_collector import BrokerDataCollector
+from src.domain.models import Operation, OperationType
 from src.infrastructure.parsers.boursorama import BoursoramaLoader
 from src.infrastructure.parsers.revolut import RevolutLoader
 
@@ -72,3 +75,36 @@ def test_collect_keeps_running_when_one_loader_fails(
     assert operations == ["op"]
     assert positions == ["position"]
     assert [(f.label, f.message) for f in failures] == [("bad", "bad csv")]
+
+
+def test_collect_rejects_account_emitted_by_multiple_sources(
+    tmp_path: Path, monkeypatch
+):
+    collector = BrokerDataCollector(
+        input_dir=tmp_path,
+        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
+    )
+
+    class Loader:
+        def __init__(self, label: str):
+            self.label = label
+
+        def load(self, ticker_map, asset_prices):
+            return [
+                Operation(
+                    date=datetime(2024, 1, 1),
+                    account="shared",
+                    operation_type=OperationType.DEPOSIT,
+                    total_amount=100.0,
+                )
+            ], []
+
+    monkeypatch.setattr(
+        collector,
+        "_build_loaders",
+        lambda: [Loader("direct/a.csv"), Loader("valuations/b.csv")],
+    )
+
+    pattern = "shared.*direct/a.csv.*valuations/b.csv"
+    with pytest.raises(ValueError, match=pattern):
+        collector.collect(pd.DataFrame())

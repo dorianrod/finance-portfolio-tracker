@@ -73,9 +73,9 @@ def portfolio_performance(
     """Decompose total portfolio value into cumulative external flows and
     performance.
 
-    External flows = DEPOSIT + WITHDRAWAL + DIVIDEND + INTEREST
-    (cash entering/leaving the portfolio). BUY/SELL are internal
-    (cash ↔ securities) and are not flows.
+    External flows = DEPOSIT + WITHDRAWAL. BUY/SELL, dividends and interest
+    are internal portfolio movements unless an explicit WITHDRAWAL records
+    that the proceeds left the tracked portfolio.
 
     Returns a dict with keys:
         all_months   – sorted list of Period objects
@@ -92,9 +92,7 @@ def portfolio_performance(
     monthly_total = pos.groupby("month")["total_value"].sum()
 
     ext_ops = operations_df[
-        operations_df["operation_type"].isin(
-            ["DEPOSIT", "WITHDRAWAL", "DIVIDEND", "INTEREST"]
-        )
+        operations_df["operation_type"].isin(["DEPOSIT", "WITHDRAWAL"])
     ].copy()
     ext_ops["month"] = ext_ops["date"].dt.to_period("M")
     monthly_flows = ext_ops.groupby("month")["total_amount"].sum()
@@ -266,10 +264,10 @@ def monthly_dietz_returns(
 ) -> pd.Series:
     """Monthly Modified Dietz returns for the whole portfolio.
 
-    When cash_df is provided, uninvested cash is added to portfolio value
-    and only DEPOSIT/WITHDRAWAL count as external flows (dividends stay
-    in portfolio). Without cash_df, DEPOSIT/WITHDRAWAL/DIVIDEND/INTEREST
-    are all treated as external flows.
+    When cash_df is provided, uninvested cash is added to portfolio value.
+    In both modes, only DEPOSIT/WITHDRAWAL count as external flows. A
+    dividend or interest payment that leaves the tracked portfolio must be
+    accompanied by an explicit WITHDRAWAL.
 
     Returns a Series indexed by month-end timestamps, named 'Portfolio'.
     The first month is dropped (no V0 reference) and >200% monthly
@@ -293,14 +291,12 @@ def monthly_dietz_returns(
             monthly_pos.reindex(all_m).ffill().fillna(0)
             + monthly_cash.reindex(all_m).ffill().fillna(0)
         ).sort_index()
-        flow_types = ["DEPOSIT", "WITHDRAWAL"]
     else:
         all_m = sorted(monthly_pos.index)
         tv = monthly_pos.reindex(all_m).ffill().fillna(0)
-        flow_types = ["DEPOSIT", "WITHDRAWAL", "DIVIDEND", "INTEREST"]
 
     ext_ops = operations_df[
-        operations_df["operation_type"].isin(flow_types)
+        operations_df["operation_type"].isin(["DEPOSIT", "WITHDRAWAL"])
     ].copy()
     ext_ops["month"] = ext_ops["date"].dt.to_period("M")
     monthly_flows = ext_ops.groupby("month")["total_amount"].sum()

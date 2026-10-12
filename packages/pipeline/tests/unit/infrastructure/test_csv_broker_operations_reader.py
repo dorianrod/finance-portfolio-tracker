@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from src.domain.models import OperationType
 from src.infrastructure.csv_broker_operations_reader import (
     CsvBrokerOperationsReader,
 )
@@ -206,10 +207,13 @@ def test_read_all_parses_valuations_when_present(tmp_path: Path):
 
     ops = reader.read_all()
 
-    assert len(ops) == 1
-    assert ops[0].account == "insurer"
-    assert ops[0].isin is None
-    assert ops[0].ticker is None
+    assert [op.operation_type for op in ops] == [
+        OperationType.DEPOSIT,
+        OperationType.BUY,
+    ]
+    assert all(op.account == "insurer" for op in ops)
+    assert all(op.isin is None for op in ops)
+    assert all(op.ticker is None for op in ops)
 
 
 def test_read_all_skips_missing_direct_and_valuations_dirs(tmp_path: Path):
@@ -235,4 +239,8 @@ def test_read_all_parses_direct_and_valuations_in_subfolders(
 
     ops = reader.read_all()
 
-    assert [op.account for op in ops] == ["bourse", "insurer"]
+    assert [op.account for op in ops] == [
+        "bourse",
+        "insurer",
+        "insurer",
+    ]

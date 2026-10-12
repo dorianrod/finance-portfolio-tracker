@@ -19,7 +19,11 @@ from src.infrastructure.parsers.valuations import ValuationsLoader, parse
 _TODAY = date.today()
 _PREV_MONTH_END = date(_TODAY.year, _TODAY.month, 1) - timedelta(days=1)
 
-_HEADER = "date,account,isin,ticker,name,value,invested,currency,tax_rate\n"
+_HEADER = (
+    "date,account,isin,ticker,name,value,invested,quantity,proceeds,"
+    "sale_price_per_unit,distribution,currency,"
+    "tax_rate,realized_tax_rate,dividend_tax_rate\n"
+)
 
 
 def _row(
@@ -28,10 +32,16 @@ def _row(
     name: str,
     value: str,
     invested: str = "",
+    quantity: str = "",
+    proceeds: str = "",
+    sale_price_per_unit: str = "",
+    distribution: str = "",
     isin: str = "",
     ticker: str = "",
     currency: str = "",
     tax_rate: str = "",
+    realized_tax_rate: str = "",
+    dividend_tax_rate: str = "",
 ) -> str:
     return ",".join(
         [
@@ -42,8 +52,14 @@ def _row(
             name,
             value,
             invested,
+            quantity,
+            proceeds,
+            sale_price_per_unit,
+            distribution,
             currency,
             tax_rate,
+            realized_tax_rate,
+            dividend_tax_rate,
         ]
     )
 
@@ -66,8 +82,12 @@ def test_parse_single_row_defaults_invested_to_value(tmp_path: Path):
 
     operations, positions = parse(path)
 
-    assert len(operations) == 1
-    op = operations[0]
+    assert [op.operation_type for op in operations] == [
+        OperationType.DEPOSIT,
+        OperationType.BUY,
+    ]
+    assert operations[0].total_amount == 1000.0
+    op = operations[1]
     assert op.operation_type == OperationType.BUY
     assert op.quantity == 1000.0
     assert op.total_amount == -1000.0
@@ -104,11 +124,17 @@ def test_parse_generates_buy_for_capital_increase_and_tracks_gain(
     operations, positions = parse(path)
 
     assert [op.operation_type for op in operations] == [
+        OperationType.DEPOSIT,
         OperationType.BUY,
+        OperationType.DEPOSIT,
         OperationType.BUY,
     ]
-    assert operations[0].total_amount == -1000.0
-    assert operations[1].total_amount == -200.0  # delta = 1200 - 1000
+    assert [op.total_amount for op in operations] == [
+        1000.0,
+        -1000.0,
+        200.0,
+        -200.0,
+    ]
 
     assert len(positions) == 2
     last = positions[-1]
@@ -141,11 +167,154 @@ def test_parse_generates_sell_for_capital_decrease_with_proportional_proceeds(
 
     operations, _ = parse(path)
 
-    sell = operations[1]
+    assert [op.operation_type for op in operations] == [
+        OperationType.DEPOSIT,
+        OperationType.BUY,
+        OperationType.SELL,
+        OperationType.WITHDRAWAL,
+    ]
+    sell = operations[2]
     assert sell.operation_type == OperationType.SELL
     assert sell.quantity == 500.0  # |500 - 1000|
     # proceeds = prev_value * (|delta| / prev_invested) = 1000 * 0.5
     assert sell.total_amount == 500.0
+    withdrawal = operations[3]
+    assert withdrawal.total_amount == -500.0
+
+
+def test_parse_withdraws_proportional_gain_with_sold_capital(tmp_path: Path):
+    path = _write(
+        tmp_path,
+        _row(
+            _PREV_MONTH_END.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1500.0",
+            invested="1000.0",
+        ),
+        _row(
+            _TODAY.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "750.0",
+            invested="500.0",
+        ),
+    )
+
+    operations, _ = parse(path)
+
+    sell, withdrawal = operations[-2:]
+    assert sell.operation_type == OperationType.SELL
+    assert sell.total_amount == 750.0
+    assert sell.realized_gain == 250.0
+    assert withdrawal.operation_type == OperationType.WITHDRAWAL
+    assert withdrawal.total_amount == -750.0
+
+
+def test_parse_uses_observed_sale_proceeds_instead_of_previous_valuation(
+    tmp_path: Path,
+):
+    path = _write(
+        tmp_path,
+        _row(
+            _PREV_MONTH_END.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1000.0",
+            invested="1000.0",
+            quantity="100.0",
+        ),
+        _row(
+            _TODAY.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "500.0",
+            invested="500.0",
+            quantity="80.0",
+            proceeds="750.0",
+            sale_price_per_unit="40.0",
+        ),
+    )
+
+    operations, positions = parse(path)
+
+    assert operations[1].operation_type == OperationType.BUY
+    assert operations[1].quantity == 100.0
+    assert operations[1].price_per_unit == 10.0
+    sell, withdrawal = operations[-2:]
+    assert sell.operation_type == OperationType.SELL
+    assert sell.quantity == 20.0
+    assert sell.price_per_unit == 40.0
+    assert sell.total_amount == 750.0
+    assert sell.realized_gain == 250.0
+    assert withdrawal.total_amount == -750.0
+    assert positions[-1].quantity == 80.0
+    assert positions[-1].avg_buy_price == 6.25
+    assert positions[-1].last_price == 6.25
+    assert positions[-1].total_value == 500.0
+
+
+def test_parse_rejects_quantity_that_starts_after_first_valuation(
+    tmp_path: Path,
+):
+    path = _write(
+        tmp_path,
+        _row(
+            _PREV_MONTH_END.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1000.0",
+            invested="1000.0",
+        ),
+        _row(
+            _TODAY.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1000.0",
+            invested="1000.0",
+            quantity="100.0",
+        ),
+    )
+
+    with pytest.raises(ValueError, match="quantity must be provided"):
+        parse(path)
+
+
+def test_parse_distribution_is_withdrawn_without_changing_invested(
+    tmp_path: Path,
+):
+    path = _write(
+        tmp_path,
+        _row(
+            _PREV_MONTH_END.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1500.0",
+            invested="1000.0",
+            tax_rate="0%",
+            dividend_tax_rate="0%",
+        ),
+        _row(
+            _TODAY.isoformat(),
+            "pe_fund",
+            "Private Fund",
+            "1500.0",
+            invested="1000.0",
+            distribution="100.0",
+        ),
+    )
+
+    operations, positions = parse(path)
+
+    assert [op.operation_type for op in operations[-2:]] == [
+        OperationType.DIVIDEND,
+        OperationType.WITHDRAWAL,
+    ]
+    assert [op.total_amount for op in operations[-2:]] == [100.0, -100.0]
+    assert operations[-2].dividend_tax_rate == 0.0
+    assert positions[-1].avg_buy_price == 1000.0
+    assert positions[-1].tax_rate == 0.0
+    assert positions[-1].dividend_tax_rate == 0.0
 
 
 def test_parse_fills_forward_value_and_invested_across_gap_months(
@@ -228,5 +397,5 @@ def test_valuations_loader_ignores_ticker_map_and_asset_prices(
         ticker_map={"unrelated": {}}, asset_prices=pd.DataFrame({"x": [1]})
     )
 
-    assert len(operations) == 1
+    assert len(operations) == 2
     assert len(positions) == 1

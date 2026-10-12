@@ -29,7 +29,9 @@ class BrokerDataCollector:
 
     A loader failing to parse its file (ValueError) doesn't stop the
     others — it's recorded as a ParseFailure for the caller to report
-    however it sees fit (see PortfolioErrorDetector).
+    however it sees fit (see PortfolioErrorDetector). An account emitted by
+    more than one successful loader is different: its cash-flow provenance
+    would be ambiguous, so collection stops with an explicit error.
     """
 
     input_dir: Path
@@ -44,6 +46,7 @@ class BrokerDataCollector:
         all_operations: list[Operation] = []
         all_positions: list[Position] = []
         failures: list[ParseFailure] = []
+        account_sources: dict[str, str] = {}
 
         for loader in self._build_loaders():
             try:
@@ -54,6 +57,20 @@ class BrokerDataCollector:
                     ParseFailure(label=loader.label, message=str(exc))
                 )
                 continue
+
+            loader_accounts = {
+                account
+                for item in [*operations, *positions]
+                if (account := getattr(item, "account", None))
+            }
+            for account in sorted(loader_accounts):
+                previous_source = account_sources.get(account)
+                if previous_source is not None:
+                    raise ValueError(
+                        f"Account {account!r} is present in multiple sources: "
+                        f"{previous_source!r} and {loader.label!r}"
+                    )
+                account_sources[account] = loader.label
 
             all_operations.extend(operations)
             all_positions.extend(positions)

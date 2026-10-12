@@ -7,6 +7,13 @@ Expected columns (exactly):
 
 The file is already in the canonical format — no mapping needed.
 This parser validates types and surfaces any bad rows with a clear error.
+
+External cash-flow contract
+---------------------------
+Capital entering the tracked portfolio must have a DEPOSIT in addition to
+the BUY that invests it. Proceeds leaving the tracked portfolio must have a
+WITHDRAWAL in addition to the SELL, DIVIDEND or INTEREST that produced them.
+If proceeds remain as tracked broker cash, no WITHDRAWAL is needed.
 """
 
 from dataclasses import dataclass
