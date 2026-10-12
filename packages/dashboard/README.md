@@ -68,6 +68,19 @@ Because GitHub Pages has no Python runtime, its filtered-IRR example is a
 pre-generated "exclude private equity" API response. The deployment workflow
 creates that fixture with the same Python TRI engine used by the local API.
 
+To generate and test that exact static demo locally (including its synthetic
+portfolio and pre-generated filtered-IRR response), run from the repository
+root:
+
+```bash
+make dashboard-demo
+```
+
+This builds the site with a root base path and serves it at
+`http://127.0.0.1:4173`. Use `DEMO_PORT=...` or `DEMO_HOST=...` to override the
+preview address. `make dashboard-demo-build DEMO_BASE=/some/subpath/` performs
+only the shared build used by the deployment workflow.
+
 One-time setup on GitHub, after this repo has a remote: **Settings →
 Pages → Build and deployment → Source: "GitHub Actions"**. The workflow
 also runs on-demand from the Actions tab (`workflow_dispatch`).
