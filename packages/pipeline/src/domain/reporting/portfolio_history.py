@@ -51,7 +51,8 @@ def portfolio_history_snapshot(
                 "total_amount": op.total_amount,
             }
             for op in operations
-        ]
+        ],
+        columns=["date", "operation_type", "total_amount"],
     )
 
     cash_rows = []

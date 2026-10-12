@@ -5,6 +5,10 @@ import { useCashHistory } from '@/hooks/useCashHistory'
 import { useAllPositions } from '@/hooks/useAllPositions'
 import { useErrors } from '@/hooks/useErrors'
 import { useManualPriceOverrides } from '@/hooks/useManualPriceOverrides'
+import {
+  normalizeAccountSelection,
+  useFilteredPortfolioHistory,
+} from '@/hooks/useFilteredPortfolioHistory'
 import { useMonthlyOps } from '@/hooks/useMonthlyOps'
 import { useSavingCapacity } from '@/hooks/useSavingCapacity'
 import { usePassiveIncome } from '@/hooks/usePassiveIncome'
@@ -19,7 +23,7 @@ import { WealthTab } from '@/features/dashboard/WealthTab'
 import { PerformanceTab } from '@/features/dashboard/PerformanceTab'
 import { DataQualityTab } from '@/features/dashboard/DataQualityTab'
 import type { Filters, SortKey } from '@/types/filters'
-import { accountFilterId } from '@/shared/filters/accountFilter'
+import { accountFilterId, rawAccountId } from '@/shared/filters/accountFilter'
 import { accountLabel } from '@/features/filters/filterBar.logic'
 import {
   buildCumulativeWealthDrivers,
@@ -138,15 +142,30 @@ export default function App() {
     [tableFiltered, filters.hideClosedPositions, allAccountTypes, sortKey, sortDir],
   )
 
-  const accountHistory = useMemo(
+  const fallbackAccountHistory = useMemo(
     () => applyAccountFilterToHistory(allPositionRows, enrichedHistory, filters.accounts),
     [allPositionRows, enrichedHistory, filters.accounts],
   )
+  const filteredHistory = useFilteredPortfolioHistory(fallbackAccountHistory, filters.accounts)
+  const accountHistory = filteredHistory.history
   const displayedHistory = useMemo(
     () => filterPointsByPeriod(accountHistory, filters.dateFrom, filters.dateTo),
     [accountHistory, filters.dateFrom, filters.dateTo],
   )
   const globalTri = displayedHistory[displayedHistory.length - 1]?.tri ?? null
+  const irrStatus = filteredHistory.loading ? 'loading' : filteredHistory.error ? 'error' : 'ready'
+  const irrScopeLabel = filteredHistory.isFiltered && irrStatus === 'ready' ? 'Selected accounts' : undefined
+  const demoPresetSelection = useMemo(() => {
+    if (!filteredHistory.demoPresetAccounts) return null
+    const included = new Set(filteredHistory.demoPresetAccounts)
+    return new Set(allAccounts.filter((account) => included.has(rawAccountId(account))))
+  }, [allAccounts, filteredHistory.demoPresetAccounts])
+  const demoPresetActive = useMemo(() => {
+    if (!filteredHistory.demoPresetAccounts) return false
+    const selected = normalizeAccountSelection(filters.accounts)
+    return selected.length === filteredHistory.demoPresetAccounts.length
+      && selected.every((account, index) => account === filteredHistory.demoPresetAccounts?.[index])
+  }, [filteredHistory.demoPresetAccounts, filters.accounts])
 
   const savingCapacity = useSavingCapacity(filters.accounts)
   const periodSavings = useMemo(
@@ -233,9 +252,22 @@ export default function App() {
             showPositionFilters={activeTab === 'positions'}
           />
 
-          {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} concentration={concentration} globalTri={globalTri} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
+          {demoPresetSelection && (
+            <div className="-mt-2 mb-4 flex items-center gap-2">
+              <span className="text-xs text-gray-600">Static demo</span>
+              <button
+                type="button"
+                onClick={() => setFilters((current) => ({ ...current, accounts: demoPresetSelection, accountTypes: new Set() }))}
+                className={`rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-blue-600 bg-blue-900/40 text-blue-200' : 'border-gray-700 text-gray-500 hover:border-gray-600 hover:text-gray-300'}`}
+              >
+                Exclude private equity
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} concentration={concentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
-          {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} positions={currentPositions} performance={performance} income={trailingIncome} globalTri={globalTri} />}
+          {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} positions={currentPositions} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
           {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />}
           {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
           {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />}

@@ -23,6 +23,8 @@ export interface PortfolioHistoryPoint {
   total_broker_cash?: number
 }
 
+export type IrrStatus = 'ready' | 'loading' | 'error'
+
 export interface AccountTypePoint {
   account_type: string
   total_cost_basis: number

@@ -54,6 +54,10 @@ jobs:
         run: |
           mkdir -p packages/dashboard/public/data
           cp /tmp/demo-data/data/output/*.csv packages/dashboard/public/data/
+          python -m src.application.filtered_portfolio_history \
+            --output-dir /tmp/demo-data/data/output \
+            --destination packages/dashboard/public/data/demo_filtered_history.json \
+            --exclude-category private_equity
 
       - name: Configure Pages
         id: pages
@@ -61,6 +65,8 @@ jobs:
 
       - name: Build (tsc + vite, project-site base path)
         working-directory: packages/dashboard
+        env:
+          VITE_STATIC_DEMO: "true"
         run: |
           npx tsc -b
           npx vite build --base="${{ steps.pages.outputs.base_path }}/"

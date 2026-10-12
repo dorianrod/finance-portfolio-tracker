@@ -28,7 +28,13 @@ allocation-read: ## Read allocation workbook metadata. Pass script arguments wit
 allocation-build: ## Build/update the dated allocation workbook. Pass script arguments with ARGS='--date YYYY-MM-DD'.
 	$(PIPELINE_PYTHON) $(ALLOCATION_BUILD_SCRIPT) --data-dir $(DATA_DIR) $(ARGS)
 
-dashboard: ## Start the dashboard development server.
+dashboard: ## Start the dashboard API and Vite development server.
+	@set -e; \
+	PYTHONPATH="$(CURDIR)/packages/pipeline:$(CURDIR)/packages/dashboard" \
+		$(PIPELINE_PYTHON) -m finance_dashboard.cli \
+		--data-dir "$(DATA_DIR)" --port 8788 --no-browser --api-only & \
+	api_pid=$$!; \
+	trap 'kill $$api_pid 2>/dev/null || true' EXIT INT TERM; \
 	cd $(DASHBOARD_DIR) && npm run dev
 
 lint: ## Check Python and dashboard lint rules without changing files.

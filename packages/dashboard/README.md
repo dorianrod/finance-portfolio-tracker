@@ -13,6 +13,11 @@ npm run dev
 Reads CSVs live from `../../data/output` (override with `FINANCE_DATA_DIR`,
 same convention as finance-pipeline).
 
+`make dashboard` from the repository root starts both Vite and the local
+Python API used to recalculate portfolio IRR for the selected accounts. The
+API delegates to finance-pipeline's TRI domain code; the browser does not
+implement XIRR itself.
+
 ## Run locally via pipx
 
 The static build is bundled into a small Python launcher so end users only
@@ -37,6 +42,12 @@ then opens a browser. Same `--data-dir` / `FINANCE_DATA_DIR` / `./data`
 resolution as finance-pipeline. Use `--port` to change the port or
 `--no-browser` to skip auto-opening one.
 
+The standalone `finance-tool dashboard` executable bundles the pipeline and
+supports filtered IRR out of the box. A separately installed
+`finance-dashboard` still serves all static data, but its filtered-IRR API
+returns an unavailable response unless `finance-pipeline` is importable in the
+same Python environment.
+
 ## Public demo (GitHub Pages)
 
 `.github/workflows/deploy-pages.yml` builds and publishes a public,
@@ -52,6 +63,10 @@ private-equity histories so both the trailing three-year IRR and the
 shorter-period fallback are visible. Publicly traded instruments are used only
 to demonstrate market-price fetching; the names, amounts and valuations of
 the example accounts are fictional.
+
+Because GitHub Pages has no Python runtime, its filtered-IRR example is a
+pre-generated "exclude private equity" API response. The deployment workflow
+creates that fixture with the same Python TRI engine used by the local API.
 
 One-time setup on GitHub, after this repo has a remote: **Settings →
 Pages → Build and deployment → Source: "GitHub Actions"**. The workflow

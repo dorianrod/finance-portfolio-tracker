@@ -4,6 +4,7 @@ import { EvolutionChart } from '@/features/portfolio-charts/EvolutionChart'
 import { SummaryKpis } from './SummaryKpis'
 import { VariationCard } from './VariationCard'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import type { IrrStatus } from '@/types/history'
 
 interface OverviewTabProps {
   history: PortfolioHistoryPoint[]
@@ -12,6 +13,8 @@ interface OverviewTabProps {
   income: IncomeSummary
   concentration: ConcentrationSummary
   globalTri: number | null
+  irrStatus: IrrStatus
+  irrScopeLabel?: string
   periodLabel: string
   anomalyCount: number
   unallocatedPct: number | null
@@ -19,12 +22,12 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({
-  history, performance, drivers, income, concentration, globalTri, periodLabel,
+  history, performance, drivers, income, concentration, globalTri, irrStatus, irrScopeLabel, periodLabel,
   anomalyCount, unallocatedPct, onNavigate,
 }: OverviewTabProps) {
   return (
     <div className="mb-6 space-y-4">
-      <SummaryKpis performance={performance} drivers={drivers} income={income} globalTri={globalTri} periodLabel={periodLabel} />
+      <SummaryKpis performance={performance} drivers={drivers} income={income} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel} />
       <VariationCard drivers={drivers} concentration={concentration} periodLabel={periodLabel} />
       {history.length > 0 && <EvolutionChart history={history} title="Portfolio trajectory" height={260} />}
       <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">

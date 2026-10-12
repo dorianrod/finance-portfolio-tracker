@@ -2,6 +2,7 @@ import type { IncomeSummary, PerformanceSummary } from '@/features/portfolio-cha
 import { fmt, fmtPct } from '@/shared/format/money'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { Kpi } from './Kpi'
+import type { IrrStatus } from '@/types/history'
 
 const gainColor = (value: number | null) => value == null || value >= 0
   ? SEMANTIC_TEXT_CLASSES.performancePositive
@@ -59,13 +60,30 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
   )
 }
 
-export function IrrSinceTrackingKpi({ value }: { value: number | null }) {
+interface IrrKpiProps {
+  value: number | null
+  status?: IrrStatus
+  scopeLabel?: string
+}
+
+function irrValue(value: number | null, status: IrrStatus): string {
+  if (status === 'loading') return 'Calculating…'
+  return value == null ? '—' : fmtPct(value, 2)
+}
+
+function irrNote(status: IrrStatus): string | undefined {
+  if (status === 'error') return 'Filtered IRR unavailable'
+  return undefined
+}
+
+export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
   return (
     <Kpi
-      label="IRR since tracking"
+      label={`IRR since tracking${scopeLabel ? ' · selected accounts' : ''}`}
       tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history."
-      value={value == null ? '—' : fmtPct(value, 2)}
+      value={irrValue(value, status)}
       valueColor={gainColor(value)}
+      subSmall={irrNote(status)}
     />
   )
 }
@@ -94,13 +112,14 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
   )
 }
 
-export function TrailingThreeYearIrrKpi({ value }: { value: number | null }) {
+export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
   return (
     <Kpi
-      label="IRR · trailing 3y"
+      label={`IRR · trailing 3y${scopeLabel ? ' · selected accounts' : ''}`}
       tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period."
-      value={value == null ? '—' : fmtPct(value, 2)}
+      value={irrValue(value, status)}
       valueColor={gainColor(value)}
+      subSmall={irrNote(status)}
     />
   )
 }

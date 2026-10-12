@@ -40,6 +40,18 @@ def test_portfolio_history_snapshot_empty_positions_returns_empty_dataframe():
     assert portfolio_history_snapshot([], []).empty
 
 
+def test_portfolio_history_snapshot_supports_positions_without_operations():
+    positions = [
+        _position("a", date(2024, 1, 31), 1000.0),
+        _position("a", date(2025, 1, 31), 1100.0),
+    ]
+
+    history = portfolio_history_snapshot(positions, [])
+
+    assert history["net_cash_injected"].tolist() == [0.0, 0.0]
+    assert history["tri_rolling_1y"].iloc[-1] == pytest.approx(10.0, abs=0.1)
+
+
 def test_portfolio_history_snapshot_aggregates_across_accounts_per_month():
     positions = [
         _position("a", date(2024, 1, 31), 1000.0),

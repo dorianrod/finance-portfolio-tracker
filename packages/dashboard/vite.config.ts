@@ -46,6 +46,11 @@ function serveFinanceData(): Plugin {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), serveFinanceData()],
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8788',
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
