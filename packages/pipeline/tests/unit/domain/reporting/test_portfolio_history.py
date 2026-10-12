@@ -87,5 +87,21 @@ def test_portfolio_history_snapshot_includes_tri_column():
     df = portfolio_history_snapshot(positions, operations)
 
     assert "tri" in df.columns
+    assert "tri_rolling_1y" in df.columns
+    assert "tri_rolling_3y" in df.columns
     # ~10% over ~1 year, matching the known XIRR case in test_tri.py
     assert df["tri"].iloc[1] == pytest.approx(10.0, abs=0.5)
+
+
+def test_portfolio_history_snapshot_includes_one_year_rolling_tri():
+    positions = [
+        _position("a", date(2022, 1, 31), 1000.0),
+        _position("a", date(2023, 1, 31), 1200.0),
+    ]
+    operations = [_deposit("a", date(2022, 1, 1), 1000.0)]
+
+    df = portfolio_history_snapshot(positions, operations)
+
+    assert pd.isna(df["tri_rolling_1y"].iloc[0])
+    assert df["tri_rolling_1y"].iloc[1] == pytest.approx(20.0, abs=0.5)
+    assert pd.isna(df["tri_rolling_3y"].iloc[1])

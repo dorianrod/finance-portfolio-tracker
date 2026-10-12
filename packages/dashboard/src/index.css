@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+/* Make every actionable control visually identifiable as interactive. */
+:where(
+  a[href],
+  button:not(:disabled),
+  select:not(:disabled),
+  summary,
+  [role="button"]:not([aria-disabled="true"]),
+  input[type="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="range"]:not(:disabled),
+  input[type="date"]:not(:disabled)
+) {
+  cursor: pointer;
+}
+
+:where(
+  button:disabled,
+  select:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled
+) {
+  cursor: not-allowed;
+}
+
 .bg-gray-850 {
   background-color: var(--color-bg-850, rgb(24 24 27));
 }
@@ -9,6 +36,8 @@
   --chart-grid: #374151;
   --chart-tick: #9ca3af;
   --chart-label: #d1d5db;
+  --chart-zero: #4b5563;
+  --chart-cursor: rgba(255, 255, 255, 0.04);
   --tooltip-bg: #1f2937;
   --tooltip-border: #374151;
   --tooltip-text: #e5e7eb;
@@ -38,6 +67,8 @@
   --chart-grid: #e5e7eb;
   --chart-tick: #6b7280;
   --chart-label: #111827;
+  --chart-zero: #9ca3af;
+  --chart-cursor: rgba(17, 24, 39, 0.05);
   --tooltip-bg: #ffffff;
   --tooltip-border: #e5e7eb;
   --tooltip-text: #374151;

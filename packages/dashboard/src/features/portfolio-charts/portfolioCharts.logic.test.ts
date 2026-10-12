@@ -1,5 +1,17 @@
 import { describe, it, expect } from 'vitest'
-import { computeTopPerformers, computeTrailing12mSavings, buildAccountTypeLabels, filterMonthlyOpsByAccounts } from './portfolioCharts.logic'
+import {
+  buildAccountTypeLabels,
+  buildCumulativeWealthDrivers,
+  computeConcentration,
+  computePerformanceSummary,
+  computePeriodDrivers,
+  computeTrailing12mYearOverYear,
+  computeTopPerformers,
+  computeTrailing12mIncome,
+  computeTrailing12mSavings,
+  filterMonthlyOpsByAccounts,
+  filterPointsByPeriod,
+} from './portfolioCharts.logic'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 import type { PositionRow } from '@/types/domain'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
@@ -133,5 +145,141 @@ describe('filterMonthlyOpsByAccounts', () => {
     expect(result.get('2024-01')).toEqual([
       { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
     ])
+  })
+})
+
+describe('wealth driver helpers', () => {
+  const points: SavingCapacityPoint[] = [
+    { date: '2024-01-31', savings_delta: 100, perf_delta: 10 },
+    { date: '2024-02-29', savings_delta: 50, perf_delta: -20 },
+    { date: '2024-03-31', savings_delta: -25, perf_delta: 30 },
+  ]
+
+  it('filters points inclusively by date', () => {
+    expect(filterPointsByPeriod(points, '2024-02-01', '2024-02-29')).toEqual([points[1]])
+  })
+
+  it('builds cumulative savings, performance and total change', () => {
+    expect(buildCumulativeWealthDrivers(points).at(-1)).toMatchObject({
+      cumulative_savings: 125,
+      cumulative_performance: 20,
+      cumulative_change: 145,
+    })
+  })
+
+  it('summarises change drivers for a period', () => {
+    expect(computePeriodDrivers(points)).toEqual({ savings: 125, performance: 20, change: 145 })
+  })
+
+  it('compares the trailing twelve months with the preceding twelve-month window', () => {
+    const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, index) => ({
+      date: new Date(Date.UTC(2024, 10 + index, 28)).toISOString().slice(0, 10),
+      savings_delta: index < 12 ? 100 : 150,
+      perf_delta: index < 12 ? 50 : -25,
+    }))
+    const result = computeTrailing12mYearOverYear(points)
+
+    expect(result).toEqual({
+      currentMonths: [
+        '2025-11', '2025-12', '2026-01', '2026-02', '2026-03', '2026-04',
+        '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10',
+      ],
+      comparisonMonths: [
+        '2024-11', '2024-12', '2025-01', '2025-02', '2025-03', '2025-04',
+        '2025-05', '2025-06', '2025-07', '2025-08', '2025-09', '2025-10',
+      ],
+      savings: { current: 1800, previous: 1200, changePct: 50 },
+      performance: { current: -300, previous: 600, changePct: -150 },
+    })
+  })
+
+  it('does not report an incomplete trailing twelve-month window', () => {
+    const result = computeTrailing12mYearOverYear([
+      { date: '2025-10-31', savings_delta: 1000, perf_delta: 100 },
+      { date: '2026-10-11', savings_delta: 2000, perf_delta: 200 },
+    ])
+
+    expect(result.savings).toEqual({ current: null, previous: null, changePct: null })
+    expect(result.performance).toEqual({ current: null, previous: null, changePct: null })
+  })
+})
+
+describe('computeTrailing12mIncome', () => {
+  it('uses the latest recorded income date as the end of its trailing window', () => {
+    const p = position({
+      subRows: [{
+        kind: 'group', id: 'income', label: 'Dividends', subRows: [
+          { kind: 'operation', id: 'old', date: '2023-12-31', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 100, realized_gain: null },
+          { kind: 'operation', id: 'div', date: '2024-06-01', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 25, realized_gain: null },
+          { kind: 'operation', id: 'interest', date: '2024-12-31', account: 'acc1', operation_type: 'INTEREST', quantity: null, price_per_unit: null, total_amount: 10, realized_gain: null },
+        ],
+      }],
+    })
+    expect(computeTrailing12mIncome([p])).toEqual({
+      dividends: 25,
+      interest: 10,
+      total: 35,
+      previousTotal: 100,
+      changePct: -65,
+      dateFrom: '2023-12-31',
+      dateTo: '2024-12-31',
+    })
+  })
+
+  it('anchors both rolling income windows to the supplied portfolio date', () => {
+    const p = position({
+      subRows: [{
+        kind: 'group', id: 'income', label: 'Passive income', subRows: [
+          { kind: 'operation', id: 'previous', date: '2024-06-01', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 100, realized_gain: null },
+          { kind: 'operation', id: 'current', date: '2025-06-01', account: 'acc1', operation_type: 'INTEREST', quantity: null, price_per_unit: null, total_amount: 150, realized_gain: null },
+        ],
+      }],
+    })
+
+    expect(computeTrailing12mIncome([p], '2025-12-31')).toMatchObject({
+      total: 150,
+      previousTotal: 100,
+      changePct: 50,
+      dateFrom: '2024-12-31',
+      dateTo: '2025-12-31',
+    })
+  })
+})
+
+describe('portfolio summaries', () => {
+  it('aggregates the same asset across accounts for concentration', () => {
+    const result = computeConcentration([
+      position({ id: 'a', isin: 'FR1', total_value: 600 }),
+      position({ id: 'b', isin: 'FR1', total_value: 200 }),
+      position({ id: 'c', isin: 'FR2', ticker: 'OTHER', total_value: 200 }),
+    ])
+    expect(result.topHoldingPct).toBe(80)
+    expect(result.topFivePct).toBe(100)
+    expect(result.holdings[0].value).toBe(800)
+  })
+
+  it('computes net current value and total net performance', () => {
+    const result = computePerformanceSummary([
+      position({
+        total_value: 1000,
+        unrealized_gain: 100,
+        unrealized_gain_net: 70,
+        realized_gain: 50,
+        realized_gain_net: 35,
+        total_dividends: 20,
+        total_dividends_net: 14,
+        total_invested: 900,
+      }),
+    ])
+    expect(result).toMatchObject({
+      currentValueNet: 970,
+      currentValueGross: 1000,
+      unrealizedNet: 70,
+      realizedNet: 35,
+      realizedGross: 50,
+      incomeNet: 14,
+      totalPerformanceGross: 170,
+      totalPerformanceNet: 119,
+    })
   })
 })

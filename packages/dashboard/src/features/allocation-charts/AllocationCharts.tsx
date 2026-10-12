@@ -2,31 +2,29 @@ import { useState, useMemo } from 'react'
 import { useAllocationData } from '@/hooks/useAllocationData'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
 import { computeMatchingIsins, aggregateFilteredPoints, computeTableRows } from './allocationCharts.logic'
-import { computeAllocationCoverageByAccount } from './allocationCoverage.logic'
-import { AllocationCoverageCard } from './AllocationCoverageCard'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
 import { FilterChipBar } from './FilterChipBar'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
 import type { AllocationFilter } from './allocationCharts.types'
 import type { PositionRow } from '@/types/domain'
+import { computeConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
+import { ConcentrationChart } from '@/features/portfolio-charts/ConcentrationChart'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
-  accountLabels: Record<string, string>
+  dateFrom?: string
+  dateTo?: string
 }
 
-export function AllocationCharts({ positions, accountLabels }: AllocationChartsProps) {
+export function AllocationCharts({ positions, dateFrom, dateTo }: AllocationChartsProps) {
   const { geo, secteur, currency, classe, loading: loadingAgg } = useAllocationData()
   const rawData = useRawIsinData()
 
-  const coverage = useMemo(
-    () => (rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData)),
-    [positions, rawData],
-  )
-
   const [activeFilter, setActiveFilter] = useState<AllocationFilter | null>(null)
   const [showTable, setShowTable] = useState(false)
+  const [view, setView] = useState<'current' | 'trend'>('current')
+  const concentration = useMemo(() => computeConcentration(positions), [positions])
 
   function handleFilterToggle(filter: AllocationFilter) {
     setActiveFilter((prev) => {
@@ -88,8 +86,18 @@ export function AllocationCharts({ positions, accountLabels }: AllocationChartsP
   const latestCurrency = displayCurrency[displayCurrency.length - 1]
   const latestClasse   = displayClasse[displayClasse.length - 1]
 
+  const inPeriod = <T extends { date: string }>(points: T[]) => points.filter((point) => {
+    if (dateFrom && point.date < dateFrom) return false
+    if (dateTo && point.date > dateTo) return false
+    return true
+  })
+  const trendGeo = inPeriod(displayGeo)
+  const trendSecteur = inPeriod(displaySecteur)
+  const trendCurrency = inPeriod(displayCurrency)
+  const trendClasse = inPeriod(displayClasse)
+
   const hasEvolution = Math.max(
-    displayGeo.length, displaySecteur.length, displayCurrency.length, displayClasse.length,
+    trendGeo.length, trendSecteur.length, trendCurrency.length, trendClasse.length,
   ) >= 2
 
   return (
@@ -105,29 +113,36 @@ export function AllocationCharts({ positions, accountLabels }: AllocationChartsP
         />
       )}
 
-      {/* ── Coverage by account ───────────────────────────────────────── */}
-      {coverage.length > 0 && <AllocationCoverageCard coverage={coverage} accountLabels={accountLabels} />}
-
-      {/* ── Current breakdown ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-4">
-        {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-        {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-        {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-        {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-base font-semibold text-white">Portfolio exposure</h2>
+          <p className="mt-1 text-xs text-gray-500">Analyse the current mix or how it changed over time.</p>
+        </div>
+        <div className="inline-flex rounded-lg border border-gray-800 bg-gray-900 p-1">
+          <button type="button" onClick={() => setView('current')} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${view === 'current' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Current</button>
+          <button type="button" onClick={() => setView('trend')} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${view === 'trend' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Trend</button>
+        </div>
       </div>
 
-      {/* ── Trend ────────────────────────────────────────────────────── */}
-      {hasEvolution && (
+      {view === 'current' && (
         <>
-          <p className="text-xs text-gray-600 -mb-2">Monthly trend (allocated amounts)</p>
-          <div className="grid grid-cols-2 gap-4">
-            {displayGeo.length >= 2 && <EvoCard title="Geography" points={displayGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-            {displayClasse.length >= 2 && <EvoCard title="Asset class" points={displayClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-            {displaySecteur.length >= 2 && <EvoCard title="Sector" points={displaySecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
-            {displayCurrency.length >= 2 && <EvoCard title="Currency" points={displayCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} />}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+            {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+            {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+            {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
           </div>
         </>
       )}
+
+      {view === 'trend' && hasEvolution && <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+        {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+        {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+        {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
+      </div>}
+      {view === 'trend' && !hasEvolution && <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">Not enough allocation history in the selected period.</div>}
 
       {/* ── Panneau positions ─────────────────────────────────────────────── */}
       {showTable && activeFilter && tableRows.length > 0 && (

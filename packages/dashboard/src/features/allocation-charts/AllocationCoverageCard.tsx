@@ -1,10 +1,8 @@
 import { useId, useState } from 'react'
 import { fmtFull } from '@/shared/format/money'
+import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { accountLabel } from '@/features/filters/filterBar.logic'
 import type { AccountCoverage } from './allocationCoverage.logic'
-
-const ALLOCATED_COLOR = '#10b981'
-const UNALLOCATED_COLOR = '#f59e0b'
 
 interface AllocationCoverageCardProps {
   coverage: AccountCoverage[]
@@ -53,7 +51,7 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
           <div className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Overall coverage</div>
-          <div className="mt-2 text-2xl font-semibold tabular-nums text-emerald-400">{roundedOverallPct}%</div>
+          <div className={`mt-2 text-2xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.coverage}`}>{roundedOverallPct}%</div>
           <div
             className="mt-3 flex h-2 overflow-hidden rounded-full bg-gray-800"
             role="progressbar"
@@ -63,16 +61,16 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
             aria-valuenow={roundedOverallPct}
             title={`${fmtFull(totalAllocated)} allocated / ${fmtFull(totalUnallocated)} not allocated`}
           >
-            {totalAllocated > 0 && <div style={{ width: `${overallPct}%`, backgroundColor: ALLOCATED_COLOR }} />}
+            {totalAllocated > 0 && <div style={{ width: `${overallPct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />}
             {totalUnallocated > 0 && (
-              <div style={{ width: `${100 - overallPct}%`, backgroundColor: UNALLOCATED_COLOR }} />
+              <div style={{ width: `${100 - overallPct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }} />
             )}
           </div>
         </div>
 
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: ALLOCATED_COLOR }} />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.coverage }} />
             <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Allocated</span>
           </div>
           <div className="mt-2 truncate text-xl font-semibold tabular-nums text-gray-200" title={fmtFull(totalAllocated)}>
@@ -83,7 +81,7 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
 
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: UNALLOCATED_COLOR }} />
+            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.coverageGap }} />
             <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Not allocated</span>
           </div>
           <div className="mt-2 truncate text-xl font-semibold tabular-nums text-gray-200" title={fmtFull(totalUnallocated)}>
@@ -116,9 +114,9 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
                     className="flex h-1.5 overflow-hidden rounded-full bg-gray-800"
                     title={`${fmtFull(c.allocated)} allocated / ${fmtFull(c.unallocated)} not allocated`}
                   >
-                    {c.allocated > 0 && <div style={{ width: `${pct}%`, backgroundColor: ALLOCATED_COLOR }} />}
+                    {c.allocated > 0 && <div style={{ width: `${pct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />}
                     {c.unallocated > 0 && (
-                      <div style={{ width: `${100 - pct}%`, backgroundColor: UNALLOCATED_COLOR }} />
+                      <div style={{ width: `${100 - pct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }} />
                     )}
                   </div>
                 </div>

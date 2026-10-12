@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { fmtFull } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import { groupTail } from './allocationCharts.logic'
@@ -48,7 +49,7 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
             outerRadius="50%"
             paddingAngle={1}
             label={PieLabel}
-            labelLine={{ stroke: '#4b5563', strokeWidth: 1 }}
+            labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
             onClick={(entry: unknown) => {
               if (!(entry as PieEntry).name.startsWith('others (')) {
                 onFilterToggle({ type: dimension, value: (entry as PieEntry).name })
@@ -64,7 +65,7 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
                   key={entry.name}
                   fill={catColor(entry.name)}
                   opacity={isDimmed ? 0.25 : 1}
-                  stroke={isActive ? '#ffffff' : 'none'}
+                  stroke={isActive ? CHART_THEME.label : 'none'}
                   strokeWidth={isActive ? 2 : 0}
                 />
               )

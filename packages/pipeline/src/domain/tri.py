@@ -40,24 +40,57 @@ def portfolio_xirr(
     operations: list[Operation],
     terminal_value: float,
     terminal_date: date,
+    opening_value: float | None = None,
+    opening_date: date | None = None,
 ) -> float | None:
-    """Global portfolio XIRR from external cash flows only.
+    """Portfolio XIRR from the beginning of the available valuation history.
 
     Sign convention (investor's perspective):
+    - opening_value → negative (capital already invested at the boundary)
     - DEPOSIT    → negative (money leaving investor's hands)
     - WITHDRAWAL → positive (money returned to investor)
     - terminal_value at terminal_date → positive (current market value)
 
+    The opening valuation is used only when it predates the first recorded
+    external flow. If deposits or withdrawals already exist on or before the
+    first snapshot, those recorded flows remain the true starting point and
+    the opening valuation is not added a second time.
+
     Dividends and interest are NOT counted separately: they are already
     reflected in total_value via reinvestment or cash positions.
     """
-    flows: list[tuple[float, date]] = []
+    external_flows: list[tuple[float, date]] = []
     for op in operations:
         if op.operation_type in (
             OperationType.DEPOSIT,
             OperationType.WITHDRAWAL,
         ):
-            flows.append((-op.total_amount, _to_date(op.date)))
+            op_date = _to_date(op.date)
+            if op_date <= terminal_date:
+                external_flows.append((-op.total_amount, op_date))
+
+    has_flow_by_opening = opening_date is not None and any(
+        flow_date <= opening_date for _, flow_date in external_flows
+    )
+    use_opening_value = (
+        opening_date is not None
+        and opening_value is not None
+        and opening_value > 0
+        and not has_flow_by_opening
+    )
+
+    flows: list[tuple[float, date]] = []
+    if use_opening_value:
+        assert opening_date is not None
+        assert opening_value is not None
+        flows.append((-opening_value, opening_date))
+        flows.extend(
+            (amount, flow_date)
+            for amount, flow_date in external_flows
+            if flow_date > opening_date
+        )
+    else:
+        flows.extend(external_flows)
 
     if not flows:
         return None
@@ -67,12 +100,29 @@ def portfolio_xirr(
     return _xirr(flows)
 
 
+def portfolio_opening_valuation(
+    positions: list[Position],
+) -> tuple[date, float] | None:
+    """Return the earliest snapshot date and its aggregate market value."""
+    if not positions:
+        return None
+    opening_date = min(
+        _to_date(position.snapshot_date) for position in positions
+    )
+    opening_value = sum(
+        position.total_value
+        for position in positions
+        if _to_date(position.snapshot_date) == opening_date
+    )
+    return opening_date, opening_value
+
+
 def monthly_tri_series(
     positions: list[Position],
     operations: list[Operation],
 ) -> dict[date, float | None]:
     """Cumulative TRI (annualised %) for each monthly snapshot date."""
-    snap_dates = sorted({p.snapshot_date for p in positions})
+    snap_dates = sorted({_to_date(p.snapshot_date) for p in positions})
     if not snap_dates:
         return {}
 
@@ -81,25 +131,19 @@ def monthly_tri_series(
         d = _to_date(p.snapshot_date)
         value_by_date[d] = value_by_date.get(d, 0.0) + p.total_value
 
-    ext_flows: list[tuple[float, date]] = []
-    for op in operations:
-        if op.operation_type in (
-            OperationType.DEPOSIT,
-            OperationType.WITHDRAWAL,
-        ):
-            ext_flows.append((-op.total_amount, _to_date(op.date)))
-    ext_flows.sort(key=lambda x: x[1])
-
     result: dict[date, float | None] = {}
     for snap in snap_dates:
-        snap_d = _to_date(snap)
-        flows = [(a, d) for a, d in ext_flows if d <= snap_d]
-        terminal = value_by_date.get(snap_d, 0.0)
-        if terminal > 0:
-            flows = flows + [(terminal, snap_d)]
-        flows_sorted = sorted(flows, key=lambda x: x[1])
-        tri = _xirr(flows_sorted)
-        result[snap_d] = round(tri * 100, 2) if tri is not None else None
+        if snap == snap_dates[0]:
+            result[snap] = None
+            continue
+        tri = portfolio_xirr(
+            operations,
+            terminal_value=value_by_date.get(snap, 0.0),
+            terminal_date=snap,
+            opening_value=value_by_date.get(snap_dates[0], 0.0),
+            opening_date=snap_dates[0],
+        )
+        result[snap] = round(tri * 100, 2) if tri is not None else None
 
     return result
 

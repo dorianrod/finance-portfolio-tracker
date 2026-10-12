@@ -1,5 +1,6 @@
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import { shortMonth } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import { groupTail } from './allocationCharts.logic'
@@ -77,9 +78,9 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
               </linearGradient>
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
           <Tooltip content={(props) => <EvolutionTooltip {...props} categories={categories} />} />
           {categories.map((cat, i) => (
             <Area

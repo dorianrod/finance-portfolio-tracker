@@ -11,6 +11,8 @@ interface Props {
   allOperationTypes: string[]
   filters: Filters
   onChange: (f: Filters) => void
+  showPeriod?: boolean
+  showPositionFilters?: boolean
 }
 
 const OP_LABELS: Record<string, string> = {
@@ -35,7 +37,7 @@ const dateInputClass =
 
 export function FilterBar({
   allAccountTypes, accountToType, allAccounts, accountLabels,
-  allOperationTypes, filters, onChange,
+  allOperationTypes, filters, onChange, showPeriod = false, showPositionFilters = false,
 }: Props) {
   const hasDateFilter = !!(filters.dateFrom || filters.dateTo)
 
@@ -64,8 +66,8 @@ export function FilterBar({
         </div>
       )}
 
-      {/* Operations + hide closed */}
-      <div className="flex flex-wrap gap-x-4 gap-y-2 items-center">
+      {/* Operations + hide closed (positions only) */}
+      {showPositionFilters && <div className="flex flex-wrap gap-x-4 gap-y-2 items-center">
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 uppercase tracking-wider">Operation type</span>
           <div className="flex gap-1.5">
@@ -96,10 +98,10 @@ export function FilterBar({
           />
           <span className="text-xs text-gray-400">Hide closed</span>
         </label>
-      </div>
+      </div>}
 
       {/* Period */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {showPeriod && <div className="flex items-center gap-2 flex-wrap">
         <span className="text-xs text-gray-500 uppercase tracking-wider w-16 shrink-0">Period</span>
         <div className="flex gap-1.5">
           {DATE_PRESETS.map((p) => (
@@ -135,7 +137,7 @@ export function FilterBar({
             </button>
           )}
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

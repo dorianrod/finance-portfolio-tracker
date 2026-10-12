@@ -9,6 +9,7 @@ import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/types/domain'
 import type { SortKey } from '@/types/filters'
 import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
+import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { gainClass } from './positionsTable.logic'
 import { GainCell, UnrealizedGainCell, RealizedGainCell } from './GainCells'
 import { ExpandBtn } from './ExpandBtn'
@@ -100,15 +101,15 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           )
         }
         if (r.kind === 'group') {
-          return <span className="text-sm font-semibold text-blue-300">{r.label}</span>
+          return <span className="text-sm font-semibold text-gray-300">{r.label}</span>
         }
         if (r.kind === 'operation') {
           return (
             <span className="flex items-center gap-2 text-sm">
               <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${
-                r.operation_type === 'BUY' ? 'bg-blue-900 text-blue-300' :
-                r.operation_type === 'SELL' ? 'bg-orange-900 text-orange-300' :
-                'bg-purple-900 text-purple-300'
+                r.operation_type === 'BUY' ? SEMANTIC_BADGE_CLASSES.transactionBuy :
+                r.operation_type === 'SELL' ? SEMANTIC_BADGE_CLASSES.transactionSell :
+                SEMANTIC_BADGE_CLASSES.transactionOther
               }`}>{r.operation_type}</span>
               <span className="text-gray-400">{r.date}</span>
               <span className="text-gray-500 text-xs">{r.account}</span>
@@ -195,9 +196,9 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Deposits / Withdrawals') {
           return (
             <span className="text-xs flex flex-col gap-0.5">
-              <span className="text-blue-300 underline decoration-dashed decoration-blue-400/50 underline-offset-2">Deposited: {fmt.format(r.deposit_total ?? 0)}</span>
+              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>Deposited: {fmt.format(r.deposit_total ?? 0)}</span>
               {(r.withdrawal_total ?? 0) > 0 && (
-                <span className="text-red-300">Withdrawn: {fmt.format(r.withdrawal_total ?? 0)}</span>
+                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>Withdrawn: {fmt.format(r.withdrawal_total ?? 0)}</span>
               )}
             </span>
           )
@@ -275,8 +276,8 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           return (
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
-                {hasDivs && <span className="text-purple-300">{fmt.format(r.total_dividends)}</span>}
-                {hasInt && <span className="text-blue-300">{fmt.format(r.total_interest)} int.</span>}
+                {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends)}</span>}
+                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest)} int.</span>}
               </span>
               {divTax != null && divTax > 0 && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -297,7 +298,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Dividends') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-purple-300">{fmt.format(r.total_dividends ?? 0)}</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends ?? 0)}</span>
               <span className="text-gray-400">({r.dividend_count} payments, ~{fmt.format(r.annualized_dividends ?? 0)}/yr)</span>
             </span>
           )
@@ -305,16 +306,16 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Interest') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-blue-300">{fmt.format(r.total_interest ?? 0)}</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest ?? 0)}</span>
               <span className="text-gray-400">({r.interest_count} payments)</span>
             </span>
           )
         }
         if (r.kind === 'operation' && r.operation_type === 'DIVIDEND') {
-          return <span className="text-sm text-purple-300">{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
         }
         if (r.kind === 'operation' && r.operation_type === 'INTEREST') {
-          return <span className="text-sm text-blue-300">{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
         }
         return null
       },
@@ -495,7 +496,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                         <td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>
                           {totals && totals.totalRealized !== 0 ? fmt.format(totals.totalRealized) : ''}
                         </td>
-                        <td className={`${td} text-purple-300`}>
+                        <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
                           {totals && totals.dividends !== 0 ? fmt.format(totals.dividends) : ''}
                         </td>
                         <td className={td} />

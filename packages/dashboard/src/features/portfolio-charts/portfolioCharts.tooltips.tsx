@@ -1,4 +1,5 @@
 import { fmtFull } from '@/shared/format/money'
+import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { typeColor } from '@/shared/format/colors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
 import type { MonthlyOpsMap } from '@/hooks/useMonthlyOps'
@@ -16,8 +17,8 @@ export function EvolutionTooltip({ active, payload, label }: any) {
         {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(cost + gain)}</div>
-      <div style={{ color: '#60a5fa' }}>Purchase value: {fmtFull(cost)}</div>
-      <div style={{ color: gain >= 0 ? '#4ade80' : '#f87171' }}>Unrealized P&L: {fmtFull(gain)}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}</div>
+      <div style={{ color: gain >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>Unrealized P&L: {fmtFull(gain)}</div>
     </TooltipBox>
   )
 }
@@ -42,28 +43,28 @@ export function MonthlyTooltip({ active, payload, label, ops }: any) {
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 8, fontWeight: 600 }}>
         {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
-      <div style={{ color: '#60a5fa', marginBottom: 4 }}>Net savings: {fmtFull(savingsDelta)}</div>
+      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}>Net contributions: {fmtFull(savingsDelta)}</div>
       {deposits.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
           {deposits.map((op, i) => (
-            <div key={i} style={{ color: '#93c5fd', fontSize: 11 }}>+ {fmtFull(op.total_amount)} — {op.account}</div>
+            <div key={i} style={{ color: SEMANTIC_COLORS.netContributionsDetail, fontSize: 11 }}>+ {fmtFull(op.total_amount)} — {op.account}</div>
           ))}
         </div>
       )}
       {withdrawals.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
           {withdrawals.map((op, i) => (
-            <div key={i} style={{ color: '#fca5a5', fontSize: 11 }}>− {fmtFull(Math.abs(op.total_amount))} — {op.account}</div>
+            <div key={i} style={{ color: SEMANTIC_COLORS.outflowText, fontSize: 11 }}>− {fmtFull(Math.abs(op.total_amount))} — {op.account}</div>
           ))}
         </div>
       )}
-      <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: perfDelta >= 0 ? '#4ade80' : '#f87171' }}>
+      <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: perfDelta >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>
         Market performance: {fmtFull(perfDelta)}
       </div>
-      <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: '#f59e0b' }}>
-        Trailing 12-month savings: {fmtFull(rolling12m)}
+      <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: SEMANTIC_COLORS.netContributionsText }}>
+        Trailing 12-month net contributions: {fmtFull(rolling12m)}
       </div>
-      <div style={{ marginTop: 4, color: rollingPerf12m >= 0 ? '#34d399' : '#f87171' }}>
+      <div style={{ marginTop: 4, color: rollingPerf12m >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>
         Trailing 12-month performance: {fmtFull(rollingPerf12m)}
       </div>
     </TooltipBox>
@@ -73,36 +74,64 @@ export function MonthlyTooltip({ active, payload, label, ops }: any) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function TriTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
-  const tri: number = payload[0]?.value ?? 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tri1y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_1y')?.value ?? null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tri3y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_3y')?.value ?? null
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
-      <div style={{ color: tri >= 0 ? '#4ade80' : '#f87171', fontWeight: 600 }}>
-        TRI (3y): {tri >= 0 ? '+' : ''}{tri.toFixed(2)}%
-      </div>
+      {tri1y != null && (
+        <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
+          IRR (1y): {tri1y >= 0 ? '+' : ''}{tri1y.toFixed(2)}%
+        </div>
+      )}
+      {tri3y != null && (
+        <div style={{ color: SEMANTIC_COLORS.returnRate, fontWeight: 600, marginTop: tri1y == null ? 0 : 4 }}>
+          IRR (3y): {tri3y >= 0 ? '+' : ''}{tri3y.toFixed(2)}%
+        </div>
+      )}
     </TooltipBox>
   )
 }
 
-interface TooltipPayloadItem { dataKey: string; value: number }
+interface AccountTypeTooltipPoint {
+  account_type: string
+  total_cost_basis: number
+  unrealized_gain: number
+  total_value: number
+}
 
-export function AccountTypeTooltip({ active, payload, label }: {
+interface TooltipPayloadItem {
+  dataKey: string
+  value: number
+  payload?: AccountTypeTooltipPoint
+}
+
+export function AccountTypeTooltip({ active, payload, label, portfolioTotal }: {
   active?: boolean
   payload?: TooltipPayloadItem[]
   label?: string
+  portfolioTotal?: number
 }) {
   if (!active || !payload?.length) return null
-  const cost = payload.find((p) => p.dataKey === 'total_cost_basis')?.value ?? 0
-  const gain = payload.find((p) => p.dataKey === 'unrealized_gain')?.value ?? 0
+  const point = payload[0]?.payload
+  const cost = point?.total_cost_basis ?? payload.find((p) => p.dataKey === 'total_cost_basis')?.value ?? 0
+  const gain = point?.unrealized_gain ?? payload.find((p) => p.dataKey === 'unrealized_gain')?.value ?? 0
+  const total = point?.total_value ?? cost + gain
+  const portfolioShare = portfolioTotal && portfolioTotal > 0 ? total / portfolioTotal * 100 : 0
   const gainPct = cost > 0 ? (gain / cost) * 100 : 0
   return (
     <TooltipBox>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{label}</div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(cost + gain)}</div>
-      <div style={{ color: '#60a5fa' }}>Cost basis: {fmtFull(cost)}</div>
-      <div style={{ color: gain >= 0 ? '#4ade80' : '#f87171' }}>
+      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{point?.account_type ?? label}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
+      {portfolioTotal != null && (
+        <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6 }}>Portfolio share: {portfolioShare.toFixed(1)}%</div>
+      )}
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}</div>
+      <div style={{ color: SEMANTIC_COLORS.performancePositiveText }}>
         Unrealized: {fmtFull(gain)} ({gain >= 0 ? '+' : ''}{gainPct.toFixed(1)}%)
       </div>
     </TooltipBox>
@@ -118,7 +147,7 @@ export function TopPerformersTooltip({ active, payload, label }: any) {
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>{entry?.name ?? label}</div>
       <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6, fontSize: 11 }}>{entry?.account_type}</div>
       <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>Value: {fmtFull(entry?.value ?? 0)}</div>
-      <div style={{ color: (entry?.pct ?? 0) >= 0 ? '#4ade80' : '#f87171', fontWeight: 600 }}>
+      <div style={{ color: (entry?.pct ?? 0) >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText, fontWeight: 600 }}>
         Unrealized: {fmtFull(entry?.gain ?? 0)} ({(entry?.pct ?? 0) >= 0 ? '+' : ''}{(entry?.pct ?? 0).toFixed(1)}%)
       </div>
     </TooltipBox>
@@ -136,8 +165,8 @@ export function PassiveIncomeTooltip({ active, payload, label }: any) {
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{label}</div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(div + int)}</div>
-      {div > 0 && <div style={{ color: '#a78bfa' }}>Dividends: {fmtFull(div)}</div>}
-      {int > 0 && <div style={{ color: '#60a5fa' }}>Interest: {fmtFull(int)}</div>}
+      {div > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncome }}>Dividends: {fmtFull(div)}</div>}
+      {int > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Interest: {fmtFull(int)}</div>}
     </TooltipBox>
   )
 }

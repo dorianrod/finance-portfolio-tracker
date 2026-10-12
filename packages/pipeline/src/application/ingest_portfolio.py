@@ -32,7 +32,7 @@ from src.domain.reporting.saving_capacity import (
     saving_capacity_snapshot,
 )
 from src.domain.tri import _xirr as _xirr_impl
-from src.domain.tri import portfolio_xirr
+from src.domain.tri import portfolio_opening_valuation, portfolio_xirr
 from src.ports.account_groups import AccountGroupsRepository
 from src.ports.allocation_repository import AllocationRepository
 from src.ports.asset_prices import AssetPriceRepository
@@ -459,8 +459,17 @@ class IngestPortfolioUseCase:
             )
         )
 
+        opening_valuation = portfolio_opening_valuation(all_positions)
         global_tri = portfolio_xirr(
-            all_operations, snapshot.total_value, today
+            all_operations,
+            snapshot.total_value,
+            today,
+            opening_value=(
+                opening_valuation[1] if opening_valuation is not None else None
+            ),
+            opening_date=(
+                opening_valuation[0] if opening_valuation is not None else None
+            ),
         )
         global_tri_pct = (
             round(global_tri * 100, 2) if global_tri is not None else None
