@@ -4,6 +4,24 @@ import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types
 
 const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])
 
+function dateTimestamp(date: string | undefined): number | null {
+  if (!date) return null
+  const timestamp = Date.parse(`${date}T00:00:00Z`)
+  return Number.isNaN(timestamp) ? null : timestamp
+}
+
+export function allocationTrendDomain(
+  points: AllocationPoint[],
+  dateFrom?: string,
+  dateTo?: string,
+): [number, number] {
+  const firstPoint = dateTimestamp(points[0]?.date)
+  const lastPoint = dateTimestamp(points.at(-1)?.date)
+  const start = dateTimestamp(dateFrom) ?? firstPoint ?? 0
+  const end = dateTimestamp(dateTo) ?? lastPoint ?? start
+  return [start, Math.max(start, end)]
+}
+
 export function groupTail(cats: Array<{ name: string; value: number }>): {
   main: Array<{ name: string; value: number }>
   grouped: Array<{ name: string; value: number }>

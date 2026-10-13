@@ -3,7 +3,7 @@ import { shortMonth } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
-import { groupTail } from './allocationCharts.logic'
+import { allocationTrendDomain, groupTail } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
 import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
 
@@ -13,9 +13,11 @@ interface EvoCardProps {
   dimension: AllocationDimension
   activeFilter: AllocationFilter | null
   onFilterToggle: (filter: AllocationFilter) => void
+  dateFrom?: string
+  dateTo?: string
 }
 
-export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle }: EvoCardProps) {
+export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, dateFrom, dateTo }: EvoCardProps) {
   const last = points[points.length - 1]
   const { main, grouped } = groupTail(last.categories)
   const groupedNames = new Set(grouped.map((c) => c.name))
@@ -24,7 +26,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
 
   const chartData = points.map((pt) => {
     const rowTotal = pt.categories.reduce((s, c) => s + c.value, 0)
-    const row: Record<string, string | number> = { date: pt.date }
+    const row: Record<string, string | number> = { date: Date.parse(`${pt.date}T00:00:00Z`) }
     for (const cat of main.map((c) => c.name)) {
       const v = pt.categories.find((c) => c.name === cat)?.value ?? 0
       row[cat] = rowTotal > 0 ? parseFloat(((v / rowTotal) * 100).toFixed(2)) : 0
@@ -37,6 +39,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
   })
 
   const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
+  const dateDomain = allocationTrendDomain(points, dateFrom, dateTo)
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
@@ -79,7 +82,17 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
             ))}
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <XAxis
+            dataKey="date"
+            type="number"
+            scale="time"
+            domain={dateDomain}
+            allowDataOverflow
+            tickFormatter={(timestamp) => shortMonth(new Date(timestamp).toISOString())}
+            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
           <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
           <Tooltip content={(props) => <EvolutionTooltip {...props} categories={categories} />} />
           {categories.map((cat, i) => (

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { groupTail, computeMatchingIsins, computeTableRows, aggregateFilteredPoints, computePopoverPos } from './allocationCharts.logic'
+import { groupTail, computeMatchingIsins, computeTableRows, aggregateFilteredPoints, computePopoverPos, allocationTrendDomain } from './allocationCharts.logic'
 import type { RawIsinData, RawIsinRow } from '@/hooks/useRawIsinData'
 
 function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
@@ -52,6 +52,34 @@ describe('groupTail', () => {
     expect(main.map((c) => c.name)).toContain('nc')
     expect(grouped.map((c) => c.name)).not.toContain('Not concerned')
     expect(grouped.map((c) => c.name)).not.toContain('nc')
+  })
+})
+
+describe('allocationTrendDomain', () => {
+  const points = [
+    { date: '2026-01-31', categories: [] },
+    { date: '2026-10-13', categories: [] },
+  ]
+
+  it('starts the time axis at the selected period even when allocation history starts later', () => {
+    expect(allocationTrendDomain(points, '2025-10-13')).toEqual([
+      Date.parse('2025-10-13T00:00:00Z'),
+      Date.parse('2026-10-13T00:00:00Z'),
+    ])
+  })
+
+  it('uses the selected end date instead of the last allocation snapshot', () => {
+    expect(allocationTrendDomain(points, '2026-03-01', '2026-12-31')).toEqual([
+      Date.parse('2026-03-01T00:00:00Z'),
+      Date.parse('2026-12-31T00:00:00Z'),
+    ])
+  })
+
+  it('falls back to the available allocation history without a period filter', () => {
+    expect(allocationTrendDomain(points)).toEqual([
+      Date.parse('2026-01-31T00:00:00Z'),
+      Date.parse('2026-10-13T00:00:00Z'),
+    ])
   })
 })
 
