@@ -1,6 +1,7 @@
+import { useMemo } from 'react'
 import type { PortfolioHistoryPoint } from '@/types/history'
 import type { PassiveIncomePoint } from '@/hooks/usePassiveIncome'
-import type { PositionRow } from '@/types/domain'
+import type { PositionRow, RawOperation, RawPosition } from '@/types/domain'
 import type { IrrStatus } from '@/types/history'
 import type { IncomeSummary, PerformanceSummary } from '@/features/portfolio-charts/portfolioCharts.logic'
 import { computeTopPerformers } from '@/features/portfolio-charts/portfolioCharts.logic'
@@ -16,11 +17,17 @@ import { PassiveIncomeChart } from '@/features/portfolio-charts/PassiveIncomeCha
 import { TopPerformersChart } from '@/features/portfolio-charts/TopPerformersChart'
 import { TriChart } from '@/features/portfolio-charts/TriChart'
 import { UnrealizedPnlChart } from '@/features/portfolio-charts/UnrealizedPnlChart'
+import { PerformanceContributionCard } from '@/features/portfolio-charts/PerformanceContributionCard'
+import { computePerformanceContributions } from '@/features/portfolio-charts/performanceContribution.logic'
 
-export function PerformanceTab({ history, passiveIncome, positions, performance, income, globalTri, irrStatus, irrScopeLabel }: {
+export function PerformanceTab({ history, passiveIncome, positions, rawPositions, rawOperations, accountFilters, accountTypeFilters, performance, income, globalTri, irrStatus, irrScopeLabel }: {
   history: PortfolioHistoryPoint[]
   passiveIncome: PassiveIncomePoint[]
   positions: PositionRow[]
+  rawPositions: RawPosition[]
+  rawOperations: RawOperation[]
+  accountFilters: Set<string>
+  accountTypeFilters: Set<string>
   performance: PerformanceSummary
   income: IncomeSummary
   globalTri: number | null
@@ -29,6 +36,19 @@ export function PerformanceTab({ history, passiveIncome, positions, performance,
 }) {
   const performers = computeTopPerformers(positions)
   const rollingTri3y = history[history.length - 1]?.tri_rolling_3y ?? null
+  const asOfDate = history.at(-1)?.date
+  const contributionFilters = useMemo(() => ({
+    accounts: accountFilters,
+    accountTypes: accountTypeFilters,
+  }), [accountFilters, accountTypeFilters])
+  const sinceTrackingContributions = useMemo(
+    () => computePerformanceContributions(rawPositions, rawOperations, 'since-tracking', asOfDate, contributionFilters),
+    [rawPositions, rawOperations, asOfDate, contributionFilters],
+  )
+  const trailingThreeYearContributions = useMemo(
+    () => computePerformanceContributions(rawPositions, rawOperations, 'trailing-3y', asOfDate, contributionFilters),
+    [rawPositions, rawOperations, asOfDate, contributionFilters],
+  )
 
   return (
     <div className="mb-6 space-y-4">
@@ -59,6 +79,13 @@ export function PerformanceTab({ history, passiveIncome, positions, performance,
         </div>
       )}
       {performers.length > 0 && <TopPerformersChart data={performers} height={Math.max(260, performers.length * 26)} />}
+      <PerformanceContributionCard
+        sinceTracking={sinceTrackingContributions}
+        trailingThreeYears={trailingThreeYearContributions}
+        sinceTrackingIrr={globalTri}
+        trailingThreeYearIrr={rollingTri3y}
+        irrStatus={irrStatus}
+      />
     </div>
   )
 }

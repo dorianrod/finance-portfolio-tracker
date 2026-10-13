@@ -70,7 +70,7 @@ function periodLabel(dateFrom?: string, dateTo?: string): string {
 }
 
 export default function App() {
-  const { positions, accountLabels, loading, error } = useData()
+  const { positions, rawPositions, rawOperations, accountLabels, loading, error } = useData()
   const { history } = usePortfolioHistory()
   const { cashHistory } = useCashHistory()
   const allPositionRows = useAllPositions()
@@ -267,7 +267,7 @@ export default function App() {
 
           {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} concentration={concentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
-          {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} positions={currentPositions} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
+          {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} positions={currentPositions} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
           {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />}
           {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
           {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />}
