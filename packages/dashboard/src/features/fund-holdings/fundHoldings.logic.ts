@@ -6,6 +6,8 @@ export interface SecurityExposure {
   name: string
   value: number
   funds: string[]
+  /** Value contributed by each source fund, largest first. */
+  sources: { fund: string; value: number }[]
 }
 
 export interface IssuerExposure {
@@ -15,6 +17,8 @@ export interface IssuerExposure {
   weight: number
   securities: SecurityExposure[]
   funds: string[]
+  /** Value contributed by each source fund, largest first. */
+  sources: { fund: string; value: number }[]
 }
 
 export function isFundPosition(position: PositionRow): boolean {
@@ -75,8 +79,8 @@ export function buildIssuerExposures(
     return { id: canonicalId, name: issuerNames.get(canonicalId) ?? issuerNames.get(id) ?? id }
   }
 
-  interface MutableSecurity { id: string; name: string; value: number; funds: Set<string> }
-  interface MutableIssuer { id: string; name: string; value: number; securities: Map<string, MutableSecurity>; funds: Set<string> }
+  interface MutableSecurity { id: string; name: string; value: number; funds: Map<string, number> }
+  interface MutableIssuer { id: string; name: string; value: number; securities: Map<string, MutableSecurity>; funds: Map<string, number> }
   const issuers = new Map<string, MutableIssuer>()
   const total = positions.reduce((sum, position) => (
     position.status === 'active' ? sum + Math.max(0, position.total_value ?? 0) : sum
@@ -92,15 +96,15 @@ export function buildIssuerExposures(
   ) => {
     const issuer = issuers.get(issuerId) ?? {
       id: issuerId, name: issuerName, value: 0,
-      securities: new Map<string, MutableSecurity>(), funds: new Set<string>(),
+      securities: new Map<string, MutableSecurity>(), funds: new Map<string, number>(),
     }
     issuer.value += value
-    if (fundName) issuer.funds.add(fundName)
+    if (fundName) issuer.funds.set(fundName, (issuer.funds.get(fundName) ?? 0) + value)
     const security = issuer.securities.get(securityId) ?? {
-      id: securityId, name: securityName, value: 0, funds: new Set<string>(),
+      id: securityId, name: securityName, value: 0, funds: new Map<string, number>(),
     }
     security.value += value
-    if (fundName) security.funds.add(fundName)
+    if (fundName) security.funds.set(fundName, (security.funds.get(fundName) ?? 0) + value)
     issuer.securities.set(securityId, security)
     issuers.set(issuerId, issuer)
   }
@@ -137,9 +141,16 @@ export function buildIssuerExposures(
       name: issuer.name,
       value: issuer.value,
       weight: total > 0 ? issuer.value / total * 100 : 0,
-      funds: [...issuer.funds].sort(),
+      funds: [...issuer.funds.keys()].sort(),
+      sources: [...issuer.funds].map(([fund, value]) => ({ fund, value })).sort((a, b) => b.value - a.value),
       securities: [...issuer.securities.values()]
-        .map((security) => ({ ...security, funds: [...security.funds].sort() }))
+        .map((security) => ({
+          id: security.id,
+          name: security.name,
+          value: security.value,
+          funds: [...security.funds.keys()].sort(),
+          sources: [...security.funds].map(([fund, value]) => ({ fund, value })).sort((a, b) => b.value - a.value),
+        }))
         .sort((a, b) => b.value - a.value),
     }))
     .sort((a, b) => b.value - a.value)
