@@ -21,12 +21,12 @@ def _position(
 ) -> dict[str, object]:
     return {
         "snapshot_date": date,
-        "account": "natixis",
+        "account": "example-provider",
         "account_type": "PEE",
         "account_category": "employer_savings",
         "isin": "",
         "ticker": "",
-        "name": "Natixis PEE",
+        "name": "Example Employee Savings",
         "total_value": value,
         **overrides,
     }
@@ -40,12 +40,12 @@ def _operation(
 ) -> dict[str, object]:
     return {
         "date": date,
-        "account": "natixis",
+        "account": "example-provider",
         "account_type": "PEE",
         "account_category": "employer_savings",
         "isin": "",
         "ticker": "",
-        "name": "Natixis PEE",
+        "name": "Example Employee Savings",
         "operation_type": operation_type,
         "total_amount": amount,
         **overrides,
@@ -78,12 +78,12 @@ def test_asset_irr_neutralizes_cash_added_during_filtered_period(
     assert result["end_date"] == "2026-10-13"
     assert result["assets"] == [
         {
-            "key": "name:natixis pee",
-            "label": "Natixis PEE",
-            "name": "Natixis PEE",
+            "key": "name:example employee savings",
+            "label": "Example Employee Savings",
+            "name": "Example Employee Savings",
             "irr": pytest.approx(6.5604),
             "value": 112_433,
-            "accounts": ["natixis"],
+            "accounts": ["example-provider"],
             "account_types": ["PEE"],
         }
     ]
@@ -102,7 +102,7 @@ def test_cash_balance_deposits_produce_zero_irr_not_price_return(
                 account="savings",
                 account_type="Livret",
                 account_category="savings",
-                name="LDDS",
+                name="Example Savings Account",
             ),
             _position(
                 "2026-10-13",
@@ -110,7 +110,7 @@ def test_cash_balance_deposits_produce_zero_irr_not_price_return(
                 account="savings",
                 account_type="Livret",
                 account_category="savings",
-                name="LDDS",
+                name="Example Savings Account",
             ),
         ],
         [
@@ -121,7 +121,7 @@ def test_cash_balance_deposits_produce_zero_irr_not_price_return(
                 account="savings",
                 account_type="Livret",
                 account_category="savings",
-                name="LDDS",
+                name="Example Savings Account",
             )
         ],
     )

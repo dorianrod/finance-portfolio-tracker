@@ -111,7 +111,7 @@ def test_api_returns_asset_irr_for_the_requested_period(api_server: str):
     with _post(
         api_server,
         {
-            "accounts": ["natixis"],
+            "accounts": ["example-provider"],
             "account_types": ["PEE"],
             "date_from": "2026-06-30",
             "date_to": "2026-10-13",
@@ -125,7 +125,7 @@ def test_api_returns_asset_irr_for_the_requested_period(api_server: str):
         "available": True,
         "start_date": "2026-06-30",
         "end_date": "2026-10-13",
-        "accounts": ["natixis"],
+        "accounts": ["example-provider"],
         "account_types": ["PEE"],
         "assets": [{"label": "Asset", "irr": 6.5}],
     }

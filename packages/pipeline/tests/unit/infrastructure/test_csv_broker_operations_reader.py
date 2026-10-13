@@ -159,7 +159,7 @@ def test_read_all_discovers_revolut_subfolders_with_suffix(
 ):
     _write_revolut_at(
         tmp_path / "brokers/Revolut/Trading/statement.csv",
-        ticker="MSFT",
+        ticker="TST1",
     )
     reader = CsvBrokerOperationsReader(input_dir=tmp_path)
 
@@ -167,7 +167,7 @@ def test_read_all_discovers_revolut_subfolders_with_suffix(
 
     assert len(ops) == 1
     assert ops[0].account == "revolut_trading"
-    assert ops[0].ticker == "MSFT"
+    assert ops[0].ticker == "TST1"
 
 
 def test_read_all_skips_revolut_when_no_matching_file(tmp_path: Path):

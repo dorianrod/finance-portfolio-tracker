@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs the fast lint/type checks and blocks commits that mention a personal
-# portfolio ticker/ISIN (see scan_personal_data.py) before anything reaches
-# the public remote. Bypass only a confirmed false positive with
+# asset name, ticker or ISIN (see scan_personal_data.py) before anything
+# reaches the public remote. Bypass only a confirmed false positive with
 # `git push --no-verify`.
 set -euo pipefail
 

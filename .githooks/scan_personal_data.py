@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Block commits/pushes that mention personal portfolio identifiers.
+"""Block commits/pushes that mention personal portfolio data.
 
 This repo is public but `data/` (a symlink to the real portfolio data)
 is gitignored and must never leak into code, comments, commit messages
 or test fixtures. Rather than maintaining a manual blocklist, this
-script derives one straight from `data/`: every ISIN and ticker it
-finds there is a name that must never appear in anything pushed to
-origin.
+script derives one straight from `data/`: every distinctive asset name,
+ISIN and ticker it finds there is a value that must never appear in
+anything pushed to origin.
 
 Reads the text to scan from stdin (a commit message, or `git log -p`
 output for a push range) and exits non-zero if any blocklisted token
 is found, printing the offending tokens.
 """
 
+import csv
 import re
 import sys
 from pathlib import Path
@@ -22,24 +23,44 @@ def repo_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-def _add_csv_tokens(tokens: set[str], path: Path, columns: list[int]) -> None:
+def _first_column(index: dict[str, int], *names: str) -> int | None:
+    return next((index[name] for name in names if name in index), None)
+
+
+def _add_csv_tokens(
+    identifiers: set[str], names: set[str], path: Path
+) -> None:
     try:
-        lines = path.read_text(errors="ignore").splitlines()
+        csv_file = path.open(newline="", errors="ignore")
     except OSError:
         return
-    for line in lines[1:]:  # skip header
-        parts = line.split(",")
-        for col in columns:
-            if col < len(parts):
-                value = parts[col].strip()
-                if value:
-                    tokens.add(value)
+
+    with csv_file:
+        for row in csv.DictReader(csv_file):
+            for header, raw_value in row.items():
+                normalized_header = (header or "").strip().lower()
+                if raw_value is None:
+                    continue
+                value = raw_value.strip()
+                if not value:
+                    continue
+                if normalized_header in {
+                    "id",
+                    "isin",
+                    "ticker",
+                    "yahoo",
+                    "yahoo_symbol",
+                }:
+                    identifiers.add(value)
+                elif normalized_header in {"name", "nom", "nom_placement"}:
+                    names.add(value)
 
 
 def load_blocklist(data_dir: Path) -> set[str]:
-    tokens: set[str] = set()
+    identifiers: set[str] = set()
+    names: set[str] = set()
 
-    # data/input/allocations/*.xlsx: "id" (ISIN) and "ticker" columns.
+    # data/input/allocations/*.xlsx: asset name, ISIN and ticker columns.
     alloc_dir = data_dir / "input" / "allocations"
     if alloc_dir.exists():
         try:
@@ -57,13 +78,24 @@ def load_blocklist(data_dir: Path) -> set[str]:
                     next(rows)  # title row
                     header = [str(h or "").strip().lower() for h in next(rows)]
                     idx = {h: i for i, h in enumerate(header) if h}
-                    id_col = idx.get("id")
-                    ticker_col = idx.get("ticker")
-                    yahoo_col = idx.get("yahoo_symbol") or idx.get("yahoo")
+                    id_col = _first_column(idx, "id", "isin")
+                    ticker_col = _first_column(idx, "ticker")
+                    yahoo_col = _first_column(
+                        idx, "yahoo_symbol", "yahoo"
+                    )
+                    name_col = _first_column(
+                        idx, "nom_placement", "name", "nom"
+                    )
                     for row in rows:
                         for col in (id_col, ticker_col, yahoo_col):
                             if col is not None and col < len(row) and row[col]:
-                                tokens.add(str(row[col]).strip())
+                                identifiers.add(str(row[col]).strip())
+                        if (
+                            name_col is not None
+                            and name_col < len(row)
+                            and row[name_col]
+                        ):
+                            names.add(str(row[name_col]).strip())
                 except Exception:
                     continue
 
@@ -71,23 +103,36 @@ def load_blocklist(data_dir: Path) -> set[str]:
     others_dir = data_dir / "input" / "asset_prices" / "others"
     if others_dir.exists():
         for f in others_dir.glob("*.csv"):
-            _add_csv_tokens(tokens, f, columns=[1, 2])
+            _add_csv_tokens(identifiers, names, f)
 
-    # data/input/asset_prices/generated/*.csv: isin,ticker,yahoo_symbol,...
+    # generated/*.csv: isin,ticker,yahoo_symbol,name,...
     generated_dir = data_dir / "input" / "asset_prices" / "generated"
     if generated_dir.exists():
         for f in generated_dir.glob("*.csv"):
-            _add_csv_tokens(tokens, f, columns=[0, 1, 2])
+            _add_csv_tokens(identifiers, names, f)
 
-    # Drop noise: too short to be meaningful, or literal "nan"/"none".
-    return {t for t in tokens if len(t) >= 3 and t.lower() not in ("nan", "none")}
+    # Very short or one-word labels ("Cash", "Bitcoin", ...) are too
+    # generic to block safely in source code and commit messages. Instrument
+    # names remain distinctive even when their capitalization changes.
+    clean_identifiers = {
+        token
+        for token in identifiers
+        if len(token) >= 3 and token.lower() not in ("nan", "none")
+    }
+    distinctive_names = {
+        name
+        for name in names
+        if len(name) >= 12 and len(name.split()) >= 2
+    }
+    return clean_identifiers | distinctive_names
 
 
 def find_matches(text: str, tokens: set[str]) -> set[str]:
     found: set[str] = set()
     for tok in tokens:
         pattern = r"(?<![A-Za-z0-9])" + re.escape(tok) + r"(?![A-Za-z0-9])"
-        if re.search(pattern, text):
+        flags = re.IGNORECASE if any(char.isspace() for char in tok) else 0
+        if re.search(pattern, text, flags=flags):
             found.add(tok)
     return found
 
@@ -102,7 +147,7 @@ def main() -> int:
     found = find_matches(text, tokens)
     if found:
         sys.stderr.write(
-            "\nBLOCKED: personal portfolio identifier(s) found in content"
+            "\nBLOCKED: personal portfolio data found in content"
             " being committed/pushed:\n"
         )
         for tok in sorted(found):
