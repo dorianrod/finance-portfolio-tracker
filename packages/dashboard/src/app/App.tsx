@@ -14,7 +14,7 @@ import { useSavingCapacity } from '@/hooks/useSavingCapacity'
 import { usePassiveIncome } from '@/hooks/usePassiveIncome'
 import { useAccountTypeHistory } from '@/hooks/useAccountTypeHistory'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
-import { useFundHoldings } from '@/hooks/useFundHoldings'
+import { useFundHoldingsData } from '@/hooks/useFundHoldings'
 import { PositionsTable } from '@/features/positions-table/PositionsTable'
 import { FilterBar } from '@/features/filters/FilterBar'
 import { AllocationCharts } from '@/features/allocation-charts/AllocationCharts'
@@ -25,6 +25,7 @@ import { OverviewTab } from '@/features/dashboard/OverviewTab'
 import { WealthTab } from '@/features/dashboard/WealthTab'
 import { PerformanceTab } from '@/features/dashboard/PerformanceTab'
 import { DataQualityTab } from '@/features/dashboard/DataQualityTab'
+import { FundLookThroughTab } from '@/features/fund-holdings/FundLookThroughTab'
 import type { Filters, SortKey } from '@/types/filters'
 import { accountFilterId, rawAccountId } from '@/shared/filters/accountFilter'
 import { accountLabel } from '@/features/filters/filterBar.logic'
@@ -47,13 +48,14 @@ import {
   sortPositionsForTable,
 } from './app.logic'
 
-type AnalysisTab = 'overview' | 'wealth' | 'performance' | 'allocation' | 'positions' | 'quality'
+type AnalysisTab = 'overview' | 'wealth' | 'performance' | 'allocation' | 'underlying' | 'positions' | 'quality'
 
 const PRIMARY_TABS: Array<{ id: Exclude<AnalysisTab, 'quality'>; label: string }> = [
   { id: 'overview', label: 'Overview' },
   { id: 'wealth', label: 'Wealth & cash flow' },
   { id: 'performance', label: 'Performance & passive income' },
   { id: 'allocation', label: 'Allocation & risk' },
+  { id: 'underlying', label: 'Underlying assets' },
   { id: 'positions', label: 'Positions' },
 ]
 
@@ -62,6 +64,7 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   wealth: { title: 'Wealth & cash flow', description: 'How contributions and market performance built the portfolio over time.' },
   performance: { title: 'Performance & passive income', description: 'Returns, realized outcomes and recurring passive income.' },
   allocation: { title: 'Allocation & risk', description: 'Current exposures, concentration and how the mix is evolving.' },
+  underlying: { title: 'Underlying assets', description: 'All identified economic exposure through ETFs and funds, grouped by issuer and security.' },
   positions: { title: 'Positions', description: 'Inspect every holding, transaction and position-level result.' },
   quality: { title: 'Data quality', description: 'Allocation coverage, pipeline anomalies and manual price overrides.' },
 }
@@ -82,7 +85,8 @@ export default function App() {
   const { manualPriceOverrides } = useManualPriceOverrides()
   const allMonthlyOps = useMonthlyOps()
   const rawAllocationData = useRawIsinData()
-  const fundHoldings = useFundHoldings()
+  const fundData = useFundHoldingsData()
+  const fundHoldings = fundData.holdings
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [activeTab, setActiveTab] = useState<AnalysisTab>('overview')
@@ -220,7 +224,8 @@ export default function App() {
     else { setSortKey(key); setSortDir('desc') }
   }
 
-  const qualityCount = pipelineErrors.length + manualPriceOverrides.length
+  const fundQualityCount = fundData.statuses.filter((status) => status.validationStatus !== 'ok' || status.residualPct > 0.5).length
+  const qualityCount = pipelineErrors.length + manualPriceOverrides.length + fundQualityCount
   const showPeriod = activeTab !== 'quality'
   const copy = TAB_COPY[activeTab]
 
@@ -244,7 +249,7 @@ export default function App() {
             {PRIMARY_TABS.map((tab) => <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? 'border-blue-500 text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>{tab.label}</button>)}
             <button type="button" onClick={() => setActiveTab('quality')} className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === 'quality' ? 'border-b-blue-500 border-l-gray-800 text-white' : 'border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300'}`}>
               Data quality
-              {qualityCount > 0 && <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${pipelineErrors.some((item) => item.level === 'error') ? 'bg-red-900/60 text-red-300' : 'bg-amber-900/60 text-amber-300'}`}>{qualityCount}</span>}
+              {qualityCount > 0 && <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${pipelineErrors.some((item) => item.level === 'error') || fundData.statuses.some((item) => item.validationStatus === 'error') ? 'bg-red-900/60 text-red-300' : 'bg-amber-900/60 text-amber-300'}`}>{qualityCount}</span>}
             </button>
           </nav>
 
@@ -285,9 +290,10 @@ export default function App() {
           {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
           {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} dateFrom={filters.dateFrom} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
-          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} dateFrom={filters.dateFrom} dateTo={filters.dateTo} activeFilter={allocationFilter} onActiveFilterChange={setAllocationFilter} />}
-          {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
-          {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />}
+          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} fundReport={fundData.report} dateFrom={filters.dateFrom} dateTo={filters.dateTo} activeFilter={allocationFilter} onActiveFilterChange={setAllocationFilter} />}
+          {activeTab === 'underlying' && <FundLookThroughTab positions={currentPositions} holdings={fundHoldings} report={fundData.report} />}
+          {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} fundHoldings={fundHoldings} fundStatuses={fundData.statuses} onOpenCompleteHoldings={() => setActiveTab('underlying')} />}
+          {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} fundStatuses={fundData.statuses} fundReport={fundData.report} />}
         </>}
       </div>
     </div>

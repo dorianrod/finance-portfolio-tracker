@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeAllocationCoverageByAccount } from './allocationCoverage.logic'
+import { computeAllocationCoverageByAccount, computeAllocationCoverageByDimension } from './allocationCoverage.logic'
 import type { RawIsinData, RawIsinRow } from '@/hooks/useRawIsinData'
 import type { PositionRow } from '@/types/domain'
 
@@ -91,5 +91,33 @@ describe('computeAllocationCoverageByAccount', () => {
     const result = computeAllocationCoverageByAccount(positions, rawData())
 
     expect(result.map((r) => r.account)).toEqual(['big', 'small'])
+  })
+})
+
+describe('computeAllocationCoverageByDimension', () => {
+  it('counts explicit nc and missing rows, with responsible assets', () => {
+    const positions = [
+      position({ id: 'known', isin: 'KNOWN', name: 'Partially documented', total_value: 1_000 }),
+      position({ id: 'missing', isin: 'MISSING', name: 'Missing', total_value: 500 }),
+    ]
+    const data = rawData({
+      geo: [isinRow({ isin: 'KNOWN', values: { france: 80, nc: 20 } })],
+      secteur: [isinRow({ isin: 'KNOWN', values: { technology: 100 } })],
+    })
+
+    const result = computeAllocationCoverageByDimension(positions, data)
+
+    expect(result.find((item) => item.dimension === 'geo')).toMatchObject({
+      allocated: 800,
+      unallocated: 700,
+    })
+    expect(result.find((item) => item.dimension === 'geo')?.issues).toEqual([
+      { id: 'MISSING', name: 'Missing', value: 500, unallocated: 500 },
+      { id: 'KNOWN', name: 'Partially documented', value: 1000, unallocated: 200 },
+    ])
+    expect(result.find((item) => item.dimension === 'secteur')).toMatchObject({
+      allocated: 1_000,
+      unallocated: 500,
+    })
   })
 })

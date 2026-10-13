@@ -47,6 +47,40 @@ data/
   output/        (generated)
 ```
 
+## Fund look-through data
+
+Every `finance-pipeline` run also refreshes ETF/fund constituents. Official
+issuer files are preferred, exact-index physical proxies are used for
+synthetic ETFs, and Yahoo is retained only as a partial fallback. Successful
+downloads are cached for 30 days and kept if a later provider request fails.
+
+The generated files are:
+
+- `fund_holdings.csv`: normalized underlying securities and issuers;
+- `fund_holdings_status.csv`: source tier (A-D), date, coverage, residual and
+  validation issues for every fund;
+- `fund_holdings_coverage.csv`: portfolio-level coverage and feasibility
+  gates consumed by the dashboard.
+
+Which provider feeds which fund is configured per portfolio in
+`input/fund_sources.csv` (private, never in code): one row per fund ISIN with
+`parent_isin, provider, adapter, url, quality_tier, index_name,
+replication_method, proxy_name, proxy_isin`. Supported adapters are
+`ishares_csv`, `globalx_csv` and `globalx_hk_html`. Funds without a row fall
+back to Yahoo (tier C), so a portfolio change never needs a code change.
+
+Run an explicit provider check, ignoring the monthly cache, with:
+
+```bash
+finance-fund-holdings --data-dir /path/to/data --force
+```
+
+The complete underlying-assets view is enabled after at least 85% of the
+fund sleeve is covered by A/B sources, the seven largest funds each reach
+98%, proxies are exact-index matches, and two successful refreshes have been
+observed. Partial and unavailable funds remain visible in Data quality with
+their monetary impact.
+
 ## finance-init
 
 ```bash

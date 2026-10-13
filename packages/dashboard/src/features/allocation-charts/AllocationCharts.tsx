@@ -9,19 +9,22 @@ import type { AllocationFilter } from './allocationCharts.types'
 import type { PositionRow } from '@/types/domain'
 import { computeConcentration, computeHeldAssetConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
 import { ConcentrationChart } from '@/features/portfolio-charts/ConcentrationChart'
-import type { FundHolding } from '@/hooks/useFundHoldings'
+import type { FundCoverageReport, FundHolding } from '@/hooks/useFundHoldings'
 import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
+import { LookThroughCoverageSummary } from '@/features/fund-holdings/LookThroughCoverageSummary'
+import { fmtFull } from '@/shared/format/money'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
   fundHoldings: FundHolding[]
+  fundReport: FundCoverageReport | null
   dateFrom?: string
   dateTo?: string
   activeFilter: AllocationFilter | null
   onActiveFilterChange: (filter: AllocationFilter | null) => void
 }
 
-export function AllocationCharts({ positions, fundHoldings, dateFrom, dateTo, activeFilter, onActiveFilterChange }: AllocationChartsProps) {
+export function AllocationCharts({ positions, fundHoldings, fundReport, dateFrom, dateTo, activeFilter, onActiveFilterChange }: AllocationChartsProps) {
   const { geo, secteur, currency, classe, loading: loadingAgg } = useAllocationData()
   const rawData = useRawIsinData()
 
@@ -118,7 +121,8 @@ export function AllocationCharts({ positions, fundHoldings, dateFrom, dateTo, ac
 
       {view === 'current' && (
         <>
-          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} topTenValue={concentration.topTenValue} topTenPct={concentration.topTenPct} description={concentrationMode === 'held' ? 'Assets effectively held, aggregated across accounts.' : `Direct and disclosed fund holdings · ${concentration.coveragePct.toFixed(0)}% coverage.`} action={<ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />} />}
+          {concentrationMode === 'lookThrough' && <LookThroughCoverageSummary report={fundReport} compact />}
+          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} topTenValue={concentration.topTenValue} topTenPct={concentration.topTenPct} description={concentrationMode === 'held' ? 'Assets effectively held, aggregated across accounts.' : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`} action={<ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />} />}
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
             {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}

@@ -325,21 +325,23 @@ describe('portfolio summaries', () => {
       position({ id: 'direct', isin: 'DIRECT-ASSET', name: 'Direct Asset', total_value: 100 }),
       position({ id: 'account', isin: '', ticker: '', name: 'Broker account', total_value: 10_000 }),
     ], [
-      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', weight: 0.1 },
-      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'US0378331005', holdingName: 'Apple', weight: 0.08 },
-      { parentIsin: 'FUND-B', parentTicker: '', parentName: 'US UCITS ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', weight: 0.2 },
+      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', issuerId: 'DIRECT-ASSET', issuerName: 'Direct Asset', weight: 0.1, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
+      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'US0378331005', holdingName: 'Apple', issuerId: 'apple', issuerName: 'Apple', weight: 0.08, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
+      { parentIsin: 'FUND-B', parentTicker: '', parentName: 'US UCITS ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', issuerId: 'DIRECT-ASSET', issuerName: 'Direct Asset', weight: 0.2, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
     ])
 
     expect(result.holdings[0]).toMatchObject({
       label: 'Direct Asset',
       name: 'Direct Asset',
       value: 300,
-      weight: 18.75,
+      weight: 300 / 11600 * 100,
     })
     expect(result.holdings[1].value).toBe(80)
     expect(result.topTenValue).toBe(380)
-    expect(result.topTenPct).toBeCloseTo(23.75)
-    expect(result.coveragePct).toBeCloseTo(1600 / 11600 * 100)
+    expect(result.topTenPct).toBeCloseTo(380 / 11600 * 100)
+    expect(result.coveragePct).toBeCloseTo(380 / 11600 * 100)
+    expect(result.undisclosedValue).toBe(1_220)
+    expect(result.opaqueValue).toBe(10_000)
   })
 
   it('does not rank account valuations or opaque funds as underlying assets', () => {

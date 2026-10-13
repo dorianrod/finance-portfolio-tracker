@@ -24,7 +24,7 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-4">
-        <h2 className="text-xs font-medium text-gray-500">Allocation coverage</h2>
+        <h2 className="text-xs font-medium text-gray-500">Allocation-row coverage</h2>
         <button
           type="button"
           className="flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-gray-400 transition-colors hover:bg-gray-800 hover:text-gray-200"
@@ -50,12 +50,12 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
-          <div className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Overall coverage</div>
+          <div className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Position mapping</div>
           <div className={`mt-2 text-2xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.coverage}`}>{roundedOverallPct}%</div>
           <div
             className="mt-3 flex h-2 overflow-hidden rounded-full bg-gray-800"
             role="progressbar"
-            aria-label="Overall allocation coverage"
+            aria-label="Positions mapped to an allocation row"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={roundedOverallPct}
@@ -71,7 +71,7 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.coverage }} />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Allocated</span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Mapped to a row</span>
           </div>
           <div className="mt-2 truncate text-xl font-semibold tabular-nums text-gray-200" title={fmtFull(totalAllocated)}>
             {fmtFull(totalAllocated)}
@@ -82,7 +82,7 @@ export function AllocationCoverageCard({ coverage, accountLabels }: AllocationCo
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.coverageGap }} />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">Not allocated</span>
+            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-600">No allocation row</span>
           </div>
           <div className="mt-2 truncate text-xl font-semibold tabular-nums text-gray-200" title={fmtFull(totalUnallocated)}>
             {fmtFull(totalUnallocated)}

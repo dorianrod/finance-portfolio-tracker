@@ -19,6 +19,10 @@ import { HoverSavingsChart, type SavingsChartTarget } from '@/features/hover-cha
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/features/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/hooks/useAllocationByIsin'
 import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
+import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
+import { FundQualityBadge } from '@/features/fund-holdings/FundQualityBadge'
+import { FundPositionBreakdown } from '@/features/fund-holdings/FundPositionBreakdown'
+import { statusForPosition } from '@/features/fund-holdings/fundHoldings.logic'
 
 const col = createColumnHelper<TableRow>()
 
@@ -35,12 +39,19 @@ interface Props {
   sortKey: SortKey
   sortDir: 'asc' | 'desc'
   onSort: (key: SortKey) => void
+  fundHoldings?: FundHolding[]
+  fundStatuses?: FundHoldingStatus[]
+  onOpenCompleteHoldings?: () => void
 }
 
-export function PositionsTable({ data, groupByType = false, sortKey, sortDir, onSort }: Props) {
+export function PositionsTable({
+  data, groupByType = false, sortKey, sortDir, onSort,
+  fundHoldings = [], fundStatuses = [], onOpenCompleteHoldings,
+}: Props) {
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
+  const [openUnderlying, setOpenUnderlying] = useState<Set<string>>(new Set())
   const { data: allocationData } = useAllocationByIsin()
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -82,6 +93,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
+          const fundStatus = statusForPosition(r, fundStatuses)
           return (
             <span className="flex flex-col gap-0.5">
               <span className="flex items-center gap-2">
@@ -89,6 +101,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                 {r.status === 'closed' && (
                   <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">Closed</span>
                 )}
+                {fundStatus && <FundQualityBadge status={fundStatus} />}
               </span>
               {(r.ticker || r.isin) && (
                 <span className="flex items-center gap-1.5">
@@ -96,6 +109,23 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   {r.isin && r.ticker && <span className="text-gray-700 text-xs">·</span>}
                   {r.ticker && <span className="text-xs text-gray-400 font-mono">{r.ticker}</span>}
                 </span>
+              )}
+              {fundStatus && r.status === 'active' && (
+                <button
+                  type="button"
+                  className="mt-1 w-fit text-[11px] font-medium text-blue-400 hover:text-blue-300"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setOpenUnderlying((current) => {
+                      const next = new Set(current)
+                      if (next.has(r.id)) next.delete(r.id)
+                      else next.add(r.id)
+                      return next
+                    })
+                  }}
+                >
+                  {openUnderlying.has(r.id) ? 'Hide underlying assets' : 'Show underlying assets'}
+                </button>
               )}
             </span>
           )
@@ -357,7 +387,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         )
       },
     }),
-  ], [setChart, sortKey, sortDir, onSort, allocationData])
+  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, openUnderlying])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
   // call, which the React Compiler can never safely memoize — not fixable here.
@@ -532,6 +562,18 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                         </td>
                       ))}
                     </tr>
+                    {isPosition && openUnderlying.has(r.id) && (
+                      <tr className="border-b border-gray-800 bg-gray-950">
+                        <td colSpan={9} className="p-0">
+                          <FundPositionBreakdown
+                            position={r}
+                            holdings={fundHoldings}
+                            statuses={fundStatuses}
+                            onOpenComplete={onOpenCompleteHoldings}
+                          />
+                        </td>
+                      </tr>
+                    )}
                   </Fragment>
                 )
               })

@@ -61,6 +61,11 @@ export interface ConcentrationSummary {
   topTenPct: number
   topTenValue: number
   coveragePct: number
+  identifiedValue: number
+  undisclosedValue: number
+  opaqueValue: number
+  selectedValue: number
+  holdingCount: number
   holdings: HoldingConcentration[]
 }
 
@@ -265,7 +270,9 @@ export function computeConcentration(
   }
 
   let selectedValue = 0
-  let coveredValue = 0
+  let identifiedValue = 0
+  let undisclosedValue = 0
+  let opaqueValue = 0
 
   function addAsset(key: string, label: string, name: string, value: number) {
     const current = byAsset.get(key) ?? { label, name, value: 0 }
@@ -286,18 +293,19 @@ export function computeConcentration(
     const lookThrough = holdingsByParent.get(position.isin)
       ?? holdingsByParent.get(position.ticker)
     if (lookThrough?.length) {
-      // Only the disclosed constituents become concentration candidates.
-      // The full fund value remains in the denominator below, so the
-      // undisclosed tail cannot be mistaken for one large holding.
+      const disclosedWeight = lookThrough.reduce((sum, holding) => sum + holding.weight, 0)
+      const scale = disclosedWeight > 1 ? 1 / disclosedWeight : 1
       for (const holding of lookThrough) {
         addAsset(
-          holding.holdingId,
-          holding.holdingName,
-          holding.holdingName,
-          positionValue * holding.weight,
+          holding.issuerId || holding.holdingId,
+          holding.issuerName || holding.holdingName,
+          holding.issuerName || holding.holdingName,
+          positionValue * holding.weight * scale,
         )
       }
-      coveredValue += positionValue
+      const explainedWeight = Math.min(1, disclosedWeight)
+      identifiedValue += positionValue * explainedWeight
+      undisclosedValue += positionValue * (1 - explainedWeight)
       continue
     }
 
@@ -306,29 +314,38 @@ export function computeConcentration(
     // Keep them out of the ranking instead of presenting the account as a
     // holding. Identified non-fund securities remain valid direct exposure.
     const key = position.isin || position.ticker
-    if (!key || isFundPosition(position)) continue
+    if (!key) {
+      opaqueValue += positionValue
+      continue
+    }
+    if (isFundPosition(position)) {
+      undisclosedValue += positionValue
+      continue
+    }
     addAsset(key, assetDisplayLabel(position, key), position.name, positionValue)
-    coveredValue += positionValue
+    identifiedValue += positionValue
   }
 
-  // `coveredValue` includes the undisclosed tail of mapped funds, producing
-  // weights against the full analysable exposure rather than only the top 10.
-  const total = coveredValue
-  const holdings = [...byAsset.values()]
+  const allHoldings = [...byAsset.values()]
     .sort((a, b) => b.value - a.value)
-    .slice(0, 10)
     .map((holding) => ({
       ...holding,
       value: Math.round(holding.value),
-      weight: total > 0 ? (holding.value / total) * 100 : 0,
+      weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,
     }))
+  const holdings = allHoldings.slice(0, 10)
 
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
     topFivePct: holdings.slice(0, 5).reduce((sum, holding) => sum + holding.weight, 0),
     topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
     topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
-    coveragePct: selectedValue > 0 ? (coveredValue / selectedValue) * 100 : 0,
+    coveragePct: selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
+    identifiedValue,
+    undisclosedValue,
+    opaqueValue,
+    selectedValue,
+    holdingCount: allHoldings.length,
     holdings,
   }
 }
@@ -369,6 +386,11 @@ export function computeHeldAssetConcentration(
     topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
     topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
     coveragePct: total > 0 ? 100 : 0,
+    identifiedValue: total,
+    undisclosedValue: 0,
+    opaqueValue: 0,
+    selectedValue: total,
+    holdingCount: byAsset.size,
     holdings,
   }
 }

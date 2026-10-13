@@ -1,6 +1,23 @@
-import pandas as pd
+from datetime import date
 
-from src.fetch_fund_holdings import build_fund_holdings
+import pandas as pd
+import pytest
+
+from src.fetch_fund_holdings import (
+    FundPosition,
+    _status_row,
+    build_coverage_report,
+    build_fund_holdings,
+    refresh_fund_holdings,
+)
+from src.fund_holdings_sources import (
+    FundSource,
+    SourceResult,
+    load_fund_sources,
+    parse_globalx_csv,
+    parse_globalx_hk_html,
+    parse_ishares_csv,
+)
 
 
 def test_build_fund_holdings_canonicalizes_direct_and_indirect_asset():
@@ -47,3 +64,207 @@ def test_build_fund_holdings_canonicalizes_direct_and_indirect_asset():
         "holding_name": "Example Energy Corp",
         "weight": 0.12,
     }]
+
+
+def test_official_source_parsers_reject_format_changes_and_parse_dates():
+    ishares = parse_ishares_csv(
+        b'Fund Holdings as of,"12/Oct/2026"\n\n'
+        b'Ticker,Name,Exchange,Weight (%)\n'
+        b'AAA,Example Corp,NASDAQ,5.25\n'
+    )
+    assert ishares.holdings_date == "2026-10-12"
+    assert ishares.holdings.iloc[0]["weight"] == pytest.approx(0.0525)
+
+    globalx = parse_globalx_csv(
+        b"AS_OF_DATE,NAME,NET_ASSETS,TICKER,ISIN\n"
+        b"2026-10-12,Cameco,15.5,CCO,CA13321L1085\n"
+    )
+    assert globalx.holdings_date == "2026-10-12"
+    assert globalx.holdings.iloc[0]["source_holding_id"] == "CA13321L1085"
+
+    html = b"""
+      <h3>Daily Holdings<small>As of 12 Oct 2026</small></h3>
+      <table id="holdingsList" id="top-ten"><tbody><tr>
+      <td>Samsung Electronics</td><td>005930 KS</td><td>Seoul</td>
+      <td>100</td><td>10</td><td>1000</td><td>7.12</td>
+      </tr></tbody></table>
+    """
+    parsed_html = parse_globalx_hk_html(html)
+    assert parsed_html.holdings_date == "2026-10-12"
+    assert parsed_html.holdings.iloc[0]["weight"] == pytest.approx(0.0712)
+
+    with pytest.raises(ValueError, match="header not found"):
+        parse_ishares_csv(b"provider changed this format")
+    with pytest.raises(ValueError, match="no parseable holdings"):
+        parse_globalx_csv(b"AS_OF_DATE,NAME,NET_ASSETS,TICKER,ISIN\n")
+
+
+_SOURCE_HEADER = (
+    "parent_isin,provider,adapter,url,quality_tier,index_name,"
+    "replication_method,proxy_name,proxy_isin\n"
+)
+
+
+def test_load_fund_sources_reads_registry_from_data_dir(tmp_path):
+    assert load_fund_sources(tmp_path) == {}
+    (tmp_path / "input").mkdir()
+    registry = tmp_path / "input" / "fund_sources.csv"
+    registry.write_text(
+        _SOURCE_HEADER
+        + "SYNTH,Provider,ishares_csv,https://example.test/p.csv,B,"
+        "Some Index,synthetic,Physical ETF,PHYS\n"
+    )
+    source = load_fund_sources(tmp_path)["SYNTH"]
+    assert source.quality_tier == "B"
+    assert source.index_name == "Some Index"
+    assert source.proxy_isin == "PHYS"
+
+    registry.write_text(
+        _SOURCE_HEADER + "X,P,unknown_adapter,https://e.test,A,I,physical,,\n"
+    )
+    with pytest.raises(ValueError, match="unsupported adapter"):
+        load_fund_sources(tmp_path)
+    registry.write_text("parent_isin,provider\nX,P\n")
+    with pytest.raises(ValueError, match="missing columns"):
+        load_fund_sources(tmp_path)
+
+
+_EXAMPLE_SOURCE = FundSource(
+    "FUND", "Provider", "ishares_csv", "https://example.test/p.csv",
+    "A", "Example Index", "physical",
+)
+
+
+def test_status_flags_stale_and_incomplete_official_data():
+    fund = FundPosition("FUND", "", "Fund ETF", "FUND", 1_000)
+    source = _EXAMPLE_SOURCE
+    source_rows = pd.DataFrame([{
+        "source_holding_id": "AAA",
+        "source_holding_name": "Example Corp",
+        "exchange": "NASDAQ",
+        "weight": 0.5,
+    }])
+    normalized = pd.DataFrame([{
+        "holding_id": "AAA",
+        "weight": 0.5,
+    }])
+    status = _status_row(
+        fund,
+        normalized,
+        source,
+        "A",
+        SourceResult(source_rows, "2026-01-01"),
+        None,
+        date(2026, 10, 13),
+    )
+    assert status["validation_status"] == "warning"
+    assert status["is_stale"] == "true"
+    assert "weights total 50.00%" in str(status["issues"])
+
+
+def test_status_resets_repeatability_when_provider_shape_changes():
+    fund = FundPosition("FUND", "", "Fund ETF", "FUND", 1_000)
+    source = _EXAMPLE_SOURCE
+    source_rows = pd.DataFrame([{
+        "source_holding_id": "ONE", "source_holding_name": "One",
+        "exchange": "", "weight": 1.0,
+    }])
+    normalized = pd.DataFrame([{"holding_id": "ONE", "weight": 1.0}])
+    previous = pd.Series({
+        "refresh_streak": 4,
+        "holding_count": 500,
+        "raw_weight_sum": 1.0,
+        "quality_tier": "A",
+    })
+    status = _status_row(
+        fund,
+        normalized,
+        source,
+        "A",
+        SourceResult(source_rows, "2026-10-12"),
+        previous,
+        date(2026, 10, 13),
+    )
+    assert status["refresh_streak"] == 1
+    assert status["validation_status"] == "warning"
+    assert "streak reset" in str(status["issues"])
+
+
+def test_coverage_report_requires_high_confidence_and_repeatability():
+    positions = pd.DataFrame([
+        {
+            "snapshot_date": "2026-10-13", "isin": "F1", "ticker": "",
+            "name": "Fund ETF", "total_value": 900,
+        },
+        {
+            "snapshot_date": "2026-10-13", "isin": "DIRECT", "ticker": "",
+            "name": "Direct", "total_value": 100,
+        },
+    ])
+    statuses = pd.DataFrame([{
+        "quality_tier": "A", "explained_value": 900,
+        "market_value": 900, "explained_pct": 100,
+        "index_name": "Index", "proxy_isin": "", "refresh_streak": 2,
+        "validation_status": "ok",
+    }])
+    report = build_coverage_report(positions, statuses).iloc[0]
+    assert report["fund_coverage_pct"] == 100
+    assert report["portfolio_coverage_pct"] == 100
+    # A real portfolio needs seven material funds before the full UI unlocks.
+    assert report["feasibility_status"] == "limited"
+
+
+def test_refresh_uses_cache_and_preserves_last_valid_data_on_failure(tmp_path):
+    output = tmp_path / "output"
+    output.mkdir()
+    (tmp_path / "input" / "allocations").mkdir(parents=True)
+    (tmp_path / "input" / "fund_sources.csv").write_text(
+        _SOURCE_HEADER
+        + "FUND,Provider,ishares_csv,https://example.test/p.csv,A,"
+        "Example Index,physical,,\n"
+    )
+    pd.DataFrame([{
+        "snapshot_date": "2026-10-13",
+        "isin": "FUND",
+        "ticker": "",
+        "name": "Example Core UCITS ETF",
+        "total_value": 1_000,
+    }]).to_csv(output / "positions.csv", index=False)
+
+    result = SourceResult(pd.DataFrame([{
+        "source_holding_id": "AAA",
+        "source_holding_name": "Example Corp",
+        "exchange": "NASDAQ",
+        "weight": 1.0,
+    }]), "2026-10-12")
+    refresh_fund_holdings(
+        tmp_path,
+        force=True,
+        official_fetch=lambda source: result,
+        today=date(2026, 10, 13),
+    )
+    first = (output / "fund_holdings.csv").read_text()
+
+    def should_not_fetch(source):
+        raise AssertionError("fresh cache should avoid the provider")
+
+    refresh_fund_holdings(
+        tmp_path,
+        official_fetch=should_not_fetch,
+        today=date(2026, 10, 20),
+    )
+    assert (output / "fund_holdings.csv").read_text() == first
+
+    def failing_fetch(source):
+        raise RuntimeError("provider unavailable")
+
+    refresh_fund_holdings(
+        tmp_path,
+        force=True,
+        official_fetch=failing_fetch,
+        today=date(2026, 12, 1),
+    )
+    assert (output / "fund_holdings.csv").read_text() == first
+    status = pd.read_csv(output / "fund_holdings_status.csv").iloc[0]
+    assert status["validation_status"] == "warning"
+    assert "last valid data kept" in status["issues"]

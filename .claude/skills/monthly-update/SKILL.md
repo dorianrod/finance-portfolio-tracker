@@ -407,6 +407,60 @@ After any fixes, rerun Step 7, then repeat Step 8 until either:
 
 ---
 
+## Step 8b — Fund look-through sources
+
+The pipeline refreshes ETF/fund constituents using the per-portfolio registry
+`<data-dir>/input/fund_sources.csv` (columns: `parent_isin, provider, adapter,
+url, quality_tier, index_name, replication_method, proxy_name, proxy_isin`).
+It is user data: never copy its rows into code, tests, docs or commits.
+
+Find funds with no official source (tier C = Yahoo fallback, D = unavailable):
+
+```bash
+python3 -c "
+import pandas as pd
+s = pd.read_csv('<data-dir>/output/fund_holdings_status.csv').fillna('')
+print(s[s.quality_tier.isin(['C','D'])][
+  ['parent_isin','parent_name','quality_tier','market_value','issues']
+].sort_values('market_value', ascending=False).to_string(index=False))
+"
+```
+
+Also flag registry rows whose fund is no longer held (informational; leave
+them unless the user asks to prune).
+
+For each tier C/D fund, largest `market_value` first, research an official
+source and propose a row:
+
+1. Issuer site, by ISIN. Supported adapters:
+   - `ishares_csv`: iShares product page "Download holdings" CSV URL
+     (`.../products/<id>/fund/<ajax-id>.ajax?fileType=csv&fileName=<T>_holdings&dataType=fund`);
+     copy the pattern from an existing iShares row.
+   - `globalx_csv` / `globalx_hk_html`: Global X holdings CSV / HK page.
+2. Physical fund with complete official holdings: `quality_tier=A`,
+   `replication_method=physical`, `proxy_*` empty.
+3. Synthetic/swap fund: only if a physical fund tracks **exactly the same
+   index** — `quality_tier=B`, `replication_method=synthetic`, fill
+   `index_name`, `proxy_name`, `proxy_isin`, and point `url` to the proxy's
+   holdings. Never map to the swap collateral basket.
+4. No supported provider or no exact proxy: leave the fund on Yahoo and say
+   so; do not add a row. A new provider needs a new adapter (code change in
+   `fund_holdings_sources.py`, generic and with no portfolio data).
+
+Present the proposed rows (fund, source URL, tier, rationale) and ask for
+confirmation when the source choice is ambiguous or a proxy is used. Append
+confirmed rows to the CSV with the **Edit** tool, then re-run:
+
+```bash
+make -C finance-portfolio-tracker fund-holdings DATA_DIR=<data-dir>
+```
+
+(`--force` is implied for new rows since uncached funds are always fetched.)
+Check that each new fund reaches tier A/B with `validation_status` ok and
+weights ≈ 100%; otherwise fix or revert the row.
+
+---
+
 ## Step 9 — Summary
 
 Display a concise recap once all steps are complete:
@@ -429,6 +483,9 @@ Direct accounts:
 Allocation file:
   {ALLOC_DATE}.xlsx — {created from scratch / copied from previous / updated with N assets}
   Assets researched: {list or "none"}
+
+Fund look-through sources:
+  {N funds already covered / N rows added to fund_sources.csv / funds left on Yahoo: list}
 
 Pipeline:
   {completed / failed}
