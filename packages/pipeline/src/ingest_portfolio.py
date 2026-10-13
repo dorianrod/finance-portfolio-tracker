@@ -43,6 +43,7 @@ from src.application.portfolio_snapshot_builder import (
     PortfolioSnapshotBuilder,  # noqa: E402
 )
 from src.data_dir import resolve_data_dir  # noqa: E402
+from src.fetch_fund_holdings import refresh_fund_holdings  # noqa: E402
 from src.infrastructure.csv_account_groups_repository import (
     CsvAccountGroupsRepository,  # noqa: E402
 )
@@ -195,6 +196,13 @@ def main(argv: list[str] | None = None) -> None:
         output_writer=output_writer,
     )
     use_case.execute()
+
+    try:
+        refresh_fund_holdings(data_dir)
+    except Exception as exc:
+        # Look-through enrichment is optional and must not make the core
+        # portfolio ingestion fail. A previous successful file is preserved.
+        print(f"[fund-holdings] refresh skipped: {exc}")
 
     print(f"  Output    : {output_dir}/")
 

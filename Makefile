@@ -12,7 +12,7 @@ DEMO_PORT       ?= 4173
 ALLOCATION_READ_SCRIPT  := packages/pipeline/src/skills/allocation-update/scripts/read_allocation.py
 ALLOCATION_BUILD_SCRIPT := packages/pipeline/src/skills/allocation-update/scripts/build_allocation_xlsx.py
 
-.PHONY: pipeline pipeline-auto pipeline-reinstall setup-hooks allocation-read allocation-build dashboard dashboard-demo dashboard-demo-build lint lint-fix typecheck check help
+.PHONY: pipeline pipeline-auto pipeline-reinstall fund-holdings setup-hooks allocation-read allocation-build dashboard dashboard-demo dashboard-demo-build lint lint-fix typecheck check help
 
 setup-hooks: ## Enable git hooks for personal-data scanning and pre-push checks.
 	git config core.hooksPath .githooks
@@ -25,6 +25,9 @@ pipeline-auto: ## Run the portfolio pipeline non-interactively. Refetches curren
 
 pipeline-reinstall: ## Reinstall finance-pipeline from the latest main branch with pipx.
 	pipx install --python $(PIPELINE_PIPX_PYTHON) --force "$(PIPELINE_PIPX_SPEC)"
+
+fund-holdings: ## Refresh ETF top holdings used by look-through concentration.
+	$(PIPELINE_PYTHON) -m src.fetch_fund_holdings --data-dir $(DATA_DIR)
 
 allocation-read: ## Read allocation workbook metadata. Pass script arguments with ARGS='--list-all' or ARGS='"Asset Name"'.
 	$(PIPELINE_PYTHON) $(ALLOCATION_READ_SCRIPT) --data-dir $(DATA_DIR) $(ARGS)

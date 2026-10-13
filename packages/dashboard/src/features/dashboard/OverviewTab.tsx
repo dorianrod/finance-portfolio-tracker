@@ -11,7 +11,8 @@ interface OverviewTabProps {
   performance: PerformanceSummary
   drivers: PeriodDrivers
   income: IncomeSummary
-  concentration: ConcentrationSummary
+  heldAssetConcentration: ConcentrationSummary
+  lookThroughConcentration: ConcentrationSummary
   globalTri: number | null
   irrStatus: IrrStatus
   irrScopeLabel?: string
@@ -22,13 +23,13 @@ interface OverviewTabProps {
 }
 
 export function OverviewTab({
-  history, performance, drivers, income, concentration, globalTri, irrStatus, irrScopeLabel, periodLabel,
+  history, performance, drivers, income, heldAssetConcentration, lookThroughConcentration, globalTri, irrStatus, irrScopeLabel, periodLabel,
   anomalyCount, unallocatedPct, onNavigate,
 }: OverviewTabProps) {
   return (
     <div className="mb-6 space-y-4">
       <SummaryKpis performance={performance} drivers={drivers} income={income} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel} />
-      <VariationCard drivers={drivers} concentration={concentration} periodLabel={periodLabel} />
+      <VariationCard drivers={drivers} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} periodLabel={periodLabel} />
       {history.length > 0 && <EvolutionChart history={history} title="Portfolio trajectory" height={260} />}
       <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
         <div className="mb-3 flex items-center justify-between gap-4">

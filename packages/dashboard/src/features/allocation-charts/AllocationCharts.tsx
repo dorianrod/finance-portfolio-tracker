@@ -8,23 +8,35 @@ import { FilterChipBar } from './FilterChipBar'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
 import type { AllocationFilter } from './allocationCharts.types'
 import type { PositionRow } from '@/types/domain'
-import { computeConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
+import { computeConcentration, computeHeldAssetConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
 import { ConcentrationChart } from '@/features/portfolio-charts/ConcentrationChart'
+import type { FundHolding } from '@/hooks/useFundHoldings'
+import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
+  fundHoldings: FundHolding[]
   dateFrom?: string
   dateTo?: string
 }
 
-export function AllocationCharts({ positions, dateFrom, dateTo }: AllocationChartsProps) {
+export function AllocationCharts({ positions, fundHoldings, dateFrom, dateTo }: AllocationChartsProps) {
   const { geo, secteur, currency, classe, loading: loadingAgg } = useAllocationData()
   const rawData = useRawIsinData()
 
   const [activeFilter, setActiveFilter] = useState<AllocationFilter | null>(null)
   const [showTable, setShowTable] = useState(false)
   const [view, setView] = useState<'current' | 'trend'>('current')
-  const concentration = useMemo(() => computeConcentration(positions), [positions])
+  const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
+  const lookThroughConcentration = useMemo(
+    () => computeConcentration(positions, fundHoldings),
+    [positions, fundHoldings],
+  )
+  const heldAssetConcentration = useMemo(
+    () => computeHeldAssetConcentration(positions),
+    [positions],
+  )
+  const concentration = concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
 
   function handleFilterToggle(filter: AllocationFilter) {
     setActiveFilter((prev) => {
@@ -126,7 +138,7 @@ export function AllocationCharts({ positions, dateFrom, dateTo }: AllocationChar
 
       {view === 'current' && (
         <>
-          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} />}
+          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} topTenValue={concentration.topTenValue} topTenPct={concentration.topTenPct} description={concentrationMode === 'held' ? 'Assets effectively held, aggregated across accounts.' : `Direct and disclosed fund holdings · ${concentration.coveragePct.toFixed(0)}% coverage.`} action={<ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />} />}
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}
             {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} />}

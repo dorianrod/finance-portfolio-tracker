@@ -6,6 +6,7 @@ import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import { rawAccountSet } from '@/shared/filters/accountFilter'
 import { assetDisplayLabel } from '@/shared/format/assetLabel'
+import type { FundHolding } from '@/hooks/useFundHoldings'
 
 export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
   rolling_12m: number
@@ -57,6 +58,9 @@ export interface HoldingConcentration {
 export interface ConcentrationSummary {
   topHoldingPct: number
   topFivePct: number
+  topTenPct: number
+  topTenValue: number
+  coveragePct: number
   holdings: HoldingConcentration[]
 }
 
@@ -245,11 +249,100 @@ export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: st
   }
 }
 
-export function computeConcentration(positions: PositionRow[]): ConcentrationSummary {
+export function computeConcentration(
+  positions: PositionRow[],
+  fundHoldings: FundHolding[] = [],
+): ConcentrationSummary {
+  const byAsset = new Map<string, { label: string; name: string; value: number }>()
+  const holdingsByParent = new Map<string, FundHolding[]>()
+
+  for (const holding of fundHoldings) {
+    for (const key of [holding.parentIsin, holding.parentTicker].filter(Boolean)) {
+      const current = holdingsByParent.get(key) ?? []
+      current.push(holding)
+      holdingsByParent.set(key, current)
+    }
+  }
+
+  let selectedValue = 0
+  let coveredValue = 0
+
+  function addAsset(key: string, label: string, name: string, value: number) {
+    const current = byAsset.get(key) ?? { label, name, value: 0 }
+    current.value += value
+    byAsset.set(key, current)
+  }
+
+  function isFundPosition(position: PositionRow): boolean {
+    return /\b(?:ETF|UCITS|FUND)\b/i.test(position.name)
+      || /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(position.name)
+  }
+
+  for (const position of positions) {
+    if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    const positionValue = position.total_value ?? 0
+    selectedValue += positionValue
+
+    const lookThrough = holdingsByParent.get(position.isin)
+      ?? holdingsByParent.get(position.ticker)
+    if (lookThrough?.length) {
+      // Only the disclosed constituents become concentration candidates.
+      // The full fund value remains in the denominator below, so the
+      // undisclosed tail cannot be mistaken for one large holding.
+      for (const holding of lookThrough) {
+        addAsset(
+          holding.holdingId,
+          holding.holdingName,
+          holding.holdingName,
+          positionValue * holding.weight,
+        )
+      }
+      coveredValue += positionValue
+      continue
+    }
+
+    // Rows without a market identifier are account-level valuations (PEE,
+    // PER, bank accounts, private-equity envelopes), not underlying assets.
+    // Keep them out of the ranking instead of presenting the account as a
+    // holding. Identified non-fund securities remain valid direct exposure.
+    const key = position.isin || position.ticker
+    if (!key || isFundPosition(position)) continue
+    addAsset(key, assetDisplayLabel(position, key), position.name, positionValue)
+    coveredValue += positionValue
+  }
+
+  // `coveredValue` includes the undisclosed tail of mapped funds, producing
+  // weights against the full analysable exposure rather than only the top 10.
+  const total = coveredValue
+  const holdings = [...byAsset.values()]
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10)
+    .map((holding) => ({
+      ...holding,
+      value: Math.round(holding.value),
+      weight: total > 0 ? (holding.value / total) * 100 : 0,
+    }))
+
+  return {
+    topHoldingPct: holdings[0]?.weight ?? 0,
+    topFivePct: holdings.slice(0, 5).reduce((sum, holding) => sum + holding.weight, 0),
+    topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
+    topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
+    coveragePct: selectedValue > 0 ? (coveredValue / selectedValue) * 100 : 0,
+    holdings,
+  }
+}
+
+export function computeHeldAssetConcentration(
+  positions: PositionRow[],
+): ConcentrationSummary {
   const byAsset = new Map<string, { label: string; name: string; value: number }>()
 
   for (const position of positions) {
     if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    // This is deliberately the allocation-file grain: the instrument or
+    // product actually held, aggregated across accounts when its market
+    // identifier is shared. Account-valued products fall back to their name.
     const key = position.isin || position.ticker || position.name
     const current = byAsset.get(key) ?? {
       label: assetDisplayLabel(position, key),
@@ -273,6 +366,9 @@ export function computeConcentration(positions: PositionRow[]): ConcentrationSum
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
     topFivePct: holdings.slice(0, 5).reduce((sum, holding) => sum + holding.weight, 0),
+    topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
+    topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
+    coveragePct: total > 0 ? 100 : 0,
     holdings,
   }
 }

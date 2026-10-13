@@ -14,6 +14,7 @@ import { useSavingCapacity } from '@/hooks/useSavingCapacity'
 import { usePassiveIncome } from '@/hooks/usePassiveIncome'
 import { useAccountTypeHistory } from '@/hooks/useAccountTypeHistory'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
+import { useFundHoldings } from '@/hooks/useFundHoldings'
 import { PositionsTable } from '@/features/positions-table/PositionsTable'
 import { FilterBar } from '@/features/filters/FilterBar'
 import { AllocationCharts } from '@/features/allocation-charts/AllocationCharts'
@@ -28,6 +29,7 @@ import { accountLabel } from '@/features/filters/filterBar.logic'
 import {
   buildCumulativeWealthDrivers,
   computeConcentration,
+  computeHeldAssetConcentration,
   computePerformanceSummary,
   computePeriodDrivers,
   computeTrailing12mYearOverYear,
@@ -78,6 +80,7 @@ export default function App() {
   const { manualPriceOverrides } = useManualPriceOverrides()
   const allMonthlyOps = useMonthlyOps()
   const rawAllocationData = useRawIsinData()
+  const fundHoldings = useFundHoldings()
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [activeTab, setActiveTab] = useState<AnalysisTab>('overview')
@@ -190,7 +193,14 @@ export default function App() {
     () => computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
     [currentPositions, displayedHistory],
   )
-  const concentration = useMemo(() => computeConcentration(tableFiltered), [tableFiltered])
+  const lookThroughConcentration = useMemo(
+    () => computeConcentration(tableFiltered, fundHoldings),
+    [tableFiltered, fundHoldings],
+  )
+  const heldAssetConcentration = useMemo(
+    () => computeHeldAssetConcentration(tableFiltered),
+    [tableFiltered],
+  )
   const coverage = useMemo(
     () => rawAllocationData.loading ? [] : computeAllocationCoverageByAccount(currentPositions, rawAllocationData),
     [currentPositions, rawAllocationData],
@@ -265,10 +275,10 @@ export default function App() {
             </div>
           )}
 
-          {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} concentration={concentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
+          {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
           {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} dateFrom={filters.dateFrom} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
-          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />}
+          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />}
           {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
           {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />}
         </>}

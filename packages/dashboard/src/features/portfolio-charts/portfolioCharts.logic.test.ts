@@ -4,6 +4,7 @@ import {
   buildTriChartData,
   buildCumulativeWealthDrivers,
   computeConcentration,
+  computeHeldAssetConcentration,
   computePerformanceSummary,
   computePeriodDrivers,
   computeTrailing12mYearOverYear,
@@ -290,6 +291,21 @@ describe('computeTrailing12mIncome', () => {
 })
 
 describe('portfolio summaries', () => {
+  it('computes the non-decomposed concentration at held-asset grain', () => {
+    const result = computeHeldAssetConcentration([
+      position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', account: 'acc1', total_value: 600 }),
+      position({ id: 'fund-b', isin: 'FUND-A', name: 'World ETF', account: 'acc2', total_value: 200 }),
+      position({ id: 'account', isin: '', ticker: '', name: 'PEE product', total_value: 200 }),
+    ])
+
+    expect(result.holdings).toHaveLength(2)
+    expect(result.holdings[0]).toMatchObject({ name: 'World ETF', value: 800, weight: 80 })
+    expect(result.holdings[1]).toMatchObject({ name: 'PEE product', value: 200, weight: 20 })
+    expect(result.topTenValue).toBe(1_000)
+    expect(result.topTenPct).toBe(100)
+    expect(result.coveragePct).toBe(100)
+  })
+
   it('aggregates the same asset across accounts for concentration', () => {
     const result = computeConcentration([
       position({ id: 'a', isin: 'FR1', total_value: 600 }),
@@ -300,6 +316,40 @@ describe('portfolio summaries', () => {
     expect(result.topFivePct).toBe(100)
     expect(result.holdings[0].value).toBe(800)
     expect(result.holdings[1].label).toBe('Asset X')
+  })
+
+  it('looks through funds and aggregates the same underlying direct and indirect exposure', () => {
+    const result = computeConcentration([
+      position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', total_value: 1_000 }),
+      position({ id: 'fund-b', isin: 'FUND-B', name: 'US UCITS ETF', total_value: 500 }),
+      position({ id: 'direct', isin: 'DIRECT-ASSET', name: 'Direct Asset', total_value: 100 }),
+      position({ id: 'account', isin: '', ticker: '', name: 'Broker account', total_value: 10_000 }),
+    ], [
+      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', weight: 0.1 },
+      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'US0378331005', holdingName: 'Apple', weight: 0.08 },
+      { parentIsin: 'FUND-B', parentTicker: '', parentName: 'US UCITS ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', weight: 0.2 },
+    ])
+
+    expect(result.holdings[0]).toMatchObject({
+      label: 'Direct Asset',
+      name: 'Direct Asset',
+      value: 300,
+      weight: 18.75,
+    })
+    expect(result.holdings[1].value).toBe(80)
+    expect(result.topTenValue).toBe(380)
+    expect(result.topTenPct).toBeCloseTo(23.75)
+    expect(result.coveragePct).toBeCloseTo(1600 / 11600 * 100)
+  })
+
+  it('does not rank account valuations or opaque funds as underlying assets', () => {
+    const result = computeConcentration([
+      position({ id: 'account', isin: '', ticker: '', name: 'PEE account', total_value: 1_000 }),
+      position({ id: 'opaque-fund', isin: 'FUND-X', name: 'Opaque ETF', total_value: 500 }),
+    ])
+
+    expect(result.holdings).toEqual([])
+    expect(result.coveragePct).toBe(0)
   })
 
   it('computes net current value and total net performance', () => {
