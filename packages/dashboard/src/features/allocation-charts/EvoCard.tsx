@@ -5,6 +5,7 @@ import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import { allocationTrendDomain, groupTail } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
+import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
 
 interface EvoCardProps {
@@ -15,9 +16,11 @@ interface EvoCardProps {
   onFilterToggle: (filter: AllocationFilter) => void
   dateFrom?: string
   dateTo?: string
+  onShowPositions?: () => void
+  positionsOpen?: boolean
 }
 
-export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, dateFrom, dateTo }: EvoCardProps) {
+export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, dateFrom, dateTo, onShowPositions, positionsOpen = false }: EvoCardProps) {
   const last = points[points.length - 1]
   const { main, grouped } = groupTail(last.categories)
   const groupedNames = new Set(grouped.map((c) => c.name))
@@ -43,7 +46,10 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
-      <h2 className="text-sm font-medium text-gray-400 mb-2">{title}</h2>
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h2 className="text-sm font-medium text-gray-400">{title}</h2>
+        {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
+      </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
         {categories.map((cat) => {
           if (cat.startsWith('others (')) return (

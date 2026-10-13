@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Filters } from '@/types/filters'
 import { toggle, presetDateFrom } from './filterBar.logic'
 import { AccountTreeSelect } from './AccountTreeSelect'
@@ -13,6 +14,7 @@ interface Props {
   onChange: (f: Filters) => void
   showPeriod?: boolean
   showPositionFilters?: boolean
+  children?: ReactNode
 }
 
 const OP_LABELS: Record<string, string> = {
@@ -37,7 +39,7 @@ const dateInputClass =
 
 export function FilterBar({
   allAccountTypes, accountToType, allAccounts, accountLabels,
-  allOperationTypes, filters, onChange, showPeriod = false, showPositionFilters = false,
+  allOperationTypes, filters, onChange, showPeriod = false, showPositionFilters = false, children,
 }: Props) {
   const hasDateFilter = !!(filters.dateFrom || filters.dateTo)
 
@@ -54,7 +56,7 @@ export function FilterBar({
       {/* Accounts */}
       {allAccounts.length > 0 && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 uppercase tracking-wider w-16 shrink-0">Accounts</span>
+          <span className="w-24 shrink-0 text-xs uppercase tracking-wider text-gray-500">Accounts</span>
           <AccountTreeSelect
             allAccountTypes={allAccountTypes}
             accountToType={accountToType}
@@ -102,7 +104,7 @@ export function FilterBar({
 
       {/* Period */}
       {showPeriod && <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-gray-500 uppercase tracking-wider w-16 shrink-0">Period</span>
+        <span className="w-24 shrink-0 text-xs uppercase tracking-wider text-gray-500">Period</span>
         <div className="flex gap-1.5">
           {DATE_PRESETS.map((p) => (
             <Chip
@@ -138,6 +140,8 @@ export function FilterBar({
           )}
         </div>
       </div>}
+
+      {children}
     </div>
   )
 }

@@ -6,6 +6,7 @@ import type { AllocationPoint } from '@/hooks/useAllocationData'
 import { groupTail } from './allocationCharts.logic'
 import { PieTooltip } from './allocationCharts.tooltips'
 import { PieLabel } from './PieLabel'
+import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter, PieEntry } from './allocationCharts.types'
 
 interface DonutCardProps {
@@ -14,9 +15,11 @@ interface DonutCardProps {
   dimension: AllocationDimension
   activeFilter: AllocationFilter | null
   onFilterToggle: (filter: AllocationFilter) => void
+  onShowPositions?: () => void
+  positionsOpen?: boolean
 }
 
-export function DonutCard({ title, point, dimension, activeFilter, onFilterToggle }: DonutCardProps) {
+export function DonutCard({ title, point, dimension, activeFilter, onFilterToggle, onShowPositions, positionsOpen = false }: DonutCardProps) {
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const dateLabel = new Date(point.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 
@@ -33,9 +36,12 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
-      <div className="flex items-baseline justify-between mb-1">
+      <div className="mb-1 flex items-start justify-between gap-3">
         <h2 className="text-sm font-medium text-gray-400">{title}</h2>
-        <span className="text-xs text-gray-600">{dateLabel}</span>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="text-xs text-gray-600">{dateLabel}</span>
+          {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
+        </div>
       </div>
       <div className="text-xs text-gray-500 mb-1">Allocated: {fmtFull(total)}</div>
       <div className="text-xs text-gray-600 mb-2">Click a segment to filter</div>

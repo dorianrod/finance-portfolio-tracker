@@ -6,10 +6,12 @@ import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types
 export function FilteredPositionsTable({
   rows,
   filter,
+  onClearFilter,
   onClose,
 }: {
   rows: MatchingIsinRow[]
   filter: AllocationFilter
+  onClearFilter: () => void
   onClose: () => void
 }) {
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
@@ -29,12 +31,23 @@ export function FilteredPositionsTable({
             {rows.length} positions · {fmtFull(totalFiltered)} in exposure
           </p>
         </div>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-300 text-lg leading-none cursor-pointer transition-colors"
-        >
-          ✕
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onClearFilter}
+            className="cursor-pointer rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:border-gray-500 hover:bg-gray-800 hover:text-gray-200"
+          >
+            Clear filter
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close positions"
+            className="cursor-pointer text-lg leading-none text-gray-500 transition-colors hover:text-gray-300"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       {/* Table */}

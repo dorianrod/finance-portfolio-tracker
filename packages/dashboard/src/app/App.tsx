@@ -18,7 +18,9 @@ import { useFundHoldings } from '@/hooks/useFundHoldings'
 import { PositionsTable } from '@/features/positions-table/PositionsTable'
 import { FilterBar } from '@/features/filters/FilterBar'
 import { AllocationCharts } from '@/features/allocation-charts/AllocationCharts'
+import { FilterChipBar } from '@/features/allocation-charts/FilterChipBar'
 import { computeAllocationCoverageByAccount } from '@/features/allocation-charts/allocationCoverage.logic'
+import type { AllocationFilter } from '@/features/allocation-charts/allocationCharts.types'
 import { OverviewTab } from '@/features/dashboard/OverviewTab'
 import { WealthTab } from '@/features/dashboard/WealthTab'
 import { PerformanceTab } from '@/features/dashboard/PerformanceTab'
@@ -84,6 +86,7 @@ export default function App() {
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [activeTab, setActiveTab] = useState<AnalysisTab>('overview')
+  const [allocationFilter, setAllocationFilter] = useState<AllocationFilter | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('total_value')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [filters, setFilters] = useState<Filters>({
@@ -260,7 +263,11 @@ export default function App() {
             onChange={setFilters}
             showPeriod={showPeriod}
             showPositionFilters={activeTab === 'positions'}
-          />
+          >
+            {activeTab === 'allocation' && allocationFilter && (
+              <FilterChipBar filter={allocationFilter} onRemove={() => setAllocationFilter(null)} />
+            )}
+          </FilterBar>
 
           {demoPresetSelection && (
             <div className="-mt-2 mb-4 flex items-center gap-2">
@@ -278,7 +285,7 @@ export default function App() {
           {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
           {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} dateFrom={filters.dateFrom} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
-          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />}
+          {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} dateFrom={filters.dateFrom} dateTo={filters.dateTo} activeFilter={allocationFilter} onActiveFilterChange={setAllocationFilter} />}
           {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />}
           {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />}
         </>}
