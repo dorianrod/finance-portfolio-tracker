@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { assetDisplayLabel } from '@/shared/format/assetLabel'
 import type { ErrorRow } from '@/hooks/useErrors'
 import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
 
@@ -72,7 +73,7 @@ export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
         case 'type':    va = TYPE_LABELS[a.type] ?? a.type; vb = TYPE_LABELS[b.type] ?? b.type; break
         case 'source':  va = a.source;  vb = b.source;  break
         case 'date':    va = a.date;    vb = b.date;    break
-        case 'name':    va = a.name || a.ticker; vb = b.name || b.ticker; break
+        case 'name':    va = assetDisplayLabel(a); vb = assetDisplayLabel(b); break
         case 'isin':    va = a.isin;    vb = b.isin;    break
         case 'message': va = a.message; vb = b.message; break
       }
@@ -214,8 +215,8 @@ export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
                   <td className="px-3 py-2 text-gray-400 font-mono">
                     {e.date || '—'}
                   </td>
-                  <td className="px-3 py-2 text-gray-300 truncate max-w-[7rem]" title={e.name || e.ticker}>
-                    {e.name || e.ticker || '—'}
+                  <td className="px-3 py-2 text-gray-300 truncate max-w-[7rem]" title={assetDisplayLabel(e)}>
+                    {assetDisplayLabel(e, '—')}
                   </td>
                   <td className="px-3 py-2 text-gray-500 font-mono">
                     {e.isin || '—'}

@@ -190,7 +190,7 @@ export default function App() {
     () => computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
     [currentPositions, displayedHistory],
   )
-  const concentration = useMemo(() => computeConcentration(currentPositions), [currentPositions])
+  const concentration = useMemo(() => computeConcentration(tableFiltered), [tableFiltered])
   const coverage = useMemo(
     () => rawAllocationData.loading ? [] : computeAllocationCoverageByAccount(currentPositions, rawAllocationData),
     [currentPositions, rawAllocationData],

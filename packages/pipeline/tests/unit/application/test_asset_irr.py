@@ -135,6 +135,27 @@ def test_cash_balance_deposits_produce_zero_irr_not_price_return(
     assert result["assets"][0]["irr"] == pytest.approx(0.0, abs=0.0001)
 
 
+def test_asset_irr_uses_descriptive_name_instead_of_ticker(tmp_path: Path):
+    output_dir = tmp_path / "output"
+    identity = {
+        "isin": "XX0000000001",
+        "ticker": "TST1",
+        "name": "Example Global Equity Fund",
+    }
+    _write_rows(
+        output_dir,
+        [
+            _position("2025-01-01", 100, **identity),
+            _position("2026-01-01", 110, **identity),
+        ],
+        [_operation("2025-01-01", "BUY", -100, **identity)],
+    )
+
+    result = build_asset_irr(output_dir)
+
+    assert result["assets"][0]["label"] == identity["name"]
+
+
 def test_generic_cash_balance_uses_signed_deposits_and_withdrawals(
     tmp_path: Path,
 ):

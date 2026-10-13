@@ -103,8 +103,8 @@ describe('computeTopPerformers', () => {
       position({ id: 'd', name: 'Closed', status: 'closed', unrealized_gain_pct: 50 }),
     ]
     expect(computeTopPerformers(positions)).toEqual([
-      { label: 'WIN', name: 'Winner', pct: 25, gain: 250, value: 1250, account_type: 'PEA' },
-      { label: 'LOSE', name: 'Loser', pct: -10, gain: -100, value: 900, account_type: 'CTO' },
+      { label: 'Winner', name: 'Winner', pct: 25, gain: 250, value: 1250, account_type: 'PEA' },
+      { label: 'Loser', name: 'Loser', pct: -10, gain: -100, value: 900, account_type: 'CTO' },
     ])
   })
 
@@ -299,6 +299,7 @@ describe('portfolio summaries', () => {
     expect(result.topHoldingPct).toBe(80)
     expect(result.topFivePct).toBe(100)
     expect(result.holdings[0].value).toBe(800)
+    expect(result.holdings[1].label).toBe('Asset X')
   })
 
   it('computes net current value and total net performance', () => {

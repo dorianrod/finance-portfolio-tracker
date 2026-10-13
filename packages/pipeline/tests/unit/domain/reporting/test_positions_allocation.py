@@ -85,7 +85,7 @@ def _positions_df() -> pd.DataFrame:
             {
                 "snapshot_date": snap,
                 "isin": "",
-                "name": "GLOBAL EM UCITS ETF (ACC) O4J0",
+                "name": "GLOBAL EM UCITS ETF (ACC) TST1",
                 "total_value": 300.0,
             },
             # no isin -> exact normalized-name match, different case

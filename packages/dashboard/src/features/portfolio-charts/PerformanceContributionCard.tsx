@@ -3,6 +3,7 @@ import type { IrrStatus } from '@/types/history'
 import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 import { fmtFull, fmtPct } from '@/shared/format/money'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { assetDisplayLabel } from '@/shared/format/assetLabel'
 import type { AssetIrrItem, AssetIrrSummary } from '@/hooks/useAssetIrr'
 import type {
   ContributionHorizon,
@@ -141,7 +142,7 @@ function IrrList({
             <li key={item.key}>
               <div className="flex items-start justify-between gap-4 text-sm">
                 <div className="min-w-0">
-                  <div className="truncate font-medium text-gray-300" title={item.name}>{item.label}</div>
+                  <div className="truncate font-medium text-gray-300" title={item.name}>{assetDisplayLabel(item, item.label)}</div>
                   <div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>
                     {item.account_types.join(', ') || item.accounts.join(', ')}
                   </div>

@@ -179,7 +179,6 @@ def build_asset_irr(
     asset_flows: dict[str, list[tuple[float, date]]] = defaultdict(list)
     asset_values: dict[str, float] = defaultdict(float)
     asset_names: dict[str, str] = {}
-    asset_tickers: dict[str, str] = {}
     asset_accounts: dict[str, set[str]] = defaultdict(set)
     asset_types: dict[str, set[str]] = defaultdict(set)
 
@@ -189,9 +188,6 @@ def build_asset_irr(
         asset_names.setdefault(
             asset_key, _text(latest.get("name")) or asset_key
         )
-        ticker = _text(latest.get("ticker"))
-        if ticker:
-            asset_tickers.setdefault(asset_key, ticker)
         asset_accounts[asset_key].add(account)
         account_type = _effective_account_type(latest)
         if account_type:
@@ -268,7 +264,7 @@ def build_asset_irr(
         assets.append(
             {
                 "key": asset_key,
-                "label": asset_tickers.get(asset_key) or name[:28],
+                "label": name,
                 "name": name,
                 "irr": round(irr * 100, 4),
                 "value": round(asset_values.get(asset_key, 0.0), 2),

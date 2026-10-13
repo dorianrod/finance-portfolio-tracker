@@ -9,6 +9,36 @@ interface ConcentrationTooltipProps {
   payload?: Array<{ payload: HoldingConcentration }>
 }
 
+interface HoldingLabelTickProps {
+  x?: number
+  y?: number
+  payload?: { value?: string | number }
+}
+
+const HOLDING_LABEL_WIDTH = 380
+
+export function HoldingLabelTick({ x = 0, y = 0, payload }: HoldingLabelTickProps) {
+  const label = String(payload?.value ?? '')
+
+  return (
+    <foreignObject
+      x={x - HOLDING_LABEL_WIDTH}
+      y={y - 10}
+      width={HOLDING_LABEL_WIDTH - 10}
+      height={20}
+      style={{ overflow: 'visible' }}
+    >
+      <div
+        className="truncate pr-2 text-right text-[11px] leading-5"
+        style={{ color: 'var(--chart-tick)' }}
+        title={label}
+      >
+        {label}
+      </div>
+    </foreignObject>
+  )
+}
+
 function ConcentrationTooltip({ active, payload }: ConcentrationTooltipProps) {
   if (!active || !payload?.length) return null
   const row = payload[0].payload as HoldingConcentration
@@ -28,18 +58,29 @@ export function ConcentrationChart({ data }: { data: HoldingConcentration[] }) {
         <h2 className="text-sm font-medium text-gray-300">Largest holdings</h2>
         <p className="mt-0.5 text-xs text-gray-600">Aggregated across accounts by ISIN or ticker.</p>
       </div>
-      <ResponsiveContainer width="100%" height={height}>
-        <BarChart layout="vertical" data={data} margin={{ top: 0, right: 50, left: 8, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
-          <XAxis type="number" domain={[0, 'dataMax']} hide />
-          <YAxis dataKey="label" type="category" tick={{ fill: 'var(--chart-tick)', fontSize: 11 }} tickLine={false} axisLine={false} width={92} />
-          <Tooltip content={<ConcentrationTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
-          <Bar dataKey="weight" radius={[0, 4, 4, 0]}>
-            {data.map((_, index) => <Cell key={index} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
-            <LabelList dataKey="weight" position="right" formatter={(value: unknown) => `${Number(value).toFixed(1)}%`} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="overflow-x-auto">
+        <div className="min-w-[840px]">
+          <ResponsiveContainer width="100%" height={height}>
+            <BarChart layout="vertical" data={data} margin={{ top: 0, right: 50, left: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
+              <XAxis type="number" domain={[0, 'dataMax']} hide />
+              <YAxis
+                dataKey="label"
+                type="category"
+                tick={<HoldingLabelTick />}
+                tickLine={false}
+                axisLine={false}
+                width={HOLDING_LABEL_WIDTH}
+              />
+              <Tooltip content={<ConcentrationTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
+              <Bar dataKey="weight" radius={[0, 4, 4, 0]}>
+                {data.map((_, index) => <Cell key={index} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
+                <LabelList dataKey="weight" position="right" formatter={(value: unknown) => `${Number(value).toFixed(1)}%`} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   )
 }

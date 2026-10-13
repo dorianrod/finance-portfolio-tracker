@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { assetDisplayLabel } from '@/shared/format/assetLabel'
 
 interface RawOp {
   date: string
@@ -38,7 +39,7 @@ export function useMonthlyOps(): MonthlyOpsMap {
           account: row.account,
           operation_type: row.operation_type,
           total_amount: amount,
-          label: row.name || row.ticker || '',
+          label: assetDisplayLabel(row),
         })
       }
       setOps(map)

@@ -6,12 +6,12 @@ const payload = {
   start_date: '2026-06-30',
   end_date: '2026-10-13',
   assets: [{
-    key: 'name:natixis pee',
-    label: 'Natixis PEE',
-    name: 'Natixis PEE',
+    key: 'name:example employee savings',
+    label: 'Example Employee Savings',
+    name: 'Example Employee Savings',
     irr: 6.5604,
     value: 112433,
-    accounts: ['Natixis PEE'],
+    accounts: ['Example Employee Savings'],
     account_types: ['PEE'],
   }],
 }
@@ -31,7 +31,7 @@ describe('requestAssetIrr', () => {
     })
 
     const result = await requestAssetIrr(
-      ['Natixis PEE'],
+      ['Example Employee Savings'],
       ['PEE'],
       '2026-06-30',
       '2026-10-13',
@@ -42,7 +42,7 @@ describe('requestAssetIrr', () => {
     expect(result).toEqual(payload)
     expect(fetchMock).toHaveBeenCalledOnce()
     expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
-      accounts: ['Natixis PEE'],
+      accounts: ['Example Employee Savings'],
       account_types: ['PEE'],
       date_from: '2026-06-30',
       date_to: '2026-10-13',

@@ -5,6 +5,7 @@ import type { PositionRow } from '@/types/domain'
 import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import { rawAccountSet } from '@/shared/filters/accountFilter'
+import { assetDisplayLabel } from '@/shared/format/assetLabel'
 
 export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
   rolling_12m: number
@@ -251,7 +252,7 @@ export function computeConcentration(positions: PositionRow[]): ConcentrationSum
     if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
     const key = position.isin || position.ticker || position.name
     const current = byAsset.get(key) ?? {
-      label: position.ticker || position.name.slice(0, 22),
+      label: assetDisplayLabel(position, key),
       name: position.name,
       value: 0,
     }
@@ -347,7 +348,7 @@ export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] 
   return positions
     .filter((p) => p.status === 'active' && p.unrealized_gain_pct !== null && p.unrealized_gain_pct !== 0)
     .map((p) => ({
-      label: p.ticker || p.name.slice(0, 24),
+      label: assetDisplayLabel(p, p.isin),
       name: p.name,
       pct: Math.round(p.unrealized_gain_pct! * 10) / 10,
       gain: Math.round(p.unrealized_gain ?? 0),

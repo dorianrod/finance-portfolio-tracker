@@ -74,10 +74,10 @@ describe('computePerformanceContributions', () => {
     expect(result.available).toBe(true)
     expect(result.netContribution).toBe(95)
     expect(result.contributors.map(({ label, amount, share }) => ({ label, amount, share }))).toEqual([
-      { label: 'AAA', amount: 115, share: expect.closeTo(79.31, 2) },
-      { label: 'CCC', amount: 30, share: expect.closeTo(20.69, 2) },
+      { label: 'Asset A', amount: 115, share: expect.closeTo(79.31, 2) },
+      { label: 'Closed asset', amount: 30, share: expect.closeTo(20.69, 2) },
     ])
-    expect(result.detractors).toMatchObject([{ label: 'BBB', amount: -50, share: 100 }])
+    expect(result.detractors).toMatchObject([{ label: 'Asset B', amount: -50, share: 100 }])
   })
 
   it('groups the same asset across accounts', () => {
@@ -91,7 +91,7 @@ describe('computePerformanceContributions', () => {
     const result = computePerformanceContributions(positions, [], 'since-tracking', '2024-01-31', noFilters)
 
     expect(result.contributors).toHaveLength(1)
-    expect(result.contributors[0]).toMatchObject({ label: 'AAA', amount: 100, accounts: ['acc1', 'acc2'] })
+    expect(result.contributors[0]).toMatchObject({ label: 'Asset A', amount: 100, accounts: ['acc1', 'acc2'] })
   })
 
   it('uses the same preceding snapshot boundary as trailing three-year IRR', () => {
@@ -160,7 +160,7 @@ describe('computePerformanceContributions', () => {
     )
 
     expect(cashOnly.contributors).toMatchObject([{ label: 'Cash PEA', amount: 3 }])
-    expect(peeOnly.contributors).toMatchObject([{ label: 'AAA', amount: 200, accounts: ['acc2'] }])
+    expect(peeOnly.contributors).toMatchObject([{ label: 'Asset A', amount: 200, accounts: ['acc2'] }])
   })
 
   it('keeps only the five largest contributors and reports an unavailable short three-year history', () => {
@@ -172,7 +172,7 @@ describe('computePerformanceContributions', () => {
     const sinceTracking = computePerformanceContributions(positions, [], 'since-tracking', '2025-01-31', noFilters)
     const trailing = computePerformanceContributions(positions, [], 'trailing-3y', '2025-01-31', noFilters)
 
-    expect(sinceTracking.contributors.map((item) => item.label)).toEqual(['A6', 'A5', 'A4', 'A3', 'A2'])
+    expect(sinceTracking.contributors.map((item) => item.label)).toEqual(['Asset 6', 'Asset 5', 'Asset 4', 'Asset 3', 'Asset 2'])
     expect(trailing.available).toBe(false)
   })
 })
