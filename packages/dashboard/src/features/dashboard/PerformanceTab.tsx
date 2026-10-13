@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 import type { PortfolioHistoryPoint } from '@/types/history'
 import type { PassiveIncomePoint } from '@/hooks/usePassiveIncome'
-import type { PositionRow, RawOperation, RawPosition } from '@/types/domain'
+import type { RawOperation, RawPosition } from '@/types/domain'
 import type { IrrStatus } from '@/types/history'
 import type { IncomeSummary, PerformanceSummary } from '@/features/portfolio-charts/portfolioCharts.logic'
-import { computeTopPerformers } from '@/features/portfolio-charts/portfolioCharts.logic'
 import {
   IrrSinceTrackingKpi,
   NetRealizedKpi,
@@ -14,27 +13,26 @@ import {
   TrailingThreeYearIrrKpi,
 } from '@/features/kpis/PortfolioKpis'
 import { PassiveIncomeChart } from '@/features/portfolio-charts/PassiveIncomeChart'
-import { TopPerformersChart } from '@/features/portfolio-charts/TopPerformersChart'
 import { TriChart } from '@/features/portfolio-charts/TriChart'
 import { UnrealizedPnlChart } from '@/features/portfolio-charts/UnrealizedPnlChart'
 import { PerformanceContributionCard } from '@/features/portfolio-charts/PerformanceContributionCard'
 import { computePerformanceContributions } from '@/features/portfolio-charts/performanceContribution.logic'
+import { useAssetIrr } from '@/hooks/useAssetIrr'
 
-export function PerformanceTab({ history, passiveIncome, positions, rawPositions, rawOperations, accountFilters, accountTypeFilters, performance, income, globalTri, irrStatus, irrScopeLabel }: {
+export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperations, accountFilters, accountTypeFilters, dateFrom, performance, income, globalTri, irrStatus, irrScopeLabel }: {
   history: PortfolioHistoryPoint[]
   passiveIncome: PassiveIncomePoint[]
-  positions: PositionRow[]
   rawPositions: RawPosition[]
   rawOperations: RawOperation[]
   accountFilters: Set<string>
   accountTypeFilters: Set<string>
+  dateFrom?: string
   performance: PerformanceSummary
   income: IncomeSummary
   globalTri: number | null
   irrStatus: IrrStatus
   irrScopeLabel?: string
 }) {
-  const performers = computeTopPerformers(positions)
   const rollingTri3y = history[history.length - 1]?.tri_rolling_3y ?? null
   const asOfDate = history.at(-1)?.date
   const contributionFilters = useMemo(() => ({
@@ -49,6 +47,7 @@ export function PerformanceTab({ history, passiveIncome, positions, rawPositions
     () => computePerformanceContributions(rawPositions, rawOperations, 'trailing-3y', asOfDate, contributionFilters),
     [rawPositions, rawOperations, asOfDate, contributionFilters],
   )
+  const assetIrr = useAssetIrr(accountFilters, accountTypeFilters, dateFrom, asOfDate)
 
   return (
     <div className="mb-6 space-y-4">
@@ -78,8 +77,9 @@ export function PerformanceTab({ history, passiveIncome, positions, rawPositions
           {passiveIncome.length > 0 && <PassiveIncomeChart data={passiveIncome} />}
         </div>
       )}
-      {performers.length > 0 && <TopPerformersChart data={performers} height={Math.max(260, performers.length * 26)} />}
       <PerformanceContributionCard
+        assetIrr={assetIrr.summary}
+        assetIrrStatus={assetIrr.loading ? 'loading' : assetIrr.error ? 'error' : 'ready'}
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}
         sinceTrackingIrr={globalTri}

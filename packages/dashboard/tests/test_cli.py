@@ -56,8 +56,26 @@ def api_server(tmp_path: Path):
         }
 
     cache = PortfolioHistoryCache(output_dir, builder)
+
+    def asset_irr_builder(
+        _output_dir: Path,
+        accounts: tuple[str, ...],
+        account_types: tuple[str, ...],
+        date_from: str | None,
+        date_to: str | None,
+    ):
+        return {
+            "available": True,
+            "start_date": date_from,
+            "end_date": date_to,
+            "accounts": list(accounts),
+            "account_types": list(account_types),
+            "assets": [{"label": "Asset", "irr": 6.5}],
+        }
+
     server = ThreadingHTTPServer(
-        ("127.0.0.1", 0), _make_handler(None, output_dir, cache)
+        ("127.0.0.1", 0),
+        _make_handler(None, output_dir, cache, asset_irr_builder),
     )
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -67,10 +85,10 @@ def api_server(tmp_path: Path):
     thread.join(timeout=2)
 
 
-def _post(url: str, payload: object):
+def _post(url: str, payload: object, path: str = "/api/portfolio-history"):
     return urlopen(
         Request(
-            f"{url}/api/portfolio-history",
+            f"{url}{path}",
             data=json.dumps(payload).encode("utf-8"),
             headers={"Content-Type": "application/json"},
             method="POST",
@@ -86,6 +104,30 @@ def test_api_returns_normalized_filtered_history(api_server: str):
     assert payload == {
         "accounts": ["a", "b"],
         "history": [{"snapshot_date": "2026-10-12", "tri": 12.5}],
+    }
+
+
+def test_api_returns_asset_irr_for_the_requested_period(api_server: str):
+    with _post(
+        api_server,
+        {
+            "accounts": ["natixis"],
+            "account_types": ["PEE"],
+            "date_from": "2026-06-30",
+            "date_to": "2026-10-13",
+        },
+        "/api/asset-irr",
+    ) as response:
+        payload = json.load(response)
+
+    assert response.status == 200
+    assert payload == {
+        "available": True,
+        "start_date": "2026-06-30",
+        "end_date": "2026-10-13",
+        "accounts": ["natixis"],
+        "account_types": ["PEE"],
+        "assets": [{"label": "Asset", "irr": 6.5}],
     }
 
 

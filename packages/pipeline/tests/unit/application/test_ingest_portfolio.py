@@ -343,6 +343,7 @@ def test_returns_are_disabled_for_livrets_and_synthetic_brokerage_cash():
     positions = [
         _position("savings-account", "Livret A", 1100.0),
         _position("broker", "Cash CTO", 1100.0),
+        _position("current-account", "Current account", 1100.0),
     ]
     operations = [
         Operation(
@@ -360,10 +361,15 @@ def test_returns_are_disabled_for_livrets_and_synthetic_brokerage_cash():
     enriched = _enrich_with_returns(
         _positions_to_df(positions),
         operations,
-        account_type_map={"savings-account": "Livret", "broker": "Bourse"},
+        account_type_map={
+            "savings-account": "Livret",
+            "broker": "Bourse",
+            "current-account": "Compte courant",
+        },
         account_category_map={
             "savings-account": "savings",
             "broker": "brokerage",
+            "current-account": "checking",
         },
     )
 

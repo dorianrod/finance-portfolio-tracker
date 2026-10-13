@@ -56,6 +56,28 @@ def _build_filtered_history(
     return build_filtered_portfolio_history(output_dir, accounts)
 
 
+def _build_asset_irr(
+    output_dir: Path,
+    accounts: tuple[str, ...],
+    account_types: tuple[str, ...],
+    date_from: str | None,
+    date_to: str | None,
+) -> dict[str, Any]:
+    try:
+        from src.application.asset_irr import build_asset_irr
+    except (ImportError, ModuleNotFoundError) as exc:
+        raise TriEngineUnavailableError(
+            "Asset IRR requires the finance-pipeline runtime"
+        ) from exc
+    return build_asset_irr(
+        output_dir,
+        accounts,
+        account_types,
+        date_from,
+        date_to,
+    )
+
+
 class PortfolioHistoryCache:
     """Cache account-scoped histories until a normalized CSV changes."""
 
@@ -98,6 +120,10 @@ def _make_handler(
     dist_dir: Path | None,
     output_dir: Path,
     history_cache: PortfolioHistoryCache | None = None,
+    asset_irr_builder: Callable[
+        [Path, tuple[str, ...], tuple[str, ...], str | None, str | None],
+        dict[str, Any],
+    ] = _build_asset_irr,
 ) -> type[SimpleHTTPRequestHandler]:
     cache = history_cache or PortfolioHistoryCache(output_dir)
 
@@ -112,7 +138,8 @@ def _make_handler(
             self.wfile.write(body)
 
         def do_POST(self) -> None:
-            if urlsplit(self.path).path != "/api/portfolio-history":
+            endpoint = urlsplit(self.path).path
+            if endpoint not in {"/api/portfolio-history", "/api/asset-irr"}:
                 self._send_json(404, {"error": "API endpoint not found"})
                 return
 
@@ -141,10 +168,46 @@ def _make_handler(
                 )
                 return
 
+            normalized_accounts = tuple(
+                sorted({account.strip() for account in accounts})
+            )
             try:
-                payload = cache.get(
-                    tuple(sorted({account.strip() for account in accounts}))
-                )
+                if endpoint == "/api/portfolio-history":
+                    payload = cache.get(normalized_accounts)
+                else:
+                    account_types = request.get("account_types", [])
+                    if not isinstance(account_types, list) or not all(
+                        isinstance(account_type, str) and account_type.strip()
+                        for account_type in account_types
+                    ):
+                        self._send_json(
+                            400,
+                            {
+                                "error": (
+                                    "account_types must be a list of"
+                                    " non-empty strings"
+                                )
+                            },
+                        )
+                        return
+                    date_from = request.get("date_from")
+                    date_to = request.get("date_to")
+                    if not all(
+                        value is None or isinstance(value, str)
+                        for value in (date_from, date_to)
+                    ):
+                        self._send_json(
+                            400,
+                            {"error": "date_from and date_to must be strings"},
+                        )
+                        return
+                    payload = asset_irr_builder(
+                        output_dir,
+                        normalized_accounts,
+                        tuple(sorted(set(account_types))),
+                        date_from,
+                        date_to,
+                    )
             except (FileNotFoundError, TriEngineUnavailableError) as exc:
                 self._send_json(503, {"error": str(exc)})
                 return

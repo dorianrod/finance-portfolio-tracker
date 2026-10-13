@@ -212,7 +212,12 @@ def _enrich_with_returns(
         is_synthetic_cash = account_category == "brokerage" and str(
             row.get("name", "")
         ).startswith("Cash ")
-        returns_enabled = not is_livret and not is_synthetic_cash
+        is_checking = account_category == "checking"
+        returns_enabled = not (
+            is_livret
+            or is_synthetic_cash
+            or is_checking
+        )
 
         if not returns_enabled:
             xirr_vals.append(None)
