@@ -44,7 +44,28 @@ describe('buildIssuerExposures', () => {
     expect(result).toHaveLength(1)
     expect(result[0]).toMatchObject({ id: 'COMPANY', name: 'Company', value: 250, weight: 12.5 })
     expect(new Set(result[0].securities.map((security) => security.id))).toEqual(new Set(['COMPANY', 'CLASS-A', 'CLASS-C']))
-    expect(result[0].funds).toEqual(['World ETF'])
+    expect(result[0].funds).toEqual(['Direct', 'World ETF'])
+    expect(result[0].sources).toEqual([
+      { fund: 'World ETF', value: 150 },
+      { fund: 'Direct', value: 100 },
+    ])
+    const direct = result[0].securities.find((security) => security.id === 'COMPANY')
+    expect(direct?.sources).toEqual([{ fund: 'Direct', value: 100 }])
+  })
+
+  it('lists a security held both directly and through a fund with both sources', () => {
+    const result = buildIssuerExposures(
+      [
+        position({ id: 'fund', isin: 'FUND', name: 'World ETF', total_value: 1_000 }),
+        position({ id: 'direct', isin: 'COMPANY', name: 'Company', total_value: 100 }),
+      ],
+      [holding({ holdingId: 'COMPANY', weight: 0.1 })],
+    )
+    expect(result[0].securities).toHaveLength(1)
+    expect(result[0].securities[0].sources).toEqual([
+      { fund: 'World ETF', value: 100 },
+      { fund: 'Direct', value: 100 },
+    ])
   })
 
   it('scales provider rounding above 100% back to the fund value', () => {

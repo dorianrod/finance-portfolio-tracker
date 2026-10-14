@@ -1,6 +1,9 @@
 import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 
+/** Source label for value held directly rather than through a fund. */
+export const DIRECT_SOURCE = 'Direct'
+
 export interface SecurityExposure {
   id: string
   name: string
@@ -131,7 +134,7 @@ export function buildIssuerExposures(
     }
     const directId = position.isin || position.ticker
     if (directId && !isFundPosition(position)) {
-      add(directId, position.name, directId, position.name, positionValue, '')
+      add(directId, position.name, directId, position.name, positionValue, DIRECT_SOURCE)
     }
   }
 
