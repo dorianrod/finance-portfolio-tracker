@@ -2,16 +2,90 @@ import { useEffect, useRef, useState } from 'react'
 import { accountLabel, toggle } from './filterBar.logic'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox'
 
-export function AccountTreeSelect({
-  allAccountTypes, accountToType, allAccounts, accountLabels, selected, onChange,
-}: {
+interface AccountTreeProps {
   allAccountTypes: string[]
   accountToType: Record<string, string>
   allAccounts: string[]
   accountLabels: Record<string, string>
   selected: Set<string>
   onChange: (next: Set<string>) => void
-}) {
+}
+
+export function AccountTree({
+  allAccountTypes, accountToType, allAccounts, accountLabels, selected, onChange,
+}: AccountTreeProps) {
+  function typeAccounts(type: string) {
+    return allAccounts.filter((account) => accountToType[account] === type)
+  }
+
+  function toggleType(type: string) {
+    const accounts = typeAccounts(type)
+    const allSelected = accounts.every((account) => selected.has(account))
+    const next = new Set(selected)
+    if (allSelected) accounts.forEach((account) => next.delete(account))
+    else accounts.forEach((account) => next.add(account))
+    onChange(next)
+  }
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-gray-700 bg-gray-950/35">
+      <button
+        type="button"
+        onClick={() => onChange(new Set())}
+        className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${selected.size === 0 ? 'bg-blue-900/35 text-blue-200' : 'text-gray-300 hover:bg-gray-800'}`}
+      >
+        <span className="font-medium">All accounts</span>
+        {selected.size === 0 && <span className="text-xs font-semibold text-blue-300">Selected</span>}
+      </button>
+
+      <div className="border-t border-gray-800 py-1.5">
+        {allAccountTypes.map((type) => {
+          const accounts = typeAccounts(type)
+          if (accounts.length === 0) return null
+          const selectedCount = accounts.filter((account) => selected.has(account)).length
+          const allSelected = selectedCount === accounts.length
+          const partiallySelected = selectedCount > 0 && !allSelected
+
+          return (
+            <div key={type} className="py-1">
+              <label className="flex cursor-pointer items-center gap-2 px-3 py-1.5 hover:bg-gray-800/80">
+                <IndeterminateCheckbox
+                  checked={allSelected}
+                  indeterminate={partiallySelected}
+                  onChange={() => toggleType(type)}
+                />
+                <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">{type}</span>
+                {selectedCount > 0 && (
+                  <span className="ml-auto text-[11px] tabular-nums text-gray-500">{selectedCount}/{accounts.length}</span>
+                )}
+              </label>
+              {accounts.map((account) => (
+                <label
+                  key={account}
+                  className="flex cursor-pointer items-center gap-2 py-1.5 pl-8 pr-3 hover:bg-gray-800/80"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.has(account)}
+                    onChange={() => onChange(toggle(selected, account))}
+                    className="h-3.5 w-3.5 cursor-pointer accent-blue-500"
+                  />
+                  <span className="min-w-0 truncate text-xs text-gray-300">
+                    {accountLabel(account, accountLabels)}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+export function AccountTreeSelect({
+  allAccountTypes, accountToType, allAccounts, accountLabels, selected, onChange,
+}: AccountTreeProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
