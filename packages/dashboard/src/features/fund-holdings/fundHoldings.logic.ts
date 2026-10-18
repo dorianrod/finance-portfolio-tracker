@@ -1,8 +1,28 @@
-import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
+import type { FundHolding, FundHoldingStatus, FundQualityTier } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 
 /** Source label for value held directly rather than through a fund. */
 export const DIRECT_SOURCE = 'Direct'
+
+export type FundQualityCategory = 'reliable' | 'partial' | 'unavailable'
+
+export const FUND_QUALITY_LABELS: Record<FundQualityCategory, string> = {
+  reliable: 'Fiable',
+  partial: 'Partiel / estimé',
+  unavailable: 'Non disponible',
+}
+
+export function fundQualityCategory(tier: FundQualityTier): FundQualityCategory {
+  if (tier === 'A' || tier === 'B') return 'reliable'
+  return tier === 'C' ? 'partial' : 'unavailable'
+}
+
+export function fundQualitySourceLabel(tier: FundQualityTier): string {
+  if (tier === 'A') return 'Source officielle'
+  if (tier === 'B') return 'Proxy exact'
+  if (tier === 'C') return 'Source partielle ou estimation'
+  return 'Aucune composition exploitable'
+}
 
 export interface SecurityExposure {
   id: string
@@ -53,6 +73,7 @@ export function statusForPosition(
 export function buildIssuerExposures(
   positions: PositionRow[],
   holdings: FundHolding[],
+  statuses: FundHoldingStatus[] = [],
 ): IssuerExposure[] {
   const byParent = new Map<string, FundHolding[]>()
   for (const holding of holdings) {
@@ -85,6 +106,11 @@ export function buildIssuerExposures(
   interface MutableSecurity { id: string; name: string; value: number; funds: Map<string, number> }
   interface MutableIssuer { id: string; name: string; value: number; securities: Map<string, MutableSecurity>; funds: Map<string, number> }
   const issuers = new Map<string, MutableIssuer>()
+  const compositeIds = new Set(statuses.flatMap((status) => [
+    status.parentId,
+    status.parentIsin,
+    status.parentTicker,
+  ]).filter(Boolean))
   const total = positions.reduce((sum, position) => (
     position.status === 'active' ? sum + Math.max(0, position.total_value ?? 0) : sum
   ), 0)
@@ -133,7 +159,7 @@ export function buildIssuerExposures(
       continue
     }
     const directId = position.isin || position.ticker
-    if (directId && !isFundPosition(position)) {
+    if (directId && !compositeIds.has(directId) && !isFundPosition(position)) {
       add(directId, position.name, directId, position.name, positionValue, DIRECT_SOURCE)
     }
   }

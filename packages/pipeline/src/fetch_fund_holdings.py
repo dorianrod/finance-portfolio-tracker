@@ -15,11 +15,17 @@ import pandas as pd
 import yfinance as yf
 
 from src.data_dir import resolve_data_dir
+from src.fund_holdings_snapshots import (
+    SNAPSHOT_COLUMNS,
+    FundSnapshot,
+    load_fund_snapshots,
+)
 from src.fund_holdings_sources import (
     FundSource,
     SourceResult,
+    discover_fund_sources,
     fetch_official_source,
-    load_fund_sources,
+    load_fund_source_candidates,
 )
 from src.infrastructure.xlsx_allocation_repository import (
     XlsxAllocationRepository,
@@ -37,6 +43,12 @@ _OUTPUT_COLUMNS = [
     "source_tier",
     "source_name",
     "holdings_date",
+    "holding_kind",
+    "lookthrough_path",
+    "depth",
+    "snapshot_id",
+    "source_origin",
+    "source_url",
 ]
 _LEGACY_OUTPUT_COLUMNS = [
     "parent_isin",
@@ -74,6 +86,39 @@ _STATUS_COLUMNS = [
     "residual_value",
     "refresh_streak",
     "issues",
+    "decomposition_state",
+    "snapshot_id",
+    "source_origin",
+    "manual_attention",
+    "checksum_sha256",
+]
+
+_ATTEMPT_COLUMNS = [
+    "parent_id",
+    "parent_name",
+    "attempted_at",
+    "candidate_order",
+    "source_name",
+    "source_type",
+    "source_url",
+    "quality_tier",
+    "outcome",
+    "holding_count",
+    "weight_sum",
+    "message",
+]
+
+_UNRESOLVED_COLUMNS = [
+    "parent_id",
+    "parent_name",
+    "unresolved_id",
+    "unresolved_name",
+    "reason",
+    "path",
+    "weight",
+    "market_value",
+    "queued_for_research",
+    "detected_at",
 ]
 
 _REPORT_COLUMNS = [
@@ -124,9 +169,50 @@ def _text(value: object) -> str:
     return "" if text.lower() in {"nan", "none"} else text
 
 
+def _float(value: object) -> float:
+    try:
+        return float(_text(value) or 0)
+    except ValueError:
+        return 0.0
+
+
 def _is_fund(name: str) -> bool:
     upper = name.upper()
-    return any(token in upper for token in (" ETF", "UCITS", " FUND")) or (
+    return any(
+        token in upper
+        for token in (
+            " ETF",
+            "UCITS",
+            " FUND",
+            "FUND ",
+            " FCPE",
+            "FCPE ",
+            " FCP",
+            "FCP ",
+            " SICAV",
+            "SICAV ",
+            " OPCVM",
+            "OPCVM ",
+            " PEE",
+            "PEE ",
+            " PEI",
+            "PEI ",
+            " PERCO",
+            "PERCO ",
+            " PRIVATE EQUITY",
+            "PRIVATE EQUITY ",
+            " ASSURANCE VIE",
+            "ASSURANCE VIE ",
+            " LIFE INSURANCE",
+            "LIFE INSURANCE ",
+            " SCPI",
+            "SCPI ",
+            " OPCI",
+            "OPCI ",
+            " FONDS",
+            "FONDS ",
+        )
+    ) or (
         upper.startswith(
             (
                 "AMUNDI ",
@@ -135,6 +221,13 @@ def _is_fund(name: str) -> bool:
                 "ISHARES ",
                 "L&G ",
                 "XTRACKERS ",
+                "DWS ",
+                "SPDR ",
+                "VANGUARD ",
+                "INVESCO ",
+                "UBS ",
+                "HSBC ",
+                "LEGAL & GENERAL ",
             )
         )
     )
@@ -183,8 +276,11 @@ def _latest_positions(positions: pd.DataFrame) -> pd.DataFrame:
 
 
 def _fund_positions(
-    positions: pd.DataFrame, ticker_data: dict[str, dict]
+    positions: pd.DataFrame,
+    ticker_data: dict[str, dict],
+    known_fund_ids: set[str] | None = None,
 ) -> list[FundPosition]:
+    known_fund_ids = known_fund_ids or set()
     funds: dict[str, FundPosition] = {}
     for _, row in _latest_positions(positions).iterrows():
         name = _text(row.get("name"))
@@ -192,7 +288,14 @@ def _fund_positions(
         ticker = _text(row.get("ticker"))
         raw_value = row.get("total_value", 1)
         value = float(raw_value) if pd.notna(raw_value) else 0.0
-        if value <= 0 or not _is_fund(name):
+        is_known = isin in known_fund_ids or ticker in known_fund_ids
+        category = _text(row.get("account_category")).lower()
+        wrapper_candidate = category in {
+            "employer_savings",
+            "private_equity",
+            "retirement",
+        } and not (isin or ticker)
+        if value <= 0 or not (_is_fund(name) or is_known or wrapper_candidate):
             continue
         parent_id = isin or ticker or name
         meta = ticker_data.get(isin) or ticker_data.get(ticker) or {}
@@ -203,9 +306,7 @@ def _fund_positions(
                 isin, ticker, name, symbol, current.market_value + value
             )
         else:
-            funds[parent_id] = FundPosition(
-                isin, ticker, name, symbol, value
-            )
+            funds[parent_id] = FundPosition(isin, ticker, name, symbol, value)
     return list(funds.values())
 
 
@@ -262,6 +363,10 @@ def _normalize_source_rows(
     tier: str,
     source_name: str,
     canonical: Callable[[str, str], str],
+    *,
+    snapshot_id: str = "",
+    source_origin: str = "deterministic",
+    source_url: str = "",
 ) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     for _, raw in result.holdings.iterrows():
@@ -276,7 +381,11 @@ def _normalize_source_rows(
         exchange = _text(raw.get("exchange"))
         is_isin = bool(re.fullmatch(r"[A-Z]{2}[A-Z0-9]{9}[0-9]", symbol))
         holding_id = canonical_id
-        if canonical_id == symbol and not is_isin:
+        if (
+            canonical_id == symbol
+            and not is_isin
+            and not bool(raw.get("preserve_id", False))
+        ):
             identity = _norm_name(name) or "unknown"
             holding_id = f"{symbol}@{exchange}:{identity}"
         issuer_name = _issuer_name(name)
@@ -285,28 +394,58 @@ def _normalize_source_rows(
             if canonical_id != symbol
             else _norm_name(issuer_name) or holding_id
         )
-        rows.append({
-            "parent_isin": fund.parent_isin,
-            "parent_ticker": fund.parent_ticker,
-            "parent_name": fund.parent_name,
-            "holding_id": holding_id,
-            "holding_name": name,
-            "issuer_id": issuer_id,
-            "issuer_name": issuer_name,
-            "weight": round(weight, 8),
-            "source_tier": tier,
-            "source_name": source_name,
-            "holdings_date": result.holdings_date,
-        })
+        rows.append(
+            {
+                "parent_isin": fund.parent_isin,
+                "parent_ticker": fund.parent_ticker,
+                "parent_name": fund.parent_name,
+                "holding_id": holding_id,
+                "holding_name": name,
+                "issuer_id": issuer_id,
+                "issuer_name": issuer_name,
+                "weight": round(weight, 8),
+                "source_tier": tier,
+                "source_name": source_name,
+                "holdings_date": result.holdings_date,
+                "holding_kind": _text(raw.get("holding_kind")) or "security",
+                "lookthrough_path": _text(raw.get("lookthrough_path"))
+                or fund.parent_id,
+                "depth": int(float(raw.get("depth", 0) or 0)),
+                "snapshot_id": snapshot_id,
+                "source_origin": source_origin,
+                "source_url": source_url,
+            }
+        )
     normalized = pd.DataFrame(rows, columns=_OUTPUT_COLUMNS)
     if normalized.empty:
         return normalized
+    duplicate_isins = normalized.loc[
+        normalized["holding_id"].duplicated(keep=False)
+        & normalized["holding_id"].astype(str).str.fullmatch(
+            r"[A-Z]{2}[A-Z0-9]{9}[0-9]"
+        ),
+        "holding_id",
+    ].unique()
+    for holding_id in duplicate_isins:
+        mask = normalized["holding_id"].eq(holding_id)
+        group = normalized.loc[mask].copy()
+        preferred_index = group["holding_name"].astype(str).str.len().idxmin()
+        preferred = normalized.loc[preferred_index].copy()
+        preferred["weight"] = float(group["weight"].sum())
+        preferred["issuer_id"] = holding_id
+        preferred["issuer_name"] = _issuer_name(
+            _text(preferred.get("holding_name"))
+        )
+        normalized = pd.concat(
+            [normalized.loc[~mask], pd.DataFrame([preferred.to_dict()])],
+            ignore_index=True,
+        )
     group_columns = [
         column for column in _OUTPUT_COLUMNS if column != "weight"
     ]
-    return normalized.groupby(
-        group_columns, as_index=False, dropna=False
-    ).agg(weight=("weight", "sum"))
+    return normalized.groupby(group_columns, as_index=False, dropna=False).agg(
+        weight=("weight", "sum")
+    )
 
 
 def _yahoo_result(
@@ -323,15 +462,83 @@ def _yahoo_result(
         except (TypeError, ValueError):
             continue
         if name and weight > 0:
-            rows.append({
-                "source_holding_id": _text(raw_symbol),
-                "source_holding_name": name,
-                "exchange": "",
-                "weight": weight,
-            })
+            rows.append(
+                {
+                    "source_holding_id": _text(raw_symbol),
+                    "source_holding_name": name,
+                    "exchange": "",
+                    "weight": weight,
+                }
+            )
     if not rows:
         raise ValueError("Yahoo returned no parseable holdings")
     return SourceResult(pd.DataFrame(rows), "")
+
+
+def _snapshot_result(
+    snapshot: FundSnapshot,
+    snapshots: dict[str, FundSnapshot],
+    *,
+    max_depth: int = 5,
+) -> tuple[SourceResult, list[dict[str, object]]]:
+    """Resolve nested snapshots and retain every unresolved branch."""
+    terminal: list[dict[str, object]] = []
+    unresolved: list[dict[str, object]] = []
+
+    def visit(
+        current: FundSnapshot,
+        factor: float,
+        path: tuple[str, ...],
+        depth: int,
+    ) -> None:
+        for raw in current.holdings.to_dict("records"):
+            holding_id = _text(raw.get("holding_isin")) or _text(
+                raw.get("holding_id")
+            )
+            holding_name = _text(raw.get("holding_name")) or holding_id
+            weight = factor * float(raw.get("weight", 0) or 0)
+            kind = _text(raw.get("holding_kind")) or "security"
+            branch = (*path, holding_id)
+            if kind == "fund":
+                child = snapshots.get(holding_id)
+                reason = "nested fund has no active snapshot"
+                if holding_id in path:
+                    reason = "look-through cycle detected"
+                elif depth >= max_depth:
+                    reason = f"maximum look-through depth {max_depth} reached"
+                elif child is not None:
+                    visit(child, weight, branch, depth + 1)
+                    continue
+                unresolved.append(
+                    {
+                        "unresolved_id": holding_id,
+                        "unresolved_name": holding_name,
+                        "reason": reason,
+                        "path": " > ".join(branch),
+                        "weight": weight,
+                    }
+                )
+                continue
+            terminal.append(
+                {
+                    "source_holding_id": holding_id,
+                    "source_holding_name": holding_name,
+                    "exchange": "",
+                    "holding_kind": kind,
+                    "weight": weight,
+                    "lookthrough_path": " > ".join(branch),
+                    "depth": depth,
+                    "preserve_id": True,
+                }
+            )
+
+    visit(snapshot, 1.0, (snapshot.fund_id,), 0)
+    return SourceResult(
+        pd.DataFrame(terminal),
+        snapshot.as_of_date,
+        exposure_kind="economic",
+        complete=snapshot.complete and not unresolved,
+    ), unresolved
 
 
 def _validation(
@@ -384,9 +591,9 @@ def _cached_rows_for_fund(
     if holdings.empty:
         return pd.DataFrame(columns=_OUTPUT_COLUMNS)
     parent_isin = holdings.get("parent_isin", pd.Series(dtype=str)).fillna("")
-    parent_ticker = holdings.get(
-        "parent_ticker", pd.Series(dtype=str)
-    ).fillna("")
+    parent_ticker = holdings.get("parent_ticker", pd.Series(dtype=str)).fillna(
+        ""
+    )
     mask = parent_isin.eq(parent_id) | parent_ticker.eq(parent_id)
     cached = holdings.loc[mask].copy()
     for column in _OUTPUT_COLUMNS:
@@ -402,11 +609,53 @@ def _cache_is_fresh(previous: pd.Series | None, today: date) -> bool:
         return False
     if "refresh failed" in _text(previous.get("issues")).lower():
         return False
+    previous_tier = _text(previous.get("quality_tier"))
+    previous_sum = float(previous.get("raw_weight_sum", 0) or 0)
+    if previous_tier in {"A", "B"} and not (
+        _MIN_COMPLETE_WEIGHT <= previous_sum <= _MAX_COMPLETE_WEIGHT
+    ):
+        return False
     fetched_at = _text(previous.get("fetched_at"))[:10]
     try:
         return 0 <= (today - date.fromisoformat(fetched_at)).days < _CACHE_DAYS
     except ValueError:
         return False
+
+
+def _has_better_candidate(
+    previous: pd.Series | None, candidates: list[FundSource]
+) -> bool:
+    if previous is None:
+        return bool(candidates)
+    rank = {"D": 0, "C": 1, "B": 2, "A": 3}
+    previous_tier = _text(previous.get("quality_tier")) or "D"
+    previous_type = _text(previous.get("source_type")).lower()
+    return any(
+        rank.get(candidate.quality_tier, 0) > rank.get(previous_tier, 0)
+        or (
+            previous_type == "partial fallback"
+            and candidate.quality_tier in {"A", "B"}
+        )
+        for candidate in candidates
+    )
+
+
+def _normalize_trusted_complete_weights(
+    rows: pd.DataFrame,
+    result: SourceResult,
+    tier: str,
+) -> pd.DataFrame:
+    raw_sum = float(result.holdings["weight"].sum())
+    normalized_sum = float(rows["weight"].sum())
+    if (
+        tier in {"A", "B"}
+        and result.complete
+        and _MIN_COMPLETE_WEIGHT <= raw_sum <= _MAX_COMPLETE_WEIGHT
+        and normalized_sum > 0
+    ):
+        rows = rows.copy()
+        rows["weight"] = rows["weight"].astype(float) / normalized_sum
+    return rows
 
 
 def _source_metadata(source: FundSource | None) -> dict[str, str]:
@@ -422,7 +671,13 @@ def _source_metadata(source: FundSource | None) -> dict[str, str]:
         }
     return {
         "source_name": source.provider,
-        "source_type": "official" if source.quality_tier == "A" else "proxy",
+        "source_type": (
+            "official"
+            if source.quality_tier == "A"
+            else "exact proxy"
+            if source.quality_tier == "B"
+            else source.source_role
+        ),
         "source_url": source.url,
         "index_name": source.index_name,
         "replication_method": source.replication_method,
@@ -440,6 +695,7 @@ def _status_row(
     previous: pd.Series | None,
     today: date,
     fetch_error: str = "",
+    snapshot: FundSnapshot | None = None,
 ) -> dict[str, object]:
     raw_weight_sum = float(result.holdings["weight"].sum())
     explained = min(1.0, max(0.0, float(rows["weight"].sum())))
@@ -450,6 +706,15 @@ def _status_row(
         issues.append(f"refresh failed; last valid data kept: {fetch_error}")
         status = "warning" if not rows.empty else "error"
         is_stale = True
+    if snapshot is not None:
+        issues.append(
+            "manual/agent snapshot: inspect sources and evidence before "
+            "relying on it"
+        )
+        if snapshot.is_stale:
+            issues.append(f"snapshot is {snapshot.age_days} days old")
+            is_stale = True
+        status = "warning"
     previous_streak = 0
     if previous is not None:
         previous_streak = int(float(previous.get("refresh_streak", 0) or 0))
@@ -470,6 +735,42 @@ def _status_row(
             issues.append("provider result changed materially; streak reset")
             status = "warning"
     metadata = _source_metadata(source)
+    if result.metadata:
+        metadata["index_name"] = (
+            result.metadata.get("index_name") or metadata["index_name"]
+        )
+        metadata["replication_method"] = (
+            result.metadata.get("replication_method")
+            or metadata["replication_method"]
+        )
+    if snapshot is not None:
+        label = (
+            "Snapshot manuel"
+            if snapshot.origin.lower().startswith("manual")
+            else "Recherche agent"
+        )
+        metadata.update(
+            {
+                "source_name": label,
+                "source_type": "manual/agent snapshot",
+                "source_url": snapshot.source_urls[0]
+                if snapshot.source_urls
+                else "",
+                "index_name": "",
+                "replication_method": "researched snapshot",
+                "proxy_name": "",
+                "proxy_isin": "",
+            }
+        )
+    decomposition_state = (
+        "unresolved"
+        if rows.empty
+        else "partial"
+        if explained < 0.999
+        else "stale"
+        if is_stale
+        else "resolved"
+    )
     return {
         "parent_id": fund.parent_id,
         "parent_isin": fund.parent_isin,
@@ -478,9 +779,9 @@ def _status_row(
         "quality_tier": tier,
         "validation_status": status,
         **metadata,
-        "fetched_at": datetime.now().astimezone().isoformat(
-            timespec="seconds"
-        ),
+        "fetched_at": datetime.now()
+        .astimezone()
+        .isoformat(timespec="seconds"),
         "holdings_date": result.holdings_date,
         "freshness_days": freshness_days,
         "is_stale": str(is_stale).lower(),
@@ -493,6 +794,11 @@ def _status_row(
         "residual_value": round(fund.market_value * (1 - explained), 2),
         "refresh_streak": refresh_streak,
         "issues": " | ".join(issues),
+        "decomposition_state": decomposition_state,
+        "snapshot_id": snapshot.snapshot_id if snapshot else "",
+        "source_origin": snapshot.origin if snapshot else "deterministic",
+        "manual_attention": str(snapshot is not None).lower(),
+        "checksum_sha256": snapshot.checksum_sha256 if snapshot else "",
     }
 
 
@@ -510,9 +816,9 @@ def _unavailable_status(
         "quality_tier": "D",
         "validation_status": "error",
         **metadata,
-        "fetched_at": datetime.now().astimezone().isoformat(
-            timespec="seconds"
-        ),
+        "fetched_at": datetime.now()
+        .astimezone()
+        .isoformat(timespec="seconds"),
         "holdings_date": "",
         "freshness_days": -1,
         "is_stale": "true",
@@ -525,6 +831,11 @@ def _unavailable_status(
         "residual_value": round(fund.market_value, 2),
         "refresh_streak": 0,
         "issues": str(error),
+        "decomposition_state": "unresolved",
+        "snapshot_id": "",
+        "source_origin": "none",
+        "manual_attention": "false",
+        "checksum_sha256": "",
     }
 
 
@@ -564,12 +875,21 @@ def build_coverage_report(
     latest = _latest_positions(positions)
     latest = latest[pd.to_numeric(latest["total_value"], errors="coerce") > 0]
     portfolio_value = float(latest["total_value"].sum())
-    fund_mask = latest["name"].fillna("").map(_is_fund)
-    fund_value = float(latest.loc[fund_mask, "total_value"].sum())
-    identified_mask = (
-        latest["isin"].fillna("").astype(str).str.strip().ne("")
-        | latest["ticker"].fillna("").astype(str).str.strip().ne("")
+    known_fund_ids = set(
+        statuses.get("parent_id", pd.Series(dtype=str)).astype(str)
     )
+    fund_mask = latest.apply(
+        lambda row: (
+            _is_fund(_text(row.get("name")))
+            or _text(row.get("isin")) in known_fund_ids
+            or _text(row.get("ticker")) in known_fund_ids
+        ),
+        axis=1,
+    )
+    fund_value = float(latest.loc[fund_mask, "total_value"].sum())
+    identified_mask = latest["isin"].fillna("").astype(str).str.strip().ne(
+        ""
+    ) | latest["ticker"].fillna("").astype(str).str.strip().ne("")
     direct_identified_value = float(
         latest.loc[~fund_mask & identified_mask, "total_value"].sum()
     )
@@ -622,29 +942,32 @@ def build_coverage_report(
         if gate_pass
         else "limited"
     )
-    issue_count = int(
-        statuses["validation_status"].astype(str).ne("ok").sum()
-    )
+    issue_count = int(statuses["validation_status"].astype(str).ne("ok").sum())
     latest_date = _text(latest["snapshot_date"].astype(str).max())
-    return pd.DataFrame([{
-        "as_of_date": latest_date,
-        "portfolio_value": round(portfolio_value, 2),
-        "fund_value": round(fund_value, 2),
-        "direct_identified_value": round(direct_identified_value, 2),
-        "opaque_value": round(opaque_value, 2),
-        "decomposed_value": round(decomposed_value, 2),
-        "high_confidence_explained_value": round(ab_explained, 2),
-        "undisclosed_fund_value": round(undisclosed_value, 2),
-        "fund_coverage_pct": round(fund_coverage, 4),
-        "portfolio_coverage_pct": round(portfolio_coverage, 4),
-        "coverage_gate_pass": str(coverage_gate).lower(),
-        "top_funds_gate_pass": str(top_gate).lower(),
-        "exact_proxy_gate_pass": str(exact_proxy_gate).lower(),
-        "repeatability_gate_pass": str(repeatability_gate).lower(),
-        "feasibility_status": feasibility,
-        "fund_count": len(statuses),
-        "issue_count": issue_count,
-    }], columns=_REPORT_COLUMNS)
+    return pd.DataFrame(
+        [
+            {
+                "as_of_date": latest_date,
+                "portfolio_value": round(portfolio_value, 2),
+                "fund_value": round(fund_value, 2),
+                "direct_identified_value": round(direct_identified_value, 2),
+                "opaque_value": round(opaque_value, 2),
+                "decomposed_value": round(decomposed_value, 2),
+                "high_confidence_explained_value": round(ab_explained, 2),
+                "undisclosed_fund_value": round(undisclosed_value, 2),
+                "fund_coverage_pct": round(fund_coverage, 4),
+                "portfolio_coverage_pct": round(portfolio_coverage, 4),
+                "coverage_gate_pass": str(coverage_gate).lower(),
+                "top_funds_gate_pass": str(top_gate).lower(),
+                "exact_proxy_gate_pass": str(exact_proxy_gate).lower(),
+                "repeatability_gate_pass": str(repeatability_gate).lower(),
+                "feasibility_status": feasibility,
+                "fund_count": len(statuses),
+                "issue_count": issue_count,
+            }
+        ],
+        columns=_REPORT_COLUMNS,
+    )
 
 
 def _read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
@@ -682,6 +1005,9 @@ def refresh_fund_holdings(
     holdings_path = output_dir / "fund_holdings.csv"
     status_path = output_dir / "fund_holdings_status.csv"
     report_path = output_dir / "fund_holdings_coverage.csv"
+    attempts_path = output_dir / "fund_holdings_attempts.csv"
+    unresolved_path = output_dir / "fund_unresolved.csv"
+    snapshots_path = output_dir / "fund_snapshot_manifest.csv"
     previous_holdings = _read_csv(holdings_path, _OUTPUT_COLUMNS)
     previous_statuses = _read_csv(status_path, _STATUS_COLUMNS)
     previous_by_id = _previous_status_by_id(previous_statuses)
@@ -693,14 +1019,51 @@ def refresh_fund_holdings(
     )
     ticker_data = allocation_repo.load_ticker_data()
     canonical = _canonicalizer(positions, ticker_data)
-    fund_sources = load_fund_sources(data_dir)
+    fund_sources = load_fund_source_candidates(data_dir)
+    snapshots, snapshot_audit = load_fund_snapshots(data_dir, today=today)
+    audited_ids = set(
+        snapshot_audit.get("fund_id", pd.Series(dtype=str))
+        .astype(str)
+        .loc[lambda values: values.str.strip().ne("")]
+    )
+    known_ids = set(fund_sources) | set(snapshots) | audited_ids
     frames: list[pd.DataFrame] = []
     status_rows: list[dict[str, object]] = []
+    attempt_rows: list[dict[str, object]] = []
+    unresolved_rows: list[dict[str, object]] = []
 
-    for fund in _fund_positions(positions, ticker_data):
+    for fund in _fund_positions(positions, ticker_data, known_ids):
         previous = previous_by_id.get(fund.parent_id)
         cached = _cached_rows_for_fund(previous_holdings, fund.parent_id)
-        if not force and not cached.empty and _cache_is_fresh(previous, today):
+        configured = list(
+            fund_sources.get(fund.parent_isin, [])
+            or fund_sources.get(fund.parent_ticker, [])
+        )
+        discovered = discover_fund_sources(fund.parent_isin, fund.parent_name)
+        seen = {(item.adapter, item.url) for item in configured}
+        candidates = configured + [
+            item
+            for item in discovered
+            if (item.adapter, item.url) not in seen
+        ]
+        snapshot = (
+            snapshots.get(fund.parent_isin)
+            or snapshots.get(fund.parent_ticker)
+            or snapshots.get(fund.parent_id)
+        )
+        cached_snapshot_id = (
+            _text(previous.get("snapshot_id")) if previous is not None else ""
+        )
+        snapshot_unchanged = (snapshot is None and not cached_snapshot_id) or (
+            snapshot is not None and cached_snapshot_id == snapshot.snapshot_id
+        )
+        if (
+            not force
+            and snapshot_unchanged
+            and not cached.empty
+            and _cache_is_fresh(previous, today)
+            and not _has_better_candidate(previous, candidates)
+        ):
             frames.append(cached)
             cached_status = dict(previous) if previous is not None else {}
             cached_status["market_value"] = round(fund.market_value, 2)
@@ -711,74 +1074,418 @@ def refresh_fund_holdings(
             cached_status["residual_value"] = round(
                 fund.market_value * (1 - explained), 2
             )
+            if not _text(cached_status.get("decomposition_state")):
+                cached_status["decomposition_state"] = (
+                    "unresolved"
+                    if explained <= 0
+                    else "partial"
+                    if explained < 0.999
+                    else "stale"
+                    if _text(cached_status.get("is_stale")) == "true"
+                    else "resolved"
+                )
+            cached_status["snapshot_id"] = _text(
+                cached_status.get("snapshot_id")
+            )
+            cached_status["source_origin"] = (
+                _text(cached_status.get("source_origin")) or "deterministic"
+            )
+            cached_status["manual_attention"] = (
+                _text(cached_status.get("manual_attention")) or "false"
+            )
+            cached_status["checksum_sha256"] = _text(
+                cached_status.get("checksum_sha256")
+            )
             status_rows.append(cached_status)
+            attempt_rows.append(
+                {
+                    "parent_id": fund.parent_id,
+                    "parent_name": fund.parent_name,
+                    "attempted_at": datetime.now()
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                    "candidate_order": 0,
+                    "source_name": _text(cached_status.get("source_name"))
+                    or "Cache",
+                    "source_type": "cache hit",
+                    "source_url": _text(cached_status.get("source_url")),
+                    "quality_tier": _text(cached_status.get("quality_tier")),
+                    "outcome": "selected",
+                    "holding_count": len(cached),
+                    "weight_sum": round(float(cached["weight"].sum()), 8),
+                    "message": "fresh cached data",
+                }
+            )
+            residual = max(0.0, 1 - explained)
+            if residual > 0.000001:
+                unresolved_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "unresolved_id": fund.parent_id,
+                        "unresolved_name": fund.parent_name,
+                        "reason": "cached decomposition has a residual",
+                        "path": fund.parent_id,
+                        "weight": round(residual, 8),
+                        "market_value": round(fund.market_value * residual, 2),
+                        "queued_for_research": "true",
+                        "detected_at": datetime.now()
+                        .astimezone()
+                        .isoformat(timespec="seconds"),
+                    }
+                )
             continue
 
-        source = fund_sources.get(fund.parent_isin)
-        tier = source.quality_tier if source else "C"
-        try:
-            if source:
+        selected = False
+        errors: list[str] = []
+        nested_unresolved: list[dict[str, object]] = []
+        selected_status: dict[str, object] | None = None
+
+        for order, source in enumerate(candidates, start=1):
+            attempted_at = (
+                datetime.now().astimezone().isoformat(timespec="seconds")
+            )
+            try:
                 result = official_fetch(source)
-            elif fund.symbol:
-                result = _yahoo_result(fund.symbol, yahoo_fetch)
-            else:
-                raise ValueError(
-                    "no official source or Yahoo symbol configured"
-                )
-            rows = _normalize_source_rows(
-                fund,
-                result,
-                tier,
-                source.provider if source else "Yahoo Finance",
-                canonical,
-            )
-            raw_sum = float(result.holdings["weight"].sum())
-            if rows.empty:
-                raise ValueError("source produced no usable holdings")
-            if tier in {"A", "B"} and not (
-                _MIN_COMPLETE_WEIGHT <= raw_sum <= _MAX_COMPLETE_WEIGHT
-            ):
-                raise ValueError(
-                    f"source weights total {raw_sum * 100:.2f}%"
-                )
-            frames.append(rows)
-            status_rows.append(
-                _status_row(
-                    fund, rows, source, tier, result, previous, today
-                )
-            )
-            print(
-                f"[fund-holdings] {fund.parent_name}: {tier}, "
-                f"{len(rows)} rows, {raw_sum * 100:.2f}%"
-            )
-        except Exception as exc:
-            if not cached.empty and previous is not None:
-                frames.append(cached)
-                fallback_result = SourceResult(
-                    pd.DataFrame({"weight": cached["weight"]}),
-                    _text(previous.get("holdings_date")),
-                )
-                status_rows.append(
-                    _status_row(
-                        fund,
-                        cached,
-                        source,
-                        _text(previous.get("quality_tier")) or tier,
-                        fallback_result,
-                        previous,
-                        today,
-                        str(exc),
+                if (
+                    result.exposure_kind != "economic"
+                    or source.source_role == "collateral"
+                ):
+                    raise ValueError(
+                        "source describes collateral, not economic exposure"
                     )
+                rows = _normalize_source_rows(
+                    fund,
+                    result,
+                    source.quality_tier,
+                    source.provider,
+                    canonical,
+                    source_url=source.url,
                 )
-                print(
-                    f"[fund-holdings] {fund.parent_name}: refresh failed; "
-                    f"kept cached data ({exc})"
+                raw_sum = float(result.holdings["weight"].sum())
+                rows = _normalize_trusted_complete_weights(
+                    rows, result, source.quality_tier
                 )
-            else:
-                status_rows.append(_unavailable_status(fund, source, exc))
-                print(
-                    f"[fund-holdings] {fund.parent_name}: unavailable ({exc})"
+                if rows.empty:
+                    raise ValueError("source produced no usable holdings")
+                if source.quality_tier in {"A", "B"} and not (
+                    result.complete
+                    and _MIN_COMPLETE_WEIGHT <= raw_sum <= _MAX_COMPLETE_WEIGHT
+                ):
+                    raise ValueError(
+                        f"source is incomplete ({raw_sum * 100:.2f}%); "
+                        "cannot be tier A/B"
+                    )
+                frames.append(rows)
+                selected_status = _status_row(
+                    fund,
+                    rows,
+                    source,
+                    source.quality_tier,
+                    result,
+                    previous,
+                    today,
                 )
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": attempted_at,
+                        "candidate_order": order,
+                        "source_name": source.provider,
+                        "source_type": source.adapter,
+                        "source_url": source.url,
+                        "quality_tier": source.quality_tier,
+                        "outcome": "selected",
+                        "holding_count": len(result.holdings),
+                        "weight_sum": round(raw_sum, 8),
+                        "message": "",
+                    }
+                )
+                selected = True
+                break
+            except Exception as exc:
+                message = str(exc)
+                errors.append(f"{source.provider}: {message}")
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": attempted_at,
+                        "candidate_order": order,
+                        "source_name": source.provider,
+                        "source_type": source.adapter,
+                        "source_url": source.url,
+                        "quality_tier": source.quality_tier,
+                        "outcome": "rejected",
+                        "holding_count": 0,
+                        "weight_sum": 0.0,
+                        "message": message,
+                    }
+                )
+
+        if not selected and snapshot is not None:
+            snapshot_attempted_at = (
+                datetime.now().astimezone().isoformat(timespec="seconds")
+            )
+            try:
+                result, nested_unresolved = _snapshot_result(
+                    snapshot, snapshots
+                )
+                label = (
+                    "Snapshot manuel"
+                    if snapshot.origin.lower().startswith("manual")
+                    else "Recherche agent"
+                )
+                rows = _normalize_source_rows(
+                    fund,
+                    result,
+                    "C",
+                    label,
+                    canonical,
+                    snapshot_id=snapshot.snapshot_id,
+                    source_origin=snapshot.origin,
+                    source_url=snapshot.source_urls[0]
+                    if snapshot.source_urls
+                    else "",
+                )
+                if rows.empty:
+                    raise ValueError("snapshot produced no terminal holdings")
+                frames.append(rows)
+                selected_status = _status_row(
+                    fund,
+                    rows,
+                    None,
+                    "C",
+                    result,
+                    previous,
+                    today,
+                    snapshot=snapshot,
+                )
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": snapshot_attempted_at,
+                        "candidate_order": len(candidates) + 1,
+                        "source_name": label,
+                        "source_type": "snapshot",
+                        "source_url": snapshot.source_urls[0]
+                        if snapshot.source_urls
+                        else "",
+                        "quality_tier": "C",
+                        "outcome": "selected",
+                        "holding_count": len(result.holdings),
+                        "weight_sum": round(
+                            float(result.holdings["weight"].sum()), 8
+                        ),
+                        "message": "manual review required",
+                    }
+                )
+                selected = True
+            except Exception as exc:
+                errors.append(f"snapshot: {exc}")
+                nested_unresolved = []
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": snapshot_attempted_at,
+                        "candidate_order": len(candidates) + 1,
+                        "source_name": "Manual/agent snapshot",
+                        "source_type": "snapshot",
+                        "source_url": (
+                            snapshot.source_urls[0]
+                            if snapshot.source_urls
+                            else ""
+                        ),
+                        "quality_tier": "C",
+                        "outcome": "rejected",
+                        "holding_count": 0,
+                        "weight_sum": 0.0,
+                        "message": str(exc),
+                    }
+                )
+
+        if not selected and not cached.empty and previous is not None:
+            frames.append(cached)
+            fallback_result = SourceResult(
+                pd.DataFrame({"weight": cached["weight"]}),
+                _text(previous.get("holdings_date")),
+            )
+            source = candidates[0] if candidates else None
+            cached_tier = _text(previous.get("quality_tier")) or "C"
+            cached_sum = float(cached["weight"].sum())
+            if cached_tier in {"A", "B"} and not (
+                _MIN_COMPLETE_WEIGHT <= cached_sum <= _MAX_COMPLETE_WEIGHT
+            ):
+                cached_tier = "C"
+                errors.append("cached A/B data was incomplete and downgraded")
+            selected_status = _status_row(
+                fund,
+                cached,
+                source,
+                cached_tier,
+                fallback_result,
+                previous,
+                today,
+                "; ".join(errors) or "fresh source unavailable",
+            )
+            attempt_rows.append(
+                {
+                    "parent_id": fund.parent_id,
+                    "parent_name": fund.parent_name,
+                    "attempted_at": datetime.now()
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                    "candidate_order": len(candidates) + 1,
+                    "source_name": _text(previous.get("source_name"))
+                    or "Cache",
+                    "source_type": "stale cache fallback",
+                    "source_url": _text(previous.get("source_url")),
+                    "quality_tier": cached_tier,
+                    "outcome": "selected",
+                    "holding_count": len(cached),
+                    "weight_sum": round(cached_sum, 8),
+                    "message": "; ".join(errors),
+                }
+            )
+            selected = True
+
+        if not selected and fund.symbol:
+            yahoo_attempted_at = (
+                datetime.now().astimezone().isoformat(timespec="seconds")
+            )
+            try:
+                result = _yahoo_result(fund.symbol, yahoo_fetch)
+                rows = _normalize_source_rows(
+                    fund,
+                    result,
+                    "C",
+                    "Yahoo Finance",
+                    canonical,
+                    source_url="https://finance.yahoo.com/",
+                )
+                if rows.empty:
+                    raise ValueError("Yahoo produced no usable holdings")
+                frames.append(rows)
+                selected_status = _status_row(
+                    fund, rows, None, "C", result, previous, today
+                )
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": yahoo_attempted_at,
+                        "candidate_order": len(candidates) + 2,
+                        "source_name": "Yahoo Finance",
+                        "source_type": "partial fallback",
+                        "source_url": "https://finance.yahoo.com/",
+                        "quality_tier": "C",
+                        "outcome": "selected",
+                        "holding_count": len(result.holdings),
+                        "weight_sum": round(
+                            float(result.holdings["weight"].sum()), 8
+                        ),
+                        "message": "top holdings only",
+                    }
+                )
+                selected = True
+            except Exception as exc:
+                errors.append(f"Yahoo Finance: {exc}")
+                attempt_rows.append(
+                    {
+                        "parent_id": fund.parent_id,
+                        "parent_name": fund.parent_name,
+                        "attempted_at": yahoo_attempted_at,
+                        "candidate_order": len(candidates) + 2,
+                        "source_name": "Yahoo Finance",
+                        "source_type": "partial fallback",
+                        "source_url": "https://finance.yahoo.com/",
+                        "quality_tier": "C",
+                        "outcome": "rejected",
+                        "holding_count": 0,
+                        "weight_sum": 0.0,
+                        "message": str(exc),
+                    }
+                )
+
+        if not selected and not fund.symbol:
+            attempt_rows.append(
+                {
+                    "parent_id": fund.parent_id,
+                    "parent_name": fund.parent_name,
+                    "attempted_at": datetime.now()
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                    "candidate_order": len(candidates) + 2,
+                    "source_name": "Yahoo Finance",
+                    "source_type": "partial fallback",
+                    "source_url": "https://finance.yahoo.com/",
+                    "quality_tier": "C",
+                    "outcome": "not_applicable",
+                    "holding_count": 0,
+                    "weight_sum": 0.0,
+                    "message": "no Yahoo symbol configured",
+                }
+            )
+
+        if selected_status is None:
+            source = candidates[0] if candidates else None
+            error = ValueError(
+                "; ".join(errors) or "no usable source configured"
+            )
+            selected_status = _unavailable_status(fund, source, error)
+        status_rows.append(selected_status)
+
+        explained_weight = (
+            _float(selected_status.get("explained_pct", 0)) / 100
+        )
+        nested_weight = sum(
+            _float(item["weight"]) for item in nested_unresolved
+        )
+        for item in nested_unresolved:
+            unresolved_rows.append(
+                {
+                    "parent_id": fund.parent_id,
+                    "parent_name": fund.parent_name,
+                    **item,
+                    "market_value": round(
+                        fund.market_value * _float(item["weight"]), 2
+                    ),
+                    "queued_for_research": "true",
+                    "detected_at": datetime.now()
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                }
+            )
+        generic_residual = max(0.0, 1 - explained_weight - nested_weight)
+        if generic_residual > 0.000001:
+            unresolved_rows.append(
+                {
+                    "parent_id": fund.parent_id,
+                    "parent_name": fund.parent_name,
+                    "unresolved_id": fund.parent_id,
+                    "unresolved_name": fund.parent_name,
+                    "reason": (
+                        "no complete deterministic economic decomposition"
+                    ),
+                    "path": fund.parent_id,
+                    "weight": round(generic_residual, 8),
+                    "market_value": round(
+                        fund.market_value * generic_residual, 2
+                    ),
+                    "queued_for_research": "true",
+                    "detected_at": datetime.now()
+                    .astimezone()
+                    .isoformat(timespec="seconds"),
+                }
+            )
+        print(
+            f"[fund-holdings] {fund.parent_name}: "
+            f"{selected_status['quality_tier']}, "
+            f"{selected_status['decomposition_state']}"
+        )
 
     holdings = (
         pd.concat(frames, ignore_index=True)
@@ -791,10 +1498,21 @@ def refresh_fund_holdings(
         holdings = holdings.sort_values(
             ["parent_name", "weight"], ascending=[True, False]
         )
-        _atomic_csv(holdings, holdings_path)
-    elif not holdings_path.exists():
-        _atomic_csv(holdings, holdings_path)
+    _atomic_csv(holdings, holdings_path)
     _atomic_csv(statuses, status_path)
+    _atomic_csv(
+        pd.DataFrame(attempt_rows, columns=_ATTEMPT_COLUMNS), attempts_path
+    )
+    _atomic_csv(
+        pd.DataFrame(unresolved_rows, columns=_UNRESOLVED_COLUMNS),
+        unresolved_path,
+    )
+    _atomic_csv(
+        snapshot_audit
+        if not snapshot_audit.empty
+        else pd.DataFrame(columns=SNAPSHOT_COLUMNS),
+        snapshots_path,
+    )
     report = build_coverage_report(positions, statuses)
     _atomic_csv(report, report_path)
     digest = hashlib.sha256(

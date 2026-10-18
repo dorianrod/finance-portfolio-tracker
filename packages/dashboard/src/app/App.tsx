@@ -54,7 +54,7 @@ const PRIMARY_TABS: Array<{ id: Exclude<AnalysisTab, 'quality'>; label: string }
   { id: 'overview', label: 'Overview' },
   { id: 'wealth', label: 'Wealth & cash flow' },
   { id: 'performance', label: 'Performance & passive income' },
-  { id: 'allocation', label: 'Allocation & risk' },
+  { id: 'allocation', label: 'Diversification & risk' },
   { id: 'underlying', label: 'Underlying assets' },
   { id: 'positions', label: 'Positions' },
 ]
@@ -63,10 +63,10 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   overview: { title: 'Portfolio overview', description: 'Current position, recent change drivers and the main signals to review.' },
   wealth: { title: 'Wealth & cash flow', description: 'How contributions and market performance built the portfolio over time.' },
   performance: { title: 'Performance & passive income', description: 'Returns, realized outcomes and recurring passive income.' },
-  allocation: { title: 'Allocation & risk', description: 'Current exposures, concentration and how the mix is evolving.' },
+  allocation: { title: 'Diversification & risk', description: 'Current exposures, concentration and how the portfolio mix is evolving.' },
   underlying: { title: 'Underlying assets', description: 'All identified economic exposure through ETFs and funds, grouped by issuer and security.' },
   positions: { title: 'Positions', description: 'Inspect every holding, transaction and position-level result.' },
-  quality: { title: 'Data quality', description: 'Allocation coverage, pipeline anomalies and manual price overrides.' },
+  quality: { title: 'Data quality', description: 'Diversification coverage, pipeline anomalies and manual price overrides.' },
 }
 
 function periodLabel(dateFrom?: string, dateTo?: string): string {
@@ -91,6 +91,7 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [activeTab, setActiveTab] = useState<AnalysisTab>('overview')
   const [allocationFilter, setAllocationFilter] = useState<AllocationFilter | null>(null)
+  const [underlyingQuery, setUnderlyingQuery] = useState('')
   const [sortKey, setSortKey] = useState<SortKey>('total_value')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [filters, setFilters] = useState<Filters>({
@@ -291,9 +292,9 @@ export default function App() {
           {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
           {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} dateFrom={filters.dateFrom} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
           {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} fundReport={fundData.report} dateFrom={filters.dateFrom} dateTo={filters.dateTo} activeFilter={allocationFilter} onActiveFilterChange={setAllocationFilter} />}
-          {activeTab === 'underlying' && <FundLookThroughTab positions={currentPositions} holdings={fundHoldings} report={fundData.report} />}
-          {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} fundHoldings={fundHoldings} fundStatuses={fundData.statuses} onOpenCompleteHoldings={() => setActiveTab('underlying')} />}
-          {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} fundStatuses={fundData.statuses} fundReport={fundData.report} />}
+          {activeTab === 'underlying' && <FundLookThroughTab positions={currentPositions} holdings={fundHoldings} statuses={fundData.statuses} report={fundData.report} query={underlyingQuery} onQueryChange={setUnderlyingQuery} />}
+          {activeTab === 'positions' && <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} fundHoldings={fundHoldings} fundStatuses={fundData.statuses} onOpenCompleteHoldings={(fundName) => { setUnderlyingQuery(fundName); setActiveTab('underlying') }} />}
+          {activeTab === 'quality' && <DataQualityTab positions={currentPositions} accountLabels={accountLabels} errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} fundStatuses={fundData.statuses} fundReport={fundData.report} fundHoldings={fundData.holdings} fundSnapshots={fundData.snapshots} fundUnresolved={fundData.unresolved} />}
         </>}
       </div>
     </div>

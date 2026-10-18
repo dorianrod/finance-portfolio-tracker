@@ -45,9 +45,9 @@ export function OverviewTab({
             <div className="mt-1 text-xs text-gray-600">Open performance analysis</div>
           </button>
           <button type="button" onClick={() => onNavigate('allocation')} className="rounded-lg border border-gray-800 bg-gray-950/40 p-3 text-left transition-colors hover:border-gray-700">
-            <div className="text-xs text-gray-500">Allocation coverage</div>
+            <div className="text-xs text-gray-500">Diversification coverage</div>
             <div className="mt-1 text-base font-semibold text-white">{unallocatedPct == null ? 'Loading…' : `${unallocatedPct.toFixed(0)}% undocumented`}</div>
-            <div className="mt-1 text-xs text-gray-600">Open allocation analysis</div>
+            <div className="mt-1 text-xs text-gray-600">Open diversification analysis</div>
           </button>
           <button type="button" onClick={() => onNavigate('quality')} className="rounded-lg border border-gray-800 bg-gray-950/40 p-3 text-left transition-colors hover:border-gray-700">
             <div className="text-xs text-gray-500">Data quality</div>

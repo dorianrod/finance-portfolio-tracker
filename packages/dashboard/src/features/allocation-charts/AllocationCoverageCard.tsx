@@ -1,9 +1,14 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useState } from 'react'
 import { fmtFull } from '@/shared/format/money'
-import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { accountLabel } from '@/features/filters/filterBar.logic'
+import { QualityIndicatorCard } from '@/shared/ui/QualityIndicatorCard'
 import { AllocationDimensionQuality } from './AllocationDimensionQuality'
 import type { AccountCoverage, DimensionCoverage } from './allocationCoverage.logic'
+
+const DIMENSION_LABELS: Record<DimensionCoverage['dimension'], string> = {
+  geo: 'Geo', secteur: 'Sector', currency: 'Currency', classe: 'Asset class',
+}
 
 interface AllocationCoverageCardProps {
   coverage: AccountCoverage[]
@@ -21,11 +26,24 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLab
   if (total <= 0) return null
 
   const overallPct = (totalAllocated / total) * 100
+  const dimensionGaps = dimensionCoverage.map((item) => {
+    const dimensionTotal = item.allocated + item.unallocated
+    return {
+      dimension: item.dimension,
+      percentage: dimensionTotal > 0 ? item.unallocated / dimensionTotal * 100 : 0,
+      amount: item.unallocated,
+    }
+  })
+  const incompleteDimensions = dimensionGaps.filter((item) => item.percentage > 0.001)
+  const worstDimension = dimensionGaps.reduce<(typeof dimensionGaps)[number] | null>(
+    (worst, item) => !worst || item.percentage > worst.percentage ? item : worst,
+    null,
+  )
 
   return (
     <div>
       <div className="mx-auto max-w-sm">
-        <CoverageNodeCard
+        <QualityIndicatorCard
           label="Portfolio scope"
           tooltip="Total value of the current active positions included in this allocation-quality check."
           amount={total}
@@ -43,7 +61,7 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLab
       <div className="mx-auto h-6 w-px bg-gray-700 sm:hidden" aria-hidden="true" />
 
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-        <CoverageNodeCard
+        <QualityIndicatorCard
           label="Mapped positions"
           tooltip="Current position value found in at least one allocation row, using its ISIN or its synthetic name key when no ISIN exists. A match does not guarantee that every dimension is complete."
           amount={totalAllocated}
@@ -79,13 +97,15 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLab
               })}
             </div>
           )}
-        </CoverageNodeCard>
-        <CoverageNodeCard
-          label="Unmapped positions"
-          tooltip="Current position value with no matching row in any allocation file. These positions cannot yet contribute to geography, sector, currency or asset-class breakdowns."
-          amount={totalUnallocated}
-          percentage={100 - overallPct}
-          detail="No allocation row"
+        </QualityIndicatorCard>
+        <QualityIndicatorCard
+          label="Dimensions with NC"
+          tooltip="Dimension-specific values that remain not classified, including NC inside mapped allocation rows. The headline percentage and amount show the largest current dimension gap."
+          amount={worstDimension?.amount ?? 0}
+          percentage={worstDimension?.percentage ?? 0}
+          detail={worstDimension && worstDimension.percentage > 0.001
+            ? `${incompleteDimensions.length}/${dimensionGaps.length} affected · largest: ${DIMENSION_LABELS[worstDimension.dimension]}`
+            : 'All dimensions complete'}
           tone="warning"
         >
           <DetailToggle
@@ -102,44 +122,8 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLab
               <AllocationDimensionQuality coverage={dimensionCoverage} />
             </div>
           )}
-        </CoverageNodeCard>
+        </QualityIndicatorCard>
       </div>
-    </div>
-  )
-}
-
-function CoverageNodeCard({
-  label, tooltip, amount, percentage, detail, tone = 'neutral', children,
-}: {
-  label: string
-  tooltip: string
-  amount: number
-  percentage: number
-  detail: string
-  tone?: 'neutral' | 'coverage' | 'warning'
-  children?: ReactNode
-}) {
-  const safePercentage = Number.isFinite(percentage) ? Math.max(0, Math.min(100, percentage)) : 0
-  const percentageLabel = safePercentage > 0 && safePercentage < 0.1 ? safePercentage.toFixed(2) : safePercentage.toFixed(1)
-  const textColor = tone === 'coverage'
-    ? SEMANTIC_TEXT_CLASSES.coverage
-    : tone === 'warning' ? SEMANTIC_TEXT_CLASSES.warning : 'text-blue-400'
-  const barColor = tone === 'coverage'
-    ? SEMANTIC_COLORS.coverage
-    : tone === 'warning' ? SEMANTIC_COLORS.coverageGap : SEMANTIC_COLORS.netContributions
-
-  return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm" title={tooltip}>
-      <div className="text-xs font-medium text-gray-400">{label}</div>
-      <div className="mt-2 flex items-baseline justify-between gap-3">
-        <span className={`text-xl font-semibold tabular-nums ${textColor}`}>{percentageLabel}%</span>
-        <span className="text-xs tabular-nums text-gray-500">{fmtFull(amount)}</span>
-      </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-800" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={safePercentage}>
-        <div className="h-full rounded-full" style={{ width: `${safePercentage}%`, backgroundColor: barColor }} />
-      </div>
-      <div className="mt-2 text-xs text-gray-600">{detail}</div>
-      {children}
     </div>
   )
 }

@@ -20,9 +20,16 @@ import { HoverAllocationPopover, type AllocationHoverTarget } from '@/features/a
 import { useAllocationByIsin } from '@/hooks/useAllocationByIsin'
 import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
 import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
-import { FundQualityBadge } from '@/features/fund-holdings/FundQualityBadge'
-import { FundPositionBreakdown } from '@/features/fund-holdings/FundPositionBreakdown'
-import { statusForPosition } from '@/features/fund-holdings/fundHoldings.logic'
+import {
+  FundPositionPopover,
+  type FundPositionPopoverTarget,
+} from '@/features/fund-holdings/FundPositionPopover'
+import {
+  FUND_QUALITY_LABELS,
+  fundQualityCategory,
+  fundQualitySourceLabel,
+  statusForPosition,
+} from '@/features/fund-holdings/fundHoldings.logic'
 
 const col = createColumnHelper<TableRow>()
 
@@ -41,7 +48,7 @@ interface Props {
   onSort: (key: SortKey) => void
   fundHoldings?: FundHolding[]
   fundStatuses?: FundHoldingStatus[]
-  onOpenCompleteHoldings?: () => void
+  onOpenCompleteHoldings?: (fundName: string) => void
 }
 
 export function PositionsTable({
@@ -51,13 +58,18 @@ export function PositionsTable({
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
-  const [openUnderlying, setOpenUnderlying] = useState<Set<string>>(new Set())
+  const [underlyingPopover, setUnderlyingPopover] = useState<FundPositionPopoverTarget | null>(null)
   const { data: allocationData } = useAllocationByIsin()
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const cancelHide = () => { if (hideTimeout.current) clearTimeout(hideTimeout.current) }
   const scheduleHide = () => {
-    hideTimeout.current = setTimeout(() => { setChart(null); setSavingsChart(null); setAllocationHover(null) }, 200)
+    hideTimeout.current = setTimeout(() => {
+      setChart(null)
+      setSavingsChart(null)
+      setAllocationHover(null)
+      setUnderlyingPopover(null)
+    }, 200)
   }
 
   const groupTotals = useMemo(() => {
@@ -93,7 +105,6 @@ export function PositionsTable({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const fundStatus = statusForPosition(r, fundStatuses)
           return (
             <span className="flex flex-col gap-0.5">
               <span className="flex items-center gap-2">
@@ -101,7 +112,6 @@ export function PositionsTable({
                 {r.status === 'closed' && (
                   <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">Closed</span>
                 )}
-                {fundStatus && <FundQualityBadge status={fundStatus} />}
               </span>
               {(r.ticker || r.isin) && (
                 <span className="flex items-center gap-1.5">
@@ -109,23 +119,6 @@ export function PositionsTable({
                   {r.isin && r.ticker && <span className="text-gray-700 text-xs">·</span>}
                   {r.ticker && <span className="text-xs text-gray-400 font-mono">{r.ticker}</span>}
                 </span>
-              )}
-              {fundStatus && r.status === 'active' && (
-                <button
-                  type="button"
-                  className="mt-1 w-fit text-[11px] font-medium text-blue-400 hover:text-blue-300"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    setOpenUnderlying((current) => {
-                      const next = new Set(current)
-                      if (next.has(r.id)) next.delete(r.id)
-                      else next.add(r.id)
-                      return next
-                    })
-                  }}
-                >
-                  {openUnderlying.has(r.id) ? 'Hide underlying assets' : 'Show underlying assets'}
-                </button>
               )}
             </span>
           )
@@ -155,20 +148,6 @@ export function PositionsTable({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const allocKey = r.isin || `NC-${r.name}`
-          const allocation = allocationData.get(allocKey)
-          const showAllocation = (button: HTMLButtonElement) => {
-            if (!allocation) return
-            cancelHide()
-            setChart(null)
-            setSavingsChart(null)
-            setAllocationHover({
-              isin: allocKey,
-              name: r.name,
-              buttonRect: button.getBoundingClientRect(),
-              allocation,
-            })
-          }
           const showQuantity = r.account_category === 'brokerage'
             && !r.account_type?.endsWith(CASH_SUFFIX)
             && r.quantity != null
@@ -178,28 +157,6 @@ export function PositionsTable({
                 {r.total_value != null
                   ? <span className="text-white font-medium">{fmt.format(r.total_value)}</span>
                   : <span className="text-gray-500">—</span>}
-                {allocation && (
-                  <button
-                    type="button"
-                    aria-label={`View allocations for ${r.name}`}
-                    title="View asset allocations"
-                    className="shrink-0 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
-                    onMouseEnter={(event) => showAllocation(event.currentTarget)}
-                    onMouseLeave={scheduleHide}
-                    onFocus={(event) => showAllocation(event.currentTarget)}
-                    onBlur={scheduleHide}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      showAllocation(event.currentTarget)
-                    }}
-                  >
-                    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
-                      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M8 1.75A6.25 6.25 0 0 1 14.25 8H8Z" fill="currentColor" />
-                      <path d="M8 8l-4.42 4.42" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  </button>
-                )}
               </span>
               {showQuantity && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -237,6 +194,80 @@ export function PositionsTable({
           return <span className="text-sm text-gray-300">{fmtDec.format(Math.abs(r.total_amount))}</span>
         }
         return null
+      },
+    }),
+    col.display({
+      id: 'breakdown',
+      header: () => <span className="normal-case" title="Position-level allocation and underlying-assets breakdowns.">Breakdown</span>,
+      cell: ({ row }) => {
+        const r = row.original
+        if (r.kind !== 'position') return null
+        const allocKey = r.isin || `NC-${r.name}`
+        const allocation = allocationData.get(allocKey)
+        const fundStatus = statusForPosition(r, fundStatuses)
+        const showAllocation = (button: HTMLButtonElement) => {
+          if (!allocation) return
+          cancelHide()
+          setChart(null)
+          setSavingsChart(null)
+          setUnderlyingPopover(null)
+          setAllocationHover({
+            isin: allocKey,
+            name: r.name,
+            buttonRect: button.getBoundingClientRect(),
+            allocation,
+          })
+        }
+        const showUnderlying = (button: HTMLButtonElement) => {
+          if (!fundStatus) return
+          cancelHide()
+          setChart(null)
+          setSavingsChart(null)
+          setAllocationHover(null)
+          setUnderlyingPopover({
+            position: r,
+            status: fundStatus,
+            buttonRect: button.getBoundingClientRect(),
+          })
+        }
+        return (
+          <span className="relative mx-auto grid w-[68px] grid-cols-2 place-items-center gap-1">
+            {allocation && (
+              <button
+                type="button"
+                aria-label={`View allocations for ${r.name}`}
+                title="View asset allocations"
+                className="shrink-0 rounded p-1.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                onMouseEnter={(event) => showAllocation(event.currentTarget)}
+                onMouseLeave={scheduleHide}
+                onFocus={(event) => showAllocation(event.currentTarget)}
+                onBlur={scheduleHide}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  showAllocation(event.currentTarget)
+                }}
+              >
+                <svg viewBox="0 0 20 20" className="size-5" aria-hidden="true">
+                  <circle cx="10" cy="10" r="7.75" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10 2.25A7.75 7.75 0 0 1 17.75 10H10Z" fill="currentColor" />
+                  <path d="M10 10 4.52 15.48" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </button>
+            )}
+            {!allocation && <span className="block size-8" aria-hidden="true" />}
+            {fundStatus && (
+              <UnderlyingStatusButton
+                status={fundStatus}
+                assetName={r.name}
+                isOpen={underlyingPopover?.position.id === r.id}
+                onShow={showUnderlying}
+                onHide={scheduleHide}
+              />
+            )}
+            {!fundStatus && <span className="block size-8" aria-hidden="true" />}
+            {!allocation && !fundStatus && <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-700">—</span>}
+          </span>
+        )
       },
     }),
     col.display({
@@ -387,7 +418,7 @@ export function PositionsTable({
         )
       },
     }),
-  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, openUnderlying])
+  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, underlyingPopover])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
   // call, which the React Compiler can never safely memoize — not fixable here.
@@ -424,8 +455,9 @@ export function PositionsTable({
         <table className="w-full text-sm text-left table-fixed">
           <colgroup>
             <col style={{ width: '28px' }} />
-            <col style={{ width: '34%' }} />
+            <col style={{ width: '27%' }} />
             <col style={{ width: '9%' }} />
+            <col style={{ width: '8%' }} />
             <col style={{ width: '9%' }} />
             <col style={{ width: '9%' }} />
             <col style={{ width: '9%' }} />
@@ -475,7 +507,7 @@ export function PositionsTable({
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
-                      setSavingsChart(null); setAllocationHover(null)
+                      setSavingsChart(null); setAllocationHover(null); setUnderlyingPopover(null)
                       setChart({ isin: posKey, name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
                     },
                     onMouseLeave: scheduleHide,
@@ -494,7 +526,7 @@ export function PositionsTable({
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
-                      setChart(null); setAllocationHover(null)
+                      setChart(null); setAllocationHover(null); setUnderlyingPopover(null)
                       setSavingsChart({ name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
                     },
                     onMouseLeave: scheduleHide,
@@ -517,6 +549,7 @@ export function PositionsTable({
                         <td className={`${td} text-gray-200 font-medium`}>
                           {totals && totals.value > 0 ? fmt.format(totals.value) : ''}
                         </td>
+                        <td className={td} />
                         <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
                           {totals && totals.unrealized !== 0 ? fmt.format(totals.unrealized) : ''}
                         </td>
@@ -562,18 +595,6 @@ export function PositionsTable({
                         </td>
                       ))}
                     </tr>
-                    {isPosition && openUnderlying.has(r.id) && (
-                      <tr className="border-b border-gray-800 bg-gray-950">
-                        <td colSpan={9} className="p-0">
-                          <FundPositionBreakdown
-                            position={r}
-                            holdings={fundHoldings}
-                            statuses={fundStatuses}
-                            onOpenComplete={onOpenCompleteHoldings}
-                          />
-                        </td>
-                      </tr>
-                    )}
                   </Fragment>
                 )
               })
@@ -605,6 +626,65 @@ export function PositionsTable({
           onMouseLeave={scheduleHide}
         />
       )}
+
+      {underlyingPopover && (
+        <FundPositionPopover
+          target={underlyingPopover}
+          holdings={fundHoldings}
+          onOpenComplete={onOpenCompleteHoldings}
+          onMouseEnter={cancelHide}
+          onMouseLeave={scheduleHide}
+        />
+      )}
     </div>
+  )
+}
+
+function UnderlyingStatusButton({
+  status,
+  assetName,
+  isOpen,
+  onShow,
+  onHide,
+}: {
+  status: FundHoldingStatus
+  assetName: string
+  isOpen: boolean
+  onShow: (button: HTMLButtonElement) => void
+  onHide: () => void
+}) {
+  const category = fundQualityCategory(status.qualityTier)
+  const label = FUND_QUALITY_LABELS[category]
+  const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${status.explainedPct.toFixed(1)} % expliqué`
+  const tone = category === 'reliable'
+    ? 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500'
+    : category === 'partial'
+      ? 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500'
+      : 'text-red-400 hover:bg-red-950/60 hover:text-red-300 focus-visible:ring-red-500'
+
+  return (
+    <button
+      type="button"
+      aria-label={`${title} pour ${assetName}. ${isOpen ? 'Masquer' : 'Afficher'} la composition.`}
+      aria-expanded={isOpen}
+      title={`${title} · ${isOpen ? 'Masquer' : 'Afficher'} la composition`}
+      className={`rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 ${tone} ${isOpen ? 'bg-gray-800 ring-1 ring-current/40' : ''}`}
+      onMouseEnter={(event) => onShow(event.currentTarget)}
+      onMouseLeave={onHide}
+      onFocus={(event) => onShow(event.currentTarget)}
+      onBlur={onHide}
+      onClick={(event) => {
+        event.stopPropagation()
+        onShow(event.currentTarget)
+      }}
+    >
+      <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <rect x="7" y="2.25" width="6" height="4" rx="1" />
+        <path d="M10 6.25v3.25M4.5 9.5h11M4.5 9.5v2.25M10 9.5v2.25M15.5 9.5v2.25" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="2.25" y="11.75" width="4.5" height="4" rx="1" />
+        <rect x="7.75" y="11.75" width="4.5" height="4" rx="1" />
+        <rect x="13.25" y="11.75" width="4.5" height="4" rx="1" />
+      </svg>
+    </button>
   )
 }

@@ -20,6 +20,9 @@ type SortCol = 'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message
 
 interface Props {
   errors: ErrorRow[]
+}
+
+interface ManualPriceOverridesProps {
   manualPriceOverrides: ManualPriceOverride[]
 }
 
@@ -42,7 +45,7 @@ function formatManualPrice(row: ManualPriceOverride): string {
   }
 }
 
-export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
+export function ErrorsTab({ errors }: Props) {
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [sortCol, setSortCol] = useState<SortCol>('date')
@@ -239,10 +242,16 @@ export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
         </div>
       )}
 
+    </div>
+  )
+}
+
+export function ManualPriceOverridesPanel({ manualPriceOverrides }: ManualPriceOverridesProps) {
+  return (
       <section className="space-y-3">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-gray-200">Manual price overrides</h2>
+            <h2 className="text-base font-semibold text-white">Manual price overrides</h2>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/60 text-blue-300">
               {manualPriceOverrides.length}
             </span>
@@ -296,6 +305,5 @@ export function ErrorsTab({ errors, manualPriceOverrides }: Props) {
           </table>
         </div>
       </section>
-    </div>
   )
 }

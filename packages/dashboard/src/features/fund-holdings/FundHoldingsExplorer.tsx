@@ -1,7 +1,7 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
-import type { FundHolding } from '@/hooks/useFundHoldings'
+import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 import { fmtFull } from '@/shared/format/money'
 import { buildIssuerExposures, type IssuerExposure, type SecurityExposure } from './fundHoldings.logic'
@@ -14,17 +14,44 @@ type ExposureRow =
   | { kind: 'security'; issuer: IssuerExposure; security: SecurityExposure }
   | { kind: 'source'; issuer: IssuerExposure; security: SecurityExposure; fund: string; value: number }
 
-export function FundHoldingsExplorer({ positions, holdings }: {
+export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQueryChange }: {
   positions: PositionRow[]
   holdings: FundHolding[]
+  statuses: FundHoldingStatus[]
+  query: string
+  onQueryChange: (query: string) => void
 }) {
-  const [query, setQuery] = useState('')
   const [sort, setSort] = useState<'value' | 'name'>('value')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
-  const exposures = useMemo(() => buildIssuerExposures(positions, holdings), [positions, holdings])
+  const selectedFundName = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase()
+    if (!needle) return ''
+    return positions.find((position) => (
+      position.name.toLocaleLowerCase() === needle
+      && statuses.some((status) => (
+        status.parentId === (position.isin || position.ticker)
+        || (!!position.isin && status.parentIsin === position.isin)
+        || (!!position.ticker && status.parentTicker === position.ticker)
+      ))
+    ))?.name ?? ''
+  }, [positions, query, statuses])
+  const exposures = useMemo(
+    () => {
+      if (!selectedFundName) return buildIssuerExposures(positions, holdings, statuses)
+      const scopedPositions = positions.filter((position) => position.name === selectedFundName)
+      const parentIds = new Set(scopedPositions.flatMap((position) => [position.isin, position.ticker]).filter(Boolean))
+      const scopedHoldings = holdings.filter((holding) => (
+        holding.parentName === selectedFundName
+        || parentIds.has(holding.parentIsin)
+        || parentIds.has(holding.parentTicker)
+      ))
+      return buildIssuerExposures(scopedPositions, scopedHoldings, statuses)
+    },
+    [positions, holdings, statuses, selectedFundName],
+  )
   const displayed = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase()
-    const filtered = needle ? exposures.filter((issuer) => (
+    const filtered = needle && !selectedFundName ? exposures.filter((issuer) => (
       issuer.name.toLocaleLowerCase().includes(needle)
       || issuer.id.toLocaleLowerCase().includes(needle)
       || issuer.securities.some((security) => security.name.toLocaleLowerCase().includes(needle))
@@ -33,7 +60,7 @@ export function FundHoldingsExplorer({ positions, holdings }: {
     return [...filtered].sort(sort === 'value'
       ? (a, b) => b.value - a.value
       : (a, b) => a.name.localeCompare(b.name))
-  }, [exposures, query, sort])
+  }, [exposures, query, selectedFundName, sort])
 
   const securityCount = useMemo(
     () => displayed.reduce((sum, issuer) => sum + issuer.securities.length, 0),
@@ -86,7 +113,7 @@ export function FundHoldingsExplorer({ positions, holdings }: {
           <input
             type="search"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search issuer, security or fund"
             aria-label="Search underlying assets"
             className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 outline-none focus:border-blue-600 sm:w-72"

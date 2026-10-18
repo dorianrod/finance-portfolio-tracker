@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import type { FundHolding } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
-import { buildIssuerExposures } from './fundHoldings.logic'
+import {
+  buildIssuerExposures,
+  fundQualityCategory,
+  fundQualitySourceLabel,
+} from './fundHoldings.logic'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
@@ -89,5 +93,19 @@ describe('buildIssuerExposures', () => {
       id: 'taiwansemiconductormanufacturing',
       value: 20,
     })
+  })
+})
+
+describe('fund quality labels', () => {
+  it('groups technical tiers into clear user-facing categories', () => {
+    expect(fundQualityCategory('A')).toBe('reliable')
+    expect(fundQualityCategory('B')).toBe('reliable')
+    expect(fundQualityCategory('C')).toBe('partial')
+    expect(fundQualityCategory('D')).toBe('unavailable')
+  })
+
+  it('keeps the source distinction available in details', () => {
+    expect(fundQualitySourceLabel('A')).toBe('Source officielle')
+    expect(fundQualitySourceLabel('B')).toBe('Proxy exact')
   })
 })
