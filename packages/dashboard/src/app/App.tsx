@@ -553,9 +553,6 @@ export default function App() {
                 irrStatus={irrStatus}
                 irrScopeLabel={irrScopeLabel}
                 periodLabel={periodLabel(filters.dateFrom, filters.dateTo)}
-                anomalyCount={qualityCount}
-                unallocatedPct={unallocatedPct}
-                onNavigate={setActiveTab}
               />
             )}
             {activeTab === "wealth" && (
