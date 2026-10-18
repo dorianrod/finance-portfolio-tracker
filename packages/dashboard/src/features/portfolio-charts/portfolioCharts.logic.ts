@@ -6,6 +6,7 @@ import type { MonthlyOp, MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import { rawAccountSet } from '@/shared/filters/accountFilter'
 import { assetDisplayLabel } from '@/shared/format/assetLabel'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 import type { FundHolding } from '@/hooks/useFundHoldings'
 
 export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
@@ -287,6 +288,7 @@ export function computeConcentration(
 
   for (const position of positions) {
     if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    if (!isAssetAnalysisApplicablePosition(position)) continue
     const positionValue = position.total_value ?? 0
     selectedValue += positionValue
 
@@ -357,6 +359,7 @@ export function computeHeldAssetConcentration(
 
   for (const position of positions) {
     if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    if (!isAssetAnalysisApplicablePosition(position)) continue
     // This is deliberately the allocation-file grain: the instrument or
     // product actually held, aggregated across accounts when its market
     // identifier is shared. Account-valued products fall back to their name.

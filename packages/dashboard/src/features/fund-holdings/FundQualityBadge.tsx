@@ -1,4 +1,5 @@
 import type { FundHoldingStatus, FundQualityTier } from '@/hooks/useFundHoldings'
+import { formatPercentage } from '@/shared/format/percentage'
 import {
   FUND_QUALITY_LABELS,
   fundQualityCategory,
@@ -18,7 +19,7 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
   const title = [
     `${FUND_QUALITY_LABELS[category]} : ${fundQualitySourceLabel(status.qualityTier)}`,
     status.sourceName || 'Aucune source',
-    `${status.explainedPct.toFixed(1)} % expliqué`,
+    `${formatPercentage(status.explainedPct)} % expliqué`,
     status.holdingsDate ? `composition du ${status.holdingsDate}` : 'date de composition inconnue',
     status.issues,
   ].filter(Boolean).join(' · ')
@@ -28,7 +29,7 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
       className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${TIER_CLASSES[status.qualityTier]}`}
     >
       {FUND_QUALITY_LABELS[category]}
-      <span className="font-normal opacity-80">{status.explainedPct.toFixed(0)}%</span>
+      <span className="font-normal opacity-80">{formatPercentage(status.explainedPct)}%</span>
       {warning && <span aria-label="Data warning">!</span>}
     </span>
   )

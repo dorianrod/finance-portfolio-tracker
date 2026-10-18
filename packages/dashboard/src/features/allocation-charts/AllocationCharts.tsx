@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
-import { useAllocationData } from '@/hooks/useAllocationData'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
-import { computeMatchingIsins, aggregateFilteredPoints, computeTableRows } from './allocationCharts.logic'
+import { aggregateAllocationPoints, computeMatchingIsins, aggregateFilteredPoints, computeTableRows, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationCharts.logic'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
@@ -13,33 +12,73 @@ import type { FundCoverageReport, FundHolding } from '@/hooks/useFundHoldings'
 import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
 import { LookThroughCoverageSummary } from '@/features/fund-holdings/LookThroughCoverageSummary'
 import { fmtFull } from '@/shared/format/money'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
   fundHoldings: FundHolding[]
   fundReport: FundCoverageReport | null
+  accountFilters: Set<string>
   dateFrom?: string
   dateTo?: string
   activeFilter: AllocationFilter | null
   onActiveFilterChange: (filter: AllocationFilter | null) => void
 }
 
-export function AllocationCharts({ positions, fundHoldings, fundReport, dateFrom, dateTo, activeFilter, onActiveFilterChange }: AllocationChartsProps) {
-  const { geo, secteur, currency, classe, loading: loadingAgg } = useAllocationData()
+export function AllocationCharts({ positions, fundHoldings, fundReport, accountFilters, dateFrom, dateTo, activeFilter, onActiveFilterChange }: AllocationChartsProps) {
   const rawData = useRawIsinData()
 
   const [showTable, setShowTable] = useState(false)
   const [view, setView] = useState<'current' | 'trend'>('current')
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
-  const lookThroughConcentration = useMemo(
-    () => computeConcentration(positions, fundHoldings),
-    [positions, fundHoldings],
-  )
-  const heldAssetConcentration = useMemo(
-    () => computeHeldAssetConcentration(positions),
+  const applicablePositions = useMemo(
+    () => positions.filter((position) => isAssetAnalysisApplicablePosition(position)),
     [positions],
   )
+  const hasSelectedValue = positions.some(
+    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
+  )
+  const hasApplicableValue = applicablePositions.some(
+    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
+  )
+  const notApplicableValue = positions.reduce((sum, position) => (
+    position.status === 'active' && !isAssetAnalysisApplicablePosition(position)
+      ? sum + Math.max(0, position.total_value ?? 0)
+      : sum
+  ), 0)
+  const lookThroughConcentration = useMemo(
+    () => computeConcentration(applicablePositions, fundHoldings),
+    [applicablePositions, fundHoldings],
+  )
+  const heldAssetConcentration = useMemo(
+    () => computeHeldAssetConcentration(applicablePositions),
+    [applicablePositions],
+  )
   const concentration = concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
+  const accountScopedRawData = useMemo(
+    () => scopeRawAllocationData(rawData, accountFilters),
+    [rawData, accountFilters],
+  )
+  const scopedRawData = useMemo(
+    () => excludeNonApplicableAllocationData(accountScopedRawData, positions),
+    [accountScopedRawData, positions],
+  )
+  const baseGeo = useMemo(
+    () => aggregateAllocationPoints(scopedRawData.geo),
+    [scopedRawData.geo],
+  )
+  const baseSecteur = useMemo(
+    () => aggregateAllocationPoints(scopedRawData.secteur),
+    [scopedRawData.secteur],
+  )
+  const baseCurrency = useMemo(
+    () => aggregateAllocationPoints(scopedRawData.currency),
+    [scopedRawData.currency],
+  )
+  const baseClasse = useMemo(
+    () => aggregateAllocationPoints(scopedRawData.classe),
+    [scopedRawData.classe],
+  )
 
   function handleFilterToggle(filter: AllocationFilter) {
     const isSameFilter = activeFilter?.type === filter.type && activeFilter?.value === filter.value
@@ -48,42 +87,46 @@ export function AllocationCharts({ positions, fundHoldings, fundReport, dateFrom
   }
 
   const matchingIsins = useMemo(
-    () => computeMatchingIsins(rawData, activeFilter),
-    [rawData, activeFilter],
+    () => computeMatchingIsins(scopedRawData, activeFilter),
+    [scopedRawData, activeFilter],
   )
 
   const displayGeo = useMemo(() => {
-    if (!activeFilter || rawData.loading) return geo
-    const pts = aggregateFilteredPoints(rawData.geo, matchingIsins, activeFilter.type === 'geo' ? activeFilter.value : undefined)
-    return pts.length ? pts : geo
-  }, [activeFilter, rawData, matchingIsins, geo])
+    if (!activeFilter || scopedRawData.loading) return baseGeo
+    const pts = aggregateFilteredPoints(scopedRawData.geo, matchingIsins, activeFilter.type === 'geo' ? activeFilter.value : undefined)
+    return pts.length ? pts : baseGeo
+  }, [activeFilter, scopedRawData, matchingIsins, baseGeo])
 
   const displaySecteur = useMemo(() => {
-    if (!activeFilter || rawData.loading) return secteur
-    const pts = aggregateFilteredPoints(rawData.secteur, matchingIsins, activeFilter.type === 'secteur' ? activeFilter.value : undefined)
-    return pts.length ? pts : secteur
-  }, [activeFilter, rawData, matchingIsins, secteur])
+    if (!activeFilter || scopedRawData.loading) return baseSecteur
+    const pts = aggregateFilteredPoints(scopedRawData.secteur, matchingIsins, activeFilter.type === 'secteur' ? activeFilter.value : undefined)
+    return pts.length ? pts : baseSecteur
+  }, [activeFilter, scopedRawData, matchingIsins, baseSecteur])
 
   const displayCurrency = useMemo(() => {
-    if (!activeFilter || rawData.loading) return currency
-    const pts = aggregateFilteredPoints(rawData.currency, matchingIsins, activeFilter.type === 'currency' ? activeFilter.value : undefined)
-    return pts.length ? pts : currency
-  }, [activeFilter, rawData, matchingIsins, currency])
+    if (!activeFilter || scopedRawData.loading) return baseCurrency
+    const pts = aggregateFilteredPoints(scopedRawData.currency, matchingIsins, activeFilter.type === 'currency' ? activeFilter.value : undefined)
+    return pts.length ? pts : baseCurrency
+  }, [activeFilter, scopedRawData, matchingIsins, baseCurrency])
 
   const displayClasse = useMemo(() => {
-    if (!activeFilter || rawData.loading) return classe
-    const pts = aggregateFilteredPoints(rawData.classe, matchingIsins, activeFilter.type === 'classe' ? activeFilter.value : undefined)
-    return pts.length ? pts : classe
-  }, [activeFilter, rawData, matchingIsins, classe])
+    if (!activeFilter || scopedRawData.loading) return baseClasse
+    const pts = aggregateFilteredPoints(scopedRawData.classe, matchingIsins, activeFilter.type === 'classe' ? activeFilter.value : undefined)
+    return pts.length ? pts : baseClasse
+  }, [activeFilter, scopedRawData, matchingIsins, baseClasse])
 
   const tableRows = useMemo(() => {
-    if (!activeFilter || rawData.loading) return []
-    return computeTableRows(rawData, matchingIsins, activeFilter)
-  }, [activeFilter, rawData, matchingIsins])
+    if (!activeFilter || scopedRawData.loading) return []
+    return computeTableRows(scopedRawData, matchingIsins, activeFilter)
+  }, [activeFilter, scopedRawData, matchingIsins])
 
-  if (loadingAgg) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
+  if (rawData.loading) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
 
-  if (!geo.length && !secteur.length && !currency.length && !classe.length) {
+  if (hasSelectedValue && !hasApplicableValue) {
+    return <p className="text-sm text-gray-500">Diversification is not applicable to savings, checking and brokerage-cash accounts.</p>
+  }
+
+  if (!baseGeo.length && !baseSecteur.length && !baseCurrency.length && !baseClasse.length) {
     return <p className="text-gray-500 text-sm">No allocation data available. Run the pipeline to generate the files.</p>
   }
 
@@ -121,7 +164,7 @@ export function AllocationCharts({ positions, fundHoldings, fundReport, dateFrom
 
       {view === 'current' && (
         <>
-          {concentrationMode === 'lookThrough' && <LookThroughCoverageSummary report={fundReport} compact />}
+          {concentrationMode === 'lookThrough' && <LookThroughCoverageSummary report={fundReport} compact notApplicableValue={notApplicableValue} />}
           {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} topTenValue={concentration.topTenValue} topTenPct={concentration.topTenPct} description={concentrationMode === 'held' ? 'Assets effectively held, aggregated across accounts.' : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`} action={<ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />} />}
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}

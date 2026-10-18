@@ -1,5 +1,8 @@
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import type { RawIsinRow, RawIsinData } from '@/hooks/useRawIsinData'
+import { accountFilterId } from '@/shared/filters/accountFilter'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
+import type { PositionRow } from '@/types/domain'
 import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'
 
 const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])
@@ -58,6 +61,48 @@ export function computeMatchingIsins(rawData: RawIsinData, filter: AllocationFil
     }
   }
   return result
+}
+
+export function scopeRawAllocationData(rawData: RawIsinData, accounts: Set<string>): RawIsinData {
+  if (accounts.size === 0) return rawData
+  const inScope = (row: RawIsinRow) => !!row.account && accounts.has(accountFilterId({
+    account: row.account,
+    account_type: row.account_type,
+  }))
+  return {
+    geo: rawData.geo.filter(inScope),
+    secteur: rawData.secteur.filter(inScope),
+    currency: rawData.currency.filter(inScope),
+    classe: rawData.classe.filter(inScope),
+    loading: rawData.loading,
+  }
+}
+
+export function excludeNonApplicableAllocationData(
+  rawData: RawIsinData,
+  positions: PositionRow[],
+): RawIsinData {
+  const excludedAccounts = new Set(
+    positions
+      .filter((position) => !isAssetAnalysisApplicablePosition(position))
+      .map(accountFilterId),
+  )
+  if (excludedAccounts.size === 0) return rawData
+  const isApplicable = (row: RawIsinRow) => !row.account || !excludedAccounts.has(accountFilterId({
+    account: row.account,
+    account_type: row.account_type,
+  }))
+  return {
+    geo: rawData.geo.filter(isApplicable),
+    secteur: rawData.secteur.filter(isApplicable),
+    currency: rawData.currency.filter(isApplicable),
+    classe: rawData.classe.filter(isApplicable),
+    loading: rawData.loading,
+  }
+}
+
+export function aggregateAllocationPoints(rows: RawIsinRow[]): AllocationPoint[] {
+  return aggregateFilteredPoints(rows, new Set(rows.map((row) => row.isin)))
 }
 
 export function aggregateFilteredPoints(

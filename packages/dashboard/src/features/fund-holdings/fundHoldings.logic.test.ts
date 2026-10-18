@@ -80,6 +80,16 @@ describe('buildIssuerExposures', () => {
     expect(result.reduce((sum, issuer) => sum + issuer.value, 0)).toBeCloseTo(100)
   })
 
+  it('excludes synthetic brokerage cash from underlying exposure and its denominator', () => {
+    const result = buildIssuerExposures([
+      position({ isin: 'COMPANY', name: 'Company', total_value: 100 }),
+      position({ name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage', total_value: 900 }),
+    ], [])
+
+    expect(result).toHaveLength(1)
+    expect(result[0]).toMatchObject({ name: 'Company', value: 100, weight: 100 })
+  })
+
   it('merges a strongly truncated official issuer name', () => {
     const result = buildIssuerExposures(
       [position({ isin: 'FUND', name: 'World ETF', total_value: 100 })],

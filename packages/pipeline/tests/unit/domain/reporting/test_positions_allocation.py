@@ -250,6 +250,26 @@ def test_build_positions_allocation_by_isin_includes_name_matched_positions():
     assert by_isin["NC-cash eur"]["france"] == 200.0
 
 
+def test_build_positions_allocation_by_isin_keeps_account_scope_metadata():
+    positions = pd.DataFrame(
+        [
+            {
+                "snapshot_date": date(2024, 2, 29),
+                "account": "PEA",
+                "account_type": "Brokerage",
+                "isin": "FR1",
+                "name": "TestStock A",
+                "total_value": 1000.0,
+            }
+        ]
+    )
+
+    row = build_positions_allocation_by_isin(positions, _repo())["geo"].iloc[0]
+
+    assert row["account"] == "PEA"
+    assert row["account_type"] == "Brokerage"
+
+
 def _cash_position(snap: date, label: str, total_value: float) -> dict:
     """A synthetic broker-cash row as PortfolioSnapshotBuilder produces it:
     no isin, name "Cash <label>", account_category "brokerage" -- and no

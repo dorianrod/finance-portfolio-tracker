@@ -1,5 +1,6 @@
 import type { FundHolding, FundHoldingStatus, FundQualityTier } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 
 /** Source label for value held directly rather than through a fund. */
 export const DIRECT_SOURCE = 'Direct'
@@ -75,6 +76,7 @@ export function buildIssuerExposures(
   holdings: FundHolding[],
   statuses: FundHoldingStatus[] = [],
 ): IssuerExposure[] {
+  const applicablePositions = positions.filter(isAssetAnalysisApplicablePosition)
   const byParent = new Map<string, FundHolding[]>()
   for (const holding of holdings) {
     for (const key of [holding.parentIsin, holding.parentTicker].filter(Boolean)) {
@@ -111,7 +113,7 @@ export function buildIssuerExposures(
     status.parentIsin,
     status.parentTicker,
   ]).filter(Boolean))
-  const total = positions.reduce((sum, position) => (
+  const total = applicablePositions.reduce((sum, position) => (
     position.status === 'active' ? sum + Math.max(0, position.total_value ?? 0) : sum
   ), 0)
 
@@ -138,7 +140,7 @@ export function buildIssuerExposures(
     issuers.set(issuerId, issuer)
   }
 
-  for (const position of positions) {
+  for (const position of applicablePositions) {
     const positionValue = position.status === 'active' ? Math.max(0, position.total_value ?? 0) : 0
     if (positionValue <= 0) continue
     const fundRows = byParent.get(position.isin) ?? byParent.get(position.ticker)

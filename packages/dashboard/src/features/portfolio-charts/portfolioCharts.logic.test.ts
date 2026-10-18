@@ -318,6 +318,21 @@ describe('portfolio summaries', () => {
     expect(result.holdings[1].label).toBe('Asset X')
   })
 
+  it('excludes synthetic brokerage cash from concentration', () => {
+    const positions = [
+      position({ id: 'asset', isin: 'FR1', name: 'Invested asset', total_value: 100 }),
+      position({ id: 'cash', isin: '', ticker: '', name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage', total_value: 900 }),
+    ]
+
+    const held = computeHeldAssetConcentration(positions)
+    const lookThrough = computeConcentration(positions)
+
+    expect(held).toMatchObject({ identifiedValue: 100, selectedValue: 100 })
+    expect(held.holdings).toMatchObject([{ name: 'Invested asset', weight: 100 }])
+    expect(lookThrough).toMatchObject({ identifiedValue: 100, opaqueValue: 0, selectedValue: 100 })
+    expect(lookThrough.holdings).toMatchObject([{ name: 'Invested asset', weight: 100 }])
+  })
+
   it('looks through funds and aggregates the same underlying direct and indirect exposure', () => {
     const result = computeConcentration([
       position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', total_value: 1_000 }),

@@ -57,8 +57,8 @@ describe('computeAllocationCoverageByAccount', () => {
     const result = computeAllocationCoverageByAccount(positions, data)
 
     expect(result).toEqual([
-      { account: 'pea', allocated: 1000, unallocated: 500 },
-      { account: 'cto', allocated: 300, unallocated: 0 },
+      { account: 'pea', allocated: 1000, unallocated: 500, notApplicable: 0 },
+      { account: 'cto', allocated: 300, unallocated: 0, notApplicable: 0 },
     ])
   })
 
@@ -68,7 +68,7 @@ describe('computeAllocationCoverageByAccount', () => {
 
     const result = computeAllocationCoverageByAccount(positions, data)
 
-    expect(result).toEqual([{ account: 'bnp', allocated: 200, unallocated: 0 }])
+    expect(result).toEqual([{ account: 'bnp', allocated: 200, unallocated: 0, notApplicable: 0 }])
   })
 
   it('ignores closed positions and non-positive values', () => {
@@ -91,6 +91,30 @@ describe('computeAllocationCoverageByAccount', () => {
     const result = computeAllocationCoverageByAccount(positions, rawData())
 
     expect(result.map((r) => r.account)).toEqual(['big', 'small'])
+  })
+
+  it('separates savings and checking balances as not applicable', () => {
+    const positions = [
+      position({ account: 'livret', account_category: 'savings', isin: '', name: 'Livret A', total_value: 1_000 }),
+      position({ account: 'courant', account_category: 'checking', isin: '', name: 'Compte courant', total_value: 500 }),
+      position({ account: 'cto', account_type: 'Bourse – Cash', account_category: 'brokerage', isin: '', name: 'Cash CTO', total_value: 900 }),
+      position({ account: 'pea', account_category: 'brokerage', isin: 'FR0000000000', total_value: 300 }),
+    ]
+    const data = rawData({
+      classe: [
+        isinRow({ isin: 'NC-Livret A', name: 'Livret A' }),
+        isinRow({ isin: 'NC-Compte courant', name: 'Compte courant' }),
+        isinRow({ isin: 'NC-Cash CTO', name: 'Cash CTO' }),
+        isinRow({ isin: 'FR0000000000' }),
+      ],
+    })
+
+    expect(computeAllocationCoverageByAccount(positions, data)).toEqual([
+      { account: 'livret', allocated: 0, unallocated: 0, notApplicable: 1_000 },
+      { account: 'cto', allocated: 0, unallocated: 0, notApplicable: 900 },
+      { account: 'courant', allocated: 0, unallocated: 0, notApplicable: 500 },
+      { account: 'pea', allocated: 300, unallocated: 0, notApplicable: 0 },
+    ])
   })
 })
 
@@ -118,6 +142,24 @@ describe('computeAllocationCoverageByDimension', () => {
     expect(result.find((item) => item.dimension === 'secteur')).toMatchObject({
       allocated: 1_000,
       unallocated: 500,
+    })
+  })
+
+  it('excludes savings and checking balances from dimension gaps', () => {
+    const positions = [
+      position({ account_category: 'savings', isin: '', name: 'Livret A', total_value: 1_000 }),
+      position({ account_category: 'checking', isin: '', name: 'Compte courant', total_value: 500 }),
+      position({ account_type: 'Bourse – Cash', account_category: 'brokerage', isin: '', name: 'Cash CTO', total_value: 900 }),
+      position({ account_category: 'brokerage', isin: 'KNOWN', name: 'Known asset', total_value: 300 }),
+    ]
+    const data = rawData({ geo: [isinRow({ isin: 'KNOWN', values: { france: 100 } })] })
+
+    const result = computeAllocationCoverageByDimension(positions, data)
+
+    expect(result.find((item) => item.dimension === 'geo')).toMatchObject({
+      allocated: 300,
+      unallocated: 0,
+      issues: [],
     })
   })
 })

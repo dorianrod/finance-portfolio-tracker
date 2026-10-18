@@ -524,12 +524,14 @@ class IngestPortfolioUseCase:
         # Allocation time-series per category (geo, secteur, currency, classe).
         # build_positions_allocation*() already return {} when the
         # allocation_repo has no files, so no existence guard is needed here.
-        positions_raw_df = _tag_account(
-            _enrich_with_returns(
-                _positions_to_df(all_positions),
-                all_operations,
-                account_type_map,
-                account_category_map,
+        positions_raw_df = _tag_cash_positions(
+            _tag_account(
+                _enrich_with_returns(
+                    _positions_to_df(all_positions),
+                    all_operations,
+                    account_type_map,
+                    account_category_map,
+                )
             )
         )
         alloc_dfs = build_positions_allocation(

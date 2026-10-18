@@ -7,6 +7,7 @@ import type {
   FundUnresolved,
 } from '@/hooks/useFundHoldings'
 import { fmtFull } from '@/shared/format/money'
+import { formatPercentage } from '@/shared/format/percentage'
 import { SidePanel } from '@/shared/ui/SidePanel'
 import { FundQualityBadge } from './FundQualityBadge'
 import {
@@ -15,6 +16,7 @@ import {
   fundQualitySourceLabel,
   type FundQualityCategory,
 } from './fundHoldings.logic'
+import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
 
 interface Props {
   statuses: FundHoldingStatus[]
@@ -30,7 +32,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
   const rows = useMemo(() => statuses
     .filter((status) => filter === 'all'
       || filter === fundQualityCategory(status.qualityTier)
-      || (filter === 'issues' && (status.validationStatus !== 'ok' || status.residualPct > 0.5)))
+      || (filter === 'issues' && (status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct))))
     .sort((a, b) => b.residualValue - a.residualValue || b.marketValue - a.marketValue), [statuses, filter])
 
   return (
@@ -73,8 +75,8 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                   <td className="px-4 py-3"><FundQualityBadge status={status} />{status.manualAttention && <div className="mt-2 w-fit rounded border border-amber-700/70 bg-amber-950/40 px-2 py-1 text-[10px] font-semibold text-amber-300">{status.sourceOrigin.startsWith('manual') ? 'Snapshot manuel' : 'Recherche agent'}</div>}</td>
                   <td className="break-words px-4 py-3"><a href={status.sourceUrl || undefined} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">{status.sourceName || 'Unavailable'}</a><div className="mt-1 text-gray-600">{status.proxyName ? `Proxy exact : ${status.proxyName}` : fundQualitySourceLabel(status.qualityTier)}</div></td>
                   <td className="px-4 py-3 text-gray-400">{status.holdingsDate || 'Unknown'}<div className="mt-1 text-gray-600">{status.holdingCount.toLocaleString()} rows · {status.refreshStreak} successful refreshes</div></td>
-                  <td className="px-4 py-3 text-right tabular-nums text-gray-300">{status.explainedPct.toFixed(1)}%<div className="mt-1 text-gray-600">{fmtFull(status.explainedValue)}</div></td>
-                  <td className="px-4 py-3 text-right tabular-nums text-gray-300">{status.residualPct.toFixed(1)}%<div className="mt-1 text-gray-600">{fmtFull(status.residualValue)}</div></td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.explainedPct)}%<div className="mt-1 text-gray-600">{fmtFull(status.explainedValue)}</div></td>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.residualPct)}%<div className="mt-1 text-gray-600">{fmtFull(status.residualValue)}</div></td>
                   <td className={`break-words px-4 py-3 ${status.issues ? 'text-amber-300' : 'text-emerald-400'}`}>{status.issues || 'No detected issue'}</td>
                   <td className="px-4 py-3"><button type="button" onClick={() => setExpanded(isOpen ? null : status.parentId)} className="rounded border border-gray-700 px-2 py-1 text-gray-300 hover:border-gray-500">{isOpen ? 'Close' : 'Details'}</button></td>
                 </tr>
@@ -86,7 +88,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                       <div>Checksum: <span className="break-all font-mono text-[10px] text-gray-400">{status.checksumSha256 || 'not recorded'}</span></div>
                       {fundSnapshots.map((snapshot) => <div key={snapshot.snapshotId} className="mt-2 border-t border-gray-800 pt-2">
                         <div>{snapshot.snapshotId} · {snapshot.status}{snapshot.isActive ? ' · active' : ''}</div>
-                        <div>{snapshot.coveragePct.toFixed(1)}% · {snapshot.holdingCount} rows · {snapshot.ageDays} days</div>
+                        <div>{formatPercentage(snapshot.coveragePct)}% · {snapshot.holdingCount} rows · {snapshot.ageDays} days</div>
                         {snapshot.notes && <div className="mt-1 text-gray-400">{snapshot.notes}</div>}
                         {snapshot.validationErrors && <div className="mt-1 text-red-300">{snapshot.validationErrors}</div>}
                         {snapshot.sourceUrls.map((url) => <a key={url} href={url} target="_blank" rel="noreferrer" className="mr-2 block truncate text-blue-400 hover:underline">{url}</a>)}
@@ -96,7 +98,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                     <DetailBlock title="Unresolved / research queue">
                       {fundUnresolved.length === 0 ? <div className="text-emerald-400">No unresolved branch.</div> : fundUnresolved.map((item, index) => <div key={`${item.path}-${index}`} className="mb-2 border-b border-gray-800 pb-2">
                         <div className="text-gray-200">{item.unresolvedName}</div>
-                        <div>{(item.weight * 100).toFixed(2)}% · {fmtFull(item.marketValue)}</div>
+                        <div>{formatPercentage(item.weight * 100)}% · {fmtFull(item.marketValue)}</div>
                         <div className="text-amber-300">{item.reason}</div>
                         <div className="break-all font-mono text-[10px]">{item.path}</div>
                       </div>)}
@@ -104,7 +106,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                     <DetailBlock title={`Resolved holdings (${fundHoldings.length})`}>
                       {fundHoldings.slice(0, 20).map((holding) => <div key={`${holding.holdingId}-${holding.lookthroughPath}`} className="flex gap-2 border-b border-gray-800 py-1">
                         <span className="min-w-0 flex-1 truncate text-gray-300" title={holding.lookthroughPath}>{holding.holdingName}</span>
-                        <span className="tabular-nums text-gray-500">{(holding.weight * 100).toFixed(2)}%</span>
+                        <span className="tabular-nums text-gray-500">{formatPercentage(holding.weight * 100)}%</span>
                       </div>)}
                       {fundHoldings.length > 20 && <div className="mt-2">+ {fundHoldings.length - 20} more rows</div>}
                     </DetailBlock>

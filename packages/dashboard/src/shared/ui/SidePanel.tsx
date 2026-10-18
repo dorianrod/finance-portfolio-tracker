@@ -9,12 +9,13 @@ interface SidePanelProps {
   children: ReactNode
   onClose: () => void
   closeLabel: string
-  size?: 'default' | 'wide'
+  size?: 'default' | 'medium' | 'wide'
   bodyClassName?: string
 }
 
 const WIDTH_BY_SIZE = {
   default: 'w-[min(92vw,480px)]',
+  medium: 'w-[min(96vw,760px)]',
   wide: 'w-[min(100vw,1200px)]',
 } as const
 

@@ -4,6 +4,7 @@ import { EvolutionChart } from '@/features/portfolio-charts/EvolutionChart'
 import { SummaryKpis } from './SummaryKpis'
 import { VariationCard } from './VariationCard'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { formatPercentage } from '@/shared/format/percentage'
 import type { IrrStatus } from '@/types/history'
 
 interface OverviewTabProps {
@@ -46,12 +47,12 @@ export function OverviewTab({
           </button>
           <button type="button" onClick={() => onNavigate('allocation')} className="rounded-lg border border-gray-800 bg-gray-950/40 p-3 text-left transition-colors hover:border-gray-700">
             <div className="text-xs text-gray-500">Diversification coverage</div>
-            <div className="mt-1 text-base font-semibold text-white">{unallocatedPct == null ? 'Loading…' : `${unallocatedPct.toFixed(0)}% undocumented`}</div>
+            <div className="mt-1 text-base font-semibold text-white">{unallocatedPct == null ? 'Loading…' : `${formatPercentage(unallocatedPct)}% undocumented`}</div>
             <div className="mt-1 text-xs text-gray-600">Open diversification analysis</div>
           </button>
           <button type="button" onClick={() => onNavigate('quality')} className="rounded-lg border border-gray-800 bg-gray-950/40 p-3 text-left transition-colors hover:border-gray-700">
             <div className="text-xs text-gray-500">Data quality</div>
-            <div className={`mt-1 text-base font-semibold ${anomalyCount > 0 ? SEMANTIC_TEXT_CLASSES.warning : SEMANTIC_TEXT_CLASSES.coverage}`}>{anomalyCount > 0 ? `${anomalyCount} item${anomalyCount > 1 ? 's' : ''}` : 'No anomaly'}</div>
+            <div className={`mt-1 text-base font-semibold ${anomalyCount > 0 ? SEMANTIC_TEXT_CLASSES.warning : SEMANTIC_TEXT_CLASSES.coverage}`}>{anomalyCount > 0 ? `${anomalyCount} theme${anomalyCount > 1 ? 's' : ''} to review` : 'No anomaly'}</div>
             <div className="mt-1 text-xs text-gray-600">Open quality controls</div>
           </button>
         </div>

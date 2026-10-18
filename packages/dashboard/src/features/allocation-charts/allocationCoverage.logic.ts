@@ -1,10 +1,12 @@
 import type { RawIsinData } from '@/hooks/useRawIsinData'
 import type { PositionRow } from '@/types/domain'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 
 export interface AccountCoverage {
   account: string
   allocated: number
   unallocated: number
+  notApplicable: number
 }
 
 export interface AllocationCoverageIssue {
@@ -53,15 +55,25 @@ export function computeAllocationCoverageByAccount(
     const value = p.total_value ?? 0
     if (value <= 0) continue
 
-    const key = p.isin || `NC-${p.name}`
-    const cur = byAccount.get(p.account) ?? { account: p.account, allocated: 0, unallocated: 0 }
-    if (allocated.has(key)) cur.allocated += value
-    else cur.unallocated += value
+    const cur = byAccount.get(p.account) ?? {
+      account: p.account,
+      allocated: 0,
+      unallocated: 0,
+      notApplicable: 0,
+    }
+    if (!isAssetAnalysisApplicablePosition(p)) {
+      cur.notApplicable += value
+    } else {
+      const key = p.isin || `NC-${p.name}`
+      if (allocated.has(key)) cur.allocated += value
+      else cur.unallocated += value
+    }
     byAccount.set(p.account, cur)
   }
 
   return [...byAccount.values()].sort(
-    (a, b) => b.allocated + b.unallocated - (a.allocated + a.unallocated),
+    (a, b) => b.allocated + b.unallocated + b.notApplicable
+      - (a.allocated + a.unallocated + a.notApplicable),
   )
 }
 
@@ -85,6 +97,7 @@ export function computeAllocationCoverageByDimension(
     for (const position of positions) {
       const value = position.status === 'active' ? Math.max(0, position.total_value ?? 0) : 0
       if (value <= 0) continue
+      if (!isAssetAnalysisApplicablePosition(position)) continue
       const key = position.isin || `NC-${position.name}`
       const allocation = latestByKey.get(key)
       const allocationTotal = allocation

@@ -1,12 +1,15 @@
 import { useId, useState } from 'react'
 import type { FundCoverageReport } from '@/hooks/useFundHoldings'
 import { fmtFull } from '@/shared/format/money'
+import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { QualityIndicatorCard } from '@/shared/ui/QualityIndicatorCard'
+import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
 
-export function LookThroughCoverageSummary({ report, compact = false }: {
+export function LookThroughCoverageSummary({ report, compact = false, notApplicableValue = 0 }: {
   report: FundCoverageReport | null
   compact?: boolean
+  notApplicableValue?: number
 }) {
   if (!report) return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-500">
@@ -14,11 +17,18 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
     </div>
   )
 
-  const percentageOfPortfolio = (value: number) => report.portfolioValue > 0
-    ? value / report.portfolioValue * 100
-    : 0
   const identifiedValue = report.directIdentifiedValue + report.decomposedValue
   const unresolvedValue = report.undisclosedFundValue + report.opaqueValue
+  const selectedPortfolioValue = identifiedValue + unresolvedValue + notApplicableValue
+  const [identifiedPercentage, unresolvedPercentage, notApplicablePercentage] = partitionPercentages([
+    identifiedValue,
+    unresolvedValue,
+    notApplicableValue,
+  ])
+  const percentageOfSelectedPortfolio = (value: number) => selectedPortfolioValue > 0
+    ? value / selectedPortfolioValue * 100
+    : 0
+  const hasNotApplicable = notApplicableValue > 0
   const reliableValue = Math.min(
     identifiedValue,
     report.directIdentifiedValue + report.highConfidenceExplainedValue,
@@ -35,7 +45,7 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
       {
         label: 'Identified exposure',
         amount: identifiedValue,
-        percentage: percentageOfPortfolio(identifiedValue),
+        percentage: identifiedPercentage,
         detail: `${fmtFull(report.directIdentifiedValue)} direct · ${fmtFull(report.decomposedValue)} decomposed funds`,
         tooltip: 'Share of the total portfolio whose economic exposure is visible, either directly or through decomposed fund holdings.',
         tone: 'coverage' as const,
@@ -43,7 +53,7 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
       {
         label: 'Reliable subset',
         amount: reliableValue,
-        percentage: percentageOfPortfolio(reliableValue),
+        percentage: percentageOfSelectedPortfolio(reliableValue),
         detail: `${readiness} · direct positions plus reliable fund sources`,
         tooltip: 'Quality-filtered subset of identified exposure. It is not an additional portfolio slice: it combines identified direct positions with fund holdings from reliable sources (official holdings or exact proxies).',
         tone: 'neutral' as const,
@@ -51,14 +61,22 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
       {
         label: 'Unresolved exposure',
         amount: unresolvedValue,
-        percentage: percentageOfPortfolio(unresolvedValue),
+        percentage: unresolvedPercentage,
         detail: `${fmtFull(report.undisclosedFundValue)} fund remainder · ${fmtFull(report.opaqueValue)} without ID`,
         tooltip: 'Complement of identified exposure: undisclosed fund holdings plus direct positions without an ISIN or ticker.',
-        tone: 'warning' as const,
+        tone: hasMaterialQualityGap(unresolvedPercentage) ? 'warning' as const : 'coverage' as const,
       },
+      ...(hasNotApplicable ? [{
+        label: 'Not applicable',
+        amount: notApplicableValue,
+        percentage: notApplicablePercentage,
+        detail: 'Savings, checking and brokerage cash',
+        tooltip: 'Cash-account balances intentionally excluded from look-through analysis.',
+        tone: 'muted' as const,
+      }] : []),
     ]
     return (
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
         {cards.map((card) => <QualityIndicatorCard key={card.label} {...card} />)}
       </div>
     )
@@ -69,8 +87,8 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
       <div className="mx-auto max-w-sm">
         <QualityIndicatorCard
           label="Portfolio scope"
-          tooltip="Total portfolio value included in the look-through completeness check."
-          amount={report.portfolioValue}
+          tooltip="Total selected portfolio value, including cash accounts shown separately as not applicable."
+          amount={selectedPortfolioValue}
           percentage={100}
           detail={`As of ${report.asOfDate || 'latest portfolio snapshot'}`}
         />
@@ -78,28 +96,35 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
 
       <div className="relative mx-auto hidden h-10 sm:block" aria-hidden="true">
         <div className="absolute left-1/2 top-0 h-5 w-px -translate-x-1/2 bg-gray-700" />
-        <div className="absolute left-1/4 right-1/4 top-5 h-px bg-gray-700" />
-        <div className="absolute bottom-0 left-1/4 top-5 w-px bg-gradient-to-b from-gray-700 to-emerald-500/40" />
-        <div className="absolute bottom-0 left-3/4 top-5 w-px bg-gradient-to-b from-gray-700 to-amber-500/40" />
+        {hasNotApplicable ? <>
+          <div className="absolute left-[16.667%] right-[16.667%] top-5 h-px bg-gray-700" />
+          <div className="absolute bottom-0 left-[16.667%] top-5 w-px bg-gradient-to-b from-gray-700 to-emerald-500/40" />
+          <div className={`absolute bottom-0 left-1/2 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? 'to-amber-500/40' : 'to-emerald-500/40'}`} />
+          <div className="absolute bottom-0 left-[83.333%] top-5 w-px bg-gradient-to-b from-gray-700 to-gray-500/40" />
+        </> : <>
+          <div className="absolute left-1/4 right-1/4 top-5 h-px bg-gray-700" />
+          <div className="absolute bottom-0 left-1/4 top-5 w-px bg-gradient-to-b from-gray-700 to-emerald-500/40" />
+          <div className={`absolute bottom-0 left-3/4 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? 'to-amber-500/40' : 'to-emerald-500/40'}`} />
+        </>}
       </div>
       <div className="mx-auto h-6 w-px bg-gray-700 sm:hidden" aria-hidden="true" />
 
-      <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+      <div className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
         <div>
           <QualityIndicatorCard
             label="Identified exposure"
             tooltip="Share of the total portfolio whose economic exposure is visible, either directly or through decomposed fund holdings."
             amount={identifiedValue}
-            percentage={percentageOfPortfolio(identifiedValue)}
+            percentage={identifiedPercentage}
             detail="Direct positions + decomposed funds"
             tone="coverage"
           >
             <SourceReliability
               status={report.feasibilityStatus}
               reliableValue={reliableValue}
-              reliablePercentage={percentageOfPortfolio(reliableValue)}
+              reliablePercentage={percentageOfSelectedPortfolio(reliableValue)}
               otherSourceValue={otherSourceValue}
-              otherSourcePercentage={percentageOfPortfolio(otherSourceValue)}
+              otherSourcePercentage={percentageOfSelectedPortfolio(otherSourceValue)}
             />
           </QualityIndicatorCard>
           <ExposureChildNodes nodes={[
@@ -107,14 +132,14 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
               label: 'Direct positions',
               tooltip: 'Identified non-fund positions held directly in the portfolio.',
               amount: report.directIdentifiedValue,
-              percentage: percentageOfPortfolio(report.directIdentifiedValue),
+              percentage: percentageOfSelectedPortfolio(report.directIdentifiedValue),
               tone: 'coverage',
             },
             {
               label: 'Decomposed funds',
               tooltip: 'Fund and ETF value broken down into underlying holdings, across all available source-quality tiers.',
               amount: report.decomposedValue,
-              percentage: percentageOfPortfolio(report.decomposedValue),
+              percentage: percentageOfSelectedPortfolio(report.decomposedValue),
               tone: 'neutral',
             },
           ]} />
@@ -125,27 +150,37 @@ export function LookThroughCoverageSummary({ report, compact = false }: {
             label="Unresolved exposure"
             tooltip="Complement of identified exposure: undisclosed fund holdings plus direct positions without an ISIN or ticker."
             amount={unresolvedValue}
-            percentage={percentageOfPortfolio(unresolvedValue)}
+            percentage={unresolvedPercentage}
             detail="Not yet visible through look-through analysis"
-            tone="warning"
+            tone={hasMaterialQualityGap(unresolvedPercentage) ? 'warning' : 'coverage'}
           />
           <ExposureChildNodes nodes={[
             {
               label: 'Undisclosed fund remainder',
               tooltip: 'Fund value not covered by the available underlying-holdings decomposition.',
               amount: report.undisclosedFundValue,
-              percentage: percentageOfPortfolio(report.undisclosedFundValue),
-              tone: 'warning',
+              percentage: percentageOfSelectedPortfolio(report.undisclosedFundValue),
+              tone: hasMaterialQualityGap(percentageOfSelectedPortfolio(report.undisclosedFundValue)) ? 'warning' : 'coverage',
             },
             {
               label: 'Opaque positions without ID',
               tooltip: 'Direct non-fund positions without an ISIN or ticker, which cannot yet be identified precisely.',
               amount: report.opaqueValue,
-              percentage: percentageOfPortfolio(report.opaqueValue),
-              tone: 'error',
+              percentage: percentageOfSelectedPortfolio(report.opaqueValue),
+              tone: hasMaterialQualityGap(percentageOfSelectedPortfolio(report.opaqueValue)) ? 'error' : 'coverage',
             },
           ]} />
         </div>
+        {hasNotApplicable && (
+          <QualityIndicatorCard
+            label="Not applicable"
+            tooltip="Savings, checking and brokerage-cash balances are intentionally excluded because look-through analysis does not apply to cash accounts."
+            amount={notApplicableValue}
+            percentage={notApplicablePercentage}
+            detail="Savings, checking and brokerage cash"
+            tone="muted"
+          />
+        )}
       </div>
     </div>
   )
@@ -288,9 +323,4 @@ function BreakdownGroup({
       </div>
     </div>
   )
-}
-
-function formatPercentage(value: number) {
-  if (value > 0 && value < 0.1) return value.toFixed(2)
-  return value.toFixed(1)
 }

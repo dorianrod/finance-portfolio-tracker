@@ -24,6 +24,7 @@ interface Props {
 
 interface ManualPriceOverridesProps {
   manualPriceOverrides: ManualPriceOverride[]
+  showHeader?: boolean
 }
 
 function SortIcon({ col, sortCol, dir }: { col: SortCol; sortCol: SortCol; dir: 'asc' | 'desc' }) {
@@ -89,66 +90,54 @@ export function ErrorsTab({ errors }: Props) {
   const warningCount = errors.filter((e) => e.level === 'warning').length
 
   return (
-    <div className="space-y-8">
-      {errors.length === 0 ? (
-        <div className="flex items-center gap-3 rounded-lg border border-green-900/50 bg-green-950/10 px-4 py-3 text-gray-500">
-          <svg className="w-7 h-7 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <div>
-            <p className="text-sm font-medium text-gray-300">No anomalies detected</p>
-            <p className="text-xs mt-0.5">All data was loaded correctly.</p>
-          </div>
+    <div className="space-y-4">
+      {errors.length > 0 && <>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm text-gray-400">
+            {errors.length} anomal{errors.length > 1 ? 'ies' : 'y'} detected
+          </span>
+          {errorCount > 0 && (
+            <span className="rounded-full border border-red-700/50 bg-red-900/50 px-2.5 py-0.5 text-xs font-medium text-red-300">
+              {errorCount} error{errorCount > 1 ? 's' : ''}
+            </span>
+          )}
+          {warningCount > 0 && (
+            <span className="rounded-full border border-yellow-700/50 bg-yellow-900/50 px-2.5 py-0.5 text-xs font-medium text-yellow-300">
+              {warningCount} warning{warningCount > 1 ? 's' : ''}
+            </span>
+          )}
         </div>
-      ) : (
-        <div className="space-y-4">
-      {/* Summary badges */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <span className="text-sm text-gray-400">
-          {errors.length} anomal{errors.length > 1 ? 'ies' : 'y'} detected
-        </span>
-        {errorCount > 0 && (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-900/50 text-red-300 border border-red-700/50">
-            {errorCount} error{errorCount > 1 ? 's' : ''}
-          </span>
-        )}
-        {warningCount > 0 && (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300 border border-yellow-700/50">
-            {warningCount} warning{warningCount > 1 ? 's' : ''}
-          </span>
-        )}
-      </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        <select
-          value={filterLevel}
-          onChange={(e) => setFilterLevel(e.target.value as typeof filterLevel)}
-          className="text-xs bg-gray-800 border border-gray-700 text-gray-300 rounded px-2 py-1 focus:outline-none focus:border-gray-500"
-        >
-          <option value="all">All levels</option>
-          <option value="error">Errors only</option>
-          <option value="warning">Warnings only</option>
-        </select>
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="text-xs bg-gray-800 border border-gray-700 text-gray-300 rounded px-2 py-1 focus:outline-none focus:border-gray-500"
-        >
-          <option value="all">All types</option>
-          {types.filter((t) => t !== 'all').map((t) => (
-            <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
-          ))}
-        </select>
-        {(filterLevel !== 'all' || filterType !== 'all') && (
-          <button
-            onClick={() => { setFilterLevel('all'); setFilterType('all') }}
-            className="text-xs text-gray-500 hover:text-gray-300 px-2 py-1"
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={filterLevel}
+            onChange={(e) => setFilterLevel(e.target.value as typeof filterLevel)}
+            className="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-gray-300 focus:border-gray-500 focus:outline-none"
           >
-            Reset
-          </button>
-        )}
-      </div>
+            <option value="all">All levels</option>
+            <option value="error">Errors only</option>
+            <option value="warning">Warnings only</option>
+          </select>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-gray-300 focus:border-gray-500 focus:outline-none"
+          >
+            <option value="all">All types</option>
+            {types.filter((t) => t !== 'all').map((t) => (
+              <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
+            ))}
+          </select>
+          {(filterLevel !== 'all' || filterType !== 'all') && (
+            <button
+              onClick={() => { setFilterLevel('all'); setFilterType('all') }}
+              className="px-2 py-1 text-xs text-gray-500 hover:text-gray-300"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+      </>}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-gray-800">
@@ -185,7 +174,7 @@ export function ErrorsTab({ errors }: Props) {
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center py-8 text-gray-500">
-                  No anomalies for this filter
+                  {errors.length === 0 ? 'No pipeline anomalies detected' : 'No anomalies for this filter'}
                 </td>
               </tr>
             ) : (
@@ -239,17 +228,14 @@ export function ErrorsTab({ errors }: Props) {
           Showing {filtered.length} / {errors.length} anomalies
         </p>
       )}
-        </div>
-      )}
-
     </div>
   )
 }
 
-export function ManualPriceOverridesPanel({ manualPriceOverrides }: ManualPriceOverridesProps) {
+export function ManualPriceOverridesPanel({ manualPriceOverrides, showHeader = true }: ManualPriceOverridesProps) {
   return (
       <section className="space-y-3">
-        <div>
+        {showHeader && <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-semibold text-white">Manual price overrides</h2>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/60 text-blue-300">
@@ -259,7 +245,7 @@ export function ManualPriceOverridesPanel({ manualPriceOverrides }: ManualPriceO
           <p className="text-xs text-gray-500 mt-1">
             Prices forced from asset_prices/others. Open-ended overrides replace automatic market prices until removed or given an end date.
           </p>
-        </div>
+        </div>}
 
         <div className="overflow-x-auto rounded-lg border border-gray-800">
           <table className="w-full text-xs">

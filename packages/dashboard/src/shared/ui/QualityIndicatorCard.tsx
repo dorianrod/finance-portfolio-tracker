@@ -1,20 +1,17 @@
 import type { ReactNode } from 'react'
 import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 import { fmtFull } from '@/shared/format/money'
+import { formatPercentage } from '@/shared/format/percentage'
 import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 
-type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error'
+type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
 const TONES: Record<QualityTone, { text: string; bar: string }> = {
   neutral: { text: 'text-blue-400', bar: SEMANTIC_COLORS.netContributions },
   coverage: { text: SEMANTIC_TEXT_CLASSES.coverage, bar: SEMANTIC_COLORS.coverage },
   warning: { text: SEMANTIC_TEXT_CLASSES.warning, bar: SEMANTIC_COLORS.coverageGap },
   error: { text: SEMANTIC_TEXT_CLASSES.error, bar: SEMANTIC_COLORS.performanceNegative },
-}
-
-function formatPercentage(value: number) {
-  if (value > 0 && value < 0.1) return value.toFixed(2)
-  return value.toFixed(1)
+  muted: { text: 'text-gray-400', bar: '#6b7280' },
 }
 
 export function QualityIndicatorCard({
@@ -39,7 +36,7 @@ export function QualityIndicatorCard({
   const colors = TONES[tone]
 
   return (
-    <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
+    <div className="quality-indicator-card rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
       <div className="flex items-center text-xs font-medium text-gray-400">
         <span>{label}</span>
         <InfoTooltip text={tooltip} />

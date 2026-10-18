@@ -93,6 +93,11 @@ def _clean_isin(pos_row: pd.Series) -> str:
     return "" if pd.isna(raw) else str(raw).strip()
 
 
+def _clean_text(pos_row: pd.Series, column: str) -> str:
+    raw = pos_row.get(column)
+    return "" if pd.isna(raw) else str(raw).strip()
+
+
 def _is_synthetic_cash(pos_row: pd.Series) -> bool:
     """True for the "Cash <label>" positions PortfolioSnapshotBuilder
     synthesises for brokerage accounts' uninvested cash (see
@@ -217,8 +222,9 @@ def build_positions_allocation_by_isin(
     """Generate per-ISIN allocation time-series DataFrames.
 
     Returns {category: df} where df has columns:
-        snapshot_date, isin, name, <label_1>, <label_2>, ...
-    Each row is one (snapshot_date, isin) pair with monetary amounts.
+        snapshot_date, account, account_type, isin, name, <label_1>, ...
+    Each row retains its source account so the dashboard can scope both the
+    current allocation and its history with the account filter.
     """
     file_dates = allocation_repo.file_dates()
     if not file_dates:
@@ -262,10 +268,15 @@ def build_positions_allocation_by_isin(
 
                 isin = _clean_isin(pos_row)
                 name = str(pos_row.get("name", "") or "").strip()
+                scope = {
+                    "account": _clean_text(pos_row, "account"),
+                    "account_type": _clean_text(pos_row, "account_type"),
+                }
 
                 if _is_not_concerned(pos_row):
                     row_dict: dict[str, object] = {
                         "snapshot_date": snap_date.isoformat(),
+                        **scope,
                         "isin": _isin_or_synthetic_key(isin, name),
                         "name": name,
                     }
@@ -300,6 +311,7 @@ def build_positions_allocation_by_isin(
 
                 row_dict: dict[str, object] = {
                     "snapshot_date": snap_date.isoformat(),
+                    **scope,
                     "isin": _isin_or_synthetic_key(isin, name),
                     "name": name,
                 }
