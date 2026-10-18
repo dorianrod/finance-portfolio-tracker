@@ -429,8 +429,9 @@ def _normalize_source_rows(
     for holding_id in duplicate_isins:
         mask = normalized["holding_id"].eq(holding_id)
         group = normalized.loc[mask].copy()
-        preferred_index = group["holding_name"].astype(str).str.len().idxmin()
-        preferred = normalized.loc[preferred_index].copy()
+        name_lengths = group["holding_name"].astype(str).str.len()
+        preferred_position = int(name_lengths.to_numpy().argmin())
+        preferred = group.iloc[preferred_position].copy()
         preferred["weight"] = float(group["weight"].sum())
         preferred["issuer_id"] = holding_id
         preferred["issuer_name"] = _issuer_name(
