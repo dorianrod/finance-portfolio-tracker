@@ -54,6 +54,9 @@ from src.infrastructure.csv_broker_operations_reader import (
     CsvBrokerOperationsReader,  # noqa: E402
 )
 from src.infrastructure.csv_output_writer import CsvOutputWriter  # noqa: E402
+from src.infrastructure.csv_salaries_repository import (  # noqa: E402
+    CsvSalariesRepository,
+)
 from src.infrastructure.xlsx_allocation_repository import (
     XlsxAllocationRepository,  # noqa: E402
 )
@@ -194,6 +197,7 @@ def main(argv: list[str] | None = None) -> None:
         snapshot_builder=PortfolioSnapshotBuilder(account_groups_repo),
         error_detector=PortfolioErrorDetector(asset_price_repo),
         output_writer=output_writer,
+        salaries_repo=CsvSalariesRepository(input_dir / "salaries.csv"),
     )
     use_case.execute()
 

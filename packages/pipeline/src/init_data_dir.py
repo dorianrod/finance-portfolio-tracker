@@ -54,6 +54,14 @@ livret,Livret,savings,Demo savings account
 private_fund,Private equity,private_equity,Demo private equity fund
 """
 
+_SALARIES = """year,total,salary,other,gross_salary,status
+2022,30000,28000,2000,38000,actual
+2023,32000,29500,2500,40500,actual
+2024,34500,31500,3000,43500,actual
+2025,37000,33500,3500,46500,actual
+2026,39500,35500,4000,49500,forecast
+"""
+
 # ---------------------------------------------------------------------------
 # brokers/direct/ -- full transaction history, one row per operation
 # ---------------------------------------------------------------------------
@@ -421,6 +429,14 @@ vocabulary the pipeline/dashboard rely on for behaviour (e.g. which
 accounts get synthetic cash positions) — one of: `brokerage`, `checking`,
 `employer_savings`, `retirement`, `savings`, `private_equity`.
 
+## salaries.csv
+
+Optional annual income history used to compare observed invested savings with
+net income. Columns are `year,total,salary,other,gross_salary,status`, where
+`total` must equal `salary + other` and `status` is `actual` or `forecast`.
+Forecast or incomplete years are displayed but excluded from placement-rate
+and correlation calculations.
+
 ## brokers/boursorama/{PEA,CTO}/operations.csv
 
 Export (raw or consolidated) of a Boursorama account — one subfolder per
@@ -566,6 +582,7 @@ def main(argv: list[str] | None = None) -> None:
 
     _write(input_dir / "README.md", _INPUT_README)
     _write(input_dir / "account_groups.csv", _ACCOUNT_GROUPS)
+    _write(input_dir / "salaries.csv", _SALARIES)
     _write(
         input_dir / "brokers/direct/checking_account.csv",
         _DIRECT_CHECKING_ACCOUNT,

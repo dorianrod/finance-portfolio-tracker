@@ -38,6 +38,9 @@ class CsvOutputWriter(PortfolioOutputWriter):
     def write_saving_capacity_by_account(self, df: pd.DataFrame) -> None:
         self._write(df, "saving_capacity_by_account.csv")
 
+    def write_annual_income_savings(self, df: pd.DataFrame) -> None:
+        self._write(df, "annual_income_savings.csv")
+
     def write_positions_allocation(
         self, category: str, df: pd.DataFrame
     ) -> None:

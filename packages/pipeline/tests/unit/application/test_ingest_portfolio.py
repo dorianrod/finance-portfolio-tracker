@@ -34,6 +34,11 @@ class _NoManualPricesRepository:
         return pd.DataFrame()
 
 
+class _NoSalariesRepository:
+    def load_salaries(self) -> pd.DataFrame:
+        return pd.DataFrame()
+
+
 class _OutputWriterSpy:
     def __init__(self) -> None:
         self.positions: pd.DataFrame | None = None
@@ -62,6 +67,9 @@ class _OutputWriterSpy:
         pass
 
     def write_saving_capacity_by_account(self, df: pd.DataFrame) -> None:
+        pass
+
+    def write_annual_income_savings(self, df: pd.DataFrame) -> None:
         pass
 
     def write_positions_allocation(
@@ -109,6 +117,7 @@ def test_write_outputs_tags_only_brokerage_synthetic_cash_positions():
         snapshot_builder=None,  # pyright: ignore[reportArgumentType]
         error_detector=None,  # pyright: ignore[reportArgumentType]
         output_writer=output_writer,  # pyright: ignore[reportArgumentType]
+        salaries_repo=_NoSalariesRepository(),
     )
     positions = [
         _position("broker", "Cash CTO", 100.0),

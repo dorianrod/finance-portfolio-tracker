@@ -40,6 +40,9 @@ class PortfolioOutputWriter(Protocol):
     def write_saving_capacity_by_account(self, df: pd.DataFrame) -> None: ...
 
     @abstractmethod
+    def write_annual_income_savings(self, df: pd.DataFrame) -> None: ...
+
+    @abstractmethod
     def write_positions_allocation(
         self, category: str, df: pd.DataFrame
     ) -> None: ...

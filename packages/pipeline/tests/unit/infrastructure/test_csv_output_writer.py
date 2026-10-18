@@ -13,6 +13,7 @@ _SIMPLE_DF_METHODS = [
     ("write_portfolio_history", "portfolio_history.csv"),
     ("write_saving_capacity", "saving_capacity.csv"),
     ("write_saving_capacity_by_account", "saving_capacity_by_account.csv"),
+    ("write_annual_income_savings", "annual_income_savings.csv"),
     ("write_accounts", "accounts.csv"),
     ("write_errors", "errors.csv"),
     ("write_manual_price_overrides", "manual_price_overrides.csv"),

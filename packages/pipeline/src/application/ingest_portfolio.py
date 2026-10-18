@@ -22,6 +22,7 @@ from src.application.portfolio_snapshot_builder import (
 )
 from src.domain.errors import ErrorCollector
 from src.domain.models import Operation, Position
+from src.domain.reporting.annual_income_savings import annual_income_savings
 from src.domain.reporting.portfolio_history import portfolio_history_snapshot
 from src.domain.reporting.positions_allocation import (
     build_positions_allocation,
@@ -37,6 +38,7 @@ from src.ports.account_groups import AccountGroupsRepository
 from src.ports.allocation_repository import AllocationRepository
 from src.ports.asset_prices import AssetPriceRepository
 from src.ports.output_writer import PortfolioOutputWriter
+from src.ports.salaries import SalariesRepository
 
 _POSITIONS_COLS = [
     "snapshot_date",
@@ -352,6 +354,7 @@ class IngestPortfolioUseCase:
     snapshot_builder: PortfolioSnapshotBuilder
     error_detector: PortfolioErrorDetector
     output_writer: PortfolioOutputWriter
+    salaries_repo: SalariesRepository
 
     def execute(self) -> None:
         today = date.today()
@@ -497,7 +500,23 @@ class IngestPortfolioUseCase:
         saving_cap_df = saving_capacity_snapshot(history_df)
         self.output_writer.write_saving_capacity(saving_cap_df)
 
-        saving_cap_by_account_df = saving_capacity_per_account(all_positions)
+        try:
+            salaries_df = self.salaries_repo.load_salaries()
+        except Exception as exc:
+            errors.add(
+                source="salaries.csv",
+                level="error",
+                type="invalid_salary_data",
+                message=f"Could not read salaries.csv: {exc}",
+            )
+            salaries_df = pd.DataFrame()
+        self.output_writer.write_annual_income_savings(
+            annual_income_savings(salaries_df, saving_cap_df, errors)
+        )
+
+        saving_cap_by_account_df = saving_capacity_per_account(
+            all_positions, all_operations
+        )
         self.output_writer.write_saving_capacity_by_account(
             saving_cap_by_account_df
         )

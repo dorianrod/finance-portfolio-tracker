@@ -37,6 +37,7 @@ Expected layout:
 data/
   input/
     account_groups.csv
+    salaries.csv        -- optional annual net income history
     brokers/
       direct/         -- pre-formatted CSVs (cash accounts, stocks/ETFs...)
       valuations/      -- periodic value/invested snapshots (PE, insurance...)

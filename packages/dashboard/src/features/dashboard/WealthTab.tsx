@@ -7,6 +7,9 @@ import { AccountTypeHistoryChart } from '@/features/portfolio-charts/AccountType
 import { EvolutionChart } from '@/features/portfolio-charts/EvolutionChart'
 import { MonthlySavingsChart } from '@/features/portfolio-charts/MonthlySavingsChart'
 import { WealthDriversChart } from '@/features/portfolio-charts/WealthDriversChart'
+import { AnnualIncomeSavingsChart } from '@/features/portfolio-charts/AnnualIncomeSavingsChart'
+import { IncomePlacementRelationshipChart } from '@/features/portfolio-charts/IncomePlacementRelationshipChart'
+import type { AnnualIncomeSavingsPoint } from '@/logic/annualIncomeSavings.logic'
 import { Kpi, KpiCard } from '@/features/kpis/Kpi'
 import { fmt, fmtPct } from '@/shared/format/money'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
@@ -21,6 +24,7 @@ interface WealthTabProps {
   monthlyOps: MonthlyOpsMap
   drivers: WealthDriverPoint[]
   trailingYearComparison: TrailingYearOverYear
+  annualIncomeSavings: AnnualIncomeSavingsPoint[]
 }
 
 function monthRangeLabel(months: string[]): string {
@@ -67,7 +71,7 @@ function ComparisonKpi({ label, metric, currentMonths, comparisonMonths, tone }:
   )
 }
 
-export function WealthTab({ history, accountTypeData, accountTypeHistory, accountTypes, typeCategories, savings, monthlyOps, drivers, trailingYearComparison }: WealthTabProps) {
+export function WealthTab({ history, accountTypeData, accountTypeHistory, accountTypes, typeCategories, savings, monthlyOps, drivers, trailingYearComparison, annualIncomeSavings }: WealthTabProps) {
   const labelledTypes = accountTypeData.map((point) => {
     const pct = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
     return { ...point, _label: `${Math.round(point.total_value).toLocaleString('en-GB')} € ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%` }
@@ -86,6 +90,12 @@ export function WealthTab({ history, accountTypeData, accountTypeHistory, accoun
         <MonthlySavingsChart data={savings} ops={monthlyOps} />
         {drivers.length > 0 && <WealthDriversChart data={drivers} />}
       </div>
+      {annualIncomeSavings.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <AnnualIncomeSavingsChart data={annualIncomeSavings} />
+          <IncomePlacementRelationshipChart data={annualIncomeSavings} />
+        </div>
+      )}
       {accountTypeHistory.length > 0 && <AccountTypeHistoryChart data={accountTypeHistory} accountTypes={accountTypes} typeCategories={typeCategories} />}
     </div>
   )

@@ -13,6 +13,7 @@ import { useMonthlyOps } from '@/hooks/useMonthlyOps'
 import { useSavingCapacity } from '@/hooks/useSavingCapacity'
 import { usePassiveIncome } from '@/hooks/usePassiveIncome'
 import { useAccountTypeHistory } from '@/hooks/useAccountTypeHistory'
+import { useAnnualIncomeSavings } from '@/hooks/useAnnualIncomeSavings'
 import { useRawIsinData } from '@/hooks/useRawIsinData'
 import { useFundHoldingsData } from '@/hooks/useFundHoldings'
 import { PositionsTable } from '@/features/positions-table/PositionsTable'
@@ -87,6 +88,7 @@ export default function App() {
   const rawAllocationData = useRawIsinData()
   const fundData = useFundHoldingsData()
   const fundHoldings = fundData.holdings
+  const annualIncomeSavings = useAnnualIncomeSavings()
 
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [activeTab, setActiveTab] = useState<AnalysisTab>('overview')
@@ -289,7 +291,7 @@ export default function App() {
           )}
 
           {activeTab === 'overview' && <OverviewTab history={displayedHistory} performance={performance} drivers={drivers} income={trailingIncome} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel(filters.dateFrom, filters.dateTo)} anomalyCount={qualityCount} unallocatedPct={unallocatedPct} onNavigate={setActiveTab} />}
-          {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} />}
+          {activeTab === 'wealth' && <WealthTab history={displayedHistory} accountTypeData={accountTypeData} accountTypeHistory={displayedTypeHistory} accountTypes={typeHistory.accountTypes} typeCategories={typeHistory.typeCategories} savings={trailingSavings} monthlyOps={monthlyOps} drivers={wealthDrivers} trailingYearComparison={trailingYearComparison} annualIncomeSavings={annualIncomeSavings} />}
           {activeTab === 'performance' && <PerformanceTab history={displayedHistory} passiveIncome={passiveIncome} rawPositions={rawPositions} rawOperations={rawOperations} accountFilters={filters.accounts} accountTypeFilters={filters.accountTypes} dateFrom={filters.dateFrom} performance={performance} income={trailingIncome} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} />}
           {activeTab === 'allocation' && <AllocationCharts positions={currentPositions} fundHoldings={fundHoldings} fundReport={fundData.report} dateFrom={filters.dateFrom} dateTo={filters.dateTo} activeFilter={allocationFilter} onActiveFilterChange={setAllocationFilter} />}
           {activeTab === 'underlying' && <FundLookThroughTab positions={currentPositions} holdings={fundHoldings} statuses={fundData.statuses} report={fundData.report} query={underlyingQuery} onQueryChange={setUnderlyingQuery} />}

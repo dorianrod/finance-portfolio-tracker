@@ -27,6 +27,10 @@ def test_init_creates_a_fully_synthetic_feature_complete_demo(
         "livret"
     }
 
+    salaries = pd.read_csv(input_dir / "salaries.csv")
+    assert salaries["total"].max() < 40000
+    assert salaries.iloc[-1]["status"] == "forecast"
+
     employee_plan = pd.read_csv(
         input_dir / "brokers/valuations/employee_plan.csv"
     )
