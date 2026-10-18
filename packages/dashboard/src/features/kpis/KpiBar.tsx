@@ -1,9 +1,10 @@
 import { fmt, fmtPct } from '@/shared/format/money'
+import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import type { PositionRow } from '@/types/domain'
 import { Kpi } from './Kpi'
 
 function gainColor(v: number) {
-  return v >= 0 ? 'text-emerald-400' : 'text-red-400'
+  return v >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
 }
 
 interface Props {
@@ -32,7 +33,7 @@ export function KpiBar({ rows, globalTri }: Props) {
   return (
     <div className="flex flex-wrap gap-6 px-4 py-3 mb-4 bg-gray-900 rounded-lg border border-gray-700">
       <Kpi
-        label="Net current value"
+        label="Net portfolio value"
         tooltip="Market value after deducting estimated taxes on unrealized gains. Calculation: cost basis + net unrealized P&L."
         value={fmt.format(totalValueNet)}
         subSmall={`gross ${fmt.format(totalValue)}`}
@@ -58,7 +59,7 @@ export function KpiBar({ rows, globalTri }: Props) {
         label="Dividends"
         tooltip="Total dividends received across all positions (active and closed)."
         value={fmt.format(totalDividends)}
-        subColor="text-purple-400"
+        subColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
       />
       <div className="w-px bg-gray-700" />
       {totalInterest > 0 && <>
@@ -66,7 +67,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           label="Interest"
           tooltip="Total interest received (savings accounts, bonds). Included in the total realized return."
           value={fmt.format(totalInterest)}
-          subColor="text-blue-400"
+          subColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
         />
         <div className="w-px bg-gray-700" />
       </>}
@@ -80,8 +81,8 @@ export function KpiBar({ rows, globalTri }: Props) {
       {globalTri != null && <>
         <div className="w-px bg-gray-700" />
         <Kpi
-          label="Global IRR"
-          tooltip="Annualized Internal Rate of Return for the portfolio (XIRR). Calculated on external flows only: deposits and withdrawals, current net asset value as the terminal flow."
+          label="IRR since tracking"
+          tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history."
           value={`${globalTri >= 0 ? '+' : ''}${globalTri.toFixed(2)}%`}
           valueColor={gainColor(globalTri)}
         />

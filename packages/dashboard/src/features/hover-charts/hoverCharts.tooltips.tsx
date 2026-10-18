@@ -1,4 +1,5 @@
 import { fmt, fmtDec } from '@/shared/format/money'
+import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
 import { RollingUnitPricePerf } from './RollingUnitPricePerf'
 
@@ -8,13 +9,13 @@ export function OpSummary({ data }: { data: any }) {
   return (
     <div className="mt-2 pt-2 border-t border-gray-600 space-y-1">
       {data.buyAmount != null && (
-        <p className="text-blue-400">▲ Buy: {fmt.format(data.buyAmount)}</p>
+        <p style={{ color: SEMANTIC_COLORS.transactionBuy }}>▲ Buy: {fmt.format(data.buyAmount)}</p>
       )}
       {data.sellAmount != null && (
         <>
-          <p className="text-orange-400">▼ Sell: {fmt.format(data.sellAmount)}</p>
+          <p style={{ color: SEMANTIC_COLORS.transactionSell }}>▼ Sell: {fmt.format(data.sellAmount)}</p>
           {data.sellGain != null && (
-            <p className={data.sellGain >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+            <p className={data.sellGain >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}>
               P&L: {fmt.format(data.sellGain)}
             </p>
           )}
@@ -38,7 +39,7 @@ export function TooltipPortfolio({ active, payload, label }: any) {
       {valeur && <p style={{ color: valeur.color }}>{valeur.name}: {fmt.format(valeur.value)}</p>}
       {cout && <p style={{ color: cout.color }}>{cout.name}: {fmt.format(cout.value)}</p>}
       {valeur && cout && (
-        <p className={`mt-1 font-semibold ${valeur.value >= cout.value ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`mt-1 font-semibold ${valeur.value >= cout.value ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
           Unrealized: {fmt.format(valeur.value - cout.value)}
         </p>
       )}
@@ -76,7 +77,7 @@ export function SavingsTooltip({ active, payload }: any) {
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Balance: {fmt.format(balance)}</div>
       {delta !== 0 && (
-        <div style={{ color: delta >= 0 ? '#60a5fa' : '#fca5a5' }}>
+        <div style={{ color: delta >= 0 ? SEMANTIC_COLORS.netContributionsText : SEMANTIC_COLORS.performanceNegativeText }}>
           {delta >= 0 ? '▲' : '▼'} {fmt.format(Math.abs(delta))}
         </div>
       )}

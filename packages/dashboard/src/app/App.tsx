@@ -1,139 +1,531 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useData } from '@/hooks/useData'
-import { usePortfolioHistory } from '@/hooks/usePortfolioHistory'
-import { useCashHistory } from '@/hooks/useCashHistory'
-import { useAllPositions } from '@/hooks/useAllPositions'
-import { useErrors } from '@/hooks/useErrors'
-import { useManualPriceOverrides } from '@/hooks/useManualPriceOverrides'
-import { PositionsTable } from '@/features/positions-table/PositionsTable'
-import { FilterBar } from '@/features/filters/FilterBar'
-import { KpiBar } from '@/features/kpis/KpiBar'
-import { PortfolioCharts } from '@/features/portfolio-charts/PortfolioCharts'
-import { AllocationCharts } from '@/features/allocation-charts/AllocationCharts'
-import { ErrorsTab } from '@/features/errors/ErrorsTab'
-import type { Filters, SortKey } from '@/types/filters'
-import type { PortfolioHistoryPoint } from '@/types/history'
-import { accountFilterId } from '@/shared/filters/accountFilter'
-import { accountLabel } from '@/features/filters/filterBar.logic'
+import { useEffect, useMemo, useState } from "react";
+import { useData } from "@/hooks/useData";
+import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
+import { useCashHistory } from "@/hooks/useCashHistory";
+import { useAllPositions } from "@/hooks/useAllPositions";
+import { useErrors } from "@/hooks/useErrors";
+import { useManualPriceOverrides } from "@/hooks/useManualPriceOverrides";
+import {
+  normalizeAccountSelection,
+  useFilteredPortfolioHistory,
+} from "@/hooks/useFilteredPortfolioHistory";
+import { useMonthlyOps } from "@/hooks/useMonthlyOps";
+import { useSavingCapacity } from "@/hooks/useSavingCapacity";
+import { usePassiveIncome } from "@/hooks/usePassiveIncome";
+import { useAccountTypeHistory } from "@/hooks/useAccountTypeHistory";
+import { useAnnualIncomeSavings } from "@/hooks/useAnnualIncomeSavings";
+import { useRawIsinData } from "@/hooks/useRawIsinData";
+import { useFundHoldingsData } from "@/hooks/useFundHoldings";
+import { PositionsTable } from "@/features/positions-table/PositionsTable";
+import {
+  ActiveFilterSummary,
+  FilterButton,
+  FilterPanel,
+} from "@/features/filters/FilterBar";
+import { AllocationCharts } from "@/features/allocation-charts/AllocationCharts";
+import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
+import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
+import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
+import { OverviewTab } from "@/features/dashboard/OverviewTab";
+import { WealthTab } from "@/features/dashboard/WealthTab";
+import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
+import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
+import { FundLookThroughTab } from "@/features/fund-holdings/FundLookThroughTab";
+import { scopeFundQualityData } from "@/features/fund-holdings/fundQualityScope.logic";
+import type { Filters, SortKey } from "@/types/filters";
+import { accountFilterId, rawAccountId } from "@/shared/filters/accountFilter";
+import {
+  accountLabel,
+  clearFilterGroup,
+  filterSummaries,
+  filterVisibilityForTab,
+  resetFilters,
+} from "@/features/filters/filterBar.logic";
+import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
+import { partitionPercentages } from "@/shared/format/percentage";
+import {
+  buildCumulativeWealthDrivers,
+  computeConcentration,
+  computeHeldAssetConcentration,
+  computePerformanceSummary,
+  computePeriodDrivers,
+  computeTrailing12mYearOverYear,
+  computeTrailing12mIncome,
+  computeTrailing12mSavings,
+  filterMonthlyOpsByAccounts,
+  filterPointsByPeriod,
+} from "@/features/portfolio-charts/portfolioCharts.logic";
 import {
   applyPositionFilters,
   applyAccountFilterToHistory,
   buildAccountTypeBreakdown,
   sortPositionsForTable,
-} from './app.logic'
+} from "./app.logic";
+
+type AnalysisTab =
+  | "overview"
+  | "wealth"
+  | "performance"
+  | "allocation"
+  | "underlying"
+  | "positions"
+  | "quality";
+
+const PRIMARY_TABS: Array<{
+  id: Exclude<AnalysisTab, "quality">;
+  label: string;
+}> = [
+  { id: "overview", label: "Overview" },
+  { id: "wealth", label: "Wealth & cash flow" },
+  { id: "performance", label: "Performance & passive income" },
+  { id: "allocation", label: "Diversification" },
+  { id: "underlying", label: "Underlying assets" },
+  { id: "positions", label: "Positions" },
+];
+
+const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
+  overview: {
+    title: "Portfolio overview",
+    description:
+      "Current position, recent change drivers and the main signals to review.",
+  },
+  wealth: {
+    title: "Wealth & cash flow",
+    description:
+      "How contributions and market performance built the portfolio over time.",
+  },
+  performance: {
+    title: "Performance & passive income",
+    description: "Returns, realized outcomes and recurring passive income.",
+  },
+  allocation: {
+    title: "Diversification",
+    description:
+      "Current exposures, concentration and how the portfolio mix is evolving.",
+  },
+  underlying: {
+    title: "Underlying assets",
+    description:
+      "All identified economic exposure through ETFs and funds, grouped by issuer and security.",
+  },
+  positions: {
+    title: "Positions",
+    description:
+      "Inspect every holding, transaction and position-level result.",
+  },
+  quality: {
+    title: "Data quality",
+    description:
+      "A focused review of pipeline, pricing, classification and look-through gaps.",
+  },
+};
+
+function periodLabel(dateFrom?: string, dateTo?: string): string {
+  if (!dateFrom && !dateTo) return "";
+  if (dateFrom && dateTo) return `${dateFrom} to ${dateTo}`;
+  if (dateFrom) return `Since ${dateFrom}`;
+  return `Until ${dateTo}`;
+}
 
 export default function App() {
-  const { positions, accountLabels, loading, error } = useData()
-  const { history } = usePortfolioHistory()
-  const { cashHistory } = useCashHistory()
-  const allPositionRows = useAllPositions()
-  const { errors: pipelineErrors } = useErrors()
-  const { manualPriceOverrides } = useManualPriceOverrides()
+  const {
+    positions,
+    rawPositions,
+    rawOperations,
+    accountLabels,
+    loading,
+    error,
+  } = useData();
+  const { history } = usePortfolioHistory();
+  const { cashHistory } = useCashHistory();
+  const allPositionRows = useAllPositions();
+  const { errors: pipelineErrors } = useErrors();
+  const { manualPriceOverrides } = useManualPriceOverrides();
+  const allMonthlyOps = useMonthlyOps();
+  const rawAllocationData = useRawIsinData();
+  const fundData = useFundHoldingsData();
+  const fundHoldings = fundData.holdings;
+  const annualIncomeSavings = useAnnualIncomeSavings();
 
-  const enrichedHistory = useMemo(() => {
-    const cashByDate = new Map(cashHistory.map((c) => [c.date, c.total_broker_cash]))
-    return history.map((pt) => ({
-      ...pt,
-      total_broker_cash: cashByDate.get(pt.date) ?? 0,
-    }))
-  }, [history, cashHistory])
-
-  const globalTri = useMemo(() => {
-    const last = enrichedHistory[enrichedHistory.length - 1]
-    return last?.tri ?? null
-  }, [enrichedHistory])
-
-  const allAccountTypes = useMemo(
-    () => [...new Set(positions.map((p) => p.account_type).filter((t): t is string => !!t))].sort(),
-    [positions]
-  )
-  const accountToType = useMemo(() => {
-    const map: Record<string, string> = {}
-    for (const p of positions) {
-      if (p.account_type) map[accountFilterId(p)] = p.account_type
-    }
-    return map
-  }, [positions])
-  const allAccounts = useMemo(
-    () => [...new Set(positions.map(accountFilterId))].sort(),
-    [positions]
-  )
-  const accountFilterLabels = useMemo(() => {
-    const labels = { ...accountLabels }
-    for (const p of positions) {
-      const id = accountFilterId(p)
-      if (!labels[id]) {
-        labels[id] = id === p.account
-          ? accountLabel(p.account, accountLabels)
-          : p.name
-      }
-    }
-    return labels
-  }, [positions, accountLabels])
-  const allOperationTypes = useMemo(
-    () => [...new Set(positions.flatMap((p) => [...p.operationTypes]))].sort(),
-    [positions]
-  )
-
-  const [theme, setTheme] = useState<'dark' | 'light'>('light')
+  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [allocationFilter, setAllocationFilter] =
+    useState<AllocationFilter | null>(null);
+  const [underlyingQuery, setUnderlyingQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("total_value");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [filters, setFilters] = useState<Filters>(() => resetFilters());
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-  }, [theme])
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
-  const [activeTab, setActiveTab] = useState<'charts' | 'allocation' | 'table' | 'errors'>('charts')
-  const [sortKey, setSortKey] = useState<SortKey>('total_value')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const enrichedHistory = useMemo(() => {
+    const cashByDate = new Map(
+      cashHistory.map((cash) => [cash.date, cash.total_broker_cash]),
+    );
+    return history.map((point) => ({
+      ...point,
+      total_broker_cash: cashByDate.get(point.date) ?? 0,
+    }));
+  }, [history, cashHistory]);
 
-  function handleSort(key: SortKey) {
-    if (key === sortKey) setSortDir(d => d === 'desc' ? 'asc' : 'desc')
-    else { setSortKey(key); setSortDir('desc') }
-  }
+  const allAccountTypes = useMemo(
+    () =>
+      [
+        ...new Set(
+          positions
+            .map((position) => position.account_type)
+            .filter((type): type is string => !!type),
+        ),
+      ].sort(),
+    [positions],
+  );
+  const accountToType = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const position of positions)
+      if (position.account_type)
+        map[accountFilterId(position)] = position.account_type;
+    return map;
+  }, [positions]);
+  const allAccounts = useMemo(
+    () => [...new Set(positions.map(accountFilterId))].sort(),
+    [positions],
+  );
+  const accountFilterLabels = useMemo(() => {
+    const labels = { ...accountLabels };
+    for (const position of positions) {
+      const id = accountFilterId(position);
+      if (!labels[id])
+        labels[id] =
+          id === position.account
+            ? accountLabel(position.account, accountLabels)
+            : position.name;
+    }
+    return labels;
+  }, [positions, accountLabels]);
+  const allOperationTypes = useMemo(
+    () =>
+      [
+        ...new Set(
+          positions.flatMap((position) => [...position.operationTypes]),
+        ),
+      ].sort(),
+    [positions],
+  );
 
-  const [filters, setFilters] = useState<Filters>({
-    accountTypes: new Set<string>(),
-    accounts: new Set<string>(),
-    operationTypes: new Set<string>(),
-    hideClosedPositions: true,
-  })
-
-  const filtered = useMemo(
+  const currentFilters = useMemo<Filters>(
+    () => ({
+      ...filters,
+      operationTypes: new Set<string>(),
+      hideClosedPositions: false,
+      dateFrom: undefined,
+      dateTo: undefined,
+    }),
+    [filters],
+  );
+  const currentPositions = useMemo(
+    () => applyPositionFilters(positions, currentFilters),
+    [positions, currentFilters],
+  );
+  const tableFiltered = useMemo(
     () => applyPositionFilters(positions, filters),
     [positions, filters],
-  )
+  );
+  const tableData = useMemo(
+    () =>
+      sortPositionsForTable(
+        tableFiltered,
+        filters.hideClosedPositions,
+        allAccountTypes,
+        sortKey,
+        sortDir,
+      ),
+    [
+      tableFiltered,
+      filters.hideClosedPositions,
+      allAccountTypes,
+      sortKey,
+      sortDir,
+    ],
+  );
 
-  const filteredHistory = useMemo((): PortfolioHistoryPoint[] =>
-    applyAccountFilterToHistory(allPositionRows, enrichedHistory, filters.accounts),
+  const fallbackAccountHistory = useMemo(
+    () =>
+      applyAccountFilterToHistory(
+        allPositionRows,
+        enrichedHistory,
+        filters.accounts,
+      ),
     [allPositionRows, enrichedHistory, filters.accounts],
-  )
+  );
+  const filteredHistory = useFilteredPortfolioHistory(
+    fallbackAccountHistory,
+    filters.accounts,
+  );
+  const accountHistory = filteredHistory.history;
+  const displayedHistory = useMemo(
+    () =>
+      filterPointsByPeriod(accountHistory, filters.dateFrom, filters.dateTo),
+    [accountHistory, filters.dateFrom, filters.dateTo],
+  );
+  const globalTri = displayedHistory[displayedHistory.length - 1]?.tri ?? null;
+  const irrStatus = filteredHistory.loading
+    ? "loading"
+    : filteredHistory.error
+      ? "error"
+      : "ready";
+  const irrScopeLabel =
+    filteredHistory.isFiltered && irrStatus === "ready"
+      ? "Selected accounts"
+      : undefined;
+  const demoPresetSelection = useMemo(() => {
+    if (!filteredHistory.demoPresetAccounts) return null;
+    const included = new Set(filteredHistory.demoPresetAccounts);
+    return new Set(
+      allAccounts.filter((account) => included.has(rawAccountId(account))),
+    );
+  }, [allAccounts, filteredHistory.demoPresetAccounts]);
+  const demoPresetActive = useMemo(() => {
+    if (!filteredHistory.demoPresetAccounts) return false;
+    const selected = normalizeAccountSelection(filters.accounts);
+    return (
+      selected.length === filteredHistory.demoPresetAccounts.length &&
+      selected.every(
+        (account, index) =>
+          account === filteredHistory.demoPresetAccounts?.[index],
+      )
+    );
+  }, [filteredHistory.demoPresetAccounts, filters.accounts]);
+
+  const savingCapacity = useSavingCapacity(filters.accounts);
+  const periodSavings = useMemo(
+    () =>
+      filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
+    [savingCapacity, filters.dateFrom, filters.dateTo],
+  );
+  const trailingSavings = useMemo(
+    () => computeTrailing12mSavings(periodSavings),
+    [periodSavings],
+  );
+  const trailingYearComparison = useMemo(
+    () => computeTrailing12mYearOverYear(savingCapacity),
+    [savingCapacity],
+  );
+  const wealthDrivers = useMemo(
+    () => buildCumulativeWealthDrivers(periodSavings),
+    [periodSavings],
+  );
+  const drivers = useMemo(
+    () => computePeriodDrivers(periodSavings),
+    [periodSavings],
+  );
+  const monthlyOps = useMemo(
+    () => filterMonthlyOpsByAccounts(allMonthlyOps, filters.accounts),
+    [allMonthlyOps, filters.accounts],
+  );
+  const passiveIncome = usePassiveIncome(
+    filters.accounts,
+    filters.dateFrom,
+    filters.dateTo,
+  );
+  const typeHistory = useAccountTypeHistory(filters.accounts);
+  const displayedTypeHistory = useMemo(
+    () =>
+      filterPointsByPeriod(typeHistory.data, filters.dateFrom, filters.dateTo),
+    [typeHistory.data, filters.dateFrom, filters.dateTo],
+  );
 
   const accountTypeData = useMemo(
-    () => buildAccountTypeBreakdown(filtered),
-    [filtered],
-  )
+    () => buildAccountTypeBreakdown(currentPositions),
+    [currentPositions],
+  );
+  const performance = useMemo(
+    () => computePerformanceSummary(currentPositions),
+    [currentPositions],
+  );
+  const trailingIncome = useMemo(
+    () =>
+      computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
+    [currentPositions, displayedHistory],
+  );
+  const lookThroughConcentration = useMemo(
+    () => computeConcentration(tableFiltered, fundHoldings),
+    [tableFiltered, fundHoldings],
+  );
+  const heldAssetConcentration = useMemo(
+    () => computeHeldAssetConcentration(tableFiltered),
+    [tableFiltered],
+  );
+  const coverage = useMemo(
+    () =>
+      rawAllocationData.loading
+        ? []
+        : computeAllocationCoverageByAccount(
+            currentPositions,
+            rawAllocationData,
+          ),
+    [currentPositions, rawAllocationData],
+  );
+  const unallocatedPct = useMemo(() => {
+    if (rawAllocationData.loading) return null;
+    const allocated = coverage.reduce((sum, item) => sum + item.allocated, 0);
+    const unallocated = coverage.reduce(
+      (sum, item) => sum + item.unallocated,
+      0,
+    );
+    const notApplicable = coverage.reduce(
+      (sum, item) => sum + item.notApplicable,
+      0,
+    );
+    return partitionPercentages([allocated, unallocated, notApplicable])[1];
+  }, [coverage, rawAllocationData.loading]);
 
-  const tableData = useMemo(
-    () => sortPositionsForTable(filtered, filters.hideClosedPositions, allAccountTypes, sortKey, sortDir),
-    [filtered, filters.hideClosedPositions, allAccountTypes, sortKey, sortDir],
-  )
+  const scopedFundQuality = useMemo(
+    () =>
+      scopeFundQualityData(
+        currentPositions,
+        fundData.holdings,
+        fundData.statuses,
+        fundData.snapshots,
+        fundData.unresolved,
+        fundData.report,
+      ),
+    [
+      currentPositions,
+      fundData.holdings,
+      fundData.statuses,
+      fundData.snapshots,
+      fundData.unresolved,
+      fundData.report,
+    ],
+  );
+
+  function handleSort(key: SortKey) {
+    if (key === sortKey)
+      setSortDir((direction) => (direction === "desc" ? "asc" : "desc"));
+    else {
+      setSortKey(key);
+      setSortDir("desc");
+    }
+  }
+
+  const hasFundValidationError = scopedFundQuality.statuses.some(
+    (status) => status.validationStatus === "error",
+  );
+  const unresolvedFundValue = scopedFundQuality.report
+    ? scopedFundQuality.report.undisclosedFundValue +
+      scopedFundQuality.report.opaqueValue
+    : 0;
+  const identifiedFundValue = scopedFundQuality.report
+    ? scopedFundQuality.report.directIdentifiedValue +
+      scopedFundQuality.report.decomposedValue
+    : 0;
+  const [, unresolvedFundPct] = partitionPercentages([
+    identifiedFundValue,
+    unresolvedFundValue,
+    scopedFundQuality.notApplicableValue,
+  ]);
+  const qualityCount =
+    Number(pipelineErrors.length > 0) +
+    Number(manualPriceOverrides.length > 0) +
+    Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
+    Number(hasFundValidationError || hasMaterialQualityGap(unresolvedFundPct));
+  const copy = TAB_COPY[activeTab];
+  const filterVisibility = filterVisibilityForTab(activeTab);
+  const activeFilterSummaries = filterSummaries(
+    filters,
+    accountFilterLabels,
+    filterVisibility,
+  );
+
+  function handleResetFilters() {
+    setFilters(resetFilters());
+    setAllocationFilter(null);
+  }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
-      <div className="max-w-screen-2xl mx-auto">
-        <div className="flex items-center mb-6">
-          <h1 className="text-2xl font-bold text-white">Portfolio</h1>
+    <div className="min-h-screen bg-gray-950 p-4 text-gray-100 sm:p-6">
+      <div className="mx-auto max-w-screen-2xl">
+        <header className="mb-5 flex items-start gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Portfolio</h1>
+          </div>
           <button
-            onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-            className="ml-auto text-xs px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-gray-300 hover:border-gray-600 transition-colors cursor-pointer"
+            onClick={() =>
+              setTheme((value) => (value === "dark" ? "light" : "dark"))
+            }
+            className="ml-auto rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-600 hover:text-gray-300"
           >
-            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            {theme === "dark" ? "Light mode" : "Dark mode"}
           </button>
-        </div>
+        </header>
+
         {loading && <p className="text-gray-400">Loading…</p>}
         {error && <p className="text-red-400">Error: {error}</p>}
         {!loading && !error && (
           <>
-            <FilterBar
+            <nav
+              className="mb-5 flex overflow-x-auto border-b border-gray-800"
+              aria-label="Portfolio analyses"
+            >
+              {PRIMARY_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-blue-500 text-white" : "border-transparent text-gray-500 hover:text-gray-300"}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setActiveTab("quality")}
+                className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-blue-500 border-l-gray-800 text-white" : "border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300"}`}
+              >
+                Data quality
+                {qualityCount > 0 && (
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${pipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
+                  >
+                    {qualityCount}
+                  </span>
+                )}
+              </button>
+            </nav>
+
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-white">
+                  {copy.title}
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">{copy.description}</p>
+              </div>
+              <FilterButton
+                activeCount={activeFilterSummaries.length}
+                open={filtersOpen}
+                onClick={() => setFiltersOpen(true)}
+              />
+            </div>
+
+            <ActiveFilterSummary
+              items={activeFilterSummaries}
+              onRemove={(item) =>
+                setFilters((current) => clearFilterGroup(current, item.key))
+              }
+              onReset={handleResetFilters}
+            >
+              {activeTab === "allocation" && allocationFilter && (
+                <FilterChipBar
+                  filter={allocationFilter}
+                  onRemove={() => setAllocationFilter(null)}
+                />
+              )}
+            </ActiveFilterSummary>
+
+            <FilterPanel
               allAccountTypes={allAccountTypes}
               accountToType={accountToType}
               allAccounts={allAccounts}
@@ -141,66 +533,110 @@ export default function App() {
               allOperationTypes={allOperationTypes}
               filters={filters}
               onChange={setFilters}
+              visibility={filterVisibility}
+              open={filtersOpen}
+              onClose={() => setFiltersOpen(false)}
+              onReset={handleResetFilters}
+              demoPresetSelection={demoPresetSelection}
+              demoPresetActive={demoPresetActive}
             />
-            <KpiBar rows={filtered} globalTri={globalTri} />
-            <div className="flex gap-1 mb-4 border-b border-gray-800">
-              {([
-                ['charts', 'Charts'],
-                ['allocation', 'Allocation'],
-                ['table', 'Detailed table'],
-              ] as const).map(([tab, label]) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-                    activeTab === tab
-                      ? 'bg-gray-900 text-white border border-b-0 border-gray-700'
-                      : 'text-gray-500 hover:text-gray-300'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-              <button
-                onClick={() => setActiveTab('errors')}
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors flex items-center gap-2 ${
-                  activeTab === 'errors'
-                    ? 'bg-gray-900 text-white border border-b-0 border-gray-700'
-                    : 'text-gray-500 hover:text-gray-300'
-                }`}
-              >
-                Anomalies
-                {pipelineErrors.length > 0 && (
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
-                    pipelineErrors.some((e) => e.level === 'error')
-                      ? 'bg-red-800 text-red-200'
-                      : 'bg-yellow-800 text-yellow-200'
-                  }`}>
-                    {pipelineErrors.length}
-                  </span>
-                )}
-                {manualPriceOverrides.length > 0 && (
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-900/60 text-blue-300">
-                    {manualPriceOverrides.length} manual
-                  </span>
-                )}
-              </button>
-            </div>
-            {activeTab === 'charts' && filteredHistory.length > 0 && (
-              <PortfolioCharts history={filteredHistory} accounts={filters.accounts} accountTypeData={accountTypeData} positions={filtered} dateFrom={filters.dateFrom} dateTo={filters.dateTo} />
+
+            {activeTab === "overview" && (
+              <OverviewTab
+                history={displayedHistory}
+                performance={performance}
+                drivers={drivers}
+                income={trailingIncome}
+                heldAssetConcentration={heldAssetConcentration}
+                lookThroughConcentration={lookThroughConcentration}
+                globalTri={globalTri}
+                irrStatus={irrStatus}
+                irrScopeLabel={irrScopeLabel}
+                periodLabel={periodLabel(filters.dateFrom, filters.dateTo)}
+              />
             )}
-            {activeTab === 'allocation' && (
-              <AllocationCharts positions={filtered} accountLabels={accountLabels} />
+            {activeTab === "wealth" && (
+              <WealthTab
+                history={displayedHistory}
+                accountTypeData={accountTypeData}
+                accountTypeHistory={displayedTypeHistory}
+                accountTypes={typeHistory.accountTypes}
+                typeCategories={typeHistory.typeCategories}
+                savings={trailingSavings}
+                monthlyOps={monthlyOps}
+                drivers={wealthDrivers}
+                trailingYearComparison={trailingYearComparison}
+                annualIncomeSavings={annualIncomeSavings}
+              />
             )}
-            {activeTab === 'table' && (
-              <PositionsTable data={tableData} groupByType={allAccountTypes.length > 0} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+            {activeTab === "performance" && (
+              <PerformanceTab
+                history={displayedHistory}
+                passiveIncome={passiveIncome}
+                rawPositions={rawPositions}
+                rawOperations={rawOperations}
+                accountFilters={filters.accounts}
+                accountTypeFilters={filters.accountTypes}
+                dateFrom={filters.dateFrom}
+                performance={performance}
+                income={trailingIncome}
+                globalTri={globalTri}
+                irrStatus={irrStatus}
+                irrScopeLabel={irrScopeLabel}
+              />
             )}
-            {activeTab === 'errors' && (
-              <ErrorsTab errors={pipelineErrors} manualPriceOverrides={manualPriceOverrides} />
+            {activeTab === "allocation" && (
+              <AllocationCharts
+                positions={currentPositions}
+                fundHoldings={fundHoldings}
+                fundReport={scopedFundQuality.report}
+                accountFilters={filters.accounts}
+                dateFrom={filters.dateFrom}
+                dateTo={filters.dateTo}
+                activeFilter={allocationFilter}
+                onActiveFilterChange={setAllocationFilter}
+              />
+            )}
+            {activeTab === "underlying" && (
+              <FundLookThroughTab
+                positions={currentPositions}
+                holdings={fundHoldings}
+                statuses={fundData.statuses}
+                query={underlyingQuery}
+                onQueryChange={setUnderlyingQuery}
+              />
+            )}
+            {activeTab === "positions" && (
+              <PositionsTable
+                data={tableData}
+                groupByType={allAccountTypes.length > 0}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
+                fundHoldings={fundHoldings}
+                fundStatuses={fundData.statuses}
+                onOpenCompleteHoldings={(fundName) => {
+                  setUnderlyingQuery(fundName);
+                  setActiveTab("underlying");
+                }}
+              />
+            )}
+            {activeTab === "quality" && (
+              <DataQualityTab
+                positions={currentPositions}
+                accountLabels={accountLabels}
+                errors={pipelineErrors}
+                manualPriceOverrides={manualPriceOverrides}
+                fundStatuses={fundData.statuses}
+                fundReport={fundData.report}
+                fundHoldings={fundData.holdings}
+                fundSnapshots={fundData.snapshots}
+                fundUnresolved={fundData.unresolved}
+              />
             )}
           </>
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,6 +1,7 @@
 import type { RawOperation, RawPosition, PositionRow, GroupRow, OperationRow } from '@/types/domain'
 import { CATEGORY_ORDER, CASH_SUFFIX } from '@/shared/constants/accountCategories'
 import { parseNum } from '@/shared/csv/parseNum'
+import { assetDisplayLabel } from '@/shared/format/assetLabel'
 
 function assetKey(op: RawOperation): string {
   return op.isin || op.ticker || op.name
@@ -217,7 +218,10 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
     rows.push({
       kind: 'position',
       id: key,
-      name: lp?.name || first.name || first.ticker || key,
+      name: assetDisplayLabel({
+        name: lp?.name || first.name,
+        ticker: lp?.ticker || first.ticker,
+      }, key),
       ticker: lp?.ticker || first.ticker || '',
       isin: lp?.isin || first.isin || '',
       account,

@@ -1,9 +1,11 @@
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import { shortMonth } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
-import { groupTail } from './allocationCharts.logic'
+import { allocationTrendDomain, groupTail } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
+import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
 
 interface EvoCardProps {
@@ -12,9 +14,13 @@ interface EvoCardProps {
   dimension: AllocationDimension
   activeFilter: AllocationFilter | null
   onFilterToggle: (filter: AllocationFilter) => void
+  dateFrom?: string
+  dateTo?: string
+  onShowPositions?: () => void
+  positionsOpen?: boolean
 }
 
-export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle }: EvoCardProps) {
+export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, dateFrom, dateTo, onShowPositions, positionsOpen = false }: EvoCardProps) {
   const last = points[points.length - 1]
   const { main, grouped } = groupTail(last.categories)
   const groupedNames = new Set(grouped.map((c) => c.name))
@@ -23,7 +29,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
 
   const chartData = points.map((pt) => {
     const rowTotal = pt.categories.reduce((s, c) => s + c.value, 0)
-    const row: Record<string, string | number> = { date: pt.date }
+    const row: Record<string, string | number> = { date: Date.parse(`${pt.date}T00:00:00Z`) }
     for (const cat of main.map((c) => c.name)) {
       const v = pt.categories.find((c) => c.name === cat)?.value ?? 0
       row[cat] = rowTotal > 0 ? parseFloat(((v / rowTotal) * 100).toFixed(2)) : 0
@@ -36,10 +42,14 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
   })
 
   const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
+  const dateDomain = allocationTrendDomain(points, dateFrom, dateTo)
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
-      <h2 className="text-sm font-medium text-gray-400 mb-2">{title}</h2>
+      <div className="mb-2 flex items-start justify-between gap-3">
+        <h2 className="text-sm font-medium text-gray-400">{title}</h2>
+        {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
+      </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
         {categories.map((cat) => {
           if (cat.startsWith('others (')) return (
@@ -77,9 +87,19 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
               </linearGradient>
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+          <XAxis
+            dataKey="date"
+            type="number"
+            scale="time"
+            domain={dateDomain}
+            allowDataOverflow
+            tickFormatter={(timestamp) => shortMonth(new Date(timestamp).toISOString())}
+            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
           <Tooltip content={(props) => <EvolutionTooltip {...props} categories={categories} />} />
           {categories.map((cat, i) => (
             <Area

@@ -1,5 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { fmtEur, shortMonth } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
 import { typeColor } from '@/shared/format/colors'
 import { AccountTypeHistoryTooltip } from './portfolioCharts.tooltips'
 import type { AccountTypeHistoryPoint } from '@/hooks/useAccountTypeHistory'
@@ -24,9 +25,9 @@ export function AccountTypeHistoryChart({
               </linearGradient>
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis tickFormatter={fmtEur} tick={{ fill: '#9ca3af', fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <Tooltip content={(props) => <AccountTypeHistoryTooltip {...props} accountTypes={accountTypes} typeCategories={typeCategories} />} />
           <Legend formatter={(value) => <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>} />
           {accountTypes.map((t, i) => (

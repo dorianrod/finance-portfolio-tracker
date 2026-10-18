@@ -33,13 +33,6 @@ jobs:
         working-directory: packages/pipeline
         run: pip install .
 
-      - name: Generate the example portfolio (finance-init + finance-pipeline)
-        run: |
-          mkdir -p /tmp/demo-data
-          cd /tmp/demo-data
-          finance-init
-          finance-pipeline --update-current-month no --price-jump-policy fetched
-
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -50,20 +43,12 @@ jobs:
         working-directory: packages/dashboard
         run: npm ci
 
-      - name: Copy the example portfolio's output into the build
-        run: |
-          mkdir -p packages/dashboard/public/data
-          cp /tmp/demo-data/data/output/*.csv packages/dashboard/public/data/
-
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v6
 
-      - name: Build (tsc + vite, project-site base path)
-        working-directory: packages/dashboard
-        run: |
-          npx tsc -b
-          npx vite build --base="${{ steps.pages.outputs.base_path }}/"
+      - name: Generate and build the static demo
+        run: make dashboard-demo-build DEMO_BASE="${{ steps.pages.outputs.base_path }}/"
 
       - uses: actions/upload-pages-artifact@v5
         with:

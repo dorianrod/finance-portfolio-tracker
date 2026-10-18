@@ -55,6 +55,29 @@ def test_portfolio_performance_simple_two_months():
     assert list(result["cum_perf"]) == [0.0, 100.0]
 
 
+def test_portfolio_performance_only_uses_explicit_external_flows():
+    positions_df = pd.DataFrame(
+        {
+            "snapshot_date": pd.to_datetime(
+                ["2023-01-31", "2023-02-28"]
+            ),
+            "total_value": [1000.0, 1100.0],
+        }
+    )
+    operations_df = pd.DataFrame(
+        {
+            "date": pd.to_datetime(["2023-01-01", "2023-02-15"]),
+            "operation_type": ["DEPOSIT", "DIVIDEND"],
+            "total_amount": [1000.0, 100.0],
+        }
+    )
+
+    result = portfolio_performance(positions_df, operations_df)
+
+    assert list(result["flows"]) == [1000.0, 0.0]
+    assert list(result["monthly_perf"]) == [0.0, 100.0]
+
+
 def test_monthly_dietz_returns_without_cash_df():
     positions_df = pd.DataFrame(
         {

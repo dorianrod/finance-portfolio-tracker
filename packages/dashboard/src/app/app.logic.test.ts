@@ -134,7 +134,7 @@ describe('applyPositionFilters', () => {
 
 describe('applyAccountFilterToHistory', () => {
   const enrichedHistory: PortfolioHistoryPoint[] = [
-    { date: '2024-01-01', total_value: 999, total_cost_basis: 999, unrealized_gain: 999, net_cash_injected: 0, cash_delta: null, tri: 1.5, tri_rolling_3y: null, total_broker_cash: 50 },
+    { date: '2024-01-01', total_value: 999, total_cost_basis: 999, unrealized_gain: 999, net_cash_injected: 0, cash_delta: null, tri: 1.5, tri_rolling_1y: null, tri_rolling_3y: null, total_broker_cash: 50 },
   ]
 
   function rawRow(overrides: Partial<RawPositionRow>): RawPositionRow {
@@ -169,6 +169,7 @@ describe('applyAccountFilterToHistory', () => {
       net_cash_injected: 0,
       cash_delta: null,
       tri: null,
+      tri_rolling_1y: null,
       tri_rolling_3y: null,
       total_broker_cash: 0,
     }])

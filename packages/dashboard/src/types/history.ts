@@ -6,6 +6,7 @@ export interface RawPortfolioHistory {
   net_cash_injected: string
   cash_delta: string
   tri: string
+  tri_rolling_1y: string
   tri_rolling_3y: string
 }
 
@@ -17,9 +18,12 @@ export interface PortfolioHistoryPoint {
   net_cash_injected: number
   cash_delta: number | null
   tri: number | null
+  tri_rolling_1y: number | null
   tri_rolling_3y: number | null
   total_broker_cash?: number
 }
+
+export type IrrStatus = 'ready' | 'loading' | 'error'
 
 export interface AccountTypePoint {
   account_type: string

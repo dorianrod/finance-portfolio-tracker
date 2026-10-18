@@ -22,6 +22,7 @@ from src.application.portfolio_snapshot_builder import (
 )
 from src.domain.errors import ErrorCollector
 from src.domain.models import Operation, Position
+from src.domain.reporting.annual_income_savings import annual_income_savings
 from src.domain.reporting.portfolio_history import portfolio_history_snapshot
 from src.domain.reporting.positions_allocation import (
     build_positions_allocation,
@@ -32,11 +33,12 @@ from src.domain.reporting.saving_capacity import (
     saving_capacity_snapshot,
 )
 from src.domain.tri import _xirr as _xirr_impl
-from src.domain.tri import portfolio_xirr
+from src.domain.tri import portfolio_opening_valuations, portfolio_xirr
 from src.ports.account_groups import AccountGroupsRepository
 from src.ports.allocation_repository import AllocationRepository
 from src.ports.asset_prices import AssetPriceRepository
 from src.ports.output_writer import PortfolioOutputWriter
+from src.ports.salaries import SalariesRepository
 
 _POSITIONS_COLS = [
     "snapshot_date",
@@ -212,7 +214,12 @@ def _enrich_with_returns(
         is_synthetic_cash = account_category == "brokerage" and str(
             row.get("name", "")
         ).startswith("Cash ")
-        returns_enabled = not is_livret and not is_synthetic_cash
+        is_checking = account_category == "checking"
+        returns_enabled = not (
+            is_livret
+            or is_synthetic_cash
+            or is_checking
+        )
 
         if not returns_enabled:
             xirr_vals.append(None)
@@ -347,6 +354,7 @@ class IngestPortfolioUseCase:
     snapshot_builder: PortfolioSnapshotBuilder
     error_detector: PortfolioErrorDetector
     output_writer: PortfolioOutputWriter
+    salaries_repo: SalariesRepository
 
     def execute(self) -> None:
         today = date.today()
@@ -460,7 +468,12 @@ class IngestPortfolioUseCase:
         )
 
         global_tri = portfolio_xirr(
-            all_operations, snapshot.total_value, today
+            all_operations,
+            snapshot.total_value,
+            today,
+            opening_values_by_account=portfolio_opening_valuations(
+                all_positions
+            ),
         )
         global_tri_pct = (
             round(global_tri * 100, 2) if global_tri is not None else None
@@ -487,7 +500,23 @@ class IngestPortfolioUseCase:
         saving_cap_df = saving_capacity_snapshot(history_df)
         self.output_writer.write_saving_capacity(saving_cap_df)
 
-        saving_cap_by_account_df = saving_capacity_per_account(all_positions)
+        try:
+            salaries_df = self.salaries_repo.load_salaries()
+        except Exception as exc:
+            errors.add(
+                source="salaries.csv",
+                level="error",
+                type="invalid_salary_data",
+                message=f"Could not read salaries.csv: {exc}",
+            )
+            salaries_df = pd.DataFrame()
+        self.output_writer.write_annual_income_savings(
+            annual_income_savings(salaries_df, saving_cap_df, errors)
+        )
+
+        saving_cap_by_account_df = saving_capacity_per_account(
+            all_positions, all_operations
+        )
         self.output_writer.write_saving_capacity_by_account(
             saving_cap_by_account_df
         )
@@ -495,12 +524,14 @@ class IngestPortfolioUseCase:
         # Allocation time-series per category (geo, secteur, currency, classe).
         # build_positions_allocation*() already return {} when the
         # allocation_repo has no files, so no existence guard is needed here.
-        positions_raw_df = _tag_account(
-            _enrich_with_returns(
-                _positions_to_df(all_positions),
-                all_operations,
-                account_type_map,
-                account_category_map,
+        positions_raw_df = _tag_cash_positions(
+            _tag_account(
+                _enrich_with_returns(
+                    _positions_to_df(all_positions),
+                    all_operations,
+                    account_type_map,
+                    account_category_map,
+                )
             )
         )
         alloc_dfs = build_positions_allocation(

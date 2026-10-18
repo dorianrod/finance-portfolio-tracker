@@ -9,6 +9,7 @@ import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/types/domain'
 import type { SortKey } from '@/types/filters'
 import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
+import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { gainClass } from './positionsTable.logic'
 import { GainCell, UnrealizedGainCell, RealizedGainCell } from './GainCells'
 import { ExpandBtn } from './ExpandBtn'
@@ -18,6 +19,17 @@ import { HoverSavingsChart, type SavingsChartTarget } from '@/features/hover-cha
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/features/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/hooks/useAllocationByIsin'
 import { CASH_SUFFIX } from '@/shared/constants/accountCategories'
+import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
+import {
+  FundPositionPopover,
+  type FundPositionPopoverTarget,
+} from '@/features/fund-holdings/FundPositionPopover'
+import {
+  FUND_QUALITY_LABELS,
+  fundQualityCategory,
+  fundQualitySourceLabel,
+  statusForPosition,
+} from '@/features/fund-holdings/fundHoldings.logic'
 
 const col = createColumnHelper<TableRow>()
 
@@ -34,18 +46,30 @@ interface Props {
   sortKey: SortKey
   sortDir: 'asc' | 'desc'
   onSort: (key: SortKey) => void
+  fundHoldings?: FundHolding[]
+  fundStatuses?: FundHoldingStatus[]
+  onOpenCompleteHoldings?: (fundName: string) => void
 }
 
-export function PositionsTable({ data, groupByType = false, sortKey, sortDir, onSort }: Props) {
+export function PositionsTable({
+  data, groupByType = false, sortKey, sortDir, onSort,
+  fundHoldings = [], fundStatuses = [], onOpenCompleteHoldings,
+}: Props) {
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
+  const [underlyingPopover, setUnderlyingPopover] = useState<FundPositionPopoverTarget | null>(null)
   const { data: allocationData } = useAllocationByIsin()
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const cancelHide = () => { if (hideTimeout.current) clearTimeout(hideTimeout.current) }
   const scheduleHide = () => {
-    hideTimeout.current = setTimeout(() => { setChart(null); setSavingsChart(null); setAllocationHover(null) }, 200)
+    hideTimeout.current = setTimeout(() => {
+      setChart(null)
+      setSavingsChart(null)
+      setAllocationHover(null)
+      setUnderlyingPopover(null)
+    }, 200)
   }
 
   const groupTotals = useMemo(() => {
@@ -100,15 +124,15 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           )
         }
         if (r.kind === 'group') {
-          return <span className="text-sm font-semibold text-blue-300">{r.label}</span>
+          return <span className="text-sm font-semibold text-gray-300">{r.label}</span>
         }
         if (r.kind === 'operation') {
           return (
             <span className="flex items-center gap-2 text-sm">
               <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${
-                r.operation_type === 'BUY' ? 'bg-blue-900 text-blue-300' :
-                r.operation_type === 'SELL' ? 'bg-orange-900 text-orange-300' :
-                'bg-purple-900 text-purple-300'
+                r.operation_type === 'BUY' ? SEMANTIC_BADGE_CLASSES.transactionBuy :
+                r.operation_type === 'SELL' ? SEMANTIC_BADGE_CLASSES.transactionSell :
+                SEMANTIC_BADGE_CLASSES.transactionOther
               }`}>{r.operation_type}</span>
               <span className="text-gray-400">{r.date}</span>
               <span className="text-gray-500 text-xs">{r.account}</span>
@@ -124,20 +148,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const allocKey = r.isin || `NC-${r.name}`
-          const allocation = allocationData.get(allocKey)
-          const showAllocation = (button: HTMLButtonElement) => {
-            if (!allocation) return
-            cancelHide()
-            setChart(null)
-            setSavingsChart(null)
-            setAllocationHover({
-              isin: allocKey,
-              name: r.name,
-              buttonRect: button.getBoundingClientRect(),
-              allocation,
-            })
-          }
           const showQuantity = r.account_category === 'brokerage'
             && !r.account_type?.endsWith(CASH_SUFFIX)
             && r.quantity != null
@@ -147,28 +157,6 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                 {r.total_value != null
                   ? <span className="text-white font-medium">{fmt.format(r.total_value)}</span>
                   : <span className="text-gray-500">—</span>}
-                {allocation && (
-                  <button
-                    type="button"
-                    aria-label={`View allocations for ${r.name}`}
-                    title="View asset allocations"
-                    className="shrink-0 rounded p-0.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
-                    onMouseEnter={(event) => showAllocation(event.currentTarget)}
-                    onMouseLeave={scheduleHide}
-                    onFocus={(event) => showAllocation(event.currentTarget)}
-                    onBlur={scheduleHide}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      showAllocation(event.currentTarget)
-                    }}
-                  >
-                    <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
-                      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M8 1.75A6.25 6.25 0 0 1 14.25 8H8Z" fill="currentColor" />
-                      <path d="M8 8l-4.42 4.42" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  </button>
-                )}
               </span>
               {showQuantity && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -195,9 +183,9 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Deposits / Withdrawals') {
           return (
             <span className="text-xs flex flex-col gap-0.5">
-              <span className="text-blue-300 underline decoration-dashed decoration-blue-400/50 underline-offset-2">Deposited: {fmt.format(r.deposit_total ?? 0)}</span>
+              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>Deposited: {fmt.format(r.deposit_total ?? 0)}</span>
               {(r.withdrawal_total ?? 0) > 0 && (
-                <span className="text-red-300">Withdrawn: {fmt.format(r.withdrawal_total ?? 0)}</span>
+                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>Withdrawn: {fmt.format(r.withdrawal_total ?? 0)}</span>
               )}
             </span>
           )
@@ -206,6 +194,80 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           return <span className="text-sm text-gray-300">{fmtDec.format(Math.abs(r.total_amount))}</span>
         }
         return null
+      },
+    }),
+    col.display({
+      id: 'breakdown',
+      header: () => <span className="normal-case" title="Position-level allocation and underlying-assets breakdowns.">Breakdown</span>,
+      cell: ({ row }) => {
+        const r = row.original
+        if (r.kind !== 'position') return null
+        const allocKey = r.isin || `NC-${r.name}`
+        const allocation = allocationData.get(allocKey)
+        const fundStatus = statusForPosition(r, fundStatuses)
+        const showAllocation = (button: HTMLButtonElement) => {
+          if (!allocation) return
+          cancelHide()
+          setChart(null)
+          setSavingsChart(null)
+          setUnderlyingPopover(null)
+          setAllocationHover({
+            isin: allocKey,
+            name: r.name,
+            buttonRect: button.getBoundingClientRect(),
+            allocation,
+          })
+        }
+        const showUnderlying = (button: HTMLButtonElement) => {
+          if (!fundStatus) return
+          cancelHide()
+          setChart(null)
+          setSavingsChart(null)
+          setAllocationHover(null)
+          setUnderlyingPopover({
+            position: r,
+            status: fundStatus,
+            buttonRect: button.getBoundingClientRect(),
+          })
+        }
+        return (
+          <span className="relative mx-auto grid w-[68px] grid-cols-2 place-items-center gap-1">
+            {allocation && (
+              <button
+                type="button"
+                aria-label={`View allocations for ${r.name}`}
+                title="View asset allocations"
+                className="shrink-0 rounded p-1.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                onMouseEnter={(event) => showAllocation(event.currentTarget)}
+                onMouseLeave={scheduleHide}
+                onFocus={(event) => showAllocation(event.currentTarget)}
+                onBlur={scheduleHide}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  showAllocation(event.currentTarget)
+                }}
+              >
+                <svg viewBox="0 0 20 20" className="size-5" aria-hidden="true">
+                  <circle cx="10" cy="10" r="7.75" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M10 2.25A7.75 7.75 0 0 1 17.75 10H10Z" fill="currentColor" />
+                  <path d="M10 10 4.52 15.48" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              </button>
+            )}
+            {!allocation && <span className="block size-8" aria-hidden="true" />}
+            {fundStatus && (
+              <UnderlyingStatusButton
+                status={fundStatus}
+                assetName={r.name}
+                isOpen={underlyingPopover?.position.id === r.id}
+                onShow={showUnderlying}
+                onHide={scheduleHide}
+              />
+            )}
+            {!fundStatus && <span className="block size-8" aria-hidden="true" />}
+            {!allocation && !fundStatus && <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-700">—</span>}
+          </span>
+        )
       },
     }),
     col.display({
@@ -275,8 +337,8 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           return (
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
-                {hasDivs && <span className="text-purple-300">{fmt.format(r.total_dividends)}</span>}
-                {hasInt && <span className="text-blue-300">{fmt.format(r.total_interest)} int.</span>}
+                {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends)}</span>}
+                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest)} int.</span>}
               </span>
               {divTax != null && divTax > 0 && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -297,7 +359,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Dividends') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-purple-300">{fmt.format(r.total_dividends ?? 0)}</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends ?? 0)}</span>
               <span className="text-gray-400">({r.dividend_count} payments, ~{fmt.format(r.annualized_dividends ?? 0)}/yr)</span>
             </span>
           )
@@ -305,16 +367,16 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         if (r.kind === 'group' && r.label === 'Interest') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-blue-300">{fmt.format(r.total_interest ?? 0)}</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest ?? 0)}</span>
               <span className="text-gray-400">({r.interest_count} payments)</span>
             </span>
           )
         }
         if (r.kind === 'operation' && r.operation_type === 'DIVIDEND') {
-          return <span className="text-sm text-purple-300">{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
         }
         if (r.kind === 'operation' && r.operation_type === 'INTEREST') {
-          return <span className="text-sm text-blue-300">{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
         }
         return null
       },
@@ -356,7 +418,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         )
       },
     }),
-  ], [setChart, sortKey, sortDir, onSort, allocationData])
+  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, underlyingPopover])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
   // call, which the React Compiler can never safely memoize — not fixable here.
@@ -393,8 +455,9 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
         <table className="w-full text-sm text-left table-fixed">
           <colgroup>
             <col style={{ width: '28px' }} />
-            <col style={{ width: '34%' }} />
+            <col style={{ width: '27%' }} />
             <col style={{ width: '9%' }} />
+            <col style={{ width: '8%' }} />
             <col style={{ width: '9%' }} />
             <col style={{ width: '9%' }} />
             <col style={{ width: '9%' }} />
@@ -444,7 +507,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
-                      setSavingsChart(null); setAllocationHover(null)
+                      setSavingsChart(null); setAllocationHover(null); setUnderlyingPopover(null)
                       setChart({ isin: posKey, name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
                     },
                     onMouseLeave: scheduleHide,
@@ -463,7 +526,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
-                      setChart(null); setAllocationHover(null)
+                      setChart(null); setAllocationHover(null); setUnderlyingPopover(null)
                       setSavingsChart({ name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
                     },
                     onMouseLeave: scheduleHide,
@@ -486,6 +549,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                         <td className={`${td} text-gray-200 font-medium`}>
                           {totals && totals.value > 0 ? fmt.format(totals.value) : ''}
                         </td>
+                        <td className={td} />
                         <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
                           {totals && totals.unrealized !== 0 ? fmt.format(totals.unrealized) : ''}
                         </td>
@@ -495,7 +559,7 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
                         <td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>
                           {totals && totals.totalRealized !== 0 ? fmt.format(totals.totalRealized) : ''}
                         </td>
-                        <td className={`${td} text-purple-300`}>
+                        <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
                           {totals && totals.dividends !== 0 ? fmt.format(totals.dividends) : ''}
                         </td>
                         <td className={td} />
@@ -562,6 +626,65 @@ export function PositionsTable({ data, groupByType = false, sortKey, sortDir, on
           onMouseLeave={scheduleHide}
         />
       )}
+
+      {underlyingPopover && (
+        <FundPositionPopover
+          target={underlyingPopover}
+          holdings={fundHoldings}
+          onOpenComplete={onOpenCompleteHoldings}
+          onMouseEnter={cancelHide}
+          onMouseLeave={scheduleHide}
+        />
+      )}
     </div>
+  )
+}
+
+function UnderlyingStatusButton({
+  status,
+  assetName,
+  isOpen,
+  onShow,
+  onHide,
+}: {
+  status: FundHoldingStatus
+  assetName: string
+  isOpen: boolean
+  onShow: (button: HTMLButtonElement) => void
+  onHide: () => void
+}) {
+  const category = fundQualityCategory(status.qualityTier)
+  const label = FUND_QUALITY_LABELS[category]
+  const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${status.explainedPct.toFixed(1)} % expliqué`
+  const tone = category === 'reliable'
+    ? 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500'
+    : category === 'partial'
+      ? 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500'
+      : 'text-red-400 hover:bg-red-950/60 hover:text-red-300 focus-visible:ring-red-500'
+
+  return (
+    <button
+      type="button"
+      aria-label={`${title} pour ${assetName}. ${isOpen ? 'Masquer' : 'Afficher'} la composition.`}
+      aria-expanded={isOpen}
+      title={`${title} · ${isOpen ? 'Masquer' : 'Afficher'} la composition`}
+      className={`rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 ${tone} ${isOpen ? 'bg-gray-800 ring-1 ring-current/40' : ''}`}
+      onMouseEnter={(event) => onShow(event.currentTarget)}
+      onMouseLeave={onHide}
+      onFocus={(event) => onShow(event.currentTarget)}
+      onBlur={onHide}
+      onClick={(event) => {
+        event.stopPropagation()
+        onShow(event.currentTarget)
+      }}
+    >
+      <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <rect x="7" y="2.25" width="6" height="4" rx="1" />
+        <path d="M10 6.25v3.25M4.5 9.5h11M4.5 9.5v2.25M10 9.5v2.25M15.5 9.5v2.25" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="2.25" y="11.75" width="4.5" height="4" rx="1" />
+        <rect x="7.75" y="11.75" width="4.5" height="4" rx="1" />
+        <rect x="13.25" y="11.75" width="4.5" height="4" rx="1" />
+      </svg>
+    </button>
   )
 }

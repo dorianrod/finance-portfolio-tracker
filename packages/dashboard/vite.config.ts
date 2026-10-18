@@ -45,7 +45,21 @@ function serveFinanceData(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), serveFinanceData()],
+  // The demo builder uses an isolated public directory so generated fixtures
+  // never overwrite (or accidentally include) files from a developer's tree.
+  publicDir: process.env.FINANCE_DEMO_PUBLIC_DIR || 'public',
+  // Static demo builds already contain their synthetic CSVs. In particular,
+  // do not let `vite preview` shadow them with the developer's local data.
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(process.env.VITE_STATIC_DEMO === 'true' ? [] : [serveFinanceData()]),
+  ],
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8788',
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

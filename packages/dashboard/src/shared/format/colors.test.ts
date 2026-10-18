@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { catColor, typeColor } from './colors'
 
 describe('catColor', () => {
-  it('assigns the fixed "nc" and "autre"/"others (n)" categories their dedicated colors', () => {
+  it('assigns fixed colors to nc, Not concerned, and autre/others categories', () => {
     expect(catColor('nc')).toBe('#374151')
+    expect(catColor('Not concerned')).toBe('#94a3b8')
     expect(catColor('autre')).toBe('#6b7280')
     expect(catColor('Autre')).toBe('#6b7280')
     expect(catColor('others (3)')).toBe('#6b7280')

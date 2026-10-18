@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { accountLabel, toggle, presetDateFrom } from './filterBar.logic'
+import type { Filters } from '@/types/filters'
+import {
+  accountLabel,
+  clearFilterGroup,
+  filterSummaries,
+  filterVisibilityForTab,
+  presetDateFrom,
+  resetFilters,
+  toggle,
+} from './filterBar.logic'
+
+function filters(overrides: Partial<Filters> = {}): Filters {
+  return {
+    accountTypes: new Set(),
+    accounts: new Set(),
+    operationTypes: new Set(),
+    hideClosedPositions: true,
+    ...overrides,
+  }
+}
 
 describe('accountLabel', () => {
   it('uses the provided label when one exists for the account', () => {
@@ -36,5 +55,75 @@ describe('presetDateFrom', () => {
     const d = new Date(now)
     d.setMonth(d.getMonth() - 6)
     expect(presetDateFrom(6)).toBe(d.toISOString().slice(0, 10))
+  })
+})
+
+describe('filterVisibilityForTab', () => {
+  it.each(['overview', 'wealth', 'performance', 'allocation', 'positions'])(
+    'shows the period filter on %s',
+    (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
+  )
+
+  it.each(['underlying', 'quality'])('hides the period filter on %s', (tab) => {
+    expect(filterVisibilityForTab(tab).showPeriod).toBe(false)
+  })
+
+  it('shows position-only filters only on the positions tab', () => {
+    expect(filterVisibilityForTab('positions').showPositionFilters).toBe(true)
+    expect(filterVisibilityForTab('overview').showPositionFilters).toBe(false)
+  })
+})
+
+describe('filterSummaries', () => {
+  it('summarizes account, period, and operation groups', () => {
+    expect(filterSummaries(filters({
+      accounts: new Set(['pea', 'cto']),
+      dateFrom: '2026-01-01',
+      dateTo: '2026-06-30',
+      operationTypes: new Set(['BUY']),
+      hideClosedPositions: false,
+    }), {}, filterVisibilityForTab('positions'))).toEqual([
+      { key: 'accounts', label: '2 accounts' },
+      { key: 'period', label: '2026-01-01 → 2026-06-30' },
+      { key: 'operations', label: 'Buy' },
+      { key: 'closed-positions', label: 'Closed positions included' },
+    ])
+  })
+
+  it('uses a friendly account name for a single selection', () => {
+    expect(filterSummaries(
+      filters({ accounts: new Set(['pea']) }),
+      { pea: 'My PEA' },
+      filterVisibilityForTab('overview'),
+    )[0]).toEqual({ key: 'accounts', label: 'My PEA' })
+  })
+
+  it('does not expose filters that do not affect the current tab', () => {
+    expect(filterSummaries(filters({
+      dateFrom: '2026-01-01',
+      operationTypes: new Set(['BUY']),
+    }), {}, filterVisibilityForTab('underlying'))).toEqual([])
+  })
+})
+
+describe('filter reset helpers', () => {
+  const active = filters({
+    accountTypes: new Set(['PEA']),
+    accounts: new Set(['pea']),
+    operationTypes: new Set(['BUY']),
+    hideClosedPositions: false,
+    dateFrom: '2026-01-01',
+  })
+
+  it('clears one summary group without changing the others', () => {
+    const next = clearFilterGroup(active, 'accounts')
+    expect(next.accounts).toEqual(new Set())
+    expect(next.accountTypes).toEqual(new Set())
+    expect(next.operationTypes).toEqual(new Set(['BUY']))
+    expect(next.dateFrom).toBe('2026-01-01')
+  })
+
+  it('restores every filter to its default', () => {
+    expect(resetFilters()).toEqual(filters())
   })
 })

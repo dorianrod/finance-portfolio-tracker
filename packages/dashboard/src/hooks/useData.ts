@@ -5,6 +5,8 @@ import { buildAccountLabels, buildPositionRows } from '@/logic/positionHierarchy
 
 export function useData() {
   const [positions, setPositions] = useState<PositionRow[]>([])
+  const [rawPositions, setRawPositions] = useState<RawPosition[]>([])
+  const [rawOperations, setRawOperations] = useState<RawOperation[]>([])
   const [accountLabels, setAccountLabels] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -18,6 +20,8 @@ export function useData() {
       .then(([ops, rawPositions, accountRows]) => {
         setAccountLabels(buildAccountLabels(accountRows))
         setPositions(buildPositionRows(ops, rawPositions))
+        setRawPositions(rawPositions)
+        setRawOperations(ops)
         setLoading(false)
       })
       .catch((e) => {
@@ -26,5 +30,5 @@ export function useData() {
       })
   }, [])
 
-  return { positions, accountLabels, loading, error }
+  return { positions, rawPositions, rawOperations, accountLabels, loading, error }
 }

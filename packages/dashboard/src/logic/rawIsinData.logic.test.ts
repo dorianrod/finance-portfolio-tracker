@@ -11,4 +11,24 @@ describe('toRawRows', () => {
       { snapshot_date: '2024-01-01', isin: 'A', name: 'Asset A', values: { france: 10 } },
     ])
   })
+
+  it('keeps account metadata out of allocation values', () => {
+    const rows = [{
+      snapshot_date: '2024-01-01',
+      account: 'PEA',
+      account_type: 'Brokerage',
+      isin: 'A',
+      name: 'Asset A',
+      france: '10',
+    }]
+
+    expect(toRawRows(rows)).toEqual([{
+      snapshot_date: '2024-01-01',
+      account: 'PEA',
+      account_type: 'Brokerage',
+      isin: 'A',
+      name: 'Asset A',
+      values: { france: 10 },
+    }])
+  })
 })

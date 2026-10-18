@@ -1,6 +1,29 @@
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import type { RawIsinRow, RawIsinData } from '@/hooks/useRawIsinData'
+import { accountFilterId } from '@/shared/filters/accountFilter'
+import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
+import type { PositionRow } from '@/types/domain'
 import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'
+
+const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])
+
+function dateTimestamp(date: string | undefined): number | null {
+  if (!date) return null
+  const timestamp = Date.parse(`${date}T00:00:00Z`)
+  return Number.isNaN(timestamp) ? null : timestamp
+}
+
+export function allocationTrendDomain(
+  points: AllocationPoint[],
+  dateFrom?: string,
+  dateTo?: string,
+): [number, number] {
+  const firstPoint = dateTimestamp(points[0]?.date)
+  const lastPoint = dateTimestamp(points.at(-1)?.date)
+  const start = dateTimestamp(dateFrom) ?? firstPoint ?? 0
+  const end = dateTimestamp(dateTo) ?? lastPoint ?? start
+  return [start, Math.max(start, end)]
+}
 
 export function groupTail(cats: Array<{ name: string; value: number }>): {
   main: Array<{ name: string; value: number }>
@@ -18,23 +41,68 @@ export function groupTail(cats: Array<{ name: string; value: number }>): {
     if (cumulative >= total * 0.85) break
   }
   const grouped = sorted.slice(splitIdx)
-  if (grouped.length <= 1) return { main: sorted, grouped: [] }
-  return { main: sorted.slice(0, splitIdx), grouped }
+  const pinned = grouped.filter((category) => PINNED_CATEGORIES.has(category.name))
+  const groupable = grouped.filter((category) => !PINNED_CATEGORIES.has(category.name))
+  if (groupable.length <= 1) return { main: sorted, grouped: [] }
+  return { main: [...sorted.slice(0, splitIdx), ...pinned], grouped: groupable }
 }
 
 export function computeMatchingIsins(rawData: RawIsinData, filter: AllocationFilter | null): Set<string> {
   if (!filter) return new Set()
   const rows = rawData[filter.type]
-  const latestByIsin = new Map<string, RawIsinRow>()
-  for (const row of rows) {
-    const cur = latestByIsin.get(row.isin)
-    if (!cur || row.snapshot_date > cur.snapshot_date) latestByIsin.set(row.isin, row)
-  }
+  const latestDate = rows.reduce(
+    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    '',
+  )
   const result = new Set<string>()
-  for (const [isin, row] of latestByIsin) {
-    if ((row.values[filter.value] ?? 0) > 0) result.add(isin)
+  for (const row of rows) {
+    if (row.snapshot_date === latestDate && (row.values[filter.value] ?? 0) > 0) {
+      result.add(row.isin)
+    }
   }
   return result
+}
+
+export function scopeRawAllocationData(rawData: RawIsinData, accounts: Set<string>): RawIsinData {
+  if (accounts.size === 0) return rawData
+  const inScope = (row: RawIsinRow) => !!row.account && accounts.has(accountFilterId({
+    account: row.account,
+    account_type: row.account_type,
+  }))
+  return {
+    geo: rawData.geo.filter(inScope),
+    secteur: rawData.secteur.filter(inScope),
+    currency: rawData.currency.filter(inScope),
+    classe: rawData.classe.filter(inScope),
+    loading: rawData.loading,
+  }
+}
+
+export function excludeNonApplicableAllocationData(
+  rawData: RawIsinData,
+  positions: PositionRow[],
+): RawIsinData {
+  const excludedAccounts = new Set(
+    positions
+      .filter((position) => !isAssetAnalysisApplicablePosition(position))
+      .map(accountFilterId),
+  )
+  if (excludedAccounts.size === 0) return rawData
+  const isApplicable = (row: RawIsinRow) => !row.account || !excludedAccounts.has(accountFilterId({
+    account: row.account,
+    account_type: row.account_type,
+  }))
+  return {
+    geo: rawData.geo.filter(isApplicable),
+    secteur: rawData.secteur.filter(isApplicable),
+    currency: rawData.currency.filter(isApplicable),
+    classe: rawData.classe.filter(isApplicable),
+    loading: rawData.loading,
+  }
+}
+
+export function aggregateAllocationPoints(rows: RawIsinRow[]): AllocationPoint[] {
+  return aggregateFilteredPoints(rows, new Set(rows.map((row) => row.isin)))
 }
 
 export function aggregateFilteredPoints(
@@ -72,36 +140,26 @@ export function computeTableRows(
   matchingIsins: Set<string>,
   filter: AllocationFilter,
 ): MatchingIsinRow[] {
-  // Total value per ISIN (from any dimension, latest snapshot)
-  const byIsin = new Map<string, { name: string; totalValue: number; date: string }>()
-  for (const dim of ['geo', 'secteur', 'currency', 'classe'] as const) {
-    for (const row of rawData[dim]) {
-      if (!matchingIsins.has(row.isin)) continue
-      const cur = byIsin.get(row.isin)
-      if (!cur || row.snapshot_date > cur.date) {
-        const total = Object.values(row.values).reduce((s, v) => s + v, 0)
-        byIsin.set(row.isin, { name: row.name, totalValue: total, date: row.snapshot_date })
-      }
+  const rows = rawData[filter.type]
+  const latestDate = rows.reduce(
+    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    '',
+  )
+  const byIsin = new Map<string, MatchingIsinRow>()
+  for (const row of rows) {
+    if (row.snapshot_date !== latestDate || !matchingIsins.has(row.isin)) continue
+    const totalValue = Object.values(row.values).reduce((sum, value) => sum + value, 0)
+    const filteredValue = row.values[filter.value] ?? 0
+    const current = byIsin.get(row.isin)
+    if (current) {
+      current.totalValue += totalValue
+      current.filteredValue += filteredValue
+    } else {
+      byIsin.set(row.isin, { isin: row.isin, name: row.name, totalValue, filteredValue })
     }
   }
 
-  // Filtered category value per ISIN (from the filter dimension, latest snapshot)
-  const latestFilterDim = new Map<string, Record<string, number>>()
-  const latestFilterDate = new Map<string, string>()
-  for (const row of rawData[filter.type]) {
-    if (!matchingIsins.has(row.isin)) continue
-    const curDate = latestFilterDate.get(row.isin)
-    if (!curDate || row.snapshot_date > curDate) {
-      latestFilterDim.set(row.isin, row.values)
-      latestFilterDate.set(row.isin, row.snapshot_date)
-    }
-  }
-
-  return [...byIsin.entries()]
-    .map(([isin, { name, totalValue }]) => {
-      const filteredValue = latestFilterDim.get(isin)?.[filter.value] ?? 0
-      return { isin, name, totalValue, filteredValue }
-    })
+  return [...byIsin.values()]
     .sort((a, b) => b.filteredValue - a.filteredValue)
 }
 

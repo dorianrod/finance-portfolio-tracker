@@ -20,6 +20,7 @@ dev = ["pytest", "ruff", "pyright", "pandas-stubs"]
 [project.scripts]
 finance-pipeline = "src.ingest_portfolio:main"
 finance-init = "src.init_data_dir:main"
+finance-fund-holdings = "src.fetch_fund_holdings:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]

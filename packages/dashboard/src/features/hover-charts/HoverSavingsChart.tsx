@@ -4,6 +4,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts'
 import { fmt } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { usePositionsHistory } from '@/hooks/usePositionsHistory'
 import { computeMonthlyBalances, computePosition } from './hoverCharts.logic'
 import { SavingsTooltip } from './hoverCharts.tooltips'
@@ -52,14 +54,14 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
           <AreaChart data={chartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
             <defs>
               <linearGradient id="gSavings" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.35} />
-                <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
+                <stop offset="5%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0.35} />
+                <stop offset="95%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 10 }} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+            <XAxis dataKey="month" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
             <YAxis
-              tick={{ fill: '#6b7280', fontSize: 10 }}
+              tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(v) => fmt.format(v)}
@@ -69,7 +71,7 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
             <Area
               type="monotone"
               dataKey="balance"
-              stroke="#60a5fa"
+              stroke={SEMANTIC_COLORS.portfolioValue}
               strokeWidth={2}
               fill="url(#gSavings)"
               dot={false}

@@ -43,6 +43,7 @@ from src.application.portfolio_snapshot_builder import (
     PortfolioSnapshotBuilder,  # noqa: E402
 )
 from src.data_dir import resolve_data_dir  # noqa: E402
+from src.fetch_fund_holdings import refresh_fund_holdings  # noqa: E402
 from src.infrastructure.csv_account_groups_repository import (
     CsvAccountGroupsRepository,  # noqa: E402
 )
@@ -53,6 +54,9 @@ from src.infrastructure.csv_broker_operations_reader import (
     CsvBrokerOperationsReader,  # noqa: E402
 )
 from src.infrastructure.csv_output_writer import CsvOutputWriter  # noqa: E402
+from src.infrastructure.csv_salaries_repository import (  # noqa: E402
+    CsvSalariesRepository,
+)
 from src.infrastructure.xlsx_allocation_repository import (
     XlsxAllocationRepository,  # noqa: E402
 )
@@ -193,8 +197,16 @@ def main(argv: list[str] | None = None) -> None:
         snapshot_builder=PortfolioSnapshotBuilder(account_groups_repo),
         error_detector=PortfolioErrorDetector(asset_price_repo),
         output_writer=output_writer,
+        salaries_repo=CsvSalariesRepository(input_dir / "salaries.csv"),
     )
     use_case.execute()
+
+    try:
+        refresh_fund_holdings(data_dir)
+    except Exception as exc:
+        # Look-through enrichment is optional and must not make the core
+        # portfolio ingestion fail. A previous successful file is preserved.
+        print(f"[fund-holdings] refresh skipped: {exc}")
 
     print(f"  Output    : {output_dir}/")
 

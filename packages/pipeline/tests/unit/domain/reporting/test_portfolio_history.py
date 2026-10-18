@@ -40,6 +40,18 @@ def test_portfolio_history_snapshot_empty_positions_returns_empty_dataframe():
     assert portfolio_history_snapshot([], []).empty
 
 
+def test_portfolio_history_snapshot_supports_positions_without_operations():
+    positions = [
+        _position("a", date(2024, 1, 31), 1000.0),
+        _position("a", date(2025, 1, 31), 1100.0),
+    ]
+
+    history = portfolio_history_snapshot(positions, [])
+
+    assert history["net_cash_injected"].tolist() == [0.0, 0.0]
+    assert history["tri_rolling_1y"].iloc[-1] == pytest.approx(10.0, abs=0.1)
+
+
 def test_portfolio_history_snapshot_aggregates_across_accounts_per_month():
     positions = [
         _position("a", date(2024, 1, 31), 1000.0),
@@ -87,5 +99,21 @@ def test_portfolio_history_snapshot_includes_tri_column():
     df = portfolio_history_snapshot(positions, operations)
 
     assert "tri" in df.columns
+    assert "tri_rolling_1y" in df.columns
+    assert "tri_rolling_3y" in df.columns
     # ~10% over ~1 year, matching the known XIRR case in test_tri.py
     assert df["tri"].iloc[1] == pytest.approx(10.0, abs=0.5)
+
+
+def test_portfolio_history_snapshot_includes_one_year_rolling_tri():
+    positions = [
+        _position("a", date(2022, 1, 31), 1000.0),
+        _position("a", date(2023, 1, 31), 1200.0),
+    ]
+    operations = [_deposit("a", date(2022, 1, 1), 1000.0)]
+
+    df = portfolio_history_snapshot(positions, operations)
+
+    assert pd.isna(df["tri_rolling_1y"].iloc[0])
+    assert df["tri_rolling_1y"].iloc[1] == pytest.approx(20.0, abs=0.5)
+    assert pd.isna(df["tri_rolling_3y"].iloc[1])

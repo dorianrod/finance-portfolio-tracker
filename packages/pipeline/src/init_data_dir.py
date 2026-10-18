@@ -54,6 +54,14 @@ livret,Livret,savings,Demo savings account
 private_fund,Private equity,private_equity,Demo private equity fund
 """
 
+_SALARIES = """year,total,salary,other,gross_salary,status
+2022,30000,28000,2000,38000,actual
+2023,32000,29500,2500,40500,actual
+2024,34500,31500,3000,43500,actual
+2025,37000,33500,3500,46500,actual
+2026,39500,35500,4000,49500,forecast
+"""
+
 # ---------------------------------------------------------------------------
 # brokers/direct/ -- full transaction history, one row per operation
 # ---------------------------------------------------------------------------
@@ -421,6 +429,14 @@ vocabulary the pipeline/dashboard rely on for behaviour (e.g. which
 accounts get synthetic cash positions) — one of: `brokerage`, `checking`,
 `employer_savings`, `retirement`, `savings`, `private_equity`.
 
+## salaries.csv
+
+Optional annual income history used to compare observed invested savings with
+net income. Columns are `year,total,salary,other,gross_salary,status`, where
+`total` must equal `salary + other` and `status` is `actual` or `forecast`.
+Forecast or incomplete years are displayed but excluded from placement-rate
+and correlation calculations.
+
 ## brokers/boursorama/{PEA,CTO}/operations.csv
 
 Export (raw or consolidated) of a Boursorama account — one subfolder per
@@ -450,6 +466,11 @@ amounts — it gives an accurate average buy price and realized gains. This
 is the typical case for a savings account, a checking account, or any
 asset you track yourself transaction by transaction.
 
+Capital entering the tracked portfolio needs a `DEPOSIT` as well as the
+`BUY` that invests it. Likewise, add a `WITHDRAWAL` after a `SELL`,
+`DIVIDEND`, or `INTEREST` when those proceeds leave the tracked portfolio.
+Do not add the withdrawal when the proceeds remain as tracked broker cash.
+
 Multiple files and subfolders are accepted (any `*.csv` under `direct/`, at
 any depth) — organise by account if useful, e.g.
 `direct/checking_account.csv` flat, or `direct/brokerage/history.csv` in a
@@ -463,6 +484,18 @@ currency`. `value` = total value as of that date, `invested` = cumulative
 capital invested as of that date (used to separate performance from new
 contributions). `isin`/`ticker` are almost always empty here — these
 aren't assets tracked on Yahoo Finance.
+
+An optional `quantity` column preserves real units; unit cost and price are
+derived from `invested / quantity` and `value / quantity`. An optional
+`proceeds` column records the observed sale amount when `invested`
+decreases; otherwise it is estimated from the previous proportional
+valuation. `sale_price_per_unit` can retain a gross execution price when it
+differs from net proceeds. An optional `distribution` column records a
+non-cumulative cash amount paid out on that date.
+
+The pipeline turns increases in `invested` into `DEPOSIT` + `BUY` pairs.
+Decreases become `SELL` + `WITHDRAWAL`, with the withdrawal based on the
+proportional market value sold so that its gain or loss is preserved.
 
 **Use `valuations/` when you only have one amount per statement** (monthly,
 quarterly...) and not the detailed history — typically a life insurance
@@ -549,6 +582,7 @@ def main(argv: list[str] | None = None) -> None:
 
     _write(input_dir / "README.md", _INPUT_README)
     _write(input_dir / "account_groups.csv", _ACCOUNT_GROUPS)
+    _write(input_dir / "salaries.csv", _SALARIES)
     _write(
         input_dir / "brokers/direct/checking_account.csv",
         _DIRECT_CHECKING_ACCOUNT,

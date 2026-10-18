@@ -37,6 +37,7 @@ Expected layout:
 data/
   input/
     account_groups.csv
+    salaries.csv        -- optional annual net income history
     brokers/
       direct/         -- pre-formatted CSVs (cash accounts, stocks/ETFs...)
       valuations/      -- periodic value/invested snapshots (PE, insurance...)
@@ -46,6 +47,56 @@ data/
     allocations/       -- optional *.xlsx for geo/secteur/currency/classe breakdowns
   output/        (generated)
 ```
+
+## Fund look-through data
+
+Every `finance-pipeline` run also refreshes composite-position constituents.
+There is no account or wrapper exclusion: ETFs, UCITS funds, FCPEs and other
+PEE/PEI/PERCO or insurance/private vehicles are candidates whenever they can
+be identified. Official issuer files are preferred, exact-index physical
+proxies are allowed for synthetic ETFs, and Yahoo is only a partial fallback.
+Successful downloads are cached for 30 days and kept if a later request fails.
+
+The generated files are:
+
+- `fund_holdings.csv`: normalized underlying securities and issuers;
+- `fund_holdings_status.csv`: source tier (A-D), date, coverage, residual and
+  validation issues for every fund;
+- `fund_holdings_coverage.csv`: portfolio-level coverage and feasibility
+  gates consumed by the dashboard;
+- `fund_holdings_attempts.csv`: every selected or rejected source attempt;
+- `fund_unresolved.csv`: traceable residual branches and monetary impact,
+  ordered for deterministic or agent-assisted research;
+- `fund_snapshot_manifest.csv`: validation, age, checksum and provenance for
+  every manual/agent snapshot.
+
+Which provider feeds which fund is configured per portfolio in
+`input/fund_sources.csv` (private, never in code): one row per fund ISIN with
+`parent_isin, provider, adapter, url, quality_tier, index_name,
+replication_method, proxy_name, proxy_isin`, with optional `priority`,
+`source_role` and `enabled`. Supported adapters are `amundi_api`, `dws_api`,
+`ishares_csv`, `globalx_csv` and `globalx_hk_html`. Amundi/Lyxor and
+DWS/Xtrackers sources are also discovered from the issuer name and ISIN.
+
+When no repeatable source exists, the `fund-source-research` skill can create
+a cited snapshot under
+`input/fund_holdings/snapshots/YYYY-MM-DD/<fund-key>/`. Snapshots are tier C,
+remain a visible Data quality warning, become stale after 90 days, and stop
+being used after 180 days. Nested funds are expanded recursively (five levels,
+with cycle detection); every unexplained amount remains in
+`fund_unresolved.csv` instead of silently disappearing.
+
+Run an explicit provider check, ignoring the monthly cache, with:
+
+```bash
+finance-fund-holdings --data-dir /path/to/data --force
+```
+
+The complete underlying-assets view is enabled after at least 85% of the
+fund sleeve is covered by A/B sources, the seven largest funds each reach
+98%, proxies are exact-index matches, and two successful refreshes have been
+observed. Partial and unavailable funds remain visible in Data quality with
+their monetary impact.
 
 ## finance-init
 
@@ -74,5 +125,7 @@ bundled Claude Code skills into `.claude/skills/` in the current working
 directory — the folder you ran `finance-init` from. `allocation-update`
 lets Claude research an asset's geo/sector/currency/asset-class
 allocation and write it into `allocations/*.xlsx`; `monthly-update`
-guides a full periodic refresh and checks pipeline errors after the run.
+guides a full periodic refresh; and `fund-source-research` resolves the
+largest unexplained fund exposures using deterministic sources or validated
+dated snapshots.
 See `.claude/skills/*/SKILL.md` once they're installed.

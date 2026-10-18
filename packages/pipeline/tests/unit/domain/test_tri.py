@@ -6,6 +6,8 @@ from src.domain.models import Operation, OperationType, Position
 from src.domain.tri import (
     _xirr,
     monthly_tri_series,
+    portfolio_opening_valuation,
+    portfolio_opening_valuations,
     portfolio_xirr,
     rolling_tri_series,
 )
@@ -63,6 +65,142 @@ def test_portfolio_xirr_returns_none_without_external_flows():
     )
 
 
+def test_portfolio_xirr_uses_opening_value_when_history_predates_flows():
+    ops = [
+        Operation(
+            date=datetime(2023, 7, 1),
+            account="a",
+            operation_type=OperationType.DEPOSIT,
+            total_amount=100.0,
+        ),
+    ]
+    rate = portfolio_xirr(
+        ops,
+        terminal_value=1210.0,
+        terminal_date=date(2024, 1, 1),
+        opening_value=1000.0,
+        opening_date=date(2023, 1, 1),
+    )
+    expected = _xirr(
+        [
+            (-1000.0, date(2023, 1, 1)),
+            (-100.0, date(2023, 7, 1)),
+            (1210.0, date(2024, 1, 1)),
+        ]
+    )
+    assert rate == pytest.approx(expected)
+
+
+def test_portfolio_xirr_does_not_double_count_a_recorded_starting_deposit():
+    ops = [
+        Operation(
+            date=datetime(2023, 1, 1),
+            account="a",
+            operation_type=OperationType.DEPOSIT,
+            total_amount=1000.0,
+        ),
+    ]
+    rate = portfolio_xirr(
+        ops,
+        terminal_value=1100.0,
+        terminal_date=date(2024, 1, 1),
+        opening_value=1000.0,
+        opening_date=date(2023, 1, 31),
+    )
+    assert rate == pytest.approx(0.10, abs=0.005)
+
+
+def test_portfolio_opening_valuation_aggregates_the_first_snapshot():
+    positions = [
+        Position(
+            snapshot_date=date(2022, 1, 31),
+            account=account,
+            name="cash",
+            quantity=value,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=value,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        )
+        for account, value in (("a", 600.0), ("b", 400.0))
+    ]
+    positions.append(
+        Position(
+            snapshot_date=date(2022, 2, 28),
+            account="a",
+            name="cash",
+            quantity=1200.0,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=1200.0,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        )
+    )
+    assert portfolio_opening_valuation(positions) == (
+        date(2022, 1, 31),
+        1000.0,
+    )
+
+
+def test_portfolio_xirr_initializes_each_account_without_double_counting():
+    ops = [
+        Operation(
+            date=datetime(2022, 1, 1),
+            account="with_deposit",
+            operation_type=OperationType.DEPOSIT,
+            total_amount=1000.0,
+        )
+    ]
+    openings = {
+        "with_deposit": (date(2022, 1, 31), 1000.0),
+        "without_deposit": (date(2022, 1, 31), 500.0),
+    }
+
+    rate = portfolio_xirr(
+        ops,
+        terminal_value=1650.0,
+        terminal_date=date(2023, 1, 1),
+        opening_values_by_account=openings,
+    )
+    expected = _xirr(
+        [
+            (-1000.0, date(2022, 1, 1)),
+            (-500.0, date(2022, 1, 31)),
+            (1650.0, date(2023, 1, 1)),
+        ]
+    )
+    assert rate == pytest.approx(expected)
+
+
+def test_portfolio_opening_valuations_use_each_accounts_first_snapshot():
+    positions = [
+        Position(
+            snapshot_date=snapshot_date,
+            account=account,
+            name=name,
+            quantity=value,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=value,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        )
+        for snapshot_date, account, name, value in (
+            (date(2022, 1, 31), "a", "one", 600.0),
+            (date(2022, 1, 31), "a", "two", 400.0),
+            (date(2022, 6, 30), "b", "three", 250.0),
+            (date(2022, 7, 31), "b", "three", 300.0),
+        )
+    ]
+
+    assert portfolio_opening_valuations(positions) == {
+        "a": (date(2022, 1, 31), 1000.0),
+        "b": (date(2022, 6, 30), 250.0),
+    }
+
+
 def test_monthly_tri_series_returns_one_value_per_snapshot():
     positions = [
         Position(
@@ -98,6 +236,36 @@ def test_monthly_tri_series_returns_one_value_per_snapshot():
     ]
     result = monthly_tri_series(positions, ops)
     assert set(result.keys()) == {date(2023, 1, 31), date(2023, 12, 31)}
+
+
+def test_monthly_tri_series_uses_value_at_start_when_no_earlier_flow_exists():
+    positions = [
+        Position(
+            snapshot_date=date(2022, 1, 1),
+            account="a",
+            name="cash",
+            quantity=1000.0,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=1000.0,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        ),
+        Position(
+            snapshot_date=date(2024, 1, 1),
+            account="a",
+            name="cash",
+            quantity=1210.0,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=1210.0,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        ),
+    ]
+    result = monthly_tri_series(positions, [])
+    assert result[date(2022, 1, 1)] is None
+    assert result[date(2024, 1, 1)] == pytest.approx(10.0, abs=0.05)
 
 
 def test_rolling_tri_series_returns_none_before_window_matures():
@@ -169,3 +337,28 @@ def test_rolling_tri_series_uses_window_start_value_as_synthetic_outflow():
     result = rolling_tri_series(positions, ops, window_years=1.0)
     assert result[date(2022, 1, 31)] is None
     assert result[date(2023, 1, 31)] == pytest.approx(20.0, abs=0.5)
+
+
+def test_rolling_tri_series_matures_from_first_snapshot_without_flows():
+    positions = [
+        Position(
+            snapshot_date=snapshot_date,
+            account="a",
+            name="fund",
+            quantity=value,
+            avg_buy_price=1.0,
+            last_price=1.0,
+            total_value=value,
+            unrealized_gain=0.0,
+            unrealized_gain_pct=0.0,
+        )
+        for snapshot_date, value in (
+            (date(2021, 12, 31), 1000.0),
+            (date(2022, 12, 31), 1100.0),
+        )
+    ]
+
+    result = rolling_tri_series(positions, [], window_years=1.0)
+
+    assert result[date(2021, 12, 31)] is None
+    assert result[date(2022, 12, 31)] == pytest.approx(10.0, abs=0.1)
