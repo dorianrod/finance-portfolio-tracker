@@ -14,6 +14,7 @@ export function NetPortfolioValueKpi({ performance }: { performance: Performance
       label="Net portfolio value"
       tooltip="Current market value after estimated tax on unrealized gains."
       value={fmt.format(performance.currentValueNet)}
+      accent="portfolio"
       subSmall={`Gross ${fmt.format(performance.currentValueGross)}`}
     />
   )
@@ -26,6 +27,7 @@ export function TotalNetPerformanceKpi({ performance }: { performance: Performan
       tooltip="Net unrealized and realized P&L plus net passive income."
       value={fmt.format(performance.totalPerformanceNet)}
       valueColor={gainColor(performance.totalPerformanceNet)}
+      accent={performance.totalPerformanceNet >= 0 ? 'positive' : 'negative'}
       sub={fmtPct(performance.totalPerformancePct)}
       subColor={gainColor(performance.totalPerformanceNet)}
       subSmall={`Gross ${fmt.format(performance.totalPerformanceGross)}`}
@@ -41,6 +43,7 @@ export function NetContributionsKpi({ value, periodLabel }: { value: number; per
       tooltip="Deposits minus withdrawals over the selected period."
       value={fmt.format(value)}
       valueColor={SEMANTIC_TEXT_CLASSES.netContributions}
+      accent="contributions"
       subSmall={periodLabel}
     />
   )
@@ -53,6 +56,7 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
       tooltip="Dividends and interest over the latest twelve months. The percentage compares this rolling total with the preceding twelve-month window."
       value={fmt.format(income.total)}
       valueColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
+      accent="income"
       sub={income.changePct == null ? '—' : fmtPct(income.changePct)}
       subColor={income.changePct == null ? 'text-gray-500' : gainColor(income.changePct)}
       subInline
@@ -83,6 +87,7 @@ export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: Irr
       tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history."
       value={irrValue(value, status)}
       valueColor={gainColor(value)}
+      accent={value == null || value >= 0 ? 'positive' : 'negative'}
       subSmall={irrNote(status)}
     />
   )
@@ -95,6 +100,7 @@ export function NetUnrealizedKpi({ performance }: { performance: PerformanceSumm
       tooltip="Current unrealized gain after estimated tax."
       value={fmt.format(performance.unrealizedNet)}
       valueColor={gainColor(performance.unrealizedNet)}
+      accent={performance.unrealizedNet >= 0 ? 'positive' : 'negative'}
       subSmall={`Gross ${fmt.format(performance.unrealizedGross)}`}
     />
   )
@@ -107,6 +113,7 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
       tooltip="Crystallized gains and losses after estimated tax."
       value={fmt.format(performance.realizedNet)}
       valueColor={gainColor(performance.realizedNet)}
+      accent={performance.realizedNet >= 0 ? 'positive' : 'negative'}
       subSmall={`Gross ${fmt.format(performance.realizedGross)}`}
     />
   )
@@ -119,6 +126,7 @@ export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }:
       tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period."
       value={irrValue(value, status)}
       valueColor={gainColor(value)}
+      accent={value == null || value >= 0 ? 'positive' : 'negative'}
       subSmall={irrNote(status)}
     />
   )

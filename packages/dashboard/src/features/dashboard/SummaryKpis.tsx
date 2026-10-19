@@ -21,7 +21,7 @@ interface SummaryKpisProps {
 
 export function SummaryKpis({ performance, drivers, income, globalTri, irrStatus, irrScopeLabel, periodLabel }: SummaryKpisProps) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    <div className="flex flex-wrap items-start gap-x-8 gap-y-4 border-b border-gray-800 pb-4">
       <KpiCard><NetPortfolioValueKpi performance={performance} /></KpiCard>
       <KpiCard><TotalNetPerformanceKpi performance={performance} /></KpiCard>
       <KpiCard><NetContributionsKpi value={drivers.savings} periodLabel={periodLabel} /></KpiCard>
