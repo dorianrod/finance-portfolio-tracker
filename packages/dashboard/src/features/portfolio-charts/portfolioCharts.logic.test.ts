@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   buildAccountTypeLabels,
+  buildCumulativeConcentration,
   buildTriChartData,
   buildCumulativeWealthDrivers,
   computeConcentration,
@@ -291,6 +292,34 @@ describe('computeTrailing12mIncome', () => {
 })
 
 describe('portfolio summaries', () => {
+  it('keeps the full ranked concentration while preserving the top-ten summary', () => {
+    const result = computeHeldAssetConcentration(
+      Array.from({ length: 12 }, (_, index) => position({
+        id: `asset-${index}`,
+        isin: `ISIN-${index}`,
+        name: `Asset ${index}`,
+        total_value: 12 - index,
+      })),
+    )
+
+    expect(result.allHoldings).toHaveLength(12)
+    expect(result.holdings).toHaveLength(10)
+    expect(result.allHoldings.map((holding) => holding.value)).toEqual([12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+    expect(result.topTenValue).toBe(75)
+  })
+
+  it('builds a sorted monotone cumulative concentration from every holding', () => {
+    const result = buildCumulativeConcentration([
+      { label: 'Small', name: 'Small', value: 20, weight: 20 },
+      { label: 'Large', name: 'Large', value: 50, weight: 50 },
+      { label: 'Medium', name: 'Medium', value: 30, weight: 30 },
+    ])
+
+    expect(result.map((point) => point.name)).toEqual(['Large', 'Medium', 'Small'])
+    expect(result.map((point) => point.rank)).toEqual([1, 2, 3])
+    expect(result.map((point) => point.cumulativeWeight)).toEqual([50, 80, 100])
+  })
+
   it('computes the non-decomposed concentration at held-asset grain', () => {
     const result = computeHeldAssetConcentration([
       position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', account: 'acc1', total_value: 600 }),
@@ -357,6 +386,8 @@ describe('portfolio summaries', () => {
     expect(result.coveragePct).toBeCloseTo(380 / 11600 * 100)
     expect(result.undisclosedValue).toBe(1_220)
     expect(result.opaqueValue).toBe(10_000)
+    expect(buildCumulativeConcentration(result.allHoldings).at(-1)?.cumulativeWeight)
+      .toBeCloseTo(result.coveragePct)
   })
 
   it('does not rank account valuations or opaque funds as underlying assets', () => {

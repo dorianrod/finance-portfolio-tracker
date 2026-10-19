@@ -56,6 +56,11 @@ export interface HoldingConcentration {
   weight: number
 }
 
+export interface CumulativeConcentrationPoint extends HoldingConcentration {
+  rank: number
+  cumulativeWeight: number
+}
+
 export interface ConcentrationSummary {
   topHoldingPct: number
   topFivePct: number
@@ -67,6 +72,7 @@ export interface ConcentrationSummary {
   opaqueValue: number
   selectedValue: number
   holdingCount: number
+  allHoldings: HoldingConcentration[]
   holdings: HoldingConcentration[]
 }
 
@@ -348,6 +354,7 @@ export function computeConcentration(
     opaqueValue,
     selectedValue,
     holdingCount: allHoldings.length,
+    allHoldings,
     holdings,
   }
 }
@@ -374,14 +381,14 @@ export function computeHeldAssetConcentration(
   }
 
   const total = [...byAsset.values()].reduce((sum, holding) => sum + holding.value, 0)
-  const holdings = [...byAsset.values()]
+  const allHoldings = [...byAsset.values()]
     .sort((a, b) => b.value - a.value)
-    .slice(0, 10)
     .map((holding) => ({
       ...holding,
       value: Math.round(holding.value),
       weight: total > 0 ? (holding.value / total) * 100 : 0,
     }))
+  const holdings = allHoldings.slice(0, 10)
 
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
@@ -394,8 +401,32 @@ export function computeHeldAssetConcentration(
     opaqueValue: 0,
     selectedValue: total,
     holdingCount: byAsset.size,
+    allHoldings,
     holdings,
   }
+}
+
+export function buildCumulativeConcentration(
+  holdings: HoldingConcentration[],
+): CumulativeConcentrationPoint[] {
+  let cumulativeWeight = 0
+
+  return [...holdings]
+    .sort((a, b) => b.value - a.value)
+    .map((holding, index) => {
+      cumulativeWeight += holding.weight
+      return {
+        ...holding,
+        rank: index + 1,
+        cumulativeWeight,
+      }
+    })
+}
+
+export function cumulativeConcentrationCrosshair(
+  point: CumulativeConcentrationPoint | null,
+): { x: number; y: number } | null {
+  return point ? { x: point.rank, y: point.cumulativeWeight } : null
 }
 
 export function computePerformanceSummary(positions: PositionRow[]): PerformanceSummary {

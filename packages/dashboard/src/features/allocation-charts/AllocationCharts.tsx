@@ -6,8 +6,9 @@ import { EvoCard } from './EvoCard'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
 import type { AllocationFilter } from './allocationCharts.types'
 import type { PositionRow } from '@/types/domain'
-import { computeConcentration, computeHeldAssetConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
+import { buildCumulativeConcentration, computeConcentration, computeHeldAssetConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
 import { ConcentrationChart } from '@/features/portfolio-charts/ConcentrationChart'
+import { CumulativeConcentrationChart } from '@/features/portfolio-charts/CumulativeConcentrationChart'
 import type { FundHolding } from '@/hooks/useFundHoldings'
 import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
 import { fmtFull } from '@/shared/format/money'
@@ -46,6 +47,10 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
     [applicablePositions],
   )
   const concentration = concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
+  const cumulativeConcentration = useMemo(
+    () => buildCumulativeConcentration(concentration.allHoldings),
+    [concentration],
+  )
   const accountScopedRawData = useMemo(
     () => scopeRawAllocationData(rawData, accountFilters),
     [rawData, accountFilters],
@@ -150,7 +155,39 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
 
       {view === 'current' && (
         <>
-          {concentration.holdings.length > 0 && <ConcentrationChart data={concentration.holdings} topTenValue={concentration.topTenValue} topTenPct={concentration.topTenPct} description={concentrationMode === 'held' ? 'Assets effectively held, aggregated across accounts.' : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`} action={<ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />} />}
+          {(heldAssetConcentration.allHoldings.length > 0 || lookThroughConcentration.allHoldings.length > 0) && (
+            <section>
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-300">Concentration</h3>
+                  <p className="mt-0.5 text-xs text-gray-600">See how much of the portfolio is concentrated in its largest exposures.</p>
+                </div>
+                <ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />
+              </div>
+              {concentration.allHoldings.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+                  <CumulativeConcentrationChart
+                    data={cumulativeConcentration}
+                    description={concentrationMode === 'held'
+                      ? 'Share of the applicable portfolio held in the largest N assets.'
+                      : `Share of the applicable portfolio identified in the largest N underlying assets · ${concentration.coveragePct.toFixed(1)}% coverage.`}
+                  />
+                  <ConcentrationChart
+                    data={concentration.holdings}
+                    topTenValue={concentration.topTenValue}
+                    topTenPct={concentration.topTenPct}
+                    description={concentrationMode === 'held'
+                      ? 'Assets effectively held, aggregated across accounts.'
+                      : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`}
+                  />
+                </div>
+              ) : (
+                <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">
+                  No identified underlying assets for the current selection.
+                </div>
+              )}
+            </section>
+          )}
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
             {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
