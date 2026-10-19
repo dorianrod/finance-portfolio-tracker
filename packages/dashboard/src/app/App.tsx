@@ -30,6 +30,7 @@ import { OverviewTab } from "@/features/dashboard/OverviewTab";
 import { WealthTab } from "@/features/dashboard/WealthTab";
 import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
 import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
+import type { QualityThemeId } from "@/features/dashboard/DataQualityTab";
 import { FundLookThroughTab } from "@/features/fund-holdings/FundLookThroughTab";
 import { scopeFundQualityData } from "@/features/fund-holdings/fundQualityScope.logic";
 import type { Filters, SortKey } from "@/types/filters";
@@ -43,7 +44,10 @@ import {
 } from "@/features/filters/filterBar.logic";
 import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
 import { partitionPercentages } from "@/shared/format/percentage";
-import { AnalysisReliabilityKpi } from "@/shared/ui/AnalysisReliabilityKpi";
+import {
+  AnalysisReliabilityKpi,
+  PipelineReliabilityKpi,
+} from "@/shared/ui/AnalysisReliabilityKpi";
 import {
   buildCumulativeWealthDrivers,
   computeConcentration,
@@ -60,6 +64,7 @@ import {
   applyPositionFilters,
   applyAccountFilterToHistory,
   buildAccountTypeBreakdown,
+  scopePipelineErrors,
   sortPositionsForTable,
 } from "./app.logic";
 
@@ -140,7 +145,7 @@ export default function App() {
   const { history } = usePortfolioHistory();
   const { cashHistory } = useCashHistory();
   const allPositionRows = useAllPositions();
-  const { errors: pipelineErrors } = useErrors();
+  const { errors: pipelineErrors, loading: pipelineErrorsLoading } = useErrors();
   const { manualPriceOverrides } = useManualPriceOverrides();
   const allMonthlyOps = useMonthlyOps();
   const rawAllocationData = useRawIsinData();
@@ -150,6 +155,8 @@ export default function App() {
 
   const [theme, setTheme] = useState<"dark" | "light">("light");
   const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
+  const [selectedQualityTheme, setSelectedQualityTheme] =
+    useState<QualityThemeId | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [allocationFilter, setAllocationFilter] =
     useState<AllocationFilter | null>(null);
@@ -441,6 +448,17 @@ export default function App() {
   const underlyingReliabilityPct = underlyingApplicableValue > 0
     ? (identifiedFundValue / underlyingApplicableValue) * 100
     : null;
+  const pipelineQualityPositions = activeTab === "positions"
+    ? tableFiltered
+    : currentPositions;
+  const scopedPipelineErrors = useMemo(
+    () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
+    [pipelineErrors, pipelineQualityPositions, filters],
+  );
+  const scopedPipelineErrorCount = scopedPipelineErrors.filter(
+    (item) => item.level === "error",
+  ).length;
+  const scopedPipelineWarningCount = scopedPipelineErrors.length - scopedPipelineErrorCount;
   const [, unresolvedFundPct] = partitionPercentages([
     identifiedFundValue,
     unresolvedFundValue,
@@ -462,6 +480,11 @@ export default function App() {
   function handleResetFilters() {
     setFilters(resetFilters());
     setAllocationFilter(null);
+  }
+
+  function openDataQuality(theme: QualityThemeId) {
+    setSelectedQualityTheme(theme);
+    setActiveTab("quality");
   }
 
   return (
@@ -501,7 +524,10 @@ export default function App() {
               ))}
               <button
                 type="button"
-                onClick={() => setActiveTab("quality")}
+                onClick={() => {
+                  setSelectedQualityTheme(null);
+                  setActiveTab("quality");
+                }}
                 className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-blue-500 border-l-gray-800 text-white" : "border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300"}`}
               >
                 Data quality
@@ -520,6 +546,16 @@ export default function App() {
                 <h2 className="text-lg font-semibold text-white">
                   {copy.title}
                 </h2>
+                {activeTab !== "allocation" && activeTab !== "underlying" && activeTab !== "quality" && (
+                  <div className="mt-2">
+                    <PipelineReliabilityKpi
+                      errorCount={scopedPipelineErrorCount}
+                      warningCount={scopedPipelineWarningCount}
+                      loading={pipelineErrorsLoading}
+                      onClick={() => openDataQuality("pipeline")}
+                    />
+                  </div>
+                )}
                 {activeTab === "allocation" && (
                   <div className="mt-2">
                     <AnalysisReliabilityKpi
@@ -532,6 +568,7 @@ export default function App() {
                           ? "warning"
                           : "healthy"}
                       tooltip="Share of the applicable portfolio mapped to allocation data. The analysis base is the mapped value used by the diversification views; savings, checking and brokerage cash are excluded."
+                      onClick={() => openDataQuality("classification")}
                     />
                   </div>
                 )}
@@ -552,6 +589,7 @@ export default function App() {
                             ? "warning"
                             : "healthy"}
                       tooltip="Share of the applicable portfolio identified directly or through decomposed funds. The analysis base is the identified exposure used by the underlying-assets view."
+                      onClick={() => openDataQuality("lookthrough")}
                     />
                   </div>
                 )}
@@ -683,6 +721,8 @@ export default function App() {
                 fundHoldings={fundData.holdings}
                 fundSnapshots={fundData.snapshots}
                 fundUnresolved={fundData.unresolved}
+                selectedTheme={selectedQualityTheme}
+                onSelectedThemeChange={setSelectedQualityTheme}
               />
             )}
           </>

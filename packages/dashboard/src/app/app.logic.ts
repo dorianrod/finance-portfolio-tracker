@@ -2,7 +2,41 @@ import type { PositionRow } from '@/types/domain'
 import type { Filters, SortKey } from '@/types/filters'
 import type { PortfolioHistoryPoint, AccountTypePoint } from '@/types/history'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import type { ErrorRow } from '@/hooks/useErrors'
 import { accountFilterId } from '@/shared/filters/accountFilter'
+
+function errorMonth(date: string): string | null {
+  const match = date.trim().match(/^(\d{4}-\d{2})/)
+  return match?.[1] ?? null
+}
+
+export function scopePipelineErrors(
+  errors: ErrorRow[],
+  positions: PositionRow[],
+  filters: Filters,
+): ErrorRow[] {
+  const selectedAccounts = new Set(positions.map((position) => position.account))
+  const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
+  const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
+  const hasPositionScope = filters.accounts.size > 0
+    || filters.accountTypes.size > 0
+    || filters.operationTypes.size > 0
+
+  return errors.filter((error) => {
+    const month = errorMonth(error.date)
+    if (month && filters.dateFrom && month < filters.dateFrom.slice(0, 7)) return false
+    if (month && filters.dateTo && month > filters.dateTo.slice(0, 7)) return false
+
+    if (!hasPositionScope) return true
+    if (error.account) return selectedAccounts.has(error.account)
+    if (error.isin) return selectedIsins.has(error.isin)
+    if (error.ticker) return selectedTickers.has(error.ticker)
+
+    // Pipeline-wide anomalies cannot be attributed more narrowly, so they
+    // remain visible even when an account or position filter is active.
+    return true
+  })
+}
 
 export function getSortValue(row: PositionRow, key: SortKey): number {
   switch (key) {

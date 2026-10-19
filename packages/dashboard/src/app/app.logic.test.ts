@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue } from './app.logic'
+import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue, scopePipelineErrors } from './app.logic'
 import type { PositionRow, GroupRow, OperationRow } from '@/types/domain'
 import type { Filters } from '@/types/filters'
 import type { PortfolioHistoryPoint } from '@/types/history'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import type { ErrorRow } from '@/hooks/useErrors'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 
 function baseFilters(overrides: Partial<Filters> = {}): Filters {
@@ -74,6 +75,67 @@ function position(overrides: Partial<PositionRow>): PositionRow {
     ...overrides,
   }
 }
+
+function pipelineError(overrides: Partial<ErrorRow>): ErrorRow {
+  return {
+    source: 'main',
+    level: 'warning',
+    type: 'missing_price',
+    date: '',
+    account: '',
+    isin: '',
+    ticker: '',
+    name: '',
+    message: 'Issue',
+    ...overrides,
+  }
+}
+
+describe('scopePipelineErrors', () => {
+  it('keeps only anomalies in the selected account and period', () => {
+    const errors = [
+      pipelineError({ message: 'selected', account: 'acc1', date: '2026-05' }),
+      pipelineError({ message: 'other account', account: 'acc2', date: '2026-05' }),
+      pipelineError({ message: 'other period', account: 'acc1', date: '2025-12' }),
+    ]
+
+    const result = scopePipelineErrors(
+      errors,
+      [position({ account: 'acc1' })],
+      baseFilters({ accounts: new Set(['acc1']), dateFrom: '2026-01-15' }),
+    )
+
+    expect(result.map((error) => error.message)).toEqual(['selected'])
+  })
+
+  it('matches asset anomalies without an account and retains global anomalies', () => {
+    const errors = [
+      pipelineError({ message: 'selected asset', isin: 'FR1' }),
+      pipelineError({ message: 'other asset', isin: 'FR2' }),
+      pipelineError({ message: 'global parsing issue', type: 'parsing_error' }),
+    ]
+
+    const result = scopePipelineErrors(
+      errors,
+      [position({ account: 'acc1', isin: 'FR1' })],
+      baseFilters({ accountTypes: new Set(['PEA']) }),
+    )
+
+    expect(result.map((error) => error.message)).toEqual([
+      'selected asset',
+      'global parsing issue',
+    ])
+  })
+
+  it('does not hide anomalies when no position filter is active', () => {
+    const errors = [
+      pipelineError({ account: 'acc1' }),
+      pipelineError({ account: 'acc2' }),
+    ]
+
+    expect(scopePipelineErrors(errors, [position({ account: 'acc1' })], baseFilters())).toEqual(errors)
+  })
+})
 
 describe('applyPositionFilters', () => {
   it('filters by account when no date range is set, leaving snapshot values untouched', () => {
