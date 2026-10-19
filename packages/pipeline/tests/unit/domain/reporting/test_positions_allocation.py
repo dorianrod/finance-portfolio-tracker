@@ -4,8 +4,8 @@ The AllocationRepository port (src.ports.allocation_repository) is the
 boundary to fake: _FakeAllocationRepository below satisfies it structurally
 with an in-memory allocation table, exercising the real matching cascade
 (ISIN -> exact normalized name -> "clean" normalized name with ticker
-codes/parens stripped) and the snapshot-date gating (>= earliest file
-date) exactly as production does.
+codes/parens stripped) and allocation-date selection exactly as production
+does.
 """
 
 from datetime import date
@@ -102,13 +102,6 @@ def _positions_df() -> pd.DataFrame:
                 "name": "TestStock A",
                 "total_value": 0.0,
             },
-            # before the allocation file's date -> entire row skipped
-            {
-                "snapshot_date": date(2023, 12, 31),
-                "isin": "FR1",
-                "name": "TestStock A",
-                "total_value": 999.0,
-            },
             # no match at all -> skipped
             {
                 "snapshot_date": snap,
@@ -132,7 +125,7 @@ def test_build_positions_allocation_empty_when_no_allocation_files():
     assert build_positions_allocation_by_isin(_positions_df(), repo) == {}
 
 
-def test_build_positions_allocation_empty_when_no_snapshot_after_min_date():
+def test_build_positions_allocation_backfills_dates_before_first_allocation():
     positions_df = pd.DataFrame(
         [
             {
@@ -144,7 +137,13 @@ def test_build_positions_allocation_empty_when_no_snapshot_after_min_date():
         ]
     )
 
-    assert build_positions_allocation(positions_df, _repo()) == {}
+    aggregate = build_positions_allocation(positions_df, _repo())["geo"]
+    by_isin = build_positions_allocation_by_isin(positions_df, _repo())["geo"]
+
+    assert aggregate["snapshot_date"].tolist() == ["2020-01-31"]
+    assert aggregate["france"].tolist() == [1000.0]
+    assert by_isin["snapshot_date"].tolist() == ["2020-01-31"]
+    assert by_isin["france"].tolist() == [1000.0]
 
 
 def test_build_positions_allocation_aggregates_via_matching_cascade():

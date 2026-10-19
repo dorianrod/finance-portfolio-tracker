@@ -1,6 +1,7 @@
 import type { AllocationPoint } from '@/hooks/useAllocationData'
 import type { RawIsinRow, RawIsinData } from '@/hooks/useRawIsinData'
 import { accountFilterId } from '@/shared/filters/accountFilter'
+import { partitionPercentages } from '@/shared/format/percentage'
 import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 import type { PositionRow } from '@/types/domain'
 import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'
@@ -15,13 +16,11 @@ function dateTimestamp(date: string | undefined): number | null {
 
 export function allocationTrendDomain(
   points: AllocationPoint[],
-  dateFrom?: string,
-  dateTo?: string,
 ): [number, number] {
   const firstPoint = dateTimestamp(points[0]?.date)
   const lastPoint = dateTimestamp(points.at(-1)?.date)
-  const start = dateTimestamp(dateFrom) ?? firstPoint ?? 0
-  const end = dateTimestamp(dateTo) ?? lastPoint ?? start
+  const start = firstPoint ?? 0
+  const end = lastPoint ?? start
   return [start, Math.max(start, end)]
 }
 
@@ -45,6 +44,58 @@ export function groupTail(cats: Array<{ name: string; value: number }>): {
   const groupable = grouped.filter((category) => !PINNED_CATEGORIES.has(category.name))
   if (groupable.length <= 1) return { main: sorted, grouped: [] }
   return { main: [...sorted.slice(0, splitIdx), ...pinned], grouped: groupable }
+}
+
+export function buildAllocationTrend(points: AllocationPoint[]): {
+  categories: string[]
+  rows: Array<Record<string, number | null>>
+} {
+  const totalsByCategory = new Map<string, number>()
+  for (const point of points) {
+    for (const category of point.categories) {
+      totalsByCategory.set(
+        category.name,
+        (totalsByCategory.get(category.name) ?? 0) + category.value,
+      )
+    }
+  }
+
+  const { main, grouped } = groupTail(
+    [...totalsByCategory]
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value),
+  )
+  const mainNames = main.map((category) => category.name)
+  const groupedNames = new Set(grouped.map((category) => category.name))
+  const groupedKey = grouped.length > 1 ? `others (${grouped.length})` : null
+  const categories = [...mainNames, ...(groupedKey ? [groupedKey] : [])]
+
+  const rows = points.map((point) => {
+    const valuesByCategory = new Map(
+      point.categories.map((category) => [category.name, category.value]),
+    )
+    const values = mainNames.map((name) => valuesByCategory.get(name) ?? 0)
+    if (groupedKey) {
+      values.push(point.categories.reduce(
+        (sum, category) => groupedNames.has(category.name) ? sum + category.value : sum,
+        0,
+      ))
+    }
+
+    const total = values.reduce((sum, value) => sum + value, 0)
+    const percentages = total > 0
+      ? partitionPercentages(values)
+      : values.map(() => null)
+    const row: Record<string, number | null> = {
+      date: dateTimestamp(point.date) ?? 0,
+    }
+    categories.forEach((category, index) => {
+      row[category] = percentages[index]
+    })
+    return row
+  })
+
+  return { categories, rows }
 }
 
 export function computeMatchingIsins(rawData: RawIsinData, filter: AllocationFilter | null): Set<string> {

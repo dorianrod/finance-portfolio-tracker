@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { groupTail, computeMatchingIsins, computeTableRows, aggregateAllocationPoints, aggregateFilteredPoints, computePopoverPos, allocationTrendDomain, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationCharts.logic'
+import { groupTail, computeMatchingIsins, computeTableRows, aggregateAllocationPoints, aggregateFilteredPoints, computePopoverPos, allocationTrendDomain, buildAllocationTrend, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationCharts.logic'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 import type { RawIsinData, RawIsinRow } from '@/hooks/useRawIsinData'
 import type { PositionRow } from '@/types/domain'
@@ -63,25 +63,56 @@ describe('allocationTrendDomain', () => {
     { date: '2026-10-13', categories: [] },
   ]
 
-  it('starts the time axis at the selected period even when allocation history starts later', () => {
-    expect(allocationTrendDomain(points, '2025-10-13')).toEqual([
-      Date.parse('2025-10-13T00:00:00Z'),
-      Date.parse('2026-10-13T00:00:00Z'),
-    ])
-  })
-
-  it('uses the selected end date instead of the last allocation snapshot', () => {
-    expect(allocationTrendDomain(points, '2026-03-01', '2026-12-31')).toEqual([
-      Date.parse('2026-03-01T00:00:00Z'),
-      Date.parse('2026-12-31T00:00:00Z'),
-    ])
-  })
-
-  it('falls back to the available allocation history without a period filter', () => {
+  it('always spans the complete available allocation history', () => {
     expect(allocationTrendDomain(points)).toEqual([
       Date.parse('2026-01-31T00:00:00Z'),
       Date.parse('2026-10-13T00:00:00Z'),
     ])
+  })
+})
+
+describe('buildAllocationTrend', () => {
+  it('uses one category base for the whole period and totals 100% on every populated date', () => {
+    const trend = buildAllocationTrend([
+      {
+        date: '2024-01-31',
+        categories: [
+          { name: 'historic only', value: 20 },
+          { name: 'shared', value: 80 },
+        ],
+      },
+      {
+        date: '2024-02-29',
+        categories: [
+          { name: 'shared', value: 50 },
+          { name: 'current only', value: 50 },
+        ],
+      },
+    ])
+
+    expect(trend.categories).toEqual(['shared', 'current only', 'historic only'])
+    expect(trend.rows[0]).toMatchObject({
+      shared: 80,
+      'current only': 0,
+      'historic only': 20,
+    })
+    expect(trend.rows[1]).toMatchObject({
+      shared: 50,
+      'current only': 50,
+      'historic only': 0,
+    })
+    for (const row of trend.rows) {
+      expect(trend.categories.reduce((sum, category) => sum + Number(row[category]), 0)).toBe(100)
+    }
+  })
+
+  it('uses null values to leave a visible gap when a date has no allocation data', () => {
+    const trend = buildAllocationTrend([
+      { date: '2024-01-31', categories: [{ name: 'equity', value: 100 }] },
+      { date: '2024-02-29', categories: [] },
+    ])
+
+    expect(trend.rows[1].equity).toBeNull()
   })
 })
 

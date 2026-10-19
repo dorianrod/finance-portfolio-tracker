@@ -59,12 +59,12 @@ describe('presetDateFrom', () => {
 })
 
 describe('filterVisibilityForTab', () => {
-  it.each(['overview', 'wealth', 'performance', 'allocation', 'positions'])(
+  it.each(['overview', 'wealth', 'performance', 'positions'])(
     'shows the period filter on %s',
     (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
 
-  it.each(['underlying', 'quality'])('hides the period filter on %s', (tab) => {
+  it.each(['allocation', 'underlying', 'quality'])('hides the period filter on %s', (tab) => {
     expect(filterVisibilityForTab(tab).showPeriod).toBe(false)
   })
 

@@ -28,7 +28,7 @@ const OP_LABELS: Record<string, string> = {
 
 export function filterVisibilityForTab(tab: string): FilterVisibility {
   return {
-    showPeriod: tab !== 'underlying' && tab !== 'quality',
+    showPeriod: tab !== 'allocation' && tab !== 'underlying' && tab !== 'quality',
     showPositionFilters: tab === 'positions',
   }
 }

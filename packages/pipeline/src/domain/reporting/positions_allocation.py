@@ -6,9 +6,10 @@ per category (geo, secteur, currency, classe):
 
   snapshot_date | <label_1> | <label_2> | ...
 
-Only snapshot dates >= the earliest repartition file are included.
-The most recent repartition file whose date <= snapshot_date is applied
-(forward-fill, no backward extrapolation).
+Every portfolio snapshot date is included. The most recent repartition file
+whose date <= snapshot_date is applied; dates before the first repartition
+file use that first known allocation so the dashboard can show the complete
+portfolio history.
 """
 
 from __future__ import annotations
@@ -235,18 +236,16 @@ def build_positions_allocation_by_isin(
     positions_df["snapshot_date"] = pd.to_datetime(
         positions_df["snapshot_date"]
     ).dt.date
-    snap_dates = sorted(
-        positions_df[positions_df["snapshot_date"] >= min_date][
-            "snapshot_date"
-        ].unique()
-    )
+    snap_dates = sorted(positions_df["snapshot_date"].unique())
     if not snap_dates:
         return {}
 
     rows_by_cat: dict[str, list[dict]] = {}
 
     for snap_date in snap_dates:
-        alloc = allocation_repo.load_allocation_tables(snap_date)
+        alloc = allocation_repo.load_allocation_tables(
+            max(snap_date, min_date)
+        )
         if alloc is None:
             continue
         snap_pos = positions_df[positions_df["snapshot_date"] == snap_date]
@@ -346,18 +345,16 @@ def build_positions_allocation(
     positions_df["snapshot_date"] = pd.to_datetime(
         positions_df["snapshot_date"]
     ).dt.date
-    snap_dates = sorted(
-        positions_df[positions_df["snapshot_date"] >= min_date][
-            "snapshot_date"
-        ].unique()
-    )
+    snap_dates = sorted(positions_df["snapshot_date"].unique())
     if not snap_dates:
         return {}
 
     rows_by_cat: dict[str, list[dict]] = {}
 
     for snap_date in snap_dates:
-        alloc = allocation_repo.load_allocation_tables(snap_date)
+        alloc = allocation_repo.load_allocation_tables(
+            max(snap_date, min_date)
+        )
         if alloc is None:
             continue
         snap_pos = positions_df[positions_df["snapshot_date"] == snap_date]
