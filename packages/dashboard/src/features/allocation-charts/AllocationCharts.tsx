@@ -20,13 +20,29 @@ interface AllocationChartsProps {
   accountFilters: Set<string>
   activeFilter: AllocationFilter | null
   onActiveFilterChange: (filter: AllocationFilter | null) => void
+  view: AllocationView
 }
 
-export function AllocationCharts({ positions, fundHoldings, accountFilters, activeFilter, onActiveFilterChange }: AllocationChartsProps) {
+export type AllocationView = 'current' | 'trend'
+
+interface AllocationViewToggleProps {
+  value: AllocationView
+  onChange: (view: AllocationView) => void
+}
+
+export function AllocationViewToggle({ value, onChange }: AllocationViewToggleProps) {
+  return (
+    <div className="inline-flex rounded-lg border border-gray-800 bg-gray-900 p-1" role="group" aria-label="Diversification view">
+      <button type="button" onClick={() => onChange('current')} aria-pressed={value === 'current'} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${value === 'current' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Current</button>
+      <button type="button" onClick={() => onChange('trend')} aria-pressed={value === 'trend'} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${value === 'trend' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Trend</button>
+    </div>
+  )
+}
+
+export function AllocationCharts({ positions, fundHoldings, accountFilters, activeFilter, onActiveFilterChange, view }: AllocationChartsProps) {
   const rawData = useRawIsinData()
 
   const [showTable, setShowTable] = useState(false)
-  const [view, setView] = useState<'current' | 'trend'>('current')
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
   const applicablePositions = useMemo(
     () => positions.filter((position) => isAssetAnalysisApplicablePosition(position)),
@@ -142,17 +158,6 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
 
   return (
     <div className="flex flex-col gap-4 mb-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-base font-semibold text-white">Portfolio exposure</h2>
-          <p className="mt-1 text-xs text-gray-500">Analyse the current mix or how it changed over time.</p>
-        </div>
-        <div className="inline-flex rounded-lg border border-gray-800 bg-gray-900 p-1">
-          <button type="button" onClick={() => setView('current')} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${view === 'current' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Current</button>
-          <button type="button" onClick={() => setView('trend')} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${view === 'trend' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Trend</button>
-        </div>
-      </div>
-
       {view === 'current' && (
         <>
           {(heldAssetConcentration.allHoldings.length > 0 || lookThroughConcentration.allHoldings.length > 0) && (
@@ -188,21 +193,33 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
               )}
             </section>
           )}
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-            {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-            {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-            {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-          </div>
+          <section>
+            <div className="mb-3">
+              <h3 className="text-sm font-medium text-gray-300">Portfolio breakdown</h3>
+              <p className="mt-0.5 text-xs text-gray-600">Explore the current mix by geography, asset class, sector and currency.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+              {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+              {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+              {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+            </div>
+          </section>
         </>
       )}
 
-      {view === 'trend' && hasEvolution && <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-        {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-        {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-        {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-      </div>}
+      {view === 'trend' && hasEvolution && <section>
+        <div className="mb-3">
+          <h3 className="text-sm font-medium text-gray-300">Portfolio breakdown trends</h3>
+          <p className="mt-0.5 text-xs text-gray-600">Track how the mix changed by geography, asset class, sector and currency.</p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+          {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+          {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+          {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+        </div>
+      </section>}
       {view === 'trend' && !hasEvolution && <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">Not enough allocation history.</div>}
 
       {/* ── Panneau positions ─────────────────────────────────────────────── */}

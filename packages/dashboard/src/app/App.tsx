@@ -22,7 +22,11 @@ import {
   FilterButton,
   FilterPanel,
 } from "@/features/filters/FilterBar";
-import { AllocationCharts } from "@/features/allocation-charts/AllocationCharts";
+import {
+  AllocationCharts,
+  AllocationViewToggle,
+  type AllocationView,
+} from "@/features/allocation-charts/AllocationCharts";
 import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
 import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
@@ -180,6 +184,8 @@ export default function App() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [allocationFilter, setAllocationFilter] =
     useState<AllocationFilter | null>(null);
+  const [allocationView, setAllocationView] =
+    useState<AllocationView>("current");
   const [underlyingQuery, setUnderlyingQuery] = useState("");
   const [underlyingSort, setUnderlyingSort] =
     useState<FundExposureSort>("value");
@@ -698,11 +704,19 @@ export default function App() {
                 )}
                 <p className="mt-2 text-sm text-gray-500">{copy.description}</p>
               </div>
-              <FilterButton
-                activeCount={activeFilterSummaries.length}
-                open={filtersOpen}
-                onClick={() => setFiltersOpen(true)}
-              />
+              <div className="flex shrink-0 items-center gap-2">
+                {activeTab === "allocation" && (
+                  <AllocationViewToggle
+                    value={allocationView}
+                    onChange={setAllocationView}
+                  />
+                )}
+                <FilterButton
+                  activeCount={activeFilterSummaries.length}
+                  open={filtersOpen}
+                  onClick={() => setFiltersOpen(true)}
+                />
+              </div>
             </div>
 
             <ActiveFilterSummary
@@ -787,6 +801,7 @@ export default function App() {
                 accountFilters={filters.accounts}
                 activeFilter={allocationFilter}
                 onActiveFilterChange={setAllocationFilter}
+                view={allocationView}
               />
             )}
             {activeTab === "holdings" && (
