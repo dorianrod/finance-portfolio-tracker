@@ -43,6 +43,7 @@ import {
 } from "@/features/filters/filterBar.logic";
 import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
 import { partitionPercentages } from "@/shared/format/percentage";
+import { AnalysisReliabilityKpi } from "@/shared/ui/AnalysisReliabilityKpi";
 import {
   buildCumulativeWealthDrivers,
   computeConcentration,
@@ -382,6 +383,20 @@ export default function App() {
     return partitionPercentages([allocated, unallocated, notApplicable])[1];
   }, [coverage, rawAllocationData.loading]);
 
+  const classificationMappedValue = coverage.reduce(
+    (sum, item) => sum + item.allocated,
+    0,
+  );
+  const classificationUnmappedValue = coverage.reduce(
+    (sum, item) => sum + item.unallocated,
+    0,
+  );
+  const classificationApplicableValue =
+    classificationMappedValue + classificationUnmappedValue;
+  const classificationReliabilityPct = classificationApplicableValue > 0
+    ? (classificationMappedValue / classificationApplicableValue) * 100
+    : null;
+
   const scopedFundQuality = useMemo(
     () =>
       scopeFundQualityData(
@@ -422,6 +437,10 @@ export default function App() {
     ? scopedFundQuality.report.directIdentifiedValue +
       scopedFundQuality.report.decomposedValue
     : 0;
+  const underlyingApplicableValue = identifiedFundValue + unresolvedFundValue;
+  const underlyingReliabilityPct = underlyingApplicableValue > 0
+    ? (identifiedFundValue / underlyingApplicableValue) * 100
+    : null;
   const [, unresolvedFundPct] = partitionPercentages([
     identifiedFundValue,
     unresolvedFundValue,
@@ -496,12 +515,47 @@ export default function App() {
               </button>
             </nav>
 
-            <div className="mb-4 flex items-start justify-between gap-4">
+            <div className="mb-6 flex items-start justify-between gap-4 border-b border-gray-800 pb-5">
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-white">
                   {copy.title}
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">{copy.description}</p>
+                {activeTab === "allocation" && (
+                  <div className="mt-2">
+                    <AnalysisReliabilityKpi
+                      percentage={rawAllocationData.loading ? null : classificationReliabilityPct}
+                      amount={classificationMappedValue}
+                      metricLabel="mapped"
+                      tone={rawAllocationData.loading || classificationReliabilityPct == null
+                        ? "unavailable"
+                        : hasMaterialQualityGap(100 - classificationReliabilityPct)
+                          ? "warning"
+                          : "healthy"}
+                      tooltip="Share of the applicable portfolio mapped to allocation data. The analysis base is the mapped value used by the diversification views; savings, checking and brokerage cash are excluded."
+                    />
+                  </div>
+                )}
+                {activeTab === "underlying" && (
+                  <div className="mt-2">
+                    <AnalysisReliabilityKpi
+                      percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
+                      amount={identifiedFundValue}
+                      metricLabel="identified"
+                      tone={!scopedFundQuality.report || underlyingReliabilityPct == null
+                        ? "unavailable"
+                        : hasFundValidationError
+                          ? "critical"
+                          : scopedFundQuality.report.feasibilityStatus === "limited"
+                            ? "critical"
+                            : scopedFundQuality.report.feasibilityStatus === "pending_repeatability"
+                              || hasMaterialQualityGap(100 - underlyingReliabilityPct)
+                            ? "warning"
+                            : "healthy"}
+                      tooltip="Share of the applicable portfolio identified directly or through decomposed funds. The analysis base is the identified exposure used by the underlying-assets view."
+                    />
+                  </div>
+                )}
+                <p className="mt-2 text-sm text-gray-500">{copy.description}</p>
               </div>
               <FilterButton
                 activeCount={activeFilterSummaries.length}
