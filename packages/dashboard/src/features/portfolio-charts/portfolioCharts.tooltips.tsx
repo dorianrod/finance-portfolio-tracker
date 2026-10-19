@@ -1,24 +1,26 @@
 import { fmtFull } from '@/shared/format/money'
+import { formatPercentage } from '@/shared/format/percentage'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { typeColor } from '@/shared/format/colors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
 import type { MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function EvolutionTooltip({ active, payload, label }: any) {
+export function EvolutionTooltip({ active, payload, label, percentageMode = false }: any) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cost = payload.find((p: any) => p.dataKey === 'total_cost_basis')?.value ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const gain = payload.find((p: any) => p.dataKey === 'unrealized_gain')?.value ?? 0
+  const row = payload[0]?.payload
+  const cost = row?.total_cost_basis ?? 0
+  const gain = row?.unrealized_gain ?? 0
+  const total = cost + gain
+  const share = (value: number) => total === 0 ? '—' : `${formatPercentage(value / total * 100)}%`
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(cost + gain)}</div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}</div>
-      <div style={{ color: gain >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>Unrealized P&L: {fmtFull(gain)}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}{percentageMode && ` · ${share(cost)}`}</div>
+      <div style={{ color: gain >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>Unrealized P&L: {fmtFull(gain)}{percentageMode && ` · ${share(gain)}`}</div>
     </TooltipBox>
   )
 }
@@ -178,10 +180,13 @@ export function PassiveIncomeTooltip({ active, payload, label }: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function AccountTypeHistoryTooltip({ active, payload, label, accountTypes, typeCategories }: any) {
+export function AccountTypeHistoryTooltip({ active, payload, label, accountTypes, typeCategories, percentageMode = false }: any) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const total = payload.reduce((s: number, p: any) => s + (p.value ?? 0), 0)
+  const row = payload[0]?.payload
+  const total = (accountTypes as string[]).reduce((sum, accountType) => {
+    const value = row?.[accountType]
+    return sum + (typeof value === 'number' ? value : 0)
+  }, 0)
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
@@ -189,11 +194,12 @@ export function AccountTypeHistoryTooltip({ active, payload, label, accountTypes
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
       {(accountTypes as string[]).map((t, i) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const val = payload.find((p: any) => p.dataKey === t)?.value ?? 0
+        const value = row?.[t]
+        const val = typeof value === 'number' ? value : 0
         if (!val) return null
+        const share = total > 0 ? `${formatPercentage(val / total * 100)}%` : '—'
         return (
-          <div key={t} style={{ color: typeColor(t, i, typeCategories) }}>{t}: {fmtFull(val)}</div>
+          <div key={t} style={{ color: typeColor(t, i, typeCategories) }}>{t}: {fmtFull(val)}{percentageMode && ` · ${share}`}</div>
         )
       })}
     </TooltipBox>
