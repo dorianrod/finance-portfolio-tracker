@@ -32,8 +32,17 @@ import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
 import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
 import type { QualityThemeId } from "@/features/dashboard/DataQualityTab";
 import { FundLookThroughTab } from "@/features/fund-holdings/FundLookThroughTab";
-import { scopeFundQualityData } from "@/features/fund-holdings/fundQualityScope.logic";
+import type { FundExposureSort } from "@/features/fund-holdings/FundHoldingsExplorer";
+import {
+  computeFundExposurePercentages,
+  scopeFundQualityData,
+} from "@/features/fund-holdings/fundQualityScope.logic";
+import {
+  HoldingsViewTabs,
+  type HoldingsView,
+} from "@/features/holdings/HoldingsViewTabs";
 import type { Filters, SortKey } from "@/types/filters";
+import type { ExpandedState } from "@tanstack/react-table";
 import { accountFilterId, rawAccountId } from "@/shared/filters/accountFilter";
 import {
   accountLabel,
@@ -46,8 +55,14 @@ import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
 import { partitionPercentages } from "@/shared/format/percentage";
 import {
   AnalysisReliabilityKpi,
+  CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
+  aggregateReliabilityTone,
+  percentageReliabilityTone,
+  pipelineReliabilityTone,
+  pipelineStatusLabel,
 } from "@/shared/ui/AnalysisReliabilityKpi";
+import type { AnalysisReliabilityTone } from "@/shared/ui/AnalysisReliabilityKpi";
 import {
   buildCumulativeWealthDrivers,
   computeConcentration,
@@ -73,8 +88,7 @@ type AnalysisTab =
   | "wealth"
   | "performance"
   | "allocation"
-  | "underlying"
-  | "positions"
+  | "holdings"
   | "quality";
 
 const PRIMARY_TABS: Array<{
@@ -85,8 +99,7 @@ const PRIMARY_TABS: Array<{
   { id: "wealth", label: "Wealth & cash flow" },
   { id: "performance", label: "Performance & passive income" },
   { id: "allocation", label: "Diversification" },
-  { id: "underlying", label: "Underlying assets" },
-  { id: "positions", label: "Positions" },
+  { id: "holdings", label: "Holdings" },
 ];
 
 const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
@@ -109,20 +122,26 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
     description:
       "Current exposures, concentration and how the portfolio mix is evolving.",
   },
-  underlying: {
-    title: "Underlying assets",
-    description:
-      "All identified economic exposure through ETFs and funds, grouped by issuer and security.",
-  },
-  positions: {
-    title: "Positions",
-    description:
-      "Inspect every holding, transaction and position-level result.",
+  holdings: {
+    title: "Holdings",
+    description: "Inspect held positions and their underlying economic exposure.",
   },
   quality: {
     title: "Data quality",
     description:
       "A focused review of pipeline, pricing, classification and look-through gaps.",
+  },
+};
+
+const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }> = {
+  positions: {
+    title: "Positions",
+    description: "Inspect every holding, transaction and position-level result.",
+  },
+  underlying: {
+    title: "Underlying exposure",
+    description:
+      "Review identified economic exposure through ETFs and funds, grouped by issuer and security.",
   },
 };
 
@@ -155,12 +174,19 @@ export default function App() {
 
   const [theme, setTheme] = useState<"dark" | "light">("light");
   const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
+  const [holdingsView, setHoldingsView] = useState<HoldingsView>("positions");
   const [selectedQualityTheme, setSelectedQualityTheme] =
     useState<QualityThemeId | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [allocationFilter, setAllocationFilter] =
     useState<AllocationFilter | null>(null);
   const [underlyingQuery, setUnderlyingQuery] = useState("");
+  const [underlyingSort, setUnderlyingSort] =
+    useState<FundExposureSort>("value");
+  const [expandedUnderlyingIssuers, setExpandedUnderlyingIssuers] =
+    useState<Set<string>>(new Set());
+  const [expandedPositionRows, setExpandedPositionRows] =
+    useState<ExpandedState>({});
   const [sortKey, setSortKey] = useState<SortKey>("total_value");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [filters, setFilters] = useState<Filters>(() => resetFilters());
@@ -444,11 +470,38 @@ export default function App() {
     ? scopedFundQuality.report.directIdentifiedValue +
       scopedFundQuality.report.decomposedValue
     : 0;
-  const underlyingApplicableValue = identifiedFundValue + unresolvedFundValue;
-  const underlyingReliabilityPct = underlyingApplicableValue > 0
-    ? (identifiedFundValue / underlyingApplicableValue) * 100
+  const fundExposurePercentages = computeFundExposurePercentages(
+    identifiedFundValue,
+    unresolvedFundValue,
+    scopedFundQuality.notApplicableValue,
+  );
+  const underlyingReliabilityPct = scopedFundQuality.report
+    ? fundExposurePercentages.identified
     : null;
-  const pipelineQualityPositions = activeTab === "positions"
+  const underlyingCritical = hasFundValidationError || scopedFundQuality.report?.feasibilityStatus === "limited";
+  const classificationMetricTone = percentageReliabilityTone(
+    rawAllocationData.loading ? null : classificationReliabilityPct,
+  );
+  const underlyingMetricTone: AnalysisReliabilityTone = underlyingCritical
+    ? "critical"
+    : scopedFundQuality.report?.feasibilityStatus === "pending_repeatability"
+      ? "warning"
+      : percentageReliabilityTone(scopedFundQuality.report ? underlyingReliabilityPct : null);
+  const diversificationReliabilityTone = aggregateReliabilityTone([
+    classificationMetricTone,
+    underlyingMetricTone,
+  ]);
+  const reliabilityPriority: Record<AnalysisReliabilityTone, number> = {
+    healthy: 0,
+    warning: 1,
+    unavailable: 2,
+    critical: 3,
+  };
+  const diversificationQualityTheme: QualityThemeId =
+    reliabilityPriority[underlyingMetricTone] > reliabilityPriority[classificationMetricTone]
+      ? "lookthrough"
+      : "classification";
+  const pipelineQualityPositions = activeTab === "holdings" && holdingsView === "positions"
     ? tableFiltered
     : currentPositions;
   const scopedPipelineErrors = useMemo(
@@ -459,18 +512,38 @@ export default function App() {
     (item) => item.level === "error",
   ).length;
   const scopedPipelineWarningCount = scopedPipelineErrors.length - scopedPipelineErrorCount;
-  const [, unresolvedFundPct] = partitionPercentages([
-    identifiedFundValue,
-    unresolvedFundValue,
-    scopedFundQuality.notApplicableValue,
+  const portfolioDataTone = pipelineReliabilityTone({
+    errorCount: scopedPipelineErrorCount,
+    warningCount: scopedPipelineWarningCount,
+    loading: pipelineErrorsLoading,
+  });
+  const portfolioDataStatus = pipelineStatusLabel({
+    errorCount: scopedPipelineErrorCount,
+    warningCount: scopedPipelineWarningCount,
+    loading: pipelineErrorsLoading,
+  });
+  const overviewReliabilityTone = aggregateReliabilityTone([
+    portfolioDataTone,
+    classificationMetricTone,
+    underlyingMetricTone,
   ]);
+  const overviewQualityTheme = [
+    { theme: "pipeline" as const, tone: portfolioDataTone },
+    { theme: "classification" as const, tone: classificationMetricTone },
+    { theme: "lookthrough" as const, tone: underlyingMetricTone },
+  ].reduce((mostRelevant, candidate) => (
+    reliabilityPriority[candidate.tone] > reliabilityPriority[mostRelevant.tone]
+      ? candidate
+      : mostRelevant
+  )).theme;
+  const unresolvedFundPct = fundExposurePercentages.unresolved;
   const qualityCount =
     Number(pipelineErrors.length > 0) +
     Number(manualPriceOverrides.length > 0) +
     Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
     Number(hasFundValidationError || hasMaterialQualityGap(unresolvedFundPct));
-  const copy = TAB_COPY[activeTab];
-  const filterVisibility = filterVisibilityForTab(activeTab);
+  const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
+  const filterVisibility = filterVisibilityForTab(activeTab, holdingsView);
   const activeFilterSummaries = filterSummaries(
     filters,
     accountFilterLabels,
@@ -541,12 +614,16 @@ export default function App() {
               </button>
             </nav>
 
+            {activeTab === "holdings" && (
+              <HoldingsViewTabs value={holdingsView} onChange={setHoldingsView} />
+            )}
+
             <div className="mb-6 flex items-start justify-between gap-4 border-b border-gray-800 pb-5">
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-white">
                   {copy.title}
                 </h2>
-                {activeTab !== "allocation" && activeTab !== "underlying" && activeTab !== "quality" && (
+                {activeTab !== "overview" && activeTab !== "allocation" && activeTab !== "quality" && !(activeTab === "holdings" && holdingsView === "underlying") && (
                   <div className="mt-2">
                     <PipelineReliabilityKpi
                       errorCount={scopedPipelineErrorCount}
@@ -556,39 +633,65 @@ export default function App() {
                     />
                   </div>
                 )}
-                {activeTab === "allocation" && (
+                {activeTab === "overview" && (
                   <div className="mt-2">
-                    <AnalysisReliabilityKpi
-                      percentage={rawAllocationData.loading ? null : classificationReliabilityPct}
-                      amount={classificationMappedValue}
-                      metricLabel="mapped"
-                      tone={rawAllocationData.loading || classificationReliabilityPct == null
-                        ? "unavailable"
-                        : hasMaterialQualityGap(100 - classificationReliabilityPct)
-                          ? "warning"
-                          : "healthy"}
-                      tooltip="Share of the applicable portfolio mapped to allocation data. The analysis base is the mapped value used by the diversification views; savings, checking and brokerage cash are excluded."
-                      onClick={() => openDataQuality("classification")}
+                    <CombinedAnalysisReliabilityKpi
+                      statusMetric={{
+                        value: portfolioDataStatus,
+                        metricLabel: "Portfolio data",
+                        tone: portfolioDataTone,
+                      }}
+                      metrics={[
+                        {
+                          percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                          amount: classificationMappedValue,
+                          metricLabel: "Diversification",
+                          tone: classificationMetricTone,
+                        },
+                        {
+                          percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                          amount: identifiedFundValue,
+                          metricLabel: "Underlying assets",
+                          tone: underlyingMetricTone,
+                        },
+                      ]}
+                      tone={overviewReliabilityTone}
+                      tooltip="Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator."
+                      onClick={() => openDataQuality(overviewQualityTheme)}
                     />
                   </div>
                 )}
-                {activeTab === "underlying" && (
+                {activeTab === "allocation" && (
+                  <div className="mt-2">
+                    <CombinedAnalysisReliabilityKpi
+                      metrics={[
+                        {
+                          percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                          amount: classificationMappedValue,
+                          metricLabel: "Diversification",
+                          tone: classificationMetricTone,
+                        },
+                        {
+                          percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                          amount: identifiedFundValue,
+                          metricLabel: "Underlying assets",
+                          tone: underlyingMetricTone,
+                        },
+                      ]}
+                      tone={diversificationReliabilityTone}
+                      tooltip="Aggregate reliability for diversification mapping and underlying-assets look-through. Each percentage keeps its own quality color; the overall status follows the weaker indicator."
+                      onClick={() => openDataQuality(diversificationQualityTheme)}
+                    />
+                  </div>
+                )}
+                {activeTab === "holdings" && holdingsView === "underlying" && (
                   <div className="mt-2">
                     <AnalysisReliabilityKpi
                       percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
                       amount={identifiedFundValue}
-                      metricLabel="identified"
-                      tone={!scopedFundQuality.report || underlyingReliabilityPct == null
-                        ? "unavailable"
-                        : hasFundValidationError
-                          ? "critical"
-                          : scopedFundQuality.report.feasibilityStatus === "limited"
-                            ? "critical"
-                            : scopedFundQuality.report.feasibilityStatus === "pending_repeatability"
-                              || hasMaterialQualityGap(100 - underlyingReliabilityPct)
-                            ? "warning"
-                            : "healthy"}
-                      tooltip="Share of the applicable portfolio identified directly or through decomposed funds. The analysis base is the identified exposure used by the underlying-assets view."
+                      metricLabel="Underlying assets"
+                      tone={underlyingMetricTone}
+                      tooltip="Reliability of the look-through data used by the underlying-assets view. The percentage uses the whole selected portfolio, including balances where look-through is not applicable."
                       onClick={() => openDataQuality("lookthrough")}
                     />
                   </div>
@@ -686,29 +789,42 @@ export default function App() {
                 onActiveFilterChange={setAllocationFilter}
               />
             )}
-            {activeTab === "underlying" && (
-              <FundLookThroughTab
-                positions={currentPositions}
-                holdings={fundHoldings}
-                statuses={fundData.statuses}
-                query={underlyingQuery}
-                onQueryChange={setUnderlyingQuery}
-              />
-            )}
-            {activeTab === "positions" && (
-              <PositionsTable
-                data={tableData}
-                groupByType={allAccountTypes.length > 0}
-                sortKey={sortKey}
-                sortDir={sortDir}
-                onSort={handleSort}
-                fundHoldings={fundHoldings}
-                fundStatuses={fundData.statuses}
-                onOpenCompleteHoldings={(fundName) => {
-                  setUnderlyingQuery(fundName);
-                  setActiveTab("underlying");
-                }}
-              />
+            {activeTab === "holdings" && (
+              <div
+                id={`holdings-${holdingsView}-panel`}
+                role="region"
+                aria-labelledby={`holdings-${holdingsView}-tab`}
+              >
+                {holdingsView === "positions" ? (
+                  <PositionsTable
+                    data={tableData}
+                    groupByType={allAccountTypes.length > 0}
+                    sortKey={sortKey}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    expanded={expandedPositionRows}
+                    onExpandedChange={setExpandedPositionRows}
+                    fundHoldings={fundHoldings}
+                    fundStatuses={fundData.statuses}
+                    onOpenCompleteHoldings={(fundName) => {
+                      setUnderlyingQuery(fundName);
+                      setHoldingsView("underlying");
+                    }}
+                  />
+                ) : (
+                  <FundLookThroughTab
+                    positions={currentPositions}
+                    holdings={fundHoldings}
+                    statuses={fundData.statuses}
+                    query={underlyingQuery}
+                    onQueryChange={setUnderlyingQuery}
+                    sort={underlyingSort}
+                    onSortChange={setUnderlyingSort}
+                    expanded={expandedUnderlyingIssuers}
+                    onExpandedChange={setExpandedUnderlyingIssuers}
+                  />
+                )}
+              </div>
             )}
             {activeTab === "quality" && (
               <DataQualityTab

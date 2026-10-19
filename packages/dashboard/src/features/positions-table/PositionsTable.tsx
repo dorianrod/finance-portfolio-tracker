@@ -5,6 +5,7 @@ import {
   flexRender,
   createColumnHelper,
 } from '@tanstack/react-table'
+import type { ExpandedState, OnChangeFn } from '@tanstack/react-table'
 import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/types/domain'
 import type { SortKey } from '@/types/filters'
@@ -47,6 +48,8 @@ interface Props {
   sortKey: SortKey
   sortDir: 'asc' | 'desc'
   onSort: (key: SortKey) => void
+  expanded?: ExpandedState
+  onExpandedChange?: OnChangeFn<ExpandedState>
   fundHoldings?: FundHolding[]
   fundStatuses?: FundHoldingStatus[]
   onOpenCompleteHoldings?: (fundName: string) => void
@@ -54,6 +57,7 @@ interface Props {
 
 export function PositionsTable({
   data, groupByType = false, sortKey, sortDir, onSort,
+  expanded, onExpandedChange,
   fundHoldings = [], fundStatuses = [], onOpenCompleteHoldings,
 }: Props) {
   const [chart, setChart] = useState<ChartTarget | null>(null)
@@ -199,7 +203,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'breakdown',
-      header: () => <span title="Position-level allocation and underlying-assets breakdowns.">Breakdown</span>,
+      header: () => <span title="Position-level allocation and underlying-exposure breakdowns.">Breakdown</span>,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind !== 'position') return null
@@ -434,6 +438,8 @@ export function PositionsTable({
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    state: expanded === undefined ? undefined : { expanded },
+    onExpandedChange,
   })
 
   return (

@@ -159,7 +159,7 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
             <section>
               <div className="mb-3 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-300">Concentration</h3>
+                  <h3 className="text-sm font-medium text-gray-300">Asset concentration</h3>
                   <p className="mt-0.5 text-xs text-gray-600">See how much of the portfolio is concentrated in its largest exposures.</p>
                 </div>
                 <ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />
@@ -169,21 +169,21 @@ export function AllocationCharts({ positions, fundHoldings, accountFilters, acti
                   <CumulativeConcentrationChart
                     data={cumulativeConcentration}
                     description={concentrationMode === 'held'
-                      ? 'Share of the applicable portfolio held in the largest N assets.'
-                      : `Share of the applicable portfolio identified in the largest N underlying assets · ${concentration.coveragePct.toFixed(1)}% coverage.`}
+                      ? 'Share of the applicable portfolio held in the largest N positions.'
+                      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${concentration.coveragePct.toFixed(1)}% coverage.`}
                   />
                   <ConcentrationChart
                     data={concentration.holdings}
                     topTenValue={concentration.topTenValue}
                     topTenPct={concentration.topTenPct}
                     description={concentrationMode === 'held'
-                      ? 'Assets effectively held, aggregated across accounts.'
+                      ? 'Positions effectively held, aggregated across accounts.'
                       : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`}
                   />
                 </div>
               ) : (
                 <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">
-                  No identified underlying assets for the current selection.
+                  No identified look-through exposure for the current selection.
                 </div>
               )}
             </section>

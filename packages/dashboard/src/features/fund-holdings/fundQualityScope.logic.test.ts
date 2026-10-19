@@ -7,7 +7,7 @@ import type {
   FundUnresolved,
 } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
-import { scopeFundQualityData } from './fundQualityScope.logic'
+import { computeFundExposurePercentages, scopeFundQualityData } from './fundQualityScope.logic'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
@@ -47,6 +47,14 @@ const report: FundCoverageReport = {
 }
 
 describe('scopeFundQualityData', () => {
+  it('uses the whole selected portfolio for the shared identified percentage', () => {
+    expect(computeFundExposurePercentages(575, 425, 59)).toEqual({
+      identified: 54.3,
+      unresolved: 40.1,
+      notApplicable: 5.6,
+    })
+  })
+
   it('recalculates look-through values from the selected account positions', () => {
     const selected = [
       position({ id: 'fund', account: 'selected', isin: 'FUND', name: 'World ETF', total_value: 200 }),

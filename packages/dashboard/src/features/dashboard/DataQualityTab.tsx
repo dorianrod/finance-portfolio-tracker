@@ -9,7 +9,7 @@ import { ErrorsTab, ManualPriceOverridesPanel } from '@/features/errors/ErrorsTa
 import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/hooks/useFundHoldings'
 import { LookThroughCoverageSummary } from '@/features/fund-holdings/LookThroughCoverageSummary'
 import { FundDataQualityPanel } from '@/features/fund-holdings/FundDataQualityPanel'
-import { scopeFundQualityData } from '@/features/fund-holdings/fundQualityScope.logic'
+import { computeFundExposurePercentages, scopeFundQualityData } from '@/features/fund-holdings/fundQualityScope.logic'
 import { SidePanel } from '@/shared/ui/SidePanel'
 import { fmtFull } from '@/shared/format/money'
 import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
@@ -150,11 +150,12 @@ export function DataQualityTab({
   const identifiedValue = scopedFundData.report
     ? scopedFundData.report.directIdentifiedValue + scopedFundData.report.decomposedValue
     : 0
-  const [, unresolvedPct] = partitionPercentages([
+  const fundExposurePercentages = computeFundExposurePercentages(
     identifiedValue,
     unresolvedValue,
     scopedFundData.notApplicableValue,
-  ])
+  )
+  const unresolvedPct = fundExposurePercentages.unresolved
   const fundErrorCount = scopedFundData.statuses.filter((status) => status.validationStatus === 'error').length
   const fundIssueCount = scopedFundData.statuses.filter(
     (status) => status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct),
@@ -164,8 +165,8 @@ export function DataQualityTab({
   const themes: QualityTheme[] = [
     {
       id: 'pipeline',
-      label: 'Pipeline',
-      description: 'Import and market-data anomalies detected during the latest run.',
+      label: 'Portfolio data',
+      description: 'Import, position and market-data anomalies detected during the latest run.',
       metric: String(errors.length),
       metricLabel: errors.length === 1 ? 'anomaly' : 'anomalies',
       tone: errorCount > 0 ? 'critical' : warningCount > 0 ? 'warning' : 'healthy',
@@ -195,7 +196,7 @@ export function DataQualityTab({
     },
     {
       id: 'lookthrough',
-      label: 'Underlying assets',
+      label: 'Underlying exposure',
       description: 'Transparency and source reliability of underlying fund exposures.',
       metric: hasLookThroughScope ? `${formatPercentage(unresolvedPct)}%` : scopedFundData.report ? 'N/A' : '—',
       metricLabel: hasLookThroughScope ? 'unresolved' : scopedFundData.report ? 'not applicable' : 'not available',

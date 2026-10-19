@@ -40,7 +40,7 @@ export function VariationCard({ drivers, heldAssetConcentration, lookThroughConc
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-sm font-medium text-gray-300">Concentration snapshot</h2>
-            <p className="mt-0.5 text-xs text-gray-600">{concentrationMode === 'held' ? 'Assets effectively held, at allocation-file grain.' : 'Look-through exposure to direct and fund holdings.'}</p>
+            <p className="mt-0.5 text-xs text-gray-600">{concentrationMode === 'held' ? 'Positions effectively held, at allocation-file grain.' : 'Look-through exposure to direct and fund holdings.'}</p>
           </div>
           <ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />
         </div>

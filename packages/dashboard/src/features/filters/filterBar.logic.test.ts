@@ -59,7 +59,7 @@ describe('presetDateFrom', () => {
 })
 
 describe('filterVisibilityForTab', () => {
-  it.each(['overview', 'wealth', 'performance', 'positions'])(
+  it.each(['overview', 'wealth', 'performance'])(
     'shows the period filter on %s',
     (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
@@ -68,8 +68,15 @@ describe('filterVisibilityForTab', () => {
     expect(filterVisibilityForTab(tab).showPeriod).toBe(false)
   })
 
-  it('shows position-only filters only on the positions tab', () => {
-    expect(filterVisibilityForTab('positions').showPositionFilters).toBe(true)
+  it('uses the active Holdings view to expose the relevant filters', () => {
+    expect(filterVisibilityForTab('holdings', 'positions')).toEqual({
+      showPeriod: true,
+      showPositionFilters: true,
+    })
+    expect(filterVisibilityForTab('holdings', 'underlying')).toEqual({
+      showPeriod: false,
+      showPositionFilters: false,
+    })
     expect(filterVisibilityForTab('overview').showPositionFilters).toBe(false)
   })
 })
@@ -82,7 +89,7 @@ describe('filterSummaries', () => {
       dateTo: '2026-06-30',
       operationTypes: new Set(['BUY']),
       hideClosedPositions: false,
-    }), {}, filterVisibilityForTab('positions'))).toEqual([
+    }), {}, filterVisibilityForTab('holdings', 'positions'))).toEqual([
       { key: 'accounts', label: '2 accounts' },
       { key: 'period', label: '2026-01-01 → 2026-06-30' },
       { key: 'operations', label: 'Buy' },
@@ -102,7 +109,7 @@ describe('filterSummaries', () => {
     expect(filterSummaries(filters({
       dateFrom: '2026-01-01',
       operationTypes: new Set(['BUY']),
-    }), {}, filterVisibilityForTab('underlying'))).toEqual([])
+    }), {}, filterVisibilityForTab('holdings', 'underlying'))).toEqual([])
   })
 })
 
