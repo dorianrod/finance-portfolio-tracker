@@ -589,10 +589,7 @@ export default function App() {
               <AllocationCharts
                 positions={currentPositions}
                 fundHoldings={fundHoldings}
-                fundReport={scopedFundQuality.report}
                 accountFilters={filters.accounts}
-                dateFrom={filters.dateFrom}
-                dateTo={filters.dateTo}
                 activeFilter={allocationFilter}
                 onActiveFilterChange={setAllocationFilter}
               />

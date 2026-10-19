@@ -3,7 +3,7 @@ import { shortMonth } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
 import type { AllocationPoint } from '@/hooks/useAllocationData'
-import { allocationTrendDomain, groupTail } from './allocationCharts.logic'
+import { allocationTrendDomain, buildAllocationTrend } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
 import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
@@ -14,35 +14,15 @@ interface EvoCardProps {
   dimension: AllocationDimension
   activeFilter: AllocationFilter | null
   onFilterToggle: (filter: AllocationFilter) => void
-  dateFrom?: string
-  dateTo?: string
   onShowPositions?: () => void
   positionsOpen?: boolean
 }
 
-export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, dateFrom, dateTo, onShowPositions, positionsOpen = false }: EvoCardProps) {
-  const last = points[points.length - 1]
-  const { main, grouped } = groupTail(last.categories)
-  const groupedNames = new Set(grouped.map((c) => c.name))
-  const groupedKey = grouped.length > 1 ? `others (${grouped.length})` : null
-  const categories = [...main.map((c) => c.name), ...(groupedKey ? [groupedKey] : [])]
-
-  const chartData = points.map((pt) => {
-    const rowTotal = pt.categories.reduce((s, c) => s + c.value, 0)
-    const row: Record<string, string | number> = { date: Date.parse(`${pt.date}T00:00:00Z`) }
-    for (const cat of main.map((c) => c.name)) {
-      const v = pt.categories.find((c) => c.name === cat)?.value ?? 0
-      row[cat] = rowTotal > 0 ? parseFloat(((v / rowTotal) * 100).toFixed(2)) : 0
-    }
-    if (groupedKey) {
-      const groupedVal = pt.categories.filter((c) => groupedNames.has(c.name)).reduce((s, c) => s + c.value, 0)
-      row[groupedKey] = rowTotal > 0 ? parseFloat(((groupedVal / rowTotal) * 100).toFixed(2)) : 0
-    }
-    return row
-  })
+export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, onShowPositions, positionsOpen = false }: EvoCardProps) {
+  const { categories, rows: chartData } = buildAllocationTrend(points)
 
   const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
-  const dateDomain = allocationTrendDomain(points, dateFrom, dateTo)
+  const dateDomain = allocationTrendDomain(points)
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
