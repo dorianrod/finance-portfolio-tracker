@@ -30,6 +30,7 @@ import {
   fundQualitySourceLabel,
   statusForPosition,
 } from '@/features/fund-holdings/fundHoldings.logic'
+import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 
 const col = createColumnHelper<TableRow>()
 
@@ -198,7 +199,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'breakdown',
-      header: () => <span className="normal-case" title="Position-level allocation and underlying-assets breakdowns.">Breakdown</span>,
+      header: () => <span title="Position-level allocation and underlying-assets breakdowns.">Breakdown</span>,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind !== 'position') return null
@@ -436,22 +437,30 @@ export function PositionsTable({
   })
 
   return (
-    <div>
-      <div className="flex gap-2 mb-2">
-        <button
-          onClick={() => table.toggleAllRowsExpanded(true)}
-          className="text-xs px-2.5 py-1 rounded border border-gray-600 text-gray-400 hover:text-white hover:border-gray-400 transition-colors"
-        >
-          Expand all
-        </button>
-        <button
-          onClick={() => table.toggleAllRowsExpanded(false)}
-          className="text-xs px-2.5 py-1 rounded border border-gray-600 text-gray-400 hover:text-white hover:border-gray-400 transition-colors"
-        >
-          Collapse all
-        </button>
+    <section className={DATA_TABLE_STYLES.panel}>
+      <div className={DATA_TABLE_STYLES.toolbar}>
+        <div>
+          <h2 className={DATA_TABLE_STYLES.title}>All portfolio positions</h2>
+          <p className={DATA_TABLE_STYLES.description}>Expand each position to review its transactions and income details.</p>
+        </div>
+        <div className={DATA_TABLE_STYLES.actions}>
+          <button
+            type="button"
+            onClick={() => table.toggleAllRowsExpanded(true)}
+            className="flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-gray-300 transition-colors hover:border-gray-500 hover:text-white sm:flex-none"
+          >
+            Expand all
+          </button>
+          <button
+            type="button"
+            onClick={() => table.toggleAllRowsExpanded(false)}
+            className="flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-gray-300 transition-colors hover:border-gray-500 hover:text-white sm:flex-none"
+          >
+            Collapse all
+          </button>
+        </div>
       </div>
-      <div className="rounded-lg border border-gray-700">
+      <div className="overflow-x-auto rounded-b-xl">
         <table className="w-full text-sm text-left table-fixed">
           <colgroup>
             <col style={{ width: '28px' }} />
@@ -465,11 +474,11 @@ export function PositionsTable({
             <col style={{ width: '9%' }} />
             <col style={{ width: '9%' }} />
           </colgroup>
-          <thead className="sticky top-0 z-10">
+          <thead className={DATA_TABLE_STYLES.columnHeader}>
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} className="border-b border-gray-700 bg-gray-800">
+              <tr key={hg.id}>
                 {hg.headers.map((h) => (
-                  <th key={h.id} className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <th key={h.id} className="px-3 py-2">
                     {flexRender(h.column.columnDef.header, h.getContext())}
                   </th>
                 ))}
@@ -636,7 +645,7 @@ export function PositionsTable({
           onMouseLeave={scheduleHide}
         />
       )}
-    </div>
+    </section>
   )
 }
 

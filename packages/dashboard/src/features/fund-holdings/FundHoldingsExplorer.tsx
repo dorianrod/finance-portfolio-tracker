@@ -4,6 +4,7 @@ import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 import { fmtFull } from '@/shared/format/money'
+import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import { buildIssuerExposures, type IssuerExposure, type SecurityExposure } from './fundHoldings.logic'
 
 const ROW_HEIGHT = 40
@@ -103,13 +104,13 @@ export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQ
   })
 
   return (
-    <section className="rounded-xl border border-gray-800 bg-gray-900">
-      <div className="flex flex-col gap-3 border-b border-gray-800 p-4 sm:flex-row sm:items-center">
+    <section className={DATA_TABLE_STYLES.panel}>
+      <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className="text-base font-semibold text-white">All identified economic exposure</h2>
-          <p className="mt-1 text-xs text-gray-500">Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
+          <h2 className={DATA_TABLE_STYLES.title}>All identified economic exposure</h2>
+          <p className={DATA_TABLE_STYLES.description}>Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
         </div>
-        <div className="ml-auto flex w-full gap-2 sm:w-auto">
+        <div className={DATA_TABLE_STYLES.actions}>
           <input
             type="search"
             value={query}
@@ -131,7 +132,7 @@ export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQ
       </div>
       <div>
         <div>
-          <div className={`${GRID} sticky top-0 z-10 rounded-none bg-gray-800 py-2 text-xs uppercase tracking-wider text-gray-500`}>
+          <div className={`${GRID} ${DATA_TABLE_STYLES.columnHeader} py-2`}>
             <span>Issuer</span><span className="text-right">Exposure</span><span className="text-right">Portfolio</span><span>Sources</span>
           </div>
           <div ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>
