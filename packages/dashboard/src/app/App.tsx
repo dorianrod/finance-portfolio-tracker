@@ -797,8 +797,10 @@ export default function App() {
             {activeTab === "allocation" && (
               <AllocationCharts
                 positions={currentPositions}
+                rawPositions={rawPositions}
                 fundHoldings={fundHoldings}
                 accountFilters={filters.accounts}
+                accountTypeFilters={filters.accountTypes}
                 activeFilter={allocationFilter}
                 onActiveFilterChange={setAllocationFilter}
                 view={allocationView}
