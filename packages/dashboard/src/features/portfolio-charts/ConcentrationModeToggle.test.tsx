@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { ConcentrationModeToggle } from './ConcentrationModeToggle'
 
 describe('ConcentrationModeToggle', () => {
-  it('names the held-position and look-through concentration methods', () => {
+  it('names the held-position and underlying-asset concentration methods', () => {
     const html = renderToStaticMarkup(
       <ConcentrationModeToggle value="held" onChange={() => undefined} />,
     )
 
     expect(html).toContain('Held positions')
-    expect(html).toContain('Look-through')
+    expect(html).toContain('Underlying assets')
   })
 
   it('can disable look-through when historical holdings are unavailable', () => {

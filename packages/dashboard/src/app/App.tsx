@@ -31,6 +31,8 @@ import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
 import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
 import { OverviewTab } from "@/features/dashboard/OverviewTab";
+import { OverviewPeriodFilter } from "@/features/dashboard/OverviewPeriodFilter";
+import { buildOverviewComparison } from "@/features/dashboard/overviewComparison.logic";
 import { WealthTab } from "@/features/dashboard/WealthTab";
 import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
 import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
@@ -69,10 +71,7 @@ import {
 import type { AnalysisReliabilityTone } from "@/shared/ui/AnalysisReliabilityKpi";
 import {
   buildCumulativeWealthDrivers,
-  computeConcentration,
-  computeHeldAssetConcentration,
   computePerformanceSummary,
-  computePeriodDrivers,
   computeTrailing12mYearOverYear,
   computeTrailing12mIncome,
   computeTrailing12mSavings,
@@ -148,13 +147,6 @@ const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }
       "Review identified economic exposure through ETFs and funds, grouped by issuer and security.",
   },
 };
-
-function periodLabel(dateFrom?: string, dateTo?: string): string {
-  if (!dateFrom && !dateTo) return "";
-  if (dateFrom && dateTo) return `${dateFrom} to ${dateTo}`;
-  if (dateFrom) return `Since ${dateFrom}`;
-  return `Until ${dateTo}`;
-}
 
 export default function App() {
   const {
@@ -340,6 +332,28 @@ export default function App() {
   }, [filteredHistory.demoPresetAccounts, filters.accounts]);
 
   const savingCapacity = useSavingCapacity(filters.accounts);
+  const overviewComparison = useMemo(
+    () => buildOverviewComparison({
+      rawPositions,
+      rawOperations,
+      savingCapacity,
+      fundHoldingsHistory: fundData.history,
+      accountFilters: filters.accounts,
+      accountTypeFilters: filters.accountTypes,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+    }),
+    [
+      rawPositions,
+      rawOperations,
+      savingCapacity,
+      fundData.history,
+      filters.accounts,
+      filters.accountTypes,
+      filters.dateFrom,
+      filters.dateTo,
+    ],
+  );
   const periodSavings = useMemo(
     () =>
       filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
@@ -355,10 +369,6 @@ export default function App() {
   );
   const wealthDrivers = useMemo(
     () => buildCumulativeWealthDrivers(periodSavings),
-    [periodSavings],
-  );
-  const drivers = useMemo(
-    () => computePeriodDrivers(periodSavings),
     [periodSavings],
   );
   const monthlyOps = useMemo(
@@ -389,14 +399,6 @@ export default function App() {
     () =>
       computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
     [currentPositions, displayedHistory],
-  );
-  const lookThroughConcentration = useMemo(
-    () => computeConcentration(tableFiltered, fundHoldings),
-    [tableFiltered, fundHoldings],
-  );
-  const heldAssetConcentration = useMemo(
-    () => computeHeldAssetConcentration(tableFiltered),
-    [tableFiltered],
   );
   const coverage = useMemo(
     () =>
@@ -555,6 +557,9 @@ export default function App() {
     accountFilterLabels,
     filterVisibility,
   );
+  const visibleFilterSummaries = activeTab === "overview"
+    ? activeFilterSummaries.filter((item) => item.key !== "period")
+    : activeFilterSummaries;
 
   function handleResetFilters() {
     setFilters(resetFilters());
@@ -720,11 +725,18 @@ export default function App() {
             </div>
 
             <ActiveFilterSummary
-              items={activeFilterSummaries}
+              items={visibleFilterSummaries}
+              leading={activeTab === "overview" && overviewComparison ? (
+                <OverviewPeriodFilter
+                  windows={overviewComparison.windows}
+                  onEdit={() => setFiltersOpen(true)}
+                />
+              ) : undefined}
               onRemove={(item) =>
                 setFilters((current) => clearFilterGroup(current, item.key))
               }
               onReset={handleResetFilters}
+              showReset={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)}
             >
               {activeTab === "allocation" && allocationFilter && (
                 <FilterChipBar
@@ -752,16 +764,10 @@ export default function App() {
 
             {activeTab === "overview" && (
               <OverviewTab
-                history={displayedHistory}
-                performance={performance}
-                drivers={drivers}
-                income={trailingIncome}
-                heldAssetConcentration={heldAssetConcentration}
-                lookThroughConcentration={lookThroughConcentration}
+                comparison={overviewComparison}
                 globalTri={globalTri}
                 irrStatus={irrStatus}
-                irrScopeLabel={irrScopeLabel}
-                periodLabel={periodLabel(filters.dateFrom, filters.dateTo)}
+                onNavigate={setActiveTab}
               />
             )}
             {activeTab === "wealth" && (

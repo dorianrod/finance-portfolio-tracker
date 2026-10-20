@@ -31,7 +31,7 @@ describe('ConcentrationTrendSection', () => {
     expect(html).toContain('Unavailable thresholds appear as gaps')
     expect(html).toContain('Largest holdings over time')
     expect(html).toContain('Held positions')
-    expect(html).toContain('Look-through')
+    expect(html).toContain('Underlying assets')
     expect(html).toContain('aria-label="Play concentration history"')
     expect(html).toContain('aria-label="Concentration month"')
     expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(html.indexOf('aria-label="Previous concentration month"'))
