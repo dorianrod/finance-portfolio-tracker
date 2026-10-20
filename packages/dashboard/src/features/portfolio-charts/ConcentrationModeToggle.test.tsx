@@ -11,4 +11,13 @@ describe('ConcentrationModeToggle', () => {
     expect(html).toContain('Held positions')
     expect(html).toContain('Look-through')
   })
+
+  it('can disable look-through when historical holdings are unavailable', () => {
+    const html = renderToStaticMarkup(
+      <ConcentrationModeToggle value="held" onChange={() => undefined} lookThroughDisabled />,
+    )
+
+    expect(html).toContain('Historical underlying holdings are unavailable')
+    expect(html).toContain('disabled=""')
+  })
 })

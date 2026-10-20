@@ -1,19 +1,13 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { AnnualConcentrationFrame, HistoricalConcentrationPoint } from './concentrationTrend.logic'
+import type { HistoricalConcentrationPoint } from './concentrationTrend.logic'
 import { nextPlaybackIndex, shouldAnimateConcentration } from './concentrationTrend.logic'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
 
 const points: HistoricalConcentrationPoint[] = [
-  { date: '2024-12-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 1.92, holdingCount: 2, holdings: [] },
-  { date: '2025-12-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 2, holdingCount: 2, holdings: [] },
+  { date: '2024-12-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 1.92, holdingCount: 2, coveragePct: 100, identifiedValue: 200, undisclosedValue: 0, opaqueValue: 0, selectedValue: 200, holdings: [] },
+  { date: '2025-01-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 2, holdingCount: 2, coveragePct: 100, identifiedValue: 200, undisclosedValue: 0, opaqueValue: 0, selectedValue: 200, holdings: [] },
 ]
-
-const frames: AnnualConcentrationFrame[] = points.map((point) => ({
-  ...point,
-  year: Number(point.date.slice(0, 4)),
-  holdings: [{ key: 'A', label: 'AAA', name: 'Asset A', value: 100, weight: 50 }],
-}))
 
 describe('ConcentrationTrendSection helpers', () => {
   it('advances playback and reports completion at the last frame', () => {
@@ -30,22 +24,25 @@ describe('ConcentrationTrendSection helpers', () => {
 
 describe('ConcentrationTrendSection', () => {
   it('renders trend charts and accessible playback controls', () => {
-    const html = renderToStaticMarkup(<ConcentrationTrendSection points={points} annualFrames={frames} />)
+    const html = renderToStaticMarkup(<ConcentrationTrendSection heldPoints={points} lookThroughPoints={points} lookThroughAvailable />)
 
     expect(html).toContain('Held-position concentration')
     expect(html).toContain('Minimum positions to reach portfolio share')
-    expect(html).toContain('Minimum number of largest positions needed to reach each share of the portfolio.')
+    expect(html).toContain('Unavailable thresholds appear as gaps')
     expect(html).toContain('Largest holdings over time')
-    expect(html).not.toContain('Effective positions')
+    expect(html).toContain('Held positions')
+    expect(html).toContain('Look-through')
     expect(html).toContain('aria-label="Play concentration history"')
-    expect(html).toContain('aria-label="Concentration year"')
-    expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(html.indexOf('aria-label="Previous concentration year"'))
-    expect(html.indexOf('aria-label="Previous concentration year"')).toBeLessThan(html.indexOf('aria-label="Next concentration year"'))
+    expect(html).toContain('aria-label="Concentration month"')
+    expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(html.indexOf('aria-label="Previous concentration month"'))
+    expect(html.indexOf('aria-label="Previous concentration month"')).toBeLessThan(html.indexOf('aria-label="Next concentration month"'))
   })
 
   it('renders a focused empty state with fewer than two snapshots', () => {
-    const html = renderToStaticMarkup(<ConcentrationTrendSection points={points.slice(0, 1)} annualFrames={frames.slice(0, 1)} />)
+    const html = renderToStaticMarkup(<ConcentrationTrendSection heldPoints={points.slice(0, 1)} lookThroughPoints={[]} lookThroughAvailable={false} />)
     expect(html).toContain('Not enough concentration history for the current selection.')
+    expect(html).toContain('fund_holdings_history.csv')
+    expect(html).toContain('disabled=""')
     expect(html).not.toContain('Play concentration history')
   })
 })

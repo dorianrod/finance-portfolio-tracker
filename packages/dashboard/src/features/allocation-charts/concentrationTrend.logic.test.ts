@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { RawPosition } from '@/types/domain'
+import type { HistoricalFundHolding } from '@/hooks/useFundHoldings'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/shared/filters/accountFilter'
 import {
-  buildAnnualConcentrationFrames,
   buildHistoricalConcentration,
+  buildHistoricalLookThroughConcentration,
 } from './concentrationTrend.logic'
 
 function row(overrides: Partial<RawPosition> = {}): RawPosition {
@@ -33,6 +34,26 @@ function row(overrides: Partial<RawPosition> = {}): RawPosition {
     xirr_rolling_3y: '',
     xirr_rolling_period_years: '',
     total_return_pct: '',
+    ...overrides,
+  }
+}
+
+function historicalHolding(overrides: Partial<HistoricalFundHolding> = {}): HistoricalFundHolding {
+  return {
+    parentIsin: 'ISIN-FUND',
+    parentTicker: '',
+    parentName: 'Example UCITS ETF',
+    holdingId: 'ISIN-UNDERLYING',
+    holdingName: 'Underlying Corp',
+    issuerId: 'ISSUER-UNDERLYING',
+    issuerName: 'Underlying Corp',
+    weight: 0.6,
+    sourceTier: 'A',
+    sourceName: 'Official provider',
+    holdingsDate: '2025-01-31',
+    effectiveDate: '2025-01-31',
+    historySnapshotId: '2025-01-31/ISIN-FUND/a',
+    capturedAt: '2025-02-01T10:00:00Z',
     ...overrides,
   }
 }
@@ -115,26 +136,60 @@ describe('buildHistoricalConcentration', () => {
   })
 })
 
-describe('buildAnnualConcentrationFrames', () => {
-  it('keeps the latest snapshot of each year, including the incomplete latest year', () => {
-    const points = buildHistoricalConcentration([
-      row({ snapshot_date: '2024-06-30', total_value: '80' }),
-      row({ snapshot_date: '2024-12-31', total_value: '90' }),
-      row({ snapshot_date: '2025-08-31', total_value: '100' }),
+describe('buildHistoricalLookThroughConcentration', () => {
+  it('uses the latest non-future fund snapshot and aggregates direct and indirect issuer exposure', () => {
+    const result = buildHistoricalLookThroughConcentration([
+      row({ snapshot_date: '2024-12-31', isin: 'DIRECT-BEFORE-HISTORY', name: 'Direct before history', total_value: '500' }),
+      row({ snapshot_date: '2025-01-31', isin: 'ISIN-FUND', name: 'Example UCITS ETF', total_value: '100' }),
+      row({ snapshot_date: '2025-01-31', isin: 'ISSUER-UNDERLYING', name: 'Underlying Corp', total_value: '40' }),
+      row({ snapshot_date: '2025-02-28', isin: 'ISIN-FUND', name: 'Example UCITS ETF', total_value: '100' }),
+    ], [
+      historicalHolding(),
+      historicalHolding({
+        effectiveDate: '2025-03-31',
+        holdingsDate: '2025-03-31',
+        historySnapshotId: '2025-03-31/ISIN-FUND/future',
+        weight: 1,
+      }),
     ])
 
-    expect(buildAnnualConcentrationFrames(points).map((frame) => [frame.year, frame.date])).toEqual([
-      [2024, '2024-12-31'],
-      [2025, '2025-08-31'],
-    ])
+    expect(result[0].date).toBe('2025-01-31')
+    expect(result[0].holdings[0]).toMatchObject({ key: 'ISSUER-UNDERLYING', value: 100 })
+    expect(result[0]).toMatchObject({
+      selectedValue: 140,
+      identifiedValue: 100,
+      undisclosedValue: 40,
+      coveragePct: 71.42857142857143,
+      positionsTo75Pct: null,
+      positionsTo90Pct: null,
+    })
+    expect(result[1].holdings[0].value).toBe(60)
   })
 
-  it('limits each animation frame to ten holdings', () => {
-    const points = buildHistoricalConcentration(Array.from({ length: 12 }, (_, index) => row({
-      isin: `ISIN-${index}`,
-      total_value: String(index + 1),
-    })))
+  it('returns no trend when no historical underlying data exists', () => {
+    const result = buildHistoricalLookThroughConcentration([
+      row({ isin: 'UNKNOWN-FUND', name: 'Unknown UCITS Fund', total_value: '60' }),
+      row({ isin: '', ticker: '', name: 'Opaque retirement wrapper', total_value: '40' }),
+    ], [])
 
-    expect(buildAnnualConcentrationFrames(points)[0].holdings).toHaveLength(10)
+    expect(result).toEqual([])
+  })
+
+  it('keeps unresolved funds and opaque wrappers in the denominator after history begins', () => {
+    const result = buildHistoricalLookThroughConcentration([
+      row({ isin: 'UNKNOWN-FUND', name: 'Unknown UCITS Fund', total_value: '60' }),
+      row({ isin: '', ticker: '', name: 'Opaque retirement wrapper', total_value: '40' }),
+      row({ isin: 'ISIN-FUND', name: 'Example UCITS ETF', total_value: '10' }),
+    ], [historicalHolding()])[0]
+
+    expect(result).toMatchObject({
+      selectedValue: 110,
+      identifiedValue: 6,
+      undisclosedValue: 64,
+      opaqueValue: 40,
+      coveragePct: 5.454545454545454,
+      positionsTo25Pct: null,
+    })
+    expect(result.holdings).toHaveLength(1)
   })
 })

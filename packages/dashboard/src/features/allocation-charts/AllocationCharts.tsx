@@ -9,17 +9,18 @@ import type { PositionRow, RawPosition } from '@/types/domain'
 import { buildCumulativeConcentration, computeConcentration, computeHeldAssetConcentration } from '@/features/portfolio-charts/portfolioCharts.logic'
 import { ConcentrationChart } from '@/features/portfolio-charts/ConcentrationChart'
 import { CumulativeConcentrationChart } from '@/features/portfolio-charts/CumulativeConcentrationChart'
-import type { FundHolding } from '@/hooks/useFundHoldings'
+import type { FundHolding, HistoricalFundHolding } from '@/hooks/useFundHoldings'
 import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
 import { fmtFull } from '@/shared/format/money'
 import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
-import { buildAnnualConcentrationFrames, buildHistoricalConcentration } from './concentrationTrend.logic'
+import { buildHistoricalConcentration, buildHistoricalLookThroughConcentration } from './concentrationTrend.logic'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
   rawPositions: RawPosition[]
   fundHoldings: FundHolding[]
+  fundHoldingsHistory: HistoricalFundHolding[]
   accountFilters: Set<string>
   accountTypeFilters: Set<string>
   activeFilter: AllocationFilter | null
@@ -43,7 +44,7 @@ export function AllocationViewToggle({ value, onChange }: AllocationViewTogglePr
   )
 }
 
-export function AllocationCharts({ positions, rawPositions, fundHoldings, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, view }: AllocationChartsProps) {
+export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, view }: AllocationChartsProps) {
   const rawData = useRawIsinData()
 
   const [showTable, setShowTable] = useState(false)
@@ -71,13 +72,13 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, accoun
     () => buildCumulativeConcentration(concentration.allHoldings),
     [concentration],
   )
-  const concentrationHistory = useMemo(
+  const heldConcentrationHistory = useMemo(
     () => buildHistoricalConcentration(rawPositions, accountFilters, accountTypeFilters),
     [rawPositions, accountFilters, accountTypeFilters],
   )
-  const annualConcentrationFrames = useMemo(
-    () => buildAnnualConcentrationFrames(concentrationHistory),
-    [concentrationHistory],
+  const lookThroughConcentrationHistory = useMemo(
+    () => buildHistoricalLookThroughConcentration(rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters),
+    [rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters],
   )
   const accountScopedRawData = useMemo(
     () => scopeRawAllocationData(rawData, accountFilters),
@@ -222,7 +223,11 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, accoun
 
       {view === 'trend' && (
         <>
-          <ConcentrationTrendSection points={concentrationHistory} annualFrames={annualConcentrationFrames} />
+          <ConcentrationTrendSection
+            heldPoints={heldConcentrationHistory}
+            lookThroughPoints={lookThroughConcentrationHistory}
+            lookThroughAvailable={fundHoldingsHistory.length > 0}
+          />
           {hasEvolution ? <section>
             <div className="mb-3">
               <h3 className="text-sm font-medium text-gray-300">Portfolio breakdown trends</h3>

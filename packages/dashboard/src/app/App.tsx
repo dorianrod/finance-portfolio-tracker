@@ -799,6 +799,7 @@ export default function App() {
                 positions={currentPositions}
                 rawPositions={rawPositions}
                 fundHoldings={fundHoldings}
+                fundHoldingsHistory={fundData.history}
                 accountFilters={filters.accounts}
                 accountTypeFilters={filters.accountTypes}
                 activeFilter={allocationFilter}

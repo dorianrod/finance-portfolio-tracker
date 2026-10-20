@@ -60,6 +60,8 @@ Successful downloads are cached for 30 days and kept if a later request fails.
 The generated files are:
 
 - `fund_holdings.csv`: normalized underlying securities and issuers;
+- `fund_holdings_history.csv`: append-only dated compositions used by the
+  monthly look-through concentration trend;
 - `fund_holdings_status.csv`: source tier (A-D), date, coverage, residual and
   validation issues for every fund;
 - `fund_holdings_coverage.csv`: portfolio-level coverage and feasibility
@@ -91,6 +93,18 @@ Run an explicit provider check, ignoring the monthly cache, with:
 ```bash
 finance-fund-holdings --data-dir /path/to/data --force
 ```
+
+Backfill every supported iShares composition from the first applicable
+investment snapshot with:
+
+```bash
+finance-fund-holdings --data-dir /path/to/data --backfill-history
+```
+
+The backfill requests only months during which each fund was held and never
+uses a composition dated after the portfolio snapshot. Providers without a
+historical endpoint begin accumulating history from the first normal refresh;
+their earlier unexplained value remains visible as reduced dashboard coverage.
 
 The complete underlying-assets view is enabled after at least 85% of the
 fund sleeve is covered by A/B sources, the seven largest funds each reach
