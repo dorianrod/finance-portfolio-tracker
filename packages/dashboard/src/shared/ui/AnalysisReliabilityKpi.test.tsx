@@ -10,7 +10,7 @@ import {
 } from './AnalysisReliabilityKpi'
 
 describe('CombinedAnalysisReliabilityKpi', () => {
-  it('shows an aggregate status while retaining each analysis color and name', () => {
+  it('shows a compact aggregate status and puts the former detail in the eye tooltip', () => {
     const html = renderToStaticMarkup(
       <CombinedAnalysisReliabilityKpi
         statusMetric={{ value: 'No anomaly', metricLabel: 'Portfolio data', tone: 'healthy' }}
@@ -24,18 +24,20 @@ describe('CombinedAnalysisReliabilityKpi', () => {
       />,
     )
 
-    expect(html).toContain('100.0%')
+    expect(html).toContain('Data quality')
+    expect(html).toContain('Review')
+    expect(html).toContain('data-quality-kpi')
+    expect(html).toContain('aria-label="Data quality: Review. No anomaly Portfolio data; 100.0% Diversification; 54.0% Underlying assets. Open Data quality."')
+    expect(html).toContain('aria-label="Show data quality details"')
+    expect(html).toContain('role="tooltip"')
+    expect(html).toContain('Aggregate quality')
     expect(html).toContain('No anomaly')
     expect(html).toContain('Portfolio data')
+    expect(html).toContain('100.0%')
     expect(html).toContain('Diversification')
     expect(html).toContain('54.0%')
     expect(html).toContain('Underlying assets')
-    expect(html).toContain('Review')
-    expect(html).toContain('·')
-    expect(html).not.toMatch(/>base</)
-    expect(html).toMatch(/text-emerald-400[^>]*>No anomaly/)
-    expect(html).toContain('text-emerald-400')
-    expect(html).toContain('text-red-400')
+    expect(html).toContain('<svg')
   })
 
   it('assigns colors independently from the reliability percentage', () => {
@@ -65,7 +67,7 @@ describe('CombinedAnalysisReliabilityKpi', () => {
 })
 
 describe('PipelineReliabilityKpi', () => {
-  it('renders the neutral no-anomaly value in gray', () => {
+  it('renders its explanation and anomaly detail in the eye tooltip', () => {
     const html = renderToStaticMarkup(
       <PipelineReliabilityKpi
         errorCount={0}
@@ -74,8 +76,14 @@ describe('PipelineReliabilityKpi', () => {
       />,
     )
 
-    expect(html).toContain('No anomaly')
+    expect(html).toContain('Data quality')
+    expect(html).toContain('Reliable')
+    expect(html).toContain('aria-label="Data quality: Reliable. 0 errors and 0 warnings in Portfolio data. Open Data quality."')
+    expect(html).toContain('role="tooltip"')
+    expect(html).toContain('Import, position and market-data anomalies')
     expect(html).toContain('Portfolio data')
-    expect(html).toMatch(/text-\[10px\][^>]*font-normal[^>]*text-gray-600[^>]*>No anomaly/)
+    expect(html).toContain('No anomaly')
+    expect(html).toContain('0 errors · 0 warnings')
+    expect(html).toContain('<svg')
   })
 })
