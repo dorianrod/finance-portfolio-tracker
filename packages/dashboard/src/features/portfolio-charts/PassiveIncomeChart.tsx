@@ -4,11 +4,12 @@ import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { PassiveIncomeTooltip } from './portfolioCharts.tooltips'
 import type { PassiveIncomePoint } from '@/hooks/usePassiveIncome'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="text-sm font-medium text-gray-400 mb-3">Passive income per year</h2>
+      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Passive income per year<InfoTooltip text="Net dividends and interest grouped by calendar year." scope={{ account: 'filterable', period: 'range' }} /></h2>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />

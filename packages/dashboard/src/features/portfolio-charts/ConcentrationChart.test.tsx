@@ -9,7 +9,7 @@ describe('HoldingLabelTick', () => {
       <svg><HoldingLabelTick x={300} y={20} payload={{ value: name }} /></svg>,
     )
 
-    expect(html).toContain('width="370"')
+    expect(html).toContain('width="250"')
     expect(html).toContain('class="truncate')
     expect(html).toContain(`title="${name}"`)
     expect(html).toContain(`>${name}</div>`)

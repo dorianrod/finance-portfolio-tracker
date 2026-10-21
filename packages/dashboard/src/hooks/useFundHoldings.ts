@@ -21,6 +21,12 @@ interface RawFundHolding {
   source_url?: string
 }
 
+interface RawFundHoldingHistory extends RawFundHolding {
+  effective_date: string
+  history_snapshot_id: string
+  captured_at: string
+}
+
 interface RawFundHoldingStatus {
   parent_id: string
   parent_isin: string
@@ -135,6 +141,12 @@ export interface FundHolding {
   sourceUrl?: string
 }
 
+export interface HistoricalFundHolding extends FundHolding {
+  effectiveDate: string
+  historySnapshotId: string
+  capturedAt: string
+}
+
 export interface FundHoldingStatus {
   parentId: string
   parentIsin: string
@@ -228,6 +240,7 @@ export interface FundCoverageReport {
 
 export interface FundHoldingsData {
   holdings: FundHolding[]
+  history: HistoricalFundHolding[]
   statuses: FundHoldingStatus[]
   report: FundCoverageReport | null
   snapshots: FundSnapshot[]
@@ -240,17 +253,18 @@ const num = (value: string | undefined) => Number.parseFloat(value || '0') || 0
 
 export function useFundHoldingsData(): FundHoldingsData {
   const [data, setData] = useState<FundHoldingsData>({
-    holdings: [], statuses: [], report: null, snapshots: [], unresolved: [], loading: true,
+    holdings: [], history: [], statuses: [], report: null, snapshots: [], unresolved: [], loading: true,
   })
 
   useEffect(() => {
     Promise.all([
       parseCsv<RawFundHolding>(dataUrl('fund_holdings.csv')).catch(() => []),
+      parseCsv<RawFundHoldingHistory>(dataUrl('fund_holdings_history.csv')).catch(() => []),
       parseCsv<RawFundHoldingStatus>(dataUrl('fund_holdings_status.csv')).catch(() => []),
       parseCsv<RawFundCoverageReport>(dataUrl('fund_holdings_coverage.csv')).catch(() => []),
       parseCsv<RawFundSnapshot>(dataUrl('fund_snapshot_manifest.csv')).catch(() => []),
       parseCsv<RawFundUnresolved>(dataUrl('fund_unresolved.csv')).catch(() => []),
-    ]).then(([holdingRows, statusRows, reportRows, snapshotRows, unresolvedRows]) => {
+    ]).then(([holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows]) => {
       const holdings = holdingRows
         .map((row): FundHolding => ({
           parentIsin: row.parent_isin?.trim() || '',
@@ -272,6 +286,31 @@ export function useFundHoldingsData(): FundHoldingsData {
           sourceUrl: row.source_url?.trim() || '',
         }))
         .filter((row) => row.holdingId && row.holdingName && row.weight > 0)
+
+      const history = historyRows
+        .map((row): HistoricalFundHolding => ({
+          parentIsin: row.parent_isin?.trim() || '',
+          parentTicker: row.parent_ticker?.trim() || '',
+          parentName: row.parent_name?.trim() || '',
+          holdingId: row.holding_id?.trim() || '',
+          holdingName: row.holding_name?.trim() || '',
+          issuerId: row.issuer_id?.trim() || row.holding_id?.trim() || '',
+          issuerName: row.issuer_name?.trim() || row.holding_name?.trim() || '',
+          weight: num(row.weight),
+          sourceTier: (row.source_tier?.trim() || '') as FundQualityTier | '',
+          sourceName: row.source_name?.trim() || '',
+          holdingsDate: row.holdings_date?.trim() || '',
+          holdingKind: row.holding_kind?.trim() || 'security',
+          lookthroughPath: row.lookthrough_path?.trim() || '',
+          depth: num(row.depth),
+          snapshotId: row.snapshot_id?.trim() || '',
+          sourceOrigin: row.source_origin?.trim() || 'deterministic',
+          sourceUrl: row.source_url?.trim() || '',
+          effectiveDate: row.effective_date?.trim() || row.holdings_date?.trim() || '',
+          historySnapshotId: row.history_snapshot_id?.trim() || '',
+          capturedAt: row.captured_at?.trim() || '',
+        }))
+        .filter((row) => row.effectiveDate && row.historySnapshotId && row.holdingId && row.holdingName && row.weight > 0)
 
       const statuses = statusRows.map((row): FundHoldingStatus => ({
         parentId: row.parent_id?.trim() || row.parent_isin?.trim() || row.parent_ticker?.trim() || '',
@@ -365,7 +404,7 @@ export function useFundHoldingsData(): FundHoldingsData {
         issueCount: num(rawReport.issue_count),
       } : null
 
-      setData({ holdings, statuses, report, snapshots, unresolved, loading: false })
+      setData({ holdings, history, statuses, report, snapshots, unresolved, loading: false })
     })
   }, [])
 

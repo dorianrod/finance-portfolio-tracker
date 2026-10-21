@@ -102,34 +102,6 @@ export function FilterPanel({
         </button>
       )}
     >
-      {allAccounts.length > 0 && (
-        <FilterSection title="Accounts" description="Choose the portfolio scope used across every view.">
-          <AccountTree
-            allAccountTypes={allAccountTypes}
-            accountToType={accountToType}
-            allAccounts={allAccounts}
-            accountLabels={accountLabels}
-            selected={filters.accounts}
-            onChange={(accounts) => onChange({ ...filters, accounts, accountTypes: new Set() })}
-          />
-          {demoPresetSelection && (
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-gray-800/60 px-3 py-2.5">
-              <div>
-                <div className="text-xs font-medium text-gray-300">Static demo</div>
-                <div className="mt-0.5 text-[11px] text-gray-500">Use the precomputed filtered return sample.</div>
-              </div>
-              <button
-                type="button"
-                onClick={() => onChange({ ...filters, accounts: demoPresetSelection, accountTypes: new Set() })}
-                className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-blue-600 bg-blue-900/40 text-blue-200' : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-200'}`}
-              >
-                Exclude private equity
-              </button>
-            </div>
-          )}
-        </FilterSection>
-      )}
-
       {visibility.showPeriod && (
         <FilterSection title="Period" description="Limit time-based charts and calculations to a specific range.">
           <div className="flex flex-wrap gap-1.5">
@@ -167,6 +139,34 @@ export function FilterPanel({
             >
               Clear period
             </button>
+          )}
+        </FilterSection>
+      )}
+
+      {allAccounts.length > 0 && (
+        <FilterSection title="Accounts" description="Choose the portfolio scope used across every view.">
+          <AccountTree
+            allAccountTypes={allAccountTypes}
+            accountToType={accountToType}
+            allAccounts={allAccounts}
+            accountLabels={accountLabels}
+            selected={filters.accounts}
+            onChange={(accounts) => onChange({ ...filters, accounts, accountTypes: new Set() })}
+          />
+          {demoPresetSelection && (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-gray-800/60 px-3 py-2.5">
+              <div>
+                <div className="text-xs font-medium text-gray-300">Static demo</div>
+                <div className="mt-0.5 text-[11px] text-gray-500">Use the precomputed filtered return sample.</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => onChange({ ...filters, accounts: demoPresetSelection, accountTypes: new Set() })}
+                className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-blue-600 bg-blue-900/40 text-blue-200' : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-200'}`}
+              >
+                Exclude private equity
+              </button>
+            </div>
           )}
         </FilterSection>
       )}
@@ -241,17 +241,22 @@ export function ActiveFilterSummary({
   items,
   onRemove,
   onReset,
+  leading,
   children,
+  showReset = true,
 }: {
   items: FilterSummaryItem[]
   onRemove: (item: FilterSummaryItem) => void
   onReset: () => void
+  leading?: ReactNode
   children?: ReactNode
+  showReset?: boolean
 }) {
-  if (items.length === 0 && !children) return null
+  if (items.length === 0 && !leading && !children) return null
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
+      {leading}
       {items.map((item) => (
         <button
           key={item.key}
@@ -265,13 +270,15 @@ export function ActiveFilterSummary({
         </button>
       ))}
       {children}
-      <button
-        type="button"
-        onClick={onReset}
-        className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
-      >
-        Reset all
-      </button>
+      {showReset && (
+        <button
+          type="button"
+          onClick={onReset}
+          className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
+        >
+          Reset all
+        </button>
+      )}
     </div>
   )
 }

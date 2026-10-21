@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   analyseIncomePlacement,
+  filterAnnualIncomeSavingsByPeriod,
   mapAnnualIncomeSavings,
   type AnnualIncomeSavingsPoint,
 } from './annualIncomeSavings.logic'
@@ -100,5 +101,13 @@ describe('analyseIncomePlacement', () => {
 
     expect(result.correlation).toBeCloseTo(-1)
     expect(result.slopePerTenThousand).toBeCloseTo(-10)
+  })
+})
+
+describe('filterAnnualIncomeSavingsByPeriod', () => {
+  it('keeps calendar years intersecting the selected period', () => {
+    const points = [point({ year: 2023 }), point({ year: 2024 }), point({ year: 2025 })]
+    expect(filterAnnualIncomeSavingsByPeriod(points, '2024-03-01', '2025-02-01').map(({ year }) => year))
+      .toEqual([2024, 2025])
   })
 })

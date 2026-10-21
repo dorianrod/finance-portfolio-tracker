@@ -1,7 +1,9 @@
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
+from src.fund_holdings_snapshots import load_all_valid_fund_snapshots
 from src.init_data_dir import main
 
 
@@ -39,6 +41,23 @@ def test_init_creates_a_fully_synthetic_feature_complete_demo(
     )
     assert employee_plan["date"].iloc[0] == "2021-12-31"
     assert private_fund["date"].iloc[0] == "2021-12-31"
+
+    snapshots, audit = load_all_valid_fund_snapshots(
+        data_dir, today=date(2026, 10, 20)
+    )
+    assert len(snapshots) == 13
+    fund_ids = {snapshot.fund_id for snapshot in snapshots}
+    assert len(fund_ids) == 4
+    assert {
+        "Demo employee savings fund",
+        "PER Fortuneo",
+    } < fund_ids
+    assert {snapshot.as_of_date for snapshot in snapshots} >= {
+        "2021-12-31",
+        "2026-09-30",
+    }
+    assert set(audit["status"]) <= {"valid", "expired"}
+    assert all(snapshot.origin == "synthetic_demo" for snapshot in snapshots)
 
     allocations = pd.read_excel(
         input_dir / "allocations/2021-01-01.xlsx", header=1

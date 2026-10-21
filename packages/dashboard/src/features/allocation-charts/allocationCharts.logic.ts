@@ -98,11 +98,15 @@ export function buildAllocationTrend(points: AllocationPoint[]): {
   return { categories, rows }
 }
 
-export function computeMatchingIsins(rawData: RawIsinData, filter: AllocationFilter | null): Set<string> {
+export function computeMatchingIsins(
+  rawData: RawIsinData,
+  filter: AllocationFilter | null,
+  asOfDate?: string,
+): Set<string> {
   if (!filter) return new Set()
   const rows = rawData[filter.type]
   const latestDate = rows.reduce(
-    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    (latest, row) => (!asOfDate || row.snapshot_date <= asOfDate) && row.snapshot_date > latest ? row.snapshot_date : latest,
     '',
   )
   const result = new Set<string>()
@@ -190,10 +194,11 @@ export function computeTableRows(
   rawData: RawIsinData,
   matchingIsins: Set<string>,
   filter: AllocationFilter,
+  asOfDate?: string,
 ): MatchingIsinRow[] {
   const rows = rawData[filter.type]
   const latestDate = rows.reduce(
-    (latest, row) => row.snapshot_date > latest ? row.snapshot_date : latest,
+    (latest, row) => (!asOfDate || row.snapshot_date <= asOfDate) && row.snapshot_date > latest ? row.snapshot_date : latest,
     '',
   )
   const byIsin = new Map<string, MatchingIsinRow>()

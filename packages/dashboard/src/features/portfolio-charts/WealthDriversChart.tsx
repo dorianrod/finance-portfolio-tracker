@@ -2,6 +2,7 @@ import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip,
 import { fmtEur, fmtFull, shortMonth } from '@/shared/format/money'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import type { WealthDriverPoint } from './portfolioCharts.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 interface DriversTooltipProps {
   active?: boolean
@@ -28,7 +29,7 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-medium text-gray-300">Cumulative wealth drivers</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">Cumulative wealth drivers<InfoTooltip text="How net contributions and market performance built the change over the selected period." scope={{ account: 'filterable', period: 'range' }} /></h2>
         <p className="mt-0.5 text-xs text-gray-600">How net contributions and market performance built the change over the selected period.</p>
       </div>
       <ResponsiveContainer width="100%" height={240}>

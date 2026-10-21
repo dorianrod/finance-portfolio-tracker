@@ -20,6 +20,7 @@ import { fmtEur, fmtFull } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 type TextAnchor = 'start' | 'middle' | 'end'
 
@@ -210,7 +211,7 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-medium text-gray-300">Income level vs placement rate</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">Income level vs placement rate<InfoTooltip text="Relationship between annual declared income and the share placed into the portfolio, using comparable actual years." scope={{ account: 'global', period: 'year-range' }} /></h2>
         <p className="mt-1 text-xs text-gray-500">Comparable actual years only · All accounts · Latest 3 years highlighted</p>
       </div>
       <div className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-xs">

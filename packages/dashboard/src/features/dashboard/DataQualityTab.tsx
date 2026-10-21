@@ -9,13 +9,13 @@ import { ErrorsTab, ManualPriceOverridesPanel } from '@/features/errors/ErrorsTa
 import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/hooks/useFundHoldings'
 import { LookThroughCoverageSummary } from '@/features/fund-holdings/LookThroughCoverageSummary'
 import { FundDataQualityPanel } from '@/features/fund-holdings/FundDataQualityPanel'
-import { scopeFundQualityData } from '@/features/fund-holdings/fundQualityScope.logic'
+import { computeFundExposurePercentages, scopeFundQualityData } from '@/features/fund-holdings/fundQualityScope.logic'
 import { SidePanel } from '@/shared/ui/SidePanel'
 import { fmtFull } from '@/shared/format/money'
 import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
 import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
 
-type QualityThemeId = 'pipeline' | 'prices' | 'classification' | 'lookthrough'
+export type QualityThemeId = 'pipeline' | 'prices' | 'classification' | 'lookthrough'
 type QualityTone = 'healthy' | 'warning' | 'critical' | 'unavailable'
 
 interface QualityTheme {
@@ -65,7 +65,7 @@ const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
 
 export function DataQualityTab({
   positions, accountLabels, errors, manualPriceOverrides, fundStatuses, fundReport,
-  fundHoldings, fundSnapshots, fundUnresolved,
+  fundHoldings, fundSnapshots, fundUnresolved, selectedTheme, onSelectedThemeChange,
 }: {
   positions: PositionRow[]
   accountLabels: Record<string, string>
@@ -76,8 +76,9 @@ export function DataQualityTab({
   fundHoldings: FundHolding[]
   fundSnapshots: FundSnapshot[]
   fundUnresolved: FundUnresolved[]
+  selectedTheme: QualityThemeId | null
+  onSelectedThemeChange: (theme: QualityThemeId) => void
 }) {
-  const [selectedTheme, setSelectedTheme] = useState<QualityThemeId | null>(null)
   const [fundDiagnosticsOpen, setFundDiagnosticsOpen] = useState(false)
   const [classificationDetailsOpen, setClassificationDetailsOpen] = useState(false)
   const [classificationDimension, setClassificationDimension] = useState<keyof typeof DIMENSION_LABELS | null>(null)
@@ -149,11 +150,12 @@ export function DataQualityTab({
   const identifiedValue = scopedFundData.report
     ? scopedFundData.report.directIdentifiedValue + scopedFundData.report.decomposedValue
     : 0
-  const [, unresolvedPct] = partitionPercentages([
+  const fundExposurePercentages = computeFundExposurePercentages(
     identifiedValue,
     unresolvedValue,
     scopedFundData.notApplicableValue,
-  ])
+  )
+  const unresolvedPct = fundExposurePercentages.unresolved
   const fundErrorCount = scopedFundData.statuses.filter((status) => status.validationStatus === 'error').length
   const fundIssueCount = scopedFundData.statuses.filter(
     (status) => status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct),
@@ -163,8 +165,8 @@ export function DataQualityTab({
   const themes: QualityTheme[] = [
     {
       id: 'pipeline',
-      label: 'Pipeline',
-      description: 'Import and market-data anomalies detected during the latest run.',
+      label: 'Portfolio data',
+      description: 'Import, position and market-data anomalies detected during the latest run.',
       metric: String(errors.length),
       metricLabel: errors.length === 1 ? 'anomaly' : 'anomalies',
       tone: errorCount > 0 ? 'critical' : warningCount > 0 ? 'warning' : 'healthy',
@@ -194,7 +196,7 @@ export function DataQualityTab({
     },
     {
       id: 'lookthrough',
-      label: 'Underlying assets',
+      label: 'Underlying exposure',
       description: 'Transparency and source reliability of underlying fund exposures.',
       metric: hasLookThroughScope ? `${formatPercentage(unresolvedPct)}%` : scopedFundData.report ? 'N/A' : '—',
       metricLabel: hasLookThroughScope ? 'unresolved' : scopedFundData.report ? 'not applicable' : 'not available',
@@ -250,7 +252,7 @@ export function DataQualityTab({
           <select
             id="quality-theme"
             value={activeThemeId}
-            onChange={(event) => setSelectedTheme(event.target.value as QualityThemeId)}
+            onChange={(event) => onSelectedThemeChange(event.target.value as QualityThemeId)}
             className="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-200 focus:border-blue-500 focus:outline-none"
           >
             {themes.map((theme) => (
@@ -270,7 +272,7 @@ export function DataQualityTab({
                 role="tab"
                 aria-selected={active}
                 aria-controls="quality-theme-panel"
-                onClick={() => setSelectedTheme(theme.id)}
+                onClick={() => onSelectedThemeChange(theme.id)}
                 className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true">

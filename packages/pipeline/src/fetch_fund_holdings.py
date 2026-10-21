@@ -18,6 +18,7 @@ from src.data_dir import resolve_data_dir
 from src.fund_holdings_snapshots import (
     SNAPSHOT_COLUMNS,
     FundSnapshot,
+    load_all_valid_fund_snapshots,
     load_fund_snapshots,
 )
 from src.fund_holdings_sources import (
@@ -25,6 +26,7 @@ from src.fund_holdings_sources import (
     SourceResult,
     discover_fund_sources,
     fetch_official_source,
+    fetch_official_source_as_of,
     load_fund_source_candidates,
 )
 from src.infrastructure.xlsx_allocation_repository import (
@@ -57,6 +59,22 @@ _LEGACY_OUTPUT_COLUMNS = [
     "holding_id",
     "holding_name",
     "weight",
+]
+_HISTORY_COLUMNS = [
+    "effective_date",
+    "history_snapshot_id",
+    "captured_at",
+    "parent_isin",
+    "parent_ticker",
+    "parent_name",
+    "holding_id",
+    "holding_name",
+    "issuer_id",
+    "issuer_name",
+    "weight",
+    "source_tier",
+    "source_name",
+    "source_origin",
 ]
 
 _STATUS_COLUMNS = [
@@ -310,6 +328,125 @@ def _fund_positions(
     return list(funds.values())
 
 
+def _applicable_investment_positions(positions: pd.DataFrame) -> pd.DataFrame:
+    values = pd.to_numeric(
+        positions.get("total_value", pd.Series(0, index=positions.index)),
+        errors="coerce",
+    )
+    categories = positions.get(
+        "account_category", pd.Series("", index=positions.index)
+    ).fillna("").astype(str).str.strip().str.lower()
+    account_types = positions.get(
+        "account_type", pd.Series("", index=positions.index)
+    ).fillna("").astype(str).str.strip().str.lower()
+    return positions.loc[
+        values.gt(0)
+        & ~categories.isin({"savings", "checking"})
+        & ~account_types.str.endswith(" – cash")
+    ].copy()
+
+
+def _history_snapshot_id(frame: pd.DataFrame) -> str:
+    parent = _text(frame.iloc[0].get("parent_isin")) or _text(
+        frame.iloc[0].get("parent_ticker")
+    ) or _norm_name(_text(frame.iloc[0].get("parent_name")))
+    effective = _text(frame.iloc[0].get("effective_date"))
+    declared = _text(frame.iloc[0].get("snapshot_id"))
+    if declared:
+        return declared
+    payload = frame[_OUTPUT_COLUMNS].sort_values(
+        ["holding_id", "issuer_id", "lookthrough_path"]
+    ).to_csv(index=False)
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()[:12]
+    return f"{effective}/{parent}/{digest}"
+
+
+def archive_fund_holdings_history(
+    destination: Path,
+    frames: list[pd.DataFrame],
+    *,
+    captured_at: str | None = None,
+) -> pd.DataFrame:
+    """Merge normalized dated compositions into an append-only CSV."""
+    captured_at = captured_at or datetime.now().astimezone().isoformat(
+        timespec="seconds"
+    )
+    additions: list[pd.DataFrame] = []
+
+    def summarize(frame: pd.DataFrame) -> pd.DataFrame:
+        if frame.empty:
+            return pd.DataFrame(columns=_HISTORY_COLUMNS)
+        frame = frame.copy()
+        for column in _HISTORY_COLUMNS:
+            if column not in frame.columns:
+                frame[column] = 0.0 if column == "weight" else ""
+        frame["issuer_id"] = frame["issuer_id"].where(
+            frame["issuer_id"].astype(str).str.strip().ne(""),
+            frame["holding_id"],
+        )
+        frame["issuer_name"] = frame["issuer_name"].where(
+            frame["issuer_name"].astype(str).str.strip().ne(""),
+            frame["holding_name"],
+        )
+        keys = [
+            column
+            for column in _HISTORY_COLUMNS
+            if column not in {"holding_id", "holding_name", "weight"}
+        ]
+        summarized = frame.groupby(keys, as_index=False, dropna=False).agg(
+            weight=("weight", "sum")
+        )
+        summarized["holding_id"] = summarized["issuer_id"]
+        summarized["holding_name"] = summarized["issuer_name"]
+        return summarized[_HISTORY_COLUMNS]
+
+    for source in frames:
+        if source.empty:
+            continue
+        frame = source.copy()
+        for column in _OUTPUT_COLUMNS:
+            if column not in frame.columns:
+                frame[column] = 0.0 if column == "weight" else ""
+        frame["effective_date"] = frame["holdings_date"].astype(str).str[:10]
+        frame = frame.loc[
+            frame["effective_date"].str.fullmatch(r"\d{4}-\d{2}-\d{2}")
+        ].copy()
+        if frame.empty:
+            continue
+        frame["captured_at"] = captured_at
+        identifiers: list[pd.DataFrame] = []
+        for _, group in frame.groupby(
+            ["parent_isin", "parent_ticker", "parent_name", "effective_date"],
+            dropna=False,
+            sort=False,
+        ):
+            group = group.copy()
+            group["history_snapshot_id"] = _history_snapshot_id(group)
+            identifiers.append(group)
+        additions.append(
+            summarize(pd.concat(identifiers, ignore_index=True))
+        )
+
+    previous = summarize(_read_csv(destination, _HISTORY_COLUMNS))
+    combined = [previous]
+    combined.extend(frame[_HISTORY_COLUMNS] for frame in additions)
+    history = pd.concat(combined, ignore_index=True)
+    if not history.empty:
+        history = history.sort_values("captured_at")
+        history = history.drop_duplicates(
+            subset=[
+                "history_snapshot_id",
+                "issuer_id",
+            ],
+            keep="last",
+        ).sort_values(
+            ["effective_date", "parent_name", "history_snapshot_id", "weight"],
+            ascending=[True, True, True, False],
+        )
+    _atomic_csv(history[_HISTORY_COLUMNS], destination)
+    return history[_HISTORY_COLUMNS]
+
+
 def _canonicalizer(
     positions: pd.DataFrame, ticker_data: dict[str, dict]
 ) -> Callable[[str, str], str]:
@@ -540,6 +677,137 @@ def _snapshot_result(
         exposure_kind="economic",
         complete=snapshot.complete and not unresolved,
     ), unresolved
+
+
+def _manual_snapshot_history_frames(
+    snapshots: list[FundSnapshot],
+    canonical: Callable[[str, str], str],
+) -> list[pd.DataFrame]:
+    frames: list[pd.DataFrame] = []
+    for snapshot in snapshots:
+        compatible: dict[str, FundSnapshot] = {}
+        for candidate in snapshots:
+            if candidate.as_of_date > snapshot.as_of_date:
+                continue
+            current = compatible.get(candidate.fund_id)
+            if current is None or (
+                candidate.as_of_date, candidate.generated_at
+            ) > (current.as_of_date, current.generated_at):
+                compatible[candidate.fund_id] = candidate
+        result, _ = _snapshot_result(snapshot, compatible)
+        if result.holdings.empty:
+            continue
+        fund = FundPosition(
+            snapshot.fund_id,
+            "",
+            snapshot.fund_name or snapshot.fund_id,
+            snapshot.fund_id,
+            0,
+        )
+        frames.append(
+            _normalize_source_rows(
+                fund,
+                result,
+                "C",
+                "Dated manual/agent snapshot",
+                canonical,
+                snapshot_id=snapshot.snapshot_id,
+                source_origin=snapshot.origin,
+                source_url=snapshot.source_urls[0]
+                if snapshot.source_urls
+                else "",
+            )
+        )
+    return frames
+
+
+def _backfill_history_frames(
+    positions: pd.DataFrame,
+    ticker_data: dict[str, dict],
+    fund_sources: dict[str, list[FundSource]],
+    canonical: Callable[[str, str], str],
+    existing_history: pd.DataFrame,
+    historical_fetch: Callable[[FundSource, date], SourceResult],
+    today: date,
+) -> list[pd.DataFrame]:
+    applicable = _applicable_investment_positions(positions)
+    if applicable.empty:
+        return []
+    applicable["snapshot_date"] = (
+        applicable["snapshot_date"].astype(str).str[:10]
+    )
+    applicable["snapshot_month"] = applicable["snapshot_date"].str[:7]
+    latest_by_month = applicable.groupby("snapshot_month")[
+        "snapshot_date"
+    ].max()
+    known_ids = set(fund_sources)
+    covered = {
+        (
+            _text(row.get("parent_isin"))
+            or _text(row.get("parent_ticker"))
+            or _text(row.get("parent_name")),
+            _text(row.get("effective_date"))[:7],
+        )
+        for row in existing_history.to_dict("records")
+    }
+    frames: list[pd.DataFrame] = []
+
+    for snapshot_date in latest_by_month.sort_values():
+        requested = date.fromisoformat(snapshot_date)
+        if requested > today:
+            continue
+        monthly = applicable.loc[
+            applicable["snapshot_date"].eq(snapshot_date)
+        ].drop(columns=["snapshot_month"])
+        for fund in _fund_positions(monthly, ticker_data, known_ids):
+            candidates = fund_sources.get(fund.parent_isin, [])
+            source = next(
+                (
+                    candidate
+                    for candidate in candidates
+                    if candidate.adapter == "ishares_csv"
+                ),
+                None,
+            )
+            already_covered = (
+                fund.parent_id, snapshot_date[:7]
+            ) in covered
+            if source is None or already_covered:
+                continue
+            try:
+                result = historical_fetch(source, requested)
+                if result.exposure_kind != "economic":
+                    raise ValueError(
+                        "historical source is not economic exposure"
+                    )
+                rows = _normalize_source_rows(
+                    fund,
+                    result,
+                    source.quality_tier,
+                    source.provider,
+                    canonical,
+                    source_origin="historical_backfill",
+                    source_url=source.url,
+                )
+                rows = _normalize_trusted_complete_weights(
+                    rows, result, source.quality_tier
+                )
+                if rows.empty:
+                    raise ValueError(
+                        "historical source produced no usable rows"
+                    )
+                frames.append(rows)
+                covered.add((fund.parent_id, result.holdings_date[:7]))
+                print(
+                    f"[fund-holdings-history] {fund.parent_name}: "
+                    f"{result.holdings_date}, {len(rows)} rows"
+                )
+            except Exception as exc:
+                print(
+                    f"[fund-holdings-history] {fund.parent_name} "
+                    f"at {snapshot_date}: unavailable ({exc})"
+                )
+    return frames
 
 
 def _validation(
@@ -975,7 +1243,7 @@ def _read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame(columns=columns)
     try:
-        return pd.read_csv(path).fillna("")
+        return pd.read_csv(path, low_memory=False).fillna("")
     except Exception:
         return pd.DataFrame(columns=columns)
 
@@ -990,9 +1258,13 @@ def refresh_fund_holdings(
     data_dir: Path,
     *,
     force: bool = False,
+    backfill_history: bool = False,
     official_fetch: Callable[
         [FundSource], SourceResult
     ] = fetch_official_source,
+    historical_fetch: Callable[
+        [FundSource, date], SourceResult
+    ] = fetch_official_source_as_of,
     yahoo_fetch: Callable[[str], pd.DataFrame] = _fetch_yahoo_holdings,
     today: date | None = None,
 ) -> Path:
@@ -1009,6 +1281,7 @@ def refresh_fund_holdings(
     attempts_path = output_dir / "fund_holdings_attempts.csv"
     unresolved_path = output_dir / "fund_unresolved.csv"
     snapshots_path = output_dir / "fund_snapshot_manifest.csv"
+    history_path = output_dir / "fund_holdings_history.csv"
     previous_holdings = _read_csv(holdings_path, _OUTPUT_COLUMNS)
     previous_statuses = _read_csv(status_path, _STATUS_COLUMNS)
     previous_by_id = _previous_status_by_id(previous_statuses)
@@ -1022,6 +1295,9 @@ def refresh_fund_holdings(
     canonical = _canonicalizer(positions, ticker_data)
     fund_sources = load_fund_source_candidates(data_dir)
     snapshots, snapshot_audit = load_fund_snapshots(data_dir, today=today)
+    all_snapshots, _ = load_all_valid_fund_snapshots(
+        data_dir, today=today
+    )
     audited_ids = set(
         snapshot_audit.get("fund_id", pd.Series(dtype=str))
         .astype(str)
@@ -1516,6 +1792,24 @@ def refresh_fund_holdings(
     )
     report = build_coverage_report(positions, statuses)
     _atomic_csv(report, report_path)
+    existing_history = _read_csv(history_path, _HISTORY_COLUMNS)
+    history_frames = [holdings]
+    history_frames.extend(
+        _manual_snapshot_history_frames(all_snapshots, canonical)
+    )
+    if backfill_history:
+        history_frames.extend(
+            _backfill_history_frames(
+                positions,
+                ticker_data,
+                fund_sources,
+                canonical,
+                existing_history,
+                historical_fetch,
+                today,
+            )
+        )
+    history = archive_fund_holdings_history(history_path, history_frames)
     digest = hashlib.sha256(
         holdings.to_csv(index=False).encode("utf-8")
     ).hexdigest()[:12]
@@ -1526,6 +1820,10 @@ def refresh_fund_holdings(
     print(
         f"[fund-holdings] feasibility={report.iloc[0]['feasibility_status']}, "
         f"A+B fund coverage={report.iloc[0]['fund_coverage_pct']:.1f}%"
+    )
+    print(
+        f"[fund-holdings-history] {history_path} — {len(history)} rows, "
+        f"{history['history_snapshot_id'].nunique()} snapshots"
     )
     return holdings_path
 
@@ -1538,8 +1836,20 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="Ignore the 30-day cache and verify every provider again",
     )
+    parser.add_argument(
+        "--backfill-history",
+        action="store_true",
+        help=(
+            "Backfill supported historical fund compositions from the first "
+            "applicable investment snapshot"
+        ),
+    )
     args = parser.parse_args(argv)
-    refresh_fund_holdings(resolve_data_dir(args.data_dir), force=args.force)
+    refresh_fund_holdings(
+        resolve_data_dir(args.data_dir),
+        force=args.force,
+        backfill_history=args.backfill_history,
+    )
 
 
 if __name__ == "__main__":

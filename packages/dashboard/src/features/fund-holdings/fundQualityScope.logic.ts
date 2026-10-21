@@ -7,6 +7,7 @@ import type {
 } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
+import { partitionPercentages } from '@/shared/format/percentage'
 import { isFundPosition } from './fundHoldings.logic'
 
 export interface ScopedFundQualityData {
@@ -16,6 +17,25 @@ export interface ScopedFundQualityData {
   snapshots: FundSnapshot[]
   unresolved: FundUnresolved[]
   notApplicableValue: number
+}
+
+export interface FundExposurePercentages {
+  identified: number
+  unresolved: number
+  notApplicable: number
+}
+
+export function computeFundExposurePercentages(
+  identifiedValue: number,
+  unresolvedValue: number,
+  notApplicableValue: number,
+): FundExposurePercentages {
+  const [identified, unresolved, notApplicable] = partitionPercentages([
+    identifiedValue,
+    unresolvedValue,
+    notApplicableValue,
+  ])
+  return { identified, unresolved, notApplicable }
 }
 
 function positiveValue(position: PositionRow): number {

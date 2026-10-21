@@ -62,7 +62,9 @@ The example covers all account categories and includes long fictional PEE and
 private-equity histories so both the trailing three-year IRR and the
 shorter-period fallback are visible. Publicly traded instruments are used only
 to demonstrate market-price fetching; the names, amounts and valuations of
-the example accounts are fictional.
+the example accounts are fictional. It also includes fictional dated fund
+compositions so the Held positions / Look-through concentration history,
+partial coverage and unresolved exposure are all visible in the static demo.
 
 Because GitHub Pages has no Python runtime, its filtered-IRR example is a
 pre-generated "exclude private equity" API response. The deployment workflow

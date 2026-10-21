@@ -52,18 +52,18 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
   return (
     <div className="mb-6 space-y-4">
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
+        <section className="border-b border-gray-800 pb-4">
           <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Performance</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <TotalNetPerformanceKpi performance={performance} />
             <NetUnrealizedKpi performance={performance} />
             <NetRealizedKpi performance={performance} />
           </div>
         </section>
 
-        <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
+        <section className="border-b border-gray-800 pb-4">
           <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Returns &amp; passive income</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <PassiveIncomeKpi income={income} />
             <IrrSinceTrackingKpi value={globalTri} status={irrStatus} scopeLabel={irrScopeLabel} />
             <TrailingThreeYearIrrKpi value={rollingTri3y} status={irrStatus} scopeLabel={irrScopeLabel} />

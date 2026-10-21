@@ -22,6 +22,7 @@ finance-pipeline, regardless of --force.
 """
 
 import argparse
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -164,6 +165,131 @@ _VALUATIONS_PRIVATE_FUND = """date,account,isin,ticker,name,value,invested,curre
 2025-12-31,private_fund,,,Demo private equity fund,14200,11000,EUR,30%
 2026-09-30,private_fund,,,Demo private equity fund,12300,9000,EUR,30%
 """
+
+# ---------------------------------------------------------------------------
+# fund_holdings/snapshots -- fictional, dated look-through data for the demo
+# ---------------------------------------------------------------------------
+
+_DEMO_FUND_SNAPSHOT_SERIES = [
+    (
+        "Demo employee savings fund",
+        "Demo employee savings fund",
+        ["2021-12-31", "2023-12-31", "2025-12-31", "2026-09-30"],
+        [
+            ("DEMO-EURO-INDUSTRIAL", "Demo Europe Industrials"),
+            ("DEMO-GLOBAL-TECH", "Demo Global Technology"),
+            ("DEMO-EURO-FINANCIAL", "Demo Europe Financials"),
+            ("DEMO-GLOBAL-HEALTH", "Demo Global Healthcare"),
+            ("DEMO-EURO-BOND", "Demo Euro Aggregate Bond"),
+        ],
+        [
+            [0.24, 0.20, 0.17, 0.13, 0.11],
+            [0.20, 0.25, 0.15, 0.14, 0.11],
+            [0.17, 0.29, 0.14, 0.15, 0.10],
+            [0.15, 0.27, 0.17, 0.16, 0.10],
+        ],
+    ),
+    (
+        "PER Fortuneo",
+        "PER Fortuneo",
+        ["2024-03-31", "2025-03-31", "2026-09-30"],
+        [
+            ("DEMO-EURO-BOND", "Demo Euro Aggregate Bond"),
+            ("DEMO-GLOBAL-TECH", "Demo Global Technology"),
+            ("DEMO-GLOBAL-HEALTH", "Demo Global Healthcare"),
+            ("DEMO-GREEN-BOND", "Demo Green Bond"),
+        ],
+        [
+            [0.28, 0.20, 0.17, 0.15],
+            [0.25, 0.24, 0.17, 0.14],
+            [0.22, 0.26, 0.18, 0.14],
+        ],
+    ),
+]
+
+
+def _write_demo_fund_snapshots(input_dir: Path) -> None:
+    """Create deterministic dated compositions used only by the demo."""
+    listed_fund_series = [
+        (
+            str(_ASSETS[3]["id"]),
+            str(_ASSETS[3]["nom_placement"]),
+            ["2024-03-31", "2025-03-31", "2026-09-30"],
+            [
+                (
+                    str(_ASSETS[1]["id"]),
+                    str(_ASSETS[1]["nom_placement"]),
+                ),
+                ("DEMO-FR-INDUSTRIAL", "Demo France Industrials"),
+                ("DEMO-FR-ENERGY", "Demo France Energy"),
+                ("DEMO-FR-HEALTH", "Demo France Healthcare"),
+                ("DEMO-FR-FINANCIAL", "Demo France Financials"),
+            ],
+            [
+                [0.24, 0.20, 0.18, 0.15, 0.13],
+                [0.20, 0.22, 0.19, 0.16, 0.13],
+                [0.18, 0.23, 0.20, 0.16, 0.13],
+            ],
+        ),
+        (
+            str(_ASSETS[4]["id"]),
+            str(_ASSETS[4]["nom_placement"]),
+            ["2024-03-31", "2025-03-31", "2026-09-30"],
+            [
+                (
+                    str(_ASSETS[0]["id"]),
+                    str(_ASSETS[0]["nom_placement"]),
+                ),
+                (
+                    str(_ASSETS[2]["id"]),
+                    str(_ASSETS[2]["nom_placement"]),
+                ),
+                ("DEMO-US-CONSUMER", "Demo US Consumer"),
+                ("DEMO-US-HEALTH", "Demo US Healthcare"),
+                ("DEMO-US-INDUSTRIAL", "Demo US Industrials"),
+            ],
+            [
+                [0.22, 0.20, 0.18, 0.16, 0.14],
+                [0.20, 0.22, 0.17, 0.16, 0.15],
+                [0.19, 0.21, 0.18, 0.17, 0.15],
+            ],
+        ),
+    ]
+    for fund_id, fund_name, dates, holdings, weight_series in (
+        [*_DEMO_FUND_SNAPSHOT_SERIES, *listed_fund_series]
+    ):
+        fund_key = "".join(
+            char.lower() if char.isalnum() else "-" for char in fund_id
+        ).strip("-")
+        for snapshot_date, weights in zip(dates, weight_series, strict=True):
+            directory = (
+                input_dir
+                / "fund_holdings"
+                / "snapshots"
+                / snapshot_date
+                / f"{fund_key}-demo"
+            )
+            manifest = {
+                "fund_id": fund_id,
+                "fund_name": fund_name,
+                "snapshot_date": snapshot_date,
+                "as_of_date": snapshot_date,
+                "generated_at": f"{snapshot_date}T12:00:00+00:00",
+                "origin": "synthetic_demo",
+                "complete": False,
+                "coverage_pct": round(sum(weights) * 100, 6),
+                "source_urls": [],
+                "notes": "Fictional composition generated for the public demo.",
+            }
+            _write(directory / "manifest.json", json.dumps(manifest, indent=2))
+            rows = ["holding_id,holding_name,holding_kind,weight"]
+            rows.extend(
+                f"{holding_id},{holding_name},security,{weight}"
+                for (holding_id, holding_name), weight in zip(
+                    holdings, weights, strict=True
+                )
+            )
+            _write(directory / "holdings.csv", "\n".join(rows) + "\n")
 
 # ---------------------------------------------------------------------------
 # allocations/*.xlsx -- geo/sector/currency/class breakdown + optional
@@ -419,6 +545,11 @@ life-insurance histories demonstrate the fallback to the available period.
 The checking account, Livret and synthetic brokerage cash intentionally have
 no IRR.
 
+The dated compositions under `fund_holdings/snapshots/` are entirely
+fictional and let the dashboard demonstrate historical look-through coverage,
+unresolved exposure, and direct/indirect issuer aggregation without relying on
+a provider archive or network access.
+
 ## account_groups.csv
 
 One row per account: `account,type,category,label`. `account` must exactly
@@ -620,6 +751,7 @@ def main(argv: list[str] | None = None) -> None:
         input_dir / "brokers/valuations/private_fund.csv",
         _VALUATIONS_PRIVATE_FUND,
     )
+    _write_demo_fund_snapshots(input_dir)
     allocations_path = input_dir / "allocations/2021-01-01.xlsx"
     allocations_path.parent.mkdir(parents=True, exist_ok=True)
     _write_allocations_xlsx(allocations_path)

@@ -8,6 +8,7 @@ from src.fetch_fund_holdings import (
     FundPosition,
     _normalize_source_rows,
     _status_row,
+    archive_fund_holdings_history,
     build_coverage_report,
     build_fund_holdings,
     refresh_fund_holdings,
@@ -15,6 +16,7 @@ from src.fetch_fund_holdings import (
 from src.fund_holdings_sources import (
     FundSource,
     SourceResult,
+    fetch_official_source_as_of,
     load_fund_sources,
     parse_amundi_json,
     parse_dws_json,
@@ -22,6 +24,77 @@ from src.fund_holdings_sources import (
     parse_globalx_hk_html,
     parse_ishares_csv,
 )
+
+
+def test_historical_ishares_fetch_uses_prior_business_day_without_lookahead():
+    source = FundSource(
+        "FUND",
+        "iShares",
+        "ishares_csv",
+        "https://example.test/holdings.csv?fileType=csv",
+        "A",
+        "Index",
+        "physical",
+    )
+    requested_urls = []
+
+    def download(url: str) -> bytes:
+        requested_urls.append(url)
+        holdings_date = (
+            "20/Oct/2026"
+            if len(requested_urls) == 1
+            else "16/Oct/2026"
+        )
+        return (
+            f'Fund Holdings as of,"{holdings_date}"\n\n'
+            "Ticker,Name,Exchange,Weight (%)\n"
+            "AAA,Example Corp,NASDAQ,100\n"
+        ).encode()
+
+    result = fetch_official_source_as_of(
+        source, date(2026, 10, 19), download=download
+    )
+
+    assert result.holdings_date == "2026-10-16"
+    assert "asOfDate=20261019" in requested_urls[0]
+    assert "asOfDate=20261016" in requested_urls[1]
+
+    unsupported = FundSource(
+        "FUND", "DWS", "dws_api", "https://example.test", "A", "", ""
+    )
+    with pytest.raises(ValueError, match="does not support historical"):
+        fetch_official_source_as_of(unsupported, date(2026, 10, 19))
+
+
+def test_history_archive_is_idempotent_and_keeps_distinct_dates(tmp_path):
+    destination = tmp_path / "fund_holdings_history.csv"
+    base = pd.DataFrame(
+        [
+            {
+                "parent_isin": "FUND",
+                "parent_name": "Example ETF",
+                "holding_id": "AAA",
+                "holding_name": "Example Corp",
+                "issuer_id": "AAA",
+                "issuer_name": "Example Corp",
+                "weight": 1.0,
+                "holdings_date": "2026-09-30",
+            }
+        ]
+    )
+
+    archive_fund_holdings_history(
+        destination, [base], captured_at="2026-10-01T00:00:00Z"
+    )
+    archive_fund_holdings_history(
+        destination, [base], captured_at="2026-10-02T00:00:00Z"
+    )
+    later = base.assign(holdings_date="2026-10-31")
+    history = archive_fund_holdings_history(destination, [later])
+
+    assert len(history) == 2
+    assert history["history_snapshot_id"].nunique() == 2
+    assert history["effective_date"].tolist() == ["2026-09-30", "2026-10-31"]
 
 
 def test_build_fund_holdings_canonicalizes_direct_and_indirect_asset():
@@ -554,3 +627,65 @@ def test_refresh_bypasses_partial_cache_for_discovered_official_source(
     assert status["decomposition_state"] == "resolved"
     assert status["residual_pct"] == 0
     assert pd.read_csv(output / "fund_unresolved.csv").empty
+
+
+def test_backfill_only_fetches_months_when_supported_fund_is_held(tmp_path):
+    output = tmp_path / "output"
+    output.mkdir()
+    (tmp_path / "input" / "allocations").mkdir(parents=True)
+    (tmp_path / "input" / "fund_sources.csv").write_text(
+        _SOURCE_HEADER
+        + "FUND,Provider,ishares_csv,https://example.test/p.csv,A,"
+        "Example Index,physical,,\n"
+    )
+    pd.DataFrame(
+        [
+            {
+                "snapshot_date": "2025-01-31",
+                "account_category": "brokerage",
+                "account_type": "Brokerage",
+                "isin": "FUND",
+                "ticker": "",
+                "name": "Example Core UCITS ETF",
+                "total_value": 1_000,
+            },
+            {
+                "snapshot_date": "2025-02-28",
+                "account_category": "brokerage",
+                "account_type": "Brokerage",
+                "isin": "DIRECT",
+                "ticker": "",
+                "name": "Direct asset",
+                "total_value": 1_000,
+            },
+        ]
+    ).to_csv(output / "positions.csv", index=False)
+    calls = []
+
+    def historical_fetch(source, requested):
+        calls.append((source.parent_isin, requested))
+        return SourceResult(
+            pd.DataFrame(
+                [
+                    {
+                        "source_holding_id": "AAA",
+                        "source_holding_name": "Example Corp",
+                        "exchange": "",
+                        "weight": 1.0,
+                    }
+                ]
+            ),
+            requested.isoformat(),
+        )
+
+    refresh_fund_holdings(
+        tmp_path,
+        backfill_history=True,
+        historical_fetch=historical_fetch,
+        today=date(2025, 3, 1),
+    )
+
+    assert calls == [("FUND", date(2025, 1, 31))]
+    history = pd.read_csv(output / "fund_holdings_history.csv")
+    assert history["effective_date"].tolist() == ["2025-01-31"]
+    assert history["source_origin"].tolist() == ["historical_backfill"]

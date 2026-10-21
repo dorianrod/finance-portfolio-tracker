@@ -13,9 +13,10 @@ import json
 import re
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 import pandas as pd
@@ -510,6 +511,63 @@ def fetch_official_source(
     if parser is None:
         raise ValueError(f"Unsupported fund source adapter: {source.adapter}")
     return parser(payload)
+
+
+def _url_with_as_of_date(url: str, as_of_date: date) -> str:
+    parts = urlsplit(url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["asOfDate"] = as_of_date.strftime("%Y%m%d")
+    return urlunsplit(
+        (
+            parts.scheme,
+            parts.netloc,
+            parts.path,
+            urlencode(query),
+            parts.fragment,
+        )
+    )
+
+
+def fetch_official_source_as_of(
+    source: FundSource,
+    requested_date: date,
+    download: Callable[[str], bytes] = download_bytes,
+) -> SourceResult:
+    """Fetch the latest supported composition on or before a portfolio date.
+
+    iShares exposes dated CSVs through an ``asOfDate`` query parameter. Other
+    configured providers currently return only their latest composition, so
+    using them here would introduce look-ahead bias and is deliberately
+    rejected.
+    """
+    if source.adapter != "ishares_csv":
+        raise ValueError(
+            f"adapter {source.adapter!r} does not support historical holdings"
+        )
+
+    errors: list[str] = []
+    for offset in range(8):
+        candidate = requested_date - timedelta(days=offset)
+        if candidate.weekday() >= 5:
+            continue
+        try:
+            result = parse_ishares_csv(
+                download(_url_with_as_of_date(source.url, candidate))
+            )
+            effective = date.fromisoformat(result.holdings_date)
+            if effective > requested_date:
+                raise ValueError("provider returned a future composition")
+            if effective < requested_date - timedelta(days=7):
+                raise ValueError(
+                    "provider returned a composition over 7 days old"
+                )
+            return result
+        except Exception as exc:
+            errors.append(f"{candidate.isoformat()}: {exc}")
+    raise ValueError(
+        "no historical iShares composition in the previous 7 days: "
+        + " | ".join(errors)
+    )
 
 
 def today_iso() -> str:

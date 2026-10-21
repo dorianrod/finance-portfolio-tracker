@@ -26,10 +26,14 @@ const OP_LABELS: Record<string, string> = {
   WITHDRAWAL: 'Withdrawal',
 }
 
-export function filterVisibilityForTab(tab: string): FilterVisibility {
+export function filterVisibilityForTab(
+  tab: string,
+  holdingsView: 'positions' | 'underlying' = 'positions',
+): FilterVisibility {
+  const positionsView = tab === 'positions' || (tab === 'holdings' && holdingsView === 'positions')
   return {
-    showPeriod: tab !== 'allocation' && tab !== 'underlying' && tab !== 'quality',
-    showPositionFilters: tab === 'positions',
+    showPeriod: true,
+    showPositionFilters: positionsView,
   }
 }
 

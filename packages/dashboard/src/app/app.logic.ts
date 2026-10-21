@@ -2,7 +2,62 @@ import type { PositionRow } from '@/types/domain'
 import type { Filters, SortKey } from '@/types/filters'
 import type { PortfolioHistoryPoint, AccountTypePoint } from '@/types/history'
 import type { RawPositionRow } from '@/hooks/useAllPositions'
+import type { ErrorRow } from '@/hooks/useErrors'
+import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
 import { accountFilterId } from '@/shared/filters/accountFilter'
+
+function errorMonth(date: string): string | null {
+  const match = date.trim().match(/^(\d{4}-\d{2})/)
+  return match?.[1] ?? null
+}
+
+export function scopePipelineErrors(
+  errors: ErrorRow[],
+  positions: PositionRow[],
+  filters: Filters,
+): ErrorRow[] {
+  const selectedAccounts = new Set(positions.map((position) => position.account))
+  const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
+  const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
+  const hasPositionScope = filters.accounts.size > 0
+    || filters.accountTypes.size > 0
+    || filters.operationTypes.size > 0
+
+  return errors.filter((error) => {
+    const month = errorMonth(error.date)
+    if (month && filters.dateFrom && month < filters.dateFrom.slice(0, 7)) return false
+    if (month && filters.dateTo && month > filters.dateTo.slice(0, 7)) return false
+
+    if (!hasPositionScope) return true
+    if (error.account) return selectedAccounts.has(error.account)
+    if (error.isin) return selectedIsins.has(error.isin)
+    if (error.ticker) return selectedTickers.has(error.ticker)
+
+    // Pipeline-wide anomalies cannot be attributed more narrowly, so they
+    // remain visible even when an account or position filter is active.
+    return true
+  })
+}
+
+export function scopeManualPriceOverrides(
+  overrides: ManualPriceOverride[],
+  positions: PositionRow[],
+  filters: Filters,
+): ManualPriceOverride[] {
+  const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
+  const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
+  const selectedNames = new Set(positions.map((position) => position.name).filter(Boolean))
+  const hasAccountScope = filters.accounts.size > 0 || filters.accountTypes.size > 0
+
+  return overrides.filter((override) => {
+    if (filters.dateFrom && override.date_to && override.date_to < filters.dateFrom) return false
+    if (filters.dateTo && override.date_from && override.date_from > filters.dateTo) return false
+    if (!hasAccountScope) return true
+    return (!!override.isin && selectedIsins.has(override.isin))
+      || (!!override.ticker && selectedTickers.has(override.ticker))
+      || (!!override.name && selectedNames.has(override.name))
+  })
+}
 
 export function getSortValue(row: PositionRow, key: SortKey): number {
   switch (key) {
@@ -76,18 +131,29 @@ export function applyPositionFilters(positions: PositionRow[], filters: Filters)
       const total_interest = allOps
         .filter((o) => o.operation_type === 'INTEREST')
         .reduce((s, o) => s + o.total_amount, 0)
+      const netRatio = (net: number | null, gross: number) => (
+        net != null && Math.abs(gross) > 0.005
+          ? net / gross
+          : 1 - (p.tax_rate ?? 0)
+      )
 
       return {
         ...p,
         subRows: filteredSubRows,
         // total_value and unrealized_gain stay as snapshot values (independent of date filter)
         realized_gain,
+        realized_gain_net: realized_gain * netRatio(p.realized_gain_net, p.realized_gain),
         total_dividends,
+        total_dividends_net: total_dividends * netRatio(p.total_dividends_net, p.total_dividends),
         total_interest,
+        total_interest_net: total_interest * netRatio(p.total_interest_net, p.total_interest),
         total_realized_return: realized_gain + total_dividends + total_interest,
       }
     })
-    .filter((p) => !hasDateFilter || p.subRows.length > 0)
+    // A held position remains visible at the selected end snapshot even when
+    // it had no operation during the interval. Closed positions are retained
+    // only when they contain an operation in the selected interval.
+    .filter((p) => !hasDateFilter || p.status === 'active' || p.subRows.length > 0)
 }
 
 // When an account filter is active, the portfolio-wide history series is

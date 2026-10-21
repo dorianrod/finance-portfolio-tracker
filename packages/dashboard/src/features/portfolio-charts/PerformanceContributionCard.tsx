@@ -10,6 +10,7 @@ import type {
   PerformanceContribution,
   PerformanceContributionSummary,
 } from './performanceContribution.logic'
+import type { FilterScopeSpec, PeriodScopeMode } from '@/shared/ui/FilterScopeBadges'
 
 interface Props {
   assetIrr: AssetIrrSummary
@@ -54,11 +55,11 @@ function irrLabel(value: number | null, status: IrrStatus): string {
   return value === null ? 'Not available' : fmtPct(value, 2)
 }
 
-function MetricLabel({ label, tooltip }: { label: string; tooltip: string }) {
+function MetricLabel({ label, tooltip, scope }: { label: string; tooltip: string; scope: FilterScopeSpec }) {
   return (
     <div className="flex items-center text-[11px] uppercase tracking-wider text-gray-600">
       <span>{label}</span>
-      <InfoTooltip text={tooltip} />
+      <InfoTooltip text={tooltip} scope={scope} />
     </div>
   )
 }
@@ -67,17 +68,27 @@ function ContributionList({
   title,
   items,
   positive,
+  scope,
 }: {
   title: string
   items: PerformanceContribution[]
   positive: boolean
+  scope: FilterScopeSpec
 }) {
   const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
 
   return (
     <section>
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</h3>
+        <h3 className="flex items-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+          {title}
+          <InfoTooltip
+            text={positive
+              ? 'Assets that created the most portfolio value over the selected horizon. Share is measured against total positive contributions.'
+              : 'Assets that reduced portfolio value the most over the selected horizon. Share is measured against total negative contributions.'}
+            scope={scope}
+          />
+        </h3>
         <span className="text-[11px] text-gray-600">Share of {positive ? 'gains' : 'losses'}</span>
       </div>
       {items.length === 0 ? (
@@ -186,26 +197,17 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
 
   return (
     <>
-      <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-3">
-        <div>
-          <MetricLabel
-            label="IRR method"
-            tooltip="Money-weighted annualized return. Opening value, purchases and contributions are outflows; sales, distributions and ending value are inflows. The timing of every flow is included."
-          />
-          <div className="mt-1 text-sm font-semibold text-teal-400">Money-weighted</div>
-        </div>
+      <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-2">
         <div>
           <MetricLabel
             label="Assets measured"
             tooltip="Number of assets with enough positive and negative cash flows to calculate an IRR. Zero IRRs are omitted from the rankings."
+            scope={{ account: 'filterable', period: 'range', effectiveDate: summary.end_date }}
           />
           <div className="mt-1 text-lg font-semibold tabular-nums text-gray-300">{measured.length}</div>
         </div>
         <div>
-          <MetricLabel
-            label="Period"
-            tooltip="Exact opening and ending snapshots used for asset IRR. The global date filters set the requested range; the closest available snapshots are used."
-          />
+          <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
           <div className="mt-1 text-sm font-medium text-gray-400">{formatExactDateRange({ startDate: summary.start_date, endDate: summary.end_date })}</div>
         </div>
       </div>
@@ -239,15 +241,15 @@ export function PerformanceContributionCard({
   const description = view === 'contribution'
     ? 'Main assets creating or reducing portfolio value.'
     : 'Annualized money-weighted return by asset over the selected period.'
+  const scopePeriod: PeriodScopeMode = view === 'irr'
+    ? 'range'
+    : activeHorizon === 'trailing-3y' ? 'trailing-3y' : 'since-tracking'
 
   return (
     <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="flex items-center">
-            <h2 className="text-sm font-medium text-gray-400">Performance by asset</h2>
-            <InfoTooltip text="IRR % is the annualized money-weighted return for each asset. It neutralizes purchases, sales, deposits and withdrawals by accounting for their amount and timing. Contribution € shows the value created or lost in euros and is not a mathematical breakdown of IRR." />
-          </div>
+          <h2 className="text-sm font-medium text-gray-400">Performance by asset</h2>
           <p className="mt-1 text-xs text-gray-600">{description}</p>
         </div>
         <div className="inline-flex self-start rounded-lg border border-gray-700 bg-gray-950 p-0.5" aria-label="Performance metric">
@@ -278,33 +280,12 @@ export function PerformanceContributionCard({
         </div>
       ) : (
         <>
-          <div className="mt-4 flex justify-end">
-            <div className="inline-flex rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label="Contribution horizon">
-              <button
-                type="button"
-                onClick={() => setHorizon('since-tracking')}
-                aria-pressed={activeHorizon === 'since-tracking'}
-                className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'since-tracking' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'}`}
-              >
-                Since tracking
-              </button>
-              <button
-                type="button"
-                onClick={() => setHorizon('trailing-3y')}
-                disabled={threeYearUnavailable}
-                aria-pressed={activeHorizon === 'trailing-3y'}
-                title={threeYearUnavailable ? 'Three years of history are not yet available' : undefined}
-                className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'trailing-3y' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'} disabled:cursor-not-allowed disabled:text-gray-700`}
-              >
-                Trailing 3 years
-              </button>
-            </div>
-          </div>
           <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-3">
             <div>
               <MetricLabel
                 label="IRR context"
                 tooltip="Annualized money-weighted return over this horizon. It accounts for the amount and timing of portfolio cash flows. It is shown for context: asset contributions explain value created or lost in euros and do not add up mathematically to IRR."
+                scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
               <div className="mt-1 text-lg font-semibold tabular-nums text-teal-400">{irrLabel(irr, irrStatus)}</div>
             </div>
@@ -312,21 +293,41 @@ export function PerformanceContributionCard({
               <MetricLabel
                 label="Attributed net performance"
                 tooltip="Sum of the attributed euro contributions across the selected assets and accounts: change in unrealized gains, realized gains on sales, dividends and interest over the period. This is a gross economic amount, not a return rate."
+                scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
               <div className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}>{fmtFull(summary.netContribution)}</div>
             </div>
             <div>
-              <MetricLabel
-                label="Period"
-                tooltip="The snapshot range used for contribution attribution. Since tracking starts at the first available snapshot for each selected account; Trailing 3 years uses the same starting snapshot as the rolling IRR. The global end-date filter sets the end."
-              />
-              <div className="mt-1 text-sm font-medium text-gray-400">{formatDateRange(summary)}</div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatDateRange(summary)}</div>
+                <div className="inline-flex shrink-0 rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label="Contribution horizon">
+                  <button
+                    type="button"
+                    onClick={() => setHorizon('since-tracking')}
+                    aria-pressed={activeHorizon === 'since-tracking'}
+                    className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'since-tracking' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                  >
+                    Since tracking
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHorizon('trailing-3y')}
+                    disabled={threeYearUnavailable}
+                    aria-pressed={activeHorizon === 'trailing-3y'}
+                    title={threeYearUnavailable ? 'Three years of history are not yet available' : undefined}
+                    className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'trailing-3y' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'} disabled:cursor-not-allowed disabled:text-gray-700`}
+                  >
+                    Trailing 3 years
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ContributionList title="Top contributors" items={summary.contributors} positive />
-            <ContributionList title="Main detractors" items={summary.detractors} positive={false} />
+            <ContributionList title="Top contributors" items={summary.contributors} positive scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
+            <ContributionList title="Main detractors" items={summary.detractors} positive={false} scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
           </div>
         </>
       )}

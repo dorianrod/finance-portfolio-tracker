@@ -1,10 +1,11 @@
 import { useId, useState } from 'react'
 import type { FundCoverageReport } from '@/hooks/useFundHoldings'
 import { fmtFull } from '@/shared/format/money'
-import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
+import { formatPercentage } from '@/shared/format/percentage'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { QualityIndicatorCard } from '@/shared/ui/QualityIndicatorCard'
 import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
+import { computeFundExposurePercentages } from './fundQualityScope.logic'
 
 export function LookThroughCoverageSummary({ report, compact = false, notApplicableValue = 0 }: {
   report: FundCoverageReport | null
@@ -20,11 +21,14 @@ export function LookThroughCoverageSummary({ report, compact = false, notApplica
   const identifiedValue = report.directIdentifiedValue + report.decomposedValue
   const unresolvedValue = report.undisclosedFundValue + report.opaqueValue
   const selectedPortfolioValue = identifiedValue + unresolvedValue + notApplicableValue
-  const [identifiedPercentage, unresolvedPercentage, notApplicablePercentage] = partitionPercentages([
+  const percentages = computeFundExposurePercentages(
     identifiedValue,
     unresolvedValue,
     notApplicableValue,
-  ])
+  )
+  const identifiedPercentage = percentages.identified
+  const unresolvedPercentage = percentages.unresolved
+  const notApplicablePercentage = percentages.notApplicable
   const percentageOfSelectedPortfolio = (value: number) => selectedPortfolioValue > 0
     ? value / selectedPortfolioValue * 100
     : 0

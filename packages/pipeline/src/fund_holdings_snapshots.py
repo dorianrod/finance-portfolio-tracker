@@ -213,24 +213,49 @@ def load_fund_snapshots(
     data_dir: Path, *, today: date | None = None
 ) -> tuple[dict[str, FundSnapshot], pd.DataFrame]:
     """Load the newest valid snapshot and audit every snapshot."""
+    all_snapshots, audit = load_all_valid_fund_snapshots(
+        data_dir, today=today
+    )
+    candidates: dict[str, list[FundSnapshot]] = {}
+    for snapshot in all_snapshots:
+        if snapshot.age_days <= SNAPSHOT_EXPIRE_DAYS:
+            candidates.setdefault(snapshot.fund_id, []).append(snapshot)
+    selected: dict[str, FundSnapshot] = {}
+    for fund_id, snapshots in candidates.items():
+        selected[fund_id] = max(
+            snapshots, key=lambda item: (item.as_of_date, item.generated_at)
+        )
+    for row in audit.to_dict("records"):
+        snapshot = selected.get(str(row.get("fund_id", "")))
+        mask = audit["snapshot_id"].eq(row.get("snapshot_id", ""))
+        audit.loc[mask, "is_active"] = str(
+            snapshot is not None
+            and row.get("snapshot_id") == snapshot.snapshot_id
+        ).lower()
+    return selected, audit
+
+
+def load_all_valid_fund_snapshots(
+    data_dir: Path, *, today: date | None = None
+) -> tuple[list[FundSnapshot], pd.DataFrame]:
+    """Load every valid dated snapshot, including expired historical ones."""
     today = today or date.today()
     root = snapshot_root(data_dir)
-    candidates: dict[str, list[FundSnapshot]] = {}
+    snapshots: list[FundSnapshot] = []
     audit_rows: list[dict[str, object]] = []
     if not root.exists():
-        return {}, pd.DataFrame(columns=SNAPSHOT_COLUMNS)
+        return [], pd.DataFrame(columns=SNAPSHOT_COLUMNS)
     for manifest_path in sorted(root.glob("*/*/manifest.json")):
         directory = manifest_path.parent
         try:
             snapshot = validate_snapshot_dir(directory, today=today)
+            snapshots.append(snapshot)
             expired = snapshot.age_days > SNAPSHOT_EXPIRE_DAYS
             audit_rows.append(
                 _audit_row(
                     snapshot, not expired, "expired" if expired else "valid"
                 )
             )
-            if not expired:
-                candidates.setdefault(snapshot.fund_id, []).append(snapshot)
         except Exception as exc:
             audit_rows.append(
                 {
@@ -244,19 +269,7 @@ def load_fund_snapshots(
                     "validation_errors": str(exc),
                 }
             )
-    selected: dict[str, FundSnapshot] = {}
-    for fund_id, snapshots in candidates.items():
-        newest = max(
-            snapshots, key=lambda item: (item.as_of_date, item.generated_at)
-        )
-        selected[fund_id] = newest
-    for row in audit_rows:
-        snapshot = selected.get(str(row.get("fund_id", "")))
-        row["is_active"] = str(
-            snapshot is not None
-            and row.get("snapshot_id") == snapshot.snapshot_id
-        ).lower()
-    return selected, pd.DataFrame(audit_rows, columns=SNAPSHOT_COLUMNS)
+    return snapshots, pd.DataFrame(audit_rows, columns=SNAPSHOT_COLUMNS)
 
 
 def _audit_row(

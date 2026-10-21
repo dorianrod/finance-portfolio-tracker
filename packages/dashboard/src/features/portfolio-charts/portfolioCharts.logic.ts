@@ -56,6 +56,11 @@ export interface HoldingConcentration {
   weight: number
 }
 
+export interface CumulativeConcentrationPoint extends HoldingConcentration {
+  rank: number
+  cumulativeWeight: number
+}
+
 export interface ConcentrationSummary {
   topHoldingPct: number
   topFivePct: number
@@ -67,6 +72,7 @@ export interface ConcentrationSummary {
   opaqueValue: number
   selectedValue: number
   holdingCount: number
+  allHoldings: HoldingConcentration[]
   holdings: HoldingConcentration[]
 }
 
@@ -157,9 +163,13 @@ function shiftMonth(month: string, offset: number): string {
   return shifted.toISOString().slice(0, 7)
 }
 
-export function computeTrailing12mYearOverYear(points: SavingCapacityPoint[]): TrailingYearOverYear {
+export function computeTrailing12mYearOverYear(
+  points: SavingCapacityPoint[],
+  asOfDate?: string,
+): TrailingYearOverYear {
   const byMonth = new Map<string, { savings: number; performance: number }>()
   for (const point of points) {
+    if (asOfDate && point.date > asOfDate) continue
     const month = point.date.slice(0, 7)
     const totals = byMonth.get(month) ?? { savings: 0, performance: 0 }
     totals.savings += point.savings_delta
@@ -348,6 +358,7 @@ export function computeConcentration(
     opaqueValue,
     selectedValue,
     holdingCount: allHoldings.length,
+    allHoldings,
     holdings,
   }
 }
@@ -374,14 +385,14 @@ export function computeHeldAssetConcentration(
   }
 
   const total = [...byAsset.values()].reduce((sum, holding) => sum + holding.value, 0)
-  const holdings = [...byAsset.values()]
+  const allHoldings = [...byAsset.values()]
     .sort((a, b) => b.value - a.value)
-    .slice(0, 10)
     .map((holding) => ({
       ...holding,
       value: Math.round(holding.value),
       weight: total > 0 ? (holding.value / total) * 100 : 0,
     }))
+  const holdings = allHoldings.slice(0, 10)
 
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
@@ -394,8 +405,32 @@ export function computeHeldAssetConcentration(
     opaqueValue: 0,
     selectedValue: total,
     holdingCount: byAsset.size,
+    allHoldings,
     holdings,
   }
+}
+
+export function buildCumulativeConcentration(
+  holdings: HoldingConcentration[],
+): CumulativeConcentrationPoint[] {
+  let cumulativeWeight = 0
+
+  return [...holdings]
+    .sort((a, b) => b.value - a.value)
+    .map((holding, index) => {
+      cumulativeWeight += holding.weight
+      return {
+        ...holding,
+        rank: index + 1,
+        cumulativeWeight,
+      }
+    })
+}
+
+export function cumulativeConcentrationCrosshair(
+  point: CumulativeConcentrationPoint | null,
+): { x: number; y: number } | null {
+  return point ? { x: point.rank, y: point.cumulativeWeight } : null
 }
 
 export function computePerformanceSummary(positions: PositionRow[]): PerformanceSummary {
@@ -444,14 +479,19 @@ export function computePerformanceSummary(positions: PositionRow[]): Performance
 // Last 12 months of savings capacity, each enriched with its own trailing
 // 12-month rolling sums (computed from the full history, not just the
 // truncated slice).
-export function computeTrailing12mSavings(savingCapacity: SavingCapacityPoint[]): TrailingSavingCapacityPoint[] {
-  return savingCapacity.slice(-12).map((pt, i, arr) => {
-    const fullIdx = savingCapacity.length - arr.length + i
+export function computeTrailing12mSavings(
+  savingCapacity: SavingCapacityPoint[],
+  dateFrom?: string,
+  dateTo?: string,
+): TrailingSavingCapacityPoint[] {
+  const enriched = savingCapacity.map((pt, fullIdx) => {
     const window = savingCapacity.slice(Math.max(0, fullIdx - 11), fullIdx + 1)
     const rolling_12m = Math.round(window.reduce((sum, p) => sum + p.savings_delta, 0))
     const rolling_perf_12m = Math.round(window.reduce((sum, p) => sum + p.perf_delta, 0))
     return { ...pt, rolling_12m, rolling_perf_12m }
   })
+  const visible = filterPointsByPeriod(enriched, dateFrom, dateTo)
+  return dateFrom || dateTo ? visible : visible.slice(-12)
 }
 
 export interface TopPerformer {

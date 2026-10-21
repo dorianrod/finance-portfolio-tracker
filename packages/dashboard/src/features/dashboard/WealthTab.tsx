@@ -35,11 +35,10 @@ function monthRangeLabel(months: string[]): string {
   return `${formatMonth(months[0])} – ${formatMonth(months[months.length - 1])}`
 }
 
-function ComparisonKpi({ label, metric, currentMonths, comparisonMonths, tone }: {
+function ComparisonKpi({ label, metric, currentMonths, tone }: {
   label: string
   metric: YearOverYearMetric
   currentMonths: string[]
-  comparisonMonths: string[]
   tone: 'blue' | 'performance'
 }) {
   const valueColor = tone === 'blue'
@@ -49,7 +48,6 @@ function ComparisonKpi({ label, metric, currentMonths, comparisonMonths, tone }:
     ? 'text-gray-500'
     : metric.changePct >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
   const currentLabel = monthRangeLabel(currentMonths)
-  const comparisonLabel = monthRangeLabel(comparisonMonths)
 
   return (
     <KpiCard>
@@ -58,15 +56,18 @@ function ComparisonKpi({ label, metric, currentMonths, comparisonMonths, tone }:
         tooltip="Rolling total over the latest twelve calendar months, compared with the preceding twelve-month window. The latest month may be partial."
         value={metric.current == null ? '—' : fmt.format(metric.current)}
         valueColor={valueColor}
+        accent={tone === 'blue' ? 'contributions' : metric.current == null || metric.current >= 0 ? 'positive' : 'negative'}
         sub={metric.changePct == null ? '—' : fmtPct(metric.changePct)}
         subColor={changeColor}
         subSmall={currentLabel || 'Insufficient history'}
         subInline
+        footer={
+          <>
+            Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
+          </>
+        }
+      scope={{ account: 'filterable', period: 'trailing-12m' }}
       />
-      <div className="mt-3 border-t border-gray-800 pt-3 text-xs text-gray-500">
-        Same period last year: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
-        {comparisonLabel && <span> · {comparisonLabel}</span>}
-      </div>
     </KpiCard>
   )
 }
@@ -78,9 +79,9 @@ export function WealthTab({ history, accountTypeData, accountTypeHistory, accoun
   })
   return (
     <div className="mb-6 space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <ComparisonKpi label="Net contributions · trailing 12m" metric={trailingYearComparison.savings} currentMonths={trailingYearComparison.currentMonths} comparisonMonths={trailingYearComparison.comparisonMonths} tone="blue" />
-        <ComparisonKpi label="Market performance · trailing 12m" metric={trailingYearComparison.performance} currentMonths={trailingYearComparison.currentMonths} comparisonMonths={trailingYearComparison.comparisonMonths} tone="performance" />
+      <div className="flex flex-wrap items-start gap-x-10 gap-y-4 border-b border-gray-800 pb-4">
+        <ComparisonKpi label="Net contributions · trailing 12m" metric={trailingYearComparison.savings} currentMonths={trailingYearComparison.currentMonths} tone="blue" />
+        <ComparisonKpi label="Market performance · trailing 12m" metric={trailingYearComparison.performance} currentMonths={trailingYearComparison.currentMonths} tone="performance" />
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {history.length > 0 && <EvolutionChart history={history} />}

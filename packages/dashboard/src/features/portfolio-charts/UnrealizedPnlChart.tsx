@@ -4,6 +4,7 @@ import { fmtEur, fmtFull, fmtPct, shortMonth } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 interface UnrealizedPnlPoint extends PortfolioHistoryPoint {
   unrealized_gain_pct: number | null
@@ -64,7 +65,7 @@ export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-medium text-gray-300">Gross unrealized P&amp;L over time</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">Gross unrealized P&amp;L over time<InfoTooltip text="Amount before estimated tax and percentage of the total cost basis." scope={{ account: 'filterable', period: 'range' }} /></h2>
         <p className="mt-0.5 text-xs text-gray-600">Amount before estimated tax and percentage of the total cost basis.</p>
       </div>
       <ResponsiveContainer width="100%" height={240}>

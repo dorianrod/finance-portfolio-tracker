@@ -4,7 +4,9 @@ import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import type { FundHolding, FundHoldingStatus } from '@/hooks/useFundHoldings'
 import type { PositionRow } from '@/types/domain'
 import { fmtFull } from '@/shared/format/money'
+import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import { buildIssuerExposures, type IssuerExposure, type SecurityExposure } from './fundHoldings.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -14,15 +16,29 @@ type ExposureRow =
   | { kind: 'security'; issuer: IssuerExposure; security: SecurityExposure }
   | { kind: 'source'; issuer: IssuerExposure; security: SecurityExposure; fund: string; value: number }
 
-export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQueryChange }: {
+export type FundExposureSort = 'value' | 'name'
+
+export function FundHoldingsExplorer({
+  positions,
+  holdings,
+  statuses,
+  query,
+  onQueryChange,
+  sort,
+  onSortChange,
+  expanded,
+  onExpandedChange,
+}: {
   positions: PositionRow[]
   holdings: FundHolding[]
   statuses: FundHoldingStatus[]
   query: string
   onQueryChange: (query: string) => void
+  sort: FundExposureSort
+  onSortChange: (sort: FundExposureSort) => void
+  expanded: Set<string>
+  onExpandedChange: (expanded: Set<string>) => void
 }) {
-  const [sort, setSort] = useState<'value' | 'name'>('value')
-  const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const selectedFundName = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase()
     if (!needle) return ''
@@ -95,33 +111,33 @@ export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQ
     scrollMargin,
   })
 
-  const toggle = (id: string) => setExpanded((current) => {
-    const next = new Set(current)
+  const toggle = (id: string) => {
+    const next = new Set(expanded)
     if (next.has(id)) next.delete(id)
     else next.add(id)
-    return next
-  })
+    onExpandedChange(next)
+  }
 
   return (
-    <section className="rounded-xl border border-gray-800 bg-gray-900">
-      <div className="flex flex-col gap-3 border-b border-gray-800 p-4 sm:flex-row sm:items-center">
+    <section className={DATA_TABLE_STYLES.panel}>
+      <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className="text-base font-semibold text-white">All identified economic exposure</h2>
-          <p className="mt-1 text-xs text-gray-500">Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
+          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>All identified economic exposure<InfoTooltip text="Underlying holdings grouped by issuer, with security and source-fund detail. Percentages use the whole selected portfolio." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+          <p className={DATA_TABLE_STYLES.description}>Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
         </div>
-        <div className="ml-auto flex w-full gap-2 sm:w-auto">
+        <div className={DATA_TABLE_STYLES.actions}>
           <input
             type="search"
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search issuer, security or fund"
-            aria-label="Search underlying assets"
+            aria-label="Search underlying exposure"
             className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 outline-none focus:border-blue-600 sm:w-72"
           />
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as 'value' | 'name')}
-            aria-label="Sort underlying assets"
+            onChange={(event) => onSortChange(event.target.value as FundExposureSort)}
+            aria-label="Sort underlying exposure"
             className="rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-300"
           >
             <option value="value">Largest first</option>
@@ -131,7 +147,7 @@ export function FundHoldingsExplorer({ positions, holdings, statuses, query, onQ
       </div>
       <div>
         <div>
-          <div className={`${GRID} sticky top-0 z-10 rounded-none bg-gray-800 py-2 text-xs uppercase tracking-wider text-gray-500`}>
+          <div className={`${GRID} ${DATA_TABLE_STYLES.columnHeader} py-2`}>
             <span>Issuer</span><span className="text-right">Exposure</span><span className="text-right">Portfolio</span><span>Sources</span>
           </div>
           <div ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>

@@ -39,9 +39,9 @@ describe('PerformanceContributionCard', () => {
       <AssetIrrView summary={assetIrr()} status="ready" />,
     )
 
-    expect(html).toContain('IRR method')
-    expect(html).toContain('Money-weighted')
+    expect(html).not.toContain('IRR method')
     expect(html).toContain('Assets measured')
+    expect(html.match(/aria-label="More information"/g)).toHaveLength(1)
     expect(html).toContain('12 Oct 2025 – 12 Oct 2026')
     expect(html).toContain('Top IRRs')
     expect(html).toContain('Lowest IRRs')
@@ -69,6 +69,10 @@ describe('PerformanceContributionCard', () => {
     )
 
     expect(html).toContain('Performance by asset')
+    expect(html).toContain('>Performance by asset</h2>')
+    expect(html).toContain('Top contributors')
+    expect(html).toContain('Main detractors')
+    expect(html.match(/aria-label="More information"/g)).toHaveLength(4)
     expect(html).toContain('Contribution €')
     expect(html).toContain('IRR %')
     expect(html).toContain('+12.34%')

@@ -7,6 +7,7 @@ import { allocationTrendDomain, buildAllocationTrend } from './allocationCharts.
 import { EvolutionTooltip } from './allocationCharts.tooltips'
 import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 interface EvoCardProps {
   title: string
@@ -27,7 +28,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-2 flex items-start justify-between gap-3">
-        <h2 className="text-sm font-medium text-gray-400">{title}</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<InfoTooltip text={`Historical portfolio allocation by ${title.toLowerCase()}.`} scope={{ account: 'filterable', period: 'range' }} /></h2>
         {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">

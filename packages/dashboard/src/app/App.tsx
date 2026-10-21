@@ -14,6 +14,7 @@ import { useSavingCapacity } from "@/hooks/useSavingCapacity";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
 import { useAccountTypeHistory } from "@/hooks/useAccountTypeHistory";
 import { useAnnualIncomeSavings } from "@/hooks/useAnnualIncomeSavings";
+import { filterAnnualIncomeSavingsByPeriod } from "@/logic/annualIncomeSavings.logic";
 import { useRawIsinData } from "@/hooks/useRawIsinData";
 import { useFundHoldingsData } from "@/hooks/useFundHoldings";
 import { PositionsTable } from "@/features/positions-table/PositionsTable";
@@ -22,18 +23,37 @@ import {
   FilterButton,
   FilterPanel,
 } from "@/features/filters/FilterBar";
-import { AllocationCharts } from "@/features/allocation-charts/AllocationCharts";
+import {
+  AllocationCharts,
+  AllocationViewToggle,
+  type AllocationView,
+} from "@/features/allocation-charts/AllocationCharts";
 import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
+import { selectHistoricalFundHoldingsAtDate } from "@/features/allocation-charts/concentrationTrend.logic";
 import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
 import { OverviewTab } from "@/features/dashboard/OverviewTab";
+import { OverviewPeriodFilter } from "@/features/dashboard/OverviewPeriodFilter";
+import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/features/dashboard/overviewComparison.logic";
 import { WealthTab } from "@/features/dashboard/WealthTab";
 import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
 import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
+import type { QualityThemeId } from "@/features/dashboard/DataQualityTab";
 import { FundLookThroughTab } from "@/features/fund-holdings/FundLookThroughTab";
-import { scopeFundQualityData } from "@/features/fund-holdings/fundQualityScope.logic";
+import type { FundExposureSort } from "@/features/fund-holdings/FundHoldingsExplorer";
+import {
+  computeFundExposurePercentages,
+  scopeFundQualityData,
+} from "@/features/fund-holdings/fundQualityScope.logic";
+import {
+  HoldingsViewTabs,
+  type HoldingsView,
+} from "@/features/holdings/HoldingsViewTabs";
 import type { Filters, SortKey } from "@/types/filters";
+import type { ExpandedState } from "@tanstack/react-table";
 import { accountFilterId, rawAccountId } from "@/shared/filters/accountFilter";
+import { buildPositionRows } from "@/logic/positionHierarchy.logic";
+import { FilterScopeProvider } from "@/shared/ui/FilterScopeBadges";
 import {
   accountLabel,
   clearFilterGroup,
@@ -44,11 +64,20 @@ import {
 import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
 import { partitionPercentages } from "@/shared/format/percentage";
 import {
+  AnalysisReliabilityKpi,
+  CombinedAnalysisReliabilityKpi,
+  PipelineReliabilityKpi,
+} from "@/shared/ui/AnalysisReliabilityKpi";
+import {
+  aggregateReliabilityTone,
+  percentageReliabilityTone,
+  pipelineReliabilityTone,
+  pipelineStatusLabel,
+  type AnalysisReliabilityTone,
+} from "@/shared/quality/analysisReliability";
+import {
   buildCumulativeWealthDrivers,
-  computeConcentration,
-  computeHeldAssetConcentration,
   computePerformanceSummary,
-  computePeriodDrivers,
   computeTrailing12mYearOverYear,
   computeTrailing12mIncome,
   computeTrailing12mSavings,
@@ -59,6 +88,8 @@ import {
   applyPositionFilters,
   applyAccountFilterToHistory,
   buildAccountTypeBreakdown,
+  scopeManualPriceOverrides,
+  scopePipelineErrors,
   sortPositionsForTable,
 } from "./app.logic";
 
@@ -67,8 +98,7 @@ type AnalysisTab =
   | "wealth"
   | "performance"
   | "allocation"
-  | "underlying"
-  | "positions"
+  | "holdings"
   | "quality";
 
 const PRIMARY_TABS: Array<{
@@ -79,8 +109,7 @@ const PRIMARY_TABS: Array<{
   { id: "wealth", label: "Wealth & cash flow" },
   { id: "performance", label: "Performance & passive income" },
   { id: "allocation", label: "Diversification" },
-  { id: "underlying", label: "Underlying assets" },
-  { id: "positions", label: "Positions" },
+  { id: "holdings", label: "Holdings" },
 ];
 
 const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
@@ -103,15 +132,9 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
     description:
       "Current exposures, concentration and how the portfolio mix is evolving.",
   },
-  underlying: {
-    title: "Underlying assets",
-    description:
-      "All identified economic exposure through ETFs and funds, grouped by issuer and security.",
-  },
-  positions: {
-    title: "Positions",
-    description:
-      "Inspect every holding, transaction and position-level result.",
+  holdings: {
+    title: "Holdings",
+    description: "Inspect held positions and their underlying economic exposure.",
   },
   quality: {
     title: "Data quality",
@@ -120,12 +143,17 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   },
 };
 
-function periodLabel(dateFrom?: string, dateTo?: string): string {
-  if (!dateFrom && !dateTo) return "";
-  if (dateFrom && dateTo) return `${dateFrom} to ${dateTo}`;
-  if (dateFrom) return `Since ${dateFrom}`;
-  return `Until ${dateTo}`;
-}
+const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }> = {
+  positions: {
+    title: "Positions",
+    description: "Inspect every holding, transaction and position-level result.",
+  },
+  underlying: {
+    title: "Underlying exposure",
+    description:
+      "Review identified economic exposure through ETFs and funds, grouped by issuer and security.",
+  },
+};
 
 export default function App() {
   const {
@@ -139,7 +167,7 @@ export default function App() {
   const { history } = usePortfolioHistory();
   const { cashHistory } = useCashHistory();
   const allPositionRows = useAllPositions();
-  const { errors: pipelineErrors } = useErrors();
+  const { errors: pipelineErrors, loading: pipelineErrorsLoading } = useErrors();
   const { manualPriceOverrides } = useManualPriceOverrides();
   const allMonthlyOps = useMonthlyOps();
   const rawAllocationData = useRawIsinData();
@@ -149,10 +177,21 @@ export default function App() {
 
   const [theme, setTheme] = useState<"dark" | "light">("light");
   const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
+  const [holdingsView, setHoldingsView] = useState<HoldingsView>("positions");
+  const [selectedQualityTheme, setSelectedQualityTheme] =
+    useState<QualityThemeId | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [allocationFilter, setAllocationFilter] =
     useState<AllocationFilter | null>(null);
+  const [allocationView, setAllocationView] =
+    useState<AllocationView>("current");
   const [underlyingQuery, setUnderlyingQuery] = useState("");
+  const [underlyingSort, setUnderlyingSort] =
+    useState<FundExposureSort>("value");
+  const [expandedUnderlyingIssuers, setExpandedUnderlyingIssuers] =
+    useState<Set<string>>(new Set());
+  const [expandedPositionRows, setExpandedPositionRows] =
+    useState<ExpandedState>({});
   const [sortKey, setSortKey] = useState<SortKey>("total_value");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [filters, setFilters] = useState<Filters>(() => resetFilters());
@@ -225,13 +264,35 @@ export default function App() {
     }),
     [filters],
   );
-  const currentPositions = useMemo(
+  const latestAccountPositions = useMemo(
     () => applyPositionFilters(positions, currentFilters),
     [positions, currentFilters],
   );
+  const positionsAtPeriodEnd = useMemo(
+    () => buildPositionRows(rawOperations, rawPositions, filters.dateTo),
+    [rawOperations, rawPositions, filters.dateTo],
+  );
+  const currentPositions = useMemo(
+    () => applyPositionFilters(positionsAtPeriodEnd, currentFilters),
+    [positionsAtPeriodEnd, currentFilters],
+  );
+  const periodEndFundHoldings = useMemo(
+    () => filters.dateTo
+      ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
+      : fundHoldings,
+    [filters.dateTo, fundData.history, fundHoldings],
+  );
   const tableFiltered = useMemo(
-    () => applyPositionFilters(positions, filters),
-    [positions, filters],
+    () => applyPositionFilters(positionsAtPeriodEnd, filters),
+    [positionsAtPeriodEnd, filters],
+  );
+  const periodPositions = useMemo(
+    () => applyPositionFilters(positionsAtPeriodEnd, {
+      ...filters,
+      operationTypes: new Set<string>(),
+      hideClosedPositions: false,
+    }),
+    [positionsAtPeriodEnd, filters],
   );
   const tableData = useMemo(
     () =>
@@ -300,25 +361,48 @@ export default function App() {
   }, [filteredHistory.demoPresetAccounts, filters.accounts]);
 
   const savingCapacity = useSavingCapacity(filters.accounts);
+  const overviewComparison = useMemo(
+    () => buildOverviewComparison({
+      rawPositions,
+      rawOperations,
+      savingCapacity,
+      fundHoldingsHistory: fundData.history,
+      accountFilters: filters.accounts,
+      accountTypeFilters: filters.accountTypes,
+      dateFrom: filters.dateFrom,
+      dateTo: filters.dateTo,
+    }),
+    [
+      rawPositions,
+      rawOperations,
+      savingCapacity,
+      fundData.history,
+      filters.accounts,
+      filters.accountTypes,
+      filters.dateFrom,
+      filters.dateTo,
+    ],
+  );
+  const rollingThreeYearTriComparison = useMemo(
+    () => overviewComparison
+      ? compareRollingThreeYearIrr(accountHistory, overviewComparison.windows)
+      : { current: null, previous: null, delta: null, deltaPct: null },
+    [accountHistory, overviewComparison],
+  );
   const periodSavings = useMemo(
-    () =>
-      filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
+    () => filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
     [savingCapacity, filters.dateFrom, filters.dateTo],
   );
   const trailingSavings = useMemo(
-    () => computeTrailing12mSavings(periodSavings),
-    [periodSavings],
+    () => computeTrailing12mSavings(savingCapacity, filters.dateFrom, filters.dateTo),
+    [savingCapacity, filters.dateFrom, filters.dateTo],
   );
   const trailingYearComparison = useMemo(
-    () => computeTrailing12mYearOverYear(savingCapacity),
-    [savingCapacity],
+    () => computeTrailing12mYearOverYear(savingCapacity, filters.dateTo),
+    [savingCapacity, filters.dateTo],
   );
   const wealthDrivers = useMemo(
     () => buildCumulativeWealthDrivers(periodSavings),
-    [periodSavings],
-  );
-  const drivers = useMemo(
-    () => computePeriodDrivers(periodSavings),
     [periodSavings],
   );
   const monthlyOps = useMemo(
@@ -341,32 +425,40 @@ export default function App() {
     () => buildAccountTypeBreakdown(currentPositions),
     [currentPositions],
   );
-  const performance = useMemo(
+  const displayedAnnualIncomeSavings = useMemo(
+    () => filterAnnualIncomeSavingsByPeriod(annualIncomeSavings, filters.dateFrom, filters.dateTo),
+    [annualIncomeSavings, filters.dateFrom, filters.dateTo],
+  );
+  const asOfPerformance = useMemo(
     () => computePerformanceSummary(currentPositions),
     [currentPositions],
+  );
+  const periodPerformance = useMemo(
+    () => computePerformanceSummary(periodPositions),
+    [periodPositions],
+  );
+  const performance = useMemo(
+    () => ({
+      ...asOfPerformance,
+      realizedNet: periodPerformance.realizedNet,
+      realizedGross: periodPerformance.realizedGross,
+    }),
+    [asOfPerformance, periodPerformance],
   );
   const trailingIncome = useMemo(
     () =>
       computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
     [currentPositions, displayedHistory],
   );
-  const lookThroughConcentration = useMemo(
-    () => computeConcentration(tableFiltered, fundHoldings),
-    [tableFiltered, fundHoldings],
-  );
-  const heldAssetConcentration = useMemo(
-    () => computeHeldAssetConcentration(tableFiltered),
-    [tableFiltered],
-  );
   const coverage = useMemo(
     () =>
       rawAllocationData.loading
         ? []
         : computeAllocationCoverageByAccount(
-            currentPositions,
+            latestAccountPositions,
             rawAllocationData,
           ),
-    [currentPositions, rawAllocationData],
+    [latestAccountPositions, rawAllocationData],
   );
   const unallocatedPct = useMemo(() => {
     if (rawAllocationData.loading) return null;
@@ -382,10 +474,24 @@ export default function App() {
     return partitionPercentages([allocated, unallocated, notApplicable])[1];
   }, [coverage, rawAllocationData.loading]);
 
+  const classificationMappedValue = coverage.reduce(
+    (sum, item) => sum + item.allocated,
+    0,
+  );
+  const classificationUnmappedValue = coverage.reduce(
+    (sum, item) => sum + item.unallocated,
+    0,
+  );
+  const classificationApplicableValue =
+    classificationMappedValue + classificationUnmappedValue;
+  const classificationReliabilityPct = classificationApplicableValue > 0
+    ? (classificationMappedValue / classificationApplicableValue) * 100
+    : null;
+
   const scopedFundQuality = useMemo(
     () =>
       scopeFundQualityData(
-        currentPositions,
+        latestAccountPositions,
         fundData.holdings,
         fundData.statuses,
         fundData.snapshots,
@@ -393,7 +499,7 @@ export default function App() {
         fundData.report,
       ),
     [
-      currentPositions,
+      latestAccountPositions,
       fundData.holdings,
       fundData.statuses,
       fundData.snapshots,
@@ -422,30 +528,105 @@ export default function App() {
     ? scopedFundQuality.report.directIdentifiedValue +
       scopedFundQuality.report.decomposedValue
     : 0;
-  const [, unresolvedFundPct] = partitionPercentages([
+  const fundExposurePercentages = computeFundExposurePercentages(
     identifiedFundValue,
     unresolvedFundValue,
     scopedFundQuality.notApplicableValue,
+  );
+  const underlyingReliabilityPct = scopedFundQuality.report
+    ? fundExposurePercentages.identified
+    : null;
+  const underlyingCritical = hasFundValidationError || scopedFundQuality.report?.feasibilityStatus === "limited";
+  const classificationMetricTone = percentageReliabilityTone(
+    rawAllocationData.loading ? null : classificationReliabilityPct,
+  );
+  const underlyingMetricTone: AnalysisReliabilityTone = underlyingCritical
+    ? "critical"
+    : scopedFundQuality.report?.feasibilityStatus === "pending_repeatability"
+      ? "warning"
+      : percentageReliabilityTone(scopedFundQuality.report ? underlyingReliabilityPct : null);
+  const diversificationReliabilityTone = aggregateReliabilityTone([
+    classificationMetricTone,
+    underlyingMetricTone,
   ]);
+  const reliabilityPriority: Record<AnalysisReliabilityTone, number> = {
+    healthy: 0,
+    warning: 1,
+    unavailable: 2,
+    critical: 3,
+  };
+  const diversificationQualityTheme: QualityThemeId =
+    reliabilityPriority[underlyingMetricTone] > reliabilityPriority[classificationMetricTone]
+      ? "lookthrough"
+      : "classification";
+  const pipelineQualityPositions = activeTab === "holdings" && holdingsView === "positions"
+    ? tableFiltered
+    : latestAccountPositions;
+  const scopedPipelineErrors = useMemo(
+    () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
+    [pipelineErrors, pipelineQualityPositions, filters],
+  );
+  const scopedManualPriceOverrides = useMemo(
+    () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
+    [manualPriceOverrides, latestAccountPositions, filters],
+  );
+  const scopedPipelineErrorCount = scopedPipelineErrors.filter(
+    (item) => item.level === "error",
+  ).length;
+  const scopedPipelineWarningCount = scopedPipelineErrors.length - scopedPipelineErrorCount;
+  const portfolioDataTone = pipelineReliabilityTone({
+    errorCount: scopedPipelineErrorCount,
+    warningCount: scopedPipelineWarningCount,
+    loading: pipelineErrorsLoading,
+  });
+  const portfolioDataStatus = pipelineStatusLabel({
+    errorCount: scopedPipelineErrorCount,
+    warningCount: scopedPipelineWarningCount,
+    loading: pipelineErrorsLoading,
+  });
+  const overviewReliabilityTone = aggregateReliabilityTone([
+    portfolioDataTone,
+    classificationMetricTone,
+    underlyingMetricTone,
+  ]);
+  const overviewQualityTheme = [
+    { theme: "pipeline" as const, tone: portfolioDataTone },
+    { theme: "classification" as const, tone: classificationMetricTone },
+    { theme: "lookthrough" as const, tone: underlyingMetricTone },
+  ].reduce((mostRelevant, candidate) => (
+    reliabilityPriority[candidate.tone] > reliabilityPriority[mostRelevant.tone]
+      ? candidate
+      : mostRelevant
+  )).theme;
+  const unresolvedFundPct = fundExposurePercentages.unresolved;
   const qualityCount =
-    Number(pipelineErrors.length > 0) +
-    Number(manualPriceOverrides.length > 0) +
+    Number(scopedPipelineErrors.length > 0) +
+    Number(scopedManualPriceOverrides.length > 0) +
     Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
     Number(hasFundValidationError || hasMaterialQualityGap(unresolvedFundPct));
-  const copy = TAB_COPY[activeTab];
-  const filterVisibility = filterVisibilityForTab(activeTab);
+  const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
+  const filterVisibility = filterVisibilityForTab(activeTab, holdingsView);
   const activeFilterSummaries = filterSummaries(
     filters,
     accountFilterLabels,
     filterVisibility,
   );
+  const visibleFilterSummaries = activeTab === "overview"
+    ? activeFilterSummaries.filter((item) => item.key !== "period")
+    : activeFilterSummaries;
 
   function handleResetFilters() {
     setFilters(resetFilters());
     setAllocationFilter(null);
   }
 
+  function openDataQuality(theme: QualityThemeId) {
+    setSelectedQualityTheme(theme);
+    setActiveTab("quality");
+  }
+
   return (
+    <FilterScopeProvider filters={filters} accountLabels={accountFilterLabels}>
     <div className="min-h-screen bg-gray-950 p-4 text-gray-100 sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
         <header className="mb-5 flex items-start gap-4">
@@ -482,13 +663,16 @@ export default function App() {
               ))}
               <button
                 type="button"
-                onClick={() => setActiveTab("quality")}
+                onClick={() => {
+                  setSelectedQualityTheme(null);
+                  setActiveTab("quality");
+                }}
                 className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-blue-500 border-l-gray-800 text-white" : "border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300"}`}
               >
                 Data quality
                 {qualityCount > 0 && (
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${pipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${scopedPipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
                   >
                     {qualityCount}
                   </span>
@@ -496,26 +680,122 @@ export default function App() {
               </button>
             </nav>
 
-            <div className="mb-4 flex items-start justify-between gap-4">
+            {activeTab === "holdings" && (
+              <HoldingsViewTabs value={holdingsView} onChange={setHoldingsView} />
+            )}
+
+            <div className="mb-6 flex items-start justify-between gap-4 border-b border-gray-800 pb-5">
               <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-white">
                   {copy.title}
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">{copy.description}</p>
+                {activeTab !== "overview" && activeTab !== "allocation" && activeTab !== "quality" && !(activeTab === "holdings" && holdingsView === "underlying") && (
+                  <div className="mt-2">
+                    <PipelineReliabilityKpi
+                      errorCount={scopedPipelineErrorCount}
+                      warningCount={scopedPipelineWarningCount}
+                      loading={pipelineErrorsLoading}
+                      onClick={() => openDataQuality("pipeline")}
+                      scope={{ account: "filterable", period: "range" }}
+                    />
+                  </div>
+                )}
+                {activeTab === "overview" && (
+                  <div className="mt-2">
+                    <CombinedAnalysisReliabilityKpi
+                      statusMetric={{
+                        value: portfolioDataStatus,
+                        metricLabel: "Portfolio data",
+                        tone: portfolioDataTone,
+                      }}
+                      metrics={[
+                        {
+                          percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                          amount: classificationMappedValue,
+                          metricLabel: "Diversification",
+                          tone: classificationMetricTone,
+                        },
+                        {
+                          percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                          amount: identifiedFundValue,
+                          metricLabel: "Underlying assets",
+                          tone: underlyingMetricTone,
+                        },
+                      ]}
+                      tone={overviewReliabilityTone}
+                      tooltip="Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator."
+                      onClick={() => openDataQuality(overviewQualityTheme)}
+                      scope={{ account: "filterable", period: "mixed" }}
+                    />
+                  </div>
+                )}
+                {activeTab === "allocation" && (
+                  <div className="mt-2">
+                    <CombinedAnalysisReliabilityKpi
+                      metrics={[
+                        {
+                          percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                          amount: classificationMappedValue,
+                          metricLabel: "Diversification",
+                          tone: classificationMetricTone,
+                        },
+                        {
+                          percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                          amount: identifiedFundValue,
+                          metricLabel: "Underlying assets",
+                          tone: underlyingMetricTone,
+                        },
+                      ]}
+                      tone={diversificationReliabilityTone}
+                      tooltip="Aggregate reliability for diversification mapping and underlying-assets look-through. Each percentage keeps its own quality color; the overall status follows the weaker indicator."
+                      onClick={() => openDataQuality(diversificationQualityTheme)}
+                      scope={{ account: "filterable", period: "latest" }}
+                    />
+                  </div>
+                )}
+                {activeTab === "holdings" && holdingsView === "underlying" && (
+                  <div className="mt-2">
+                    <AnalysisReliabilityKpi
+                      percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
+                      amount={identifiedFundValue}
+                      metricLabel="Underlying assets"
+                      tone={underlyingMetricTone}
+                      tooltip="Reliability of the look-through data used by the underlying-assets view. The percentage uses the whole selected portfolio, including balances where look-through is not applicable."
+                      onClick={() => openDataQuality("lookthrough")}
+                      scope={{ account: "filterable", period: "latest" }}
+                    />
+                  </div>
+                )}
+                <p className="mt-2 text-sm text-gray-500">{copy.description}</p>
               </div>
-              <FilterButton
-                activeCount={activeFilterSummaries.length}
-                open={filtersOpen}
-                onClick={() => setFiltersOpen(true)}
-              />
+              <div className="flex shrink-0 items-center gap-2">
+                {activeTab === "allocation" && (
+                  <AllocationViewToggle
+                    value={allocationView}
+                    onChange={setAllocationView}
+                  />
+                )}
+                <FilterButton
+                  activeCount={activeFilterSummaries.length}
+                  open={filtersOpen}
+                  onClick={() => setFiltersOpen(true)}
+                />
+              </div>
             </div>
 
             <ActiveFilterSummary
-              items={activeFilterSummaries}
+              items={visibleFilterSummaries}
+              leading={activeTab === "overview" && overviewComparison ? (
+                <OverviewPeriodFilter
+                  windows={overviewComparison.windows}
+                  onEdit={() => setFiltersOpen(true)}
+                />
+              ) : undefined}
               onRemove={(item) =>
                 setFilters((current) => clearFilterGroup(current, item.key))
               }
               onReset={handleResetFilters}
+              showReset={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)}
             >
               {activeTab === "allocation" && allocationFilter && (
                 <FilterChipBar
@@ -543,16 +823,10 @@ export default function App() {
 
             {activeTab === "overview" && (
               <OverviewTab
-                history={displayedHistory}
-                performance={performance}
-                drivers={drivers}
-                income={trailingIncome}
-                heldAssetConcentration={heldAssetConcentration}
-                lookThroughConcentration={lookThroughConcentration}
-                globalTri={globalTri}
+                comparison={overviewComparison}
+                rollingThreeYearTri={rollingThreeYearTriComparison}
                 irrStatus={irrStatus}
-                irrScopeLabel={irrScopeLabel}
-                periodLabel={periodLabel(filters.dateFrom, filters.dateTo)}
+                onNavigate={setActiveTab}
               />
             )}
             {activeTab === "wealth" && (
@@ -566,7 +840,7 @@ export default function App() {
                 monthlyOps={monthlyOps}
                 drivers={wealthDrivers}
                 trailingYearComparison={trailingYearComparison}
-                annualIncomeSavings={annualIncomeSavings}
+                annualIncomeSavings={displayedAnnualIncomeSavings}
               />
             )}
             {activeTab === "performance" && (
@@ -588,52 +862,74 @@ export default function App() {
             {activeTab === "allocation" && (
               <AllocationCharts
                 positions={currentPositions}
-                fundHoldings={fundHoldings}
+                rawPositions={rawPositions}
+                fundHoldings={periodEndFundHoldings}
+                fundHoldingsHistory={fundData.history}
                 accountFilters={filters.accounts}
+                accountTypeFilters={filters.accountTypes}
                 activeFilter={allocationFilter}
                 onActiveFilterChange={setAllocationFilter}
+                view={allocationView}
+                dateFrom={filters.dateFrom}
+                dateTo={filters.dateTo}
               />
             )}
-            {activeTab === "underlying" && (
-              <FundLookThroughTab
-                positions={currentPositions}
-                holdings={fundHoldings}
-                statuses={fundData.statuses}
-                query={underlyingQuery}
-                onQueryChange={setUnderlyingQuery}
-              />
-            )}
-            {activeTab === "positions" && (
-              <PositionsTable
-                data={tableData}
-                groupByType={allAccountTypes.length > 0}
-                sortKey={sortKey}
-                sortDir={sortDir}
-                onSort={handleSort}
-                fundHoldings={fundHoldings}
-                fundStatuses={fundData.statuses}
-                onOpenCompleteHoldings={(fundName) => {
-                  setUnderlyingQuery(fundName);
-                  setActiveTab("underlying");
-                }}
-              />
+            {activeTab === "holdings" && (
+              <div
+                id={`holdings-${holdingsView}-panel`}
+                role="region"
+                aria-labelledby={`holdings-${holdingsView}-tab`}
+              >
+                {holdingsView === "positions" ? (
+                  <PositionsTable
+                    data={tableData}
+                    groupByType={allAccountTypes.length > 0}
+                    sortKey={sortKey}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                    expanded={expandedPositionRows}
+                    onExpandedChange={setExpandedPositionRows}
+                    fundHoldings={periodEndFundHoldings}
+                    fundStatuses={fundData.statuses}
+                    onOpenCompleteHoldings={(fundName) => {
+                      setUnderlyingQuery(fundName);
+                      setHoldingsView("underlying");
+                    }}
+                  />
+                ) : (
+                  <FundLookThroughTab
+                    positions={currentPositions}
+                    holdings={periodEndFundHoldings}
+                    statuses={fundData.statuses}
+                    query={underlyingQuery}
+                    onQueryChange={setUnderlyingQuery}
+                    sort={underlyingSort}
+                    onSortChange={setUnderlyingSort}
+                    expanded={expandedUnderlyingIssuers}
+                    onExpandedChange={setExpandedUnderlyingIssuers}
+                  />
+                )}
+              </div>
             )}
             {activeTab === "quality" && (
               <DataQualityTab
-                positions={currentPositions}
+                positions={latestAccountPositions}
                 accountLabels={accountLabels}
-                errors={pipelineErrors}
-                manualPriceOverrides={manualPriceOverrides}
+                errors={scopedPipelineErrors}
+                manualPriceOverrides={scopedManualPriceOverrides}
                 fundStatuses={fundData.statuses}
                 fundReport={fundData.report}
                 fundHoldings={fundData.holdings}
                 fundSnapshots={fundData.snapshots}
                 fundUnresolved={fundData.unresolved}
+                selectedTheme={selectedQualityTheme}
+                onSelectedThemeChange={setSelectedQualityTheme}
               />
             )}
           </>
         )}
       </div>
     </div>
+    </FilterScopeProvider>
   );
 }

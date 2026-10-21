@@ -8,6 +8,7 @@ import { PieTooltip } from './allocationCharts.tooltips'
 import { PieLabel } from './PieLabel'
 import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, AllocationFilter, PieEntry } from './allocationCharts.types'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 interface DonutCardProps {
   title: string
@@ -37,7 +38,7 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-1 flex items-start justify-between gap-3">
-        <h2 className="text-sm font-medium text-gray-400">{title}</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<InfoTooltip text={`Portfolio allocation by ${title.toLowerCase()} at the displayed snapshot.`} scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }} /></h2>
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-xs text-gray-600">{dateLabel}</span>
           {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}

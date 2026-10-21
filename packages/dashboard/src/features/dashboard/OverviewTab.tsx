@@ -1,31 +1,58 @@
-import type { PortfolioHistoryPoint } from '@/types/history'
-import type { ConcentrationSummary, IncomeSummary, PerformanceSummary, PeriodDrivers } from '@/features/portfolio-charts/portfolioCharts.logic'
-import { EvolutionChart } from '@/features/portfolio-charts/EvolutionChart'
-import { SummaryKpis } from './SummaryKpis'
-import { VariationCard } from './VariationCard'
+import { useState } from 'react'
 import type { IrrStatus } from '@/types/history'
+import type { ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
+import type { ComparedMetric, OverviewComparison } from './overviewComparison.logic'
+import { OverviewSummaryCards, type OverviewDestination } from './OverviewSummaryCards'
+import { OverviewConcentrationChart, OverviewDriversChart, OverviewValueChart } from './OverviewCharts'
 
 interface OverviewTabProps {
-  history: PortfolioHistoryPoint[]
-  performance: PerformanceSummary
-  drivers: PeriodDrivers
-  income: IncomeSummary
-  heldAssetConcentration: ConcentrationSummary
-  lookThroughConcentration: ConcentrationSummary
-  globalTri: number | null
+  comparison: OverviewComparison | null
+  rollingThreeYearTri: ComparedMetric
   irrStatus: IrrStatus
-  irrScopeLabel?: string
-  periodLabel: string
+  onNavigate: (destination: OverviewDestination) => void
 }
 
-export function OverviewTab({
-  history, performance, drivers, income, heldAssetConcentration, lookThroughConcentration, globalTri, irrStatus, irrScopeLabel, periodLabel,
-}: OverviewTabProps) {
+export function OverviewTab({ comparison, rollingThreeYearTri, irrStatus, onNavigate }: OverviewTabProps) {
+  const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('lookThrough')
+
+  if (!comparison) {
+    return (
+      <div className="mb-6 rounded-2xl border border-gray-800 bg-gray-900 p-8 text-center">
+        <h3 className="text-sm font-semibold text-gray-200">Overview unavailable</h3>
+        <p className="mt-2 text-sm text-gray-500">Choose a valid period with available portfolio history.</p>
+      </div>
+    )
+  }
+
+  const lookThroughDisabled = comparison.lookThroughConcentration.current == null
+  const displayedConcentrationMode = concentrationMode === 'lookThrough' && lookThroughDisabled
+    ? 'held'
+    : concentrationMode
+  const concentration = displayedConcentrationMode === 'held'
+    ? comparison.heldConcentration
+    : comparison.lookThroughConcentration
+
   return (
     <div className="mb-6 space-y-4">
-      <SummaryKpis performance={performance} drivers={drivers} income={income} globalTri={globalTri} irrStatus={irrStatus} irrScopeLabel={irrScopeLabel} periodLabel={periodLabel} />
-      <VariationCard drivers={drivers} heldAssetConcentration={heldAssetConcentration} lookThroughConcentration={lookThroughConcentration} periodLabel={periodLabel} />
-      {history.length > 0 && <EvolutionChart history={history} title="Portfolio trajectory" height={260} />}
+      <OverviewSummaryCards
+        comparison={comparison}
+        heldConcentration={comparison.heldConcentration}
+        underlyingConcentration={comparison.lookThroughConcentration}
+        rollingThreeYearTri={rollingThreeYearTri}
+        irrStatus={irrStatus}
+        onNavigate={onNavigate}
+      />
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <OverviewValueChart comparison={comparison} />
+        <OverviewDriversChart comparison={comparison} />
+        <OverviewConcentrationChart
+          concentration={concentration}
+          mode={displayedConcentrationMode}
+          onModeChange={setConcentrationMode}
+          lookThroughDisabled={lookThroughDisabled}
+        />
+      </div>
     </div>
   )
 }

@@ -4,7 +4,10 @@ from datetime import date
 import pandas as pd
 
 from src.fetch_fund_holdings import refresh_fund_holdings
-from src.fund_holdings_snapshots import load_fund_snapshots
+from src.fund_holdings_snapshots import (
+    load_all_valid_fund_snapshots,
+    load_fund_snapshots,
+)
 
 
 def _write_snapshot(
@@ -79,6 +82,13 @@ def test_snapshot_lifecycle_keeps_stale_and_expires_after_180_days(tmp_path):
     expired = audit[audit["fund_id"] == "EXPIRED"].iloc[0]
     assert expired["status"] == "expired"
     assert expired["is_active"] == "false"
+    historical, _ = load_all_valid_fund_snapshots(
+        tmp_path, today=date(2026, 10, 17)
+    )
+    assert {snapshot.fund_id for snapshot in historical} == {
+        "STALE",
+        "EXPIRED",
+    }
 
 
 def test_refresh_recursively_uses_manual_snapshot_and_exposes_provenance(
@@ -151,3 +161,8 @@ def test_refresh_recursively_uses_manual_snapshot_and_exposes_provenance(
     assert pd.read_csv(output / "fund_unresolved.csv").empty
     audit = pd.read_csv(output / "fund_snapshot_manifest.csv")
     assert len(audit) == 2
+    history = pd.read_csv(output / "fund_holdings_history.csv")
+    assert set(history["history_snapshot_id"]) == {
+        "2026-10-17/PEE-ROOT",
+        "2026-10-17/CHILD",
+    }

@@ -5,11 +5,12 @@ import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { MonthlyTooltip } from './portfolioCharts.tooltips'
 import type { MonthlyOpsMap } from '@/hooks/useMonthlyOps'
 import type { TrailingSavingCapacityPoint } from './portfolioCharts.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacityPoint[]; ops: MonthlyOpsMap }) {
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="text-sm font-medium text-gray-400 mb-3">Monthly wealth drivers</h2>
+      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Monthly wealth drivers<InfoTooltip text="Monthly net contributions and market performance, with a rolling view of saving capacity." scope={{ account: 'filterable', period: 'range-or-trailing-12m' }} /></h2>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart data={data} margin={{ top: 4, right: 52, left: 0, bottom: 0 }} barGap={2}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />

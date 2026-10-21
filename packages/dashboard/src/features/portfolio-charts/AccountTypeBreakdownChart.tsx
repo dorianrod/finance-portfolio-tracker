@@ -4,6 +4,7 @@ import { catColor } from '@/shared/format/colors'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { AccountTypeTooltip } from './portfolioCharts.tooltips'
 import type { AccountTypePointWithLabel } from './portfolioCharts.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 type DonutPoint = AccountTypePointWithLabel
 
@@ -148,7 +149,7 @@ export function AccountTypeBreakdownChart({ data }: { data: AccountTypePointWith
 
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="text-sm font-medium text-gray-400">Breakdown by account type</h2>
+      <h2 className="flex items-center text-sm font-medium text-gray-400">Breakdown by account type<InfoTooltip text="Each slice is an account type. The radial split separates cost basis from gross unrealized profit or loss." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
       <p className="mt-1 text-xs text-gray-600">Each slice is an account type · Radial split: cost basis / unrealized P&amp;L</p>
 
       <ResponsiveContainer width="100%" height={280}>
