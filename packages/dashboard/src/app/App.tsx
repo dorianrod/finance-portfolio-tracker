@@ -67,12 +67,14 @@ import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
+} from "@/shared/ui/AnalysisReliabilityKpi";
+import {
   aggregateReliabilityTone,
   percentageReliabilityTone,
   pipelineReliabilityTone,
   pipelineStatusLabel,
-} from "@/shared/ui/AnalysisReliabilityKpi";
-import type { AnalysisReliabilityTone } from "@/shared/ui/AnalysisReliabilityKpi";
+  type AnalysisReliabilityTone,
+} from "@/shared/quality/analysisReliability";
 import {
   buildCumulativeWealthDrivers,
   computePerformanceSummary,

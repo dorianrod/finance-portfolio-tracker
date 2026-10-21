@@ -3,11 +3,13 @@ import { describe, expect, it } from 'vitest'
 import {
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
+} from './AnalysisReliabilityKpi'
+import {
   aggregateReliabilityTone,
   percentageReliabilityTone,
   pipelineReliabilityTone,
   pipelineStatusLabel,
-} from './AnalysisReliabilityKpi'
+} from '../quality/analysisReliability'
 
 describe('CombinedAnalysisReliabilityKpi', () => {
   it('shows a compact aggregate status and puts the detail in the info tooltip', () => {
