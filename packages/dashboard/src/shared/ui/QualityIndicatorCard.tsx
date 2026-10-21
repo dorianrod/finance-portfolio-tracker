@@ -3,6 +3,7 @@ import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 import { fmtFull } from '@/shared/format/money'
 import { formatPercentage } from '@/shared/format/percentage'
 import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import type { FilterScopeSpec } from '@/shared/ui/FilterScopeBadges'
 
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
@@ -21,6 +22,7 @@ export function QualityIndicatorCard({
   percentage,
   detail,
   tone = 'neutral',
+  scope = { account: 'filterable', period: 'latest' },
   children,
 }: {
   label: string
@@ -29,6 +31,7 @@ export function QualityIndicatorCard({
   percentage: number
   detail?: string
   tone?: QualityTone
+  scope?: FilterScopeSpec
   children?: ReactNode
 }) {
   const safePercentage = Number.isFinite(percentage) ? Math.max(0, Math.min(100, percentage)) : 0
@@ -39,7 +42,7 @@ export function QualityIndicatorCard({
     <div className="quality-indicator-card rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
       <div className="flex items-center text-xs font-medium text-gray-400">
         <span>{label}</span>
-        <InfoTooltip text={tooltip} />
+        <InfoTooltip text={tooltip} scope={scope} />
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-3">
         <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>{percentageLabel}%</span>

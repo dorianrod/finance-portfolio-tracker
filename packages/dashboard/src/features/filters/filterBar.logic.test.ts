@@ -64,8 +64,8 @@ describe('filterVisibilityForTab', () => {
     (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
 
-  it.each(['allocation', 'underlying', 'quality'])('hides the period filter on %s', (tab) => {
-    expect(filterVisibilityForTab(tab).showPeriod).toBe(false)
+  it.each(['allocation', 'underlying', 'quality'])('shows the period filter on %s', (tab) => {
+    expect(filterVisibilityForTab(tab).showPeriod).toBe(true)
   })
 
   it('uses the active Holdings view to expose the relevant filters', () => {
@@ -74,7 +74,7 @@ describe('filterVisibilityForTab', () => {
       showPositionFilters: true,
     })
     expect(filterVisibilityForTab('holdings', 'underlying')).toEqual({
-      showPeriod: false,
+      showPeriod: true,
       showPositionFilters: false,
     })
     expect(filterVisibilityForTab('overview').showPositionFilters).toBe(false)
@@ -105,11 +105,13 @@ describe('filterSummaries', () => {
     )[0]).toEqual({ key: 'accounts', label: 'My PEA' })
   })
 
-  it('does not expose filters that do not affect the current tab', () => {
+  it('keeps the period visible while hiding position-only filters', () => {
     expect(filterSummaries(filters({
       dateFrom: '2026-01-01',
       operationTypes: new Set(['BUY']),
-    }), {}, filterVisibilityForTab('holdings', 'underlying'))).toEqual([])
+    }), {}, filterVisibilityForTab('holdings', 'underlying'))).toEqual([
+      { key: 'period', label: 'Since 2026-01-01' },
+    ])
   })
 })
 

@@ -12,6 +12,7 @@ import { ConcentrationModeToggle, type ConcentrationMode } from '@/features/port
 import type { HistoricalConcentrationHolding, HistoricalConcentrationPoint } from './concentrationTrend.logic'
 import { nextPlaybackIndex, shouldAnimateConcentration } from './concentrationTrend.logic'
 import { interpolateRankedBars } from './rankedBarAnimation'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const matchHoldingByKey = matchByDataKey('key')
 
@@ -243,7 +244,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <div className="rounded-xl bg-gray-900 p-4">
-          <h2 className="mb-1 text-sm font-medium text-gray-400">Minimum positions to reach portfolio share</h2>
+          <h2 className="mb-1 flex items-center text-sm font-medium text-gray-400">Minimum positions to reach portfolio share<InfoTooltip text="Minimum number of the largest exposures needed to reach 25%, 50%, 75% and 90% of the portfolio at each snapshot." scope={{ account: 'filterable', period: 'range' }} /></h2>
           <p className="mb-3 text-xs text-gray-600">Unavailable thresholds appear as gaps when identified exposure cannot reach them.</p>
           <ChartLegend />
           <ResponsiveContainer width="100%" height={250}>
@@ -267,7 +268,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
           <div className="rounded-xl bg-gray-900 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h2 className="text-sm font-medium text-gray-300">Largest holdings over time</h2>
+                <h2 className="flex items-center text-sm font-medium text-gray-300">Largest holdings over time<InfoTooltip text="Ranked portfolio exposures at each monthly snapshot. Hover, use the slider or play the history." scope={{ account: 'filterable', period: 'range' }} /></h2>
                 <p className="mt-0.5 text-xs text-gray-600">Hover to preview; the slider and playback use every monthly snapshot.</p>
               </div>
               <div className="text-left sm:text-right">

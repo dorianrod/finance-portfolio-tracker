@@ -14,6 +14,7 @@ import { useSavingCapacity } from "@/hooks/useSavingCapacity";
 import { usePassiveIncome } from "@/hooks/usePassiveIncome";
 import { useAccountTypeHistory } from "@/hooks/useAccountTypeHistory";
 import { useAnnualIncomeSavings } from "@/hooks/useAnnualIncomeSavings";
+import { filterAnnualIncomeSavingsByPeriod } from "@/logic/annualIncomeSavings.logic";
 import { useRawIsinData } from "@/hooks/useRawIsinData";
 import { useFundHoldingsData } from "@/hooks/useFundHoldings";
 import { PositionsTable } from "@/features/positions-table/PositionsTable";
@@ -29,10 +30,11 @@ import {
 } from "@/features/allocation-charts/AllocationCharts";
 import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
+import { selectHistoricalFundHoldingsAtDate } from "@/features/allocation-charts/concentrationTrend.logic";
 import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
 import { OverviewTab } from "@/features/dashboard/OverviewTab";
 import { OverviewPeriodFilter } from "@/features/dashboard/OverviewPeriodFilter";
-import { buildOverviewComparison } from "@/features/dashboard/overviewComparison.logic";
+import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/features/dashboard/overviewComparison.logic";
 import { WealthTab } from "@/features/dashboard/WealthTab";
 import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
 import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
@@ -50,6 +52,8 @@ import {
 import type { Filters, SortKey } from "@/types/filters";
 import type { ExpandedState } from "@tanstack/react-table";
 import { accountFilterId, rawAccountId } from "@/shared/filters/accountFilter";
+import { buildPositionRows } from "@/logic/positionHierarchy.logic";
+import { FilterScopeProvider } from "@/shared/ui/FilterScopeBadges";
 import {
   accountLabel,
   clearFilterGroup,
@@ -82,6 +86,7 @@ import {
   applyPositionFilters,
   applyAccountFilterToHistory,
   buildAccountTypeBreakdown,
+  scopeManualPriceOverrides,
   scopePipelineErrors,
   sortPositionsForTable,
 } from "./app.logic";
@@ -257,13 +262,35 @@ export default function App() {
     }),
     [filters],
   );
-  const currentPositions = useMemo(
+  const latestAccountPositions = useMemo(
     () => applyPositionFilters(positions, currentFilters),
     [positions, currentFilters],
   );
+  const positionsAtPeriodEnd = useMemo(
+    () => buildPositionRows(rawOperations, rawPositions, filters.dateTo),
+    [rawOperations, rawPositions, filters.dateTo],
+  );
+  const currentPositions = useMemo(
+    () => applyPositionFilters(positionsAtPeriodEnd, currentFilters),
+    [positionsAtPeriodEnd, currentFilters],
+  );
+  const periodEndFundHoldings = useMemo(
+    () => filters.dateTo
+      ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
+      : fundHoldings,
+    [filters.dateTo, fundData.history, fundHoldings],
+  );
   const tableFiltered = useMemo(
-    () => applyPositionFilters(positions, filters),
-    [positions, filters],
+    () => applyPositionFilters(positionsAtPeriodEnd, filters),
+    [positionsAtPeriodEnd, filters],
+  );
+  const periodPositions = useMemo(
+    () => applyPositionFilters(positionsAtPeriodEnd, {
+      ...filters,
+      operationTypes: new Set<string>(),
+      hideClosedPositions: false,
+    }),
+    [positionsAtPeriodEnd, filters],
   );
   const tableData = useMemo(
     () =>
@@ -354,18 +381,23 @@ export default function App() {
       filters.dateTo,
     ],
   );
+  const rollingThreeYearTriComparison = useMemo(
+    () => overviewComparison
+      ? compareRollingThreeYearIrr(accountHistory, overviewComparison.windows)
+      : { current: null, previous: null, delta: null, deltaPct: null },
+    [accountHistory, overviewComparison],
+  );
   const periodSavings = useMemo(
-    () =>
-      filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
+    () => filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
     [savingCapacity, filters.dateFrom, filters.dateTo],
   );
   const trailingSavings = useMemo(
-    () => computeTrailing12mSavings(periodSavings),
-    [periodSavings],
+    () => computeTrailing12mSavings(savingCapacity, filters.dateFrom, filters.dateTo),
+    [savingCapacity, filters.dateFrom, filters.dateTo],
   );
   const trailingYearComparison = useMemo(
-    () => computeTrailing12mYearOverYear(savingCapacity),
-    [savingCapacity],
+    () => computeTrailing12mYearOverYear(savingCapacity, filters.dateTo),
+    [savingCapacity, filters.dateTo],
   );
   const wealthDrivers = useMemo(
     () => buildCumulativeWealthDrivers(periodSavings),
@@ -391,9 +423,25 @@ export default function App() {
     () => buildAccountTypeBreakdown(currentPositions),
     [currentPositions],
   );
-  const performance = useMemo(
+  const displayedAnnualIncomeSavings = useMemo(
+    () => filterAnnualIncomeSavingsByPeriod(annualIncomeSavings, filters.dateFrom, filters.dateTo),
+    [annualIncomeSavings, filters.dateFrom, filters.dateTo],
+  );
+  const asOfPerformance = useMemo(
     () => computePerformanceSummary(currentPositions),
     [currentPositions],
+  );
+  const periodPerformance = useMemo(
+    () => computePerformanceSummary(periodPositions),
+    [periodPositions],
+  );
+  const performance = useMemo(
+    () => ({
+      ...asOfPerformance,
+      realizedNet: periodPerformance.realizedNet,
+      realizedGross: periodPerformance.realizedGross,
+    }),
+    [asOfPerformance, periodPerformance],
   );
   const trailingIncome = useMemo(
     () =>
@@ -405,10 +453,10 @@ export default function App() {
       rawAllocationData.loading
         ? []
         : computeAllocationCoverageByAccount(
-            currentPositions,
+            latestAccountPositions,
             rawAllocationData,
           ),
-    [currentPositions, rawAllocationData],
+    [latestAccountPositions, rawAllocationData],
   );
   const unallocatedPct = useMemo(() => {
     if (rawAllocationData.loading) return null;
@@ -441,7 +489,7 @@ export default function App() {
   const scopedFundQuality = useMemo(
     () =>
       scopeFundQualityData(
-        currentPositions,
+        latestAccountPositions,
         fundData.holdings,
         fundData.statuses,
         fundData.snapshots,
@@ -449,7 +497,7 @@ export default function App() {
         fundData.report,
       ),
     [
-      currentPositions,
+      latestAccountPositions,
       fundData.holdings,
       fundData.statuses,
       fundData.snapshots,
@@ -511,10 +559,14 @@ export default function App() {
       : "classification";
   const pipelineQualityPositions = activeTab === "holdings" && holdingsView === "positions"
     ? tableFiltered
-    : currentPositions;
+    : latestAccountPositions;
   const scopedPipelineErrors = useMemo(
     () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
     [pipelineErrors, pipelineQualityPositions, filters],
+  );
+  const scopedManualPriceOverrides = useMemo(
+    () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
+    [manualPriceOverrides, latestAccountPositions, filters],
   );
   const scopedPipelineErrorCount = scopedPipelineErrors.filter(
     (item) => item.level === "error",
@@ -546,8 +598,8 @@ export default function App() {
   )).theme;
   const unresolvedFundPct = fundExposurePercentages.unresolved;
   const qualityCount =
-    Number(pipelineErrors.length > 0) +
-    Number(manualPriceOverrides.length > 0) +
+    Number(scopedPipelineErrors.length > 0) +
+    Number(scopedManualPriceOverrides.length > 0) +
     Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
     Number(hasFundValidationError || hasMaterialQualityGap(unresolvedFundPct));
   const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
@@ -572,6 +624,7 @@ export default function App() {
   }
 
   return (
+    <FilterScopeProvider filters={filters} accountLabels={accountFilterLabels}>
     <div className="min-h-screen bg-gray-950 p-4 text-gray-100 sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
         <header className="mb-5 flex items-start gap-4">
@@ -617,7 +670,7 @@ export default function App() {
                 Data quality
                 {qualityCount > 0 && (
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${pipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${scopedPipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
                   >
                     {qualityCount}
                   </span>
@@ -641,6 +694,7 @@ export default function App() {
                       warningCount={scopedPipelineWarningCount}
                       loading={pipelineErrorsLoading}
                       onClick={() => openDataQuality("pipeline")}
+                      scope={{ account: "filterable", period: "range" }}
                     />
                   </div>
                 )}
@@ -669,6 +723,7 @@ export default function App() {
                       tone={overviewReliabilityTone}
                       tooltip="Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator."
                       onClick={() => openDataQuality(overviewQualityTheme)}
+                      scope={{ account: "filterable", period: "mixed" }}
                     />
                   </div>
                 )}
@@ -692,6 +747,7 @@ export default function App() {
                       tone={diversificationReliabilityTone}
                       tooltip="Aggregate reliability for diversification mapping and underlying-assets look-through. Each percentage keeps its own quality color; the overall status follows the weaker indicator."
                       onClick={() => openDataQuality(diversificationQualityTheme)}
+                      scope={{ account: "filterable", period: "latest" }}
                     />
                   </div>
                 )}
@@ -704,6 +760,7 @@ export default function App() {
                       tone={underlyingMetricTone}
                       tooltip="Reliability of the look-through data used by the underlying-assets view. The percentage uses the whole selected portfolio, including balances where look-through is not applicable."
                       onClick={() => openDataQuality("lookthrough")}
+                      scope={{ account: "filterable", period: "latest" }}
                     />
                   </div>
                 )}
@@ -765,7 +822,7 @@ export default function App() {
             {activeTab === "overview" && (
               <OverviewTab
                 comparison={overviewComparison}
-                globalTri={globalTri}
+                rollingThreeYearTri={rollingThreeYearTriComparison}
                 irrStatus={irrStatus}
                 onNavigate={setActiveTab}
               />
@@ -781,7 +838,7 @@ export default function App() {
                 monthlyOps={monthlyOps}
                 drivers={wealthDrivers}
                 trailingYearComparison={trailingYearComparison}
-                annualIncomeSavings={annualIncomeSavings}
+                annualIncomeSavings={displayedAnnualIncomeSavings}
               />
             )}
             {activeTab === "performance" && (
@@ -804,13 +861,15 @@ export default function App() {
               <AllocationCharts
                 positions={currentPositions}
                 rawPositions={rawPositions}
-                fundHoldings={fundHoldings}
+                fundHoldings={periodEndFundHoldings}
                 fundHoldingsHistory={fundData.history}
                 accountFilters={filters.accounts}
                 accountTypeFilters={filters.accountTypes}
                 activeFilter={allocationFilter}
                 onActiveFilterChange={setAllocationFilter}
                 view={allocationView}
+                dateFrom={filters.dateFrom}
+                dateTo={filters.dateTo}
               />
             )}
             {activeTab === "holdings" && (
@@ -828,7 +887,7 @@ export default function App() {
                     onSort={handleSort}
                     expanded={expandedPositionRows}
                     onExpandedChange={setExpandedPositionRows}
-                    fundHoldings={fundHoldings}
+                    fundHoldings={periodEndFundHoldings}
                     fundStatuses={fundData.statuses}
                     onOpenCompleteHoldings={(fundName) => {
                       setUnderlyingQuery(fundName);
@@ -838,7 +897,7 @@ export default function App() {
                 ) : (
                   <FundLookThroughTab
                     positions={currentPositions}
-                    holdings={fundHoldings}
+                    holdings={periodEndFundHoldings}
                     statuses={fundData.statuses}
                     query={underlyingQuery}
                     onQueryChange={setUnderlyingQuery}
@@ -852,10 +911,10 @@ export default function App() {
             )}
             {activeTab === "quality" && (
               <DataQualityTab
-                positions={currentPositions}
+                positions={latestAccountPositions}
                 accountLabels={accountLabels}
-                errors={pipelineErrors}
-                manualPriceOverrides={manualPriceOverrides}
+                errors={scopedPipelineErrors}
+                manualPriceOverrides={scopedManualPriceOverrides}
                 fundStatuses={fundData.statuses}
                 fundReport={fundData.report}
                 fundHoldings={fundData.holdings}
@@ -869,5 +928,6 @@ export default function App() {
         )}
       </div>
     </div>
+    </FilterScopeProvider>
   );
 }

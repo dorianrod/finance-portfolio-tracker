@@ -7,6 +7,7 @@ import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleTog
 import { AccountTypeHistoryTooltip } from './portfolioCharts.tooltips'
 import { accountTypeShareKey, withAccountTypeShares } from './chartScale.logic'
 import type { AccountTypeHistoryPoint } from '@/hooks/useAccountTypeHistory'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 export function AccountTypeHistoryChart({
   data, accountTypes, typeCategories,
@@ -22,7 +23,7 @@ export function AccountTypeHistoryChart({
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="text-sm font-medium text-gray-400">Account type over time</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">Account type over time<InfoTooltip text="Evolution of portfolio value by account type, shown as amounts or portfolio shares." scope={{ account: 'filterable', period: 'range' }} /></h2>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={220}>

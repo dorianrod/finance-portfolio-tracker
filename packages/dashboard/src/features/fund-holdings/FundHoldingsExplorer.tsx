@@ -6,6 +6,7 @@ import type { PositionRow } from '@/types/domain'
 import { fmtFull } from '@/shared/format/money'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import { buildIssuerExposures, type IssuerExposure, type SecurityExposure } from './fundHoldings.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -121,7 +122,7 @@ export function FundHoldingsExplorer({
     <section className={DATA_TABLE_STYLES.panel}>
       <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className={DATA_TABLE_STYLES.title}>All identified economic exposure</h2>
+          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>All identified economic exposure<InfoTooltip text="Underlying holdings grouped by issuer, with security and source-fund detail. Percentages use the whole selected portfolio." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
           <p className={DATA_TABLE_STYLES.description}>Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>

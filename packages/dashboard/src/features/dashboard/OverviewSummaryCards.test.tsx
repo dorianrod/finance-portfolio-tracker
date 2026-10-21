@@ -55,18 +55,20 @@ describe('OverviewSummaryCards', () => {
         comparison={model}
         heldConcentration={model.heldConcentration}
         underlyingConcentration={model.lookThroughConcentration}
-        globalTri={8.42}
+        rollingThreeYearTri={metric(8.42, 6.2)}
         irrStatus="ready"
         onNavigate={() => undefined}
       />,
     )
 
-    expect(html.match(/type="button"/g)).toHaveLength(4)
+    expect(html.match(/aria-label="Open [^"]+ details"/g)).toHaveLength(4)
     expect(html).toContain('Open Portfolio value details')
     expect(html).toContain('Open Net contributions details')
     expect(html).toContain('Open Performance &amp; income details')
     expect(html).toContain('Open Concentration details')
-    expect(html).toContain('IRR since tracking')
+    expect(html).toContain('IRR · trailing 3y')
+    expect(html).toContain('+2.2 pp')
+    expect(html).toContain('Previous <span class="font-medium tabular-nums text-gray-400">+6.20%</span>')
     expect(html).toContain('-2.0 pp')
     expect(html).toContain('Underlying assets')
     expect(html).toContain('Held positions · largest 24.0% · top five 62.0%')
@@ -90,7 +92,7 @@ describe('OverviewSummaryCards', () => {
         comparison={model}
         heldConcentration={model.heldConcentration}
         underlyingConcentration={model.lookThroughConcentration}
-        globalTri={null}
+        rollingThreeYearTri={metric(null, null)}
         irrStatus="error"
         onNavigate={() => undefined}
       />,

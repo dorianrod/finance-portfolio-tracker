@@ -15,6 +15,7 @@ import { fmtFull } from '@/shared/format/money'
 import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountApplicability'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
 import { buildHistoricalConcentration, buildHistoricalLookThroughConcentration } from './concentrationTrend.logic'
+import { filterPointsByPeriod } from '@/features/portfolio-charts/portfolioCharts.logic'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
@@ -26,6 +27,8 @@ interface AllocationChartsProps {
   activeFilter: AllocationFilter | null
   onActiveFilterChange: (filter: AllocationFilter | null) => void
   view: AllocationView
+  dateFrom?: string
+  dateTo?: string
 }
 
 export type AllocationView = 'current' | 'trend'
@@ -44,7 +47,7 @@ export function AllocationViewToggle({ value, onChange }: AllocationViewTogglePr
   )
 }
 
-export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, view }: AllocationChartsProps) {
+export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, view, dateFrom, dateTo }: AllocationChartsProps) {
   const rawData = useRawIsinData()
 
   const [showTable, setShowTable] = useState(false)
@@ -112,8 +115,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
   }
 
   const matchingIsins = useMemo(
-    () => computeMatchingIsins(scopedRawData, activeFilter),
-    [scopedRawData, activeFilter],
+    () => computeMatchingIsins(scopedRawData, activeFilter, dateTo),
+    [scopedRawData, activeFilter, dateTo],
   )
 
   const displayGeo = useMemo(() => {
@@ -142,8 +145,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
 
   const tableRows = useMemo(() => {
     if (!activeFilter || scopedRawData.loading) return []
-    return computeTableRows(scopedRawData, matchingIsins, activeFilter)
-  }, [activeFilter, scopedRawData, matchingIsins])
+    return computeTableRows(scopedRawData, matchingIsins, activeFilter, dateTo)
+  }, [activeFilter, scopedRawData, matchingIsins, dateTo])
 
   if (rawData.loading) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
 
@@ -155,15 +158,16 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
     return <p className="text-gray-500 text-sm">No allocation data available. Run the pipeline to generate the files.</p>
   }
 
-  const latestGeo      = displayGeo[displayGeo.length - 1]
-  const latestSecteur  = displaySecteur[displaySecteur.length - 1]
-  const latestCurrency = displayCurrency[displayCurrency.length - 1]
-  const latestClasse   = displayClasse[displayClasse.length - 1]
+  const asOf = <T extends { date: string }>(points: T[]) => points.filter((point) => !dateTo || point.date <= dateTo).at(-1)
+  const latestGeo      = asOf(displayGeo)
+  const latestSecteur  = asOf(displaySecteur)
+  const latestCurrency = asOf(displayCurrency)
+  const latestClasse   = asOf(displayClasse)
 
-  const trendGeo = displayGeo
-  const trendSecteur = displaySecteur
-  const trendCurrency = displayCurrency
-  const trendClasse = displayClasse
+  const trendGeo = filterPointsByPeriod(displayGeo, dateFrom, dateTo)
+  const trendSecteur = filterPointsByPeriod(displaySecteur, dateFrom, dateTo)
+  const trendCurrency = filterPointsByPeriod(displayCurrency, dateFrom, dateTo)
+  const trendClasse = filterPointsByPeriod(displayClasse, dateFrom, dateTo)
 
   const hasEvolution = Math.max(
     trendGeo.length, trendSecteur.length, trendCurrency.length, trendClasse.length,
@@ -186,12 +190,14 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
                 <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
                   <CumulativeConcentrationChart
                     data={cumulativeConcentration}
+                    effectiveDate={dateTo}
                     description={concentrationMode === 'held'
                       ? 'Share of the applicable portfolio held in the largest N positions.'
                       : `Share of the applicable portfolio identified in the largest N look-through exposures · ${concentration.coveragePct.toFixed(1)}% coverage.`}
                   />
                   <ConcentrationChart
                     data={concentration.holdings}
+                    effectiveDate={dateTo}
                     topTenValue={concentration.topTenValue}
                     topTenPct={concentration.topTenPct}
                     description={concentrationMode === 'held'
@@ -224,8 +230,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
       {view === 'trend' && (
         <>
           <ConcentrationTrendSection
-            heldPoints={heldConcentrationHistory}
-            lookThroughPoints={lookThroughConcentrationHistory}
+            heldPoints={filterPointsByPeriod(heldConcentrationHistory, dateFrom, dateTo)}
+            lookThroughPoints={filterPointsByPeriod(lookThroughConcentrationHistory, dateFrom, dateTo)}
             lookThroughAvailable={fundHoldingsHistory.length > 0}
           />
           {hasEvolution ? <section>

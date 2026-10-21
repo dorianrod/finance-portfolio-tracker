@@ -65,6 +65,19 @@ export function mapAnnualIncomeSavings(
     .sort((a, b) => a.year - b.year)
 }
 
+export function filterAnnualIncomeSavingsByPeriod(
+  points: AnnualIncomeSavingsPoint[],
+  dateFrom?: string,
+  dateTo?: string,
+): AnnualIncomeSavingsPoint[] {
+  const fromYear = dateFrom ? Number(dateFrom.slice(0, 4)) : null
+  const toYear = dateTo ? Number(dateTo.slice(0, 4)) : null
+  return points.filter((point) => (
+    (fromYear == null || point.year >= fromYear)
+    && (toYear == null || point.year <= toYear)
+  ))
+}
+
 export function analyseIncomePlacement(
   data: AnnualIncomeSavingsPoint[],
 ): IncomePlacementAnalysis {

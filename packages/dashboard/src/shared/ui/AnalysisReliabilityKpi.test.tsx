@@ -10,7 +10,7 @@ import {
 } from './AnalysisReliabilityKpi'
 
 describe('CombinedAnalysisReliabilityKpi', () => {
-  it('shows a compact aggregate status and puts the former detail in the eye tooltip', () => {
+  it('shows a compact aggregate status and puts the detail in the info tooltip', () => {
     const html = renderToStaticMarkup(
       <CombinedAnalysisReliabilityKpi
         statusMetric={{ value: 'No anomaly', metricLabel: 'Portfolio data', tone: 'healthy' }}
@@ -21,6 +21,7 @@ describe('CombinedAnalysisReliabilityKpi', () => {
         tone={aggregateReliabilityTone(['healthy', 'critical'])}
         tooltip="Aggregate quality"
         onClick={() => undefined}
+        scope={{ account: 'filterable', period: 'mixed' }}
       />,
     )
 
@@ -37,7 +38,7 @@ describe('CombinedAnalysisReliabilityKpi', () => {
     expect(html).toContain('Diversification')
     expect(html).toContain('54.0%')
     expect(html).toContain('Underlying assets')
-    expect(html).toContain('<svg')
+    expect(html).toContain('>i</span>')
   })
 
   it('assigns colors independently from the reliability percentage', () => {
@@ -67,12 +68,13 @@ describe('CombinedAnalysisReliabilityKpi', () => {
 })
 
 describe('PipelineReliabilityKpi', () => {
-  it('renders its explanation and anomaly detail in the eye tooltip', () => {
+  it('renders its explanation and anomaly detail in the info tooltip', () => {
     const html = renderToStaticMarkup(
       <PipelineReliabilityKpi
         errorCount={0}
         warningCount={0}
         onClick={() => undefined}
+        scope={{ account: 'filterable', period: 'range' }}
       />,
     )
 
@@ -84,6 +86,6 @@ describe('PipelineReliabilityKpi', () => {
     expect(html).toContain('Portfolio data')
     expect(html).toContain('No anomaly')
     expect(html).toContain('0 errors · 0 warnings')
-    expect(html).toContain('<svg')
+    expect(html).toContain('>i</span>')
   })
 })

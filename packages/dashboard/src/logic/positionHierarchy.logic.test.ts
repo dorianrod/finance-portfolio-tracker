@@ -114,4 +114,20 @@ describe('buildPositionRows', () => {
     expect(rows.map((r) => r.account).sort()).toEqual(['cto', 'pea'])
     expect(rows.every((r) => r.account_type === 'Bourse')).toBe(true)
   })
+
+  it('uses the latest snapshot and operations on or before an as-of date', () => {
+    const rows = buildPositionRows(
+      [
+        op({ date: '2024-01-01', total_amount: '-1000' }),
+        op({ date: '2025-01-01', operation_type: 'DIVIDEND', total_amount: '99' }),
+      ],
+      [
+        pos({ snapshot_date: '2024-06-01', total_value: '1200' }),
+        pos({ snapshot_date: '2025-06-01', total_value: '1800' }),
+      ],
+      '2024-12-31',
+    )
+    expect(rows[0].total_value).toBe(1200)
+    expect(rows[0].subRows.flatMap((group) => group.subRows).map((item) => item.date)).toEqual(['2024-01-01'])
+  })
 })

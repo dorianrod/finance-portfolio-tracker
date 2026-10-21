@@ -2,6 +2,7 @@ import type { HistoricalFundHolding } from '@/hooks/useFundHoldings'
 import type { SavingCapacityPoint } from '@/hooks/useSavingCapacity'
 import { CASH_ACCOUNT_FILTER_SUFFIX, accountFilterId } from '@/shared/filters/accountFilter'
 import type { RawOperation, RawPosition } from '@/types/domain'
+import type { PortfolioHistoryPoint } from '@/types/history'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -172,6 +173,16 @@ function latestAtOrBefore<T extends { date: string }>(points: T[], end: string):
     if (points[index].date <= end) return points[index]
   }
   return null
+}
+
+export function compareRollingThreeYearIrr(
+  history: PortfolioHistoryPoint[],
+  windows: OverviewWindows,
+): ComparedMetric {
+  const points = [...history].sort((left, right) => left.date.localeCompare(right.date))
+  const current = latestAtOrBefore(points, windows.current.end)?.tri_rolling_3y ?? null
+  const previous = latestAtOrBefore(points, windows.previous.end)?.tri_rolling_3y ?? null
+  return compared(current, previous)
 }
 
 function sumWindow<T extends { date: string }>(

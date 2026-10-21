@@ -247,6 +247,18 @@ describe('wealth driver helpers', () => {
     expect(result.savings).toEqual({ current: null, previous: null, changePct: null })
     expect(result.performance).toEqual({ current: null, previous: null, changePct: null })
   })
+
+  it('anchors the trailing comparison at the selected end date', () => {
+    const points: SavingCapacityPoint[] = Array.from({ length: 36 }, (_, index) => ({
+      date: new Date(Date.UTC(2023, index, 28)).toISOString().slice(0, 10),
+      savings_delta: index < 24 ? 100 : 999,
+      perf_delta: index < 24 ? 10 : 999,
+    }))
+    const result = computeTrailing12mYearOverYear(points, '2024-12-31')
+    expect(result.currentMonths.at(-1)).toBe('2024-12')
+    expect(result.savings.current).toBe(1200)
+    expect(result.savings.previous).toBe(1200)
+  })
 })
 
 describe('computeTrailing12mIncome', () => {

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { assetDisplayLabel } from '@/shared/format/assetLabel'
 import type { ErrorRow } from '@/hooks/useErrors'
 import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const TYPE_LABELS: Record<string, string> = {
   unresolved_ticker: 'Unresolved ticker',
@@ -237,7 +238,7 @@ export function ManualPriceOverridesPanel({ manualPriceOverrides, showHeader = t
       <section className="space-y-3">
         {showHeader && <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-white">Manual price overrides</h2>
+            <h2 className="flex items-center text-base font-semibold text-white">Manual price overrides<InfoTooltip text="Prices forced from asset_prices/others. Open-ended overrides replace automatic market prices until removed or given an end date." scope={{ account: 'filterable', period: 'range' }} /></h2>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/60 text-blue-300">
               {manualPriceOverrides.length}
             </span>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { InfoTooltip } from './InfoTooltip'
+import type { FilterScopeSpec } from '@/shared/ui/FilterScopeBadges'
 
 interface KpiProps {
   label: string
@@ -12,6 +13,7 @@ interface KpiProps {
   subSmall?: string
   subInline?: boolean
   footer?: ReactNode
+  scope?: FilterScopeSpec
 }
 
 export type KpiAccent = 'neutral' | 'portfolio' | 'contributions' | 'positive' | 'negative' | 'income' | 'return'
@@ -26,14 +28,14 @@ const ACCENT_CLASSES: Record<KpiAccent, string> = {
   return: 'bg-teal-400',
 }
 
-export function Kpi({ label, tooltip, value, valueColor, accent = 'neutral', sub, subColor, subSmall, subInline = false, footer }: KpiProps) {
+export function Kpi({ label, tooltip, value, valueColor, accent = 'neutral', sub, subColor, subSmall, subInline = false, footer, scope }: KpiProps) {
   return (
     <div className="relative min-w-0 flex-1 basis-40 py-1 pl-4">
       <span className={`absolute bottom-1 left-0 top-1 w-[3px] rounded-full ${ACCENT_CLASSES[accent]}`} aria-hidden="true" />
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="flex items-center text-[11px] font-semibold uppercase tracking-[0.09em] text-gray-500">
           {label}
-          <InfoTooltip text={tooltip} />
+          <InfoTooltip text={tooltip} scope={scope} />
         </span>
         <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className={`truncate text-2xl font-semibold tracking-tight tabular-nums ${valueColor ?? 'text-white'}`} title={value}>{value}</span>

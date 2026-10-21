@@ -7,6 +7,7 @@ import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleTog
 import { EvolutionTooltip } from './portfolioCharts.tooltips'
 import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioComposition } from './chartScale.logic'
 import type { PortfolioHistoryPoint } from '@/types/history'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 export function EvolutionChart({ history, title = 'Portfolio value over time', height = 220 }: {
   history: PortfolioHistoryPoint[]
@@ -20,7 +21,7 @@ export function EvolutionChart({ history, title = 'Portfolio value over time', h
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="text-sm font-medium text-gray-400">{title}</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<InfoTooltip text="Portfolio market value over time, split between cost basis and gross unrealized profit or loss." scope={{ account: 'filterable', period: 'range' }} /></h2>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={height}>

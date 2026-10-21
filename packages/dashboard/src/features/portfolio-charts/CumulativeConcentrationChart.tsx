@@ -16,6 +16,7 @@ import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
 import { cumulativeConcentrationCrosshair } from './portfolioCharts.logic'
 import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 interface CumulativeConcentrationTooltipProps {
   active?: boolean
@@ -48,9 +49,11 @@ export function CumulativeConcentrationTooltip({
 export function CumulativeConcentrationChart({
   data,
   description,
+  effectiveDate,
 }: {
   data: CumulativeConcentrationPoint[]
   description?: string
+  effectiveDate?: string | null
 }) {
   const [activePoint, setActivePoint] = useState<CumulativeConcentrationPoint | null>(null)
   const crosshair = cumulativeConcentrationCrosshair(activePoint)
@@ -68,7 +71,7 @@ export function CumulativeConcentrationChart({
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-medium text-gray-300">Cumulative concentration</h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">Cumulative concentration<InfoTooltip text={description ?? 'Share of the applicable portfolio held in the largest N assets.'} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
         <p className="mt-0.5 text-xs text-gray-600">
           {description ?? 'Share of the applicable portfolio held in the largest N assets.'}
         </p>

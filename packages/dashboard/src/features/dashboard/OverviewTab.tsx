@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import type { IrrStatus } from '@/types/history'
 import type { ConcentrationMode } from '@/features/portfolio-charts/ConcentrationModeToggle'
-import type { OverviewComparison } from './overviewComparison.logic'
+import type { ComparedMetric, OverviewComparison } from './overviewComparison.logic'
 import { OverviewSummaryCards, type OverviewDestination } from './OverviewSummaryCards'
 import { OverviewConcentrationChart, OverviewDriversChart, OverviewValueChart } from './OverviewCharts'
 
 interface OverviewTabProps {
   comparison: OverviewComparison | null
-  globalTri: number | null
+  rollingThreeYearTri: ComparedMetric
   irrStatus: IrrStatus
   onNavigate: (destination: OverviewDestination) => void
 }
 
-export function OverviewTab({ comparison, globalTri, irrStatus, onNavigate }: OverviewTabProps) {
+export function OverviewTab({ comparison, rollingThreeYearTri, irrStatus, onNavigate }: OverviewTabProps) {
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('lookThrough')
 
   if (!comparison) {
@@ -38,7 +38,7 @@ export function OverviewTab({ comparison, globalTri, irrStatus, onNavigate }: Ov
         comparison={comparison}
         heldConcentration={comparison.heldConcentration}
         underlyingConcentration={comparison.lookThroughConcentration}
-        globalTri={globalTri}
+        rollingThreeYearTri={rollingThreeYearTri}
         irrStatus={irrStatus}
         onNavigate={onNavigate}
       />

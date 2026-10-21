@@ -193,6 +193,21 @@ function latestSnapshotAt(
   return undefined
 }
 
+export function selectHistoricalFundHoldingsAtDate(
+  history: HistoricalFundHolding[],
+  date: string,
+): HistoricalFundHolding[] {
+  const snapshotsByParent = historicalSnapshotsByParent(history)
+  const selected = new Map<string, HistoricalSnapshot>()
+  for (const holding of history) {
+    const parentKey = holding.parentIsin || holding.parentTicker || holding.parentName
+    if (!parentKey || selected.has(parentKey)) continue
+    const snapshot = latestSnapshotAt(snapshotsByParent.get(parentKey), date)
+    if (snapshot) selected.set(parentKey, snapshot)
+  }
+  return [...selected.values()].flatMap((snapshot) => snapshot.holdings)
+}
+
 function isFundPosition(row: RawPosition): boolean {
   return /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(row.name)
     || /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers|DWS|SPDR|Vanguard|Invesco|UBS|HSBC)\b/i.test(row.name)

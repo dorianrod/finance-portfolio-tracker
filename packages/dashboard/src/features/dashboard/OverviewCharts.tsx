@@ -19,6 +19,8 @@ import { CHART_THEME } from '@/shared/format/chartTheme'
 import { fmt, fmtEur } from '@/shared/format/money'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import type { OverviewConcentrationComparison, OverviewComparison } from './overviewComparison.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
+import type { FilterScopeSpec } from '@/shared/ui/FilterScopeBadges'
 
 function timestamp(date: string): number {
   return Date.parse(`${date.slice(0, 10)}T00:00:00Z`)
@@ -60,7 +62,7 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
     currentValue: point.window === 'current' ? point.value : null,
   }))
   if (chartData.length === 0) {
-    return <EmptyChart title="Portfolio value" message="No value history is available for these periods." />
+    return <EmptyChart title="Portfolio value" message="No value history is available for these periods." scope={{ account: 'filterable', period: 'comparison-range' }} />
   }
   const domain: [number, number] = [timestamp(comparison.windows.previous.start), timestamp(comparison.windows.current.end)]
   const currentStart = timestamp(comparison.windows.current.start)
@@ -69,7 +71,7 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4 xl:col-span-2">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-gray-200">Portfolio value</h3>
+          <h3 className="flex items-center text-sm font-semibold text-gray-200">Portfolio value<InfoTooltip text="Gross market value across the previous and current periods." scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
           <p className="mt-0.5 text-xs text-gray-600">Gross market value across the previous and current periods.</p>
         </div>
         <div className="flex items-center gap-3 text-[11px] text-gray-500">
@@ -147,7 +149,7 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
     },
   ]
   const unavailable = comparison.contributions.current == null && comparison.marketPerformance.current == null
-  if (unavailable) return <EmptyChart title="Change drivers" message="No cash-flow history is available for this period." />
+  if (unavailable) return <EmptyChart title="Change drivers" message="No cash-flow history is available for this period." scope={{ account: 'filterable', period: 'comparison-range' }} />
   const currentChange = comparison.contributions.current == null || comparison.marketPerformance.current == null
     ? null
     : comparison.contributions.current + comparison.marketPerformance.current
@@ -158,7 +160,7 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
   return (
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
       <div className="mb-2">
-        <h3 className="text-sm font-semibold text-gray-200">Change drivers</h3>
+        <h3 className="flex items-center text-sm font-semibold text-gray-200">Change drivers<InfoTooltip text="Gross movement from contributions and market performance." scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
         <p className="mt-0.5 text-xs text-gray-600">Gross movement from contributions and market performance.</p>
       </div>
       <div className="mb-2 flex items-baseline justify-between gap-3 rounded-lg bg-gray-950/45 px-3 py-2">
@@ -182,10 +184,10 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
   )
 }
 
-function EmptyChart({ title, message }: { title: string; message: string }) {
+function EmptyChart({ title, message, scope }: { title: string; message: string; scope: FilterScopeSpec }) {
   return (
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
-      <h3 className="text-sm font-semibold text-gray-200">{title}</h3>
+      <h3 className="flex items-center text-sm font-semibold text-gray-200">{title}<InfoTooltip text={message} scope={scope} /></h3>
       <div className="flex h-52 items-center justify-center text-center text-sm text-gray-600">{message}</div>
     </section>
   )
@@ -214,7 +216,13 @@ export function OverviewConcentrationChart({
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-gray-200">{mode === 'lookThrough' ? 'Largest underlying assets' : 'Largest held positions'}</h3>
+          <h3 className="flex items-center text-sm font-semibold text-gray-200">
+            {mode === 'lookThrough' ? 'Largest underlying assets' : 'Largest held positions'}
+            <InfoTooltip
+              text={mode === 'lookThrough' ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.' : 'Products and instruments as held, including portfolio wrappers.'}
+              scope={{ account: 'filterable', period: 'as-of', effectiveDate: concentration.current?.date }}
+            />
+          </h3>
           <p className="mt-0.5 text-xs text-gray-600">
             {mode === 'lookThrough'
               ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.'

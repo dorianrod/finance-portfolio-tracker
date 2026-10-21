@@ -16,6 +16,7 @@ export function NetPortfolioValueKpi({ performance }: { performance: Performance
       value={fmt.format(performance.currentValueNet)}
       accent="portfolio"
       subSmall={`Gross ${fmt.format(performance.currentValueGross)}`}
+      scope={{ account: 'filterable', period: 'as-of' }}
     />
   )
 }
@@ -32,6 +33,7 @@ export function TotalNetPerformanceKpi({ performance }: { performance: Performan
       subColor={gainColor(performance.totalPerformanceNet)}
       subSmall={`Gross ${fmt.format(performance.totalPerformanceGross)}`}
       subInline
+      scope={{ account: 'filterable', period: 'since-tracking' }}
     />
   )
 }
@@ -45,6 +47,7 @@ export function NetContributionsKpi({ value, periodLabel }: { value: number; per
       valueColor={SEMANTIC_TEXT_CLASSES.netContributions}
       accent="contributions"
       subSmall={periodLabel}
+      scope={{ account: 'filterable', period: 'range' }}
     />
   )
 }
@@ -60,6 +63,7 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
       sub={income.changePct == null ? '—' : fmtPct(income.changePct)}
       subColor={income.changePct == null ? 'text-gray-500' : gainColor(income.changePct)}
       subInline
+      scope={{ account: 'filterable', period: 'trailing-12m' }}
     />
   )
 }
@@ -89,6 +93,7 @@ export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: Irr
       valueColor={gainColor(value)}
       accent={value == null || value >= 0 ? 'positive' : 'negative'}
       subSmall={irrNote(status)}
+      scope={{ account: 'filterable', period: 'since-tracking' }}
     />
   )
 }
@@ -102,6 +107,7 @@ export function NetUnrealizedKpi({ performance }: { performance: PerformanceSumm
       valueColor={gainColor(performance.unrealizedNet)}
       accent={performance.unrealizedNet >= 0 ? 'positive' : 'negative'}
       subSmall={`Gross ${fmt.format(performance.unrealizedGross)}`}
+      scope={{ account: 'filterable', period: 'as-of' }}
     />
   )
 }
@@ -115,6 +121,7 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
       valueColor={gainColor(performance.realizedNet)}
       accent={performance.realizedNet >= 0 ? 'positive' : 'negative'}
       subSmall={`Gross ${fmt.format(performance.realizedGross)}`}
+      scope={{ account: 'filterable', period: 'range' }}
     />
   )
 }
@@ -128,6 +135,7 @@ export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }:
       valueColor={gainColor(value)}
       accent={value == null || value >= 0 ? 'positive' : 'negative'}
       subSmall={irrNote(status)}
+      scope={{ account: 'filterable', period: 'trailing-3y' }}
     />
   )
 }

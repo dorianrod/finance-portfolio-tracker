@@ -2,6 +2,7 @@ import { useId } from 'react'
 import { fmtFull } from '@/shared/format/money'
 import { formatPercentage } from '@/shared/format/percentage'
 import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
+import { FilterScopeBadges, type FilterScopeSpec } from '@/shared/ui/FilterScopeBadges'
 
 export type AnalysisReliabilityTone = 'healthy' | 'warning' | 'critical' | 'unavailable'
 
@@ -105,24 +106,8 @@ const RELIABILITY_TONES: Record<AnalysisReliabilityTone, {
   },
 }
 
-function EyeIcon() {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      aria-hidden="true"
-      className="h-3.5 w-3.5"
-    >
-      <path
-        d="M2.5 10s2.6-4 7.5-4 7.5 4 7.5 4-2.6 4-7.5 4-7.5-4-7.5-4Z"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="10" cy="10" r="1.75" stroke="currentColor" strokeWidth="1.35" />
-    </svg>
-  )
+function InfoIcon() {
+  return <span aria-hidden="true" className="flex h-4 w-4 items-center justify-center rounded-full border border-gray-600 text-[10px] font-bold leading-none">i</span>
 }
 
 function CompactDataQualityKpi({
@@ -131,12 +116,14 @@ function CompactDataQualityKpi({
   rows,
   ariaLabel,
   onClick,
+  scope,
 }: {
   tone: AnalysisReliabilityTone
   tooltip: string
   rows: QualityTooltipRow[]
   ariaLabel: string
   onClick: () => void
+  scope: FilterScopeSpec
 }) {
   const tooltipId = useId()
   const styles = RELIABILITY_TONES[tone]
@@ -159,13 +146,17 @@ function CompactDataQualityKpi({
         aria-label="Show data quality details"
         aria-describedby={tooltipId}
       >
-        <EyeIcon />
+        <InfoIcon />
         <span
           id={tooltipId}
           role="tooltip"
           className="data-quality-tooltip pointer-events-none invisible absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-gray-700 bg-gray-900 p-3 text-left opacity-0 shadow-xl transition-[opacity,visibility] duration-150"
         >
           <span className="block text-xs leading-relaxed text-gray-400">{tooltip}</span>
+          <span className="mt-2.5 block border-t border-gray-800 pt-2">
+            <span className="block text-[10px] font-semibold uppercase tracking-wider text-gray-500">Filter scope</span>
+            <FilterScopeBadges {...scope} />
+          </span>
           <span className="mt-3 block border-t border-gray-800 pt-1">
             {rows.map((row) => {
               const rowStyles = RELIABILITY_TONES[row.tone]
@@ -196,6 +187,7 @@ export function AnalysisReliabilityKpi({
   tone,
   tooltip,
   onClick,
+  scope,
 }: {
   percentage: number | null
   amount: number
@@ -203,6 +195,7 @@ export function AnalysisReliabilityKpi({
   tone: AnalysisReliabilityTone
   tooltip: string
   onClick: () => void
+  scope: FilterScopeSpec
 }) {
   const safePercentage = percentage == null || !Number.isFinite(percentage)
     ? null
@@ -221,6 +214,7 @@ export function AnalysisReliabilityKpi({
         tone,
       }]}
       onClick={onClick}
+      scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${percentageLabel} ${metricLabel}. Open Data quality.`}
     />
   )
@@ -232,12 +226,14 @@ export function CombinedAnalysisReliabilityKpi({
   tone,
   tooltip,
   onClick,
+  scope,
 }: {
   metrics: AnalysisReliabilityMetric[]
   statusMetric?: StatusReliabilityMetric
   tone: AnalysisReliabilityTone
   tooltip: string
   onClick: () => void
+  scope: FilterScopeSpec
 }) {
   const styles = RELIABILITY_TONES[tone]
   const rows: QualityTooltipRow[] = [
@@ -263,6 +259,7 @@ export function CombinedAnalysisReliabilityKpi({
       tooltip={tooltip}
       rows={rows}
       onClick={onClick}
+      scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${metricSummary}. Open Data quality.`}
     />
   )
@@ -273,11 +270,13 @@ export function PipelineReliabilityKpi({
   warningCount,
   loading = false,
   onClick,
+  scope,
 }: {
   errorCount: number
   warningCount: number
   loading?: boolean
   onClick: () => void
+  scope: FilterScopeSpec
 }) {
   const tone = pipelineReliabilityTone({ errorCount, warningCount, loading })
   const styles = RELIABILITY_TONES[tone]
@@ -294,6 +293,7 @@ export function PipelineReliabilityKpi({
         tone,
       }]}
       onClick={onClick}
+      scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${errorCount} errors and ${warningCount} warnings in Portfolio data. Open Data quality.`}
     />
   )

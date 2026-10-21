@@ -66,6 +66,7 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
             Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
           </>
         }
+      scope={{ account: 'filterable', period: 'trailing-12m' }}
       />
     </KpiCard>
   )

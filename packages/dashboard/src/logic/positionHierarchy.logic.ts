@@ -23,13 +23,24 @@ export function buildAccountLabels(accountRows: { account: string; label: string
   return labels
 }
 
-export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition[]): PositionRow[] {
-  // Build map of latest positions (any account, max snapshot_date)
-  const latestDateStr = rawPositions
+export function buildPositionRows(
+  ops: RawOperation[],
+  rawPositions: RawPosition[],
+  asOfDate?: string,
+): PositionRow[] {
+  const eligiblePositions = asOfDate
+    ? rawPositions.filter((position) => position.snapshot_date.slice(0, 10) <= asOfDate)
+    : rawPositions
+  const eligibleOperations = asOfDate
+    ? ops.filter((operation) => operation.date.slice(0, 10) <= asOfDate)
+    : ops
+
+  // Build map of positions at the latest complete snapshot on or before asOfDate.
+  const latestDateStr = eligiblePositions
     .reduce((max, p) => (p.snapshot_date > max ? p.snapshot_date : max), '')
 
   const latestByKey = new Map<string, RawPosition>()
-  rawPositions
+  eligiblePositions
     .filter((p) => p.snapshot_date === latestDateStr)
     .forEach((p) => {
       const key = positionKey(p.isin || p.ticker || p.name, p.account)
@@ -43,7 +54,7 @@ export function buildPositionRows(ops: RawOperation[], rawPositions: RawPosition
   // Group operations by (asset, account), excluding pure cash ops
   // (DEPOSIT/WITHDRAWAL with no isin/ticker/name)
   const byAsset = new Map<string, RawOperation[]>()
-  for (const op of ops) {
+  for (const op of eligibleOperations) {
     const asset = assetKey(op)
     if (!asset) continue
     const key = positionKey(asset, op.account)

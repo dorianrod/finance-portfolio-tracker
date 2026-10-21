@@ -32,6 +32,7 @@ import {
   statusForPosition,
 } from '@/features/fund-holdings/fundHoldings.logic'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const col = createColumnHelper<TableRow>()
 
@@ -446,8 +447,9 @@ export function PositionsTable({
     <section className={DATA_TABLE_STYLES.panel}>
       <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className={DATA_TABLE_STYLES.title}>All portfolio positions</h2>
+          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>All portfolio positions<InfoTooltip text="Positions are valued at period end. Expanded transaction and income amounts use the selected period." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
           <p className={DATA_TABLE_STYLES.description}>Expand each position to review its transactions and income details.</p>
+          <p className="mt-1 text-[10px] text-gray-600">Transaction and income amounts use the selected period.</p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>
           <button

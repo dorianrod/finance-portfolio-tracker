@@ -3,8 +3,10 @@ import type { RawOperation, RawPosition } from '@/types/domain'
 import {
   buildGrossValueHistory,
   buildOverviewComparison,
+  compareRollingThreeYearIrr,
   resolveOverviewWindows,
 } from './overviewComparison.logic'
+import type { PortfolioHistoryPoint } from '@/types/history'
 
 function position(overrides: Partial<RawPosition> = {}): RawPosition {
   return {
@@ -105,6 +107,32 @@ describe('buildGrossValueHistory', () => {
     expect(buildGrossValueHistory([
       position({ total_value: '100', unrealized_gain: '20', unrealized_gain_net: '14' }),
     ])[0].value).toBe(100)
+  })
+})
+
+describe('compareRollingThreeYearIrr', () => {
+  it('compares the rolling three-year IRR at each period end', () => {
+    const point = (date: string, tri: number): PortfolioHistoryPoint => ({
+      date,
+      total_value: 0,
+      total_cost_basis: 0,
+      unrealized_gain: 0,
+      net_cash_injected: 0,
+      cash_delta: null,
+      tri: null,
+      tri_rolling_1y: null,
+      tri_rolling_3y: tri,
+    })
+    const result = compareRollingThreeYearIrr(
+      [point('2025-10-20', 6.2), point('2026-10-20', 8.4)],
+      {
+        current: { start: '2025-10-21', end: '2026-10-20' },
+        previous: { start: '2024-10-21', end: '2025-10-20' },
+        defaultedToTrailingYear: true,
+      },
+    )
+
+    expect(result).toMatchObject({ current: 8.4, previous: 6.2, delta: 2.2 })
   })
 })
 

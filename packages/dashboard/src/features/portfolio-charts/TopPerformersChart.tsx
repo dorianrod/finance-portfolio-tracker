@@ -3,10 +3,11 @@ import { TopPerformersTooltip } from './portfolioCharts.tooltips'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import type { TopPerformer } from './portfolioCharts.logic'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 export function TopPerformersChart({ data, height }: { data: TopPerformer[]; height: number }) {
   return <div className="bg-gray-900 rounded-xl p-4">
-    <h2 className="text-sm font-medium text-gray-400 mb-3">Performance by asset</h2>
+    <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Performance by asset<InfoTooltip text="Gross unrealized performance by currently held asset." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
     <ResponsiveContainer width="100%" height={height}>
       <BarChart layout="vertical" data={data} margin={{ top: 4, right: 64, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} horizontal={false} />

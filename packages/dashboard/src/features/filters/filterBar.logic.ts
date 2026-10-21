@@ -31,9 +31,8 @@ export function filterVisibilityForTab(
   holdingsView: 'positions' | 'underlying' = 'positions',
 ): FilterVisibility {
   const positionsView = tab === 'positions' || (tab === 'holdings' && holdingsView === 'positions')
-  const underlyingView = tab === 'underlying' || (tab === 'holdings' && holdingsView === 'underlying')
   return {
-    showPeriod: tab !== 'allocation' && !underlyingView && tab !== 'quality',
+    showPeriod: true,
     showPositionFilters: positionsView,
   }
 }

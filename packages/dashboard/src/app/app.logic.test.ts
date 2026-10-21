@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue, scopePipelineErrors } from './app.logic'
+import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue, scopeManualPriceOverrides, scopePipelineErrors } from './app.logic'
 import type { PositionRow, GroupRow, OperationRow } from '@/types/domain'
 import type { Filters } from '@/types/filters'
 import type { PortfolioHistoryPoint } from '@/types/history'
@@ -187,10 +187,40 @@ describe('applyPositionFilters', () => {
     expect(result[0].total_value).toBe(1000)
   })
 
-  it('drops a position entirely if none of its operations fall within the date range', () => {
+  it('keeps an active end-snapshot position even if it has no operation in the date range', () => {
     const positions = [position({ subRows: [group({ label: 'Buys / Sells', subRows: [op({ date: '2023-01-01' })] })] })]
     const result = applyPositionFilters(positions, baseFilters({ dateFrom: '2024-01-01' }))
-    expect(result).toEqual([])
+    expect(result).toHaveLength(1)
+    expect(result[0].subRows).toEqual([])
+  })
+
+  it('drops a closed position with no operation in the date range', () => {
+    const positions = [position({ status: 'closed', subRows: [group({ label: 'Buys / Sells', subRows: [op({ date: '2023-01-01' })] })] })]
+    expect(applyPositionFilters(positions, baseFilters({ dateFrom: '2024-01-01' }))).toEqual([])
+  })
+})
+
+describe('scopeManualPriceOverrides', () => {
+  const override = {
+    name: 'Asset', ticker: 'AAA', isin: 'FR1', price: '100', currency: 'EUR',
+    date_from: '2025-01-01', date_to: '', source_file: 'manual.csv',
+  }
+
+  it('matches selected-account assets and overlapping dates', () => {
+    const result = scopeManualPriceOverrides(
+      [override, { ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }],
+      [position({ name: 'Asset', ticker: 'AAA', isin: 'FR1' })],
+      baseFilters({ accounts: new Set(['acc1']), dateFrom: '2026-01-01', dateTo: '2026-12-31' }),
+    )
+    expect(result).toEqual([override])
+  })
+
+  it('excludes overrides ending before the selected period', () => {
+    expect(scopeManualPriceOverrides(
+      [{ ...override, date_to: '2024-12-31' }],
+      [position({ isin: 'FR1' })],
+      baseFilters({ dateFrom: '2025-01-01' }),
+    )).toEqual([])
   })
 })
 

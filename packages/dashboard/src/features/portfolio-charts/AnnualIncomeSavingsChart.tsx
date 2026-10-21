@@ -14,6 +14,7 @@ import { fmtEur, fmtFull } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
+import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 function IncomeSavingsTooltip({ active, payload }: {
   active?: boolean
@@ -55,10 +56,9 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start gap-3">
         <div>
-          <h2 className="text-sm font-medium text-gray-300">Income vs net contributions</h2>
+          <h2 className="flex items-center text-sm font-medium text-gray-300">Income vs net contributions<InfoTooltip text="Annual declared income compared with deposits minus withdrawals across all accounts." scope={{ account: 'global', period: 'year-range' }} /></h2>
           <p className="mt-1 text-xs text-gray-500">Annual · All accounts</p>
         </div>
-        <span className="ml-auto rounded-full border border-gray-700 px-2 py-1 text-[10px] uppercase tracking-wide text-gray-500">Global</span>
       </div>
       <ResponsiveContainer width="100%" height={285}>
         <ComposedChart data={data} margin={{ top: 8, right: 48, left: 0, bottom: 0 }} barGap={3}>
