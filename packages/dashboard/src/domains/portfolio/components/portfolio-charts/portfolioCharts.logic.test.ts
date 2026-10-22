@@ -5,6 +5,7 @@ import {
   buildTriChartData,
   buildCumulativeWealthDrivers,
   computeConcentration,
+  cumulativeConcentrationCrosshair,
   computeHeldAssetConcentration,
   computePerformanceSummary,
   computePeriodDrivers,
@@ -20,6 +21,22 @@ import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { SavingCapacityPoint } from '@/domains/portfolio/apis/queries/useSavingCapacity'
 import type { MonthlyOp, MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
+
+describe('cumulativeConcentrationCrosshair', () => {
+  it('uses the active rank and cumulative share', () => {
+    const point = {
+      rank: 7,
+      label: 'Example asset',
+      name: 'Example asset',
+      value: 12_500,
+      weight: 4.25,
+      cumulativeWeight: 70.5,
+    }
+
+    expect(cumulativeConcentrationCrosshair(point)).toEqual({ x: 7, y: 70.5 })
+    expect(cumulativeConcentrationCrosshair(null)).toBeNull()
+  })
+})
 
 function historyPoint(
   date: string,

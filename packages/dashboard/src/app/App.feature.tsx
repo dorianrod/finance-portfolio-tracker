@@ -50,8 +50,6 @@ const loadAllocationCharts = () =>
   import("@/domains/portfolio/components/allocation-charts/AllocationCharts.feature").then((module) => ({ default: module.AllocationCharts }));
 const loadPositionsTable = () =>
   import("@/domains/portfolio/components/positions-table/PositionsTable.feature").then((module) => ({ default: module.PositionsTable }));
-const loadGroupedPositionsTable = () =>
-  import("@/domains/portfolio/components/positions-table/PositionsTable.feature").then((module) => ({ default: module.GroupedPositionsTable }));
 const loadFundLookThroughTab = () =>
   import("@/domains/portfolio/components/fund-holdings/FundLookThroughTab.feature").then((module) => ({ default: module.FundLookThroughTab }));
 const loadDataQualityTab = () =>
@@ -62,7 +60,6 @@ const WealthTab = lazy(loadWealthTab);
 const PerformanceTab = lazy(loadPerformanceTab);
 const AllocationCharts = lazy(loadAllocationCharts);
 const PositionsTable = lazy(loadPositionsTable);
-const GroupedPositionsTable = lazy(loadGroupedPositionsTable);
 const FundLookThroughTab = lazy(loadFundLookThroughTab);
 const DataQualityTab = lazy(loadDataQualityTab);
 
@@ -208,10 +205,6 @@ export default function App() {
     underlyingMetricTone,
     underlyingReliabilityPct,
   } = qualitySummary;
-  const PositionsTableVariant = useGroupedPositionsTable
-    ? GroupedPositionsTable
-    : PositionsTable;
-
   const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView);
   const activeFilterSummaries = filterSummaries(
@@ -463,9 +456,10 @@ export default function App() {
                   aria-labelledby={`holdings-${holdingsView}-tab`}
                 >
                   {holdingsView === "positions" ? (
-                    <PositionsTableVariant
+                    <PositionsTable
                       data={tableData}
                       fundStatuses={fundData.statuses}
+                      grouping={useGroupedPositionsTable ? "account-type" : "flat"}
                     />
                   ) : (
                     <FundLookThroughTab

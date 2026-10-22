@@ -15,19 +15,14 @@ function LatestQualityScope() {
 interface LookThroughCoverageSummaryProps {
   report: FundCoverageReport | null
   notApplicableValue?: number
+  variant?: 'compact' | 'detailed'
 }
 
-export function LookThroughCoverageSummary(props: LookThroughCoverageSummaryProps) {
-  return <LookThroughCoverageSummaryView {...props} variant="detailed" />
-}
-
-export function CompactLookThroughCoverageSummary(props: LookThroughCoverageSummaryProps) {
-  return <LookThroughCoverageSummaryView {...props} variant="compact" />
-}
-
-function LookThroughCoverageSummaryView({ report, variant, notApplicableValue = 0 }: LookThroughCoverageSummaryProps & {
-  variant: 'compact' | 'detailed'
-}) {
+export function LookThroughCoverageSummary({
+  report,
+  variant = 'detailed',
+  notApplicableValue = 0,
+}: LookThroughCoverageSummaryProps) {
   if (!report) return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-500">
       No look-through quality report. Run the portfolio pipeline to generate it.
@@ -264,7 +259,8 @@ function SourceReliability({
       </button>
       {isExpanded && (
         <div id={detailsId} className="mt-3 border-t border-gray-800 pt-3">
-          <InlineBreakdownGroup
+          <BreakdownGroupContent
+            className="mt-3"
             title="Source reliability details"
             note="Another view of the same identified exposure"
             // eslint-disable-next-line local/no-prop-drilling -- Breakdown rows are presentation data owned by this reliability feature.
@@ -321,10 +317,6 @@ interface BreakdownGroupProps {
   note: string
   badge?: string
   rows: BreakdownRow[]
-}
-
-function InlineBreakdownGroup(props: BreakdownGroupProps) {
-  return <BreakdownGroupContent {...props} className="mt-3" />
 }
 
 function BreakdownGroupContent({ title, note, badge, rows, className }: BreakdownGroupProps & { className: string }) {

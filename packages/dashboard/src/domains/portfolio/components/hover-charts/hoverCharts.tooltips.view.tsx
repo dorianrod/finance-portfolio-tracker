@@ -41,9 +41,9 @@ export function TooltipPortfolio({
       <p className="text-gray-400 mb-2">{label}</p>
       {valueEntry && <p style={{ color: valueEntry.color }}>{valueEntry.name}: {fmt.format(valueEntry.value ?? 0)}</p>}
       {costEntry && <p style={{ color: costEntry.color }}>{costEntry.name}: {fmt.format(costEntry.value ?? 0)}</p>}
-      {valueEntry && costEntry && (
-        <p className={`mt-1 font-semibold ${(valueEntry.value ?? 0) >= (costEntry.value ?? 0) ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
-          Unrealized: {fmt.format((valueEntry.value ?? 0) - (costEntry.value ?? 0))}
+      {valueEntry && costEntry && data && (
+        <p className={`mt-1 font-semibold ${data.unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
+          Unrealized: {fmt.format(data.unrealized)}
         </p>
       )}
       <OpSummary data={data} />
@@ -51,11 +51,7 @@ export function TooltipPortfolio({
   )
 }
 
-interface TooltipUnitProps extends NumericTooltipProps<HoverChartDataPoint> {
-  series: HoverChartDataPoint[]
-}
-
-export function TooltipUnit({ active, payload, label, series }: TooltipUnitProps) {
+export function TooltipUnit({ active, payload, label }: NumericTooltipProps<HoverChartDataPoint>) {
   if (!active || !payload?.length) return null
   const p = payload[0]
   const data = p?.payload
@@ -63,7 +59,7 @@ export function TooltipUnit({ active, payload, label, series }: TooltipUnitProps
     <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
       <p className="text-gray-400 mb-1">{label}</p>
       <p style={{ color: p.color }}>Unit price: {fmtDec.format(p.value ?? 0)}</p>
-      <RollingUnitPricePerf series={series} label={String(label)} />
+      <RollingUnitPricePerf rows={data?.rollingReturns ?? []} />
       <OpSummary data={data} />
     </TooltipBox>
   )

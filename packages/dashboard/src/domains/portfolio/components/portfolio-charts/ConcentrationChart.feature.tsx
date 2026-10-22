@@ -4,40 +4,11 @@ import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import type { HoldingConcentration } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import { HOLDING_LABEL_WIDTH, HoldingLabelTick } from './HoldingLabelTick.view'
 
 interface ConcentrationTooltipProps {
   active?: boolean
   payload?: Array<{ payload: HoldingConcentration }>
-}
-
-interface HoldingLabelTickProps {
-  x?: number
-  y?: number
-  payload?: { value?: string | number }
-}
-
-const HOLDING_LABEL_WIDTH = 260
-
-export function HoldingLabelTick({ x = 0, y = 0, payload }: HoldingLabelTickProps) {
-  const label = String(payload?.value ?? '')
-
-  return (
-    <foreignObject
-      x={x - HOLDING_LABEL_WIDTH}
-      y={y - 10}
-      width={HOLDING_LABEL_WIDTH - 10}
-      height={20}
-      style={{ overflow: 'visible' }}
-    >
-      <div
-        className="truncate pr-2 text-right text-[11px] leading-5"
-        style={{ color: 'var(--chart-tick)' }}
-        title={label}
-      >
-        {label}
-      </div>
-    </foreignObject>
-  )
 }
 
 function ConcentrationTooltip({ active, payload }: ConcentrationTooltipProps) {

@@ -41,7 +41,16 @@ describe('computeRollingReturns', () => {
 
 describe('computeUnitPriceDomain', () => {
   function point(unitPrice: number): HoverChartDataPoint {
-    return { date: 'd', Value: 0, 'Cost basis': 0, 'Unit price': unitPrice, hasBuy: false, hasSell: false }
+    return {
+      date: 'd',
+      Value: 0,
+      'Cost basis': 0,
+      'Unit price': unitPrice,
+      hasBuy: false,
+      hasSell: false,
+      unrealized: 0,
+      rollingReturns: [],
+    }
   }
 
   it('pads the [min, max] of positive unit prices by 15%', () => {
@@ -70,10 +79,13 @@ describe('buildHoverChartSeries', () => {
       {
         date: '2024-01', Value: 1000, 'Cost basis': 900, 'Unit price': 100,
         hasBuy: true, hasSell: false, buyAmount: 900, sellAmount: undefined, sellGain: undefined,
+        unrealized: 100, rollingReturns: [],
       },
       {
         date: '2024-02', Value: 1100, 'Cost basis': 900, 'Unit price': 110,
         hasBuy: false, hasSell: true, buyAmount: undefined, sellAmount: 500, sellGain: 50,
+        unrealized: 200,
+        rollingReturns: [{ label: 'Since start', pct: (110 / 100 - 1) * 100 }],
       },
     ])
   })

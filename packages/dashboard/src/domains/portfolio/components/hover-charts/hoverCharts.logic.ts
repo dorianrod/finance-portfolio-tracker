@@ -17,13 +17,15 @@ export interface HoverChartDataPoint {
   buyAmount?: number
   sellAmount?: number
   sellGain?: number
+  unrealized: number
+  rollingReturns: RollingReturn[]
 }
 
 // Builds one point per month: the position's value/cost-basis/unit-price
 // snapshot, plus that month's buy/sell activity (for the dot markers and
 // tooltip breakdown).
 export function buildHoverChartSeries(history: HistoryPoint[], operations: Operation[]): HoverChartDataPoint[] {
-  return history.map((p) => {
+  const series = history.map((p) => {
     const month = p.date.slice(0, 7)
     const buysThisMonth = operations.filter((o) => o.date.slice(0, 7) === month && o.operation_type === 'BUY')
     const sellsThisMonth = operations.filter((o) => o.date.slice(0, 7) === month && o.operation_type === 'SELL')
@@ -40,8 +42,14 @@ export function buildHoverChartSeries(history: HistoryPoint[], operations: Opera
       buyAmount: buysThisMonth.length > 0 ? buyAmount : undefined,
       sellAmount: sellsThisMonth.length > 0 ? sellAmount : undefined,
       sellGain: sellsThisMonth.length > 0 ? sellGain : undefined,
+      unrealized: p.value - p.costBasis,
     }
   })
+
+  return series.map((point) => ({
+    ...point,
+    rollingReturns: computeRollingReturns(series, point.date),
+  }))
 }
 
 export function computeUnitPriceDomain(chartData: HoverChartDataPoint[]): [number, number] | undefined {

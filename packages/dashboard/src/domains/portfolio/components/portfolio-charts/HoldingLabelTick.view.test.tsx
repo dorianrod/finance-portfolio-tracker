@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { HoldingLabelTick } from './ConcentrationChart.feature'
+import { HoldingLabelTick } from './HoldingLabelTick.view'
 
 describe('HoldingLabelTick', () => {
   it('reserves a wide clipped label area and exposes the full name as a tooltip', () => {

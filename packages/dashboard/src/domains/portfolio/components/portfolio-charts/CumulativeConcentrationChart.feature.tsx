@@ -10,41 +10,12 @@ import {
   YAxis,
 } from 'recharts'
 import type { MouseHandlerDataParam } from 'recharts'
-import { fmtFull } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
-import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { cumulativeConcentrationCrosshair } from './portfolioCharts.logic'
 import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
-
-interface CumulativeConcentrationTooltipProps {
-  active?: boolean
-  payload?: Array<{ payload: CumulativeConcentrationPoint }>
-}
-
-export function CumulativeConcentrationTooltip({
-  active,
-  payload,
-}: CumulativeConcentrationTooltipProps) {
-  if (!active || !payload?.length) return null
-  const point = payload[0].payload
-  const assetLabel = point.rank === 1 ? 'asset' : 'assets'
-
-  return (
-    <TooltipBox minWidth={220}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
-        Top {point.rank} {assetLabel} · {point.cumulativeWeight.toFixed(1)}%
-      </div>
-      <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
-        #{point.rank} {point.name}
-      </div>
-      <div className="mt-0.5" style={{ color: SEMANTIC_COLORS.riskSecondary }}>
-        {fmtFull(point.value)} · {point.weight.toFixed(1)}%
-      </div>
-    </TooltipBox>
-  )
-}
+import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 
 export function CumulativeConcentrationChart({
   data,

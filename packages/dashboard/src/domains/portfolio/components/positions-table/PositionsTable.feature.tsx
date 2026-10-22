@@ -11,7 +11,8 @@ import type { PositionRow, TableRow } from '@/domains/portfolio/types/domain'
 import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
 import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { gainClass } from './positionsTable.logic'
-import { GainCell, UnrealizedGainCell, RealizedGainCell } from './GainCells.view'
+import { GainCell } from './GainCell.view'
+import { RealizedGainCell, UnrealizedGainCell } from './GainCells.feature'
 import { ExpandBtn } from './ExpandBtn.view'
 import { SortHeader } from './SortHeader.view'
 import { HoverChart, type ChartTarget } from '@/domains/portfolio/components/hover-charts/HoverChart.feature'
@@ -63,19 +64,14 @@ function irrPeriodLabel(years: number | null): string {
 interface Props {
   data: PositionRow[]
   fundStatuses?: FundHoldingStatus[]
+  grouping?: 'flat' | 'account-type'
 }
 
-export function PositionsTable(props: Props) {
-  return <PositionsTableView {...props} grouping="flat" />
-}
-
-export function GroupedPositionsTable(props: Props) {
-  return <PositionsTableView {...props} grouping="account-type" />
-}
-
-function PositionsTableView({
-  data, grouping, fundStatuses = [],
-}: Props & { grouping: 'flat' | 'account-type' }) {
+export function PositionsTable({
+  data,
+  grouping = 'flat',
+  fundStatuses = [],
+}: Props) {
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
   const expanded = useAtomValue(dashboardExpandedPositionRowsAtom)
@@ -285,7 +281,7 @@ function PositionsTableView({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          return <UnrealizedGainCell r={r} />
+          return <UnrealizedGainCell position={r} />
         }
         if (r.kind === 'operation' && r.operation_type === 'BUY') {
           if (r.quantity == null) return null
@@ -302,7 +298,7 @@ function PositionsTableView({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          return <RealizedGainCell r={r} />
+          return <RealizedGainCell position={r} />
         }
         if (r.kind === 'group' && r.label === 'Buys / Sells') {
           return (
