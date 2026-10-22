@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import type { HoldingsView } from '@/domains/portfolio/components/holdings/HoldingsViewTabs'
+import type { HoldingsView } from '@/domains/portfolio/components/holdings/HoldingsViewTabs.feature'
 
 export type AnalysisTab =
   | 'overview'

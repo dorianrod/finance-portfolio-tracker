@@ -16,7 +16,7 @@ metadata:
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 82 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 83 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
 
@@ -54,6 +54,7 @@ Several rules describe the target standard, not the current state of every file.
 
 ### 1. Architecture & Boundaries (CRITICAL)
 
+- `arch-component-roles` - Declare Every React Component as a View or Feature
 - `arch-domain-first-layout` - Follow the Domain-First Folder Layout
 - `arch-transverse-only-imports` - Import Other Domains Only Through Transverse Domains
 - `arch-shared-no-domain-knowledge` - Keep Shared Code Free of Domain Knowledge

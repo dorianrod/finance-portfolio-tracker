@@ -23,7 +23,7 @@ import {
   computeHeldAssetConcentration,
   filterPointsByPeriod,
 } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
-import type { ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle'
+import type { ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import type { PositionRow, RawPosition } from '@/domains/portfolio/types/domain'
 

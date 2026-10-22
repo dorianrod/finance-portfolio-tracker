@@ -1,5 +1,20 @@
+import path from 'node:path'
+
 const REACT_COMPONENT_WRAPPERS = new Set(['forwardRef', 'memo'])
 const EXCLUDED_ATTRIBUTE_NAMES = new Set(['children', 'key', 'ref'])
+const DERIVED_EXPRESSION_TYPES = new Set([
+  'ArrayExpression',
+  'BinaryExpression',
+  'CallExpression',
+  'ConditionalExpression',
+  'LogicalExpression',
+  'NewExpression',
+  'ObjectExpression',
+  'TaggedTemplateExpression',
+  'TemplateLiteral',
+  'UnaryExpression',
+  'UpdateExpression',
+])
 
 function isPascalCase(name) {
   return typeof name === 'string' && /^[A-Z]/u.test(name)
@@ -24,6 +39,11 @@ function getCalleeName(node) {
     return getStaticPropertyName(node.property)
   }
   return null
+}
+
+function isHookCall(node) {
+  const name = node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
+  return typeof name === 'string' && /^use[A-Z0-9]/u.test(name)
 }
 
 function isReactComponentWrapper(node) {
@@ -83,17 +103,42 @@ function isClassNode(node) {
   return node?.type === 'ClassDeclaration' || node?.type === 'ClassExpression'
 }
 
-function isNodeWithin(node, container) {
-  return node.range[0] >= container.range[0] && node.range[1] <= container.range[1]
+function roleFromPath(value) {
+  if (value.endsWith('.view') || value.endsWith('.view.tsx')) return 'view'
+  if (value.endsWith('.feature') || value.endsWith('.feature.tsx')) return 'feature'
+  return null
 }
 
-function isApplicationImport(source) {
-  return source.startsWith('.') || source.startsWith('@/')
+function unwrapExpression(node) {
+  let current = node
+  while (current?.type === 'ChainExpression'
+    || current?.type === 'TSAsExpression'
+    || current?.type === 'TSNonNullExpression'
+    || current?.type === 'TSTypeAssertion') {
+    current = current.expression
+  }
+  return current
+}
+
+function combineAnalyses(analyses, derived = false) {
+  const relevant = analyses.filter(({ dependsOnProps }) => dependsOnProps)
+  if (relevant.length === 0) {
+    return { dependsOnProps: false, derived: false, propName: null }
+  }
+
+  const propNames = new Set(relevant.map(({ propName }) => propName).filter(Boolean))
+  return {
+    dependsOnProps: true,
+    derived: derived || relevant.some((analysis) => analysis.derived),
+    propName: propNames.size === 1 ? [...propNames][0] : null,
+  }
 }
 
 function createRule(context) {
   const sourceCode = context.sourceCode
+  const moduleRole = roleFromPath(path.basename(context.filename))
   const componentContexts = new WeakMap()
+  const forwardingEdges = []
 
   function findVariable(identifier) {
     let scope = sourceCode.getScope(identifier)
@@ -103,6 +148,33 @@ function createRule(context) {
       scope = scope.upper
     }
     return null
+  }
+
+  function registerPattern(pattern, propertyName, propVariables) {
+    if (!pattern) return
+    if (pattern.type === 'Identifier') {
+      const variable = findVariable(pattern)
+      if (variable) propVariables.set(variable, propertyName)
+      return
+    }
+    if (pattern.type === 'AssignmentPattern') {
+      registerPattern(pattern.left, propertyName, propVariables)
+      return
+    }
+    if (pattern.type === 'RestElement') {
+      registerPattern(pattern.argument, null, propVariables)
+      return
+    }
+    if (pattern.type !== 'ObjectPattern') return
+
+    for (const property of pattern.properties) {
+      if (property.type === 'RestElement') {
+        registerPattern(property.argument, null, propVariables)
+        continue
+      }
+      const name = property.computed ? null : getStaticPropertyName(property.key)
+      registerPattern(property.value, name, propVariables)
+    }
   }
 
   function getFunctionContext(node) {
@@ -115,28 +187,33 @@ function createRule(context) {
     }
 
     const firstParameter = node.params[0]
-    const propVariables = new Set()
-    if (firstParameter) {
-      for (const variable of sourceCode.getDeclaredVariables(node)) {
-        const isPropVariable = variable.defs.some((definition) => (
-          definition.type === 'Parameter'
-          && definition.name?.range
-          && isNodeWithin(definition.name, firstParameter)
-        ))
-        if (isPropVariable) propVariables.add(variable)
-      }
+    const propVariables = new Map()
+    let propsObjectVariable = null
+    if (firstParameter?.type === 'Identifier') {
+      propsObjectVariable = findVariable(firstParameter)
+    } else if (firstParameter) {
+      registerPattern(firstParameter, null, propVariables)
     }
 
-    const componentContext = { kind: 'function', name, node, propVariables }
+    const componentContext = {
+      kind: 'function',
+      name,
+      propVariables,
+      propsObjectVariable,
+    }
     componentContexts.set(node, componentContext)
     return componentContext
   }
 
   function getClassContext(node) {
     if (componentContexts.has(node)) return componentContexts.get(node)
-
     const name = getClassComponentName(node)
-    const componentContext = name ? { kind: 'class', name, node, propVariables: new Set() } : null
+    const componentContext = name ? {
+      kind: 'class',
+      name,
+      propVariables: new Map(),
+      propsObjectVariable: null,
+    } : null
     componentContexts.set(node, componentContext)
     return componentContext
   }
@@ -144,7 +221,6 @@ function createRule(context) {
   function getEnclosingComponentContexts(node) {
     const contexts = []
     let current = node.parent
-
     while (current) {
       if (isFunctionNode(current)) {
         const componentContext = getFunctionContext(current)
@@ -155,113 +231,189 @@ function createRule(context) {
       }
       current = current.parent
     }
-
     return contexts
   }
 
-  function isApplicationComponent(nameNode) {
+  function getApplicationComponent(nameNode) {
     const rootIdentifier = getRootJsxIdentifier(nameNode)
-    if (!rootIdentifier || !isPascalCase(rootIdentifier.name)) return false
+    if (!rootIdentifier || !isPascalCase(rootIdentifier.name)) return null
 
     const variable = findVariable(rootIdentifier)
-    if (!variable) return false
+    if (!variable) return null
 
-    return variable.defs.some((definition) => {
-      if (definition.type !== 'ImportBinding') return definition.type !== 'Parameter'
-      return isApplicationImport(definition.parent.source.value)
-    })
+    for (const definition of variable.defs) {
+      if (definition.type === 'Parameter') return null
+      if (definition.type === 'ImportBinding') {
+        const source = definition.parent.source.value
+        return {
+          name: sourceCode.getText(nameNode),
+          role: typeof source === 'string' ? roleFromPath(source) : null,
+        }
+      }
+    }
+
+    return { name: sourceCode.getText(nameNode), role: moduleRole }
   }
 
-  function isThisProps(node) {
-    return node?.type === 'MemberExpression'
-      && !node.computed
-      && node.object.type === 'ThisExpression'
-      && getStaticPropertyName(node.property) === 'props'
-  }
+  function analyzeExpression(node, componentContext, state = {
+    seenNodes: new Set(),
+    seenVariables: new Set(),
+  }) {
+    const expression = unwrapExpression(node)
+    if (!expression || state.seenNodes.has(expression)) {
+      return { dependsOnProps: false, derived: false, propName: null }
+    }
+    state.seenNodes.add(expression)
 
-  function expressionDependsOnProps(node, componentContext, state) {
-    if (!node || state.seenNodes.has(node)) return false
-    state.seenNodes.add(node)
+    if (expression.type === 'ArrowFunctionExpression'
+      || expression.type === 'FunctionExpression') {
+      return { dependsOnProps: false, derived: false, propName: null }
+    }
 
-    if (componentContext.kind === 'class' && isThisProps(node)) return true
+    // A hook owns the derivation of its return value. Treat that result as a
+    // feature input, rather than attributing every value it exposes to the
+    // component props used to configure the hook.
+    if (isHookCall(expression)) {
+      return { dependsOnProps: false, derived: false, propName: null }
+    }
 
-    if (node.type === 'Identifier') {
-      const variable = findVariable(node)
-      if (!variable) return false
-      if (componentContext.propVariables.has(variable)) return true
-      if (state.seenVariables.has(variable)) return false
+    if (componentContext.kind === 'class'
+      && expression.type === 'MemberExpression'
+      && !expression.computed
+      && expression.object.type === 'MemberExpression'
+      && !expression.object.computed
+      && expression.object.object.type === 'ThisExpression'
+      && getStaticPropertyName(expression.object.property) === 'props') {
+      return {
+        dependsOnProps: true,
+        derived: false,
+        propName: getStaticPropertyName(expression.property),
+      }
+    }
 
+    if (expression.type === 'MemberExpression') {
+      const object = unwrapExpression(expression.object)
+      if (object?.type === 'Identifier'
+        && findVariable(object) === componentContext.propsObjectVariable) {
+        return {
+          dependsOnProps: true,
+          derived: false,
+          propName: expression.computed ? null : getStaticPropertyName(expression.property),
+        }
+      }
+      return analyzeExpression(expression.object, componentContext, state)
+    }
+
+    if (expression.type === 'Identifier') {
+      const variable = findVariable(expression)
+      if (!variable) return { dependsOnProps: false, derived: false, propName: null }
+      if (componentContext.propVariables.has(variable)) {
+        return {
+          dependsOnProps: true,
+          derived: false,
+          propName: componentContext.propVariables.get(variable),
+        }
+      }
+      if (state.seenVariables.has(variable)) {
+        return { dependsOnProps: false, derived: false, propName: null }
+      }
       state.seenVariables.add(variable)
 
+      const analyses = []
       for (const definition of variable.defs) {
-        if (definition.type === 'Variable'
-          && definition.node.init
-          && expressionDependsOnProps(definition.node.init, componentContext, state)) {
-          return true
-        }
-        if (definition.type === 'FunctionName'
-          && expressionDependsOnProps(definition.node.body, componentContext, state)) {
-          return true
+        if (definition.type === 'Variable' && definition.node.init) {
+          analyses.push(analyzeExpression(definition.node.init, componentContext, state))
         }
       }
-
       for (const reference of variable.references) {
-        if (reference.writeExpr
-          && expressionDependsOnProps(reference.writeExpr, componentContext, state)) {
-          return true
+        if (reference.writeExpr) {
+          analyses.push(analyzeExpression(reference.writeExpr, componentContext, state))
         }
       }
-
-      return false
+      return combineAnalyses(analyses)
     }
 
-    const visitorKeys = sourceCode.visitorKeys[node.type] ?? []
-    for (const key of visitorKeys) {
-      const child = node[key]
+    const analyses = []
+    for (const key of sourceCode.visitorKeys[expression.type] ?? []) {
+      const child = expression[key]
       if (Array.isArray(child)) {
         for (const childNode of child) {
-          if (expressionDependsOnProps(childNode, componentContext, state)) return true
+          analyses.push(analyzeExpression(childNode, componentContext, state))
         }
-      } else if (expressionDependsOnProps(child, componentContext, state)) {
-        return true
+      } else {
+        analyses.push(analyzeExpression(child, componentContext, state))
       }
     }
 
-    return false
+    return combineAnalyses(analyses, DERIVED_EXPRESSION_TYPES.has(expression.type))
   }
 
-  function attributeDependsOnProps(attribute, componentContext) {
-    if (attribute.value?.type !== 'JSXExpressionContainer') return false
-    return expressionDependsOnProps(attribute.value.expression, componentContext, {
-      seenNodes: new Set(),
-      seenVariables: new Set(),
-    })
+  function inspectAttribute(node) {
+    const attributeName = node.name.type === 'JSXIdentifier' ? node.name.name : null
+    if (!attributeName || EXCLUDED_ATTRIBUTE_NAMES.has(attributeName)) return
+    if (node.value?.type !== 'JSXExpressionContainer') return
+
+    const child = getApplicationComponent(node.parent.name)
+    if (!child || child.role !== 'feature') return
+
+    for (const componentContext of getEnclosingComponentContexts(node)) {
+      const analysis = analyzeExpression(node.value.expression, componentContext)
+      if (!analysis.dependsOnProps) continue
+
+      if (analysis.derived) {
+        context.report({
+          node,
+          messageId: 'derivedBusinessProp',
+          data: {
+            attributeName,
+            childName: child.name,
+            parentName: componentContext.name,
+          },
+        })
+        return
+      }
+
+      if (analysis.propName) {
+        forwardingEdges.push({
+          attributeName,
+          childName: child.name,
+          node,
+          parentName: componentContext.name,
+          sourcePropName: analysis.propName,
+        })
+      }
+      return
+    }
+  }
+
+  function reportPropChains() {
+    const incomingPropsByComponent = new Map()
+    for (const edge of forwardingEdges) {
+      if (!incomingPropsByComponent.has(edge.childName)) {
+        incomingPropsByComponent.set(edge.childName, new Set())
+      }
+      incomingPropsByComponent.get(edge.childName).add(edge.attributeName)
+    }
+
+    for (const edge of forwardingEdges) {
+      const incomingProps = incomingPropsByComponent.get(edge.parentName)
+      if (!incomingProps?.has(edge.sourcePropName)) continue
+      context.report({
+        node: edge.node,
+        messageId: 'propDrilling',
+        data: {
+          attributeName: edge.attributeName,
+          childName: edge.childName,
+          parentName: edge.parentName,
+          sourcePropName: edge.sourcePropName,
+        },
+      })
+    }
   }
 
   return {
-    JSXAttribute(node) {
-      const attributeName = node.name.type === 'JSXIdentifier' ? node.name.name : null
-      if (!attributeName || EXCLUDED_ATTRIBUTE_NAMES.has(attributeName)) return
-
-      const openingElement = node.parent
-      if (!isApplicationComponent(openingElement.name)) return
-
-      const componentContextsForAttribute = getEnclosingComponentContexts(node)
-      const sourceComponent = componentContextsForAttribute.find((componentContext) => (
-        attributeDependsOnProps(node, componentContext)
-      ))
-      if (!sourceComponent) return
-
-      context.report({
-        node,
-        messageId: 'propDrilling',
-        data: {
-          attributeName,
-          childName: sourceCode.getText(openingElement.name),
-          parentName: sourceComponent.name,
-        },
-      })
-    },
+    JSXAttribute: inspectAttribute,
+    'Program:exit': reportPropChains,
   }
 }
 
@@ -269,11 +421,12 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow passing values derived from parent props to application components',
+      description: 'Detect prop chains and calculations assigned to feature components',
     },
     schema: [],
     messages: {
-      propDrilling: 'Prop drilling: "{{parentName}}" passes a value derived from its props to "{{childName}}.{{attributeName}}".',
+      derivedBusinessProp: 'Business ownership: "{{parentName}}" calculates "{{childName}}.{{attributeName}}" from its props. Pass raw inputs and let the feature own the calculation, or classify the child as a view.',
+      propDrilling: 'Prop drilling: "{{parentName}}" forwards its "{{sourcePropName}}" prop to feature "{{childName}}.{{attributeName}}".',
     },
   },
   create: createRule,

@@ -1,0 +1,94 @@
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { useAtomValue } from 'jotai'
+import { fmtFull } from '@/shared/format/money'
+import { CHART_THEME } from '@/shared/format/chartTheme'
+import { catColor } from '@/shared/format/colors'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
+import { groupTail } from './allocationCharts.logic'
+import { PieTooltip } from './allocationCharts.tooltips.view'
+import { PieLabel } from './PieLabel.view'
+import { PositionsToggle } from './PositionsToggle.view'
+import type { AllocationDimension, PieEntry } from './allocationCharts.types'
+import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
+import { useDashboardAllocationPositions } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationPositions'
+import {
+  dashboardAllocationFilterAtom,
+  dashboardAllocationPositionsOpenAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
+
+interface DonutCardProps {
+  title: string
+  point: AllocationPoint
+  dimension: AllocationDimension
+}
+
+export function DonutCard({ title, point, dimension }: DonutCardProps) {
+  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
+  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
+  const { toggleFilter } = useDashboardAllocationFilters()
+  const { togglePositions } = useDashboardAllocationPositions()
+  const total = point.categories.reduce((s, c) => s + c.value, 0)
+  const dateLabel = new Date(point.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+
+  const { main, grouped } = groupTail(point.categories)
+  const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
+  const data: PieEntry[] = [
+    ...main.map((c) => ({ ...c, total })),
+    ...(grouped.length > 1
+      ? [{ name: `others (${grouped.length})`, value: groupedTotal, total, subItems: grouped }]
+      : []),
+  ]
+
+  const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
+
+  return (
+    <div className="bg-gray-900 rounded-xl p-4">
+      <div className="mb-1 flex items-start justify-between gap-3">
+        {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the chart copy and scope passed to the tooltip feature adapter. */}
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={`Portfolio allocation by ${title.toLowerCase()} at the displayed snapshot.`} scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }} /></h2>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="text-xs text-gray-600">{dateLabel}</span>
+          {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
+        </div>
+      </div>
+      <div className="text-xs text-gray-500 mb-1">Allocated: {fmtFull(total)}</div>
+      <div className="text-xs text-gray-600 mb-2">Click a segment to filter</div>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            innerRadius="32%"
+            outerRadius="50%"
+            paddingAngle={1}
+            label={PieLabel}
+            labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
+            onClick={(entry: unknown) => {
+              if (!(entry as PieEntry).name.startsWith('others (')) {
+                toggleFilter({ type: dimension, value: (entry as PieEntry).name })
+              }
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            {data.map((entry) => {
+              const isActive = activeSeg === entry.name
+              const isDimmed = activeFilter !== null && !isActive
+              return (
+                <Cell
+                  key={entry.name}
+                  fill={catColor(entry.name)}
+                  opacity={isDimmed ? 0.25 : 1}
+                  stroke={isActive ? CHART_THEME.label : 'none'}
+                  strokeWidth={isActive ? 2 : 0}
+                />
+              )
+            })}
+          </Pie>
+          <Tooltip content={<PieTooltip />} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}

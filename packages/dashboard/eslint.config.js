@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import componentRole from './eslint-rules/component-role.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
 export default defineConfig([
@@ -29,6 +30,7 @@ export default defineConfig([
     plugins: {
       local: {
         rules: {
+          'component-role': componentRole,
           'no-prop-drilling': noPropDrilling,
         },
       },
@@ -47,6 +49,7 @@ export default defineConfig([
       'prefer-template': 'error',
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      'local/component-role': 'error',
       'local/no-prop-drilling': 'warn',
     },
   },

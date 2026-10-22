@@ -5,7 +5,7 @@ import noPropDrilling from './no-prop-drilling.js'
 
 const linter = new Linter({ configType: 'flat' })
 
-function lint(code) {
+function lint(code, filename = 'component.feature.tsx') {
   return linter.verify(code, {
     files: ['**/*.tsx'],
     languageOptions: {
@@ -24,185 +24,118 @@ function lint(code) {
     rules: {
       'local/no-prop-drilling': 'warn',
     },
-  }, { filename: 'component.tsx' })
+  }, { filename })
 }
 
 describe('no-prop-drilling', () => {
-  it.each([
-    {
-      name: 'passes a destructured prop directly',
-      code: `
-        function Child({ value }: { value: string }) { return <span>{value}</span> }
-        function Parent({ value }: { value: string }) { return <Child value={value} /> }
-      `,
-    },
-    {
-      name: 'passes a property from the props object',
-      code: `
-        import { Child } from './Child'
-        function Parent(props: { value: string }) { return <Child value={props.value} /> }
-      `,
-    },
-    {
-      name: 'passes a renamed prop with a default value',
-      code: `
-        import { Child } from '@/shared/Child'
-        function Parent({ value: label = 'fallback' }: { value?: string }) {
-          return <Child label={label} />
-        }
-      `,
-    },
-    {
-      name: 'passes a formatted prop through aliases',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: number }) {
-          const firstAlias = value
-          const secondAlias = firstAlias
-          return <Child label={format(secondAlias)} />
-        }
-      `,
-    },
-    {
-      name: 'passes a prop through an assignment alias',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) {
-          let forwardedValue = ''
-          forwardedValue = value
-          return <Child value={forwardedValue} />
-        }
-      `,
-    },
-    {
-      name: 'passes a prop through a nested expression and closure',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) {
-          return <Child config={{ values: [value] }} onSelect={() => consume(value)} />
-        }
-      `,
-      expectedCount: 2,
-    },
-    {
-      name: 'passes a value destructured from the rest props',
-      code: `
-        import { Child } from './Child'
-        function Parent({ ignored, ...rest }: { ignored: boolean; value: string }) {
-          const { value } = rest
-          return <Child value={value} />
-        }
-      `,
-    },
-    {
-      name: 'passes props from a memoized component',
-      code: `
-        import { memo } from 'react'
-        import { Child } from './Child'
-        const Parent = memo(({ value }: { value: string }) => <Child value={value} />)
-      `,
-    },
-    {
-      name: 'passes props from a forwardRef component',
-      code: `
-        import { forwardRef } from 'react'
-        import { Child } from './Child'
-        const Parent = forwardRef<HTMLDivElement, { value: string }>(
-          ({ value }, ref) => <Child value={value} />,
-        )
-      `,
-    },
-    {
-      name: 'passes props from a class component',
-      code: `
-        import { Component } from 'react'
-        import { Child } from './Child'
-        class Parent extends Component<{ value: string }> {
-          render() { return <Child value={this.props.value} /> }
-        }
-      `,
-    },
-    {
-      name: 'reports one warning when an attribute depends on multiple props',
-      code: `
-        import { Child } from './Child'
-        function Parent({ first, second }: { first: string; second: string }) {
-          return <Child label={first + second} />
-        }
-      `,
-    },
-  ])('$name', ({ code, expectedCount = 1 }) => {
-    const messages = lint(code)
-
-    expect(messages).toHaveLength(expectedCount)
-    expect(messages.every(({ messageId }) => messageId === 'propDrilling')).toBe(true)
+  it('reports an unchanged prop forwarded through feature components', () => {
+    const code = `
+      function Leaf({ value }: { value: string }) { return <span>{value}</span> }
+      function Middle({ value }: { value: string }) { return <Leaf value={value} /> }
+      function Root({ value }: { value: string }) { return <Middle value={value} /> }
+    `
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['propDrilling'])
   })
 
   it.each([
-    {
-      name: 'allows props on intrinsic elements',
-      code: `function Parent({ value }: { value: string }) { return <div data-value={value} /> }`,
-    },
-    {
-      name: 'allows props on external components',
-      code: `
-        import { Button } from 'design-system'
-        function Parent({ value }: { value: string }) { return <Button value={value} /> }
-      `,
-    },
-    {
-      name: 'allows props as JSX children',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) { return <Child>{value}</Child> }
-      `,
-    },
-    {
-      name: 'allows values that do not depend on parent props',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) {
-          const localValue = 'local'
-          return <><span>{value}</span><Child value={localValue} /></>
-        }
-      `,
-    },
-    {
-      name: 'allows JSX rendered by a non-React class',
-      code: `
-        import { Child } from './Child'
-        class TemplateRenderer {
-          props = { value: 'local' }
-          render() { return <Child value={this.props.value} /> }
-        }
-      `,
-    },
-    {
-      name: 'ignores JSX spreads',
-      code: `
-        import { Child } from './Child'
-        function Parent(props: { value: string }) { return <Child {...props} /> }
-      `,
-    },
-    {
-      name: 'ignores key and ref attributes',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) {
-          return <Child key={value} ref={value} />
-        }
-      `,
-    },
-    {
-      name: 'does not confuse a shadowed closure parameter with a prop',
-      code: `
-        import { Child } from './Child'
-        function Parent({ value }: { value: string }) {
-          return [value].map((value) => <Child value={value} />)
-        }
-      `,
-    },
-  ])('$name', ({ code }) => {
+    ['call', 'format(value)'],
+    ['binary expression', 'value + 1'],
+    ['logical expression', 'value || 1'],
+    ['conditional expression', 'value > 0 ? value : 0'],
+    ['template', '`${value}%`'],
+    ['object', '{ value }'],
+    ['array', '[value]'],
+    ['unary expression', '-value'],
+  ])('reports a %s calculated for a feature', (_name, expression) => {
+    const code = `
+      import { Child } from './Child.feature'
+      function Parent({ value }: { value: number }) {
+        return <Child result={${expression}} />
+      }
+    `
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['derivedBusinessProp'])
+  })
+
+  it('traces calculations through aliases and destructuring', () => {
+    const code = `
+      import { Child } from './Child.feature'
+      function Parent({ first, second }: { first: number; second: number }) {
+        const total = first + second
+        const [percentage] = calculatePercentages([first, second])
+        return <Child total={total} percentage={percentage} />
+      }
+    `
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'derivedBusinessProp',
+      'derivedBusinessProp',
+    ])
+  })
+
+  it('allows the same calculations for a view', () => {
+    const code = `
+      import { Child } from './Child.view'
+      function Parent({ value }: { value: number }) {
+        const total = value + 1
+        return <Child result={format(total)} />
+      }
+    `
+    expect(lint(code)).toEqual([])
+  })
+
+  it('treats values returned by a hook as owned feature inputs', () => {
+    const code = `
+      import { Child } from './Child.feature'
+      function Parent({ value }: { value: number }) {
+        const { total } = useTotals({ value })
+        return <Child total={total} />
+      }
+    `
+    expect(lint(code)).toEqual([])
+  })
+
+  it.each([
+    ['direct value', 'value'],
+    ['direct property', 'value.total'],
+    ['literal', '42'],
+    ['callback adapter', '() => onChange(value)'],
+  ])('allows a %s passed to a feature', (_name, expression) => {
+    const code = `
+      import { Child } from './Child.feature'
+      function Parent({ value, onChange }: { value: { total: number }; onChange: (value: object) => void }) {
+        return <Child result={${expression}} />
+      }
+    `
+    expect(lint(code)).toEqual([])
+  })
+
+  it('supports props objects and imported aliases', () => {
+    const code = `
+      import { Child as BusinessChild } from './Child.feature'
+      function Parent(props: { value: number }) {
+        return <BusinessChild result={props.value * 2} />
+      }
+    `
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['derivedBusinessProp'])
+  })
+
+  it('ignores intrinsic elements, external components, children, key and ref', () => {
+    const code = `
+      import { Button } from 'design-system'
+      import { Child } from './Child.feature'
+      function Parent({ value }: { value: number }) {
+        return <><div data-value={value + 1} /><Button value={value + 1} /><Child key={value} ref={value}>{value + 1}</Child></>
+      }
+    `
+    expect(lint(code)).toEqual([])
+  })
+
+  it('does not confuse a shadowed closure parameter with a prop', () => {
+    const code = `
+      import { Child } from './Child.feature'
+      function Parent({ value }: { value: number }) {
+        return [value].map((value) => <Child result={value + 1} />)
+      }
+    `
     expect(lint(code)).toEqual([])
   })
 })

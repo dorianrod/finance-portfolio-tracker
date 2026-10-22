@@ -11,6 +11,8 @@ tags: arch, prop-drilling, jotai, hooks, state, single-responsibility
 
 State consumed below its owner must not be threaded through intermediate component props or moved into an application React Context. Put shared client state in page- or domain-scoped Jotai atoms. A component that needs a value reads the atom directly; a component that needs to change it calls a focused hook that owns the write operations.
 
+Apply this rule together with `arch-component-roles`. A view may receive calculations and display-ready objects because rendering them is its declared responsibility. A feature should receive raw business inputs or read shared state itself; warn when a parent derives a value from its own props and passes that result to another feature. The warning is a review signal: move the calculation to the receiving feature when it owns the decision, classify a truly presentational child as a view, or suppress only the verified exception on the affected line with a reason.
+
 Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useDashboardFilters`, `useDashboardSort`, `useDashboardSelection` and `useDashboardModal`. A `useDashboardUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
 
 **Incorrect (one hook owns unrelated state, then drills values and actions):**
@@ -80,6 +82,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - A custom hook declares `useState` and returns that state. This means another consumer needs the value: move shared client state to an atom, unless the hook and its state are an intentionally self-contained reusable primitive.
 - A UI hook owns several independent concerns such as filters, sorting, search, selection and modals. Split it into concern-specific atoms and hooks; retain an aggregate hook only as a thin optional facade.
 - A prop is forwarded unchanged through one or more components that do not use it.
+- A feature calculates, formats, combines or constructs a value from its props only to pass it to another feature. This includes calls, operations, conditions, templates, objects and arrays, even through aliases or destructuring. Passing the same expression to a view is expected.
 - A component accepts both a state value and its setter only to pass them farther down the tree.
 - A new `createContext` or `useContext` exists primarily to avoid passing client UI state through props.
 
@@ -90,6 +93,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - Put shared client state in scoped atoms and read it directly with `useAtomValue`.
 - Expose writes through small responsibility-specific hooks using `useSetAtom`; use `useAtom` only when one consumer genuinely reads and writes.
 - Keep explicit props for a direct parent-child API. The smell is an intermediary that forwards props it does not use.
+- Pass display-ready values to views. Pass raw inputs to features unless orchestration ownership makes a narrowly documented exception necessary.
 - Do not create application React Contexts for state sharing. Third-party providers required by a library are outside this rule.
 
 See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`

@@ -21,16 +21,17 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 ## Table of Contents
 
 1. [Architecture & Boundaries](#1-architecture--boundaries) — **CRITICAL**
-   - 1.1 [Follow the Domain-First Folder Layout](#11-follow-the-domain-first-folder-layout)
-   - 1.2 [Import Other Domains Only Through Transverse Domains](#12-import-other-domains-only-through-transverse-domains)
-   - 1.3 [Keep Shared Code Free of Domain Knowledge](#13-keep-shared-code-free-of-domain-knowledge)
-   - 1.4 [Share Client State Through Jotai, Not Prop Chains or Context](#14-share-client-state-through-jotai-not-prop-chains-or-context)
-   - 1.5 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#15-choose-helpers-or-services-by-asking-does-it-need-a-hook)
-   - 1.6 [Gate Experimental Features With a Typed Flag Registry](#16-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.7 [Keep Components Thin](#17-keep-components-thin)
-   - 1.8 [Keep Visual Logic Out of apis/, services/ and helpers/](#18-keep-visual-logic-out-of-apis-services-and-helpers)
-   - 1.9 [No index.ts in stores/, One File per Concern](#19-no-indexts-in-stores-one-file-per-concern)
-   - 1.10 [Create a Sub-Domain Only for a Distinct Business Entity](#110-create-a-sub-domain-only-for-a-distinct-business-entity)
+   - 1.1 [Declare Every React Component as a View or Feature](#11-declare-every-react-component-as-a-view-or-feature)
+   - 1.2 [Follow the Domain-First Folder Layout](#12-follow-the-domain-first-folder-layout)
+   - 1.3 [Import Other Domains Only Through Transverse Domains](#13-import-other-domains-only-through-transverse-domains)
+   - 1.4 [Keep Shared Code Free of Domain Knowledge](#14-keep-shared-code-free-of-domain-knowledge)
+   - 1.5 [Share Client State Through Jotai, Not Prop Chains or Context](#15-share-client-state-through-jotai-not-prop-chains-or-context)
+   - 1.6 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#16-choose-helpers-or-services-by-asking-does-it-need-a-hook)
+   - 1.7 [Gate Experimental Features With a Typed Flag Registry](#17-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.8 [Keep Components Thin](#18-keep-components-thin)
+   - 1.9 [Keep Visual Logic Out of apis/, services/ and helpers/](#19-keep-visual-logic-out-of-apis-services-and-helpers)
+   - 1.10 [No index.ts in stores/, One File per Concern](#110-no-indexts-in-stores-one-file-per-concern)
+   - 1.11 [Create a Sub-Domain Only for a Distinct Business Entity](#111-create-a-sub-domain-only-for-a-distinct-business-entity)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -123,7 +124,69 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 
 A domain-first layout and strict import boundaries keep features isolated, prevent circular dependencies and make every file's responsibility obvious from its location.
 
-### 1.1 Follow the Domain-First Folder Layout
+### 1.1 Declare Every React Component as a View or Feature
+
+**Impact: CRITICAL (makes component ownership and data-flow boundaries explicit)**
+
+Classify every production React component module by responsibility:
+
+- `*.view.tsx` renders display-ready data. It may format or clamp values for display, manage accessibility, and keep local visual state such as hover, tooltip or accordion state.
+- `*.feature.tsx` owns business orchestration. It reads queries or atoms, invokes actions and pure business helpers, and supplies display-ready props to views.
+
+The suffix is a controlled declaration, not proof that the implementation is correctly classified. During review, verify the imports and responsibilities. Split a file that mixes feature orchestration with reusable presentation components; every component left in a module inherits that module's role. Entrypoints and test modules may remain unsuffixed, while colocated tests should follow the classified source name.
+
+A view may import React, visual libraries, other views, types, formatters, and colocalized purely visual logic. It must not import a feature or runtime dependencies from server-state hooks, client stores, APIs, services, or business helpers. If a deep component needs shared client state, classify it as a feature and let it read the atom directly.
+
+**Incorrect (a declared view owns business state and decisions):**
+
+```tsx
+// OrderTotal.view.tsx
+import { useAtomValue } from 'jotai'
+import { activeOrderAtom } from '../stores/order.atoms'
+import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+
+export function OrderTotal() {
+  const order = useAtomValue(activeOrderAtom)
+  return <strong>{calculateOrderTotal(order)}</strong>
+}
+```
+
+Renaming the file does not turn this component into a view: it still consumes state and performs a business calculation.
+
+**Correct (the feature owns the decision; the view receives render-ready data):**
+
+```tsx
+// OrderTotal.feature.tsx
+import { useAtomValue } from 'jotai'
+import { activeOrderAtom } from '../stores/order.atoms'
+import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+import { OrderTotalView } from './OrderTotal.view'
+
+export function OrderTotal() {
+  const order = useAtomValue(activeOrderAtom)
+  const total = calculateOrderTotal(order)
+  return <OrderTotalView label="Total" formattedTotal={formatMoney(total)} />
+}
+
+// OrderTotal.view.tsx
+export function OrderTotalView(props: { label: string; formattedTotal: string }) {
+  return <p><span>{props.label}</span> <strong>{props.formattedTotal}</strong></p>
+}
+```
+
+Composition is valid: a feature may pass a calculated expression to a view. When the receiving component is another feature, prefer raw inputs so that it owns its business calculation. Treat lint findings as conservative signals and keep any justified suppression on the affected line.
+
+### Review checklist
+
+- Every production component module declares `.view.tsx` or `.feature.tsx`.
+- A view has no runtime import of a feature, query, atom, API, service, store or business helper.
+- Type-only imports do not create a runtime boundary violation.
+- Calculations are passed to views, while features receive raw business inputs or read shared state directly.
+- Mixed modules are split, and the chosen suffix matches actual responsibilities.
+
+See also: `arch-no-prop-drilling`
+
+### 1.2 Follow the Domain-First Folder Layout
 
 **Impact: CRITICAL (every file's role is obvious from its path)**
 
@@ -174,7 +237,7 @@ src/shared/                                # generic code with no business knowl
 
 Create only the folders you need. Import across folders through one path alias (`@/` → `src/`) and reject deep relative paths (`../../*`) with ESLint; keep `./` for colocated files. Import shared components from their public entry, not from their internal files.
 
-### 1.2 Import Other Domains Only Through Transverse Domains
+### 1.3 Import Other Domains Only Through Transverse Domains
 
 **Impact: CRITICAL (keeps domains isolated and free of import cycles)**
 
@@ -205,7 +268,7 @@ Escape hatches, in order of preference:
 
 See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`
 
-### 1.3 Keep Shared Code Free of Domain Knowledge
+### 1.4 Keep Shared Code Free of Domain Knowledge
 
 **Impact: CRITICAL (keeps shared/ reusable and cycle-free)**
 
@@ -238,11 +301,13 @@ Prefer injecting rendered content or data (`table: ReactNode`, `histories: Histo
 
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 
-### 1.4 Share Client State Through Jotai, Not Prop Chains or Context
+### 1.5 Share Client State Through Jotai, Not Prop Chains or Context
 
 **Impact: CRITICAL (prevents prop drilling and oversized UI hooks)**
 
 State consumed below its owner must not be threaded through intermediate component props or moved into an application React Context. Put shared client state in page- or domain-scoped Jotai atoms. A component that needs a value reads the atom directly; a component that needs to change it calls a focused hook that owns the write operations.
+
+Apply this rule together with `arch-component-roles`. A view may receive calculations and display-ready objects because rendering them is its declared responsibility. A feature should receive raw business inputs or read shared state itself; warn when a parent derives a value from its own props and passes that result to another feature. The warning is a review signal: move the calculation to the receiving feature when it owns the decision, classify a truly presentational child as a view, or suppress only the verified exception on the affected line with a reason.
 
 Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useDashboardFilters`, `useDashboardSort`, `useDashboardSelection` and `useDashboardModal`. A `useDashboardUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
 
@@ -313,6 +378,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - A custom hook declares `useState` and returns that state. This means another consumer needs the value: move shared client state to an atom, unless the hook and its state are an intentionally self-contained reusable primitive.
 - A UI hook owns several independent concerns such as filters, sorting, search, selection and modals. Split it into concern-specific atoms and hooks; retain an aggregate hook only as a thin optional facade.
 - A prop is forwarded unchanged through one or more components that do not use it.
+- A feature calculates, formats, combines or constructs a value from its props only to pass it to another feature. This includes calls, operations, conditions, templates, objects and arrays, even through aliases or destructuring. Passing the same expression to a view is expected.
 - A component accepts both a state value and its setter only to pass them farther down the tree.
 - A new `createContext` or `useContext` exists primarily to avoid passing client UI state through props.
 
@@ -323,11 +389,12 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - Put shared client state in scoped atoms and read it directly with `useAtomValue`.
 - Expose writes through small responsibility-specific hooks using `useSetAtom`; use `useAtom` only when one consumer genuinely reads and writes.
 - Keep explicit props for a direct parent-child API. The smell is an intermediary that forwards props it does not use.
+- Pass display-ready values to views. Pass raw inputs to features unless orchestration ownership makes a narrowly documented exception necessary.
 - Do not create application React Contexts for state sharing. Third-party providers required by a library are outside this rule.
 
 See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.5 Choose helpers/ or services/ by Asking "Does It Need a Hook?"
+### 1.6 Choose helpers/ or services/ by Asking "Does It Need a Hook?"
 
 **Impact: HIGH (predictable location, minimal test setup)**
 
@@ -364,7 +431,7 @@ src/domains/sales/shared/
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`.
 
-### 1.6 Gate Experimental Features With a Typed Flag Registry
+### 1.7 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -405,7 +472,7 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.7 Keep Components Thin
+### 1.8 Keep Components Thin
 
 **Impact: HIGH (logic becomes reusable and testable without rendering)**
 
@@ -456,7 +523,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 
 See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.8 Keep Visual Logic Out of apis/, services/ and helpers/
+### 1.9 Keep Visual Logic Out of apis/, services/ and helpers/
 
 **Impact: HIGH (domain hooks stay reusable across pages and contexts)**
 
@@ -518,7 +585,7 @@ How the page action gives feedback:
 
 See also: `vercel-react-best-practices` → `async-parallel`
 
-### 1.9 No index.ts in stores/, One File per Concern
+### 1.10 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
 
@@ -556,7 +623,7 @@ Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. D
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.10 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.11 Create a Sub-Domain Only for a Distinct Business Entity
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
