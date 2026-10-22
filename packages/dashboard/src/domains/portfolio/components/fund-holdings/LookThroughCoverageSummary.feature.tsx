@@ -18,6 +18,19 @@ interface LookThroughCoverageSummaryProps {
   variant?: 'compact' | 'detailed'
 }
 
+interface CompactCoverageCardData {
+  label: string
+  amount: number
+  percentage: number
+  detail: string
+  tooltip: string
+  tone: 'coverage' | 'neutral' | 'warning' | 'muted'
+}
+
+function CompactCoverageCard({ card }: { card: CompactCoverageCardData }) {
+  return <QualityIndicatorCard tooltipFooter={<LatestQualityScope />} {...card} />
+}
+
 export function LookThroughCoverageSummary({
   report,
   variant = 'detailed',
@@ -93,7 +106,7 @@ export function LookThroughCoverageSummary({
     ]
     return (
       <div className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
-        {cards.map((card) => <QualityIndicatorCard tooltipFooter={<LatestQualityScope />} key={card.label} {...card} />)}
+        {cards.map((card) => <CompactCoverageCard key={card.label} card={card} />)}
       </div>
     )
   }
@@ -290,20 +303,14 @@ function ExposureChildNodes({ nodes }: { nodes: [ExposureChildNode, ExposureChil
       </div>
       <div className="mx-auto h-4 w-px bg-gray-700 lg:hidden" aria-hidden="true" />
       <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
-        {nodes.map((node) => (
-          <QualityIndicatorCard tooltipFooter={<LatestQualityScope />}
-            key={node.label}
-            label={node.label}
-            tooltip={node.tooltip}
-            amount={node.amount}
-            percentage={node.percentage}
-            detail="Share of total portfolio"
-            tone={node.tone}
-          />
-        ))}
+        {nodes.map((node) => <ExposureChildNodeCard key={node.label} node={node} />)}
       </div>
     </div>
   )
+}
+
+function ExposureChildNodeCard({ node }: { node: ExposureChildNode }) {
+  return <QualityIndicatorCard tooltipFooter={<LatestQualityScope />} label={node.label} tooltip={node.tooltip} amount={node.amount} percentage={node.percentage} detail="Share of total portfolio" tone={node.tone} />
 }
 
 interface BreakdownRow {
@@ -320,9 +327,13 @@ interface BreakdownGroupProps {
   rows: BreakdownRow[]
 }
 
-function BreakdownGroupContent({ title, note, badge, rows, className }: BreakdownGroupProps & { className: string }) {
+function BreakdownRowView({ row }: { row: BreakdownRow }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  return <div><div className="mb-1 flex items-baseline justify-between gap-3 text-[11px]"><span className="truncate text-gray-500">{row.label}</span><span className="shrink-0 tabular-nums text-gray-500">{formatMoney(row.amount, { style: 'full' })} · {formatPercentage(row.percentage)}</span></div><div className="h-1.5 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.max(0, row.percentage))}%`, backgroundColor: row.color }} /></div></div>
+}
+
+function BreakdownGroupContent({ title, note, badge, rows, className }: BreakdownGroupProps & { className: string }) {
   return (
     <div className={className}>
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -333,17 +344,7 @@ function BreakdownGroupContent({ title, note, badge, rows, className }: Breakdow
         {badge && <span className="shrink-0 rounded-full border border-gray-700 bg-gray-950/50 px-2 py-0.5 text-[10px] font-medium text-gray-400">{badge}</span>}
       </div>
       <div className="space-y-3">
-        {rows.map((row) => (
-          <div key={row.label}>
-            <div className="mb-1 flex items-baseline justify-between gap-3 text-[11px]">
-              <span className="truncate text-gray-500">{row.label}</span>
-              <span className="shrink-0 tabular-nums text-gray-500">{formatMoney(row.amount, { style: 'full' })} · {formatPercentage(row.percentage)}</span>
-            </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-gray-800">
-              <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.max(0, row.percentage))}%`, backgroundColor: row.color }} />
-            </div>
-          </div>
-        ))}
+        {rows.map((row) => <BreakdownRowView key={row.label} row={row} />)}
       </div>
     </div>
   )

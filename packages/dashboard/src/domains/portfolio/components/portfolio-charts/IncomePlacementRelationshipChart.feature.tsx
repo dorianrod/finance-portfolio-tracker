@@ -52,6 +52,12 @@ const LABEL_CANDIDATES: YearLabelPlacement[] = [
   { dx: -10, dy: 17, textAnchor: 'end' },
 ]
 
+function RelationshipCell({ newestYear, oldestYear, point, recentYears }: { newestYear: number; oldestYear: number; point: AnnualIncomeSavingsPoint; recentYears: Set<number> }) {
+  const isRecent = recentYears.has(point.year)
+  const ageProgress = (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
+  return <Cell fill={isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries} fillOpacity={isRecent ? 1 : 0.3 + ageProgress * 0.35} />
+}
+
 function labelBox(x: number, y: number, placement: YearLabelPlacement): LabelBox {
   const labelX = x + placement.dx
   let left = labelX - LABEL_WIDTH
@@ -239,17 +245,7 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
             />
           )}
           <Scatter data={analysis.points} fill={SEMANTIC_COLORS.returnRate}>
-            {analysis.points.map((point) => {
-              const isRecent = recentYears.has(point.year)
-              const ageProgress = (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
-              return (
-                <Cell
-                  key={point.year}
-                  fill={isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries}
-                  fillOpacity={isRecent ? 1 : 0.3 + ageProgress * 0.35}
-                />
-              )
-            })}
+            {analysis.points.map((point) => <RelationshipCell key={point.year} newestYear={newestYear} oldestYear={oldestYear} point={point} recentYears={recentYears} />)}
             <LabelList
               dataKey="year"
               content={(props) => (

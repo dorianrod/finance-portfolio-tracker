@@ -121,13 +121,17 @@ function ChartLegend() {
         ['50%', SEMANTIC_COLORS.totalChange],
         ['75%', SEMANTIC_COLORS.netContributions],
         ['90%', SEMANTIC_COLORS.portfolioValue],
-      ].map(([label, color]) => (
-        <span key={label} className="inline-flex items-center gap-1.5">
-          <span className="h-0.5 w-3 rounded" style={{ background: color }} />{label}
-        </span>
-      ))}
+      ].map(([label, color]) => <ChartLegendItem key={label} label={label} color={color} />)}
     </div>
   )
+}
+
+function ChartLegendItem({ color, label }: { color: string; label: string }) {
+  return <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-3 rounded" style={{ background: color }} />{label}</span>
+}
+
+function HistoricalHoldingCell({ index }: { index: number }) {
+  return <Cell fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />
 }
 
 function delta(current: number | null, previous: number | null | undefined): number | null {
@@ -315,7 +319,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
                     <YAxis dataKey="label" type="category" tick={<HoldingLabelTick />} tickLine={false} axisLine={false} width={260} />
                     <Tooltip content={<HistoricalHoldingTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
                     <Bar dataKey="weight" radius={[0, 4, 4, 0]} isAnimationActive={animationEnabled} animationDuration={450} animationEasing="ease-in-out" animationMatchBy={matchHoldingByKey} animationInterpolateFn={interpolateRankedBars}>
-                      {displayedHoldings.map((holding, index) => <Cell key={holding.key} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
+                      {displayedHoldings.map((holding, index) => <HistoricalHoldingCell key={holding.key} index={index} />)}
                       <LabelList dataKey="weight" position="right" formatter={(value: unknown) => formatPercentage(Number(value))} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
                     </Bar>
                   </BarChart>

@@ -5,6 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import componentRole from './eslint-rules/component-role.js'
+import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
 export default defineConfig([
@@ -31,6 +32,7 @@ export default defineConfig([
       local: {
         rules: {
           'component-role': componentRole,
+          'no-complex-jsx-map': noComplexJsxMap,
           'no-prop-drilling': noPropDrilling,
         },
       },
@@ -66,6 +68,7 @@ export default defineConfig([
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       'local/component-role': 'error',
+      'local/no-complex-jsx-map': 'warn',
       'local/no-prop-drilling': 'warn',
     },
   },

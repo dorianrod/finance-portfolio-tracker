@@ -6,6 +6,31 @@ import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import type { PieEntry } from './allocationCharts.types'
 
+function PieTooltipSubItem({ item, subItem }: { item: PieEntry; subItem: NonNullable<PieEntry['subItems']>[number] }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const percentage = formatPercentage(item.total > 0 ? (subItem.value / item.total) * 100 : 0)
+
+  return (
+    <div style={{ color: 'var(--tooltip-dim)', marginTop: 2 }}>
+      {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} · {percentage}
+    </div>
+  )
+}
+
+interface EvolutionTooltipRowProps {
+  category: string
+  payload: NonNullable<NumericTooltipProps<Record<string, number | string>>['payload']>
+}
+
+function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
+  const formatPercentage = useFormatPercentage()
+  const value = tooltipValue(payload, category)
+  if (!value) return null
+
+  return <div style={{ color: catColor(category) }}>{category}: {formatPercentage(value)}</div>
+}
+
 export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
@@ -20,14 +45,7 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
       <div style={{ color: 'var(--tooltip-dim)', marginBottom: item.subItems?.length ? 6 : 0 }}>
         {percentage} of total allocated
       </div>
-      {item.subItems?.map((sub) => {
-        const subPercentage = formatPercentage(item.total > 0 ? (sub.value / item.total) * 100 : 0)
-        return (
-          <div key={sub.name} style={{ color: 'var(--tooltip-dim)', marginTop: 2 }}>
-            {sub.name} — {formatMoney(sub.value, { style: 'compact' })} · {subPercentage}
-          </div>
-        )
-      })}
+      {item.subItems?.map((subItem) => <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />)}
     </TooltipBox>
   )
 }
@@ -38,22 +56,13 @@ interface EvolutionTooltipProps extends NumericTooltipProps<Record<string, numbe
 
 export function EvolutionTooltip({ active, payload, label, categories }: EvolutionTooltipProps) {
   const formatDate = useFormatDate()
-  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   return (
     <TooltipBox maxWidth={220}>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
-      {categories.toReversed().map((cat) => {
-        const val = tooltipValue(payload, cat)
-        if (!val) return null
-        return (
-          <div key={cat} style={{ color: catColor(cat) }}>
-            {cat}: {formatPercentage(val)}
-          </div>
-        )
-      })}
+      {categories.toReversed().map((category) => <EvolutionTooltipRow key={category} category={category} payload={payload} />)}
     </TooltipBox>
   )
 }

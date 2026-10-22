@@ -54,6 +54,14 @@ function yearOpacity(point: AnnualIncomeSavingsPoint): number {
   return point.incomeStatus === 'forecast' ? 0.45 : 1
 }
 
+function IncomeCell({ point }: { point: AnnualIncomeSavingsPoint }) {
+  return <Cell fillOpacity={yearOpacity(point)} />
+}
+
+function SavingsCell({ point }: { point: AnnualIncomeSavingsPoint }) {
+  return <Cell fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4} />
+}
+
 export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
   const formatMoney = useFormatMoney()
   return (
@@ -72,13 +80,13 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
           <YAxis yAxisId="rate" orientation="right" tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
           <Tooltip content={<IncomeSavingsTooltip />} />
           <Bar yAxisId="amount" dataKey="netSalary" stackId="income" fill={SEMANTIC_COLORS.costBasis} radius={[0, 0, 3, 3]}>
-            {data.map((point) => <Cell key={point.year} fillOpacity={yearOpacity(point)} />)}
+            {data.map((point) => <IncomeCell key={point.year} point={point} />)}
           </Bar>
           <Bar yAxisId="amount" dataKey="otherIncome" stackId="income" fill={SEMANTIC_COLORS.passiveIncome} radius={[3, 3, 0, 0]}>
-            {data.map((point) => <Cell key={point.year} fillOpacity={yearOpacity(point)} />)}
+            {data.map((point) => <IncomeCell key={point.year} point={point} />)}
           </Bar>
           <Bar yAxisId="amount" dataKey="placedSavings" fill={SEMANTIC_COLORS.netContributions} radius={[3, 3, 0, 0]}>
-            {data.map((point) => <Cell key={point.year} fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4} />)}
+            {data.map((point) => <SavingsCell key={point.year} point={point} />)}
           </Bar>
           <Line yAxisId="rate" type="monotone" dataKey="placementRate" stroke={SEMANTIC_COLORS.returnRate} strokeWidth={2.5} connectNulls={false} dot={{ r: 3 }} activeDot={{ r: 5 }} />
         </ComposedChart>

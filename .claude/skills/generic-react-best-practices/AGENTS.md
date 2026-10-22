@@ -73,12 +73,13 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 6.5 [Build Translated Form Validation Schemas in a use[Form]Schema Hook](#65-build-translated-form-validation-schemas-in-a-useformschema-hook)
    - 6.6 [Declare Yup Schemas at Module Level With Explicit Names](#66-declare-yup-schemas-at-module-level-with-explicit-names)
 7. [UI Composition & Accessibility](#7-ui-composition--accessibility) — **HIGH**
-   - 7.1 [Keep Compound Component Slots as Direct, Renderable Children](#71-keep-compound-component-slots-as-direct-renderable-children)
-   - 7.2 [Keep Dialog Mounted and Drive It with a Boolean open](#72-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
-   - 7.3 [Never Nest a form Inside a form](#73-never-nest-a-form-inside-a-form)
-   - 7.4 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#74-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
-   - 7.5 [Style with Design System Components, Utility Classes Only for Layout](#75-style-with-design-system-components-utility-classes-only-for-layout)
-   - 7.6 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#76-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.1 [Delegate Mapped JSX to a Component](#71-delegate-mapped-jsx-to-a-component)
+   - 7.2 [Keep Compound Component Slots as Direct, Renderable Children](#72-keep-compound-component-slots-as-direct-renderable-children)
+   - 7.3 [Keep Dialog Mounted and Drive It with a Boolean open](#73-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
+   - 7.4 [Never Nest a form Inside a form](#74-never-nest-a-form-inside-a-form)
+   - 7.5 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#75-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
+   - 7.6 [Style with Design System Components, Utility Classes Only for Layout](#76-style-with-design-system-components-utility-classes-only-for-layout)
+   - 7.7 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#77-give-icon-only-buttons-and-custom-controls-an-accessible-name)
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
@@ -2229,7 +2230,69 @@ Schemas shared across hooks of a sub-domain go in `helpers/schemas/` (e.g. `orde
 
 Structural expectations of compound components, dialogs, forms and styling. Breaking them causes silent layout bugs, lost form values or inaccessible controls.
 
-### 7.1 Keep Compound Component Slots as Direct, Renderable Children
+### 7.1 Delegate Mapped JSX to a Component
+
+**Impact: HIGH (keeps list rendering declarative and isolates per-item decisions)**
+
+When `map` produces JSX, its callback only renders one named component and passes source values to it. Put branching, derived values, event-handler construction, styling decisions and element structure inside that item component. Data-only transformations that do not produce JSX are unaffected.
+
+Enforce this convention with the ESLint rule `local/no-complex-jsx-map` when the project provides it. Treat a warning from that rule as a request to extract or simplify the mapped item, not as a reason to disable the rule.
+
+**Incorrect (the map callback owns conditions and markup):**
+
+```tsx
+<div>
+  {categories.map((category) => {
+    const isActive = category.id === activeCategoryId
+    if (category.isOther) return <span key={category.id}>{category.label}</span>
+
+    return (
+      <button key={category.id} onClick={() => selectCategory(category.id)}>
+        <span className={isActive ? 'active' : undefined}>{category.label}</span>
+      </button>
+    )
+  })}
+</div>
+```
+
+**Correct (the map delegates each item without inline logic):**
+
+```tsx
+type CategoryItemProps = {
+  activeCategoryId: string | null
+  category: Category
+  onSelect: (categoryId: string) => void
+}
+
+function CategoryItem({ activeCategoryId, category, onSelect }: CategoryItemProps) {
+  const isActive = category.id === activeCategoryId
+
+  if (category.isOther) return <span>{category.label}</span>
+
+  return (
+    <button onClick={() => onSelect(category.id)}>
+      <span className={isActive ? 'active' : undefined}>{category.label}</span>
+    </button>
+  )
+}
+
+<div>
+  {categories.map((category) => (
+    <CategoryItem
+      key={category.id}
+      activeCategoryId={activeCategoryId}
+      category={category}
+      onSelect={selectCategory}
+    />
+  ))}
+</div>
+```
+
+The item component must be declared at module scope, never inside its parent component.
+
+See also: `vercel-react-best-practices` → `rerender-no-inline-components`
+
+### 7.2 Keep Compound Component Slots as Direct, Renderable Children
 
 **Impact: HIGH (prevents silently dropped slots and empty overflow menus)**
 
@@ -2286,7 +2349,7 @@ const canRestore = canRestoreProject(project) // boolean business rule
 - Gate optional actions in the caller with a boolean predicate: a wrapper that renders `null` still occupies a visible slot and can leave an overflow menu empty, and the container cannot know what its children will render.
 - Put `Suspense` outside the compound component, or inside a content slot (`Card.Body`), never between the compound and its slots.
 
-### 7.2 Keep Dialog Mounted and Drive It with a Boolean open
+### 7.3 Keep Dialog Mounted and Drive It with a Boolean open
 
 **Impact: HIGH (keeps close transitions and focus handling working)**
 
@@ -2323,7 +2386,7 @@ return (
 
 While the exit transition plays, the target may already be `null`: keep the last displayed values (or render stable text) so the content does not flash empty during the close animation.
 
-### 7.3 Never Nest a form Inside a form
+### 7.4 Never Nest a form Inside a form
 
 **Impact: HIGH (prevents native submit that reloads the SPA and loses data)**
 
@@ -2351,7 +2414,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 
 With a form library, use its "render as div" option or `useForm().handleSubmit` from a button `onClick`. The trade-off is losing native Enter-to-submit on the outer form. Check in the browser console with `document.querySelectorAll('form form').length === 0`.
 
-### 7.4 Wrap the Whole Dialog in a Form Keyed on the Open Target
+### 7.5 Wrap the Whole Dialog in a Form Keyed on the Open Target
 
 **Impact: HIGH (submit button inside the form, fresh values on each open)**
 
@@ -2399,7 +2462,7 @@ function SubmitButton() {
 
 Do not let a generic "confirm" action close the dialog by itself: it would close even when validation fails. Close it from the submit handler on success.
 
-### 7.5 Style with Design System Components, Utility Classes Only for Layout
+### 7.6 Style with Design System Components, Utility Classes Only for Layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
@@ -2429,7 +2492,7 @@ Visual styling (text size, color, weight, background, border, radius, shadow, pa
 
 If no design-system component fits, add or extend one in the shared UI layer instead of styling locally. Detection hint: search feature code for `className=` values containing `bg-`, `text-`, `border-`, `rounded-` or `shadow-`.
 
-### 7.6 Give Icon-Only Buttons and Custom Controls an Accessible Name
+### 7.7 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
 **Impact: MEDIUM (usable with assistive tech, queryable by role in tests)**
 

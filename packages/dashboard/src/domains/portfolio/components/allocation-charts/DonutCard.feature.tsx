@@ -24,6 +24,26 @@ interface DonutCardProps {
   dimension: AllocationDimension
 }
 
+interface DonutCellProps {
+  activeFilter: ReturnType<typeof useAtomValue<typeof dashboardAllocationFilterAtom>>
+  activeSegment: string | null
+  entry: PieEntry
+}
+
+function DonutCell({ activeFilter, activeSegment, entry }: DonutCellProps) {
+  const isActive = activeSegment === entry.name
+  const isDimmed = activeFilter !== null && !isActive
+
+  return (
+    <Cell
+      fill={catColor(entry.name)}
+      opacity={isDimmed ? 0.25 : 1}
+      stroke={isActive ? CHART_THEME.label : 'none'}
+      strokeWidth={isActive ? 2 : 0}
+    />
+  )
+}
+
 export function DonutCard({ title, point, dimension }: DonutCardProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -75,19 +95,9 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
             }}
             style={{ cursor: 'pointer' }}
           >
-            {data.map((entry) => {
-              const isActive = activeSeg === entry.name
-              const isDimmed = activeFilter !== null && !isActive
-              return (
-                <Cell
-                  key={entry.name}
-                  fill={catColor(entry.name)}
-                  opacity={isDimmed ? 0.25 : 1}
-                  stroke={isActive ? CHART_THEME.label : 'none'}
-                  strokeWidth={isActive ? 2 : 0}
-                />
-              )
-            })}
+            {data.map((entry) => (
+              <DonutCell key={entry.name} activeFilter={activeFilter} activeSegment={activeSeg} entry={entry} />
+            ))}
           </Pie>
           <Tooltip content={<PieTooltip />} />
         </PieChart>

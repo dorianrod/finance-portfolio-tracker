@@ -16,7 +16,7 @@ metadata:
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 83 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 84 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
 
@@ -118,6 +118,7 @@ Several rules describe the target standard, not the current state of every file.
 
 ### 7. UI Composition & Accessibility (HIGH)
 
+- `ui-delegate-mapped-jsx` - Delegate Mapped JSX to a Component
 - `ui-compound-slots-direct-children` - Keep Compound Component Slots as Direct, Renderable Children
 - `ui-dialog-controlled` - Keep Dialog Mounted and Drive It with a Boolean open
 - `ui-no-nested-form` - Never Nest a form Inside a form

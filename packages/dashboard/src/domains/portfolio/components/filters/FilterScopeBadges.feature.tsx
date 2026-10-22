@@ -146,6 +146,12 @@ const TONE_CLASSES = {
   ignored: 'border-amber-700/60 bg-amber-950/35 text-amber-300',
 } as const
 
+type ScopeBadge = ReturnType<typeof accountBadge>
+
+function FilterScopeBadge({ badge }: { badge: ScopeBadge }) {
+  return <span title={badge.detail} className={`inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold normal-case tracking-normal ${TONE_CLASSES[badge.tone]}`}>{badge.label}</span>
+}
+
 export function FilterScopeBadges({ account, period, effectiveDate }: FilterScopeSpec) {
   const formatDate = useFormatDate()
   const filters = useAtomValue(dashboardFiltersAtom)
@@ -156,15 +162,7 @@ export function FilterScopeBadges({ account, period, effectiveDate }: FilterScop
   ]
   return (
     <span className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Indicator filter scope">
-      {badges.map((badge) => (
-        <span
-          key={badge.label}
-          title={badge.detail}
-          className={`inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold normal-case tracking-normal ${TONE_CLASSES[badge.tone]}`}
-        >
-          {badge.label}
-        </span>
-      ))}
+      {badges.map((badge) => <FilterScopeBadge key={badge.label} badge={badge} />)}
     </span>
   )
 }

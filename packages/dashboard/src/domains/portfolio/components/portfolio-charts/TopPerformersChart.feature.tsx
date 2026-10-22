@@ -6,6 +6,10 @@ import type { TopPerformer } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
+function PerformerCell({ entry }: { entry: TopPerformer }) {
+  return <Cell fill={entry.pct >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
+}
+
 export function TopPerformersChart({ data, height }: { data: TopPerformer[]; height: number }) {
   const formatPercentage = useFormatPercentage()
   return <div className="bg-gray-900 rounded-xl p-4">
@@ -24,9 +28,7 @@ export function TopPerformersChart({ data, height }: { data: TopPerformer[]; hei
         <Tooltip content={<TopPerformersTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
         <ReferenceLine x={0} stroke={CHART_THEME.zeroLine} />
         <Bar dataKey="pct" radius={[0, 3, 3, 0]}>
-          {data.map((entry, i) => (
-            <Cell key={i} fill={entry.pct >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
-          ))}
+          {data.map((entry) => <PerformerCell key={entry.label} entry={entry} />)}
           <LabelList
             dataKey="pct"
             position="right"

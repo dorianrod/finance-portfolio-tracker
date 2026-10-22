@@ -68,6 +68,16 @@ function InfoIcon() {
   );
 }
 
+function QualityTooltipMetricRow({ row }: { row: QualityTooltipRow }) {
+  const rowStyles = RELIABILITY_TONES[row.tone];
+  return (
+    <span className="flex items-center justify-between gap-4 py-1.5">
+      <span className="flex min-w-0 items-center gap-2"><span className={`h-1.5 w-1.5 shrink-0 rounded-full ${rowStyles.dot}`} aria-hidden="true" /><span className="text-[11px] text-gray-300">{row.label}</span></span>
+      <span className="shrink-0 text-right"><span className={`block text-xs font-semibold tabular-nums ${rowStyles.value}`}>{row.value}</span>{row.secondary && <span className="mt-0.5 block text-[10px] tabular-nums text-gray-500">{row.secondary}</span>}</span>
+    </span>
+  );
+}
+
 function CompactDataQualityKpi({
   tone,
   tooltip,
@@ -134,37 +144,7 @@ function CompactDataQualityKpi({
             <FilterScopeBadges {...scope} />
           </span>
           <span className="mt-3 block border-t border-gray-800 pt-1">
-            {rows.map((row) => {
-              const rowStyles = RELIABILITY_TONES[row.tone];
-              return (
-                <span
-                  key={row.label}
-                  className="flex items-center justify-between gap-4 py-1.5"
-                >
-                  <span className="flex min-w-0 items-center gap-2">
-                    <span
-                      className={`h-1.5 w-1.5 shrink-0 rounded-full ${rowStyles.dot}`}
-                      aria-hidden="true"
-                    />
-                    <span className="text-[11px] text-gray-300">
-                      {row.label}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-right">
-                    <span
-                      className={`block text-xs font-semibold tabular-nums ${rowStyles.value}`}
-                    >
-                      {row.value}
-                    </span>
-                    {row.secondary && (
-                      <span className="mt-0.5 block text-[10px] tabular-nums text-gray-500">
-                        {row.secondary}
-                      </span>
-                    )}
-                  </span>
-                </span>
-              );
-            })}
+            {rows.map((row) => <QualityTooltipMetricRow key={row.label} row={row} />)}
           </span>
         </span>
       </button>

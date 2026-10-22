@@ -130,6 +130,27 @@ const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }
   },
 };
 
+interface PrimaryTabButtonProps {
+  activeTab: AnalysisTab;
+  onNavigate: (tab: AnalysisTab) => void;
+  tab: (typeof PRIMARY_TABS)[number];
+}
+
+function PrimaryTabButton({ activeTab, onNavigate, tab }: PrimaryTabButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate(tab.id)}
+      onMouseEnter={() => preloadTab(tab.id)}
+      onFocus={() => preloadTab(tab.id)}
+      aria-current={activeTab === tab.id ? "page" : undefined}
+      className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-accent text-content" : "border-transparent text-content-subtle hover:text-content-secondary"}`}
+    >
+      {tab.label}
+    </button>
+  );
+}
+
 function DashboardPanelFallback() {
   return (
     <div className="mb-6 rounded-card border border-border bg-surface/50 p-8 text-center text-sm text-content-subtle">
@@ -244,17 +265,7 @@ export default function App() {
               aria-label="Portfolio analyses"
             >
               {PRIMARY_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => navigateTo(tab.id)}
-                  onMouseEnter={() => preloadTab(tab.id)}
-                  onFocus={() => preloadTab(tab.id)}
-                  aria-current={activeTab === tab.id ? "page" : undefined}
-                  className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-accent text-content" : "border-transparent text-content-subtle hover:text-content-secondary"}`}
-                >
-                  {tab.label}
-                </button>
+                <PrimaryTabButton key={tab.id} activeTab={activeTab} onNavigate={navigateTo} tab={tab} />
               ))}
               <button
                 type="button"

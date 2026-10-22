@@ -10,6 +10,15 @@ import { accountTypeShareKey, withAccountTypeShares } from './chartScale.logic'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
+function AccountTypeGradient({ accountType, index, typeCategories }: { accountType: string; index: number; typeCategories: Record<string, string> }) {
+  const color = typeColor(accountType, index, typeCategories)
+  return <linearGradient id={`grad-${index}`} x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={color} stopOpacity={0.7} /><stop offset="95%" stopColor={color} stopOpacity={0.15} /></linearGradient>
+}
+
+function AccountTypeArea({ accountType, index, percentageMode, typeCategories }: { accountType: string; index: number; percentageMode: boolean; typeCategories: Record<string, string> }) {
+  return <Area type="monotone" dataKey={percentageMode ? accountTypeShareKey(index) : accountType} name={accountType} stackId="a" stroke={typeColor(accountType, index, typeCategories)} fill={`url(#grad-${index})`} strokeWidth={1.5} />
+}
+
 export function AccountTypeHistoryChart({
   data, accountTypes, typeCategories,
 }: {
@@ -32,30 +41,14 @@ export function AccountTypeHistoryChart({
       <ResponsiveContainer width="100%" height={220}>
         <AreaChart key={scale} data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
           <defs>
-            {accountTypes.map((t, i) => (
-              <linearGradient key={t} id={`grad-${i}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%"  stopColor={typeColor(t, i, typeCategories)} stopOpacity={0.7} />
-                <stop offset="95%" stopColor={typeColor(t, i, typeCategories)} stopOpacity={0.15} />
-              </linearGradient>
-            ))}
+            {accountTypes.map((accountType, index) => <AccountTypeGradient key={accountType} accountType={accountType} index={index} typeCategories={typeCategories} />)}
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
           <YAxis tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : (value) => formatMoney(value, { style: 'compact' })} domain={percentageMode ? [0, 100] : undefined} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={percentageMode ? 48 : 52} />
           <Tooltip content={<AccountTypeHistoryTooltip accountTypes={accountTypes} typeCategories={typeCategories} percentageMode={percentageMode} />} />
           <Legend formatter={(value) => <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>} />
-          {accountTypes.map((t, i) => (
-            <Area
-              key={t}
-              type="monotone"
-              dataKey={percentageMode ? accountTypeShareKey(i) : t}
-              name={t}
-              stackId="a"
-              stroke={typeColor(t, i, typeCategories)}
-              fill={`url(#grad-${i})`}
-              strokeWidth={1.5}
-            />
-          ))}
+          {accountTypes.map((accountType, index) => <AccountTypeArea key={accountType} accountType={accountType} index={index} percentageMode={percentageMode} typeCategories={typeCategories} />)}
         </AreaChart>
       </ResponsiveContainer>
     </div>

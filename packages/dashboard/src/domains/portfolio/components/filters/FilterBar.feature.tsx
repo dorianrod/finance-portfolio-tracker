@@ -57,6 +57,27 @@ function FilterSection({ title, description, children }: {
   )
 }
 
+function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const { setFilters } = useDashboardFilters()
+  const dateFrom = presetDateFrom(preset.months)
+  function applyPreset() {
+    setFilters(filters.dateFrom === dateFrom && !filters.dateTo ? { ...filters, dateFrom: undefined, dateTo: undefined } : { ...filters, dateFrom, dateTo: undefined })
+  }
+  return <Chip label={preset.label} active={filters.dateFrom === dateFrom && !filters.dateTo} onClick={applyPreset} />
+}
+
+function OperationTypeChip({ operation }: { operation: string }) {
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const { setFilters } = useDashboardFilters()
+  return <Chip label={OP_LABELS[operation] ?? operation} active={filters.operationTypes.has(operation)} onClick={() => setFilters({ ...filters, operationTypes: toggle(filters.operationTypes, operation) })} />
+}
+
+function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
+  const { setFilters } = useDashboardFilters()
+  return <button type="button" onClick={() => setFilters((current) => clearFilterGroup(current, item.key))} title={`Clear ${item.key} filter`} className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-blue-500 bg-blue-900/35 px-3 py-1 text-xs text-blue-200 transition-colors hover:bg-blue-900/55"><span className="truncate">{item.label}</span><span aria-hidden="true" className="text-blue-400">×</span></button>
+}
+
 export function FilterPanel({
   visibility,
   demoPresetSelection,
@@ -73,15 +94,6 @@ export function FilterPanel({
     allOperationTypes,
   } = usePortfolioFilterOptions()
   if (!open) return null
-
-  function applyPreset(months: number) {
-    const dateFrom = presetDateFrom(months)
-    if (filters.dateFrom === dateFrom && !filters.dateTo) {
-      setFilters({ ...filters, dateFrom: undefined, dateTo: undefined })
-    } else {
-      setFilters({ ...filters, dateFrom, dateTo: undefined })
-    }
-  }
 
   return (
     <SidePanel
@@ -102,14 +114,7 @@ export function FilterPanel({
       {visibility.showPeriod && (
         <FilterSection title="Period" description="Limit time-based charts and calculations to a specific range.">
           <div className="flex flex-wrap gap-1.5">
-            {DATE_PRESETS.map((preset) => (
-              <Chip
-                key={preset.label}
-                label={preset.label}
-                active={filters.dateFrom === presetDateFrom(preset.months) && !filters.dateTo}
-                onClick={() => applyPreset(preset.months)}
-              />
-            ))}
+            {DATE_PRESETS.map((preset) => <DatePresetChip key={preset.label} preset={preset} />)}
           </div>
           <div className="mt-3 flex items-center gap-2">
             <input
@@ -177,14 +182,7 @@ export function FilterPanel({
               active={filters.operationTypes.size === 0}
               onClick={() => setFilters({ ...filters, operationTypes: new Set() })}
             />
-            {allOperationTypes.map((operation) => (
-              <Chip
-                key={operation}
-                label={OP_LABELS[operation] ?? operation}
-                active={filters.operationTypes.has(operation)}
-                onClick={() => setFilters({ ...filters, operationTypes: toggle(filters.operationTypes, operation) })}
-              />
-            ))}
+            {allOperationTypes.map((operation) => <OperationTypeChip key={operation} operation={operation} />)}
           </div>
           <label className="mt-4 flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-700 bg-gray-950/35 px-3 py-2.5">
             <span>
@@ -244,24 +242,12 @@ export function ActiveFilterSummary({
   children?: ReactNode
   actions?: ReactNode
 }) {
-  const { setFilters } = useDashboardFilters()
   if (items.length === 0 && !leading && !children && !actions) return null
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
       {leading}
-      {items.map((item) => (
-        <button
-          key={item.key}
-          type="button"
-          onClick={() => setFilters((current) => clearFilterGroup(current, item.key))}
-          title={`Clear ${item.key} filter`}
-          className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-blue-500 bg-blue-900/35 px-3 py-1 text-xs text-blue-200 transition-colors hover:bg-blue-900/55"
-        >
-          <span className="truncate">{item.label}</span>
-          <span aria-hidden="true" className="text-blue-400">×</span>
-        </button>
-      ))}
+      {items.map((item) => <ActiveFilterChip key={item.key} item={item} />)}
       {children}
       {actions}
     </div>

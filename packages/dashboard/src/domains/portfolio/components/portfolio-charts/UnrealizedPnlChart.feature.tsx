@@ -50,6 +50,10 @@ function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
   )
 }
 
+function UnrealizedPnlCell({ point }: { point: UnrealizedPnlPoint }) {
+  return <Cell fill={point.unrealized_gain >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
+}
+
 export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint[] }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -81,12 +85,7 @@ export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint
           <ReferenceLine yAxisId="amount" y={0} stroke={CHART_THEME.zeroLine} />
           <Tooltip content={<UnrealizedPnlTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
           <Bar yAxisId="amount" dataKey="unrealized_gain" maxBarSize={24} radius={3} isAnimationActive={false}>
-            {data.map((point) => (
-              <Cell
-                key={point.date}
-                fill={point.unrealized_gain >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative}
-              />
-            ))}
+            {data.map((point) => <UnrealizedPnlCell key={point.date} point={point} />)}
           </Bar>
           <Line yAxisId="pct" type="monotone" dataKey="unrealized_gain_pct" stroke={SEMANTIC_COLORS.returnRate} strokeWidth={2} dot={false} activeDot={{ r: 4 }} connectNulls isAnimationActive={false} />
         </ComposedChart>

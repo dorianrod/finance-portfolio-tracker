@@ -25,6 +25,10 @@ function ConcentrationTooltip({ active, payload }: ConcentrationTooltipProps) {
   )
 }
 
+function ConcentrationCell({ index }: { index: number }) {
+  return <Cell fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />
+}
+
 export function ConcentrationChart({ data, topTenValue, topTenPct, description, effectiveDate }: { data: HoldingConcentration[]; topTenValue?: number; topTenPct?: number; description?: string; effectiveDate?: string | null }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
@@ -57,7 +61,7 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
               />
               <Tooltip content={<ConcentrationTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
               <Bar dataKey="weight" radius={[0, 4, 4, 0]}>
-                {data.map((_, index) => <Cell key={index} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
+                {data.map((point, index) => <ConcentrationCell key={point.label} index={index} />)}
                 <LabelList dataKey="weight" position="right" formatter={(value: unknown) => formatPercentage(Number(value))} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
               </Bar>
             </BarChart>

@@ -8,6 +8,10 @@ import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyO
 import type { TrailingSavingCapacityPoint } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
+function MonthlyPerformanceCell({ entry }: { entry: TrailingSavingCapacityPoint }) {
+  return <Cell fill={(entry.perf_delta ?? 0) >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
+}
+
 export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacityPoint[]; ops: MonthlyOpsMap }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -24,9 +28,7 @@ export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacit
           <ReferenceLine yAxisId="left" y={0} stroke={CHART_THEME.zeroLine} />
           <Bar yAxisId="left" dataKey="savings_delta" fill={SEMANTIC_COLORS.netContributions} radius={[3, 3, 0, 0]} />
           <Bar yAxisId="left" dataKey="perf_delta" fill={SEMANTIC_COLORS.performancePositive} radius={[3, 3, 0, 0]}>
-            {data.map((entry, i) => (
-              <Cell key={i} fill={(entry.perf_delta ?? 0) >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
-            ))}
+            {data.map((entry) => <MonthlyPerformanceCell key={entry.date} entry={entry} />)}
           </Bar>
           <Line yAxisId="right" type="monotone" dataKey="rolling_12m" stroke={SEMANTIC_COLORS.netContributions} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: SEMANTIC_COLORS.netContributions }} />
           <Line yAxisId="right" type="monotone" dataKey="rolling_perf_12m" stroke={SEMANTIC_COLORS.performance} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: SEMANTIC_COLORS.performance }} />
