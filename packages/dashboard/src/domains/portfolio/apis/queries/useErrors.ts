@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import Papa from 'papaparse'
-import { dataUrl } from '@/shared/csv/csvData'
+import { dataUrl, parseCsv } from '@/shared/csv/csvData'
 
 export interface ErrorRow {
   source: string   // "main" | "fetch_prices"
@@ -19,19 +18,15 @@ export function useErrors() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Papa.parse<ErrorRow>(dataUrl('errors.csv'), {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (r) => {
-        setErrors(r.data)
+    parseCsv<ErrorRow>(dataUrl('errors.csv'))
+      .then((rows) => {
+        setErrors(rows)
         setLoading(false)
-      },
-      error: () => {
+      })
+      .catch(() => {
         setErrors([])
         setLoading(false)
-      },
-    })
+      })
   }, [])
 
   return { errors, loading }

@@ -1,6 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import Papa from 'papaparse'
-import { dataUrl } from '@/shared/csv/csvData'
+import { dataUrl, parseCsv } from '@/shared/csv/csvData'
 import { buildPositionsHistory, type RawPositionsHistoryRow, type HistoryMap, type HistoryPoint } from '@/domains/portfolio/helpers/positionsHistory.logic'
 
 export type { HistoryPoint }
@@ -12,16 +11,15 @@ const listeners = new Set<() => void>()
 function load() {
   if (cache || loading) return
   loading = true
-  Papa.parse<RawPositionsHistoryRow>(dataUrl('positions.csv'), {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: ({ data }) => {
+  parseCsv<RawPositionsHistoryRow>(dataUrl('positions.csv'))
+    .then((data) => {
       cache = buildPositionsHistory(data)
       loading = false
       listeners.forEach((fn) => fn())
-    },
-  })
+    })
+    .catch(() => {
+      loading = false
+    })
 }
 
 function subscribe(onStoreChange: () => void): () => void {

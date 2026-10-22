@@ -1,5 +1,7 @@
 import Papa from 'papaparse'
 
+const csvRequests = new Map<string, Promise<unknown[]>>()
+
 // All dashboard data is fetched at runtime from <base>/data/*.csv (see
 // vite.config.ts's serveFinanceData plugin in dev, or public/data/ once
 // copied in for a build). Routing every call through this URL builder
@@ -11,7 +13,10 @@ export function dataUrl(filename: string): string {
 }
 
 export function parseCsv<T = Record<string, string>>(url: string): Promise<T[]> {
-  return new Promise((resolve, reject) => {
+  const cachedRequest = csvRequests.get(url)
+  if (cachedRequest) return cachedRequest as Promise<T[]>
+
+  const request = new Promise<T[]>((resolve, reject) => {
     Papa.parse<T>(url, {
       download: true,
       header: true,
@@ -20,4 +25,15 @@ export function parseCsv<T = Record<string, string>>(url: string): Promise<T[]> 
       error: reject,
     })
   })
+
+  csvRequests.set(url, request)
+  void request.catch(() => {
+    if (csvRequests.get(url) === request) csvRequests.delete(url)
+  })
+
+  return request
+}
+
+export function clearCsvCache(): void {
+  csvRequests.clear()
 }

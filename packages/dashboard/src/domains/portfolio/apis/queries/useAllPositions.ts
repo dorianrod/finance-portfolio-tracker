@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import Papa from 'papaparse'
-import { dataUrl } from '@/shared/csv/csvData'
+import { dataUrl, parseCsv } from '@/shared/csv/csvData'
 
 export interface RawPositionRow {
   snapshot_date: string
@@ -17,12 +16,9 @@ export function useAllPositions(): RawPositionRow[] {
   const [rows, setRows] = useState<RawPositionRow[]>([])
 
   useEffect(() => {
-    Papa.parse<RawPositionRow>(dataUrl('positions.csv'), {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (r) => setRows(r.data),
-    })
+    parseCsv<RawPositionRow>(dataUrl('positions.csv'))
+      .then(setRows)
+      .catch(() => setRows([]))
   }, [])
 
   return rows

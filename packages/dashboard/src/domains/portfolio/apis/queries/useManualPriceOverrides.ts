@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import Papa from 'papaparse'
-import { dataUrl } from '@/shared/csv/csvData'
+import { dataUrl, parseCsv } from '@/shared/csv/csvData'
 
 export interface ManualPriceOverride {
   name: string
@@ -17,13 +16,9 @@ export function useManualPriceOverrides() {
   const [manualPriceOverrides, setManualPriceOverrides] = useState<ManualPriceOverride[]>([])
 
   useEffect(() => {
-    Papa.parse<ManualPriceOverride>(dataUrl('manual_price_overrides.csv'), {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (result) => setManualPriceOverrides(result.data),
-      error: () => setManualPriceOverrides([]),
-    })
+    parseCsv<ManualPriceOverride>(dataUrl('manual_price_overrides.csv'))
+      .then(setManualPriceOverrides)
+      .catch(() => setManualPriceOverrides([]))
   }, [])
 
   return { manualPriceOverrides }
