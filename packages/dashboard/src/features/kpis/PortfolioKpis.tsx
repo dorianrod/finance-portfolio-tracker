@@ -9,62 +9,61 @@ const gainColor = (value: number | null) => value == null || value >= 0
   : SEMANTIC_TEXT_CLASSES.performanceNegative
 
 export function NetPortfolioValueKpi({ performance }: { performance: PerformanceSummary }) {
+  const value = fmt.format(performance.currentValueNet)
   return (
-    <Kpi
-      label="Net portfolio value"
-      tooltip="Current market value after estimated tax on unrealized gains."
-      value={fmt.format(performance.currentValueNet)}
-      accent="portfolio"
-      subSmall={`Gross ${fmt.format(performance.currentValueGross)}`}
-      scope={{ account: 'filterable', period: 'as-of' }}
-    />
+    <Kpi.Root accent="portfolio">
+      <Kpi.Label tooltip="Current market value after estimated tax on unrealized gains." scope={{ account: 'filterable', period: 'as-of' }}>
+        Net portfolio value
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value title={value}>{value}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.Detail>Gross {fmt.format(performance.currentValueGross)}</Kpi.Detail>
+    </Kpi.Root>
   )
 }
 
 export function TotalNetPerformanceKpi({ performance }: { performance: PerformanceSummary }) {
+  const value = fmt.format(performance.totalPerformanceNet)
   return (
-    <Kpi
-      label="Total net performance"
-      tooltip="Net unrealized and realized P&L plus net passive income."
-      value={fmt.format(performance.totalPerformanceNet)}
-      valueColor={gainColor(performance.totalPerformanceNet)}
-      accent={performance.totalPerformanceNet >= 0 ? 'positive' : 'negative'}
-      sub={fmtPct(performance.totalPerformancePct)}
-      subColor={gainColor(performance.totalPerformanceNet)}
-      subSmall={`Gross ${fmt.format(performance.totalPerformanceGross)}`}
-      subInline
-      scope={{ account: 'filterable', period: 'since-tracking' }}
-    />
+    <Kpi.Root accent={performance.totalPerformanceNet >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Label tooltip="Net unrealized and realized P&L plus net passive income." scope={{ account: 'filterable', period: 'since-tracking' }}>
+        Total net performance
+      </Kpi.Label>
+      <Kpi.ValueRow>
+        <Kpi.Value color={gainColor(performance.totalPerformanceNet)} title={value}>{value}</Kpi.Value>
+        <Kpi.InlineNote color={gainColor(performance.totalPerformanceNet)}>{fmtPct(performance.totalPerformancePct)}</Kpi.InlineNote>
+      </Kpi.ValueRow>
+      <Kpi.Detail>Gross {fmt.format(performance.totalPerformanceGross)}</Kpi.Detail>
+    </Kpi.Root>
   )
 }
 
 export function NetContributionsKpi({ value, periodLabel }: { value: number; periodLabel: string }) {
+  const formattedValue = fmt.format(value)
   return (
-    <Kpi
-      label="Net contributions"
-      tooltip="Deposits minus withdrawals over the selected period."
-      value={fmt.format(value)}
-      valueColor={SEMANTIC_TEXT_CLASSES.netContributions}
-      accent="contributions"
-      subSmall={periodLabel}
-      scope={{ account: 'filterable', period: 'range' }}
-    />
+    <Kpi.Root accent="contributions">
+      <Kpi.Label tooltip="Deposits minus withdrawals over the selected period." scope={{ account: 'filterable', period: 'range' }}>
+        Net contributions
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value color={SEMANTIC_TEXT_CLASSES.netContributions} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.Detail>{periodLabel}</Kpi.Detail>
+    </Kpi.Root>
   )
 }
 
 export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
+  const value = fmt.format(income.total)
   return (
-    <Kpi
-      label="Passive income · trailing 12m"
-      tooltip="Dividends and interest over the latest twelve months. The percentage compares this rolling total with the preceding twelve-month window."
-      value={fmt.format(income.total)}
-      valueColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
-      accent="income"
-      sub={income.changePct == null ? '—' : fmtPct(income.changePct)}
-      subColor={income.changePct == null ? 'text-gray-500' : gainColor(income.changePct)}
-      subInline
-      scope={{ account: 'filterable', period: 'trailing-12m' }}
-    />
+    <Kpi.Root accent="income">
+      <Kpi.Label tooltip="Dividends and interest over the latest twelve months. The percentage compares this rolling total with the preceding twelve-month window." scope={{ account: 'filterable', period: 'trailing-12m' }}>
+        Passive income · trailing 12m
+      </Kpi.Label>
+      <Kpi.ValueRow>
+        <Kpi.Value color={SEMANTIC_TEXT_CLASSES.passiveIncome} title={value}>{value}</Kpi.Value>
+        <Kpi.InlineNote color={income.changePct == null ? 'text-gray-500' : gainColor(income.changePct)}>
+          {income.changePct == null ? '—' : fmtPct(income.changePct)}
+        </Kpi.InlineNote>
+      </Kpi.ValueRow>
+    </Kpi.Root>
   )
 }
 
@@ -85,57 +84,55 @@ function irrNote(status: IrrStatus): string | undefined {
 }
 
 export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
+  const formattedValue = irrValue(value, status)
+  const note = irrNote(status)
   return (
-    <Kpi
-      label={`IRR since tracking${scopeLabel ? ' · selected accounts' : ''}`}
-      tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history."
-      value={irrValue(value, status)}
-      valueColor={gainColor(value)}
-      accent={value == null || value >= 0 ? 'positive' : 'negative'}
-      subSmall={irrNote(status)}
-      scope={{ account: 'filterable', period: 'since-tracking' }}
-    />
+    <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history." scope={{ account: 'filterable', period: 'since-tracking' }}>
+        IRR since tracking{scopeLabel ? ' · selected accounts' : ''}
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value color={gainColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
+      {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}
+    </Kpi.Root>
   )
 }
 
 export function NetUnrealizedKpi({ performance }: { performance: PerformanceSummary }) {
+  const value = fmt.format(performance.unrealizedNet)
   return (
-    <Kpi
-      label="Net unrealized P&L"
-      tooltip="Current unrealized gain after estimated tax."
-      value={fmt.format(performance.unrealizedNet)}
-      valueColor={gainColor(performance.unrealizedNet)}
-      accent={performance.unrealizedNet >= 0 ? 'positive' : 'negative'}
-      subSmall={`Gross ${fmt.format(performance.unrealizedGross)}`}
-      scope={{ account: 'filterable', period: 'as-of' }}
-    />
+    <Kpi.Root accent={performance.unrealizedNet >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Label tooltip="Current unrealized gain after estimated tax." scope={{ account: 'filterable', period: 'as-of' }}>
+        Net unrealized P&amp;L
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value color={gainColor(performance.unrealizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.Detail>Gross {fmt.format(performance.unrealizedGross)}</Kpi.Detail>
+    </Kpi.Root>
   )
 }
 
 export function NetRealizedKpi({ performance }: { performance: PerformanceSummary }) {
+  const value = fmt.format(performance.realizedNet)
   return (
-    <Kpi
-      label="Net realized P&L"
-      tooltip="Crystallized gains and losses after estimated tax."
-      value={fmt.format(performance.realizedNet)}
-      valueColor={gainColor(performance.realizedNet)}
-      accent={performance.realizedNet >= 0 ? 'positive' : 'negative'}
-      subSmall={`Gross ${fmt.format(performance.realizedGross)}`}
-      scope={{ account: 'filterable', period: 'range' }}
-    />
+    <Kpi.Root accent={performance.realizedNet >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Label tooltip="Crystallized gains and losses after estimated tax." scope={{ account: 'filterable', period: 'range' }}>
+        Net realized P&amp;L
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value color={gainColor(performance.realizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.Detail>Gross {fmt.format(performance.realizedGross)}</Kpi.Detail>
+    </Kpi.Root>
   )
 }
 
 export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
+  const formattedValue = irrValue(value, status)
+  const note = irrNote(status)
   return (
-    <Kpi
-      label={`IRR · trailing 3y${scopeLabel ? ' · selected accounts' : ''}`}
-      tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period."
-      value={irrValue(value, status)}
-      valueColor={gainColor(value)}
-      accent={value == null || value >= 0 ? 'positive' : 'negative'}
-      subSmall={irrNote(status)}
-      scope={{ account: 'filterable', period: 'trailing-3y' }}
-    />
+    <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Label tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period." scope={{ account: 'filterable', period: 'trailing-3y' }}>
+        IRR · trailing 3y{scopeLabel ? ' · selected accounts' : ''}
+      </Kpi.Label>
+      <Kpi.ValueRow><Kpi.Value color={gainColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
+      {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}
+    </Kpi.Root>
   )
 }

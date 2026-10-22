@@ -7,10 +7,21 @@ import { QualityIndicatorCard } from '@/shared/ui/QualityIndicatorCard'
 import { hasMaterialQualityGap } from '@/shared/quality/qualityThresholds'
 import { computeFundExposurePercentages } from './fundQualityScope.logic'
 
-export function LookThroughCoverageSummary({ report, compact = false, notApplicableValue = 0 }: {
+interface LookThroughCoverageSummaryProps {
   report: FundCoverageReport | null
-  compact?: boolean
   notApplicableValue?: number
+}
+
+export function LookThroughCoverageSummary(props: LookThroughCoverageSummaryProps) {
+  return <LookThroughCoverageSummaryView {...props} variant="detailed" />
+}
+
+export function CompactLookThroughCoverageSummary(props: LookThroughCoverageSummaryProps) {
+  return <LookThroughCoverageSummaryView {...props} variant="compact" />
+}
+
+function LookThroughCoverageSummaryView({ report, variant, notApplicableValue = 0 }: LookThroughCoverageSummaryProps & {
+  variant: 'compact' | 'detailed'
 }) {
   if (!report) return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-500">
@@ -44,7 +55,7 @@ export function LookThroughCoverageSummary({ report, compact = false, notApplica
       ? 'Pending verification'
       : 'Limited'
 
-  if (compact) {
+  if (variant === 'compact') {
     const cards = [
       {
         label: 'Identified exposure',
@@ -242,10 +253,9 @@ function SourceReliability({
       </button>
       {isExpanded && (
         <div id={detailsId} className="mt-3 border-t border-gray-800 pt-3">
-          <BreakdownGroup
+          <InlineBreakdownGroup
             title="Source reliability details"
             note="Another view of the same identified exposure"
-            bordered={false}
             rows={[
               { label: 'Reliable subset', amount: reliableValue, percentage: reliablePercentage, color: SEMANTIC_COLORS.coverage },
               { label: 'Other source tiers', amount: otherSourceValue, percentage: otherSourcePercentage, color: SEMANTIC_COLORS.netContributions },
@@ -294,17 +304,20 @@ interface BreakdownRow {
   color: string
 }
 
-function BreakdownGroup({
-  title, note, badge, rows, bordered = true,
-}: {
+interface BreakdownGroupProps {
   title: string
   note: string
   badge?: string
   rows: BreakdownRow[]
-  bordered?: boolean
-}) {
+}
+
+function InlineBreakdownGroup(props: BreakdownGroupProps) {
+  return <BreakdownGroupContent {...props} className="mt-3" />
+}
+
+function BreakdownGroupContent({ title, note, badge, rows, className }: BreakdownGroupProps & { className: string }) {
   return (
-    <div className={bordered ? 'mt-3 border-t border-gray-800 pt-3' : 'mt-3'}>
+    <div className={className}>
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <div className="text-[11px] font-semibold text-gray-400">{title}</div>

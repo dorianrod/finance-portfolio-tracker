@@ -32,75 +32,54 @@ export function KpiBar({ rows, globalTri }: Props) {
 
   return (
     <div className="mb-4 flex flex-wrap items-start gap-6 border-b border-gray-800 pb-4">
-      <Kpi
-        label="Net portfolio value"
-        tooltip="Market value after deducting estimated taxes on unrealized gains. Calculation: cost basis + net unrealized P&L."
-        value={fmt.format(totalValueNet)}
-        accent="portfolio"
-        subSmall={`gross ${fmt.format(totalValue)}`}
-      />
+      <Kpi.Root accent="portfolio">
+        <Kpi.Label tooltip="Market value after deducting estimated taxes on unrealized gains. Calculation: cost basis + net unrealized P&L.">Net portfolio value</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{fmt.format(totalValueNet)}</Kpi.Value></Kpi.ValueRow>
+        <Kpi.Detail>gross {fmt.format(totalValue)}</Kpi.Detail>
+      </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      <Kpi
-        label="Net unrealized P&L"
-        tooltip="Unrealized gain net of estimated taxes. Tax rate configurable per asset (default: 30% flat tax). Calculation: gross P&L × (1 − tax rate)."
-        value={fmt.format(totalUnrealizedNet)}
-        accent={totalUnrealizedNet >= 0 ? 'positive' : 'negative'}
-        sub={fmtPct(unrealizedPctNet)}
-        subColor={gainColor(totalUnrealizedNet)}
-        subSmall={`gross ${fmt.format(totalUnrealized)} (${fmtPct(unrealizedPctGross)})`}
-      />
+      <Kpi.Root accent={totalUnrealizedNet >= 0 ? 'positive' : 'negative'}>
+        <Kpi.Label tooltip="Unrealized gain net of estimated taxes. Tax rate configurable per asset (default: 30% flat tax). Calculation: gross P&L × (1 − tax rate).">Net unrealized P&amp;L</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{fmt.format(totalUnrealizedNet)}</Kpi.Value></Kpi.ValueRow>
+        <Kpi.Note color={gainColor(totalUnrealizedNet)}>{fmtPct(unrealizedPctNet)}</Kpi.Note>
+        <Kpi.Detail>gross {fmt.format(totalUnrealized)} ({fmtPct(unrealizedPctGross)})</Kpi.Detail>
+      </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      <Kpi
-        label="Realized P&L"
-        tooltip="Sum of gains/losses crystallized across all sales, across all accounts."
-        value={fmt.format(totalRealized)}
-        accent={totalRealized >= 0 ? 'positive' : 'negative'}
-        subColor={gainColor(totalRealized)}
-      />
+      <Kpi.Root accent={totalRealized >= 0 ? 'positive' : 'negative'}>
+        <Kpi.Label tooltip="Sum of gains/losses crystallized across all sales, across all accounts.">Realized P&amp;L</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{fmt.format(totalRealized)}</Kpi.Value></Kpi.ValueRow>
+      </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      <Kpi
-        label="Dividends"
-        tooltip="Total dividends received across all positions (active and closed)."
-        value={fmt.format(totalDividends)}
-        accent="income"
-        subColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
-      />
+      <Kpi.Root accent="income">
+        <Kpi.Label tooltip="Total dividends received across all positions (active and closed).">Dividends</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{fmt.format(totalDividends)}</Kpi.Value></Kpi.ValueRow>
+      </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      {totalInterest > 0 && <>
-        <Kpi
-          label="Interest"
-          tooltip="Total interest received (savings accounts, bonds). Included in the total realized return."
-          value={fmt.format(totalInterest)}
-          accent="income"
-          subColor={SEMANTIC_TEXT_CLASSES.passiveIncome}
-        />
+      {totalInterest > 0 ? <>
+        <Kpi.Root accent="income">
+          <Kpi.Label tooltip="Total interest received (savings accounts, bonds). Included in the total realized return.">Interest</Kpi.Label>
+          <Kpi.ValueRow><Kpi.Value>{fmt.format(totalInterest)}</Kpi.Value></Kpi.ValueRow>
+        </Kpi.Root>
         <div className="w-px bg-gray-700" />
-      </>}
-      <Kpi
-        label="Total realized return"
-        tooltip="Realized P&L + dividends + interest. Does not include unrealized gains."
-        value={fmt.format(totalReturn)}
-        accent={totalReturn >= 0 ? 'positive' : 'negative'}
-        subColor={gainColor(totalReturn)}
-      />
+      </> : null}
+      <Kpi.Root accent={totalReturn >= 0 ? 'positive' : 'negative'}>
+        <Kpi.Label tooltip="Realized P&L + dividends + interest. Does not include unrealized gains.">Total realized return</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{fmt.format(totalReturn)}</Kpi.Value></Kpi.ValueRow>
+      </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      {globalTri != null && <>
+      {globalTri != null ? <>
         <div className="w-px bg-gray-700" />
-        <Kpi
-          label="IRR since tracking"
-          tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history."
-          value={`${globalTri >= 0 ? '+' : ''}${globalTri.toFixed(2)}%`}
-          valueColor={gainColor(globalTri)}
-          accent={globalTri >= 0 ? 'positive' : 'negative'}
-        />
-      </>}
+        <Kpi.Root accent={globalTri >= 0 ? 'positive' : 'negative'}>
+          <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history.">IRR since tracking</Kpi.Label>
+          <Kpi.ValueRow><Kpi.Value color={gainColor(globalTri)}>{globalTri >= 0 ? '+' : ''}{globalTri.toFixed(2)}%</Kpi.Value></Kpi.ValueRow>
+        </Kpi.Root>
+      </> : null}
       <div className="w-px bg-gray-700" />
-      <Kpi
-        label="Positions"
-        tooltip="Number of active positions (valued today) and closed positions (fully sold)."
-        value={String(active.length)}
-        sub={`${rows.length - active.length} closed`}
-      />
+      <Kpi.Root>
+        <Kpi.Label tooltip="Number of active positions (valued today) and closed positions (fully sold).">Positions</Kpi.Label>
+        <Kpi.ValueRow><Kpi.Value>{active.length}</Kpi.Value></Kpi.ValueRow>
+        <Kpi.Note>{rows.length - active.length} closed</Kpi.Note>
+      </Kpi.Root>
     </div>
   )
 }

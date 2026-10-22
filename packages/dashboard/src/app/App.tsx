@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useData } from "@/hooks/useData";
 import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
 import { useCashHistory } from "@/hooks/useCashHistory";
@@ -17,29 +17,23 @@ import { useAnnualIncomeSavings } from "@/hooks/useAnnualIncomeSavings";
 import { filterAnnualIncomeSavingsByPeriod } from "@/logic/annualIncomeSavings.logic";
 import { useRawIsinData } from "@/hooks/useRawIsinData";
 import { useFundHoldingsData } from "@/hooks/useFundHoldings";
-import { PositionsTable } from "@/features/positions-table/PositionsTable";
 import {
   ActiveFilterSummary,
   FilterButton,
   FilterPanel,
+  ResetFiltersButton,
 } from "@/features/filters/FilterBar";
 import {
-  AllocationCharts,
   AllocationViewToggle,
   type AllocationView,
-} from "@/features/allocation-charts/AllocationCharts";
+} from "@/features/allocation-charts/AllocationViewToggle";
 import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
 import { selectHistoricalFundHoldingsAtDate } from "@/features/allocation-charts/concentrationTrend.logic";
 import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
-import { OverviewTab } from "@/features/dashboard/OverviewTab";
 import { OverviewPeriodFilter } from "@/features/dashboard/OverviewPeriodFilter";
 import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/features/dashboard/overviewComparison.logic";
-import { WealthTab } from "@/features/dashboard/WealthTab";
-import { PerformanceTab } from "@/features/dashboard/PerformanceTab";
-import { DataQualityTab } from "@/features/dashboard/DataQualityTab";
 import type { QualityThemeId } from "@/features/dashboard/DataQualityTab";
-import { FundLookThroughTab } from "@/features/fund-holdings/FundLookThroughTab";
 import type { FundExposureSort } from "@/features/fund-holdings/FundHoldingsExplorer";
 import {
   computeFundExposurePercentages,
@@ -93,6 +87,32 @@ import {
   sortPositionsForTable,
 } from "./app.logic";
 
+const loadOverviewTab = () =>
+  import("@/features/dashboard/OverviewTab").then((module) => ({ default: module.OverviewTab }));
+const loadWealthTab = () =>
+  import("@/features/dashboard/WealthTab").then((module) => ({ default: module.WealthTab }));
+const loadPerformanceTab = () =>
+  import("@/features/dashboard/PerformanceTab").then((module) => ({ default: module.PerformanceTab }));
+const loadAllocationCharts = () =>
+  import("@/features/allocation-charts/AllocationCharts").then((module) => ({ default: module.AllocationCharts }));
+const loadPositionsTable = () =>
+  import("@/features/positions-table/PositionsTable").then((module) => ({ default: module.PositionsTable }));
+const loadGroupedPositionsTable = () =>
+  import("@/features/positions-table/PositionsTable").then((module) => ({ default: module.GroupedPositionsTable }));
+const loadFundLookThroughTab = () =>
+  import("@/features/fund-holdings/FundLookThroughTab").then((module) => ({ default: module.FundLookThroughTab }));
+const loadDataQualityTab = () =>
+  import("@/features/dashboard/DataQualityTab").then((module) => ({ default: module.DataQualityTab }));
+
+const OverviewTab = lazy(loadOverviewTab);
+const WealthTab = lazy(loadWealthTab);
+const PerformanceTab = lazy(loadPerformanceTab);
+const AllocationCharts = lazy(loadAllocationCharts);
+const PositionsTable = lazy(loadPositionsTable);
+const GroupedPositionsTable = lazy(loadGroupedPositionsTable);
+const FundLookThroughTab = lazy(loadFundLookThroughTab);
+const DataQualityTab = lazy(loadDataQualityTab);
+
 type AnalysisTab =
   | "overview"
   | "wealth"
@@ -100,6 +120,19 @@ type AnalysisTab =
   | "allocation"
   | "holdings"
   | "quality";
+
+const TAB_PRELOADERS: Record<AnalysisTab, () => Promise<unknown>> = {
+  overview: loadOverviewTab,
+  wealth: loadWealthTab,
+  performance: loadPerformanceTab,
+  allocation: loadAllocationCharts,
+  holdings: loadPositionsTable,
+  quality: loadDataQualityTab,
+};
+
+function preloadTab(tab: AnalysisTab) {
+  void TAB_PRELOADERS[tab]();
+}
 
 const PRIMARY_TABS: Array<{
   id: Exclude<AnalysisTab, "quality">;
@@ -154,6 +187,14 @@ const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }
       "Review identified economic exposure through ETFs and funds, grouped by issuer and security.",
   },
 };
+
+function DashboardPanelFallback() {
+  return (
+    <div className="mb-6 rounded-xl border border-gray-800 bg-gray-900/50 p-8 text-center text-sm text-gray-500">
+      Loading analysis…
+    </div>
+  );
+}
 
 export default function App() {
   const {
@@ -311,6 +352,9 @@ export default function App() {
       sortDir,
     ],
   );
+  const PositionsTableVariant = allAccountTypes.length > 0
+    ? GroupedPositionsTable
+    : PositionsTable;
 
   const fallbackAccountHistory = useMemo(
     () =>
@@ -656,6 +700,8 @@ export default function App() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
+                  onMouseEnter={() => preloadTab(tab.id)}
+                  onFocus={() => preloadTab(tab.id)}
                   className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-blue-500 text-white" : "border-transparent text-gray-500 hover:text-gray-300"}`}
                 >
                   {tab.label}
@@ -667,6 +713,8 @@ export default function App() {
                   setSelectedQualityTheme(null);
                   setActiveTab("quality");
                 }}
+                onMouseEnter={() => preloadTab("quality")}
+                onFocus={() => preloadTab("quality")}
                 className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-blue-500 border-l-gray-800 text-white" : "border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300"}`}
               >
                 Data quality
@@ -794,8 +842,9 @@ export default function App() {
               onRemove={(item) =>
                 setFilters((current) => clearFilterGroup(current, item.key))
               }
-              onReset={handleResetFilters}
-              showReset={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)}
+              actions={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)
+                ? <ResetFiltersButton onClick={handleResetFilters} />
+                : undefined}
             >
               {activeTab === "allocation" && allocationFilter && (
                 <FilterChipBar
@@ -821,111 +870,114 @@ export default function App() {
               demoPresetActive={demoPresetActive}
             />
 
-            {activeTab === "overview" && (
-              <OverviewTab
-                comparison={overviewComparison}
-                rollingThreeYearTri={rollingThreeYearTriComparison}
-                irrStatus={irrStatus}
-                onNavigate={setActiveTab}
-              />
-            )}
-            {activeTab === "wealth" && (
-              <WealthTab
-                history={displayedHistory}
-                accountTypeData={accountTypeData}
-                accountTypeHistory={displayedTypeHistory}
-                accountTypes={typeHistory.accountTypes}
-                typeCategories={typeHistory.typeCategories}
-                savings={trailingSavings}
-                monthlyOps={monthlyOps}
-                drivers={wealthDrivers}
-                trailingYearComparison={trailingYearComparison}
-                annualIncomeSavings={displayedAnnualIncomeSavings}
-              />
-            )}
-            {activeTab === "performance" && (
-              <PerformanceTab
-                history={displayedHistory}
-                passiveIncome={passiveIncome}
-                rawPositions={rawPositions}
-                rawOperations={rawOperations}
-                accountFilters={filters.accounts}
-                accountTypeFilters={filters.accountTypes}
-                dateFrom={filters.dateFrom}
-                performance={performance}
-                income={trailingIncome}
-                globalTri={globalTri}
-                irrStatus={irrStatus}
-                irrScopeLabel={irrScopeLabel}
-              />
-            )}
-            {activeTab === "allocation" && (
-              <AllocationCharts
-                positions={currentPositions}
-                rawPositions={rawPositions}
-                fundHoldings={periodEndFundHoldings}
-                fundHoldingsHistory={fundData.history}
-                accountFilters={filters.accounts}
-                accountTypeFilters={filters.accountTypes}
-                activeFilter={allocationFilter}
-                onActiveFilterChange={setAllocationFilter}
-                view={allocationView}
-                dateFrom={filters.dateFrom}
-                dateTo={filters.dateTo}
-              />
-            )}
-            {activeTab === "holdings" && (
-              <div
-                id={`holdings-${holdingsView}-panel`}
-                role="region"
-                aria-labelledby={`holdings-${holdingsView}-tab`}
-              >
-                {holdingsView === "positions" ? (
-                  <PositionsTable
-                    data={tableData}
-                    groupByType={allAccountTypes.length > 0}
-                    sortKey={sortKey}
-                    sortDir={sortDir}
-                    onSort={handleSort}
-                    expanded={expandedPositionRows}
-                    onExpandedChange={setExpandedPositionRows}
-                    fundHoldings={periodEndFundHoldings}
-                    fundStatuses={fundData.statuses}
-                    onOpenCompleteHoldings={(fundName) => {
-                      setUnderlyingQuery(fundName);
-                      setHoldingsView("underlying");
-                    }}
-                  />
-                ) : (
-                  <FundLookThroughTab
-                    positions={currentPositions}
-                    holdings={periodEndFundHoldings}
-                    statuses={fundData.statuses}
-                    query={underlyingQuery}
-                    onQueryChange={setUnderlyingQuery}
-                    sort={underlyingSort}
-                    onSortChange={setUnderlyingSort}
-                    expanded={expandedUnderlyingIssuers}
-                    onExpandedChange={setExpandedUnderlyingIssuers}
-                  />
-                )}
-              </div>
-            )}
-            {activeTab === "quality" && (
-              <DataQualityTab
-                positions={latestAccountPositions}
-                accountLabels={accountLabels}
-                errors={scopedPipelineErrors}
-                manualPriceOverrides={scopedManualPriceOverrides}
-                fundStatuses={fundData.statuses}
-                fundReport={fundData.report}
-                fundHoldings={fundData.holdings}
-                fundSnapshots={fundData.snapshots}
-                fundUnresolved={fundData.unresolved}
-                selectedTheme={selectedQualityTheme}
-                onSelectedThemeChange={setSelectedQualityTheme}
-              />
-            )}
+            <Suspense fallback={<DashboardPanelFallback />}>
+              {activeTab === "overview" && (
+                <OverviewTab
+                  comparison={overviewComparison}
+                  rollingThreeYearTri={rollingThreeYearTriComparison}
+                  irrStatus={irrStatus}
+                  onNavigate={setActiveTab}
+                />
+              )}
+              {activeTab === "wealth" && (
+                <WealthTab
+                  history={displayedHistory}
+                  accountTypeData={accountTypeData}
+                  accountTypeHistory={displayedTypeHistory}
+                  accountTypes={typeHistory.accountTypes}
+                  typeCategories={typeHistory.typeCategories}
+                  savings={trailingSavings}
+                  monthlyOps={monthlyOps}
+                  drivers={wealthDrivers}
+                  trailingYearComparison={trailingYearComparison}
+                  annualIncomeSavings={displayedAnnualIncomeSavings}
+                />
+              )}
+              {activeTab === "performance" && (
+                <PerformanceTab
+                  history={displayedHistory}
+                  passiveIncome={passiveIncome}
+                  rawPositions={rawPositions}
+                  rawOperations={rawOperations}
+                  accountFilters={filters.accounts}
+                  accountTypeFilters={filters.accountTypes}
+                  dateFrom={filters.dateFrom}
+                  performance={performance}
+                  income={trailingIncome}
+                  globalTri={globalTri}
+                  irrStatus={irrStatus}
+                  irrScopeLabel={irrScopeLabel}
+                />
+              )}
+              {activeTab === "allocation" && (
+                <AllocationCharts
+                  positions={currentPositions}
+                  rawPositions={rawPositions}
+                  fundHoldings={periodEndFundHoldings}
+                  fundHoldingsHistory={fundData.history}
+                  accountFilters={filters.accounts}
+                  accountTypeFilters={filters.accountTypes}
+                  activeFilter={allocationFilter}
+                  onActiveFilterChange={setAllocationFilter}
+                  rawData={rawAllocationData}
+                  view={allocationView}
+                  dateFrom={filters.dateFrom}
+                  dateTo={filters.dateTo}
+                />
+              )}
+              {activeTab === "holdings" && (
+                <div
+                  id={`holdings-${holdingsView}-panel`}
+                  role="region"
+                  aria-labelledby={`holdings-${holdingsView}-tab`}
+                >
+                  {holdingsView === "positions" ? (
+                    <PositionsTableVariant
+                      data={tableData}
+                      sortKey={sortKey}
+                      sortDir={sortDir}
+                      onSort={handleSort}
+                      expanded={expandedPositionRows}
+                      onExpandedChange={setExpandedPositionRows}
+                      fundHoldings={periodEndFundHoldings}
+                      fundStatuses={fundData.statuses}
+                      onOpenCompleteHoldings={(fundName) => {
+                        setUnderlyingQuery(fundName);
+                        setHoldingsView("underlying");
+                      }}
+                    />
+                  ) : (
+                    <FundLookThroughTab
+                      positions={currentPositions}
+                      holdings={periodEndFundHoldings}
+                      statuses={fundData.statuses}
+                      query={underlyingQuery}
+                      onQueryChange={setUnderlyingQuery}
+                      sort={underlyingSort}
+                      onSortChange={setUnderlyingSort}
+                      expanded={expandedUnderlyingIssuers}
+                      onExpandedChange={setExpandedUnderlyingIssuers}
+                    />
+                  )}
+                </div>
+              )}
+              {activeTab === "quality" && (
+                <DataQualityTab
+                  positions={latestAccountPositions}
+                  accountLabels={accountLabels}
+                  errors={scopedPipelineErrors}
+                  manualPriceOverrides={scopedManualPriceOverrides}
+                  fundStatuses={fundData.statuses}
+                  fundReport={fundData.report}
+                  fundHoldings={fundData.holdings}
+                  fundSnapshots={fundData.snapshots}
+                  fundUnresolved={fundData.unresolved}
+                  selectedTheme={selectedQualityTheme}
+                  onSelectedThemeChange={setSelectedQualityTheme}
+                  rawData={rawAllocationData}
+                />
+              )}
+            </Suspense>
           </>
         )}
       </div>

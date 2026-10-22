@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { assetDisplayLabel } from '@/shared/format/assetLabel'
 import type { ErrorRow } from '@/hooks/useErrors'
 import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
-import { InfoTooltip } from '@/features/kpis/InfoTooltip'
 
 const TYPE_LABELS: Record<string, string> = {
   unresolved_ticker: 'Unresolved ticker',
@@ -25,7 +24,6 @@ interface Props {
 
 interface ManualPriceOverridesProps {
   manualPriceOverrides: ManualPriceOverride[]
-  showHeader?: boolean
 }
 
 function SortIcon({ col, sortCol, dir }: { col: SortCol; sortCol: SortCol; dir: 'asc' | 'desc' }) {
@@ -233,64 +231,50 @@ export function ErrorsTab({ errors }: Props) {
   )
 }
 
-export function ManualPriceOverridesPanel({ manualPriceOverrides, showHeader = true }: ManualPriceOverridesProps) {
+export function ManualPriceOverridesTable({ manualPriceOverrides }: ManualPriceOverridesProps) {
   return (
-      <section className="space-y-3">
-        {showHeader && <div>
-          <div className="flex items-center gap-2">
-            <h2 className="flex items-center text-base font-semibold text-white">Manual price overrides<InfoTooltip text="Prices forced from asset_prices/others. Open-ended overrides replace automatic market prices until removed or given an end date." scope={{ account: 'filterable', period: 'range' }} /></h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/60 text-blue-300">
-              {manualPriceOverrides.length}
-            </span>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Prices forced from asset_prices/others. Open-ended overrides replace automatic market prices until removed or given an end date.
-          </p>
-        </div>}
-
-        <div className="overflow-x-auto rounded-lg border border-gray-800">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-gray-800 bg-gray-900/60 text-left text-gray-400">
-                <th className="px-3 py-2 font-medium w-24">Status</th>
-                <th className="px-3 py-2 font-medium">Asset</th>
-                <th className="px-3 py-2 font-medium w-28">ISIN / Ticker</th>
-                <th className="px-3 py-2 font-medium w-24">Forced price</th>
-                <th className="px-3 py-2 font-medium w-24">From</th>
-                <th className="px-3 py-2 font-medium w-24">Until</th>
-                <th className="px-3 py-2 font-medium w-36">Source</th>
+    <div className="overflow-x-auto rounded-lg border border-gray-800">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-gray-800 bg-gray-900/60 text-left text-gray-400">
+            <th className="px-3 py-2 font-medium w-24">Status</th>
+            <th className="px-3 py-2 font-medium">Asset</th>
+            <th className="px-3 py-2 font-medium w-28">ISIN / Ticker</th>
+            <th className="px-3 py-2 font-medium w-24">Forced price</th>
+            <th className="px-3 py-2 font-medium w-24">From</th>
+            <th className="px-3 py-2 font-medium w-24">Until</th>
+            <th className="px-3 py-2 font-medium w-36">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {manualPriceOverrides.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="text-center py-8 text-gray-500">No manual price overrides</td>
+            </tr>
+          ) : manualPriceOverrides.map((row, index) => {
+            const openEnded = !row.date_to
+            return (
+              <tr key={`${row.source_file}-${index}`} className="border-b border-gray-800/50 hover:bg-gray-900/40">
+                <td className="px-3 py-2">
+                  <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                    openEnded
+                      ? 'bg-yellow-900/60 text-yellow-300'
+                      : 'bg-gray-800 text-gray-400'
+                  }`}>
+                    {openEnded ? 'Open-ended' : 'Bounded'}
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-gray-300">{row.name || '—'}</td>
+                <td className="px-3 py-2 text-gray-500 font-mono">{row.isin || row.ticker || '—'}</td>
+                <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row)}</td>
+                <td className="px-3 py-2 text-gray-400 font-mono">{row.date_from || '—'}</td>
+                <td className="px-3 py-2 text-gray-400 font-mono">{row.date_to || '—'}</td>
+                <td className="px-3 py-2 text-gray-500 font-mono">{row.source_file}</td>
               </tr>
-            </thead>
-            <tbody>
-              {manualPriceOverrides.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-8 text-gray-500">No manual price overrides</td>
-                </tr>
-              ) : manualPriceOverrides.map((row, index) => {
-                const openEnded = !row.date_to
-                return (
-                  <tr key={`${row.source_file}-${index}`} className="border-b border-gray-800/50 hover:bg-gray-900/40">
-                    <td className="px-3 py-2">
-                      <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                        openEnded
-                          ? 'bg-yellow-900/60 text-yellow-300'
-                          : 'bg-gray-800 text-gray-400'
-                      }`}>
-                        {openEnded ? 'Open-ended' : 'Bounded'}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-gray-300">{row.name || '—'}</td>
-                    <td className="px-3 py-2 text-gray-500 font-mono">{row.isin || row.ticker || '—'}</td>
-                    <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row)}</td>
-                    <td className="px-3 py-2 text-gray-400 font-mono">{row.date_from || '—'}</td>
-                    <td className="px-3 py-2 text-gray-400 font-mono">{row.date_to || '—'}</td>
-                    <td className="px-3 py-2 text-gray-500 font-mono">{row.source_file}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }

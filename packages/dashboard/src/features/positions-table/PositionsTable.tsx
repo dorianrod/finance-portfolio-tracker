@@ -45,7 +45,6 @@ function irrPeriodLabel(years: number | null): string {
 
 interface Props {
   data: PositionRow[]
-  groupByType?: boolean
   sortKey: SortKey
   sortDir: 'asc' | 'desc'
   onSort: (key: SortKey) => void
@@ -56,11 +55,19 @@ interface Props {
   onOpenCompleteHoldings?: (fundName: string) => void
 }
 
-export function PositionsTable({
-  data, groupByType = false, sortKey, sortDir, onSort,
+export function PositionsTable(props: Props) {
+  return <PositionsTableView {...props} grouping="flat" />
+}
+
+export function GroupedPositionsTable(props: Props) {
+  return <PositionsTableView {...props} grouping="account-type" />
+}
+
+function PositionsTableView({
+  data, grouping, sortKey, sortDir, onSort,
   expanded, onExpandedChange,
   fundHoldings = [], fundStatuses = [], onOpenCompleteHoldings,
-}: Props) {
+}: Props & { grouping: 'flat' | 'account-type' }) {
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
@@ -551,7 +558,7 @@ export function PositionsTable({
                 })() : null
 
                 let separator: React.ReactNode = null
-                if (groupByType && isPosition && row.depth === 0) {
+                if (grouping === 'account-type' && isPosition && row.depth === 0) {
                   const currentType = r.account_type ?? ''
                   if (currentType !== lastType) {
                     lastType = currentType

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useRawIsinData } from '@/hooks/useRawIsinData'
+import type { RawIsinData } from '@/hooks/useRawIsinData'
 import { aggregateAllocationPoints, computeMatchingIsins, aggregateFilteredPoints, computeTableRows, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationCharts.logic'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
@@ -16,6 +16,7 @@ import { isAssetAnalysisApplicablePosition } from '@/shared/quality/accountAppli
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
 import { buildHistoricalConcentration, buildHistoricalLookThroughConcentration } from './concentrationTrend.logic'
 import { filterPointsByPeriod } from '@/features/portfolio-charts/portfolioCharts.logic'
+import type { AllocationView } from './AllocationViewToggle'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
@@ -26,30 +27,13 @@ interface AllocationChartsProps {
   accountTypeFilters: Set<string>
   activeFilter: AllocationFilter | null
   onActiveFilterChange: (filter: AllocationFilter | null) => void
+  rawData: RawIsinData
   view: AllocationView
   dateFrom?: string
   dateTo?: string
 }
 
-export type AllocationView = 'current' | 'trend'
-
-interface AllocationViewToggleProps {
-  value: AllocationView
-  onChange: (view: AllocationView) => void
-}
-
-export function AllocationViewToggle({ value, onChange }: AllocationViewToggleProps) {
-  return (
-    <div className="inline-flex rounded-lg border border-gray-800 bg-gray-900 p-1" role="group" aria-label="Diversification view">
-      <button type="button" onClick={() => onChange('current')} aria-pressed={value === 'current'} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${value === 'current' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Current</button>
-      <button type="button" onClick={() => onChange('trend')} aria-pressed={value === 'trend'} className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${value === 'trend' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}>Trend</button>
-    </div>
-  )
-}
-
-export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, view, dateFrom, dateTo }: AllocationChartsProps) {
-  const rawData = useRawIsinData()
-
+export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, rawData, view, dateFrom, dateTo }: AllocationChartsProps) {
   const [showTable, setShowTable] = useState(false)
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
   const applicablePositions = useMemo(

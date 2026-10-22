@@ -48,26 +48,26 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
     ? 'text-gray-500'
     : metric.changePct >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
   const currentLabel = monthRangeLabel(currentMonths)
+  const value = metric.current == null ? '—' : fmt.format(metric.current)
 
   return (
     <KpiCard>
-      <Kpi
-        label={label}
-        tooltip="Rolling total over the latest twelve calendar months, compared with the preceding twelve-month window. The latest month may be partial."
-        value={metric.current == null ? '—' : fmt.format(metric.current)}
-        valueColor={valueColor}
-        accent={tone === 'blue' ? 'contributions' : metric.current == null || metric.current >= 0 ? 'positive' : 'negative'}
-        sub={metric.changePct == null ? '—' : fmtPct(metric.changePct)}
-        subColor={changeColor}
-        subSmall={currentLabel || 'Insufficient history'}
-        subInline
-        footer={
-          <>
-            Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
-          </>
-        }
-      scope={{ account: 'filterable', period: 'trailing-12m' }}
-      />
+      <Kpi.Root accent={tone === 'blue' ? 'contributions' : metric.current == null || metric.current >= 0 ? 'positive' : 'negative'}>
+        <Kpi.Label
+          tooltip="Rolling total over the latest twelve calendar months, compared with the preceding twelve-month window. The latest month may be partial."
+          scope={{ account: 'filterable', period: 'trailing-12m' }}
+        >
+          {label}
+        </Kpi.Label>
+        <Kpi.ValueRow>
+          <Kpi.Value color={valueColor} title={value}>{value}</Kpi.Value>
+          <Kpi.InlineNote color={changeColor}>{metric.changePct == null ? '—' : fmtPct(metric.changePct)}</Kpi.InlineNote>
+        </Kpi.ValueRow>
+        <Kpi.Detail>{currentLabel || 'Insufficient history'}</Kpi.Detail>
+        <Kpi.Footer>
+          Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
+        </Kpi.Footer>
+      </Kpi.Root>
     </KpiCard>
   )
 }

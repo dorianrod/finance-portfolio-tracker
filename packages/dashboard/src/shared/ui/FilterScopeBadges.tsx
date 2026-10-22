@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, use, type ReactNode } from 'react'
 import type { Filters } from '@/types/filters'
 
 export type AccountScopeMode = 'filterable' | 'global'
@@ -165,7 +165,7 @@ const TONE_CLASSES = {
 } as const
 
 export function FilterScopeBadges({ account, period, effectiveDate }: FilterScopeSpec) {
-  const context = useContext(FilterScopeContext)
+  const context = use(FilterScopeContext)
   if (!context) return null
   const badges = [
     accountBadge(account, context.filters, context.accountLabels),

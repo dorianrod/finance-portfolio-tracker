@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react'
 import type { PositionRow } from '@/types/domain'
 import type { ErrorRow } from '@/hooks/useErrors'
 import type { ManualPriceOverride } from '@/hooks/useManualPriceOverrides'
-import { useRawIsinData } from '@/hooks/useRawIsinData'
+import type { RawIsinData } from '@/hooks/useRawIsinData'
 import { AllocationCoverageCard } from '@/features/allocation-charts/AllocationCoverageCard'
 import { computeAllocationCoverageByAccount, computeAllocationCoverageByDimension } from '@/features/allocation-charts/allocationCoverage.logic'
-import { ErrorsTab, ManualPriceOverridesPanel } from '@/features/errors/ErrorsTab'
+import { ErrorsTab, ManualPriceOverridesTable } from '@/features/errors/ErrorsTab'
 import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/hooks/useFundHoldings'
 import { LookThroughCoverageSummary } from '@/features/fund-holdings/LookThroughCoverageSummary'
 import { FundDataQualityPanel } from '@/features/fund-holdings/FundDataQualityPanel'
@@ -65,7 +65,7 @@ const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
 
 export function DataQualityTab({
   positions, accountLabels, errors, manualPriceOverrides, fundStatuses, fundReport,
-  fundHoldings, fundSnapshots, fundUnresolved, selectedTheme, onSelectedThemeChange,
+  fundHoldings, fundSnapshots, fundUnresolved, selectedTheme, onSelectedThemeChange, rawData,
 }: {
   positions: PositionRow[]
   accountLabels: Record<string, string>
@@ -78,11 +78,11 @@ export function DataQualityTab({
   fundUnresolved: FundUnresolved[]
   selectedTheme: QualityThemeId | null
   onSelectedThemeChange: (theme: QualityThemeId) => void
+  rawData: RawIsinData
 }) {
   const [fundDiagnosticsOpen, setFundDiagnosticsOpen] = useState(false)
   const [classificationDetailsOpen, setClassificationDetailsOpen] = useState(false)
   const [classificationDimension, setClassificationDimension] = useState<keyof typeof DIMENSION_LABELS | null>(null)
-  const rawData = useRawIsinData()
   const coverage = useMemo(
     () => rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData),
     [positions, rawData],
@@ -325,7 +325,7 @@ export function DataQualityTab({
           {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
 
           {activeThemeId === 'prices' && (
-            <ManualPriceOverridesPanel manualPriceOverrides={manualPriceOverrides} showHeader={false} />
+            <ManualPriceOverridesTable manualPriceOverrides={manualPriceOverrides} />
           )}
 
           {activeThemeId === 'classification' && (

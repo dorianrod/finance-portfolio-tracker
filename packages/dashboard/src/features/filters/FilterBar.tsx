@@ -240,19 +240,17 @@ export function FilterButton({
 export function ActiveFilterSummary({
   items,
   onRemove,
-  onReset,
   leading,
   children,
-  showReset = true,
+  actions,
 }: {
   items: FilterSummaryItem[]
   onRemove: (item: FilterSummaryItem) => void
-  onReset: () => void
   leading?: ReactNode
   children?: ReactNode
-  showReset?: boolean
+  actions?: ReactNode
 }) {
-  if (items.length === 0 && !leading && !children) return null
+  if (items.length === 0 && !leading && !children && !actions) return null
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
@@ -270,15 +268,19 @@ export function ActiveFilterSummary({
         </button>
       ))}
       {children}
-      {showReset && (
-        <button
-          type="button"
-          onClick={onReset}
-          className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
-        >
-          Reset all
-        </button>
-      )}
+      {actions}
     </div>
+  )
+}
+
+export function ResetFiltersButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
+    >
+      Reset all
+    </button>
   )
 }
