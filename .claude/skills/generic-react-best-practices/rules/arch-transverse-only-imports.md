@@ -1,0 +1,37 @@
+---
+title: Import Other Domains Only Through Transverse Domains
+impact: CRITICAL
+impactDescription: keeps domains isolated and free of import cycles
+tags: arch, imports, boundaries, transverse, circular-deps
+---
+
+## Import Other Domains Only Through Transverse Domains
+
+**Impact: CRITICAL (keeps domains isolated and free of import cycles)**
+
+A domain imports only from itself, from `src/shared`, and from an explicit short list of transverse domains (stable, generic, no business context: for example `appShell` or a `featureFlags` module). Sibling sub-domains (e.g. `orders` and `invoices`) and other business domains (`projects`, `contracts`, `directory`...) are forbidden: such imports couple release cycles and create import cycles. Enforce the allowed list with an ESLint restriction on import paths.
+
+**Incorrect (orders reaches into its sibling invoices):**
+
+```tsx
+// src/domains/sales/orders/pages/detail/components/InvoicesBlock.tsx
+import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
+```
+
+**Correct (shared code is promoted, transverse domains are imported freely):**
+
+```tsx
+// Promoted once to the main domain's shared folder, used by both sub-domains
+import { getStatusBadgeType } from '@/domains/sales/shared/helpers/mappers/getStatusBadgeType'
+// Transverse domains from the explicit list are always allowed, through their public entry
+import { Alert } from '@/domains/appShell/alert'
+import { useFlag } from '@/domains/featureFlags'
+```
+
+Escape hatches, in order of preference:
+
+1. Move the code to the main domain's `shared/` (used by sibling sub-domains) or to `src/shared/` (generic, no domain vocabulary).
+2. Reference the other entity by id or route (store `projectId`, link with a path string) instead of importing its hooks or components.
+3. Add a domain to the transverse list only by an explicit architecture decision.
+
+See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`

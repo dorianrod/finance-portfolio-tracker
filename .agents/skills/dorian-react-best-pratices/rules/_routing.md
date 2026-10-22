@@ -1,0 +1,18 @@
+# Rule Routing
+
+Use this table to select candidate rule files from observable code patterns or an explicit review intent. Then read the selected files and confirm their applicability and exceptions.
+
+Routing rules:
+
+- Load only the files linked by a matching signal.
+- When several distinct signals match, load every corresponding file.
+- Prefer the most specific signal when routes overlap.
+- A keyword alone is not a match unless its route explicitly says so.
+- If nothing matches, the Dorian catalog has no applicable rule.
+- Ignore files beginning with `_`; they are maintenance material.
+
+| Observable pattern or intent | Section prefix | Rule file |
+| --- | --- | --- |
+| A React feature or domain component contains a literal color (`#…`, `rgb(…)`, `hsl(…)`, `oklch(…)`, or a concrete CSS color name such as `red`), including in inline styles or SVG attributes. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
+| A React feature or domain component uses an arbitrary or palette-specific Tailwind color such as `text-[#b91c1c]`, `bg-red-500`, or `border-slate-300`. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
+| The request asks to introduce, review, centralize, or name colors used by business UI. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
