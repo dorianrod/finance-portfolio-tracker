@@ -19,4 +19,26 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/shared/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['@/domains/**'],
+          message: 'Shared code must not depend on business domains.',
+        }],
+      }],
+    },
+  },
+  {
+    files: ['src/domains/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['@/app/**'],
+          message: 'Business domains must not depend on the application shell.',
+        }],
+      }],
+    },
+  },
 ])

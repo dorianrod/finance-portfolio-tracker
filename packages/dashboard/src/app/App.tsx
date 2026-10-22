@@ -1,74 +1,74 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { useData } from "@/hooks/useData";
-import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
-import { useCashHistory } from "@/hooks/useCashHistory";
-import { useAllPositions } from "@/hooks/useAllPositions";
-import { useErrors } from "@/hooks/useErrors";
-import { useManualPriceOverrides } from "@/hooks/useManualPriceOverrides";
+import { useData } from "@/domains/portfolio/apis/queries/useData";
+import { usePortfolioHistory } from "@/domains/portfolio/apis/queries/usePortfolioHistory";
+import { useCashHistory } from "@/domains/portfolio/apis/queries/useCashHistory";
+import { useAllPositions } from "@/domains/portfolio/apis/queries/useAllPositions";
+import { useErrors } from "@/domains/portfolio/apis/queries/useErrors";
+import { useManualPriceOverrides } from "@/domains/portfolio/apis/queries/useManualPriceOverrides";
 import {
   normalizeAccountSelection,
   useFilteredPortfolioHistory,
-} from "@/hooks/useFilteredPortfolioHistory";
-import { useMonthlyOps } from "@/hooks/useMonthlyOps";
-import { useSavingCapacity } from "@/hooks/useSavingCapacity";
-import { usePassiveIncome } from "@/hooks/usePassiveIncome";
-import { useAccountTypeHistory } from "@/hooks/useAccountTypeHistory";
-import { useAnnualIncomeSavings } from "@/hooks/useAnnualIncomeSavings";
-import { filterAnnualIncomeSavingsByPeriod } from "@/logic/annualIncomeSavings.logic";
-import { useRawIsinData } from "@/hooks/useRawIsinData";
-import { useFundHoldingsData } from "@/hooks/useFundHoldings";
+} from "@/domains/portfolio/apis/queries/useFilteredPortfolioHistory";
+import { useMonthlyOps } from "@/domains/portfolio/apis/queries/useMonthlyOps";
+import { useSavingCapacity } from "@/domains/portfolio/apis/queries/useSavingCapacity";
+import { usePassiveIncome } from "@/domains/portfolio/apis/queries/usePassiveIncome";
+import { useAccountTypeHistory } from "@/domains/portfolio/apis/queries/useAccountTypeHistory";
+import { useAnnualIncomeSavings } from "@/domains/portfolio/apis/queries/useAnnualIncomeSavings";
+import { filterAnnualIncomeSavingsByPeriod } from "@/domains/portfolio/helpers/annualIncomeSavings.logic";
+import { useRawIsinData } from "@/domains/portfolio/apis/queries/useRawIsinData";
+import { useFundHoldingsData } from "@/domains/portfolio/apis/queries/useFundHoldings";
 import {
   ActiveFilterSummary,
   FilterButton,
   FilterPanel,
   ResetFiltersButton,
-} from "@/features/filters/FilterBar";
+} from "@/domains/portfolio/components/filters/FilterBar";
 import {
   AllocationViewToggle,
   type AllocationView,
-} from "@/features/allocation-charts/AllocationViewToggle";
-import { FilterChipBar } from "@/features/allocation-charts/FilterChipBar";
-import { computeAllocationCoverageByAccount } from "@/features/allocation-charts/allocationCoverage.logic";
-import { selectHistoricalFundHoldingsAtDate } from "@/features/allocation-charts/concentrationTrend.logic";
-import type { AllocationFilter } from "@/features/allocation-charts/allocationCharts.types";
-import { OverviewPeriodFilter } from "@/features/dashboard/OverviewPeriodFilter";
-import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/features/dashboard/overviewComparison.logic";
-import type { QualityThemeId } from "@/features/dashboard/DataQualityTab";
-import type { FundExposureSort } from "@/features/fund-holdings/FundHoldingsExplorer";
+} from "@/domains/portfolio/components/allocation-charts/AllocationViewToggle";
+import { FilterChipBar } from "@/domains/portfolio/components/allocation-charts/FilterChipBar";
+import { computeAllocationCoverageByAccount } from "@/domains/portfolio/components/allocation-charts/allocationCoverage.logic";
+import { selectHistoricalFundHoldingsAtDate } from "@/domains/portfolio/components/allocation-charts/concentrationTrend.logic";
+import type { AllocationFilter } from "@/domains/portfolio/components/allocation-charts/allocationCharts.types";
+import { OverviewPeriodFilter } from "@/domains/portfolio/pages/OverviewPeriodFilter";
+import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/domains/portfolio/pages/overviewComparison.logic";
+import type { QualityThemeId } from "@/domains/portfolio/pages/DataQualityTab";
+import type { FundExposureSort } from "@/domains/portfolio/components/fund-holdings/FundHoldingsExplorer";
 import {
   computeFundExposurePercentages,
   scopeFundQualityData,
-} from "@/features/fund-holdings/fundQualityScope.logic";
+} from "@/domains/portfolio/components/fund-holdings/fundQualityScope.logic";
 import {
   HoldingsViewTabs,
   type HoldingsView,
-} from "@/features/holdings/HoldingsViewTabs";
-import type { Filters, SortKey } from "@/types/filters";
+} from "@/domains/portfolio/components/holdings/HoldingsViewTabs";
+import type { Filters, SortKey } from "@/domains/portfolio/types/filters";
 import type { ExpandedState } from "@tanstack/react-table";
-import { accountFilterId, rawAccountId } from "@/shared/filters/accountFilter";
-import { buildPositionRows } from "@/logic/positionHierarchy.logic";
-import { FilterScopeProvider } from "@/shared/ui/FilterScopeBadges";
+import { accountFilterId, rawAccountId } from "@/domains/portfolio/helpers/filters/accountFilter";
+import { buildPositionRows } from "@/domains/portfolio/helpers/positionHierarchy.logic";
+import { FilterScopeProvider } from "@/domains/portfolio/components/filters/FilterScopeBadges";
 import {
   accountLabel,
   clearFilterGroup,
   filterSummaries,
   filterVisibilityForTab,
   resetFilters,
-} from "@/features/filters/filterBar.logic";
-import { hasMaterialQualityGap } from "@/shared/quality/qualityThresholds";
+} from "@/domains/portfolio/components/filters/filterBar.logic";
+import { hasMaterialQualityGap } from "@/domains/portfolio/helpers/quality/qualityThresholds";
 import { partitionPercentages } from "@/shared/format/percentage";
 import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
-} from "@/shared/ui/AnalysisReliabilityKpi";
+} from "@/domains/portfolio/components/quality/AnalysisReliabilityKpi";
 import {
   aggregateReliabilityTone,
   percentageReliabilityTone,
   pipelineReliabilityTone,
   pipelineStatusLabel,
   type AnalysisReliabilityTone,
-} from "@/shared/quality/analysisReliability";
+} from "@/domains/portfolio/helpers/quality/analysisReliability";
 import {
   buildCumulativeWealthDrivers,
   computePerformanceSummary,
@@ -77,7 +77,7 @@ import {
   computeTrailing12mSavings,
   filterMonthlyOpsByAccounts,
   filterPointsByPeriod,
-} from "@/features/portfolio-charts/portfolioCharts.logic";
+} from "@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic";
 import {
   applyPositionFilters,
   applyAccountFilterToHistory,
@@ -85,24 +85,24 @@ import {
   scopeManualPriceOverrides,
   scopePipelineErrors,
   sortPositionsForTable,
-} from "./app.logic";
+} from "@/domains/portfolio/helpers/app.logic";
 
 const loadOverviewTab = () =>
-  import("@/features/dashboard/OverviewTab").then((module) => ({ default: module.OverviewTab }));
+  import("@/domains/portfolio/pages/OverviewTab").then((module) => ({ default: module.OverviewTab }));
 const loadWealthTab = () =>
-  import("@/features/dashboard/WealthTab").then((module) => ({ default: module.WealthTab }));
+  import("@/domains/portfolio/pages/WealthTab").then((module) => ({ default: module.WealthTab }));
 const loadPerformanceTab = () =>
-  import("@/features/dashboard/PerformanceTab").then((module) => ({ default: module.PerformanceTab }));
+  import("@/domains/portfolio/pages/PerformanceTab").then((module) => ({ default: module.PerformanceTab }));
 const loadAllocationCharts = () =>
-  import("@/features/allocation-charts/AllocationCharts").then((module) => ({ default: module.AllocationCharts }));
+  import("@/domains/portfolio/components/allocation-charts/AllocationCharts").then((module) => ({ default: module.AllocationCharts }));
 const loadPositionsTable = () =>
-  import("@/features/positions-table/PositionsTable").then((module) => ({ default: module.PositionsTable }));
+  import("@/domains/portfolio/components/positions-table/PositionsTable").then((module) => ({ default: module.PositionsTable }));
 const loadGroupedPositionsTable = () =>
-  import("@/features/positions-table/PositionsTable").then((module) => ({ default: module.GroupedPositionsTable }));
+  import("@/domains/portfolio/components/positions-table/PositionsTable").then((module) => ({ default: module.GroupedPositionsTable }));
 const loadFundLookThroughTab = () =>
-  import("@/features/fund-holdings/FundLookThroughTab").then((module) => ({ default: module.FundLookThroughTab }));
+  import("@/domains/portfolio/components/fund-holdings/FundLookThroughTab").then((module) => ({ default: module.FundLookThroughTab }));
 const loadDataQualityTab = () =>
-  import("@/features/dashboard/DataQualityTab").then((module) => ({ default: module.DataQualityTab }));
+  import("@/domains/portfolio/pages/DataQualityTab").then((module) => ({ default: module.DataQualityTab }));
 
 const OverviewTab = lazy(loadOverviewTab);
 const WealthTab = lazy(loadWealthTab);
