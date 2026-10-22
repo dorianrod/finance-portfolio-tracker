@@ -1,11 +1,14 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { Provider } from 'jotai'
 import { describe, expect, it } from 'vitest'
 import { HoldingsViewTabs } from './HoldingsViewTabs'
 
 describe('HoldingsViewTabs', () => {
   it('renders both keyboard-focusable views and marks the active view', () => {
     const html = renderToStaticMarkup(
-      <HoldingsViewTabs value="positions" onChange={() => undefined} />,
+      <Provider>
+        <HoldingsViewTabs />
+      </Provider>,
     )
 
     expect(html).toContain('aria-label="Holdings views"')

@@ -1,17 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Provider, createStore } from 'jotai'
 import { describe, expect, it } from 'vitest'
-import { resetFilters } from '@/domains/portfolio/components/filters/filterBar.logic'
 import { useDashboardViewModel } from './useDashboardViewModel'
 
 function DashboardViewModelProbe() {
-  const viewModel = useDashboardViewModel({
-    activeTab: 'overview',
-    filters: resetFilters(),
-    holdingsView: 'positions',
-    sortDir: 'desc',
-    sortKey: 'total_value',
-  })
+  const viewModel = useDashboardViewModel()
 
   return (
     <output
@@ -27,9 +21,12 @@ describe('useDashboardViewModel', () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     })
+    const store = createStore()
     const html = renderToStaticMarkup(
       <QueryClientProvider client={queryClient}>
-        <DashboardViewModelProbe />
+        <Provider store={store}>
+          <DashboardViewModelProbe />
+        </Provider>
       </QueryClientProvider>,
     )
 

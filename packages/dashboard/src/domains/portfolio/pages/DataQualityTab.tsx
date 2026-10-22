@@ -18,7 +18,13 @@ import {
   type AffectedAsset,
   type QualityTheme,
 } from './data-quality/helpers/mappers/buildDataQualityViewModel'
-import { useDataQualityPanels } from './data-quality/services/actions/useDataQualityPanels'
+import { useDataQualityClassificationDetails } from './data-quality/services/actions/useDataQualityClassificationDetails'
+import { useDataQualityFundDiagnostics } from './data-quality/services/actions/useDataQualityFundDiagnostics'
+import {
+  dataQualityClassificationDetailsOpenAtom,
+  dataQualityClassificationDimensionAtom,
+  dataQualityFundDiagnosticsOpenAtom,
+} from './data-quality/stores/dataQualityPanels.atoms'
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
 import { useDashboardQuality } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardQuality.atoms'
@@ -97,22 +103,61 @@ export function DataQualityTab({
   )
   const activeThemeId = selectedTheme ?? recommendedTheme.id
   const activeTheme = themes.find((theme) => theme.id === activeThemeId) ?? themes[0]
+  const fundDiagnosticsOpen = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
+  const classificationDetailsOpen = useAtomValue(dataQualityClassificationDetailsOpenAtom)
+  const classificationDimension = useAtomValue(dataQualityClassificationDimensionAtom)
   const {
-    activeDetailAction,
-    classificationDetailsOpen,
-    classificationDimension,
     closeClassificationDetails,
+    openAllClassificationDetails,
+  } = useDataQualityClassificationDetails()
+  const {
     closeFundDiagnostics,
-    fundDiagnosticsOpen,
-    visibleAffectedAssets,
-  } = useDataQualityPanels({
+    openFundDiagnostics,
+  } = useDataQualityFundDiagnostics()
+  const visibleAffectedAssets = useMemo(
+    () => classificationDimension
+      ? affectedAssets.filter((asset) => asset.dimensions.includes(classificationDimension))
+      : affectedAssets,
+    [affectedAssets, classificationDimension],
+  )
+  const activeDetailAction = useMemo(() => {
+    if (
+      activeThemeId === 'lookthrough'
+      && hasLookThroughScope
+      && scopedFundData.statuses.length > 0
+    ) {
+      return {
+        label: 'Inspect',
+        detail: `${fundIssueCount} issue${fundIssueCount === 1 ? '' : 's'} to inspect`,
+        expanded: fundDiagnosticsOpen,
+        onClick: openFundDiagnostics,
+      }
+    }
+
+    if (activeThemeId === 'classification' && classificationApplicableValue > 0) {
+      return {
+        label: 'Inspect',
+        detail: affectedAssets.length > 0
+          ? `${affectedAssets.length} asset${affectedAssets.length === 1 ? '' : 's'} to inspect`
+          : 'No affected asset',
+        expanded: classificationDetailsOpen,
+        onClick: openAllClassificationDetails,
+      }
+    }
+
+    return null
+  }, [
     activeThemeId,
-    affectedAssets,
+    affectedAssets.length,
     classificationApplicableValue,
+    classificationDetailsOpen,
+    fundDiagnosticsOpen,
     fundIssueCount,
-    hasFundStatuses: scopedFundData.statuses.length > 0,
     hasLookThroughScope,
-  })
+    openAllClassificationDetails,
+    openFundDiagnostics,
+    scopedFundData.statuses.length,
+  ])
   useEffect(() => () => {
     closeClassificationDetails()
     closeFundDiagnostics()

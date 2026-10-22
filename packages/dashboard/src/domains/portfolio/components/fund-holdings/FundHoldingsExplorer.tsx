@@ -1,4 +1,5 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useAtomValue } from 'jotai'
 import { createPortal } from 'react-dom'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import {
@@ -17,6 +18,11 @@ import {
   type FundExposureSort,
 } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardUnderlyingHoldings'
+import {
+  dashboardExpandedUnderlyingIssuersAtom,
+  dashboardUnderlyingQueryAtom,
+  dashboardUnderlyingSortAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardUnderlyingHoldings.atoms'
 
 const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -33,7 +39,10 @@ export function FundHoldingsExplorer({
 }) {
   const { data: fundData } = useFundHoldingsData()
   const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
-  const { expanded, query, setQuery, setSort, sort, toggleIssuer } = useDashboardUnderlyingHoldings()
+  const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
+  const query = useAtomValue(dashboardUnderlyingQueryAtom)
+  const sort = useAtomValue(dashboardUnderlyingSortAtom)
+  const { setQuery, setSort, toggleIssuer } = useDashboardUnderlyingHoldings()
   const { displayed, rows, securityCount, totalIssuerCount } = useMemo(
     () => buildFundExposureViewModel({
       expanded,

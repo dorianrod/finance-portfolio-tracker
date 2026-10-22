@@ -1,19 +1,20 @@
+import { useAtomValue } from 'jotai'
 import { fmtFull } from '@/shared/format/money'
 import { catColor } from '@/shared/format/colors'
 import { SidePanel } from '@/shared/ui/SidePanel'
 import type { MatchingIsinRow } from './allocationCharts.types'
-import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
+import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
+import { useDashboardAllocationPositions } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationPositions'
+import { dashboardAllocationFilterAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
 
 export function FilteredPositionsTable({
   rows,
 }: {
   rows: MatchingIsinRow[]
 }) {
-  const {
-    allocationFilter: filter,
-    clearFilter,
-    closePositions,
-  } = useDashboardAllocation()
+  const filter = useAtomValue(dashboardAllocationFilterAtom)
+  const { clearFilter } = useDashboardAllocationFilters()
+  const { closePositions } = useDashboardAllocationPositions()
   if (!filter) return null
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
 

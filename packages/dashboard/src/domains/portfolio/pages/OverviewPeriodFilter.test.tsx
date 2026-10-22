@@ -1,18 +1,20 @@
 import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it, vi } from 'vitest'
+import { Provider } from 'jotai'
+import { describe, expect, it } from 'vitest'
 import { OverviewPeriodFilter } from './OverviewPeriodFilter'
 
 describe('OverviewPeriodFilter', () => {
   it('shows both exact comparison windows in a compact filter control', () => {
     const markup = renderToStaticMarkup(
-      <OverviewPeriodFilter
-        windows={{
-          current: { start: '2025-10-21', end: '2026-10-20' },
-          previous: { start: '2024-10-21', end: '2025-10-20' },
-          defaultedToTrailingYear: true,
-        }}
-        onEdit={vi.fn()}
-      />,
+      <Provider>
+        <OverviewPeriodFilter
+          windows={{
+            current: { start: '2025-10-21', end: '2026-10-20' },
+            previous: { start: '2024-10-21', end: '2025-10-20' },
+            defaultedToTrailingYear: true,
+          }}
+        />
+      </Provider>,
     )
 
     expect(markup).toContain('Current')

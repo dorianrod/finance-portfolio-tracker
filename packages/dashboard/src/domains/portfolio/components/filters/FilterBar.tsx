@@ -10,6 +10,7 @@ import { SidePanel } from '@/shared/ui/SidePanel'
 import { AccountTree } from './AccountTreeSelect'
 import { Chip } from './Chip'
 import {
+  clearFilterGroup,
   presetDateFrom,
   toggle,
   type FilterSummaryItem,
@@ -205,17 +206,16 @@ export function FilterPanel({
 
 export function FilterButton({
   activeCount,
-  open,
-  onClick,
 }: {
   activeCount: number
-  open: boolean
-  onClick: () => void
 }) {
+  const open = useAtomValue(dashboardFiltersOpenAtom)
+  const { openFilters } = useDashboardFilters()
+
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={openFilters}
       aria-haspopup="dialog"
       aria-expanded={open}
       className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${activeCount > 0 ? 'border-blue-600 bg-blue-900/30 text-blue-200 hover:bg-blue-900/45' : 'border-gray-700 bg-gray-900 text-gray-400 hover:border-gray-600 hover:text-gray-200'}`}
@@ -235,17 +235,16 @@ export function FilterButton({
 
 export function ActiveFilterSummary({
   items,
-  onRemove,
   leading,
   children,
   actions,
 }: {
   items: FilterSummaryItem[]
-  onRemove: (item: FilterSummaryItem) => void
   leading?: ReactNode
   children?: ReactNode
   actions?: ReactNode
 }) {
+  const { setFilters } = useDashboardFilters()
   if (items.length === 0 && !leading && !children && !actions) return null
 
   return (
@@ -255,7 +254,7 @@ export function ActiveFilterSummary({
         <button
           key={item.key}
           type="button"
-          onClick={() => onRemove(item)}
+          onClick={() => setFilters((current) => clearFilterGroup(current, item.key))}
           title={`Clear ${item.key} filter`}
           className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-blue-500 bg-blue-900/35 px-3 py-1 text-xs text-blue-200 transition-colors hover:bg-blue-900/55"
         >
@@ -269,11 +268,13 @@ export function ActiveFilterSummary({
   )
 }
 
-export function ResetFiltersButton({ onClick }: { onClick: () => void }) {
+export function ResetFiltersButton() {
+  const { resetDashboardFilters } = useDashboardFilters()
+
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={resetDashboardFilters}
       className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
     >
       Reset all

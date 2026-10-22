@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import {
   dashboardExpandedPositionRowsAtom,
   dashboardPositionSortDirectionAtom,
@@ -8,9 +8,10 @@ import {
 import type { SortKey } from '@/domains/portfolio/types/filters'
 
 export function useDashboardPositionsTable() {
-  const [expanded, setExpanded] = useAtom(dashboardExpandedPositionRowsAtom)
+  const setExpanded = useSetAtom(dashboardExpandedPositionRowsAtom)
   const setSortDir = useSetAtom(dashboardPositionSortDirectionAtom)
-  const [sortKey, setSortKey] = useAtom(dashboardPositionSortKeyAtom)
+  const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
+  const setSortKey = useSetAtom(dashboardPositionSortKeyAtom)
 
   const sort = useCallback((key: SortKey) => {
     if (key === sortKey) {
@@ -22,7 +23,7 @@ export function useDashboardPositionsTable() {
   }, [setSortDir, setSortKey, sortKey])
 
   return useMemo(
-    () => ({ expanded, setExpanded, sort }),
-    [expanded, setExpanded, sort],
+    () => ({ setExpanded, sort }),
+    [setExpanded, sort],
   )
 }

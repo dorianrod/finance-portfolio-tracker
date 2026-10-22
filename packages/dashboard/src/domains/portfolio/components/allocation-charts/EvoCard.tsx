@@ -1,4 +1,5 @@
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { useAtomValue } from 'jotai'
 import { shortMonth } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
@@ -8,7 +9,12 @@ import { EvolutionTooltip } from './allocationCharts.tooltips'
 import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension } from './allocationCharts.types'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
-import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
+import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
+import { useDashboardAllocationPositions } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationPositions'
+import {
+  dashboardAllocationFilterAtom,
+  dashboardAllocationPositionsOpenAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
 
 interface EvoCardProps {
   title: string
@@ -17,12 +23,10 @@ interface EvoCardProps {
 }
 
 export function EvoCard({ title, points, dimension }: EvoCardProps) {
-  const {
-    allocationFilter: activeFilter,
-    positionsOpen,
-    toggleFilter,
-    togglePositions,
-  } = useDashboardAllocation()
+  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
+  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
+  const { toggleFilter } = useDashboardAllocationFilters()
+  const { togglePositions } = useDashboardAllocationPositions()
   const { categories, rows: chartData } = buildAllocationTrend(points)
 
   const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null

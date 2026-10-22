@@ -15,7 +15,6 @@ import {
   type HoldingsView,
 } from "@/domains/portfolio/components/holdings/HoldingsViewTabs";
 import {
-  clearFilterGroup,
   filterSummaries,
   filterVisibilityForTab,
 } from "@/domains/portfolio/components/filters/filterBar.logic";
@@ -27,22 +26,18 @@ import {
 import {
   filterSummariesForTab,
 } from "@/domains/portfolio/helpers/filters/portfolioFilterScopes";
-import { useDashboardAllocation } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation";
-import { useDashboardFilters } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardFilters";
 import { useDashboardNavigation } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation";
 import { useDashboardQuality } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality";
-import { useDashboardTheme } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardTheme";
+import { useDashboardTheme, useDashboardThemeSync } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardTheme";
 import { useDashboardViewModel } from "@/domains/portfolio/pages/dashboard/services/useDashboardViewModel";
-import { dashboardFiltersAtom, dashboardFiltersOpenAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms";
+import { dashboardFiltersAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms";
+import { dashboardAllocationFilterAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms";
+import { dashboardThemeAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardTheme.atoms";
 import {
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
   type AnalysisTab,
 } from "@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms";
-import {
-  dashboardPositionSortDirectionAtom,
-  dashboardPositionSortKeyAtom,
-} from "@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms";
 import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/format/semanticColors";
 
 const loadOverviewTab = () =>
@@ -149,19 +144,12 @@ function DashboardPanelFallback() {
 export default function App() {
   const activeTab = useAtomValue(dashboardActiveTabAtom);
   const filters = useAtomValue(dashboardFiltersAtom);
-  const filtersOpen = useAtomValue(dashboardFiltersOpenAtom);
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom);
-  const sortDir = useAtomValue(dashboardPositionSortDirectionAtom);
-  const sortKey = useAtomValue(dashboardPositionSortKeyAtom);
-  const { theme, toggleTheme } = useDashboardTheme();
-  const {
-    allocationFilter,
-    allocationView,
-    clearFilter: clearAllocationFilter,
-    setAllocationView,
-  } = useDashboardAllocation();
-  const { navigateTo, setHoldingsView } = useDashboardNavigation();
-  const { openFilters, resetDashboardFilters, setFilters } = useDashboardFilters();
+  const allocationFilter = useAtomValue(dashboardAllocationFilterAtom);
+  const theme = useAtomValue(dashboardThemeAtom);
+  const { toggleTheme } = useDashboardTheme();
+  useDashboardThemeSync();
+  const { navigateTo } = useDashboardNavigation();
   const { openQualityOverview } = useDashboardQuality();
   const {
     accountFilterLabels,
@@ -200,7 +188,7 @@ export default function App() {
     typeHistory,
     useGroupedPositionsTable,
     wealthDrivers,
-  } = useDashboardViewModel({ activeTab, filters, holdingsView, sortDir, sortKey });
+  } = useDashboardViewModel();
   const {
     classificationMappedValue,
     classificationMetricTone,
@@ -295,7 +283,7 @@ export default function App() {
             </nav>
 
             {activeTab === "holdings" && (
-              <HoldingsViewTabs value={holdingsView} onChange={setHoldingsView} />
+              <HoldingsViewTabs />
             )}
 
             <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-5">
@@ -383,15 +371,10 @@ export default function App() {
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {activeTab === "allocation" && (
-                  <AllocationViewToggle
-                    value={allocationView}
-                    onChange={setAllocationView}
-                  />
+                  <AllocationViewToggle />
                 )}
                 <FilterButton
                   activeCount={activeFilterSummaries.length}
-                  open={filtersOpen}
-                  onClick={openFilters}
                 />
               </div>
             </div>
@@ -401,21 +384,14 @@ export default function App() {
               leading={activeTab === "overview" && overviewComparison ? (
                 <OverviewPeriodFilter
                   windows={overviewComparison.windows}
-                  onEdit={openFilters}
                 />
               ) : undefined}
-              onRemove={(item) =>
-                setFilters((current) => clearFilterGroup(current, item.key))
-              }
               actions={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)
-                ? <ResetFiltersButton onClick={resetDashboardFilters} />
+                ? <ResetFiltersButton />
                 : undefined}
             >
               {activeTab === "allocation" && allocationFilter && (
-                <FilterChipBar
-                  filter={allocationFilter}
-                  onRemove={clearAllocationFilter}
-                />
+                <FilterChipBar />
               )}
             </ActiveFilterSummary>
 

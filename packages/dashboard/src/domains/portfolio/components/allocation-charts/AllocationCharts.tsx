@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAtomValue } from 'jotai'
 import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
@@ -14,7 +15,11 @@ import {
 import { fmtFull } from '@/shared/format/money'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
 import { useAllocationCharts } from '@/domains/portfolio/services/useAllocationCharts'
-import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
+import {
+  dashboardAllocationFilterAtom,
+  dashboardAllocationPositionsOpenAtom,
+  dashboardAllocationViewAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
@@ -30,7 +35,9 @@ interface AllocationChartsProps {
 
 export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, rawData, dateFrom, dateTo }: AllocationChartsProps) {
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
-  const { allocationFilter: activeFilter, allocationView: view, positionsOpen } = useDashboardAllocation()
+  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
+  const view = useAtomValue(dashboardAllocationViewAtom)
+  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
   const {
     baseClasse,
     baseCurrency,

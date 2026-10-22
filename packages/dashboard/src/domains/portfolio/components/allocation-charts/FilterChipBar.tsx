@@ -1,4 +1,7 @@
-import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
+import { useAtomValue } from 'jotai'
+import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
+import { dashboardAllocationFilterAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
+import type { AllocationDimension } from './allocationCharts.types'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
   geo: 'Geo',
@@ -7,19 +10,17 @@ const DIM_LABELS: Record<AllocationDimension, string> = {
   classe: 'Class',
 }
 
-export function FilterChipBar({
-  filter,
-  onRemove,
-}: {
-  filter: AllocationFilter
-  onRemove: () => void
-}) {
+export function FilterChipBar() {
+  const filter = useAtomValue(dashboardAllocationFilterAtom)
+  const { clearFilter } = useDashboardAllocationFilters()
+  if (!filter) return null
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="w-24 shrink-0 text-xs uppercase tracking-wider text-gray-500">Allocation</span>
       <button
         type="button"
-        onClick={onRemove}
+        onClick={clearFilter}
         title="Clear allocation filter"
         className="inline-flex max-w-full cursor-pointer items-center gap-1 rounded-full border border-blue-500 bg-blue-600 px-3 py-1 text-xs text-white transition-colors hover:border-blue-400 hover:bg-blue-500"
       >

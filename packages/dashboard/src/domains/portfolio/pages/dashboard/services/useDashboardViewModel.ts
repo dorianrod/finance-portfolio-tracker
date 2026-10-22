@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useAtomValue } from 'jotai'
 import { useAccountTypeHistory } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
 import { useAllPositions, type RawPositionRow } from '@/domains/portfolio/apis/queries/useAllPositions'
 import { useAnnualIncomeSavings } from '@/domains/portfolio/apis/queries/useAnnualIncomeSavings'
@@ -16,7 +17,6 @@ import { useSavingCapacity, type SavingCapacityPoint } from '@/domains/portfolio
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/components/allocation-charts/allocationCoverage.logic'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
 import { scopeFundQualityData } from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
-import type { HoldingsView } from '@/domains/portfolio/components/holdings/HoldingsViewTabs'
 import {
   buildCumulativeWealthDrivers,
   computePerformanceSummary,
@@ -45,17 +45,16 @@ import { buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy
 import { buildOverviewComparison, compareRollingThreeYearIrr } from '@/domains/portfolio/pages/overviewComparison.logic'
 import { buildDashboardQualitySummary } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardQualitySummary'
 import { buildDashboardSourceData } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardSourceData'
-import type { AnalysisTab } from '@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms'
-import type { Filters, SortKey } from '@/domains/portfolio/types/filters'
+import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
+import {
+  dashboardActiveTabAtom,
+  dashboardHoldingsViewAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms'
+import {
+  dashboardPositionSortDirectionAtom,
+  dashboardPositionSortKeyAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
-
-interface UseDashboardViewModelInput {
-  activeTab: AnalysisTab
-  filters: Filters
-  holdingsView: HoldingsView
-  sortDir: 'asc' | 'desc'
-  sortKey: SortKey
-}
 
 const EMPTY_DASHBOARD_DATA: DashboardData = {
   positions: [],
@@ -89,13 +88,12 @@ const EMPTY_PORTFOLIO_HISTORY: PortfolioHistoryPoint[] = []
 const EMPTY_RAW_POSITIONS: RawPositionRow[] = []
 const EMPTY_SAVING_CAPACITY: SavingCapacityPoint[] = []
 
-export function useDashboardViewModel({
-  activeTab,
-  filters,
-  holdingsView,
-  sortDir,
-  sortKey,
-}: UseDashboardViewModelInput) {
+export function useDashboardViewModel() {
+  const activeTab = useAtomValue(dashboardActiveTabAtom)
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
+  const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
+  const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
   const dashboardQuery = useData()
   const historyQuery = usePortfolioHistory()
   const cashHistoryQuery = useCashHistory()

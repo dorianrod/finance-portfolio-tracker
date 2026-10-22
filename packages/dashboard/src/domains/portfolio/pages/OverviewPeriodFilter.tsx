@@ -1,8 +1,8 @@
+import { useDashboardFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardFilters'
 import type { OverviewPeriod, OverviewWindows } from './overviewComparison.logic'
 
 interface OverviewPeriodFilterProps {
   windows: OverviewWindows
-  onEdit: () => void
 }
 
 function dateLabel(date: string): string {
@@ -18,7 +18,9 @@ function rangeLabel(period: OverviewPeriod): string {
   return `${dateLabel(period.start)} – ${dateLabel(period.end)}`
 }
 
-export function OverviewPeriodFilter({ windows, onEdit }: OverviewPeriodFilterProps) {
+export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
+  const { openFilters } = useDashboardFilters()
+
   return (
     <div
       className="flex w-full min-w-0 flex-col overflow-hidden rounded-xl border border-gray-800 bg-gray-900 sm:w-auto sm:flex-row"
@@ -26,7 +28,7 @@ export function OverviewPeriodFilter({ windows, onEdit }: OverviewPeriodFilterPr
     >
       <button
         type="button"
-        onClick={onEdit}
+        onClick={openFilters}
         aria-label="Edit current comparison period"
         className="group flex min-w-0 items-center gap-2.5 px-3 py-2 text-left transition-colors hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
       >

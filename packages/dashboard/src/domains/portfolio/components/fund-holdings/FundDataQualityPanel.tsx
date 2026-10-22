@@ -18,7 +18,7 @@ import {
   buildFundDiagnosticsRows,
   type FundDiagnosticsFilter,
 } from '@/domains/portfolio/helpers/mappers/buildFundDiagnosticsRows'
-import { useDataQualityPanelActions } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityPanels'
+import { useDataQualityFundDiagnostics } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityFundDiagnostics'
 
 interface Props {
   statuses: FundHoldingStatus[]
@@ -28,7 +28,7 @@ interface Props {
 }
 
 export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved }: Props) {
-  const { closeFundDiagnostics } = useDataQualityPanelActions()
+  const { closeFundDiagnostics } = useDataQualityFundDiagnostics()
   const [filter, setFilter] = useState<FundDiagnosticsFilter>('issues')
   const [expanded, setExpanded] = useState<string | null>(null)
   const rows = useMemo(

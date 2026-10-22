@@ -47,6 +47,7 @@ import {
 import { useDashboardPositionsTable } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardPositionsTable'
 import {
   dashboardPositionSortDirectionAtom,
+  dashboardExpandedPositionRowsAtom,
   dashboardPositionSortKeyAtom,
 } from '@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms'
 
@@ -77,7 +78,8 @@ function PositionsTableView({
 }: Props & { grouping: 'flat' | 'account-type' }) {
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
-  const { expanded, setExpanded, sort: onSort } = useDashboardPositionsTable()
+  const expanded = useAtomValue(dashboardExpandedPositionRowsAtom)
+  const { setExpanded, sort: onSort } = useDashboardPositionsTable()
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)

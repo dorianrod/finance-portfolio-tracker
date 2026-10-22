@@ -1,6 +1,6 @@
 import type { DimensionCoverage } from './allocationCoverage.logic'
 import { fmtFull } from '@/shared/format/money'
-import { useDataQualityPanelActions } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityPanels'
+import { useDataQualityClassificationDetails } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityClassificationDetails'
 import { formatPercentage } from '@/shared/format/percentage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 
@@ -13,7 +13,7 @@ export function AllocationDimensionQuality({
 }: {
   coverage: DimensionCoverage[]
 }) {
-  const { openClassificationDetails } = useDataQualityPanelActions()
+  const { openClassificationDetails } = useDataQualityClassificationDetails()
   return (
     <div className="space-y-4">
       {coverage.map((item) => {

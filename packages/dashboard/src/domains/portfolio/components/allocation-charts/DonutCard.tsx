@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { useAtomValue } from 'jotai'
 import { fmtFull } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
@@ -9,7 +10,12 @@ import { PieLabel } from './PieLabel'
 import { PositionsToggle } from './PositionsToggle'
 import type { AllocationDimension, PieEntry } from './allocationCharts.types'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
-import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
+import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
+import { useDashboardAllocationPositions } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationPositions'
+import {
+  dashboardAllocationFilterAtom,
+  dashboardAllocationPositionsOpenAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
 
 interface DonutCardProps {
   title: string
@@ -18,12 +24,10 @@ interface DonutCardProps {
 }
 
 export function DonutCard({ title, point, dimension }: DonutCardProps) {
-  const {
-    allocationFilter: activeFilter,
-    positionsOpen,
-    toggleFilter,
-    togglePositions,
-  } = useDashboardAllocation()
+  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
+  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
+  const { toggleFilter } = useDashboardAllocationFilters()
+  const { togglePositions } = useDashboardAllocationPositions()
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const dateLabel = new Date(point.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 
