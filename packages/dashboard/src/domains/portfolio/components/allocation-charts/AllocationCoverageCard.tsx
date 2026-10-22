@@ -5,17 +5,17 @@ import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { accountLabel } from '@/domains/portfolio/components/filters/filterBar.logic'
 import { QualityIndicatorCard } from '@/domains/portfolio/components/quality/QualityIndicatorCard'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
+import { useAccountFilterLabels } from '@/domains/portfolio/services/useAccountFilterLabels'
 import { AllocationDimensionQuality } from './AllocationDimensionQuality'
 import type { AccountCoverage, DimensionCoverage } from './allocationCoverage.logic'
 
 interface AllocationCoverageCardProps {
   coverage: AccountCoverage[]
   dimensionCoverage: DimensionCoverage[]
-  accountLabels: Record<string, string>
-  onOpenAffectedAssets?: (dimension?: DimensionCoverage['dimension']) => void
 }
 
-export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLabels, onOpenAffectedAssets }: AllocationCoverageCardProps) {
+export function AllocationCoverageCard({ coverage, dimensionCoverage }: AllocationCoverageCardProps) {
+  const accountLabels = useAccountFilterLabels()
   const [expandedDetail, setExpandedDetail] = useState<'accounts' | 'dimensions' | null>(null)
   const accountDetailsId = useId()
   const dimensionDetailsId = useId()
@@ -116,7 +116,7 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage, accountLab
               <p className="mb-3 text-[11px] leading-4 text-gray-600">
                 Unmapped positions are NC in every dimension; mapped rows can also contain dimension-specific NC.
               </p>
-              <AllocationDimensionQuality coverage={dimensionCoverage} onOpenIssues={onOpenAffectedAssets} />
+              <AllocationDimensionQuality coverage={dimensionCoverage} />
             </div>
           )}
         </QualityIndicatorCard>

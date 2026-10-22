@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useAtomValue } from 'jotai'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
@@ -19,6 +20,8 @@ import {
 } from './data-quality/helpers/mappers/buildDataQualityViewModel'
 import { useDataQualityPanels } from './data-quality/services/actions/useDataQualityPanels'
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
+import { useDashboardQuality } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality'
+import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardQuality.atoms'
 
 export type { QualityThemeId } from '@/domains/portfolio/types/quality'
 
@@ -42,11 +45,10 @@ const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
 }
 
 export function DataQualityTab({
-  positions, accountLabels, errors, manualPriceOverrides, fundStatuses, fundReport,
-  fundHoldings, fundSnapshots, fundUnresolved, selectedTheme, onSelectedThemeChange, rawData,
+  positions, errors, manualPriceOverrides, fundStatuses, fundReport,
+  fundHoldings, fundSnapshots, fundUnresolved, rawData,
 }: {
   positions: PositionRow[]
-  accountLabels: Record<string, string>
   errors: ErrorRow[]
   manualPriceOverrides: ManualPriceOverride[]
   fundStatuses: FundHoldingStatus[]
@@ -54,10 +56,10 @@ export function DataQualityTab({
   fundHoldings: FundHolding[]
   fundSnapshots: FundSnapshot[]
   fundUnresolved: FundUnresolved[]
-  selectedTheme: QualityThemeId | null
-  onSelectedThemeChange: (theme: QualityThemeId) => void
   rawData: RawIsinData
 }) {
+  const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
+  const { setSelectedQualityTheme } = useDashboardQuality()
   const {
     affectedAssets,
     classificationApplicableValue,
@@ -102,7 +104,6 @@ export function DataQualityTab({
     closeClassificationDetails,
     closeFundDiagnostics,
     fundDiagnosticsOpen,
-    openClassificationDetails,
     visibleAffectedAssets,
   } = useDataQualityPanels({
     activeThemeId,
@@ -112,6 +113,10 @@ export function DataQualityTab({
     hasFundStatuses: scopedFundData.statuses.length > 0,
     hasLookThroughScope,
   })
+  useEffect(() => () => {
+    closeClassificationDetails()
+    closeFundDiagnostics()
+  }, [closeClassificationDetails, closeFundDiagnostics])
 
   let classificationContent = (
     <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />
@@ -123,8 +128,6 @@ export function DataQualityTab({
       <AllocationCoverageCard
         coverage={coverage}
         dimensionCoverage={dimensionCoverage}
-        accountLabels={accountLabels}
-        onOpenAffectedAssets={openClassificationDetails}
       />
     )
   }
@@ -151,7 +154,7 @@ export function DataQualityTab({
           <select
             id="quality-theme"
             value={activeThemeId}
-            onChange={(event) => onSelectedThemeChange(event.target.value as QualityThemeId)}
+            onChange={(event) => setSelectedQualityTheme(event.target.value as QualityThemeId)}
             className="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-200 focus:border-blue-500 focus:outline-none"
           >
             {themes.map((theme) => (
@@ -171,7 +174,7 @@ export function DataQualityTab({
                 role="tab"
                 aria-selected={active}
                 aria-controls="quality-theme-panel"
-                onClick={() => onSelectedThemeChange(theme.id)}
+                onClick={() => setSelectedQualityTheme(theme.id)}
                 className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true">
@@ -239,7 +242,6 @@ export function DataQualityTab({
           holdings={scopedFundData.holdings}
           snapshots={scopedFundData.snapshots}
           unresolved={scopedFundData.unresolved}
-          onClose={closeFundDiagnostics}
         />
       )}
 

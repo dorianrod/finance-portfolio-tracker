@@ -1,13 +1,26 @@
 import { renderToStaticMarkup } from "react-dom/server";
+import type { ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider, createStore } from "jotai";
 import { describe, expect, it } from "vitest";
 import {
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
 } from "./AnalysisReliabilityKpi";
 
+function renderWithProviders(node: ReactNode) {
+  return renderToStaticMarkup(
+    <Provider store={createStore()}>
+      <QueryClientProvider client={new QueryClient()}>
+        {node}
+      </QueryClientProvider>
+    </Provider>,
+  );
+}
+
 describe("CombinedAnalysisReliabilityKpi", () => {
   it("shows a compact aggregate status and puts the detail in the info tooltip", () => {
-    const html = renderToStaticMarkup(
+    const html = renderWithProviders(
       <CombinedAnalysisReliabilityKpi
         statusMetric={{
           value: "No anomaly",
@@ -30,7 +43,7 @@ describe("CombinedAnalysisReliabilityKpi", () => {
         ]}
         tone="critical"
         tooltip="Aggregate quality"
-        onClick={() => undefined}
+        qualityTheme="classification"
         scope={{ account: "filterable", period: "mixed" }}
       />,
     );
@@ -56,11 +69,10 @@ describe("CombinedAnalysisReliabilityKpi", () => {
 
 describe("PipelineReliabilityKpi", () => {
   it("renders its explanation and anomaly detail in the info tooltip", () => {
-    const html = renderToStaticMarkup(
+    const html = renderWithProviders(
       <PipelineReliabilityKpi
         errorCount={0}
         warningCount={0}
-        onClick={() => undefined}
         scope={{ account: "filterable", period: "range" }}
       />,
     );

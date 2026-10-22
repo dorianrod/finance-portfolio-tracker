@@ -1,4 +1,6 @@
-import { createContext, use, type ReactNode } from 'react'
+import { useAtomValue } from 'jotai'
+import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
+import { useAccountFilterLabels } from '@/domains/portfolio/services/useAccountFilterLabels'
 import type { Filters } from '@/domains/portfolio/types/filters'
 
 export type AccountScopeMode = 'filterable' | 'global'
@@ -18,25 +20,6 @@ export interface FilterScopeSpec {
   account: AccountScopeMode
   period: PeriodScopeMode
   effectiveDate?: string | null
-}
-
-interface FilterScopeContextValue {
-  filters: Filters
-  accountLabels: Record<string, string>
-}
-
-const FilterScopeContext = createContext<FilterScopeContextValue | null>(null)
-
-export function FilterScopeProvider({
-  filters,
-  accountLabels,
-  children,
-}: FilterScopeContextValue & { children: ReactNode }) {
-  return (
-    <FilterScopeContext.Provider value={{ filters, accountLabels }}>
-      {children}
-    </FilterScopeContext.Provider>
-  )
 }
 
 function friendlyDate(value: string | null | undefined): string | null {
@@ -167,11 +150,11 @@ const TONE_CLASSES = {
 } as const
 
 export function FilterScopeBadges({ account, period, effectiveDate }: FilterScopeSpec) {
-  const context = use(FilterScopeContext)
-  if (!context) return null
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const accountLabels = useAccountFilterLabels()
   const badges = [
-    accountBadge(account, context.filters, context.accountLabels),
-    periodBadge(period, context.filters, effectiveDate),
+    accountBadge(account, filters, accountLabels),
+    periodBadge(period, filters, effectiveDate),
   ]
   return (
     <span className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Indicator filter scope">

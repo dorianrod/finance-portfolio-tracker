@@ -9,6 +9,7 @@ import { fmt, fmtPct } from '@/shared/format/money'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
 import type { FilterScopeSpec } from '@/domains/portfolio/components/filters/FilterScopeBadges'
+import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
 
 export type OverviewDestination = 'wealth' | 'performance' | 'allocation'
 
@@ -18,7 +19,6 @@ interface SummaryCardsProps {
   underlyingConcentration: OverviewConcentrationComparison
   rollingThreeYearTri: ComparedMetric
   irrStatus: IrrStatus
-  onNavigate: (destination: OverviewDestination) => void
 }
 
 function money(value: number | null): string {
@@ -83,7 +83,6 @@ function CardShell({
   eyebrow,
   destination,
   accent,
-  onNavigate,
   children,
 }: {
   title: string
@@ -92,12 +91,13 @@ function CardShell({
   eyebrow: string
   destination: OverviewDestination
   accent: string
-  onNavigate: (destination: OverviewDestination) => void
   children: ReactNode
 }) {
+  const { navigateTo } = useDashboardNavigation()
+
   return (
     <article className="group relative min-w-0 rounded-2xl border border-gray-800 bg-gray-900 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-gray-700 hover:bg-gray-900/80">
-      <button type="button" onClick={() => onNavigate(destination)} aria-label={`Open ${title} details`} className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
+      <button type="button" onClick={() => navigateTo(destination)} aria-label={`Open ${title} details`} className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
       <span className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${accent}`} aria-hidden="true" />
       <span className="pointer-events-none relative z-10 flex items-start justify-between gap-3">
         <span>
@@ -130,7 +130,6 @@ export function OverviewSummaryCards({
   underlyingConcentration,
   rollingThreeYearTri,
   irrStatus,
-  onNavigate,
 }: SummaryCardsProps) {
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable ? underlyingConcentration : heldConcentration
@@ -138,7 +137,7 @@ export function OverviewSummaryCards({
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <CardShell title="Portfolio value" description="Gross market value before estimated tax, measured at the end of the selected period." scope={{ account: 'filterable', period: 'as-of', effectiveDate: comparison.windows.current.end }} eyebrow="At period end" destination="wealth" accent="bg-cyan-400" onNavigate={onNavigate}>
+      <CardShell title="Portfolio value" description="Gross market value before estimated tax, measured at the end of the selected period." scope={{ account: 'filterable', period: 'as-of', effectiveDate: comparison.windows.current.end }} eyebrow="At period end" destination="wealth" accent="bg-cyan-400">
         <span className="block text-2xl font-semibold tracking-tight tabular-nums text-white">{money(comparison.value.current)}</span>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.value} />
@@ -147,7 +146,7 @@ export function OverviewSummaryCards({
         <span className="mt-3 block text-[11px] text-gray-600">Gross market value before estimated tax</span>
       </CardShell>
 
-      <CardShell title="Net contributions" description="Deposits minus withdrawals during the period, compared with the preceding period of equal length." scope={{ account: 'filterable', period: 'comparison-range' }} eyebrow="Cash flow" destination="wealth" accent="bg-blue-400" onNavigate={onNavigate}>
+      <CardShell title="Net contributions" description="Deposits minus withdrawals during the period, compared with the preceding period of equal length." scope={{ account: 'filterable', period: 'comparison-range' }} eyebrow="Cash flow" destination="wealth" accent="bg-blue-400">
         <span className={`block text-2xl font-semibold tracking-tight tabular-nums ${SEMANTIC_TEXT_CLASSES.netContributions}`}>
           {money(comparison.contributions.current)}
         </span>
@@ -158,7 +157,7 @@ export function OverviewSummaryCards({
         <span className="mt-3 block text-[11px] text-gray-600">Deposits minus withdrawals during the period</span>
       </CardShell>
 
-      <CardShell title="Performance & income" description="Market performance and passive income generated during the period, compared with the preceding period. The trailing three-year IRR is anchored at period end." scope={{ account: 'filterable', period: 'comparison-range' }} eyebrow="Period result" destination="performance" accent="bg-emerald-400" onNavigate={onNavigate}>
+      <CardShell title="Performance & income" description="Market performance and passive income generated during the period, compared with the preceding period. The trailing three-year IRR is anchored at period end." scope={{ account: 'filterable', period: 'comparison-range' }} eyebrow="Period result" destination="performance" accent="bg-emerald-400">
         <span className="flex items-baseline justify-between gap-2">
           <span className={`text-2xl font-semibold tracking-tight tabular-nums ${performanceTone(comparison.marketPerformance.current)}`}>
             {money(comparison.marketPerformance.current)}
@@ -191,7 +190,7 @@ export function OverviewSummaryCards({
         </span>
       </CardShell>
 
-      <CardShell title="Concentration" description="Share of the portfolio represented by the largest asset and the ten largest assets at period end." scope={{ account: 'filterable', period: 'as-of', effectiveDate: comparison.windows.current.end }} eyebrow={primaryLabel} destination="allocation" accent="bg-orange-400" onNavigate={onNavigate}>
+      <CardShell title="Concentration" description="Share of the portfolio represented by the largest asset and the ten largest assets at period end." scope={{ account: 'filterable', period: 'as-of', effectiveDate: comparison.windows.current.end }} eyebrow={primaryLabel} destination="allocation" accent="bg-orange-400">
         <span className="grid grid-cols-2 gap-4">
           <span>
             <span className="block text-[11px] text-gray-600">Largest asset</span>

@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { Provider, createStore } from 'jotai'
 import { describe, expect, it } from 'vitest'
 import type { OverviewComparison } from './overviewComparison.logic'
 import { OverviewSummaryCards } from './OverviewSummaryCards'
@@ -51,14 +52,15 @@ describe('OverviewSummaryCards', () => {
   it('renders four accessible drill-down cards with comparison context', () => {
     const model = comparison()
     const html = renderToStaticMarkup(
-      <OverviewSummaryCards
-        comparison={model}
-        heldConcentration={model.heldConcentration}
-        underlyingConcentration={model.lookThroughConcentration}
-        rollingThreeYearTri={metric(8.42, 6.2)}
-        irrStatus="ready"
-        onNavigate={() => undefined}
-      />,
+      <Provider store={createStore()}>
+        <OverviewSummaryCards
+          comparison={model}
+          heldConcentration={model.heldConcentration}
+          underlyingConcentration={model.lookThroughConcentration}
+          rollingThreeYearTri={metric(8.42, 6.2)}
+          irrStatus="ready"
+        />
+      </Provider>,
     )
 
     expect(html.match(/aria-label="Open [^"]+ details"/g)).toHaveLength(4)
@@ -88,14 +90,15 @@ describe('OverviewSummaryCards', () => {
     }
     model.lookThroughConcentration = model.heldConcentration
     const html = renderToStaticMarkup(
-      <OverviewSummaryCards
-        comparison={model}
-        heldConcentration={model.heldConcentration}
-        underlyingConcentration={model.lookThroughConcentration}
-        rollingThreeYearTri={metric(null, null)}
-        irrStatus="error"
-        onNavigate={() => undefined}
-      />,
+      <Provider store={createStore()}>
+        <OverviewSummaryCards
+          comparison={model}
+          heldConcentration={model.heldConcentration}
+          underlyingConcentration={model.lookThroughConcentration}
+          rollingThreeYearTri={metric(null, null)}
+          irrStatus="error"
+        />
+      </Provider>,
     )
 
     expect(html).toContain('Previous <span class="font-medium tabular-nums text-gray-400">Unavailable</span>')

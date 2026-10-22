@@ -57,13 +57,13 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-domain-first-layout` - Follow the Domain-First Folder Layout
 - `arch-transverse-only-imports` - Import Other Domains Only Through Transverse Domains
 - `arch-shared-no-domain-knowledge` - Keep Shared Code Free of Domain Knowledge
+- `arch-no-prop-drilling` - Share Client State Through Jotai, Not Prop Chains or Context
 - `arch-helpers-vs-services` - Choose helpers/ or services/ by Asking "Does It Need a Hook?"
 - `arch-feature-flags` - Gate Experimental Features With a Typed Flag Registry
 - `arch-thin-components` - Keep Components Thin
 - `arch-no-visual-logic-below-page` - Keep Visual Logic Out of apis/, services/ and helpers/
 - `arch-stores-no-index` - No index.ts in stores/, One File per Concern
 - `arch-subdomain-decision` - Create a Sub-Domain Only for a Distinct Business Entity
-- `arch-no-prop-drilling` - Share State Through Jotai or Context, Not Prop Chains
 
 ### 2. API Hooks & Server State (CRITICAL)
 

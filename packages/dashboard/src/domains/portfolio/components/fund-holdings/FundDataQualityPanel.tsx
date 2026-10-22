@@ -18,16 +18,17 @@ import {
   buildFundDiagnosticsRows,
   type FundDiagnosticsFilter,
 } from '@/domains/portfolio/helpers/mappers/buildFundDiagnosticsRows'
+import { useDataQualityPanelActions } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityPanels'
 
 interface Props {
   statuses: FundHoldingStatus[]
   holdings: FundHolding[]
   snapshots: FundSnapshot[]
   unresolved: FundUnresolved[]
-  onClose: () => void
 }
 
-export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved, onClose }: Props) {
+export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved }: Props) {
+  const { closeFundDiagnostics } = useDataQualityPanelActions()
   const [filter, setFilter] = useState<FundDiagnosticsFilter>('issues')
   const [expanded, setExpanded] = useState<string | null>(null)
   const rows = useMemo(
@@ -39,7 +40,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
     <SidePanel
       title="Fund data diagnostics"
       description="Sorted by unexplained monetary impact. Manual and agent snapshots always require attention."
-      onClose={onClose}
+      onClose={closeFundDiagnostics}
       closeLabel="Close fund data diagnostics"
       size="wide"
       bodyClassName="overflow-y-auto overflow-x-hidden"

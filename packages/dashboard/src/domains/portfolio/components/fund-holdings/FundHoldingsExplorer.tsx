@@ -1,7 +1,11 @@
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
-import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
+import {
+  useFundHoldingsData,
+  type FundHolding,
+  type FundHoldingStatus,
+} from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { fmtFull } from '@/shared/format/money'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
@@ -12,33 +16,24 @@ import {
   type ExposureRow,
   type FundExposureSort,
 } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
+import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardUnderlyingHoldings'
 
 const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
+const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
 export type { FundExposureSort } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
 
 export function FundHoldingsExplorer({
   positions,
   holdings,
-  statuses,
-  query,
-  onQueryChange,
-  sort,
-  onSortChange,
-  expanded,
-  onExpandedChange,
 }: {
   positions: PositionRow[]
   holdings: FundHolding[]
-  statuses: FundHoldingStatus[]
-  query: string
-  onQueryChange: (query: string) => void
-  sort: FundExposureSort
-  onSortChange: (sort: FundExposureSort) => void
-  expanded: Set<string>
-  onExpandedChange: (expanded: Set<string>) => void
 }) {
+  const { data: fundData } = useFundHoldingsData()
+  const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
+  const { expanded, query, setQuery, setSort, sort, toggleIssuer } = useDashboardUnderlyingHoldings()
   const { displayed, rows, securityCount, totalIssuerCount } = useMemo(
     () => buildFundExposureViewModel({
       expanded,
@@ -67,13 +62,6 @@ export function FundHoldingsExplorer({
     scrollMargin,
   })
 
-  const toggle = (id: string) => {
-    const next = new Set(expanded)
-    if (next.has(id)) next.delete(id)
-    else next.add(id)
-    onExpandedChange(next)
-  }
-
   return (
     <section className={DATA_TABLE_STYLES.panel}>
       <div className={DATA_TABLE_STYLES.toolbar}>
@@ -85,14 +73,14 @@ export function FundHoldingsExplorer({
           <input
             type="search"
             value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
+            onChange={(event) => setQuery(event.target.value)}
             placeholder="Search issuer, security or fund"
             aria-label="Search underlying exposure"
             className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 outline-none focus:border-blue-600 sm:w-72"
           />
           <select
             value={sort}
-            onChange={(event) => onSortChange(event.target.value as FundExposureSort)}
+            onChange={(event) => setSort(event.target.value as FundExposureSort)}
             aria-label="Sort underlying exposure"
             className="rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-300"
           >
@@ -115,7 +103,7 @@ export function FundHoldingsExplorer({
                   className="absolute left-0 top-0 w-full"
                   style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}
                 >
-                  {row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={toggle} />}
+                  {row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={toggleIssuer} />}
                   {row.kind === 'security' && <SecurityRow security={row.security} />}
                   {row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}
                 </div>

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useCallback, useId } from "react";
 import { fmtFull } from "@/shared/format/money";
 import { formatPercentage } from "@/shared/format/percentage";
 import {
@@ -12,6 +12,8 @@ import {
   FilterScopeBadges,
   type FilterScopeSpec,
 } from "@/domains/portfolio/components/filters/FilterScopeBadges";
+import { useDashboardQuality } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality";
+import type { QualityThemeId } from "@/domains/portfolio/types/quality";
 
 interface QualityTooltipRow {
   label: string;
@@ -71,16 +73,21 @@ function CompactDataQualityKpi({
   tooltip,
   rows,
   ariaLabel,
-  onClick,
+  qualityTheme,
   scope,
 }: {
   tone: AnalysisReliabilityTone;
   tooltip: string;
   rows: QualityTooltipRow[];
   ariaLabel: string;
-  onClick: () => void;
+  qualityTheme: QualityThemeId;
   scope: FilterScopeSpec;
 }) {
+  const { openDataQuality } = useDashboardQuality();
+  const handleClick = useCallback(
+    () => openDataQuality(qualityTheme),
+    [openDataQuality, qualityTheme],
+  );
   const tooltipId = useId();
   const styles = RELIABILITY_TONES[tone];
 
@@ -88,7 +95,7 @@ function CompactDataQualityKpi({
     <div className="data-quality-kpi inline-flex items-center rounded-md transition-colors hover:bg-gray-900/60">
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleClick}
         className="inline-flex items-center gap-2 rounded-l-md py-1 pl-0 pr-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
         aria-label={ariaLabel}
       >
@@ -171,7 +178,7 @@ export function AnalysisReliabilityKpi({
   metricLabel,
   tone,
   tooltip,
-  onClick,
+  qualityTheme,
   scope,
 }: {
   percentage: number | null;
@@ -179,7 +186,7 @@ export function AnalysisReliabilityKpi({
   metricLabel: string;
   tone: AnalysisReliabilityTone;
   tooltip: string;
-  onClick: () => void;
+  qualityTheme: QualityThemeId;
   scope: FilterScopeSpec;
 }) {
   const safePercentage =
@@ -202,7 +209,7 @@ export function AnalysisReliabilityKpi({
           tone,
         },
       ]}
-      onClick={onClick}
+      qualityTheme={qualityTheme}
       scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${percentageLabel} ${metricLabel}. Open Data quality.`}
     />
@@ -214,14 +221,14 @@ export function CombinedAnalysisReliabilityKpi({
   statusMetric,
   tone,
   tooltip,
-  onClick,
+  qualityTheme,
   scope,
 }: {
   metrics: AnalysisReliabilityMetric[];
   statusMetric?: StatusReliabilityMetric;
   tone: AnalysisReliabilityTone;
   tooltip: string;
-  onClick: () => void;
+  qualityTheme: QualityThemeId;
   scope: FilterScopeSpec;
 }) {
   const styles = RELIABILITY_TONES[tone];
@@ -254,7 +261,7 @@ export function CombinedAnalysisReliabilityKpi({
       tone={tone}
       tooltip={tooltip}
       rows={rows}
-      onClick={onClick}
+      qualityTheme={qualityTheme}
       scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${metricSummary}. Open Data quality.`}
     />
@@ -265,13 +272,11 @@ export function PipelineReliabilityKpi({
   errorCount,
   warningCount,
   loading = false,
-  onClick,
   scope,
 }: {
   errorCount: number;
   warningCount: number;
   loading?: boolean;
-  onClick: () => void;
   scope: FilterScopeSpec;
 }) {
   const tone = pipelineReliabilityTone({ errorCount, warningCount, loading });
@@ -296,7 +301,7 @@ export function PipelineReliabilityKpi({
           tone,
         },
       ]}
-      onClick={onClick}
+      qualityTheme="pipeline"
       scope={scope}
       ariaLabel={`Data quality: ${styles.label}. ${errorCount} errors and ${warningCount} warnings in Portfolio data. Open Data quality.`}
     />

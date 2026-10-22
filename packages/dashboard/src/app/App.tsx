@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { useAtomValue } from "jotai";
 import { DashboardPanelErrorBoundary } from "@/app/DashboardPanelErrorBoundary";
 import {
   ActiveFilterSummary,
@@ -13,7 +14,6 @@ import {
   HoldingsViewTabs,
   type HoldingsView,
 } from "@/domains/portfolio/components/holdings/HoldingsViewTabs";
-import { FilterScopeProvider } from "@/domains/portfolio/components/filters/FilterScopeBadges";
 import {
   clearFilterGroup,
   filterSummaries,
@@ -27,11 +27,22 @@ import {
 import {
   filterSummariesForTab,
 } from "@/domains/portfolio/helpers/filters/portfolioFilterScopes";
-import {
-  useDashboardUi,
-  type AnalysisTab,
-} from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardUi";
+import { useDashboardAllocation } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation";
+import { useDashboardFilters } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardFilters";
+import { useDashboardNavigation } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation";
+import { useDashboardQuality } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality";
+import { useDashboardTheme } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardTheme";
 import { useDashboardViewModel } from "@/domains/portfolio/pages/dashboard/services/useDashboardViewModel";
+import { dashboardFiltersAtom, dashboardFiltersOpenAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms";
+import {
+  dashboardActiveTabAtom,
+  dashboardHoldingsViewAtom,
+  type AnalysisTab,
+} from "@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms";
+import {
+  dashboardPositionSortDirectionAtom,
+  dashboardPositionSortKeyAtom,
+} from "@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms";
 import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/format/semanticColors";
 
 const loadOverviewTab = () =>
@@ -136,48 +147,25 @@ function DashboardPanelFallback() {
 }
 
 export default function App() {
+  const activeTab = useAtomValue(dashboardActiveTabAtom);
+  const filters = useAtomValue(dashboardFiltersAtom);
+  const filtersOpen = useAtomValue(dashboardFiltersOpenAtom);
+  const holdingsView = useAtomValue(dashboardHoldingsViewAtom);
+  const sortDir = useAtomValue(dashboardPositionSortDirectionAtom);
+  const sortKey = useAtomValue(dashboardPositionSortKeyAtom);
+  const { theme, toggleTheme } = useDashboardTheme();
   const {
-    activeTab,
     allocationFilter,
     allocationView,
-    expandedPositionRows,
-    expandedUnderlyingIssuers,
-    filters,
-    filtersOpen,
-    handleSort,
-    holdingsView,
-    openCompleteHoldings,
-    openDataQuality,
-    openQualityOverview,
-    resetAllFilters,
-    selectedQualityTheme,
-    setActiveTab,
-    setAllocationFilter,
+    clearFilter: clearAllocationFilter,
     setAllocationView,
-    setExpandedPositionRows,
-    setExpandedUnderlyingIssuers,
-    setFilters,
-    setFiltersOpen,
-    setHoldingsView,
-    setSelectedQualityTheme,
-    setUnderlyingQuery,
-    setUnderlyingSort,
-    sortDir,
-    sortKey,
-    theme,
-    toggleTheme,
-    underlyingQuery,
-    underlyingSort,
-  } = useDashboardUi();
-
+  } = useDashboardAllocation();
+  const { navigateTo, setHoldingsView } = useDashboardNavigation();
+  const { openFilters, resetDashboardFilters, setFilters } = useDashboardFilters();
+  const { openQualityOverview } = useDashboardQuality();
   const {
     accountFilterLabels,
-    accountLabels,
-    accountToType,
     accountTypeData,
-    allAccounts,
-    allAccountTypes,
-    allOperationTypes,
     currentPositions,
     demoPresetActive,
     demoPresetSelection,
@@ -249,7 +237,6 @@ export default function App() {
   );
 
   return (
-    <FilterScopeProvider filters={filters} accountLabels={accountFilterLabels}>
     <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
         <header className="mb-5 flex items-start gap-4">
@@ -279,7 +266,7 @@ export default function App() {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => navigateTo(tab.id)}
                   onMouseEnter={() => preloadTab(tab.id)}
                   onFocus={() => preloadTab(tab.id)}
                   aria-current={activeTab === tab.id ? "page" : undefined}
@@ -322,7 +309,6 @@ export default function App() {
                       errorCount={scopedPipelineErrorCount}
                       warningCount={scopedPipelineWarningCount}
                       loading={pipelineErrorsLoading}
-                      onClick={() => openDataQuality("pipeline")}
                       scope={{ account: "filterable", period: "range" }}
                     />
                   </div>
@@ -351,7 +337,7 @@ export default function App() {
                       ]}
                       tone={overviewReliabilityTone}
                       tooltip="Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator."
-                      onClick={() => openDataQuality(overviewQualityTheme)}
+                      qualityTheme={overviewQualityTheme}
                       scope={{ account: "filterable", period: "mixed" }}
                     />
                   </div>
@@ -375,7 +361,7 @@ export default function App() {
                       ]}
                       tone={diversificationReliabilityTone}
                       tooltip="Aggregate reliability for diversification mapping and underlying-assets look-through. Each percentage keeps its own quality color; the overall status follows the weaker indicator."
-                      onClick={() => openDataQuality(diversificationQualityTheme)}
+                      qualityTheme={diversificationQualityTheme}
                       scope={{ account: "filterable", period: "latest" }}
                     />
                   </div>
@@ -388,7 +374,7 @@ export default function App() {
                       metricLabel="Underlying assets"
                       tone={underlyingMetricTone}
                       tooltip="Reliability of the look-through data used by the underlying-assets view. The percentage uses the whole selected portfolio, including balances where look-through is not applicable."
-                      onClick={() => openDataQuality("lookthrough")}
+                      qualityTheme="lookthrough"
                       scope={{ account: "filterable", period: "latest" }}
                     />
                   </div>
@@ -405,7 +391,7 @@ export default function App() {
                 <FilterButton
                   activeCount={activeFilterSummaries.length}
                   open={filtersOpen}
-                  onClick={() => setFiltersOpen(true)}
+                  onClick={openFilters}
                 />
               </div>
             </div>
@@ -415,36 +401,26 @@ export default function App() {
               leading={activeTab === "overview" && overviewComparison ? (
                 <OverviewPeriodFilter
                   windows={overviewComparison.windows}
-                  onEdit={() => setFiltersOpen(true)}
+                  onEdit={openFilters}
                 />
               ) : undefined}
               onRemove={(item) =>
                 setFilters((current) => clearFilterGroup(current, item.key))
               }
               actions={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)
-                ? <ResetFiltersButton onClick={resetAllFilters} />
+                ? <ResetFiltersButton onClick={resetDashboardFilters} />
                 : undefined}
             >
               {activeTab === "allocation" && allocationFilter && (
                 <FilterChipBar
                   filter={allocationFilter}
-                  onRemove={() => setAllocationFilter(null)}
+                  onRemove={clearAllocationFilter}
                 />
               )}
             </ActiveFilterSummary>
 
             <FilterPanel
-              allAccountTypes={allAccountTypes}
-              accountToType={accountToType}
-              allAccounts={allAccounts}
-              accountLabels={accountFilterLabels}
-              allOperationTypes={allOperationTypes}
-              filters={filters}
-              onChange={setFilters}
               visibility={filterVisibility}
-              open={filtersOpen}
-              onClose={() => setFiltersOpen(false)}
-              onReset={resetAllFilters}
               demoPresetSelection={demoPresetSelection}
               demoPresetActive={demoPresetActive}
             />
@@ -459,7 +435,6 @@ export default function App() {
                     comparison={overviewComparison}
                     rollingThreeYearTri={rollingThreeYearTriComparison}
                     irrStatus={irrStatus}
-                    onNavigate={setActiveTab}
                   />
                 )}
               {activeTab === "wealth" && (
@@ -500,10 +475,7 @@ export default function App() {
                   fundHoldingsHistory={fundData.history}
                   accountFilters={filters.accounts}
                   accountTypeFilters={filters.accountTypes}
-                  activeFilter={allocationFilter}
-                  onActiveFilterChange={setAllocationFilter}
                   rawData={rawAllocationData}
-                  view={allocationView}
                   dateFrom={filters.dateFrom}
                   dateTo={filters.dateTo}
                 />
@@ -517,26 +489,12 @@ export default function App() {
                   {holdingsView === "positions" ? (
                     <PositionsTableVariant
                       data={tableData}
-                      sortKey={sortKey}
-                      sortDir={sortDir}
-                      onSort={handleSort}
-                      expanded={expandedPositionRows}
-                      onExpandedChange={setExpandedPositionRows}
-                      fundHoldings={periodEndFundHoldings}
                       fundStatuses={fundData.statuses}
-                      onOpenCompleteHoldings={openCompleteHoldings}
                     />
                   ) : (
                     <FundLookThroughTab
                       positions={currentPositions}
                       holdings={periodEndFundHoldings}
-                      statuses={fundData.statuses}
-                      query={underlyingQuery}
-                      onQueryChange={setUnderlyingQuery}
-                      sort={underlyingSort}
-                      onSortChange={setUnderlyingSort}
-                      expanded={expandedUnderlyingIssuers}
-                      onExpandedChange={setExpandedUnderlyingIssuers}
                     />
                   )}
                 </div>
@@ -544,7 +502,6 @@ export default function App() {
               {activeTab === "quality" && (
                 <DataQualityTab
                   positions={latestAccountPositions}
-                  accountLabels={accountLabels}
                   errors={scopedPipelineErrors}
                   manualPriceOverrides={scopedManualPriceOverrides}
                   fundStatuses={fundData.statuses}
@@ -552,8 +509,6 @@ export default function App() {
                   fundHoldings={fundData.holdings}
                   fundSnapshots={fundData.snapshots}
                   fundUnresolved={fundData.unresolved}
-                  selectedTheme={selectedQualityTheme}
-                  onSelectedThemeChange={setSelectedQualityTheme}
                   rawData={rawAllocationData}
                 />
               )}
@@ -563,6 +518,5 @@ export default function App() {
         )}
       </div>
     </div>
-    </FilterScopeProvider>
   );
 }

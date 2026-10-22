@@ -7,20 +7,23 @@ import { groupTail } from './allocationCharts.logic'
 import { PieTooltip } from './allocationCharts.tooltips'
 import { PieLabel } from './PieLabel'
 import { PositionsToggle } from './PositionsToggle'
-import type { AllocationDimension, AllocationFilter, PieEntry } from './allocationCharts.types'
+import type { AllocationDimension, PieEntry } from './allocationCharts.types'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
+import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
 
 interface DonutCardProps {
   title: string
   point: AllocationPoint
   dimension: AllocationDimension
-  activeFilter: AllocationFilter | null
-  onFilterToggle: (filter: AllocationFilter) => void
-  onShowPositions?: () => void
-  positionsOpen?: boolean
 }
 
-export function DonutCard({ title, point, dimension, activeFilter, onFilterToggle, onShowPositions, positionsOpen = false }: DonutCardProps) {
+export function DonutCard({ title, point, dimension }: DonutCardProps) {
+  const {
+    allocationFilter: activeFilter,
+    positionsOpen,
+    toggleFilter,
+    togglePositions,
+  } = useDashboardAllocation()
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const dateLabel = new Date(point.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 
@@ -41,7 +44,7 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
         <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<InfoTooltip text={`Portfolio allocation by ${title.toLowerCase()} at the displayed snapshot.`} scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }} /></h2>
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-xs text-gray-600">{dateLabel}</span>
-          {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
+          {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
         </div>
       </div>
       <div className="text-xs text-gray-500 mb-1">Allocated: {fmtFull(total)}</div>
@@ -59,7 +62,7 @@ export function DonutCard({ title, point, dimension, activeFilter, onFilterToggl
             labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
             onClick={(entry: unknown) => {
               if (!(entry as PieEntry).name.startsWith('others (')) {
-                onFilterToggle({ type: dimension, value: (entry as PieEntry).name })
+                toggleFilter({ type: dimension, value: (entry as PieEntry).name })
               }
             }}
             style={{ cursor: 'pointer' }}

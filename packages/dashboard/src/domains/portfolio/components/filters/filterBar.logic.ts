@@ -1,8 +1,53 @@
+import { accountFilterId } from '@/domains/portfolio/helpers/filters/accountFilter'
+import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { Filters } from '@/domains/portfolio/types/filters'
 
 export function accountLabel(account: string, labels: Record<string, string>): string {
   if (labels[account]) return labels[account]
   return account.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+export function buildAccountFilterLabels(
+  positions: PositionRow[],
+  labels: Record<string, string>,
+): Record<string, string> {
+  const resolvedLabels = { ...labels }
+  for (const position of positions) {
+    const id = accountFilterId(position)
+    if (!resolvedLabels[id]) {
+      resolvedLabels[id] = id === position.account
+        ? accountLabel(position.account, labels)
+        : position.name
+    }
+  }
+  return resolvedLabels
+}
+
+export function buildPortfolioFilterOptions(
+  positions: PositionRow[],
+  accountLabels: Record<string, string>,
+) {
+  const accountToType: Record<string, string> = {}
+  for (const position of positions) {
+    const id = accountFilterId(position)
+    if (position.account_type) accountToType[id] = position.account_type
+  }
+
+  return {
+    accountFilterLabels: buildAccountFilterLabels(positions, accountLabels),
+    accountToType,
+    allAccounts: [...new Set(positions.map(accountFilterId))].sort(),
+    allAccountTypes: [
+      ...new Set(
+        positions
+          .map((position) => position.account_type)
+          .filter((type): type is string => !!type),
+      ),
+    ].sort(),
+    allOperationTypes: [
+      ...new Set(positions.flatMap((position) => [...position.operationTypes])),
+    ].sort(),
+  }
 }
 
 export type FilterSummaryKey = 'accounts' | 'period' | 'operations' | 'closed-positions'

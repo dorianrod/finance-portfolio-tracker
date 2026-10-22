@@ -45,7 +45,7 @@ import { buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy
 import { buildOverviewComparison, compareRollingThreeYearIrr } from '@/domains/portfolio/pages/overviewComparison.logic'
 import { buildDashboardQualitySummary } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardQualitySummary'
 import { buildDashboardSourceData } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardSourceData'
-import type { AnalysisTab } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardUi'
+import type { AnalysisTab } from '@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms'
 import type { Filters, SortKey } from '@/domains/portfolio/types/filters'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 

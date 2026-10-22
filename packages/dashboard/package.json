@@ -17,6 +17,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.19",
     "@types/papaparse": "^5.5.2",
+    "jotai": "^2.20.3",
     "papaparse": "^5.5.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

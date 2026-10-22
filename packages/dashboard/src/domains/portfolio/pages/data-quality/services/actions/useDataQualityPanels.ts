@@ -1,9 +1,15 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
 import type {
   AffectedAsset,
   DataQualityDimension,
 } from '../../helpers/mappers/buildDataQualityViewModel'
 import type { QualityThemeId } from '@/domains/portfolio/types/quality'
+import {
+  dataQualityClassificationDetailsOpenAtom,
+  dataQualityClassificationDimensionAtom,
+  dataQualityFundDiagnosticsOpenAtom,
+} from '../../stores/dataQualityPanels.atoms'
 
 interface UseDataQualityPanelsInput {
   activeThemeId: QualityThemeId
@@ -14,6 +20,41 @@ interface UseDataQualityPanelsInput {
   hasLookThroughScope: boolean
 }
 
+export function useDataQualityPanelActions() {
+  const setFundDiagnosticsOpen = useSetAtom(dataQualityFundDiagnosticsOpenAtom)
+  const setClassificationDetailsOpen = useSetAtom(dataQualityClassificationDetailsOpenAtom)
+  const setClassificationDimension = useSetAtom(dataQualityClassificationDimensionAtom)
+
+  const openFundDiagnostics = useCallback(() => setFundDiagnosticsOpen(true), [setFundDiagnosticsOpen])
+  const closeFundDiagnostics = useCallback(() => setFundDiagnosticsOpen(false), [setFundDiagnosticsOpen])
+  const openClassificationDetails = useCallback((dimension?: DataQualityDimension) => {
+    setClassificationDimension(dimension ?? null)
+    setClassificationDetailsOpen(true)
+  }, [setClassificationDetailsOpen, setClassificationDimension])
+  const openAllClassificationDetails = useCallback(
+    () => openClassificationDetails(),
+    [openClassificationDetails],
+  )
+  const closeClassificationDetails = useCallback(() => {
+    setClassificationDetailsOpen(false)
+    setClassificationDimension(null)
+  }, [setClassificationDetailsOpen, setClassificationDimension])
+
+  return useMemo(() => ({
+    closeClassificationDetails,
+    closeFundDiagnostics,
+    openAllClassificationDetails,
+    openClassificationDetails,
+    openFundDiagnostics,
+  }), [
+    closeClassificationDetails,
+    closeFundDiagnostics,
+    openAllClassificationDetails,
+    openClassificationDetails,
+    openFundDiagnostics,
+  ])
+}
+
 export function useDataQualityPanels({
   activeThemeId,
   affectedAssets,
@@ -22,25 +63,16 @@ export function useDataQualityPanels({
   hasFundStatuses,
   hasLookThroughScope,
 }: UseDataQualityPanelsInput) {
-  const [fundDiagnosticsOpen, setFundDiagnosticsOpen] = useState(false)
-  const [classificationDetailsOpen, setClassificationDetailsOpen] = useState(false)
-  const [classificationDimension, setClassificationDimension] =
-    useState<DataQualityDimension | null>(null)
-
-  const openFundDiagnostics = useCallback(() => setFundDiagnosticsOpen(true), [])
-  const closeFundDiagnostics = useCallback(() => setFundDiagnosticsOpen(false), [])
-  const openClassificationDetails = useCallback((dimension?: DataQualityDimension) => {
-    setClassificationDimension(dimension ?? null)
-    setClassificationDetailsOpen(true)
-  }, [])
-  const openAllClassificationDetails = useCallback(
-    () => openClassificationDetails(),
-    [openClassificationDetails],
-  )
-  const closeClassificationDetails = useCallback(() => {
-    setClassificationDetailsOpen(false)
-    setClassificationDimension(null)
-  }, [])
+  const fundDiagnosticsOpen = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
+  const classificationDetailsOpen = useAtomValue(dataQualityClassificationDetailsOpenAtom)
+  const classificationDimension = useAtomValue(dataQualityClassificationDimensionAtom)
+  const {
+    closeClassificationDetails,
+    closeFundDiagnostics,
+    openAllClassificationDetails,
+    openClassificationDetails,
+    openFundDiagnostics,
+  } = useDataQualityPanelActions()
 
   const visibleAffectedAssets = useMemo(
     () => classificationDimension

@@ -24,13 +24,13 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.1 [Follow the Domain-First Folder Layout](#11-follow-the-domain-first-folder-layout)
    - 1.2 [Import Other Domains Only Through Transverse Domains](#12-import-other-domains-only-through-transverse-domains)
    - 1.3 [Keep Shared Code Free of Domain Knowledge](#13-keep-shared-code-free-of-domain-knowledge)
-   - 1.4 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#14-choose-helpers-or-services-by-asking-does-it-need-a-hook)
-   - 1.5 [Gate Experimental Features With a Typed Flag Registry](#15-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.6 [Keep Components Thin](#16-keep-components-thin)
-   - 1.7 [Keep Visual Logic Out of apis/, services/ and helpers/](#17-keep-visual-logic-out-of-apis-services-and-helpers)
-   - 1.8 [No index.ts in stores/, One File per Concern](#18-no-indexts-in-stores-one-file-per-concern)
-   - 1.9 [Create a Sub-Domain Only for a Distinct Business Entity](#19-create-a-sub-domain-only-for-a-distinct-business-entity)
-   - 1.10 [Share State Through Jotai or Context, Not Prop Chains](#110-share-state-through-jotai-or-context-not-prop-chains)
+   - 1.4 [Share Client State Through Jotai, Not Prop Chains or Context](#14-share-client-state-through-jotai-not-prop-chains-or-context)
+   - 1.5 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#15-choose-helpers-or-services-by-asking-does-it-need-a-hook)
+   - 1.6 [Gate Experimental Features With a Typed Flag Registry](#16-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.7 [Keep Components Thin](#17-keep-components-thin)
+   - 1.8 [Keep Visual Logic Out of apis/, services/ and helpers/](#18-keep-visual-logic-out-of-apis-services-and-helpers)
+   - 1.9 [No index.ts in stores/, One File per Concern](#19-no-indexts-in-stores-one-file-per-concern)
+   - 1.10 [Create a Sub-Domain Only for a Distinct Business Entity](#110-create-a-sub-domain-only-for-a-distinct-business-entity)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -238,7 +238,94 @@ Prefer injecting rendered content or data (`table: ReactNode`, `histories: Histo
 
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 
-### 1.4 Choose helpers/ or services/ by Asking "Does It Need a Hook?"
+### 1.4 Share Client State Through Jotai, Not Prop Chains or Context
+
+**Impact: CRITICAL (prevents prop drilling and oversized UI hooks)**
+
+State consumed below its owner must not be threaded through intermediate component props or moved into an application React Context. Put shared client state in page- or domain-scoped Jotai atoms. A component that needs a value reads the atom directly; a component that needs to change it calls a focused hook that owns the write operations.
+
+Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useDashboardFilters`, `useDashboardSort`, `useDashboardSelection` and `useDashboardModal`. A `useDashboardUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
+
+**Incorrect (one hook owns unrelated state, then drills values and actions):**
+
+```tsx
+function useDashboardUi() {
+  const [filters, setFilters] = useState<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
+  const [sort, setSort] = useState<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  return { filters, setFilters, sort, setSort, selectedIds, setSelectedIds }
+}
+
+function Dashboard() {
+  const dashboardUi = useDashboardUi()
+  return <DashboardBody filters={dashboardUi.filters} setFilters={dashboardUi.setFilters} />
+}
+
+function DashboardBody(props: DashboardBodyProps) {
+  return <DashboardToolbar filters={props.filters} setFilters={props.setFilters} />
+}
+```
+
+Creating a `DashboardContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
+
+**Correct (atoms own values; focused hooks own actions; consumers subscribe where needed):**
+
+```tsx
+// pages/dashboard/stores/dashboardFilters.atoms.ts
+export const dashboardFiltersAtom = atom<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
+
+// pages/dashboard/stores/dashboardSort.atoms.ts
+export const dashboardSortAtom = atom<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+
+// pages/dashboard/services/useDashboardFilters.ts
+export function useDashboardFilters() {
+  const setFilters = useSetAtom(dashboardFiltersAtom)
+
+  const setStatus = useCallback(
+    (status: OrderStatus | null) => setFilters(current => ({ ...current, status })),
+    [setFilters],
+  )
+  const resetFilters = useCallback(() => setFilters(DEFAULT_DASHBOARD_FILTERS), [setFilters])
+
+  return useMemo(() => ({ setStatus, resetFilters }), [setStatus, resetFilters])
+}
+
+// pages/dashboard/components/DashboardToolbar.tsx
+function DashboardToolbar() {
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const { setStatus, resetFilters } = useDashboardFilters()
+
+  return <Filters value={filters} onStatusChange={setStatus} onReset={resetFilters} />
+}
+
+// A different deep consumer reads only what it needs, without intermediary props.
+function DashboardResults() {
+  const sort = useAtomValue(dashboardSortAtom)
+  return <OrderList sort={sort} />
+}
+```
+
+### How to detect the problem
+
+- A custom hook declares `useState` and returns that state. This means another consumer needs the value: move shared client state to an atom, unless the hook and its state are an intentionally self-contained reusable primitive.
+- A UI hook owns several independent concerns such as filters, sorting, search, selection and modals. Split it into concern-specific atoms and hooks; retain an aggregate hook only as a thin optional facade.
+- A prop is forwarded unchanged through one or more components that do not use it.
+- A component accepts both a state value and its setter only to pass them farther down the tree.
+- A new `createContext` or `useContext` exists primarily to avoid passing client UI state through props.
+
+### Summary
+
+- Keep truly local, unreturned UI state in `useState`, such as hover or one component's accordion state.
+- Keep server state in TanStack Query, never in Jotai.
+- Put shared client state in scoped atoms and read it directly with `useAtomValue`.
+- Expose writes through small responsibility-specific hooks using `useSetAtom`; use `useAtom` only when one consumer genuinely reads and writes.
+- Keep explicit props for a direct parent-child API. The smell is an intermediary that forwards props it does not use.
+- Do not create application React Contexts for state sharing. Third-party providers required by a library are outside this rule.
+
+See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
+
+### 1.5 Choose helpers/ or services/ by Asking "Does It Need a Hook?"
 
 **Impact: HIGH (predictable location, minimal test setup)**
 
@@ -275,7 +362,7 @@ src/domains/sales/shared/
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`.
 
-### 1.5 Gate Experimental Features With a Typed Flag Registry
+### 1.6 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -316,7 +403,7 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.6 Keep Components Thin
+### 1.7 Keep Components Thin
 
 **Impact: HIGH (logic becomes reusable and testable without rendering)**
 
@@ -367,7 +454,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 
 See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.7 Keep Visual Logic Out of apis/, services/ and helpers/
+### 1.8 Keep Visual Logic Out of apis/, services/ and helpers/
 
 **Impact: HIGH (domain hooks stay reusable across pages and contexts)**
 
@@ -429,7 +516,7 @@ How the page action gives feedback:
 
 See also: `vercel-react-best-practices` → `async-parallel`
 
-### 1.8 No index.ts in stores/, One File per Concern
+### 1.9 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
 
@@ -467,7 +554,7 @@ Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. D
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.9 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.10 Create a Sub-Domain Only for a Distinct Business Entity
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
@@ -493,43 +580,6 @@ src/domains/sales/orders/
 ```
 
 Create a new sub-domain when the concept has its own API resource (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views. If two sub-domains need the same code, move it to the main domain's `shared/` folder instead of merging them. A main domain that holds a single entity stays single-level (`src/domains/contracts/apis/…`) until a second entity appears.
-
-### 1.10 Share State Through Jotai or Context, Not Prop Chains
-
-**Impact: MEDIUM (decouples deep components from their ancestors)**
-
-When intermediate components only forward a value, move it out of the props. Page-wide dynamic state (modal target, edit mode, filters, selection) goes in a Jotai atom in `pages/[page]/stores/` (or the domain `stores/`), exposed through a page hook. A value bound to one instance of a compound component (the entity rendered by a card) goes in a React Context owned by that component.
-
-**Incorrect (modal state threaded through three levels):**
-
-```tsx
-const Detail: FC = () => {
-  const [reminderToDelete, setReminderToDelete] = useState<ContractReminder | null>(null)
-  return <RemindersTab onRequestDelete={setReminderToDelete} reminderToDelete={reminderToDelete} />
-}
-// RemindersTab -> ReminderBlock -> ReminderActions all forward onRequestDelete
-```
-
-**Correct (page atom + modal controller, consumed where needed):**
-
-```tsx
-// pages/detail/stores/reminderModal.atoms.ts
-export const reminderToDeleteAtom = atom<ContractReminder | null>(null)
-
-// pages/detail/services/actions/useReminderModal.ts: modal controller
-export function useReminderModal() {
-  const setReminderToDelete = useSetAtom(reminderToDeleteAtom)
-  return useMemo(
-    () => ({ openDelete: setReminderToDelete, close: () => setReminderToDelete(null) }),
-    [setReminderToDelete],
-  )
-}
-
-// deep component
-const { openDelete } = useReminderModal()
-```
-
-Modal controllers (`use[Name]Modal`) are the only page hooks that return an object of handlers; other action hooks return a single callback. Keep filters, selection and edit-mode atoms in `stores/` behind a small factory rather than redefining raw atoms on every page.
 
 ---
 

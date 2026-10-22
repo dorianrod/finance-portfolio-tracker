@@ -1,13 +1,29 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Provider, createStore } from 'jotai'
 import { describe, expect, it } from 'vitest'
-import { FilterScopeBadges, FilterScopeProvider } from './FilterScopeBadges'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
+import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
+import { FilterScopeBadges } from './FilterScopeBadges'
 import type { Filters } from '@/domains/portfolio/types/filters'
 
 function render(filters: Filters, period: Parameters<typeof FilterScopeBadges>[0]['period'], account: Parameters<typeof FilterScopeBadges>[0]['account'] = 'filterable') {
+  const store = createStore()
+  store.set(dashboardFiltersAtom, filters)
+  const queryClient = new QueryClient()
+  queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {
+    accountLabels: { acc1: 'Main PEA' },
+    positions: [],
+    rawOperations: [],
+    rawPositions: [],
+  })
+
   return renderToStaticMarkup(
-    <FilterScopeProvider filters={filters} accountLabels={{ acc1: 'Main PEA' }}>
-      <FilterScopeBadges account={account} period={period} />
-    </FilterScopeProvider>,
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <FilterScopeBadges account={account} period={period} />
+      </QueryClientProvider>
+    </Provider>,
   )
 }
 

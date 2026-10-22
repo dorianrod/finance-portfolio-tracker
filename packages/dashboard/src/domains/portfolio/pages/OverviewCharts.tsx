@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -194,16 +195,18 @@ function EmptyChart({ title, message, scope }: { title: string; message: string;
 }
 
 export function OverviewConcentrationChart({
-  concentration,
-  mode,
-  onModeChange,
-  lookThroughDisabled,
+  heldConcentration,
+  underlyingConcentration,
 }: {
-  concentration: OverviewConcentrationComparison
-  mode: ConcentrationMode
-  onModeChange: (mode: ConcentrationMode) => void
-  lookThroughDisabled: boolean
+  heldConcentration: OverviewConcentrationComparison
+  underlyingConcentration: OverviewConcentrationComparison
 }) {
+  const [mode, setMode] = useState<ConcentrationMode>('lookThrough')
+  const lookThroughDisabled = underlyingConcentration.current == null
+  const displayedMode = mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
+  const concentration = displayedMode === 'held'
+    ? heldConcentration
+    : underlyingConcentration
   const current = concentration.current
   const previousByKey = new Map(concentration.previous?.holdings.map((holding) => [holding.key, holding.weight]) ?? [])
   const rows = current?.holdings.slice(0, 5).map((holding) => ({
@@ -217,19 +220,19 @@ export function OverviewConcentrationChart({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="flex items-center text-sm font-semibold text-gray-200">
-            {mode === 'lookThrough' ? 'Largest underlying assets' : 'Largest held positions'}
+            {displayedMode === 'lookThrough' ? 'Largest underlying assets' : 'Largest held positions'}
             <InfoTooltip
-              text={mode === 'lookThrough' ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.' : 'Products and instruments as held, including portfolio wrappers.'}
+              text={displayedMode === 'lookThrough' ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.' : 'Products and instruments as held, including portfolio wrappers.'}
               scope={{ account: 'filterable', period: 'as-of', effectiveDate: concentration.current?.date }}
             />
           </h3>
           <p className="mt-0.5 text-xs text-gray-600">
-            {mode === 'lookThrough'
+            {displayedMode === 'lookThrough'
               ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.'
               : 'Products and instruments as held, including portfolio wrappers.'}
           </p>
         </div>
-        <ConcentrationModeToggle value={mode} onChange={onModeChange} lookThroughDisabled={lookThroughDisabled} />
+        <ConcentrationModeToggle value={displayedMode} onChange={setMode} lookThroughDisabled={lookThroughDisabled} />
       </div>
       {rows.length === 0 ? (
         <div className="flex h-48 items-center justify-center text-center text-sm text-gray-600">Historical concentration is unavailable for this period.</div>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import type {
   FundHolding,
@@ -35,7 +35,7 @@ interface UseAllocationChartsInput {
   accountFilters: Set<string>
   accountTypeFilters: Set<string>
   activeFilter: AllocationFilter | null
-  onActiveFilterChange: (filter: AllocationFilter | null) => void
+  concentrationMode: ConcentrationMode
   rawData: RawIsinData
   dateFrom?: string
   dateTo?: string
@@ -53,14 +53,11 @@ export function useAllocationCharts({
   accountFilters,
   accountTypeFilters,
   activeFilter,
-  onActiveFilterChange,
+  concentrationMode,
   rawData,
   dateFrom,
   dateTo,
 }: UseAllocationChartsInput) {
-  const [showTable, setShowTable] = useState(false)
-  const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
-
   const applicablePositions = useMemo(
     () => positions.filter(isAssetAnalysisApplicablePosition),
     [positions],
@@ -192,30 +189,13 @@ export function useAllocationCharts({
     trendClasse.length,
   ) >= 2
 
-  const handleFilterToggle = useCallback((filter: AllocationFilter) => {
-    const isSameFilter = activeFilter?.type === filter.type
-      && activeFilter.value === filter.value
-    setShowTable(false)
-    onActiveFilterChange(isSameFilter ? null : filter)
-  }, [activeFilter, onActiveFilterChange])
-  const togglePositions = useCallback(() => setShowTable((open) => !open), [])
-  const closePositions = useCallback(() => setShowTable(false), [])
-  const clearFilter = useCallback(() => {
-    setShowTable(false)
-    onActiveFilterChange(null)
-  }, [onActiveFilterChange])
-
   return {
     baseClasse,
     baseCurrency,
     baseGeo,
     baseSecteur,
-    clearFilter,
-    closePositions,
     concentration,
-    concentrationMode,
     cumulativeConcentration,
-    handleFilterToggle,
     hasApplicableValue,
     hasEvolution,
     hasSelectedValue,
@@ -227,10 +207,7 @@ export function useAllocationCharts({
     latestSecteur,
     lookThroughConcentration,
     lookThroughConcentrationHistory,
-    setConcentrationMode,
-    showTable,
     tableRows,
-    togglePositions,
     trendClasse,
     trendCurrency,
     trendGeo,

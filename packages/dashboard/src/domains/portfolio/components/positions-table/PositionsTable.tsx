@@ -5,10 +5,9 @@ import {
   flexRender,
   createColumnHelper,
 } from '@tanstack/react-table'
-import type { ExpandedState, OnChangeFn } from '@tanstack/react-table'
+import { useAtomValue } from 'jotai'
 import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/domains/portfolio/types/domain'
-import type { SortKey } from '@/domains/portfolio/types/filters'
 import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
 import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { gainClass } from './positionsTable.logic'
@@ -19,7 +18,7 @@ import { HoverChart, type ChartTarget } from '@/domains/portfolio/components/hov
 import { HoverSavingsChart, type SavingsChartTarget } from '@/domains/portfolio/components/hover-charts/HoverSavingsChart'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/domains/portfolio/components/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
-import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
+import type { FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import {
   FundPositionPopover,
   type FundPositionPopoverTarget,
@@ -45,6 +44,11 @@ import {
   isClosedPosition,
   isTaxFreePassiveIncome,
 } from '@/domains/portfolio/helpers/businessRules/positionDisplayRules'
+import { useDashboardPositionsTable } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardPositionsTable'
+import {
+  dashboardPositionSortDirectionAtom,
+  dashboardPositionSortKeyAtom,
+} from '@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms'
 
 const col = createColumnHelper<TableRow>()
 
@@ -57,14 +61,7 @@ function irrPeriodLabel(years: number | null): string {
 
 interface Props {
   data: PositionRow[]
-  sortKey: SortKey
-  sortDir: 'asc' | 'desc'
-  onSort: (key: SortKey) => void
-  expanded?: ExpandedState
-  onExpandedChange?: OnChangeFn<ExpandedState>
-  fundHoldings?: FundHolding[]
   fundStatuses?: FundHoldingStatus[]
-  onOpenCompleteHoldings?: (fundName: string) => void
 }
 
 export function PositionsTable(props: Props) {
@@ -76,10 +73,11 @@ export function GroupedPositionsTable(props: Props) {
 }
 
 function PositionsTableView({
-  data, grouping, sortKey, sortDir, onSort,
-  expanded, onExpandedChange,
-  fundHoldings = [], fundStatuses = [], onOpenCompleteHoldings,
+  data, grouping, fundStatuses = [],
 }: Props & { grouping: 'flat' | 'account-type' }) {
+  const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
+  const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
+  const { expanded, setExpanded, sort: onSort } = useDashboardPositionsTable()
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
@@ -448,8 +446,8 @@ function PositionsTableView({
     },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    state: expanded === undefined ? undefined : { expanded },
-    onExpandedChange,
+    state: { expanded },
+    onExpandedChange: setExpanded,
   })
 
   return (
@@ -644,8 +642,6 @@ function PositionsTableView({
       {underlyingPopover && (
         <FundPositionPopover
           target={underlyingPopover}
-          holdings={fundHoldings}
-          onOpenComplete={onOpenCompleteHoldings}
           onMouseEnter={cancelHide}
           onMouseLeave={scheduleHide}
         />

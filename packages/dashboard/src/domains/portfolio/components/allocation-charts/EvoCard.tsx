@@ -6,20 +6,23 @@ import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { allocationTrendDomain, buildAllocationTrend } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
 import { PositionsToggle } from './PositionsToggle'
-import type { AllocationDimension, AllocationFilter } from './allocationCharts.types'
+import type { AllocationDimension } from './allocationCharts.types'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
+import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
 
 interface EvoCardProps {
   title: string
   points: AllocationPoint[]
   dimension: AllocationDimension
-  activeFilter: AllocationFilter | null
-  onFilterToggle: (filter: AllocationFilter) => void
-  onShowPositions?: () => void
-  positionsOpen?: boolean
 }
 
-export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle, onShowPositions, positionsOpen = false }: EvoCardProps) {
+export function EvoCard({ title, points, dimension }: EvoCardProps) {
+  const {
+    allocationFilter: activeFilter,
+    positionsOpen,
+    toggleFilter,
+    togglePositions,
+  } = useDashboardAllocation()
   const { categories, rows: chartData } = buildAllocationTrend(points)
 
   const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
@@ -29,7 +32,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-2 flex items-start justify-between gap-3">
         <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<InfoTooltip text={`Historical portfolio allocation by ${title.toLowerCase()}.`} scope={{ account: 'filterable', period: 'range' }} /></h2>
-        {activeFilter?.type === dimension && onShowPositions && <PositionsToggle open={positionsOpen} onClick={onShowPositions} />}
+        {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
         {categories.map((cat) => {
@@ -45,7 +48,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
             <button
               key={cat}
               type="button"
-              onClick={() => onFilterToggle({ type: dimension, value: cat })}
+              onClick={() => toggleFilter({ type: dimension, value: cat })}
               className="inline-flex items-center gap-1 text-[11px] transition-opacity cursor-pointer"
               style={{ opacity: isDimmed ? 0.35 : 1 }}
             >

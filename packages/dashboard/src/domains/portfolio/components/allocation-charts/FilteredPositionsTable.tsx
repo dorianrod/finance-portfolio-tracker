@@ -1,31 +1,32 @@
 import { fmtFull } from '@/shared/format/money'
 import { catColor } from '@/shared/format/colors'
 import { SidePanel } from '@/shared/ui/SidePanel'
-import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'
+import type { MatchingIsinRow } from './allocationCharts.types'
+import { useDashboardAllocation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocation'
 
 export function FilteredPositionsTable({
   rows,
-  filter,
-  onClearFilter,
-  onClose,
 }: {
   rows: MatchingIsinRow[]
-  filter: AllocationFilter
-  onClearFilter: () => void
-  onClose: () => void
 }) {
+  const {
+    allocationFilter: filter,
+    clearFilter,
+    closePositions,
+  } = useDashboardAllocation()
+  if (!filter) return null
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
 
   return (
     <SidePanel
       title={<>Positions — <span style={{ color: catColor(filter.value) }}>{filter.value}</span></>}
       description={`${rows.length} positions · ${fmtFull(totalFiltered)} in exposure`}
-      onClose={onClose}
+      onClose={closePositions}
       closeLabel="Close positions"
       headerActions={(
         <button
           type="button"
-          onClick={onClearFilter}
+          onClick={clearFilter}
           className="cursor-pointer rounded-lg border border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:border-gray-500 hover:bg-gray-800 hover:text-gray-200"
         >
           Clear filter

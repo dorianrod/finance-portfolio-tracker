@@ -1,9 +1,21 @@
 import { createPortal } from 'react-dom'
-import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
+import { useAtomValue } from 'jotai'
+import {
+  useFundHoldingsData,
+  type FundHolding,
+  type FundHoldingStatus,
+  type HistoricalFundHolding,
+} from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { computePopoverPos } from '@/domains/portfolio/components/allocation-charts/allocationCharts.logic'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
 import { fmtFull } from '@/shared/format/money'
+import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
+import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
 import { holdingsForPosition } from './fundHoldings.logic'
+
+const EMPTY_FUND_HOLDINGS: FundHolding[] = []
+const EMPTY_HISTORICAL_FUND_HOLDINGS: HistoricalFundHolding[] = []
 
 export interface FundPositionPopoverTarget {
   position: PositionRow
@@ -13,17 +25,19 @@ export interface FundPositionPopoverTarget {
 
 export function FundPositionPopover({
   target,
-  holdings,
-  onOpenComplete,
   onMouseEnter,
   onMouseLeave,
 }: {
   target: FundPositionPopoverTarget
-  holdings: FundHolding[]
-  onOpenComplete?: (fundName: string) => void
   onMouseEnter: () => void
   onMouseLeave: () => void
 }) {
+  const { openCompleteHoldings } = useDashboardNavigation()
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const { data: fundData } = useFundHoldingsData()
+  const holdings = filters.dateTo
+    ? selectHistoricalFundHoldingsAtDate(fundData?.history ?? EMPTY_HISTORICAL_FUND_HOLDINGS, filters.dateTo)
+    : fundData?.holdings ?? EMPTY_FUND_HOLDINGS
   const { position, status } = target
   const rows = holdingsForPosition(position, holdings)
     .slice()
@@ -46,11 +60,9 @@ export function FundPositionPopover({
           <p className="truncate text-sm font-semibold text-white">{position.name}</p>
           <p className="mt-0.5 truncate font-mono text-[10px] text-gray-600">{position.isin || position.ticker}</p>
         </div>
-        {onOpenComplete && (
-          <button type="button" onClick={() => onOpenComplete(position.name)} className="shrink-0 text-xs font-medium text-blue-400 hover:text-blue-300">
-            Open all →
-          </button>
-        )}
+        <button type="button" onClick={() => openCompleteHoldings(position.name)} className="shrink-0 text-xs font-medium text-blue-400 hover:text-blue-300">
+          Open all →
+        </button>
       </div>
 
       <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 border-b border-gray-800 pb-3 text-xs text-gray-500">
