@@ -53,6 +53,11 @@ export const SEMANTIC_BADGE_CLASSES = {
   transactionOther: 'bg-violet-900 text-violet-300',
 } as const
 
+export const SEMANTIC_STATUS_BADGE_CLASSES = {
+  critical: 'bg-red-900/60 text-red-300',
+  warning: 'bg-amber-900/60 text-amber-300',
+} as const
+
 export const SEMANTIC_ACCENT_CLASSES = {
   coverage: { border: 'border-l-emerald-500', dot: 'bg-emerald-500' },
   warning: { border: 'border-l-amber-500', dot: 'bg-amber-500' },

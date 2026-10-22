@@ -2,6 +2,7 @@ import { fmt, fmtPct } from '@/shared/format/money'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { Kpi } from './Kpi'
+import { calculatePortfolioKpis } from '@/domains/portfolio/helpers/calculators/calculatePortfolioKpis'
 
 function gainColor(v: number) {
   return v >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
@@ -13,22 +14,20 @@ interface Props {
 }
 
 export function KpiBar({ rows, globalTri }: Props) {
-  const active = rows.filter((r) => r.status === 'active')
-
-  const totalValue = active.reduce((s, r) => s + (r.total_value ?? 0), 0)
-  const totalUnrealized = active.reduce((s, r) => s + (r.unrealized_gain ?? 0), 0)
-  const totalUnrealizedNet = active.reduce((s, r) => s + (r.unrealized_gain_net ?? r.unrealized_gain ?? 0), 0)
-  const totalCostBasis = totalValue - totalUnrealized
-  const totalValueNet = totalCostBasis + totalUnrealizedNet
-
-  const totalInvested = active.reduce((s, r) => s + r.total_invested, 0)
-  const unrealizedPctNet = totalInvested > 0 ? (totalUnrealizedNet / totalInvested) * 100 : 0
-  const unrealizedPctGross = totalInvested > 0 ? (totalUnrealized / totalInvested) * 100 : 0
-
-  const totalRealized = rows.reduce((s, r) => s + r.realized_gain, 0)
-  const totalDividends = rows.reduce((s, r) => s + r.total_dividends, 0)
-  const totalInterest = rows.reduce((s, r) => s + r.total_interest, 0)
-  const totalReturn = rows.reduce((s, r) => s + r.total_realized_return, 0)
+  const {
+    activeCount,
+    closedCount,
+    totalDividends,
+    totalInterest,
+    totalRealized,
+    totalReturn,
+    totalUnrealized,
+    totalUnrealizedNet,
+    totalValue,
+    totalValueNet,
+    unrealizedPctGross,
+    unrealizedPctNet,
+  } = calculatePortfolioKpis(rows)
 
   return (
     <div className="mb-4 flex flex-wrap items-start gap-6 border-b border-gray-800 pb-4">
@@ -77,8 +76,8 @@ export function KpiBar({ rows, globalTri }: Props) {
       <div className="w-px bg-gray-700" />
       <Kpi.Root>
         <Kpi.Label tooltip="Number of active positions (valued today) and closed positions (fully sold).">Positions</Kpi.Label>
-        <Kpi.ValueRow><Kpi.Value>{active.length}</Kpi.Value></Kpi.ValueRow>
-        <Kpi.Note>{rows.length - active.length} closed</Kpi.Note>
+        <Kpi.ValueRow><Kpi.Value>{activeCount}</Kpi.Value></Kpi.ValueRow>
+        <Kpi.Note>{closedCount} closed</Kpi.Note>
       </Kpi.Root>
     </div>
   )

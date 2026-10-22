@@ -1,48 +1,26 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
 import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import { AllocationCoverageCard } from '@/domains/portfolio/components/allocation-charts/AllocationCoverageCard'
-import { computeAllocationCoverageByAccount, computeAllocationCoverageByDimension } from '@/domains/portfolio/components/allocation-charts/allocationCoverage.logic'
 import { ErrorsTab, ManualPriceOverridesTable } from '@/domains/portfolio/components/errors/ErrorsTab'
 import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import { LookThroughCoverageSummary } from '@/domains/portfolio/components/fund-holdings/LookThroughCoverageSummary'
 import { FundDataQualityPanel } from '@/domains/portfolio/components/fund-holdings/FundDataQualityPanel'
-import { computeFundExposurePercentages, scopeFundQualityData } from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
 import { SidePanel } from '@/shared/ui/SidePanel'
 import { fmtFull } from '@/shared/format/money'
-import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
-import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
+import { formatPercentage } from '@/shared/format/percentage'
+import {
+  buildDataQualityViewModel,
+  DATA_QUALITY_DIMENSION_LABELS,
+  type AffectedAsset,
+  type QualityTheme,
+} from './data-quality/helpers/mappers/buildDataQualityViewModel'
+import { useDataQualityPanels } from './data-quality/services/actions/useDataQualityPanels'
+import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
 
-export type QualityThemeId = 'pipeline' | 'prices' | 'classification' | 'lookthrough'
-type QualityTone = 'healthy' | 'warning' | 'critical' | 'unavailable'
-
-interface QualityTheme {
-  id: QualityThemeId
-  label: string
-  description: string
-  metric: string
-  metricLabel: string
-  tone: QualityTone
-  priority: number
-}
-
-interface AffectedAsset {
-  id: string
-  name: string
-  value: number
-  dimensions: Array<keyof typeof DIMENSION_LABELS>
-  largestGapValue: number
-  largestGapPct: number
-}
-
-const DIMENSION_LABELS = {
-  geo: 'geography',
-  secteur: 'sector',
-  currency: 'currency',
-  classe: 'asset class',
-} as const
+export type { QualityThemeId } from '@/domains/portfolio/types/quality'
 
 const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
   healthy: {
@@ -80,169 +58,60 @@ export function DataQualityTab({
   onSelectedThemeChange: (theme: QualityThemeId) => void
   rawData: RawIsinData
 }) {
-  const [fundDiagnosticsOpen, setFundDiagnosticsOpen] = useState(false)
-  const [classificationDetailsOpen, setClassificationDetailsOpen] = useState(false)
-  const [classificationDimension, setClassificationDimension] = useState<keyof typeof DIMENSION_LABELS | null>(null)
-  const coverage = useMemo(
-    () => rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData),
-    [positions, rawData],
-  )
-  const dimensionCoverage = useMemo(
-    () => rawData.loading ? [] : computeAllocationCoverageByDimension(positions, rawData),
-    [positions, rawData],
-  )
-  const scopedFundData = useMemo(
-    () => scopeFundQualityData(
+  const {
+    affectedAssets,
+    classificationApplicableValue,
+    classificationIsNotApplicable,
+    coverage,
+    dimensionCoverage,
+    fundIssueCount,
+    hasLookThroughScope,
+    recommendedTheme,
+    scopedFundData,
+    themes,
+  } = useMemo(
+    () => buildDataQualityViewModel({
       positions,
-      fundHoldings,
+      errors,
+      manualPriceOverrides,
       fundStatuses,
+      fundReport,
+      fundHoldings,
       fundSnapshots,
       fundUnresolved,
+      rawData,
+    }),
+    [
+      positions,
+      errors,
+      manualPriceOverrides,
+      fundStatuses,
       fundReport,
-    ),
-    [positions, fundHoldings, fundStatuses, fundSnapshots, fundUnresolved, fundReport],
-  )
-
-  const errorCount = errors.filter((item) => item.level === 'error').length
-  const warningCount = errors.length - errorCount
-  const classificationMappedValue = coverage.reduce((sum, item) => sum + item.allocated, 0)
-  const classificationUnmappedValue = coverage.reduce((sum, item) => sum + item.unallocated, 0)
-  const classificationApplicableValue = classificationMappedValue + classificationUnmappedValue
-  const classificationNotApplicableValue = coverage.reduce(
-    (sum, item) => sum + item.notApplicable,
-    0,
-  )
-  const [, classificationGap] = partitionPercentages([
-    classificationMappedValue,
-    classificationUnmappedValue,
-    classificationNotApplicableValue,
-  ])
-  const classificationIsNotApplicable = !rawData.loading
-    && classificationApplicableValue <= 0
-    && classificationNotApplicableValue > 0
-  const affectedAssets = useMemo(() => {
-    const byAsset = new Map<string, AffectedAsset>()
-    for (const dimension of dimensionCoverage) {
-      for (const issue of dimension.issues) {
-        const gapPct = issue.value > 0 ? issue.unallocated / issue.value * 100 : 0
-        const current: AffectedAsset = byAsset.get(issue.id) ?? {
-          id: issue.id,
-          name: issue.name,
-          value: issue.value,
-          dimensions: [],
-          largestGapValue: 0,
-          largestGapPct: 0,
-        }
-        current.value = Math.max(current.value, issue.value)
-        if (!current.dimensions.includes(dimension.dimension)) current.dimensions.push(dimension.dimension)
-        if (issue.unallocated > current.largestGapValue) {
-          current.largestGapValue = issue.unallocated
-          current.largestGapPct = gapPct
-        }
-        byAsset.set(issue.id, current)
-      }
-    }
-    return [...byAsset.values()].sort((a, b) => b.largestGapValue - a.largestGapValue)
-  }, [dimensionCoverage])
-  const unresolvedValue = scopedFundData.report
-    ? scopedFundData.report.undisclosedFundValue + scopedFundData.report.opaqueValue
-    : 0
-  const identifiedValue = scopedFundData.report
-    ? scopedFundData.report.directIdentifiedValue + scopedFundData.report.decomposedValue
-    : 0
-  const fundExposurePercentages = computeFundExposurePercentages(
-    identifiedValue,
-    unresolvedValue,
-    scopedFundData.notApplicableValue,
-  )
-  const unresolvedPct = fundExposurePercentages.unresolved
-  const fundErrorCount = scopedFundData.statuses.filter((status) => status.validationStatus === 'error').length
-  const fundIssueCount = scopedFundData.statuses.filter(
-    (status) => status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct),
-  ).length
-  const hasLookThroughScope = !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
-
-  const themes: QualityTheme[] = [
-    {
-      id: 'pipeline',
-      label: 'Portfolio data',
-      description: 'Import, position and market-data anomalies detected during the latest run.',
-      metric: String(errors.length),
-      metricLabel: errors.length === 1 ? 'anomaly' : 'anomalies',
-      tone: errorCount > 0 ? 'critical' : warningCount > 0 ? 'warning' : 'healthy',
-      priority: errorCount > 0 ? 1_000 + errorCount : warningCount > 0 ? 700 + warningCount : 0,
-    },
-    {
-      id: 'prices',
-      label: 'Manual prices',
-      description: 'Overrides that replace automatic market prices.',
-      metric: String(manualPriceOverrides.length),
-      metricLabel: manualPriceOverrides.length === 1 ? 'override' : 'overrides',
-      tone: manualPriceOverrides.length > 0 ? 'warning' : 'healthy',
-      priority: manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
-    },
-    {
-      id: 'classification',
-      label: 'Diversification',
-      description: 'Completeness of asset class, geography, sector and currency data.',
-      metric: rawData.loading ? '—' : classificationIsNotApplicable ? 'N/A' : `${formatPercentage(classificationGap)}%`,
-      metricLabel: rawData.loading
-        ? 'loading'
-        : classificationIsNotApplicable
-          ? 'not applicable'
-          : 'unmapped',
-      tone: rawData.loading || classificationIsNotApplicable ? 'unavailable' : hasMaterialQualityGap(classificationGap) ? 'warning' : 'healthy',
-      priority: rawData.loading || classificationIsNotApplicable ? -1 : hasMaterialQualityGap(classificationGap) ? 500 + classificationGap : 0,
-    },
-    {
-      id: 'lookthrough',
-      label: 'Underlying exposure',
-      description: 'Transparency and source reliability of underlying fund exposures.',
-      metric: hasLookThroughScope ? `${formatPercentage(unresolvedPct)}%` : scopedFundData.report ? 'N/A' : '—',
-      metricLabel: hasLookThroughScope ? 'unresolved' : scopedFundData.report ? 'not applicable' : 'not available',
-      tone: !hasLookThroughScope
-        ? 'unavailable'
-        : fundErrorCount > 0
-          ? 'critical'
-          : hasMaterialQualityGap(unresolvedPct)
-            ? 'warning'
-            : 'healthy',
-      priority: !hasLookThroughScope
-        ? -1
-        : fundErrorCount > 0
-          ? 900 + fundErrorCount
-          : hasMaterialQualityGap(unresolvedPct)
-            ? 600 + unresolvedPct
-            : 0,
-    },
-  ]
-
-  const recommendedTheme = themes.reduce(
-    (highest, theme) => theme.priority > highest.priority ? theme : highest,
-    themes[0],
+      fundHoldings,
+      fundSnapshots,
+      fundUnresolved,
+      rawData,
+    ],
   )
   const activeThemeId = selectedTheme ?? recommendedTheme.id
   const activeTheme = themes.find((theme) => theme.id === activeThemeId) ?? themes[0]
-  const activeDetailAction = activeThemeId === 'lookthrough' && hasLookThroughScope && scopedFundData.statuses.length > 0
-    ? {
-        label: 'Inspect',
-        detail: `${fundIssueCount} issue${fundIssueCount === 1 ? '' : 's'} to inspect`,
-        expanded: fundDiagnosticsOpen,
-        onClick: () => setFundDiagnosticsOpen(true),
-      }
-    : activeThemeId === 'classification' && classificationApplicableValue > 0
-      ? {
-          label: 'Inspect',
-          detail: affectedAssets.length > 0
-            ? `${affectedAssets.length} asset${affectedAssets.length === 1 ? '' : 's'} to inspect`
-            : 'No affected asset',
-          expanded: classificationDetailsOpen,
-          onClick: () => {
-            setClassificationDimension(null)
-            setClassificationDetailsOpen(true)
-          },
-        }
-      : null
+  const {
+    activeDetailAction,
+    classificationDetailsOpen,
+    classificationDimension,
+    closeClassificationDetails,
+    closeFundDiagnostics,
+    fundDiagnosticsOpen,
+    openClassificationDetails,
+    visibleAffectedAssets,
+  } = useDataQualityPanels({
+    activeThemeId,
+    affectedAssets,
+    classificationApplicableValue,
+    fundIssueCount,
+    hasFundStatuses: scopedFundData.statuses.length > 0,
+    hasLookThroughScope,
+  })
 
   return (
     <div className="data-quality-view mb-6">
@@ -337,10 +206,7 @@ export function DataQualityTab({
                     coverage={coverage}
                     dimensionCoverage={dimensionCoverage}
                     accountLabels={accountLabels}
-                    onOpenAffectedAssets={(dimension) => {
-                      setClassificationDimension(dimension ?? null)
-                      setClassificationDetailsOpen(true)
-                    }}
+                    onOpenAffectedAssets={openClassificationDetails}
                   />
                 )
               : <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />
@@ -365,25 +231,20 @@ export function DataQualityTab({
           holdings={scopedFundData.holdings}
           snapshots={scopedFundData.snapshots}
           unresolved={scopedFundData.unresolved}
-          onClose={() => setFundDiagnosticsOpen(false)}
+          onClose={closeFundDiagnostics}
         />
       )}
 
       {classificationDetailsOpen && (
         <SidePanel
-          title={classificationDimension ? `Affected assets · ${DIMENSION_LABELS[classificationDimension]}` : 'Affected assets'}
+          title={classificationDimension ? `Affected assets · ${DATA_QUALITY_DIMENSION_LABELS[classificationDimension]}` : 'Affected assets'}
           description="Positions contributing to undocumented diversification data, sorted by their largest monetary gap."
-          onClose={() => {
-            setClassificationDetailsOpen(false)
-            setClassificationDimension(null)
-          }}
+          onClose={closeClassificationDetails}
           closeLabel="Close affected assets details"
           size="medium"
         >
           <AffectedAssetsTable
-            assets={classificationDimension
-              ? affectedAssets.filter((asset) => asset.dimensions.includes(classificationDimension))
-              : affectedAssets}
+            assets={visibleAffectedAssets}
           />
         </SidePanel>
       )}
@@ -418,7 +279,7 @@ function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
                 <div className="flex flex-wrap gap-1.5">
                   {asset.dimensions.map((dimension) => (
                     <span key={dimension} className="rounded bg-gray-800 px-1.5 py-0.5 text-[10px] text-gray-400">
-                      {DIMENSION_LABELS[dimension]}
+                      {DATA_QUALITY_DIMENSION_LABELS[dimension]}
                     </span>
                   ))}
                 </div>

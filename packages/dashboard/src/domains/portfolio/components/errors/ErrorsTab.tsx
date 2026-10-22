@@ -2,21 +2,16 @@ import { useMemo, useState } from 'react'
 import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
-
-const TYPE_LABELS: Record<string, string> = {
-  unresolved_ticker: 'Unresolved ticker',
-  missing_price:     'Missing price',
-  missing_fx_rate:   'Missing FX rate',
-  parsing_error:     'Parsing error',
-  missing_data:      'Missing data',
-}
+import {
+  buildPipelineErrorsViewModel,
+  PIPELINE_ERROR_TYPE_LABELS,
+  type PipelineErrorSortColumn,
+} from '@/domains/portfolio/helpers/mappers/buildPipelineErrorsViewModel'
 
 const SOURCE_LABELS: Record<string, string> = {
   main:         'ingest_portfolio.py',
   fetch_prices: 'fetch_prices.py',
 }
-
-type SortCol = 'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message'
 
 interface Props {
   errors: ErrorRow[]
@@ -26,7 +21,7 @@ interface ManualPriceOverridesProps {
   manualPriceOverrides: ManualPriceOverride[]
 }
 
-function SortIcon({ col, sortCol, dir }: { col: SortCol; sortCol: SortCol; dir: 'asc' | 'desc' }) {
+function SortIcon({ col, sortCol, dir }: { col: PipelineErrorSortColumn; sortCol: PipelineErrorSortColumn; dir: 'asc' | 'desc' }) {
   if (col !== sortCol) return <span className="ml-1 text-gray-700">↕</span>
   return <span className="ml-1 text-gray-400">{dir === 'asc' ? '↑' : '↓'}</span>
 }
@@ -48,45 +43,24 @@ function formatManualPrice(row: ManualPriceOverride): string {
 export function ErrorsTab({ errors }: Props) {
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>('all')
   const [filterType, setFilterType] = useState<string>('all')
-  const [sortCol, setSortCol] = useState<SortCol>('date')
+  const [sortCol, setSortCol] = useState<PipelineErrorSortColumn>('date')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
 
-  function handleSort(col: SortCol) {
+  function handleSort(col: PipelineErrorSortColumn) {
     if (col === sortCol) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
     else { setSortCol(col); setSortDir('asc') }
   }
 
-  const types = useMemo(
-    () => ['all', ...Array.from(new Set(errors.map((e) => e.type))).sort()],
-    [errors]
+  const { errorCount, rows: filtered, types, warningCount } = useMemo(
+    () => buildPipelineErrorsViewModel({
+      errors,
+      filterLevel,
+      filterType,
+      sortColumn: sortCol,
+      sortDirection: sortDir,
+    }),
+    [errors, filterLevel, filterType, sortCol, sortDir],
   )
-
-  const filtered = useMemo(() => {
-    const rows = errors.filter((e) => {
-      if (filterLevel !== 'all' && e.level !== filterLevel) return false
-      if (filterType !== 'all' && e.type !== filterType) return false
-      return true
-    })
-
-    return [...rows].sort((a, b) => {
-      let va = ''
-      let vb = ''
-      switch (sortCol) {
-        case 'level':   va = a.level;   vb = b.level;   break
-        case 'type':    va = TYPE_LABELS[a.type] ?? a.type; vb = TYPE_LABELS[b.type] ?? b.type; break
-        case 'source':  va = a.source;  vb = b.source;  break
-        case 'date':    va = a.date;    vb = b.date;    break
-        case 'name':    va = assetDisplayLabel(a); vb = assetDisplayLabel(b); break
-        case 'isin':    va = a.isin;    vb = b.isin;    break
-        case 'message': va = a.message; vb = b.message; break
-      }
-      const cmp = va.localeCompare(vb, 'en')
-      return sortDir === 'asc' ? cmp : -cmp
-    })
-  }, [errors, filterLevel, filterType, sortCol, sortDir])
-
-  const errorCount   = errors.filter((e) => e.level === 'error').length
-  const warningCount = errors.filter((e) => e.level === 'warning').length
 
   return (
     <div className="space-y-4">
@@ -124,7 +98,7 @@ export function ErrorsTab({ errors }: Props) {
           >
             <option value="all">All types</option>
             {types.filter((t) => t !== 'all').map((t) => (
-              <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
+              <option key={t} value={t}>{PIPELINE_ERROR_TYPE_LABELS[t] ?? t}</option>
             ))}
           </select>
           {(filterLevel !== 'all' || filterType !== 'all') && (
@@ -152,7 +126,7 @@ export function ErrorsTab({ errors }: Props) {
                   ['name',    'Asset',   'w-28'],
                   ['isin',    'ISIN',    'w-24'],
                   ['message', 'Message', ''],
-                ] as [SortCol, string, string][]
+                ] as [PipelineErrorSortColumn, string, string][]
               ).map(([col, label, width]) => (
                 <th
                   key={col}
@@ -198,7 +172,7 @@ export function ErrorsTab({ errors }: Props) {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-gray-300">
-                    {TYPE_LABELS[e.type] ?? e.type}
+                    {PIPELINE_ERROR_TYPE_LABELS[e.type] ?? e.type}
                   </td>
                   <td className="px-3 py-2 text-gray-500 font-mono">
                     {SOURCE_LABELS[e.source] ?? e.source}

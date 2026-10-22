@@ -11,6 +11,10 @@ import type {
   PerformanceContributionSummary,
 } from './performanceContribution.logic'
 import type { FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/components/filters/FilterScopeBadges'
+import {
+  buildAssetIrrRankings,
+  resolveContributionHorizon,
+} from '@/domains/portfolio/helpers/mappers/buildPerformanceContributionViewModel'
 
 interface Props {
   assetIrr: AssetIrrSummary
@@ -185,15 +189,7 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
     return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">Asset IRR is not available for this selection.</div>
   }
 
-  const measured = summary.assets.filter((item) => Math.abs(item.irr) >= 0.005)
-  const topReturns = measured
-    .filter((item) => item.irr > 0)
-    .sort((left, right) => right.irr - left.irr)
-    .slice(0, 5)
-  const underperformers = measured
-    .filter((item) => item.irr < 0)
-    .sort((left, right) => left.irr - right.irr)
-    .slice(0, 5)
+  const { measuredCount, topReturns, underperformers } = buildAssetIrrRankings(summary)
 
   return (
     <>
@@ -204,7 +200,7 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
             tooltip="Number of assets with enough positive and negative cash flows to calculate an IRR. Zero IRRs are omitted from the rankings."
             scope={{ account: 'filterable', period: 'range', effectiveDate: summary.end_date }}
           />
-          <div className="mt-1 text-lg font-semibold tabular-nums text-gray-300">{measured.length}</div>
+          <div className="mt-1 text-lg font-semibold tabular-nums text-gray-300">{measuredCount}</div>
         </div>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
@@ -230,10 +226,13 @@ export function PerformanceContributionCard({
 }: Props) {
   const [view, setView] = useState<PerformanceView>('contribution')
   const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
-  const threeYearUnavailable = !trailingThreeYears.available || trailingThreeYearIrr === null
-  const activeHorizon = horizon === 'trailing-3y' && threeYearUnavailable ? 'since-tracking' : horizon
-  const summary = activeHorizon === 'since-tracking' ? sinceTracking : trailingThreeYears
-  const irr = activeHorizon === 'since-tracking' ? sinceTrackingIrr : trailingThreeYearIrr
+  const { activeHorizon, irr, summary, threeYearUnavailable } = resolveContributionHorizon({
+    horizon,
+    sinceTracking,
+    sinceTrackingIrr,
+    trailingThreeYears,
+    trailingThreeYearIrr,
+  })
   const netTone = summary.netContribution >= 0
     ? SEMANTIC_TEXT_CLASSES.performancePositive
     : SEMANTIC_TEXT_CLASSES.performanceNegative

@@ -12,11 +12,12 @@ import { SidePanel } from '@/shared/ui/SidePanel'
 import { FundQualityBadge } from './FundQualityBadge'
 import {
   FUND_QUALITY_LABELS,
-  fundQualityCategory,
   fundQualitySourceLabel,
-  type FundQualityCategory,
 } from './fundHoldings.logic'
-import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
+import {
+  buildFundDiagnosticsRows,
+  type FundDiagnosticsFilter,
+} from '@/domains/portfolio/helpers/mappers/buildFundDiagnosticsRows'
 
 interface Props {
   statuses: FundHoldingStatus[]
@@ -27,13 +28,12 @@ interface Props {
 }
 
 export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved, onClose }: Props) {
-  const [filter, setFilter] = useState<'all' | 'issues' | FundQualityCategory>('issues')
+  const [filter, setFilter] = useState<FundDiagnosticsFilter>('issues')
   const [expanded, setExpanded] = useState<string | null>(null)
-  const rows = useMemo(() => statuses
-    .filter((status) => filter === 'all'
-      || filter === fundQualityCategory(status.qualityTier)
-      || (filter === 'issues' && (status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct))))
-    .sort((a, b) => b.residualValue - a.residualValue || b.marketValue - a.marketValue), [statuses, filter])
+  const rows = useMemo(
+    () => buildFundDiagnosticsRows({ filter, holdings, snapshots, statuses, unresolved }),
+    [filter, holdings, snapshots, statuses, unresolved],
+  )
 
   return (
     <SidePanel
@@ -64,11 +64,8 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
           </colgroup>
           <thead className="sticky top-0 z-10 bg-gray-800 uppercase tracking-wider text-gray-500"><tr><th className="px-4 py-2">Fund</th><th className="px-4 py-2">Quality</th><th className="px-4 py-2">Source / proxy</th><th className="px-4 py-2">Holdings date</th><th className="px-4 py-2 text-right">Explained</th><th className="px-4 py-2 text-right">Residual</th><th className="px-4 py-2">Diagnostic</th><th className="px-4 py-2" /></tr></thead>
           <tbody>
-            {rows.map((status) => {
+            {rows.map(({ holdings: fundHoldings, snapshots: fundSnapshots, status, unresolved: fundUnresolved }) => {
               const isOpen = expanded === status.parentId
-              const fundHoldings = holdings.filter((item) => (item.parentIsin || item.parentTicker || item.parentName) === status.parentId)
-              const fundSnapshots = snapshots.filter((item) => item.fundId === status.parentId)
-              const fundUnresolved = unresolved.filter((item) => item.parentId === status.parentId)
               return <Fragment key={status.parentId}>
                 <tr className="border-t border-gray-800 align-top">
                   <td className="break-words px-4 py-3"><div className="font-medium text-gray-200">{status.parentName}</div><div className="mt-1 break-all font-mono text-[10px] text-gray-600">{status.parentIsin || status.parentTicker}</div></td>

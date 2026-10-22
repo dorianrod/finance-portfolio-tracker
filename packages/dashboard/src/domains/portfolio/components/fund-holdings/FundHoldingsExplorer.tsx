@@ -5,18 +5,18 @@ import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/apis/qu
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { fmtFull } from '@/shared/format/money'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
-import { buildIssuerExposures, type IssuerExposure, type SecurityExposure } from './fundHoldings.logic'
+import type { IssuerExposure, SecurityExposure } from './fundHoldings.logic'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
+import {
+  buildFundExposureViewModel,
+  type ExposureRow,
+  type FundExposureSort,
+} from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
 
 const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
 
-type ExposureRow =
-  | { kind: 'issuer'; issuer: IssuerExposure; open: boolean }
-  | { kind: 'security'; issuer: IssuerExposure; security: SecurityExposure }
-  | { kind: 'source'; issuer: IssuerExposure; security: SecurityExposure; fund: string; value: number }
-
-export type FundExposureSort = 'value' | 'name'
+export type { FundExposureSort } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
 
 export function FundHoldingsExplorer({
   positions,
@@ -39,61 +39,17 @@ export function FundHoldingsExplorer({
   expanded: Set<string>
   onExpandedChange: (expanded: Set<string>) => void
 }) {
-  const selectedFundName = useMemo(() => {
-    const needle = query.trim().toLocaleLowerCase()
-    if (!needle) return ''
-    return positions.find((position) => (
-      position.name.toLocaleLowerCase() === needle
-      && statuses.some((status) => (
-        status.parentId === (position.isin || position.ticker)
-        || (!!position.isin && status.parentIsin === position.isin)
-        || (!!position.ticker && status.parentTicker === position.ticker)
-      ))
-    ))?.name ?? ''
-  }, [positions, query, statuses])
-  const exposures = useMemo(
-    () => {
-      if (!selectedFundName) return buildIssuerExposures(positions, holdings, statuses)
-      const scopedPositions = positions.filter((position) => position.name === selectedFundName)
-      const parentIds = new Set(scopedPositions.flatMap((position) => [position.isin, position.ticker]).filter(Boolean))
-      const scopedHoldings = holdings.filter((holding) => (
-        holding.parentName === selectedFundName
-        || parentIds.has(holding.parentIsin)
-        || parentIds.has(holding.parentTicker)
-      ))
-      return buildIssuerExposures(scopedPositions, scopedHoldings, statuses)
-    },
-    [positions, holdings, statuses, selectedFundName],
+  const { displayed, rows, securityCount, totalIssuerCount } = useMemo(
+    () => buildFundExposureViewModel({
+      expanded,
+      holdings,
+      positions,
+      query,
+      sort,
+      statuses,
+    }),
+    [expanded, holdings, positions, query, sort, statuses],
   )
-  const displayed = useMemo(() => {
-    const needle = query.trim().toLocaleLowerCase()
-    const filtered = needle && !selectedFundName ? exposures.filter((issuer) => (
-      issuer.name.toLocaleLowerCase().includes(needle)
-      || issuer.id.toLocaleLowerCase().includes(needle)
-      || issuer.securities.some((security) => security.name.toLocaleLowerCase().includes(needle))
-      || issuer.funds.some((fund) => fund.toLocaleLowerCase().includes(needle))
-    )) : exposures
-    return [...filtered].sort(sort === 'value'
-      ? (a, b) => b.value - a.value
-      : (a, b) => a.name.localeCompare(b.name))
-  }, [exposures, query, selectedFundName, sort])
-
-  const securityCount = useMemo(
-    () => displayed.reduce((sum, issuer) => sum + issuer.securities.length, 0),
-    [displayed],
-  )
-  const rows = useMemo<ExposureRow[]>(() => displayed.flatMap((issuer) => [
-    { kind: 'issuer' as const, issuer, open: expanded.has(issuer.id) },
-    ...(expanded.has(issuer.id)
-      ? issuer.securities.flatMap((security): ExposureRow[] => [
-        { kind: 'security', issuer, security },
-        // One line per source fund when a security is held through several.
-        ...(security.sources.length > 1
-          ? security.sources.map((source) => ({ kind: 'source' as const, issuer, security, fund: source.fund, value: source.value }))
-          : []),
-      ])
-      : []),
-  ]), [displayed, expanded])
   const listRef = useRef<HTMLDivElement>(null)
   const [scrollMargin, setScrollMargin] = useState(0)
   useLayoutEffect(() => {
@@ -171,7 +127,7 @@ export function FundHoldingsExplorer({
       </div>
       <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-gray-800 bg-gray-900 px-4 py-2 text-xs text-gray-400">
         {displayed.length.toLocaleString()} issuers · {securityCount.toLocaleString()} securities
-        {displayed.length !== exposures.length && <span className="text-gray-600"> (filtered from {exposures.length.toLocaleString()} issuers)</span>}
+        {displayed.length !== totalIssuerCount && <span className="text-gray-600"> (filtered from {totalIssuerCount.toLocaleString()} issuers)</span>}
       </div>
     </section>
   )

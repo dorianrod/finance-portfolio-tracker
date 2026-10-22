@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { accountLabel, toggle } from './filterBar.logic'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox'
+import {
+  accountsForType,
+  accountTypeSelectionState,
+  buildAccountSelectionLabel,
+  toggleAccountTypeSelection,
+} from '@/domains/portfolio/helpers/filters/accountTreeSelection'
 
 interface AccountTreeProps {
   allAccountTypes: string[]
@@ -15,16 +21,11 @@ export function AccountTree({
   allAccountTypes, accountToType, allAccounts, accountLabels, selected, onChange,
 }: AccountTreeProps) {
   function typeAccounts(type: string) {
-    return allAccounts.filter((account) => accountToType[account] === type)
+    return accountsForType(type, allAccounts, accountToType)
   }
 
   function toggleType(type: string) {
-    const accounts = typeAccounts(type)
-    const allSelected = accounts.every((account) => selected.has(account))
-    const next = new Set(selected)
-    if (allSelected) accounts.forEach((account) => next.delete(account))
-    else accounts.forEach((account) => next.add(account))
-    onChange(next)
+    onChange(toggleAccountTypeSelection(typeAccounts(type), selected))
   }
 
   return (
@@ -42,9 +43,8 @@ export function AccountTree({
         {allAccountTypes.map((type) => {
           const accounts = typeAccounts(type)
           if (accounts.length === 0) return null
-          const selectedCount = accounts.filter((account) => selected.has(account)).length
-          const allSelected = selectedCount === accounts.length
-          const partiallySelected = selectedCount > 0 && !allSelected
+          const { allSelected, partiallySelected, selectedCount } =
+            accountTypeSelectionState(accounts, selected)
 
           return (
             <div key={type} className="py-1">
@@ -99,41 +99,24 @@ export function AccountTreeSelect({
   }, [open])
 
   function typeAccounts(type: string) {
-    return allAccounts.filter((a) => accountToType[a] === type)
+    return accountsForType(type, allAccounts, accountToType)
   }
 
   function toggleType(type: string) {
-    const accs = typeAccounts(type)
-    const allSel = accs.every((a) => selected.has(a))
-    const next = new Set(selected)
-    if (allSel) accs.forEach((a) => next.delete(a))
-    else accs.forEach((a) => next.add(a))
-    onChange(next)
+    onChange(toggleAccountTypeSelection(typeAccounts(type), selected))
   }
 
   function toggleAccount(account: string) {
     onChange(toggle(selected, account))
   }
 
-  // Trigger label
-  function triggerLabel() {
-    if (selected.size === 0) return 'All accounts'
-    // Check if entire types are selected
-    const fullTypes = allAccountTypes.filter((t) => {
-      const accs = typeAccounts(t)
-      return accs.length > 0 && accs.every((a) => selected.has(a))
-    })
-    const partialAccounts = [...selected].filter((a) => {
-      const t = accountToType[a]
-      return !t || !fullTypes.includes(t)
-    })
-    const parts: string[] = [
-      ...fullTypes,
-      ...partialAccounts.map((a) => accountLabel(a, accountLabels)),
-    ]
-    if (parts.length <= 2) return parts.join(', ')
-    return `${parts.slice(0, 2).join(', ')} +${parts.length - 2}`
-  }
+  const triggerLabel = buildAccountSelectionLabel({
+    accountLabels,
+    accountToType,
+    allAccountTypes,
+    allAccounts,
+    selected,
+  })
 
   const hasSelection = selected.size > 0
 
@@ -148,7 +131,7 @@ export function AccountTreeSelect({
             : 'bg-gray-800 border-gray-600 text-gray-400 hover:border-gray-400 hover:text-gray-200',
         ].join(' ')}
       >
-        <span>{triggerLabel()}</span>
+        <span>{triggerLabel}</span>
         {hasSelection && (
           <span
             role="button"
@@ -181,9 +164,10 @@ export function AccountTreeSelect({
           {allAccountTypes.map((type) => {
             const accs = typeAccounts(type)
             if (accs.length === 0) return null
-            const selCount = accs.filter((a) => selected.has(a)).length
-            const isAll = selCount === accs.length
-            const isPartial = selCount > 0 && !isAll
+            const {
+              allSelected: isAll,
+              partiallySelected: isPartial,
+            } = accountTypeSelectionState(accs, selected)
             return (
               <div key={type}>
                 {/* Type row */}

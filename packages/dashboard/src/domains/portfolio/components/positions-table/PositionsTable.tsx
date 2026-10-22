@@ -19,7 +19,6 @@ import { HoverChart, type ChartTarget } from '@/domains/portfolio/components/hov
 import { HoverSavingsChart, type SavingsChartTarget } from '@/domains/portfolio/components/hover-charts/HoverSavingsChart'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/domains/portfolio/components/allocation-charts/HoverAllocationPopover'
 import { useAllocationByIsin } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
-import { CASH_SUFFIX } from '@/domains/portfolio/constants/accountCategories'
 import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import {
   FundPositionPopover,
@@ -33,6 +32,19 @@ import {
 } from '@/domains/portfolio/components/fund-holdings/fundHoldings.logic'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip'
+import {
+  calculatePassiveIncomeTax,
+  calculatePositionGroupTotals,
+  shouldShowPositionQuantity,
+} from '@/domains/portfolio/helpers/calculators/calculatePositionTableValues'
+import {
+  getPositionSavingsOperations,
+  getPositionTradeOperations,
+} from '@/domains/portfolio/helpers/mappers/getPositionChartOperations'
+import {
+  isClosedPosition,
+  isTaxFreePassiveIncome,
+} from '@/domains/portfolio/helpers/businessRules/positionDisplayRules'
 
 const col = createColumnHelper<TableRow>()
 
@@ -85,21 +97,7 @@ function PositionsTableView({
     }, 200)
   }
 
-  const groupTotals = useMemo(() => {
-    const map = new Map<string, { value: number; unrealized: number; realized: number; totalRealized: number; dividends: number }>()
-    for (const row of data) {
-      const type = row.account_type ?? ''
-      const cur = map.get(type) ?? { value: 0, unrealized: 0, realized: 0, totalRealized: 0, dividends: 0 }
-      map.set(type, {
-        value: cur.value + (row.total_value ?? 0),
-        unrealized: cur.unrealized + (row.unrealized_gain ?? 0),
-        realized: cur.realized + row.realized_gain,
-        totalRealized: cur.totalRealized + row.total_realized_return,
-        dividends: cur.dividends + row.total_dividends + row.total_interest,
-      })
-    }
-    return map
-  }, [data])
+  const groupTotals = useMemo(() => calculatePositionGroupTotals(data), [data])
 
   const columns = useMemo(() => [
     col.display({
@@ -161,9 +159,7 @@ function PositionsTableView({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          const showQuantity = r.account_category === 'brokerage'
-            && !r.account_type?.endsWith(CASH_SUFFIX)
-            && r.quantity != null
+          const showQuantity = shouldShowPositionQuantity(r)
           return (
             <span className="flex flex-col leading-tight">
               <span className="flex items-center gap-1">
@@ -343,10 +339,16 @@ function PositionsTableView({
           const hasDivs = r.total_dividends > 0
           const hasInt = r.total_interest > 0
           if (!hasDivs && !hasInt) return <span className="text-gray-600">—</span>
-          const divTax = (hasDivs && r.total_dividends_net != null && r.tax_rate != null && r.tax_rate > 0)
-            ? r.total_dividends - r.total_dividends_net : null
-          const intTax = (hasInt && r.total_interest_net != null && r.tax_rate != null && r.tax_rate > 0)
-            ? r.total_interest - r.total_interest_net : null
+          const divTax = calculatePassiveIncomeTax(
+            r.total_dividends,
+            r.total_dividends_net,
+            r.tax_rate,
+          )
+          const intTax = calculatePassiveIncomeTax(
+            r.total_interest,
+            r.total_interest_net,
+            r.tax_rate,
+          )
           return (
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
@@ -363,7 +365,7 @@ function PositionsTableView({
                   ~{fmt.format(-intTax)} tax on int. ({(r.tax_rate! * 100).toFixed(0)}%)
                 </span>
               )}
-              {r.tax_rate === 0 && (hasDivs || hasInt) && (
+              {isTaxFreePassiveIncome(r) && (
                 <span className="text-[10px] text-gray-500 mt-0.5">net (0% tax)</span>
               )}
             </span>
@@ -509,8 +511,7 @@ function PositionsTableView({
                 const isGroup = r.kind === 'group'
                 let rootRow: typeof row = row
                 while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
-                const isClosed =
-                  rootRow.original.kind === 'position' && rootRow.original.status === 'closed'
+                const isClosed = isClosedPosition(rootRow.original)
 
                 const isTradeGroup = r.kind === 'group' && r.label === 'Buys / Sells'
                 const chartHandlers = isTradeGroup ? (() => {
@@ -519,15 +520,7 @@ function PositionsTableView({
                   const { name } = parent
                   const posKey = parent.isin || parent.ticker || name
                   if (!posKey) return null
-                  const ops = parent.subRows
-                    .flatMap(g => g.subRows)
-                    .filter(o => o.operation_type === 'BUY' || o.operation_type === 'SELL')
-                    .map(o => ({
-                      date: o.date,
-                      operation_type: o.operation_type,
-                      total_amount: o.total_amount,
-                      realized_gain: o.realized_gain,
-                    }))
+                  const ops = getPositionTradeOperations(parent)
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()
@@ -543,10 +536,7 @@ function PositionsTableView({
                   const parent = row.getParentRow()?.original
                   if (parent?.kind !== 'position') return null
                   const { name } = parent
-                  const ops = parent.subRows
-                    .flatMap(g => g.subRows)
-                    .filter(o => o.operation_type === 'DEPOSIT' || o.operation_type === 'INTEREST')
-                    .map(o => ({ date: o.date, total_amount: o.total_amount, operation_type: o.operation_type }))
+                  const ops = getPositionSavingsOperations(parent)
                   return {
                     onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
                       cancelHide()

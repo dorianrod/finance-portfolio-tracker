@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import { useData } from "@/domains/portfolio/apis/queries/useData";
 import { usePortfolioHistory } from "@/domains/portfolio/apis/queries/usePortfolioHistory";
 import { useCashHistory } from "@/domains/portfolio/apis/queries/useCashHistory";
@@ -6,7 +6,6 @@ import { useAllPositions } from "@/domains/portfolio/apis/queries/useAllPosition
 import { useErrors } from "@/domains/portfolio/apis/queries/useErrors";
 import { useManualPriceOverrides } from "@/domains/portfolio/apis/queries/useManualPriceOverrides";
 import {
-  normalizeAccountSelection,
   useFilteredPortfolioHistory,
 } from "@/domains/portfolio/apis/queries/useFilteredPortfolioHistory";
 import { useMonthlyOps } from "@/domains/portfolio/apis/queries/useMonthlyOps";
@@ -23,52 +22,43 @@ import {
   FilterPanel,
   ResetFiltersButton,
 } from "@/domains/portfolio/components/filters/FilterBar";
-import {
-  AllocationViewToggle,
-  type AllocationView,
-} from "@/domains/portfolio/components/allocation-charts/AllocationViewToggle";
+import { AllocationViewToggle } from "@/domains/portfolio/components/allocation-charts/AllocationViewToggle";
 import { FilterChipBar } from "@/domains/portfolio/components/allocation-charts/FilterChipBar";
 import { computeAllocationCoverageByAccount } from "@/domains/portfolio/components/allocation-charts/allocationCoverage.logic";
 import { selectHistoricalFundHoldingsAtDate } from "@/domains/portfolio/components/allocation-charts/concentrationTrend.logic";
-import type { AllocationFilter } from "@/domains/portfolio/components/allocation-charts/allocationCharts.types";
 import { OverviewPeriodFilter } from "@/domains/portfolio/pages/OverviewPeriodFilter";
 import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/domains/portfolio/pages/overviewComparison.logic";
-import type { QualityThemeId } from "@/domains/portfolio/pages/DataQualityTab";
-import type { FundExposureSort } from "@/domains/portfolio/components/fund-holdings/FundHoldingsExplorer";
-import {
-  computeFundExposurePercentages,
-  scopeFundQualityData,
-} from "@/domains/portfolio/components/fund-holdings/fundQualityScope.logic";
+import { scopeFundQualityData } from "@/domains/portfolio/components/fund-holdings/fundQualityScope.logic";
 import {
   HoldingsViewTabs,
   type HoldingsView,
 } from "@/domains/portfolio/components/holdings/HoldingsViewTabs";
-import type { Filters, SortKey } from "@/domains/portfolio/types/filters";
-import type { ExpandedState } from "@tanstack/react-table";
-import { accountFilterId, rawAccountId } from "@/domains/portfolio/helpers/filters/accountFilter";
+import type { Filters } from "@/domains/portfolio/types/filters";
 import { buildPositionRows } from "@/domains/portfolio/helpers/positionHierarchy.logic";
 import { FilterScopeProvider } from "@/domains/portfolio/components/filters/FilterScopeBadges";
 import {
-  accountLabel,
   clearFilterGroup,
   filterSummaries,
   filterVisibilityForTab,
-  resetFilters,
 } from "@/domains/portfolio/components/filters/filterBar.logic";
-import { hasMaterialQualityGap } from "@/domains/portfolio/helpers/quality/qualityThresholds";
-import { partitionPercentages } from "@/shared/format/percentage";
 import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
 } from "@/domains/portfolio/components/quality/AnalysisReliabilityKpi";
+import { buildDashboardQualitySummary } from "@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardQualitySummary";
+import { buildDashboardSourceData } from "@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardSourceData";
 import {
-  aggregateReliabilityTone,
-  percentageReliabilityTone,
-  pipelineReliabilityTone,
-  pipelineStatusLabel,
-  type AnalysisReliabilityTone,
-} from "@/domains/portfolio/helpers/quality/analysisReliability";
+  buildDemoPresetSelection,
+  filterSummariesForTab,
+  isDemoPresetActive,
+  withoutOperationAndPeriodFilters,
+  withoutOperationFilters,
+} from "@/domains/portfolio/helpers/filters/portfolioFilterScopes";
+import {
+  useDashboardUi,
+  type AnalysisTab,
+} from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardUi";
 import {
   buildCumulativeWealthDrivers,
   computePerformanceSummary,
@@ -86,6 +76,7 @@ import {
   scopePipelineErrors,
   sortPositionsForTable,
 } from "@/domains/portfolio/helpers/app.logic";
+import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/format/semanticColors";
 
 const loadOverviewTab = () =>
   import("@/domains/portfolio/pages/OverviewTab").then((module) => ({ default: module.OverviewTab }));
@@ -112,29 +103,6 @@ const PositionsTable = lazy(loadPositionsTable);
 const GroupedPositionsTable = lazy(loadGroupedPositionsTable);
 const FundLookThroughTab = lazy(loadFundLookThroughTab);
 const DataQualityTab = lazy(loadDataQualityTab);
-
-type AnalysisTab =
-  | "overview"
-  | "wealth"
-  | "performance"
-  | "allocation"
-  | "holdings"
-  | "quality";
-
-type Theme = "dark" | "light";
-
-const THEME_STORAGE_KEY = "finance-dashboard-theme";
-
-function initialTheme(): Theme {
-  if (typeof document !== "undefined") {
-    const theme = document.documentElement.dataset.theme;
-    if (theme === "dark" || theme === "light") return theme;
-  }
-  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    return "dark";
-  }
-  return "light";
-}
 
 const TAB_PRELOADERS: Record<AnalysisTab, () => Promise<unknown>> = {
   overview: loadOverviewTab,
@@ -231,103 +199,59 @@ export default function App() {
   const fundHoldings = fundData.holdings;
   const annualIncomeSavings = useAnnualIncomeSavings();
 
-  const [theme, setTheme] = useState<Theme>(initialTheme);
-  const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
-  const [holdingsView, setHoldingsView] = useState<HoldingsView>("positions");
-  const [selectedQualityTheme, setSelectedQualityTheme] =
-    useState<QualityThemeId | null>(null);
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [allocationFilter, setAllocationFilter] =
-    useState<AllocationFilter | null>(null);
-  const [allocationView, setAllocationView] =
-    useState<AllocationView>("current");
-  const [underlyingQuery, setUnderlyingQuery] = useState("");
-  const [underlyingSort, setUnderlyingSort] =
-    useState<FundExposureSort>("value");
-  const [expandedUnderlyingIssuers, setExpandedUnderlyingIssuers] =
-    useState<Set<string>>(new Set());
-  const [expandedPositionRows, setExpandedPositionRows] =
-    useState<ExpandedState>({});
-  const [sortKey, setSortKey] = useState<SortKey>("total_value");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [filters, setFilters] = useState<Filters>(() => resetFilters());
+  const {
+    activeTab,
+    allocationFilter,
+    allocationView,
+    expandedPositionRows,
+    expandedUnderlyingIssuers,
+    filters,
+    filtersOpen,
+    handleSort,
+    holdingsView,
+    openCompleteHoldings,
+    openDataQuality,
+    openQualityOverview,
+    resetAllFilters,
+    selectedQualityTheme,
+    setActiveTab,
+    setAllocationFilter,
+    setAllocationView,
+    setExpandedPositionRows,
+    setExpandedUnderlyingIssuers,
+    setFilters,
+    setFiltersOpen,
+    setHoldingsView,
+    setSelectedQualityTheme,
+    setUnderlyingQuery,
+    setUnderlyingSort,
+    sortDir,
+    sortKey,
+    theme,
+    toggleTheme,
+    underlyingQuery,
+    underlyingSort,
+  } = useDashboardUi();
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.dataset.theme = theme;
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-    } catch {
-      // Storage can be unavailable in hardened/private browser contexts.
-    }
-    document.querySelector('meta[name="theme-color"]')?.setAttribute(
-      "content",
-      theme === "dark" ? "#111827" : "#f9fafb",
-    );
-  }, [theme]);
-
-  const enrichedHistory = useMemo(() => {
-    const cashByDate = new Map(
-      cashHistory.map((cash) => [cash.date, cash.total_broker_cash]),
-    );
-    return history.map((point) => ({
-      ...point,
-      total_broker_cash: cashByDate.get(point.date) ?? 0,
-    }));
-  }, [history, cashHistory]);
-
-  const allAccountTypes = useMemo(
-    () =>
-      [
-        ...new Set(
-          positions
-            .map((position) => position.account_type)
-            .filter((type): type is string => !!type),
-        ),
-      ].sort(),
-    [positions],
-  );
-  const accountToType = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const position of positions)
-      if (position.account_type)
-        map[accountFilterId(position)] = position.account_type;
-    return map;
-  }, [positions]);
-  const allAccounts = useMemo(
-    () => [...new Set(positions.map(accountFilterId))].sort(),
-    [positions],
-  );
-  const accountFilterLabels = useMemo(() => {
-    const labels = { ...accountLabels };
-    for (const position of positions) {
-      const id = accountFilterId(position);
-      if (!labels[id])
-        labels[id] =
-          id === position.account
-            ? accountLabel(position.account, accountLabels)
-            : position.name;
-    }
-    return labels;
-  }, [positions, accountLabels]);
-  const allOperationTypes = useMemo(
-    () =>
-      [
-        ...new Set(
-          positions.flatMap((position) => [...position.operationTypes]),
-        ),
-      ].sort(),
-    [positions],
+  const {
+    accountFilterLabels,
+    accountToType,
+    allAccounts,
+    allAccountTypes,
+    allOperationTypes,
+    enrichedHistory,
+  } = useMemo(
+    () => buildDashboardSourceData({
+      accountLabels,
+      cashHistory,
+      history,
+      positions,
+    }),
+    [accountLabels, cashHistory, history, positions],
   );
 
   const currentFilters = useMemo<Filters>(
-    () => ({
-      ...filters,
-      operationTypes: new Set<string>(),
-      hideClosedPositions: false,
-      dateFrom: undefined,
-      dateTo: undefined,
-    }),
+    () => withoutOperationAndPeriodFilters(filters),
     [filters],
   );
   const latestAccountPositions = useMemo(
@@ -353,11 +277,7 @@ export default function App() {
     [positionsAtPeriodEnd, filters],
   );
   const periodPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, {
-      ...filters,
-      operationTypes: new Set<string>(),
-      hideClosedPositions: false,
-    }),
+    () => applyPositionFilters(positionsAtPeriodEnd, withoutOperationFilters(filters)),
     [positionsAtPeriodEnd, filters],
   );
   const tableData = useMemo(
@@ -411,23 +331,12 @@ export default function App() {
       ? "Selected accounts"
       : undefined;
   const demoPresetSelection = useMemo(() => {
-    if (!filteredHistory.demoPresetAccounts) return null;
-    const included = new Set(filteredHistory.demoPresetAccounts);
-    return new Set(
-      allAccounts.filter((account) => included.has(rawAccountId(account))),
-    );
+    return buildDemoPresetSelection(allAccounts, filteredHistory.demoPresetAccounts);
   }, [allAccounts, filteredHistory.demoPresetAccounts]);
-  const demoPresetActive = useMemo(() => {
-    if (!filteredHistory.demoPresetAccounts) return false;
-    const selected = normalizeAccountSelection(filters.accounts);
-    return (
-      selected.length === filteredHistory.demoPresetAccounts.length &&
-      selected.every(
-        (account, index) =>
-          account === filteredHistory.demoPresetAccounts?.[index],
-      )
-    );
-  }, [filteredHistory.demoPresetAccounts, filters.accounts]);
+  const demoPresetActive = useMemo(
+    () => isDemoPresetActive(filters.accounts, filteredHistory.demoPresetAccounts),
+    [filteredHistory.demoPresetAccounts, filters.accounts],
+  );
 
   const savingCapacity = useSavingCapacity(filters.accounts);
   const overviewComparison = useMemo(
@@ -529,34 +438,6 @@ export default function App() {
           ),
     [latestAccountPositions, rawAllocationData],
   );
-  const unallocatedPct = useMemo(() => {
-    if (rawAllocationData.loading) return null;
-    const allocated = coverage.reduce((sum, item) => sum + item.allocated, 0);
-    const unallocated = coverage.reduce(
-      (sum, item) => sum + item.unallocated,
-      0,
-    );
-    const notApplicable = coverage.reduce(
-      (sum, item) => sum + item.notApplicable,
-      0,
-    );
-    return partitionPercentages([allocated, unallocated, notApplicable])[1];
-  }, [coverage, rawAllocationData.loading]);
-
-  const classificationMappedValue = coverage.reduce(
-    (sum, item) => sum + item.allocated,
-    0,
-  );
-  const classificationUnmappedValue = coverage.reduce(
-    (sum, item) => sum + item.unallocated,
-    0,
-  );
-  const classificationApplicableValue =
-    classificationMappedValue + classificationUnmappedValue;
-  const classificationReliabilityPct = classificationApplicableValue > 0
-    ? (classificationMappedValue / classificationApplicableValue) * 100
-    : null;
-
   const scopedFundQuality = useMemo(
     () =>
       scopeFundQualityData(
@@ -577,57 +458,6 @@ export default function App() {
     ],
   );
 
-  function handleSort(key: SortKey) {
-    if (key === sortKey)
-      setSortDir((direction) => (direction === "desc" ? "asc" : "desc"));
-    else {
-      setSortKey(key);
-      setSortDir("desc");
-    }
-  }
-
-  const hasFundValidationError = scopedFundQuality.statuses.some(
-    (status) => status.validationStatus === "error",
-  );
-  const unresolvedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.undisclosedFundValue +
-      scopedFundQuality.report.opaqueValue
-    : 0;
-  const identifiedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.directIdentifiedValue +
-      scopedFundQuality.report.decomposedValue
-    : 0;
-  const fundExposurePercentages = computeFundExposurePercentages(
-    identifiedFundValue,
-    unresolvedFundValue,
-    scopedFundQuality.notApplicableValue,
-  );
-  const underlyingReliabilityPct = scopedFundQuality.report
-    ? fundExposurePercentages.identified
-    : null;
-  const underlyingCritical = hasFundValidationError || scopedFundQuality.report?.feasibilityStatus === "limited";
-  const classificationMetricTone = percentageReliabilityTone(
-    rawAllocationData.loading ? null : classificationReliabilityPct,
-  );
-  const underlyingMetricTone: AnalysisReliabilityTone = underlyingCritical
-    ? "critical"
-    : scopedFundQuality.report?.feasibilityStatus === "pending_repeatability"
-      ? "warning"
-      : percentageReliabilityTone(scopedFundQuality.report ? underlyingReliabilityPct : null);
-  const diversificationReliabilityTone = aggregateReliabilityTone([
-    classificationMetricTone,
-    underlyingMetricTone,
-  ]);
-  const reliabilityPriority: Record<AnalysisReliabilityTone, number> = {
-    healthy: 0,
-    warning: 1,
-    unavailable: 2,
-    critical: 3,
-  };
-  const diversificationQualityTheme: QualityThemeId =
-    reliabilityPriority[underlyingMetricTone] > reliabilityPriority[classificationMetricTone]
-      ? "lookthrough"
-      : "classification";
   const pipelineQualityPositions = activeTab === "holdings" && holdingsView === "positions"
     ? tableFiltered
     : latestAccountPositions;
@@ -639,40 +469,42 @@ export default function App() {
     () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
     [manualPriceOverrides, latestAccountPositions, filters],
   );
-  const scopedPipelineErrorCount = scopedPipelineErrors.filter(
-    (item) => item.level === "error",
-  ).length;
-  const scopedPipelineWarningCount = scopedPipelineErrors.length - scopedPipelineErrorCount;
-  const portfolioDataTone = pipelineReliabilityTone({
-    errorCount: scopedPipelineErrorCount,
-    warningCount: scopedPipelineWarningCount,
-    loading: pipelineErrorsLoading,
-  });
-  const portfolioDataStatus = pipelineStatusLabel({
-    errorCount: scopedPipelineErrorCount,
-    warningCount: scopedPipelineWarningCount,
-    loading: pipelineErrorsLoading,
-  });
-  const overviewReliabilityTone = aggregateReliabilityTone([
-    portfolioDataTone,
+  const {
+    classificationMappedValue,
     classificationMetricTone,
+    classificationReliabilityPct,
+    diversificationQualityTheme,
+    diversificationReliabilityTone,
+    hasFundValidationError,
+    hasPipelineError,
+    identifiedFundValue,
+    overviewQualityTheme,
+    overviewReliabilityTone,
+    portfolioDataStatus,
+    portfolioDataTone,
+    qualityCount,
+    scopedPipelineErrorCount,
+    scopedPipelineWarningCount,
     underlyingMetricTone,
-  ]);
-  const overviewQualityTheme = [
-    { theme: "pipeline" as const, tone: portfolioDataTone },
-    { theme: "classification" as const, tone: classificationMetricTone },
-    { theme: "lookthrough" as const, tone: underlyingMetricTone },
-  ].reduce((mostRelevant, candidate) => (
-    reliabilityPriority[candidate.tone] > reliabilityPriority[mostRelevant.tone]
-      ? candidate
-      : mostRelevant
-  )).theme;
-  const unresolvedFundPct = fundExposurePercentages.unresolved;
-  const qualityCount =
-    Number(scopedPipelineErrors.length > 0) +
-    Number(scopedManualPriceOverrides.length > 0) +
-    Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
-    Number(hasFundValidationError || hasMaterialQualityGap(unresolvedFundPct));
+    underlyingReliabilityPct,
+  } = useMemo(
+    () => buildDashboardQualitySummary({
+      allocationLoading: rawAllocationData.loading,
+      coverage,
+      pipelineErrorsLoading,
+      scopedFundQuality,
+      scopedManualPriceOverrides,
+      scopedPipelineErrors,
+    }),
+    [
+      rawAllocationData.loading,
+      coverage,
+      pipelineErrorsLoading,
+      scopedFundQuality,
+      scopedManualPriceOverrides,
+      scopedPipelineErrors,
+    ],
+  );
   const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView);
   const activeFilterSummaries = filterSummaries(
@@ -680,19 +512,10 @@ export default function App() {
     accountFilterLabels,
     filterVisibility,
   );
-  const visibleFilterSummaries = activeTab === "overview"
-    ? activeFilterSummaries.filter((item) => item.key !== "period")
-    : activeFilterSummaries;
-
-  function handleResetFilters() {
-    setFilters(resetFilters());
-    setAllocationFilter(null);
-  }
-
-  function openDataQuality(theme: QualityThemeId) {
-    setSelectedQualityTheme(theme);
-    setActiveTab("quality");
-  }
+  const visibleFilterSummaries = filterSummariesForTab(
+    activeFilterSummaries,
+    activeTab,
+  );
 
   return (
     <FilterScopeProvider filters={filters} accountLabels={accountFilterLabels}>
@@ -704,9 +527,7 @@ export default function App() {
           </div>
           <button
             type="button"
-            onClick={() =>
-              setTheme((value) => (value === "dark" ? "light" : "dark"))
-            }
+            onClick={toggleTheme}
             aria-pressed={theme === "dark"}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
@@ -738,10 +559,7 @@ export default function App() {
               ))}
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedQualityTheme(null);
-                  setActiveTab("quality");
-                }}
+                onClick={openQualityOverview}
                 onMouseEnter={() => preloadTab("quality")}
                 onFocus={() => preloadTab("quality")}
                 aria-current={activeTab === "quality" ? "page" : undefined}
@@ -750,7 +568,7 @@ export default function App() {
                 Data quality
                 {qualityCount > 0 && (
                   <span
-                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${scopedPipelineErrors.some((item) => item.level === "error") || hasFundValidationError ? "bg-red-900/60 text-red-300" : "bg-amber-900/60 text-amber-300"}`}
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${hasPipelineError || hasFundValidationError ? SEMANTIC_STATUS_BADGE_CLASSES.critical : SEMANTIC_STATUS_BADGE_CLASSES.warning}`}
                   >
                     {qualityCount}
                   </span>
@@ -873,7 +691,7 @@ export default function App() {
                 setFilters((current) => clearFilterGroup(current, item.key))
               }
               actions={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)
-                ? <ResetFiltersButton onClick={handleResetFilters} />
+                ? <ResetFiltersButton onClick={resetAllFilters} />
                 : undefined}
             >
               {activeTab === "allocation" && allocationFilter && (
@@ -895,7 +713,7 @@ export default function App() {
               visibility={filterVisibility}
               open={filtersOpen}
               onClose={() => setFiltersOpen(false)}
-              onReset={handleResetFilters}
+              onReset={resetAllFilters}
               demoPresetSelection={demoPresetSelection}
               demoPresetActive={demoPresetActive}
             />
@@ -971,10 +789,7 @@ export default function App() {
                       onExpandedChange={setExpandedPositionRows}
                       fundHoldings={periodEndFundHoldings}
                       fundStatuses={fundData.statuses}
-                      onOpenCompleteHoldings={(fundName) => {
-                        setUnderlyingQuery(fundName);
-                        setHoldingsView("underlying");
-                      }}
+                      onOpenCompleteHoldings={openCompleteHoldings}
                     />
                   ) : (
                     <FundLookThroughTab

@@ -1,22 +1,17 @@
-import { useState, useMemo } from 'react'
 import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
-import { aggregateAllocationPoints, computeMatchingIsins, aggregateFilteredPoints, computeTableRows, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationCharts.logic'
 import { DonutCard } from './DonutCard'
 import { EvoCard } from './EvoCard'
 import { FilteredPositionsTable } from './FilteredPositionsTable'
 import type { AllocationFilter } from './allocationCharts.types'
 import type { PositionRow, RawPosition } from '@/domains/portfolio/types/domain'
-import { buildCumulativeConcentration, computeConcentration, computeHeldAssetConcentration } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
 import { ConcentrationChart } from '@/domains/portfolio/components/portfolio-charts/ConcentrationChart'
 import { CumulativeConcentrationChart } from '@/domains/portfolio/components/portfolio-charts/CumulativeConcentrationChart'
 import type { FundHolding, HistoricalFundHolding } from '@/domains/portfolio/apis/queries/useFundHoldings'
-import { ConcentrationModeToggle, type ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle'
+import { ConcentrationModeToggle } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle'
 import { fmtFull } from '@/shared/format/money'
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection'
-import { buildHistoricalConcentration, buildHistoricalLookThroughConcentration } from './concentrationTrend.logic'
-import { filterPointsByPeriod } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
 import type { AllocationView } from './AllocationViewToggle'
+import { useAllocationCharts } from '@/domains/portfolio/services/useAllocationCharts'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
@@ -34,103 +29,49 @@ interface AllocationChartsProps {
 }
 
 export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, activeFilter, onActiveFilterChange, rawData, view, dateFrom, dateTo }: AllocationChartsProps) {
-  const [showTable, setShowTable] = useState(false)
-  const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
-  const applicablePositions = useMemo(
-    () => positions.filter((position) => isAssetAnalysisApplicablePosition(position)),
-    [positions],
-  )
-  const hasSelectedValue = positions.some(
-    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
-  )
-  const hasApplicableValue = applicablePositions.some(
-    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
-  )
-  const lookThroughConcentration = useMemo(
-    () => computeConcentration(applicablePositions, fundHoldings),
-    [applicablePositions, fundHoldings],
-  )
-  const heldAssetConcentration = useMemo(
-    () => computeHeldAssetConcentration(applicablePositions),
-    [applicablePositions],
-  )
-  const concentration = concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
-  const cumulativeConcentration = useMemo(
-    () => buildCumulativeConcentration(concentration.allHoldings),
-    [concentration],
-  )
-  const heldConcentrationHistory = useMemo(
-    () => buildHistoricalConcentration(rawPositions, accountFilters, accountTypeFilters),
-    [rawPositions, accountFilters, accountTypeFilters],
-  )
-  const lookThroughConcentrationHistory = useMemo(
-    () => buildHistoricalLookThroughConcentration(rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters),
-    [rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters],
-  )
-  const accountScopedRawData = useMemo(
-    () => scopeRawAllocationData(rawData, accountFilters),
-    [rawData, accountFilters],
-  )
-  const scopedRawData = useMemo(
-    () => excludeNonApplicableAllocationData(accountScopedRawData, positions),
-    [accountScopedRawData, positions],
-  )
-  const baseGeo = useMemo(
-    () => aggregateAllocationPoints(scopedRawData.geo),
-    [scopedRawData.geo],
-  )
-  const baseSecteur = useMemo(
-    () => aggregateAllocationPoints(scopedRawData.secteur),
-    [scopedRawData.secteur],
-  )
-  const baseCurrency = useMemo(
-    () => aggregateAllocationPoints(scopedRawData.currency),
-    [scopedRawData.currency],
-  )
-  const baseClasse = useMemo(
-    () => aggregateAllocationPoints(scopedRawData.classe),
-    [scopedRawData.classe],
-  )
-
-  function handleFilterToggle(filter: AllocationFilter) {
-    const isSameFilter = activeFilter?.type === filter.type && activeFilter?.value === filter.value
-    setShowTable(false)
-    onActiveFilterChange(isSameFilter ? null : filter)
-  }
-
-  const matchingIsins = useMemo(
-    () => computeMatchingIsins(scopedRawData, activeFilter, dateTo),
-    [scopedRawData, activeFilter, dateTo],
-  )
-
-  const displayGeo = useMemo(() => {
-    if (!activeFilter || scopedRawData.loading) return baseGeo
-    const pts = aggregateFilteredPoints(scopedRawData.geo, matchingIsins, activeFilter.type === 'geo' ? activeFilter.value : undefined)
-    return pts.length ? pts : baseGeo
-  }, [activeFilter, scopedRawData, matchingIsins, baseGeo])
-
-  const displaySecteur = useMemo(() => {
-    if (!activeFilter || scopedRawData.loading) return baseSecteur
-    const pts = aggregateFilteredPoints(scopedRawData.secteur, matchingIsins, activeFilter.type === 'secteur' ? activeFilter.value : undefined)
-    return pts.length ? pts : baseSecteur
-  }, [activeFilter, scopedRawData, matchingIsins, baseSecteur])
-
-  const displayCurrency = useMemo(() => {
-    if (!activeFilter || scopedRawData.loading) return baseCurrency
-    const pts = aggregateFilteredPoints(scopedRawData.currency, matchingIsins, activeFilter.type === 'currency' ? activeFilter.value : undefined)
-    return pts.length ? pts : baseCurrency
-  }, [activeFilter, scopedRawData, matchingIsins, baseCurrency])
-
-  const displayClasse = useMemo(() => {
-    if (!activeFilter || scopedRawData.loading) return baseClasse
-    const pts = aggregateFilteredPoints(scopedRawData.classe, matchingIsins, activeFilter.type === 'classe' ? activeFilter.value : undefined)
-    return pts.length ? pts : baseClasse
-  }, [activeFilter, scopedRawData, matchingIsins, baseClasse])
-
-  const tableRows = useMemo(() => {
-    if (!activeFilter || scopedRawData.loading) return []
-    return computeTableRows(scopedRawData, matchingIsins, activeFilter, dateTo)
-  }, [activeFilter, scopedRawData, matchingIsins, dateTo])
+  const {
+    baseClasse,
+    baseCurrency,
+    baseGeo,
+    baseSecteur,
+    clearFilter,
+    closePositions,
+    concentration,
+    concentrationMode,
+    cumulativeConcentration,
+    handleFilterToggle,
+    hasApplicableValue,
+    hasEvolution,
+    hasSelectedValue,
+    heldAssetConcentration,
+    heldConcentrationHistory,
+    latestClasse,
+    latestCurrency,
+    latestGeo,
+    latestSecteur,
+    lookThroughConcentration,
+    lookThroughConcentrationHistory,
+    setConcentrationMode,
+    showTable,
+    tableRows,
+    togglePositions,
+    trendClasse,
+    trendCurrency,
+    trendGeo,
+    trendSecteur,
+  } = useAllocationCharts({
+    positions,
+    rawPositions,
+    fundHoldings,
+    fundHoldingsHistory,
+    accountFilters,
+    accountTypeFilters,
+    activeFilter,
+    onActiveFilterChange,
+    rawData,
+    dateFrom,
+    dateTo,
+  })
 
   if (rawData.loading) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
 
@@ -141,21 +82,6 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
   if (view === 'current' && !baseGeo.length && !baseSecteur.length && !baseCurrency.length && !baseClasse.length) {
     return <p className="text-gray-500 text-sm">No allocation data available. Run the pipeline to generate the files.</p>
   }
-
-  const asOf = <T extends { date: string }>(points: T[]) => points.filter((point) => !dateTo || point.date <= dateTo).at(-1)
-  const latestGeo      = asOf(displayGeo)
-  const latestSecteur  = asOf(displaySecteur)
-  const latestCurrency = asOf(displayCurrency)
-  const latestClasse   = asOf(displayClasse)
-
-  const trendGeo = filterPointsByPeriod(displayGeo, dateFrom, dateTo)
-  const trendSecteur = filterPointsByPeriod(displaySecteur, dateFrom, dateTo)
-  const trendCurrency = filterPointsByPeriod(displayCurrency, dateFrom, dateTo)
-  const trendClasse = filterPointsByPeriod(displayClasse, dateFrom, dateTo)
-
-  const hasEvolution = Math.max(
-    trendGeo.length, trendSecteur.length, trendCurrency.length, trendClasse.length,
-  ) >= 2
 
   return (
     <div className="flex flex-col gap-4 mb-6">
@@ -202,10 +128,10 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
               <p className="mt-0.5 text-xs text-gray-600">Explore the current mix by geography, asset class, sector and currency.</p>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+              {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
             </div>
           </section>
         </>
@@ -214,8 +140,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
       {view === 'trend' && (
         <>
           <ConcentrationTrendSection
-            heldPoints={filterPointsByPeriod(heldConcentrationHistory, dateFrom, dateTo)}
-            lookThroughPoints={filterPointsByPeriod(lookThroughConcentrationHistory, dateFrom, dateTo)}
+            heldPoints={heldConcentrationHistory}
+            lookThroughPoints={lookThroughConcentrationHistory}
             lookThroughAvailable={fundHoldingsHistory.length > 0}
           />
           {hasEvolution ? <section>
@@ -224,10 +150,10 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
               <p className="mt-0.5 text-xs text-gray-600">Track how the mix changed by geography, asset class, sector and currency.</p>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
-              {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={() => setShowTable((open) => !open)} positionsOpen={showTable} />}
+              {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
+              {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" activeFilter={activeFilter} onFilterToggle={handleFilterToggle} onShowPositions={togglePositions} positionsOpen={showTable} />}
             </div>
           </section> : <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">Not enough portfolio breakdown history.</div>}
         </>
@@ -238,11 +164,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
         <FilteredPositionsTable
           rows={tableRows}
           filter={activeFilter}
-          onClearFilter={() => {
-            setShowTable(false)
-            onActiveFilterChange(null)
-          }}
-          onClose={() => setShowTable(false)}
+          onClearFilter={clearFilter}
+          onClose={closePositions}
         />
       )}
 
