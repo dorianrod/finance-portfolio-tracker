@@ -1,6 +1,7 @@
 import Papa from 'papaparse'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { clearCsvCache, parseCsv } from './csvData'
+import * as yup from 'yup'
 
 vi.mock('papaparse', () => ({
   default: { parse: vi.fn() },
@@ -9,6 +10,10 @@ vi.mock('papaparse', () => ({
 interface CsvRow {
   id: string
 }
+
+const CSV_ROW_SCHEMA: yup.ObjectSchema<CsvRow> = yup.object({
+  id: yup.string().defined(),
+})
 
 const result = (data: CsvRow[]): Papa.ParseResult<CsvRow> => ({
   data,
@@ -40,11 +45,10 @@ describe('parseCsv', () => {
       config.complete?.(result(rows), source)
     })
 
-    const firstRequest = parseCsv<CsvRow>('/data/positions.csv')
-    const secondRequest = parseCsv<CsvRow>('/data/positions.csv')
+    const firstRequest = parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)
+    const secondRequest = parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)
 
-    expect(firstRequest).toBe(secondRequest)
-    await expect(firstRequest).resolves.toBe(rows)
+    await expect(Promise.all([firstRequest, secondRequest])).resolves.toEqual([rows, rows])
     expect(Papa.parse).toHaveBeenCalledOnce()
   })
 
@@ -54,8 +58,8 @@ describe('parseCsv', () => {
     })
 
     await Promise.all([
-      parseCsv<CsvRow>('/data/positions.csv'),
-      parseCsv<CsvRow>('/data/operations.csv'),
+      parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+      parseCsv('/data/operations.csv', CSV_ROW_SCHEMA),
     ])
 
     expect(Papa.parse).toHaveBeenCalledTimes(2)
@@ -71,8 +75,16 @@ describe('parseCsv', () => {
         config.complete?.(result(rows), source)
       })
 
-    await expect(parseCsv<CsvRow>('/data/positions.csv')).rejects.toThrow('Network error')
-    await expect(parseCsv<CsvRow>('/data/positions.csv')).resolves.toBe(rows)
+    await expect(parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)).rejects.toThrow('Network error')
+    await expect(parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)).resolves.toEqual(rows)
     expect(Papa.parse).toHaveBeenCalledTimes(2)
+  })
+
+  it('rejects rows that do not match the supplied schema', async () => {
+    parseMock.mockImplementation((source, config) => {
+      config.complete?.(result([{ id: undefined as never }]), source)
+    })
+
+    await expect(parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)).rejects.toThrow()
   })
 })

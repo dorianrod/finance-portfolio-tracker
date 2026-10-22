@@ -1,6 +1,7 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
 import { parseCsv } from '@/shared/csv/csvData'
+import { RAW_POSITION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 
 export interface RawPositionRow {
   snapshot_date: string
@@ -17,7 +18,7 @@ export function useAllPositions(): RawPositionRow[] {
   const [rows, setRows] = useState<RawPositionRow[]>([])
 
   useEffect(() => {
-    parseCsv<RawPositionRow>(PORTFOLIO_ENDPOINTS.data.positions)
+    parseCsv(PORTFOLIO_ENDPOINTS.data.positions, RAW_POSITION_SCHEMA)
       .then(setRows)
       .catch(() => setRows([]))
   }, [])

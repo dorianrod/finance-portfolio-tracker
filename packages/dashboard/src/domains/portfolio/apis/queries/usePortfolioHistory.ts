@@ -1,7 +1,8 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import type { RawPortfolioHistory, PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { parseCsv } from '@/shared/csv/csvData'
+import { RAW_PORTFOLIO_HISTORY_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 
 export function usePortfolioHistory() {
   const [history, setHistory] = useState<PortfolioHistoryPoint[]>([])
@@ -9,7 +10,7 @@ export function usePortfolioHistory() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    parseCsv<RawPortfolioHistory>(PORTFOLIO_ENDPOINTS.data.portfolioHistory)
+    parseCsv(PORTFOLIO_ENDPOINTS.data.portfolioHistory, RAW_PORTFOLIO_HISTORY_SCHEMA)
       .then((rows) => {
         const points: PortfolioHistoryPoint[] = rows.map((r) => ({
           date: r.snapshot_date,

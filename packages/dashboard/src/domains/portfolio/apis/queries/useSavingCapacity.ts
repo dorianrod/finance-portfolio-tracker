@@ -3,10 +3,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { parseCsv } from '@/shared/csv/csvData'
 import { rawAccountSet } from '@/domains/portfolio/helpers/filters/accountFilter'
 import {
+  RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA,
+  RAW_SAVING_CAPACITY_SCHEMA,
+} from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import {
   mapSavingCapacity,
   aggregateSavingCapacityByAccount,
-  type RawSavingCapacityRow,
-  type RawSavingCapacityByAccountRow,
   type SavingCapacityPoint,
 } from '@/domains/portfolio/helpers/savingCapacity.logic'
 
@@ -24,11 +26,11 @@ export function useSavingCapacity(accounts?: Set<string>): SavingCapacityPoint[]
   useEffect(() => {
     if (accountsKey) {
       const accountSet = rawAccountSet(new Set(accountsKey.split(','))) ?? new Set()
-      parseCsv<RawSavingCapacityByAccountRow>(PORTFOLIO_ENDPOINTS.data.savingCapacityByAccount).then((rows) => {
+      parseCsv(PORTFOLIO_ENDPOINTS.data.savingCapacityByAccount, RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA).then((rows) => {
         setData(aggregateSavingCapacityByAccount(rows, accountSet))
       })
     } else {
-      parseCsv<RawSavingCapacityRow>(PORTFOLIO_ENDPOINTS.data.savingCapacity).then((rows) => {
+      parseCsv(PORTFOLIO_ENDPOINTS.data.savingCapacity, RAW_SAVING_CAPACITY_SCHEMA).then((rows) => {
         setData(mapSavingCapacity(rows))
       })
     }

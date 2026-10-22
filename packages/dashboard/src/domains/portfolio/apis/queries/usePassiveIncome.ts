@@ -2,7 +2,8 @@ import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { parseCsv } from '@/shared/csv/csvData'
 import { rawAccountSet } from '@/domains/portfolio/helpers/filters/accountFilter'
-import { aggregatePassiveIncomeByYear, type RawPassiveIncomeOp, type PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
+import { aggregatePassiveIncomeByYear, type PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
+import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 
 export type { PassiveIncomePoint }
 
@@ -23,7 +24,7 @@ export function usePassiveIncome(
       ? rawAccountSet(new Set(accountsKey.split(',')))
       : null
 
-    parseCsv<RawPassiveIncomeOp>(PORTFOLIO_ENDPOINTS.data.operations).then((rows) => {
+    parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA).then((rows) => {
       setData(aggregatePassiveIncomeByYear(rows, accountSet, dateFrom, dateTo))
     })
   }, [accountsKey, dateFrom, dateTo])

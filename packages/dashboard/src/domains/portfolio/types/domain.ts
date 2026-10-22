@@ -15,8 +15,8 @@ export interface RawOperation {
 export interface RawPosition {
   snapshot_date: string
   account: string
-  account_type?: string
-  account_category?: string
+  account_type: string
+  account_category: string
   isin: string
   ticker: string
   name: string

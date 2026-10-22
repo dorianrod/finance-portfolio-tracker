@@ -2,6 +2,7 @@ import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { rawAccountId } from '@/domains/portfolio/helpers/filters/accountFilter'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
+import * as yup from 'yup'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -21,6 +22,31 @@ export interface PortfolioHistoryResponse {
   accounts: string[]
   history: ApiHistoryPoint[]
 }
+
+const FILTERED_HISTORY_REQUEST_SCHEMA = yup.object({
+  accounts: yup.array(yup.string().defined()).defined(),
+})
+
+const API_HISTORY_POINT_SCHEMA: yup.ObjectSchema<ApiHistoryPoint> = yup.object({
+  snapshot_date: yup.string().defined(),
+  total_value: yup.number().defined(),
+  total_cost_basis: yup.number().defined(),
+  unrealized_gain: yup.number().defined(),
+  net_cash_injected: yup.number().defined(),
+  cash_delta: yup.number().nullable().default(null).defined(),
+  tri: yup.number().nullable().default(null).defined(),
+  tri_rolling_1y: yup.number().nullable().default(null).defined(),
+  tri_rolling_3y: yup.number().nullable().default(null).defined(),
+})
+
+const FILTERED_HISTORY_RESPONSE_SCHEMA: yup.ObjectSchema<PortfolioHistoryResponse> = yup.object({
+  accounts: yup.array(yup.string().defined()).default([]).defined(),
+  history: yup.array(API_HISTORY_POINT_SCHEMA).default([]).defined(),
+})
+
+const ERROR_RESPONSE_SCHEMA = yup.object({
+  error: yup.string().ensure().defined(),
+})
 
 export class DemoScopeUnavailableError extends Error {}
 
@@ -70,9 +96,12 @@ export function resolveFilteredHistoryState(
 }
 
 async function readResponse(response: Response): Promise<PortfolioHistoryResponse> {
-  const payload = await response.json() as PortfolioHistoryResponse & { error?: string }
-  if (!response.ok) throw new Error(payload.error ?? `Filtered IRR request failed (${response.status})`)
-  return payload
+  const payload: unknown = await response.json()
+  if (!response.ok) {
+    const errorResponse = await ERROR_RESPONSE_SCHEMA.validate(payload, { stripUnknown: true })
+    throw new Error(errorResponse.error || `Filtered IRR request failed (${response.status})`)
+  }
+  return FILTERED_HISTORY_RESPONSE_SCHEMA.validate(payload, { stripUnknown: true })
 }
 
 export async function requestFilteredPortfolioHistory(
@@ -91,10 +120,14 @@ export async function requestFilteredPortfolioHistory(
     return fixture
   }
 
+  const body = await FILTERED_HISTORY_REQUEST_SCHEMA.validate(
+    { accounts: normalized },
+    { stripUnknown: true },
+  )
   return readResponse(await fetchImpl(PORTFOLIO_ENDPOINTS.api.portfolioHistory, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ accounts: normalized }),
+    body: JSON.stringify(body),
     signal,
   }))
 }

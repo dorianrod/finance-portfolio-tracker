@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { parseCsv } from '@/shared/csv/csvData'
 import type { AllocationPoint } from './useAllocationData'
 import { toLatestByIsin } from '@/domains/portfolio/helpers/allocationByIsin.logic'
+import { ALLOCATION_BY_ISIN_ROW_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 
 export interface IsinAllocation {
   isin: string
@@ -21,10 +22,10 @@ export function useAllocationByIsin(): { data: Map<string, IsinAllocation>; load
 
   useEffect(() => {
     Promise.all([
-      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsGeoByIsin),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsSecteurByIsin),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsCurrencyByIsin),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsClasseByIsin),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsGeoByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsSecteurByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsCurrencyByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsClasseByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
     ])
       .then(([geo, secteur, currency, classe]) => {
         const geoMap = toLatestByIsin(geo)

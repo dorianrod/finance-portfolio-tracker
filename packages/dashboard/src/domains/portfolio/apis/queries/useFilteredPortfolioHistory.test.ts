@@ -118,4 +118,18 @@ describe('requestFilteredPortfolioHistory', () => {
       { staticDemo: false, fetchImpl },
     )).rejects.toThrow('Unknown accounts: x')
   })
+
+  it('rejects a successful response whose history data is incomplete', async () => {
+    const { total_value: _totalValue, ...incompletePoint } = payload.history[0]
+    const fetchImpl = vi.fn(async () => jsonResponse({
+      ...payload,
+      history: [incompletePoint],
+    })) as unknown as typeof fetch
+
+    await expect(requestFilteredPortfolioHistory(
+      ['a'],
+      new AbortController().signal,
+      { staticDemo: false, fetchImpl },
+    )).rejects.toThrow()
+  })
 })

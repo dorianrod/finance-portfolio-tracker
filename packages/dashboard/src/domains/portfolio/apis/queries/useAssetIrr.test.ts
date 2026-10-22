@@ -61,4 +61,20 @@ describe('requestAssetIrr', () => {
       fetchImpl,
     )).rejects.toThrow('Unable to calculate asset IRR')
   })
+
+  it('rejects a successful response whose asset data is invalid', async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({
+      ...payload,
+      assets: [{ ...payload.assets[0], irr: 'not-a-number' }],
+    })) as unknown as typeof fetch
+
+    await expect(requestAssetIrr(
+      [],
+      [],
+      undefined,
+      '2026-10-13',
+      new AbortController().signal,
+      fetchImpl,
+    )).rejects.toThrow()
+  })
 })

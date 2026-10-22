@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
+import * as yup from 'yup'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -19,6 +20,34 @@ export interface AssetIrrSummary {
   end_date: string | null
   assets: AssetIrrItem[]
 }
+
+const ASSET_IRR_REQUEST_SCHEMA = yup.object({
+  accounts: yup.array(yup.string().defined()).defined(),
+  account_types: yup.array(yup.string().defined()).defined(),
+  date_from: yup.string().nullable().defined(),
+  date_to: yup.string().nullable().defined(),
+})
+
+const ASSET_IRR_ITEM_SCHEMA: yup.ObjectSchema<AssetIrrItem> = yup.object({
+  key: yup.string().defined(),
+  label: yup.string().ensure().defined(),
+  name: yup.string().ensure().defined(),
+  irr: yup.number().defined(),
+  value: yup.number().defined(),
+  accounts: yup.array(yup.string().defined()).default([]).defined(),
+  account_types: yup.array(yup.string().defined()).default([]).defined(),
+})
+
+const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> = yup.object({
+  available: yup.boolean().defined(),
+  start_date: yup.string().nullable().default(null).defined(),
+  end_date: yup.string().nullable().default(null).defined(),
+  assets: yup.array(ASSET_IRR_ITEM_SCHEMA).default([]).defined(),
+})
+
+const ERROR_RESPONSE_SCHEMA = yup.object({
+  error: yup.string().ensure().defined(),
+})
 
 interface AssetIrrState {
   key: string
@@ -41,20 +70,24 @@ export async function requestAssetIrr(
   signal: AbortSignal,
   fetchImpl: typeof fetch = fetch,
 ): Promise<AssetIrrSummary> {
+  const body = await ASSET_IRR_REQUEST_SCHEMA.validate({
+    accounts,
+    account_types: accountTypes,
+    date_from: dateFrom ?? null,
+    date_to: dateTo ?? null,
+  }, { stripUnknown: true })
   const response = await fetchImpl(PORTFOLIO_ENDPOINTS.api.assetIrr, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      accounts,
-      account_types: accountTypes,
-      date_from: dateFrom ?? null,
-      date_to: dateTo ?? null,
-    }),
+    body: JSON.stringify(body),
     signal,
   })
-  const payload = await response.json() as AssetIrrSummary & { error?: string }
-  if (!response.ok) throw new Error(payload.error ?? `Asset IRR request failed (${response.status})`)
-  return payload
+  const payload: unknown = await response.json()
+  if (!response.ok) {
+    const errorResponse = await ERROR_RESPONSE_SCHEMA.validate(payload, { stripUnknown: true })
+    throw new Error(errorResponse.error || `Asset IRR request failed (${response.status})`)
+  }
+  return ASSET_IRR_RESPONSE_SCHEMA.validate(payload, { stripUnknown: true })
 }
 
 export function useAssetIrr(

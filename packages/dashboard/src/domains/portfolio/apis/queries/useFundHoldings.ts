@@ -1,6 +1,7 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
 import { parseCsv } from '@/shared/csv/csvData'
+import * as yup from 'yup'
 
 interface RawFundHolding {
   parent_isin: string
@@ -11,7 +12,7 @@ interface RawFundHolding {
   issuer_id?: string
   issuer_name?: string
   weight: string
-  source_tier?: string
+  source_tier?: FundQualityTier | ''
   source_name?: string
   holdings_date?: string
   holding_kind?: string
@@ -33,8 +34,8 @@ interface RawFundHoldingStatus {
   parent_isin: string
   parent_ticker: string
   parent_name: string
-  quality_tier: string
-  validation_status: string
+  quality_tier: FundQualityTier | ''
+  validation_status: FundValidationStatus | ''
   source_name: string
   source_type: string
   source_url: string
@@ -55,7 +56,7 @@ interface RawFundHoldingStatus {
   residual_value: string
   refresh_streak: string
   issues: string
-  decomposition_state?: string
+  decomposition_state?: FundHoldingStatus['decompositionState'] | ''
   snapshot_id?: string
   source_origin?: string
   manual_attention?: string
@@ -114,13 +115,139 @@ interface RawFundCoverageReport {
   top_funds_gate_pass: string
   exact_proxy_gate_pass: string
   repeatability_gate_pass: string
-  feasibility_status: string
+  feasibility_status: FundCoverageReport['feasibilityStatus']
   fund_count: string
   issue_count: string
 }
 
 export type FundQualityTier = 'A' | 'B' | 'C' | 'D'
 export type FundValidationStatus = 'ok' | 'warning' | 'error'
+
+const requiredText = () => yup.string().defined()
+const optionalText = () => yup.string().optional()
+
+const RAW_FUND_HOLDING_SCHEMA: yup.ObjectSchema<RawFundHolding> = yup.object({
+  parent_isin: requiredText(),
+  parent_ticker: requiredText(),
+  parent_name: requiredText(),
+  holding_id: requiredText(),
+  holding_name: requiredText(),
+  issuer_id: optionalText(),
+  issuer_name: optionalText(),
+  weight: requiredText(),
+  source_tier: yup.string<FundQualityTier | ''>().oneOf(['A', 'B', 'C', 'D', '']).optional(),
+  source_name: optionalText(),
+  holdings_date: optionalText(),
+  holding_kind: optionalText(),
+  lookthrough_path: optionalText(),
+  depth: optionalText(),
+  snapshot_id: optionalText(),
+  source_origin: optionalText(),
+  source_url: optionalText(),
+})
+
+const RAW_FUND_HOLDING_HISTORY_SCHEMA: yup.ObjectSchema<RawFundHoldingHistory> = RAW_FUND_HOLDING_SCHEMA.shape({
+  effective_date: requiredText(),
+  history_snapshot_id: requiredText(),
+  captured_at: requiredText(),
+})
+
+const RAW_FUND_HOLDING_STATUS_SCHEMA: yup.ObjectSchema<RawFundHoldingStatus> = yup.object({
+  parent_id: requiredText(),
+  parent_isin: requiredText(),
+  parent_ticker: requiredText(),
+  parent_name: requiredText(),
+  quality_tier: yup.string<FundQualityTier | ''>().oneOf(['A', 'B', 'C', 'D', '']).defined(),
+  validation_status: yup.string<FundValidationStatus | ''>().oneOf(['ok', 'warning', 'error', '']).defined(),
+  source_name: requiredText(),
+  source_type: requiredText(),
+  source_url: requiredText(),
+  index_name: requiredText(),
+  replication_method: requiredText(),
+  proxy_name: requiredText(),
+  proxy_isin: requiredText(),
+  fetched_at: requiredText(),
+  holdings_date: requiredText(),
+  freshness_days: requiredText(),
+  is_stale: requiredText(),
+  holding_count: requiredText(),
+  raw_weight_sum: requiredText(),
+  explained_pct: requiredText(),
+  residual_pct: requiredText(),
+  market_value: requiredText(),
+  explained_value: requiredText(),
+  residual_value: requiredText(),
+  refresh_streak: requiredText(),
+  issues: requiredText(),
+  decomposition_state: yup
+    .string<FundHoldingStatus['decompositionState'] | ''>()
+    .oneOf(['resolved', 'partial', 'unresolved', 'stale', ''])
+    .optional(),
+  snapshot_id: optionalText(),
+  source_origin: optionalText(),
+  manual_attention: optionalText(),
+  checksum_sha256: optionalText(),
+})
+
+const RAW_FUND_SNAPSHOT_SCHEMA: yup.ObjectSchema<RawFundSnapshot> = yup.object({
+  fund_id: requiredText(),
+  fund_name: requiredText(),
+  snapshot_id: requiredText(),
+  snapshot_date: requiredText(),
+  as_of_date: requiredText(),
+  generated_at: requiredText(),
+  origin: requiredText(),
+  status: requiredText(),
+  is_active: requiredText(),
+  is_stale: requiredText(),
+  age_days: requiredText(),
+  holding_count: requiredText(),
+  weight_sum: requiredText(),
+  coverage_pct: requiredText(),
+  complete: requiredText(),
+  source_urls: requiredText(),
+  evidence_path: requiredText(),
+  holdings_path: requiredText(),
+  checksum_sha256: requiredText(),
+  notes: requiredText(),
+  validation_errors: requiredText(),
+})
+
+const RAW_FUND_UNRESOLVED_SCHEMA: yup.ObjectSchema<RawFundUnresolved> = yup.object({
+  parent_id: requiredText(),
+  parent_name: requiredText(),
+  unresolved_id: requiredText(),
+  unresolved_name: requiredText(),
+  reason: requiredText(),
+  path: requiredText(),
+  weight: requiredText(),
+  market_value: requiredText(),
+  queued_for_research: requiredText(),
+  detected_at: requiredText(),
+})
+
+const RAW_FUND_COVERAGE_REPORT_SCHEMA: yup.ObjectSchema<RawFundCoverageReport> = yup.object({
+  as_of_date: requiredText(),
+  portfolio_value: requiredText(),
+  fund_value: requiredText(),
+  direct_identified_value: requiredText(),
+  opaque_value: requiredText(),
+  decomposed_value: requiredText(),
+  high_confidence_explained_value: requiredText(),
+  undisclosed_fund_value: requiredText(),
+  fund_coverage_pct: requiredText(),
+  portfolio_coverage_pct: requiredText(),
+  coverage_gate_pass: requiredText(),
+  top_funds_gate_pass: requiredText(),
+  exact_proxy_gate_pass: requiredText(),
+  repeatability_gate_pass: requiredText(),
+  feasibility_status: yup
+    .string<FundCoverageReport['feasibilityStatus']>()
+    .oneOf(['passed', 'pending_repeatability', 'limited'])
+    .defined(),
+  fund_count: requiredText(),
+  issue_count: requiredText(),
+})
 
 export interface FundHolding {
   parentIsin: string
@@ -259,12 +386,12 @@ export function useFundHoldingsData(): FundHoldingsData {
 
   useEffect(() => {
     Promise.all([
-      parseCsv<RawFundHolding>(PORTFOLIO_ENDPOINTS.data.fundHoldings).catch(() => []),
-      parseCsv<RawFundHoldingHistory>(PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory).catch(() => []),
-      parseCsv<RawFundHoldingStatus>(PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus).catch(() => []),
-      parseCsv<RawFundCoverageReport>(PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage).catch(() => []),
-      parseCsv<RawFundSnapshot>(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest).catch(() => []),
-      parseCsv<RawFundUnresolved>(PORTFOLIO_ENDPOINTS.data.fundUnresolved).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldings, RAW_FUND_HOLDING_SCHEMA).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory, RAW_FUND_HOLDING_HISTORY_SCHEMA).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus, RAW_FUND_HOLDING_STATUS_SCHEMA).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage, RAW_FUND_COVERAGE_REPORT_SCHEMA).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest, RAW_FUND_SNAPSHOT_SCHEMA).catch(() => []),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.fundUnresolved, RAW_FUND_UNRESOLVED_SCHEMA).catch(() => []),
     ]).then(([holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows]) => {
       const holdings = holdingRows
         .map((row): FundHolding => ({
@@ -276,7 +403,7 @@ export function useFundHoldingsData(): FundHoldingsData {
           issuerId: row.issuer_id?.trim() || row.holding_id?.trim() || '',
           issuerName: row.issuer_name?.trim() || row.holding_name?.trim() || '',
           weight: num(row.weight),
-          sourceTier: (row.source_tier?.trim() || '') as FundQualityTier | '',
+          sourceTier: row.source_tier || '',
           sourceName: row.source_name?.trim() || '',
           holdingsDate: row.holdings_date?.trim() || '',
           holdingKind: row.holding_kind?.trim() || 'security',
@@ -298,7 +425,7 @@ export function useFundHoldingsData(): FundHoldingsData {
           issuerId: row.issuer_id?.trim() || row.holding_id?.trim() || '',
           issuerName: row.issuer_name?.trim() || row.holding_name?.trim() || '',
           weight: num(row.weight),
-          sourceTier: (row.source_tier?.trim() || '') as FundQualityTier | '',
+          sourceTier: row.source_tier || '',
           sourceName: row.source_name?.trim() || '',
           holdingsDate: row.holdings_date?.trim() || '',
           holdingKind: row.holding_kind?.trim() || 'security',
@@ -318,8 +445,8 @@ export function useFundHoldingsData(): FundHoldingsData {
         parentIsin: row.parent_isin?.trim() || '',
         parentTicker: row.parent_ticker?.trim() || '',
         parentName: row.parent_name?.trim() || '',
-        qualityTier: (row.quality_tier?.trim() || 'D') as FundQualityTier,
-        validationStatus: (row.validation_status?.trim() || 'error') as FundValidationStatus,
+        qualityTier: row.quality_tier || 'D',
+        validationStatus: row.validation_status || 'error',
         sourceName: row.source_name?.trim() || '',
         sourceType: row.source_type?.trim() || '',
         sourceUrl: row.source_url?.trim() || '',
@@ -340,7 +467,7 @@ export function useFundHoldingsData(): FundHoldingsData {
         residualValue: num(row.residual_value),
         refreshStreak: num(row.refresh_streak),
         issues: row.issues?.trim() || '',
-        decompositionState: (row.decomposition_state?.trim() || 'unresolved') as FundHoldingStatus['decompositionState'],
+        decompositionState: row.decomposition_state || 'unresolved',
         snapshotId: row.snapshot_id?.trim() || '',
         sourceOrigin: row.source_origin?.trim() || '',
         manualAttention: bool(row.manual_attention),
@@ -400,7 +527,7 @@ export function useFundHoldingsData(): FundHoldingsData {
         topFundsGatePass: bool(rawReport.top_funds_gate_pass),
         exactProxyGatePass: bool(rawReport.exact_proxy_gate_pass),
         repeatabilityGatePass: bool(rawReport.repeatability_gate_pass),
-        feasibilityStatus: rawReport.feasibility_status as FundCoverageReport['feasibilityStatus'],
+        feasibilityStatus: rawReport.feasibility_status,
         fundCount: num(rawReport.fund_count),
         issueCount: num(rawReport.issue_count),
       } : null
