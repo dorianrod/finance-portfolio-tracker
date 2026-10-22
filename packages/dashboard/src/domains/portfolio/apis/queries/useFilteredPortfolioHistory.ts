@@ -1,6 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useMemo, useState } from 'react'
 import { rawAccountId } from '@/domains/portfolio/helpers/filters/accountFilter'
-import { dataUrl } from '@/shared/csv/csvData'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
@@ -83,7 +83,7 @@ export async function requestFilteredPortfolioHistory(
   const fetchImpl = options.fetchImpl ?? fetch
   const normalized = normalizeAccountSelection(accounts)
   if (options.staticDemo ?? STATIC_DEMO) {
-    const fixture = await readResponse(await fetchImpl(dataUrl('demo_filtered_history.json'), { signal }))
+    const fixture = await readResponse(await fetchImpl(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }))
     const fixtureAccounts = normalizeAccountSelection(fixture.accounts)
     if (!sameAccounts(normalized, fixtureAccounts)) {
       throw new DemoScopeUnavailableError('Filtered IRR is available in the local dashboard for this selection.')
@@ -91,7 +91,7 @@ export async function requestFilteredPortfolioHistory(
     return fixture
   }
 
-  return readResponse(await fetchImpl(`${import.meta.env.BASE_URL}api/portfolio-history`, {
+  return readResponse(await fetchImpl(PORTFOLIO_ENDPOINTS.api.portfolioHistory, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ accounts: normalized }),
@@ -101,7 +101,7 @@ export async function requestFilteredPortfolioHistory(
 
 async function requestDemoPresetAccounts(signal: AbortSignal): Promise<string[] | null> {
   if (!STATIC_DEMO) return null
-  const fixture = await readResponse(await fetch(dataUrl('demo_filtered_history.json'), { signal }))
+  const fixture = await readResponse(await fetch(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }))
   return normalizeAccountSelection(fixture.accounts)
 }
 

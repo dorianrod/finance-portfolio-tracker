@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
 
 interface RawOp {
@@ -26,7 +27,7 @@ export function useMonthlyOps(): MonthlyOpsMap {
   const [ops, setOps] = useState<MonthlyOpsMap>(new Map())
 
   useEffect(() => {
-    parseCsv<RawOp>(dataUrl('operations.csv')).then((rows) => {
+    parseCsv<RawOp>(PORTFOLIO_ENDPOINTS.data.operations).then((rows) => {
       const map = new Map<string, MonthlyOp[]>()
       for (const row of rows) {
         if (!['DEPOSIT', 'WITHDRAWAL'].includes(row.operation_type)) continue

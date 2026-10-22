@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 
 export interface ErrorRow {
   source: string   // "main" | "fetch_prices"
@@ -18,7 +19,7 @@ export function useErrors() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    parseCsv<ErrorRow>(dataUrl('errors.csv'))
+    parseCsv<ErrorRow>(PORTFOLIO_ENDPOINTS.data.errors)
       .then((rows) => {
         setErrors(rows)
         setLoading(false)

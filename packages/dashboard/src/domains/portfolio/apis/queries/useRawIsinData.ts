@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 import { toRawRows, type RawIsinRow } from '@/domains/portfolio/helpers/rawIsinData.logic'
 
 export type { RawIsinRow }
@@ -19,10 +20,10 @@ export function useRawIsinData(): RawIsinData {
 
   useEffect(() => {
     Promise.all([
-      parseCsv(dataUrl('positions_geo_by_isin.csv')),
-      parseCsv(dataUrl('positions_secteur_by_isin.csv')),
-      parseCsv(dataUrl('positions_currency_by_isin.csv')),
-      parseCsv(dataUrl('positions_classe_by_isin.csv')),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsGeoByIsin),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsSecteurByIsin),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsCurrencyByIsin),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsClasseByIsin),
     ])
       .then(([geo, secteur, currency, classe]) => {
         setData({

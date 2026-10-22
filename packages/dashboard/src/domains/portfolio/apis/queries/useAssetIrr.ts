@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -40,7 +41,7 @@ export async function requestAssetIrr(
   signal: AbortSignal,
   fetchImpl: typeof fetch = fetch,
 ): Promise<AssetIrrSummary> {
-  const response = await fetchImpl(`${import.meta.env.BASE_URL}api/asset-irr`, {
+  const response = await fetchImpl(PORTFOLIO_ENDPOINTS.api.assetIrr, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

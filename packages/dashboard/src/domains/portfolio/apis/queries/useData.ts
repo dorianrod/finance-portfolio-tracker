@@ -1,6 +1,7 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
 import type { RawOperation, RawPosition, PositionRow } from '@/domains/portfolio/types/domain'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 import { buildAccountLabels, buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy.logic'
 
 export function useData() {
@@ -13,9 +14,9 @@ export function useData() {
 
   useEffect(() => {
     Promise.all([
-      parseCsv<RawOperation>(dataUrl('operations.csv')),
-      parseCsv<RawPosition>(dataUrl('positions.csv')),
-      parseCsv<{ account: string; label: string }>(dataUrl('accounts.csv')),
+      parseCsv<RawOperation>(PORTFOLIO_ENDPOINTS.data.operations),
+      parseCsv<RawPosition>(PORTFOLIO_ENDPOINTS.data.positions),
+      parseCsv<{ account: string; label: string }>(PORTFOLIO_ENDPOINTS.data.accounts),
     ])
       .then(([ops, rawPositions, accountRows]) => {
         setAccountLabels(buildAccountLabels(accountRows))

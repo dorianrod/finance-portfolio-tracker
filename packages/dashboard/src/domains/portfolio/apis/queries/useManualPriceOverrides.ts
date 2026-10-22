@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 
 export interface ManualPriceOverride {
   name: string
@@ -16,7 +17,7 @@ export function useManualPriceOverrides() {
   const [manualPriceOverrides, setManualPriceOverrides] = useState<ManualPriceOverride[]>([])
 
   useEffect(() => {
-    parseCsv<ManualPriceOverride>(dataUrl('manual_price_overrides.csv'))
+    parseCsv<ManualPriceOverride>(PORTFOLIO_ENDPOINTS.data.manualPriceOverrides)
       .then(setManualPriceOverrides)
       .catch(() => setManualPriceOverrides([]))
   }, [])

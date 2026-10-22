@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 
 export interface AllocationPoint {
   date: string
@@ -42,10 +43,10 @@ export function useAllocationData(): AllocationData {
 
   useEffect(() => {
     Promise.all([
-      parseCsv(dataUrl('positions_geo.csv')),
-      parseCsv(dataUrl('positions_secteur.csv')),
-      parseCsv(dataUrl('positions_currency.csv')),
-      parseCsv(dataUrl('positions_classe.csv')),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsGeo),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsSecteur),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsCurrency),
+      parseCsv(PORTFOLIO_ENDPOINTS.data.positionsClasse),
     ])
       .then(([geo, secteur, currency, classe]) => {
         setData({

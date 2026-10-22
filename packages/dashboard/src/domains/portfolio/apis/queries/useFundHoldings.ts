@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useEffect, useState } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 
 interface RawFundHolding {
   parent_isin: string
@@ -258,12 +259,12 @@ export function useFundHoldingsData(): FundHoldingsData {
 
   useEffect(() => {
     Promise.all([
-      parseCsv<RawFundHolding>(dataUrl('fund_holdings.csv')).catch(() => []),
-      parseCsv<RawFundHoldingHistory>(dataUrl('fund_holdings_history.csv')).catch(() => []),
-      parseCsv<RawFundHoldingStatus>(dataUrl('fund_holdings_status.csv')).catch(() => []),
-      parseCsv<RawFundCoverageReport>(dataUrl('fund_holdings_coverage.csv')).catch(() => []),
-      parseCsv<RawFundSnapshot>(dataUrl('fund_snapshot_manifest.csv')).catch(() => []),
-      parseCsv<RawFundUnresolved>(dataUrl('fund_unresolved.csv')).catch(() => []),
+      parseCsv<RawFundHolding>(PORTFOLIO_ENDPOINTS.data.fundHoldings).catch(() => []),
+      parseCsv<RawFundHoldingHistory>(PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory).catch(() => []),
+      parseCsv<RawFundHoldingStatus>(PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus).catch(() => []),
+      parseCsv<RawFundCoverageReport>(PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage).catch(() => []),
+      parseCsv<RawFundSnapshot>(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest).catch(() => []),
+      parseCsv<RawFundUnresolved>(PORTFOLIO_ENDPOINTS.data.fundUnresolved).catch(() => []),
     ]).then(([holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows]) => {
       const holdings = holdingRows
         .map((row): FundHolding => ({

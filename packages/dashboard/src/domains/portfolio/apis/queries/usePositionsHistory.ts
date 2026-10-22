@@ -1,5 +1,6 @@
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useSyncExternalStore } from 'react'
-import { dataUrl, parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData'
 import { buildPositionsHistory, type RawPositionsHistoryRow, type HistoryMap, type HistoryPoint } from '@/domains/portfolio/helpers/positionsHistory.logic'
 
 export type { HistoryPoint }
@@ -11,7 +12,7 @@ const listeners = new Set<() => void>()
 function load() {
   if (cache || loading) return
   loading = true
-  parseCsv<RawPositionsHistoryRow>(dataUrl('positions.csv'))
+  parseCsv<RawPositionsHistoryRow>(PORTFOLIO_ENDPOINTS.data.positions)
     .then((data) => {
       cache = buildPositionsHistory(data)
       loading = false
