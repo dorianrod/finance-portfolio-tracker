@@ -66,13 +66,13 @@ export function KpiBar({ rows, globalTri }: Props) {
         <Kpi.ValueRow><Kpi.Value>{fmt.format(totalReturn)}</Kpi.Value></Kpi.ValueRow>
       </Kpi.Root>
       <div className="w-px bg-gray-700" />
-      {globalTri != null ? <>
+      {globalTri == null ? null : <>
         <div className="w-px bg-gray-700" />
         <Kpi.Root accent={globalTri >= 0 ? 'positive' : 'negative'}>
           <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history.">IRR since tracking</Kpi.Label>
           <Kpi.ValueRow><Kpi.Value color={gainColor(globalTri)}>{globalTri >= 0 ? '+' : ''}{globalTri.toFixed(2)}%</Kpi.Value></Kpi.ValueRow>
         </Kpi.Root>
-      </> : null}
+      </>}
       <div className="w-px bg-gray-700" />
       <Kpi.Root>
         <Kpi.Label tooltip="Number of active positions (valued today) and closed positions (fully sold).">Positions</Kpi.Label>

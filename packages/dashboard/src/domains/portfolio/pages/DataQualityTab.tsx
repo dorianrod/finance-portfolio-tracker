@@ -113,6 +113,36 @@ export function DataQualityTab({
     hasLookThroughScope,
   })
 
+  let classificationContent = (
+    <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />
+  )
+  if (classificationIsNotApplicable) {
+    classificationContent = <EmptyQualityState message="Classification is not applicable to savings, checking and brokerage-cash accounts." />
+  } else if (coverage.length > 0) {
+    classificationContent = (
+      <AllocationCoverageCard
+        coverage={coverage}
+        dimensionCoverage={dimensionCoverage}
+        accountLabels={accountLabels}
+        onOpenAffectedAssets={openClassificationDetails}
+      />
+    )
+  }
+
+  let lookThroughContent = (
+    <EmptyQualityState message={scopedFundData.report
+      ? 'Look-through is not applicable to savings, checking and brokerage-cash accounts.'
+      : 'No look-through quality report. Run the portfolio pipeline to generate it.'} />
+  )
+  if (hasLookThroughScope) {
+    lookThroughContent = (
+      <LookThroughCoverageSummary
+        report={scopedFundData.report}
+        notApplicableValue={scopedFundData.notApplicableValue}
+      />
+    )
+  }
+
   return (
     <div className="data-quality-view mb-6">
       <div className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]">
@@ -197,31 +227,9 @@ export function DataQualityTab({
             <ManualPriceOverridesTable manualPriceOverrides={manualPriceOverrides} />
           )}
 
-          {activeThemeId === 'classification' && (
-            classificationIsNotApplicable
-              ? <EmptyQualityState message="Classification is not applicable to savings, checking and brokerage-cash accounts." />
-              : coverage.length > 0
-              ? (
-                  <AllocationCoverageCard
-                    coverage={coverage}
-                    dimensionCoverage={dimensionCoverage}
-                    accountLabels={accountLabels}
-                    onOpenAffectedAssets={openClassificationDetails}
-                  />
-                )
-              : <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />
-          )}
+          {activeThemeId === 'classification' && classificationContent}
 
-          {activeThemeId === 'lookthrough' && (
-            hasLookThroughScope
-              ? <LookThroughCoverageSummary
-                  report={scopedFundData.report}
-                  notApplicableValue={scopedFundData.notApplicableValue}
-                />
-              : <EmptyQualityState message={scopedFundData.report
-                  ? 'Look-through is not applicable to savings, checking and brokerage-cash accounts.'
-                  : 'No look-through quality report. Run the portfolio pipeline to generate it.'} />
-          )}
+          {activeThemeId === 'lookthrough' && lookThroughContent}
         </section>
       </div>
 

@@ -138,9 +138,10 @@ export function scopeFundQualityData(
     .every((status) => !!status.indexName.trim() && !!status.proxyIsin.trim())
   const repeatabilityGatePass = ranked.length === 0 || ranked.every((status) => status.refreshStreak >= 2)
   const qualityGatesPass = coverageGatePass && topFundsGatePass && exactProxyGatePass
-  const feasibilityStatus: FundCoverageReport['feasibilityStatus'] = qualityGatesPass
-    ? repeatabilityGatePass ? 'passed' : 'pending_repeatability'
-    : 'limited'
+  let feasibilityStatus: FundCoverageReport['feasibilityStatus'] = 'limited'
+  if (qualityGatesPass) {
+    feasibilityStatus = repeatabilityGatePass ? 'passed' : 'pending_repeatability'
+  }
 
   return {
     holdings: scopedHoldings,

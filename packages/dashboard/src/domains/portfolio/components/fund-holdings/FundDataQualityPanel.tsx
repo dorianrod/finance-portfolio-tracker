@@ -46,9 +46,12 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
     >
       <div className="flex flex-wrap items-center gap-2 border-b border-gray-800 px-4 py-3">
         <span className="mr-1 text-xs font-medium text-gray-500">Show</span>
-        {(['issues', 'all', 'reliable', 'partial', 'unavailable'] as const).map((option) => (
-          <button key={option} type="button" onClick={() => setFilter(option)} className={`rounded-lg border px-2.5 py-1 text-xs ${filter === option ? 'border-blue-600 bg-blue-950/50 text-blue-200' : 'border-gray-700 text-gray-500 hover:text-gray-300'}`}>{option === 'issues' ? 'Issues' : option === 'all' ? 'All' : FUND_QUALITY_LABELS[option]}</button>
-        ))}
+        {(['issues', 'all', 'reliable', 'partial', 'unavailable'] as const).map((option) => {
+          let optionLabel: string = FUND_QUALITY_LABELS[option as keyof typeof FUND_QUALITY_LABELS]
+          if (option === 'issues') optionLabel = 'Issues'
+          else if (option === 'all') optionLabel = 'All'
+          return <button key={option} type="button" onClick={() => setFilter(option)} className={`rounded-lg border px-2.5 py-1 text-xs ${filter === option ? 'border-blue-600 bg-blue-950/50 text-blue-200' : 'border-gray-700 text-gray-500 hover:text-gray-300'}`}>{optionLabel}</button>
+        })}
       </div>
       <div>
         <table className="w-full table-fixed text-left text-xs">

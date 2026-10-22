@@ -35,6 +35,12 @@ function monthRangeLabel(months: string[]): string {
   return `${formatMonth(months[0])} – ${formatMonth(months[months.length - 1])}`
 }
 
+function performanceColor(value: number | null): string {
+  return value == null || value >= 0
+    ? SEMANTIC_TEXT_CLASSES.performancePositive
+    : SEMANTIC_TEXT_CLASSES.performanceNegative
+}
+
 function ComparisonKpi({ label, metric, currentMonths, tone }: {
   label: string
   metric: YearOverYearMetric
@@ -43,16 +49,19 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
 }) {
   const valueColor = tone === 'blue'
     ? SEMANTIC_TEXT_CLASSES.netContributions
-    : metric.current == null || metric.current >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
+    : performanceColor(metric.current)
   const changeColor = metric.changePct == null
     ? 'text-gray-500'
-    : metric.changePct >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
+    : performanceColor(metric.changePct)
   const currentLabel = monthRangeLabel(currentMonths)
   const value = metric.current == null ? '—' : fmt.format(metric.current)
+  let accent: 'contributions' | 'positive' | 'negative' = 'positive'
+  if (tone === 'blue') accent = 'contributions'
+  else if (metric.current != null && metric.current < 0) accent = 'negative'
 
   return (
     <KpiCard>
-      <Kpi.Root accent={tone === 'blue' ? 'contributions' : metric.current == null || metric.current >= 0 ? 'positive' : 'negative'}>
+      <Kpi.Root accent={accent}>
         <Kpi.Label
           tooltip="Rolling total over the latest twelve calendar months, compared with the preceding twelve-month window. The latest month may be partial."
           scope={{ account: 'filterable', period: 'trailing-12m' }}

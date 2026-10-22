@@ -73,7 +73,7 @@ export function SavingsTooltip({ active, payload }: any) {
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(monthStr + '-02').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(`${monthStr}-02`).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Balance: {fmt.format(balance)}</div>
       {delta !== 0 && (

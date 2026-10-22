@@ -18,6 +18,20 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      'default-case-last': 'error',
+      eqeqeq: ['error', 'smart'],
+      'no-alert': 'error',
+      'no-else-return': 'error',
+      'no-lonely-if': 'error',
+      'no-negated-condition': 'error',
+      'no-nested-ternary': 'error',
+      'no-unneeded-ternary': 'error',
+      'object-shorthand': 'error',
+      'prefer-object-spread': 'error',
+      'prefer-template': 'error',
+      radix: 'error',
+    },
   },
   {
     files: ['src/shared/**/*.{ts,tsx}'],

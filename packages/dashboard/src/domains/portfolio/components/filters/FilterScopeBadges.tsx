@@ -88,13 +88,14 @@ function periodBadge(
 ): { label: string; detail: string; tone: 'applied' | 'default' | 'ignored' } {
   const active = !!(filters.dateFrom || filters.dateTo)
   const end = friendlyDate(effectiveDate ?? filters.dateTo)
-  const range = filters.dateFrom && filters.dateTo
-    ? `${friendlyDate(filters.dateFrom)} – ${friendlyDate(filters.dateTo)}`
-    : filters.dateFrom
-      ? `Since ${friendlyDate(filters.dateFrom)}`
-      : filters.dateTo
-        ? `Until ${friendlyDate(filters.dateTo)}`
-        : null
+  let range: string | null = null
+  if (filters.dateFrom && filters.dateTo) {
+    range = `${friendlyDate(filters.dateFrom)} – ${friendlyDate(filters.dateTo)}`
+  } else if (filters.dateFrom) {
+    range = `Since ${friendlyDate(filters.dateFrom)}`
+  } else if (filters.dateTo) {
+    range = `Until ${friendlyDate(filters.dateTo)}`
+  }
 
   if (mode === 'latest') {
     return {
@@ -136,11 +137,12 @@ function periodBadge(
     return { label: `Latest snapshot${end ? ` · ${end}` : ''}`, detail: 'Uses the latest available portfolio snapshot.', tone: 'default' }
   }
 
-  const horizon = mode === 'trailing-12m'
-    ? 'Trailing 12m'
-    : mode === 'trailing-3y'
-      ? 'Trailing 3y'
-      : 'Since tracking'
+  const horizonByMode = {
+    'trailing-12m': 'Trailing 12m',
+    'trailing-3y': 'Trailing 3y',
+    'since-tracking': 'Since tracking',
+  } as const
+  const horizon = horizonByMode[mode]
   if (filters.dateTo) {
     return {
       label: `${horizon} to ${end}`,

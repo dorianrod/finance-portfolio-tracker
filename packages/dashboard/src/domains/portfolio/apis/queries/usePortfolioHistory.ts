@@ -18,7 +18,7 @@ export function usePortfolioHistory() {
           total_cost_basis: parseFloat(r.total_cost_basis) || 0,
           unrealized_gain: parseFloat(r.unrealized_gain) || 0,
           net_cash_injected: parseFloat(r.net_cash_injected) || 0,
-          cash_delta: r.cash_delta !== '' ? parseFloat(r.cash_delta) : null,
+          cash_delta: r.cash_delta === '' ? null : parseFloat(r.cash_delta),
           tri: r.tri !== '' && r.tri != null ? parseFloat(r.tri) : null,
           tri_rolling_1y:
             r.tri_rolling_1y !== '' && r.tri_rolling_1y != null

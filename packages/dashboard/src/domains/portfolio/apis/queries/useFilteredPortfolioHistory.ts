@@ -87,9 +87,9 @@ export function resolveFilteredHistoryState(
 ) {
   const matchingResponse = responseState?.key === accountKey ? responseState : null
   return {
-    history: !isFiltered
-      ? fallbackHistory
-      : matchingResponse?.history ?? fallbackHistory,
+    history: isFiltered
+      ? matchingResponse?.history ?? fallbackHistory
+      : fallbackHistory,
     loading: isFiltered && matchingResponse === null,
     error: matchingResponse?.error ?? null,
   }

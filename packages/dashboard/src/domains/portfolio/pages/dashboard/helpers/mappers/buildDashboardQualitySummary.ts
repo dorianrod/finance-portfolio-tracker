@@ -96,13 +96,13 @@ export function buildDashboardQualitySummary({
   const classificationMetricTone = percentageReliabilityTone(
     allocationLoading ? null : classificationReliabilityPct,
   )
-  const underlyingMetricTone: AnalysisReliabilityTone = underlyingCritical
-    ? 'critical'
-    : scopedFundQuality.report?.feasibilityStatus === 'pending_repeatability'
-      ? 'warning'
-      : percentageReliabilityTone(
-          scopedFundQuality.report ? underlyingReliabilityPct : null,
-        )
+  let underlyingMetricTone: AnalysisReliabilityTone = percentageReliabilityTone(
+    scopedFundQuality.report ? underlyingReliabilityPct : null,
+  )
+  if (underlyingCritical) underlyingMetricTone = 'critical'
+  else if (scopedFundQuality.report?.feasibilityStatus === 'pending_repeatability') {
+    underlyingMetricTone = 'warning'
+  }
   const diversificationReliabilityTone = aggregateReliabilityTone([
     classificationMetricTone,
     underlyingMetricTone,

@@ -193,9 +193,11 @@ export function computeTrailing12mYearOverYear(
     const previous = comparisonMonths.every((month) => byMonth.has(month))
       ? comparisonMonths.reduce((sum, month) => sum + byMonth.get(month)![key], 0)
       : null
-    const changePct = current == null || previous == null || previous === 0
-      ? current === 0 && previous === 0 ? 0 : null
-      : ((current - previous) / Math.abs(previous)) * 100
+    let changePct: number | null = null
+    if (current === 0 && previous === 0) changePct = 0
+    else if (current != null && previous != null && previous !== 0) {
+      changePct = ((current - previous) / Math.abs(previous)) * 100
+    }
 
     return { current, previous, changePct }
   }
@@ -250,9 +252,9 @@ export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: st
     .reduce((sum, operation) => sum + operation.total_amount, 0)
   const previousTotal = previousTrailing.reduce((sum, operation) => sum + operation.total_amount, 0)
   const total = dividends + interest
-  const changePct = previousTotal === 0
-    ? total === 0 ? 0 : null
-    : ((total - previousTotal) / Math.abs(previousTotal)) * 100
+  let changePct: number | null = null
+  if (previousTotal !== 0) changePct = ((total - previousTotal) / Math.abs(previousTotal)) * 100
+  else if (total === 0) changePct = 0
 
   return {
     dividends: Math.round(dividends),

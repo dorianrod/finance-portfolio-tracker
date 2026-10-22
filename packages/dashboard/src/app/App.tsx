@@ -321,11 +321,9 @@ export default function App() {
     [accountHistory, filters.dateFrom, filters.dateTo],
   );
   const globalTri = displayedHistory[displayedHistory.length - 1]?.tri ?? null;
-  const irrStatus = filteredHistory.loading
-    ? "loading"
-    : filteredHistory.error
-      ? "error"
-      : "ready";
+  let irrStatus: "loading" | "error" | "ready" = "ready";
+  if (filteredHistory.loading) irrStatus = "loading";
+  else if (filteredHistory.error) irrStatus = "error";
   const irrScopeLabel =
     filteredHistory.isFiltered && irrStatus === "ready"
       ? "Selected accounts"

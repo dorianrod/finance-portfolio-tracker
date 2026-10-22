@@ -52,11 +52,9 @@ export function filterSummaries(
   }
 
   if (visibility.showPeriod && (filters.dateFrom || filters.dateTo)) {
-    const label = filters.dateFrom && filters.dateTo
-      ? `${filters.dateFrom} → ${filters.dateTo}`
-      : filters.dateFrom
-        ? `Since ${filters.dateFrom}`
-        : `Until ${filters.dateTo}`
+    let label = `Until ${filters.dateTo}`
+    if (filters.dateFrom && filters.dateTo) label = `${filters.dateFrom} → ${filters.dateTo}`
+    else if (filters.dateFrom) label = `Since ${filters.dateFrom}`
     summaries.push({ key: 'period', label })
   }
 

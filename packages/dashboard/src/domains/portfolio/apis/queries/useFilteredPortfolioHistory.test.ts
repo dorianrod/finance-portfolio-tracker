@@ -120,7 +120,8 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('rejects a successful response whose history data is incomplete', async () => {
-    const { total_value: _totalValue, ...incompletePoint } = payload.history[0]
+    const incompletePoint: Partial<(typeof payload.history)[number]> = { ...payload.history[0] }
+    delete incompletePoint.total_value
     const fetchImpl = vi.fn(async () => jsonResponse({
       ...payload,
       history: [incompletePoint],

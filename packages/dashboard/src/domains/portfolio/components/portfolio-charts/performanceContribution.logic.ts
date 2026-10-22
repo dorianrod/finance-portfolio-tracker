@@ -231,9 +231,10 @@ export function computePerformanceContributions(
     const meta = metaByAccountAsset.get(accountAssetKey(operation.account, key))
     if (!operationIsInScope(operation, meta, filters, accountTypes)) continue
 
-    const lowerBound = horizon === 'since-tracking'
-      ? meta ? startsByFilterId.get(meta.filterId) : startsByFilterId.get(operation.account)
-      : startDate
+    let lowerBound: string | undefined = startDate
+    if (horizon === 'since-tracking') {
+      lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
+    }
     if (!lowerBound || operationDate <= lowerBound) continue
 
     const amount = operation.operation_type === 'SELL'

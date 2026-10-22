@@ -19,7 +19,7 @@ function serveFinanceData(): Plugin {
 
   const middleware: Connect.NextHandleFunction = (req, res, next) => {
     const requestPath = decodeURIComponent((req.url ?? '').split('?')[0])
-    const filePath = resolve(outputDir, '.' + requestPath)
+    const filePath = resolve(outputDir, `.${requestPath}`)
     if (
       (filePath !== outputDir && !filePath.startsWith(outputDir + sep)) ||
       !existsSync(filePath) ||

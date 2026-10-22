@@ -52,9 +52,9 @@ const LABEL_CANDIDATES: YearLabelPlacement[] = [
 
 function labelBox(x: number, y: number, placement: YearLabelPlacement): LabelBox {
   const labelX = x + placement.dx
-  const left = placement.textAnchor === 'middle'
-    ? labelX - LABEL_WIDTH / 2
-    : placement.textAnchor === 'start' ? labelX : labelX - LABEL_WIDTH
+  let left = labelX - LABEL_WIDTH
+  if (placement.textAnchor === 'middle') left = labelX - LABEL_WIDTH / 2
+  else if (placement.textAnchor === 'start') left = labelX
   const baseline = y + placement.dy
   return {
     left,

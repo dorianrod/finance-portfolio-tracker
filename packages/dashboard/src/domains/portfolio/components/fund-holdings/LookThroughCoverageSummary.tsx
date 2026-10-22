@@ -49,11 +49,11 @@ function LookThroughCoverageSummaryView({ report, variant, notApplicableValue = 
     report.directIdentifiedValue + report.highConfidenceExplainedValue,
   )
   const otherSourceValue = Math.max(0, identifiedValue - reliableValue)
-  const readiness = report.feasibilityStatus === 'passed'
-    ? 'Ready'
-    : report.feasibilityStatus === 'pending_repeatability'
-      ? 'Pending verification'
-      : 'Limited'
+  const readiness = {
+    passed: 'Ready',
+    pending_repeatability: 'Pending verification',
+    limited: 'Limited',
+  }[report.feasibilityStatus]
 
   if (variant === 'compact') {
     const cards = [
@@ -224,11 +224,11 @@ function SourceReliability({
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const detailsId = useId()
-  const indicator = status === 'passed'
-    ? { label: 'Good', dot: 'bg-emerald-500', badge: 'border-emerald-800 bg-emerald-950/40 text-emerald-300' }
-    : status === 'pending_repeatability'
-      ? { label: 'Needs verification', dot: 'bg-amber-500', badge: 'border-amber-800 bg-amber-950/40 text-amber-300' }
-      : { label: 'Limited', dot: 'bg-red-500', badge: 'border-red-800 bg-red-950/40 text-red-300' }
+  const indicator = {
+    passed: { label: 'Good', dot: 'bg-emerald-500', badge: 'border-emerald-800 bg-emerald-950/40 text-emerald-300' },
+    pending_repeatability: { label: 'Needs verification', dot: 'bg-amber-500', badge: 'border-amber-800 bg-amber-950/40 text-amber-300' },
+    limited: { label: 'Limited', dot: 'bg-red-500', badge: 'border-red-800 bg-red-950/40 text-red-300' },
+  }[status]
 
   return (
     <div>

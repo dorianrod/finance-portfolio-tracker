@@ -54,15 +54,19 @@ export function mapAnnualIncomeSavings(
       grossSalary: parseRequired(row.gross_salary),
       placedSavings: parseNum(row.placed_savings),
       savingsThrough: row.savings_through || null,
-      savingsStatus: row.savings_status === 'complete'
-        ? 'complete' as const
-        : row.savings_status === 'partial' ? 'partial' as const : 'missing' as const,
+      savingsStatus: parseSavingsStatus(row.savings_status),
       placementRate: parseNum(row.placement_rate),
       unplacedIncomeProxy: parseNum(row.unplaced_income_proxy),
       comparable: row.comparable.toLowerCase() === 'true',
     }))
     .filter((point) => point.year > 0)
     .sort((a, b) => a.year - b.year)
+}
+
+function parseSavingsStatus(status: string): AnnualIncomeSavingsPoint['savingsStatus'] {
+  if (status === 'complete') return 'complete'
+  if (status === 'partial') return 'partial'
+  return 'missing'
 }
 
 export function filterAnnualIncomeSavingsByPeriod(

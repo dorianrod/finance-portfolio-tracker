@@ -48,6 +48,9 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
     [rawPositions, rawOperations, asOfDate, contributionFilters],
   )
   const assetIrr = useAssetIrr(accountFilters, accountTypeFilters, dateFrom, asOfDate)
+  let assetIrrStatus: IrrStatus = 'ready'
+  if (assetIrr.loading) assetIrrStatus = 'loading'
+  else if (assetIrr.error) assetIrrStatus = 'error'
 
   return (
     <div className="mb-6 space-y-4">
@@ -79,7 +82,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
       )}
       <PerformanceContributionCard
         assetIrr={assetIrr.summary}
-        assetIrrStatus={assetIrr.loading ? 'loading' : assetIrr.error ? 'error' : 'ready'}
+        assetIrrStatus={assetIrrStatus}
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}
         sinceTrackingIrr={globalTri}

@@ -164,6 +164,51 @@ export function buildDataQualityViewModel({
   ).length
   const hasLookThroughScope = !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
+  let pipelineTone: QualityTone = 'healthy'
+  let pipelinePriority = 0
+  if (errorCount > 0) {
+    pipelineTone = 'critical'
+    pipelinePriority = 1_000 + errorCount
+  } else if (warningCount > 0) {
+    pipelineTone = 'warning'
+    pipelinePriority = 700 + warningCount
+  }
+
+  let classificationMetric = `${formatPercentage(classificationGap)}%`
+  let classificationMetricLabel = 'unmapped'
+  let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap) ? 'warning' : 'healthy'
+  let classificationPriority = hasMaterialQualityGap(classificationGap) ? 500 + classificationGap : 0
+  if (rawData.loading) {
+    classificationMetric = '—'
+    classificationMetricLabel = 'loading'
+    classificationTone = 'unavailable'
+    classificationPriority = -1
+  } else if (classificationIsNotApplicable) {
+    classificationMetric = 'N/A'
+    classificationMetricLabel = 'not applicable'
+    classificationTone = 'unavailable'
+    classificationPriority = -1
+  }
+
+  let lookThroughMetric = scopedFundData.report ? 'N/A' : '—'
+  let lookThroughMetricLabel = scopedFundData.report ? 'not applicable' : 'not available'
+  let lookThroughTone: QualityTone = 'unavailable'
+  let lookThroughPriority = -1
+  if (hasLookThroughScope) {
+    lookThroughMetric = `${formatPercentage(unresolvedPct)}%`
+    lookThroughMetricLabel = 'unresolved'
+    if (fundErrorCount > 0) {
+      lookThroughTone = 'critical'
+      lookThroughPriority = 900 + fundErrorCount
+    } else if (hasMaterialQualityGap(unresolvedPct)) {
+      lookThroughTone = 'warning'
+      lookThroughPriority = 600 + unresolvedPct
+    } else {
+      lookThroughTone = 'healthy'
+      lookThroughPriority = 0
+    }
+  }
+
   const themes: QualityTheme[] = [
     {
       id: 'pipeline',
@@ -171,8 +216,8 @@ export function buildDataQualityViewModel({
       description: 'Import, position and market-data anomalies detected during the latest run.',
       metric: String(errors.length),
       metricLabel: errors.length === 1 ? 'anomaly' : 'anomalies',
-      tone: errorCount > 0 ? 'critical' : warningCount > 0 ? 'warning' : 'healthy',
-      priority: errorCount > 0 ? 1_000 + errorCount : warningCount > 0 ? 700 + warningCount : 0,
+      tone: pipelineTone,
+      priority: pipelinePriority,
     },
     {
       id: 'prices',
@@ -187,55 +232,19 @@ export function buildDataQualityViewModel({
       id: 'classification',
       label: 'Diversification',
       description: 'Completeness of asset class, geography, sector and currency data.',
-      metric: rawData.loading
-        ? '—'
-        : classificationIsNotApplicable
-          ? 'N/A'
-          : `${formatPercentage(classificationGap)}%`,
-      metricLabel: rawData.loading
-        ? 'loading'
-        : classificationIsNotApplicable
-          ? 'not applicable'
-          : 'unmapped',
-      tone: rawData.loading || classificationIsNotApplicable
-        ? 'unavailable'
-        : hasMaterialQualityGap(classificationGap)
-          ? 'warning'
-          : 'healthy',
-      priority: rawData.loading || classificationIsNotApplicable
-        ? -1
-        : hasMaterialQualityGap(classificationGap)
-          ? 500 + classificationGap
-          : 0,
+      metric: classificationMetric,
+      metricLabel: classificationMetricLabel,
+      tone: classificationTone,
+      priority: classificationPriority,
     },
     {
       id: 'lookthrough',
       label: 'Underlying exposure',
       description: 'Transparency and source reliability of underlying fund exposures.',
-      metric: hasLookThroughScope
-        ? `${formatPercentage(unresolvedPct)}%`
-        : scopedFundData.report
-          ? 'N/A'
-          : '—',
-      metricLabel: hasLookThroughScope
-        ? 'unresolved'
-        : scopedFundData.report
-          ? 'not applicable'
-          : 'not available',
-      tone: !hasLookThroughScope
-        ? 'unavailable'
-        : fundErrorCount > 0
-          ? 'critical'
-          : hasMaterialQualityGap(unresolvedPct)
-            ? 'warning'
-            : 'healthy',
-      priority: !hasLookThroughScope
-        ? -1
-        : fundErrorCount > 0
-          ? 900 + fundErrorCount
-          : hasMaterialQualityGap(unresolvedPct)
-            ? 600 + unresolvedPct
-            : 0,
+      metric: lookThroughMetric,
+      metricLabel: lookThroughMetricLabel,
+      tone: lookThroughTone,
+      priority: lookThroughPriority,
     },
   ]
 

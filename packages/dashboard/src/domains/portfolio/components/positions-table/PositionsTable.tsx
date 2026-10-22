@@ -138,13 +138,12 @@ function PositionsTableView({
           return <span className="text-sm font-semibold text-gray-300">{r.label}</span>
         }
         if (r.kind === 'operation') {
+          let operationClass: string = SEMANTIC_BADGE_CLASSES.transactionOther
+          if (r.operation_type === 'BUY') operationClass = SEMANTIC_BADGE_CLASSES.transactionBuy
+          else if (r.operation_type === 'SELL') operationClass = SEMANTIC_BADGE_CLASSES.transactionSell
           return (
             <span className="flex items-center gap-2 text-sm">
-              <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${
-                r.operation_type === 'BUY' ? SEMANTIC_BADGE_CLASSES.transactionBuy :
-                r.operation_type === 'SELL' ? SEMANTIC_BADGE_CLASSES.transactionSell :
-                SEMANTIC_BADGE_CLASSES.transactionOther
-              }`}>{r.operation_type}</span>
+              <span className={`font-mono text-xs px-1.5 py-0.5 rounded ${operationClass}`}>{r.operation_type}</span>
               <span className="text-gray-400">{r.date}</span>
               <span className="text-gray-500 text-xs">{r.account}</span>
             </span>
@@ -163,9 +162,9 @@ function PositionsTableView({
           return (
             <span className="flex flex-col leading-tight">
               <span className="flex items-center gap-1">
-                {r.total_value != null
-                  ? <span className="text-white font-medium">{fmt.format(r.total_value)}</span>
-                  : <span className="text-gray-500">—</span>}
+                {r.total_value == null
+                  ? <span className="text-gray-500">—</span>
+                  : <span className="text-white font-medium">{fmt.format(r.total_value)}</span>}
               </span>
               {showQuantity && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
@@ -288,9 +287,10 @@ function PositionsTableView({
           return <UnrealizedGainCell r={r} />
         }
         if (r.kind === 'operation' && r.operation_type === 'BUY') {
-          return r.quantity != null ? (
-            <span className="text-xs text-gray-400">{r.quantity != null ? +r.quantity.toFixed(2) : ''} × {r.price_per_unit != null ? fmtDec.format(r.price_per_unit) : '—'}</span>
-          ) : null
+          if (r.quantity == null) return null
+          return (
+            <span className="text-xs text-gray-400">{+r.quantity.toFixed(2)} × {r.price_per_unit == null ? '—' : fmtDec.format(r.price_per_unit)}</span>
+          )
         }
         return null
       },
@@ -323,9 +323,9 @@ function PositionsTableView({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
-          return r.total_realized_return !== 0 ? (
-            <GainCell value={r.total_realized_return} />
-          ) : <span className="text-gray-600">—</span>
+          return r.total_realized_return === 0
+            ? <span className="text-gray-600">—</span>
+            : <GainCell value={r.total_realized_return} />
         }
         return null
       },
@@ -426,7 +426,7 @@ function PositionsTableView({
             {r.xirr != null && (
               <span className="mt-0.5 text-[10px] text-gray-500">
                 {irrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
-                {r.xirr_rolling_3y != null ? `${fmtPct(r.xirr_rolling_3y, 2)}/yr` : '—'}
+                {r.xirr_rolling_3y == null ? '—' : `${fmtPct(r.xirr_rolling_3y, 2)}/yr`}
               </span>
             )}
           </span>
@@ -670,11 +670,11 @@ function UnderlyingStatusButton({
   const category = fundQualityCategory(status.qualityTier)
   const label = FUND_QUALITY_LABELS[category]
   const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${status.explainedPct.toFixed(1)} % expliqué`
-  const tone = category === 'reliable'
-    ? 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500'
-    : category === 'partial'
-      ? 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500'
-      : 'text-red-400 hover:bg-red-950/60 hover:text-red-300 focus-visible:ring-red-500'
+  const tone = {
+    reliable: 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500',
+    partial: 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500',
+    unavailable: 'text-red-400 hover:bg-red-950/60 hover:text-red-300 focus-visible:ring-red-500',
+  }[category]
 
   return (
     <button

@@ -53,15 +53,19 @@ function concentrationTone(value: number | null): string {
     : SEMANTIC_TEXT_CLASSES.performanceNegative
 }
 
+function irrValueLabel(status: IrrStatus, value: number | null): string {
+  if (status === 'loading') return 'Calculating…'
+  if (status === 'error' || value == null) return '—'
+  return fmtPct(value, 2)
+}
+
 function DeltaBadge({ metric, tone = 'performance' }: {
   metric: ComparedMetric
   tone?: 'performance' | 'contributions' | 'concentration'
 }) {
-  const color = tone === 'contributions'
-    ? SEMANTIC_TEXT_CLASSES.netContributions
-    : tone === 'concentration'
-      ? concentrationTone(metric.delta)
-      : performanceTone(metric.delta)
+  let color = performanceTone(metric.delta)
+  if (tone === 'contributions') color = SEMANTIC_TEXT_CLASSES.netContributions
+  else if (tone === 'concentration') color = concentrationTone(metric.delta)
   return (
     <span className={`inline-flex items-center gap-1 rounded-full bg-gray-950/55 px-2 py-1 text-[11px] font-semibold tabular-nums ${color}`}>
       {tone === 'concentration' ? points(metric.delta) : signedMoney(metric.delta)}
@@ -174,7 +178,7 @@ export function OverviewSummaryCards({
             <span className="pointer-events-auto"><InfoTooltip text="Annualized money-weighted return over the three years ending at the selected period end." scope={{ account: 'filterable', period: 'trailing-3y', effectiveDate: comparison.windows.current.end }} /></span>
           </span>
           <span className={`font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.current)}`}>
-            {irrStatus === 'loading' ? 'Calculating…' : irrStatus === 'error' || rollingThreeYearTri.current == null ? '—' : fmtPct(rollingThreeYearTri.current, 2)}
+            {irrValueLabel(irrStatus, rollingThreeYearTri.current)}
           </span>
           {irrStatus === 'ready' && rollingThreeYearTri.delta != null && (
             <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.delta)}`}>

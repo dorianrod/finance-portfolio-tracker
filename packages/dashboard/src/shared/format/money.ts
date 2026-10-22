@@ -9,7 +9,7 @@ export function fmtEur(v: number): string {
 }
 
 export function fmtFull(v: number): string {
-  return v.toLocaleString('en-GB', { maximumFractionDigits: 0 }) + ' €'
+  return `${v.toLocaleString('en-GB', { maximumFractionDigits: 0 })} €`
 }
 
 export function fmtPct(v: number, decimals = 1): string {

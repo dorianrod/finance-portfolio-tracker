@@ -23,6 +23,9 @@ export function AllocationDimensionQuality({
         const missingPct = total > 0 ? item.unallocated / total * 100 : 0
         const materialGap = hasMaterialQualityGap(missingPct)
         const isOpen = open === item.dimension
+        let actionLabel = `${item.issues.length} responsible assets`
+        if (onOpenIssues) actionLabel += ' · View details'
+        else if (isOpen) actionLabel = 'Hide responsible assets'
         return (
           <div key={item.dimension}>
             <div className="mb-1.5 flex items-baseline justify-between gap-3">
@@ -37,7 +40,7 @@ export function AllocationDimensionQuality({
               onClick={() => onOpenIssues ? onOpenIssues(item.dimension) : setOpen(isOpen ? null : item.dimension)}
               className="mt-1.5 text-[11px] text-blue-400 hover:text-blue-300"
             >
-              {onOpenIssues ? `${item.issues.length} responsible assets · View details` : isOpen ? 'Hide responsible assets' : `${item.issues.length} responsible assets`}
+              {actionLabel}
             </button>
             {!onOpenIssues && isOpen && <div className="mt-2 max-h-48 space-y-2 overflow-auto rounded-lg border border-gray-800 bg-gray-950/40 p-2.5">{item.issues.map((issue) => <div key={issue.id} className="flex gap-3 text-xs"><span className="min-w-0 flex-1 truncate text-gray-400" title={issue.name}>{issue.name}</span><span className="shrink-0 tabular-nums text-amber-300">{fmtFull(issue.unallocated)}</span></div>)}</div>}
           </div>

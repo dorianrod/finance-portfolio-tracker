@@ -61,12 +61,12 @@ export function computeAllocationCoverageByAccount(
       unallocated: 0,
       notApplicable: 0,
     }
-    if (!isAssetAnalysisApplicablePosition(p)) {
-      cur.notApplicable += value
-    } else {
+    if (isAssetAnalysisApplicablePosition(p)) {
       const key = p.isin || `NC-${p.name}`
       if (allocated.has(key)) cur.allocated += value
       else cur.unallocated += value
+    } else {
+      cur.notApplicable += value
     }
     byAccount.set(p.account, cur)
   }

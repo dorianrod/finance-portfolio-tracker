@@ -240,9 +240,8 @@ export function PerformanceContributionCard({
   const description = view === 'contribution'
     ? 'Main assets creating or reducing portfolio value.'
     : 'Annualized money-weighted return by asset over the selected period.'
-  const scopePeriod: PeriodScopeMode = view === 'irr'
-    ? 'range'
-    : activeHorizon === 'trailing-3y' ? 'trailing-3y' : 'since-tracking'
+  let scopePeriod: PeriodScopeMode = activeHorizon
+  if (view === 'irr') scopePeriod = 'range'
 
   return (
     <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
@@ -271,13 +270,15 @@ export function PerformanceContributionCard({
         </div>
       </div>
 
-      {view === 'irr' ? (
+      {view === 'irr' && (
         <AssetIrrView summary={assetIrr} status={assetIrrStatus} />
-      ) : !summary.available ? (
+      )}
+      {view === 'contribution' && !summary.available && (
         <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">
           Contribution history is not available for this selection.
         </div>
-      ) : (
+      )}
+      {view === 'contribution' && summary.available && (
         <>
           <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-3">
             <div>

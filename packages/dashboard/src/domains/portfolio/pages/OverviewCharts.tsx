@@ -237,12 +237,15 @@ export function OverviewConcentrationChart({
         <div className="mt-5 space-y-4">
           {rows.map((row) => {
             const delta = row.previousWeight == null ? null : row.weight - row.previousWeight
+            let deltaTone = 'text-gray-600'
+            if (delta != null && delta > 0) deltaTone = 'text-red-400'
+            else if (delta != null && delta < 0) deltaTone = 'text-emerald-400'
             return (
               <div key={row.key}>
                 <div className="mb-1.5 flex items-center gap-3 text-xs">
                   <span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span>
                   <span className="shrink-0 tabular-nums text-gray-300">{row.weight.toFixed(1)}%</span>
-                  <span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${delta != null && delta > 0 ? 'text-red-400' : delta != null && delta < 0 ? 'text-emerald-400' : 'text-gray-600'}`}>
+                  <span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>
                     {delta == null ? '—' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)} pp`}
                   </span>
                 </div>
