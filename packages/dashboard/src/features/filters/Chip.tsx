@@ -1,12 +1,13 @@
 export function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={[
-        'px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer',
+        'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
         active
-          ? 'bg-blue-600 border-blue-500 text-white'
-          : 'bg-gray-800 border-gray-600 text-gray-400 hover:border-gray-400 hover:text-gray-200',
+          ? 'border-accent-solid bg-accent-solid text-on-accent'
+          : 'border-border-strong bg-surface-raised text-content-muted hover:bg-surface-hover hover:text-content-secondary',
       ].join(' ')}
     >
       {label}

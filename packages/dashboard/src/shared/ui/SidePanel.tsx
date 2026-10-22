@@ -82,19 +82,19 @@ export function SidePanel({
         tabIndex={-1}
         aria-label={closeLabel}
         onClick={onClose}
-        className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-[1px]"
+        className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-xs"
       />
       <aside
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`absolute inset-y-0 right-0 flex max-w-full flex-col border-l border-gray-700 bg-gray-900 shadow-2xl ${WIDTH_BY_SIZE[size]}`}
+        className={`absolute inset-y-0 right-0 flex max-w-full flex-col border-l border-border-strong bg-surface shadow-2xl ${WIDTH_BY_SIZE[size]}`}
       >
-        <div className="flex shrink-0 items-start gap-3 border-b border-gray-800 px-4 py-3">
+        <div className="flex shrink-0 items-start gap-3 border-b border-border px-4 py-3">
           <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="text-sm font-semibold text-white">{title}</h2>
-            {description && <div className="mt-0.5 text-xs text-gray-500">{description}</div>}
+            <h2 id={titleId} className="text-sm font-semibold text-content">{title}</h2>
+            {description && <div className="mt-0.5 text-xs text-content-subtle">{description}</div>}
           </div>
           {headerActions}
           <button
@@ -102,7 +102,7 @@ export function SidePanel({
             type="button"
             onClick={onClose}
             aria-label={closeLabel}
-            className="shrink-0 text-lg leading-none text-gray-500 transition-colors hover:text-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            className="grid size-8 shrink-0 place-items-center rounded-control text-lg leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
           >
             ✕
           </button>

@@ -8,11 +8,11 @@ import type { FilterScopeSpec } from '@/shared/ui/FilterScopeBadges'
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
 const TONES: Record<QualityTone, { text: string; bar: string }> = {
-  neutral: { text: 'text-blue-400', bar: SEMANTIC_COLORS.netContributions },
+  neutral: { text: 'text-accent', bar: SEMANTIC_COLORS.netContributions },
   coverage: { text: SEMANTIC_TEXT_CLASSES.coverage, bar: SEMANTIC_COLORS.coverage },
   warning: { text: SEMANTIC_TEXT_CLASSES.warning, bar: SEMANTIC_COLORS.coverageGap },
   error: { text: SEMANTIC_TEXT_CLASSES.error, bar: SEMANTIC_COLORS.performanceNegative },
-  muted: { text: 'text-gray-400', bar: '#6b7280' },
+  muted: { text: 'text-content-muted', bar: '#6b7280' },
 }
 
 export function QualityIndicatorCard({
@@ -39,17 +39,17 @@ export function QualityIndicatorCard({
   const colors = TONES[tone]
 
   return (
-    <div className="quality-indicator-card rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-sm">
-      <div className="flex items-center text-xs font-medium text-gray-400">
+    <div className="quality-indicator-card rounded-card border border-border bg-surface p-4 shadow-sm">
+      <div className="flex items-center text-xs font-medium text-content-muted">
         <span>{label}</span>
         <InfoTooltip text={tooltip} scope={scope} />
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-3">
         <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>{percentageLabel}%</span>
-        <span className="text-xs tabular-nums text-gray-500">{fmtFull(amount)}</span>
+        <span className="text-xs tabular-nums text-content-subtle">{fmtFull(amount)}</span>
       </div>
       <div
-        className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-800"
+        className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-raised"
         role="progressbar"
         aria-label={label}
         aria-valuemin={0}
@@ -58,7 +58,7 @@ export function QualityIndicatorCard({
       >
         <div className="h-full rounded-full" style={{ width: `${safePercentage}%`, backgroundColor: colors.bar }} />
       </div>
-      {detail && <div className="mt-2 text-xs text-gray-600">{detail}</div>}
+      {detail && <div className="mt-2 text-xs text-content-subtle">{detail}</div>}
       {children}
     </div>
   )

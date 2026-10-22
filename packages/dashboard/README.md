@@ -18,6 +18,20 @@ Python API used to recalculate portfolio IRR for the selected accounts. The
 API delegates to finance-pipeline's TRI domain code; the browser does not
 implement XIRR itself.
 
+## UI design system
+
+Tailwind CSS v4 tokens live in `src/index.css`. New UI should use the semantic
+utilities (`bg-canvas`, `bg-surface`, `text-content`, `text-content-muted`,
+`border-border`, `text-accent`, and the shared radius tokens) instead of raw
+palette classes. This keeps light and dark themes independent from Tailwind's
+color scale.
+
+Reusable interaction patterns live in `src/shared/ui`. Use
+`SegmentedControl` for mutually exclusive view switches so focus, disabled,
+active, and theme states remain consistent. The remaining raw `gray-*` theme
+overrides are a compatibility layer for feature views that have not yet moved
+to semantic tokens; avoid adding new dependencies on them.
+
 ## Run locally via pipx
 
 The static build is bundled into a small Python launcher so end users only

@@ -8,9 +8,14 @@ export function SortHeader({ label, tooltip, col: sk, activeKey, dir, onSort }: 
   const active = activeKey === sk
   return (
     <span className="inline-flex items-center gap-1">
-      <button onClick={() => onSort(sk)} className="cursor-pointer select-none hover:text-gray-200 transition-colors">
+      <button
+        type="button"
+        onClick={() => onSort(sk)}
+        aria-label={`Sort by ${label}${active ? `, currently ${dir === 'desc' ? 'descending' : 'ascending'}` : ''}`}
+        className="rounded-control p-1 text-content-muted transition-colors hover:text-content-secondary"
+      >
         {label}
-        <span className={`ml-0.5 text-[9px] ${active ? 'text-gray-300' : 'text-gray-600'}`}>
+        <span className={`ml-0.5 text-[9px] ${active ? 'text-content-secondary' : 'text-content-subtle'}`}>
           {active ? (dir === 'desc' ? '↓' : '↑') : '⇅'}
         </span>
       </button>

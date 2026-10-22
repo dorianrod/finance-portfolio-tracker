@@ -121,6 +121,21 @@ type AnalysisTab =
   | "holdings"
   | "quality";
 
+type Theme = "dark" | "light";
+
+const THEME_STORAGE_KEY = "finance-dashboard-theme";
+
+function initialTheme(): Theme {
+  if (typeof document !== "undefined") {
+    const theme = document.documentElement.dataset.theme;
+    if (theme === "dark" || theme === "light") return theme;
+  }
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  }
+  return "light";
+}
+
 const TAB_PRELOADERS: Record<AnalysisTab, () => Promise<unknown>> = {
   overview: loadOverviewTab,
   wealth: loadWealthTab,
@@ -190,7 +205,7 @@ const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }
 
 function DashboardPanelFallback() {
   return (
-    <div className="mb-6 rounded-xl border border-gray-800 bg-gray-900/50 p-8 text-center text-sm text-gray-500">
+    <div className="mb-6 rounded-card border border-border bg-surface/50 p-8 text-center text-sm text-content-subtle">
       Loading analysis…
     </div>
   );
@@ -216,7 +231,7 @@ export default function App() {
   const fundHoldings = fundData.holdings;
   const annualIncomeSavings = useAnnualIncomeSavings();
 
-  const [theme, setTheme] = useState<"dark" | "light">("light");
+  const [theme, setTheme] = useState<Theme>(initialTheme);
   const [activeTab, setActiveTab] = useState<AnalysisTab>("overview");
   const [holdingsView, setHoldingsView] = useState<HoldingsView>("positions");
   const [selectedQualityTheme, setSelectedQualityTheme] =
@@ -238,7 +253,17 @@ export default function App() {
   const [filters, setFilters] = useState<Filters>(() => resetFilters());
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Storage can be unavailable in hardened/private browser contexts.
+    }
+    document.querySelector('meta[name="theme-color"]')?.setAttribute(
+      "content",
+      theme === "dark" ? "#111827" : "#f9fafb",
+    );
   }, [theme]);
 
   const enrichedHistory = useMemo(() => {
@@ -671,28 +696,31 @@ export default function App() {
 
   return (
     <FilterScopeProvider filters={filters} accountLabels={accountFilterLabels}>
-    <div className="min-h-screen bg-gray-950 p-4 text-gray-100 sm:p-6">
+    <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
         <header className="mb-5 flex items-start gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">Portfolio</h1>
+            <h1 className="text-2xl font-bold text-content">Portfolio</h1>
           </div>
           <button
+            type="button"
             onClick={() =>
               setTheme((value) => (value === "dark" ? "light" : "dark"))
             }
-            className="ml-auto rounded-lg border border-gray-700 px-3 py-1.5 text-xs text-gray-400 transition-colors hover:border-gray-600 hover:text-gray-300"
+            aria-pressed={theme === "dark"}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
           >
             {theme === "dark" ? "Light mode" : "Dark mode"}
           </button>
         </header>
 
-        {loading && <p className="text-gray-400">Loading…</p>}
-        {error && <p className="text-red-400">Error: {error}</p>}
+        {loading && <p className="text-content-muted">Loading…</p>}
+        {error && <p className="text-danger">Error: {error}</p>}
         {!loading && !error && (
           <>
             <nav
-              className="mb-5 flex overflow-x-auto border-b border-gray-800"
+              className="mb-5 flex overflow-x-auto border-b border-border"
               aria-label="Portfolio analyses"
             >
               {PRIMARY_TABS.map((tab) => (
@@ -702,7 +730,8 @@ export default function App() {
                   onClick={() => setActiveTab(tab.id)}
                   onMouseEnter={() => preloadTab(tab.id)}
                   onFocus={() => preloadTab(tab.id)}
-                  className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-blue-500 text-white" : "border-transparent text-gray-500 hover:text-gray-300"}`}
+                  aria-current={activeTab === tab.id ? "page" : undefined}
+                  className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-accent text-content" : "border-transparent text-content-subtle hover:text-content-secondary"}`}
                 >
                   {tab.label}
                 </button>
@@ -715,7 +744,8 @@ export default function App() {
                 }}
                 onMouseEnter={() => preloadTab("quality")}
                 onFocus={() => preloadTab("quality")}
-                className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-blue-500 border-l-gray-800 text-white" : "border-b-transparent border-l-gray-800 text-gray-500 hover:text-gray-300"}`}
+                aria-current={activeTab === "quality" ? "page" : undefined}
+                className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-accent text-content" : "border-b-transparent text-content-subtle hover:text-content-secondary"}`}
               >
                 Data quality
                 {qualityCount > 0 && (
@@ -732,9 +762,9 @@ export default function App() {
               <HoldingsViewTabs value={holdingsView} onChange={setHoldingsView} />
             )}
 
-            <div className="mb-6 flex items-start justify-between gap-4 border-b border-gray-800 pb-5">
+            <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-5">
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-content">
                   {copy.title}
                 </h2>
                 {activeTab !== "overview" && activeTab !== "allocation" && activeTab !== "quality" && !(activeTab === "holdings" && holdingsView === "underlying") && (
@@ -814,7 +844,7 @@ export default function App() {
                     />
                   </div>
                 )}
-                <p className="mt-2 text-sm text-gray-500">{copy.description}</p>
+                <p className="mt-2 text-sm text-content-subtle">{copy.description}</p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {activeTab === "allocation" && (

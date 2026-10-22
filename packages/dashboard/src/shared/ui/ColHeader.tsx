@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId } from 'react'
 import { createPortal } from 'react-dom'
 
 interface Props {
@@ -9,7 +9,8 @@ interface Props {
 export function ColHeader({ label, content }: Props) {
   const [visible, setVisible] = useState(false)
   const [pos, setPos] = useState({ top: 0, left: 0 })
-  const iconRef = useRef<HTMLSpanElement>(null)
+  const iconRef = useRef<HTMLButtonElement>(null)
+  const tooltipId = useId()
 
   useEffect(() => {
     if (visible && iconRef.current) {
@@ -21,19 +22,34 @@ export function ColHeader({ label, content }: Props) {
   return (
     <span className="inline-flex items-center gap-1">
       {label}
-      <span
+      <button
+        type="button"
         ref={iconRef}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="text-gray-600 hover:text-gray-300 cursor-help text-[10px] leading-none"
+        onFocus={() => setVisible(true)}
+        onBlur={() => setVisible(false)}
+        onClick={() => setVisible((current) => !current)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            setVisible(false)
+            event.currentTarget.blur()
+          }
+        }}
+        aria-label={`More information about ${label || 'this column'}`}
+        aria-describedby={visible ? tooltipId : undefined}
+        aria-expanded={visible}
+        className="grid size-5 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
       >
         ⓘ
-      </span>
+      </button>
       {visible &&
         createPortal(
           <div
+            id={tooltipId}
+            role="tooltip"
             style={{ top: pos.top, left: pos.left }}
-            className="fixed z-[9999] w-72 p-3 bg-gray-800 border border-gray-600 rounded-lg shadow-xl text-xs text-gray-200 leading-relaxed pointer-events-none"
+            className="pointer-events-none fixed z-[9999] w-72 rounded-control border border-border-strong bg-surface-raised p-3 text-xs leading-relaxed text-content-secondary shadow-xl"
           >
             {content}
           </div>,
