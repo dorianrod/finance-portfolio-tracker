@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 import * as yup from 'yup'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
@@ -49,12 +51,6 @@ const ERROR_RESPONSE_SCHEMA = yup.object({
   error: yup.string().ensure().defined(),
 })
 
-interface AssetIrrState {
-  key: string
-  summary: AssetIrrSummary | null
-  error: string | null
-}
-
 const unavailable: AssetIrrSummary = {
   available: false,
   start_date: null,
@@ -96,29 +92,16 @@ export function useAssetIrr(
   dateFrom: string | undefined,
   dateTo: string | undefined,
 ) {
-  const accounts = useMemo(() => [...selectedAccounts].sort(), [selectedAccounts])
-  const accountTypes = useMemo(() => [...selectedAccountTypes].sort(), [selectedAccountTypes])
-  const requestKey = JSON.stringify([accounts, accountTypes, dateFrom ?? null, dateTo ?? null])
-  const [state, setState] = useState<AssetIrrState | null>(null)
-
-  useEffect(() => {
-    if (!dateTo || STATIC_DEMO) return
-
-    const controller = new AbortController()
-    requestAssetIrr(accounts, accountTypes, dateFrom, dateTo, controller.signal)
-      .then((summary) => {
-        if (!controller.signal.aborted) setState({ key: requestKey, summary, error: null })
-      })
-      .catch((requestError: unknown) => {
-        if (controller.signal.aborted) return
-        setState({
-          key: requestKey,
-          summary: null,
-          error: requestError instanceof Error ? requestError.message : String(requestError),
-        })
-      })
-    return () => controller.abort()
-  }, [accountTypes, accounts, dateFrom, dateTo, requestKey])
+  const accounts = useMemo(() => [...selectedAccounts].toSorted(), [selectedAccounts])
+  const accountTypes = useMemo(
+    () => [...selectedAccountTypes].toSorted(),
+    [selectedAccountTypes],
+  )
+  const query = useQuery({
+    queryKey: portfolioQueryKeys.data('asset-irr', accounts, accountTypes, dateFrom, dateTo),
+    queryFn: ({ signal }) => requestAssetIrr(accounts, accountTypes, dateFrom, dateTo, signal),
+    enabled: Boolean(dateTo) && !STATIC_DEMO,
+  })
 
   if (STATIC_DEMO) {
     return {
@@ -128,10 +111,9 @@ export function useAssetIrr(
     }
   }
 
-  const matching = state?.key === requestKey ? state : null
   return {
-    summary: matching?.summary ?? unavailable,
-    loading: !!dateTo && matching === null,
-    error: matching?.error ?? null,
+    summary: query.data ?? unavailable,
+    loading: query.isPending && query.fetchStatus === 'fetching',
+    error: query.error instanceof Error ? query.error.message : null,
   }
 }

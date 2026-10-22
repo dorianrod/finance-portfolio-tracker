@@ -31,6 +31,7 @@ export default defineConfig([
       'prefer-object-spread': 'error',
       'prefer-template': 'error',
       radix: 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   },
   {

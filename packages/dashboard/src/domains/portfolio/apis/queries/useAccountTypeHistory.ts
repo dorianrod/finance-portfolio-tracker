@@ -5,7 +5,7 @@ import { buildAccountTypeHistory, type AccountTypeHistoryPoint, type AccountType
 export type { AccountTypeHistoryPoint }
 
 export function useAccountTypeHistory(accounts?: Set<string>): AccountTypeHistory {
-  const rows = useAllPositions()
+  const { data: rows = [] } = useAllPositions()
 
   const accountsKey = useMemo(
     () => (accounts && accounts.size > 0 ? [...accounts].sort().join(',') : ''),

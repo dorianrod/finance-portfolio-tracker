@@ -4,9 +4,16 @@ import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
 import { typeColor } from '@/shared/format/colors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
+import type { PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
+import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
+import type { TopPerformer, TrailingSavingCapacityPoint, TriChartPoint } from './portfolioCharts.logic'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function EvolutionTooltip({ active, payload, label, percentageMode = false }: any) {
+interface EvolutionTooltipProps extends NumericTooltipProps<PortfolioHistoryPoint> {
+  percentageMode?: boolean
+}
+
+export function EvolutionTooltip({ active, payload, label, percentageMode = false }: EvolutionTooltipProps) {
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
   const cost = row?.total_cost_basis ?? 0
@@ -16,7 +23,7 @@ export function EvolutionTooltip({ active, payload, label, percentageMode = fals
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
       <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}{percentageMode && ` · ${share(cost)}`}</div>
@@ -25,25 +32,24 @@ export function EvolutionTooltip({ active, payload, label, percentageMode = fals
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function MonthlyTooltip({ active, payload, label, ops }: any) {
+interface MonthlyTooltipProps extends NumericTooltipProps<TrailingSavingCapacityPoint> {
+  ops: MonthlyOpsMap
+}
+
+export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipProps) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const savingsDelta: number = payload.find((p: any) => p.dataKey === 'savings_delta')?.value ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const perfDelta: number    = payload.find((p: any) => p.dataKey === 'perf_delta')?.value ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rolling12m: number      = payload.find((p: any) => p.dataKey === 'rolling_12m')?.value ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const rollingPerf12m: number  = payload.find((p: any) => p.dataKey === 'rolling_perf_12m')?.value ?? 0
+  const savingsDelta = tooltipValue(payload, 'savings_delta')
+  const perfDelta = tooltipValue(payload, 'perf_delta')
+  const rolling12m = tooltipValue(payload, 'rolling_12m')
+  const rollingPerf12m = tooltipValue(payload, 'rolling_perf_12m')
   const month = String(label).slice(0, 7)
-  const monthOps: ReturnType<MonthlyOpsMap['get']> = (ops as MonthlyOpsMap).get(month) ?? []
+  const monthOps: ReturnType<MonthlyOpsMap['get']> = ops.get(month) ?? []
   const deposits    = monthOps.filter((o) => o.operation_type === 'DEPOSIT' && o.total_amount > 0)
   const withdrawals = monthOps.filter((o) => o.operation_type === 'WITHDRAWAL' || (o.operation_type === 'DEPOSIT' && o.total_amount < 0))
   return (
     <TooltipBox padding="10px 14px" maxWidth={280}>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 8, fontWeight: 600 }}>
-        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}>Net contributions: {fmtFull(savingsDelta)}</div>
       {deposits.length > 0 && (
@@ -73,23 +79,18 @@ export function MonthlyTooltip({ active, payload, label, ops }: any) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TriTooltip({ active, payload, label }: any) {
+export function TriTooltip({ active, payload, label }: NumericTooltipProps<TriChartPoint>) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tri1y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_1y')?.value ?? null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tri1yBackfill: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_1y_backfill')?.value ?? null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tri3y: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_3y')?.value ?? null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tri3yBackfill: number | null = payload.find((point: any) => point.dataKey === 'tri_rolling_3y_backfill')?.value ?? null
+  const tri1y = payload.find((point) => point.dataKey === 'tri_rolling_1y')?.value ?? null
+  const tri1yBackfill = payload.find((point) => point.dataKey === 'tri_rolling_1y_backfill')?.value ?? null
+  const tri3y = payload.find((point) => point.dataKey === 'tri_rolling_3y')?.value ?? null
+  const tri3yBackfill = payload.find((point) => point.dataKey === 'tri_rolling_3y_backfill')?.value ?? null
   const showTri1y = tri1y !== null || tri1yBackfill !== null
   const showTri3y = tri3y !== null || tri3yBackfill !== null
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       {showTri1y && (
         <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
@@ -146,8 +147,7 @@ export function AccountTypeTooltip({ active, payload, label, portfolioTotal }: {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TopPerformersTooltip({ active, payload, label }: any) {
+export function TopPerformersTooltip({ active, payload, label }: NumericTooltipProps<TopPerformer>) {
   if (!active || !payload?.length) return null
   const entry = payload[0]?.payload
   return (
@@ -162,13 +162,10 @@ export function TopPerformersTooltip({ active, payload, label }: any) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function PassiveIncomeTooltip({ active, payload, label }: any) {
+export function PassiveIncomeTooltip({ active, payload, label }: NumericTooltipProps<PassiveIncomePoint>) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const div = payload.find((p: any) => p.dataKey === 'dividends')?.value ?? 0
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const int = payload.find((p: any) => p.dataKey === 'interest')?.value ?? 0
+  const div = tooltipValue(payload, 'dividends')
+  const int = tooltipValue(payload, 'interest')
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{label}</div>
@@ -179,21 +176,33 @@ export function PassiveIncomeTooltip({ active, payload, label }: any) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function AccountTypeHistoryTooltip({ active, payload, label, accountTypes, typeCategories, percentageMode = false }: any) {
+interface AccountTypeHistoryTooltipProps extends NumericTooltipProps<Record<string, number | string>> {
+  accountTypes: string[]
+  percentageMode?: boolean
+  typeCategories: Record<string, string>
+}
+
+export function AccountTypeHistoryTooltip({
+  active,
+  payload,
+  label,
+  accountTypes,
+  typeCategories,
+  percentageMode = false,
+}: AccountTypeHistoryTooltipProps) {
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
-  const total = (accountTypes as string[]).reduce((sum, accountType) => {
+  const total = accountTypes.reduce((sum, accountType) => {
     const value = row?.[accountType]
     return sum + (typeof value === 'number' ? value : 0)
   }, 0)
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
-      {(accountTypes as string[]).map((t, i) => {
+      {accountTypes.map((t, i) => {
         const value = row?.[t]
         const val = typeof value === 'number' ? value : 0
         if (!val) return null

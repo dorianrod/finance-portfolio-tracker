@@ -2,7 +2,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { shortMonth } from '@/shared/format/money'
 import { CHART_THEME } from '@/shared/format/chartTheme'
 import { catColor } from '@/shared/format/colors'
-import type { AllocationPoint } from '@/domains/portfolio/apis/queries/useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { allocationTrendDomain, buildAllocationTrend } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips'
 import { PositionsToggle } from './PositionsToggle'
@@ -44,6 +44,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
           return (
             <button
               key={cat}
+              type="button"
               onClick={() => onFilterToggle({ type: dimension, value: cat })}
               className="inline-flex items-center gap-1 text-[11px] transition-opacity cursor-pointer"
               style={{ opacity: isDimmed ? 0.35 : 1 }}
@@ -81,7 +82,7 @@ export function EvoCard({ title, points, dimension, activeFilter, onFilterToggle
             axisLine={false}
           />
           <YAxis tickFormatter={(v) => `${v}%`} domain={[0, 100]} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={36} />
-          <Tooltip content={(props) => <EvolutionTooltip {...props} categories={categories} />} />
+          <Tooltip content={<EvolutionTooltip categories={categories} />} />
           {categories.map((cat, i) => (
             <Area
               key={cat}

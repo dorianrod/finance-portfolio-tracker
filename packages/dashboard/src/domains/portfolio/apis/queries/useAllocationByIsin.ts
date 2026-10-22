@@ -1,9 +1,12 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import type { AllocationPoint } from './useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { toLatestByIsin } from '@/domains/portfolio/helpers/allocationByIsin.logic'
 import { ALLOCATION_BY_ISIN_ROW_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
+
+const EMPTY_ISIN_ALLOCATIONS = new Map<string, IsinAllocation>()
 
 export interface IsinAllocation {
   isin: string
@@ -14,20 +17,17 @@ export interface IsinAllocation {
   classe: AllocationPoint | null
 }
 
-export function useAllocationByIsin(): { data: Map<string, IsinAllocation>; loading: boolean } {
-  const [state, setState] = useState<{ data: Map<string, IsinAllocation>; loading: boolean }>({
-    data: new Map(),
-    loading: true,
-  })
-
-  useEffect(() => {
-    Promise.all([
+export function useAllocationByIsin() {
+  return useQuery({
+    queryKey: portfolioQueryKeys.data('allocation-by-isin'),
+    initialData: EMPTY_ISIN_ALLOCATIONS,
+    queryFn: async () => {
+      const [geo, secteur, currency, classe] = await Promise.all([
       parseCsv(PORTFOLIO_ENDPOINTS.data.positionsGeoByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
       parseCsv(PORTFOLIO_ENDPOINTS.data.positionsSecteurByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
       parseCsv(PORTFOLIO_ENDPOINTS.data.positionsCurrencyByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
       parseCsv(PORTFOLIO_ENDPOINTS.data.positionsClasseByIsin, ALLOCATION_BY_ISIN_ROW_SCHEMA),
-    ])
-      .then(([geo, secteur, currency, classe]) => {
+      ])
         const geoMap = toLatestByIsin(geo)
         const secteurMap = toLatestByIsin(secteur)
         const currencyMap = toLatestByIsin(currency)
@@ -56,10 +56,7 @@ export function useAllocationByIsin(): { data: Map<string, IsinAllocation>; load
             classe: classeMap.get(isin)?.point ?? null,
           })
         }
-        setState({ data, loading: false })
-      })
-      .catch(() => setState((s) => ({ ...s, loading: false })))
-  }, [])
-
-  return state
+      return data
+    },
+  })
 }

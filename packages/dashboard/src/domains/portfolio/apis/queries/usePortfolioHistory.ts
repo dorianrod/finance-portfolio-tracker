@@ -1,18 +1,20 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { parseCsv } from '@/shared/csv/csvData'
 import { RAW_PORTFOLIO_HISTORY_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 export function usePortfolioHistory() {
-  const [history, setHistory] = useState<PortfolioHistoryPoint[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  return useQuery<PortfolioHistoryPoint[]>({
+    queryKey: portfolioQueryKeys.data('portfolio-history'),
+    queryFn: async () => {
+      const rows = await parseCsv(
+        PORTFOLIO_ENDPOINTS.data.portfolioHistory,
+        RAW_PORTFOLIO_HISTORY_SCHEMA,
+      )
 
-  useEffect(() => {
-    parseCsv(PORTFOLIO_ENDPOINTS.data.portfolioHistory, RAW_PORTFOLIO_HISTORY_SCHEMA)
-      .then((rows) => {
-        const points: PortfolioHistoryPoint[] = rows.map((r) => ({
+      return rows.map((r) => ({
           date: r.snapshot_date,
           total_value: parseFloat(r.total_value) || 0,
           total_cost_basis: parseFloat(r.total_cost_basis) || 0,
@@ -29,14 +31,6 @@ export function usePortfolioHistory() {
               ? parseFloat(r.tri_rolling_3y)
               : null,
         }))
-        setHistory(points)
-        setLoading(false)
-      })
-      .catch((e) => {
-        setError(String(e))
-        setLoading(false)
-      })
-  }, [])
-
-  return { history, loading, error }
+    },
+  })
 }

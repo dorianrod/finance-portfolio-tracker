@@ -1,7 +1,8 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import * as yup from 'yup'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 export interface ErrorRow {
   source: string   // "main" | "fetch_prices"
@@ -28,20 +29,8 @@ const ERROR_ROW_SCHEMA: yup.ObjectSchema<ErrorRow> = yup.object({
 })
 
 export function useErrors() {
-  const [errors, setErrors] = useState<ErrorRow[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    parseCsv(PORTFOLIO_ENDPOINTS.data.errors, ERROR_ROW_SCHEMA)
-      .then((rows) => {
-        setErrors(rows)
-        setLoading(false)
-      })
-      .catch(() => {
-        setErrors([])
-        setLoading(false)
-      })
-  }, [])
-
-  return { errors, loading }
+  return useQuery({
+    queryKey: portfolioQueryKeys.data('pipeline-errors'),
+    queryFn: () => parseCsv(PORTFOLIO_ENDPOINTS.data.errors, ERROR_ROW_SCHEMA),
+  })
 }

@@ -17,7 +17,7 @@ export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacit
           <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis yAxisId="left" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <YAxis yAxisId="right" orientation="right" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
-          <Tooltip content={(props) => <MonthlyTooltip {...props} ops={ops} />} />
+          <Tooltip content={<MonthlyTooltip ops={ops} />} />
           <ReferenceLine yAxisId="left" y={0} stroke={CHART_THEME.zeroLine} />
           <Bar yAxisId="left" dataKey="savings_delta" fill={SEMANTIC_COLORS.netContributions} radius={[3, 3, 0, 0]} />
           <Bar yAxisId="left" dataKey="perf_delta" fill={SEMANTIC_COLORS.performancePositive} radius={[3, 3, 0, 0]}>

@@ -1,7 +1,8 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import * as yup from 'yup'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 interface RawFundHolding {
   parent_isin: string
@@ -373,26 +374,23 @@ export interface FundHoldingsData {
   report: FundCoverageReport | null
   snapshots: FundSnapshot[]
   unresolved: FundUnresolved[]
-  loading: boolean
 }
 
 const bool = (value: string | undefined) => value?.trim().toLowerCase() === 'true'
 const num = (value: string | undefined) => Number.parseFloat(value || '0') || 0
 
-export function useFundHoldingsData(): FundHoldingsData {
-  const [data, setData] = useState<FundHoldingsData>({
-    holdings: [], history: [], statuses: [], report: null, snapshots: [], unresolved: [], loading: true,
-  })
-
-  useEffect(() => {
-    Promise.all([
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldings, RAW_FUND_HOLDING_SCHEMA).catch(() => []),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory, RAW_FUND_HOLDING_HISTORY_SCHEMA).catch(() => []),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus, RAW_FUND_HOLDING_STATUS_SCHEMA).catch(() => []),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage, RAW_FUND_COVERAGE_REPORT_SCHEMA).catch(() => []),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest, RAW_FUND_SNAPSHOT_SCHEMA).catch(() => []),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.fundUnresolved, RAW_FUND_UNRESOLVED_SCHEMA).catch(() => []),
-    ]).then(([holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows]) => {
+export function useFundHoldingsData() {
+  return useQuery<FundHoldingsData>({
+    queryKey: portfolioQueryKeys.data('fund-holdings'),
+    queryFn: async () => {
+      const [holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows] = await Promise.all([
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldings, RAW_FUND_HOLDING_SCHEMA).catch(() => []),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory, RAW_FUND_HOLDING_HISTORY_SCHEMA).catch(() => []),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus, RAW_FUND_HOLDING_STATUS_SCHEMA).catch(() => []),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage, RAW_FUND_COVERAGE_REPORT_SCHEMA).catch(() => []),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest, RAW_FUND_SNAPSHOT_SCHEMA).catch(() => []),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.fundUnresolved, RAW_FUND_UNRESOLVED_SCHEMA).catch(() => []),
+      ])
       const holdings = holdingRows
         .map((row): FundHolding => ({
           parentIsin: row.parent_isin?.trim() || '',
@@ -532,14 +530,7 @@ export function useFundHoldingsData(): FundHoldingsData {
         issueCount: num(rawReport.issue_count),
       } : null
 
-      setData({ holdings, history, statuses, report, snapshots, unresolved, loading: false })
-    })
-  }, [])
-
-  return data
-}
-
-/** Compatibility helper for consumers that only need constituent rows. */
-export function useFundHoldings(): FundHolding[] {
-  return useFundHoldingsData().holdings
+      return { holdings, history, statuses, report, snapshots, unresolved }
+    },
+  })
 }

@@ -1,4 +1,4 @@
-import type { AllocationPoint } from '@/domains/portfolio/apis/queries/useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 
 export function toLatestByIsin(rows: Record<string, string>[]): Map<string, { name: string; point: AllocationPoint }> {
   const byIsin = new Map<string, Record<string, string>[]>()

@@ -1,7 +1,8 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import * as yup from 'yup'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 export interface ManualPriceOverride {
   name: string
@@ -26,13 +27,11 @@ const MANUAL_PRICE_OVERRIDE_SCHEMA: yup.ObjectSchema<ManualPriceOverride> = yup.
 })
 
 export function useManualPriceOverrides() {
-  const [manualPriceOverrides, setManualPriceOverrides] = useState<ManualPriceOverride[]>([])
-
-  useEffect(() => {
-    parseCsv(PORTFOLIO_ENDPOINTS.data.manualPriceOverrides, MANUAL_PRICE_OVERRIDE_SCHEMA)
-      .then(setManualPriceOverrides)
-      .catch(() => setManualPriceOverrides([]))
-  }, [])
-
-  return { manualPriceOverrides }
+  return useQuery({
+    queryKey: portfolioQueryKeys.data('manual-price-overrides'),
+    queryFn: () => parseCsv(
+      PORTFOLIO_ENDPOINTS.data.manualPriceOverrides,
+      MANUAL_PRICE_OVERRIDE_SCHEMA,
+    ),
+  })
 }

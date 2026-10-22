@@ -73,7 +73,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                 <tr className="border-t border-gray-800 align-top">
                   <td className="break-words px-4 py-3"><div className="font-medium text-gray-200">{status.parentName}</div><div className="mt-1 break-all font-mono text-[10px] text-gray-600">{status.parentIsin || status.parentTicker}</div></td>
                   <td className="px-4 py-3"><FundQualityBadge status={status} />{status.manualAttention && <div className="mt-2 w-fit rounded border border-amber-700/70 bg-amber-950/40 px-2 py-1 text-[10px] font-semibold text-amber-300">{status.sourceOrigin.startsWith('manual') ? 'Snapshot manuel' : 'Recherche agent'}</div>}</td>
-                  <td className="break-words px-4 py-3"><a href={status.sourceUrl || undefined} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">{status.sourceName || 'Unavailable'}</a><div className="mt-1 text-gray-600">{status.proxyName ? `Proxy exact : ${status.proxyName}` : fundQualitySourceLabel(status.qualityTier)}</div></td>
+                  <td className="break-words px-4 py-3"><a href={status.sourceUrl || undefined} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{status.sourceName || 'Unavailable'}</a><div className="mt-1 text-gray-600">{status.proxyName ? `Proxy exact : ${status.proxyName}` : fundQualitySourceLabel(status.qualityTier)}</div></td>
                   <td className="px-4 py-3 text-gray-400">{status.holdingsDate || 'Unknown'}<div className="mt-1 text-gray-600">{status.holdingCount.toLocaleString()} rows · {status.refreshStreak} successful refreshes</div></td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.explainedPct)}%<div className="mt-1 text-gray-600">{fmtFull(status.explainedValue)}</div></td>
                   <td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.residualPct)}%<div className="mt-1 text-gray-600">{fmtFull(status.residualValue)}</div></td>
@@ -91,7 +91,7 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
                         <div>{formatPercentage(snapshot.coveragePct)}% · {snapshot.holdingCount} rows · {snapshot.ageDays} days</div>
                         {snapshot.notes && <div className="mt-1 text-gray-400">{snapshot.notes}</div>}
                         {snapshot.validationErrors && <div className="mt-1 text-red-300">{snapshot.validationErrors}</div>}
-                        {snapshot.sourceUrls.map((url) => <a key={url} href={url} target="_blank" rel="noreferrer" className="mr-2 block truncate text-blue-400 hover:underline">{url}</a>)}
+                        {snapshot.sourceUrls.map((url) => <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="mr-2 block truncate text-blue-400 hover:underline">{url}</a>)}
                         {snapshot.evidencePath && <div className="mt-1 break-all font-mono text-[10px] text-gray-600">Evidence: {snapshot.evidencePath}</div>}
                       </div>)}
                     </DetailBlock>

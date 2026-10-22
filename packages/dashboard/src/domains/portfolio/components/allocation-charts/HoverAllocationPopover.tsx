@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import type { AllocationPoint } from '@/domains/portfolio/apis/queries/useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import type { IsinAllocation } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
 import { computePopoverPos } from './allocationCharts.logic'
 import { MiniDonut } from './MiniDonut'

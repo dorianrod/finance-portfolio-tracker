@@ -10,7 +10,7 @@ import tailwindcss from '@tailwindcss/vite'
 function resolveOutputDir(): string {
   const base = process.env.FINANCE_DATA_DIR
     ? resolve(process.env.FINANCE_DATA_DIR)
-    : resolve(__dirname, '../../data')
+    : resolve(import.meta.dirname, '../../data')
   return resolve(base, 'output')
 }
 
@@ -62,7 +62,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': resolve(import.meta.dirname, 'src'),
     },
   },
 })

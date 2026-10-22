@@ -1,4 +1,4 @@
-import type { AllocationPoint } from '@/domains/portfolio/apis/queries/useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import type { RawIsinRow, RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import { accountFilterId } from '@/domains/portfolio/helpers/filters/accountFilter'
 import { partitionPercentages } from '@/shared/format/percentage'

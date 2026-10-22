@@ -85,8 +85,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
                   <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
                   <XAxis dataKey="date" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
                   <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmtDec.format(v)} width={64} domain={unitPriceDomain} />
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  <Tooltip content={(props: any) => <TooltipUnit {...props} series={chartData} />} />
+                  <Tooltip content={<TooltipUnit series={chartData} />} />
                   <Line type="monotone" dataKey="Unit price" stroke={SEMANTIC_COLORS.returnRate} strokeWidth={2}
                     dot={<BuySellDotUnit />} activeDot={{ r: 4 }} />
                 </LineChart>

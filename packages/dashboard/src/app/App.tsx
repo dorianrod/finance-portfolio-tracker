@@ -1,21 +1,5 @@
-import { lazy, Suspense, useMemo } from "react";
-import { useData } from "@/domains/portfolio/apis/queries/useData";
-import { usePortfolioHistory } from "@/domains/portfolio/apis/queries/usePortfolioHistory";
-import { useCashHistory } from "@/domains/portfolio/apis/queries/useCashHistory";
-import { useAllPositions } from "@/domains/portfolio/apis/queries/useAllPositions";
-import { useErrors } from "@/domains/portfolio/apis/queries/useErrors";
-import { useManualPriceOverrides } from "@/domains/portfolio/apis/queries/useManualPriceOverrides";
-import {
-  useFilteredPortfolioHistory,
-} from "@/domains/portfolio/apis/queries/useFilteredPortfolioHistory";
-import { useMonthlyOps } from "@/domains/portfolio/apis/queries/useMonthlyOps";
-import { useSavingCapacity } from "@/domains/portfolio/apis/queries/useSavingCapacity";
-import { usePassiveIncome } from "@/domains/portfolio/apis/queries/usePassiveIncome";
-import { useAccountTypeHistory } from "@/domains/portfolio/apis/queries/useAccountTypeHistory";
-import { useAnnualIncomeSavings } from "@/domains/portfolio/apis/queries/useAnnualIncomeSavings";
-import { filterAnnualIncomeSavingsByPeriod } from "@/domains/portfolio/helpers/annualIncomeSavings.logic";
-import { useRawIsinData } from "@/domains/portfolio/apis/queries/useRawIsinData";
-import { useFundHoldingsData } from "@/domains/portfolio/apis/queries/useFundHoldings";
+import { lazy, Suspense } from "react";
+import { DashboardPanelErrorBoundary } from "@/app/DashboardPanelErrorBoundary";
 import {
   ActiveFilterSummary,
   FilterButton,
@@ -24,17 +8,11 @@ import {
 } from "@/domains/portfolio/components/filters/FilterBar";
 import { AllocationViewToggle } from "@/domains/portfolio/components/allocation-charts/AllocationViewToggle";
 import { FilterChipBar } from "@/domains/portfolio/components/allocation-charts/FilterChipBar";
-import { computeAllocationCoverageByAccount } from "@/domains/portfolio/components/allocation-charts/allocationCoverage.logic";
-import { selectHistoricalFundHoldingsAtDate } from "@/domains/portfolio/components/allocation-charts/concentrationTrend.logic";
 import { OverviewPeriodFilter } from "@/domains/portfolio/pages/OverviewPeriodFilter";
-import { buildOverviewComparison, compareRollingThreeYearIrr } from "@/domains/portfolio/pages/overviewComparison.logic";
-import { scopeFundQualityData } from "@/domains/portfolio/components/fund-holdings/fundQualityScope.logic";
 import {
   HoldingsViewTabs,
   type HoldingsView,
 } from "@/domains/portfolio/components/holdings/HoldingsViewTabs";
-import type { Filters } from "@/domains/portfolio/types/filters";
-import { buildPositionRows } from "@/domains/portfolio/helpers/positionHierarchy.logic";
 import { FilterScopeProvider } from "@/domains/portfolio/components/filters/FilterScopeBadges";
 import {
   clearFilterGroup,
@@ -46,36 +24,14 @@ import {
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
 } from "@/domains/portfolio/components/quality/AnalysisReliabilityKpi";
-import { buildDashboardQualitySummary } from "@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardQualitySummary";
-import { buildDashboardSourceData } from "@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardSourceData";
 import {
-  buildDemoPresetSelection,
   filterSummariesForTab,
-  isDemoPresetActive,
-  withoutOperationAndPeriodFilters,
-  withoutOperationFilters,
 } from "@/domains/portfolio/helpers/filters/portfolioFilterScopes";
 import {
   useDashboardUi,
   type AnalysisTab,
 } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardUi";
-import {
-  buildCumulativeWealthDrivers,
-  computePerformanceSummary,
-  computeTrailing12mYearOverYear,
-  computeTrailing12mIncome,
-  computeTrailing12mSavings,
-  filterMonthlyOpsByAccounts,
-  filterPointsByPeriod,
-} from "@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic";
-import {
-  applyPositionFilters,
-  applyAccountFilterToHistory,
-  buildAccountTypeBreakdown,
-  scopeManualPriceOverrides,
-  scopePipelineErrors,
-  sortPositionsForTable,
-} from "@/domains/portfolio/helpers/app.logic";
+import { useDashboardViewModel } from "@/domains/portfolio/pages/dashboard/services/useDashboardViewModel";
 import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/format/semanticColors";
 
 const loadOverviewTab = () =>
@@ -181,25 +137,6 @@ function DashboardPanelFallback() {
 
 export default function App() {
   const {
-    positions,
-    rawPositions,
-    rawOperations,
-    accountLabels,
-    loading,
-    error,
-  } = useData();
-  const { history } = usePortfolioHistory();
-  const { cashHistory } = useCashHistory();
-  const allPositionRows = useAllPositions();
-  const { errors: pipelineErrors, loading: pipelineErrorsLoading } = useErrors();
-  const { manualPriceOverrides } = useManualPriceOverrides();
-  const allMonthlyOps = useMonthlyOps();
-  const rawAllocationData = useRawIsinData();
-  const fundData = useFundHoldingsData();
-  const fundHoldings = fundData.holdings;
-  const annualIncomeSavings = useAnnualIncomeSavings();
-
-  const {
     activeTab,
     allocationFilter,
     allocationView,
@@ -235,238 +172,47 @@ export default function App() {
 
   const {
     accountFilterLabels,
+    accountLabels,
     accountToType,
+    accountTypeData,
     allAccounts,
     allAccountTypes,
     allOperationTypes,
-    enrichedHistory,
-  } = useMemo(
-    () => buildDashboardSourceData({
-      accountLabels,
-      cashHistory,
-      history,
-      positions,
-    }),
-    [accountLabels, cashHistory, history, positions],
-  );
-
-  const currentFilters = useMemo<Filters>(
-    () => withoutOperationAndPeriodFilters(filters),
-    [filters],
-  );
-  const latestAccountPositions = useMemo(
-    () => applyPositionFilters(positions, currentFilters),
-    [positions, currentFilters],
-  );
-  const positionsAtPeriodEnd = useMemo(
-    () => buildPositionRows(rawOperations, rawPositions, filters.dateTo),
-    [rawOperations, rawPositions, filters.dateTo],
-  );
-  const currentPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, currentFilters),
-    [positionsAtPeriodEnd, currentFilters],
-  );
-  const periodEndFundHoldings = useMemo(
-    () => filters.dateTo
-      ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
-      : fundHoldings,
-    [filters.dateTo, fundData.history, fundHoldings],
-  );
-  const tableFiltered = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, filters),
-    [positionsAtPeriodEnd, filters],
-  );
-  const periodPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, withoutOperationFilters(filters)),
-    [positionsAtPeriodEnd, filters],
-  );
-  const tableData = useMemo(
-    () =>
-      sortPositionsForTable(
-        tableFiltered,
-        filters.hideClosedPositions,
-        allAccountTypes,
-        sortKey,
-        sortDir,
-      ),
-    [
-      tableFiltered,
-      filters.hideClosedPositions,
-      allAccountTypes,
-      sortKey,
-      sortDir,
-    ],
-  );
-  const PositionsTableVariant = allAccountTypes.length > 0
-    ? GroupedPositionsTable
-    : PositionsTable;
-
-  const fallbackAccountHistory = useMemo(
-    () =>
-      applyAccountFilterToHistory(
-        allPositionRows,
-        enrichedHistory,
-        filters.accounts,
-      ),
-    [allPositionRows, enrichedHistory, filters.accounts],
-  );
-  const filteredHistory = useFilteredPortfolioHistory(
-    fallbackAccountHistory,
-    filters.accounts,
-  );
-  const accountHistory = filteredHistory.history;
-  const displayedHistory = useMemo(
-    () =>
-      filterPointsByPeriod(accountHistory, filters.dateFrom, filters.dateTo),
-    [accountHistory, filters.dateFrom, filters.dateTo],
-  );
-  const globalTri = displayedHistory[displayedHistory.length - 1]?.tri ?? null;
-  let irrStatus: "loading" | "error" | "ready" = "ready";
-  if (filteredHistory.loading) irrStatus = "loading";
-  else if (filteredHistory.error) irrStatus = "error";
-  const irrScopeLabel =
-    filteredHistory.isFiltered && irrStatus === "ready"
-      ? "Selected accounts"
-      : undefined;
-  const demoPresetSelection = useMemo(() => {
-    return buildDemoPresetSelection(allAccounts, filteredHistory.demoPresetAccounts);
-  }, [allAccounts, filteredHistory.demoPresetAccounts]);
-  const demoPresetActive = useMemo(
-    () => isDemoPresetActive(filters.accounts, filteredHistory.demoPresetAccounts),
-    [filteredHistory.demoPresetAccounts, filters.accounts],
-  );
-
-  const savingCapacity = useSavingCapacity(filters.accounts);
-  const overviewComparison = useMemo(
-    () => buildOverviewComparison({
-      rawPositions,
-      rawOperations,
-      savingCapacity,
-      fundHoldingsHistory: fundData.history,
-      accountFilters: filters.accounts,
-      accountTypeFilters: filters.accountTypes,
-      dateFrom: filters.dateFrom,
-      dateTo: filters.dateTo,
-    }),
-    [
-      rawPositions,
-      rawOperations,
-      savingCapacity,
-      fundData.history,
-      filters.accounts,
-      filters.accountTypes,
-      filters.dateFrom,
-      filters.dateTo,
-    ],
-  );
-  const rollingThreeYearTriComparison = useMemo(
-    () => overviewComparison
-      ? compareRollingThreeYearIrr(accountHistory, overviewComparison.windows)
-      : { current: null, previous: null, delta: null, deltaPct: null },
-    [accountHistory, overviewComparison],
-  );
-  const periodSavings = useMemo(
-    () => filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
-    [savingCapacity, filters.dateFrom, filters.dateTo],
-  );
-  const trailingSavings = useMemo(
-    () => computeTrailing12mSavings(savingCapacity, filters.dateFrom, filters.dateTo),
-    [savingCapacity, filters.dateFrom, filters.dateTo],
-  );
-  const trailingYearComparison = useMemo(
-    () => computeTrailing12mYearOverYear(savingCapacity, filters.dateTo),
-    [savingCapacity, filters.dateTo],
-  );
-  const wealthDrivers = useMemo(
-    () => buildCumulativeWealthDrivers(periodSavings),
-    [periodSavings],
-  );
-  const monthlyOps = useMemo(
-    () => filterMonthlyOpsByAccounts(allMonthlyOps, filters.accounts),
-    [allMonthlyOps, filters.accounts],
-  );
-  const passiveIncome = usePassiveIncome(
-    filters.accounts,
-    filters.dateFrom,
-    filters.dateTo,
-  );
-  const typeHistory = useAccountTypeHistory(filters.accounts);
-  const displayedTypeHistory = useMemo(
-    () =>
-      filterPointsByPeriod(typeHistory.data, filters.dateFrom, filters.dateTo),
-    [typeHistory.data, filters.dateFrom, filters.dateTo],
-  );
-
-  const accountTypeData = useMemo(
-    () => buildAccountTypeBreakdown(currentPositions),
-    [currentPositions],
-  );
-  const displayedAnnualIncomeSavings = useMemo(
-    () => filterAnnualIncomeSavingsByPeriod(annualIncomeSavings, filters.dateFrom, filters.dateTo),
-    [annualIncomeSavings, filters.dateFrom, filters.dateTo],
-  );
-  const asOfPerformance = useMemo(
-    () => computePerformanceSummary(currentPositions),
-    [currentPositions],
-  );
-  const periodPerformance = useMemo(
-    () => computePerformanceSummary(periodPositions),
-    [periodPositions],
-  );
-  const performance = useMemo(
-    () => ({
-      ...asOfPerformance,
-      realizedNet: periodPerformance.realizedNet,
-      realizedGross: periodPerformance.realizedGross,
-    }),
-    [asOfPerformance, periodPerformance],
-  );
-  const trailingIncome = useMemo(
-    () =>
-      computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
-    [currentPositions, displayedHistory],
-  );
-  const coverage = useMemo(
-    () =>
-      rawAllocationData.loading
-        ? []
-        : computeAllocationCoverageByAccount(
-            latestAccountPositions,
-            rawAllocationData,
-          ),
-    [latestAccountPositions, rawAllocationData],
-  );
-  const scopedFundQuality = useMemo(
-    () =>
-      scopeFundQualityData(
-        latestAccountPositions,
-        fundData.holdings,
-        fundData.statuses,
-        fundData.snapshots,
-        fundData.unresolved,
-        fundData.report,
-      ),
-    [
-      latestAccountPositions,
-      fundData.holdings,
-      fundData.statuses,
-      fundData.snapshots,
-      fundData.unresolved,
-      fundData.report,
-    ],
-  );
-
-  const pipelineQualityPositions = activeTab === "holdings" && holdingsView === "positions"
-    ? tableFiltered
-    : latestAccountPositions;
-  const scopedPipelineErrors = useMemo(
-    () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
-    [pipelineErrors, pipelineQualityPositions, filters],
-  );
-  const scopedManualPriceOverrides = useMemo(
-    () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
-    [manualPriceOverrides, latestAccountPositions, filters],
-  );
+    currentPositions,
+    demoPresetActive,
+    demoPresetSelection,
+    displayedAnnualIncomeSavings,
+    displayedHistory,
+    displayedTypeHistory,
+    error,
+    fundData,
+    globalTri,
+    irrScopeLabel,
+    irrStatus,
+    latestAccountPositions,
+    loading,
+    monthlyOps,
+    overviewComparison,
+    passiveIncome,
+    performance,
+    periodEndFundHoldings,
+    pipelineErrorsLoading,
+    qualitySummary,
+    rawAllocationData,
+    rawOperations,
+    rawPositions,
+    rollingThreeYearTriComparison,
+    scopedFundQuality,
+    scopedManualPriceOverrides,
+    scopedPipelineErrors,
+    tableData,
+    trailingIncome,
+    trailingSavings,
+    trailingYearComparison,
+    typeHistory,
+    useGroupedPositionsTable,
+    wealthDrivers,
+  } = useDashboardViewModel({ activeTab, filters, holdingsView, sortDir, sortKey });
   const {
     classificationMappedValue,
     classificationMetricTone,
@@ -485,24 +231,11 @@ export default function App() {
     scopedPipelineWarningCount,
     underlyingMetricTone,
     underlyingReliabilityPct,
-  } = useMemo(
-    () => buildDashboardQualitySummary({
-      allocationLoading: rawAllocationData.loading,
-      coverage,
-      pipelineErrorsLoading,
-      scopedFundQuality,
-      scopedManualPriceOverrides,
-      scopedPipelineErrors,
-    }),
-    [
-      rawAllocationData.loading,
-      coverage,
-      pipelineErrorsLoading,
-      scopedFundQuality,
-      scopedManualPriceOverrides,
-      scopedPipelineErrors,
-    ],
-  );
+  } = qualitySummary;
+  const PositionsTableVariant = useGroupedPositionsTable
+    ? GroupedPositionsTable
+    : PositionsTable;
+
   const copy = activeTab === "holdings" ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab];
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView);
   const activeFilterSummaries = filterSummaries(
@@ -716,15 +449,19 @@ export default function App() {
               demoPresetActive={demoPresetActive}
             />
 
-            <Suspense fallback={<DashboardPanelFallback />}>
-              {activeTab === "overview" && (
-                <OverviewTab
-                  comparison={overviewComparison}
-                  rollingThreeYearTri={rollingThreeYearTriComparison}
-                  irrStatus={irrStatus}
-                  onNavigate={setActiveTab}
-                />
-              )}
+            <DashboardPanelErrorBoundary
+              key={activeTab}
+              onRetry={() => window.location.reload()}
+            >
+              <Suspense fallback={<DashboardPanelFallback />}>
+                {activeTab === "overview" && (
+                  <OverviewTab
+                    comparison={overviewComparison}
+                    rollingThreeYearTri={rollingThreeYearTriComparison}
+                    irrStatus={irrStatus}
+                    onNavigate={setActiveTab}
+                  />
+                )}
               {activeTab === "wealth" && (
                 <WealthTab
                   history={displayedHistory}
@@ -820,7 +557,8 @@ export default function App() {
                   rawData={rawAllocationData}
                 />
               )}
-            </Suspense>
+              </Suspense>
+            </DashboardPanelErrorBoundary>
           </>
         )}
       </div>

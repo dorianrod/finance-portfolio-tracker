@@ -1,8 +1,9 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
 import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 export interface MonthlyOp {
   date: string
@@ -14,11 +15,11 @@ export interface MonthlyOp {
 
 export type MonthlyOpsMap = Map<string, MonthlyOp[]>
 
-export function useMonthlyOps(): MonthlyOpsMap {
-  const [ops, setOps] = useState<MonthlyOpsMap>(new Map())
-
-  useEffect(() => {
-    parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA).then((rows) => {
+export function useMonthlyOps() {
+  return useQuery<MonthlyOpsMap>({
+    queryKey: portfolioQueryKeys.data('monthly-operations'),
+    queryFn: async () => {
+      const rows = await parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA)
       const map = new Map<string, MonthlyOp[]>()
       for (const row of rows) {
         if (!['DEPOSIT', 'WITHDRAWAL'].includes(row.operation_type)) continue
@@ -34,9 +35,7 @@ export function useMonthlyOps(): MonthlyOpsMap {
           label: assetDisplayLabel(row),
         })
       }
-      setOps(map)
-    })
-  }, [])
-
-  return ops
+      return map
+    },
+  })
 }

@@ -1,12 +1,13 @@
 import { fmtEur, fmtFull } from '@/shared/format/money'
 import { catColor } from '@/shared/format/colors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
+import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import type { PieEntry } from './allocationCharts.types'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function PieTooltip({ active, payload }: any) {
+export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   if (!active || !payload?.length) return null
-  const item = payload[0]?.payload as PieEntry
+  const item = payload[0]?.payload
+  if (!item) return null
   const pct = item.total > 0 ? ((item.value / item.total) * 100).toFixed(1) : '0'
   return (
     <TooltipBox minWidth={160}>
@@ -27,21 +28,23 @@ export function PieTooltip({ active, payload }: any) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function EvolutionTooltip({ active, payload, label, categories }: any) {
+interface EvolutionTooltipProps extends NumericTooltipProps<Record<string, number | string>> {
+  categories: string[]
+}
+
+export function EvolutionTooltip({ active, payload, label, categories }: EvolutionTooltipProps) {
   if (!active || !payload?.length) return null
   return (
     <TooltipBox maxWidth={220}>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(label).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </div>
-      {(categories as string[]).slice(0).reverse().map((cat: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const val = payload.find((p: any) => p.dataKey === cat)?.value ?? 0
+      {categories.toReversed().map((cat) => {
+        const val = tooltipValue(payload, cat)
         if (!val) return null
         return (
           <div key={cat} style={{ color: catColor(cat) }}>
-            {cat}: {(val as number).toFixed(1)}%
+            {cat}: {val.toFixed(1)}%
           </div>
         )
       })}

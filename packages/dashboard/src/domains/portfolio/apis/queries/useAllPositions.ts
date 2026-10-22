@@ -1,27 +1,25 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import { RAW_POSITION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
+import type { RawPosition } from '@/domains/portfolio/types/domain'
 
-export interface RawPositionRow {
-  snapshot_date: string
-  account: string
-  account_type: string
-  account_category: string
-  quantity: string
-  avg_buy_price: string
-  total_value: string
-  unrealized_gain: string
-}
+export type RawPositionRow = Pick<
+  RawPosition,
+  | 'snapshot_date'
+  | 'account'
+  | 'account_type'
+  | 'account_category'
+  | 'quantity'
+  | 'avg_buy_price'
+  | 'total_value'
+  | 'unrealized_gain'
+>
 
-export function useAllPositions(): RawPositionRow[] {
-  const [rows, setRows] = useState<RawPositionRow[]>([])
-
-  useEffect(() => {
-    parseCsv(PORTFOLIO_ENDPOINTS.data.positions, RAW_POSITION_SCHEMA)
-      .then(setRows)
-      .catch(() => setRows([]))
-  }, [])
-
-  return rows
+export function useAllPositions() {
+  return useQuery({
+    queryKey: portfolioQueryKeys.data('all-positions'),
+    queryFn: () => parseCsv(PORTFOLIO_ENDPOINTS.data.positions, RAW_POSITION_SCHEMA),
+  })
 }

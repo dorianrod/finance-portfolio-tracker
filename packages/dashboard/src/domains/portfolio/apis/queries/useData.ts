@@ -1,6 +1,5 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useState } from 'react'
-import type { RawOperation, RawPosition, PositionRow } from '@/domains/portfolio/types/domain'
+import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import { buildAccountLabels, buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy.logic'
 import {
@@ -8,33 +7,32 @@ import {
   RAW_OPERATION_SCHEMA,
   RAW_POSITION_SCHEMA,
 } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
+import type { PositionRow, RawOperation, RawPosition } from '@/domains/portfolio/types/domain'
+
+export interface DashboardData {
+  accountLabels: Record<string, string>
+  positions: PositionRow[]
+  rawOperations: RawOperation[]
+  rawPositions: RawPosition[]
+}
 
 export function useData() {
-  const [positions, setPositions] = useState<PositionRow[]>([])
-  const [rawPositions, setRawPositions] = useState<RawPosition[]>([])
-  const [rawOperations, setRawOperations] = useState<RawOperation[]>([])
-  const [accountLabels, setAccountLabels] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  return useQuery<DashboardData>({
+    queryKey: portfolioQueryKeys.data('dashboard'),
+    queryFn: async () => {
+      const [rawOperations, rawPositions, accountRows] = await Promise.all([
+        parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.positions, RAW_POSITION_SCHEMA),
+        parseCsv(PORTFOLIO_ENDPOINTS.data.accounts, ACCOUNT_ROW_SCHEMA),
+      ])
 
-  useEffect(() => {
-    Promise.all([
-      parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.positions, RAW_POSITION_SCHEMA),
-      parseCsv(PORTFOLIO_ENDPOINTS.data.accounts, ACCOUNT_ROW_SCHEMA),
-    ])
-      .then(([ops, rawPositions, accountRows]) => {
-        setAccountLabels(buildAccountLabels(accountRows))
-        setPositions(buildPositionRows(ops, rawPositions))
-        setRawPositions(rawPositions)
-        setRawOperations(ops)
-        setLoading(false)
-      })
-      .catch((e) => {
-        setError(String(e))
-        setLoading(false)
-      })
-  }, [])
-
-  return { positions, rawPositions, rawOperations, accountLabels, loading, error }
+      return {
+        positions: buildPositionRows(rawOperations, rawPositions),
+        rawPositions,
+        rawOperations,
+        accountLabels: buildAccountLabels(accountRows),
+      }
+    },
+  })
 }

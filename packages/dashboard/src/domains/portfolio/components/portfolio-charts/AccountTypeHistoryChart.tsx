@@ -39,7 +39,7 @@ export function AccountTypeHistoryChart({
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
           <YAxis tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : fmtEur} domain={percentageMode ? [0, 100] : undefined} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={percentageMode ? 48 : 52} />
-          <Tooltip content={(props) => <AccountTypeHistoryTooltip {...props} accountTypes={accountTypes} typeCategories={typeCategories} percentageMode={percentageMode} />} />
+          <Tooltip content={<AccountTypeHistoryTooltip accountTypes={accountTypes} typeCategories={typeCategories} percentageMode={percentageMode} />} />
           <Legend formatter={(value) => <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>} />
           {accountTypes.map((t, i) => (
             <Area

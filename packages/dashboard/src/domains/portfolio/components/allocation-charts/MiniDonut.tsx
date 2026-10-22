@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { catColor } from '@/shared/format/colors'
-import type { AllocationPoint } from '@/domains/portfolio/apis/queries/useAllocationData'
+import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { groupTail } from './allocationCharts.logic'
 import { PieTooltip } from './allocationCharts.tooltips'
 import type { PieEntry } from './allocationCharts.types'

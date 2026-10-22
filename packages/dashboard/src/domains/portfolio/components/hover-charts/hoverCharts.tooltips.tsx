@@ -1,10 +1,12 @@
 import { fmt, fmtDec } from '@/shared/format/money'
 import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox'
+import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { RollingUnitPricePerf } from './RollingUnitPricePerf'
+import type { HoverChartDataPoint } from './hoverCharts.logic'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function OpSummary({ data }: { data: any }) {
+export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
+  if (!data) return null
   if (!data.buyAmount && !data.sellAmount) return null
   return (
     <div className="mt-2 pt-2 border-t border-gray-600 space-y-1">
@@ -25,22 +27,23 @@ export function OpSummary({ data }: { data: any }) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TooltipPortfolio({ active, payload, label }: any) {
+export function TooltipPortfolio({
+  active,
+  payload,
+  label,
+}: NumericTooltipProps<HoverChartDataPoint>) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const valeur = payload.find((p: any) => p.dataKey === 'Value')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cout = payload.find((p: any) => p.dataKey === 'Cost basis')
+  const valueEntry = payload.find((item) => item.dataKey === 'Value')
+  const costEntry = payload.find((item) => item.dataKey === 'Cost basis')
   const data = payload[0]?.payload
   return (
     <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
       <p className="text-gray-400 mb-2">{label}</p>
-      {valeur && <p style={{ color: valeur.color }}>{valeur.name}: {fmt.format(valeur.value)}</p>}
-      {cout && <p style={{ color: cout.color }}>{cout.name}: {fmt.format(cout.value)}</p>}
-      {valeur && cout && (
-        <p className={`mt-1 font-semibold ${valeur.value >= cout.value ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
-          Unrealized: {fmt.format(valeur.value - cout.value)}
+      {valueEntry && <p style={{ color: valueEntry.color }}>{valueEntry.name}: {fmt.format(valueEntry.value ?? 0)}</p>}
+      {costEntry && <p style={{ color: costEntry.color }}>{costEntry.name}: {fmt.format(costEntry.value ?? 0)}</p>}
+      {valueEntry && costEntry && (
+        <p className={`mt-1 font-semibold ${(valueEntry.value ?? 0) >= (costEntry.value ?? 0) ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
+          Unrealized: {fmt.format((valueEntry.value ?? 0) - (costEntry.value ?? 0))}
         </p>
       )}
       <OpSummary data={data} />
@@ -48,26 +51,33 @@ export function TooltipPortfolio({ active, payload, label }: any) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TooltipUnit({ active, payload, label, series }: any) {
+interface TooltipUnitProps extends NumericTooltipProps<HoverChartDataPoint> {
+  series: HoverChartDataPoint[]
+}
+
+export function TooltipUnit({ active, payload, label, series }: TooltipUnitProps) {
   if (!active || !payload?.length) return null
   const p = payload[0]
   const data = p?.payload
   return (
     <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
       <p className="text-gray-400 mb-1">{label}</p>
-      <p style={{ color: p.color }}>Unit price: {fmtDec.format(p.value)}</p>
-      {series && <RollingUnitPricePerf series={series} label={label} />}
+      <p style={{ color: p.color }}>Unit price: {fmtDec.format(p.value ?? 0)}</p>
+      <RollingUnitPricePerf series={series} label={String(label)} />
       <OpSummary data={data} />
     </TooltipBox>
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function SavingsTooltip({ active, payload }: any) {
+interface SavingsPoint {
+  balance: number
+  delta: number
+  month: string
+}
+
+export function SavingsTooltip({ active, payload }: NumericTooltipProps<SavingsPoint>) {
   if (!active || !payload?.length) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const balance = payload.find((p: any) => p.dataKey === 'balance')?.value ?? 0
+  const balance = tooltipValue(payload, 'balance')
   const delta: number = payload[0]?.payload?.delta ?? 0
   const monthStr: string = payload[0]?.payload?.month ?? ''
   return (

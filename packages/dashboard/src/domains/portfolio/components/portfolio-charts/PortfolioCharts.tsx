@@ -29,13 +29,13 @@ interface Props {
 }
 
 export function PortfolioCharts({ history, accounts, accountTypeData, positions, dateFrom, dateTo }: Props) {
-  const allOps = useMonthlyOps()
+  const { data: allOps = new Map() } = useMonthlyOps()
   const ops = filterMonthlyOpsByAccounts(allOps, accounts)
 
-  const savingCapacity = useSavingCapacity(accounts)
+  const { data: savingCapacity = [] } = useSavingCapacity(accounts)
   const last12 = computeTrailing12mSavings(savingCapacity)
 
-  const passiveIncome = usePassiveIncome(accounts, dateFrom, dateTo)
+  const { data: passiveIncome = [] } = usePassiveIncome(accounts, dateFrom, dateTo)
   const { data: typeHistory, accountTypes, typeCategories } = useAccountTypeHistory(accounts)
 
   const accountTypeWithLabels = buildAccountTypeLabels(accountTypeData)

@@ -1,8 +1,10 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { rawAccountId } from '@/domains/portfolio/helpers/filters/accountFilter'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import * as yup from 'yup'
+import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -57,7 +59,7 @@ interface FilteredResponseState {
 }
 
 export function normalizeAccountSelection(accounts: Iterable<string>): string[] {
-  return [...new Set([...accounts].map(rawAccountId))].sort()
+  return [...new Set([...accounts].map(rawAccountId))].toSorted()
 }
 
 function sameAccounts(left: string[], right: string[]): boolean {
@@ -148,40 +150,32 @@ export function useFilteredPortfolioHistory(
   )
   const accountKey = normalizedAccounts.join('\u0000')
   const isFiltered = selectedAccounts.size > 0
-  const [responseState, setResponseState] = useState<FilteredResponseState | null>(null)
-  const [demoPresetAccounts, setDemoPresetAccounts] = useState<string[] | null>(null)
-
-  useEffect(() => {
-    const controller = new AbortController()
-    requestDemoPresetAccounts(controller.signal)
-      .then(setDemoPresetAccounts)
-      .catch((requestError: unknown) => {
-        if (!(requestError instanceof DOMException && requestError.name === 'AbortError')) {
-          setDemoPresetAccounts(null)
-        }
-      })
-    return () => controller.abort()
-  }, [])
-
-  useEffect(() => {
-    if (!isFiltered) return
-
-    const controller = new AbortController()
-    requestFilteredPortfolioHistory(normalizedAccounts, controller.signal)
-      .then((response) => {
-        if (controller.signal.aborted) return
-        setResponseState({ key: accountKey, history: toHistory(response), error: null })
-      })
-      .catch((requestError: unknown) => {
-        if (controller.signal.aborted) return
-        setResponseState({
-          key: accountKey,
-          history: null,
-          error: requestError instanceof Error ? requestError.message : String(requestError),
-        })
-      })
-    return () => controller.abort()
-  }, [accountKey, isFiltered, normalizedAccounts])
+  const demoPresetQuery = useQuery({
+    queryKey: portfolioQueryKeys.data('demo-filtered-history-accounts'),
+    queryFn: ({ signal }) => requestDemoPresetAccounts(signal),
+    enabled: STATIC_DEMO,
+  })
+  const filteredHistoryQuery = useQuery({
+    queryKey: portfolioQueryKeys.data('filtered-history', ...normalizedAccounts),
+    queryFn: ({ signal }) => requestFilteredPortfolioHistory(normalizedAccounts, signal),
+    enabled: isFiltered,
+  })
+  let responseState: FilteredResponseState | null = null
+  if (filteredHistoryQuery.data) {
+    responseState = {
+      key: accountKey,
+      history: toHistory(filteredHistoryQuery.data),
+      error: null,
+    }
+  } else if (filteredHistoryQuery.error) {
+    responseState = {
+      key: accountKey,
+      history: null,
+      error: filteredHistoryQuery.error instanceof Error
+        ? filteredHistoryQuery.error.message
+        : String(filteredHistoryQuery.error),
+    }
+  }
 
   const { history, loading, error } = resolveFilteredHistoryState(
     fallbackHistory,
@@ -190,5 +184,11 @@ export function useFilteredPortfolioHistory(
     responseState,
   )
 
-  return { history, loading, error, isFiltered, demoPresetAccounts }
+  return {
+    history,
+    loading,
+    error,
+    isFiltered,
+    demoPresetAccounts: demoPresetQuery.data ?? null,
+  }
 }
