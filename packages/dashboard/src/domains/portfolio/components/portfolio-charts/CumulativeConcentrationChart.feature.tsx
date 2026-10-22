@@ -10,8 +10,8 @@ import {
   YAxis,
 } from 'recharts'
 import type { MouseHandlerDataParam } from 'recharts'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { cumulativeConcentrationCrosshair } from './portfolioCharts.logic'
 import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'

@@ -12,8 +12,10 @@ import { IncomePlacementRelationshipChart } from '@/domains/portfolio/components
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
 import { Kpi, KpiCard } from '@/domains/portfolio/components/kpis/Kpi.view'
 import { FilterScopeBadges } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
-import { fmt, fmtPct } from '@/shared/format/money'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 
 interface WealthTabProps {
   history: PortfolioHistoryPoint[]
@@ -28,10 +30,9 @@ interface WealthTabProps {
   annualIncomeSavings: AnnualIncomeSavingsPoint[]
 }
 
-function monthRangeLabel(months: string[]): string {
-  const formatter = new Intl.DateTimeFormat('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+function monthRangeLabel(months: string[], formatDate: ReturnType<typeof useFormatDate>): string {
   if (months.length === 0) return ''
-  const formatMonth = (month: string) => formatter.format(new Date(`${month}-01T00:00:00Z`))
+  const formatMonth = (month: string) => formatDate(`${month}-01T00:00:00Z`, { style: 'shortMonthYear', timeZone: 'UTC' })
   if (months.length === 1) return formatMonth(months[0])
   return `${formatMonth(months[0])} – ${formatMonth(months[months.length - 1])}`
 }
@@ -48,14 +49,17 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
   currentMonths: string[]
   tone: 'blue' | 'performance'
 }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const valueColor = tone === 'blue'
     ? SEMANTIC_TEXT_CLASSES.netContributions
     : performanceColor(metric.current)
   const changeColor = metric.changePct == null
     ? 'text-gray-500'
     : performanceColor(metric.changePct)
-  const currentLabel = monthRangeLabel(currentMonths)
-  const value = metric.current == null ? '—' : fmt.format(metric.current)
+  const currentLabel = monthRangeLabel(currentMonths, formatDate)
+  const value = metric.current == null ? '—' : formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
   if (tone === 'blue') accent = 'contributions'
   else if (metric.current != null && metric.current < 0) accent = 'negative'
@@ -71,11 +75,11 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
         </Kpi.Label>
         <Kpi.ValueRow>
           <Kpi.Value color={valueColor} title={value}>{value}</Kpi.Value>
-          <Kpi.InlineNote color={changeColor}>{metric.changePct == null ? '—' : fmtPct(metric.changePct)}</Kpi.InlineNote>
+          <Kpi.InlineNote color={changeColor}>{metric.changePct == null ? '—' : formatPercentage(metric.changePct, { signed: true })}</Kpi.InlineNote>
         </Kpi.ValueRow>
         <Kpi.Detail>{currentLabel || 'Insufficient history'}</Kpi.Detail>
         <Kpi.Footer>
-          Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : fmt.format(metric.previous)}</span>
+          Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : formatMoney(metric.previous)}</span>
         </Kpi.Footer>
       </Kpi.Root>
     </KpiCard>
@@ -83,9 +87,11 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
 }
 
 export function WealthTab({ history, accountTypeData, accountTypeHistory, accountTypes, typeCategories, savings, monthlyOps, drivers, trailingYearComparison, annualIncomeSavings }: WealthTabProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const labelledTypes = accountTypeData.map((point) => {
     const pct = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
-    return { ...point, _label: `${Math.round(point.total_value).toLocaleString('en-GB')} € ${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%` }
+    return { ...point, _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(pct, { decimals: 0, signed: true })}` }
   })
   return (
     <div className="mb-6 space-y-4">

@@ -3,9 +3,9 @@ import {
   ResponsiveContainer, AreaChart, Area, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts'
-import { fmt, fmtDec } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { usePositionsHistory } from '@/domains/portfolio/apis/queries/usePositionsHistory'
 import { buildHoverChartSeries, computeUnitPriceDomain, computePosition, type Operation } from './hoverCharts.logic'
 import { TooltipPortfolio, TooltipUnit } from './hoverCharts.tooltips.view'
@@ -25,6 +25,7 @@ interface Props {
 }
 
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
+  const formatMoney = useFormatMoney()
   const history = usePositionsHistory(target.isin)
   const { top, left } = computePosition(target.buttonRect)
 
@@ -61,7 +62,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
               <XAxis dataKey="date" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
-              <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmt.format(v)} width={64} />
+              <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(value) => formatMoney(value)} width={64} />
               <Tooltip content={<TooltipPortfolio />} />
               <Legend wrapperStyle={{ fontSize: 11, color: CHART_THEME.tick }} />
               <Area type="monotone" dataKey="Cost basis" stroke={SEMANTIC_COLORS.costBasis} strokeWidth={1.5} fill="none" strokeDasharray="4 2" dot={false} />
@@ -84,7 +85,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
                 <LineChart data={chartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
                   <XAxis dataKey="date" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
-                  <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmtDec.format(v)} width={64} domain={unitPriceDomain} />
+                  <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(value) => formatMoney(value, { style: 'decimal' })} width={64} domain={unitPriceDomain} />
                   <Tooltip content={<TooltipUnit />} />
                   <Line type="monotone" dataKey="Unit price" stroke={SEMANTIC_COLORS.returnRate} strokeWidth={2}
                     dot={<BuySellDotUnit />} activeDot={{ r: 4 }} />

@@ -10,8 +10,8 @@ import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, 
 import { LookThroughCoverageSummary } from '@/domains/portfolio/components/fund-holdings/LookThroughCoverageSummary.feature'
 import { FundDataQualityPanel } from '@/domains/portfolio/components/fund-holdings/FundDataQualityPanel.feature'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-import { fmtFull } from '@/shared/format/money'
-import { formatPercentage } from '@/shared/format/percentage'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
   buildDataQualityViewModel,
   DATA_QUALITY_DIMENSION_LABELS,
@@ -64,6 +64,7 @@ export function DataQualityTab({
   fundUnresolved: FundUnresolved[]
   rawData: RawIsinData
 }) {
+  const formatPercentage = useFormatPercentage()
   const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
   const { setSelectedQualityTheme } = useDashboardQuality()
   const {
@@ -88,6 +89,7 @@ export function DataQualityTab({
       fundSnapshots,
       fundUnresolved,
       rawData,
+      formatPercentage,
     }),
     [
       positions,
@@ -99,6 +101,7 @@ export function DataQualityTab({
       fundSnapshots,
       fundUnresolved,
       rawData,
+      formatPercentage,
     ],
   )
   const activeThemeId = selectedTheme ?? recommendedTheme.id
@@ -309,6 +312,8 @@ export function DataQualityTab({
 }
 
 function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (assets.length === 0) {
     return <p className="p-6 text-center text-sm text-gray-500">No affected asset for this scope.</p>
   }
@@ -341,10 +346,10 @@ function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
                 </div>
               </td>
               <td className="px-4 py-3 text-right tabular-nums">
-                <div className="font-medium text-amber-400">{fmtFull(asset.largestGapValue)}</div>
-                <div className="mt-1 text-[10px] text-gray-600">{formatPercentage(asset.largestGapPct)}%</div>
+                <div className="font-medium text-amber-400">{formatMoney(asset.largestGapValue, { style: 'full' })}</div>
+                <div className="mt-1 text-[10px] text-gray-600">{formatPercentage(asset.largestGapPct)}</div>
               </td>
-              <td className="px-4 py-3 text-right font-medium tabular-nums text-gray-300">{fmtFull(asset.value)}</td>
+              <td className="px-4 py-3 text-right font-medium tabular-nums text-gray-300">{formatMoney(asset.value, { style: 'full' })}</td>
             </tr>
           ))}
         </tbody>

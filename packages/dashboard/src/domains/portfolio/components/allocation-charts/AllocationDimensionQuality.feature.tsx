@@ -1,7 +1,7 @@
 import type { DimensionCoverage } from './allocationCoverage.logic'
-import { fmtFull } from '@/shared/format/money'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useDataQualityClassificationDetails } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityClassificationDetails'
-import { formatPercentage } from '@/shared/format/percentage'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 
 const LABELS: Record<DimensionCoverage['dimension'], string> = {
@@ -13,6 +13,8 @@ export function AllocationDimensionQuality({
 }: {
   coverage: DimensionCoverage[]
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const { openClassificationDetails } = useDataQualityClassificationDetails()
   return (
     <div className="space-y-4">
@@ -25,9 +27,9 @@ export function AllocationDimensionQuality({
           <div key={item.dimension}>
             <div className="mb-1.5 flex items-baseline justify-between gap-3">
               <span className="truncate text-xs text-gray-400">{LABELS[item.dimension]}</span>
-              <span className={`shrink-0 text-[11px] tabular-nums ${materialGap ? 'text-amber-400' : 'text-emerald-400'}`}>{fmtFull(item.unallocated)} · {formatPercentage(missingPct)}%</span>
+              <span className={`shrink-0 text-[11px] tabular-nums ${materialGap ? 'text-amber-400' : 'text-emerald-400'}`}>{formatMoney(item.unallocated, { style: 'full' })} · {formatPercentage(missingPct)}</span>
             </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${formatPercentage(missingPct)}% not classified for ${LABELS[item.dimension].toLowerCase()}`}>
+            <div className="h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${formatPercentage(missingPct)} not classified for ${LABELS[item.dimension].toLowerCase()}`}>
               <div className={`h-full rounded-full ${materialGap ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(100, missingPct)}%` }} />
             </div>
             <button

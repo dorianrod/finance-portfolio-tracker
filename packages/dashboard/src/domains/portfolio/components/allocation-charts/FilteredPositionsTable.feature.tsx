@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
-import { fmtFull } from '@/shared/format/money'
-import { catColor } from '@/shared/format/colors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { catColor } from '@/shared/theme/chartColors'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import type { MatchingIsinRow } from './allocationCharts.types'
 import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationFilters'
@@ -12,6 +13,8 @@ export function FilteredPositionsTable({
 }: {
   rows: MatchingIsinRow[]
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const filter = useAtomValue(dashboardAllocationFilterAtom)
   const { clearFilter } = useDashboardAllocationFilters()
   const { closePositions } = useDashboardAllocationPositions()
@@ -21,7 +24,7 @@ export function FilteredPositionsTable({
   return (
     <SidePanel
       title={<>Positions — <span style={{ color: catColor(filter.value) }}>{filter.value}</span></>}
-      description={`${rows.length} positions · ${fmtFull(totalFiltered)} in exposure`}
+      description={`${rows.length} positions · ${formatMoney(totalFiltered, { style: 'full' })} in exposure`}
       onClose={closePositions}
       closeLabel="Close positions"
       headerActions={(
@@ -54,10 +57,10 @@ export function FilteredPositionsTable({
                   <div className="text-[11px] text-gray-600">{row.isin}</div>
                 </td>
                 <td className="px-4 py-2.5 text-right text-xs tabular-nums text-gray-400">
-                  {fmtFull(row.totalValue)}
+                  {formatMoney(row.totalValue, { style: 'full' })}
                 </td>
                 <td className="px-4 py-2.5 text-right">
-                  <div className="text-xs font-medium tabular-nums text-gray-200">{fmtFull(row.filteredValue)}</div>
+                  <div className="text-xs font-medium tabular-nums text-gray-200">{formatMoney(row.filteredValue, { style: 'full' })}</div>
                   <div className="mt-0.5 flex items-center justify-end gap-1.5">
                     <div className="h-1 w-12 overflow-hidden rounded-full bg-gray-800">
                       <div
@@ -65,7 +68,7 @@ export function FilteredPositionsTable({
                         style={{ width: `${Math.min(pct, 100)}%`, background: catColor(filter.value) }}
                       />
                     </div>
-                    <span className="w-8 text-right text-[11px] tabular-nums text-gray-500">{pct.toFixed(0)}%</span>
+                    <span className="w-8 text-right text-[11px] tabular-nums text-gray-500">{formatPercentage(pct, { decimals: 0 })}</span>
                   </div>
                 </td>
               </tr>

@@ -1,22 +1,25 @@
 import { ComposedChart, Bar, Line, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
-import { fmtEur, shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { MonthlyTooltip } from './portfolioCharts.tooltips.view'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { TrailingSavingCapacityPoint } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
 export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacityPoint[]; ops: MonthlyOpsMap }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
       <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Monthly wealth drivers<ScopedInfoTooltip text="Monthly net contributions and market performance, with a rolling view of saving capacity." scope={{ account: 'filterable', period: 'range-or-trailing-12m' }} /></h2>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart data={data} margin={{ top: 4, right: 52, left: 0, bottom: 0 }} barGap={2}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis yAxisId="left" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
-          <YAxis yAxisId="right" orientation="right" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis yAxisId="left" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <YAxis yAxisId="right" orientation="right" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <Tooltip content={<MonthlyTooltip ops={ops} />} />
           <ReferenceLine yAxisId="left" y={0} stroke={CHART_THEME.zeroLine} />
           <Bar yAxisId="left" dataKey="savings_delta" fill={SEMANTIC_COLORS.netContributions} radius={[3, 3, 0, 0]} />

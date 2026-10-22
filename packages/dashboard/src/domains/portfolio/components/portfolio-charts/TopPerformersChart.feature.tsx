@@ -1,11 +1,13 @@
 import { BarChart, Bar, Cell, LabelList, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
 import { TopPerformersTooltip } from './portfolioCharts.tooltips.view'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
-import { CHART_THEME } from '@/shared/format/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
 import type { TopPerformer } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function TopPerformersChart({ data, height }: { data: TopPerformer[]; height: number }) {
+  const formatPercentage = useFormatPercentage()
   return <div className="bg-gray-900 rounded-xl p-4">
     <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Performance by asset<ScopedInfoTooltip text="Gross unrealized performance by currently held asset." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
     <ResponsiveContainer width="100%" height={height}>
@@ -13,7 +15,7 @@ export function TopPerformersChart({ data, height }: { data: TopPerformer[]; hei
         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} horizontal={false} />
         <XAxis
           type="number"
-          tickFormatter={(v) => `${v >= 0 ? '+' : ''}${v.toFixed(0)}%`}
+          tickFormatter={(value) => formatPercentage(value, { decimals: 0, signed: true })}
           tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
           tickLine={false}
           axisLine={false}
@@ -28,7 +30,7 @@ export function TopPerformersChart({ data, height }: { data: TopPerformer[]; hei
           <LabelList
             dataKey="pct"
             position="right"
-            formatter={(v: unknown) => `${(v as number) >= 0 ? '+' : ''}${(v as number).toFixed(0)}%`}
+            formatter={(value: unknown) => formatPercentage(value as number, { decimals: 0, signed: true })}
             style={{ fill: CHART_THEME.tick, fontSize: 10 }}
           />
         </Bar>

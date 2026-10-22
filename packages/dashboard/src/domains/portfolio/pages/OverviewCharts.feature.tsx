@@ -16,9 +16,11 @@ import {
 import type { ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
 import { ConcentrationModeToggle } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { fmt, fmtEur } from '@/shared/format/money'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { OverviewConcentrationComparison, OverviewComparison } from './overviewComparison.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import type { FilterScopeSpec } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
@@ -27,35 +29,26 @@ function timestamp(date: string): number {
   return Date.parse(`${date.slice(0, 10)}T00:00:00Z`)
 }
 
-function chartDate(value: number): string {
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(value))
-}
-
-function signedMoney(value: number): string {
-  return `${value > 0 ? '+' : ''}${fmt.format(value)}`
-}
-
 function ValueTooltip({ active, payload }: {
   active?: boolean
   payload?: Array<{ payload: { timestamp: number; value: number; window: 'previous' | 'current' } }>
 }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const point = payload[0].payload
   return (
     <TooltipBox minWidth={190}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{chartDate(point.timestamp)}</div>
-      <div className="mt-1 tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{fmt.format(point.value)}</div>
+      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{formatDate(point.timestamp, { style: 'dayMonthYear', timeZone: 'UTC' })}</div>
+      <div className="mt-1 tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{formatMoney(point.value)}</div>
       <div className="mt-1 text-xs capitalize" style={{ color: 'var(--tooltip-dim)' }}>{point.window} period</div>
     </TooltipBox>
   )
 }
 
 export function OverviewValueChart({ comparison }: { comparison: OverviewComparison }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   const chartData = comparison.valueHistory.map((point) => ({
     ...point,
     timestamp: timestamp(point.date),
@@ -91,13 +84,13 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
             type="number"
             scale="time"
             domain={domain}
-            tickFormatter={chartDate}
+            tickFormatter={(value) => formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })}
             tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
             tickLine={false}
             axisLine={false}
             minTickGap={44}
           />
-          <YAxis tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} domain={['auto', 'auto']} />
+          <YAxis tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} domain={['auto', 'auto']} />
           <Tooltip content={<ValueTooltip />} cursor={{ stroke: CHART_THEME.label, strokeOpacity: 0.25 }} />
           <Line type="monotone" dataKey="previousValue" stroke={SEMANTIC_COLORS.neutralSeries} strokeWidth={2} dot={false} activeDot={{ r: 4 }} isAnimationActive={false} />
           <Line type="monotone" dataKey="currentValue" stroke={SEMANTIC_COLORS.portfolioValue} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} isAnimationActive={false} />
@@ -118,21 +111,23 @@ function DriversTooltip({ active, payload }: {
   active?: boolean
   payload?: Array<{ dataKey: string; value: number | null; payload: DriverRow }>
 }) {
+  const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
     <TooltipBox minWidth={205}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{row.label}</div>
       <div className="mt-2 space-y-1 text-xs">
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Current</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null ? 'Unavailable' : fmt.format(row.current)}</span></div>
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Previous</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.previous == null ? 'Unavailable' : fmt.format(row.previous)}</span></div>
-        <div className="flex justify-between gap-6 border-t pt-1" style={{ color: 'var(--tooltip-dim)', borderColor: 'var(--tooltip-border)' }}><span>Difference</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null || row.previous == null ? 'Unavailable' : signedMoney(row.current - row.previous)}</span></div>
+        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Current</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null ? 'Unavailable' : formatMoney(row.current)}</span></div>
+        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Previous</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.previous == null ? 'Unavailable' : formatMoney(row.previous)}</span></div>
+        <div className="flex justify-between gap-6 border-t pt-1" style={{ color: 'var(--tooltip-dim)', borderColor: 'var(--tooltip-border)' }}><span>Difference</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null || row.previous == null ? 'Unavailable' : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}</span></div>
       </div>
     </TooltipBox>
   )
 }
 
 export function OverviewDriversChart({ comparison }: { comparison: OverviewComparison }) {
+  const formatMoney = useFormatMoney()
   const rows: DriverRow[] = [
     {
       label: 'Net contributions',
@@ -166,13 +161,13 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
       </div>
       <div className="mb-2 flex items-baseline justify-between gap-3 rounded-lg bg-gray-950/45 px-3 py-2">
         <span className="text-[11px] text-gray-600">Gross value change</span>
-        <span className="text-sm font-semibold tabular-nums text-gray-200">{currentChange == null ? '—' : signedMoney(currentChange)} <span className="ml-1 text-[10px] font-normal text-gray-600">vs {previousChange == null ? 'Unavailable' : fmt.format(previousChange)}</span></span>
+        <span className="text-sm font-semibold tabular-nums text-gray-200">{currentChange == null ? '—' : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`} <span className="ml-1 text-[10px] font-normal text-gray-600">vs {previousChange == null ? 'Unavailable' : formatMoney(previousChange)}</span></span>
       </div>
       <ResponsiveContainer width="100%" height={190}>
         <BarChart data={rows} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} barGap={3}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
           <XAxis dataKey="label" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} />
-          <YAxis tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} width={48} />
+          <YAxis tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} width={48} />
           <ReferenceLine y={0} stroke={CHART_THEME.zeroLine} />
           <Tooltip content={<DriversTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
           <Bar dataKey="previous" name="Previous" fill={SEMANTIC_COLORS.neutralSeries} fillOpacity={0.45} radius={[3, 3, 0, 0]} isAnimationActive={false} />
@@ -201,6 +196,7 @@ export function OverviewConcentrationChart({
   heldConcentration: OverviewConcentrationComparison
   underlyingConcentration: OverviewConcentrationComparison
 }) {
+  const formatPercentage = useFormatPercentage()
   const [mode, setMode] = useState<ConcentrationMode>('lookThrough')
   const lookThroughDisabled = underlyingConcentration.current == null
   const displayedMode = mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
@@ -249,9 +245,9 @@ export function OverviewConcentrationChart({
               <div key={row.key}>
                 <div className="mb-1.5 flex items-center gap-3 text-xs">
                   <span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span>
-                  <span className="shrink-0 tabular-nums text-gray-300">{row.weight.toFixed(1)}%</span>
+                  <span className="shrink-0 tabular-nums text-gray-300">{formatPercentage(row.weight)}</span>
                   <span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>
-                    {delta == null ? '—' : `${delta > 0 ? '+' : ''}${delta.toFixed(1)} pp`}
+                    {delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}
                   </span>
                 </div>
                 <div className="relative h-2.5 rounded-full bg-gray-800">
@@ -260,7 +256,7 @@ export function OverviewConcentrationChart({
                     <span
                       className="absolute -top-1 h-4 w-0.5 rounded-full bg-gray-300 shadow-[0_0_0_1px_var(--color-gray-900)]"
                       style={{ left: `${(row.previousWeight ?? 0) / scaleMax * 100}%` }}
-                      title={`Previous: ${(row.previousWeight ?? 0).toFixed(1)}%`}
+                      title={`Previous: ${formatPercentage(row.previousWeight ?? 0)}`}
                     />
                   )}
                 </div>

@@ -43,6 +43,22 @@ export default defineConfig([
       'no-lonely-if': 'error',
       'no-negated-condition': 'error',
       'no-nested-ternary': 'error',
+      'no-restricted-properties': ['error',
+        { property: 'toFixed', message: 'Format display values through a formatter hook.' },
+        { property: 'toLocaleDateString', message: 'Format dates through useFormatDate.' },
+        { property: 'toLocaleString', message: 'Format display values through a formatter hook.' },
+        { property: 'toLocaleTimeString', message: 'Format dates through useFormatDate.' },
+      ],
+      'no-restricted-syntax': ['error',
+        {
+          selector: "NewExpression[callee.object.name='Intl'][callee.property.name='DateTimeFormat']",
+          message: 'Format dates through useFormatDate.',
+        },
+        {
+          selector: "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+          message: 'Format display values through a formatter hook.',
+        },
+      ],
       'no-unneeded-ternary': 'error',
       'object-shorthand': 'error',
       'prefer-object-spread': 'error',
@@ -51,6 +67,13 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       'local/component-role': 'error',
       'local/no-prop-drilling': 'warn',
+    },
+  },
+  {
+    files: ['src/shared/helpers/formatters/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-properties': 'off',
+      'no-restricted-syntax': 'off',
     },
   },
   {

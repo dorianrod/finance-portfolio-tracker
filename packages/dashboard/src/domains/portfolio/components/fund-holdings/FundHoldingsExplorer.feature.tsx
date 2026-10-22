@@ -8,7 +8,9 @@ import {
   type FundHoldingStatus,
 } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
-import { fmtFull } from '@/shared/format/money'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import type { IssuerExposure, SecurityExposure } from './fundHoldings.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
@@ -37,6 +39,7 @@ export function FundHoldingsExplorer({
   positions: PositionRow[]
   holdings: FundHolding[]
 }) {
+  const formatNumber = useFormatNumber()
   const { data: fundData } = useFundHoldingsData()
   const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
   const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
@@ -123,8 +126,8 @@ export function FundHoldingsExplorer({
         {displayed.length === 0 && <p className="p-8 text-center text-sm text-gray-500">No exposure matches this search.</p>}
       </div>
       <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-gray-800 bg-gray-900 px-4 py-2 text-xs text-gray-400">
-        {displayed.length.toLocaleString()} issuers · {securityCount.toLocaleString()} securities
-        {displayed.length !== totalIssuerCount && <span className="text-gray-600"> (filtered from {totalIssuerCount.toLocaleString()} issuers)</span>}
+        {formatNumber(displayed.length)} issuers · {formatNumber(securityCount)} securities
+        {displayed.length !== totalIssuerCount && <span className="text-gray-600"> (filtered from {formatNumber(totalIssuerCount)} issuers)</span>}
       </div>
     </section>
   )
@@ -162,6 +165,8 @@ function SourcesCell({ sources, total, empty, className }: {
 const TOOLTIP_WIDTH = 340
 
 function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: Source[]; total: number }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const left = Math.max(8, Math.min(anchor.left, window.innerWidth - TOOLTIP_WIDTH - 8))
   const below = anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
   const position = below ? { top: anchor.bottom + 6 } : { bottom: window.innerHeight - anchor.top + 6 }
@@ -176,8 +181,8 @@ function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: 
         {sources.map((source) => (
           <li key={source.fund} className="flex items-baseline gap-3">
             <span className="min-w-0 flex-1 truncate text-gray-300">{source.fund}</span>
-            <span className="tabular-nums text-gray-400">{fmtFull(source.value)}</span>
-            <span className="w-12 text-right tabular-nums text-gray-600">{total > 0 ? (source.value / total * 100).toFixed(0) : 0}%</span>
+            <span className="tabular-nums text-gray-400">{formatMoney(source.value, { style: 'full' })}</span>
+            <span className="w-12 text-right tabular-nums text-gray-600">{formatPercentage(total > 0 ? source.value / total * 100 : 0, { decimals: 0 })}</span>
           </li>
         ))}
       </ul>
@@ -204,6 +209,8 @@ const IssuerRow = memo(function IssuerRow({ issuer, open, onToggle }: {
   open: boolean
   onToggle: (id: string) => void
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   return (
     <div className={`${GRID} h-full border-b border-gray-800 text-sm hover:bg-gray-800/60`}>
       <button
@@ -216,19 +223,20 @@ const IssuerRow = memo(function IssuerRow({ issuer, open, onToggle }: {
         <span className="truncate font-medium text-gray-100">{issuer.name}</span>
         <span className="font-mono text-[10px] text-gray-600">{issuer.id}</span>
       </button>
-      <span className="text-right font-medium tabular-nums text-gray-200">{fmtFull(issuer.value)}</span>
-      <span className="text-right tabular-nums text-gray-400">{issuer.weight.toFixed(2)}%</span>
+      <span className="text-right font-medium tabular-nums text-gray-200">{formatMoney(issuer.value, { style: 'full' })}</span>
+      <span className="text-right tabular-nums text-gray-400">{formatPercentage(issuer.weight, { decimals: 2 })}</span>
       <SourcesCell sources={issuer.sources} total={issuer.value} empty="Direct" className="text-xs text-gray-500" />
     </div>
   )
 })
 
 const SecurityRow = memo(function SecurityRow({ security }: { security: SecurityExposure }) {
+  const formatMoney = useFormatMoney()
   const [single] = security.funds
   return (
     <div className={`${GRID} h-full border-b border-gray-900 bg-gray-950/50 text-xs`}>
       <span className="min-w-0 truncate pl-6"><span className="text-gray-300">{security.name}</span><span className="ml-2 font-mono text-[10px] text-gray-700">{security.id}</span></span>
-      <span className="text-right tabular-nums text-gray-400">{fmtFull(security.value)}</span>
+      <span className="text-right tabular-nums text-gray-400">{formatMoney(security.value, { style: 'full' })}</span>
       <span />
       {security.funds.length <= 1
         ? <span className="truncate text-gray-500" title={single}>{single ?? 'Direct holding'}</span>
@@ -238,10 +246,11 @@ const SecurityRow = memo(function SecurityRow({ security }: { security: Security
 })
 
 const SourceRow = memo(function SourceRow({ fund, value }: { fund: string; value: number }) {
+  const formatMoney = useFormatMoney()
   return (
     <div className={`${GRID} h-full border-b border-gray-900 bg-gray-950/50 text-xs`}>
       <span />
-      <span className="text-right tabular-nums text-gray-500">{fmtFull(value)}</span>
+      <span className="text-right tabular-nums text-gray-500">{formatMoney(value, { style: 'full' })}</span>
       <span />
       <span className="truncate text-gray-500" title={fund}>{fund}</span>
     </div>

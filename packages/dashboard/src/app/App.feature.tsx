@@ -38,7 +38,7 @@ import {
   dashboardHoldingsViewAtom,
   type AnalysisTab,
 } from "@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms";
-import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/format/semanticColors";
+import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/theme/semanticColors";
 
 const loadOverviewTab = () =>
   import("@/domains/portfolio/pages/OverviewTab.feature").then((module) => ({ default: module.OverviewTab }));

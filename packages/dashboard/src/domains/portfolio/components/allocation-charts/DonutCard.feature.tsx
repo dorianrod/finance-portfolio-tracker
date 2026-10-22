@@ -1,8 +1,9 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useAtomValue } from 'jotai'
-import { fmtFull } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { catColor } from '@/shared/format/colors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { groupTail } from './allocationCharts.logic'
 import { PieTooltip } from './allocationCharts.tooltips.view'
@@ -24,12 +25,14 @@ interface DonutCardProps {
 }
 
 export function DonutCard({ title, point, dimension }: DonutCardProps) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
   const { toggleFilter } = useDashboardAllocationFilters()
   const { togglePositions } = useDashboardAllocationPositions()
   const total = point.categories.reduce((s, c) => s + c.value, 0)
-  const dateLabel = new Date(point.date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+  const dateLabel = formatDate(point.date, { style: 'longMonthYear' })
 
   const { main, grouped } = groupTail(point.categories)
   const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
@@ -52,7 +55,7 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
           {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
         </div>
       </div>
-      <div className="text-xs text-gray-500 mb-1">Allocated: {fmtFull(total)}</div>
+      <div className="text-xs text-gray-500 mb-1">Allocated: {formatMoney(total, { style: 'full' })}</div>
       <div className="text-xs text-gray-600 mb-2">Click a segment to filter</div>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>

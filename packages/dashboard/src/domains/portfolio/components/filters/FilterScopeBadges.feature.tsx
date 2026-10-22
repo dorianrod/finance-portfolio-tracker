@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai'
 import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
 import { useAccountFilterLabels } from '@/domains/portfolio/services/useAccountFilterLabels'
 import type { Filters } from '@/domains/portfolio/types/filters'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export type AccountScopeMode = 'filterable' | 'global'
 export type PeriodScopeMode =
@@ -22,14 +23,9 @@ export interface FilterScopeSpec {
   effectiveDate?: string | null
 }
 
-function friendlyDate(value: string | null | undefined): string | null {
+function friendlyDate(value: string | null | undefined, formatDate: ReturnType<typeof useFormatDate>): string | null {
   if (!value) return null
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(`${value.slice(0, 10)}T00:00:00Z`))
+  return formatDate(`${value.slice(0, 10)}T00:00:00Z`, { style: 'dayMonthYear', timeZone: 'UTC' })
 }
 
 function accountBadge(
@@ -67,17 +63,18 @@ function accountBadge(
 function periodBadge(
   mode: PeriodScopeMode,
   filters: Filters,
+  formatDate: ReturnType<typeof useFormatDate>,
   effectiveDate?: string | null,
 ): { label: string; detail: string; tone: 'applied' | 'default' | 'ignored' } {
   const active = !!(filters.dateFrom || filters.dateTo)
-  const end = friendlyDate(effectiveDate ?? filters.dateTo)
+  const end = friendlyDate(effectiveDate ?? filters.dateTo, formatDate)
   let range: string | null = null
   if (filters.dateFrom && filters.dateTo) {
-    range = `${friendlyDate(filters.dateFrom)} – ${friendlyDate(filters.dateTo)}`
+    range = `${friendlyDate(filters.dateFrom, formatDate)} – ${friendlyDate(filters.dateTo, formatDate)}`
   } else if (filters.dateFrom) {
-    range = `Since ${friendlyDate(filters.dateFrom)}`
+    range = `Since ${friendlyDate(filters.dateFrom, formatDate)}`
   } else if (filters.dateTo) {
-    range = `Until ${friendlyDate(filters.dateTo)}`
+    range = `Until ${friendlyDate(filters.dateTo, formatDate)}`
   }
 
   if (mode === 'latest') {
@@ -150,11 +147,12 @@ const TONE_CLASSES = {
 } as const
 
 export function FilterScopeBadges({ account, period, effectiveDate }: FilterScopeSpec) {
+  const formatDate = useFormatDate()
   const filters = useAtomValue(dashboardFiltersAtom)
   const accountLabels = useAccountFilterLabels()
   const badges = [
     accountBadge(account, filters, accountLabels),
-    periodBadge(period, filters, effectiveDate),
+    periodBadge(period, filters, formatDate, effectiveDate),
   ]
   return (
     <span className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Indicator filter scope">

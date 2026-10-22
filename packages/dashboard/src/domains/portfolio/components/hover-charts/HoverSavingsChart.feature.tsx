@@ -3,9 +3,9 @@ import {
   ResponsiveContainer, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts'
-import { fmt } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { usePositionsHistory } from '@/domains/portfolio/apis/queries/usePositionsHistory'
 import { computeMonthlyBalances, computePosition } from './hoverCharts.logic'
 import { SavingsTooltip } from './hoverCharts.tooltips.view'
@@ -23,6 +23,7 @@ interface SavingsProps {
 }
 
 export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: SavingsProps) {
+  const formatMoney = useFormatMoney()
   const history = usePositionsHistory(target.name)
   const { top, left } = computePosition(target.buttonRect)
 
@@ -64,7 +65,7 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
               tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v) => fmt.format(v)}
+              tickFormatter={(value) => formatMoney(value)}
               width={64}
             />
             <Tooltip content={<SavingsTooltip />} />

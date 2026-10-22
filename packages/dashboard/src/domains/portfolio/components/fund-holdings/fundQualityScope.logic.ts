@@ -7,7 +7,7 @@ import type {
 } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
-import { partitionPercentages } from '@/shared/format/percentage'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { isFundPosition } from './fundHoldings.logic'
 
 export interface ScopedFundQualityData {

@@ -1,6 +1,7 @@
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { fmtEur, fmtFull, shortMonth } from '@/shared/format/money'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { WealthDriverPoint } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
@@ -11,21 +12,24 @@ interface DriversTooltipProps {
 }
 
 function DriversTooltip({ active, payload, label }: DriversTooltipProps) {
+  const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload as WealthDriverPoint
   return (
     <div className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-xs shadow-xl">
       <div className="mb-2 font-semibold text-white">{label}</div>
       <div className="space-y-1 text-gray-300">
-        <div className="flex justify-between gap-6"><span>Net contributions</span><span className="font-medium" style={{ color: SEMANTIC_COLORS.netContributionsText }}>{fmtFull(row.cumulative_savings)}</span></div>
-        <div className="flex justify-between gap-6"><span>Market performance</span><span className="font-medium" style={{ color: row.cumulative_performance >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>{fmtFull(row.cumulative_performance)}</span></div>
-        <div className="flex justify-between gap-6 border-t border-gray-700 pt-1"><span>Total change</span><span className="font-semibold text-white">{fmtFull(row.cumulative_change)}</span></div>
+        <div className="flex justify-between gap-6"><span>Net contributions</span><span className="font-medium" style={{ color: SEMANTIC_COLORS.netContributionsText }}>{formatMoney(row.cumulative_savings, { style: 'full' })}</span></div>
+        <div className="flex justify-between gap-6"><span>Market performance</span><span className="font-medium" style={{ color: row.cumulative_performance >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>{formatMoney(row.cumulative_performance, { style: 'full' })}</span></div>
+        <div className="flex justify-between gap-6 border-t border-gray-700 pt-1"><span>Total change</span><span className="font-semibold text-white">{formatMoney(row.cumulative_change, { style: 'full' })}</span></div>
       </div>
     </div>
   )
 }
 
 export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
@@ -45,8 +49,8 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: 'var(--chart-tick)', fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis tickFormatter={fmtEur} tick={{ fill: 'var(--chart-tick)', fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: 'var(--chart-tick)', fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: 'var(--chart-tick)', fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <Tooltip content={<DriversTooltip />} />
           <Area type="monotone" dataKey="cumulative_savings" stroke={SEMANTIC_COLORS.netContributions} fill="url(#driversSavings)" strokeWidth={2} />
           <Area type="monotone" dataKey="cumulative_performance" stroke={SEMANTIC_COLORS.performance} fill="url(#driversPerformance)" strokeWidth={2} />

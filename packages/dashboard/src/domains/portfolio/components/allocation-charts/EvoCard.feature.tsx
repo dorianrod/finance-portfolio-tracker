@@ -1,8 +1,8 @@
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import { useAtomValue } from 'jotai'
-import { shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { catColor } from '@/shared/format/colors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { allocationTrendDomain, buildAllocationTrend } from './allocationCharts.logic'
 import { EvolutionTooltip } from './allocationCharts.tooltips.view'
@@ -23,6 +23,7 @@ interface EvoCardProps {
 }
 
 export function EvoCard({ title, points, dimension }: EvoCardProps) {
+  const formatDate = useFormatDate()
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
   const { toggleFilter } = useDashboardAllocationFilters()
@@ -84,7 +85,7 @@ export function EvoCard({ title, points, dimension }: EvoCardProps) {
             scale="time"
             domain={dateDomain}
             allowDataOverflow
-            tickFormatter={(timestamp) => shortMonth(new Date(timestamp).toISOString())}
+            tickFormatter={(timestamp) => formatDate(timestamp, { style: 'shortMonthShortYear' })}
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}
             axisLine={false}

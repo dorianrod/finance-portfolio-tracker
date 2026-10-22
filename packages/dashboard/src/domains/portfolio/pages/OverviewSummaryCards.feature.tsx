@@ -5,8 +5,9 @@ import type {
   OverviewConcentrationComparison,
   OverviewComparison,
 } from './overviewComparison.logic'
-import { fmt, fmtPct } from '@/shared/format/money'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import type { FilterScopeSpec } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
@@ -19,24 +20,6 @@ interface SummaryCardsProps {
   underlyingConcentration: OverviewConcentrationComparison
   rollingThreeYearTri: ComparedMetric
   irrStatus: IrrStatus
-}
-
-function money(value: number | null): string {
-  return value == null ? '—' : fmt.format(value)
-}
-
-function signedMoney(value: number | null): string {
-  if (value == null) return '—'
-  return `${value > 0 ? '+' : ''}${fmt.format(value)}`
-}
-
-function percentage(value: number | null): string {
-  return value == null ? '—' : fmtPct(value)
-}
-
-function points(value: number | null): string {
-  if (value == null) return '—'
-  return `${value > 0 ? '+' : ''}${value.toFixed(1)} pp`
 }
 
 function performanceTone(value: number | null): string {
@@ -53,24 +36,30 @@ function concentrationTone(value: number | null): string {
     : SEMANTIC_TEXT_CLASSES.performanceNegative
 }
 
-function irrValueLabel(status: IrrStatus, value: number | null): string {
+function irrValueLabel(status: IrrStatus, value: number | null, formatPercentage: ReturnType<typeof useFormatPercentage>): string {
   if (status === 'loading') return 'Calculating…'
   if (status === 'error' || value == null) return '—'
-  return fmtPct(value, 2)
+  return formatPercentage(value, { decimals: 2, signed: true })
 }
 
 function DeltaBadge({ metric, tone = 'performance' }: {
   metric: ComparedMetric
   tone?: 'performance' | 'contributions' | 'concentration'
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   let color = performanceTone(metric.delta)
   if (tone === 'contributions') color = SEMANTIC_TEXT_CLASSES.netContributions
   else if (tone === 'concentration') color = concentrationTone(metric.delta)
+  let label = metric.delta == null ? '—' : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
+  if (tone === 'concentration') {
+    label = metric.delta == null ? '—' : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
+  }
   return (
     <span className={`inline-flex items-center gap-1 rounded-full bg-gray-950/55 px-2 py-1 text-[11px] font-semibold tabular-nums ${color}`}>
-      {tone === 'concentration' ? points(metric.delta) : signedMoney(metric.delta)}
+      {label}
       {tone !== 'concentration' && metric.deltaPct != null && (
-        <span className="font-medium opacity-75">· {percentage(metric.deltaPct)}</span>
+        <span className="font-medium opacity-75">· {formatPercentage(metric.deltaPct, { signed: true })}</span>
       )}
     </span>
   )
@@ -117,9 +106,10 @@ function CardShell({
 }
 
 function PreviousValue({ value, suffix = '' }: { value: number | null; suffix?: string }) {
+  const formatMoney = useFormatMoney()
   return (
     <span className="text-[11px] text-gray-600">
-      Previous <span className="font-medium tabular-nums text-gray-400">{value == null ? 'Unavailable' : `${fmt.format(value)}${suffix}`}</span>
+      Previous <span className="font-medium tabular-nums text-gray-400">{value == null ? 'Unavailable' : `${formatMoney(value)}${suffix}`}</span>
     </span>
   )
 }
@@ -131,6 +121,11 @@ export function OverviewSummaryCards({
   rollingThreeYearTri,
   irrStatus,
 }: SummaryCardsProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const money = (value: number | null) => value == null ? '—' : formatMoney(value)
+  const signedMoney = (value: number | null) => value == null ? '—' : `${value > 0 ? '+' : ''}${formatMoney(value)}`
+  const points = (value: number | null) => value == null ? '—' : formatPercentage(value, { signed: true, unit: ' pp' })
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable ? underlyingConcentration : heldConcentration
   const primaryLabel = underlyingAvailable ? 'Underlying assets' : 'Held positions · limited view'
@@ -179,15 +174,15 @@ export function OverviewSummaryCards({
             <span className="pointer-events-auto"><ScopedInfoTooltip text="Annualized money-weighted return over the three years ending at the selected period end." scope={{ account: 'filterable', period: 'trailing-3y', effectiveDate: comparison.windows.current.end }} /></span>
           </span>
           <span className={`font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.current)}`}>
-            {irrValueLabel(irrStatus, rollingThreeYearTri.current)}
+            {irrValueLabel(irrStatus, rollingThreeYearTri.current, formatPercentage)}
           </span>
           {irrStatus === 'ready' && rollingThreeYearTri.delta != null && (
             <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.delta)}`}>
-              {rollingThreeYearTri.delta > 0 ? '+' : ''}{rollingThreeYearTri.delta.toFixed(1)} pp
+              {formatPercentage(rollingThreeYearTri.delta, { signed: true, unit: ' pp' })}
             </span>
           )}
           <span className="text-gray-600">
-            Previous <span className="font-medium tabular-nums text-gray-400">{irrStatus === 'ready' && rollingThreeYearTri.previous != null ? fmtPct(rollingThreeYearTri.previous, 2) : '—'}</span>
+            Previous <span className="font-medium tabular-nums text-gray-400">{irrStatus === 'ready' && rollingThreeYearTri.previous != null ? formatPercentage(rollingThreeYearTri.previous, { decimals: 2, signed: true }) : '—'}</span>
           </span>
         </span>
       </CardShell>
@@ -198,7 +193,7 @@ export function OverviewSummaryCards({
           <span>
             <span className="block text-[11px] text-gray-600">Largest asset</span>
             <span className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.risk}`}>
-              {primaryConcentration.current ? `${primaryConcentration.current.topHoldingPct.toFixed(1)}%` : '—'}
+              {primaryConcentration.current ? formatPercentage(primaryConcentration.current.topHoldingPct) : '—'}
             </span>
             <span className={`mt-1 block text-[10px] font-medium tabular-nums ${concentrationTone(primaryConcentration.topHolding.delta)}`}>
               {points(primaryConcentration.topHolding.delta)}
@@ -207,7 +202,7 @@ export function OverviewSummaryCards({
           <span>
             <span className="block text-[11px] text-gray-600">Top five</span>
             <span className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.riskSecondary}`}>
-              {primaryConcentration.current ? `${primaryConcentration.current.topFivePct.toFixed(1)}%` : '—'}
+              {primaryConcentration.current ? formatPercentage(primaryConcentration.current.topFivePct) : '—'}
             </span>
             <span className={`mt-1 block text-[10px] font-medium tabular-nums ${concentrationTone(primaryConcentration.topFive.delta)}`}>
               {points(primaryConcentration.topFive.delta)}
@@ -217,7 +212,7 @@ export function OverviewSummaryCards({
         <span className="mt-3 block space-y-1 border-t border-gray-800 pt-2 text-[11px] text-gray-600">
           {underlyingAvailable ? (
             <span className="block text-gray-600">
-              Held positions · largest {heldConcentration.current ? `${heldConcentration.current.topHoldingPct.toFixed(1)}%` : '—'} · top five {heldConcentration.current ? `${heldConcentration.current.topFivePct.toFixed(1)}%` : '—'}
+              Held positions · largest {heldConcentration.current ? formatPercentage(heldConcentration.current.topHoldingPct) : '—'} · top five {heldConcentration.current ? formatPercentage(heldConcentration.current.topFivePct) : '—'}
             </span>
           ) : (
             <span className="block">Underlying detail unavailable · showing held positions</span>

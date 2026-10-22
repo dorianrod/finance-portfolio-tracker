@@ -8,8 +8,10 @@ import {
 import { useAtomValue } from 'jotai'
 import { Fragment, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/domains/portfolio/types/domain'
-import { fmt, fmtDec, fmtPct, fmtQty } from '@/shared/format/money'
-import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { gainClass } from './positionsTable.logic'
 import { GainCell } from './GainCell.view'
 import { RealizedGainCell, UnrealizedGainCell } from './GainCells.feature'
@@ -72,6 +74,9 @@ export function PositionsTable({
   grouping = 'flat',
   fundStatuses = [],
 }: Props) {
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
   const expanded = useAtomValue(dashboardExpandedPositionRowsAtom)
@@ -160,12 +165,12 @@ export function PositionsTable({
               <span className="flex items-center gap-1">
                 {r.total_value == null
                   ? <span className="text-gray-500">—</span>
-                  : <span className="text-white font-medium">{fmt.format(r.total_value)}</span>}
+                  : <span className="text-white font-medium">{formatMoney(r.total_value)}</span>}
               </span>
               {showQuantity && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  {fmtQty.format(r.quantity!)}
-                  {r.last_price != null && <> · {fmtDec.format(r.last_price)}</>}
+                  {formatNumber(r.quantity!, { maximumFractionDigits: 0 })}
+                  {r.last_price != null && <> · {formatMoney(r.last_price, { style: 'decimal' })}</>}
                 </span>
               )}
             </span>
@@ -174,10 +179,10 @@ export function PositionsTable({
         if (r.kind === 'group' && r.total_invested != null) {
           return (
             <span className="text-xs text-gray-400 flex flex-col gap-0.5">
-              <span className="underline decoration-dashed decoration-gray-500 underline-offset-2">Invested: {fmt.format(r.total_invested)}</span>
+              <span className="underline decoration-dashed decoration-gray-500 underline-offset-2">Invested: {formatMoney(r.total_invested)}</span>
               {r.avg_buy_price != null && (
                 <span className="text-gray-500">
-                  Avg price: {fmtDec.format(r.avg_buy_price)}
+                  Avg price: {formatMoney(r.avg_buy_price, { style: 'decimal' })}
                   <span className="ml-1 opacity-40 text-[9px]">▲</span>
                 </span>
               )}
@@ -187,15 +192,15 @@ export function PositionsTable({
         if (r.kind === 'group' && r.label === 'Deposits / Withdrawals') {
           return (
             <span className="text-xs flex flex-col gap-0.5">
-              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>Deposited: {fmt.format(r.deposit_total ?? 0)}</span>
+              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>Deposited: {formatMoney(r.deposit_total ?? 0)}</span>
               {(r.withdrawal_total ?? 0) > 0 && (
-                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>Withdrawn: {fmt.format(r.withdrawal_total ?? 0)}</span>
+                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>Withdrawn: {formatMoney(r.withdrawal_total ?? 0)}</span>
               )}
             </span>
           )
         }
         if (r.kind === 'operation') {
-          return <span className="text-sm text-gray-300">{fmtDec.format(Math.abs(r.total_amount))}</span>
+          return <span className="text-sm text-gray-300">{formatMoney(Math.abs(r.total_amount), { style: 'decimal' })}</span>
         }
         return null
       },
@@ -286,7 +291,7 @@ export function PositionsTable({
         if (r.kind === 'operation' && r.operation_type === 'BUY') {
           if (r.quantity == null) return null
           return (
-            <span className="text-xs text-gray-400">{+r.quantity.toFixed(2)} × {r.price_per_unit == null ? '—' : fmtDec.format(r.price_per_unit)}</span>
+            <span className="text-xs text-gray-400">{formatNumber(r.quantity, { maximumFractionDigits: 2 })} × {r.price_per_unit == null ? '—' : formatMoney(r.price_per_unit, { style: 'decimal' })}</span>
           )
         }
         return null
@@ -303,7 +308,7 @@ export function PositionsTable({
         if (r.kind === 'group' && r.label === 'Buys / Sells') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-gray-400">Sold: {fmt.format(r.total_sold ?? 0)}</span>
+              <span className="text-gray-400">Sold: {formatMoney(r.total_sold ?? 0)}</span>
               <GainCell value={r.realized_pnl ?? null} />
             </span>
           )
@@ -349,17 +354,17 @@ export function PositionsTable({
           return (
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
-                {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends)}</span>}
-                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest)} int.</span>}
+                {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_dividends)}</span>}
+                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest)} int.</span>}
               </span>
               {divTax != null && divTax > 0 && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{fmt.format(-divTax)} tax on div. ({(r.tax_rate! * 100).toFixed(0)}%)
+                  ~{formatMoney(-divTax)} tax on div. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
               {intTax != null && intTax > 0 && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{fmt.format(-intTax)} tax on int. ({(r.tax_rate! * 100).toFixed(0)}%)
+                  ~{formatMoney(-intTax)} tax on int. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
               {isTaxFreePassiveIncome(r) && (
@@ -371,24 +376,24 @@ export function PositionsTable({
         if (r.kind === 'group' && r.label === 'Dividends') {
           return (
             <span className="text-xs space-x-2">
-              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_dividends ?? 0)}</span>
-              <span className="text-gray-400">({r.dividend_count} payments, ~{fmt.format(r.annualized_dividends ?? 0)}/yr)</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_dividends ?? 0)}</span>
+              <span className="text-gray-400">({r.dividend_count} payments, ~{formatMoney(r.annualized_dividends ?? 0)}/yr)</span>
             </span>
           )
         }
         if (r.kind === 'group' && r.label === 'Interest') {
           return (
             <span className="text-xs space-x-2">
-              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{fmt.format(r.total_interest ?? 0)}</span>
+              <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest ?? 0)}</span>
               <span className="text-gray-400">({r.interest_count} payments)</span>
             </span>
           )
         }
         if (r.kind === 'operation' && r.operation_type === 'DIVIDEND') {
-          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{formatMoney(r.total_amount, { style: 'decimal' })}</span>
         }
         if (r.kind === 'operation' && r.operation_type === 'INTEREST') {
-          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{fmtDec.format(r.total_amount)}</span>
+          return <span className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{formatMoney(r.total_amount, { style: 'decimal' })}</span>
         }
         return null
       },
@@ -401,7 +406,7 @@ export function PositionsTable({
         if (r.kind !== 'position' || r.total_return_pct == null) return null
         return (
           <span className={gainClass(r.total_return_pct)}>
-            {fmtPct(r.total_return_pct, 2)}
+            {formatPercentage(r.total_return_pct, { decimals: 2, signed: true })}
           </span>
         )
       },
@@ -416,21 +421,21 @@ export function PositionsTable({
           <span className="flex flex-col leading-tight">
             {r.xirr != null && (
               <span className={gainClass(r.xirr)}>
-                {fmtPct(r.xirr, 2)}
+                {formatPercentage(r.xirr, { decimals: 2, signed: true })}
                 <span className="ml-0.5 text-xs opacity-60">/yr</span>
               </span>
             )}
             {r.xirr != null && (
               <span className="mt-0.5 text-[10px] text-gray-500">
                 {irrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
-                {r.xirr_rolling_3y == null ? '—' : `${fmtPct(r.xirr_rolling_3y, 2)}/yr`}
+                {r.xirr_rolling_3y == null ? '—' : `${formatPercentage(r.xirr_rolling_3y, { decimals: 2, signed: true })}/yr`}
               </span>
             )}
           </span>
         )
       },
     }),
-  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, underlyingPopover])
+  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, underlyingPopover, formatMoney, formatNumber, formatPercentage])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
   // call, which the React Compiler can never safely memoize — not fixable here.
@@ -558,20 +563,20 @@ export function PositionsTable({
                           {currentType || 'Other'}
                         </td>
                         <td className={`${td} text-gray-200 font-medium`}>
-                          {totals && totals.value > 0 ? fmt.format(totals.value) : ''}
+                          {totals && totals.value > 0 ? formatMoney(totals.value) : ''}
                         </td>
                         <td className={td} />
                         <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
-                          {totals && totals.unrealized !== 0 ? fmt.format(totals.unrealized) : ''}
+                          {totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}
                         </td>
                         <td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>
-                          {totals && totals.realized !== 0 ? fmt.format(totals.realized) : ''}
+                          {totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}
                         </td>
                         <td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>
-                          {totals && totals.totalRealized !== 0 ? fmt.format(totals.totalRealized) : ''}
+                          {totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}
                         </td>
                         <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
-                          {totals && totals.dividends !== 0 ? fmt.format(totals.dividends) : ''}
+                          {totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}
                         </td>
                         <td className={td} />
                         <td className={td} />
@@ -662,9 +667,10 @@ function UnderlyingStatusButton({
   onShow: (button: HTMLButtonElement) => void
   onHide: () => void
 }) {
+  const formatPercentage = useFormatPercentage()
   const category = fundQualityCategory(status.qualityTier)
   const label = FUND_QUALITY_LABELS[category]
-  const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${status.explainedPct.toFixed(1)} % expliqué`
+  const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`
   const tone = {
     reliable: 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500',
     partial: 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500',

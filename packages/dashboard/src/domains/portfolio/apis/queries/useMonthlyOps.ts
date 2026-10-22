@@ -1,7 +1,7 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { useFormatAssetLabel } from '@/domains/portfolio/helpers/formatters/useFormatAssetLabel'
 import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
@@ -16,6 +16,7 @@ export interface MonthlyOp {
 export type MonthlyOpsMap = Map<string, MonthlyOp[]>
 
 export function useMonthlyOps() {
+  const formatAssetLabel = useFormatAssetLabel()
   return useQuery<MonthlyOpsMap>({
     queryKey: portfolioQueryKeys.data('monthly-operations'),
     queryFn: async () => {
@@ -32,7 +33,7 @@ export function useMonthlyOps() {
           account: row.account,
           operation_type: row.operation_type,
           total_amount: amount,
-          label: assetDisplayLabel(row),
+          label: formatAssetLabel(row),
         })
       }
       return map

@@ -16,7 +16,7 @@ import {
 } from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
-import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
@@ -58,6 +58,7 @@ interface BuildDataQualityViewModelInput {
   fundSnapshots: FundSnapshot[]
   fundUnresolved: FundUnresolved[]
   rawData: RawIsinData
+  formatPercentage: (value: number) => string
 }
 
 function buildAffectedAssets(
@@ -104,6 +105,7 @@ export function buildDataQualityViewModel({
   fundSnapshots,
   fundUnresolved,
   rawData,
+  formatPercentage,
 }: BuildDataQualityViewModelInput) {
   const coverage = rawData.loading
     ? []
@@ -174,7 +176,7 @@ export function buildDataQualityViewModel({
     pipelinePriority = 700 + warningCount
   }
 
-  let classificationMetric = `${formatPercentage(classificationGap)}%`
+  let classificationMetric = formatPercentage(classificationGap)
   let classificationMetricLabel = 'unmapped'
   let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap) ? 'warning' : 'healthy'
   let classificationPriority = hasMaterialQualityGap(classificationGap) ? 500 + classificationGap : 0
@@ -195,7 +197,7 @@ export function buildDataQualityViewModel({
   let lookThroughTone: QualityTone = 'unavailable'
   let lookThroughPriority = -1
   if (hasLookThroughScope) {
-    lookThroughMetric = `${formatPercentage(unresolvedPct)}%`
+    lookThroughMetric = formatPercentage(unresolvedPct)
     lookThroughMetricLabel = 'unresolved'
     if (fundErrorCount > 0) {
       lookThroughTone = 'critical'

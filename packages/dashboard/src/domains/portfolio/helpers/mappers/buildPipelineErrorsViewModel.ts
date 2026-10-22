@@ -1,5 +1,5 @@
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import type { AssetLabelSource } from '@/domains/portfolio/helpers/formatters/useFormatAssetLabel'
 
 export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
   unresolved_ticker: 'Unresolved ticker',
@@ -24,12 +24,14 @@ export function buildPipelineErrorsViewModel({
   filterType,
   sortColumn,
   sortDirection,
+  formatAssetLabel,
 }: {
   errors: ErrorRow[]
   filterLevel: 'all' | 'error' | 'warning'
   filterType: string
   sortColumn: PipelineErrorSortColumn
   sortDirection: 'asc' | 'desc'
+  formatAssetLabel: (source: AssetLabelSource, fallback?: string) => string
 }) {
   const types = ['all', ...new Set(errors.map((error) => error.type))].toSorted()
   const filtered = errors.filter((error) => (
@@ -43,7 +45,7 @@ export function buildPipelineErrorsViewModel({
         case 'type': return PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type
         case 'source': return error.source
         case 'date': return error.date
-        case 'name': return assetDisplayLabel(error)
+        case 'name': return formatAssetLabel(error)
         case 'isin': return error.isin
         case 'message': return error.message
       }

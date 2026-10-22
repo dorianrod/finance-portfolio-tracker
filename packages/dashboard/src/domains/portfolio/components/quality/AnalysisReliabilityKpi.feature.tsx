@@ -1,6 +1,6 @@
 import { useCallback, useId } from "react";
-import { fmtFull } from "@/shared/format/money";
-import { formatPercentage } from "@/shared/format/percentage";
+import { useFormatMoney } from "@/shared/helpers/formatters/useFormatMoney";
+import { useFormatPercentage } from "@/shared/helpers/formatters/useFormatPercentage";
 import {
   pipelineReliabilityTone,
   pipelineStatusLabel,
@@ -189,13 +189,15 @@ export function AnalysisReliabilityKpi({
   qualityTheme: QualityThemeId;
   scope: FilterScopeSpec;
 }) {
+  const formatMoney = useFormatMoney();
+  const formatPercentage = useFormatPercentage();
   const safePercentage =
     percentage == null || !Number.isFinite(percentage)
       ? null
       : Math.max(0, Math.min(100, percentage));
   const styles = RELIABILITY_TONES[tone];
   const percentageLabel =
-    safePercentage == null ? "—" : `${formatPercentage(safePercentage)}%`;
+    safePercentage == null ? "—" : formatPercentage(safePercentage);
 
   return (
     <CompactDataQualityKpi
@@ -206,7 +208,7 @@ export function AnalysisReliabilityKpi({
         {
           label: metricLabel,
           value: percentageLabel,
-          secondary: `${fmtFull(amount)} analyzed`,
+          secondary: `${formatMoney(amount, { style: "full" })} analyzed`,
           tone,
         },
       ]}
@@ -233,6 +235,8 @@ export function CombinedAnalysisReliabilityKpi({
   qualityTheme: QualityThemeId;
   scope: FilterScopeSpec;
 }) {
+  const formatMoney = useFormatMoney();
+  const formatPercentage = useFormatPercentage();
   const styles = RELIABILITY_TONES[tone];
   const rows: QualityTooltipRow[] = [
     ...(statusMetric
@@ -249,8 +253,8 @@ export function CombinedAnalysisReliabilityKpi({
       value:
         metric.percentage == null || !Number.isFinite(metric.percentage)
           ? "—"
-          : `${formatPercentage(Math.max(0, Math.min(100, metric.percentage)))}%`,
-      secondary: `${fmtFull(metric.amount)} analyzed`,
+          : formatPercentage(Math.max(0, Math.min(100, metric.percentage))),
+      secondary: `${formatMoney(metric.amount, { style: "full" })} analyzed`,
       tone: metric.tone,
     })),
   ];

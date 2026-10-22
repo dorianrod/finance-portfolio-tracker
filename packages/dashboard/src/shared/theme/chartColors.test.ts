@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { catColor, typeColor } from './colors'
+import { catColor, typeColor } from './chartColors'
 
 describe('catColor', () => {
   it('assigns fixed colors to nc, Not concerned, and autre/others categories', () => {
@@ -33,6 +33,6 @@ describe('typeColor', () => {
   it('falls back to a rotating fallback palette by index when the category is unknown', () => {
     expect(typeColor('Unknown', 0, {})).toBe('#ec4899')
     expect(typeColor('Unknown', 1, {})).toBe('#14b8a6')
-    expect(typeColor('Unknown', 4, {})).toBe('#ec4899') // wraps around (4 % 4 === 0)
+    expect(typeColor('Unknown', 4, {})).toBe('#ec4899')
   })
 })

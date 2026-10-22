@@ -1,19 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatPercentage, partitionPercentages } from './percentage'
-
-describe('formatPercentage', () => {
-  it('always displays one decimal place', () => {
-    expect(formatPercentage(0)).toBe('0.0')
-    expect(formatPercentage(0.04)).toBe('0.0')
-    expect(formatPercentage(12.36)).toBe('12.4')
-    expect(formatPercentage(100)).toBe('100.0')
-  })
-
-  it('falls back to zero for non-finite values', () => {
-    expect(formatPercentage(Number.NaN)).toBe('0.0')
-    expect(formatPercentage(Number.POSITIVE_INFINITY)).toBe('0.0')
-  })
-})
+import { partitionPercentages } from './partitionPercentages'
 
 describe('partitionPercentages', () => {
   it('returns exclusive one-decimal shares that add up to exactly 100%', () => {

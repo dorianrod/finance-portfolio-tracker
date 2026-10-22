@@ -1,7 +1,8 @@
 import { useId, useState } from 'react'
-import { fmtFull } from '@/shared/format/money'
-import { formatPercentage, partitionPercentages } from '@/shared/format/percentage'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { accountLabel } from '@/domains/portfolio/components/filters/filterBar.logic'
 import { QualityIndicatorCard } from '@/domains/portfolio/components/quality/QualityIndicatorCard.view'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
@@ -20,6 +21,8 @@ interface AllocationCoverageCardProps {
 }
 
 export function AllocationCoverageCard({ coverage, dimensionCoverage }: AllocationCoverageCardProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const accountLabels = useAccountFilterLabels()
   const [expandedDetail, setExpandedDetail] = useState<'accounts' | 'dimensions' | null>(null)
   const accountDetailsId = useId()
@@ -88,10 +91,10 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage }: Allocati
                     <div className="mb-1.5 flex items-baseline justify-between gap-3">
                       <span className="truncate text-xs text-gray-400" title={label}>{label}</span>
                       <span className="shrink-0 text-[11px] tabular-nums text-gray-600">
-                        {c.allocated + c.unallocated > 0 ? `${fmtFull(c.allocated)} · ${formatPercentage(allocatedPct)}%` : `${fmtFull(c.notApplicable)} · N/A`}
+                        {c.allocated + c.unallocated > 0 ? `${formatMoney(c.allocated, { style: 'full' })} · ${formatPercentage(allocatedPct)}` : `${formatMoney(c.notApplicable, { style: 'full' })} · N/A`}
                       </span>
                     </div>
-                    <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${fmtFull(c.allocated)} mapped / ${fmtFull(c.unallocated)} unmapped / ${fmtFull(c.notApplicable)} not applicable`}>
+                    <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${formatMoney(c.allocated, { style: 'full' })} mapped / ${formatMoney(c.unallocated, { style: 'full' })} unmapped / ${formatMoney(c.notApplicable, { style: 'full' })} not applicable`}>
                       {c.allocated > 0 && <div style={{ width: `${allocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />}
                       {c.unallocated > 0 && <div style={{ width: `${unallocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }} />}
                       {c.notApplicable > 0 && <div className="bg-gray-500" style={{ width: `${notApplicablePct}%` }} />}

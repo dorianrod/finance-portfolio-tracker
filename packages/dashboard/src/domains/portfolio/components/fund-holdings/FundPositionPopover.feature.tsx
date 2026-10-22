@@ -9,7 +9,9 @@ import {
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { computePopoverPos } from '@/domains/portfolio/components/allocation-charts/allocationCharts.logic'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
-import { fmtFull } from '@/shared/format/money'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
 import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
 import { holdingsForPosition } from './fundHoldings.logic'
@@ -32,6 +34,9 @@ export function FundPositionPopover({
   onMouseEnter: () => void
   onMouseLeave: () => void
 }) {
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
   const { openCompleteHoldings } = useDashboardNavigation()
   const filters = useAtomValue(dashboardFiltersAtom)
   const { data: fundData } = useFundHoldingsData()
@@ -67,7 +72,7 @@ export function FundPositionPopover({
 
       <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 border-b border-gray-800 pb-3 text-xs text-gray-500">
         <span>{status.sourceName}{status.proxyName ? ` · exact proxy ${status.proxyName}` : ''}</span>
-        <span>Holdings {status.holdingsDate || 'unknown'} · {status.holdingCount.toLocaleString()} rows</span>
+        <span>Holdings {status.holdingsDate || 'unknown'} · {formatNumber(status.holdingCount)} rows</span>
       </div>
 
       {rows.length > 0 ? (
@@ -75,8 +80,8 @@ export function FundPositionPopover({
           {rows.map((holding) => (
             <div key={`${holding.holdingId}-${holding.holdingName}`} className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-gray-800/70 py-1.5 text-xs">
               <span className="truncate text-gray-300" title={holding.holdingName}>{holding.holdingName}</span>
-              <span className="text-right tabular-nums text-gray-500">{(holding.weight * 100).toFixed(2)}%</span>
-              <span className="text-right tabular-nums text-gray-400">{fmtFull(positionValue * holding.weight)}</span>
+              <span className="text-right tabular-nums text-gray-500">{formatPercentage(holding.weight * 100, { decimals: 2 })}</span>
+              <span className="text-right tabular-nums text-gray-400">{formatMoney(positionValue * holding.weight, { style: 'full' })}</span>
             </div>
           ))}
         </div>
@@ -85,8 +90,8 @@ export function FundPositionPopover({
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span>{status.explainedPct.toFixed(1)}% explained ({fmtFull(status.explainedValue)})</span>
-        <span>{status.residualPct.toFixed(1)}% undisclosed ({fmtFull(status.residualValue)})</span>
+        <span>{formatPercentage(status.explainedPct)} explained ({formatMoney(status.explainedValue, { style: 'full' })})</span>
+        <span>{formatPercentage(status.residualPct)} undisclosed ({formatMoney(status.residualValue, { style: 'full' })})</span>
         {status.issues && <span className="basis-full text-amber-300">{status.issues}</span>}
       </div>
     </div>,

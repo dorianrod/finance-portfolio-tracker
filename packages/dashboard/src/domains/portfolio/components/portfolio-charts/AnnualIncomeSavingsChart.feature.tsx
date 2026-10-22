@@ -10,9 +10,10 @@ import {
   YAxis,
 } from 'recharts'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
-import { fmtEur, fmtFull } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
@@ -20,6 +21,8 @@ function IncomeSavingsTooltip({ active, payload }: {
   active?: boolean
   payload?: Array<{ payload?: AnnualIncomeSavingsPoint }>
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const point = payload?.[0]?.payload
   if (!active || !point) return null
   const suffix = point.incomeStatus === 'forecast' ? ' · forecast' : ''
@@ -31,17 +34,17 @@ function IncomeSavingsTooltip({ active, payload }: {
       <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>
         {point.year}{suffix}
       </div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {fmtFull(point.netSalary)}</div>
-      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {fmtFull(point.otherIncome)}</div>
-      <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>Total net income: {fmtFull(point.totalIncome)}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {formatMoney(point.netSalary, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {formatMoney(point.otherIncome, { style: 'full' })}</div>
+      <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>Total net income: {formatMoney(point.totalIncome, { style: 'full' })}</div>
       <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}>
-        Net contributions: {point.placedSavings == null ? '—' : fmtFull(point.placedSavings)}{savingsSuffix}
+        Net contributions: {point.placedSavings == null ? '—' : formatMoney(point.placedSavings, { style: 'full' })}{savingsSuffix}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate, marginTop: 4 }}>
-        Placement rate: {point.placementRate == null ? 'Not comparable' : `${point.placementRate.toFixed(1)}%`}
+        Placement rate: {point.placementRate == null ? 'Not comparable' : formatPercentage(point.placementRate)}
       </div>
       <div style={{ color: 'var(--tooltip-dim)', marginTop: 7, borderTop: '1px solid var(--tooltip-border)', paddingTop: 7 }}>
-        Unplaced income proxy: {point.unplacedIncomeProxy == null ? '—' : fmtFull(point.unplacedIncomeProxy)}
+        Unplaced income proxy: {point.unplacedIncomeProxy == null ? '—' : formatMoney(point.unplacedIncomeProxy, { style: 'full' })}
       </div>
     </TooltipBox>
   )
@@ -52,6 +55,7 @@ function yearOpacity(point: AnnualIncomeSavingsPoint): number {
 }
 
 export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
+  const formatMoney = useFormatMoney()
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start gap-3">
@@ -64,7 +68,7 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
         <ComposedChart data={data} margin={{ top: 8, right: 48, left: 0, bottom: 0 }} barGap={3}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis dataKey="year" tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis yAxisId="amount" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <YAxis yAxisId="amount" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <YAxis yAxisId="rate" orientation="right" tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
           <Tooltip content={<IncomeSavingsTooltip />} />
           <Bar yAxisId="amount" dataKey="netSalary" stackId="income" fill={SEMANTIC_COLORS.costBasis} radius={[0, 0, 3, 3]}>

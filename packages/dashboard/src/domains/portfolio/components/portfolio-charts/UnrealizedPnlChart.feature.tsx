@@ -1,8 +1,10 @@
 import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
-import { fmtEur, fmtFull, fmtPct, shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
@@ -17,6 +19,9 @@ interface UnrealizedPnlTooltipProps {
 }
 
 function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const point = payload[0]?.payload
   if (!point) return null
@@ -24,25 +29,21 @@ function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
   const valueColor = point.unrealized_gain >= 0
     ? SEMANTIC_COLORS.performancePositiveText
     : SEMANTIC_COLORS.performanceNegativeText
-  const date = new Date(`${point.date}T00:00:00`).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
+  const date = formatDate(`${point.date}T00:00:00`, { style: 'longDayMonthYear' })
 
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{date}</div>
       <div style={{ color: valueColor, fontWeight: 600 }}>
-        Gross unrealized P&amp;L: {fmtFull(point.unrealized_gain)}
+        Gross unrealized P&amp;L: {formatMoney(point.unrealized_gain, { style: 'full' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>
-        P&amp;L / total capital placed: {point.unrealized_gain_pct == null ? '—' : fmtPct(point.unrealized_gain_pct)}
+        P&amp;L / total capital placed: {point.unrealized_gain_pct == null ? '—' : formatPercentage(point.unrealized_gain_pct, { signed: true })}
       </div>
-      <div style={{ color: CHART_THEME.label, marginTop: 4 }}>Cost basis: {fmtFull(point.total_cost_basis)}</div>
+      <div style={{ color: CHART_THEME.label, marginTop: 4 }}>Cost basis: {formatMoney(point.total_cost_basis, { style: 'full' })}</div>
       {point.snapshot_change != null && (
         <div style={{ borderTop: '1px solid var(--tooltip-border)', color: CHART_THEME.label, marginTop: 6, paddingTop: 6 }}>
-          Change since previous snapshot: {fmtFull(point.snapshot_change)}
+          Change since previous snapshot: {formatMoney(point.snapshot_change, { style: 'full' })}
         </div>
       )}
     </TooltipBox>
@@ -50,6 +51,9 @@ function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
 }
 
 export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint[] }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const data: UnrealizedPnlPoint[] = history.map((point, index) => ({
     ...point,
     unrealized_gain_pct: point.total_cost_basis > 0
@@ -71,9 +75,9 @@ export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart data={data} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis yAxisId="amount" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
-          <YAxis yAxisId="pct" orientation="right" tickFormatter={(value: number) => `${Math.round(value)}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={42} />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis yAxisId="amount" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <YAxis yAxisId="pct" orientation="right" tickFormatter={(value: number) => formatPercentage(value, { decimals: 0 })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={42} />
           <ReferenceLine yAxisId="amount" y={0} stroke={CHART_THEME.zeroLine} />
           <Tooltip content={<UnrealizedPnlTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
           <Bar yAxisId="amount" dataKey="unrealized_gain" maxBarSize={24} radius={3} isAnimationActive={false}>

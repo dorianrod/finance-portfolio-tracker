@@ -8,7 +8,6 @@ import { useAccountTypeHistory } from '@/domains/portfolio/apis/queries/useAccou
 import {
   computeTopPerformers,
   computeTrailing12mSavings,
-  buildAccountTypeLabels,
   filterMonthlyOpsByAccounts,
 } from './portfolioCharts.logic'
 import { AccountTypeBreakdownChart } from './AccountTypeBreakdownChart.feature'
@@ -18,6 +17,8 @@ import { AccountTypeHistoryChart } from './AccountTypeHistoryChart.feature'
 import { EvolutionChart } from './EvolutionChart.feature'
 import { TriChart } from './TriChart.feature'
 import { TopPerformersChart } from './TopPerformersChart.feature'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 interface Props {
   history: PortfolioHistoryPoint[]
@@ -29,6 +30,8 @@ interface Props {
 }
 
 export function PortfolioCharts({ history, accounts, accountTypeData, positions, dateFrom, dateTo }: Props) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const { data: allOps = new Map() } = useMonthlyOps()
   const ops = filterMonthlyOpsByAccounts(allOps, accounts)
 
@@ -38,7 +41,10 @@ export function PortfolioCharts({ history, accounts, accountTypeData, positions,
   const { data: passiveIncome = [] } = usePassiveIncome(accounts, dateFrom, dateTo)
   const { data: typeHistory, accountTypes, typeCategories } = useAccountTypeHistory(accounts)
 
-  const accountTypeWithLabels = buildAccountTypeLabels(accountTypeData)
+  const accountTypeWithLabels = (accountTypeData ?? []).map((point) => {
+    const percentage = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
+    return { ...point, _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(percentage, { decimals: 0, signed: true })}` }
+  })
   const topPerformers = useMemo(() => computeTopPerformers(positions), [positions])
   const topPerformersHeight = Math.max(240, topPerformers.length * 26)
 

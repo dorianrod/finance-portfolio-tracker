@@ -13,7 +13,7 @@ import {
   type AnalysisReliabilityTone,
 } from '@/domains/portfolio/helpers/quality/analysisReliability'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
-import { partitionPercentages } from '@/shared/format/percentage'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import type { QualityThemeId } from '@/domains/portfolio/types/quality'
 
 interface BuildDashboardQualitySummaryInput {

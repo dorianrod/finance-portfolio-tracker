@@ -1,8 +1,8 @@
 import { useId, useState } from 'react'
 import type { FundCoverageReport } from '@/domains/portfolio/apis/queries/useFundHoldings'
-import { fmtFull } from '@/shared/format/money'
-import { formatPercentage } from '@/shared/format/percentage'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { QualityIndicatorCard } from '@/domains/portfolio/components/quality/QualityIndicatorCard.view'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 import { computeFundExposurePercentages } from './fundQualityScope.logic'
@@ -23,6 +23,7 @@ export function LookThroughCoverageSummary({
   variant = 'detailed',
   notApplicableValue = 0,
 }: LookThroughCoverageSummaryProps) {
+  const formatMoney = useFormatMoney()
   if (!report) return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-500">
       No look-through quality report. Run the portfolio pipeline to generate it.
@@ -61,7 +62,7 @@ export function LookThroughCoverageSummary({
         label: 'Identified exposure',
         amount: identifiedValue,
         percentage: identifiedPercentage,
-        detail: `${fmtFull(report.directIdentifiedValue)} direct · ${fmtFull(report.decomposedValue)} decomposed funds`,
+        detail: `${formatMoney(report.directIdentifiedValue, { style: 'full' })} direct · ${formatMoney(report.decomposedValue, { style: 'full' })} decomposed funds`,
         tooltip: 'Share of the total portfolio whose economic exposure is visible, either directly or through decomposed fund holdings.',
         tone: 'coverage' as const,
       },
@@ -77,7 +78,7 @@ export function LookThroughCoverageSummary({
         label: 'Unresolved exposure',
         amount: unresolvedValue,
         percentage: unresolvedPercentage,
-        detail: `${fmtFull(report.undisclosedFundValue)} fund remainder · ${fmtFull(report.opaqueValue)} without ID`,
+        detail: `${formatMoney(report.undisclosedFundValue, { style: 'full' })} fund remainder · ${formatMoney(report.opaqueValue, { style: 'full' })} without ID`,
         tooltip: 'Complement of identified exposure: undisclosed fund holdings plus direct positions without an ISIN or ticker.',
         tone: hasMaterialQualityGap(unresolvedPercentage) ? 'warning' as const : 'coverage' as const,
       },
@@ -320,6 +321,8 @@ interface BreakdownGroupProps {
 }
 
 function BreakdownGroupContent({ title, note, badge, rows, className }: BreakdownGroupProps & { className: string }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   return (
     <div className={className}>
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -334,7 +337,7 @@ function BreakdownGroupContent({ title, note, badge, rows, className }: Breakdow
           <div key={row.label}>
             <div className="mb-1 flex items-baseline justify-between gap-3 text-[11px]">
               <span className="truncate text-gray-500">{row.label}</span>
-              <span className="shrink-0 tabular-nums text-gray-500">{fmtFull(row.amount)} · {formatPercentage(row.percentage)}%</span>
+              <span className="shrink-0 tabular-nums text-gray-500">{formatMoney(row.amount, { style: 'full' })} · {formatPercentage(row.percentage)}</span>
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-gray-800">
               <div className="h-full rounded-full" style={{ width: `${Math.min(100, Math.max(0, row.percentage))}%`, backgroundColor: row.color }} />

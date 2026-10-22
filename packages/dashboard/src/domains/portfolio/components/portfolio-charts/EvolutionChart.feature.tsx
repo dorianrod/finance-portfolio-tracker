@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { fmtEur, shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { EvolutionTooltip } from './portfolioCharts.tooltips.view'
 import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioComposition } from './chartScale.logic'
@@ -14,6 +15,8 @@ export function EvolutionChart({ history, title = 'Portfolio value over time', h
   title?: string
   height?: number
 }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   const [scale, setScale] = useState<ChartScaleMode>('value')
   const percentageMode = scale === 'percentage'
   const chartData = useMemo(() => withPortfolioComposition(history), [history])
@@ -37,9 +40,9 @@ export function EvolutionChart({ history, title = 'Portfolio value over time', h
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
           <YAxis
-            tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : fmtEur}
+            tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : (value) => formatMoney(value, { style: 'compact' })}
             domain={percentageMode ? ['auto', 'auto'] : undefined}
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}

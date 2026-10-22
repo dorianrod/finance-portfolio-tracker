@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { useFormatAssetLabel } from '@/domains/portfolio/helpers/formatters/useFormatAssetLabel'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
 import {
@@ -26,21 +27,21 @@ function SortIcon({ col, sortCol, dir }: { col: PipelineErrorSortColumn; sortCol
   return <span className="ml-1 text-gray-400">{dir === 'asc' ? '↑' : '↓'}</span>
 }
 
-function formatManualPrice(row: ManualPriceOverride): string {
+function formatManualPrice(row: ManualPriceOverride, formatMoney: ReturnType<typeof useFormatMoney>): string {
   const price = Number(row.price)
   if (!Number.isFinite(price)) return `${row.price} ${row.currency}`.trim()
   try {
-    return new Intl.NumberFormat('en-GB', {
-      style: 'currency',
+    return formatMoney(price, {
       currency: row.currency || 'EUR',
       maximumFractionDigits: 4,
-    }).format(price)
+    })
   } catch {
     return `${row.price} ${row.currency}`.trim()
   }
 }
 
 export function ErrorsTab({ errors }: Props) {
+  const formatAssetLabel = useFormatAssetLabel()
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [sortCol, setSortCol] = useState<PipelineErrorSortColumn>('date')
@@ -56,10 +57,11 @@ export function ErrorsTab({ errors }: Props) {
       errors,
       filterLevel,
       filterType,
+      formatAssetLabel,
       sortColumn: sortCol,
       sortDirection: sortDir,
     }),
-    [errors, filterLevel, filterType, sortCol, sortDir],
+    [errors, filterLevel, filterType, formatAssetLabel, sortCol, sortDir],
   )
 
   return (
@@ -180,8 +182,8 @@ export function ErrorsTab({ errors }: Props) {
                   <td className="px-3 py-2 text-gray-400 font-mono">
                     {e.date || '—'}
                   </td>
-                  <td className="px-3 py-2 text-gray-300 truncate max-w-[7rem]" title={assetDisplayLabel(e)}>
-                    {assetDisplayLabel(e, '—')}
+                  <td className="px-3 py-2 text-gray-300 truncate max-w-[7rem]" title={formatAssetLabel(e)}>
+                    {formatAssetLabel(e, '—')}
                   </td>
                   <td className="px-3 py-2 text-gray-500 font-mono">
                     {e.isin || '—'}
@@ -206,6 +208,7 @@ export function ErrorsTab({ errors }: Props) {
 }
 
 export function ManualPriceOverridesTable({ manualPriceOverrides }: ManualPriceOverridesProps) {
+  const formatMoney = useFormatMoney()
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-800">
       <table className="w-full text-xs">
@@ -240,7 +243,7 @@ export function ManualPriceOverridesTable({ manualPriceOverrides }: ManualPriceO
                 </td>
                 <td className="px-3 py-2 text-gray-300">{row.name || '—'}</td>
                 <td className="px-3 py-2 text-gray-500 font-mono">{row.isin || row.ticker || '—'}</td>
-                <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row)}</td>
+                <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row, formatMoney)}</td>
                 <td className="px-3 py-2 text-gray-400 font-mono">{row.date_from || '—'}</td>
                 <td className="px-3 py-2 text-gray-400 font-mono">{row.date_to || '—'}</td>
                 <td className="px-3 py-2 text-gray-500 font-mono">{row.source_file}</td>

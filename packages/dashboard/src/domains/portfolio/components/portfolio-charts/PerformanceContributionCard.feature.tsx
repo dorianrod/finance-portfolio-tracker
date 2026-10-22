@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import type { IrrStatus } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
-import { fmtFull, fmtPct } from '@/shared/format/money'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { useFormatAssetLabel } from '@/domains/portfolio/helpers/formatters/useFormatAssetLabel'
 import type { AssetIrrItem, AssetIrrSummary } from '@/domains/portfolio/apis/queries/useAssetIrr'
 import type {
   ContributionHorizon,
@@ -28,35 +30,26 @@ interface Props {
 
 type PerformanceView = 'contribution' | 'irr'
 
-function formatDateRange(summary: { startDate: string | null; endDate: string | null }): string {
+function formatDateRange(summary: { startDate: string | null; endDate: string | null }, formatDate: ReturnType<typeof useFormatDate>): string {
   if (!summary.startDate || !summary.endDate) return ''
-  const format = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', {
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  const format = (date: string) => formatDate(`${date}T00:00:00Z`, { style: 'shortMonthYear', timeZone: 'UTC' })
   return `${format(summary.startDate)} – ${format(summary.endDate)}`
 }
 
-function formatAsOfDate(date: string | undefined): string {
+function formatAsOfDate(date: string | undefined, formatDate: ReturnType<typeof useFormatDate>): string {
   if (!date) return 'Not available'
-  return new Date(`${date.slice(0, 10)}T00:00:00Z`).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
+  return formatDate(`${date.slice(0, 10)}T00:00:00Z`, { style: 'dayMonthYear', timeZone: 'UTC' })
 }
 
-function formatExactDateRange(summary: { startDate: string | null; endDate: string | null }): string {
+function formatExactDateRange(summary: { startDate: string | null; endDate: string | null }, formatDate: ReturnType<typeof useFormatDate>): string {
   if (!summary.startDate || !summary.endDate) return 'Not available'
-  return `${formatAsOfDate(summary.startDate)} – ${formatAsOfDate(summary.endDate)}`
+  return `${formatAsOfDate(summary.startDate, formatDate)} – ${formatAsOfDate(summary.endDate, formatDate)}`
 }
 
-function irrLabel(value: number | null, status: IrrStatus): string {
+function irrLabel(value: number | null, status: IrrStatus, formatPercentage: ReturnType<typeof useFormatPercentage>): string {
   if (status === 'loading') return 'Calculating…'
   if (status === 'error') return 'Unavailable'
-  return value === null ? 'Not available' : fmtPct(value, 2)
+  return value === null ? 'Not available' : formatPercentage(value, { decimals: 2, signed: true })
 }
 
 function MetricLabel({ label, tooltip, scope }: { label: string; tooltip: string; scope: FilterScopeSpec }) {
@@ -79,6 +72,8 @@ function ContributionList({
   positive: boolean
   scope: FilterScopeSpec
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
 
   return (
@@ -112,8 +107,8 @@ function ContributionList({
                   </div>
                 </div>
                 <div className="shrink-0 text-right tabular-nums">
-                  <div className={`font-semibold ${tone}`}>{fmtFull(item.amount)}</div>
-                  <div className="text-[11px] text-gray-500">{item.share.toFixed(1)}%</div>
+                  <div className={`font-semibold ${tone}`}>{formatMoney(item.amount, { style: 'full' })}</div>
+                  <div className="text-[11px] text-gray-500">{formatPercentage(item.share)}</div>
                 </div>
               </div>
               <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
@@ -139,6 +134,9 @@ function IrrList({
   items: AssetIrrItem[]
   positive: boolean
 }) {
+  const formatAssetLabel = useFormatAssetLabel()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
   const strongestIrr = Math.max(0, ...items.map((item) => Math.abs(item.irr)))
 
@@ -158,14 +156,14 @@ function IrrList({
             <li key={item.key}>
               <div className="flex items-start justify-between gap-4 text-sm">
                 <div className="min-w-0">
-                  <div className="truncate font-medium text-gray-300" title={item.name}>{assetDisplayLabel(item, item.label)}</div>
+                  <div className="truncate font-medium text-gray-300" title={item.name}>{formatAssetLabel(item, item.label)}</div>
                   <div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>
                     {item.account_types.join(', ') || item.accounts.join(', ')}
                   </div>
                 </div>
                 <div className="shrink-0 text-right tabular-nums">
-                  <div className={`font-semibold ${tone}`}>{fmtPct(item.irr, 2)}</div>
-                  <div className="text-[11px] text-gray-500">Value {fmtFull(item.value)}</div>
+                  <div className={`font-semibold ${tone}`}>{formatPercentage(item.irr, { decimals: 2, signed: true })}</div>
+                  <div className="text-[11px] text-gray-500">Value {formatMoney(item.value, { style: 'full' })}</div>
                 </div>
               </div>
               <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
@@ -183,6 +181,7 @@ function IrrList({
 }
 
 export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; status: IrrStatus }) {
+  const formatDate = useFormatDate()
   if (status === 'loading') {
     return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">Calculating asset IRR…</div>
   }
@@ -206,7 +205,7 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
         </div>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
-          <div className="mt-1 text-sm font-medium text-gray-400">{formatExactDateRange({ startDate: summary.start_date, endDate: summary.end_date })}</div>
+          <div className="mt-1 text-sm font-medium text-gray-400">{formatExactDateRange({ startDate: summary.start_date, endDate: summary.end_date }, formatDate)}</div>
         </div>
       </div>
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -228,6 +227,9 @@ export function PerformanceContributionCard({
   trailingThreeYearIrr,
   irrStatus,
 }: Props) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const [view, setView] = useState<PerformanceView>('contribution')
   const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
   const { activeHorizon, irr, summary, threeYearUnavailable } = resolveContributionHorizon({
@@ -292,7 +294,7 @@ export function PerformanceContributionCard({
                 // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
                 scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
-              <div className="mt-1 text-lg font-semibold tabular-nums text-teal-400">{irrLabel(irr, irrStatus)}</div>
+              <div className="mt-1 text-lg font-semibold tabular-nums text-teal-400">{irrLabel(irr, irrStatus, formatPercentage)}</div>
             </div>
             <div>
               <MetricLabel
@@ -301,12 +303,12 @@ export function PerformanceContributionCard({
                 // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
                 scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
-              <div className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}>{fmtFull(summary.netContribution)}</div>
+              <div className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}>{formatMoney(summary.netContribution, { style: 'full' })}</div>
             </div>
             <div>
               <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
               <div className="mt-2 flex items-center justify-between gap-3">
-                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatDateRange(summary)}</div>
+                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatDateRange(summary, formatDate)}</div>
                 <div className="inline-flex shrink-0 rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label="Contribution horizon">
                   <button
                     type="button"

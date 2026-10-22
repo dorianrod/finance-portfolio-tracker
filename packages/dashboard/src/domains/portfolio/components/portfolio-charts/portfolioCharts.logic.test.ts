@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest'
 import {
-  buildAccountTypeLabels,
   buildCumulativeConcentration,
   buildTriChartData,
   buildCumulativeWealthDrivers,
@@ -155,23 +154,6 @@ describe('computeTrailing12mSavings', () => {
     expect(last12).toHaveLength(2)
     // Sums all available history rather than a strict 12-month window.
     expect(last12[1].rolling_12m).toBe(300)
-  })
-})
-
-describe('buildAccountTypeLabels', () => {
-  it('appends a formatted "value +pct%" label to each account type point', () => {
-    const result = buildAccountTypeLabels([
-      { account_type: 'PEA', total_cost_basis: 1000, unrealized_gain: 200, total_value: 1200 },
-      { account_type: 'Livret', total_cost_basis: 0, unrealized_gain: 0, total_value: 0 },
-    ])
-    expect(result).toEqual([
-      { account_type: 'PEA', total_cost_basis: 1000, unrealized_gain: 200, total_value: 1200, _label: '1k€ +20%' },
-      { account_type: 'Livret', total_cost_basis: 0, unrealized_gain: 0, total_value: 0, _label: '0€ +0%' },
-    ])
-  })
-
-  it('returns an empty list when no data is provided', () => {
-    expect(buildAccountTypeLabels(undefined)).toEqual([])
   })
 })
 

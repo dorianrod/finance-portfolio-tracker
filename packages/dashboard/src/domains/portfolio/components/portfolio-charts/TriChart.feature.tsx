@@ -1,7 +1,8 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
-import { shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TriTooltip } from './portfolioCharts.tooltips.view'
 import { buildTriChartData } from './portfolioCharts.logic'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
@@ -11,6 +12,8 @@ import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInf
 // series start once their full trailing window is available; dotted leading
 // segments extend their first values back to the beginning of the history.
 export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
+  const formatDate = useFormatDate()
+  const formatPercentage = useFormatPercentage()
   const chartData = buildTriChartData(history)
   if (chartData.length === 0) return null
 
@@ -20,8 +23,8 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis tickFormatter={(v: number) => `${Math.round(v)}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis tickFormatter={(value: number) => formatPercentage(value, { decimals: 0 })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={52} />
           <ReferenceLine y={0} stroke={CHART_THEME.zeroLine} strokeDasharray="3 3" />
           <Tooltip content={<TriTooltip />} />
           <Line type="linear" dataKey="tri_rolling_1y_backfill" stroke={SEMANTIC_COLORS.totalChange} strokeWidth={2} strokeDasharray="5 4" dot={false} activeDot={false} connectNulls isAnimationActive={false} />

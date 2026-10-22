@@ -16,9 +16,11 @@ import {
   analyseIncomePlacement,
   type AnnualIncomeSavingsPoint,
 } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
-import { fmtEur, fmtFull } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
@@ -174,26 +176,27 @@ function RelationshipTooltip({ active, payload }: {
   active?: boolean
   payload?: Array<{ payload?: AnnualIncomeSavingsPoint }>
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const point = payload?.[0]?.payload
   if (!active || !point) return null
   return (
     <TooltipBox minWidth={220}>
       <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>{point.year}</div>
-      <div style={{ color: 'var(--tooltip-label)' }}>Total net income: {fmtFull(point.totalIncome)}</div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {fmtFull(point.netSalary)}</div>
-      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {fmtFull(point.otherIncome)}</div>
-      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}>Net contributions: {fmtFull(point.placedSavings ?? 0)}</div>
-      <div style={{ color: SEMANTIC_COLORS.returnRate }}>Placement rate: {point.placementRate?.toFixed(1)}%</div>
-      <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>Unplaced income proxy: {fmtFull(point.unplacedIncomeProxy ?? 0)}</div>
+      <div style={{ color: 'var(--tooltip-label)' }}>Total net income: {formatMoney(point.totalIncome, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {formatMoney(point.netSalary, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {formatMoney(point.otherIncome, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}>Net contributions: {formatMoney(point.placedSavings ?? 0, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.returnRate }}>Placement rate: {formatPercentage(point.placementRate ?? 0)}</div>
+      <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>Unplaced income proxy: {formatMoney(point.unplacedIncomeProxy ?? 0, { style: 'full' })}</div>
     </TooltipBox>
   )
 }
 
-function signed(value: number, decimals = 2): string {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}`
-}
-
 export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
   const analysis = useMemo(() => analyseIncomePlacement(data), [data])
   const [trendStart, trendEnd] = analysis.trendLine
   const [chartWidth, setChartWidth] = useState(600)
@@ -215,13 +218,13 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
         <p className="mt-1 text-xs text-gray-500">Comparable actual years only · All accounts · Latest 3 years highlighted</p>
       </div>
       <div className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-xs">
-        <span className="text-gray-500">Correlation <strong className="font-semibold text-gray-300">{analysis.correlation == null ? '—' : signed(analysis.correlation)}</strong></span>
-        <span className="text-gray-500">Trend per €10k income <strong className="font-semibold text-gray-300">{analysis.slopePerTenThousand == null ? '—' : `${signed(analysis.slopePerTenThousand, 1)} pp`}</strong></span>
+        <span className="text-gray-500">Correlation <strong className="font-semibold text-gray-300">{analysis.correlation == null ? '—' : formatNumber(analysis.correlation, { maximumFractionDigits: 2, minimumFractionDigits: 2, signDisplay: 'always' })}</strong></span>
+        <span className="text-gray-500">Trend per €10k income <strong className="font-semibold text-gray-300">{analysis.slopePerTenThousand == null ? '—' : formatPercentage(analysis.slopePerTenThousand, { signed: true, unit: ' pp' })}</strong></span>
       </div>
       <ResponsiveContainer width="100%" height={285} onResize={(width) => setChartWidth(width)}>
         <ScatterChart margin={{ top: 18, right: 24, left: 4, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis type="number" dataKey="totalIncome" name="Net income" tickFormatter={fmtEur} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <XAxis type="number" dataKey="totalIncome" name="Net income" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis type="number" dataKey="placementRate" name="Placement rate" tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<RelationshipTooltip />} />
           {trendStart && trendEnd && (

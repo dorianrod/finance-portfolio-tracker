@@ -1,7 +1,7 @@
 import type { RawOperation, RawPosition } from '@/domains/portfolio/types/domain'
 import { accountFilterId } from '@/domains/portfolio/helpers/filters/accountFilter'
 import { parseNum } from '@/shared/csv/parseNum'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { resolveAssetName } from '@/domains/portfolio/helpers/mappers/resolveAssetName'
 
 export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
 
@@ -136,7 +136,7 @@ function makeContribution(
 ): PerformanceContribution {
   return {
     key: item.key,
-    label: assetDisplayLabel(item, item.key),
+    label: resolveAssetName(item, item.key),
     name: item.name,
     amount: Math.round(item.amount * 100) / 100,
     share: denominator > 0 ? Math.abs(item.amount) / denominator * 100 : 0,
@@ -197,7 +197,7 @@ export function computePerformanceContributions(
   const touch = (key: string, name: string, ticker: string, account: string): ContributionAccumulator => {
     const current = contributions.get(key) ?? {
       key,
-      name: assetDisplayLabel({ name, ticker }, key),
+      name: resolveAssetName({ name, ticker }, key),
       ticker,
       amount: 0,
       accounts: new Set<string>(),

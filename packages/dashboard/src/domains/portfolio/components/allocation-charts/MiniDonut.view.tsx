@@ -1,11 +1,13 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
-import { catColor } from '@/shared/format/colors'
+import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import { groupTail } from './allocationCharts.logic'
 import { PieTooltip } from './allocationCharts.tooltips.view'
 import type { PieEntry } from './allocationCharts.types'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function MiniDonut({ title, point }: { title: string; point: AllocationPoint }) {
+  const formatPercentage = useFormatPercentage()
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const { main, grouped } = groupTail(point.categories)
   const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
@@ -30,11 +32,11 @@ export function MiniDonut({ title, point }: { title: string; point: AllocationPo
       </ResponsiveContainer>
       <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1">
         {data.map((entry) => {
-          const pct = total > 0 ? ((entry.value / total) * 100).toFixed(0) : '0'
+          const pct = formatPercentage(total > 0 ? (entry.value / total) * 100 : 0, { decimals: 0 })
           return (
             <span key={entry.name} className="inline-flex items-center gap-1 text-[10px] text-gray-400">
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: catColor(entry.name), display: 'inline-block', flexShrink: 0 }} />
-              {entry.name} {pct}%
+              {entry.name} {pct}
             </span>
           )
         })}

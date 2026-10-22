@@ -1,7 +1,8 @@
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { fmtFull } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { HoldingConcentration } from './portfolioCharts.logic'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { HOLDING_LABEL_WIDTH, HoldingLabelTick } from './HoldingLabelTick.view'
@@ -12,17 +13,21 @@ interface ConcentrationTooltipProps {
 }
 
 function ConcentrationTooltip({ active, payload }: ConcentrationTooltipProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const row = payload[0].payload as HoldingConcentration
   return (
     <div className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-xs shadow-xl">
       <div className="font-semibold text-white">{row.name}</div>
-      <div className="mt-1 text-gray-300">{fmtFull(row.value)} · {row.weight.toFixed(1)}%</div>
+      <div className="mt-1 text-gray-300">{formatMoney(row.value, { style: 'full' })} · {formatPercentage(row.weight)}</div>
     </div>
   )
 }
 
 export function ConcentrationChart({ data, topTenValue, topTenPct, description, effectiveDate }: { data: HoldingConcentration[]; topTenValue?: number; topTenPct?: number; description?: string; effectiveDate?: string | null }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const height = Math.max(250, data.length * 30)
   return (
     <div className="rounded-xl bg-gray-900 p-4">
@@ -33,7 +38,7 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
           <p className="mt-0.5 text-xs text-gray-600">{description ?? 'Aggregated across accounts.'}</p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          {topTenValue != null && topTenPct != null && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">Top 10 total</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{fmtFull(topTenValue)} · {topTenPct.toFixed(1)}%</div></div>}
+          {topTenValue != null && topTenPct != null && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">Top 10 total</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{formatMoney(topTenValue, { style: 'full' })} · {formatPercentage(topTenPct)}</div></div>}
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -53,7 +58,7 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
               <Tooltip content={<ConcentrationTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
               <Bar dataKey="weight" radius={[0, 4, 4, 0]}>
                 {data.map((_, index) => <Cell key={index} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
-                <LabelList dataKey="weight" position="right" formatter={(value: unknown) => `${Number(value).toFixed(1)}%`} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
+                <LabelList dataKey="weight" position="right" formatter={(value: unknown) => formatPercentage(Number(value))} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

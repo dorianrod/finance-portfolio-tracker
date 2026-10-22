@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { InfoTooltip } from '@/domains/portfolio/components/kpis/InfoTooltip.view'
-import { fmtFull } from '@/shared/format/money'
-import { formatPercentage } from '@/shared/format/percentage'
-import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/format/semanticColors'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
@@ -33,6 +33,8 @@ export function QualityIndicatorCard({
   tooltipFooter?: ReactNode
   children?: ReactNode
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const safePercentage = Number.isFinite(percentage) ? Math.max(0, Math.min(100, percentage)) : 0
   const percentageLabel = formatPercentage(safePercentage)
   const colors = TONES[tone]
@@ -44,8 +46,8 @@ export function QualityIndicatorCard({
         <InfoTooltip text={tooltip} footer={tooltipFooter} />
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-3">
-        <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>{percentageLabel}%</span>
-        <span className="text-xs tabular-nums text-content-subtle">{fmtFull(amount)}</span>
+        <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>{percentageLabel}</span>
+        <span className="text-xs tabular-nums text-content-subtle">{formatMoney(amount, { style: 'full' })}</span>
       </div>
       <div
         className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-raised"

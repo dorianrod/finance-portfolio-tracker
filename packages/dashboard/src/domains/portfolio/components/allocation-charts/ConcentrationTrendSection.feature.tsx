@@ -3,9 +3,12 @@ import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Line, LineChart,
   matchByDataKey, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts'
-import { fmtFull, shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { HoldingLabelTick } from '@/domains/portfolio/components/portfolio-charts/HoldingLabelTick.view'
 import { ConcentrationModeToggle, type ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
@@ -38,10 +41,10 @@ function timestamp(date: string): number {
   return Date.parse(`${date}T00:00:00Z`)
 }
 
-function formatDelta(value: number | null): string {
+function formatDelta(value: number | null, formatNumber: ReturnType<typeof useFormatNumber>): string {
   if (value == null) return 'First comparable observation'
   const sign = value > 0 ? '+' : ''
-  return `${sign}${value.toFixed(0)} positions vs previous month`
+  return `${sign}${formatNumber(value, { maximumFractionDigits: 0 })} positions vs previous month`
 }
 
 function formatPositionCount(value: number | null): string {
@@ -55,23 +58,26 @@ function ThresholdRow({ label, color, value, delta }: {
   value: number | null
   delta: number | null
 }) {
+  const formatNumber = useFormatNumber()
   return (
     <div>
       <span style={{ color }}>{label}</span> {formatPositionCount(value)}{' '}
       <span className="text-gray-500">
-        · {value == null ? 'Insufficient identified coverage' : formatDelta(delta)}
+        · {value == null ? 'Insufficient identified coverage' : formatDelta(delta, formatNumber)}
       </span>
     </div>
   )
 }
 
 function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps) {
+  const formatDate = useFormatDate()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
     <TooltipBox minWidth={250}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{shortMonth(row.date)}</div>
-      <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>Coverage: {row.coveragePct.toFixed(1)}%</div>
+      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{formatDate(row.date, { style: 'shortMonthShortYear' })}</div>
+      <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>Coverage: {formatPercentage(row.coveragePct)}</div>
       <div className="mt-2 space-y-1" style={{ color: 'var(--tooltip-label)' }}>
         <ThresholdRow label="25%" color={SEMANTIC_COLORS.risk} value={row.positionsTo25Pct} delta={row.positionsTo25Delta} />
         <ThresholdRow label="50%" color={SEMANTIC_COLORS.totalChange} value={row.positionsTo50Pct} delta={row.positionsTo50Delta} />
@@ -83,12 +89,14 @@ function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps) {
 }
 
 function HistoricalHoldingTooltip({ active, payload }: HoldingTooltipProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const holding = payload[0].payload
   return (
     <TooltipBox minWidth={200}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{holding.name}</div>
-      <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>{fmtFull(holding.value)} · {holding.weight.toFixed(1)}%</div>
+      <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>{formatMoney(holding.value, { style: 'full' })} · {formatPercentage(holding.weight)}</div>
     </TooltipBox>
   )
 }
@@ -131,6 +139,9 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
   lookThroughPoints: HistoricalConcentrationPoint[]
   lookThroughAvailable: boolean
 }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const [mode, setMode] = useState<ConcentrationMode>('held')
   const [selectedDate, setSelectedDate] = useState(() => heldPoints.at(-1)?.date ?? '')
   const [isPlaying, setIsPlaying] = useState(false)
@@ -252,7 +263,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
               if (state.isTooltipActive) selectHoveredPoint(state.activeTooltipIndex)
             }} onMouseLeave={() => setHoveredPointIndex(null)}>
               <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-              <XAxis dataKey="timestamp" type="number" scale="time" domain={dateDomain} tickFormatter={(value) => shortMonth(new Date(value).toISOString())} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+              <XAxis dataKey="timestamp" type="number" scale="time" domain={dateDomain} tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
               <YAxis domain={[0, 'auto']} allowDecimals={false} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={32} />
               {selectedTimestamp != null && <ReferenceLine x={selectedTimestamp} stroke={CHART_THEME.label} strokeDasharray="4 4" />}
               <Tooltip content={<ConcentrationTrendTooltip />} />
@@ -272,16 +283,16 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
                 <p className="mt-0.5 text-xs text-gray-600">Hover to preview; the slider and playback use every monthly snapshot.</p>
               </div>
               <div className="text-left sm:text-right">
-                <div className="text-lg font-semibold tabular-nums text-gray-200">{shortMonth(displayedPoint.date)}</div>
+                <div className="text-lg font-semibold tabular-nums text-gray-200">{formatDate(displayedPoint.date, { style: 'shortMonthShortYear' })}</div>
                 <div className="text-[11px] text-gray-600">Snapshot {displayedPoint.date}</div>
               </div>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500">
-              <span>Coverage <strong className="font-semibold text-gray-300">{displayedPoint.coveragePct.toFixed(1)}%</strong></span>
-              <span>Identified <strong className="font-semibold text-gray-300">{fmtFull(displayedPoint.identifiedValue)}</strong></span>
-              <span>Undisclosed funds <strong className="font-semibold text-gray-300">{fmtFull(displayedPoint.undisclosedValue)}</strong></span>
-              <span>Opaque <strong className="font-semibold text-gray-300">{fmtFull(displayedPoint.opaqueValue)}</strong></span>
+              <span>Coverage <strong className="font-semibold text-gray-300">{formatPercentage(displayedPoint.coveragePct)}</strong></span>
+              <span>Identified <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.identifiedValue, { style: 'full' })}</strong></span>
+              <span>Undisclosed funds <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.undisclosedValue, { style: 'full' })}</strong></span>
+              <span>Opaque <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.opaqueValue, { style: 'full' })}</strong></span>
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -289,9 +300,9 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
               <button type="button" aria-label="Previous concentration month" disabled={selectedIndex === 0} onClick={() => selectPoint(selectedIndex - 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
               <button type="button" aria-label="Next concentration month" disabled={selectedIndex >= points.length - 1} onClick={() => selectPoint(selectedIndex + 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
               <label className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 text-[11px] text-gray-500 sm:ml-2">
-                <span>{shortMonth(points[0].date)}</span>
+                <span>{formatDate(points[0].date, { style: 'shortMonthShortYear' })}</span>
                 <input aria-label="Concentration month" type="range" min={0} max={points.length - 1} step={1} value={selectedIndex} onChange={(event) => selectPoint(Number(event.target.value))} className="min-w-0 flex-1 accent-blue-500" />
-                <span>{shortMonth(points.at(-1)!.date)}</span>
+                <span>{formatDate(points.at(-1)!.date, { style: 'shortMonthShortYear' })}</span>
               </label>
             </div>
 
@@ -305,7 +316,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
                     <Tooltip content={<HistoricalHoldingTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
                     <Bar dataKey="weight" radius={[0, 4, 4, 0]} isAnimationActive={animationEnabled} animationDuration={450} animationEasing="ease-in-out" animationMatchBy={matchHoldingByKey} animationInterpolateFn={interpolateRankedBars}>
                       {displayedHoldings.map((holding, index) => <Cell key={holding.key} fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries} />)}
-                      <LabelList dataKey="weight" position="right" formatter={(value: unknown) => `${Number(value).toFixed(1)}%`} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
+                      <LabelList dataKey="weight" position="right" formatter={(value: unknown) => formatPercentage(Number(value))} style={{ fill: 'var(--chart-label)', fontSize: 11 }} />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>

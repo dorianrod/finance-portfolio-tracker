@@ -12,7 +12,8 @@ import {
   ConcentrationModeToggle,
   type ConcentrationMode,
 } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
-import { fmtFull } from '@/shared/format/money'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection.feature'
 import { useAllocationCharts } from '@/domains/portfolio/services/useAllocationCharts'
 import {
@@ -34,6 +35,8 @@ interface AllocationChartsProps {
 }
 
 export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, rawData, dateFrom, dateTo }: AllocationChartsProps) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const view = useAtomValue(dashboardAllocationViewAtom)
@@ -104,7 +107,7 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
                     effectiveDate={dateTo}
                     description={concentrationMode === 'held'
                       ? 'Share of the applicable portfolio held in the largest N positions.'
-                      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${concentration.coveragePct.toFixed(1)}% coverage.`}
+                      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${formatPercentage(concentration.coveragePct)} coverage.`}
                   />
                   <ConcentrationChart
                     data={concentration.holdings}
@@ -113,7 +116,7 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
                     topTenPct={concentration.topTenPct}
                     description={concentrationMode === 'held'
                       ? 'Positions effectively held, aggregated across accounts.'
-                      : `Identified ${fmtFull(concentration.identifiedValue)} · undisclosed funds ${fmtFull(concentration.undisclosedValue)} · opaque ${fmtFull(concentration.opaqueValue)}.`}
+                      : `Identified ${formatMoney(concentration.identifiedValue, { style: 'full' })} · undisclosed funds ${formatMoney(concentration.undisclosedValue, { style: 'full' })} · opaque ${formatMoney(concentration.opaqueValue, { style: 'full' })}.`}
                   />
                 </div>
               ) : (

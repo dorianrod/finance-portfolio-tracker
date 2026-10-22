@@ -1,10 +1,5 @@
 const PERCENTAGE_DECIMAL_PLACES = 1
 
-export function formatPercentage(value: number): string {
-  const safeValue = Number.isFinite(value) ? value : 0
-  return safeValue.toFixed(PERCENTAGE_DECIMAL_PLACES)
-}
-
 export function partitionPercentages(values: number[]): number[] {
   const safeValues = values.map((value) => Number.isFinite(value) ? Math.max(0, value) : 0)
   const total = safeValues.reduce((sum, value) => sum + value, 0)

@@ -1,7 +1,8 @@
-import { fmtFull } from '@/shared/format/money'
-import { formatPercentage } from '@/shared/format/percentage'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
-import { typeColor } from '@/shared/format/colors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { typeColor } from '@/shared/theme/chartColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
@@ -14,20 +15,23 @@ interface EvolutionTooltipProps extends NumericTooltipProps<PortfolioHistoryPoin
 }
 
 export function EvolutionTooltip({ active, payload, label, percentageMode = false }: EvolutionTooltipProps) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
   const cost = row?.total_cost_basis ?? 0
   const gain = row?.unrealized_gain ?? 0
   const total = cost + gain
-  const share = (value: number) => total === 0 ? '—' : `${formatPercentage(value / total * 100)}%`
+  const share = (value: number) => total === 0 ? '—' : formatPercentage(value / total * 100)
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}{percentageMode && ` · ${share(cost)}`}</div>
-      <div style={{ color: gain >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>Unrealized P&L: {fmtFull(gain)}{percentageMode && ` · ${share(gain)}`}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {formatMoney(total, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {formatMoney(cost, { style: 'full' })}{percentageMode && ` · ${share(cost)}`}</div>
+      <div style={{ color: gain >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>Unrealized P&L: {formatMoney(gain, { style: 'full' })}{percentageMode && ` · ${share(gain)}`}</div>
     </TooltipBox>
   )
 }
@@ -37,6 +41,8 @@ interface MonthlyTooltipProps extends NumericTooltipProps<TrailingSavingCapacity
 }
 
 export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipProps) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const savingsDelta = tooltipValue(payload, 'savings_delta')
   const perfDelta = tooltipValue(payload, 'perf_delta')
@@ -49,37 +55,39 @@ export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipPr
   return (
     <TooltipBox padding="10px 14px" maxWidth={280}>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 8, fontWeight: 600 }}>
-        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
-      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}>Net contributions: {fmtFull(savingsDelta)}</div>
+      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}>Net contributions: {formatMoney(savingsDelta, { style: 'full' })}</div>
       {deposits.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
           {deposits.map((op, i) => (
-            <div key={i} style={{ color: SEMANTIC_COLORS.netContributionsDetail, fontSize: 11 }}>+ {fmtFull(op.total_amount)} — {op.account}</div>
+            <div key={i} style={{ color: SEMANTIC_COLORS.netContributionsDetail, fontSize: 11 }}>+ {formatMoney(op.total_amount, { style: 'full' })} — {op.account}</div>
           ))}
         </div>
       )}
       {withdrawals.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
           {withdrawals.map((op, i) => (
-            <div key={i} style={{ color: SEMANTIC_COLORS.outflowText, fontSize: 11 }}>− {fmtFull(Math.abs(op.total_amount))} — {op.account}</div>
+            <div key={i} style={{ color: SEMANTIC_COLORS.outflowText, fontSize: 11 }}>− {formatMoney(Math.abs(op.total_amount), { style: 'full' })} — {op.account}</div>
           ))}
         </div>
       )}
       <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: perfDelta >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>
-        Market performance: {fmtFull(perfDelta)}
+        Market performance: {formatMoney(perfDelta, { style: 'full' })}
       </div>
       <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: SEMANTIC_COLORS.netContributionsText }}>
-        Trailing 12-month net contributions: {fmtFull(rolling12m)}
+        Trailing 12-month net contributions: {formatMoney(rolling12m, { style: 'full' })}
       </div>
       <div style={{ marginTop: 4, color: rollingPerf12m >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>
-        Trailing 12-month performance: {fmtFull(rollingPerf12m)}
+        Trailing 12-month performance: {formatMoney(rollingPerf12m, { style: 'full' })}
       </div>
     </TooltipBox>
   )
 }
 
 export function TriTooltip({ active, payload, label }: NumericTooltipProps<TriChartPoint>) {
+  const formatDate = useFormatDate()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const tri1y = payload.find((point) => point.dataKey === 'tri_rolling_1y')?.value ?? null
   const tri1yBackfill = payload.find((point) => point.dataKey === 'tri_rolling_1y_backfill')?.value ?? null
@@ -90,16 +98,16 @@ export function TriTooltip({ active, payload, label }: NumericTooltipProps<TriCh
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
       {showTri1y && (
         <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
-          IRR (1y): {tri1y === null ? 'Not yet available' : `${tri1y >= 0 ? '+' : ''}${tri1y.toFixed(2)}%`}
+          IRR (1y): {tri1y === null ? 'Not yet available' : formatPercentage(tri1y, { decimals: 2, signed: true })}
         </div>
       )}
       {showTri3y && (
         <div style={{ color: SEMANTIC_COLORS.returnRate, fontWeight: 600, marginTop: showTri1y ? 4 : 0 }}>
-          IRR (3y): {tri3y === null ? 'Not yet available' : `${tri3y >= 0 ? '+' : ''}${tri3y.toFixed(2)}%`}
+          IRR (3y): {tri3y === null ? 'Not yet available' : formatPercentage(tri3y, { decimals: 2, signed: true })}
         </div>
       )}
     </TooltipBox>
@@ -125,6 +133,8 @@ export function AccountTypeTooltip({ active, payload, label, portfolioTotal }: {
   label?: string
   portfolioTotal?: number
 }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const point = payload[0]?.payload
   const cost = point?.total_cost_basis ?? payload.find((p) => p.dataKey === 'total_cost_basis')?.value ?? 0
@@ -135,43 +145,46 @@ export function AccountTypeTooltip({ active, payload, label, portfolioTotal }: {
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{point?.account_type ?? label}</div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {formatMoney(total, { style: 'full' })}</div>
       {portfolioTotal != null && (
-        <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6 }}>Portfolio share: {portfolioShare.toFixed(1)}%</div>
+        <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6 }}>Portfolio share: {formatPercentage(portfolioShare)}</div>
       )}
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {fmtFull(cost)}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Cost basis: {formatMoney(cost, { style: 'full' })}</div>
       <div style={{ color: SEMANTIC_COLORS.performancePositiveText }}>
-        Unrealized: {fmtFull(gain)} ({gain >= 0 ? '+' : ''}{gainPct.toFixed(1)}%)
+        Unrealized: {formatMoney(gain, { style: 'full' })} ({formatPercentage(gainPct, { signed: true })})
       </div>
     </TooltipBox>
   )
 }
 
 export function TopPerformersTooltip({ active, payload, label }: NumericTooltipProps<TopPerformer>) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const entry = payload[0]?.payload
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>{entry?.name ?? label}</div>
       <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6, fontSize: 11 }}>{entry?.account_type}</div>
-      <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>Value: {fmtFull(entry?.value ?? 0)}</div>
+      <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>Value: {formatMoney(entry?.value ?? 0, { style: 'full' })}</div>
       <div style={{ color: (entry?.pct ?? 0) >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText, fontWeight: 600 }}>
-        Unrealized: {fmtFull(entry?.gain ?? 0)} ({(entry?.pct ?? 0) >= 0 ? '+' : ''}{(entry?.pct ?? 0).toFixed(1)}%)
+        Unrealized: {formatMoney(entry?.gain ?? 0, { style: 'full' })} ({formatPercentage(entry?.pct ?? 0, { signed: true })})
       </div>
     </TooltipBox>
   )
 }
 
 export function PassiveIncomeTooltip({ active, payload, label }: NumericTooltipProps<PassiveIncomePoint>) {
+  const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const div = tooltipValue(payload, 'dividends')
   const int = tooltipValue(payload, 'interest')
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{label}</div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(div + int)}</div>
-      {div > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncome }}>Dividends: {fmtFull(div)}</div>}
-      {int > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Interest: {fmtFull(int)}</div>}
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {formatMoney(div + int, { style: 'full' })}</div>
+      {div > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncome }}>Dividends: {formatMoney(div, { style: 'full' })}</div>}
+      {int > 0 && <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Interest: {formatMoney(int, { style: 'full' })}</div>}
     </TooltipBox>
   )
 }
@@ -190,6 +203,9 @@ export function AccountTypeHistoryTooltip({
   typeCategories,
   percentageMode = false,
 }: AccountTypeHistoryTooltipProps) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
   const total = accountTypes.reduce((sum, accountType) => {
@@ -199,16 +215,16 @@ export function AccountTypeHistoryTooltip({
   return (
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {new Date(String(label)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+        {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {fmtFull(total)}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {formatMoney(total, { style: 'full' })}</div>
       {accountTypes.map((t, i) => {
         const value = row?.[t]
         const val = typeof value === 'number' ? value : 0
         if (!val) return null
-        const share = total > 0 ? `${formatPercentage(val / total * 100)}%` : '—'
+        const share = total > 0 ? formatPercentage(val / total * 100) : '—'
         return (
-          <div key={t} style={{ color: typeColor(t, i, typeCategories) }}>{t}: {fmtFull(val)}{percentageMode && ` · ${share}`}</div>
+          <div key={t} style={{ color: typeColor(t, i, typeCategories) }}>{t}: {formatMoney(val, { style: 'full' })}{percentageMode && ` · ${share}`}</div>
         )
       })}
     </TooltipBox>

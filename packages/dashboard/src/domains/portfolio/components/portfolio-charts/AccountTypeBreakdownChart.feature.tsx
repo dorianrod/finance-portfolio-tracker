@@ -1,12 +1,15 @@
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
-import { catColor } from '@/shared/format/colors'
-import { SEMANTIC_COLORS } from '@/shared/format/semanticColors'
+import { catColor } from '@/shared/theme/chartColors'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { AccountTypeTooltip } from './portfolioCharts.tooltips.view'
-import type { AccountTypePointWithLabel } from './portfolioCharts.logic'
+import type { AccountTypePoint } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
-type DonutPoint = AccountTypePointWithLabel
+interface DonutPoint extends AccountTypePoint {
+  _label: string
+}
 
 interface LabelPosition {
   x: number
@@ -60,6 +63,7 @@ function resolveLabelPositions(data: DonutPoint[], cx: number, cy: number, outer
 }
 
 function AccountTypeLabel({ data, ...props }: PieLabelRenderProps & { data: DonutPoint[] }) {
+  const formatPercentage = useFormatPercentage()
   const { cx, cy, midAngle, outerRadius, payload, percent, index } = props
   if (typeof cx !== 'number' || typeof cy !== 'number' || typeof midAngle !== 'number' || typeof outerRadius !== 'number') return null
   const point = payload as DonutPoint
@@ -91,7 +95,7 @@ function AccountTypeLabel({ data, ...props }: PieLabelRenderProps & { data: Donu
         textAnchor={position.isRight ? 'start' : 'end'}
         dominantBaseline="central"
       >
-        {point.account_type} · {((percent ?? 0) * 100).toFixed(0)}%
+        {point.account_type} · {formatPercentage((percent ?? 0) * 100, { decimals: 0 })}
       </text>
     </g>
   )
@@ -139,7 +143,7 @@ function AccountTypeSector({ cx, cy, startAngle, endAngle, outerRadius, payload 
   )
 }
 
-export function AccountTypeBreakdownChart({ data }: { data: AccountTypePointWithLabel[] }) {
+export function AccountTypeBreakdownChart({ data }: { data: DonutPoint[] }) {
   const donutData: DonutPoint[] = data.map((point) => ({
     ...point,
     total_cost_basis: Math.max(0, point.total_cost_basis),

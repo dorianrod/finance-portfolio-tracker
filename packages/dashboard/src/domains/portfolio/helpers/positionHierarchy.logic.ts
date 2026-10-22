@@ -1,7 +1,7 @@
 import type { RawOperation, RawPosition, PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/types/domain'
 import { CATEGORY_ORDER, CASH_SUFFIX } from '@/domains/portfolio/constants/accountCategories'
 import { parseNum } from '@/shared/csv/parseNum'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { resolveAssetName } from '@/domains/portfolio/helpers/mappers/resolveAssetName'
 
 function assetKey(op: RawOperation): string {
   return op.isin || op.ticker || op.name
@@ -229,7 +229,7 @@ export function buildPositionRows(
     rows.push({
       kind: 'position',
       id: key,
-      name: assetDisplayLabel({
+      name: resolveAssetName({
         name: lp?.name || first.name,
         ticker: lp?.ticker || first.ticker,
       }, key),

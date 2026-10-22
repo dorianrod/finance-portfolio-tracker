@@ -104,9 +104,10 @@ describe('component-role', () => {
     const code = `
       import { useState } from 'react'
       import { Button } from './Button.view'
-      import { formatMoney } from '@/shared/format/money'
+      import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
       export function Card() {
         const [open] = useState(false)
+        const formatMoney = useFormatMoney()
         return <Button>{open ? formatMoney(1) : 'Closed'}</Button>
       }
     `

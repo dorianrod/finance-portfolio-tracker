@@ -1,5 +1,5 @@
 import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/apis/queries/useFundHoldings'
-import { formatPercentage } from '@/shared/format/percentage'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
   FUND_QUALITY_LABELS,
   fundQualityCategory,
@@ -14,12 +14,13 @@ const TIER_CLASSES: Record<FundQualityTier, string> = {
 }
 
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
+  const formatPercentage = useFormatPercentage()
   const warning = status.validationStatus !== 'ok' || status.isStale
   const category = fundQualityCategory(status.qualityTier)
   const title = [
     `${FUND_QUALITY_LABELS[category]} : ${fundQualitySourceLabel(status.qualityTier)}`,
     status.sourceName || 'Aucune source',
-    `${formatPercentage(status.explainedPct)} % expliqué`,
+    `${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`,
     status.holdingsDate ? `composition du ${status.holdingsDate}` : 'date de composition inconnue',
     status.issues,
   ].filter(Boolean).join(' · ')
@@ -29,7 +30,7 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
       className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${TIER_CLASSES[status.qualityTier]}`}
     >
       {FUND_QUALITY_LABELS[category]}
-      <span className="font-normal opacity-80">{formatPercentage(status.explainedPct)}%</span>
+      <span className="font-normal opacity-80">{formatPercentage(status.explainedPct)}</span>
       {warning && <span aria-label="Data warning">!</span>}
     </span>
   )

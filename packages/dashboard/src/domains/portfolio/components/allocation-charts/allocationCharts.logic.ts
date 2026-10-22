@@ -1,7 +1,7 @@
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import type { RawIsinRow, RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import { accountFilterId } from '@/domains/portfolio/helpers/filters/accountFilter'
-import { partitionPercentages } from '@/shared/format/percentage'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { AllocationFilter, MatchingIsinRow } from './allocationCharts.types'

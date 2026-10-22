@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { fmtEur, shortMonth } from '@/shared/format/money'
-import { CHART_THEME } from '@/shared/format/chartTheme'
-import { typeColor } from '@/shared/format/colors'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { typeColor } from '@/shared/theme/chartColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { AccountTypeHistoryTooltip } from './portfolioCharts.tooltips.view'
 import { accountTypeShareKey, withAccountTypeShares } from './chartScale.logic'
@@ -16,6 +17,8 @@ export function AccountTypeHistoryChart({
   accountTypes: string[]
   typeCategories: Record<string, string>
 }) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
   const [scale, setScale] = useState<ChartScaleMode>('value')
   const percentageMode = scale === 'percentage'
   const chartData = useMemo(() => withAccountTypeShares(data, accountTypes), [data, accountTypes])
@@ -37,8 +40,8 @@ export function AccountTypeHistoryChart({
             ))}
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis dataKey="date" tickFormatter={shortMonth} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : fmtEur} domain={percentageMode ? [0, 100] : undefined} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={percentageMode ? 48 : 52} />
+          <XAxis dataKey="date" tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis tickFormatter={percentageMode ? (value) => `${Math.round(Number(value))}%` : (value) => formatMoney(value, { style: 'compact' })} domain={percentageMode ? [0, 100] : undefined} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={percentageMode ? 48 : 52} />
           <Tooltip content={<AccountTypeHistoryTooltip accountTypes={accountTypes} typeCategories={typeCategories} percentageMode={percentageMode} />} />
           <Legend formatter={(value) => <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>} />
           {accountTypes.map((t, i) => (

@@ -1,11 +1,9 @@
-import { fmtEur } from '@/shared/format/money'
-import type { AccountTypePoint } from '@/domains/portfolio/types/history'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { MonthlyOp, MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { SavingCapacityPoint } from '@/domains/portfolio/apis/queries/useSavingCapacity'
 import { rawAccountSet } from '@/domains/portfolio/helpers/filters/accountFilter'
-import { assetDisplayLabel } from '@/domains/portfolio/helpers/formatters/assetLabel'
+import { resolveAssetName } from '@/domains/portfolio/helpers/mappers/resolveAssetName'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import type { FundHolding } from '@/domains/portfolio/apis/queries/useFundHoldings'
 
@@ -336,7 +334,7 @@ export function computeConcentration(
       undisclosedValue += positionValue
       continue
     }
-    addAsset(key, assetDisplayLabel(position, key), position.name, positionValue)
+    addAsset(key, resolveAssetName(position, key), position.name, positionValue)
     identifiedValue += positionValue
   }
 
@@ -378,7 +376,7 @@ export function computeHeldAssetConcentration(
     // identifier is shared. Account-valued products fall back to their name.
     const key = position.isin || position.ticker || position.name
     const current = byAsset.get(key) ?? {
-      label: assetDisplayLabel(position, key),
+      label: resolveAssetName(position, key),
       name: position.name,
       value: 0,
     }
@@ -511,7 +509,7 @@ export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] 
   return positions
     .filter((p) => p.status === 'active' && p.unrealized_gain_pct !== null && p.unrealized_gain_pct !== 0)
     .map((p) => ({
-      label: assetDisplayLabel(p, p.isin),
+      label: resolveAssetName(p, p.isin),
       name: p.name,
       pct: Math.round(p.unrealized_gain_pct! * 10) / 10,
       gain: Math.round(p.unrealized_gain ?? 0),
@@ -519,17 +517,6 @@ export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] 
       account_type: p.account_type ?? '',
     }))
     .sort((a, b) => b.pct - a.pct)
-}
-
-export interface AccountTypePointWithLabel extends AccountTypePoint {
-  _label: string
-}
-
-export function buildAccountTypeLabels(accountTypeData?: AccountTypePoint[]): AccountTypePointWithLabel[] {
-  return (accountTypeData ?? []).map((pt) => {
-    const gainPct = pt.total_cost_basis > 0 ? (pt.unrealized_gain / pt.total_cost_basis) * 100 : 0
-    return { ...pt, _label: `${fmtEur(pt.total_value)} ${gainPct >= 0 ? '+' : ''}${gainPct.toFixed(0)}%` }
-  })
 }
 
 export function filterMonthlyOpsByAccounts(allOps: MonthlyOpsMap, accounts?: Set<string>): MonthlyOpsMap {
