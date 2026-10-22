@@ -4,9 +4,17 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  {
+    files: ['eslint-rules/**/*.js'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -17,6 +25,13 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
+    },
+    plugins: {
+      local: {
+        rules: {
+          'no-prop-drilling': noPropDrilling,
+        },
+      },
     },
     rules: {
       'default-case-last': 'error',
@@ -32,6 +47,7 @@ export default defineConfig([
       'prefer-template': 'error',
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      'local/no-prop-drilling': 'warn',
     },
   },
   {
