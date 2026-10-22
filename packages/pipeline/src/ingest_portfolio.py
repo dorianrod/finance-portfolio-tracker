@@ -57,6 +57,9 @@ from src.infrastructure.csv_output_writer import CsvOutputWriter  # noqa: E402
 from src.infrastructure.csv_salaries_repository import (  # noqa: E402
     CsvSalariesRepository,
 )
+from src.infrastructure.file_broker_loader_source import (  # noqa: E402
+    FileBrokerLoaderSource,
+)
 from src.infrastructure.xlsx_allocation_repository import (
     XlsxAllocationRepository,  # noqa: E402
 )
@@ -193,7 +196,10 @@ def main(argv: list[str] | None = None) -> None:
         asset_price_repo=asset_price_repo,
         allocation_repo=allocation_repo,
         account_groups_repo=account_groups_repo,
-        broker_data_collector=BrokerDataCollector(input_dir, allocation_repo),
+        broker_data_collector=BrokerDataCollector(
+            loader_source=FileBrokerLoaderSource(input_dir),
+            allocation_repo=allocation_repo,
+        ),
         snapshot_builder=PortfolioSnapshotBuilder(account_groups_repo),
         error_detector=PortfolioErrorDetector(asset_price_repo),
         output_writer=output_writer,

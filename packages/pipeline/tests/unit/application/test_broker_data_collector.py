@@ -1,13 +1,12 @@
 from datetime import datetime
-from pathlib import Path
+from typing import cast
 
 import pandas as pd
 import pytest
 
 from src.application.broker_data_collector import BrokerDataCollector
 from src.domain.models import Operation, OperationType
-from src.infrastructure.parsers.boursorama import BoursoramaLoader
-from src.infrastructure.parsers.revolut import RevolutLoader
+from src.ports.parsers import BrokerLoader
 
 
 class _FakeAllocationRepository:
@@ -15,43 +14,15 @@ class _FakeAllocationRepository:
         return {}
 
 
-def _touch(path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("header\n")
+class _LoaderSource:
+    def __init__(self, loaders: list[object]) -> None:
+        self.loaders = loaders
+
+    def discover(self) -> list[BrokerLoader]:
+        return cast(list[BrokerLoader], self.loaders)
 
 
-def test_build_loaders_discovers_prefixed_broker_accounts(tmp_path: Path):
-    _touch(tmp_path / "brokers/Boursorama/PEA/operations.csv")
-    _touch(tmp_path / "brokers/Revolut/Trading/statement.csv")
-
-    collector = BrokerDataCollector(
-        input_dir=tmp_path,
-        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
-    )
-
-    loaders = collector._build_loaders()
-
-    assert [type(loader) for loader in loaders] == [
-        BoursoramaLoader,
-        RevolutLoader,
-    ]
-    boursorama_loader = loaders[0]
-    revolut_loader = loaders[1]
-    assert isinstance(boursorama_loader, BoursoramaLoader)
-    assert isinstance(revolut_loader, RevolutLoader)
-    assert boursorama_loader.account == "boursorama_pea"
-    assert revolut_loader.account == "revolut_trading"
-    assert revolut_loader.label == "revolut_trading"
-
-
-def test_collect_keeps_running_when_one_loader_fails(
-    tmp_path: Path, monkeypatch
-):
-    collector = BrokerDataCollector(
-        input_dir=tmp_path,
-        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
-    )
-
+def test_collect_keeps_running_when_one_loader_fails():
     class FailingLoader:
         label = "bad"
 
@@ -64,10 +35,9 @@ def test_collect_keeps_running_when_one_loader_fails(
         def load(self, ticker_map, asset_prices):
             return ["op"], ["position"]
 
-    monkeypatch.setattr(
-        collector,
-        "_build_loaders",
-        lambda: [FailingLoader(), PassingLoader()],
+    collector = BrokerDataCollector(
+        loader_source=_LoaderSource([FailingLoader(), PassingLoader()]),
+        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
     )
 
     operations, positions, failures = collector.collect(pd.DataFrame())
@@ -77,14 +47,7 @@ def test_collect_keeps_running_when_one_loader_fails(
     assert [(f.label, f.message) for f in failures] == [("bad", "bad csv")]
 
 
-def test_collect_rejects_account_emitted_by_multiple_sources(
-    tmp_path: Path, monkeypatch
-):
-    collector = BrokerDataCollector(
-        input_dir=tmp_path,
-        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
-    )
-
+def test_collect_rejects_account_emitted_by_multiple_sources():
     class Loader:
         def __init__(self, label: str):
             self.label = label
@@ -99,10 +62,11 @@ def test_collect_rejects_account_emitted_by_multiple_sources(
                 )
             ], []
 
-    monkeypatch.setattr(
-        collector,
-        "_build_loaders",
-        lambda: [Loader("direct/a.csv"), Loader("valuations/b.csv")],
+    collector = BrokerDataCollector(
+        loader_source=_LoaderSource(
+            [Loader("direct/a.csv"), Loader("valuations/b.csv")]
+        ),
+        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
     )
 
     pattern = "shared.*direct/a.csv.*valuations/b.csv"

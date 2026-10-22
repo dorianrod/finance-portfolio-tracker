@@ -1,4 +1,4 @@
-"""Tests for build_positions_allocation / build_positions_allocation_by_isin.
+"""Tests for the allocation time-series report builders.
 
 The AllocationRepository port (src.ports.allocation_repository) is the
 boundary to fake: _FakeAllocationRepository below satisfies it structurally
@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from src.domain.reporting.positions_allocation import (
+from src.application.positions_allocation_report import (
     build_positions_allocation,
     build_positions_allocation_by_isin,
 )

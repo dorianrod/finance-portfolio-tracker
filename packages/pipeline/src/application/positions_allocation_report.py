@@ -1,7 +1,7 @@
-"""Allocation time-series output.
+"""Build allocation time-series reports from positions and repository data.
 
-Joins positions with allocation tables (read via an AllocationRepository,
-see src.infrastructure.xlsx_allocation_repository) to produce one wide CSV
+Joins positions with allocation tables supplied by an AllocationRepository
+to produce one wide CSV
 per category (geo, secteur, currency, classe):
 
   snapshot_date | <label_1> | <label_2> | ...
@@ -37,9 +37,9 @@ def _norm_clean(s: str) -> str:
     ticker codes.
 
     Examples:
-      "iShares MSCI EM UCITS ETF USD (Acc)"
-        -> "ishares msci em ucits etf usd acc"
-      "iShares S&P 500 Equal Weight (acc) O4J0"
+      "Example Emerging Markets Fund (Acc)"
+        -> "Example Emerging Markets Fund Acc"
+      "Example Equal Weight Fund (acc) TST1"
         -> "ishares s&p 500 equal weight acc"
     """
     stripped = re.sub(r"\(([^)]*)\)", r" \1 ", str(s))
@@ -121,8 +121,7 @@ _NOT_CONCERNED_LABEL = "Not concerned"
 def _is_not_concerned(pos_row: pd.Series) -> bool:
     category = pos_row.get("account_category")
     account_is_not_concerned = not pd.isna(category) and (
-        str(category).strip().lower()
-        in _NOT_CONCERNED_ACCOUNT_CATEGORIES
+        str(category).strip().lower() in _NOT_CONCERNED_ACCOUNT_CATEGORIES
     )
     return account_is_not_concerned or _is_synthetic_cash(pos_row)
 
