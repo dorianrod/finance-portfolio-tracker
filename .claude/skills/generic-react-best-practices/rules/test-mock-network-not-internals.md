@@ -14,10 +14,10 @@ Never `jest.mock` an internal module: a hook, component, helper, provider or a s
 **Incorrect (stubs the query hook and the permissions hook):**
 
 ```tsx
-jest.mock('@/domains/sales/orders/apis/queries/useGetOrderDetailQuery', () => ({
+jest.mock('@/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery', () => ({
   useGetOrderDetailQuery: () => mockUseGetOrderDetailQuery(),
 }))
-jest.mock('@/domains/sales/orders/pages/detail/services/permissions/usePermissions', () => ({
+jest.mock('@/domains/sales/orders/features/detail/pages/detail/services/permissions/usePermissions', () => ({
   usePermissions: () => mockUsePermissions(),
 }))
 

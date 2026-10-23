@@ -1,0 +1,43 @@
+import i18n from '@/i18n/i18n'
+import { BarChart, Bar, Cell, LabelList, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
+import { TopPerformersTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import type { TopPerformer } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+
+function PerformerCell({ entry }: { entry: TopPerformer }) {
+  return <Cell fill={entry.pct >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
+}
+
+export function TopPerformersChart({ data, height }: { data: TopPerformer[]; height: number }) {
+  const formatPercentage = useFormatPercentage()
+  return <div className="bg-gray-900 rounded-xl p-4">
+    <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.topperformerschart.performanceByAsset')}<ScopedInfoTooltip text={i18n.t('ui.topperformerschart.grossUnrealizedPerformanceByCurrentlyHeldAsset')} scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart layout="vertical" data={data} margin={{ top: 4, right: 64, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} horizontal={false} />
+        <XAxis
+          type="number"
+          tickFormatter={(value) => formatPercentage(value, { decimals: 0, signed: true })}
+          tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
+          tickLine={false}
+          axisLine={false}
+        />
+        <YAxis type="category" dataKey="label" tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={170} />
+        <Tooltip content={<TopPerformersTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
+        <ReferenceLine x={0} stroke={CHART_THEME.zeroLine} />
+        <Bar dataKey="pct" radius={[0, 3, 3, 0]}>
+          {data.map((entry) => <PerformerCell key={entry.label} entry={entry} />)}
+          <LabelList
+            dataKey="pct"
+            position="right"
+            formatter={(value: unknown) => formatPercentage(value as number, { decimals: 0, signed: true })}
+            style={{ fill: CHART_THEME.tick, fontSize: 10 }}
+          />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+}

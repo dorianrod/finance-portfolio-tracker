@@ -25,7 +25,7 @@ describe('useGetOrderDetailQuery', () => {
 **Correct (sibling file, nominal and error cases):**
 
 ```tsx
-// src/domains/sales/orders/apis/queries/useGetOrderDetailQuery.test.tsx
+// src/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.test.tsx
 describe('useGetOrderDetailQuery', () => {
   it('should parse the API payload and strip unknown fields', async () => { /* ... */ })
 

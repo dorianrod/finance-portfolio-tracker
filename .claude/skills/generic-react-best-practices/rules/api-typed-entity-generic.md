@@ -27,7 +27,7 @@ export function useGetProjectDetailQuery(
 **Correct (domain entity, inferred return):**
 
 ```tsx
-import type { ProjectDetail } from '@/domains/projects/types/projectDetail.type'
+import type { ProjectDetail } from '@/domains/projects/shared/types/projectDetail.type'
 
 export function useGetProjectDetailQuery(projectId: string) {
   return useSuspenseQuery<ProjectDetail>({

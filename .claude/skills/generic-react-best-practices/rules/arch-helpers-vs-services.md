@@ -13,13 +13,13 @@ Place a function by what it depends on, not by its name. Helpers always live in 
 
 | Needs | Folder | Examples |
 | --- | --- | --- |
-| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or domain scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
-| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or domain scope | `useOrderDocumentTitle`, `useResendInvoice` |
+| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or feature scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
+| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or feature scope | `useOrderDocumentTitle`, `useResendInvoice` |
 
 **Incorrect (flat logic file and a pure rule needlessly wrapped in a service hook):**
 
 ```text
-src/domains/contracts/
+src/domains/contracts/features/detail/
 ├── helpers/
 │   ├── utils.ts                          # flat grab-bag
 │   └── contract.logic.ts                  # responsibility hidden by its suffix
@@ -30,16 +30,16 @@ src/domains/contracts/
 **Correct (categorized helpers, side effects in services/):**
 
 ```text
-src/domains/contracts/
+src/domains/contracts/features/detail/
 ├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
 ├── helpers/formatters/getContractTypeLabel.ts
 └── services/useCloseContract.ts                    # mutation + confirmation dialog
 
-src/domains/contracts/components/ContractPanel/
+src/domains/contracts/features/detail/components/ContractPanel/
 ├── ContractPanel.feature.tsx
 └── services/useContractDocumentTitle.ts             # one component owns the effect
 
-src/domains/sales/shared/
+src/domains/sales/orders/shared/
 ├── helpers/formatters/useFormatOrderStatus.ts      # hook only to read `t`
 └── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
 ```

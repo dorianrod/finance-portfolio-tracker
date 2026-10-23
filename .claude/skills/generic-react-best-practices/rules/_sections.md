@@ -9,7 +9,7 @@ A rule's impact can never exceed the impact of its section (enforced by `scripts
 ## 1. Architecture & Boundaries (arch)
 
 **Impact:** CRITICAL  
-**Description:** A domain-first layout and strict import boundaries keep features isolated, prevent circular dependencies and make every file's responsibility obvious from its location.
+**Description:** A domain-first layout, vertical feature slices and strict import boundaries keep capabilities cohesive, prevent circular dependencies and make every file's ownership and responsibility obvious from its location.
 
 ## 2. API Hooks & Server State (api)
 

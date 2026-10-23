@@ -38,7 +38,7 @@ export function createListAtoms<TFilters>(defaultFilters: TFilters) {
 }
 export type ListAtoms<TFilters> = ReturnType<typeof createListAtoms<TFilters>>
 
-// src/domains/sales/invoices/stores/list.atoms.ts
+// src/domains/sales/invoices/features/list/stores/list.atoms.ts
 export const invoiceListAtoms = createListAtoms<InvoiceFilters>(DEFAULT_FILTERS)
 
 // owner hook: the only place that knows how the atoms are combined

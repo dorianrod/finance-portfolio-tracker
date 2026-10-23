@@ -14,7 +14,7 @@ Export only the strict domain `Entity` from `types/[entity].type.ts`. The raw AP
 **Incorrect (one exported type mixes API and domain shapes, consumers re-coerce):**
 
 ```tsx
-// domains/sales/opportunities/types/opportunity.type.ts
+// domains/sales/opportunities/shared/types/opportunity.type.ts
 export type OpportunityResponse = {
   uuid: string
   creationDate?: string // raw ISO string leaks to every consumer
@@ -27,7 +27,7 @@ const created = opportunity.creationDate ? new Date(opportunity.creationDate) : 
 **Correct (strict Entity exported, raw shape private to the hook):**
 
 ```typescript
-// domains/sales/opportunities/types/opportunity.type.ts
+// domains/sales/opportunities/shared/types/opportunity.type.ts
 export type Opportunity = {
   uuid: string
   opportunityCrmId: string
@@ -36,7 +36,7 @@ export type Opportunity = {
   creationDate: Date | null
 }
 
-// domains/sales/opportunities/apis/queries/useGetOpportunitiesQuery.ts
+// domains/sales/opportunities/features/list/apis/queries/useGetOpportunitiesQuery.ts
 const ITEM_SCHEMA: yup.ObjectSchema<Opportunity> = yup.object({
   uuid: yup.string().required(),
   opportunityCrmId: yup.string().ensure(),

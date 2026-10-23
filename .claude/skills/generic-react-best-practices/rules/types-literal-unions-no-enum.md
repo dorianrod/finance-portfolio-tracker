@@ -14,7 +14,7 @@ Model a finite set of values as a string literal union. When you need to iterate
 **Incorrect (enum, values must be imported and cast everywhere):**
 
 ```typescript
-// domains/contracts/types/statuses.type.ts
+// domains/contracts/shared/types/statuses.type.ts
 export enum ContractStatus {
   DRAFT = 'DRAFT',
   ONGOING = 'ONGOING',
@@ -27,7 +27,7 @@ const isDraft = contract.status === ContractStatus.DRAFT
 **Correct (literal union plus an `ALL_` array for runtime use):**
 
 ```typescript
-// domains/contracts/types/statuses.type.ts (excerpt)
+// domains/contracts/shared/types/statuses.type.ts (excerpt)
 export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSED' | 'CANCELLED'
 
 export const ALL_CONTRACT_STATUSES: ContractStatus[] = [

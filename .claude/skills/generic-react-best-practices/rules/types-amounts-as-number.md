@@ -14,7 +14,7 @@ An amount is a `number` in the domain entity (`number | null` when it can be mis
 **Incorrect (string amount, formatted by hand):**
 
 ```tsx
-// domains/sales/orders/types/order.type.ts
+// domains/sales/orders/shared/types/order.type.ts
 export type Order = {
   uuid: string
   amount: string // '1250.50' from the API
@@ -28,17 +28,17 @@ export type Order = {
 **Correct (number in the entity, one formatter for display):**
 
 ```tsx
-// domains/sales/orders/types/order.type.ts
+// domains/sales/orders/shared/types/order.type.ts
 export type Order = {
   uuid: string
   amount: number
   currency: string
 }
 
-// domains/sales/orders/apis/queries/useGetOrderDetailQuery.ts
+// domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.ts
 amount: yup.number().required(), // '1250.50' → 1250.5
 
-// domains/sales/helpers/useFormatMoney.ts
+// domains/sales/shared/helpers/formatters/useFormatMoney.ts
 export const useFormatMoney = () => {
   const { i18n } = useTranslation()
   return useCallback(

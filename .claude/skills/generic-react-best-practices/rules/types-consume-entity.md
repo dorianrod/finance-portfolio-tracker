@@ -9,18 +9,19 @@ tags: types, entity, shared, placement, signatures
 
 **Impact: HIGH (keeps one source of truth per entity shape)**
 
-Helpers, hooks, services and component props import the entity exported from the domain `types/`. Never declare a local structural copy (`type Address = {...}`, an inline `{ uuid: string; file: ... }`): it drifts silently when the entity changes and duplicates the nullability decisions the entity already made. To narrow a dependency, derive it with `Pick<Entity, ...>`.
+Helpers, hooks, services and component props import the entity exported from its owning feature or scoped shared `types/`. Never declare a local structural copy (`type Address = {...}`, an inline `{ uuid: string; file: ... }`): it drifts silently when the entity changes and duplicates the nullability decisions the entity already made. To narrow a dependency, derive it with `Pick<Entity, ...>`.
 
 Before you create a type, search where it would already live, and put a new one at the narrowest level that fits:
 
-- the domain `types/` folder, for anything owned by one sub-domain;
+- a feature's `types/` folder, for anything owned by that feature;
+- an entity's `shared/types/` folder, for an entity type consumed by several sibling features;
 - `domains/[domain]/shared/types/` (e.g. `sales/shared/types/sales.type.ts` with `GlobalStatus`), for a type shared by sibling sub-domains;
 - `src/shared/types/`, only for a type no business domain owns and that carries no domain vocabulary.
 
 **Incorrect (helper redeclares the entity shape):**
 
 ```typescript
-// domains/sales/orders/pages/detail/helpers/toOrderDocumentFile.ts
+// domains/sales/orders/features/detail/pages/detail/helpers/toOrderDocumentFile.ts
 type OrderDocument = {
   uuid: string
   file?: { uuid: string; url: string; name: string }
@@ -33,8 +34,8 @@ export function toOrderDocumentFile(item: OrderDocument, label: string) { /* ...
 **Correct (import the entity; Pick when only a slice is needed):**
 
 ```typescript
-import type { DocumentFile } from '@/domains/documents/types/document.type'
-import type { OrderDocument } from '@/domains/sales/orders/types/orderDocument.type'
+import type { DocumentFile } from '@/domains/documents/shared/types/document.type'
+import type { OrderDocument } from '@/domains/sales/orders/shared/types/orderDocument.type'
 
 export function toOrderDocumentFile(
   item: Pick<OrderDocument, 'uuid' | 'file' | 'customerComment'>,

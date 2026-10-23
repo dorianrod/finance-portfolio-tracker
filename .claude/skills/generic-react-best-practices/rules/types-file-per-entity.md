@@ -13,14 +13,14 @@ Give each main entity its own `types/[entity].type.ts` file, named in singular c
 
 Where each variant lives:
 
-- **Filters** live next to the store that uses them: `types/[entity]Filters.type.ts` for a domain store, `pages/[page]/types/[entity]Filters.type.ts` for a page store.
+- **Filters** live next to the store that uses them: `types/[entity]Filters.type.ts` for a feature store, `pages/[page]/types/[entity]Filters.type.ts` for a page store.
 - **Payloads** stay private in the mutation hook file. Move one to `types/[action][Entity]Payload.type.ts` only when several mutations share it.
 - Sub-shapes that only exist inside an entity (`InvoiceRecipient`, `PaymentSection`) stay in that entity's file.
 
 **Incorrect (catch-all file, plural name, interfaces, ad-hoc names):**
 
 ```typescript
-// domains/sales/invoices/types/types.ts
+// domains/sales/invoices/shared/types/types.ts
 export interface Invoices {
   uuid: string
   globalStatus: string
@@ -32,16 +32,16 @@ export interface Body { /* ... */ }
 **Correct (one file per entity, type aliases, entity-prefixed names):**
 
 ```typescript
-// domains/sales/invoices/types/invoice.type.ts
+// domains/sales/invoices/shared/types/invoice.type.ts
 export type Invoice = {
   uuid: string
   globalStatus: GlobalStatus
   createdAt: Date
 }
 
-// domains/contracts/types/statuses.type.ts (excerpt)
+// domains/contracts/shared/types/statuses.type.ts (excerpt)
 export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSED' | 'CANCELLED'
 
-// domains/sales/invoices/pages/list/types/invoiceFilters.type.ts
+// domains/sales/invoices/features/list/pages/list/types/invoiceFilters.type.ts
 export type InvoiceFilters = { /* ... */ }
 ```

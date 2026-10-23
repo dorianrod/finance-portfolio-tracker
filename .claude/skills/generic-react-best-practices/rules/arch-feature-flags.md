@@ -23,17 +23,17 @@ export const OrdersToolbar: FC = () => {
 **Correct (one registry, typed key, one reading hook):**
 
 ```tsx
-// src/domains/featureFlags/flags.ts
+// src/domains/featureFlags/features/registry/constants/flags.ts
 export const FLAGS = {
   ordersExportV2: { description: 'New export dialog on the orders list' },
 } as const satisfies Record<string, { description: string }>
 
 export type FlagKey = keyof typeof FLAGS
 
-// src/domains/featureFlags/useFlag.ts
+// src/domains/featureFlags/features/registry/services/useFlag.ts
 export const useFlag = (key: FlagKey): boolean => useAtomValue(flagsAtom)[key] ?? false
 
-// src/domains/sales/orders/pages/list/components/OrdersToolbar.tsx
+// src/domains/sales/orders/features/list/pages/list/components/OrdersToolbar.tsx
 export const OrdersToolbar: FC = () => {
   const isExportV2Enabled = useFlag('ordersExportV2')
   return <div>{isExportV2Enabled && <ExportAction />}</div>

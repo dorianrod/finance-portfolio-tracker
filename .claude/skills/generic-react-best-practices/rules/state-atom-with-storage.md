@@ -9,7 +9,7 @@ tags: state, jotai, persistence, localStorage, atomWithStorage
 
 **Impact: MEDIUM (avoids key collisions, flashes and crashes on bad storage)**
 
-Persist client state only through `atomWithStorage<T>(key, default, storage?, options?)` from `jotai/utils`, in a `[name].store.ts` file of the owning domain, with a typed default and a key unique across the app. Never read/write `localStorage` by hand in an effect next to a plain atom.
+Persist client state only through `atomWithStorage<T>(key, default, storage?, options?)` from `jotai/utils`, in a `[name].store.ts` file of the owning feature, with a typed default and a key unique across the app. Never read/write `localStorage` by hand in an effect next to a plain atom.
 
 - Export the key as a constant when anything else needs it (tests, cleanup). A single-use inline key is acceptable.
 - Pass `{ getOnInit: true }` when the stored value drives the first render; otherwise the default renders first, then the subtree re-renders with the stored value.
@@ -29,7 +29,7 @@ useEffect(() => localStorage.setItem('columns', JSON.stringify([...pinned])), [p
 **Correct (atomWithStorage, exported key, defensive storage):**
 
 ```ts
-// src/domains/sales/orders/stores/pinnedColumns.store.ts
+// src/domains/sales/orders/features/list/stores/pinnedColumns.store.ts
 export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns'
 
 export const pinnedColumnsAtom = atomWithStorage<Set<string>>(

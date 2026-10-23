@@ -9,7 +9,7 @@ tags: api, yup, validation, axios
 
 **Impact: CRITICAL (no unvalidated API data reaches the domain)**
 
-Every API hook validates both directions with Yup, inside the domain hook: a request schema before sending (query params or body) and a response schema after receiving. Without it, `response.data` is trusted as `T` and nothing checks the shape, so a backend change surfaces as a crash far from the call. Declare schemas as module constants (see `yup-module-level-schemas`) and let `stripUnknown` drop fields the domain does not model.
+Every API hook validates both directions with Yup, inside the owning feature's hook: a request schema before sending (query params or body) and a response schema after receiving. Without it, `response.data` is trusted as `T` and nothing checks the shape, so a backend change surfaces as a crash far from the call. Declare schemas as module constants (see `yup-module-level-schemas`) and let `stripUnknown` drop fields the domain does not model.
 
 **Incorrect (trusts the raw response and sends params untransformed):**
 

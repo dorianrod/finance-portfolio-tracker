@@ -19,7 +19,7 @@ Formatters and sorting then work on real dates, and nobody calls `new Date(str)`
 **Incorrect (ISO string in the entity, parsing scattered in consumers):**
 
 ```tsx
-// domains/projects/types/projectListItem.type.ts
+// domains/projects/features/list/types/projectListItem.type.ts
 export type ProjectListItem = {
   uuid: string
   publishedOn: string | null
@@ -32,13 +32,13 @@ const date = item.publishedOn ? new Date(item.publishedOn) : null
 **Correct (Date in the entity, conversions in the hook's schemas):**
 
 ```typescript
-// domains/projects/types/projectListItem.type.ts
+// domains/projects/features/list/types/projectListItem.type.ts
 export type ProjectListItem = {
   uuid: string
   publishedOn: Date | null
 }
 
-// domains/projects/apis/queries/useGetProjectsQuery.ts
+// domains/projects/features/list/apis/queries/useGetProjectsQuery.ts
 const LIST_ITEM_SCHEMA = yup.object({
   uuid: yup.string().required(),
   publishedOn: yup.date().nullable().default(null), // ISO string → Date | null

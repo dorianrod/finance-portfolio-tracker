@@ -7,38 +7,38 @@ import {
   FilterButton,
   FilterPanel,
   ResetFiltersButton,
-} from "@/domains/portfolio/components/filters/FilterBar.feature";
-import { AllocationViewToggle } from "@/domains/portfolio/components/allocation-charts/AllocationViewToggle.feature";
-import { FilterChipBar } from "@/domains/portfolio/components/allocation-charts/FilterChipBar.feature";
-import { OverviewPeriodFilter } from "@/domains/portfolio/pages/OverviewPeriodFilter.feature";
+} from "@/domains/portfolio/shared/components/filters/FilterBar.feature";
+import { AllocationViewToggle } from "@/domains/portfolio/features/allocation/components/AllocationViewToggle.feature";
+import { FilterChipBar } from "@/domains/portfolio/features/allocation/components/FilterChipBar.feature";
+import { OverviewPeriodFilter } from "@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature";
 import {
   HoldingsViewTabs,
   type HoldingsView,
-} from "@/domains/portfolio/components/holdings/HoldingsViewTabs.feature";
+} from "@/domains/portfolio/features/holdings/components/HoldingsViewTabs.feature";
 import {
   filterSummaries,
   filterVisibilityForTab,
-} from "@/domains/portfolio/components/filters/helpers/filters/portfolioFilters";
+} from "@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters";
 import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
-} from "@/domains/portfolio/components/quality/AnalysisReliabilityKpi.feature";
+} from "@/domains/portfolio/shared/components/quality/AnalysisReliabilityKpi.feature";
 import {
   filterSummariesForTab,
-} from "@/domains/portfolio/helpers/filters/portfolioFilterScopes";
-import { useDashboardNavigation } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation";
-import { useDashboardQuality } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality";
-import { useDashboardTheme, useDashboardThemeSync } from "@/domains/portfolio/pages/dashboard/services/actions/useDashboardTheme";
-import { useDashboardViewModel } from "@/domains/portfolio/pages/dashboard/services/useDashboardViewModel";
-import { dashboardFiltersAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms";
-import { dashboardAllocationFilterAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms";
-import { dashboardThemeAtom } from "@/domains/portfolio/pages/dashboard/stores/dashboardTheme.atoms";
+} from "@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes";
+import { useDashboardNavigation } from "@/domains/portfolio/shared/services/actions/useDashboardNavigation";
+import { useDashboardQuality } from "@/domains/portfolio/shared/services/actions/useDashboardQuality";
+import { useDashboardTheme, useDashboardThemeSync } from "@/domains/portfolio/shared/services/actions/useDashboardTheme";
+import { useDashboardViewModel } from "@/app/services/useDashboardViewModel";
+import { dashboardFiltersAtom } from "@/domains/portfolio/shared/stores/dashboardFilters.atoms";
+import { dashboardAllocationFilterAtom } from "@/domains/portfolio/shared/stores/dashboardAllocation.atoms";
+import { dashboardThemeAtom } from "@/domains/portfolio/shared/stores/dashboardTheme.atoms";
 import {
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
   type AnalysisTab,
-} from "@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms";
+} from "@/domains/portfolio/shared/stores/dashboardNavigation.atoms";
 import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/theme/semanticColors";
 import { DASHBOARD_TAB_LOADERS, preloadDashboardTab } from "@/app/services/dashboardTabLoaders";
 

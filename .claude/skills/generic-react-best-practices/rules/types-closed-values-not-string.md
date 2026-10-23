@@ -14,7 +14,7 @@ When a field holds one of a known set of values, such as a status, kind or custo
 **Incorrect (free string on a status that drives actions):**
 
 ```typescript
-// domains/sales/orders/types/orderDetail.type.ts
+// domains/sales/orders/features/detail/types/orderDetail.type.ts
 export type PaymentSection = {
   status: string
   isSignatureBypassed: boolean
@@ -27,7 +27,7 @@ const canValidate = payment.status === 'FORM_TO_REVEIW'
 **Correct (union from the domain, narrowed once in Yup):**
 
 ```typescript
-// domains/sales/orders/types/orderDetail.type.ts
+// domains/sales/orders/features/detail/types/orderDetail.type.ts
 export const ALL_PAYMENT_STATUSES = ['DRAFT', 'FORM_TO_REVIEW', 'PAID'] as const
 export type PaymentStatus = (typeof ALL_PAYMENT_STATUSES)[number]
 
@@ -36,7 +36,7 @@ export type PaymentSection = {
   isSignatureBypassed: boolean
 }
 
-// domains/sales/orders/apis/queries/useGetOrderDetailQuery.ts
+// domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.ts
 status: yup.string<PaymentStatus>().oneOf(ALL_PAYMENT_STATUSES).required(),
 ```
 

@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.2.0**
+**Version 1.4.0**
 
 Frontend Engineering
 
@@ -26,17 +26,18 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.1 [Declare Every React Component as a View or Feature](#11-declare-every-react-component-as-a-view-or-feature)
    - 1.2 [Follow the Domain-First Folder Layout](#12-follow-the-domain-first-folder-layout)
    - 1.3 [Import Other Domains Only Through Transverse Domains](#13-import-other-domains-only-through-transverse-domains)
-   - 1.4 [Keep Shared Code Free of Domain Knowledge](#14-keep-shared-code-free-of-domain-knowledge)
-   - 1.5 [Share Client State Through Jotai, Not Prop Chains or Context](#15-share-client-state-through-jotai-not-prop-chains-or-context)
-   - 1.6 [Decompose Hook-Heavy Components by Responsibility](#16-decompose-hook-heavy-components-by-responsibility)
-   - 1.7 [Gate Experimental Features With a Typed Flag Registry](#17-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.8 [Isolate Effects in Intent-Named Hooks](#18-isolate-effects-in-intent-named-hooks)
-   - 1.9 [Keep Component Modules Focused on Components](#19-keep-component-modules-focused-on-components)
-   - 1.10 [Keep Components Thin](#110-keep-components-thin)
-   - 1.11 [Keep Visual Logic at the Component or Page Boundary](#111-keep-visual-logic-at-the-component-or-page-boundary)
-   - 1.12 [No index.ts in stores/, One File per Concern](#112-no-indexts-in-stores-one-file-per-concern)
-   - 1.13 [Separate Helpers from Services by Effects and Orchestration](#113-separate-helpers-from-services-by-effects-and-orchestration)
-   - 1.14 [Create a Sub-Domain Only for a Distinct Business Entity](#114-create-a-sub-domain-only-for-a-distinct-business-entity)
+   - 1.4 [Keep Shared Code Within Its Ownership Boundary](#14-keep-shared-code-within-its-ownership-boundary)
+   - 1.5 [Organize Every Domain into Vertical Feature Slices](#15-organize-every-domain-into-vertical-feature-slices)
+   - 1.6 [Share Client State Through Jotai, Not Prop Chains or Context](#16-share-client-state-through-jotai-not-prop-chains-or-context)
+   - 1.7 [Decompose Hook-Heavy Components by Responsibility](#17-decompose-hook-heavy-components-by-responsibility)
+   - 1.8 [Gate Experimental Features With a Typed Flag Registry](#18-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.9 [Isolate Effects in Intent-Named Hooks](#19-isolate-effects-in-intent-named-hooks)
+   - 1.10 [Keep Component Modules Focused on Components](#110-keep-component-modules-focused-on-components)
+   - 1.11 [Keep Components Thin](#111-keep-components-thin)
+   - 1.12 [Keep Visual Logic at the Component or Page Boundary](#112-keep-visual-logic-at-the-component-or-page-boundary)
+   - 1.13 [No index.ts in stores/, One File per Concern](#113-no-indexts-in-stores-one-file-per-concern)
+   - 1.14 [Separate Helpers from Services by Effects and Orchestration](#114-separate-helpers-from-services-by-effects-and-orchestration)
+   - 1.15 [Create a Sub-Domain Only for a Distinct Business Entity](#115-create-a-sub-domain-only-for-a-distinct-business-entity)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -89,7 +90,7 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
-   - 8.3 [Place Stores at Domain or Page Level by Reuse](#83-place-stores-at-domain-or-page-level-by-reuse)
+   - 8.3 [Place Stores at Feature or Page Level by Reuse](#83-place-stores-at-feature-or-page-level-by-reuse)
    - 8.4 [Reuse App Atom Factories Instead of Hand-Rolled Atoms](#84-reuse-app-atom-factories-instead-of-hand-rolled-atoms)
    - 8.5 [Derive Atoms Instead of Storing Duplicates](#85-derive-atoms-instead-of-storing-duplicates)
    - 8.6 [Persist Atoms with atomWithStorage and a Unique Key](#86-persist-atoms-with-atomwithstorage-and-a-unique-key)
@@ -110,7 +111,7 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 11.1 [Isolate Jotai State with a Fresh Store per Test](#111-isolate-jotai-state-with-a-fresh-store-per-test)
    - 11.2 [Mock the Network Boundary, Never Internal Modules](#112-mock-the-network-boundary-never-internal-modules)
    - 11.3 [Assert Behavior with Parametrized, Unconditional Tests](#113-assert-behavior-with-parametrized-unconditional-tests)
-   - 11.4 [Build Typed, Deterministic Mock Data in the Domain mocks Folder](#114-build-typed-deterministic-mock-data-in-the-domain-mocks-folder)
+   - 11.4 [Build Typed, Deterministic Mock Data in the Owning mocks Folder](#114-build-typed-deterministic-mock-data-in-the-owning-mocks-folder)
    - 11.5 [Colocate a Test Next to Every File, Covering Errors](#115-colocate-a-test-next-to-every-file-covering-errors)
    - 11.6 [Query by Role and Label, Interact with userEvent](#116-query-by-role-and-label-interact-with-userevent)
    - 11.7 [Test API Hooks with renderHook and a Per-Test Query Wrapper](#117-test-api-hooks-with-renderhook-and-a-per-test-query-wrapper)
@@ -129,7 +130,7 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 
 **Impact: CRITICAL**
 
-A domain-first layout and strict import boundaries keep features isolated, prevent circular dependencies and make every file's responsibility obvious from its location.
+A domain-first layout, vertical feature slices and strict import boundaries keep capabilities cohesive, prevent circular dependencies and make every file's ownership and responsibility obvious from its location.
 
 ### 1.1 Declare Every React Component as a View or Feature
 
@@ -260,52 +261,56 @@ See also: `arch-no-prop-drilling`
 
 **Impact: CRITICAL (every file's role is obvious from its path)**
 
-Business code lives in `src/domains/[mainDomain]/[subDomain]/`, or directly in `src/domains/[mainDomain]/` when the main domain holds a single entity (`contracts/`, `projects/`). Each level uses the same fixed role folders. Reviewers and grep-based audits rely on this layout (`apis/queries` = reads, `pages/*/services/actions` = UI orchestration), so never invent a parallel structure or dump files at the domain root.
+Business code lives in `src/domains/[mainDomain]/[subDomain]/`, or directly in `src/domains/[mainDomain]/` when the main domain holds a single entity (`contracts/`, `projects/`). Pick the smallest structure that keeps ownership explicit: a cohesive domain may own role folders directly, while a domain with several capabilities uses `features/` for vertical slices. Either shape may contain `shared/` for code owned jointly by multiple children.
+
+Each feature uses the same fixed role folders, so paths keep both ownership and responsibility explicit (`features/detail/apis/queries` = reads owned by order detail, `features/detail/services/actions` = its UI orchestration). Do not mix the compact and feature-sliced layouts for separate capabilities, invent a generic feature wrapper around the whole domain, or dump files directly at the domain root. Feature nesting stops after one sub-feature level.
 
 Never recreate catch-all root folders (`src/hooks/`, `src/components/`, `src/helpers/`, `src/utils/`, `src/types/`) outside `domains` and `shared`, nor aliases or re-exports that mimic them. Code goes either in its domain or in the matching `src/shared/` folder.
 
-**Incorrect (ad-hoc folders, mixed responsibilities):**
+**Incorrect (ad-hoc roots and a redundant wrapper):**
 
 ```text
 src/
-├── hooks/useDebounce.ts             # catch-all root outside domains and shared
-├── utils/formatAmount.ts            # catch-all root
+├── hooks/useDebounce.ts                       # catch-all root outside domains and shared
+├── utils/formatAmount.ts                      # catch-all root
 └── domains/sales/orders/
-    ├── hooks/useOrders.ts           # query + toast + navigation in one file
-    ├── utils.ts                     # flat bag of helpers
-    ├── OrderList.tsx                # page at the sub-domain root
-    └── store/index.ts               # barrel store
+    └── features/dashboard/features/           # delivery wrapper, not a business capability
+        ├── list/
+        └── detail/
 ```
 
 **Correct (one role per folder):**
 
 ```text
-src/domains/sales/                         # main domain with sub-domains
-├── shared/                                # code shared by sibling sub-domains only
-└── orders/                                # sub-domain (business entity)
-    ├── apis/{queries,mutations}/          # TanStack Query hooks
-    ├── services/                          # reusable domain hooks with side effects
-    ├── helpers/{businessRules,formatters,mappers,…}/
-    ├── components/                        # UI reused by several pages of the sub-domain
-    ├── types/                             # order.type.ts, statuses.type.ts
-    ├── mocks/                             # typed fixtures only (order.mock.ts)
-    ├── stores/                            # filters.atoms.ts, selection.atoms.ts
-    └── pages/list/
-        ├── List.tsx
-        ├── components/                    # page-only UI
-        ├── helpers/
-        ├── types/                         # page-only types (filters.type.ts)
-        ├── stores/                        # page-local atoms
-        └── services/{actions,forms,permissions}/
+src/domains/sales/                              # main domain with entity sub-domains
+├── shared/                                     # code owned jointly by those entities
+└── orders/                                     # sub-domain (business entity)
+    ├── features/
+    │   ├── list/
+    │   │   ├── apis/{queries,mutations}/       # TanStack Query hooks owned by the list
+    │   │   ├── components/                     # list UI
+    │   │   ├── helpers/{formatters,mappers,…}/
+    │   │   ├── pages/list/
+    │   │   ├── services/{actions,forms}/
+    │   │   ├── stores/
+    │   │   └── types/
+    │   └── detail/
+    │       └── features/                       # explicit nested feature boundary
+    │           └── access-management/...
+    └── shared/                                 # order code used by several order features
 
-src/domains/contracts/                     # single-level main domain: same folders, no sub-domain
-├── apis/ helpers/ types/ …
-└── pages/detail/
+src/domains/contracts/                          # cohesive single-capability domain
+├── apis/queries/
+├── components/
+├── services/
+└── types/
 
 src/shared/                                # generic code with no business knowledge
 ```
 
-Create only the folders you need. Import across folders through one path alias (`@/` → `src/`) and reject deep relative paths (`../../*`) with ESLint; keep `./` for colocated files. Import shared components from their public entry, not from their internal files.
+Create only the role folders you need inside each feature or scoped `shared/` folder. Import across folders through one path alias (`@/` → `src/`) and reject deep relative paths (`../../*`) with ESLint; keep `./` for colocated files.
+
+See also: `arch-feature-slice-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
 
 ### 1.3 Import Other Domains Only Through Transverse Domains
 
@@ -316,8 +321,8 @@ A domain imports only from itself, from `src/shared`, and from an explicit short
 **Incorrect (orders reaches into its sibling invoices):**
 
 ```tsx
-// src/domains/sales/orders/pages/detail/components/InvoicesBlock.tsx
-import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
+// src/domains/sales/orders/features/detail/pages/detail/components/InvoicesBlock.tsx
+import { InvoiceCard } from '@/domains/sales/invoices/features/detail/components/InvoiceCard.feature'
 ```
 
 **Correct (shared code is promoted, transverse domains are imported freely):**
@@ -326,8 +331,8 @@ import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
 // Promoted once to the main domain's shared folder, used by both sub-domains
 import { toOrderReference } from '@/domains/sales/shared/helpers/mappers/toOrderReference'
 // Transverse domains from the explicit list are always allowed, through their public entry
-import { Alert } from '@/domains/appShell/alert'
-import { useFlag } from '@/domains/featureFlags'
+import { Alert } from '@/domains/appShell/features/alerts/components/Alert.view'
+import { useFlag } from '@/domains/featureFlags/features/registry/services/useFlag'
 ```
 
 Escape hatches, in order of preference:
@@ -338,40 +343,88 @@ Escape hatches, in order of preference:
 
 See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`
 
-### 1.4 Keep Shared Code Free of Domain Knowledge
+### 1.4 Keep Shared Code Within Its Ownership Boundary
 
-**Impact: CRITICAL (keeps shared/ reusable and cycle-free)**
+**Impact: CRITICAL (keeps shared code reusable at its scope and prevents downward dependencies)**
 
-`src/shared/` must never import from `src/domains/*`, and a main-domain `shared/` folder (e.g. `src/domains/sales/shared/`) must never import from one of its sub-domains. Neither may use a concrete entity's vocabulary in file, type, prop or function names: an `invoiceId` prop in shared code is a sign the extraction is incomplete.
+The meaning of `shared/` is relative to its owner. `src/shared/` has no business-domain knowledge. A scoped folder such as `src/domains/sales/shared/`, `src/domains/sales/orders/shared/` or `features/detail/shared/` may use the stable vocabulary of its enclosing scope, but it never imports from or names a descendant sub-domain, feature or nested feature.
 
-**Incorrect (shared code knows about one sub-domain):**
+Place shared code at the nearest common ancestor of all its consumers. It may depend only on shared code at the same or an ancestor scope; it never depends downward on a descendant. This keeps reuse local, prevents cycles and avoids turning a high-level `shared/` folder into a business catch-all.
+
+**Incorrect (main-domain shared code knows about a descendant entity):**
 
 ```tsx
-// src/domains/sales/shared/components/AccessesBlockItem.tsx
-type AccessesBlockItemProps = {
+// src/domains/sales/shared/types/invoiceAccess.type.ts
+export interface InvoiceAccess {
   invoiceId: string
-  onResend: (invoiceId: string) => void
+  recipientEmail: string
 }
 ```
 
-**Correct (generic names, data and callbacks injected by the caller):**
+**Correct (entity vocabulary stays in the entity's own shared boundary):**
 
 ```tsx
-// src/domains/sales/shared/components/AccessesBlockItem.tsx
-import type { Access } from '@/domains/sales/shared/types/access.type'
-
-type AccessesBlockItemProps = {
-  access: Access
-  parentId: string
-  onResend: (parentId: string) => void
+// src/domains/sales/invoices/shared/types/invoiceAccess.type.ts
+export interface InvoiceAccess {
+  invoiceId: string
+  recipientEmail: string
 }
 ```
 
-Prefer injecting rendered content or data (`table: ReactNode`, `histories: History[]`) over passing an id that the shared component would use to fetch domain data itself. In `src/shared/`, operate on transverse types from `src/shared/types/` or on generics.
+An entity-level `shared/` may therefore contain entity types and components used by several of its features. A feature-level `shared/` may contain concepts common to its immediate sub-features. If only one feature consumes the code, keep it inside that feature instead of promoting it. Shared ownership does not justify adding another feature nesting level.
 
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 
-### 1.5 Share Client State Through Jotai, Not Prop Chains or Context
+See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-transverse-only-imports`
+
+### 1.5 Organize Every Domain into Vertical Feature Slices
+
+**Impact: CRITICAL (keeps each business capability cohesive and prevents overlapping technical buckets)**
+
+Use `features/` when a domain or entity contains several distinct business capabilities. A small domain that already represents one cohesive capability may own its role folders directly; do not add a feature wrapper merely to satisfy a template. Conversely, once several capabilities coexist, move them into named vertical slices instead of scattering them across domain-level role folders.
+
+Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `dashboard`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
+
+Allow at most two feature levels below a domain: `features/<feature>/` and, when a genuinely distinct responsibility needs it, `features/<feature>/features/<subfeature>/`. Do not nest a third feature level. Promote an overgrown sub-feature to the domain's first level or introduce a real sub-domain when it has an independent business lifecycle. A sub-feature must express a responsibility, not merely isolate one file or technical category.
+
+**Incorrect (technical buckets and a redundant screen wrapper obscure ownership):**
+
+```text
+src/domains/sales/orders/
+└── features/
+    └── dashboard/                         # generic wrapper with no business responsibility
+        └── features/
+            └── detail/
+                └── features/
+                    └── access-management/ # third feature level
+```
+
+**Correct (the capability and its nested responsibility own complete vertical slices):**
+
+```text
+src/domains/sales/orders/
+├── features/
+│   └── detail/
+│       ├── components/OrderDetail.feature.tsx
+│       ├── pages/detail/OrderDetailPage.tsx
+│       ├── shared/
+│       │   └── types/detailSection.type.ts
+│       └── features/
+│           └── access-management/
+│               ├── apis/queries/useOrderAccessesQuery.ts
+│               ├── components/OrderAccessPanel.feature.tsx
+│               ├── helpers/mappers/toOrderAccessRows.ts
+│               ├── services/useResendOrderAccess.ts
+│               └── types/orderAccess.type.ts
+└── shared/
+    └── types/orderSummary.type.ts
+```
+
+A parent feature may compose its sub-features. Sibling features never import each other directly: move code they both need to the nearest common ancestor's `shared/<role>/` folder. A sub-feature may depend on `shared/` folders owned by its ancestors, while shared code never depends on a descendant feature. Apply this direction at both supported feature levels and keep promotion local instead of turning domain-wide shared folders into catch-alls.
+
+See also: `arch-domain-first-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
+
+### 1.6 Share Client State Through Jotai, Not Prop Chains or Context
 
 **Impact: CRITICAL (prevents prop drilling and oversized UI hooks)**
 
@@ -464,7 +517,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 
 See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.6 Decompose Hook-Heavy Components by Responsibility
+### 1.7 Decompose Hook-Heavy Components by Responsibility
 
 **Impact: HIGH (hook count reveals components coordinating too many concerns)**
 
@@ -509,7 +562,7 @@ The lint threshold is diagnostic, not a target for every component. When a compo
 
 See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.7 Gate Experimental Features With a Typed Flag Registry
+### 1.8 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -527,17 +580,17 @@ export const OrdersToolbar: FC = () => {
 **Correct (one registry, typed key, one reading hook):**
 
 ```tsx
-// src/domains/featureFlags/flags.ts
+// src/domains/featureFlags/features/registry/constants/flags.ts
 export const FLAGS = {
   ordersExportV2: { description: 'New export dialog on the orders list' },
 } as const satisfies Record<string, { description: string }>
 
 export type FlagKey = keyof typeof FLAGS
 
-// src/domains/featureFlags/useFlag.ts
+// src/domains/featureFlags/features/registry/services/useFlag.ts
 export const useFlag = (key: FlagKey): boolean => useAtomValue(flagsAtom)[key] ?? false
 
-// src/domains/sales/orders/pages/list/components/OrdersToolbar.tsx
+// src/domains/sales/orders/features/list/pages/list/components/OrdersToolbar.tsx
 export const OrdersToolbar: FC = () => {
   const isExportV2Enabled = useFlag('ordersExportV2')
   return <div>{isExportV2Enabled && <ExportAction />}</div>
@@ -550,7 +603,7 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.8 Isolate Effects in Intent-Named Hooks
+### 1.9 Isolate Effects in Intent-Named Hooks
 
 **Impact: HIGH (synchronization responsibilities stay explicit and independently testable)**
 
@@ -589,11 +642,11 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning domain service when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
+Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning feature's `services/` when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
 See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.9 Keep Component Modules Focused on Components
+### 1.10 Keep Component Modules Focused on Components
 
 **Impact: HIGH (component files stay readable while logic gains explicit ownership)**
 
@@ -645,7 +698,7 @@ PascalCase components may share a component module when they all have the module
 
 See also: `arch-helpers-vs-services`, `arch-isolate-effects-in-hooks`, `arch-thin-components`, `helpers-categories`
 
-### 1.10 Keep Components Thin
+### 1.11 Keep Components Thin
 
 **Impact: HIGH (logic becomes reusable and testable without rendering)**
 
@@ -688,7 +741,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 **Correct (the component only wires page hooks):**
 
 ```tsx
-import { useDeleteContractAction } from '@/domains/contracts/pages/detail/services/actions/useDeleteContractAction'
+import { useDeleteContractAction } from '@/domains/contracts/features/detail/pages/detail/services/actions/useDeleteContractAction'
 
 export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
   const [deleteContract, isDeleting] = useDeleteContractAction(contractId)
@@ -698,16 +751,16 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 
 See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.11 Keep Visual Logic at the Component or Page Boundary
+### 1.12 Keep Visual Logic at the Component or Page Boundary
 
-**Impact: HIGH (domain hooks stay reusable across pages and contexts)**
+**Impact: HIGH (feature hooks stay reusable across pages and contexts)**
 
-Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Domain `apis/`, `services/` and domain-shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
+Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Feature-level `apis/`, `services/` and scoped shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
 
-**Incorrect (a domain service shows the toast itself):**
+**Incorrect (a feature service shows the toast itself):**
 
 ```ts
-// src/domains/contracts/services/useResendDocument.ts
+// src/domains/contracts/features/detail/services/useResendDocument.ts
 export function useResendDocument(contractId: string) {
   const { t } = useTranslation()
   const notify = useNotify()
@@ -769,45 +822,45 @@ Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest
 
 See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`
 
-### 1.12 No index.ts in stores/, One File per Concern
+### 1.13 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
 
-Never add an `index.ts` barrel to a state or store folder (domain or page level), and import each store file directly. Atoms are imported by queries, page actions and components at the same time; a barrel ties all of them to every atom file, is the typical source of circular imports, and defeats tree-shaking.
+Never add an `index.ts` barrel to a state or store folder (feature or page level), and import each store file directly. Atoms are imported by queries, page actions and components at the same time; a barrel ties all of them to every atom file, is the typical source of circular imports, and defeats tree-shaking.
 
 Give each file one concern and a name that says it:
 
-- `<concern>.atoms.ts` for domain and page atoms: `filters.atoms.ts`, `selection.atoms.ts`, `form.atoms.ts`, or a feature name (`reminderModal.atoms.ts`). Never a generic `atoms.ts` / `state.ts` mixing filters, selection, modals and tabs.
+- `<concern>.atoms.ts` for feature and page atoms: `filters.atoms.ts`, `selection.atoms.ts`, `form.atoms.ts`, or a feature name (`reminderModal.atoms.ts`). Never a generic `atoms.ts` / `state.ts` mixing filters, selection, modals and tabs.
 - `<name>.store.ts` for app-level stores (session, user, flags) and for shared modules that pair a factory with its hook.
 
 **Incorrect (barrel re-export):**
 
 ```ts
-// src/domains/sales/orders/stores/index.ts
+// src/domains/sales/orders/features/list/stores/index.ts
 export * from './filters.atoms'
 export * from './selection.atoms'
 
 // consumer
-import { ordersFiltersAtom, selectedOrderIdsAtom } from '@/domains/sales/orders/stores'
+import { ordersFiltersAtom, selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/stores'
 ```
 
 **Correct (explicit file per concern, direct imports):**
 
 ```ts
-// src/domains/sales/orders/stores/
+// src/domains/sales/orders/features/list/stores/
 //   filters.atoms.ts     selection.atoms.ts
-// src/domains/sales/orders/pages/detail/stores/
+// src/domains/sales/orders/features/detail/pages/detail/stores/
 //   reminderModal.atoms.ts     form.atoms.ts
 
-import { ordersFiltersAtom } from '@/domains/sales/orders/stores/filters.atoms'
-import { selectedOrderIdsAtom } from '@/domains/sales/orders/stores/selection.atoms'
+import { ordersFiltersAtom } from '@/domains/sales/orders/features/list/stores/filters.atoms'
+import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/stores/selection.atoms'
 ```
 
 Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.13 Separate Helpers from Services by Effects and Orchestration
+### 1.14 Separate Helpers from Services by Effects and Orchestration
 
 **Impact: HIGH (predictable location, minimal test setup)**
 
@@ -815,13 +868,13 @@ Place a function by what it depends on, not by its name. Helpers always live in 
 
 | Needs | Folder | Examples |
 | --- | --- | --- |
-| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or domain scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
-| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or domain scope | `useOrderDocumentTitle`, `useResendInvoice` |
+| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or feature scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
+| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or feature scope | `useOrderDocumentTitle`, `useResendInvoice` |
 
 **Incorrect (flat logic file and a pure rule needlessly wrapped in a service hook):**
 
 ```text
-src/domains/contracts/
+src/domains/contracts/features/detail/
 ├── helpers/
 │   ├── utils.ts                          # flat grab-bag
 │   └── contract.logic.ts                  # responsibility hidden by its suffix
@@ -832,27 +885,27 @@ src/domains/contracts/
 **Correct (categorized helpers, side effects in services/):**
 
 ```text
-src/domains/contracts/
+src/domains/contracts/features/detail/
 ├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
 ├── helpers/formatters/getContractTypeLabel.ts
 └── services/useCloseContract.ts                    # mutation + confirmation dialog
 
-src/domains/contracts/components/ContractPanel/
+src/domains/contracts/features/detail/components/ContractPanel/
 ├── ContractPanel.feature.tsx
 └── services/useContractDocumentTitle.ts             # one component owns the effect
 
-src/domains/sales/shared/
+src/domains/sales/orders/shared/
 ├── helpers/formatters/useFormatOrderStatus.ts      # hook only to read `t`
 └── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
 ```
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
 
-### 1.14 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.15 Create a Sub-Domain Only for a Distinct Business Entity
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
-Sibling sub-domains cannot import each other, so splitting an entity's features across sub-domains forces duplication or boundary violations. Create a sub-domain only for an entity with its own lifecycle, endpoints, permissions and several pages; otherwise extend the parent sub-domain (new page, new mutation, new section).
+Sibling sub-domains cannot import each other, so splitting one entity's capabilities across sub-domains forces duplication or boundary violations. Create a sub-domain only for an entity with its own lifecycle, endpoints, permissions and several pages; model a capability of an existing entity as a feature or one sub-feature level under that entity instead.
 
 **Incorrect (a feature of the order split into its own sub-domain):**
 
@@ -864,16 +917,21 @@ src/domains/sales/
     └── components/            #   (sibling import, forbidden)
 ```
 
-**Correct (the feature extends the owning sub-domain):**
+**Correct (the capability becomes a vertical feature of the owning entity):**
 
 ```text
 src/domains/sales/orders/
-├── apis/queries/useGetOrderAccessesQuery.ts
-├── apis/mutations/useResendAccessInvitation.ts
-└── pages/detail/...
+└── features/
+    └── access-management/
+        ├── apis/queries/useGetOrderAccessesQuery.ts
+        ├── apis/mutations/useResendAccessInvitation.ts
+        ├── components/OrderAccessPanel.feature.tsx
+        └── services/useResendOrderAccess.ts
 ```
 
-Create a new sub-domain when the concept has its own API resource (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views. If two sub-domains need the same code, move it to the main domain's `shared/` folder instead of merging them. A main domain that holds a single entity stays single-level (`src/domains/contracts/apis/…`) until a second entity appears.
+Create a new sub-domain when the concept has its own API resource (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views. If two sub-domains need the same code, move it to the main domain's `shared/` folder instead of merging them. A main domain that holds a single entity stays single-level (`src/domains/contracts/`) until a second entity appears; it may use direct role folders while it remains one cohesive capability.
+
+See also: `arch-domain-first-layout`, `arch-feature-slice-layout`
 
 ---
 
@@ -887,7 +945,7 @@ All HTTP access goes through typed query/mutation hooks, with schema validation 
 
 **Impact: CRITICAL (no unvalidated API data reaches the domain)**
 
-Every API hook validates both directions with Yup, inside the domain hook: a request schema before sending (query params or body) and a response schema after receiving. Without it, `response.data` is trusted as `T` and nothing checks the shape, so a backend change surfaces as a crash far from the call. Declare schemas as module constants (see `yup-module-level-schemas`) and let `stripUnknown` drop fields the domain does not model.
+Every API hook validates both directions with Yup, inside the owning feature's hook: a request schema before sending (query params or body) and a response schema after receiving. Without it, `response.data` is trusted as `T` and nothing checks the shape, so a backend change surfaces as a crash far from the call. Declare schemas as module constants (see `yup-module-level-schemas`) and let `stripUnknown` drop fields the domain does not model.
 
 **Incorrect (trusts the raw response and sends params untransformed):**
 
@@ -932,7 +990,7 @@ Mutations follow the same rule inside `mutationFn`. Endpoints with an empty body
 
 **Impact: CRITICAL (single typed, validated entry point per endpoint)**
 
-Each endpoint gets exactly one hook in `apis/queries/` (reads) or `apis/mutations/` (writes) of its domain. That hook owns the query key, the endpoint URL, the Yup validation and the TanStack Query call. Components and page hooks consume it; they never call `axios`, `useQuery` or `useMutation` directly. Inline calls duplicate keys and URLs and skip validation.
+Each endpoint gets exactly one hook in `apis/queries/` (reads) or `apis/mutations/` (writes) of its owning feature. That hook owns the query key, the endpoint URL, the Yup validation and the TanStack Query call. Components and page hooks consume it; they never call `axios`, `useQuery` or `useMutation` directly. Inline calls duplicate keys and URLs and skip validation.
 
 **Incorrect (endpoint, key and parsing inlined in a component):**
 
@@ -946,10 +1004,10 @@ export const RemindersTab: FC<RemindersTabProps> = ({ contractId }) => {
 }
 ```
 
-**Correct (one domain hook per endpoint, consumed by the component):**
+**Correct (one feature-owned hook per endpoint, consumed by the component):**
 
 ```tsx
-// src/domains/contracts/apis/queries/useGetContractRemindersQuery.ts
+// src/domains/contracts/features/detail/apis/queries/useGetContractRemindersQuery.ts
 export function useGetContractRemindersQuery(contractId: string) {
   return useSuspenseQuery<ContractReminder[]>({
     queryKey: ['contracts', contractId, 'reminders'],
@@ -960,7 +1018,7 @@ export function useGetContractRemindersQuery(contractId: string) {
   })
 }
 
-// src/domains/contracts/pages/detail/components/RemindersTab/RemindersTab.tsx
+// src/domains/contracts/features/detail/pages/detail/components/RemindersTab/RemindersTab.tsx
 export const RemindersTab: FC<RemindersTabProps> = ({ contractId }) => {
   const { data: reminders } = useGetContractRemindersQuery(contractId)
   const { mutateAsync: deleteReminder } = useDeleteReminder(contractId)
@@ -1002,7 +1060,7 @@ export const ENDPOINTS = {
   },
 } as const
 
-// src/domains/sales/invoices/apis/mutations/useUpdateInvoiceComment.ts
+// src/domains/sales/invoices/features/comments/apis/mutations/useUpdateInvoiceComment.ts
 export function useUpdateInvoiceComment(invoiceId: string) {
   return useMutation({
     mutationFn: async ({ commentId, message }: UpdateInvoiceCommentInput) => {
@@ -1276,7 +1334,7 @@ export function useGetProjectDetailQuery(
 **Correct (domain entity, inferred return):**
 
 ```tsx
-import type { ProjectDetail } from '@/domains/projects/types/projectDetail.type'
+import type { ProjectDetail } from '@/domains/projects/shared/types/projectDetail.type'
 
 export function useGetProjectDetailQuery(projectId: string) {
   return useSuspenseQuery<ProjectDetail>({
@@ -1658,18 +1716,19 @@ Strict domain entities (real dates, literal unions, explicit nullability) decoup
 
 **Impact: HIGH (keeps one source of truth per entity shape)**
 
-Helpers, hooks, services and component props import the entity exported from the domain `types/`. Never declare a local structural copy (`type Address = {...}`, an inline `{ uuid: string; file: ... }`): it drifts silently when the entity changes and duplicates the nullability decisions the entity already made. To narrow a dependency, derive it with `Pick<Entity, ...>`.
+Helpers, hooks, services and component props import the entity exported from its owning feature or scoped shared `types/`. Never declare a local structural copy (`type Address = {...}`, an inline `{ uuid: string; file: ... }`): it drifts silently when the entity changes and duplicates the nullability decisions the entity already made. To narrow a dependency, derive it with `Pick<Entity, ...>`.
 
 Before you create a type, search where it would already live, and put a new one at the narrowest level that fits:
 
-- the domain `types/` folder, for anything owned by one sub-domain;
+- a feature's `types/` folder, for anything owned by that feature;
+- an entity's `shared/types/` folder, for an entity type consumed by several sibling features;
 - `domains/[domain]/shared/types/` (e.g. `sales/shared/types/sales.type.ts` with `GlobalStatus`), for a type shared by sibling sub-domains;
 - `src/shared/types/`, only for a type no business domain owns and that carries no domain vocabulary.
 
 **Incorrect (helper redeclares the entity shape):**
 
 ```typescript
-// domains/sales/orders/pages/detail/helpers/toOrderDocumentFile.ts
+// domains/sales/orders/features/detail/pages/detail/helpers/toOrderDocumentFile.ts
 type OrderDocument = {
   uuid: string
   file?: { uuid: string; url: string; name: string }
@@ -1682,8 +1741,8 @@ export function toOrderDocumentFile(item: OrderDocument, label: string) { /* ...
 **Correct (import the entity; Pick when only a slice is needed):**
 
 ```typescript
-import type { DocumentFile } from '@/domains/documents/types/document.type'
-import type { OrderDocument } from '@/domains/sales/orders/types/orderDocument.type'
+import type { DocumentFile } from '@/domains/documents/shared/types/document.type'
+import type { OrderDocument } from '@/domains/sales/orders/shared/types/orderDocument.type'
 
 export function toOrderDocumentFile(
   item: Pick<OrderDocument, 'uuid' | 'file' | 'customerComment'>,
@@ -1745,7 +1804,7 @@ Export only the strict domain `Entity` from `types/[entity].type.ts`. The raw AP
 **Incorrect (one exported type mixes API and domain shapes, consumers re-coerce):**
 
 ```tsx
-// domains/sales/opportunities/types/opportunity.type.ts
+// domains/sales/opportunities/shared/types/opportunity.type.ts
 export type OpportunityResponse = {
   uuid: string
   creationDate?: string // raw ISO string leaks to every consumer
@@ -1758,7 +1817,7 @@ const created = opportunity.creationDate ? new Date(opportunity.creationDate) : 
 **Correct (strict Entity exported, raw shape private to the hook):**
 
 ```typescript
-// domains/sales/opportunities/types/opportunity.type.ts
+// domains/sales/opportunities/shared/types/opportunity.type.ts
 export type Opportunity = {
   uuid: string
   opportunityCrmId: string
@@ -1767,7 +1826,7 @@ export type Opportunity = {
   creationDate: Date | null
 }
 
-// domains/sales/opportunities/apis/queries/useGetOpportunitiesQuery.ts
+// domains/sales/opportunities/features/list/apis/queries/useGetOpportunitiesQuery.ts
 const ITEM_SCHEMA: yup.ObjectSchema<Opportunity> = yup.object({
   uuid: yup.string().required(),
   opportunityCrmId: yup.string().ensure(),
@@ -1788,7 +1847,7 @@ When a field holds one of a known set of values, such as a status, kind or custo
 **Incorrect (free string on a status that drives actions):**
 
 ```typescript
-// domains/sales/orders/types/orderDetail.type.ts
+// domains/sales/orders/features/detail/types/orderDetail.type.ts
 export type PaymentSection = {
   status: string
   isSignatureBypassed: boolean
@@ -1801,7 +1860,7 @@ const canValidate = payment.status === 'FORM_TO_REVEIW'
 **Correct (union from the domain, narrowed once in Yup):**
 
 ```typescript
-// domains/sales/orders/types/orderDetail.type.ts
+// domains/sales/orders/features/detail/types/orderDetail.type.ts
 export const ALL_PAYMENT_STATUSES = ['DRAFT', 'FORM_TO_REVIEW', 'PAID'] as const
 export type PaymentStatus = (typeof ALL_PAYMENT_STATUSES)[number]
 
@@ -1810,7 +1869,7 @@ export type PaymentSection = {
   isSignatureBypassed: boolean
 }
 
-// domains/sales/orders/apis/queries/useGetOrderDetailQuery.ts
+// domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.ts
 status: yup.string<PaymentStatus>().oneOf(ALL_PAYMENT_STATUSES).required(),
 ```
 
@@ -1830,7 +1889,7 @@ Formatters and sorting then work on real dates, and nobody calls `new Date(str)`
 **Incorrect (ISO string in the entity, parsing scattered in consumers):**
 
 ```tsx
-// domains/projects/types/projectListItem.type.ts
+// domains/projects/features/list/types/projectListItem.type.ts
 export type ProjectListItem = {
   uuid: string
   publishedOn: string | null
@@ -1843,13 +1902,13 @@ const date = item.publishedOn ? new Date(item.publishedOn) : null
 **Correct (Date in the entity, conversions in the hook's schemas):**
 
 ```typescript
-// domains/projects/types/projectListItem.type.ts
+// domains/projects/features/list/types/projectListItem.type.ts
 export type ProjectListItem = {
   uuid: string
   publishedOn: Date | null
 }
 
-// domains/projects/apis/queries/useGetProjectsQuery.ts
+// domains/projects/features/list/apis/queries/useGetProjectsQuery.ts
 const LIST_ITEM_SCHEMA = yup.object({
   uuid: yup.string().required(),
   publishedOn: yup.date().nullable().default(null), // ISO string → Date | null
@@ -1874,7 +1933,7 @@ Model a finite set of values as a string literal union. When you need to iterate
 **Incorrect (enum, values must be imported and cast everywhere):**
 
 ```typescript
-// domains/contracts/types/statuses.type.ts
+// domains/contracts/shared/types/statuses.type.ts
 export enum ContractStatus {
   DRAFT = 'DRAFT',
   ONGOING = 'ONGOING',
@@ -1887,7 +1946,7 @@ const isDraft = contract.status === ContractStatus.DRAFT
 **Correct (literal union plus an `ALL_` array for runtime use):**
 
 ```typescript
-// domains/contracts/types/statuses.type.ts (excerpt)
+// domains/contracts/shared/types/statuses.type.ts (excerpt)
 export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSED' | 'CANCELLED'
 
 export const ALL_CONTRACT_STATUSES: ContractStatus[] = [
@@ -1910,8 +1969,8 @@ Reuse the types of transverse domains (e.g. `documents`) and of the app-wide sha
 **Incorrect (copies a transverse shape and imports a sibling entity):**
 
 ```typescript
-// domains/sales/orders/types/orderRejection.type.ts
-import type { Invoice } from '@/domains/sales/invoices/types/invoice.type'
+// domains/sales/orders/shared/types/orderRejection.type.ts
+import type { Invoice } from '@/domains/sales/invoices/shared/types/invoice.type'
 
 export type OrderRejection = {
   uuid: string
@@ -1926,7 +1985,7 @@ export type OrderRejection = {
 **Correct (compose the transverse type, link the foreign entity by id):**
 
 ```typescript
-import type { AntivirusStatus, RejectionHistories } from '@/domains/documents/types/document.type'
+import type { AntivirusStatus, RejectionHistories } from '@/domains/documents/shared/types/document.type'
 
 export type OrderRejection = RejectionHistories & {
   antivirusStatus?: AntivirusStatus
@@ -1944,14 +2003,14 @@ Give each main entity its own `types/[entity].type.ts` file, named in singular c
 
 Where each variant lives:
 
-- **Filters** live next to the store that uses them: `types/[entity]Filters.type.ts` for a domain store, `pages/[page]/types/[entity]Filters.type.ts` for a page store.
+- **Filters** live next to the store that uses them: `types/[entity]Filters.type.ts` for a feature store, `pages/[page]/types/[entity]Filters.type.ts` for a page store.
 - **Payloads** stay private in the mutation hook file. Move one to `types/[action][Entity]Payload.type.ts` only when several mutations share it.
 - Sub-shapes that only exist inside an entity (`InvoiceRecipient`, `PaymentSection`) stay in that entity's file.
 
 **Incorrect (catch-all file, plural name, interfaces, ad-hoc names):**
 
 ```typescript
-// domains/sales/invoices/types/types.ts
+// domains/sales/invoices/shared/types/types.ts
 export interface Invoices {
   uuid: string
   globalStatus: string
@@ -1963,17 +2022,17 @@ export interface Body { /* ... */ }
 **Correct (one file per entity, type aliases, entity-prefixed names):**
 
 ```typescript
-// domains/sales/invoices/types/invoice.type.ts
+// domains/sales/invoices/shared/types/invoice.type.ts
 export type Invoice = {
   uuid: string
   globalStatus: GlobalStatus
   createdAt: Date
 }
 
-// domains/contracts/types/statuses.type.ts (excerpt)
+// domains/contracts/shared/types/statuses.type.ts (excerpt)
 export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSED' | 'CANCELLED'
 
-// domains/sales/invoices/pages/list/types/invoiceFilters.type.ts
+// domains/sales/invoices/features/list/pages/list/types/invoiceFilters.type.ts
 export type InvoiceFilters = { /* ... */ }
 ```
 
@@ -1986,7 +2045,7 @@ An amount is a `number` in the domain entity (`number | null` when it can be mis
 **Incorrect (string amount, formatted by hand):**
 
 ```tsx
-// domains/sales/orders/types/order.type.ts
+// domains/sales/orders/shared/types/order.type.ts
 export type Order = {
   uuid: string
   amount: string // '1250.50' from the API
@@ -2000,17 +2059,17 @@ export type Order = {
 **Correct (number in the entity, one formatter for display):**
 
 ```tsx
-// domains/sales/orders/types/order.type.ts
+// domains/sales/orders/shared/types/order.type.ts
 export type Order = {
   uuid: string
   amount: number
   currency: string
 }
 
-// domains/sales/orders/apis/queries/useGetOrderDetailQuery.ts
+// domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.ts
 amount: yup.number().required(), // '1250.50' → 1250.5
 
-// domains/sales/helpers/useFormatMoney.ts
+// domains/sales/shared/helpers/formatters/useFormatMoney.ts
 export const useFormatMoney = () => {
   const { i18n } = useTranslation()
   return useCallback(
@@ -2803,32 +2862,32 @@ const selectedIds = useAtomValue(selectedOrderIdsAtom)
 
 Only exception: filter *options* published from the list metadata into an atom (they must survive filtering). Never extend it to entities.
 
-### 8.3 Place Stores at Domain or Page Level by Reuse
+### 8.3 Place Stores at Feature or Page Level by Reuse
 
 **Impact: MEDIUM-HIGH (avoids cross-page coupling and orphan business state)**
 
-Put an atom in the sub-domain `stores/` (`domains/[main]/[sub]/stores/`, or `domains/[domain]/stores/` for a single-level domain) only when several pages or domain hooks of the sub-domain share it (list filters read by actions, selection read by bulk actions). Everything owned by one page (modal state, page filters, form/edit state, tabs) goes in `domains/[main]/[sub]/pages/[page]/stores/`. Persisted or app-level atoms live in their owning domain; the app-shell domain is reserved for session state, and `src/shared/stores/` only holds generic, business-agnostic atoms.
+Put an atom in a feature's `stores/` only when several pages, components or services of that feature share it (list filters read by actions, selection read by bulk actions). Everything owned by one page (modal state, page filters, form/edit state, tabs) goes in the feature's `pages/[page]/stores/`. State shared by sibling features moves to their nearest common ancestor's `shared/stores/`. Persisted or app-level atoms live in their owning feature; the app-shell domain is reserved for session state, and `src/shared/stores/` only holds generic, business-agnostic atoms.
 
 **Incorrect (page state promoted to the domain, business state in shared):**
 
 ```text
-src/domains/contracts/stores/reminderModal.atoms.ts   # used by the detail page only
-src/shared/stores/orderFilters.atoms.ts               # business state in shared
-src/domains/appShell/stores/invoiceTabs.store.ts      # domain state in the app shell
+src/domains/contracts/features/detail/stores/reminderModal.atoms.ts   # used by one page only
+src/shared/stores/orderFilters.atoms.ts                              # business state in global shared
+src/domains/appShell/features/session/stores/invoiceTabs.store.ts    # invoice state in app shell
 ```
 
 **Correct (scope follows the consumers):**
 
 ```text
-src/domains/sales/orders/stores/filters.atoms.ts                  # read by list page + actions
-src/domains/sales/orders/stores/selection.atoms.ts
-src/domains/contracts/pages/detail/stores/reminderModal.atoms.ts
-src/domains/sales/invoices/pages/detail/stores/uploadInvoiceFileModal.atoms.ts
-src/domains/appShell/stores/auth.store.ts                         # session only
-src/shared/stores/confirmModal.atoms.ts                           # generic, no business
+src/domains/sales/orders/features/list/stores/filters.atoms.ts       # read across the list feature
+src/domains/sales/orders/features/list/stores/selection.atoms.ts
+src/domains/contracts/features/detail/pages/detail/stores/reminderModal.atoms.ts
+src/domains/sales/invoices/features/detail/pages/detail/stores/uploadInvoiceFileModal.atoms.ts
+src/domains/appShell/features/session/stores/auth.store.ts           # session only
+src/shared/stores/confirmModal.atoms.ts                              # generic, no business
 ```
 
-Start at page level; move an atom up to the domain only when a second page needs it.
+Start at page level; move an atom up to the feature only when another consumer in that feature needs it. Promote it to the nearest scoped `shared/stores/` only when sibling features need the same state.
 
 ### 8.4 Reuse App Atom Factories Instead of Hand-Rolled Atoms
 
@@ -2863,7 +2922,7 @@ export function createListAtoms<TFilters>(defaultFilters: TFilters) {
 }
 export type ListAtoms<TFilters> = ReturnType<typeof createListAtoms<TFilters>>
 
-// src/domains/sales/invoices/stores/list.atoms.ts
+// src/domains/sales/invoices/features/list/stores/list.atoms.ts
 export const invoiceListAtoms = createListAtoms<InvoiceFilters>(DEFAULT_FILTERS)
 
 // owner hook: the only place that knows how the atoms are combined
@@ -2898,7 +2957,7 @@ useEffect(() => setIsAdmin(user?.role === 'admin'), [user, setIsAdmin])
 export const userAtom = atom<CurrentUser | undefined>(undefined)
 export const isAdminAtom = atom(get => get(userAtom)?.role === 'admin')
 
-// src/domains/sales/invoices/stores/selection.atoms.ts
+// src/domains/sales/invoices/features/list/stores/selection.atoms.ts
 export const selectedInvoiceIdsAtom = atom<ReadonlySet<string>>(new Set<string>())
 export const selectedInvoiceCountAtom = atom(get => get(selectedInvoiceIdsAtom).size)
 ```
@@ -2911,7 +2970,7 @@ See also: `vercel-react-best-practices` → `rerender-derived-state`
 
 **Impact: MEDIUM (avoids key collisions, flashes and crashes on bad storage)**
 
-Persist client state only through `atomWithStorage<T>(key, default, storage?, options?)` from `jotai/utils`, in a `[name].store.ts` file of the owning domain, with a typed default and a key unique across the app. Never read/write `localStorage` by hand in an effect next to a plain atom.
+Persist client state only through `atomWithStorage<T>(key, default, storage?, options?)` from `jotai/utils`, in a `[name].store.ts` file of the owning feature, with a typed default and a key unique across the app. Never read/write `localStorage` by hand in an effect next to a plain atom.
 
 - Export the key as a constant when anything else needs it (tests, cleanup). A single-use inline key is acceptable.
 - Pass `{ getOnInit: true }` when the stored value drives the first render; otherwise the default renders first, then the subtree re-renders with the stored value.
@@ -2931,7 +2990,7 @@ useEffect(() => localStorage.setItem('columns', JSON.stringify([...pinned])), [p
 **Correct (atomWithStorage, exported key, defensive storage):**
 
 ```ts
-// src/domains/sales/orders/stores/pinnedColumns.store.ts
+// src/domains/sales/orders/features/list/stores/pinnedColumns.store.ts
 export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns'
 
 export const pinnedColumnsAtom = atomWithStorage<Set<string>>(
@@ -3228,12 +3287,12 @@ Parsing and coercion of raw API values are not helper categories. They belong in
 
 Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
 
-When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; domain-shared logic belongs under the domain; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
+When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; feature-shared logic belongs under that feature; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
 
 **Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
 
 ```text
-src/domains/sales/orders/helpers/
+src/domains/sales/orders/features/list/helpers/
 ├── utils.ts                      # formatDate, isCancelable, buildBody, …
 ├── orderHelpers.ts
 ├── order.logic.ts                # selection, aggregation and display mixed together
@@ -3244,7 +3303,7 @@ src/domains/sales/orders/helpers/
 **Correct (one category per file, file named after its export):**
 
 ```text
-src/domains/sales/orders/helpers/
+src/domains/sales/orders/features/list/helpers/
 ├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
 ├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
 ├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
@@ -3257,12 +3316,12 @@ src/domains/sales/orders/helpers/
 ├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
 └── filters/useOrderStatusFilterOptions.ts
 
-src/domains/sales/orders/pages/list/components/OrdersChart/
+src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
 ├── OrdersChart.feature.tsx
 └── helpers/presenters/getOrdersChartDomain.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
+Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`
 
@@ -3434,7 +3493,7 @@ import { Provider, createStore } from 'jotai'
 import {
   DEFAULT_HISTORY_FILTERS,
   historyFiltersAtom,
-} from '@/domains/contracts/pages/histories/stores/filters.atoms'
+} from '@/domains/contracts/features/histories/pages/histories/stores/filters.atoms'
 
 it('should reset the filters when the contract changes', () => {
   const store = createStore()
@@ -3464,10 +3523,10 @@ Never `jest.mock` an internal module: a hook, component, helper, provider or a s
 **Incorrect (stubs the query hook and the permissions hook):**
 
 ```tsx
-jest.mock('@/domains/sales/orders/apis/queries/useGetOrderDetailQuery', () => ({
+jest.mock('@/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery', () => ({
   useGetOrderDetailQuery: () => mockUseGetOrderDetailQuery(),
 }))
-jest.mock('@/domains/sales/orders/pages/detail/services/permissions/usePermissions', () => ({
+jest.mock('@/domains/sales/orders/features/detail/pages/detail/services/permissions/usePermissions', () => ({
   usePermissions: () => mockUsePermissions(),
 }))
 
@@ -3545,13 +3604,13 @@ Assert what the user or caller observes, not the implementation:
 
 Move repeated setup into `beforeEach` or a local `setup()` helper, not into a branch. Use `test.each` for the null, undefined and empty-string variants as well.
 
-### 11.4 Build Typed, Deterministic Mock Data in the Domain mocks Folder
+### 11.4 Build Typed, Deterministic Mock Data in the Owning mocks Folder
 
 **Impact: MEDIUM (reproducible tests that break when the domain type changes)**
 
-Domain fixtures live in `src/domains/<domain>/<subDomain>/mocks/<entity>.mock.ts` and are annotated with the domain entity, never cast (`as Invoice[]` hides missing or renamed fields). They use fixed `Date` values (`new Date('2026-01-15T09:00:00.000Z')`, never `new Date()`), a unique id per item, and varied values that cover each state the UI branches on. A factory with `overrides` lets each test state only what it cares about.
+Fixtures live in the owning feature's `mocks/<entity>.mock.ts`, or in the nearest scoped `shared/mocks/` when sibling features reuse them. They are annotated with the domain entity, never cast (`as Invoice[]` hides missing or renamed fields). They use fixed `Date` values (`new Date('2026-01-15T09:00:00.000Z')`, never `new Date()`), a unique id per item, and varied values that cover each state the UI branches on. A factory with `overrides` lets each test state only what it cares about.
 
-A domain `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one shared mock-server folder and reuse these fixtures, so tests and the dev environment agree on the same data (see `test-mock-network-not-internals`).
+A `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one shared mock-server folder and reuse these fixtures, so tests and the dev environment agree on the same data (see `test-mock-network-not-internals`).
 
 **Incorrect (cast hides the missing required fields):**
 
@@ -3565,7 +3624,7 @@ export const mockInvoices = [
 **Correct (annotated factory with overrides, fixed dates, distinct ids and states):**
 
 ```ts
-import type { Invoice } from '@/domains/sales/invoices/types/invoice.type'
+import type { Invoice } from '@/domains/sales/invoices/shared/types/invoice.type'
 
 export const makeInvoice = (overrides: Partial<Invoice> = {}): Invoice => ({
   id: 'invoice-1',
@@ -3605,7 +3664,7 @@ describe('useGetOrderDetailQuery', () => {
 **Correct (sibling file, nominal and error cases):**
 
 ```tsx
-// src/domains/sales/orders/apis/queries/useGetOrderDetailQuery.test.tsx
+// src/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.test.tsx
 describe('useGetOrderDetailQuery', () => {
   it('should parse the API payload and strip unknown fields', async () => { /* ... */ })
 
@@ -3734,7 +3793,7 @@ export const useFormatInvoiceStatusOptions = createUseFormatStatusOptions(useFor
 **Correct (generic hook takes a value, each wrapper calls the source hook explicitly):**
 
 ```ts
-import { useFormatInvoiceStatus } from '@/domains/sales/invoices/helpers/formatters/useFormatInvoiceStatus'
+import { useFormatInvoiceStatus } from '@/domains/sales/invoices/shared/helpers/formatters/useFormatInvoiceStatus'
 
 type StatusOption<T extends string> = { value: T; label: string }
 

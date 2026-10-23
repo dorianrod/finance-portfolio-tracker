@@ -1,20 +1,20 @@
 ---
 title: Keep Visual Logic at the Component or Page Boundary
 impact: HIGH
-impactDescription: domain hooks stay reusable across pages and contexts
+impactDescription: feature hooks stay reusable across pages and contexts
 tags: arch, separation-of-concerns, toast, navigation, page-actions
 ---
 
 ## Keep Visual Logic at the Component or Page Boundary
 
-**Impact: HIGH (domain hooks stay reusable across pages and contexts)**
+**Impact: HIGH (feature hooks stay reusable across pages and contexts)**
 
-Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Domain `apis/`, `services/` and domain-shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
+Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Feature-level `apis/`, `services/` and scoped shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
 
-**Incorrect (a domain service shows the toast itself):**
+**Incorrect (a feature service shows the toast itself):**
 
 ```ts
-// src/domains/contracts/services/useResendDocument.ts
+// src/domains/contracts/features/detail/services/useResendDocument.ts
 export function useResendDocument(contractId: string) {
   const { t } = useTranslation()
   const notify = useNotify()

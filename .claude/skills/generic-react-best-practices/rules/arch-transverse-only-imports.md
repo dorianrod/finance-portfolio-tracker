@@ -14,8 +14,8 @@ A domain imports only from itself, from `src/shared`, and from an explicit short
 **Incorrect (orders reaches into its sibling invoices):**
 
 ```tsx
-// src/domains/sales/orders/pages/detail/components/InvoicesBlock.tsx
-import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
+// src/domains/sales/orders/features/detail/pages/detail/components/InvoicesBlock.tsx
+import { InvoiceCard } from '@/domains/sales/invoices/features/detail/components/InvoiceCard.feature'
 ```
 
 **Correct (shared code is promoted, transverse domains are imported freely):**
@@ -24,8 +24,8 @@ import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
 // Promoted once to the main domain's shared folder, used by both sub-domains
 import { toOrderReference } from '@/domains/sales/shared/helpers/mappers/toOrderReference'
 // Transverse domains from the explicit list are always allowed, through their public entry
-import { Alert } from '@/domains/appShell/alert'
-import { useFlag } from '@/domains/featureFlags'
+import { Alert } from '@/domains/appShell/features/alerts/components/Alert.view'
+import { useFlag } from '@/domains/featureFlags/features/registry/services/useFlag'
 ```
 
 Escape hatches, in order of preference:

@@ -42,12 +42,12 @@ Parsing and coercion of raw API values are not helper categories. They belong in
 
 Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
 
-When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; domain-shared logic belongs under the domain; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
+When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; feature-shared logic belongs under that feature; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
 
 **Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
 
 ```text
-src/domains/sales/orders/helpers/
+src/domains/sales/orders/features/list/helpers/
 ├── utils.ts                      # formatDate, isCancelable, buildBody, …
 ├── orderHelpers.ts
 ├── order.logic.ts                # selection, aggregation and display mixed together
@@ -58,7 +58,7 @@ src/domains/sales/orders/helpers/
 **Correct (one category per file, file named after its export):**
 
 ```text
-src/domains/sales/orders/helpers/
+src/domains/sales/orders/features/list/helpers/
 ├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
 ├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
 ├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
@@ -71,11 +71,11 @@ src/domains/sales/orders/helpers/
 ├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
 └── filters/useOrderStatusFilterOptions.ts
 
-src/domains/sales/orders/pages/list/components/OrdersChart/
+src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
 ├── OrdersChart.feature.tsx
 └── helpers/presenters/getOrdersChartDomain.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
+Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`

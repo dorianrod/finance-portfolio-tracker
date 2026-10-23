@@ -31,7 +31,7 @@ useEffect(() => setIsAdmin(user?.role === 'admin'), [user, setIsAdmin])
 export const userAtom = atom<CurrentUser | undefined>(undefined)
 export const isAdminAtom = atom(get => get(userAtom)?.role === 'admin')
 
-// src/domains/sales/invoices/stores/selection.atoms.ts
+// src/domains/sales/invoices/features/list/stores/selection.atoms.ts
 export const selectedInvoiceIdsAtom = atom<ReadonlySet<string>>(new Set<string>())
 export const selectedInvoiceCountAtom = atom(get => get(selectedInvoiceIdsAtom).size)
 ```

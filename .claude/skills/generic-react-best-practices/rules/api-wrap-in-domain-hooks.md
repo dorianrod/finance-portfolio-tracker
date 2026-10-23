@@ -9,7 +9,7 @@ tags: api, react-query, hooks, architecture, components
 
 **Impact: CRITICAL (single typed, validated entry point per endpoint)**
 
-Each endpoint gets exactly one hook in `apis/queries/` (reads) or `apis/mutations/` (writes) of its domain. That hook owns the query key, the endpoint URL, the Yup validation and the TanStack Query call. Components and page hooks consume it; they never call `axios`, `useQuery` or `useMutation` directly. Inline calls duplicate keys and URLs and skip validation.
+Each endpoint gets exactly one hook in `apis/queries/` (reads) or `apis/mutations/` (writes) of its owning feature. That hook owns the query key, the endpoint URL, the Yup validation and the TanStack Query call. Components and page hooks consume it; they never call `axios`, `useQuery` or `useMutation` directly. Inline calls duplicate keys and URLs and skip validation.
 
 **Incorrect (endpoint, key and parsing inlined in a component):**
 
@@ -23,10 +23,10 @@ export const RemindersTab: FC<RemindersTabProps> = ({ contractId }) => {
 }
 ```
 
-**Correct (one domain hook per endpoint, consumed by the component):**
+**Correct (one feature-owned hook per endpoint, consumed by the component):**
 
 ```tsx
-// src/domains/contracts/apis/queries/useGetContractRemindersQuery.ts
+// src/domains/contracts/features/detail/apis/queries/useGetContractRemindersQuery.ts
 export function useGetContractRemindersQuery(contractId: string) {
   return useSuspenseQuery<ContractReminder[]>({
     queryKey: ['contracts', contractId, 'reminders'],
@@ -37,7 +37,7 @@ export function useGetContractRemindersQuery(contractId: string) {
   })
 }
 
-// src/domains/contracts/pages/detail/components/RemindersTab/RemindersTab.tsx
+// src/domains/contracts/features/detail/pages/detail/components/RemindersTab/RemindersTab.tsx
 export const RemindersTab: FC<RemindersTabProps> = ({ contractId }) => {
   const { data: reminders } = useGetContractRemindersQuery(contractId)
   const { mutateAsync: deleteReminder } = useDeleteReminder(contractId)

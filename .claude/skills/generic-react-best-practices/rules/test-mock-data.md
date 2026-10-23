@@ -1,17 +1,17 @@
 ---
-title: Build Typed, Deterministic Mock Data in the Domain mocks Folder
+title: Build Typed, Deterministic Mock Data in the Owning mocks Folder
 impact: MEDIUM
 impactDescription: reproducible tests that break when the domain type changes
 tags: test, mocks, fixtures, dates, types
 ---
 
-## Build Typed, Deterministic Mock Data in the Domain mocks Folder
+## Build Typed, Deterministic Mock Data in the Owning mocks Folder
 
 **Impact: MEDIUM (reproducible tests that break when the domain type changes)**
 
-Domain fixtures live in `src/domains/<domain>/<subDomain>/mocks/<entity>.mock.ts` and are annotated with the domain entity, never cast (`as Invoice[]` hides missing or renamed fields). They use fixed `Date` values (`new Date('2026-01-15T09:00:00.000Z')`, never `new Date()`), a unique id per item, and varied values that cover each state the UI branches on. A factory with `overrides` lets each test state only what it cares about.
+Fixtures live in the owning feature's `mocks/<entity>.mock.ts`, or in the nearest scoped `shared/mocks/` when sibling features reuse them. They are annotated with the domain entity, never cast (`as Invoice[]` hides missing or renamed fields). They use fixed `Date` values (`new Date('2026-01-15T09:00:00.000Z')`, never `new Date()`), a unique id per item, and varied values that cover each state the UI branches on. A factory with `overrides` lets each test state only what it cares about.
 
-A domain `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one shared mock-server folder and reuse these fixtures, so tests and the dev environment agree on the same data (see `test-mock-network-not-internals`).
+A `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one shared mock-server folder and reuse these fixtures, so tests and the dev environment agree on the same data (see `test-mock-network-not-internals`).
 
 **Incorrect (cast hides the missing required fields):**
 
@@ -25,7 +25,7 @@ export const mockInvoices = [
 **Correct (annotated factory with overrides, fixed dates, distinct ids and states):**
 
 ```ts
-import type { Invoice } from '@/domains/sales/invoices/types/invoice.type'
+import type { Invoice } from '@/domains/sales/invoices/shared/types/invoice.type'
 
 export const makeInvoice = (overrides: Partial<Invoice> = {}): Invoice => ({
   id: 'invoice-1',

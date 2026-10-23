@@ -11,12 +11,12 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.2.0"
+  version: "1.4.0"
 ---
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 88 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 89 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
 
@@ -57,7 +57,8 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-component-roles` - Declare Every React Component as a View or Feature
 - `arch-domain-first-layout` - Follow the Domain-First Folder Layout
 - `arch-transverse-only-imports` - Import Other Domains Only Through Transverse Domains
-- `arch-shared-no-domain-knowledge` - Keep Shared Code Free of Domain Knowledge
+- `arch-shared-no-domain-knowledge` - Keep Shared Code Within Its Ownership Boundary
+- `arch-feature-slice-layout` - Organize Every Domain into Vertical Feature Slices
 - `arch-no-prop-drilling` - Share Client State Through Jotai, Not Prop Chains or Context
 - `arch-decompose-hook-heavy-components` - Decompose Hook-Heavy Components by Responsibility
 - `arch-feature-flags` - Gate Experimental Features With a Typed Flag Registry
@@ -134,7 +135,7 @@ Several rules describe the target standard, not the current state of every file.
 
 - `state-module-level-atoms` - Create Atoms at Module Scope, Never During Render
 - `state-server-state-in-react-query` - Keep Server Data in React Query, Not in Atoms
-- `state-domain-vs-page-location` - Place Stores at Domain or Page Level by Reuse
+- `state-domain-vs-page-location` - Place Stores at Feature or Page Level by Reuse
 - `state-prefer-factories` - Reuse App Atom Factories Instead of Hand-Rolled Atoms
 - `state-derived-atoms` - Derive Atoms Instead of Storing Duplicates
 - `state-atom-with-storage` - Persist Atoms with atomWithStorage and a Unique Key
@@ -161,7 +162,7 @@ Several rules describe the target standard, not the current state of every file.
 - `test-jotai-provider-isolation` - Isolate Jotai State with a Fresh Store per Test
 - `test-mock-network-not-internals` - Mock the Network Boundary, Never Internal Modules
 - `test-behavior-not-implementation` - Assert Behavior with Parametrized, Unconditional Tests
-- `test-mock-data` - Build Typed, Deterministic Mock Data in the Domain mocks Folder
+- `test-mock-data` - Build Typed, Deterministic Mock Data in the Owning mocks Folder
 - `test-colocated-tests` - Colocate a Test Next to Every File, Covering Errors
 - `test-semantic-queries` - Query by Role and Label, Interact with userEvent
 - `test-renderhook` - Test API Hooks with renderHook and a Per-Test Query Wrapper

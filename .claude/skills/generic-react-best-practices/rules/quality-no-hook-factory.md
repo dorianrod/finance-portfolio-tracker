@@ -29,7 +29,7 @@ export const useFormatInvoiceStatusOptions = createUseFormatStatusOptions(useFor
 **Correct (generic hook takes a value, each wrapper calls the source hook explicitly):**
 
 ```ts
-import { useFormatInvoiceStatus } from '@/domains/sales/invoices/helpers/formatters/useFormatInvoiceStatus'
+import { useFormatInvoiceStatus } from '@/domains/sales/invoices/shared/helpers/formatters/useFormatInvoiceStatus'
 
 type StatusOption<T extends string> = { value: T; label: string }
 

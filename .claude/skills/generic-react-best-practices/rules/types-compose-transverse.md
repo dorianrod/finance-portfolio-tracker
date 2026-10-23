@@ -14,8 +14,8 @@ Reuse the types of transverse domains (e.g. `documents`) and of the app-wide sha
 **Incorrect (copies a transverse shape and imports a sibling entity):**
 
 ```typescript
-// domains/sales/orders/types/orderRejection.type.ts
-import type { Invoice } from '@/domains/sales/invoices/types/invoice.type'
+// domains/sales/orders/shared/types/orderRejection.type.ts
+import type { Invoice } from '@/domains/sales/invoices/shared/types/invoice.type'
 
 export type OrderRejection = {
   uuid: string
@@ -30,7 +30,7 @@ export type OrderRejection = {
 **Correct (compose the transverse type, link the foreign entity by id):**
 
 ```typescript
-import type { AntivirusStatus, RejectionHistories } from '@/domains/documents/types/document.type'
+import type { AntivirusStatus, RejectionHistories } from '@/domains/documents/shared/types/document.type'
 
 export type OrderRejection = RejectionHistories & {
   antivirusStatus?: AntivirusStatus

@@ -48,7 +48,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 **Correct (the component only wires page hooks):**
 
 ```tsx
-import { useDeleteContractAction } from '@/domains/contracts/pages/detail/services/actions/useDeleteContractAction'
+import { useDeleteContractAction } from '@/domains/contracts/features/detail/pages/detail/services/actions/useDeleteContractAction'
 
 export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
   const [deleteContract, isDeleting] = useDeleteContractAction(contractId)

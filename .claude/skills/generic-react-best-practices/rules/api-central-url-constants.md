@@ -35,7 +35,7 @@ export const ENDPOINTS = {
   },
 } as const
 
-// src/domains/sales/invoices/apis/mutations/useUpdateInvoiceComment.ts
+// src/domains/sales/invoices/features/comments/apis/mutations/useUpdateInvoiceComment.ts
 export function useUpdateInvoiceComment(invoiceId: string) {
   return useMutation({
     mutationFn: async ({ commentId, message }: UpdateInvoiceCommentInput) => {

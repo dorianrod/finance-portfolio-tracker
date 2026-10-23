@@ -30,7 +30,7 @@ import { Provider, createStore } from 'jotai'
 import {
   DEFAULT_HISTORY_FILTERS,
   historyFiltersAtom,
-} from '@/domains/contracts/pages/histories/stores/filters.atoms'
+} from '@/domains/contracts/features/histories/pages/histories/stores/filters.atoms'
 
 it('should reset the filters when the contract changes', () => {
   const store = createStore()

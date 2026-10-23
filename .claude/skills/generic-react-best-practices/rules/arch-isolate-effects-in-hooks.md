@@ -44,6 +44,6 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning domain service when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
+Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning feature's `services/` when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
 See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
