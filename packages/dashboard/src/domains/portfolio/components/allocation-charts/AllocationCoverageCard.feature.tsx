@@ -20,9 +20,17 @@ interface AllocationCoverageCardProps {
   dimensionCoverage: DimensionCoverage[]
 }
 
-export function AllocationCoverageCard({ coverage, dimensionCoverage }: AllocationCoverageCardProps) {
+function AccountCoverageRow({ accountLabels, coverage }: { accountLabels: Record<string, string>; coverage: AccountCoverage }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  const rowTotal = coverage.allocated + coverage.unallocated + coverage.notApplicable
+  if (rowTotal <= 0) return null
+  const [allocatedPct, unallocatedPct, notApplicablePct] = partitionPercentages([coverage.allocated, coverage.unallocated, coverage.notApplicable])
+  const label = accountLabel(coverage.account, accountLabels)
+  return <div><div className="mb-1.5 flex items-baseline justify-between gap-3"><span className="truncate text-xs text-gray-400" title={label}>{label}</span><span className="shrink-0 text-[11px] tabular-nums text-gray-600">{coverage.allocated + coverage.unallocated > 0 ? `${formatMoney(coverage.allocated, { style: 'full' })} · ${formatPercentage(allocatedPct)}` : `${formatMoney(coverage.notApplicable, { style: 'full' })} · N/A`}</span></div><div className="flex h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${formatMoney(coverage.allocated, { style: 'full' })} mapped / ${formatMoney(coverage.unallocated, { style: 'full' })} unmapped / ${formatMoney(coverage.notApplicable, { style: 'full' })} not applicable`}>{coverage.allocated > 0 && <div style={{ width: `${allocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />}{coverage.unallocated > 0 && <div style={{ width: `${unallocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }} />}{coverage.notApplicable > 0 && <div className="bg-gray-500" style={{ width: `${notApplicablePct}%` }} />}</div></div>
+}
+
+export function AllocationCoverageCard({ coverage, dimensionCoverage }: AllocationCoverageCardProps) {
   const accountLabels = useAccountFilterLabels()
   const [expandedDetail, setExpandedDetail] = useState<'accounts' | 'dimensions' | null>(null)
   const accountDetailsId = useId()
@@ -77,31 +85,7 @@ export function AllocationCoverageCard({ coverage, dimensionCoverage }: Allocati
           />
           {expandedDetail === 'accounts' && (
             <div id={accountDetailsId} className="mt-3 space-y-4 border-t border-gray-800 pt-3">
-              {coverage.map((c) => {
-                const rowTotal = c.allocated + c.unallocated + c.notApplicable
-                if (rowTotal <= 0) return null
-                const [allocatedPct, unallocatedPct, notApplicablePct] = partitionPercentages([
-                  c.allocated,
-                  c.unallocated,
-                  c.notApplicable,
-                ])
-                const label = accountLabel(c.account, accountLabels)
-                return (
-                  <div key={c.account}>
-                    <div className="mb-1.5 flex items-baseline justify-between gap-3">
-                      <span className="truncate text-xs text-gray-400" title={label}>{label}</span>
-                      <span className="shrink-0 text-[11px] tabular-nums text-gray-600">
-                        {c.allocated + c.unallocated > 0 ? `${formatMoney(c.allocated, { style: 'full' })} · ${formatPercentage(allocatedPct)}` : `${formatMoney(c.notApplicable, { style: 'full' })} · N/A`}
-                      </span>
-                    </div>
-                    <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-800" title={`${formatMoney(c.allocated, { style: 'full' })} mapped / ${formatMoney(c.unallocated, { style: 'full' })} unmapped / ${formatMoney(c.notApplicable, { style: 'full' })} not applicable`}>
-                      {c.allocated > 0 && <div style={{ width: `${allocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />}
-                      {c.unallocated > 0 && <div style={{ width: `${unallocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }} />}
-                      {c.notApplicable > 0 && <div className="bg-gray-500" style={{ width: `${notApplicablePct}%` }} />}
-                    </div>
-                  </div>
-                )
-              })}
+              {coverage.map((item) => <AccountCoverageRow key={item.account} accountLabels={accountLabels} coverage={item} />)}
             </div>
           )}
         </QualityIndicatorCard>

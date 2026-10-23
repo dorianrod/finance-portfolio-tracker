@@ -40,6 +40,14 @@ interface MonthlyTooltipProps extends NumericTooltipProps<TrailingSavingCapacity
   ops: MonthlyOpsMap
 }
 
+type MonthlyOperation = NonNullable<ReturnType<MonthlyOpsMap['get']>>[number]
+
+function MonthlyOperationRow({ operation, withdrawal }: { operation: MonthlyOperation; withdrawal: boolean }) {
+  const formatMoney = useFormatMoney()
+  const amount = withdrawal ? Math.abs(operation.total_amount) : operation.total_amount
+  return <div style={{ color: withdrawal ? SEMANTIC_COLORS.outflowText : SEMANTIC_COLORS.netContributionsDetail, fontSize: 11 }}>{withdrawal ? '−' : '+'} {formatMoney(amount, { style: 'full' })} — {operation.account}</div>
+}
+
 export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -60,16 +68,12 @@ export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipPr
       <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}>Net contributions: {formatMoney(savingsDelta, { style: 'full' })}</div>
       {deposits.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
-          {deposits.map((op, i) => (
-            <div key={i} style={{ color: SEMANTIC_COLORS.netContributionsDetail, fontSize: 11 }}>+ {formatMoney(op.total_amount, { style: 'full' })} — {op.account}</div>
-          ))}
+          {deposits.map((operation) => <MonthlyOperationRow key={operation.account} operation={operation} withdrawal={false} />)}
         </div>
       )}
       {withdrawals.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
-          {withdrawals.map((op, i) => (
-            <div key={i} style={{ color: SEMANTIC_COLORS.outflowText, fontSize: 11 }}>− {formatMoney(Math.abs(op.total_amount), { style: 'full' })} — {op.account}</div>
-          ))}
+          {withdrawals.map((operation) => <MonthlyOperationRow key={operation.account} operation={operation} withdrawal />)}
         </div>
       )}
       <div style={{ borderTop: '1px solid var(--tooltip-border)', marginTop: 6, paddingTop: 6, color: perfDelta >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>
@@ -195,6 +199,16 @@ interface AccountTypeHistoryTooltipProps extends NumericTooltipProps<Record<stri
   typeCategories: Record<string, string>
 }
 
+function AccountTypeTooltipRow({ accountType, index, percentageMode, row, total, typeCategories }: { accountType: string; index: number; percentageMode: boolean; row: Record<string, number | string> | undefined; total: number; typeCategories: Record<string, string> }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const rawValue = row?.[accountType]
+  const value = typeof rawValue === 'number' ? rawValue : 0
+  if (!value) return null
+  const share = total > 0 ? formatPercentage(value / total * 100) : '—'
+  return <div style={{ color: typeColor(accountType, index, typeCategories) }}>{accountType}: {formatMoney(value, { style: 'full' })}{percentageMode && ` · ${share}`}</div>
+}
+
 export function AccountTypeHistoryTooltip({
   active,
   payload,
@@ -205,7 +219,6 @@ export function AccountTypeHistoryTooltip({
 }: AccountTypeHistoryTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
   const total = accountTypes.reduce((sum, accountType) => {
@@ -218,15 +231,7 @@ export function AccountTypeHistoryTooltip({
         {formatDate(String(label), { style: 'longMonthYear' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>Total: {formatMoney(total, { style: 'full' })}</div>
-      {accountTypes.map((t, i) => {
-        const value = row?.[t]
-        const val = typeof value === 'number' ? value : 0
-        if (!val) return null
-        const share = total > 0 ? formatPercentage(val / total * 100) : '—'
-        return (
-          <div key={t} style={{ color: typeColor(t, i, typeCategories) }}>{t}: {formatMoney(val, { style: 'full' })}{percentageMode && ` · ${share}`}</div>
-        )
-      })}
+      {accountTypes.map((accountType, index) => <AccountTypeTooltipRow key={accountType} accountType={accountType} index={index} percentageMode={percentageMode} row={row} total={total} typeCategories={typeCategories} />)}
     </TooltipBox>
   )
 }

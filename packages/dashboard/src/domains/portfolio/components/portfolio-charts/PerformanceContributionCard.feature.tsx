@@ -61,6 +61,21 @@ function MetricLabel({ label, tooltip, scope }: { label: string; tooltip: string
   )
 }
 
+function ContributionListItem({ item, positive }: { item: PerformanceContribution; positive: boolean }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
+  return <li><div className="flex items-start justify-between gap-4 text-sm"><div className="min-w-0"><div className="truncate font-medium text-gray-300" title={item.name}>{item.label}</div><div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>{item.accounts.join(', ')}</div></div><div className="shrink-0 text-right tabular-nums"><div className={`font-semibold ${tone}`}>{formatMoney(item.amount, { style: 'full' })}</div><div className="text-[11px] text-gray-500">{formatPercentage(item.share)}</div></div></div><div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800"><div className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${Math.min(item.share, 100)}%` }} /></div></li>
+}
+
+function IrrListItem({ item, positive, strongestIrr }: { item: AssetIrrItem; positive: boolean; strongestIrr: number }) {
+  const formatAssetLabel = useFormatAssetLabel()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
+  return <li><div className="flex items-start justify-between gap-4 text-sm"><div className="min-w-0"><div className="truncate font-medium text-gray-300" title={item.name}>{formatAssetLabel(item, item.label)}</div><div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>{item.account_types.join(', ') || item.accounts.join(', ')}</div></div><div className="shrink-0 text-right tabular-nums"><div className={`font-semibold ${tone}`}>{formatPercentage(item.irr, { decimals: 2, signed: true })}</div><div className="text-[11px] text-gray-500">Value {formatMoney(item.value, { style: 'full' })}</div></div></div><div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800"><div className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${strongestIrr > 0 ? Math.abs(item.irr) / strongestIrr * 100 : 0}%` }} /></div></li>
+}
+
 function ContributionList({
   title,
   items,
@@ -72,9 +87,6 @@ function ContributionList({
   positive: boolean
   scope: FilterScopeSpec
 }) {
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
-  const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
 
   return (
     <section>
@@ -97,28 +109,7 @@ function ContributionList({
         </p>
       ) : (
         <ol className="space-y-3">
-          {items.map((item) => (
-            <li key={item.key}>
-              <div className="flex items-start justify-between gap-4 text-sm">
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-gray-300" title={item.name}>{item.label}</div>
-                  <div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>
-                    {item.accounts.join(', ')}
-                  </div>
-                </div>
-                <div className="shrink-0 text-right tabular-nums">
-                  <div className={`font-semibold ${tone}`}>{formatMoney(item.amount, { style: 'full' })}</div>
-                  <div className="text-[11px] text-gray-500">{formatPercentage(item.share)}</div>
-                </div>
-              </div>
-              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
-                <div
-                  className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`}
-                  style={{ width: `${Math.min(item.share, 100)}%` }}
-                />
-              </div>
-            </li>
-          ))}
+          {items.map((item) => <ContributionListItem key={item.key} item={item} positive={positive} />)}
         </ol>
       )}
     </section>
@@ -134,10 +125,6 @@ function IrrList({
   items: AssetIrrItem[]
   positive: boolean
 }) {
-  const formatAssetLabel = useFormatAssetLabel()
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
-  const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
   const strongestIrr = Math.max(0, ...items.map((item) => Math.abs(item.irr)))
 
   return (
@@ -152,28 +139,7 @@ function IrrList({
         </p>
       ) : (
         <ol className="space-y-3">
-          {items.map((item) => (
-            <li key={item.key}>
-              <div className="flex items-start justify-between gap-4 text-sm">
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-gray-300" title={item.name}>{formatAssetLabel(item, item.label)}</div>
-                  <div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>
-                    {item.account_types.join(', ') || item.accounts.join(', ')}
-                  </div>
-                </div>
-                <div className="shrink-0 text-right tabular-nums">
-                  <div className={`font-semibold ${tone}`}>{formatPercentage(item.irr, { decimals: 2, signed: true })}</div>
-                  <div className="text-[11px] text-gray-500">Value {formatMoney(item.value, { style: 'full' })}</div>
-                </div>
-              </div>
-              <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800">
-                <div
-                  className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`}
-                  style={{ width: `${strongestIrr > 0 ? Math.abs(item.irr) / strongestIrr * 100 : 0}%` }}
-                />
-              </div>
-            </li>
-          ))}
+          {items.map((item) => <IrrListItem key={item.key} item={item} positive={positive} strongestIrr={strongestIrr} />)}
         </ol>
       )}
     </section>

@@ -50,6 +50,16 @@ const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
   },
 }
 
+function QualityThemeOption({ theme }: { theme: QualityTheme }) {
+  return <option value={theme.id}>{theme.label} · {theme.metric} {theme.metricLabel}</option>
+}
+
+function QualityThemeTab({ activeThemeId, onSelect, theme }: { activeThemeId: QualityThemeId; onSelect: (theme: QualityThemeId) => void; theme: QualityTheme }) {
+  const active = theme.id === activeThemeId
+  const styles = TONE_STYLES[theme.tone]
+  return <button type="button" role="tab" aria-selected={active} aria-controls="quality-theme-panel" onClick={() => onSelect(theme.id)} className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true"><span className={`h-2 w-2 rounded-full ${styles.dot}`} /></span><span className="min-w-0 flex-1"><span className={`block text-sm font-medium ${active ? 'text-white' : 'text-gray-300'}`}>{theme.label}</span><span className="mt-0.5 block truncate text-[11px] text-gray-600">{theme.metricLabel}</span></span><span className="shrink-0 text-sm font-semibold tabular-nums text-gray-100">{theme.metric}</span></button>
+}
+
 export function DataQualityTab({
   positions, errors, manualPriceOverrides, fundStatuses, fundReport,
   fundHoldings, fundSnapshots, fundUnresolved, rawData,
@@ -206,37 +216,12 @@ export function DataQualityTab({
             onChange={(event) => setSelectedQualityTheme(event.target.value as QualityThemeId)}
             className="w-full rounded-lg border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-gray-200 focus:border-blue-500 focus:outline-none"
           >
-            {themes.map((theme) => (
-              <option key={theme.id} value={theme.id}>{theme.label} · {theme.metric} {theme.metricLabel}</option>
-            ))}
+            {themes.map((theme) => <QualityThemeOption key={theme.id} theme={theme} />)}
           </select>
         </div>
 
         <nav className="hidden space-y-1 md:block md:border-r md:border-gray-800 md:pr-4" aria-label="Data quality themes" role="tablist" aria-orientation="vertical">
-          {themes.map((theme) => {
-            const active = theme.id === activeThemeId
-            const styles = TONE_STYLES[theme.tone]
-            return (
-              <button
-                key={theme.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                aria-controls="quality-theme-panel"
-                onClick={() => setSelectedQualityTheme(theme.id)}
-                className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}
-              >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true">
-                  <span className={`h-2 w-2 rounded-full ${styles.dot}`} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className={`block text-sm font-medium ${active ? 'text-white' : 'text-gray-300'}`}>{theme.label}</span>
-                  <span className="mt-0.5 block truncate text-[11px] text-gray-600">{theme.metricLabel}</span>
-                </span>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-gray-100">{theme.metric}</span>
-              </button>
-            )
-          })}
+          {themes.map((theme) => <QualityThemeTab key={theme.id} activeThemeId={activeThemeId} onSelect={setSelectedQualityTheme} theme={theme} />)}
         </nav>
 
         <section
@@ -312,8 +297,6 @@ export function DataQualityTab({
 }
 
 function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   if (assets.length === 0) {
     return <p className="p-6 text-center text-sm text-gray-500">No affected asset for this scope.</p>
   }
@@ -330,32 +313,21 @@ function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
           </tr>
         </thead>
         <tbody>
-          {assets.map((asset) => (
-            <tr key={asset.id} className="border-b border-gray-800/70 align-top hover:bg-gray-950/40">
-              <td className="px-4 py-3">
-                <div className="font-medium text-gray-200">{asset.name}</div>
-                <div className="mt-1 break-all font-mono text-[10px] text-gray-600">{asset.id}</div>
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {asset.dimensions.map((dimension) => (
-                    <span key={dimension} className="rounded bg-gray-800 px-1.5 py-0.5 text-[10px] text-gray-400">
-                      {DATA_QUALITY_DIMENSION_LABELS[dimension]}
-                    </span>
-                  ))}
-                </div>
-              </td>
-              <td className="px-4 py-3 text-right tabular-nums">
-                <div className="font-medium text-amber-400">{formatMoney(asset.largestGapValue, { style: 'full' })}</div>
-                <div className="mt-1 text-[10px] text-gray-600">{formatPercentage(asset.largestGapPct)}</div>
-              </td>
-              <td className="px-4 py-3 text-right font-medium tabular-nums text-gray-300">{formatMoney(asset.value, { style: 'full' })}</td>
-            </tr>
-          ))}
+          {assets.map((asset) => <AffectedAssetRow key={asset.id} asset={asset} />)}
         </tbody>
       </table>
     </div>
   )
+}
+
+function AffectedDimensionBadge({ dimension }: { dimension: AffectedAsset['dimensions'][number] }) {
+  return <span className="rounded bg-gray-800 px-1.5 py-0.5 text-[10px] text-gray-400">{DATA_QUALITY_DIMENSION_LABELS[dimension]}</span>
+}
+
+function AffectedAssetRow({ asset }: { asset: AffectedAsset }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  return <tr className="border-b border-gray-800/70 align-top hover:bg-gray-950/40"><td className="px-4 py-3"><div className="font-medium text-gray-200">{asset.name}</div><div className="mt-1 break-all font-mono text-[10px] text-gray-600">{asset.id}</div></td><td className="px-4 py-3"><div className="flex flex-wrap gap-1.5">{asset.dimensions.map((dimension) => <AffectedDimensionBadge key={dimension} dimension={dimension} />)}</div></td><td className="px-4 py-3 text-right tabular-nums"><div className="font-medium text-amber-400">{formatMoney(asset.largestGapValue, { style: 'full' })}</div><div className="mt-1 text-[10px] text-gray-600">{formatPercentage(asset.largestGapPct)}</div></td><td className="px-4 py-3 text-right font-medium tabular-nums text-gray-300">{formatMoney(asset.value, { style: 'full' })}</td></tr>
 }
 
 function DetailKpiButton({

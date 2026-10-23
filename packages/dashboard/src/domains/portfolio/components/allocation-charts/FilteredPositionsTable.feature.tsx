@@ -8,18 +8,25 @@ import { useDashboardAllocationFilters } from '@/domains/portfolio/pages/dashboa
 import { useDashboardAllocationPositions } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationPositions'
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
 
+function FilteredPositionRow({ color, index, row }: { color: string; index: number; row: MatchingIsinRow }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const percentage = row.totalValue > 0 ? row.filteredValue / row.totalValue * 100 : 0
+  return <tr className={`border-b border-gray-800/50 ${index % 2 === 0 ? '' : 'bg-gray-800/20'}`}><td className="px-4 py-2.5"><div className="max-w-[180px] truncate text-xs font-medium leading-tight text-gray-200">{row.name}</div><div className="text-[11px] text-gray-600">{row.isin}</div></td><td className="px-4 py-2.5 text-right text-xs tabular-nums text-gray-400">{formatMoney(row.totalValue, { style: 'full' })}</td><td className="px-4 py-2.5 text-right"><div className="text-xs font-medium tabular-nums text-gray-200">{formatMoney(row.filteredValue, { style: 'full' })}</div><div className="mt-0.5 flex items-center justify-end gap-1.5"><div className="h-1 w-12 overflow-hidden rounded-full bg-gray-800"><div className="h-full rounded-full" style={{ width: `${Math.min(percentage, 100)}%`, background: color }} /></div><span className="w-8 text-right text-[11px] tabular-nums text-gray-500">{formatPercentage(percentage, { decimals: 0 })}</span></div></td></tr>
+}
+
 export function FilteredPositionsTable({
   rows,
 }: {
   rows: MatchingIsinRow[]
 }) {
   const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   const filter = useAtomValue(dashboardAllocationFilterAtom)
   const { clearFilter } = useDashboardAllocationFilters()
   const { closePositions } = useDashboardAllocationPositions()
   if (!filter) return null
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
+  const filterColor = catColor(filter.value)
 
   return (
     <SidePanel
@@ -48,32 +55,7 @@ export function FilteredPositionsTable({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, i) => {
-            const pct = row.totalValue > 0 ? (row.filteredValue / row.totalValue) * 100 : 0
-            return (
-              <tr key={row.isin} className={`border-b border-gray-800/50 ${i % 2 === 0 ? '' : 'bg-gray-800/20'}`}>
-                <td className="px-4 py-2.5">
-                  <div className="max-w-[180px] truncate text-xs font-medium leading-tight text-gray-200">{row.name}</div>
-                  <div className="text-[11px] text-gray-600">{row.isin}</div>
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs tabular-nums text-gray-400">
-                  {formatMoney(row.totalValue, { style: 'full' })}
-                </td>
-                <td className="px-4 py-2.5 text-right">
-                  <div className="text-xs font-medium tabular-nums text-gray-200">{formatMoney(row.filteredValue, { style: 'full' })}</div>
-                  <div className="mt-0.5 flex items-center justify-end gap-1.5">
-                    <div className="h-1 w-12 overflow-hidden rounded-full bg-gray-800">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${Math.min(pct, 100)}%`, background: catColor(filter.value) }}
-                      />
-                    </div>
-                    <span className="w-8 text-right text-[11px] tabular-nums text-gray-500">{formatPercentage(pct, { decimals: 0 })}</span>
-                  </div>
-                </td>
-              </tr>
-            )
-          })}
+          {rows.map((row, index) => <FilteredPositionRow key={row.isin} color={filterColor} index={index} row={row} />)}
         </tbody>
       </table>
     </SidePanel>

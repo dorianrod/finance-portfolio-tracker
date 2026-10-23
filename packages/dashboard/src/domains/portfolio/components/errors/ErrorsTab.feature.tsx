@@ -14,6 +14,10 @@ const SOURCE_LABELS: Record<string, string> = {
   fetch_prices: 'fetch_prices.py',
 }
 
+const ERROR_COLUMNS: [PipelineErrorSortColumn, string, string][] = [
+  ['level', 'Level', 'w-20'], ['type', 'Type', 'w-40'], ['source', 'Source', 'w-28'], ['date', 'Date', 'w-24'], ['name', 'Asset', 'w-28'], ['isin', 'ISIN', 'w-24'], ['message', 'Message', ''],
+]
+
 interface Props {
   errors: ErrorRow[]
 }
@@ -38,6 +42,28 @@ function formatManualPrice(row: ManualPriceOverride, formatMoney: ReturnType<typ
   } catch {
     return `${row.price} ${row.currency}`.trim()
   }
+}
+
+function ErrorTypeOption({ type }: { type: string }) {
+  return <option value={type}>{PIPELINE_ERROR_TYPE_LABELS[type] ?? type}</option>
+}
+
+function ErrorColumnHeader({ column, direction, onSort, sortColumn }: { column: (typeof ERROR_COLUMNS)[number]; direction: 'asc' | 'desc'; onSort: (column: PipelineErrorSortColumn) => void; sortColumn: PipelineErrorSortColumn }) {
+  const [id, label, width] = column
+  return <th className={`px-3 py-2 text-left font-medium text-gray-400 ${width} select-none`}><button onClick={() => onSort(id)} className="flex cursor-pointer items-center transition-colors hover:text-gray-200">{label}<SortIcon col={id} sortCol={sortColumn} dir={direction} /></button></th>
+}
+
+type PipelineErrorRow = ReturnType<typeof buildPipelineErrorsViewModel>['rows'][number]
+
+function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
+  const formatAssetLabel = useFormatAssetLabel()
+  return <tr className={`border-b border-gray-800/50 ${error.level === 'error' ? 'bg-red-950/20 hover:bg-red-950/30' : 'bg-yellow-950/10 hover:bg-yellow-950/20'}`}><td className="px-3 py-2"><span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold ${error.level === 'error' ? 'bg-red-900/60 text-red-300' : 'bg-yellow-900/60 text-yellow-300'}`}>{error.level === 'error' ? '✕ Error' : '⚠ Warning'}</span></td><td className="px-3 py-2 text-gray-300">{PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}</td><td className="px-3 py-2 font-mono text-gray-500">{SOURCE_LABELS[error.source] ?? error.source}</td><td className="px-3 py-2 font-mono text-gray-400">{error.date || '—'}</td><td className="max-w-[7rem] truncate px-3 py-2 text-gray-300" title={formatAssetLabel(error)}>{formatAssetLabel(error, '—')}</td><td className="px-3 py-2 font-mono text-gray-500">{error.isin || '—'}</td><td className="px-3 py-2 leading-relaxed text-gray-400">{error.message}</td></tr>
+}
+
+function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
+  const formatMoney = useFormatMoney()
+  const openEnded = !row.date_to
+  return <tr className="border-b border-gray-800/50 hover:bg-gray-900/40"><td className="px-3 py-2"><span className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold ${openEnded ? 'bg-yellow-900/60 text-yellow-300' : 'bg-gray-800 text-gray-400'}`}>{openEnded ? 'Open-ended' : 'Bounded'}</span></td><td className="px-3 py-2 text-gray-300">{row.name || '—'}</td><td className="px-3 py-2 font-mono text-gray-500">{row.isin || row.ticker || '—'}</td><td className="px-3 py-2 font-medium text-gray-300">{formatManualPrice(row, formatMoney)}</td><td className="px-3 py-2 font-mono text-gray-400">{row.date_from || '—'}</td><td className="px-3 py-2 font-mono text-gray-400">{row.date_to || '—'}</td><td className="px-3 py-2 font-mono text-gray-500">{row.source_file}</td></tr>
 }
 
 export function ErrorsTab({ errors }: Props) {
@@ -99,9 +125,7 @@ export function ErrorsTab({ errors }: Props) {
             className="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-gray-300 focus:border-gray-500 focus:outline-none"
           >
             <option value="all">All types</option>
-            {types.filter((t) => t !== 'all').map((t) => (
-              <option key={t} value={t}>{PIPELINE_ERROR_TYPE_LABELS[t] ?? t}</option>
-            ))}
+            {types.filter((type) => type !== 'all').map((type) => <ErrorTypeOption key={type} type={type} />)}
           </select>
           {(filterLevel !== 'all' || filterType !== 'all') && (
             <button
@@ -119,30 +143,7 @@ export function ErrorsTab({ errors }: Props) {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-gray-800 bg-gray-900/60">
-              {(
-                [
-                  ['level',   'Level',   'w-20'],
-                  ['type',    'Type',    'w-40'],
-                  ['source',  'Source',  'w-28'],
-                  ['date',    'Date',    'w-24'],
-                  ['name',    'Asset',   'w-28'],
-                  ['isin',    'ISIN',    'w-24'],
-                  ['message', 'Message', ''],
-                ] as [PipelineErrorSortColumn, string, string][]
-              ).map(([col, label, width]) => (
-                <th
-                  key={col}
-                  className={`text-left px-3 py-2 font-medium text-gray-400 ${width} select-none`}
-                >
-                  <button
-                    onClick={() => handleSort(col)}
-                    className="flex items-center hover:text-gray-200 transition-colors cursor-pointer"
-                  >
-                    {label}
-                    <SortIcon col={col} sortCol={sortCol} dir={sortDir} />
-                  </button>
-                </th>
-              ))}
+              {ERROR_COLUMNS.map((column) => <ErrorColumnHeader key={column[0]} column={column} direction={sortDir} onSort={handleSort} sortColumn={sortCol} />)}
             </tr>
           </thead>
           <tbody>
@@ -153,46 +154,7 @@ export function ErrorsTab({ errors }: Props) {
                 </td>
               </tr>
             ) : (
-              filtered.map((e, i) => (
-                <tr
-                  key={i}
-                  className={`border-b border-gray-800/50 ${
-                    e.level === 'error'
-                      ? 'bg-red-950/20 hover:bg-red-950/30'
-                      : 'bg-yellow-950/10 hover:bg-yellow-950/20'
-                  }`}
-                >
-                  <td className="px-3 py-2">
-                    <span
-                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                        e.level === 'error'
-                          ? 'bg-red-900/60 text-red-300'
-                          : 'bg-yellow-900/60 text-yellow-300'
-                      }`}
-                    >
-                      {e.level === 'error' ? '✕ Error' : '⚠ Warning'}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-gray-300">
-                    {PIPELINE_ERROR_TYPE_LABELS[e.type] ?? e.type}
-                  </td>
-                  <td className="px-3 py-2 text-gray-500 font-mono">
-                    {SOURCE_LABELS[e.source] ?? e.source}
-                  </td>
-                  <td className="px-3 py-2 text-gray-400 font-mono">
-                    {e.date || '—'}
-                  </td>
-                  <td className="px-3 py-2 text-gray-300 truncate max-w-[7rem]" title={formatAssetLabel(e)}>
-                    {formatAssetLabel(e, '—')}
-                  </td>
-                  <td className="px-3 py-2 text-gray-500 font-mono">
-                    {e.isin || '—'}
-                  </td>
-                  <td className="px-3 py-2 text-gray-400 leading-relaxed">
-                    {e.message}
-                  </td>
-                </tr>
-              ))
+              filtered.map((error) => <PipelineErrorTableRow key={error.message} error={error} />)
             )}
           </tbody>
         </table>
@@ -208,7 +170,6 @@ export function ErrorsTab({ errors }: Props) {
 }
 
 export function ManualPriceOverridesTable({ manualPriceOverrides }: ManualPriceOverridesProps) {
-  const formatMoney = useFormatMoney()
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-800">
       <table className="w-full text-xs">
@@ -228,28 +189,7 @@ export function ManualPriceOverridesTable({ manualPriceOverrides }: ManualPriceO
             <tr>
               <td colSpan={7} className="text-center py-8 text-gray-500">No manual price overrides</td>
             </tr>
-          ) : manualPriceOverrides.map((row, index) => {
-            const openEnded = !row.date_to
-            return (
-              <tr key={`${row.source_file}-${index}`} className="border-b border-gray-800/50 hover:bg-gray-900/40">
-                <td className="px-3 py-2">
-                  <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                    openEnded
-                      ? 'bg-yellow-900/60 text-yellow-300'
-                      : 'bg-gray-800 text-gray-400'
-                  }`}>
-                    {openEnded ? 'Open-ended' : 'Bounded'}
-                  </span>
-                </td>
-                <td className="px-3 py-2 text-gray-300">{row.name || '—'}</td>
-                <td className="px-3 py-2 text-gray-500 font-mono">{row.isin || row.ticker || '—'}</td>
-                <td className="px-3 py-2 text-gray-300 font-medium">{formatManualPrice(row, formatMoney)}</td>
-                <td className="px-3 py-2 text-gray-400 font-mono">{row.date_from || '—'}</td>
-                <td className="px-3 py-2 text-gray-400 font-mono">{row.date_to || '—'}</td>
-                <td className="px-3 py-2 text-gray-500 font-mono">{row.source_file}</td>
-              </tr>
-            )
-          })}
+          ) : manualPriceOverrides.map((row) => <ManualPriceOverrideRow key={row.source_file} row={row} />)}
         </tbody>
       </table>
     </div>

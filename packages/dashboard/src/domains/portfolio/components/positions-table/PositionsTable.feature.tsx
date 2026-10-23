@@ -4,6 +4,10 @@ import {
   getExpandedRowModel,
   flexRender,
   createColumnHelper,
+  type Cell,
+  type Header,
+  type HeaderGroup,
+  type Row,
 } from '@tanstack/react-table'
 import { useAtomValue } from 'jotai'
 import { Fragment, useMemo, useRef, useState } from 'react'
@@ -67,6 +71,61 @@ interface Props {
   data: PositionRow[]
   fundStatuses?: FundHoldingStatus[]
   grouping?: 'flat' | 'account-type'
+}
+
+function PositionHeaderCell({ header }: { header: Header<TableRow, unknown> }) {
+  return <th className="px-3 py-2">{flexRender(header.column.columnDef.header, header.getContext())}</th>
+}
+
+function PositionHeaderRow({ group }: { group: HeaderGroup<TableRow> }) {
+  return <tr>{group.headers.map((header) => <PositionHeaderCell key={header.id} header={header} />)}</tr>
+}
+
+type PositionGroupTotals = ReturnType<typeof calculatePositionGroupTotals> extends Map<string, infer Totals> ? Totals : never
+type CellHandlers = React.HTMLAttributes<HTMLTableCellElement> | null
+
+function PositionBodyCell({ cell, chartHandlers, savingsHandlers }: { cell: Cell<TableRow, unknown>; chartHandlers: CellHandlers; savingsHandlers: CellHandlers }) {
+  return <td className="overflow-hidden px-3 py-2" {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})} {...(savingsHandlers && cell.column.id === 'value' ? savingsHandlers : {})}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+}
+
+interface PositionBodyRowProps {
+  cancelHide: () => void
+  row: Row<TableRow>
+  scheduleHide: () => void
+  separatorType?: string
+  setAllocationHover: React.Dispatch<React.SetStateAction<AllocationHoverTarget | null>>
+  setChart: React.Dispatch<React.SetStateAction<ChartTarget | null>>
+  setSavingsChart: React.Dispatch<React.SetStateAction<SavingsChartTarget | null>>
+  setUnderlyingPopover: React.Dispatch<React.SetStateAction<FundPositionPopoverTarget | null>>
+  totals?: PositionGroupTotals
+}
+
+function PositionBodyRow({ cancelHide, row, scheduleHide, separatorType, setAllocationHover, setChart, setSavingsChart, setUnderlyingPopover, totals }: PositionBodyRowProps) {
+  const formatMoney = useFormatMoney()
+  const item = row.original
+  const isPosition = item.kind === 'position'
+  const isGroup = item.kind === 'group'
+  let rootRow = row
+  while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
+  const isClosed = isClosedPosition(rootRow.original)
+  const isTradeGroup = item.kind === 'group' && item.label === 'Buys / Sells'
+  let chartHandlers: CellHandlers = null
+  if (isTradeGroup) {
+    const parent = row.getParentRow()?.original
+    if (parent?.kind === 'position') {
+      const name = parent.name
+      const positionKey = parent.isin || parent.ticker || name
+      if (positionKey) chartHandlers = { onMouseEnter: (event) => { cancelHide(); setSavingsChart(null); setAllocationHover(null); setUnderlyingPopover(null); setChart({ isin: positionKey, name, operations: getPositionTradeOperations(parent), buttonRect: event.currentTarget.getBoundingClientRect() }) }, onMouseLeave: scheduleHide }
+    }
+  }
+  const isSavingsGroup = item.kind === 'group' && item.label === 'Deposits / Withdrawals'
+  let savingsHandlers: CellHandlers = null
+  if (isSavingsGroup) {
+    const parent = row.getParentRow()?.original
+    if (parent?.kind === 'position') savingsHandlers = { onMouseEnter: (event) => { cancelHide(); setChart(null); setAllocationHover(null); setUnderlyingPopover(null); setSavingsChart({ name: parent.name, operations: getPositionSavingsOperations(parent), buttonRect: event.currentTarget.getBoundingClientRect() }) }, onMouseLeave: scheduleHide }
+  }
+  const td = 'px-3 py-1.5 text-xs bg-gray-800 border-t-2 border-gray-600 border-b border-gray-700'
+  return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || 'Other'}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
 }
 
 export function PositionsTable({
@@ -453,6 +512,21 @@ export function PositionsTable({
     state: { expanded },
     onExpandedChange: setExpanded,
   })
+  let previousAccountType: string | undefined
+  const bodyRows = table.getRowModel().rows.map((row) => {
+    const item = row.original
+    let separatorType: string | undefined
+    let totals: PositionGroupTotals | undefined
+    if (grouping === 'account-type' && item.kind === 'position' && row.depth === 0) {
+      const currentType = item.account_type ?? ''
+      if (currentType !== previousAccountType) {
+        previousAccountType = currentType
+        separatorType = currentType
+        totals = groupTotals.get(currentType)
+      }
+    }
+    return { row, separatorType, totals }
+  })
 
   return (
     <section className={DATA_TABLE_STYLES.panel}>
@@ -494,127 +568,10 @@ export function PositionsTable({
             <col style={{ width: '9%' }} />
           </colgroup>
           <thead className={DATA_TABLE_STYLES.columnHeader}>
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((h) => (
-                  <th key={h.id} className="px-3 py-2">
-                    {flexRender(h.column.columnDef.header, h.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            {table.getHeaderGroups().map((group) => <PositionHeaderRow key={group.id} group={group} />)}
           </thead>
           <tbody>
-            {(() => {
-              let lastType: string | undefined = undefined
-              return table.getRowModel().rows.map((row) => {
-                const r = row.original
-                const isPosition = r.kind === 'position'
-                const isGroup = r.kind === 'group'
-                let rootRow: typeof row = row
-                while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
-                const isClosed = isClosedPosition(rootRow.original)
-
-                const isTradeGroup = r.kind === 'group' && r.label === 'Buys / Sells'
-                const chartHandlers = isTradeGroup ? (() => {
-                  const parent = row.getParentRow()?.original
-                  if (parent?.kind !== 'position') return null
-                  const { name } = parent
-                  const posKey = parent.isin || parent.ticker || name
-                  if (!posKey) return null
-                  const ops = getPositionTradeOperations(parent)
-                  return {
-                    onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
-                      cancelHide()
-                      setSavingsChart(null); setAllocationHover(null); setUnderlyingPopover(null)
-                      setChart({ isin: posKey, name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
-                    },
-                    onMouseLeave: scheduleHide,
-                  }
-                })() : null
-
-                const isSavingsGroup = r.kind === 'group' && r.label === 'Deposits / Withdrawals'
-                const savingsHandlers = isSavingsGroup ? (() => {
-                  const parent = row.getParentRow()?.original
-                  if (parent?.kind !== 'position') return null
-                  const { name } = parent
-                  const ops = getPositionSavingsOperations(parent)
-                  return {
-                    onMouseEnter: (e: React.MouseEvent<HTMLTableCellElement>) => {
-                      cancelHide()
-                      setChart(null); setAllocationHover(null); setUnderlyingPopover(null)
-                      setSavingsChart({ name, operations: ops, buttonRect: e.currentTarget.getBoundingClientRect() })
-                    },
-                    onMouseLeave: scheduleHide,
-                  }
-                })() : null
-
-                let separator: React.ReactNode = null
-                if (grouping === 'account-type' && isPosition && row.depth === 0) {
-                  const currentType = r.account_type ?? ''
-                  if (currentType !== lastType) {
-                    lastType = currentType
-                    const totals = groupTotals.get(currentType)
-                    const td = 'px-3 py-1.5 text-xs bg-gray-800 border-t-2 border-gray-600 border-b border-gray-700'
-                    separator = (
-                      <tr key={`sep-${currentType}`}>
-                        <td className={td} />
-                        <td className={`${td} font-semibold text-gray-400 uppercase tracking-widest`}>
-                          {currentType || 'Other'}
-                        </td>
-                        <td className={`${td} text-gray-200 font-medium`}>
-                          {totals && totals.value > 0 ? formatMoney(totals.value) : ''}
-                        </td>
-                        <td className={td} />
-                        <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
-                          {totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}
-                        </td>
-                        <td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>
-                          {totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}
-                        </td>
-                        <td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>
-                          {totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}
-                        </td>
-                        <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
-                          {totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}
-                        </td>
-                        <td className={td} />
-                        <td className={td} />
-                      </tr>
-                    )
-                  }
-                }
-
-                return (
-                  <Fragment key={row.id}>
-                    {separator}
-                    <tr
-                      className={[
-                        'border-b transition-colors',
-                        isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800',
-                        isPosition && !isClosed ? 'bg-gray-900 hover:bg-gray-800 cursor-pointer' : '',
-                        isPosition && isClosed ? 'bg-gray-950 cursor-pointer' : '',
-                        isGroup && !isClosed ? 'bg-gray-850 hover:bg-gray-800 cursor-pointer' : '',
-                        isGroup && isClosed ? 'bg-gray-950 cursor-pointer' : '',
-                        !isPosition && !isGroup ? 'bg-gray-950' : '',
-                      ].join(' ')}
-                      onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="px-3 py-2 overflow-hidden"
-                          {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})}
-                          {...(savingsHandlers && cell.column.id === 'value' ? savingsHandlers : {})}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  </Fragment>
-                )
-              })
-            })()}
+            {bodyRows.map((item) => <PositionBodyRow key={item.row.id} cancelHide={cancelHide} row={item.row} scheduleHide={scheduleHide} separatorType={item.separatorType} setAllocationHover={setAllocationHover} setChart={setChart} setSavingsChart={setSavingsChart} setUnderlyingPopover={setUnderlyingPopover} totals={item.totals} />)}
           </tbody>
         </table>
       </div>

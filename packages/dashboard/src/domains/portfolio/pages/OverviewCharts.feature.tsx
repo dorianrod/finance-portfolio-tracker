@@ -196,7 +196,6 @@ export function OverviewConcentrationChart({
   heldConcentration: OverviewConcentrationComparison
   underlyingConcentration: OverviewConcentrationComparison
 }) {
-  const formatPercentage = useFormatPercentage()
   const [mode, setMode] = useState<ConcentrationMode>('lookThrough')
   const lookThroughDisabled = underlyingConcentration.current == null
   const displayedMode = mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
@@ -210,6 +209,7 @@ export function OverviewConcentrationChart({
     previousWeight: concentration.previous ? previousByKey.get(holding.key) ?? 0 : null,
   })) ?? []
   const scaleMax = Math.max(1, ...rows.flatMap((row) => [row.weight, row.previousWeight ?? 0]))
+  const previousAvailable = concentration.previous != null
 
   return (
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -236,33 +236,7 @@ export function OverviewConcentrationChart({
         <div className="flex h-48 items-center justify-center text-center text-sm text-gray-600">Historical concentration is unavailable for this period.</div>
       ) : (
         <div className="mt-5 space-y-4">
-          {rows.map((row) => {
-            const delta = row.previousWeight == null ? null : row.weight - row.previousWeight
-            let deltaTone = 'text-gray-600'
-            if (delta != null && delta > 0) deltaTone = 'text-red-400'
-            else if (delta != null && delta < 0) deltaTone = 'text-emerald-400'
-            return (
-              <div key={row.key}>
-                <div className="mb-1.5 flex items-center gap-3 text-xs">
-                  <span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span>
-                  <span className="shrink-0 tabular-nums text-gray-300">{formatPercentage(row.weight)}</span>
-                  <span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>
-                    {delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}
-                  </span>
-                </div>
-                <div className="relative h-2.5 rounded-full bg-gray-800">
-                  <div className="absolute inset-y-0 left-0 rounded-full bg-orange-500/80" style={{ width: `${row.weight / scaleMax * 100}%` }} />
-                  {concentration.previous && (
-                    <span
-                      className="absolute -top-1 h-4 w-0.5 rounded-full bg-gray-300 shadow-[0_0_0_1px_var(--color-gray-900)]"
-                      style={{ left: `${(row.previousWeight ?? 0) / scaleMax * 100}%` }}
-                      title={`Previous: ${formatPercentage(row.previousWeight ?? 0)}`}
-                    />
-                  )}
-                </div>
-              </div>
-            )
-          })}
+          {rows.map((row) => <OverviewConcentrationRow key={row.key} previousAvailable={previousAvailable} row={row} scaleMax={scaleMax} />)}
           <div className="flex items-center justify-end gap-1.5 pt-1 text-[10px] text-gray-600">
             <span className="h-3 w-0.5 bg-gray-300" /> Previous period-end
           </div>
@@ -270,4 +244,15 @@ export function OverviewConcentrationChart({
       )}
     </section>
   )
+}
+
+type OverviewConcentrationRowData = NonNullable<OverviewConcentrationComparison['current']>['holdings'][number] & { previousWeight: number | null }
+
+function OverviewConcentrationRow({ previousAvailable, row, scaleMax }: { previousAvailable: boolean; row: OverviewConcentrationRowData; scaleMax: number }) {
+  const formatPercentage = useFormatPercentage()
+  const delta = row.previousWeight == null ? null : row.weight - row.previousWeight
+  let deltaTone = 'text-gray-600'
+  if (delta != null && delta > 0) deltaTone = 'text-red-400'
+  else if (delta != null && delta < 0) deltaTone = 'text-emerald-400'
+  return <div><div className="mb-1.5 flex items-center gap-3 text-xs"><span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span><span className="shrink-0 tabular-nums text-gray-300">{formatPercentage(row.weight)}</span><span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>{delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}</span></div><div className="relative h-2.5 rounded-full bg-gray-800"><div className="absolute inset-y-0 left-0 rounded-full bg-orange-500/80" style={{ width: `${row.weight / scaleMax * 100}%` }} />{previousAvailable && <span className="absolute -top-1 h-4 w-0.5 rounded-full bg-gray-300 shadow-[0_0_0_1px_var(--color-gray-900)]" style={{ left: `${(row.previousWeight ?? 0) / scaleMax * 100}%` }} title={`Previous: ${formatPercentage(row.previousWeight ?? 0)}`} />}</div></div>
 }

@@ -30,6 +30,12 @@ const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
 const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
+interface VirtualExposureItem { index: number; size: number; start: number }
+
+function VirtualExposureRow({ item, onToggle, row, scrollMargin }: { item: VirtualExposureItem; onToggle: (id: string) => void; row: ExposureRow; scrollMargin: number }) {
+  return <div className="absolute left-0 top-0 w-full" style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}>{row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />}{row.kind === 'security' && <SecurityRow security={row.security} />}{row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}</div>
+}
+
 export type { FundExposureSort } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
 
 export function FundHoldingsExplorer({
@@ -73,6 +79,10 @@ export function FundHoldingsExplorer({
     overscan: 12,
     scrollMargin,
   })
+  const virtualRows = virtualizer.getVirtualItems().map((item) => {
+    const row = rows[item.index]
+    return { item, key: rowKey(row), row }
+  })
 
   return (
     <section className={DATA_TABLE_STYLES.panel}>
@@ -107,20 +117,7 @@ export function FundHoldingsExplorer({
             <span>Issuer</span><span className="text-right">Exposure</span><span className="text-right">Portfolio</span><span>Sources</span>
           </div>
           <div ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>
-            {virtualizer.getVirtualItems().map((item) => {
-              const row = rows[item.index]
-              return (
-                <div
-                  key={rowKey(row)}
-                  className="absolute left-0 top-0 w-full"
-                  style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}
-                >
-                  {row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={toggleIssuer} />}
-                  {row.kind === 'security' && <SecurityRow security={row.security} />}
-                  {row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}
-                </div>
-              )
-            })}
+            {virtualRows.map((virtualRow) => <VirtualExposureRow key={virtualRow.key} item={virtualRow.item} onToggle={toggleIssuer} row={virtualRow.row} scrollMargin={scrollMargin} />)}
           </div>
         </div>
         {displayed.length === 0 && <p className="p-8 text-center text-sm text-gray-500">No exposure matches this search.</p>}
@@ -164,9 +161,13 @@ function SourcesCell({ sources, total, empty, className }: {
 
 const TOOLTIP_WIDTH = 340
 
-function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: Source[]; total: number }) {
+function SourceTooltipRow({ source, total }: { source: Source; total: number }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  return <li className="flex items-baseline gap-3"><span className="min-w-0 flex-1 truncate text-gray-300">{source.fund}</span><span className="tabular-nums text-gray-400">{formatMoney(source.value, { style: 'full' })}</span><span className="w-12 text-right tabular-nums text-gray-600">{formatPercentage(total > 0 ? source.value / total * 100 : 0, { decimals: 0 })}</span></li>
+}
+
+function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: Source[]; total: number }) {
   const left = Math.max(8, Math.min(anchor.left, window.innerWidth - TOOLTIP_WIDTH - 8))
   const below = anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
   const position = below ? { top: anchor.bottom + 6 } : { bottom: window.innerHeight - anchor.top + 6 }
@@ -178,13 +179,7 @@ function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: 
     >
       <div className="mb-2 text-[10px] uppercase tracking-wider text-gray-500">Held through {sources.length} funds</div>
       <ul className="max-h-64 space-y-1 overflow-hidden">
-        {sources.map((source) => (
-          <li key={source.fund} className="flex items-baseline gap-3">
-            <span className="min-w-0 flex-1 truncate text-gray-300">{source.fund}</span>
-            <span className="tabular-nums text-gray-400">{formatMoney(source.value, { style: 'full' })}</span>
-            <span className="w-12 text-right tabular-nums text-gray-600">{formatPercentage(total > 0 ? source.value / total * 100 : 0, { decimals: 0 })}</span>
-          </li>
-        ))}
+        {sources.map((source) => <SourceTooltipRow key={source.fund} source={source} total={total} />)}
       </ul>
     </div>
   )

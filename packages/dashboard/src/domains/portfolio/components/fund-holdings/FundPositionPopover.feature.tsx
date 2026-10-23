@@ -25,6 +25,12 @@ export interface FundPositionPopoverTarget {
   buttonRect: DOMRect
 }
 
+function FundPositionHoldingRow({ holding, positionValue }: { holding: FundHolding; positionValue: number }) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  return <div className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-gray-800/70 py-1.5 text-xs"><span className="truncate text-gray-300" title={holding.holdingName}>{holding.holdingName}</span><span className="text-right tabular-nums text-gray-500">{formatPercentage(holding.weight * 100, { decimals: 2 })}</span><span className="text-right tabular-nums text-gray-400">{formatMoney(positionValue * holding.weight, { style: 'full' })}</span></div>
+}
+
 export function FundPositionPopover({
   target,
   onMouseEnter,
@@ -77,13 +83,7 @@ export function FundPositionPopover({
 
       {rows.length > 0 ? (
         <div>
-          {rows.map((holding) => (
-            <div key={`${holding.holdingId}-${holding.holdingName}`} className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-gray-800/70 py-1.5 text-xs">
-              <span className="truncate text-gray-300" title={holding.holdingName}>{holding.holdingName}</span>
-              <span className="text-right tabular-nums text-gray-500">{formatPercentage(holding.weight * 100, { decimals: 2 })}</span>
-              <span className="text-right tabular-nums text-gray-400">{formatMoney(positionValue * holding.weight, { style: 'full' })}</span>
-            </div>
-          ))}
+          {rows.map((holding) => <FundPositionHoldingRow key={holding.holdingId} holding={holding} positionValue={positionValue} />)}
         </div>
       ) : (
         <p className="py-5 text-center text-xs text-gray-500">No underlying holdings available.</p>
