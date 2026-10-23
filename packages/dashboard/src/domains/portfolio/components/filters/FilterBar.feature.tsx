@@ -15,7 +15,7 @@ import {
   toggle,
   type FilterSummaryItem,
   type FilterVisibility,
-} from './filterBar.logic'
+} from './helpers/filters/portfolioFilters'
 
 interface FilterPanelProps {
   visibility: FilterVisibility

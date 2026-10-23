@@ -3,71 +3,16 @@ import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { catColor } from '@/shared/theme/chartColors'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { AccountTypeTooltip } from './portfolioCharts.tooltips.view'
-import type { AccountTypePoint } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { resolveAccountTypeLabelPositions, type AccountTypeDonutPoint } from './helpers/calculators/resolveAccountTypeLabelPositions'
 
-interface DonutPoint extends AccountTypePoint {
-  _label: string
-}
-
-interface LabelPosition {
-  x: number
-  y: number
-  isRight: boolean
-}
-
-function resolveLabelPositions(data: DonutPoint[], cx: number, cy: number, outerRadius: number): LabelPosition[] {
-  const total = data.reduce((sum, point) => sum + point.total_value, 0)
-  const labelRadius = outerRadius + 24
-  let cursorAngle = 90
-  const positions = data.map((point, index) => {
-    const sweep = total > 0 ? point.total_value / total * 360 : 0
-    const midAngle = cursorAngle - sweep / 2
-    cursorAngle -= sweep
-    const radians = -midAngle * Math.PI / 180
-    const isRight = Math.cos(radians) >= 0
-    return {
-      index,
-      isRight,
-      desiredY: cy + labelRadius * Math.sin(radians),
-      x: cx + (isRight ? labelRadius : -labelRadius),
-      y: 0,
-    }
-  })
-
-  const minY = cy - labelRadius + 6
-  const maxY = cy + labelRadius - 6
-  for (const isRight of [false, true]) {
-    const side = positions.filter((position) => position.isRight === isRight).sort((a, b) => a.desiredY - b.desiredY)
-    if (side.length === 0) continue
-    const gap = side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
-
-    side[0].y = Math.max(minY, side[0].desiredY)
-    for (let i = 1; i < side.length; i++) {
-      side[i].y = Math.max(side[i].desiredY, side[i - 1].y + gap)
-    }
-    if (side.at(-1)!.y > maxY) {
-      side[side.length - 1].y = maxY
-      for (let i = side.length - 2; i >= 0; i--) {
-        side[i].y = Math.min(side[i].y, side[i + 1].y - gap)
-      }
-    }
-    if (side[0].y < minY) {
-      const shift = minY - side[0].y
-      side.forEach((position) => { position.y += shift })
-    }
-  }
-
-  return positions.sort((a, b) => a.index - b.index)
-}
-
-function AccountTypeLabel({ data, ...props }: PieLabelRenderProps & { data: DonutPoint[] }) {
+function AccountTypeLabel({ data, ...props }: PieLabelRenderProps & { data: AccountTypeDonutPoint[] }) {
   const formatPercentage = useFormatPercentage()
   const { cx, cy, midAngle, outerRadius, payload, percent, index } = props
   if (typeof cx !== 'number' || typeof cy !== 'number' || typeof midAngle !== 'number' || typeof outerRadius !== 'number') return null
-  const point = payload as DonutPoint
-  const position = resolveLabelPositions(data, cx, cy, outerRadius)[index]
+  const point = payload as AccountTypeDonutPoint
+  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[index]
   if (!position) return null
 
   const radians = -midAngle * Math.PI / 180
@@ -102,7 +47,7 @@ function AccountTypeLabel({ data, ...props }: PieLabelRenderProps & { data: Donu
 }
 
 function AccountTypeSector({ cx, cy, startAngle, endAngle, outerRadius, payload }: PieSectorShapeProps) {
-  const point = payload as DonutPoint
+  const point = payload as AccountTypeDonutPoint
   const radius = outerRadius ?? 0
   const accountColor = catColor(point.account_type)
   const sectorBase = {
@@ -143,8 +88,8 @@ function AccountTypeSector({ cx, cy, startAngle, endAngle, outerRadius, payload 
   )
 }
 
-export function AccountTypeBreakdownChart({ data }: { data: DonutPoint[] }) {
-  const donutData: DonutPoint[] = data.map((point) => ({
+export function AccountTypeBreakdownChart({ data }: { data: AccountTypeDonutPoint[] }) {
+  const donutData: AccountTypeDonutPoint[] = data.map((point) => ({
     ...point,
     total_cost_basis: Math.max(0, point.total_cost_basis),
   }))

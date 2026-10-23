@@ -2,21 +2,25 @@
 title: Sort Every Helper Into One of a Fixed Set of Categories
 impact: MEDIUM-HIGH
 impactDescription: predictable location, no grab-bag folders, no duplicated helpers
-tags: helpers, categories, formatters, mappers, payloads, validators
+tags: helpers, categories, selectors, aggregators, calculators, mappers, presenters, quality
 ---
 
 ## Sort Every Helper Into One of a Fixed Set of Categories
 
 **Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
 
-`helpers/` is never flat and never holds a `utils.ts`: each file lives in one category folder, named after its export. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects (mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
+`helpers/` is never flat and never holds a `utils.ts` or `*.logic.ts`. Each file lives in one category folder, is named after its single public helper export, and may keep private support functions. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects or orchestration (effect, mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
 
 | Category | Input → output | Examples |
 | --- | --- | --- |
 | `businessRules/` | entity/state → `boolean` (or a closed union) | `isContractClosed`, `canCancelOrder`, `shouldShowApprovers` |
 | `formatters/` | entity/value → display text | `useFormatContact`, `useFormatOrderStatus` |
-| `mappers/` | one representation → another one, never text | `getOrderStatusBadgeType`, `toContactOption` |
-| `calculators/` | entities/numbers → derived number | `getInvoiceTotal`, `getRemainingAmount` |
+| `selectors/` | collection → same items filtered, ordered, indexed or selected | `selectVisibleOrders`, `findLatestInvoice`, `sortContacts` |
+| `aggregators/` | many records → grouped or consolidated collection | `aggregateInvoicesByMonth`, `buildAccountHistory` |
+| `calculators/` | values/entities → quantitative metric or metric summary | `getInvoiceTotal`, `computeOrderPerformance` |
+| `mappers/` | one representation → another, without material selection or aggregation | `toContactOption`, `buildOrderViewModel` |
+| `presenters/` | display data → UI class, tone, geometry or library-specific shape | `getOrderStatusTone`, `getChartDomain`, `computePopoverPosition` |
+| `quality/` | data → coverage, reliability, missing-data or anomaly diagnostic | `computeInvoiceCoverage`, `assessContactCompleteness` |
 | `validators/` | entity/items → list of business errors (never throws, no toast) | `validateOrdersForCancellation` |
 | `payloads/` | domain values → API request body | `buildOrderPayload` |
 | `forms/` | entity → form initial values, and form values → domain input | `getOrderFormInitialValues` |
@@ -24,9 +28,21 @@ tags: helpers, categories, formatters, mappers, payloads, validators
 | `schemas/` | Yup schemas reused by several hooks (see `yup-module-level-schemas`) | `ORDER_LIST_ITEM_SCHEMA` |
 | `links/` | ids → route or URL | `getContractDetailPath` |
 
-Decision path when adding a helper: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a number → `calculators`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; feeds a select/filter → `filters`; returns a route or URL → `links`; otherwise a representation change → `mappers`.
+Use these boundaries when neighboring categories look plausible:
 
-When no category fits, the function is probably misplaced (a hook with side effects belongs to `services/`, a component-only function stays next to its component, an app-wide generic function goes to `src/shared/`). Create a new category only when at least two helpers share it, then add it to this table.
+- Same item shape with fewer, reordered or selected items → `selectors`.
+- Several records grouped by a key into consolidated records → `aggregators`.
+- Primarily numeric or statistical result, including a structured metric summary → `calculators`.
+- Representation change without material selection or aggregation → `mappers`.
+- CSS, design-system, charting or geometry vocabulary in the output → `presenters`.
+- Completeness, reliability, coverage or anomaly evidence in the output → `quality`.
+- A simple quality predicate still belongs in `businessRules/`; a quality label still belongs in `formatters/`.
+
+Parsing and coercion of raw API values are not helper categories. They belong in the API hook's Yup schema so the domain never receives unvalidated wire values (see `yup-last-coercion-barrier`).
+
+Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
+
+When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; domain-shared logic belongs under the domain; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
 
 **Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
 
@@ -34,6 +50,7 @@ When no category fits, the function is probably misplaced (a hook with side effe
 src/domains/sales/orders/helpers/
 ├── utils.ts                      # formatDate, isCancelable, buildBody, …
 ├── orderHelpers.ts
+├── order.logic.ts                # selection, aggregation and display mixed together
 ├── responsiveness/useIsMobile.ts # not domain logic
 └── lists/useOrderListData.ts     # page data orchestration, not a helper
 ```
@@ -44,14 +61,21 @@ src/domains/sales/orders/helpers/
 src/domains/sales/orders/helpers/
 ├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
 ├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
-├── mappers/getOrderStatusBadgeType.ts      # OrderStatus -> BadgeType
-├── calculators/getOrderTotal.ts            # (lines: OrderLine[]) => number
+├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
+├── aggregators/aggregateOrdersByMonth.ts    # Order[] -> MonthlyOrders[]
+├── calculators/getOrderTotal.ts             # OrderLine[] -> number
+├── mappers/toOrderOption.ts                 # Order -> SelectOption
+├── quality/computeOrderCoverage.ts          # Order[] -> CoverageDiagnostic
 ├── validators/validateOrdersForCancellation.ts
 ├── payloads/buildOrderPayload.ts           # OrderFormValues -> OrderPayload
 ├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
 └── filters/useOrderStatusFilterOptions.ts
+
+src/domains/sales/orders/pages/list/components/OrdersChart/
+├── OrdersChart.feature.tsx
+└── helpers/presenters/getOrdersChartDomain.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`.
+Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`

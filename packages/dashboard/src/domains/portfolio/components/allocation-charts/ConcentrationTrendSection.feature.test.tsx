@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { HistoricalConcentrationPoint } from './concentrationTrend.logic'
-import { nextPlaybackIndex, shouldAnimateConcentration } from './concentrationTrend.logic'
+import type { HistoricalConcentrationPoint } from './helpers/calculators/buildConcentrationTrend'
+import { nextPlaybackIndex, shouldAnimateConcentration } from './helpers/calculators/buildConcentrationTrend'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection.feature'
 
 const points: HistoricalConcentrationPoint[] = [

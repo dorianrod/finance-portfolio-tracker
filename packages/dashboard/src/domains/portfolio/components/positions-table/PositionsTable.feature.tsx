@@ -9,14 +9,12 @@ import {
   type HeaderGroup,
   type Row,
 } from '@tanstack/react-table'
-import { useAtomValue } from 'jotai'
-import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
+import { Fragment, useMemo } from 'react'
 import type { PositionRow, TableRow } from '@/domains/portfolio/types/domain'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
-import { gainClass } from './positionsTable.logic'
+import { gainClass } from './helpers/presenters/getGainClass'
 import { GainCell } from './GainCell.view'
 import { RealizedGainCell, UnrealizedGainCell } from './GainCells.feature'
 import { ExpandBtn } from './ExpandBtn.view'
@@ -24,7 +22,6 @@ import { SortHeader } from './SortHeader.view'
 import { HoverChart, type ChartTarget } from '@/domains/portfolio/components/hover-charts/HoverChart.feature'
 import { HoverSavingsChart, type SavingsChartTarget } from '@/domains/portfolio/components/hover-charts/HoverSavingsChart.feature'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/domains/portfolio/components/allocation-charts/HoverAllocationPopover.view'
-import { useAllocationByIsin } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
 import type { FundHoldingStatus } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import {
   FundPositionPopover,
@@ -32,10 +29,9 @@ import {
 } from '@/domains/portfolio/components/fund-holdings/FundPositionPopover.feature'
 import {
   FUND_QUALITY_LABELS,
-  fundQualityCategory,
-  fundQualitySourceLabel,
-  statusForPosition,
-} from '@/domains/portfolio/components/fund-holdings/fundHoldings.logic'
+  getFundQualityPresentation,
+} from '@/domains/portfolio/components/fund-holdings/helpers/presenters/getFundQualityPresentation'
+import { statusForPosition } from '@/domains/portfolio/components/fund-holdings/helpers/mappers/buildFundHoldingsViewModel'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import {
@@ -51,21 +47,13 @@ import {
   isClosedPosition,
   isTaxFreePassiveIncome,
 } from '@/domains/portfolio/helpers/businessRules/positionDisplayRules'
-import { useDashboardPositionsTable } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardPositionsTable'
-import {
-  dashboardPositionSortDirectionAtom,
-  dashboardExpandedPositionRowsAtom,
-  dashboardPositionSortKeyAtom,
-} from '@/domains/portfolio/pages/dashboard/stores/dashboardPositionsTable.atoms'
+import { formatIrrPeriodLabel } from './helpers/formatters/formatIrrPeriodLabel'
+import { usePositionTableFormatters } from './helpers/formatters/usePositionTableFormatters'
+import { usePositionTableData } from './services/usePositionTableData'
+import { usePositionTableOverlays } from './services/usePositionTableOverlays'
+import { usePositionTableState } from './services/usePositionTableState'
 
 const col = createColumnHelper<TableRow>()
-
-function irrPeriodLabel(years: number | null): string {
-  if (years == null) return '3y'
-  if (years >= 3) return '3y'
-  if (years >= 1) return `${Math.floor(years * 10) / 10}y`
-  return `${Math.max(1, Math.round(years * 12))}mo`
-}
 
 interface Props {
   data: PositionRow[]
@@ -126,60 +114,6 @@ function PositionBodyRow({ cancelHide, row, scheduleHide, separatorType, setAllo
   }
   const td = 'px-3 py-1.5 text-xs bg-gray-800 border-t-2 border-gray-600 border-b border-gray-700'
   return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || 'Other'}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
-}
-
-function usePositionTableFormatters() {
-  const formatMoney = useFormatMoney()
-  const formatNumber = useFormatNumber()
-  const formatPercentage = useFormatPercentage()
-  return { formatMoney, formatNumber, formatPercentage }
-}
-
-function usePositionTableState() {
-  const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
-  const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
-  const expanded = useAtomValue(dashboardExpandedPositionRowsAtom)
-  const { setExpanded, sort: onSort } = useDashboardPositionsTable()
-  return { expanded, onSort, setExpanded, sortDir, sortKey }
-}
-
-function usePositionTableOverlays() {
-  const [chart, setChart] = useState<ChartTarget | null>(null)
-  const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
-  const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
-  const [underlyingPopover, setUnderlyingPopover] = useState<FundPositionPopoverTarget | null>(null)
-  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const cancelHide = useCallback(() => {
-    if (hideTimeout.current) clearTimeout(hideTimeout.current)
-  }, [])
-  const scheduleHide = useCallback(() => {
-    hideTimeout.current = setTimeout(() => {
-      setChart(null)
-      setSavingsChart(null)
-      setAllocationHover(null)
-      setUnderlyingPopover(null)
-    }, 200)
-  }, [])
-
-  return {
-    allocationHover,
-    cancelHide,
-    chart,
-    savingsChart,
-    scheduleHide,
-    setAllocationHover,
-    setChart,
-    setSavingsChart,
-    setUnderlyingPopover,
-    underlyingPopover,
-  }
-}
-
-function usePositionTableData(data: PositionRow[]) {
-  const { data: allocationData } = useAllocationByIsin()
-  const groupTotals = useMemo(() => calculatePositionGroupTotals(data), [data])
-  return { allocationData, groupTotals }
 }
 
 export function PositionsTable({
@@ -535,7 +469,7 @@ export function PositionsTable({
             )}
             {r.xirr != null && (
               <span className="mt-0.5 text-[10px] text-gray-500">
-                {irrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
+                {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
                 {r.xirr_rolling_3y == null ? '—' : `${formatPercentage(r.xirr_rolling_3y, { decimals: 2, signed: true })}/yr`}
               </span>
             )}
@@ -674,9 +608,9 @@ function UnderlyingStatusButton({
   onHide: () => void
 }) {
   const formatPercentage = useFormatPercentage()
-  const category = fundQualityCategory(status.qualityTier)
+  const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
   const label = FUND_QUALITY_LABELS[category]
-  const title = `${label} · ${fundQualitySourceLabel(status.qualityTier)} · ${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`
+  const title = `${label} · ${sourceLabel} · ${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`
   const tone = {
     reliable: 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500',
     partial: 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500',

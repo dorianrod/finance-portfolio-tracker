@@ -11,18 +11,18 @@ import {
   computeTableRows,
   excludeNonApplicableAllocationData,
   scopeRawAllocationData,
-} from '@/domains/portfolio/components/allocation-charts/allocationCharts.logic'
+} from '@/domains/portfolio/components/allocation-charts/helpers/calculators/allocationChartCalculations'
 import type { AllocationFilter } from '@/domains/portfolio/components/allocation-charts/allocationCharts.types'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
-} from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
+} from '@/domains/portfolio/components/allocation-charts/helpers/calculators/buildConcentrationTrend'
 import {
   buildCumulativeConcentration,
   computeConcentration,
   computeHeldAssetConcentration,
   filterPointsByPeriod,
-} from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
+} from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
 import type { ConcentrationMode } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import type { PositionRow, RawPosition } from '@/domains/portfolio/types/domain'

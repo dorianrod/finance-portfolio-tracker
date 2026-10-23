@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Provider, createStore } from 'jotai'
 import { describe, expect, it } from 'vitest'
-import type { OverviewComparison } from './overviewComparison.logic'
+import type { OverviewComparison } from './helpers/calculators/buildOverviewComparison'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
 const metric = (current: number | null, previous: number | null) => ({

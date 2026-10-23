@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useAllPositions } from './useAllPositions'
-import { buildAccountTypeHistory, type AccountTypeHistoryPoint, type AccountTypeHistory } from '@/domains/portfolio/helpers/accountTypeHistory.logic'
+import { buildAccountTypeHistory, type AccountTypeHistoryPoint, type AccountTypeHistory } from '@/domains/portfolio/helpers/aggregators/buildAccountTypeHistory'
 
 export type { AccountTypeHistoryPoint }
 

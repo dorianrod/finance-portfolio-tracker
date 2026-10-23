@@ -1,13 +1,9 @@
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { Kpi } from './Kpi.view'
 import { calculatePortfolioKpis } from '@/domains/portfolio/helpers/calculators/calculatePortfolioKpis'
-
-function gainColor(v: number) {
-  return v >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
-}
+import { getPerformanceColor } from '@/domains/portfolio/helpers/presenters/getPerformanceColor'
 
 interface Props {
   rows: PositionRow[]
@@ -43,7 +39,7 @@ export function KpiBar({ rows, globalTri }: Props) {
       <Kpi.Root accent={totalUnrealizedNet >= 0 ? 'positive' : 'negative'}>
         <Kpi.Label tooltip="Unrealized gain net of estimated taxes. Tax rate configurable per asset (default: 30% flat tax). Calculation: gross P&L × (1 − tax rate).">Net unrealized P&amp;L</Kpi.Label>
         <Kpi.ValueRow><Kpi.Value>{formatMoney(totalUnrealizedNet)}</Kpi.Value></Kpi.ValueRow>
-        <Kpi.Note color={gainColor(totalUnrealizedNet)}>{formatPercentage(unrealizedPctNet, { signed: true })}</Kpi.Note>
+        <Kpi.Note color={getPerformanceColor(totalUnrealizedNet)}>{formatPercentage(unrealizedPctNet, { signed: true })}</Kpi.Note>
         <Kpi.Detail>gross {formatMoney(totalUnrealized)} ({formatPercentage(unrealizedPctGross, { signed: true })})</Kpi.Detail>
       </Kpi.Root>
       <div className="w-px bg-gray-700" />
@@ -73,7 +69,7 @@ export function KpiBar({ rows, globalTri }: Props) {
         <div className="w-px bg-gray-700" />
         <Kpi.Root accent={globalTri >= 0 ? 'positive' : 'negative'}>
           <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history.">IRR since tracking</Kpi.Label>
-          <Kpi.ValueRow><Kpi.Value color={gainColor(globalTri)}>{formatPercentage(globalTri, { decimals: 2, signed: true })}</Kpi.Value></Kpi.ValueRow>
+          <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(globalTri)}>{formatPercentage(globalTri, { decimals: 2, signed: true })}</Kpi.Value></Kpi.ValueRow>
         </Kpi.Root>
       </>}
       <div className="w-px bg-gray-700" />

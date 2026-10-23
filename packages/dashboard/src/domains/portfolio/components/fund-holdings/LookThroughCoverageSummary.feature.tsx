@@ -5,7 +5,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { QualityIndicatorCard } from '@/domains/portfolio/components/quality/QualityIndicatorCard.view'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
-import { computeFundExposurePercentages } from './fundQualityScope.logic'
+import { computeFundExposurePercentages } from './helpers/quality/scopeFundQualityData'
 import { FilterScopeBadges } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 
 function LatestQualityScope() {

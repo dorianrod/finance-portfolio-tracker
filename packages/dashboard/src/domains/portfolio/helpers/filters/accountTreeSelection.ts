@@ -1,4 +1,4 @@
-import { accountLabel } from '@/domains/portfolio/components/filters/filterBar.logic'
+import { accountLabel } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
 
 export function accountsForType(
   type: string,

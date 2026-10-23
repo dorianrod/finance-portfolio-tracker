@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import { rawAccountSet } from '@/domains/portfolio/helpers/filters/accountFilter'
-import { aggregatePassiveIncomeByYear, type PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
+import { aggregatePassiveIncomeByYear, type PassiveIncomePoint } from '@/domains/portfolio/helpers/aggregators/aggregatePassiveIncomeByYear'
 import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 

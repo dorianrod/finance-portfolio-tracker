@@ -7,7 +7,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { usePositionsHistory } from '@/domains/portfolio/apis/queries/usePositionsHistory'
-import { buildHoverChartSeries, computeUnitPriceDomain, computePosition, type Operation } from './hoverCharts.logic'
+import { buildHoverChartSeries, computeUnitPriceDomain, computePosition, type Operation } from './helpers/calculators/buildHoverChartData'
 import { TooltipPortfolio, TooltipUnit } from './hoverCharts.tooltips.view'
 import { BuySellDot, BuySellDotUnit } from './BuySellDots.view'
 

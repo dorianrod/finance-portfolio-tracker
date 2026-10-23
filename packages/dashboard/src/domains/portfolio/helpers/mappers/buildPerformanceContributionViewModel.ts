@@ -2,7 +2,7 @@ import type { AssetIrrSummary } from '@/domains/portfolio/apis/queries/useAssetI
 import type {
   ContributionHorizon,
   PerformanceContributionSummary,
-} from '@/domains/portfolio/components/portfolio-charts/performanceContribution.logic'
+} from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/computePerformanceContributions'
 
 const MINIMUM_DISPLAYED_IRR = 0.005
 const RANKING_SIZE = 5

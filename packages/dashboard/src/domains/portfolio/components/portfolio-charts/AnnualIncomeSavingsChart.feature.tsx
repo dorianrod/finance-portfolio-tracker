@@ -9,13 +9,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import { getIncomeYearOpacity } from './helpers/presenters/getIncomeYearOpacity'
 
 function IncomeSavingsTooltip({ active, payload }: {
   active?: boolean
@@ -50,12 +51,8 @@ function IncomeSavingsTooltip({ active, payload }: {
   )
 }
 
-function yearOpacity(point: AnnualIncomeSavingsPoint): number {
-  return point.incomeStatus === 'forecast' ? 0.45 : 1
-}
-
 function IncomeCell({ point }: { point: AnnualIncomeSavingsPoint }) {
-  return <Cell fillOpacity={yearOpacity(point)} />
+  return <Cell fillOpacity={getIncomeYearOpacity(point)} />
 }
 
 function SavingsCell({ point }: { point: AnnualIncomeSavingsPoint }) {

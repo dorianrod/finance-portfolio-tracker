@@ -1,84 +1,22 @@
-import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useAtomValue } from 'jotai'
+import { memo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import {
-  useFundHoldingsData,
   type FundHolding,
-  type FundHoldingStatus,
 } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
-import type { IssuerExposure, SecurityExposure } from './fundHoldings.logic'
+import type { IssuerExposure, SecurityExposure } from './helpers/mappers/buildFundHoldingsViewModel'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
-import {
-  buildFundExposureViewModel,
-  type ExposureRow,
-  type FundExposureSort,
-} from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
-import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardUnderlyingHoldings'
-import {
-  dashboardExpandedUnderlyingIssuersAtom,
-  dashboardUnderlyingQueryAtom,
-  dashboardUnderlyingSortAtom,
-} from '@/domains/portfolio/pages/dashboard/stores/dashboardUnderlyingHoldings.atoms'
+import type { ExposureRow, FundExposureSort } from '@/domains/portfolio/helpers/mappers/buildFundExposureViewModel'
+import { useFundExposureViewModel } from './services/useFundExposureViewModel'
+import { useVirtualExposureList } from './services/useVirtualExposureList'
 
-const ROW_HEIGHT = 40
 const GRID = 'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
-const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
 interface VirtualExposureItem { index: number; size: number; start: number }
-
-function useFundExposureViewModel(positions: PositionRow[], holdings: FundHolding[]) {
-  const { data: fundData } = useFundHoldingsData()
-  const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
-  const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
-  const query = useAtomValue(dashboardUnderlyingQueryAtom)
-  const sort = useAtomValue(dashboardUnderlyingSortAtom)
-  const actions = useDashboardUnderlyingHoldings()
-  const exposure = useMemo(
-    () => buildFundExposureViewModel({
-      expanded,
-      holdings,
-      positions,
-      query,
-      sort,
-      statuses,
-    }),
-    [expanded, holdings, positions, query, sort, statuses],
-  )
-  return { ...actions, ...exposure, query, sort }
-}
-
-function useVirtualExposureList(rows: ExposureRow[]) {
-  const listRef = useRef<HTMLDivElement>(null)
-  const [scrollMargin, setScrollMargin] = useState(0)
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (listRef.current) setScrollMargin(listRef.current.getBoundingClientRect().top + window.scrollY)
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [])
-
-  const virtualizer = useWindowVirtualizer({
-    count: rows.length,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 12,
-    scrollMargin,
-  })
-  const virtualRows = virtualizer.getVirtualItems().map((item) => {
-    const row = rows[item.index]
-    return { item, key: rowKey(row), row }
-  })
-
-  return { listRef, scrollMargin, virtualizer, virtualRows }
-}
 
 function VirtualExposureRow({ item, onToggle, row, scrollMargin }: { item: VirtualExposureItem; onToggle: (id: string) => void; row: ExposureRow; scrollMargin: number }) {
   return <div className="absolute left-0 top-0 w-full" style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}>{row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />}{row.kind === 'security' && <SecurityRow security={row.security} />}{row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}</div>
@@ -206,12 +144,6 @@ function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: 
       </ul>
     </div>
   )
-}
-
-function rowKey(row: ExposureRow): string {
-  if (row.kind === 'issuer') return row.issuer.id
-  if (row.kind === 'security') return `${row.issuer.id}|${row.security.id}`
-  return `${row.issuer.id}|${row.security.id}|${row.fund}`
 }
 
 function Chevron({ open }: { open: boolean }) {

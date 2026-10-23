@@ -1,10 +1,10 @@
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
-import type { AccountCoverage } from '@/domains/portfolio/components/allocation-charts/allocationCoverage.logic'
+import type { AccountCoverage } from '@/domains/portfolio/components/allocation-charts/helpers/quality/computeAllocationCoverage'
 import {
   computeFundExposurePercentages,
   type ScopedFundQualityData,
-} from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
+} from '@/domains/portfolio/components/fund-holdings/helpers/quality/scopeFundQualityData'
 import {
   aggregateReliabilityTone,
   percentageReliabilityTone,

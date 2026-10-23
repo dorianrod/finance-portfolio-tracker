@@ -4,7 +4,7 @@ import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticC
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { RollingUnitPricePerf } from './RollingUnitPricePerf.view'
-import type { HoverChartDataPoint } from './hoverCharts.logic'
+import type { HoverChartDataPoint } from './helpers/calculators/buildHoverChartData'
 
 export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
   const formatMoney = useFormatMoney()

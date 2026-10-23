@@ -11,12 +11,12 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 87 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 88 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
 
@@ -59,13 +59,14 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-transverse-only-imports` - Import Other Domains Only Through Transverse Domains
 - `arch-shared-no-domain-knowledge` - Keep Shared Code Free of Domain Knowledge
 - `arch-no-prop-drilling` - Share Client State Through Jotai, Not Prop Chains or Context
-- `arch-helpers-vs-services` - Choose helpers/ or services/ by Asking "Does It Need a Hook?"
 - `arch-decompose-hook-heavy-components` - Decompose Hook-Heavy Components by Responsibility
 - `arch-feature-flags` - Gate Experimental Features With a Typed Flag Registry
 - `arch-isolate-effects-in-hooks` - Isolate Effects in Intent-Named Hooks
+- `arch-component-module-boundaries` - Keep Component Modules Focused on Components
 - `arch-thin-components` - Keep Components Thin
-- `arch-no-visual-logic-below-page` - Keep Visual Logic Out of apis/, services/ and helpers/
+- `arch-no-visual-logic-below-page` - Keep Visual Logic at the Component or Page Boundary
 - `arch-stores-no-index` - No index.ts in stores/, One File per Concern
+- `arch-helpers-vs-services` - Separate Helpers from Services by Effects and Orchestration
 - `arch-subdomain-decision` - Create a Sub-Domain Only for a Distinct Business Entity
 
 ### 2. API Hooks & Server State (CRITICAL)

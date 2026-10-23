@@ -2,7 +2,7 @@ import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
-import { toLatestByIsin } from '@/domains/portfolio/helpers/allocationByIsin.logic'
+import { toLatestByIsin } from '@/domains/portfolio/helpers/mappers/toLatestAllocationByIsin'
 import { ALLOCATION_BY_ISIN_ROW_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 

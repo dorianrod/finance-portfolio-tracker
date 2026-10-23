@@ -3,7 +3,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { HoldingConcentration } from './portfolioCharts.logic'
+import type { HoldingConcentration } from './helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { HOLDING_LABEL_WIDTH, HoldingLabelTick } from './HoldingLabelTick.view'
 

@@ -11,7 +11,7 @@ import {
   mapSavingCapacity,
   aggregateSavingCapacityByAccount,
   type SavingCapacityPoint,
-} from '@/domains/portfolio/helpers/savingCapacity.logic'
+} from '@/domains/portfolio/helpers/aggregators/aggregateSavingCapacity'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 
 export type { SavingCapacityPoint }

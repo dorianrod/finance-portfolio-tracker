@@ -7,14 +7,14 @@ import {
   type HistoricalFundHolding,
 } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
-import { computePopoverPos } from '@/domains/portfolio/components/allocation-charts/allocationCharts.logic'
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
+import { computeAllocationPopoverPosition } from '@/domains/portfolio/components/allocation-charts/helpers/presenters/computeAllocationPopoverPosition'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/helpers/calculators/buildConcentrationTrend'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
 import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
-import { holdingsForPosition } from './fundHoldings.logic'
+import { holdingsForPosition } from './helpers/mappers/buildFundHoldingsViewModel'
 
 const EMPTY_FUND_HOLDINGS: FundHolding[] = []
 const EMPTY_HISTORICAL_FUND_HOLDINGS: HistoricalFundHolding[] = []
@@ -57,7 +57,7 @@ export function FundPositionPopover({
   const positionValue = position.total_value ?? 0
   const width = Math.min(560, window.innerWidth - 20)
   const estimatedHeight = Math.min(430, window.innerHeight - 20)
-  const { top, left } = computePopoverPos(target.buttonRect, width, estimatedHeight)
+  const { top, left } = computeAllocationPopoverPosition(target.buttonRect, width, estimatedHeight)
 
   return createPortal(
     <div

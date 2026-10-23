@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
-import { groupTail } from './allocationCharts.logic'
+import { groupAllocationTail } from './helpers/presenters/groupAllocationTail'
 import { PieTooltip } from './allocationCharts.tooltips.view'
 import type { PieEntry } from './allocationCharts.types'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -24,7 +24,7 @@ function MiniDonutLegendItem({ entry, total }: { entry: PieEntry; total: number 
 
 export function MiniDonut({ title, point }: { title: string; point: AllocationPoint }) {
   const total = point.categories.reduce((s, c) => s + c.value, 0)
-  const { main, grouped } = groupTail(point.categories)
+  const { main, grouped } = groupAllocationTail(point.categories)
   const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
   const data: PieEntry[] = [
     ...main.map((c) => ({ ...c, total })),

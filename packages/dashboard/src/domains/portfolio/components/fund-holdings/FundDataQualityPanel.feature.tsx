@@ -13,8 +13,8 @@ import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { FundQualityBadge } from './FundQualityBadge.view'
 import {
   FUND_QUALITY_LABELS,
-  fundQualitySourceLabel,
-} from './fundHoldings.logic'
+} from './helpers/presenters/getFundQualityPresentation'
+import { getFundQualitySourceLabel as fundQualitySourceLabel } from './helpers/presenters/getFundQualitySourceLabel'
 import {
   buildFundDiagnosticsRows,
   type FundDiagnosticsFilter,

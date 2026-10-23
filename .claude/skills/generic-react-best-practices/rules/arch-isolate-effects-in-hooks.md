@@ -23,14 +23,20 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-**Correct (the effect has a focused, intention-revealing boundary):**
+**Correct (the effect has a focused, intention-revealing service file):**
 
 ```tsx
-function useOrderDocumentTitle(orderId: string): void {
+// OrderPanel/services/useOrderDocumentTitle.ts
+export function useOrderDocumentTitle(orderId: string): void {
   useEffect(() => {
     document.title = `Order ${orderId}`
   }, [orderId])
 }
+```
+
+```tsx
+// OrderPanel/OrderPanel.feature.tsx
+import { useOrderDocumentTitle } from './services/useOrderDocumentTitle'
 
 function OrderPanel({ orderId }: { orderId: string }) {
   useOrderDocumentTitle(orderId)
@@ -38,6 +44,6 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-Keep the hook close to a single-use component or move it to the owning domain service when reused. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
+Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning domain service when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
-See also: `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`

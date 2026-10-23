@@ -1,7 +1,7 @@
 import type { AccountTypePoint, PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
-import type { TrailingSavingCapacityPoint, TrailingYearOverYear, WealthDriverPoint, YearOverYearMetric } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
+import type { TrailingSavingCapacityPoint, TrailingYearOverYear, WealthDriverPoint, YearOverYearMetric } from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
 import { AccountTypeBreakdownChart } from '@/domains/portfolio/components/portfolio-charts/AccountTypeBreakdownChart.feature'
 import { AccountTypeHistoryChart } from '@/domains/portfolio/components/portfolio-charts/AccountTypeHistoryChart.feature'
 import { EvolutionChart } from '@/domains/portfolio/components/portfolio-charts/EvolutionChart.feature'
@@ -9,13 +9,15 @@ import { MonthlySavingsChart } from '@/domains/portfolio/components/portfolio-ch
 import { WealthDriversChart } from '@/domains/portfolio/components/portfolio-charts/WealthDriversChart.feature'
 import { AnnualIncomeSavingsChart } from '@/domains/portfolio/components/portfolio-charts/AnnualIncomeSavingsChart.feature'
 import { IncomePlacementRelationshipChart } from '@/domains/portfolio/components/portfolio-charts/IncomePlacementRelationshipChart.feature'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
 import { Kpi, KpiCard } from '@/domains/portfolio/components/kpis/Kpi.view'
 import { FilterScopeBadges } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { formatMonthRange } from './helpers/formatters/formatMonthRange'
+import { getPerformanceColor } from '@/domains/portfolio/helpers/presenters/getPerformanceColor'
 
 interface WealthTabProps {
   history: PortfolioHistoryPoint[]
@@ -30,19 +32,6 @@ interface WealthTabProps {
   annualIncomeSavings: AnnualIncomeSavingsPoint[]
 }
 
-function monthRangeLabel(months: string[], formatDate: ReturnType<typeof useFormatDate>): string {
-  if (months.length === 0) return ''
-  const formatMonth = (month: string) => formatDate(`${month}-01T00:00:00Z`, { style: 'shortMonthYear', timeZone: 'UTC' })
-  if (months.length === 1) return formatMonth(months[0])
-  return `${formatMonth(months[0])} – ${formatMonth(months[months.length - 1])}`
-}
-
-function performanceColor(value: number | null): string {
-  return value == null || value >= 0
-    ? SEMANTIC_TEXT_CLASSES.performancePositive
-    : SEMANTIC_TEXT_CLASSES.performanceNegative
-}
-
 function ComparisonKpi({ label, metric, currentMonths, tone }: {
   label: string
   metric: YearOverYearMetric
@@ -54,11 +43,11 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
   const formatPercentage = useFormatPercentage()
   const valueColor = tone === 'blue'
     ? SEMANTIC_TEXT_CLASSES.netContributions
-    : performanceColor(metric.current)
+    : getPerformanceColor(metric.current)
   const changeColor = metric.changePct == null
     ? 'text-gray-500'
-    : performanceColor(metric.changePct)
-  const currentLabel = monthRangeLabel(currentMonths, formatDate)
+    : getPerformanceColor(metric.changePct)
+  const currentLabel = formatMonthRange(currentMonths, formatDate)
   const value = metric.current == null ? '—' : formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
   if (tone === 'blue') accent = 'contributions'

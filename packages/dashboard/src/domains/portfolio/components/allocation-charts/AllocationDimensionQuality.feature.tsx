@@ -1,4 +1,4 @@
-import type { DimensionCoverage } from './allocationCoverage.logic'
+import type { DimensionCoverage } from './helpers/quality/computeAllocationCoverage'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useDataQualityClassificationDetails } from '@/domains/portfolio/pages/data-quality/services/actions/useDataQualityClassificationDetails'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

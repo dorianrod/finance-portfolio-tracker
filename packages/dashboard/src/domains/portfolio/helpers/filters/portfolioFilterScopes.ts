@@ -1,7 +1,7 @@
 import { normalizeAccountSelection } from '@/domains/portfolio/apis/queries/useFilteredPortfolioHistory'
 import { rawAccountId } from '@/domains/portfolio/helpers/filters/accountFilter'
 import type { Filters } from '@/domains/portfolio/types/filters'
-import type { FilterSummaryItem } from '@/domains/portfolio/components/filters/filterBar.logic'
+import type { FilterSummaryItem } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
 
 export function withoutOperationAndPeriodFilters(filters: Filters): Filters {
   return {

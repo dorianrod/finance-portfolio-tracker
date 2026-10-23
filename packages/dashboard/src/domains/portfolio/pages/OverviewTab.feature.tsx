@@ -1,5 +1,5 @@
 import type { IrrStatus } from '@/domains/portfolio/types/history'
-import type { ComparedMetric, OverviewComparison } from './overviewComparison.logic'
+import type { ComparedMetric, OverviewComparison } from './helpers/calculators/buildOverviewComparison'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 import { OverviewConcentrationChart, OverviewDriversChart, OverviewValueChart } from './OverviewCharts.feature'
 

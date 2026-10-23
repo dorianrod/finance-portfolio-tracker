@@ -40,4 +40,4 @@ export type PaymentSection = {
 status: yup.string<PaymentStatus>().oneOf(ALL_PAYMENT_STATUSES).required(),
 ```
 
-Exception: a display-only taxonomy owned by the API (for example a project `status` that is only shown as a badge) may stay `string`. In that case, parse it with a tolerant `yup.string()` and display it through a mapper with a fallback (see `yup-no-oneof-on-display-enums`). As soon as code branches on the value, switch to a union.
+Exception: a display-only taxonomy owned by the API (for example a project `status` that is only shown as a badge) may stay `string`. In that case, parse it with a tolerant `yup.string()` and display it through a component- or page-scoped presenter with a fallback (see `yup-no-oneof-on-display-enums`). As soon as code branches on the value, switch to a union.

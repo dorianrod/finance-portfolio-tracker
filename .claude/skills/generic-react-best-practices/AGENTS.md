@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.1.0**
+**Version 1.2.0**
 
 Frontend Engineering
 
@@ -28,14 +28,15 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.3 [Import Other Domains Only Through Transverse Domains](#13-import-other-domains-only-through-transverse-domains)
    - 1.4 [Keep Shared Code Free of Domain Knowledge](#14-keep-shared-code-free-of-domain-knowledge)
    - 1.5 [Share Client State Through Jotai, Not Prop Chains or Context](#15-share-client-state-through-jotai-not-prop-chains-or-context)
-   - 1.6 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#16-choose-helpers-or-services-by-asking-does-it-need-a-hook)
-   - 1.7 [Decompose Hook-Heavy Components by Responsibility](#17-decompose-hook-heavy-components-by-responsibility)
-   - 1.8 [Gate Experimental Features With a Typed Flag Registry](#18-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.9 [Isolate Effects in Intent-Named Hooks](#19-isolate-effects-in-intent-named-hooks)
+   - 1.6 [Decompose Hook-Heavy Components by Responsibility](#16-decompose-hook-heavy-components-by-responsibility)
+   - 1.7 [Gate Experimental Features With a Typed Flag Registry](#17-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.8 [Isolate Effects in Intent-Named Hooks](#18-isolate-effects-in-intent-named-hooks)
+   - 1.9 [Keep Component Modules Focused on Components](#19-keep-component-modules-focused-on-components)
    - 1.10 [Keep Components Thin](#110-keep-components-thin)
-   - 1.11 [Keep Visual Logic Out of apis/, services/ and helpers/](#111-keep-visual-logic-out-of-apis-services-and-helpers)
+   - 1.11 [Keep Visual Logic at the Component or Page Boundary](#111-keep-visual-logic-at-the-component-or-page-boundary)
    - 1.12 [No index.ts in stores/, One File per Concern](#112-no-indexts-in-stores-one-file-per-concern)
-   - 1.13 [Create a Sub-Domain Only for a Distinct Business Entity](#113-create-a-sub-domain-only-for-a-distinct-business-entity)
+   - 1.13 [Separate Helpers from Services by Effects and Orchestration](#113-separate-helpers-from-services-by-effects-and-orchestration)
+   - 1.14 [Create a Sub-Domain Only for a Distinct Business Entity](#114-create-a-sub-domain-only-for-a-distinct-business-entity)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -323,7 +324,7 @@ import { InvoiceCard } from '@/domains/sales/invoices/components/InvoiceCard'
 
 ```tsx
 // Promoted once to the main domain's shared folder, used by both sub-domains
-import { getStatusBadgeType } from '@/domains/sales/shared/helpers/mappers/getStatusBadgeType'
+import { toOrderReference } from '@/domains/sales/shared/helpers/mappers/toOrderReference'
 // Transverse domains from the explicit list are always allowed, through their public entry
 import { Alert } from '@/domains/appShell/alert'
 import { useFlag } from '@/domains/featureFlags'
@@ -463,44 +464,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 
 See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.6 Choose helpers/ or services/ by Asking "Does It Need a Hook?"
-
-**Impact: HIGH (predictable location, minimal test setup)**
-
-Place a function by what it depends on, not by its name. Helpers always live in a categorized subfolder (see `helpers-categories`), never flat in `helpers/`, and the file is named after its export:
-
-| Needs | Folder | Examples |
-| --- | --- | --- |
-| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` (categories in `helpers-categories`) | `isContractClosed`, `useFormatOrderStatus`, `getOrderStatusBadgeType` |
-| Side effects (mutation, dialog, navigation, several queries) | `services/` | `useResendInvoice` |
-
-**Incorrect (flat helper file, mutation hidden in helpers/, pure rule wrapped in a service hook):**
-
-```text
-src/domains/contracts/
-├── helpers/
-│   ├── utils.ts                          # flat grab-bag
-│   └── useCloseContract.ts               # calls a mutation: not a helper
-└── services/
-    └── useIsContractClosed.ts            # pure predicate needlessly made a hook
-```
-
-**Correct (categorized helpers, side effects in services/):**
-
-```text
-src/domains/contracts/
-├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
-├── helpers/formatters/getContractTypeLabel.ts
-└── services/useCloseContract.ts                    # mutation + confirmation dialog
-
-src/domains/sales/shared/
-├── helpers/formatters/useFormatOrderStatus.ts      # hook only to read `t`
-└── helpers/mappers/getOrderStatusBadgeType.ts      # OrderStatus -> BadgeType
-```
-
-A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`.
-
-### 1.7 Decompose Hook-Heavy Components by Responsibility
+### 1.6 Decompose Hook-Heavy Components by Responsibility
 
 **Impact: HIGH (hook count reveals components coordinating too many concerns)**
 
@@ -545,7 +509,7 @@ The lint threshold is diagnostic, not a target for every component. When a compo
 
 See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.8 Gate Experimental Features With a Typed Flag Registry
+### 1.7 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -586,7 +550,7 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.9 Isolate Effects in Intent-Named Hooks
+### 1.8 Isolate Effects in Intent-Named Hooks
 
 **Impact: HIGH (synchronization responsibilities stay explicit and independently testable)**
 
@@ -604,14 +568,20 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-**Correct (the effect has a focused, intention-revealing boundary):**
+**Correct (the effect has a focused, intention-revealing service file):**
 
 ```tsx
-function useOrderDocumentTitle(orderId: string): void {
+// OrderPanel/services/useOrderDocumentTitle.ts
+export function useOrderDocumentTitle(orderId: string): void {
   useEffect(() => {
     document.title = `Order ${orderId}`
   }, [orderId])
 }
+```
+
+```tsx
+// OrderPanel/OrderPanel.feature.tsx
+import { useOrderDocumentTitle } from './services/useOrderDocumentTitle'
 
 function OrderPanel({ orderId }: { orderId: string }) {
   useOrderDocumentTitle(orderId)
@@ -619,9 +589,61 @@ function OrderPanel({ orderId }: { orderId: string }) {
 }
 ```
 
-Keep the hook close to a single-use component or move it to the owning domain service when reused. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
+Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning domain service when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
-See also: `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+
+### 1.9 Keep Component Modules Focused on Components
+
+**Impact: HIGH (component files stay readable while logic gains explicit ownership)**
+
+A `.view.tsx` or `.feature.tsx` module declares components, component-local prop or view types, and inert configuration constants; it does not declare module-level custom hooks or lowercase helper functions. Local callbacks and event handlers may stay inside the component only when they adapt an event and delegate to an imported action or service. Extract business orchestration and every module-level callable into a file whose path states its responsibility.
+
+When a component needs supporting files, give it a named directory. Put an effectful or orchestrating hook in `services/`, and put a pure or read-only helper in `helpers/<category>/`. Use one public helper export per file, name the file after that export, and keep supporting functions private. Do not create `*.logic.ts`: the suffix hides whether the module selects, aggregates, calculates, presents or performs effects.
+
+**Incorrect (a component module mixes rendering, synchronization and visual derivation):**
+
+```tsx
+function useOrderDocumentTitle(orderId: string) {
+  useEffect(() => {
+    document.title = `Order ${orderId}`
+  }, [orderId])
+}
+
+function getOrderTone(total: number) {
+  return total >= 0 ? 'positive' : 'negative'
+}
+
+export function OrderPanel({ order }: { order: Order }) {
+  useOrderDocumentTitle(order.id)
+  return <OrderTotal tone={getOrderTone(order.total)} />
+}
+```
+
+**Correct (the component owns rendering and imports explicitly placed logic):**
+
+```text
+OrderPanel/
+├── OrderPanel.feature.tsx
+├── services/useOrderDocumentTitle.ts
+└── helpers/presenters/getOrderTone.ts
+```
+
+```tsx
+import { getOrderTone } from './helpers/presenters/getOrderTone'
+import { useOrderDocumentTitle } from './services/useOrderDocumentTitle'
+
+export function OrderPanel({ order }: { order: Order }) {
+  useOrderDocumentTitle(order.id)
+  return <OrderTotal tone={getOrderTone(order.total)} />
+}
+```
+
+Place logic at the narrowest scope that owns it: component-only logic stays in the component directory, page-shared logic goes under that page, and domain-shared logic goes under the domain. Only helpers without business vocabulary belong in application-wide shared code. Presenter helpers stay at component or page scope because their output is coupled to the UI.
+
+PascalCase components may share a component module when they all have the module's declared view or feature role; otherwise split the mixed roles according to `arch-component-roles`. The ESLint rule treats a PascalCase callable as a component candidate, not as proof that it renders React UI, so review its actual role when auditing the module. Inline callbacks and local UI event handlers are allowed, but they must not hide mutations, navigation, notifications or multi-source orchestration that belongs in a service according to `arch-thin-components`.
+
+See also: `arch-helpers-vs-services`, `arch-isolate-effects-in-hooks`, `arch-thin-components`, `helpers-categories`
 
 ### 1.10 Keep Components Thin
 
@@ -676,11 +698,11 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 
 See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.11 Keep Visual Logic Out of apis/, services/ and helpers/
+### 1.11 Keep Visual Logic at the Component or Page Boundary
 
 **Impact: HIGH (domain hooks stay reusable across pages and contexts)**
 
-Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. Domain `apis/`, `services/` and `helpers/` only fetch, mutate, transform and decide; they return data or throw, and let the page decide what the user sees. The same mutation can then be reused by a bulk action, a modal and a detail page with different feedback.
+Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Domain `apis/`, `services/` and domain-shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
 
 **Incorrect (a domain service shows the toast itself):**
 
@@ -701,7 +723,7 @@ export function useResendDocument(contractId: string) {
 }
 ```
 
-**Correct (the service only acts and throws, the page action owns the feedback):**
+**Correct (the service only acts and throws, while page-owned code controls feedback and presentation):**
 
 ```ts
 // services/useResendDocument.ts: same hook, without notification nor translation
@@ -730,13 +752,22 @@ export function useResendDocumentAction(contractId: string, documentId: string) 
 }
 ```
 
+```typescript
+// pages/detail/helpers/presenters/getDocumentStatusTone.ts
+export function getDocumentStatusTone(status: DocumentStatus): StatusTone {
+  return status === 'failed' ? 'critical' : 'neutral'
+}
+```
+
 How the page action gives feedback:
 
 - Wrap the mutation call in one `try`/`catch`: success and error messages go through `t()`.
 - Clear the selection, close the modal or `navigate(...)` only after the mutation succeeded, inside the same `try`.
 - Prefer the backend's readable error message when there is one, falling back to a translated default. Run independent saves of one action with `Promise.all`.
 
-See also: `vercel-react-best-practices` → `async-parallel`
+Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
+
+See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`
 
 ### 1.12 No index.ts in stores/, One File per Concern
 
@@ -776,7 +807,48 @@ Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. D
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.13 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.13 Separate Helpers from Services by Effects and Orchestration
+
+**Impact: HIGH (predictable location, minimal test setup)**
+
+Place a function by what it depends on, not by its name. Helpers always live in a categorized subfolder (see `helpers-categories`), never flat in `helpers/`, and each file is named after its one public helper export:
+
+| Needs | Folder | Examples |
+| --- | --- | --- |
+| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or domain scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
+| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or domain scope | `useOrderDocumentTitle`, `useResendInvoice` |
+
+**Incorrect (flat logic file and a pure rule needlessly wrapped in a service hook):**
+
+```text
+src/domains/contracts/
+├── helpers/
+│   ├── utils.ts                          # flat grab-bag
+│   └── contract.logic.ts                  # responsibility hidden by its suffix
+└── services/
+    └── useIsContractClosed.ts            # pure predicate needlessly made a hook
+```
+
+**Correct (categorized helpers, side effects in services/):**
+
+```text
+src/domains/contracts/
+├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
+├── helpers/formatters/getContractTypeLabel.ts
+└── services/useCloseContract.ts                    # mutation + confirmation dialog
+
+src/domains/contracts/components/ContractPanel/
+├── ContractPanel.feature.tsx
+└── services/useContractDocumentTitle.ts             # one component owns the effect
+
+src/domains/sales/shared/
+├── helpers/formatters/useFormatOrderStatus.ts      # hook only to read `t`
+└── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
+```
+
+A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
+
+### 1.14 Create a Sub-Domain Only for a Distinct Business Entity
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
@@ -1742,7 +1814,7 @@ export type PaymentSection = {
 status: yup.string<PaymentStatus>().oneOf(ALL_PAYMENT_STATUSES).required(),
 ```
 
-Exception: a display-only taxonomy owned by the API (for example a project `status` that is only shown as a badge) may stay `string`. In that case, parse it with a tolerant `yup.string()` and display it through a mapper with a fallback (see `yup-no-oneof-on-display-enums`). As soon as code branches on the value, switch to a union.
+Exception: a display-only taxonomy owned by the API (for example a project `status` that is only shown as a badge) may stay `string`. In that case, parse it with a tolerant `yup.string()` and display it through a component- or page-scoped presenter with a fallback (see `yup-no-oneof-on-display-enums`). As soon as code branches on the value, switch to a union.
 
 ### 5.5 Type Domain Dates as Date and Convert Them in Yup
 
@@ -2040,7 +2112,7 @@ const badgeType = isContractStatus(status)
   : 'neutral'
 ```
 
-Exception: a display-only taxonomy that the API owns can be typed as `string` at the mapper boundary, with a deliberate fallback that has a comment (for example a `getEmailStatusBadge` mapper). Keep the input typed `string` there, so the fallback is reachable and its intent is visible.
+Exception: a display-only taxonomy that the API owns can be typed as `string` at the presenter boundary, with a deliberate fallback that has a comment (for example a page-scoped `getEmailStatusBadge` presenter). Keep the input typed `string` there, so the fallback is reachable and its intent is visible.
 
 ---
 
@@ -2065,7 +2137,7 @@ const EMAIL_TRACKING_SCHEMA = yup.object({
 })
 ```
 
-**Correct (tolerant string + mapper with fallback):**
+**Correct (tolerant string + component- or page-scoped presenter with fallback):**
 
 ```tsx
 const EMAIL_TRACKING_SCHEMA = yup.object({
@@ -2073,7 +2145,7 @@ const EMAIL_TRACKING_SCHEMA = yup.object({
   status: yup.string().required(), // API owns this taxonomy
 })
 
-// helpers/mappers/getEmailStatusBadge.ts
+// pages/detail/helpers/presenters/getEmailStatusBadge.ts
 const STATUS_BADGE: Record<ContractEmailStatus, EmailStatusBadge> = { /* SENT, OPENED… */ }
 const UNKNOWN_STATUS_BADGE: EmailStatusBadge = { type: 'neutral', i18nKey: null }
 
@@ -2084,7 +2156,7 @@ export const getEmailStatusBadge = (status: string): EmailStatusBadge =>
   isKnownEmailStatus(status) ? STATUS_BADGE[status] : UNKNOWN_STATUS_BADGE
 ```
 
-Logic-driving enums keep `.oneOf` with the domain union, e.g. `billingMethod: yup.string<ContractBillingMethod>().oneOf(ALL_CONTRACT_BILLING_METHODS)`. The entity types the display field as `string`, not as the union, and the mapper narrows it with a type guard rather than a cast.
+Logic-driving enums keep `.oneOf` with the domain union, e.g. `billingMethod: yup.string<ContractBillingMethod>().oneOf(ALL_CONTRACT_BILLING_METHODS)`. The entity types the display field as `string`, not as the union, and the presenter narrows it with a type guard rather than a cast.
 
 See also: `types-closed-values-not-string`
 
@@ -2309,7 +2381,7 @@ export function useGetProjectsQuery(params: ProjectListQueryParams) {
 }
 ```
 
-Schemas shared across hooks of a sub-domain go in `helpers/schemas/` (e.g. `orderPaymentSchemas.ts`). Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
+A schema shared across hooks of a sub-domain gets its own file in `helpers/schemas/`, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
 
 ---
 
@@ -2987,7 +3059,7 @@ Owner hooks that wrap a whole bundle of atoms (filters + search + sort) subscrib
 
 **Impact: MEDIUM-HIGH**
 
-Formatters, mappers and business rules centralize display and decision logic so that it is reusable, testable and consistent across pages.
+Explicit helper categories separate selection, aggregation, calculation, mapping, presentation, validation and business decisions so each function has predictable ownership and dependencies.
 
 ### 9.1 Format Entities Through Formatter Hooks, Never Inline
 
@@ -3123,14 +3195,18 @@ The formatter itself follows the same pattern (see `arch-helpers-vs-services` an
 
 **Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
 
-`helpers/` is never flat and never holds a `utils.ts`: each file lives in one category folder, named after its export. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects (mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
+`helpers/` is never flat and never holds a `utils.ts` or `*.logic.ts`. Each file lives in one category folder, is named after its single public helper export, and may keep private support functions. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects or orchestration (effect, mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
 
 | Category | Input → output | Examples |
 | --- | --- | --- |
 | `businessRules/` | entity/state → `boolean` (or a closed union) | `isContractClosed`, `canCancelOrder`, `shouldShowApprovers` |
 | `formatters/` | entity/value → display text | `useFormatContact`, `useFormatOrderStatus` |
-| `mappers/` | one representation → another one, never text | `getOrderStatusBadgeType`, `toContactOption` |
-| `calculators/` | entities/numbers → derived number | `getInvoiceTotal`, `getRemainingAmount` |
+| `selectors/` | collection → same items filtered, ordered, indexed or selected | `selectVisibleOrders`, `findLatestInvoice`, `sortContacts` |
+| `aggregators/` | many records → grouped or consolidated collection | `aggregateInvoicesByMonth`, `buildAccountHistory` |
+| `calculators/` | values/entities → quantitative metric or metric summary | `getInvoiceTotal`, `computeOrderPerformance` |
+| `mappers/` | one representation → another, without material selection or aggregation | `toContactOption`, `buildOrderViewModel` |
+| `presenters/` | display data → UI class, tone, geometry or library-specific shape | `getOrderStatusTone`, `getChartDomain`, `computePopoverPosition` |
+| `quality/` | data → coverage, reliability, missing-data or anomaly diagnostic | `computeInvoiceCoverage`, `assessContactCompleteness` |
 | `validators/` | entity/items → list of business errors (never throws, no toast) | `validateOrdersForCancellation` |
 | `payloads/` | domain values → API request body | `buildOrderPayload` |
 | `forms/` | entity → form initial values, and form values → domain input | `getOrderFormInitialValues` |
@@ -3138,9 +3214,21 @@ The formatter itself follows the same pattern (see `arch-helpers-vs-services` an
 | `schemas/` | Yup schemas reused by several hooks (see `yup-module-level-schemas`) | `ORDER_LIST_ITEM_SCHEMA` |
 | `links/` | ids → route or URL | `getContractDetailPath` |
 
-Decision path when adding a helper: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a number → `calculators`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; feeds a select/filter → `filters`; returns a route or URL → `links`; otherwise a representation change → `mappers`.
+Use these boundaries when neighboring categories look plausible:
 
-When no category fits, the function is probably misplaced (a hook with side effects belongs to `services/`, a component-only function stays next to its component, an app-wide generic function goes to `src/shared/`). Create a new category only when at least two helpers share it, then add it to this table.
+- Same item shape with fewer, reordered or selected items → `selectors`.
+- Several records grouped by a key into consolidated records → `aggregators`.
+- Primarily numeric or statistical result, including a structured metric summary → `calculators`.
+- Representation change without material selection or aggregation → `mappers`.
+- CSS, design-system, charting or geometry vocabulary in the output → `presenters`.
+- Completeness, reliability, coverage or anomaly evidence in the output → `quality`.
+- A simple quality predicate still belongs in `businessRules/`; a quality label still belongs in `formatters/`.
+
+Parsing and coercion of raw API values are not helper categories. They belong in the API hook's Yup schema so the domain never receives unvalidated wire values (see `yup-last-coercion-barrier`).
+
+Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
+
+When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; domain-shared logic belongs under the domain; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
 
 **Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
 
@@ -3148,6 +3236,7 @@ When no category fits, the function is probably misplaced (a hook with side effe
 src/domains/sales/orders/helpers/
 ├── utils.ts                      # formatDate, isCancelable, buildBody, …
 ├── orderHelpers.ts
+├── order.logic.ts                # selection, aggregation and display mixed together
 ├── responsiveness/useIsMobile.ts # not domain logic
 └── lists/useOrderListData.ts     # page data orchestration, not a helper
 ```
@@ -3158,17 +3247,24 @@ src/domains/sales/orders/helpers/
 src/domains/sales/orders/helpers/
 ├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
 ├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
-├── mappers/getOrderStatusBadgeType.ts      # OrderStatus -> BadgeType
-├── calculators/getOrderTotal.ts            # (lines: OrderLine[]) => number
+├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
+├── aggregators/aggregateOrdersByMonth.ts    # Order[] -> MonthlyOrders[]
+├── calculators/getOrderTotal.ts             # OrderLine[] -> number
+├── mappers/toOrderOption.ts                 # Order -> SelectOption
+├── quality/computeOrderCoverage.ts          # Order[] -> CoverageDiagnostic
 ├── validators/validateOrdersForCancellation.ts
 ├── payloads/buildOrderPayload.ts           # OrderFormValues -> OrderPayload
 ├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
 └── filters/useOrderStatusFilterOptions.ts
+
+src/domains/sales/orders/pages/list/components/OrdersChart/
+├── OrdersChart.feature.tsx
+└── helpers/presenters/getOrdersChartDomain.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`.
+Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sub-domains live once in `[domain]/shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`
 
 ---
 
@@ -3845,14 +3941,20 @@ const badgeType: BadgeType = !order.closingDate
   : 'success'
 ```
 
-**Correct (named helper with early returns, positive conditions):**
+**Correct (component-scoped presenter helper with early returns and positive conditions):**
 
 ```tsx
-const getOrderBadgeType = ({ closingDate, globalStatus }: OrderDetail): BadgeType => {
+// OrderCard/helpers/presenters/getOrderBadgeType.ts
+export const getOrderBadgeType = ({ closingDate, globalStatus }: OrderDetail): BadgeType => {
   if (closingDate) return 'success'
   if (globalStatus === 'NOT_STARTED') return 'error'
   return 'info'
 }
+```
+
+```tsx
+// OrderCard/OrderCard.view.tsx
+import { getOrderBadgeType } from './helpers/presenters/getOrderBadgeType'
 
 const badgeType = getOrderBadgeType(order)
 ```

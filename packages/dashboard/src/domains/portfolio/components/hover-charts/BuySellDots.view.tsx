@@ -1,5 +1,5 @@
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { HoverChartDataPoint } from './hoverCharts.logic'
+import type { HoverChartDataPoint } from './helpers/calculators/buildHoverChartData'
 
 interface BuySellDotProps {
   cx?: number

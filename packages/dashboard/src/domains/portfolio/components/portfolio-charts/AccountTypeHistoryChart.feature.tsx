@@ -6,7 +6,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { typeColor } from '@/shared/theme/chartColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { AccountTypeHistoryTooltip } from './portfolioCharts.tooltips.view'
-import { accountTypeShareKey, withAccountTypeShares } from './chartScale.logic'
+import { accountTypeShareKey, withAccountTypeShares } from './helpers/mappers/buildChartScaleData'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 

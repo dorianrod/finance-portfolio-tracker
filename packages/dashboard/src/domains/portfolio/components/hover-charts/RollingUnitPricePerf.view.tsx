@@ -1,5 +1,5 @@
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
-import type { RollingReturn } from './hoverCharts.logic'
+import type { RollingReturn } from './helpers/calculators/buildHoverChartData'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 function RollingUnitPriceRow({ row }: { row: RollingReturn }) {

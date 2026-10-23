@@ -5,7 +5,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
-import { groupTail } from './allocationCharts.logic'
+import { groupAllocationTail } from './helpers/presenters/groupAllocationTail'
 import { PieTooltip } from './allocationCharts.tooltips.view'
 import { PieLabel } from './PieLabel.view'
 import { PositionsToggle } from './PositionsToggle.view'
@@ -54,7 +54,7 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const dateLabel = formatDate(point.date, { style: 'longMonthYear' })
 
-  const { main, grouped } = groupTail(point.categories)
+  const { main, grouped } = groupAllocationTail(point.categories)
   const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
   const data: PieEntry[] = [
     ...main.map((c) => ({ ...c, total })),

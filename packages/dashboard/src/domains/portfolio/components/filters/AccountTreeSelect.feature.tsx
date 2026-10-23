@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { accountLabel, toggle } from './filterBar.logic'
+import { useState } from 'react'
+import { accountLabel, toggle } from './helpers/filters/portfolioFilters'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
 import {
   accountsForType,
@@ -7,6 +7,7 @@ import {
   buildAccountSelectionLabel,
   toggleAccountTypeSelection,
 } from '@/domains/portfolio/helpers/filters/accountTreeSelection'
+import { useCloseAccountTreeOnOutsideClick } from './services/useCloseAccountTreeOnOutsideClick'
 
 interface AccountTreeProps {
   allAccountTypes: string[]
@@ -15,21 +16,6 @@ interface AccountTreeProps {
   accountLabels: Record<string, string>
   selected: Set<string>
   onChange: (next: Set<string>) => void
-}
-
-function useCloseAccountTreeOnOutsideClick(open: boolean, setOpen: (open: boolean) => void) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    function handleMouseDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handleMouseDown)
-    return () => document.removeEventListener('mousedown', handleMouseDown)
-  }, [open, setOpen])
-
-  return containerRef
 }
 
 function TreeAccountRow({ account, accountLabels, onChange, selected }: { account: string; accountLabels: Record<string, string>; onChange: (next: Set<string>) => void; selected: Set<string> }) {

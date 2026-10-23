@@ -1,14 +1,13 @@
-import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
+import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { Kpi } from './Kpi.view'
 import type { IrrStatus } from '@/domains/portfolio/types/history'
 import { FilterScopeBadges } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
-
-const gainColor = (value: number | null) => value == null || value >= 0
-  ? SEMANTIC_TEXT_CLASSES.performancePositive
-  : SEMANTIC_TEXT_CLASSES.performanceNegative
+import { getPerformanceColor } from '@/domains/portfolio/helpers/presenters/getPerformanceColor'
+import { formatIrrKpiValue } from './helpers/formatters/formatIrrKpiValue'
+import { getIrrKpiNote } from './helpers/presenters/getIrrKpiNote'
 
 export function NetPortfolioValueKpi({ performance }: { performance: PerformanceSummary }) {
   const formatMoney = useFormatMoney()
@@ -34,8 +33,8 @@ export function TotalNetPerformanceKpi({ performance }: { performance: Performan
         Total net performance
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value color={gainColor(performance.totalPerformanceNet)} title={value}>{value}</Kpi.Value>
-        <Kpi.InlineNote color={gainColor(performance.totalPerformanceNet)}>{formatPercentage(performance.totalPerformancePct, { signed: true })}</Kpi.InlineNote>
+        <Kpi.Value color={getPerformanceColor(performance.totalPerformanceNet)} title={value}>{value}</Kpi.Value>
+        <Kpi.InlineNote color={getPerformanceColor(performance.totalPerformanceNet)}>{formatPercentage(performance.totalPerformancePct, { signed: true })}</Kpi.InlineNote>
       </Kpi.ValueRow>
       <Kpi.Detail>Gross {formatMoney(performance.totalPerformanceGross)}</Kpi.Detail>
     </Kpi.Root>
@@ -67,7 +66,7 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value color={SEMANTIC_TEXT_CLASSES.passiveIncome} title={value}>{value}</Kpi.Value>
-        <Kpi.InlineNote color={income.changePct == null ? 'text-gray-500' : gainColor(income.changePct)}>
+        <Kpi.InlineNote color={income.changePct == null ? 'text-gray-500' : getPerformanceColor(income.changePct)}>
           {income.changePct == null ? '—' : formatPercentage(income.changePct, { signed: true })}
         </Kpi.InlineNote>
       </Kpi.ValueRow>
@@ -81,26 +80,16 @@ interface IrrKpiProps {
   scopeLabel?: string
 }
 
-function irrValue(value: number | null, status: IrrStatus, formatPercentage: ReturnType<typeof useFormatPercentage>): string {
-  if (status === 'loading') return 'Calculating…'
-  return value == null ? '—' : formatPercentage(value, { decimals: 2, signed: true })
-}
-
-function irrNote(status: IrrStatus): string | undefined {
-  if (status === 'error') return 'Filtered IRR unavailable'
-  return undefined
-}
-
 export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
   const formatPercentage = useFormatPercentage()
-  const formattedValue = irrValue(value, status, formatPercentage)
-  const note = irrNote(status)
+  const formattedValue = formatIrrKpiValue(value, status, formatPercentage)
+  const note = getIrrKpiNote(status)
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
       <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history." tooltipFooter={<FilterScopeBadges account="filterable" period="since-tracking" />}>
         IRR since tracking{scopeLabel ? ' · selected accounts' : ''}
       </Kpi.Label>
-      <Kpi.ValueRow><Kpi.Value color={gainColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
       {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}
     </Kpi.Root>
   )
@@ -114,7 +103,7 @@ export function NetUnrealizedKpi({ performance }: { performance: PerformanceSumm
       <Kpi.Label tooltip="Current unrealized gain after estimated tax." tooltipFooter={<FilterScopeBadges account="filterable" period="as-of" />}>
         Net unrealized P&amp;L
       </Kpi.Label>
-      <Kpi.ValueRow><Kpi.Value color={gainColor(performance.unrealizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(performance.unrealizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
       <Kpi.Detail>Gross {formatMoney(performance.unrealizedGross)}</Kpi.Detail>
     </Kpi.Root>
   )
@@ -128,7 +117,7 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
       <Kpi.Label tooltip="Crystallized gains and losses after estimated tax." tooltipFooter={<FilterScopeBadges account="filterable" period="range" />}>
         Net realized P&amp;L
       </Kpi.Label>
-      <Kpi.ValueRow><Kpi.Value color={gainColor(performance.realizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(performance.realizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
       <Kpi.Detail>Gross {formatMoney(performance.realizedGross)}</Kpi.Detail>
     </Kpi.Root>
   )
@@ -136,14 +125,14 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
 
 export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }: IrrKpiProps) {
   const formatPercentage = useFormatPercentage()
-  const formattedValue = irrValue(value, status, formatPercentage)
-  const note = irrNote(status)
+  const formattedValue = formatIrrKpiValue(value, status, formatPercentage)
+  const note = getIrrKpiNote(status)
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
       <Kpi.Label tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period." tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-3y" />}>
         IRR · trailing 3y{scopeLabel ? ' · selected accounts' : ''}
       </Kpi.Label>
-      <Kpi.ValueRow><Kpi.Value color={gainColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
+      <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
       {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}
     </Kpi.Root>
   )

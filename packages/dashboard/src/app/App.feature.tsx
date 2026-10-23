@@ -17,7 +17,7 @@ import {
 import {
   filterSummaries,
   filterVisibilityForTab,
-} from "@/domains/portfolio/components/filters/filterBar.logic";
+} from "@/domains/portfolio/components/filters/helpers/filters/portfolioFilters";
 import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
@@ -39,42 +39,15 @@ import {
   type AnalysisTab,
 } from "@/domains/portfolio/pages/dashboard/stores/dashboardNavigation.atoms";
 import { SEMANTIC_STATUS_BADGE_CLASSES } from "@/shared/theme/semanticColors";
+import { DASHBOARD_TAB_LOADERS, preloadDashboardTab } from "@/app/services/dashboardTabLoaders";
 
-const loadOverviewTab = () =>
-  import("@/domains/portfolio/pages/OverviewTab.feature").then((module) => ({ default: module.OverviewTab }));
-const loadWealthTab = () =>
-  import("@/domains/portfolio/pages/WealthTab.feature").then((module) => ({ default: module.WealthTab }));
-const loadPerformanceTab = () =>
-  import("@/domains/portfolio/pages/PerformanceTab.feature").then((module) => ({ default: module.PerformanceTab }));
-const loadAllocationCharts = () =>
-  import("@/domains/portfolio/components/allocation-charts/AllocationCharts.feature").then((module) => ({ default: module.AllocationCharts }));
-const loadPositionsTable = () =>
-  import("@/domains/portfolio/components/positions-table/PositionsTable.feature").then((module) => ({ default: module.PositionsTable }));
-const loadFundLookThroughTab = () =>
-  import("@/domains/portfolio/components/fund-holdings/FundLookThroughTab.feature").then((module) => ({ default: module.FundLookThroughTab }));
-const loadDataQualityTab = () =>
-  import("@/domains/portfolio/pages/DataQualityTab.feature").then((module) => ({ default: module.DataQualityTab }));
-
-const OverviewTab = lazy(loadOverviewTab);
-const WealthTab = lazy(loadWealthTab);
-const PerformanceTab = lazy(loadPerformanceTab);
-const AllocationCharts = lazy(loadAllocationCharts);
-const PositionsTable = lazy(loadPositionsTable);
-const FundLookThroughTab = lazy(loadFundLookThroughTab);
-const DataQualityTab = lazy(loadDataQualityTab);
-
-const TAB_PRELOADERS: Record<AnalysisTab, () => Promise<unknown>> = {
-  overview: loadOverviewTab,
-  wealth: loadWealthTab,
-  performance: loadPerformanceTab,
-  allocation: loadAllocationCharts,
-  holdings: loadPositionsTable,
-  quality: loadDataQualityTab,
-};
-
-function preloadTab(tab: AnalysisTab) {
-  void TAB_PRELOADERS[tab]();
-}
+const OverviewTab = lazy(DASHBOARD_TAB_LOADERS.overview);
+const WealthTab = lazy(DASHBOARD_TAB_LOADERS.wealth);
+const PerformanceTab = lazy(DASHBOARD_TAB_LOADERS.performance);
+const AllocationCharts = lazy(DASHBOARD_TAB_LOADERS.allocation);
+const PositionsTable = lazy(DASHBOARD_TAB_LOADERS.holdings);
+const FundLookThroughTab = lazy(DASHBOARD_TAB_LOADERS.fundLookThrough);
+const DataQualityTab = lazy(DASHBOARD_TAB_LOADERS.quality);
 
 const PRIMARY_TABS: Array<{
   id: Exclude<AnalysisTab, "quality">;
@@ -141,8 +114,8 @@ function PrimaryTabButton({ activeTab, onNavigate, tab }: PrimaryTabButtonProps)
     <button
       type="button"
       onClick={() => onNavigate(tab.id)}
-      onMouseEnter={() => preloadTab(tab.id)}
-      onFocus={() => preloadTab(tab.id)}
+      onMouseEnter={() => preloadDashboardTab(tab.id)}
+      onFocus={() => preloadDashboardTab(tab.id)}
       aria-current={activeTab === tab.id ? "page" : undefined}
       className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? "border-accent text-content" : "border-transparent text-content-subtle hover:text-content-secondary"}`}
     >
@@ -207,8 +180,8 @@ function DashboardNavigation({
       <button
         type="button"
         onClick={openQualityOverview}
-        onMouseEnter={() => preloadTab("quality")}
-        onFocus={() => preloadTab("quality")}
+        onMouseEnter={() => preloadDashboardTab("quality")}
+        onFocus={() => preloadDashboardTab("quality")}
         aria-current={activeTab === "quality" ? "page" : undefined}
         className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-accent text-content" : "border-b-transparent text-content-subtle hover:text-content-secondary"}`}
       >

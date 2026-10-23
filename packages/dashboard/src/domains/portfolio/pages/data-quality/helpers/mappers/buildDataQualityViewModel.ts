@@ -9,11 +9,11 @@ import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinDat
 import {
   computeAllocationCoverageByAccount,
   computeAllocationCoverageByDimension,
-} from '@/domains/portfolio/components/allocation-charts/allocationCoverage.logic'
+} from '@/domains/portfolio/components/allocation-charts/helpers/quality/computeAllocationCoverage'
 import {
   computeFundExposurePercentages,
   scopeFundQualityData,
-} from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
+} from '@/domains/portfolio/components/fund-holdings/helpers/quality/scopeFundQualityData'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'

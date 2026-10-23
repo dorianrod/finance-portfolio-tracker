@@ -12,8 +12,8 @@ import {
 import type { MouseHandlerDataParam } from 'recharts'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { cumulativeConcentrationCrosshair } from './portfolioCharts.logic'
-import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
+import { cumulativeConcentrationCrosshair } from './helpers/calculators/calculatePortfolioCharts'
+import type { CumulativeConcentrationPoint } from './helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 

@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef } from 'react'
+import { useId } from 'react'
 import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { useSidePanelDialog } from './helpers/presenters/useSidePanelDialog'
 
 interface SidePanelProps {
   title: ReactNode
@@ -18,55 +19,6 @@ const WIDTH_BY_SIZE = {
   medium: 'w-[min(96vw,760px)]',
   wide: 'w-[min(100vw,1200px)]',
 } as const
-
-function useSidePanelDialog(onClose: () => void) {
-  const closeButtonRef = useRef<HTMLButtonElement>(null)
-  const panelRef = useRef<HTMLElement>(null)
-  const onCloseRef = useRef(onClose)
-
-  useEffect(() => {
-    onCloseRef.current = onClose
-  }, [onClose])
-
-  useEffect(() => {
-    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    const previousOverflow = document.body.style.overflow
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onCloseRef.current()
-        return
-      }
-      if (event.key !== 'Tab') return
-
-      const focusable = panelRef.current?.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      )
-      if (!focusable?.length) return
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', handleKeyDown)
-    closeButtonRef.current?.focus()
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKeyDown)
-      previouslyFocused?.focus()
-    }
-  }, [])
-
-  return { closeButtonRef, panelRef }
-}
 
 export function SidePanel({
   title,

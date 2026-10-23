@@ -8,6 +8,7 @@ import {
   PIPELINE_ERROR_TYPE_LABELS,
   type PipelineErrorSortColumn,
 } from '@/domains/portfolio/helpers/mappers/buildPipelineErrorsViewModel'
+import { formatManualPrice } from './helpers/formatters/formatManualPrice'
 
 const SOURCE_LABELS: Record<string, string> = {
   main:         'ingest_portfolio.py',
@@ -29,19 +30,6 @@ interface ManualPriceOverridesProps {
 function SortIcon({ col, sortCol, dir }: { col: PipelineErrorSortColumn; sortCol: PipelineErrorSortColumn; dir: 'asc' | 'desc' }) {
   if (col !== sortCol) return <span className="ml-1 text-gray-700">↕</span>
   return <span className="ml-1 text-gray-400">{dir === 'asc' ? '↑' : '↓'}</span>
-}
-
-function formatManualPrice(row: ManualPriceOverride, formatMoney: ReturnType<typeof useFormatMoney>): string {
-  const price = Number(row.price)
-  if (!Number.isFinite(price)) return `${row.price} ${row.currency}`.trim()
-  try {
-    return formatMoney(price, {
-      currency: row.currency || 'EUR',
-      maximumFractionDigits: 4,
-    })
-  } catch {
-    return `${row.price} ${row.currency}`.trim()
-  }
 }
 
 function ErrorTypeOption({ type }: { type: string }) {

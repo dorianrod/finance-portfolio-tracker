@@ -1,5 +1,5 @@
 import type { CashHistoryPoint } from '@/domains/portfolio/apis/queries/useCashHistory'
-import { buildPortfolioFilterOptions } from '@/domains/portfolio/components/filters/filterBar.logic'
+import { buildPortfolioFilterOptions } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 

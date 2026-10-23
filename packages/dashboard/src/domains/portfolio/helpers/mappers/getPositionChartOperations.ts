@@ -1,5 +1,5 @@
 import type { PositionRow } from '@/domains/portfolio/types/domain'
-import type { Operation } from '@/domains/portfolio/components/hover-charts/hoverCharts.logic'
+import type { Operation } from '@/domains/portfolio/components/hover-charts/helpers/calculators/buildHoverChartData'
 
 export function getPositionTradeOperations(position: PositionRow): Operation[] {
   return position.subRows

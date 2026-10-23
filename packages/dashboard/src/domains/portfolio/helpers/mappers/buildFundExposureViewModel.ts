@@ -6,7 +6,7 @@ import {
   buildIssuerExposures,
   type IssuerExposure,
   type SecurityExposure,
-} from '@/domains/portfolio/components/fund-holdings/fundHoldings.logic'
+} from '@/domains/portfolio/components/fund-holdings/helpers/mappers/buildFundHoldingsViewModel'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 
 export type FundExposureSort = 'value' | 'name'

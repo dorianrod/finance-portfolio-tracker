@@ -8,6 +8,7 @@ import componentRole from './eslint-rules/component-role.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
+import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
@@ -38,6 +39,7 @@ export default defineConfig([
           'max-hooks-per-component': maxHooksPerComponent,
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
+          'no-component-module-logic': noComponentModuleLogic,
           'no-effects-in-components': noEffectsInComponents,
           'no-prop-drilling': noPropDrilling,
         },
@@ -77,6 +79,7 @@ export default defineConfig([
       'local/max-hooks-per-component': ['warn', { max: 6 }],
       'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
+      'local/no-component-module-logic': 'warn',
       'local/no-effects-in-components': 'warn',
       'local/no-prop-drilling': 'warn',
     },

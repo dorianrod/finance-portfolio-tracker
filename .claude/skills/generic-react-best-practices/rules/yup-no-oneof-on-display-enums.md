@@ -2,7 +2,7 @@
 title: Do Not Use oneOf on Display-Only API Enums
 impact: HIGH
 impactDescription: a new backend value must not break the screen
-tags: yup, enums, oneOf, mappers
+tags: yup, enums, oneOf, presenters
 ---
 
 ## Do Not Use oneOf on Display-Only API Enums
@@ -20,7 +20,7 @@ const EMAIL_TRACKING_SCHEMA = yup.object({
 })
 ```
 
-**Correct (tolerant string + mapper with fallback):**
+**Correct (tolerant string + component- or page-scoped presenter with fallback):**
 
 ```tsx
 const EMAIL_TRACKING_SCHEMA = yup.object({
@@ -28,7 +28,7 @@ const EMAIL_TRACKING_SCHEMA = yup.object({
   status: yup.string().required(), // API owns this taxonomy
 })
 
-// helpers/mappers/getEmailStatusBadge.ts
+// pages/detail/helpers/presenters/getEmailStatusBadge.ts
 const STATUS_BADGE: Record<ContractEmailStatus, EmailStatusBadge> = { /* SENT, OPENED… */ }
 const UNKNOWN_STATUS_BADGE: EmailStatusBadge = { type: 'neutral', i18nKey: null }
 
@@ -39,6 +39,6 @@ export const getEmailStatusBadge = (status: string): EmailStatusBadge =>
   isKnownEmailStatus(status) ? STATUS_BADGE[status] : UNKNOWN_STATUS_BADGE
 ```
 
-Logic-driving enums keep `.oneOf` with the domain union, e.g. `billingMethod: yup.string<ContractBillingMethod>().oneOf(ALL_CONTRACT_BILLING_METHODS)`. The entity types the display field as `string`, not as the union, and the mapper narrows it with a type guard rather than a cast.
+Logic-driving enums keep `.oneOf` with the domain union, e.g. `billingMethod: yup.string<ContractBillingMethod>().oneOf(ALL_CONTRACT_BILLING_METHODS)`. The entity types the display field as `string`, not as the union, and the presenter narrows it with a type guard rather than a cast.
 
 See also: `types-closed-values-not-string`

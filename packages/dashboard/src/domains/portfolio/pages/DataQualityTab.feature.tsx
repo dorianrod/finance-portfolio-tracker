@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from 'react'
-import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useManualPriceOverrides'
@@ -13,21 +12,13 @@ import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
-  buildDataQualityViewModel,
   DATA_QUALITY_DIMENSION_LABELS,
   type AffectedAsset,
   type QualityTheme,
 } from './data-quality/helpers/mappers/buildDataQualityViewModel'
-import { useDataQualityClassificationDetails } from './data-quality/services/actions/useDataQualityClassificationDetails'
-import { useDataQualityFundDiagnostics } from './data-quality/services/actions/useDataQualityFundDiagnostics'
-import {
-  dataQualityClassificationDetailsOpenAtom,
-  dataQualityClassificationDimensionAtom,
-  dataQualityFundDiagnosticsOpenAtom,
-} from './data-quality/stores/dataQualityPanels.atoms'
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
-import { useDashboardQuality } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardQuality'
-import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardQuality.atoms'
+import { useDataQualityPanels } from './data-quality/services/useDataQualityPanels'
+import { useDataQualityViewModel } from './data-quality/services/useDataQualityViewModel'
 
 export type { QualityThemeId } from '@/domains/portfolio/types/quality'
 
@@ -70,72 +61,6 @@ function QualityThemeTab({ activeThemeId, onSelect, theme }: { activeThemeId: Qu
   const active = theme.id === activeThemeId
   const styles = TONE_STYLES[theme.tone]
   return <button type="button" role="tab" aria-selected={active} aria-controls="quality-theme-panel" onClick={() => onSelect(theme.id)} className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true"><span className={`h-2 w-2 rounded-full ${styles.dot}`} /></span><span className="min-w-0 flex-1"><span className={`block text-sm font-medium ${active ? 'text-white' : 'text-gray-300'}`}>{theme.label}</span><span className="mt-0.5 block truncate text-[11px] text-gray-600">{theme.metricLabel}</span></span><span className="shrink-0 text-sm font-semibold tabular-nums text-gray-100">{theme.metric}</span></button>
-}
-
-function useDataQualityViewModel({
-  positions, errors, manualPriceOverrides, fundStatuses, fundReport,
-  fundHoldings, fundSnapshots, fundUnresolved, rawData,
-}: DataQualityTabProps) {
-  const formatPercentage = useFormatPercentage()
-  const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
-  const { setSelectedQualityTheme } = useDashboardQuality()
-  const viewModel = useMemo(
-    () => buildDataQualityViewModel({
-      positions,
-      errors,
-      manualPriceOverrides,
-      fundStatuses,
-      fundReport,
-      fundHoldings,
-      fundSnapshots,
-      fundUnresolved,
-      rawData,
-      formatPercentage,
-    }),
-    [
-      positions,
-      errors,
-      manualPriceOverrides,
-      fundStatuses,
-      fundReport,
-      fundHoldings,
-      fundSnapshots,
-      fundUnresolved,
-      rawData,
-      formatPercentage,
-    ],
-  )
-  const activeThemeId = selectedTheme ?? viewModel.recommendedTheme.id
-  const activeTheme = viewModel.themes.find((theme) => theme.id === activeThemeId) ?? viewModel.themes[0]
-  return { ...viewModel, activeTheme, activeThemeId, setSelectedQualityTheme }
-}
-
-function useDataQualityPanels() {
-  const fundDiagnosticsOpen = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
-  const classificationDetailsOpen = useAtomValue(dataQualityClassificationDetailsOpenAtom)
-  const classificationDimension = useAtomValue(dataQualityClassificationDimensionAtom)
-  const {
-    closeClassificationDetails,
-    openAllClassificationDetails,
-  } = useDataQualityClassificationDetails()
-  const {
-    closeFundDiagnostics,
-    openFundDiagnostics,
-  } = useDataQualityFundDiagnostics()
-
-  useEffect(() => () => {
-    closeClassificationDetails()
-    closeFundDiagnostics()
-  }, [closeClassificationDetails, closeFundDiagnostics])
-
-  return {
-    classificationDetailsOpen,
-    classificationDimension,
-    closeClassificationDetails,
-    fundDiagnosticsOpen,
-    openAllClassificationDetails,
-    openFundDiagnostics,
-  }
 }
 
 export function DataQualityTab({

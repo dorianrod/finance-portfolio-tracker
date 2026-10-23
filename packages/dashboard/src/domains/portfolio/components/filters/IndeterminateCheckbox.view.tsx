@@ -1,12 +1,4 @@
-import { useEffect, useRef } from 'react'
-
-function useIndeterminateInput(indeterminate: boolean | undefined) {
-  const ref = useRef<HTMLInputElement>(null)
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate ?? false
-  }, [indeterminate])
-  return ref
-}
+import { useIndeterminateInput } from './helpers/presenters/useIndeterminateInput'
 
 // Needs a ref to set the DOM-only `indeterminate` property.
 export function IndeterminateCheckbox({

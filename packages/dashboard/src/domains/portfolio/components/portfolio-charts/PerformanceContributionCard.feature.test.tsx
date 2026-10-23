@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { AssetIrrView, PerformanceContributionCard } from './PerformanceContributionCard.feature'
 import type { AssetIrrSummary } from '@/domains/portfolio/apis/queries/useAssetIrr'
-import type { PerformanceContributionSummary } from './performanceContribution.logic'
+import type { PerformanceContributionSummary } from './helpers/calculators/computePerformanceContributions'
 
 function summary(overrides: Partial<PerformanceContributionSummary> = {}): PerformanceContributionSummary {
   return {

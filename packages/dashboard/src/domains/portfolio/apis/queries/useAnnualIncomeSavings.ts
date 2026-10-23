@@ -4,7 +4,7 @@ import { parseCsv } from '@/shared/csv/csvData'
 import {
   mapAnnualIncomeSavings,
   type AnnualIncomeSavingsPoint,
-} from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
+} from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
 import { RAW_ANNUAL_INCOME_SAVINGS_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 

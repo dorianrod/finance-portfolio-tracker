@@ -1,7 +1,7 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import { buildAccountLabels, buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy.logic'
+import { buildAccountLabels, buildPositionRows } from '@/domains/portfolio/helpers/mappers/buildPositionHierarchy'
 import {
   ACCOUNT_ROW_SCHEMA,
   RAW_OPERATION_SCHEMA,

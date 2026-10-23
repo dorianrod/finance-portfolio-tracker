@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
-import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
+import type { CumulativeConcentrationPoint } from './helpers/calculators/calculatePortfolioCharts'
 
 const point: CumulativeConcentrationPoint = {
   rank: 7,

@@ -19,14 +19,20 @@ const badgeType: BadgeType = !order.closingDate
   : 'success'
 ```
 
-**Correct (named helper with early returns, positive conditions):**
+**Correct (component-scoped presenter helper with early returns and positive conditions):**
 
 ```tsx
-const getOrderBadgeType = ({ closingDate, globalStatus }: OrderDetail): BadgeType => {
+// OrderCard/helpers/presenters/getOrderBadgeType.ts
+export const getOrderBadgeType = ({ closingDate, globalStatus }: OrderDetail): BadgeType => {
   if (closingDate) return 'success'
   if (globalStatus === 'NOT_STARTED') return 'error'
   return 'info'
 }
+```
+
+```tsx
+// OrderCard/OrderCard.view.tsx
+import { getOrderBadgeType } from './helpers/presenters/getOrderBadgeType'
 
 const badgeType = getOrderBadgeType(order)
 ```

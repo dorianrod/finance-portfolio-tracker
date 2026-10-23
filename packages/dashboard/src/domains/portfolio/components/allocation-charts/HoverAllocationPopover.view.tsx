@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import type { IsinAllocation } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
-import { computePopoverPos } from './allocationCharts.logic'
+import { computeAllocationPopoverPosition } from './helpers/presenters/computeAllocationPopoverPosition'
 import { MiniDonut } from './MiniDonut.view'
 
 export interface AllocationHoverTarget {
@@ -33,7 +33,7 @@ export function HoverAllocationPopover({
   const cols = charts.length >= 2 ? 2 : 1
   const W = cols === 2 ? 490 : 250
   const H = charts.length > 2 ? 430 : 230
-  const { top, left } = computePopoverPos(target.buttonRect, W, H)
+  const { top, left } = computeAllocationPopoverPosition(target.buttonRect, W, H)
 
   return createPortal(
     <div

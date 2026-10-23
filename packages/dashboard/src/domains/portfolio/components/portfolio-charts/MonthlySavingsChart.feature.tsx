@@ -5,7 +5,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { MonthlyTooltip } from './portfolioCharts.tooltips.view'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
-import type { TrailingSavingCapacityPoint } from './portfolioCharts.logic'
+import type { TrailingSavingCapacityPoint } from './helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
 function MonthlyPerformanceCell({ entry }: { entry: TrailingSavingCapacityPoint }) {

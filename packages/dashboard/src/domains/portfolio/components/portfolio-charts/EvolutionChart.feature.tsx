@@ -6,7 +6,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { EvolutionTooltip } from './portfolioCharts.tooltips.view'
-import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioComposition } from './chartScale.logic'
+import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioComposition } from './helpers/mappers/buildChartScaleData'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 

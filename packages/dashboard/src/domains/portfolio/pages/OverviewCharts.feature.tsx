@@ -21,13 +21,10 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { OverviewConcentrationComparison, OverviewComparison } from './overviewComparison.logic'
+import type { OverviewConcentrationComparison, OverviewComparison } from './helpers/calculators/buildOverviewComparison'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import type { FilterScopeSpec } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
-
-function timestamp(date: string): number {
-  return Date.parse(`${date.slice(0, 10)}T00:00:00Z`)
-}
+import { toUtcDateTimestamp } from './helpers/formatters/toUtcDateTimestamp'
 
 function ValueTooltip({ active, payload }: {
   active?: boolean
@@ -51,15 +48,15 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
   const formatMoney = useFormatMoney()
   const chartData = comparison.valueHistory.map((point) => ({
     ...point,
-    timestamp: timestamp(point.date),
+    timestamp: toUtcDateTimestamp(point.date),
     previousValue: point.window === 'previous' ? point.value : null,
     currentValue: point.window === 'current' ? point.value : null,
   }))
   if (chartData.length === 0) {
     return <EmptyChart title="Portfolio value" message="No value history is available for these periods." scope={{ account: 'filterable', period: 'comparison-range' }} />
   }
-  const domain: [number, number] = [timestamp(comparison.windows.previous.start), timestamp(comparison.windows.current.end)]
-  const currentStart = timestamp(comparison.windows.current.start)
+  const domain: [number, number] = [toUtcDateTimestamp(comparison.windows.previous.start), toUtcDateTimestamp(comparison.windows.current.end)]
+  const currentStart = toUtcDateTimestamp(comparison.windows.current.start)
 
   return (
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4 xl:col-span-2">

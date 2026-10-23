@@ -1,6 +1,6 @@
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { gainClass } from './positionsTable.logic'
+import { gainClass } from './helpers/presenters/getGainClass'
 
 export function GainCell({ value, pct }: { value: number | null; pct?: number | null }) {
   const formatMoney = useFormatMoney()

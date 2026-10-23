@@ -11,12 +11,15 @@ import type {
   ContributionHorizon,
   PerformanceContribution,
   PerformanceContributionSummary,
-} from './performanceContribution.logic'
+} from './helpers/calculators/computePerformanceContributions'
 import type { FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 import {
   buildAssetIrrRankings,
   resolveContributionHorizon,
 } from '@/domains/portfolio/helpers/mappers/buildPerformanceContributionViewModel'
+import { formatPerformanceDateRange } from './helpers/formatters/formatPerformanceDateRange'
+import { formatExactPerformanceDateRange } from './helpers/formatters/formatExactPerformanceDateRange'
+import { formatPerformanceIrrLabel } from './helpers/formatters/formatPerformanceIrrLabel'
 
 interface Props {
   assetIrr: AssetIrrSummary
@@ -29,28 +32,6 @@ interface Props {
 }
 
 type PerformanceView = 'contribution' | 'irr'
-
-function formatDateRange(summary: { startDate: string | null; endDate: string | null }, formatDate: ReturnType<typeof useFormatDate>): string {
-  if (!summary.startDate || !summary.endDate) return ''
-  const format = (date: string) => formatDate(`${date}T00:00:00Z`, { style: 'shortMonthYear', timeZone: 'UTC' })
-  return `${format(summary.startDate)} – ${format(summary.endDate)}`
-}
-
-function formatAsOfDate(date: string | undefined, formatDate: ReturnType<typeof useFormatDate>): string {
-  if (!date) return 'Not available'
-  return formatDate(`${date.slice(0, 10)}T00:00:00Z`, { style: 'dayMonthYear', timeZone: 'UTC' })
-}
-
-function formatExactDateRange(summary: { startDate: string | null; endDate: string | null }, formatDate: ReturnType<typeof useFormatDate>): string {
-  if (!summary.startDate || !summary.endDate) return 'Not available'
-  return `${formatAsOfDate(summary.startDate, formatDate)} – ${formatAsOfDate(summary.endDate, formatDate)}`
-}
-
-function irrLabel(value: number | null, status: IrrStatus, formatPercentage: ReturnType<typeof useFormatPercentage>): string {
-  if (status === 'loading') return 'Calculating…'
-  if (status === 'error') return 'Unavailable'
-  return value === null ? 'Not available' : formatPercentage(value, { decimals: 2, signed: true })
-}
 
 function MetricLabel({ label, tooltip, scope }: { label: string; tooltip: string; scope: FilterScopeSpec }) {
   return (
@@ -171,7 +152,7 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
         </div>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
-          <div className="mt-1 text-sm font-medium text-gray-400">{formatExactDateRange({ startDate: summary.start_date, endDate: summary.end_date }, formatDate)}</div>
+          <div className="mt-1 text-sm font-medium text-gray-400">{formatExactPerformanceDateRange({ startDate: summary.start_date, endDate: summary.end_date }, formatDate)}</div>
         </div>
       </div>
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -262,7 +243,7 @@ export function PerformanceContributionCard({
                 // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
                 scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
-              <div className="mt-1 text-lg font-semibold tabular-nums text-teal-400">{irrLabel(irr, irrStatus, formatPercentage)}</div>
+              <div className="mt-1 text-lg font-semibold tabular-nums text-teal-400">{formatPerformanceIrrLabel(irr, irrStatus, formatPercentage)}</div>
             </div>
             <div>
               <MetricLabel
@@ -276,7 +257,7 @@ export function PerformanceContributionCard({
             <div>
               <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
               <div className="mt-2 flex items-center justify-between gap-3">
-                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatDateRange(summary, formatDate)}</div>
+                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatPerformanceDateRange(summary, formatDate)}</div>
                 <div className="inline-flex shrink-0 rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label="Contribution horizon">
                   <button
                     type="button"

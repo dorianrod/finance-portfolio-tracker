@@ -2,7 +2,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import type { CumulativeConcentrationPoint } from './portfolioCharts.logic'
+import type { CumulativeConcentrationPoint } from './helpers/calculators/calculatePortfolioCharts'
 
 interface CumulativeConcentrationTooltipProps {
   active?: boolean

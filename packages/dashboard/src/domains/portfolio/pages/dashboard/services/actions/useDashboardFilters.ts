@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
-import { resetFilters } from '@/domains/portfolio/components/filters/filterBar.logic'
+import { resetFilters } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
 import {
   dashboardFiltersAtom,
   dashboardFiltersOpenAtom,

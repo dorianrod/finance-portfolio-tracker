@@ -49,7 +49,7 @@ A rule's impact can never exceed the impact of its section (enforced by `scripts
 ## 9. Helpers (helpers)
 
 **Impact:** MEDIUM-HIGH  
-**Description:** Formatters, mappers and business rules centralize display and decision logic so that it is reusable, testable and consistent across pages.
+**Description:** Explicit helper categories separate selection, aggregation, calculation, mapping, presentation, validation and business decisions so each function has predictable ownership and dependencies.
 
 ## 10. Internationalization (i18n)
 

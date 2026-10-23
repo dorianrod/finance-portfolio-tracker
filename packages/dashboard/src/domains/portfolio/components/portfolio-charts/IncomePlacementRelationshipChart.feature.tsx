@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react'
 import {
   CartesianGrid,
   Cell,
@@ -12,10 +11,7 @@ import {
   YAxis,
   type LabelProps,
 } from 'recharts'
-import {
-  analyseIncomePlacement,
-  type AnnualIncomeSavingsPoint,
-} from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -23,114 +19,15 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
+import type { YearLabelPlacement } from './helpers/calculators/calculateYearLabelLayout'
+import { useIncomePlacementChart } from './services/useIncomePlacementChart'
 
-type TextAnchor = 'start' | 'middle' | 'end'
-
-interface YearLabelPlacement {
-  dx: number
-  dy: number
-  textAnchor: TextAnchor
-}
-
-interface LabelBox {
-  left: number
-  right: number
-  top: number
-  bottom: number
-}
-
-const LABEL_WIDTH = 32
-const LABEL_HEIGHT = 14
-const LABEL_CANDIDATES: YearLabelPlacement[] = [
-  { dx: 0, dy: -12, textAnchor: 'middle' },
-  { dx: 0, dy: 20, textAnchor: 'middle' },
-  { dx: 10, dy: 4, textAnchor: 'start' },
-  { dx: -10, dy: 4, textAnchor: 'end' },
-  { dx: 10, dy: -10, textAnchor: 'start' },
-  { dx: -10, dy: -10, textAnchor: 'end' },
-  { dx: 10, dy: 17, textAnchor: 'start' },
-  { dx: -10, dy: 17, textAnchor: 'end' },
-]
+const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = { dx: 0, dy: -12, textAnchor: 'middle' }
 
 function RelationshipCell({ newestYear, oldestYear, point, recentYears }: { newestYear: number; oldestYear: number; point: AnnualIncomeSavingsPoint; recentYears: Set<number> }) {
   const isRecent = recentYears.has(point.year)
   const ageProgress = (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
   return <Cell fill={isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries} fillOpacity={isRecent ? 1 : 0.3 + ageProgress * 0.35} />
-}
-
-function labelBox(x: number, y: number, placement: YearLabelPlacement): LabelBox {
-  const labelX = x + placement.dx
-  let left = labelX - LABEL_WIDTH
-  if (placement.textAnchor === 'middle') left = labelX - LABEL_WIDTH / 2
-  else if (placement.textAnchor === 'start') left = labelX
-  const baseline = y + placement.dy
-  return {
-    left,
-    right: left + LABEL_WIDTH,
-    top: baseline - LABEL_HEIGHT + 2,
-    bottom: baseline + 2,
-  }
-}
-
-function overlapArea(a: LabelBox, b: LabelBox): number {
-  return Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left))
-    * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
-}
-
-/** Greedily gives the newest years first choice, then moves colliding labels around their point. */
-function createYearLabelLayout(points: AnnualIncomeSavingsPoint[], chartWidth: number): YearLabelPlacement[] {
-  if (points.length === 0) return []
-
-  const plotWidth = Math.max(180, chartWidth - 80)
-  const plotHeight = 215
-  const incomes = points.map((point) => point.totalIncome)
-  const rates = points.map((point) => point.placementRate ?? 0)
-  const minIncome = Math.min(...incomes)
-  const maxIncome = Math.max(...incomes)
-  const minRate = Math.min(...rates)
-  const maxRate = Math.max(...rates)
-  const incomeRange = Math.max(1, maxIncome - minIncome)
-  const rateRange = Math.max(1, maxRate - minRate)
-  const coordinates = points.map((point) => ({
-    x: 16 + ((point.totalIncome - minIncome) / incomeRange) * (plotWidth - 32),
-    y: 16 + ((maxRate - (point.placementRate ?? 0)) / rateRange) * (plotHeight - 32),
-  }))
-  const placements: YearLabelPlacement[] = points.map(() => LABEL_CANDIDATES[0])
-  const occupied: LabelBox[] = []
-  const order = points
-    .map((point, index) => ({ year: point.year, index }))
-    .sort((a, b) => b.year - a.year)
-
-  for (const { index } of order) {
-    const coordinate = coordinates[index]
-    let best = LABEL_CANDIDATES[0]
-    let bestScore = Number.POSITIVE_INFINITY
-
-    for (const [candidateIndex, candidate] of LABEL_CANDIDATES.entries()) {
-      const box = labelBox(coordinate.x, coordinate.y, candidate)
-      const labelOverlap = occupied.reduce((sum, other) => sum + overlapArea(box, other), 0)
-      const pointOverlap = coordinates.reduce((sum, point) => {
-        const inside = point.x >= box.left - 4 && point.x <= box.right + 4
-          && point.y >= box.top - 4 && point.y <= box.bottom + 4
-        return sum + (inside ? 1 : 0)
-      }, 0)
-      const outside = Math.max(0, -box.left)
-        + Math.max(0, box.right - plotWidth)
-        + Math.max(0, -box.top)
-        + Math.max(0, box.bottom - plotHeight)
-      const score = labelOverlap * 100 + pointOverlap * 1_000 + outside * 1_000 + candidateIndex
-
-      if (score < bestScore) {
-        best = candidate
-        bestScore = score
-      }
-    }
-
-    placements[index] = best
-    occupied.push(labelBox(coordinate.x, coordinate.y, best))
-  }
-
-  return placements
 }
 
 function YearLabel({
@@ -150,7 +47,7 @@ function YearLabel({
   newestYear: number
 }) {
   if (index == null || !viewBox || !('x' in viewBox) || !('y' in viewBox)) return null
-  const placement = placements[index] ?? LABEL_CANDIDATES[0]
+  const placement = placements[index] ?? DEFAULT_YEAR_LABEL_PLACEMENT
   const point = chartPoints[index]
   if (!point) return null
 
@@ -197,28 +94,6 @@ function RelationshipTooltip({ active, payload }: {
       <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>Unplaced income proxy: {formatMoney(point.unplacedIncomeProxy ?? 0, { style: 'full' })}</div>
     </TooltipBox>
   )
-}
-
-function useIncomePlacementChart(data: AnnualIncomeSavingsPoint[]) {
-  const analysis = useMemo(() => analyseIncomePlacement(data), [data])
-  const [chartWidth, setChartWidth] = useState(600)
-  const years = useMemo(() => analysis.points.map((point) => point.year), [analysis.points])
-  const recentYears = useMemo(
-    () => new Set([...years].sort((a, b) => b - a).slice(0, 3)),
-    [years],
-  )
-  const labelPlacements = useMemo(
-    () => createYearLabelLayout(analysis.points, chartWidth),
-    [analysis.points, chartWidth],
-  )
-  return {
-    analysis,
-    labelPlacements,
-    newestYear: years.length > 0 ? Math.max(...years) : 0,
-    oldestYear: years.length > 0 ? Math.min(...years) : 0,
-    recentYears,
-    setChartWidth,
-  }
 }
 
 export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {

@@ -7,7 +7,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { usePositionsHistory } from '@/domains/portfolio/apis/queries/usePositionsHistory'
-import { computeMonthlyBalances, computePosition } from './hoverCharts.logic'
+import { computeMonthlyBalances, computePosition } from './helpers/calculators/buildHoverChartData'
 import { SavingsTooltip } from './hoverCharts.tooltips.view'
 
 export interface SavingsChartTarget {

@@ -9,7 +9,7 @@ import {
   computeTopPerformers,
   computeTrailing12mSavings,
   filterMonthlyOpsByAccounts,
-} from './portfolioCharts.logic'
+} from './helpers/calculators/calculatePortfolioCharts'
 import { AccountTypeBreakdownChart } from './AccountTypeBreakdownChart.feature'
 import { MonthlySavingsChart } from './MonthlySavingsChart.feature'
 import { PassiveIncomeChart } from './PassiveIncomeChart.feature'
@@ -17,8 +17,7 @@ import { AccountTypeHistoryChart } from './AccountTypeHistoryChart.feature'
 import { EvolutionChart } from './EvolutionChart.feature'
 import { TriChart } from './TriChart.feature'
 import { TopPerformersChart } from './TopPerformersChart.feature'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { useAccountTypeLabels } from './helpers/formatters/useAccountTypeLabels'
 
 interface Props {
   history: PortfolioHistoryPoint[]
@@ -27,15 +26,6 @@ interface Props {
   positions?: PositionRow[]
   dateFrom?: string
   dateTo?: string
-}
-
-function useAccountTypeLabels(accountTypeData: AccountTypePoint[] | undefined) {
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
-  return (accountTypeData ?? []).map((point) => {
-    const percentage = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
-    return { ...point, _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(percentage, { decimals: 0, signed: true })}` }
-  })
 }
 
 export function PortfolioCharts({ history, accounts, accountTypeData, positions, dateFrom, dateTo }: Props) {

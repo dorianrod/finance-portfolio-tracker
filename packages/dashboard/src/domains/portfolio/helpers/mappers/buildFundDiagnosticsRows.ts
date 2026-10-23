@@ -5,9 +5,9 @@ import type {
   FundUnresolved,
 } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import {
-  fundQualityCategory,
+  getFundQualityPresentation,
   type FundQualityCategory,
-} from '@/domains/portfolio/components/fund-holdings/fundHoldings.logic'
+} from '@/domains/portfolio/components/fund-holdings/helpers/presenters/getFundQualityPresentation'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 
 export type FundDiagnosticsFilter = 'all' | 'issues' | FundQualityCategory
@@ -34,7 +34,7 @@ export function buildFundDiagnosticsRows({
 }): FundDiagnosticsRow[] {
   return statuses
     .filter((status) => filter === 'all'
-      || filter === fundQualityCategory(status.qualityTier)
+      || filter === getFundQualityPresentation(status.qualityTier).category
       || (
         filter === 'issues'
         && (

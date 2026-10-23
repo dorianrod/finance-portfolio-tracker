@@ -5,10 +5,10 @@ import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { typeColor } from '@/shared/theme/chartColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
-import type { PassiveIncomePoint } from '@/domains/portfolio/helpers/passiveIncome.logic'
+import type { PassiveIncomePoint } from '@/domains/portfolio/helpers/aggregators/aggregatePassiveIncomeByYear'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
-import type { TopPerformer, TrailingSavingCapacityPoint, TriChartPoint } from './portfolioCharts.logic'
+import type { TopPerformer, TrailingSavingCapacityPoint, TriChartPoint } from './helpers/calculators/calculatePortfolioCharts'
 
 interface EvolutionTooltipProps extends NumericTooltipProps<PortfolioHistoryPoint> {
   percentageMode?: boolean

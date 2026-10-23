@@ -2,7 +2,7 @@ import { BarChart, Bar, Cell, LabelList, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { TopPerformersTooltip } from './portfolioCharts.tooltips.view'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
-import type { TopPerformer } from './portfolioCharts.logic'
+import type { TopPerformer } from './helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 

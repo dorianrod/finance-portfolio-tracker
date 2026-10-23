@@ -3,12 +3,12 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { accountLabel } from '@/domains/portfolio/components/filters/filterBar.logic'
+import { accountLabel } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
 import { QualityIndicatorCard } from '@/domains/portfolio/components/quality/QualityIndicatorCard.view'
 import { hasMaterialQualityGap } from '@/domains/portfolio/helpers/quality/qualityThresholds'
 import { useAccountFilterLabels } from '@/domains/portfolio/services/useAccountFilterLabels'
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
-import type { AccountCoverage, DimensionCoverage } from './allocationCoverage.logic'
+import type { AccountCoverage, DimensionCoverage } from './helpers/quality/computeAllocationCoverage'
 import { FilterScopeBadges } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 
 function LatestQualityScope() {

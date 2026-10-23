@@ -1,7 +1,7 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import { buildPositionsHistory, type HistoryPoint } from '@/domains/portfolio/helpers/positionsHistory.logic'
+import { buildPositionsHistory, type HistoryPoint } from '@/domains/portfolio/helpers/aggregators/buildPositionsHistory'
 import { RAW_POSITION_SCHEMA } from '@/domains/portfolio/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
 

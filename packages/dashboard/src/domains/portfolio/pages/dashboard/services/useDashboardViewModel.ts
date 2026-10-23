@@ -14,9 +14,9 @@ import { usePassiveIncome, type PassiveIncomePoint } from '@/domains/portfolio/a
 import { usePortfolioHistory } from '@/domains/portfolio/apis/queries/usePortfolioHistory'
 import { useRawIsinData, type RawIsinRows } from '@/domains/portfolio/apis/queries/useRawIsinData'
 import { useSavingCapacity, type SavingCapacityPoint } from '@/domains/portfolio/apis/queries/useSavingCapacity'
-import { computeAllocationCoverageByAccount } from '@/domains/portfolio/components/allocation-charts/allocationCoverage.logic'
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/concentrationTrend.logic'
-import { scopeFundQualityData } from '@/domains/portfolio/components/fund-holdings/fundQualityScope.logic'
+import { computeAllocationCoverageByAccount } from '@/domains/portfolio/components/allocation-charts/helpers/quality/computeAllocationCoverage'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/components/allocation-charts/helpers/calculators/buildConcentrationTrend'
+import { scopeFundQualityData } from '@/domains/portfolio/components/fund-holdings/helpers/quality/scopeFundQualityData'
 import {
   buildCumulativeWealthDrivers,
   computePerformanceSummary,
@@ -25,8 +25,8 @@ import {
   computeTrailing12mYearOverYear,
   filterMonthlyOpsByAccounts,
   filterPointsByPeriod,
-} from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
-import { filterAnnualIncomeSavingsByPeriod, type AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
+} from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
+import { filterAnnualIncomeSavingsByPeriod, type AnnualIncomeSavingsPoint } from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
 import {
   applyAccountFilterToHistory,
   applyPositionFilters,
@@ -34,15 +34,15 @@ import {
   scopeManualPriceOverrides,
   scopePipelineErrors,
   sortPositionsForTable,
-} from '@/domains/portfolio/helpers/app.logic'
+} from '@/domains/portfolio/helpers/filters/portfolioDataFilters'
 import {
   buildDemoPresetSelection,
   isDemoPresetActive,
   withoutOperationAndPeriodFilters,
   withoutOperationFilters,
 } from '@/domains/portfolio/helpers/filters/portfolioFilterScopes'
-import { buildPositionRows } from '@/domains/portfolio/helpers/positionHierarchy.logic'
-import { buildOverviewComparison, compareRollingThreeYearIrr } from '@/domains/portfolio/pages/overviewComparison.logic'
+import { buildPositionRows } from '@/domains/portfolio/helpers/mappers/buildPositionHierarchy'
+import { buildOverviewComparison, compareRollingThreeYearIrr } from '@/domains/portfolio/pages/helpers/calculators/buildOverviewComparison'
 import { buildDashboardQualitySummary } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardQualitySummary'
 import { buildDashboardSourceData } from '@/domains/portfolio/pages/dashboard/helpers/mappers/buildDashboardSourceData'
 import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'

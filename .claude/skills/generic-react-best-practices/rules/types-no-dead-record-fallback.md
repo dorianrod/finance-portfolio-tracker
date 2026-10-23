@@ -41,4 +41,4 @@ const badgeType = isContractStatus(status)
   : 'neutral'
 ```
 
-Exception: a display-only taxonomy that the API owns can be typed as `string` at the mapper boundary, with a deliberate fallback that has a comment (for example a `getEmailStatusBadge` mapper). Keep the input typed `string` there, so the fallback is reachable and its intent is visible.
+Exception: a display-only taxonomy that the API owns can be typed as `string` at the presenter boundary, with a deliberate fallback that has a comment (for example a page-scoped `getEmailStatusBadge` presenter). Keep the input typed `string` there, so the fallback is reachable and its intent is visible.

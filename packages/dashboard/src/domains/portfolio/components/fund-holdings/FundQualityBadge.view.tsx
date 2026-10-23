@@ -2,9 +2,8 @@ import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/api
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
   FUND_QUALITY_LABELS,
-  fundQualityCategory,
-  fundQualitySourceLabel,
-} from './fundHoldings.logic'
+  getFundQualityPresentation,
+} from './helpers/presenters/getFundQualityPresentation'
 
 const TIER_CLASSES: Record<FundQualityTier, string> = {
   A: 'border-emerald-700 bg-emerald-950/60 text-emerald-300',
@@ -16,9 +15,9 @@ const TIER_CLASSES: Record<FundQualityTier, string> = {
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
   const formatPercentage = useFormatPercentage()
   const warning = status.validationStatus !== 'ok' || status.isStale
-  const category = fundQualityCategory(status.qualityTier)
+  const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
   const title = [
-    `${FUND_QUALITY_LABELS[category]} : ${fundQualitySourceLabel(status.qualityTier)}`,
+    `${FUND_QUALITY_LABELS[category]} : ${sourceLabel}`,
     status.sourceName || 'Aucune source',
     `${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`,
     status.holdingsDate ? `composition du ${status.holdingsDate}` : 'date de composition inconnue',

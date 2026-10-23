@@ -12,8 +12,6 @@ import {
   ConcentrationModeToggle,
   type ConcentrationMode,
 } from '@/domains/portfolio/components/portfolio-charts/ConcentrationModeToggle.view'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ConcentrationTrendSection } from './ConcentrationTrendSection.feature'
 import { useAllocationCharts } from '@/domains/portfolio/services/useAllocationCharts'
 import {
@@ -21,6 +19,7 @@ import {
   dashboardAllocationPositionsOpenAtom,
   dashboardAllocationViewAtom,
 } from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
+import { useConcentrationDescriptions } from './services/useConcentrationDescriptions'
 
 interface AllocationChartsProps {
   positions: PositionRow[]
@@ -32,22 +31,6 @@ interface AllocationChartsProps {
   rawData: RawIsinData
   dateFrom?: string
   dateTo?: string
-}
-
-function useConcentrationDescriptions(
-  concentration: ReturnType<typeof useAllocationCharts>['concentration'],
-  mode: ConcentrationMode,
-) {
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
-  return {
-    cumulativeDescription: mode === 'held'
-      ? 'Share of the applicable portfolio held in the largest N positions.'
-      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${formatPercentage(concentration.coveragePct)} coverage.`,
-    holdingsDescription: mode === 'held'
-      ? 'Positions effectively held, aggregated across accounts.'
-      : `Identified ${formatMoney(concentration.identifiedValue, { style: 'full' })} · undisclosed funds ${formatMoney(concentration.undisclosedValue, { style: 'full' })} · opaque ${formatMoney(concentration.opaqueValue, { style: 'full' })}.`,
-  }
 }
 
 export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, rawData, dateFrom, dateTo }: AllocationChartsProps) {

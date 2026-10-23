@@ -1,12 +1,12 @@
 import * as yup from 'yup'
 import type { RawOperation, RawPosition } from '@/domains/portfolio/types/domain'
 import type { RawPortfolioHistory } from '@/domains/portfolio/types/history'
-import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/helpers/annualIncomeSavings.logic'
-import type { RawCashRow } from '@/domains/portfolio/helpers/cashHistory.logic'
+import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/helpers/mappers/mapAnnualIncomeSavings'
+import type { RawCashRow } from '@/domains/portfolio/helpers/aggregators/aggregateBrokerageCash'
 import type {
   RawSavingCapacityByAccountRow,
   RawSavingCapacityRow,
-} from '@/domains/portfolio/helpers/savingCapacity.logic'
+} from '@/domains/portfolio/helpers/aggregators/aggregateSavingCapacity'
 
 const requiredText = () => yup.string().defined()
 export const ACCOUNT_ROW_SCHEMA = yup.object({

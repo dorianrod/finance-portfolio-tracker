@@ -4,7 +4,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TriTooltip } from './portfolioCharts.tooltips.view'
-import { buildTriChartData } from './portfolioCharts.logic'
+import { buildTriChartData } from './helpers/calculators/calculatePortfolioCharts'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 

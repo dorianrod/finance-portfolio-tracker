@@ -2,7 +2,7 @@ import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip,
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { WealthDriverPoint } from './portfolioCharts.logic'
+import type { WealthDriverPoint } from './helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
 interface DriversTooltipProps {

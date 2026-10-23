@@ -4,13 +4,16 @@ import type {
   ComparedMetric,
   OverviewConcentrationComparison,
   OverviewComparison,
-} from './overviewComparison.logic'
+} from './helpers/calculators/buildOverviewComparison'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 import type { FilterScopeSpec } from '@/domains/portfolio/components/filters/FilterScopeBadges.feature'
 import { useDashboardNavigation } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardNavigation'
+import { formatOverviewIrrValue } from './helpers/formatters/formatOverviewIrrValue'
+import { getConcentrationTone } from './helpers/presenters/getConcentrationTone'
+import { getOverviewPerformanceTone } from './helpers/presenters/getOverviewPerformanceTone'
 
 export type OverviewDestination = 'wealth' | 'performance' | 'allocation'
 
@@ -22,35 +25,15 @@ interface SummaryCardsProps {
   irrStatus: IrrStatus
 }
 
-function performanceTone(value: number | null): string {
-  if (value == null) return 'text-gray-500'
-  return value >= 0
-    ? SEMANTIC_TEXT_CLASSES.performancePositive
-    : SEMANTIC_TEXT_CLASSES.performanceNegative
-}
-
-function concentrationTone(value: number | null): string {
-  if (value == null || value === 0) return 'text-gray-500'
-  return value < 0
-    ? SEMANTIC_TEXT_CLASSES.performancePositive
-    : SEMANTIC_TEXT_CLASSES.performanceNegative
-}
-
-function irrValueLabel(status: IrrStatus, value: number | null, formatPercentage: ReturnType<typeof useFormatPercentage>): string {
-  if (status === 'loading') return 'Calculating…'
-  if (status === 'error' || value == null) return '—'
-  return formatPercentage(value, { decimals: 2, signed: true })
-}
-
 function DeltaBadge({ metric, tone = 'performance' }: {
   metric: ComparedMetric
   tone?: 'performance' | 'contributions' | 'concentration'
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  let color = performanceTone(metric.delta)
+  let color = getOverviewPerformanceTone(metric.delta)
   if (tone === 'contributions') color = SEMANTIC_TEXT_CLASSES.netContributions
-  else if (tone === 'concentration') color = concentrationTone(metric.delta)
+  else if (tone === 'concentration') color = getConcentrationTone(metric.delta)
   let label = metric.delta == null ? '—' : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
   if (tone === 'concentration') {
     label = metric.delta == null ? '—' : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
@@ -161,7 +144,7 @@ export function OverviewSummaryCards({
 
       <CardShell title="Performance & income" description="Market performance and passive income generated during the period, compared with the preceding period. The trailing three-year IRR is anchored at period end." scope={{ account: 'filterable', period: 'comparison-range' }} eyebrow="Period result" destination="performance" accent="bg-emerald-400">
         <span className="flex items-baseline justify-between gap-2">
-          <span className={`text-2xl font-semibold tracking-tight tabular-nums ${performanceTone(comparison.marketPerformance.current)}`}>
+          <span className={`text-2xl font-semibold tracking-tight tabular-nums ${getOverviewPerformanceTone(comparison.marketPerformance.current)}`}>
             {money(comparison.marketPerformance.current)}
           </span>
           <DeltaBadge metric={comparison.marketPerformance} />
@@ -179,11 +162,11 @@ export function OverviewSummaryCards({
             {/* eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope. */}
             <span className="pointer-events-auto"><ScopedInfoTooltip text="Annualized money-weighted return over the three years ending at the selected period end." scope={{ account: 'filterable', period: 'trailing-3y', effectiveDate: comparison.windows.current.end }} /></span>
           </span>
-          <span className={`font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.current)}`}>
-            {irrValueLabel(irrStatus, rollingThreeYearTri.current, formatPercentage)}
+          <span className={`font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearTri.current)}`}>
+            {formatOverviewIrrValue(irrStatus, rollingThreeYearTri.current, formatPercentage)}
           </span>
           {rollingThreeYearDelta != null && (
-            <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${performanceTone(rollingThreeYearDelta)}`}>
+            <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearDelta)}`}>
               {formatPercentage(rollingThreeYearDelta, { signed: true, unit: ' pp' })}
             </span>
           )}
@@ -201,7 +184,7 @@ export function OverviewSummaryCards({
             <span className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.risk}`}>
               {primaryConcentration.current ? formatPercentage(primaryConcentration.current.topHoldingPct) : '—'}
             </span>
-            <span className={`mt-1 block text-[10px] font-medium tabular-nums ${concentrationTone(primaryConcentration.topHolding.delta)}`}>
+            <span className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topHolding.delta)}`}>
               {points(primaryConcentration.topHolding.delta)}
             </span>
           </span>
@@ -210,7 +193,7 @@ export function OverviewSummaryCards({
             <span className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.riskSecondary}`}>
               {primaryConcentration.current ? formatPercentage(primaryConcentration.current.topFivePct) : '—'}
             </span>
-            <span className={`mt-1 block text-[10px] font-medium tabular-nums ${concentrationTone(primaryConcentration.topFive.delta)}`}>
+            <span className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topFive.delta)}`}>
               {points(primaryConcentration.topFive.delta)}
             </span>
           </span>

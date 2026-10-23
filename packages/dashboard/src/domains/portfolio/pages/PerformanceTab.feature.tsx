@@ -3,7 +3,7 @@ import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import type { PassiveIncomePoint } from '@/domains/portfolio/apis/queries/usePassiveIncome'
 import type { RawOperation, RawPosition } from '@/domains/portfolio/types/domain'
 import type { IrrStatus } from '@/domains/portfolio/types/history'
-import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/components/portfolio-charts/portfolioCharts.logic'
+import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
 import {
   IrrSinceTrackingKpi,
   NetRealizedKpi,
@@ -16,7 +16,7 @@ import { PassiveIncomeChart } from '@/domains/portfolio/components/portfolio-cha
 import { TriChart } from '@/domains/portfolio/components/portfolio-charts/TriChart.feature'
 import { UnrealizedPnlChart } from '@/domains/portfolio/components/portfolio-charts/UnrealizedPnlChart.feature'
 import { PerformanceContributionCard } from '@/domains/portfolio/components/portfolio-charts/PerformanceContributionCard.feature'
-import { computePerformanceContributions } from '@/domains/portfolio/components/portfolio-charts/performanceContribution.logic'
+import { computePerformanceContributions } from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/computePerformanceContributions'
 import { useAssetIrr } from '@/domains/portfolio/apis/queries/useAssetIrr'
 
 export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperations, accountFilters, accountTypeFilters, dateFrom, performance, income, globalTri, irrStatus, irrScopeLabel }: {

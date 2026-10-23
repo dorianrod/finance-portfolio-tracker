@@ -1,15 +1,15 @@
 ---
-title: Keep Visual Logic Out of apis/, services/ and helpers/
+title: Keep Visual Logic at the Component or Page Boundary
 impact: HIGH
 impactDescription: domain hooks stay reusable across pages and contexts
 tags: arch, separation-of-concerns, toast, navigation, page-actions
 ---
 
-## Keep Visual Logic Out of apis/, services/ and helpers/
+## Keep Visual Logic at the Component or Page Boundary
 
 **Impact: HIGH (domain hooks stay reusable across pages and contexts)**
 
-Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. Domain `apis/`, `services/` and `helpers/` only fetch, mutate, transform and decide; they return data or throw, and let the page decide what the user sees. The same mutation can then be reused by a bulk action, a modal and a detail page with different feedback.
+Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Domain `apis/`, `services/` and domain-shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
 
 **Incorrect (a domain service shows the toast itself):**
 
@@ -30,7 +30,7 @@ export function useResendDocument(contractId: string) {
 }
 ```
 
-**Correct (the service only acts and throws, the page action owns the feedback):**
+**Correct (the service only acts and throws, while page-owned code controls feedback and presentation):**
 
 ```ts
 // services/useResendDocument.ts: same hook, without notification nor translation
@@ -59,10 +59,19 @@ export function useResendDocumentAction(contractId: string, documentId: string) 
 }
 ```
 
+```typescript
+// pages/detail/helpers/presenters/getDocumentStatusTone.ts
+export function getDocumentStatusTone(status: DocumentStatus): StatusTone {
+  return status === 'failed' ? 'critical' : 'neutral'
+}
+```
+
 How the page action gives feedback:
 
 - Wrap the mutation call in one `try`/`catch`: success and error messages go through `t()`.
 - Clear the selection, close the modal or `navigate(...)` only after the mutation succeeded, inside the same `try`.
 - Prefer the backend's readable error message when there is one, falling back to a translated default. Run independent saves of one action with `Promise.all`.
 
-See also: `vercel-react-best-practices` → `async-parallel`
+Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
+
+See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`

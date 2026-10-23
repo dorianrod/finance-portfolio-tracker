@@ -47,4 +47,4 @@ export function useGetProjectsQuery(params: ProjectListQueryParams) {
 }
 ```
 
-Schemas shared across hooks of a sub-domain go in `helpers/schemas/` (e.g. `orderPaymentSchemas.ts`). Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
+A schema shared across hooks of a sub-domain gets its own file in `helpers/schemas/`, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
