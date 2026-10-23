@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import type { IrrStatus } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
@@ -54,7 +55,7 @@ function IrrListItem({ item, positive, strongestIrr }: { item: AssetIrrItem; pos
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const tone = positive ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative
-  return <li><div className="flex items-start justify-between gap-4 text-sm"><div className="min-w-0"><div className="truncate font-medium text-gray-300" title={item.name}>{formatAssetLabel(item, item.label)}</div><div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>{item.account_types.join(', ') || item.accounts.join(', ')}</div></div><div className="shrink-0 text-right tabular-nums"><div className={`font-semibold ${tone}`}>{formatPercentage(item.irr, { decimals: 2, signed: true })}</div><div className="text-[11px] text-gray-500">Value {formatMoney(item.value, { style: 'full' })}</div></div></div><div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800"><div className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${strongestIrr > 0 ? Math.abs(item.irr) / strongestIrr * 100 : 0}%` }} /></div></li>
+  return <li><div className="flex items-start justify-between gap-4 text-sm"><div className="min-w-0"><div className="truncate font-medium text-gray-300" title={item.name}>{formatAssetLabel(item, item.label)}</div><div className="truncate text-[11px] text-gray-600" title={item.accounts.join(', ')}>{item.account_types.join(', ') || item.accounts.join(', ')}</div></div><div className="shrink-0 text-right tabular-nums"><div className={`font-semibold ${tone}`}>{formatPercentage(item.irr, { decimals: 2, signed: true })}</div><div className="text-[11px] text-gray-500">{i18n.t('ui.performancecontributioncard.value')} {formatMoney(item.value, { style: 'full' })}</div></div></div><div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-800"><div className={`h-full rounded-full ${positive ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${strongestIrr > 0 ? Math.abs(item.irr) / strongestIrr * 100 : 0}%` }} /></div></li>
 }
 
 function ContributionList({
@@ -77,16 +78,17 @@ function ContributionList({
           <ScopedInfoTooltip
             // eslint-disable-next-line local/no-prop-drilling -- Copy selection is presentation logic owned by this contribution section.
             text={positive
-              ? 'Assets that created the most portfolio value over the selected horizon. Share is measured against total positive contributions.'
-              : 'Assets that reduced portfolio value the most over the selected horizon. Share is measured against total negative contributions.'}
+              ? i18n.t('ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe')
+              : i18n.t('ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe')}
             scope={scope}
           />
         </h3>
-        <span className="text-[11px] text-gray-600">Share of {positive ? 'gains' : 'losses'}</span>
+        <span className="text-[11px] text-gray-600">{i18n.t('ui.performancecontributioncard.shareOf')} {positive ? i18n.t('ui.performancecontributioncard.gains') : i18n.t('ui.performancecontributioncard.losses')}</span>
       </div>
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-800 px-3 py-6 text-center text-xs text-gray-600">
-          No {positive ? 'positive' : 'negative'} contribution
+
+          {i18n.t('ui.performancecontributioncard.no')} {positive ? i18n.t('ui.performancecontributioncard.positive') : i18n.t('ui.performancecontributioncard.negative')}  {i18n.t('ui.performancecontributioncard.contribution')}
         </p>
       ) : (
         <ol className="space-y-3">
@@ -112,11 +114,12 @@ function IrrList({
     <section>
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</h3>
-        <span className="text-[11px] text-gray-600">Annualized IRR</span>
+        <span className="text-[11px] text-gray-600">{i18n.t('ui.performancecontributioncard.annualizedIrr')}</span>
       </div>
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed border-gray-800 px-3 py-6 text-center text-xs text-gray-600">
-          No {positive ? 'positive' : 'negative'} IRR
+
+          {i18n.t('ui.performancecontributioncard.no')} {positive ? i18n.t('ui.performancecontributioncard.positive') : i18n.t('ui.performancecontributioncard.negative')}  {i18n.t('ui.performancecontributioncard.irr')}
         </p>
       ) : (
         <ol className="space-y-3">
@@ -130,10 +133,10 @@ function IrrList({
 export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; status: IrrStatus }) {
   const formatDate = useFormatDate()
   if (status === 'loading') {
-    return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">Calculating asset IRR…</div>
+    return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">{i18n.t('ui.performancecontributioncard.calculatingAssetIrr')}</div>
   }
   if (status === 'error' || !summary.available) {
-    return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">Asset IRR is not available for this selection.</div>
+    return <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">{i18n.t('ui.performancecontributioncard.assetIrrIsNotAvailableForThisSelection')}</div>
   }
 
   const { measuredCount, topReturns, underperformers } = buildAssetIrrRankings(summary)
@@ -143,23 +146,23 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
       <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-2">
         <div>
           <MetricLabel
-            label="Assets measured"
-            tooltip="Number of assets with enough positive and negative cash flows to calculate an IRR. Zero IRRs are omitted from the rankings."
+            label={i18n.t('ui.performancecontributioncard.assetsMeasured')}
+            tooltip={i18n.t('ui.performancecontributioncard.numberOfAssetsWithEnoughPositiveAndNegativeCash')}
             // eslint-disable-next-line local/no-prop-drilling -- The asset-IRR feature owns its effective reporting scope.
             scope={{ account: 'filterable', period: 'range', effectiveDate: summary.end_date }}
           />
           <div className="mt-1 text-lg font-semibold tabular-nums text-gray-300">{measuredCount}</div>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
+          <div className="text-[11px] uppercase tracking-wider text-gray-600">{i18n.t('ui.performancecontributioncard.period')}</div>
           <div className="mt-1 text-sm font-medium text-gray-400">{formatExactPerformanceDateRange({ startDate: summary.start_date, endDate: summary.end_date }, formatDate)}</div>
         </div>
       </div>
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* eslint-disable-next-line local/no-prop-drilling -- Ranking partitioning is owned by the asset-IRR feature. */}
-        <IrrList title="Top IRRs" items={topReturns} positive />
+        <IrrList title={i18n.t('ui.performancecontributioncard.topIrrs')} items={topReturns} positive />
         {/* eslint-disable-next-line local/no-prop-drilling -- Ranking partitioning is owned by the asset-IRR feature. */}
-        <IrrList title="Lowest IRRs" items={underperformers} positive={false} />
+        <IrrList title={i18n.t('ui.performancecontributioncard.lowestIrrs')} items={underperformers} positive={false} />
       </div>
     </>
   )
@@ -191,8 +194,8 @@ export function PerformanceContributionCard({
     : SEMANTIC_TEXT_CLASSES.performanceNegative
 
   const description = view === 'contribution'
-    ? 'Main assets creating or reducing portfolio value.'
-    : 'Annualized money-weighted return by asset over the selected period.'
+    ? i18n.t('ui.performancecontributioncard.mainAssetsCreatingOrReducingPortfolioValue')
+    : i18n.t('ui.performancecontributioncard.annualizedMoneyWeightedReturnByAssetOverTheSelected')
   let scopePeriod: PeriodScopeMode = activeHorizon
   if (view === 'irr') scopePeriod = 'range'
   const showUnavailableContribution = view === 'contribution' && !summary.available
@@ -202,17 +205,18 @@ export function PerformanceContributionCard({
     <section className="rounded-xl border border-gray-800 bg-gray-900 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-sm font-medium text-gray-400">Performance by asset</h2>
+          <h2 className="text-sm font-medium text-gray-400">{i18n.t('ui.performancecontributioncard.performanceByAsset')}</h2>
           <p className="mt-1 text-xs text-gray-600">{description}</p>
         </div>
-        <div className="inline-flex self-start rounded-lg border border-gray-700 bg-gray-950 p-0.5" aria-label="Performance metric">
+        <div className="inline-flex self-start rounded-lg border border-gray-700 bg-gray-950 p-0.5" aria-label={i18n.t('ui.performancecontributioncard.performanceMetric')}>
           <button
             type="button"
             onClick={() => setView('contribution')}
             aria-pressed={view === 'contribution'}
             className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'contribution' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            Contribution €
+
+            {i18n.t('ui.performancecontributioncard.contribution.7ffdcf')}
           </button>
           <button
             type="button"
@@ -220,7 +224,8 @@ export function PerformanceContributionCard({
             aria-pressed={view === 'irr'}
             className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'irr' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            IRR %
+
+            {i18n.t('ui.performancecontributioncard.irr.a0fb95')}
           </button>
         </div>
       </div>
@@ -230,7 +235,8 @@ export function PerformanceContributionCard({
       )}
       {showUnavailableContribution && (
         <div className="mt-5 rounded-lg border border-dashed border-gray-800 py-10 text-center text-sm text-gray-600">
-          Contribution history is not available for this selection.
+
+          {i18n.t('ui.performancecontributioncard.contributionHistoryIsNotAvailableForThisSelection')}
         </div>
       )}
       {showContributionDetails && (
@@ -238,8 +244,8 @@ export function PerformanceContributionCard({
           <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-gray-800 bg-gray-950/40 p-3 sm:grid-cols-3">
             <div>
               <MetricLabel
-                label="IRR context"
-                tooltip="Annualized money-weighted return over this horizon. It accounts for the amount and timing of portfolio cash flows. It is shown for context: asset contributions explain value created or lost in euros and do not add up mathematically to IRR."
+                label={i18n.t('ui.performancecontributioncard.irrContext')}
+                tooltip={i18n.t('ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts')}
                 // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
                 scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
@@ -247,35 +253,37 @@ export function PerformanceContributionCard({
             </div>
             <div>
               <MetricLabel
-                label="Attributed net performance"
-                tooltip="Sum of the attributed euro contributions across the selected assets and accounts: change in unrealized gains, realized gains on sales, dividends and interest over the period. This is a gross economic amount, not a return rate."
+                label={i18n.t('ui.performancecontributioncard.attributedNetPerformance')}
+                tooltip={i18n.t('ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected')}
                 // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
                 scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
               />
               <div className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}>{formatMoney(summary.netContribution, { style: 'full' })}</div>
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-gray-600">Period</div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-600">{i18n.t('ui.performancecontributioncard.period')}</div>
               <div className="mt-2 flex items-center justify-between gap-3">
                 <div className="min-w-0 whitespace-nowrap text-sm font-medium text-gray-400">{formatPerformanceDateRange(summary, formatDate)}</div>
-                <div className="inline-flex shrink-0 rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label="Contribution horizon">
+                <div className="inline-flex shrink-0 rounded-lg border border-gray-800 bg-gray-950/40 p-0.5" aria-label={i18n.t('ui.performancecontributioncard.contributionHorizon')}>
                   <button
                     type="button"
                     onClick={() => setHorizon('since-tracking')}
                     aria-pressed={activeHorizon === 'since-tracking'}
                     className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'since-tracking' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'}`}
                   >
-                    Since tracking
+
+                    {i18n.t('ui.performancecontributioncard.sinceTracking')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setHorizon('trailing-3y')}
                     disabled={threeYearUnavailable}
                     aria-pressed={activeHorizon === 'trailing-3y'}
-                    title={threeYearUnavailable ? 'Three years of history are not yet available' : undefined}
+                    title={threeYearUnavailable ? i18n.t('ui.performancecontributioncard.threeYearsOfHistoryAreNotYetAvailable') : undefined}
                     className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'trailing-3y' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-gray-300'} disabled:cursor-not-allowed disabled:text-gray-700`}
                   >
-                    Trailing 3 years
+
+                    {i18n.t('ui.performancecontributioncard.trailing3Years')}
                   </button>
                 </div>
               </div>
@@ -284,9 +292,9 @@ export function PerformanceContributionCard({
 
           <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature. */}
-            <ContributionList title="Top contributors" items={summary.contributors} positive scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
+            <ContributionList title={i18n.t('ui.performancecontributioncard.topContributors')} items={summary.contributors} positive scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
             {/* eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature. */}
-            <ContributionList title="Main detractors" items={summary.detractors} positive={false} scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
+            <ContributionList title={i18n.t('ui.performancecontributioncard.mainDetractors')} items={summary.detractors} positive={false} scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }} />
           </div>
         </>
       )}

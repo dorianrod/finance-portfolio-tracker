@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useAtomValue } from 'jotai'
 import { dashboardFiltersAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardFilters.atoms'
 import { useAccountFilterLabels } from '@/domains/portfolio/services/useAccountFilterLabels'
@@ -30,7 +31,7 @@ export function FilterScopeBadges({ account, period, effectiveDate }: FilterScop
     period,
   })
   return (
-    <span className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Indicator filter scope">
+    <span className="mt-1.5 flex flex-wrap gap-1.5" aria-label={i18n.t('ui.filterscopebadges.indicatorFilterScope')}>
       {badges.map((badge) => <FilterScopeBadge key={badge.label} badge={badge} />)}
     </span>
   )

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -43,7 +44,7 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>{item.name}</div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 700 }}>{formatMoney(item.value, { style: 'full' })}</div>
       <div style={{ color: 'var(--tooltip-dim)', marginBottom: item.subItems?.length ? 6 : 0 }}>
-        {percentage} of total allocated
+        {percentage}  {i18n.t('ui.allocationchartsTooltips.ofTotalAllocated')}
       </div>
       {item.subItems?.map((subItem) => <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />)}
     </TooltipBox>

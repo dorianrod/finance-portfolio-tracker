@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -19,7 +20,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
-      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">IRR over time (trailing, annualised)<ScopedInfoTooltip text="Annualized money-weighted return calculated over rolling fixed windows at each historical date." scope={{ account: 'filterable', period: 'range' }} /></h2>
+      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.trichart.irrOverTimeTrailingAnnualised')}<ScopedInfoTooltip text={i18n.t('ui.trichart.annualizedMoneyWeightedReturnCalculatedOverRollingFixedWindows')} scope={{ account: 'filterable', period: 'range' }} /></h2>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
@@ -34,8 +35,8 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
         </LineChart>
       </ResponsiveContainer>
       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.totalChange }} />Trailing 1-year IRR</span>
-        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />Trailing 3-year IRR</span>
+        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.totalChange }} />{i18n.t('ui.trichart.trailing1YearIrr')}</span>
+        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />{i18n.t('ui.trichart.trailing3YearIrr')}</span>
       </div>
     </div>
   )

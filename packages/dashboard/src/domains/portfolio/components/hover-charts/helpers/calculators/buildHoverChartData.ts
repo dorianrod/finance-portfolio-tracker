@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { HistoryPoint } from '@/domains/portfolio/apis/queries/usePositionsHistory'
 
 
@@ -81,7 +82,7 @@ export function computeRollingReturns(series: Array<{ date: string; 'Unit price'
     if (ref != null && ref !== 0) rows.push({ label: lbl, pct: (current / ref - 1) * 100 })
   }
   const first = series[0]?.['Unit price']
-  if (idx > 0 && first != null && first !== 0) rows.push({ label: 'Since start', pct: (current / first - 1) * 100 })
+  if (idx > 0 && first != null && first !== 0) rows.push({ label: i18n.t('ui.buildhoverchartdataTs.sinceStart'), pct: (current / first - 1) * 100 })
 
   return rows
 }

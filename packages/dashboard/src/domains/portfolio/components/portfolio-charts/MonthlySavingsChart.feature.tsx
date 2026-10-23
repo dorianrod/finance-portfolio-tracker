@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { ComposedChart, Bar, Line, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -17,7 +18,7 @@ export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacit
   const formatMoney = useFormatMoney()
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Monthly wealth drivers<ScopedInfoTooltip text="Monthly net contributions and market performance, with a rolling view of saving capacity." scope={{ account: 'filterable', period: 'range-or-trailing-12m' }} /></h2>
+      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.monthlysavingschart.monthlyWealthDrivers')}<ScopedInfoTooltip text={i18n.t('ui.monthlysavingschart.monthlyNetContributionsAndMarketPerformanceWithARolling')} scope={{ account: 'filterable', period: 'range-or-trailing-12m' }} /></h2>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart data={data} margin={{ top: 4, right: 52, left: 0, bottom: 0 }} barGap={2}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
@@ -36,31 +37,31 @@ export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacit
       </ResponsiveContainer>
       <div className="mt-3 grid grid-cols-2 gap-5 border-t border-gray-800 pt-3 text-xs text-gray-500">
         <div>
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-600">Monthly bars</div>
+          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-600">{i18n.t('ui.monthlysavingschart.monthlyBars')}</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} aria-hidden="true" />
-              <span>Net contributions</span>
+              <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-3 overflow-hidden rounded-sm" aria-hidden="true">
                 <i className="h-full w-1/2" style={{ backgroundColor: SEMANTIC_COLORS.performancePositive }} />
                 <i className="h-full w-1/2" style={{ backgroundColor: SEMANTIC_COLORS.performanceNegative }} />
               </span>
-              <span>Market performance</span>
+              <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
             </div>
           </div>
         </div>
         <div>
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-600">Trailing 12m lines</div>
+          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-600">{i18n.t('ui.monthlysavingschart.trailing12mLines')}</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <span className="h-0.5 w-4" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} aria-hidden="true" />
-              <span>Net contributions</span>
+              <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-0.5 w-4" style={{ backgroundColor: SEMANTIC_COLORS.performance }} aria-hidden="true" />
-              <span>Market performance</span>
+              <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
             </div>
           </div>
         </div>

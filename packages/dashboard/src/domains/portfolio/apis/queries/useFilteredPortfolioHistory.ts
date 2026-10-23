@@ -1,4 +1,5 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
+import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { rawAccountId } from '@/domains/portfolio/helpers/filters/accountFilter'
@@ -117,7 +118,7 @@ export async function requestFilteredPortfolioHistory(
     const fixture = await readResponse(await fetchImpl(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }))
     const fixtureAccounts = normalizeAccountSelection(fixture.accounts)
     if (!sameAccounts(normalized, fixtureAccounts)) {
-      throw new DemoScopeUnavailableError('Filtered IRR is available in the local dashboard for this selection.')
+      throw new DemoScopeUnavailableError(i18n.t('ui.usefilteredportfoliohistory.localDashboardOnly'))
     }
     return fixture
   }

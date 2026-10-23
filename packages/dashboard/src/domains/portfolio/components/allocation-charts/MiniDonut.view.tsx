@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
-import { groupAllocationTail } from './helpers/presenters/groupAllocationTail'
+import { formatGroupedAllocationLabel, groupAllocationTail } from './helpers/presenters/groupAllocationTail'
 import { PieTooltip } from './allocationCharts.tooltips.view'
 import type { PieEntry } from './allocationCharts.types'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -29,7 +29,7 @@ export function MiniDonut({ title, point }: { title: string; point: AllocationPo
   const data: PieEntry[] = [
     ...main.map((c) => ({ ...c, total })),
     ...(grouped.length > 1
-      ? [{ name: `others (${grouped.length})`, value: groupedTotal, total, subItems: grouped }]
+      ? [{ name: formatGroupedAllocationLabel(grouped.length), value: groupedTotal, total, subItems: grouped }]
       : []),
   ]
   return (

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useAtomValue } from 'jotai'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -5,7 +6,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { catColor } from '@/shared/theme/chartColors'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
-import { groupAllocationTail } from './helpers/presenters/groupAllocationTail'
+import { formatGroupedAllocationLabel, groupAllocationTail } from './helpers/presenters/groupAllocationTail'
 import { PieTooltip } from './allocationCharts.tooltips.view'
 import { PieLabel } from './PieLabel.view'
 import { PositionsToggle } from './PositionsToggle.view'
@@ -59,7 +60,7 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
   const data: PieEntry[] = [
     ...main.map((c) => ({ ...c, total })),
     ...(grouped.length > 1
-      ? [{ name: `others (${grouped.length})`, value: groupedTotal, total, subItems: grouped }]
+      ? [{ name: formatGroupedAllocationLabel(grouped.length), value: groupedTotal, total, subItems: grouped }]
       : []),
   ]
 
@@ -69,14 +70,14 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-1 flex items-start justify-between gap-3">
         {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the chart copy and scope passed to the tooltip feature adapter. */}
-        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={`Portfolio allocation by ${title.toLowerCase()} at the displayed snapshot.`} scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }} /></h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={i18n.t('ui.donutcard.portfolioAllocationByValue0AtTheDisplayedSnapshot', { value0: title.toLowerCase() })} scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }} /></h2>
         <div className="flex shrink-0 items-center gap-2">
           <span className="text-xs text-gray-600">{dateLabel}</span>
           {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
         </div>
       </div>
-      <div className="text-xs text-gray-500 mb-1">Allocated: {formatMoney(total, { style: 'full' })}</div>
-      <div className="text-xs text-gray-600 mb-2">Click a segment to filter</div>
+      <div className="text-xs text-gray-500 mb-1">{i18n.t('ui.donutcard.allocated')} {formatMoney(total, { style: 'full' })}</div>
+      <div className="text-xs text-gray-600 mb-2">{i18n.t('ui.donutcard.clickASegmentToFilter')}</div>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie

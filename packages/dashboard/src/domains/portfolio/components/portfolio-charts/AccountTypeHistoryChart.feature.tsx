@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useMemo, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -35,7 +36,7 @@ export function AccountTypeHistoryChart({
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-gray-400">Account type over time<ScopedInfoTooltip text="Evolution of portfolio value by account type, shown as amounts or portfolio shares." scope={{ account: 'filterable', period: 'range' }} /></h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.accounttypehistorychart.accountTypeOverTime')}<ScopedInfoTooltip text={i18n.t('ui.accounttypehistorychart.evolutionOfPortfolioValueByAccountTypeShownAs')} scope={{ account: 'filterable', period: 'range' }} /></h2>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={220}>

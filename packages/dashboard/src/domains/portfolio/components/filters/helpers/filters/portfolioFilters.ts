@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { accountFilterId } from '@/domains/portfolio/helpers/filters/accountFilter'
 
 import type { PositionRow } from '@/domains/portfolio/types/domain'
@@ -64,12 +65,12 @@ export interface FilterVisibility {
 }
 
 const OP_LABELS: Record<string, string> = {
-  BUY: 'Buy',
-  SELL: 'Sell',
-  DIVIDEND: 'Dividend',
-  INTEREST: 'Interest',
-  DEPOSIT: 'Deposit',
-  WITHDRAWAL: 'Withdrawal',
+  BUY: i18n.t('ui.portfoliofilters.buy'),
+  SELL: i18n.t('ui.portfoliofilters.sell'),
+  DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
+  INTEREST: i18n.t('ui.portfoliofilters.interest'),
+  DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
+  WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
 }
 
 export function filterVisibilityForTab(
@@ -94,13 +95,16 @@ export function filterSummaries(
     const account = [...filters.accounts][0]
     summaries.push({ key: 'accounts', label: accountLabel(account, accountLabels) })
   } else if (filters.accounts.size > 1) {
-    summaries.push({ key: 'accounts', label: `${filters.accounts.size} accounts` })
+    summaries.push({ key: 'accounts', label: i18n.t('ui.portfoliofiltersTs.value0Accounts', { value0: filters.accounts.size }) })
   }
 
   if (visibility.showPeriod && (filters.dateFrom || filters.dateTo)) {
-    let label = `Until ${filters.dateTo}`
-    if (filters.dateFrom && filters.dateTo) label = `${filters.dateFrom} → ${filters.dateTo}`
-    else if (filters.dateFrom) label = `Since ${filters.dateFrom}`
+    let label = i18n.t('ui.portfoliofilters.untilDate', { date: filters.dateTo })
+    if (filters.dateFrom && filters.dateTo) {
+      label = i18n.t('ui.portfoliofilters.dateRange', { from: filters.dateFrom, to: filters.dateTo })
+    } else if (filters.dateFrom) {
+      label = i18n.t('ui.portfoliofilters.sinceDate', { date: filters.dateFrom })
+    }
     summaries.push({ key: 'period', label })
   }
 
@@ -108,11 +112,11 @@ export function filterSummaries(
     const operation = [...filters.operationTypes][0]
     summaries.push({ key: 'operations', label: OP_LABELS[operation] ?? operation })
   } else if (visibility.showPositionFilters && filters.operationTypes.size > 1) {
-    summaries.push({ key: 'operations', label: `${filters.operationTypes.size} operation types` })
+    summaries.push({ key: 'operations', label: i18n.t('ui.portfoliofiltersTs.value0OperationTypes', { value0: filters.operationTypes.size }) })
   }
 
   if (visibility.showPositionFilters && !filters.hideClosedPositions) {
-    summaries.push({ key: 'closed-positions', label: 'Closed positions included' })
+    summaries.push({ key: 'closed-positions', label: i18n.t('ui.portfoliofiltersTs.closedPositionsIncluded') })
   }
 
   return summaries

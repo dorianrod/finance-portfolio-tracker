@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import i18n from '@/i18n/i18n'
 import { useQuery } from '@tanstack/react-query'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/apis/queryKeys'
@@ -107,7 +108,7 @@ export function useAssetIrr(
     return {
       summary: unavailable,
       loading: false,
-      error: 'Asset IRR is available in the local dashboard.',
+      error: i18n.t('ui.useassetirr.localDashboardOnly'),
     }
   }
 

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -22,10 +23,10 @@ import type { ManualPriceOverride } from '@/domains/portfolio/apis/queries/useMa
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/types/quality'
 
 export const DATA_QUALITY_DIMENSION_LABELS = {
-  geo: 'geography',
-  secteur: 'sector',
-  currency: 'currency',
-  classe: 'asset class',
+  geo: i18n.t('ui.builddataqualityviewmodel.geography'),
+  secteur: i18n.t('ui.builddataqualityviewmodel.sector'),
+  currency: i18n.t('ui.builddataqualityviewmodel.currency'),
+  classe: i18n.t('ui.builddataqualityviewmodel.assetClass'),
 } as const
 
 export type DataQualityDimension = keyof typeof DATA_QUALITY_DIMENSION_LABELS
@@ -177,28 +178,32 @@ export function buildDataQualityViewModel({
   }
 
   let classificationMetric = formatPercentage(classificationGap)
-  let classificationMetricLabel = 'unmapped'
+  let classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.unmapped')
   let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap) ? 'warning' : 'healthy'
   let classificationPriority = hasMaterialQualityGap(classificationGap) ? 500 + classificationGap : 0
   if (rawData.loading) {
     classificationMetric = '—'
-    classificationMetricLabel = 'loading'
+    classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.loading')
     classificationTone = 'unavailable'
     classificationPriority = -1
   } else if (classificationIsNotApplicable) {
-    classificationMetric = 'N/A'
-    classificationMetricLabel = 'not applicable'
+    classificationMetric = i18n.t('ui.builddataqualityviewmodel.notApplicableShort')
+    classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.notApplicable')
     classificationTone = 'unavailable'
     classificationPriority = -1
   }
 
-  let lookThroughMetric = scopedFundData.report ? 'N/A' : '—'
-  let lookThroughMetricLabel = scopedFundData.report ? 'not applicable' : 'not available'
+  let lookThroughMetric = scopedFundData.report
+    ? i18n.t('ui.builddataqualityviewmodel.notApplicableShort')
+    : '—'
+  let lookThroughMetricLabel = scopedFundData.report
+    ? i18n.t('ui.builddataqualityviewmodel.notApplicable')
+    : i18n.t('ui.builddataqualityviewmodel.notAvailable')
   let lookThroughTone: QualityTone = 'unavailable'
   let lookThroughPriority = -1
   if (hasLookThroughScope) {
     lookThroughMetric = formatPercentage(unresolvedPct)
-    lookThroughMetricLabel = 'unresolved'
+    lookThroughMetricLabel = i18n.t('ui.builddataqualityviewmodel.unresolved')
     if (fundErrorCount > 0) {
       lookThroughTone = 'critical'
       lookThroughPriority = 900 + fundErrorCount
@@ -214,26 +219,28 @@ export function buildDataQualityViewModel({
   const themes: QualityTheme[] = [
     {
       id: 'pipeline',
-      label: 'Portfolio data',
-      description: 'Import, position and market-data anomalies detected during the latest run.',
+      label: i18n.t('ui.builddataqualityviewmodelTs.portfolioData'),
+      description: i18n.t('ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe'),
       metric: String(errors.length),
-      metricLabel: errors.length === 1 ? 'anomaly' : 'anomalies',
+      metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', { count: errors.length }),
       tone: pipelineTone,
       priority: pipelinePriority,
     },
     {
       id: 'prices',
-      label: 'Manual prices',
-      description: 'Overrides that replace automatic market prices.',
+      label: i18n.t('ui.builddataqualityviewmodelTs.manualPrices'),
+      description: i18n.t('ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices'),
       metric: String(manualPriceOverrides.length),
-      metricLabel: manualPriceOverrides.length === 1 ? 'override' : 'overrides',
+      metricLabel: i18n.t('ui.builddataqualityviewmodel.overrideLabel', {
+        count: manualPriceOverrides.length,
+      }),
       tone: manualPriceOverrides.length > 0 ? 'warning' : 'healthy',
       priority: manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
     },
     {
       id: 'classification',
-      label: 'Diversification',
-      description: 'Completeness of asset class, geography, sector and currency data.',
+      label: i18n.t('ui.builddataqualityviewmodelTs.diversification'),
+      description: i18n.t('ui.builddataqualityviewmodelTs.completenessOfAssetClassGeographySectorAndCurrencyData'),
       metric: classificationMetric,
       metricLabel: classificationMetricLabel,
       tone: classificationTone,
@@ -241,8 +248,8 @@ export function buildDataQualityViewModel({
     },
     {
       id: 'lookthrough',
-      label: 'Underlying exposure',
-      description: 'Transparency and source reliability of underlying fund exposures.',
+      label: i18n.t('ui.builddataqualityviewmodelTs.underlyingExposure'),
+      description: i18n.t('ui.builddataqualityviewmodelTs.transparencyAndSourceReliabilityOfUnderlyingFundExposures'),
       metric: lookThroughMetric,
       metricLabel: lookThroughMetricLabel,
       tone: lookThroughTone,

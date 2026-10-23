@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { SegmentedControl, SegmentedControlItem } from '@/shared/ui/SegmentedControl.view'
 
 export type ConcentrationMode = 'held' | 'lookThrough'
@@ -12,23 +13,25 @@ export function ConcentrationModeToggle({
   lookThroughDisabled?: boolean
 }) {
   return (
-    <SegmentedControl label="Concentration method" density="compact" className="shrink-0">
+    <SegmentedControl label={i18n.t('ui.concentrationmodetoggle.concentrationMethod')} density="compact" className="shrink-0">
       <SegmentedControlItem
         active={value === 'held'}
         size="compact"
         onClick={() => onChange('held')}
-        title="Assets effectively held, at the allocation-file level"
+        title={i18n.t('ui.concentrationmodetoggle.assetsEffectivelyHeldAtTheAllocationFileLevel')}
       >
-        Held positions
+
+        {i18n.t('ui.concentrationmodetoggle.heldPositions')}
       </SegmentedControlItem>
       <SegmentedControlItem
         active={value === 'lookThrough'}
         size="compact"
         onClick={() => onChange('lookThrough')}
         disabled={lookThroughDisabled}
-        title={lookThroughDisabled ? 'Historical underlying holdings are unavailable' : 'Assets held directly and through funds'}
+        title={lookThroughDisabled ? i18n.t('ui.concentrationmodetoggle.historicalUnderlyingHoldingsAreUnavailable') : i18n.t('ui.concentrationmodetoggle.assetsHeldDirectlyAndThroughFunds')}
       >
-        Underlying assets
+
+        {i18n.t('ui.concentrationmodetoggle.underlyingAssets')}
       </SegmentedControlItem>
     </SegmentedControl>
   )

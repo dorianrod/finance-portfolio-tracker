@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
 import {
   ResponsiveContainer, AreaChart, Area, LineChart, Line,
@@ -47,12 +48,12 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
         <p className="text-gray-500 text-xs font-mono">{target.isin}</p>
       </div>
 
-      {!history && <p className="text-gray-400 text-xs py-4 text-center">Loading…</p>}
+      {!history && <p className="text-gray-400 text-xs py-4 text-center">{i18n.t('ui.hoverchart.loading')}</p>}
 
       {displayedChartData && (
         <>
           {/* Chart 1: position value */}
-          <p className="text-gray-400 text-xs mb-1">Position value</p>
+          <p className="text-gray-400 text-xs mb-1">{i18n.t('ui.hoverchart.positionValue')}</p>
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={displayedChartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
               <defs>
@@ -74,14 +75,14 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
 
           {/* legend markers */}
           <div className="flex gap-4 text-xs text-gray-500 mt-1 mb-3 ml-2">
-            <span><span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.transactionBuy }} />Buy</span>
-            <span><span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.transactionSell }} />Sell</span>
+            <span><span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.transactionBuy }} />{i18n.t('ui.hoverchart.buy')}</span>
+            <span><span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.transactionSell }} />{i18n.t('ui.hoverchart.sell')}</span>
           </div>
 
           {/* Chart 2: unit price — only when real market data is available */}
           {showUnitPrice && (
             <>
-              <p className="text-gray-400 text-xs mb-1">Unit price</p>
+              <p className="text-gray-400 text-xs mb-1">{i18n.t('ui.hoverchart.unitPrice')}</p>
               <ResponsiveContainer width="100%" height={160}>
                 <LineChart data={displayedChartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />

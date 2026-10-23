@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import {
   Bar,
@@ -38,7 +39,7 @@ function ValueTooltip({ active, payload }: {
     <TooltipBox minWidth={190}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{formatDate(point.timestamp, { style: 'dayMonthYear', timeZone: 'UTC' })}</div>
       <div className="mt-1 tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{formatMoney(point.value)}</div>
-      <div className="mt-1 text-xs capitalize" style={{ color: 'var(--tooltip-dim)' }}>{point.window} period</div>
+      <div className="mt-1 text-xs capitalize" style={{ color: 'var(--tooltip-dim)' }}>{point.window}  {i18n.t('ui.overviewcharts.period')}</div>
     </TooltipBox>
   )
 }
@@ -53,7 +54,7 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
     currentValue: point.window === 'current' ? point.value : null,
   }))
   if (chartData.length === 0) {
-    return <EmptyChart title="Portfolio value" message="No value history is available for these periods." scope={{ account: 'filterable', period: 'comparison-range' }} />
+    return <EmptyChart title={i18n.t('ui.overviewcharts.portfolioValue')} message={i18n.t('ui.overviewcharts.noValueHistoryIsAvailableForThesePeriods')} scope={{ account: 'filterable', period: 'comparison-range' }} />
   }
   const domain: [number, number] = [toUtcDateTimestamp(comparison.windows.previous.start), toUtcDateTimestamp(comparison.windows.current.end)]
   const currentStart = toUtcDateTimestamp(comparison.windows.current.start)
@@ -62,12 +63,12 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4 xl:col-span-2">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="flex items-center text-sm font-semibold text-gray-200">Portfolio value<ScopedInfoTooltip text="Gross market value across the previous and current periods." scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
-          <p className="mt-0.5 text-xs text-gray-600">Gross market value across the previous and current periods.</p>
+          <h3 className="flex items-center text-sm font-semibold text-gray-200">{i18n.t('ui.overviewcharts.portfolioValue')}<ScopedInfoTooltip text={i18n.t('ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods')} scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
+          <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods')}</p>
         </div>
         <div className="flex items-center gap-3 text-[11px] text-gray-500">
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-gray-600" />Previous</span>
-          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-cyan-400" />Current</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-gray-600" />{i18n.t('ui.overviewcharts.previous')}</span>
+          <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-cyan-400" />{i18n.t('ui.overviewcharts.current')}</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={250}>
@@ -115,9 +116,9 @@ function DriversTooltip({ active, payload }: {
     <TooltipBox minWidth={205}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{row.label}</div>
       <div className="mt-2 space-y-1 text-xs">
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Current</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null ? 'Unavailable' : formatMoney(row.current)}</span></div>
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>Previous</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.previous == null ? 'Unavailable' : formatMoney(row.previous)}</span></div>
-        <div className="flex justify-between gap-6 border-t pt-1" style={{ color: 'var(--tooltip-dim)', borderColor: 'var(--tooltip-border)' }}><span>Difference</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null || row.previous == null ? 'Unavailable' : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}</span></div>
+        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>{i18n.t('ui.overviewcharts.current')}</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null ? i18n.t('ui.overviewcharts.unavailable') : formatMoney(row.current)}</span></div>
+        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}><span>{i18n.t('ui.overviewcharts.previous')}</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.previous == null ? i18n.t('ui.overviewcharts.unavailable') : formatMoney(row.previous)}</span></div>
+        <div className="flex justify-between gap-6 border-t pt-1" style={{ color: 'var(--tooltip-dim)', borderColor: 'var(--tooltip-border)' }}><span>{i18n.t('ui.overviewcharts.difference')}</span><span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>{row.current == null || row.previous == null ? i18n.t('ui.overviewcharts.unavailable') : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}</span></div>
       </div>
     </TooltipBox>
   )
@@ -127,13 +128,13 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
   const formatMoney = useFormatMoney()
   const rows: DriverRow[] = [
     {
-      label: 'Net contributions',
+      label: i18n.t('ui.overviewcharts.netContributions'),
       previous: comparison.contributions.previous,
       current: comparison.contributions.current,
       color: SEMANTIC_COLORS.netContributions,
     },
     {
-      label: 'Market performance',
+      label: i18n.t('ui.overviewcharts.marketPerformance'),
       previous: comparison.marketPerformance.previous,
       current: comparison.marketPerformance.current,
       color: comparison.marketPerformance.current != null && comparison.marketPerformance.current < 0
@@ -142,7 +143,7 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
     },
   ]
   const unavailable = comparison.contributions.current == null && comparison.marketPerformance.current == null
-  if (unavailable) return <EmptyChart title="Change drivers" message="No cash-flow history is available for this period." scope={{ account: 'filterable', period: 'comparison-range' }} />
+  if (unavailable) return <EmptyChart title={i18n.t('ui.overviewcharts.changeDrivers')} message={i18n.t('ui.overviewcharts.noCashFlowHistoryIsAvailableForThisPeriod')} scope={{ account: 'filterable', period: 'comparison-range' }} />
   const currentChange = comparison.contributions.current == null || comparison.marketPerformance.current == null
     ? null
     : comparison.contributions.current + comparison.marketPerformance.current
@@ -153,12 +154,12 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
   return (
     <section className="rounded-2xl border border-gray-800 bg-gray-900 p-4">
       <div className="mb-2">
-        <h3 className="flex items-center text-sm font-semibold text-gray-200">Change drivers<ScopedInfoTooltip text="Gross movement from contributions and market performance." scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
-        <p className="mt-0.5 text-xs text-gray-600">Gross movement from contributions and market performance.</p>
+        <h3 className="flex items-center text-sm font-semibold text-gray-200">{i18n.t('ui.overviewcharts.changeDrivers')}<ScopedInfoTooltip text={i18n.t('ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance')} scope={{ account: 'filterable', period: 'comparison-range' }} /></h3>
+        <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance')}</p>
       </div>
       <div className="mb-2 flex items-baseline justify-between gap-3 rounded-lg bg-gray-950/45 px-3 py-2">
-        <span className="text-[11px] text-gray-600">Gross value change</span>
-        <span className="text-sm font-semibold tabular-nums text-gray-200">{currentChange == null ? '—' : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`} <span className="ml-1 text-[10px] font-normal text-gray-600">vs {previousChange == null ? 'Unavailable' : formatMoney(previousChange)}</span></span>
+        <span className="text-[11px] text-gray-600">{i18n.t('ui.overviewcharts.grossValueChange')}</span>
+        <span className="text-sm font-semibold tabular-nums text-gray-200">{currentChange == null ? '—' : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`} <span className="ml-1 text-[10px] font-normal text-gray-600">{i18n.t('ui.overviewcharts.vs')} {previousChange == null ? i18n.t('ui.overviewcharts.unavailable') : formatMoney(previousChange)}</span></span>
       </div>
       <ResponsiveContainer width="100%" height={190}>
         <BarChart data={rows} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} barGap={3}>
@@ -167,8 +168,8 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
           <YAxis tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} width={48} />
           <ReferenceLine y={0} stroke={CHART_THEME.zeroLine} />
           <Tooltip content={<DriversTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
-          <Bar dataKey="previous" name="Previous" fill={SEMANTIC_COLORS.neutralSeries} fillOpacity={0.45} radius={[3, 3, 0, 0]} isAnimationActive={false} />
-          <Bar dataKey="current" name="Current" radius={[3, 3, 0, 0]} isAnimationActive={false}>
+          <Bar dataKey="previous" name={i18n.t('ui.overviewcharts.previous')} fill={SEMANTIC_COLORS.neutralSeries} fillOpacity={0.45} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+          <Bar dataKey="current" name={i18n.t('ui.overviewcharts.current')} radius={[3, 3, 0, 0]} isAnimationActive={false}>
             {rows.map((row) => <Cell key={row.label} fill={row.color} />)}
           </Bar>
         </BarChart>
@@ -213,29 +214,29 @@ export function OverviewConcentrationChart({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="flex items-center text-sm font-semibold text-gray-200">
-            {displayedMode === 'lookThrough' ? 'Largest underlying assets' : 'Largest held positions'}
+            {displayedMode === 'lookThrough' ? i18n.t('ui.overviewcharts.largestUnderlyingAssets') : i18n.t('ui.overviewcharts.largestHeldPositions')}
             <ScopedInfoTooltip
               // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
-              text={displayedMode === 'lookThrough' ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.' : 'Products and instruments as held, including portfolio wrappers.'}
+              text={displayedMode === 'lookThrough' ? i18n.t('ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel') : i18n.t('ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers')}
               // eslint-disable-next-line local/no-prop-drilling -- This feature owns the effective concentration snapshot scope.
               scope={{ account: 'filterable', period: 'as-of', effectiveDate: concentration.current?.date }}
             />
           </h3>
           <p className="mt-0.5 text-xs text-gray-600">
             {displayedMode === 'lookThrough'
-              ? 'Direct and fund look-through exposure, avoiding wrapper-level concentration.'
-              : 'Products and instruments as held, including portfolio wrappers.'}
+              ? i18n.t('ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel')
+              : i18n.t('ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers')}
           </p>
         </div>
         <ConcentrationModeToggle value={displayedMode} onChange={setMode} lookThroughDisabled={lookThroughDisabled} />
       </div>
       {rows.length === 0 ? (
-        <div className="flex h-48 items-center justify-center text-center text-sm text-gray-600">Historical concentration is unavailable for this period.</div>
+        <div className="flex h-48 items-center justify-center text-center text-sm text-gray-600">{i18n.t('ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod')}</div>
       ) : (
         <div className="mt-5 space-y-4">
           {rows.map((row) => <OverviewConcentrationRow key={row.key} previousAvailable={previousAvailable} row={row} scaleMax={scaleMax} />)}
           <div className="flex items-center justify-end gap-1.5 pt-1 text-[10px] text-gray-600">
-            <span className="h-3 w-0.5 bg-gray-300" /> Previous period-end
+            <span className="h-3 w-0.5 bg-gray-300" />  {i18n.t('ui.overviewcharts.previousPeriodEnd')}
           </div>
         </div>
       )}
@@ -251,5 +252,5 @@ function OverviewConcentrationRow({ previousAvailable, row, scaleMax }: { previo
   let deltaTone = 'text-gray-600'
   if (delta != null && delta > 0) deltaTone = 'text-red-400'
   else if (delta != null && delta < 0) deltaTone = 'text-emerald-400'
-  return <div><div className="mb-1.5 flex items-center gap-3 text-xs"><span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span><span className="shrink-0 tabular-nums text-gray-300">{formatPercentage(row.weight)}</span><span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>{delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}</span></div><div className="relative h-2.5 rounded-full bg-gray-800"><div className="absolute inset-y-0 left-0 rounded-full bg-orange-500/80" style={{ width: `${row.weight / scaleMax * 100}%` }} />{previousAvailable && <span className="absolute -top-1 h-4 w-0.5 rounded-full bg-gray-300 shadow-[0_0_0_1px_var(--color-gray-900)]" style={{ left: `${(row.previousWeight ?? 0) / scaleMax * 100}%` }} title={`Previous: ${formatPercentage(row.previousWeight ?? 0)}`} />}</div></div>
+  return <div><div className="mb-1.5 flex items-center gap-3 text-xs"><span className="min-w-0 flex-1 truncate font-medium text-gray-300" title={row.name}>{row.label}</span><span className="shrink-0 tabular-nums text-gray-300">{formatPercentage(row.weight)}</span><span className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}>{delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}</span></div><div className="relative h-2.5 rounded-full bg-gray-800"><div className="absolute inset-y-0 left-0 rounded-full bg-orange-500/80" style={{ width: `${row.weight / scaleMax * 100}%` }} />{previousAvailable && <span className="absolute -top-1 h-4 w-0.5 rounded-full bg-gray-300 shadow-[0_0_0_1px_var(--color-gray-900)]" style={{ left: `${(row.previousWeight ?? 0) / scaleMax * 100}%` }} title={i18n.t('ui.overviewcharts.previousValue0', { value0: formatPercentage(row.previousWeight ?? 0) })} />}</div></div>
 }

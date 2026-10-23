@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTooltipPosition } from './helpers/presenters/useTooltipPosition'
@@ -29,7 +30,9 @@ export function ColHeader({ label, content }: Props) {
             event.currentTarget.blur()
           }
         }}
-        aria-label={`More information about ${label || 'this column'}`}
+        aria-label={i18n.t('ui.colheader.moreInformationAbout', {
+          column: label || i18n.t('ui.colheader.thisColumn'),
+        })}
         aria-describedby={visible ? tooltipId : undefined}
         aria-expanded={visible}
         className="grid size-5 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"

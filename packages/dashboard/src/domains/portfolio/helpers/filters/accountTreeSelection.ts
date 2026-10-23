@@ -1,4 +1,5 @@
 import { accountLabel } from '@/domains/portfolio/components/filters/helpers/filters/portfolioFilters'
+import i18n from '@/i18n/i18n'
 
 export function accountsForType(
   type: string,
@@ -47,7 +48,7 @@ export function buildAccountSelectionLabel({
   allAccounts: string[]
   selected: Set<string>
 }): string {
-  if (selected.size === 0) return 'All accounts'
+  if (selected.size === 0) return i18n.t('ui.accounttreeselection.allAccounts')
   const fullTypes = allAccountTypes.filter((type) => {
     const accounts = accountsForType(type, allAccounts, accountToType)
     return accountTypeSelectionState(accounts, selected).allSelected

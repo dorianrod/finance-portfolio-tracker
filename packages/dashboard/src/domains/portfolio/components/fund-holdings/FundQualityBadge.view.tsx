@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
@@ -17,10 +18,17 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
   const warning = status.validationStatus !== 'ok' || status.isStale
   const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
   const title = [
-    `${FUND_QUALITY_LABELS[category]} : ${sourceLabel}`,
-    status.sourceName || 'Aucune source',
-    `${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`,
-    status.holdingsDate ? `composition du ${status.holdingsDate}` : 'date de composition inconnue',
+    i18n.t('ui.fundqualitybadge.qualityAndSource', {
+      quality: FUND_QUALITY_LABELS[category],
+      source: sourceLabel,
+    }),
+    status.sourceName || i18n.t('ui.fundqualitybadge.noSource'),
+    i18n.t('ui.fundqualitybadge.explainedPercentage', {
+      percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
+    }),
+    status.holdingsDate
+      ? i18n.t('ui.fundqualitybadge.compositionDate', { date: status.holdingsDate })
+      : i18n.t('ui.fundqualitybadge.unknownCompositionDate'),
     status.issues,
   ].filter(Boolean).join(' · ')
   return (
@@ -30,7 +38,7 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
     >
       {FUND_QUALITY_LABELS[category]}
       <span className="font-normal opacity-80">{formatPercentage(status.explainedPct)}</span>
-      {warning && <span aria-label="Data warning">!</span>}
+      {warning && <span aria-label={i18n.t('ui.fundqualitybadge.dataWarning')}>!</span>}
     </span>
   )
 }

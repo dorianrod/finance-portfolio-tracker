@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -19,9 +20,9 @@ function DriversTooltip({ active, payload, label }: DriversTooltipProps) {
     <div className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-xs shadow-xl">
       <div className="mb-2 font-semibold text-white">{label}</div>
       <div className="space-y-1 text-gray-300">
-        <div className="flex justify-between gap-6"><span>Net contributions</span><span className="font-medium" style={{ color: SEMANTIC_COLORS.netContributionsText }}>{formatMoney(row.cumulative_savings, { style: 'full' })}</span></div>
-        <div className="flex justify-between gap-6"><span>Market performance</span><span className="font-medium" style={{ color: row.cumulative_performance >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>{formatMoney(row.cumulative_performance, { style: 'full' })}</span></div>
-        <div className="flex justify-between gap-6 border-t border-gray-700 pt-1"><span>Total change</span><span className="font-semibold text-white">{formatMoney(row.cumulative_change, { style: 'full' })}</span></div>
+        <div className="flex justify-between gap-6"><span>{i18n.t('ui.wealthdriverschart.netContributions')}</span><span className="font-medium" style={{ color: SEMANTIC_COLORS.netContributionsText }}>{formatMoney(row.cumulative_savings, { style: 'full' })}</span></div>
+        <div className="flex justify-between gap-6"><span>{i18n.t('ui.wealthdriverschart.marketPerformance')}</span><span className="font-medium" style={{ color: row.cumulative_performance >= 0 ? SEMANTIC_COLORS.performancePositiveText : SEMANTIC_COLORS.performanceNegativeText }}>{formatMoney(row.cumulative_performance, { style: 'full' })}</span></div>
+        <div className="flex justify-between gap-6 border-t border-gray-700 pt-1"><span>{i18n.t('ui.wealthdriverschart.totalChange')}</span><span className="font-semibold text-white">{formatMoney(row.cumulative_change, { style: 'full' })}</span></div>
       </div>
     </div>
   )
@@ -33,8 +34,8 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-gray-300">Cumulative wealth drivers<ScopedInfoTooltip text="How net contributions and market performance built the change over the selected period." scope={{ account: 'filterable', period: 'range' }} /></h2>
-        <p className="mt-0.5 text-xs text-gray-600">How net contributions and market performance built the change over the selected period.</p>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.wealthdriverschart.cumulativeWealthDrivers')}<ScopedInfoTooltip text={i18n.t('ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange')} scope={{ account: 'filterable', period: 'range' }} /></h2>
+        <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange')}</p>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
@@ -58,9 +59,9 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
         </ComposedChart>
       </ResponsiveContainer>
       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} />Net contributions</span>
-        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performance }} />Market performance</span>
-        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.totalChange }} />Total change</span>
+        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} />{i18n.t('ui.wealthdriverschart.netContributions')}</span>
+        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performance }} />{i18n.t('ui.wealthdriverschart.marketPerformance')}</span>
+        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.totalChange }} />{i18n.t('ui.wealthdriverschart.totalChange')}</span>
       </div>
     </div>
   )

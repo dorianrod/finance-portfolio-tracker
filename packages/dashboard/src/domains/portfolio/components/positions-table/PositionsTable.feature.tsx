@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import {
   useReactTable,
   getCoreRowModel,
@@ -113,7 +114,7 @@ function PositionBodyRow({ cancelHide, row, scheduleHide, separatorType, setAllo
     if (parent?.kind === 'position') savingsHandlers = { onMouseEnter: (event) => { cancelHide(); setChart(null); setAllocationHover(null); setUnderlyingPopover(null); setSavingsChart({ name: parent.name, operations: getPositionSavingsOperations(parent), buttonRect: event.currentTarget.getBoundingClientRect() }) }, onMouseLeave: scheduleHide }
   }
   const td = 'px-3 py-1.5 text-xs bg-gray-800 border-t-2 border-gray-600 border-b border-gray-700'
-  return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || 'Other'}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
+  return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || i18n.t('ui.positionstable.other')}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
 }
 
 export function PositionsTable({
@@ -150,7 +151,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'name',
-      header: 'Asset',
+      header: i18n.t('ui.positionstable.asset'),
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -161,7 +162,7 @@ export function PositionsTable({
               <span className="flex items-center gap-2">
                 <span className="font-medium text-white">{r.name}</span>
                 {r.status === 'closed' && (
-                  <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">Closed</span>
+                  <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">{i18n.t('ui.positionstable.closed')}</span>
                 )}
               </span>
               {hasIdentifier && (
@@ -194,7 +195,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'value',
-      header: () => <SortHeader label="Current value" tooltip="Market value of the position at the last known price: quantity held × last price. Shows — for closed positions." col="total_value" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.currentValue')} tooltip={i18n.t('ui.positionstable.marketValueOfThePositionAtTheLastKnown')} col="total_value" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -218,10 +219,11 @@ export function PositionsTable({
         if (r.kind === 'group' && r.total_invested != null) {
           return (
             <span className="text-xs text-gray-400 flex flex-col gap-0.5">
-              <span className="underline decoration-dashed decoration-gray-500 underline-offset-2">Invested: {formatMoney(r.total_invested)}</span>
+              <span className="underline decoration-dashed decoration-gray-500 underline-offset-2">{i18n.t('ui.positionstable.invested')} {formatMoney(r.total_invested)}</span>
               {r.avg_buy_price != null && (
                 <span className="text-gray-500">
-                  Avg price: {formatMoney(r.avg_buy_price, { style: 'decimal' })}
+
+                  {i18n.t('ui.positionstable.avgPrice')} {formatMoney(r.avg_buy_price, { style: 'decimal' })}
                   <span className="ml-1 opacity-40 text-[9px]">▲</span>
                 </span>
               )}
@@ -231,9 +233,9 @@ export function PositionsTable({
         if (r.kind === 'group' && r.label === 'Deposits / Withdrawals') {
           return (
             <span className="text-xs flex flex-col gap-0.5">
-              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>Deposited: {formatMoney(r.deposit_total ?? 0)}</span>
+              <span className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}>{i18n.t('ui.positionstable.deposited')} {formatMoney(r.deposit_total ?? 0)}</span>
               {(r.withdrawal_total ?? 0) > 0 && (
-                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>Withdrawn: {formatMoney(r.withdrawal_total ?? 0)}</span>
+                <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>{i18n.t('ui.positionstable.withdrawn')} {formatMoney(r.withdrawal_total ?? 0)}</span>
               )}
             </span>
           )
@@ -246,7 +248,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'breakdown',
-      header: () => <span title="Position-level allocation and underlying-exposure breakdowns.">Breakdown</span>,
+      header: () => <span title={i18n.t('ui.positionstable.positionLevelAllocationAndUnderlyingExposureBreakdowns')}>{i18n.t('ui.positionstable.breakdown')}</span>,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind !== 'position') return null
@@ -284,8 +286,8 @@ export function PositionsTable({
             {allocation && (
               <button
                 type="button"
-                aria-label={`View allocations for ${r.name}`}
-                title="View asset allocations"
+                aria-label={i18n.t('ui.positionstable.viewAllocationsForValue0', { value0: r.name })}
+                title={i18n.t('ui.positionstable.viewAssetAllocations')}
                 className="shrink-0 rounded p-1.5 text-gray-500 transition-colors hover:bg-gray-700 hover:text-blue-300 focus-visible:bg-gray-700 focus-visible:text-blue-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
                 onMouseEnter={(event) => showAllocation(event.currentTarget)}
                 onMouseLeave={scheduleHide}
@@ -322,7 +324,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'unrealized',
-      header: () => <SortHeader label="Unrealized P&L (gross)" tooltip="Gross unrealized gain/loss on the open position. Calculation: current value − cost basis. In small text: estimated tax on disposal at the configured rate (default 30%). Shows 'net' if rate = 0%." col="unrealized_gain" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.unrealizedPLGross')} tooltip={i18n.t('ui.positionstable.grossUnrealizedGainLossOnTheOpenPositionCalculation')} col="unrealized_gain" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -339,7 +341,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'realized',
-      header: () => <SortHeader label="Realized P&L (gross)" tooltip="Gross realized gains/losses on disposal. Calculation: sale proceeds − weighted average cost. In small text: estimated tax at the configured rate (default 30%). Shows 'net' if rate = 0%." col="realized_gain" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.realizedPLGross')} tooltip={i18n.t('ui.positionstable.grossRealizedGainsLossesOnDisposalCalculationSaleProceeds')} col="realized_gain" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -348,7 +350,7 @@ export function PositionsTable({
         if (r.kind === 'group' && r.label === 'Buys / Sells') {
           return (
             <span className="text-xs space-x-2">
-              <span className="text-gray-400">Sold: {formatMoney(r.total_sold ?? 0)}</span>
+              <span className="text-gray-400">{i18n.t('ui.positionstable.sold')} {formatMoney(r.total_sold ?? 0)}</span>
               <GainCell value={r.realized_pnl ?? null} />
             </span>
           )
@@ -361,7 +363,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'total_realized',
-      header: () => <SortHeader label="Total realized return" tooltip="Cash actually collected: realized gains on disposal + dividends/interest received. Excludes the unrealized value of the still-open position. Calculation: realized P&L + total dividends." col="total_realized_return" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.totalRealizedReturn')} tooltip={i18n.t('ui.positionstable.cashActuallyCollectedRealizedGainsOnDisposalDividendsInterest')} col="total_realized_return" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -374,7 +376,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'dividends',
-      header: () => <SortHeader label="Dividends / Interest" tooltip="Dividends received (stocks/ETFs) and interest received (bonds/cash), since the first purchase, across all accounts." col="total_dividends" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.dividendsInterest')} tooltip={i18n.t('ui.positionstable.dividendsReceivedStocksEtfsAndInterestReceivedBondsCash')} col="total_dividends" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
@@ -397,20 +399,20 @@ export function PositionsTable({
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
                 {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_dividends)}</span>}
-                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest)} int.</span>}
+                {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest)}  {i18n.t('ui.positionstable.int')}</span>}
               </span>
               {displayedDividendTax != null && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{formatMoney(-displayedDividendTax)} tax on div. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                  ~{formatMoney(-displayedDividendTax)}  {i18n.t('ui.positionstable.taxOnDiv')}{formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
               {displayedInterestTax != null && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{formatMoney(-displayedInterestTax)} tax on int. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                  ~{formatMoney(-displayedInterestTax)}  {i18n.t('ui.positionstable.taxOnInt')}{formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
               {isTaxFreePassiveIncome(r) && (
-                <span className="text-[10px] text-gray-500 mt-0.5">net (0% tax)</span>
+                <span className="text-[10px] text-gray-500 mt-0.5">{i18n.t('ui.positionstable.net0Tax')}</span>
               )}
             </span>
           )
@@ -419,7 +421,7 @@ export function PositionsTable({
           return (
             <span className="text-xs space-x-2">
               <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_dividends ?? 0)}</span>
-              <span className="text-gray-400">({r.dividend_count} payments, ~{formatMoney(r.annualized_dividends ?? 0)}/yr)</span>
+              <span className="text-gray-400">({r.dividend_count}  {i18n.t('ui.positionstable.payments')}{formatMoney(r.annualized_dividends ?? 0)}{i18n.t('ui.positionstable.yr')}</span>
             </span>
           )
         }
@@ -427,7 +429,7 @@ export function PositionsTable({
           return (
             <span className="text-xs space-x-2">
               <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest ?? 0)}</span>
-              <span className="text-gray-400">({r.interest_count} payments)</span>
+              <span className="text-gray-400">({r.interest_count}  {i18n.t('ui.positionstable.payments.137c46')}</span>
             </span>
           )
         }
@@ -442,7 +444,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'total_return_pct',
-      header: () => <SortHeader label="Total return" tooltip="Gross, non-annualized return across all sources. Calculation: (current value + sales + dividends − purchases) / purchases × 100. Includes the unrealized (open position), the realized (sales) and dividends. Does not account for the timing of cash flows." col="total_return_pct" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.totalReturn')} tooltip={i18n.t('ui.positionstable.grossNonAnnualizedReturnAcrossAllSourcesCalculationCurrent')} col="total_return_pct" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind !== 'position' || r.total_return_pct == null) return null
@@ -455,7 +457,7 @@ export function PositionsTable({
     }),
     col.display({
       id: 'xirr',
-      header: () => <SortHeader label="Annualized IRR" tooltip="Annualized Internal Rate of Return (XIRR). The main value is calculated since inception. The smaller value measures the trailing three years, using the position value at the start of that window as a fictitious outflow. If less than three years of history are available, it uses and labels the full available period instead. Purchases are outflows; sales, dividends and current value are inflows." col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
+      header: () => <SortHeader label={i18n.t('ui.positionstable.annualizedIrr')} tooltip={i18n.t('ui.positionstable.annualizedInternalRateOfReturnXirrTheMainValue')} col="xirr" activeKey={sortKey} dir={sortDir} onSort={onSort} />,
       cell: ({ row }) => {
         const r = row.original
         if (r.kind !== 'position' || (r.xirr == null && r.xirr_rolling_3y == null)) return null
@@ -464,13 +466,13 @@ export function PositionsTable({
             {r.xirr != null && (
               <span className={gainClass(r.xirr)}>
                 {formatPercentage(r.xirr, { decimals: 2, signed: true })}
-                <span className="ml-0.5 text-xs opacity-60">/yr</span>
+                <span className="ml-0.5 text-xs opacity-60">{i18n.t('ui.positionstable.yr.22ed45')}</span>
               </span>
             )}
             {r.xirr != null && (
               <span className="mt-0.5 text-[10px] text-gray-500">
                 {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
-                {r.xirr_rolling_3y == null ? '—' : `${formatPercentage(r.xirr_rolling_3y, { decimals: 2, signed: true })}/yr`}
+                {r.xirr_rolling_3y == null ? '—' : i18n.t('ui.positionstable.value0Yr', { value0: formatPercentage(r.xirr_rolling_3y, { decimals: 2, signed: true }) })}
               </span>
             )}
           </span>
@@ -515,9 +517,9 @@ export function PositionsTable({
     <section className={DATA_TABLE_STYLES.panel}>
       <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>All portfolio positions<ScopedInfoTooltip text="Positions are valued at period end. Expanded transaction and income amounts use the selected period." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
-          <p className={DATA_TABLE_STYLES.description}>Expand each position to review its transactions and income details.</p>
-          <p className="mt-1 text-[10px] text-gray-600">Transaction and income amounts use the selected period.</p>
+          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>{i18n.t('ui.positionstable.allPortfolioPositions')}<ScopedInfoTooltip text={i18n.t('ui.positionstable.positionsAreValuedAtPeriodEndExpandedTransactionAnd')} scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+          <p className={DATA_TABLE_STYLES.description}>{i18n.t('ui.positionstable.expandEachPositionToReviewItsTransactionsAndIncome')}</p>
+          <p className="mt-1 text-[10px] text-gray-600">{i18n.t('ui.positionstable.transactionAndIncomeAmountsUseTheSelectedPeriod')}</p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>
           <button
@@ -525,14 +527,16 @@ export function PositionsTable({
             onClick={() => table.toggleAllRowsExpanded(true)}
             className="flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-gray-300 transition-colors hover:border-gray-500 hover:text-white sm:flex-none"
           >
-            Expand all
+
+            {i18n.t('ui.positionstable.expandAll')}
           </button>
           <button
             type="button"
             onClick={() => table.toggleAllRowsExpanded(false)}
             className="flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-xs text-gray-300 transition-colors hover:border-gray-500 hover:text-white sm:flex-none"
           >
-            Collapse all
+
+            {i18n.t('ui.positionstable.collapseAll')}
           </button>
         </div>
       </div>
@@ -610,7 +614,11 @@ function UnderlyingStatusButton({
   const formatPercentage = useFormatPercentage()
   const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
   const label = FUND_QUALITY_LABELS[category]
-  const title = `${label} · ${sourceLabel} · ${formatPercentage(status.explainedPct, { unit: ' %' })} expliqué`
+  const title = i18n.t('ui.positionstable.fundQualitySummary', {
+    label,
+    source: sourceLabel,
+    percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
+  })
   const tone = {
     reliable: 'text-emerald-400 hover:bg-emerald-950/60 hover:text-emerald-300 focus-visible:ring-emerald-500',
     partial: 'text-amber-400 hover:bg-amber-950/60 hover:text-amber-300 focus-visible:ring-amber-500',
@@ -620,9 +628,13 @@ function UnderlyingStatusButton({
   return (
     <button
       type="button"
-      aria-label={`${title} pour ${assetName}. ${isOpen ? 'Masquer' : 'Afficher'} la composition.`}
+      aria-label={isOpen
+        ? i18n.t('ui.positionstable.hideCompositionForAsset', { title, assetName })
+        : i18n.t('ui.positionstable.showCompositionForAsset', { title, assetName })}
       aria-expanded={isOpen}
-      title={`${title} · ${isOpen ? 'Masquer' : 'Afficher'} la composition`}
+      title={isOpen
+        ? i18n.t('ui.positionstable.hideComposition', { title })
+        : i18n.t('ui.positionstable.showComposition', { title })}
       className={`rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 ${tone} ${isOpen ? 'bg-gray-800 ring-1 ring-current/40' : ''}`}
       onMouseEnter={(event) => onShow(event.currentTarget)}
       onMouseLeave={onHide}

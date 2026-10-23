@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
 import {
   ResponsiveContainer, AreaChart, Area,
@@ -47,7 +48,7 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
     >
       <div className="mb-3">
         <p className="text-white text-sm font-semibold">{target.name}</p>
-        <p className="text-gray-500 text-xs">Balance over time</p>
+        <p className="text-gray-500 text-xs">{i18n.t('ui.hoversavingschart.balanceOverTime')}</p>
       </div>
 
       {chartData.length > 0 && (

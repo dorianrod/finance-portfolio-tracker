@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { memo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
@@ -49,43 +50,43 @@ export function FundHoldingsExplorer({
     <section className={DATA_TABLE_STYLES.panel}>
       <div className={DATA_TABLE_STYLES.toolbar}>
         <div>
-          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>All identified economic exposure<ScopedInfoTooltip text="Underlying holdings grouped by issuer, with security and source-fund detail. Percentages use the whole selected portfolio." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
-          <p className={DATA_TABLE_STYLES.description}>Grouped by issuer, with security and source-fund detail underneath. Percentages use the whole selected portfolio.</p>
+          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>{i18n.t('ui.fundholdingsexplorer.allIdentifiedEconomicExposure')}<ScopedInfoTooltip text={i18n.t('ui.fundholdingsexplorer.underlyingHoldingsGroupedByIssuerWithSecurityAndSource')} scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+          <p className={DATA_TABLE_STYLES.description}>{i18n.t('ui.fundholdingsexplorer.groupedByIssuerWithSecurityAndSourceFundDetail')}</p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search issuer, security or fund"
-            aria-label="Search underlying exposure"
+            placeholder={i18n.t('ui.fundholdingsexplorer.searchIssuerSecurityOrFund')}
+            aria-label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
             className="min-w-0 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-200 outline-none focus:border-blue-600 sm:w-72"
           />
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as FundExposureSort)}
-            aria-label="Sort underlying exposure"
+            aria-label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
             className="rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-300"
           >
-            <option value="value">Largest first</option>
-            <option value="name">Name</option>
+            <option value="value">{i18n.t('ui.fundholdingsexplorer.largestFirst')}</option>
+            <option value="name">{i18n.t('ui.fundholdingsexplorer.name')}</option>
           </select>
         </div>
       </div>
       <div>
         <div>
           <div className={`${GRID} ${DATA_TABLE_STYLES.columnHeader} py-2`}>
-            <span>Issuer</span><span className="text-right">Exposure</span><span className="text-right">Portfolio</span><span>Sources</span>
+            <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span><span className="text-right">{i18n.t('ui.fundholdingsexplorer.exposure')}</span><span className="text-right">{i18n.t('ui.fundholdingsexplorer.portfolio')}</span><span>{i18n.t('ui.fundholdingsexplorer.sources')}</span>
           </div>
           <div ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>
             {virtualRows.map((virtualRow) => <VirtualExposureRow key={virtualRow.key} item={virtualRow.item} onToggle={toggleIssuer} row={virtualRow.row} scrollMargin={scrollMargin} />)}
           </div>
         </div>
-        {displayed.length === 0 && <p className="p-8 text-center text-sm text-gray-500">No exposure matches this search.</p>}
+        {displayed.length === 0 && <p className="p-8 text-center text-sm text-gray-500">{i18n.t('ui.fundholdingsexplorer.noExposureMatchesThisSearch')}</p>}
       </div>
       <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-gray-800 bg-gray-900 px-4 py-2 text-xs text-gray-400">
-        {formatNumber(displayed.length)} issuers · {formatNumber(securityCount)} securities
-        {displayed.length !== totalIssuerCount && <span className="text-gray-600"> (filtered from {formatNumber(totalIssuerCount)} issuers)</span>}
+        {formatNumber(displayed.length)}  {i18n.t('ui.fundholdingsexplorer.issuers')} {formatNumber(securityCount)}  {i18n.t('ui.fundholdingsexplorer.securities')}
+        {displayed.length !== totalIssuerCount && <span className="text-gray-600">  {i18n.t('ui.fundholdingsexplorer.filteredFrom')} {formatNumber(totalIssuerCount)}  {i18n.t('ui.fundholdingsexplorer.issuers.64f16f')}</span>}
       </div>
     </section>
   )
@@ -113,7 +114,7 @@ function SourcesCell({ sources, total, empty, className }: {
       onBlur={() => setAnchor(null)}
       className={`w-fit cursor-help truncate underline decoration-dotted decoration-gray-600 underline-offset-4 ${className}`}
     >
-      {sources.length} funds
+      {sources.length}  {i18n.t('ui.fundholdingsexplorer.funds')}
       {/* eslint-disable-next-line local/no-prop-drilling -- The co-located tooltip receives the cell's unchanged display data intentionally. */}
       {anchor && createPortal(<SourcesTooltip anchor={anchor} sources={sources} total={total} />, document.body)}
     </span>
@@ -138,7 +139,7 @@ function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: 
       style={{ left, width: TOOLTIP_WIDTH, ...position }}
       className="pointer-events-none fixed z-50 rounded-lg border border-gray-700 bg-gray-950 p-3 text-xs shadow-xl"
     >
-      <div className="mb-2 text-[10px] uppercase tracking-wider text-gray-500">Held through {sources.length} funds</div>
+      <div className="mb-2 text-[10px] uppercase tracking-wider text-gray-500">{i18n.t('ui.fundholdingsexplorer.heldThrough')} {sources.length}  {i18n.t('ui.fundholdingsexplorer.funds')}</div>
       <ul className="max-h-64 space-y-1 overflow-hidden">
         {sources.map((source) => <SourceTooltipRow key={source.fund} source={source} total={total} />)}
       </ul>
@@ -175,7 +176,7 @@ const IssuerRow = memo(function IssuerRow({ issuer, open, onToggle }: {
       </button>
       <span className="text-right font-medium tabular-nums text-gray-200">{formatMoney(issuer.value, { style: 'full' })}</span>
       <span className="text-right tabular-nums text-gray-400">{formatPercentage(issuer.weight, { decimals: 2 })}</span>
-      <SourcesCell sources={issuer.sources} total={issuer.value} empty="Direct" className="text-xs text-gray-500" />
+      <SourcesCell sources={issuer.sources} total={issuer.value} empty={i18n.t('ui.fundholdingsexplorer.direct')} className="text-xs text-gray-500" />
     </div>
   )
 })
@@ -189,8 +190,8 @@ const SecurityRow = memo(function SecurityRow({ security }: { security: Security
       <span className="text-right tabular-nums text-gray-400">{formatMoney(security.value, { style: 'full' })}</span>
       <span />
       {security.funds.length <= 1
-        ? <span className="truncate text-gray-500" title={single}>{single ?? 'Direct holding'}</span>
-        : <SourcesCell sources={security.sources} total={security.value} empty="Direct holding" className="text-gray-600" />}
+        ? <span className="truncate text-gray-500" title={single}>{single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}</span>
+        : <SourcesCell sources={security.sources} total={security.value} empty={i18n.t('ui.fundholdingsexplorer.directHolding')} className="text-gray-600" />}
     </div>
   )
 })

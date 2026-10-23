@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import {
   CartesianGrid,
@@ -43,9 +44,9 @@ export function CumulativeConcentrationChart({
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
         {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter. */}
-        <h2 className="flex items-center text-sm font-medium text-gray-300">Cumulative concentration<ScopedInfoTooltip text={description ?? 'Share of the applicable portfolio held in the largest N assets.'} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.cumulativeconcentrationchart.cumulativeConcentration')}<ScopedInfoTooltip text={description ?? i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
         <p className="mt-0.5 text-xs text-gray-600">
-          {description ?? 'Share of the applicable portfolio held in the largest N assets.'}
+          {description ?? i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')}
         </p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
@@ -94,7 +95,7 @@ export function CumulativeConcentrationChart({
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-1 text-center text-[11px] text-gray-600">Number of assets</div>
+      <div className="mt-1 text-center text-[11px] text-gray-600">{i18n.t('ui.cumulativeconcentrationchart.numberOfAssets')}</div>
     </div>
   )
 }

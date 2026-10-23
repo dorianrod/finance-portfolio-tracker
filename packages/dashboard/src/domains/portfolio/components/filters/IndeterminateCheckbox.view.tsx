@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useIndeterminateInput } from './helpers/presenters/useIndeterminateInput'
 
 // Needs a ref to set the DOM-only `indeterminate` property.
@@ -16,7 +17,7 @@ export function IndeterminateCheckbox({
       type="checkbox"
       checked={checked}
       onChange={onChange}
-      className={className ?? 'w-3.5 h-3.5 accent-blue-500 cursor-pointer'}
+      className={className ?? i18n.t('ui.indeterminatecheckbox.w35H35AccentBlue500')}
     />
   )
 }

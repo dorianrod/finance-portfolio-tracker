@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { SortKey } from '@/domains/portfolio/types/filters'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
 
@@ -6,8 +7,12 @@ export function SortHeader({ label, tooltip, col: sk, activeKey, dir, onSort }: 
   activeKey: SortKey; dir: 'asc' | 'desc'; onSort: (k: SortKey) => void
 }) {
   const active = activeKey === sk
-  let sortState = 'not sorted'
-  if (active) sortState = dir === 'desc' ? 'descending' : 'ascending'
+  let sortState = i18n.t('ui.sortheader.notSorted')
+  if (active) {
+    sortState = dir === 'desc'
+      ? i18n.t('ui.sortheader.descending')
+      : i18n.t('ui.sortheader.ascending')
+  }
   const sortIndicator = active
     ? { asc: '↑', desc: '↓' }[dir]
     : '⇅'
@@ -16,7 +21,7 @@ export function SortHeader({ label, tooltip, col: sk, activeKey, dir, onSort }: 
       <button
         type="button"
         onClick={() => onSort(sk)}
-        aria-label={`Sort by ${label}, currently ${sortState}`}
+        aria-label={i18n.t('ui.sortheader.sortByValue0CurrentlyValue1', { value0: label, value1: sortState })}
         className="rounded-control p-1 text-content-muted transition-colors hover:text-content-secondary"
       >
         {label}

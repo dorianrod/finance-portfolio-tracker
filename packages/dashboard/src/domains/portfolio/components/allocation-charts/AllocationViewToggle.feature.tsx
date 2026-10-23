@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useAtomValue } from 'jotai'
 import { useDashboardAllocationView } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardAllocationView'
 import { dashboardAllocationViewAtom } from '@/domains/portfolio/pages/dashboard/stores/dashboardAllocation.atoms'
@@ -10,18 +11,20 @@ export function AllocationViewToggle() {
   const { setAllocationView } = useDashboardAllocationView()
 
   return (
-    <SegmentedControl label="Diversification view">
+    <SegmentedControl label={i18n.t('ui.allocationviewtoggle.diversificationView')}>
       <SegmentedControlItem
         active={value === 'current'}
         onClick={() => setAllocationView('current')}
       >
-        Current
+
+        {i18n.t('ui.allocationviewtoggle.current')}
       </SegmentedControlItem>
       <SegmentedControlItem
         active={value === 'trend'}
         onClick={() => setAllocationView('trend')}
       >
-        Trend
+
+        {i18n.t('ui.allocationviewtoggle.trend')}
       </SegmentedControlItem>
     </SegmentedControl>
   )

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import type {
@@ -32,8 +33,8 @@ const FILTER_OPTIONS = ['issues', 'all', 'reliable', 'partial', 'unavailable'] a
 
 function DiagnosticsFilterButton({ activeFilter, onSelect, option }: { activeFilter: FundDiagnosticsFilter; onSelect: (filter: FundDiagnosticsFilter) => void; option: FundDiagnosticsFilter }) {
   let label: string = FUND_QUALITY_LABELS[option as keyof typeof FUND_QUALITY_LABELS]
-  if (option === 'issues') label = 'Issues'
-  else if (option === 'all') label = 'All'
+  if (option === 'issues') label = i18n.t('ui.funddataqualitypanel.issues')
+  else if (option === 'all') label = i18n.t('ui.funddataqualitypanel.all')
   return <button type="button" onClick={() => onSelect(option)} className={`rounded-lg border px-2.5 py-1 text-xs ${activeFilter === option ? 'border-blue-600 bg-blue-950/50 text-blue-200' : 'border-gray-700 text-gray-500 hover:text-gray-300'}`}>{label}</button>
 }
 
@@ -43,7 +44,7 @@ function SnapshotSourceLink({ url }: { url: string }) {
 
 function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
   const formatPercentage = useFormatPercentage()
-  return <div className="mt-2 border-t border-gray-800 pt-2"><div>{snapshot.snapshotId} · {snapshot.status}{snapshot.isActive ? ' · active' : ''}</div><div>{formatPercentage(snapshot.coveragePct)} · {snapshot.holdingCount} rows · {snapshot.ageDays} days</div>{snapshot.notes && <div className="mt-1 text-gray-400">{snapshot.notes}</div>}{snapshot.validationErrors && <div className="mt-1 text-red-300">{snapshot.validationErrors}</div>}{snapshot.sourceUrls.map((url) => <SnapshotSourceLink key={url} url={url} />)}{snapshot.evidencePath && <div className="mt-1 break-all font-mono text-[10px] text-gray-600">Evidence: {snapshot.evidencePath}</div>}</div>
+  return <div className="mt-2 border-t border-gray-800 pt-2"><div>{snapshot.snapshotId} · {snapshot.status}{snapshot.isActive ? i18n.t('ui.funddataqualitypanel.active') : ''}</div><div>{formatPercentage(snapshot.coveragePct)} · {snapshot.holdingCount}  {i18n.t('ui.funddataqualitypanel.rows')} {snapshot.ageDays}  {i18n.t('ui.funddataqualitypanel.days')}</div>{snapshot.notes && <div className="mt-1 text-gray-400">{snapshot.notes}</div>}{snapshot.validationErrors && <div className="mt-1 text-red-300">{snapshot.validationErrors}</div>}{snapshot.sourceUrls.map((url) => <SnapshotSourceLink key={url} url={url} />)}{snapshot.evidencePath && <div className="mt-1 break-all font-mono text-[10px] text-gray-600">{i18n.t('ui.funddataqualitypanel.evidence')} {snapshot.evidencePath}</div>}</div>
 }
 
 function UnresolvedDetail({ item }: { item: FundUnresolved }) {
@@ -65,7 +66,7 @@ function FundDiagnosticsRow({ expanded, onToggle, row }: { expanded: string | nu
   const formatPercentage = useFormatPercentage()
   const { holdings, snapshots, status, unresolved } = row
   const isOpen = expanded === status.parentId
-  return <Fragment><tr className="border-t border-gray-800 align-top"><td className="break-words px-4 py-3"><div className="font-medium text-gray-200">{status.parentName}</div><div className="mt-1 break-all font-mono text-[10px] text-gray-600">{status.parentIsin || status.parentTicker}</div></td><td className="px-4 py-3"><FundQualityBadge status={status} />{status.manualAttention && <div className="mt-2 w-fit rounded border border-amber-700/70 bg-amber-950/40 px-2 py-1 text-[10px] font-semibold text-amber-300">{status.sourceOrigin.startsWith('manual') ? 'Snapshot manuel' : 'Recherche agent'}</div>}</td><td className="break-words px-4 py-3"><a href={status.sourceUrl || undefined} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{status.sourceName || 'Unavailable'}</a><div className="mt-1 text-gray-600">{status.proxyName ? `Proxy exact : ${status.proxyName}` : fundQualitySourceLabel(status.qualityTier)}</div></td><td className="px-4 py-3 text-gray-400">{status.holdingsDate || 'Unknown'}<div className="mt-1 text-gray-600">{formatNumber(status.holdingCount)} rows · {status.refreshStreak} successful refreshes</div></td><td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.explainedPct)}<div className="mt-1 text-gray-600">{formatMoney(status.explainedValue, { style: 'full' })}</div></td><td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.residualPct)}<div className="mt-1 text-gray-600">{formatMoney(status.residualValue, { style: 'full' })}</div></td><td className={`break-words px-4 py-3 ${status.issues ? 'text-amber-300' : 'text-emerald-400'}`}>{status.issues || 'No detected issue'}</td><td className="px-4 py-3"><button type="button" onClick={() => onToggle(status.parentId)} className="rounded border border-gray-700 px-2 py-1 text-gray-300 hover:border-gray-500">{isOpen ? 'Close' : 'Details'}</button></td></tr>{isOpen && <tr className="border-t border-gray-800 bg-gray-950/50"><td colSpan={8} className="p-4"><div className="grid gap-4 lg:grid-cols-3"><DetailBlock title="Provenance & validation"><div>State: <span className="text-gray-200">{status.decompositionState}</span></div><div>Snapshot: <span className="font-mono text-gray-300">{status.snapshotId || 'none'}</span></div><div>Checksum: <span className="break-all font-mono text-[10px] text-gray-400">{status.checksumSha256 || 'not recorded'}</span></div>{snapshots.map((snapshot) => <SnapshotDetail key={snapshot.snapshotId} snapshot={snapshot} />)}</DetailBlock><DetailBlock title="Unresolved / research queue">{unresolved.length === 0 ? <div className="text-emerald-400">No unresolved branch.</div> : unresolved.map((item) => <UnresolvedDetail key={item.path} item={item} />)}</DetailBlock><DetailBlock title={`Resolved holdings (${holdings.length})`}>{holdings.slice(0, 20).map((holding) => <ResolvedHoldingDetail key={holding.lookthroughPath} holding={holding} />)}{holdings.length > 20 && <div className="mt-2">+ {holdings.length - 20} more rows</div>}</DetailBlock></div></td></tr>}</Fragment>
+  return <Fragment><tr className="border-t border-gray-800 align-top"><td className="break-words px-4 py-3"><div className="font-medium text-gray-200">{status.parentName}</div><div className="mt-1 break-all font-mono text-[10px] text-gray-600">{status.parentIsin || status.parentTicker}</div></td><td className="px-4 py-3"><FundQualityBadge status={status} />{status.manualAttention && <div className="mt-2 w-fit rounded border border-amber-700/70 bg-amber-950/40 px-2 py-1 text-[10px] font-semibold text-amber-300">{status.sourceOrigin.startsWith('manual') ? i18n.t('ui.funddataqualitypanel.snapshotManuel') : i18n.t('ui.funddataqualitypanel.rechercheAgent')}</div>}</td><td className="break-words px-4 py-3"><a href={status.sourceUrl || undefined} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{status.sourceName || i18n.t('ui.funddataqualitypanel.unavailable')}</a><div className="mt-1 text-gray-600">{status.proxyName ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', { value0: status.proxyName }) : fundQualitySourceLabel(status.qualityTier)}</div></td><td className="px-4 py-3 text-gray-400">{status.holdingsDate || i18n.t('ui.funddataqualitypanel.unknown')}<div className="mt-1 text-gray-600">{formatNumber(status.holdingCount)}  {i18n.t('ui.funddataqualitypanel.rows')} {status.refreshStreak}  {i18n.t('ui.funddataqualitypanel.successfulRefreshes')}</div></td><td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.explainedPct)}<div className="mt-1 text-gray-600">{formatMoney(status.explainedValue, { style: 'full' })}</div></td><td className="px-4 py-3 text-right tabular-nums text-gray-300">{formatPercentage(status.residualPct)}<div className="mt-1 text-gray-600">{formatMoney(status.residualValue, { style: 'full' })}</div></td><td className={`break-words px-4 py-3 ${status.issues ? 'text-amber-300' : 'text-emerald-400'}`}>{status.issues || i18n.t('ui.funddataqualitypanel.noDetectedIssue')}</td><td className="px-4 py-3"><button type="button" onClick={() => onToggle(status.parentId)} className="rounded border border-gray-700 px-2 py-1 text-gray-300 hover:border-gray-500">{isOpen ? i18n.t('ui.funddataqualitypanel.close') : i18n.t('ui.funddataqualitypanel.details')}</button></td></tr>{isOpen && <tr className="border-t border-gray-800 bg-gray-950/50"><td colSpan={8} className="p-4"><div className="grid gap-4 lg:grid-cols-3"><DetailBlock title={i18n.t('ui.funddataqualitypanel.provenanceValidation')}><div>{i18n.t('ui.funddataqualitypanel.state')} <span className="text-gray-200">{status.decompositionState}</span></div><div>{i18n.t('ui.funddataqualitypanel.snapshot')} <span className="font-mono text-gray-300">{status.snapshotId || i18n.t('ui.funddataqualitypanel.none')}</span></div><div>{i18n.t('ui.funddataqualitypanel.checksum')} <span className="break-all font-mono text-[10px] text-gray-400">{status.checksumSha256 || i18n.t('ui.funddataqualitypanel.notRecorded')}</span></div>{snapshots.map((snapshot) => <SnapshotDetail key={snapshot.snapshotId} snapshot={snapshot} />)}</DetailBlock><DetailBlock title={i18n.t('ui.funddataqualitypanel.unresolvedResearchQueue')}>{unresolved.length === 0 ? <div className="text-emerald-400">{i18n.t('ui.funddataqualitypanel.noUnresolvedBranch')}</div> : unresolved.map((item) => <UnresolvedDetail key={item.path} item={item} />)}</DetailBlock><DetailBlock title={i18n.t('ui.funddataqualitypanel.resolvedHoldingsValue0', { value0: holdings.length })}>{holdings.slice(0, 20).map((holding) => <ResolvedHoldingDetail key={holding.lookthroughPath} holding={holding} />)}{holdings.length > 20 && <div className="mt-2">+ {holdings.length - 20}  {i18n.t('ui.funddataqualitypanel.moreRows')}</div>}</DetailBlock></div></td></tr>}</Fragment>
 }
 
 export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved }: Props) {
@@ -80,15 +81,15 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
 
   return (
     <SidePanel
-      title="Fund data diagnostics"
-      description="Sorted by unexplained monetary impact. Manual and agent snapshots always require attention."
+      title={i18n.t('ui.funddataqualitypanel.fundDataDiagnostics')}
+      description={i18n.t('ui.funddataqualitypanel.sortedByUnexplainedMonetaryImpactManualAndAgentSnapshots')}
       onClose={closeFundDiagnostics}
-      closeLabel="Close fund data diagnostics"
+      closeLabel={i18n.t('ui.funddataqualitypanel.closeFundDataDiagnostics')}
       size="wide"
       bodyClassName="overflow-y-auto overflow-x-hidden"
     >
       <div className="flex flex-wrap items-center gap-2 border-b border-gray-800 px-4 py-3">
-        <span className="mr-1 text-xs font-medium text-gray-500">Show</span>
+        <span className="mr-1 text-xs font-medium text-gray-500">{i18n.t('ui.funddataqualitypanel.show')}</span>
         {FILTER_OPTIONS.map((option) => <DiagnosticsFilterButton key={option} activeFilter={filter} onSelect={setFilter} option={option} />)}
       </div>
       <div>
@@ -103,12 +104,12 @@ export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved
             <col className="w-[21%]" />
             <col className="w-[7%]" />
           </colgroup>
-          <thead className="sticky top-0 z-10 bg-gray-800 uppercase tracking-wider text-gray-500"><tr><th className="px-4 py-2">Fund</th><th className="px-4 py-2">Quality</th><th className="px-4 py-2">Source / proxy</th><th className="px-4 py-2">Holdings date</th><th className="px-4 py-2 text-right">Explained</th><th className="px-4 py-2 text-right">Residual</th><th className="px-4 py-2">Diagnostic</th><th className="px-4 py-2" /></tr></thead>
+          <thead className="sticky top-0 z-10 bg-gray-800 uppercase tracking-wider text-gray-500"><tr><th className="px-4 py-2">{i18n.t('ui.funddataqualitypanel.fund')}</th><th className="px-4 py-2">{i18n.t('ui.funddataqualitypanel.quality')}</th><th className="px-4 py-2">{i18n.t('ui.funddataqualitypanel.sourceProxy')}</th><th className="px-4 py-2">{i18n.t('ui.funddataqualitypanel.holdingsDate')}</th><th className="px-4 py-2 text-right">{i18n.t('ui.funddataqualitypanel.explained')}</th><th className="px-4 py-2 text-right">{i18n.t('ui.funddataqualitypanel.residual')}</th><th className="px-4 py-2">{i18n.t('ui.funddataqualitypanel.diagnostic')}</th><th className="px-4 py-2" /></tr></thead>
           <tbody>
             {rows.map((row) => <FundDiagnosticsRow key={row.status.parentId} expanded={expanded} onToggle={toggleExpanded} row={row} />)}
           </tbody>
         </table>
-        {rows.length === 0 && <p className="p-6 text-center text-sm text-gray-500">No fund matches this filter.</p>}
+        {rows.length === 0 && <p className="p-6 text-center text-sm text-gray-500">{i18n.t('ui.funddataqualitypanel.noFundMatchesThisFilter')}</p>}
       </div>
     </SidePanel>
   )

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useId, useState } from 'react'
 import type { FundCoverageReport } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -39,7 +40,8 @@ export function LookThroughCoverageSummary({
   const formatMoney = useFormatMoney()
   if (!report) return (
     <div className="rounded-xl border border-gray-800 bg-gray-900 p-4 text-sm text-gray-500">
-      No look-through quality report. Run the portfolio pipeline to generate it.
+
+      {i18n.t('ui.lookthroughcoveragesummary.noLookThroughQualityReportRunThePortfolioPipeline')}
     </div>
   )
 
@@ -64,43 +66,49 @@ export function LookThroughCoverageSummary({
   )
   const otherSourceValue = Math.max(0, identifiedValue - reliableValue)
   const readiness = {
-    passed: 'Ready',
-    pending_repeatability: 'Pending verification',
-    limited: 'Limited',
+    passed: i18n.t('ui.lookthroughcoveragesummary.ready'),
+    pending_repeatability: i18n.t('ui.lookthroughcoveragesummary.pendingVerification'),
+    limited: i18n.t('ui.lookthroughcoveragesummary.limited'),
   }[report.feasibilityStatus]
 
   if (variant === 'compact') {
     const cards = [
       {
-        label: 'Identified exposure',
+        label: i18n.t('ui.lookthroughcoveragesummary.identifiedExposure'),
         amount: identifiedValue,
         percentage: identifiedPercentage,
-        detail: `${formatMoney(report.directIdentifiedValue, { style: 'full' })} direct · ${formatMoney(report.decomposedValue, { style: 'full' })} decomposed funds`,
-        tooltip: 'Share of the total portfolio whose economic exposure is visible, either directly or through decomposed fund holdings.',
+        detail: i18n.t('ui.lookthroughcoveragesummary.identifiedDetail', {
+          direct: formatMoney(report.directIdentifiedValue, { style: 'full' }),
+          decomposed: formatMoney(report.decomposedValue, { style: 'full' }),
+        }),
+        tooltip: i18n.t('ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs'),
         tone: 'coverage' as const,
       },
       {
-        label: 'Reliable subset',
+        label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
         amount: reliableValue,
         percentage: percentageOfSelectedPortfolio(reliableValue),
-        detail: `${readiness} · direct positions plus reliable fund sources`,
-        tooltip: 'Quality-filtered subset of identified exposure. It is not an additional portfolio slice: it combines identified direct positions with fund holdings from reliable sources (official holdings or exact proxies).',
+        detail: i18n.t('ui.lookthroughcoveragesummary.value0DirectPositionsPlusReliableFundSources', { value0: readiness }),
+        tooltip: i18n.t('ui.lookthroughcoveragesummary.qualityFilteredSubsetOfIdentifiedExposureItIsNot'),
         tone: 'neutral' as const,
       },
       {
-        label: 'Unresolved exposure',
+        label: i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure'),
         amount: unresolvedValue,
         percentage: unresolvedPercentage,
-        detail: `${formatMoney(report.undisclosedFundValue, { style: 'full' })} fund remainder · ${formatMoney(report.opaqueValue, { style: 'full' })} without ID`,
-        tooltip: 'Complement of identified exposure: undisclosed fund holdings plus direct positions without an ISIN or ticker.',
+        detail: i18n.t('ui.lookthroughcoveragesummary.unresolvedDetail', {
+          remainder: formatMoney(report.undisclosedFundValue, { style: 'full' }),
+          opaque: formatMoney(report.opaqueValue, { style: 'full' }),
+        }),
+        tooltip: i18n.t('ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect'),
         tone: hasMaterialQualityGap(unresolvedPercentage) ? 'warning' as const : 'coverage' as const,
       },
       ...(hasNotApplicable ? [{
-        label: 'Not applicable',
+        label: i18n.t('ui.lookthroughcoveragesummary.notApplicable'),
         amount: notApplicableValue,
         percentage: notApplicablePercentage,
-        detail: 'Savings, checking and brokerage cash',
-        tooltip: 'Cash-account balances intentionally excluded from look-through analysis.',
+        detail: i18n.t('ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash'),
+        tooltip: i18n.t('ui.lookthroughcoveragesummary.cashAccountBalancesIntentionallyExcludedFromLookThroughAnalysis'),
         tone: 'muted' as const,
       }] : []),
     ]
@@ -115,11 +123,13 @@ export function LookThroughCoverageSummary({
     <div>
       <div className="mx-auto max-w-sm">
         <QualityIndicatorCard tooltipFooter={<LatestQualityScope />}
-          label="Portfolio scope"
-          tooltip="Total selected portfolio value, including cash accounts shown separately as not applicable."
+          label={i18n.t('ui.lookthroughcoveragesummary.portfolioScope')}
+          tooltip={i18n.t('ui.lookthroughcoveragesummary.totalSelectedPortfolioValueIncludingCashAccountsShownSeparately')}
           amount={selectedPortfolioValue}
           percentage={100}
-          detail={`As of ${report.asOfDate || 'latest portfolio snapshot'}`}
+          detail={i18n.t('ui.lookthroughcoveragesummary.asOfDate', {
+            date: report.asOfDate || i18n.t('ui.lookthroughcoveragesummary.latestPortfolioSnapshot'),
+          })}
         />
       </div>
 
@@ -128,12 +138,12 @@ export function LookThroughCoverageSummary({
         {hasNotApplicable ? <>
           <div className="absolute left-[16.667%] right-[16.667%] top-5 h-px bg-gray-700" />
           <div className="absolute bottom-0 left-[16.667%] top-5 w-px bg-gradient-to-b from-gray-700 to-emerald-500/40" />
-          <div className={`absolute bottom-0 left-1/2 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? 'to-amber-500/40' : 'to-emerald-500/40'}`} />
+          <div className={`absolute bottom-0 left-1/2 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? i18n.t('ui.lookthroughcoveragesummary.toAmber50040') : i18n.t('ui.lookthroughcoveragesummary.toEmerald50040')}`} />
           <div className="absolute bottom-0 left-[83.333%] top-5 w-px bg-gradient-to-b from-gray-700 to-gray-500/40" />
         </> : <>
           <div className="absolute left-1/4 right-1/4 top-5 h-px bg-gray-700" />
           <div className="absolute bottom-0 left-1/4 top-5 w-px bg-gradient-to-b from-gray-700 to-emerald-500/40" />
-          <div className={`absolute bottom-0 left-3/4 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? 'to-amber-500/40' : 'to-emerald-500/40'}`} />
+          <div className={`absolute bottom-0 left-3/4 top-5 w-px bg-gradient-to-b from-gray-700 ${hasMaterialQualityGap(unresolvedPercentage) ? i18n.t('ui.lookthroughcoveragesummary.toAmber50040') : i18n.t('ui.lookthroughcoveragesummary.toEmerald50040')}`} />
         </>}
       </div>
       <div className="mx-auto h-6 w-px bg-gray-700 sm:hidden" aria-hidden="true" />
@@ -141,11 +151,11 @@ export function LookThroughCoverageSummary({
       <div className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
         <div>
           <QualityIndicatorCard tooltipFooter={<LatestQualityScope />}
-            label="Identified exposure"
-            tooltip="Share of the total portfolio whose economic exposure is visible, either directly or through decomposed fund holdings."
+            label={i18n.t('ui.lookthroughcoveragesummary.identifiedExposure')}
+            tooltip={i18n.t('ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs')}
             amount={identifiedValue}
             percentage={identifiedPercentage}
-            detail="Direct positions + decomposed funds"
+            detail={i18n.t('ui.lookthroughcoveragesummary.directPositionsDecomposedFunds')}
             tone="coverage"
           >
             <SourceReliability
@@ -163,15 +173,15 @@ export function LookThroughCoverageSummary({
           {/* eslint-disable-next-line local/no-prop-drilling -- Child-node construction is view data owned by the summary feature. */}
           <ExposureChildNodes nodes={[
             {
-              label: 'Direct positions',
-              tooltip: 'Identified non-fund positions held directly in the portfolio.',
+              label: i18n.t('ui.lookthroughcoveragesummary.directPositions'),
+              tooltip: i18n.t('ui.lookthroughcoveragesummary.identifiedNonFundPositionsHeldDirectlyInThePortfolio'),
               amount: report.directIdentifiedValue,
               percentage: percentageOfSelectedPortfolio(report.directIdentifiedValue),
               tone: 'coverage',
             },
             {
-              label: 'Decomposed funds',
-              tooltip: 'Fund and ETF value broken down into underlying holdings, across all available source-quality tiers.',
+              label: i18n.t('ui.lookthroughcoveragesummary.decomposedFunds'),
+              tooltip: i18n.t('ui.lookthroughcoveragesummary.fundAndEtfValueBrokenDownIntoUnderlyingHoldings'),
               amount: report.decomposedValue,
               percentage: percentageOfSelectedPortfolio(report.decomposedValue),
               tone: 'neutral',
@@ -181,25 +191,25 @@ export function LookThroughCoverageSummary({
 
         <div>
           <QualityIndicatorCard tooltipFooter={<LatestQualityScope />}
-            label="Unresolved exposure"
-            tooltip="Complement of identified exposure: undisclosed fund holdings plus direct positions without an ISIN or ticker."
+            label={i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure')}
+            tooltip={i18n.t('ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect')}
             amount={unresolvedValue}
             percentage={unresolvedPercentage}
-            detail="Not yet visible through look-through analysis"
+            detail={i18n.t('ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis')}
             tone={hasMaterialQualityGap(unresolvedPercentage) ? 'warning' : 'coverage'}
           />
           {/* eslint-disable-next-line local/no-prop-drilling -- Child-node construction is view data owned by the summary feature. */}
           <ExposureChildNodes nodes={[
             {
-              label: 'Undisclosed fund remainder',
-              tooltip: 'Fund value not covered by the available underlying-holdings decomposition.',
+              label: i18n.t('ui.lookthroughcoveragesummary.undisclosedFundRemainder'),
+              tooltip: i18n.t('ui.lookthroughcoveragesummary.fundValueNotCoveredByTheAvailableUnderlyingHoldings'),
               amount: report.undisclosedFundValue,
               percentage: percentageOfSelectedPortfolio(report.undisclosedFundValue),
               tone: hasMaterialQualityGap(percentageOfSelectedPortfolio(report.undisclosedFundValue)) ? 'warning' : 'coverage',
             },
             {
-              label: 'Opaque positions without ID',
-              tooltip: 'Direct non-fund positions without an ISIN or ticker, which cannot yet be identified precisely.',
+              label: i18n.t('ui.lookthroughcoveragesummary.opaquePositionsWithoutId'),
+              tooltip: i18n.t('ui.lookthroughcoveragesummary.directNonFundPositionsWithoutAnIsinOrTicker'),
               amount: report.opaqueValue,
               percentage: percentageOfSelectedPortfolio(report.opaqueValue),
               tone: hasMaterialQualityGap(percentageOfSelectedPortfolio(report.opaqueValue)) ? 'error' : 'coverage',
@@ -208,11 +218,11 @@ export function LookThroughCoverageSummary({
         </div>
         {hasNotApplicable && (
           <QualityIndicatorCard tooltipFooter={<LatestQualityScope />}
-            label="Not applicable"
-            tooltip="Savings, checking and brokerage-cash balances are intentionally excluded because look-through analysis does not apply to cash accounts."
+            label={i18n.t('ui.lookthroughcoveragesummary.notApplicable')}
+            tooltip={i18n.t('ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded')}
             amount={notApplicableValue}
             percentage={notApplicablePercentage}
-            detail="Savings, checking and brokerage cash"
+            detail={i18n.t('ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash')}
             tone="muted"
           />
         )}
@@ -245,9 +255,9 @@ function SourceReliability({
   const [isExpanded, setIsExpanded] = useState(false)
   const detailsId = useId()
   const indicator = {
-    passed: { label: 'Good', dot: 'bg-emerald-500', badge: 'border-emerald-800 bg-emerald-950/40 text-emerald-300' },
-    pending_repeatability: { label: 'Needs verification', dot: 'bg-amber-500', badge: 'border-amber-800 bg-amber-950/40 text-amber-300' },
-    limited: { label: 'Limited', dot: 'bg-red-500', badge: 'border-red-800 bg-red-950/40 text-red-300' },
+    passed: { label: i18n.t('ui.lookthroughcoveragesummary.good'), dot: 'bg-emerald-500', badge: 'border-emerald-800 bg-emerald-950/40 text-emerald-300' },
+    pending_repeatability: { label: i18n.t('ui.lookthroughcoveragesummary.needsVerification'), dot: 'bg-amber-500', badge: 'border-amber-800 bg-amber-950/40 text-amber-300' },
+    limited: { label: i18n.t('ui.lookthroughcoveragesummary.limited'), dot: 'bg-red-500', badge: 'border-red-800 bg-red-950/40 text-red-300' },
   }[status]
 
   return (
@@ -261,11 +271,11 @@ function SourceReliability({
       >
         <div className="flex min-w-0 items-center gap-2">
           <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${indicator.dot}`} aria-hidden="true" />
-          <span className="truncate text-xs font-medium text-gray-400">Source reliability</span>
+          <span className="truncate text-xs font-medium text-gray-400">{i18n.t('ui.lookthroughcoveragesummary.sourceReliability')}</span>
           <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${indicator.badge}`}>{indicator.label}</span>
         </div>
         <span className="flex shrink-0 items-center gap-1.5 text-blue-400 transition-colors group-hover:text-blue-300">
-          <span>{isExpanded ? 'Hide details' : 'Details'}</span>
+          <span>{isExpanded ? i18n.t('ui.lookthroughcoveragesummary.hideDetails') : i18n.t('ui.lookthroughcoveragesummary.details')}</span>
           <svg className={`h-3.5 w-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
           </svg>
@@ -275,16 +285,17 @@ function SourceReliability({
         <div id={detailsId} className="mt-3 border-t border-gray-800 pt-3">
           <BreakdownGroupContent
             className="mt-3"
-            title="Source reliability details"
-            note="Another view of the same identified exposure"
+            title={i18n.t('ui.lookthroughcoveragesummary.sourceReliabilityDetails')}
+            note={i18n.t('ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure')}
             // eslint-disable-next-line local/no-prop-drilling -- Breakdown rows are presentation data owned by this reliability feature.
             rows={[
-              { label: 'Reliable subset', amount: reliableValue, percentage: reliablePercentage, color: SEMANTIC_COLORS.coverage },
-              { label: 'Other source tiers', amount: otherSourceValue, percentage: otherSourcePercentage, color: SEMANTIC_COLORS.netContributions },
+              { label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'), amount: reliableValue, percentage: reliablePercentage, color: SEMANTIC_COLORS.coverage },
+              { label: i18n.t('ui.lookthroughcoveragesummary.otherSourceTiers'), amount: otherSourceValue, percentage: otherSourcePercentage, color: SEMANTIC_COLORS.netContributions },
             ]}
           />
           <p className="mt-3 text-[10px] leading-4 text-gray-600">
-            Reliable is a quality-filtered subset: direct positions plus official fund holdings or exact proxies. It is not an additional portfolio slice.
+
+            {i18n.t('ui.lookthroughcoveragesummary.reliableIsAQualityFilteredSubsetDirectPositionsPlus')}
           </p>
         </div>
       )}
@@ -310,7 +321,7 @@ function ExposureChildNodes({ nodes }: { nodes: [ExposureChildNode, ExposureChil
 }
 
 function ExposureChildNodeCard({ node }: { node: ExposureChildNode }) {
-  return <QualityIndicatorCard tooltipFooter={<LatestQualityScope />} label={node.label} tooltip={node.tooltip} amount={node.amount} percentage={node.percentage} detail="Share of total portfolio" tone={node.tone} />
+  return <QualityIndicatorCard tooltipFooter={<LatestQualityScope />} label={node.label} tooltip={node.tooltip} amount={node.amount} percentage={node.percentage} detail={i18n.t('ui.lookthroughcoveragesummary.shareOfTotalPortfolio')} tone={node.tone} />
 }
 
 interface BreakdownRow {

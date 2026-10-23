@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { FundHolding } from '@/domains/portfolio/apis/queries/useFundHoldings'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
@@ -17,9 +18,9 @@ export function FundLookThroughTab({
     && isAssetAnalysisApplicablePosition(position)
   ))
 
-  let content = <section className="rounded-xl border border-gray-800 bg-gray-900 p-5"><h2 className="flex items-center font-semibold text-gray-200">No identified underlying exposure yet<ScopedInfoTooltip text="Unresolved composite positions remain listed with their monetary impact in Data quality." scope={{ account: 'filterable', period: 'as-of' }} /></h2><p className="mt-1 text-sm text-gray-500">Unresolved composite positions remain listed with their monetary impact in Data quality.</p></section>
+  let content = <section className="rounded-xl border border-gray-800 bg-gray-900 p-5"><h2 className="flex items-center font-semibold text-gray-200">{i18n.t('ui.fundlookthroughtab.noIdentifiedUnderlyingExposureYet')}<ScopedInfoTooltip text={i18n.t('ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact')} scope={{ account: 'filterable', period: 'as-of' }} /></h2><p className="mt-1 text-sm text-gray-500">{i18n.t('ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact')}</p></section>
   if (applicablePositions.length === 0) {
-    content = <section className="rounded-xl border border-gray-800 bg-gray-900 p-5"><h2 className="flex items-center font-semibold text-gray-200">Underlying exposure not applicable<ScopedInfoTooltip text="Look-through analysis is not applicable to savings, checking and brokerage-cash accounts." scope={{ account: 'filterable', period: 'as-of' }} /></h2><p className="mt-1 text-sm text-gray-500">Look-through analysis is not applicable to savings, checking and brokerage-cash accounts.</p></section>
+    content = <section className="rounded-xl border border-gray-800 bg-gray-900 p-5"><h2 className="flex items-center font-semibold text-gray-200">{i18n.t('ui.fundlookthroughtab.underlyingExposureNotApplicable')}<ScopedInfoTooltip text={i18n.t('ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking')} scope={{ account: 'filterable', period: 'as-of' }} /></h2><p className="mt-1 text-sm text-gray-500">{i18n.t('ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking')}</p></section>
   } else if (holdings.length > 0) {
     // eslint-disable-next-line local/no-prop-drilling -- Applicability filtering belongs to this tab-level orchestration feature.
     content = <FundHoldingsExplorer positions={applicablePositions} holdings={holdings} />

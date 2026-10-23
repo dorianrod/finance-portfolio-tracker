@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/components/portfolio-charts/helpers/calculators/calculatePortfolioCharts'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -14,11 +15,12 @@ export function NetPortfolioValueKpi({ performance }: { performance: Performance
   const value = formatMoney(performance.currentValueNet)
   return (
     <Kpi.Root accent="portfolio">
-      <Kpi.Label tooltip="Current market value after estimated tax on unrealized gains." tooltipFooter={<FilterScopeBadges account="filterable" period="as-of" />}>
-        Net portfolio value
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.currentMarketValueAfterEstimatedTaxOnUnrealizedGains')} tooltipFooter={<FilterScopeBadges account="filterable" period="as-of" />}>
+
+        {i18n.t('ui.portfoliokpis.netPortfolioValue')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value title={value}>{value}</Kpi.Value></Kpi.ValueRow>
-      <Kpi.Detail>Gross {formatMoney(performance.currentValueGross)}</Kpi.Detail>
+      <Kpi.Detail>{i18n.t('ui.portfoliokpis.gross')} {formatMoney(performance.currentValueGross)}</Kpi.Detail>
     </Kpi.Root>
   )
 }
@@ -29,14 +31,15 @@ export function TotalNetPerformanceKpi({ performance }: { performance: Performan
   const value = formatMoney(performance.totalPerformanceNet)
   return (
     <Kpi.Root accent={performance.totalPerformanceNet >= 0 ? 'positive' : 'negative'}>
-      <Kpi.Label tooltip="Net unrealized and realized P&L plus net passive income." tooltipFooter={<FilterScopeBadges account="filterable" period="since-tracking" />}>
-        Total net performance
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.netUnrealizedAndRealizedPLPlusNetPassive')} tooltipFooter={<FilterScopeBadges account="filterable" period="since-tracking" />}>
+
+        {i18n.t('ui.portfoliokpis.totalNetPerformance')}
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value color={getPerformanceColor(performance.totalPerformanceNet)} title={value}>{value}</Kpi.Value>
         <Kpi.InlineNote color={getPerformanceColor(performance.totalPerformanceNet)}>{formatPercentage(performance.totalPerformancePct, { signed: true })}</Kpi.InlineNote>
       </Kpi.ValueRow>
-      <Kpi.Detail>Gross {formatMoney(performance.totalPerformanceGross)}</Kpi.Detail>
+      <Kpi.Detail>{i18n.t('ui.portfoliokpis.gross')} {formatMoney(performance.totalPerformanceGross)}</Kpi.Detail>
     </Kpi.Root>
   )
 }
@@ -46,8 +49,9 @@ export function NetContributionsKpi({ value, periodLabel }: { value: number; per
   const formattedValue = formatMoney(value)
   return (
     <Kpi.Root accent="contributions">
-      <Kpi.Label tooltip="Deposits minus withdrawals over the selected period." tooltipFooter={<FilterScopeBadges account="filterable" period="range" />}>
-        Net contributions
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.depositsMinusWithdrawalsOverTheSelectedPeriod')} tooltipFooter={<FilterScopeBadges account="filterable" period="range" />}>
+
+        {i18n.t('ui.portfoliokpis.netContributions')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value color={SEMANTIC_TEXT_CLASSES.netContributions} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
       <Kpi.Detail>{periodLabel}</Kpi.Detail>
@@ -61,8 +65,9 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
   const value = formatMoney(income.total)
   return (
     <Kpi.Root accent="income">
-      <Kpi.Label tooltip="Dividends and interest over the latest twelve months. The percentage compares this rolling total with the preceding twelve-month window." tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-12m" />}>
-        Passive income · trailing 12m
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.dividendsAndInterestOverTheLatestTwelveMonthsThe')} tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-12m" />}>
+
+        {i18n.t('ui.portfoliokpis.passiveIncomeTrailing12m')}
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value color={SEMANTIC_TEXT_CLASSES.passiveIncome} title={value}>{value}</Kpi.Value>
@@ -86,8 +91,11 @@ export function IrrSinceTrackingKpi({ value, status = 'ready', scopeLabel }: Irr
   const note = getIrrKpiNote(status)
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
-      <Kpi.Label tooltip="Annualized money-weighted return since the first recorded deposit, or since the first portfolio valuation when it predates the available cash-flow history." tooltipFooter={<FilterScopeBadges account="filterable" period="since-tracking" />}>
-        IRR since tracking{scopeLabel ? ' · selected accounts' : ''}
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.annualizedMoneyWeightedReturnSinceTheFirstRecordedDeposit')} tooltipFooter={<FilterScopeBadges account="filterable" period="since-tracking" />}>
+
+        {scopeLabel
+          ? i18n.t('ui.portfoliokpis.irrSinceTrackingSelectedAccounts')
+          : i18n.t('ui.portfoliokpis.irrSinceTracking')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
       {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}
@@ -100,11 +108,12 @@ export function NetUnrealizedKpi({ performance }: { performance: PerformanceSumm
   const value = formatMoney(performance.unrealizedNet)
   return (
     <Kpi.Root accent={performance.unrealizedNet >= 0 ? 'positive' : 'negative'}>
-      <Kpi.Label tooltip="Current unrealized gain after estimated tax." tooltipFooter={<FilterScopeBadges account="filterable" period="as-of" />}>
-        Net unrealized P&amp;L
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.currentUnrealizedGainAfterEstimatedTax')} tooltipFooter={<FilterScopeBadges account="filterable" period="as-of" />}>
+
+        {i18n.t('ui.portfoliokpis.netUnrealizedPandl')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(performance.unrealizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
-      <Kpi.Detail>Gross {formatMoney(performance.unrealizedGross)}</Kpi.Detail>
+      <Kpi.Detail>{i18n.t('ui.portfoliokpis.gross')} {formatMoney(performance.unrealizedGross)}</Kpi.Detail>
     </Kpi.Root>
   )
 }
@@ -114,11 +123,12 @@ export function NetRealizedKpi({ performance }: { performance: PerformanceSummar
   const value = formatMoney(performance.realizedNet)
   return (
     <Kpi.Root accent={performance.realizedNet >= 0 ? 'positive' : 'negative'}>
-      <Kpi.Label tooltip="Crystallized gains and losses after estimated tax." tooltipFooter={<FilterScopeBadges account="filterable" period="range" />}>
-        Net realized P&amp;L
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.crystallizedGainsAndLossesAfterEstimatedTax')} tooltipFooter={<FilterScopeBadges account="filterable" period="range" />}>
+
+        {i18n.t('ui.portfoliokpis.netRealizedPandl')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(performance.realizedNet)} title={value}>{value}</Kpi.Value></Kpi.ValueRow>
-      <Kpi.Detail>Gross {formatMoney(performance.realizedGross)}</Kpi.Detail>
+      <Kpi.Detail>{i18n.t('ui.portfoliokpis.gross')} {formatMoney(performance.realizedGross)}</Kpi.Detail>
     </Kpi.Root>
   )
 }
@@ -129,8 +139,11 @@ export function TrailingThreeYearIrrKpi({ value, status = 'ready', scopeLabel }:
   const note = getIrrKpiNote(status)
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
-      <Kpi.Label tooltip="Annualized money-weighted return over the latest three years, accounting for deposits and withdrawals during the period." tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-3y" />}>
-        IRR · trailing 3y{scopeLabel ? ' · selected accounts' : ''}
+      <Kpi.Label tooltip={i18n.t('ui.portfoliokpis.annualizedMoneyWeightedReturnOverTheLatestThreeYears')} tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-3y" />}>
+
+        {scopeLabel
+          ? i18n.t('ui.portfoliokpis.irrTrailing3ySelectedAccounts')
+          : i18n.t('ui.portfoliokpis.irrTrailing3y')}
       </Kpi.Label>
       <Kpi.ValueRow><Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>{formattedValue}</Kpi.Value></Kpi.ValueRow>
       {note ? <Kpi.Detail>{note}</Kpi.Detail> : null}

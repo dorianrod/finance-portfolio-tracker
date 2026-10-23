@@ -1,4 +1,5 @@
 import { hasMaterialQualityGap } from "@/domains/portfolio/helpers/quality/qualityThresholds";
+import i18n from '@/i18n/i18n'
 
 export type AnalysisReliabilityTone =
   | "healthy"
@@ -64,8 +65,8 @@ export function pipelineStatusLabel({
   warningCount: number;
   loading?: boolean;
 }): string {
-  if (loading) return "Loading";
+  if (loading) return i18n.t('ui.analysisreliability.loading');
   const issueCount = errorCount + warningCount;
-  if (issueCount === 0) return "No anomaly";
-  return `${issueCount} ${issueCount === 1 ? "anomaly" : "anomalies"}`;
+  if (issueCount === 0) return i18n.t('ui.analysisreliability.noAnomaly');
+  return i18n.t('ui.analysisreliability.anomalyCount', { count: issueCount });
 }

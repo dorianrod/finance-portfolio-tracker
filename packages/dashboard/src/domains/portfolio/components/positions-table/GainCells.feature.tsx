@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -22,11 +23,11 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
       <GainCell value={gross} pct={position.unrealized_gain_pct} />
       {taxDetails && (
         <span className="mt-0.5 text-[10px] text-gray-500">
-          ~{formatMoney(-taxDetails.amount)} tax ({formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
+          ~{formatMoney(-taxDetails.amount)}  {i18n.t('ui.gaincells.tax')}{formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
         </span>
       )}
       {isTaxFreeGain && (
-        <span className="mt-0.5 text-[10px] text-gray-500">net (0% tax)</span>
+        <span className="mt-0.5 text-[10px] text-gray-500">{i18n.t('ui.gaincells.net0Tax')}</span>
       )}
     </span>
   )
@@ -51,11 +52,11 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
       <GainCell value={gross} />
       {taxDetails && (
         <span className="mt-0.5 text-[10px] text-gray-500">
-          ~{formatMoney(-taxDetails.amount)} tax ({formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
+          ~{formatMoney(-taxDetails.amount)}  {i18n.t('ui.gaincells.tax')}{formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
         </span>
       )}
       {isTaxFreeGain && (
-        <span className="mt-0.5 text-[10px] text-gray-500">net (0% tax)</span>
+        <span className="mt-0.5 text-[10px] text-gray-500">{i18n.t('ui.gaincells.net0Tax')}</span>
       )}
     </span>
   )

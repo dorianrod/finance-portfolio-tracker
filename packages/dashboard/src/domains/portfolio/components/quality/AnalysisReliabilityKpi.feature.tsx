@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useCallback, useId } from "react";
 import { useFormatMoney } from "@/shared/helpers/formatters/useFormatMoney";
 import { useFormatPercentage } from "@/shared/helpers/formatters/useFormatPercentage";
@@ -35,25 +36,25 @@ const RELIABILITY_TONES: Record<
     dot: "bg-emerald-500",
     status: "text-emerald-400",
     value: "text-emerald-400",
-    label: "Reliable",
+    label: i18n.t('ui.analysisreliabilitykpi.reliable'),
   },
   warning: {
     dot: "bg-amber-500",
     status: "text-amber-400",
     value: "text-amber-400",
-    label: "Partial",
+    label: i18n.t('ui.analysisreliabilitykpi.partial'),
   },
   critical: {
     dot: "bg-red-500",
     status: "text-red-400",
     value: "text-red-400",
-    label: "Review",
+    label: i18n.t('ui.analysisreliabilitykpi.review'),
   },
   unavailable: {
     dot: "bg-gray-500",
     status: "text-gray-400",
     value: "text-gray-400",
-    label: "Unavailable",
+    label: i18n.t('ui.analysisreliabilitykpi.unavailable'),
   },
 };
 
@@ -63,7 +64,8 @@ function InfoIcon() {
       aria-hidden="true"
       className="flex h-4 w-4 items-center justify-center rounded-full border border-gray-600 text-[10px] font-bold leading-none"
     >
-      i
+
+      {i18n.t('ui.analysisreliabilitykpi.i')}
     </span>
   );
 }
@@ -110,7 +112,8 @@ function CompactDataQualityKpi({
         aria-label={ariaLabel}
       >
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500">
-          Data quality
+
+          {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
         </span>
         <span
           className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`}
@@ -125,7 +128,7 @@ function CompactDataQualityKpi({
       <button
         type="button"
         className="data-quality-help relative rounded-r-md p-1 text-gray-600 transition-colors hover:text-gray-400 focus-visible:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
-        aria-label="Show data quality details"
+        aria-label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
         aria-describedby={tooltipId}
       >
         <InfoIcon />
@@ -139,7 +142,8 @@ function CompactDataQualityKpi({
           </span>
           <span className="mt-2.5 block border-t border-gray-800 pt-2">
             <span className="block text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-              Filter scope
+
+              {i18n.t('ui.analysisreliabilitykpi.filterScope')}
             </span>
             <FilterScopeBadges {...scope} />
           </span>
@@ -195,7 +199,7 @@ export function AnalysisReliabilityKpi({
       qualityTheme={qualityTheme}
       scope={scope}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
-      ariaLabel={`Data quality: ${styles.label}. ${percentageLabel} ${metricLabel}. Open Data quality.`}
+      ariaLabel={i18n.t('ui.analysisreliabilitykpi.dataQualityValue0Value1Value2OpenDataQuality', { value0: styles.label, value1: percentageLabel, value2: metricLabel })}
     />
   );
 }
@@ -251,7 +255,7 @@ export function CombinedAnalysisReliabilityKpi({
       qualityTheme={qualityTheme}
       scope={scope}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
-      ariaLabel={`Data quality: ${styles.label}. ${metricSummary}. Open Data quality.`}
+      ariaLabel={i18n.t('ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality', { value0: styles.label, value1: metricSummary })}
     />
   );
 }
@@ -279,22 +283,25 @@ export function PipelineReliabilityKpi({
     <CompactDataQualityKpi
       // eslint-disable-next-line local/no-prop-drilling -- Pipeline severity normalization belongs to this feature.
       tone={tone}
-      tooltip="Import, position and market-data anomalies relevant to the selected accounts and period. Severity determines the status: errors require review; warnings indicate partial reliability."
+      tooltip={i18n.t('ui.analysisreliabilitykpi.importPositionAndMarketDataAnomaliesRelevantToThe')}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns the normalized pipeline metric rows.
       rows={[
         {
-          label: "Portfolio data",
+          label: i18n.t('ui.analysisreliabilitykpi.portfolioData'),
           value: statusLabel,
           secondary: loading
             ? undefined
-            : `${errorCount} errors · ${warningCount} warnings`,
+            : i18n.t('ui.analysisreliabilitykpi.errorWarningSummary', {
+                errors: i18n.t('ui.analysisreliabilitykpi.errorCount', { count: errorCount }),
+                warnings: i18n.t('ui.analysisreliabilitykpi.warningCount', { count: warningCount }),
+              }),
           tone,
         },
       ]}
       qualityTheme="pipeline"
       scope={scope}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
-      ariaLabel={`Data quality: ${styles.label}. ${errorCount} errors and ${warningCount} warnings in Portfolio data. Open Data quality.`}
+      ariaLabel={i18n.t('ui.analysisreliabilitykpi.dataQualityValue0Value1ErrorsAndValue2WarningsIn', { value0: styles.label, value1: errorCount, value2: warningCount })}
     />
   );
 }

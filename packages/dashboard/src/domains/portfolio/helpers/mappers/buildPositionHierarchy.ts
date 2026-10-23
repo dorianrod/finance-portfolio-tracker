@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { RawOperation, RawPosition, PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/types/domain'
 
 import { CATEGORY_ORDER, CASH_SUFFIX } from '@/domains/portfolio/constants/accountCategories'
@@ -135,7 +136,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-dividends`,
-        label: 'Dividends',
+        label: i18n.t('ui.buildpositionhierarchyTs.dividends'),
         total_dividends: totalDividends,
         dividend_count: dividendOps.length,
         annualized_dividends: annualizedDividends,
@@ -161,7 +162,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-interest`,
-        label: 'Interest',
+        label: i18n.t('ui.buildpositionhierarchyTs.interest'),
         total_interest: totalInterest,
         interest_count: interestOps.length,
         subRows: intOpRows,
@@ -186,7 +187,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-deposits`,
-        label: 'Deposits / Withdrawals',
+        label: i18n.t('ui.buildpositionhierarchyTs.depositsWithdrawals'),
         deposit_total: totalDeposits,
         withdrawal_total: totalWithdrawals,
         subRows: depOpRows,
@@ -211,7 +212,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-trades`,
-        label: 'Buys / Sells',
+        label: i18n.t('ui.buildpositionhierarchyTs.buysSells'),
         total_invested: totalInvested,
         total_sold: totalSold,
         realized_pnl: realizedPnl,

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { BarChart, Bar, Cell, LabelList, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
 import { TopPerformersTooltip } from './portfolioCharts.tooltips.view'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
@@ -13,7 +14,7 @@ function PerformerCell({ entry }: { entry: TopPerformer }) {
 export function TopPerformersChart({ data, height }: { data: TopPerformer[]; height: number }) {
   const formatPercentage = useFormatPercentage()
   return <div className="bg-gray-900 rounded-xl p-4">
-    <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Performance by asset<ScopedInfoTooltip text="Gross unrealized performance by currently held asset." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+    <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.topperformerschart.performanceByAsset')}<ScopedInfoTooltip text={i18n.t('ui.topperformerschart.grossUnrealizedPerformanceByCurrentlyHeldAsset')} scope={{ account: 'filterable', period: 'as-of' }} /></h2>
     <ResponsiveContainer width="100%" height={height}>
       <BarChart layout="vertical" data={data} margin={{ top: 4, right: 64, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} horizontal={false} />

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import { accountLabel, toggle } from './helpers/filters/portfolioFilters'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
@@ -52,8 +53,8 @@ export function AccountTree({
         onClick={() => onChange(new Set())}
         className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${selected.size === 0 ? 'bg-blue-900/35 text-blue-200' : 'text-gray-300 hover:bg-gray-800'}`}
       >
-        <span className="font-medium">All accounts</span>
-        {selected.size === 0 && <span className="text-xs font-semibold text-blue-300">Selected</span>}
+        <span className="font-medium">{i18n.t('ui.accounttreeselect.allAccounts')}</span>
+        {selected.size === 0 && <span className="text-xs font-semibold text-blue-300">{i18n.t('ui.accounttreeselect.selected')}</span>}
       </button>
 
       <div className="border-t border-gray-800 py-1.5">
@@ -89,7 +90,7 @@ export function AccountTreeSelect({
       <button
         onClick={() => setOpen((o) => !o)}
         className={[
-          'flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs transition-colors cursor-pointer',
+          i18n.t('ui.accounttreeselect.flexItemsCenterGap15Px3Py'),
           hasSelection
             ? 'bg-blue-900/40 border-blue-600 text-blue-200'
             : 'bg-gray-800 border-gray-600 text-gray-400 hover:border-gray-400 hover:text-gray-200',
@@ -101,7 +102,7 @@ export function AccountTreeSelect({
             role="button"
             onClick={(e) => { e.stopPropagation(); onChange(new Set()) }}
             className="ml-1 text-blue-400 hover:text-white leading-none"
-            title="Reset"
+            title={i18n.t('ui.accounttreeselect.reset')}
           >
             ×
           </span>
@@ -122,7 +123,7 @@ export function AccountTreeSelect({
                   else onChange(new Set(allAccounts))
                 }}
               />
-              <span className="text-xs font-semibold text-gray-200">Select all</span>
+              <span className="text-xs font-semibold text-gray-200">{i18n.t('ui.accounttreeselect.selectAll')}</span>
             </label>
           </div>
           {accountGroups.map((group) => <SelectAccountType key={group.type} accountLabels={accountLabels} accounts={group.accounts} onChange={onChange} selected={selected} type={group.type} />)}

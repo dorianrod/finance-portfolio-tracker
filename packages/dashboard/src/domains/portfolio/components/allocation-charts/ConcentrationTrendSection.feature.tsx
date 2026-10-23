@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Line, LineChart,
   matchByDataKey, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -41,7 +42,7 @@ function ThresholdRow({ label, color, value, delta }: {
     <div>
       <span style={{ color }}>{label}</span> {formatPositionCount(value)}{' '}
       <span className="text-gray-500">
-        · {value == null ? 'Insufficient identified coverage' : formatConcentrationDelta(delta, formatNumber)}
+        · {value == null ? i18n.t('ui.concentrationtrendsection.insufficientIdentifiedCoverage') : formatConcentrationDelta(delta, formatNumber)}
       </span>
     </div>
   )
@@ -55,7 +56,7 @@ function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps) {
   return (
     <TooltipBox minWidth={250}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>{formatDate(row.date, { style: 'shortMonthShortYear' })}</div>
-      <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>Coverage: {formatPercentage(row.coveragePct)}</div>
+      <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>{i18n.t('ui.concentrationtrendsection.coverage')} {formatPercentage(row.coveragePct)}</div>
       <div className="mt-2 space-y-1" style={{ color: 'var(--tooltip-label)' }}>
         <ThresholdRow label="25%" color={SEMANTIC_COLORS.risk} value={row.positionsTo25Pct} delta={row.positionsTo25Delta} />
         <ThresholdRow label="50%" color={SEMANTIC_COLORS.totalChange} value={row.positionsTo50Pct} delta={row.positionsTo50Delta} />
@@ -126,10 +127,10 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
     togglePlayback,
   } = useConcentrationTrendController(heldPoints, lookThroughPoints, lookThroughAvailable)
 
-  const heading = mode === 'held' ? 'Held-position concentration' : 'Underlying concentration'
+  const heading = mode === 'held' ? i18n.t('ui.concentrationtrendsection.heldPositionConcentration') : i18n.t('ui.concentrationtrendsection.underlyingConcentration')
   const description = mode === 'held'
-    ? 'Track how many of the largest held positions account for each portfolio threshold.'
-    : 'Track identified direct and fund look-through exposure. Missing fund detail lowers coverage and concentration.'
+    ? i18n.t('ui.concentrationtrendsection.trackHowManyOfTheLargestHeldPositionsAccount')
+    : i18n.t('ui.concentrationtrendsection.trackIdentifiedDirectAndFundLookThroughExposureMissing')
 
   if (points.length < 2) {
     return (
@@ -141,9 +142,10 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
           </div>
           <ConcentrationModeToggle value={mode} onChange={changeMode} lookThroughDisabled={!lookThroughAvailable} />
         </div>
-        {!lookThroughAvailable && <p className="mb-3 text-xs text-amber-500">Look-through history is unavailable until fund_holdings_history.csv is generated.</p>}
+        {!lookThroughAvailable && <p className="mb-3 text-xs text-amber-500">{i18n.t('ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory')}</p>}
         <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">
-          Not enough concentration history for the current selection.
+
+          {i18n.t('ui.concentrationtrendsection.notEnoughConcentrationHistoryForTheCurrentSelection')}
         </div>
       </section>
     )
@@ -155,15 +157,15 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
         <div>
           <h3 className="text-sm font-medium text-gray-300">{heading}</h3>
           <p className="mt-0.5 text-xs text-gray-600">{description}</p>
-          {!lookThroughAvailable && <p className="mt-1 text-xs text-amber-500">Look-through history is unavailable until fund_holdings_history.csv is generated.</p>}
+          {!lookThroughAvailable && <p className="mt-1 text-xs text-amber-500">{i18n.t('ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory')}</p>}
         </div>
         <ConcentrationModeToggle value={mode} onChange={changeMode} lookThroughDisabled={!lookThroughAvailable} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <div className="rounded-xl bg-gray-900 p-4">
-          <h2 className="mb-1 flex items-center text-sm font-medium text-gray-400">Minimum positions to reach portfolio share<ScopedInfoTooltip text="Minimum number of the largest exposures needed to reach 25%, 50%, 75% and 90% of the portfolio at each snapshot." scope={{ account: 'filterable', period: 'range' }} /></h2>
-          <p className="mb-3 text-xs text-gray-600">Unavailable thresholds appear as gaps when identified exposure cannot reach them.</p>
+          <h2 className="mb-1 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare')}<ScopedInfoTooltip text={i18n.t('ui.concentrationtrendsection.minimumNumberOfTheLargestExposuresNeededToReach')} scope={{ account: 'filterable', period: 'range' }} /></h2>
+          <p className="mb-3 text-xs text-gray-600">{i18n.t('ui.concentrationtrendsection.unavailableThresholdsAppearAsGapsWhenIdentifiedExposureCannot')}</p>
           <ChartLegend />
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} onMouseMove={(state) => {
@@ -186,29 +188,29 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
           <div className="rounded-xl bg-gray-900 p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h2 className="flex items-center text-sm font-medium text-gray-300">Largest holdings over time<ScopedInfoTooltip text="Ranked portfolio exposures at each monthly snapshot. Hover, use the slider or play the history." scope={{ account: 'filterable', period: 'range' }} /></h2>
-                <p className="mt-0.5 text-xs text-gray-600">Hover to preview; the slider and playback use every monthly snapshot.</p>
+                <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.concentrationtrendsection.largestHoldingsOverTime')}<ScopedInfoTooltip text={i18n.t('ui.concentrationtrendsection.rankedPortfolioExposuresAtEachMonthlySnapshotHoverUse')} scope={{ account: 'filterable', period: 'range' }} /></h2>
+                <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.concentrationtrendsection.hoverToPreviewTheSliderAndPlaybackUseEvery')}</p>
               </div>
               <div className="text-left sm:text-right">
                 <div className="text-lg font-semibold tabular-nums text-gray-200">{formatDate(displayedPoint.date, { style: 'shortMonthShortYear' })}</div>
-                <div className="text-[11px] text-gray-600">Snapshot {displayedPoint.date}</div>
+                <div className="text-[11px] text-gray-600">{i18n.t('ui.concentrationtrendsection.snapshot')} {displayedPoint.date}</div>
               </div>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500">
-              <span>Coverage <strong className="font-semibold text-gray-300">{formatPercentage(displayedPoint.coveragePct)}</strong></span>
-              <span>Identified <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.identifiedValue, { style: 'full' })}</strong></span>
-              <span>Undisclosed funds <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.undisclosedValue, { style: 'full' })}</strong></span>
-              <span>Opaque <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.opaqueValue, { style: 'full' })}</strong></span>
+              <span>{i18n.t('ui.concentrationtrendsection.coverage.80e135')} <strong className="font-semibold text-gray-300">{formatPercentage(displayedPoint.coveragePct)}</strong></span>
+              <span>{i18n.t('ui.concentrationtrendsection.identified')} <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.identifiedValue, { style: 'full' })}</strong></span>
+              <span>{i18n.t('ui.concentrationtrendsection.undisclosedFunds')} <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.undisclosedValue, { style: 'full' })}</strong></span>
+              <span>{i18n.t('ui.concentrationtrendsection.opaque')} <strong className="font-semibold text-gray-300">{formatMoney(displayedPoint.opaqueValue, { style: 'full' })}</strong></span>
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button type="button" aria-label={isPlaying ? 'Pause concentration history' : 'Play concentration history'} aria-pressed={isPlaying} onClick={togglePlayback} className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white">{isPlaying ? 'Pause' : 'Play'}</button>
-              <button type="button" aria-label="Previous concentration month" disabled={selectedIndex === 0} onClick={() => selectPoint(selectedIndex - 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
-              <button type="button" aria-label="Next concentration month" disabled={selectedIndex >= points.length - 1} onClick={() => selectPoint(selectedIndex + 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
+              <button type="button" aria-label={isPlaying ? i18n.t('ui.concentrationtrendsection.pauseConcentrationHistory') : i18n.t('ui.concentrationtrendsection.playConcentrationHistory')} aria-pressed={isPlaying} onClick={togglePlayback} className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white">{isPlaying ? i18n.t('ui.concentrationtrendsection.pause') : i18n.t('ui.concentrationtrendsection.play')}</button>
+              <button type="button" aria-label={i18n.t('ui.concentrationtrendsection.previousConcentrationMonth')} disabled={selectedIndex === 0} onClick={() => selectPoint(selectedIndex - 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">{i18n.t('ui.concentrationtrendsection.previous')}</button>
+              <button type="button" aria-label={i18n.t('ui.concentrationtrendsection.nextConcentrationMonth')} disabled={selectedIndex >= points.length - 1} onClick={() => selectPoint(selectedIndex + 1)} className="rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-300 disabled:cursor-not-allowed disabled:opacity-40">{i18n.t('ui.concentrationtrendsection.next')}</button>
               <label className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 text-[11px] text-gray-500 sm:ml-2">
                 <span>{formatDate(points[0].date, { style: 'shortMonthShortYear' })}</span>
-                <input aria-label="Concentration month" type="range" min={0} max={points.length - 1} step={1} value={selectedIndex} onChange={(event) => selectPoint(Number(event.target.value))} className="min-w-0 flex-1 accent-blue-500" />
+                <input aria-label={i18n.t('ui.concentrationtrendsection.concentrationMonth')} type="range" min={0} max={points.length - 1} step={1} value={selectedIndex} onChange={(event) => selectPoint(Number(event.target.value))} className="min-w-0 flex-1 accent-blue-500" />
                 <span>{formatDate(points.at(-1)!.date, { style: 'shortMonthShortYear' })}</span>
               </label>
             </div>

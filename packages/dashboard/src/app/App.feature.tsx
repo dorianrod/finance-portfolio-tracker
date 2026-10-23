@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { lazy, Suspense } from "react";
 import { useAtomValue } from "jotai";
 import { DashboardPanelErrorBoundary } from "@/app/DashboardPanelErrorBoundary.view";
@@ -53,53 +54,53 @@ const PRIMARY_TABS: Array<{
   id: Exclude<AnalysisTab, "quality">;
   label: string;
 }> = [
-  { id: "overview", label: "Overview" },
-  { id: "wealth", label: "Wealth & cash flow" },
-  { id: "performance", label: "Performance & passive income" },
-  { id: "allocation", label: "Diversification" },
-  { id: "holdings", label: "Holdings" },
+  { id: "overview", label: i18n.t('ui.app.overview') },
+  { id: "wealth", label: i18n.t('ui.app.wealthCashFlow') },
+  { id: "performance", label: i18n.t('ui.app.performancePassiveIncome') },
+  { id: "allocation", label: i18n.t('ui.app.diversification') },
+  { id: "holdings", label: i18n.t('ui.app.holdings') },
 ];
 
 const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   overview: {
-    title: "Portfolio overview",
+    title: i18n.t('ui.app.portfolioOverview'),
     description:
-      "Current position, recent change drivers and the main signals to review.",
+      i18n.t('ui.app.currentPositionRecentChangeDriversAndTheMainSignals'),
   },
   wealth: {
-    title: "Wealth & cash flow",
+    title: i18n.t('ui.app.wealthCashFlow'),
     description:
-      "How contributions and market performance built the portfolio over time.",
+      i18n.t('ui.app.howContributionsAndMarketPerformanceBuiltThePortfolioOver'),
   },
   performance: {
-    title: "Performance & passive income",
-    description: "Returns, realized outcomes and recurring passive income.",
+    title: i18n.t('ui.app.performancePassiveIncome'),
+    description: i18n.t('ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome'),
   },
   allocation: {
-    title: "Diversification",
+    title: i18n.t('ui.app.diversification'),
     description:
-      "Current exposures, concentration and how the portfolio mix is evolving.",
+      i18n.t('ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs'),
   },
   holdings: {
-    title: "Holdings",
-    description: "Inspect held positions and their underlying economic exposure.",
+    title: i18n.t('ui.app.holdings'),
+    description: i18n.t('ui.app.inspectHeldPositionsAndTheirUnderlyingEconomicExposure'),
   },
   quality: {
-    title: "Data quality",
+    title: i18n.t('ui.app.dataQuality'),
     description:
-      "A focused review of pipeline, pricing, classification and look-through gaps.",
+      i18n.t('ui.app.aFocusedReviewOfPipelinePricingClassificationAndLook'),
   },
 };
 
 const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }> = {
   positions: {
-    title: "Positions",
-    description: "Inspect every holding, transaction and position-level result.",
+    title: i18n.t('ui.app.positions'),
+    description: i18n.t('ui.app.inspectEveryHoldingTransactionAndPositionLevelResult'),
   },
   underlying: {
-    title: "Underlying exposure",
+    title: i18n.t('ui.app.underlyingExposure'),
     description:
-      "Review identified economic exposure through ETFs and funds, grouped by issuer and security.",
+      i18n.t('ui.app.reviewIdentifiedEconomicExposureThroughEtfsAndFundsGrouped'),
   },
 };
 
@@ -127,7 +128,8 @@ function PrimaryTabButton({ activeTab, onNavigate, tab }: PrimaryTabButtonProps)
 function DashboardPanelFallback() {
   return (
     <div className="mb-6 rounded-card border border-border bg-surface/50 p-8 text-center text-sm text-content-subtle">
-      Loading analysis…
+
+      {i18n.t('ui.app.loadingAnalysis')}
     </div>
   );
 }
@@ -140,16 +142,18 @@ function DashboardHeader() {
   return (
     <header className="mb-5 flex items-start gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-content">Portfolio</h1>
+        <h1 className="text-2xl font-bold text-content">{i18n.t('ui.app.portfolio')}</h1>
       </div>
       <button
         type="button"
         onClick={toggleTheme}
         aria-pressed={theme === "dark"}
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        aria-label={theme === "dark"
+          ? i18n.t('ui.app.switchToLightMode')
+          : i18n.t('ui.app.switchToDarkMode')}
         className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
       >
-        {theme === "dark" ? "Light mode" : "Dark mode"}
+        {theme === "dark" ? i18n.t('ui.app.lightMode') : i18n.t('ui.app.darkMode')}
       </button>
     </header>
   );
@@ -172,7 +176,7 @@ function DashboardNavigation({
   return (
     <nav
       className="mb-5 flex overflow-x-auto border-b border-border"
-      aria-label="Portfolio analyses"
+      aria-label={i18n.t('ui.app.portfolioAnalyses')}
     >
       {PRIMARY_TABS.map((tab) => (
         <PrimaryTabButton key={tab.id} activeTab={activeTab} onNavigate={navigateTo} tab={tab} />
@@ -185,7 +189,8 @@ function DashboardNavigation({
         aria-current={activeTab === "quality" ? "page" : undefined}
         className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-accent text-content" : "border-b-transparent text-content-subtle hover:text-content-secondary"}`}
       >
-        Data quality
+
+        {i18n.t('ui.app.dataQuality')}
         {qualityCount > 0 && (
           <span
             className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${hasPipelineError || hasFundValidationError ? SEMANTIC_STATUS_BADGE_CLASSES.critical : SEMANTIC_STATUS_BADGE_CLASSES.warning}`}
@@ -286,8 +291,8 @@ export default function App() {
       <div className="mx-auto max-w-screen-2xl">
         <DashboardHeader />
 
-        {loading && <p className="text-content-muted">Loading…</p>}
-        {error && <p className="text-danger">Error: {error}</p>}
+        {loading && <p className="text-content-muted">{i18n.t('ui.app.loading')}</p>}
+        {error && <p className="text-danger">{i18n.t('ui.app.error')} {error}</p>}
         {dashboardReady && (
           <>
             <DashboardNavigation
@@ -321,25 +326,25 @@ export default function App() {
                     <CombinedAnalysisReliabilityKpi
                       statusMetric={{
                         value: portfolioDataStatus,
-                        metricLabel: "Portfolio data",
+                        metricLabel: i18n.t('ui.app.portfolioData'),
                         tone: portfolioDataTone,
                       }}
                       metrics={[
                         {
                           percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
                           amount: classificationMappedValue,
-                          metricLabel: "Diversification",
+                          metricLabel: i18n.t('ui.app.diversification'),
                           tone: classificationMetricTone,
                         },
                         {
                           percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
                           amount: identifiedFundValue,
-                          metricLabel: "Underlying assets",
+                          metricLabel: i18n.t('ui.app.underlyingAssets'),
                           tone: underlyingMetricTone,
                         },
                       ]}
                       tone={overviewReliabilityTone}
-                      tooltip="Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator."
+                      tooltip={i18n.t('ui.app.aggregateReliabilityForPortfolioDataDiversificationMappingAndUnderlying')}
                       qualityTheme={overviewQualityTheme}
                       scope={{ account: "filterable", period: "mixed" }}
                     />
@@ -352,18 +357,18 @@ export default function App() {
                         {
                           percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
                           amount: classificationMappedValue,
-                          metricLabel: "Diversification",
+                          metricLabel: i18n.t('ui.app.diversification'),
                           tone: classificationMetricTone,
                         },
                         {
                           percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
                           amount: identifiedFundValue,
-                          metricLabel: "Underlying assets",
+                          metricLabel: i18n.t('ui.app.underlyingAssets'),
                           tone: underlyingMetricTone,
                         },
                       ]}
                       tone={diversificationReliabilityTone}
-                      tooltip="Aggregate reliability for diversification mapping and underlying-assets look-through. Each percentage keeps its own quality color; the overall status follows the weaker indicator."
+                      tooltip={i18n.t('ui.app.aggregateReliabilityForDiversificationMappingAndUnderlyingAssetsLook')}
                       qualityTheme={diversificationQualityTheme}
                       scope={{ account: "filterable", period: "latest" }}
                     />
@@ -374,9 +379,9 @@ export default function App() {
                     <AnalysisReliabilityKpi
                       percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
                       amount={identifiedFundValue}
-                      metricLabel="Underlying assets"
+                      metricLabel={i18n.t('ui.app.underlyingAssets')}
                       tone={underlyingMetricTone}
-                      tooltip="Reliability of the look-through data used by the underlying-assets view. The percentage uses the whole selected portfolio, including balances where look-through is not applicable."
+                      tooltip={i18n.t('ui.app.reliabilityOfTheLookThroughDataUsedByThe')}
                       qualityTheme="lookthrough"
                       scope={{ account: "filterable", period: "latest" }}
                     />

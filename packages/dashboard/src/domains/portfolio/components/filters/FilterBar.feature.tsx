@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { ReactNode } from 'react'
 import { useAtomValue } from 'jotai'
 import { useDashboardFilters } from '@/domains/portfolio/pages/dashboard/services/actions/useDashboardFilters'
@@ -24,19 +25,19 @@ interface FilterPanelProps {
 }
 
 const OP_LABELS: Record<string, string> = {
-  BUY: 'Buy',
-  SELL: 'Sell',
-  DIVIDEND: 'Dividend',
-  INTEREST: 'Interest',
-  DEPOSIT: 'Deposit',
-  WITHDRAWAL: 'Withdrawal',
+  BUY: i18n.t('ui.filterbar.buy'),
+  SELL: i18n.t('ui.filterbar.sell'),
+  DIVIDEND: i18n.t('ui.filterbar.dividend'),
+  INTEREST: i18n.t('ui.filterbar.interest'),
+  DEPOSIT: i18n.t('ui.filterbar.deposit'),
+  WITHDRAWAL: i18n.t('ui.filterbar.withdrawal'),
 }
 
 const DATE_PRESETS = [
-  { label: 'This month', months: 0 },
-  { label: '3 months', months: 3 },
-  { label: '6 months', months: 6 },
-  { label: '1 year', months: 12 },
+  { label: i18n.t('ui.filterbar.thisMonth'), months: 0 },
+  { label: i18n.t('ui.filterbar.3Months'), months: 3 },
+  { label: i18n.t('ui.filterbar.6Months'), months: 6 },
+  { label: i18n.t('ui.filterbar.1Year'), months: 12 },
 ] as const
 
 const dateInputClass =
@@ -75,7 +76,7 @@ function OperationTypeChip({ operation }: { operation: string }) {
 
 function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
   const { setFilters } = useDashboardFilters()
-  return <button type="button" onClick={() => setFilters((current) => clearFilterGroup(current, item.key))} title={`Clear ${item.key} filter`} className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-blue-500 bg-blue-900/35 px-3 py-1 text-xs text-blue-200 transition-colors hover:bg-blue-900/55"><span className="truncate">{item.label}</span><span aria-hidden="true" className="text-blue-400">×</span></button>
+  return <button type="button" onClick={() => setFilters((current) => clearFilterGroup(current, item.key))} title={i18n.t('ui.filterbar.clearValue0Filter', { value0: item.key })} className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-blue-500 bg-blue-900/35 px-3 py-1 text-xs text-blue-200 transition-colors hover:bg-blue-900/55"><span className="truncate">{item.label}</span><span aria-hidden="true" className="text-blue-400">×</span></button>
 }
 
 export function FilterPanel({
@@ -98,29 +99,30 @@ export function FilterPanel({
 
   return (
     <SidePanel
-      title="Filters"
-      description="Changes update the dashboard immediately."
+      title={i18n.t('ui.filterbar.filters')}
+      description={i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
       onClose={closeFilters}
-      closeLabel="Close filters"
+      closeLabel={i18n.t('ui.filterbar.closeFilters')}
       headerActions={(
         <button
           type="button"
           onClick={resetDashboardFilters}
           className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-800 hover:text-gray-200"
         >
-          Reset all
+
+          {i18n.t('ui.filterbar.resetAll')}
         </button>
       )}
     >
       {visibility.showPeriod && (
-        <FilterSection title="Period" description="Limit time-based charts and calculations to a specific range.">
+        <FilterSection title={i18n.t('ui.filterbar.period')} description={i18n.t('ui.filterbar.limitTimeBasedChartsAndCalculationsToASpecific')}>
           <div className="flex flex-wrap gap-1.5">
             {DATE_PRESETS.map((preset) => <DatePresetChip key={preset.label} preset={preset} />)}
           </div>
           <div className="mt-3 flex items-center gap-2">
             <input
               type="date"
-              aria-label="Period start"
+              aria-label={i18n.t('ui.filterbar.periodStart')}
               value={filters.dateFrom ?? ''}
               onChange={(event) => setFilters({ ...filters, dateFrom: event.target.value || undefined })}
               className={dateInputClass}
@@ -128,7 +130,7 @@ export function FilterPanel({
             <span aria-hidden="true" className="text-xs text-gray-600">→</span>
             <input
               type="date"
-              aria-label="Period end"
+              aria-label={i18n.t('ui.filterbar.periodEnd')}
               value={filters.dateTo ?? ''}
               onChange={(event) => setFilters({ ...filters, dateTo: event.target.value || undefined })}
               className={dateInputClass}
@@ -140,14 +142,15 @@ export function FilterPanel({
               onClick={() => setFilters({ ...filters, dateFrom: undefined, dateTo: undefined })}
               className="mt-2 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
             >
-              Clear period
+
+              {i18n.t('ui.filterbar.clearPeriod')}
             </button>
           )}
         </FilterSection>
       )}
 
       {allAccounts.length > 0 && (
-        <FilterSection title="Accounts" description="Choose the portfolio scope used across every view.">
+        <FilterSection title={i18n.t('ui.filterbar.accounts')} description={i18n.t('ui.filterbar.chooseThePortfolioScopeUsedAcrossEveryView')}>
           <AccountTree
             allAccountTypes={allAccountTypes}
             accountToType={accountToType}
@@ -159,15 +162,16 @@ export function FilterPanel({
           {demoPresetSelection && (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-gray-800/60 px-3 py-2.5">
               <div>
-                <div className="text-xs font-medium text-gray-300">Static demo</div>
-                <div className="mt-0.5 text-[11px] text-gray-500">Use the precomputed filtered return sample.</div>
+                <div className="text-xs font-medium text-gray-300">{i18n.t('ui.filterbar.staticDemo')}</div>
+                <div className="mt-0.5 text-[11px] text-gray-500">{i18n.t('ui.filterbar.useThePrecomputedFilteredReturnSample')}</div>
               </div>
               <button
                 type="button"
                 onClick={() => setFilters({ ...filters, accounts: demoPresetSelection, accountTypes: new Set() })}
                 className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-blue-600 bg-blue-900/40 text-blue-200' : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-200'}`}
               >
-                Exclude private equity
+
+                {i18n.t('ui.filterbar.excludePrivateEquity')}
               </button>
             </div>
           )}
@@ -175,11 +179,11 @@ export function FilterPanel({
       )}
 
       {visibility.showPositionFilters && (
-        <FilterSection title="Positions" description="Refine the transactions and holdings shown in the table.">
-          <div className="text-xs font-medium text-gray-400">Operation type</div>
+        <FilterSection title={i18n.t('ui.filterbar.positions')} description={i18n.t('ui.filterbar.refineTheTransactionsAndHoldingsShownInTheTable')}>
+          <div className="text-xs font-medium text-gray-400">{i18n.t('ui.filterbar.operationType')}</div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Chip
-              label="All"
+              label={i18n.t('ui.filterbar.all')}
               active={filters.operationTypes.size === 0}
               onClick={() => setFilters({ ...filters, operationTypes: new Set() })}
             />
@@ -187,8 +191,8 @@ export function FilterPanel({
           </div>
           <label className="mt-4 flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-gray-700 bg-gray-950/35 px-3 py-2.5">
             <span>
-              <span className="block text-xs font-medium text-gray-300">Hide closed positions</span>
-              <span className="mt-0.5 block text-[11px] text-gray-500">Keep the table focused on current holdings.</span>
+              <span className="block text-xs font-medium text-gray-300">{i18n.t('ui.filterbar.hideClosedPositions')}</span>
+              <span className="mt-0.5 block text-[11px] text-gray-500">{i18n.t('ui.filterbar.keepTheTableFocusedOnCurrentHoldings')}</span>
             </span>
             <input
               type="checkbox"
@@ -222,7 +226,7 @@ export function FilterButton({
       <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
         <path d="M3 5h14M5.5 10h9M8 15h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
-      <span>Filters</span>
+      <span>{i18n.t('ui.filterbar.filters')}</span>
       {activeCount > 0 && (
         <span className="min-w-5 rounded-full bg-blue-600 px-1.5 py-0.5 text-center text-[10px] font-bold leading-4 text-white">
           {activeCount}
@@ -246,7 +250,7 @@ export function ActiveFilterSummary({
   if (items.length === 0 && !leading && !children && !actions) return null
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
+    <div className="mb-4 flex flex-wrap items-center gap-2" aria-label={i18n.t('ui.filterbar.activeFilters')}>
       {leading}
       {items.map((item) => <ActiveFilterChip key={item.key} item={item} />)}
       {children}
@@ -264,7 +268,8 @@ export function ResetFiltersButton() {
       onClick={resetDashboardFilters}
       className="px-1 py-1 text-xs font-medium text-gray-500 transition-colors hover:text-gray-200"
     >
-      Reset all
+
+      {i18n.t('ui.filterbar.resetAll')}
     </button>
   )
 }

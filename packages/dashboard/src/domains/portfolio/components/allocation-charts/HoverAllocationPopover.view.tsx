@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
 import type { AllocationPoint } from '@/domains/portfolio/types/allocation'
 import type { IsinAllocation } from '@/domains/portfolio/apis/queries/useAllocationByIsin'
@@ -22,10 +23,10 @@ export function HoverAllocationPopover({
 }) {
   const { allocation } = target
   const charts = [
-    { title: 'Geography', point: allocation.geo },
-    { title: 'Asset class', point: allocation.classe },
-    { title: 'Sector', point: allocation.secteur },
-    { title: 'Currency', point: allocation.currency },
+    { title: i18n.t('ui.hoverallocationpopover.geography'), point: allocation.geo },
+    { title: i18n.t('ui.hoverallocationpopover.assetClass'), point: allocation.classe },
+    { title: i18n.t('ui.hoverallocationpopover.sector'), point: allocation.secteur },
+    { title: i18n.t('ui.hoverallocationpopover.currency'), point: allocation.currency },
   ].filter((c): c is { title: string; point: AllocationPoint } => c.point != null && c.point.categories.length > 0)
 
   if (!charts.length) return null

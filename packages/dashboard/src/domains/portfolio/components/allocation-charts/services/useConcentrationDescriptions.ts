@@ -2,6 +2,7 @@ import type { ConcentrationMode } from '@/domains/portfolio/components/portfolio
 import type { useAllocationCharts } from '@/domains/portfolio/services/useAllocationCharts'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import i18n from '@/i18n/i18n'
 
 export function useConcentrationDescriptions(
   concentration: ReturnType<typeof useAllocationCharts>['concentration'],
@@ -11,10 +12,16 @@ export function useConcentrationDescriptions(
   const formatPercentage = useFormatPercentage()
   return {
     cumulativeDescription: mode === 'held'
-      ? 'Share of the applicable portfolio held in the largest N positions.'
-      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${formatPercentage(concentration.coveragePct)} coverage.`,
+      ? i18n.t('ui.useconcentrationdescriptions.heldCumulativeDescription')
+      : i18n.t('ui.useconcentrationdescriptions.underlyingCumulativeDescription', {
+          coverage: formatPercentage(concentration.coveragePct),
+        }),
     holdingsDescription: mode === 'held'
-      ? 'Positions effectively held, aggregated across accounts.'
-      : `Identified ${formatMoney(concentration.identifiedValue, { style: 'full' })} · undisclosed funds ${formatMoney(concentration.undisclosedValue, { style: 'full' })} · opaque ${formatMoney(concentration.opaqueValue, { style: 'full' })}.`,
+      ? i18n.t('ui.useconcentrationdescriptions.heldPositionsDescription')
+      : i18n.t('ui.useconcentrationdescriptions.underlyingPositionsDescription', {
+          identified: formatMoney(concentration.identifiedValue, { style: 'full' }),
+          undisclosed: formatMoney(concentration.undisclosedValue, { style: 'full' }),
+          opaque: formatMoney(concentration.opaqueValue, { style: 'full' }),
+        }),
   }
 }

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import i18n from '@/i18n/i18n'
 import { useAtomValue } from 'jotai'
 import { useAccountTypeHistory } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
 import { useAllPositions, type RawPositionRow } from '@/domains/portfolio/apis/queries/useAllPositions'
@@ -194,7 +195,7 @@ export function useDashboardViewModel() {
   if (filteredHistory.loading) irrStatus = 'loading'
   else if (filteredHistory.error) irrStatus = 'error'
   const irrScopeLabel = filteredHistory.isFiltered && irrStatus === 'ready'
-    ? 'Selected accounts'
+    ? i18n.t('ui.usedashboardviewmodel.selectedAccounts')
     : undefined
   const demoPresetSelection = useMemo(
     () => buildDemoPresetSelection(allAccounts, filteredHistory.demoPresetAccounts),

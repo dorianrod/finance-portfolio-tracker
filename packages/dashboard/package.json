@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "audit:i18n": "eslint src --quiet && node scripts/check-i18n-catalog.mjs",
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
     "test": "vitest run"
@@ -17,10 +18,12 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.19",
     "@types/papaparse": "^5.5.2",
+    "i18next": "^26.5.6",
     "jotai": "^2.20.3",
     "papaparse": "^5.5.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-i18next": "^17.1.4",
     "recharts": "^3.10.1",
     "tailwindcss": "^4.3.0",
     "yup": "^1.7.1"

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { AccountTypePoint, PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import type { MonthlyOpsMap } from '@/domains/portfolio/apis/queries/useMonthlyOps'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/apis/queries/useAccountTypeHistory'
@@ -57,7 +58,7 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
     <KpiCard>
       <Kpi.Root accent={accent}>
         <Kpi.Label
-          tooltip="Rolling total over the latest twelve calendar months, compared with the preceding twelve-month window. The latest month may be partial."
+          tooltip={i18n.t('ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared')}
           tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-12m" />}
         >
           {label}
@@ -66,9 +67,10 @@ function ComparisonKpi({ label, metric, currentMonths, tone }: {
           <Kpi.Value color={valueColor} title={value}>{value}</Kpi.Value>
           <Kpi.InlineNote color={changeColor}>{metric.changePct == null ? '—' : formatPercentage(metric.changePct, { signed: true })}</Kpi.InlineNote>
         </Kpi.ValueRow>
-        <Kpi.Detail>{currentLabel || 'Insufficient history'}</Kpi.Detail>
+        <Kpi.Detail>{currentLabel || i18n.t('ui.wealthtab.insufficientHistory')}</Kpi.Detail>
         <Kpi.Footer>
-          Previous 12m: <span className="font-medium text-gray-300">{metric.previous == null ? '—' : formatMoney(metric.previous)}</span>
+
+          {i18n.t('ui.wealthtab.previous12m')} <span className="font-medium text-gray-300">{metric.previous == null ? '—' : formatMoney(metric.previous)}</span>
         </Kpi.Footer>
       </Kpi.Root>
     </KpiCard>
@@ -85,8 +87,8 @@ export function WealthTab({ history, accountTypeData, accountTypeHistory, accoun
   return (
     <div className="mb-6 space-y-4">
       <div className="flex flex-wrap items-start gap-x-10 gap-y-4 border-b border-gray-800 pb-4">
-        <ComparisonKpi label="Net contributions · trailing 12m" metric={trailingYearComparison.savings} currentMonths={trailingYearComparison.currentMonths} tone="blue" />
-        <ComparisonKpi label="Market performance · trailing 12m" metric={trailingYearComparison.performance} currentMonths={trailingYearComparison.currentMonths} tone="performance" />
+        <ComparisonKpi label={i18n.t('ui.wealthtab.netContributionsTrailing12m')} metric={trailingYearComparison.savings} currentMonths={trailingYearComparison.currentMonths} tone="blue" />
+        <ComparisonKpi label={i18n.t('ui.wealthtab.marketPerformanceTrailing12m')} metric={trailingYearComparison.performance} currentMonths={trailingYearComparison.currentMonths} tone="performance" />
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {history.length > 0 && <EvolutionChart history={history} />}

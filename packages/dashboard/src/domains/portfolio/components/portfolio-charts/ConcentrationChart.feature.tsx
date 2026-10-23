@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -41,11 +42,11 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter. */}
-          <h2 className="flex items-center text-sm font-medium text-gray-300">Largest holdings<ScopedInfoTooltip text={description ?? 'Largest portfolio exposures aggregated across accounts.'} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
-          <p className="mt-0.5 text-xs text-gray-600">{description ?? 'Aggregated across accounts.'}</p>
+          <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.concentrationchart.largestHoldings')}<ScopedInfoTooltip text={description ?? i18n.t('ui.concentrationchart.largestPortfolioExposuresAggregatedAcrossAccounts')} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
+          <p className="mt-0.5 text-xs text-gray-600">{description ?? i18n.t('ui.concentrationchart.aggregatedAcrossAccounts')}</p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          {topTenSummary && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">Top 10 total</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{formatMoney(topTenSummary.value, { style: 'full' })} · {formatPercentage(topTenSummary.percentage)}</div></div>}
+          {topTenSummary && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">{i18n.t('ui.concentrationchart.top10Total')}</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{formatMoney(topTenSummary.value, { style: 'full' })} · {formatPercentage(topTenSummary.percentage)}</div></div>}
         </div>
       </div>
       <div className="overflow-x-auto">

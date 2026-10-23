@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useMemo, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -10,7 +11,7 @@ import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioCompos
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { ScopedInfoTooltip } from '@/domains/portfolio/components/kpis/ScopedInfoTooltip.feature'
 
-export function EvolutionChart({ history, title = 'Portfolio value over time', height = 220 }: {
+export function EvolutionChart({ history, title = i18n.t('ui.evolutionchart.portfolioValueOverTime'), height = 220 }: {
   history: PortfolioHistoryPoint[]
   title?: string
   height?: number
@@ -24,7 +25,7 @@ export function EvolutionChart({ history, title = 'Portfolio value over time', h
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text="Portfolio market value over time, split between cost basis and gross unrealized profit or loss." scope={{ account: 'filterable', period: 'range' }} /></h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={i18n.t('ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis')} scope={{ account: 'filterable', period: 'range' }} /></h2>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={height}>
@@ -52,11 +53,11 @@ export function EvolutionChart({ history, title = 'Portfolio value over time', h
           <Tooltip content={<EvolutionTooltip percentageMode={percentageMode} />} />
           <Legend formatter={(value) => (
             <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
-              {value === 'Cost basis' ? 'Cost basis' : 'Unrealized P&L'}
+              {value === 'Cost basis' ? i18n.t('ui.evolutionchart.costBasis') : i18n.t('ui.evolutionchart.unrealizedPL')}
             </span>
           )} />
-          <Area type="monotone" dataKey={percentageMode ? PORTFOLIO_COST_SHARE_KEY : 'total_cost_basis'} name="Cost basis" stackId="a" stroke={SEMANTIC_COLORS.costBasis} fill="url(#gradCost)" strokeWidth={1.5} />
-          <Area type="monotone" dataKey={percentageMode ? PORTFOLIO_GAIN_SHARE_KEY : 'unrealized_gain'} name="Unrealized P&L" stackId="a" stroke={SEMANTIC_COLORS.performancePositive} fill="url(#gradGain)" strokeWidth={1.5} />
+          <Area type="monotone" dataKey={percentageMode ? PORTFOLIO_COST_SHARE_KEY : 'total_cost_basis'} name={i18n.t('ui.evolutionchart.costBasis')} stackId="a" stroke={SEMANTIC_COLORS.costBasis} fill="url(#gradCost)" strokeWidth={1.5} />
+          <Area type="monotone" dataKey={percentageMode ? PORTFOLIO_GAIN_SHARE_KEY : 'unrealized_gain'} name={i18n.t('ui.evolutionchart.unrealizedPL')} stackId="a" stroke={SEMANTIC_COLORS.performancePositive} fill="url(#gradGain)" strokeWidth={1.5} />
         </AreaChart>
       </ResponsiveContainer>
     </div>

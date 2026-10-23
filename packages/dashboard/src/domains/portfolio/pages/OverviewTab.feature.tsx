@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import type { IrrStatus } from '@/domains/portfolio/types/history'
 import type { ComparedMetric, OverviewComparison } from './helpers/calculators/buildOverviewComparison'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
@@ -13,8 +14,8 @@ export function OverviewTab({ comparison, rollingThreeYearTri, irrStatus }: Over
   if (!comparison) {
     return (
       <div className="mb-6 rounded-2xl border border-gray-800 bg-gray-900 p-8 text-center">
-        <h3 className="text-sm font-semibold text-gray-200">Overview unavailable</h3>
-        <p className="mt-2 text-sm text-gray-500">Choose a valid period with available portfolio history.</p>
+        <h3 className="text-sm font-semibold text-gray-200">{i18n.t('ui.overviewtab.overviewUnavailable')}</h3>
+        <p className="mt-2 text-sm text-gray-500">{i18n.t('ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory')}</p>
       </div>
     )
   }

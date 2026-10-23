@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import { useAtomValue } from 'jotai'
 import type { RawIsinData } from '@/domains/portfolio/apis/queries/useRawIsinData'
@@ -78,14 +79,14 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
   const hasConcentrationData = heldAssetConcentration.allHoldings.length > 0
     || lookThroughConcentration.allHoldings.length > 0
   const showFilteredPositions = positionsOpen && activeFilter != null && tableRows.length > 0
-  if (rawData.loading) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
+  if (rawData.loading) return <p className="text-gray-400 text-sm">{i18n.t('ui.allocationcharts.loadingBreakdowns')}</p>
 
   if (hasSelectedValue && !hasApplicableValue) {
-    return <p className="text-sm text-gray-500">Diversification is not applicable to savings, checking and brokerage-cash accounts.</p>
+    return <p className="text-sm text-gray-500">{i18n.t('ui.allocationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage')}</p>
   }
 
   if (view === 'current' && !baseGeo.length && !baseSecteur.length && !baseCurrency.length && !baseClasse.length) {
-    return <p className="text-gray-500 text-sm">No allocation data available. Run the pipeline to generate the files.</p>
+    return <p className="text-gray-500 text-sm">{i18n.t('ui.allocationcharts.noAllocationDataAvailableRunThePipelineToGenerate')}</p>
   }
 
   return (
@@ -96,8 +97,8 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
             <section>
               <div className="mb-3 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-300">Asset concentration</h3>
-                  <p className="mt-0.5 text-xs text-gray-600">See how much of the portfolio is concentrated in its largest exposures.</p>
+                  <h3 className="text-sm font-medium text-gray-300">{i18n.t('ui.allocationcharts.assetConcentration')}</h3>
+                  <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn')}</p>
                 </div>
                 <ConcentrationModeToggle value={concentrationMode} onChange={setConcentrationMode} />
               </div>
@@ -118,21 +119,22 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
                 </div>
               ) : (
                 <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">
-                  No identified look-through exposure for the current selection.
+
+                  {i18n.t('ui.allocationcharts.noIdentifiedLookThroughExposureForTheCurrentSelection')}
                 </div>
               )}
             </section>
           )}
           <section>
             <div className="mb-3">
-              <h3 className="text-sm font-medium text-gray-300">Portfolio breakdown</h3>
-              <p className="mt-0.5 text-xs text-gray-600">Explore the current mix by geography, asset class, sector and currency.</p>
+              <h3 className="text-sm font-medium text-gray-300">{i18n.t('ui.allocationcharts.portfolioBreakdown')}</h3>
+              <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector')}</p>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {latestGeo && <DonutCard title="Geography" point={latestGeo} dimension="geo" />}
-              {latestClasse && <DonutCard title="Asset class" point={latestClasse} dimension="classe" />}
-              {latestSecteur && <DonutCard title="Sector" point={latestSecteur} dimension="secteur" />}
-              {latestCurrency && <DonutCard title="Currency (equities + fixed income)" point={latestCurrency} dimension="currency" />}
+              {latestGeo && <DonutCard title={i18n.t('ui.allocationcharts.geography')} point={latestGeo} dimension="geo" />}
+              {latestClasse && <DonutCard title={i18n.t('ui.allocationcharts.assetClass')} point={latestClasse} dimension="classe" />}
+              {latestSecteur && <DonutCard title={i18n.t('ui.allocationcharts.sector')} point={latestSecteur} dimension="secteur" />}
+              {latestCurrency && <DonutCard title={i18n.t('ui.allocationcharts.currencyEquitiesFixedIncome')} point={latestCurrency} dimension="currency" />}
             </div>
           </section>
         </>
@@ -148,16 +150,16 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
           />
           {hasEvolution ? <section>
             <div className="mb-3">
-              <h3 className="text-sm font-medium text-gray-300">Portfolio breakdown trends</h3>
-              <p className="mt-0.5 text-xs text-gray-600">Track how the mix changed by geography, asset class, sector and currency.</p>
+              <h3 className="text-sm font-medium text-gray-300">{i18n.t('ui.allocationcharts.portfolioBreakdownTrends')}</h3>
+              <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.allocationcharts.trackHowTheMixChangedByGeographyAssetClass')}</p>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {trendGeo.length >= 2 && <EvoCard title="Geography" points={trendGeo} dimension="geo" />}
-              {trendClasse.length >= 2 && <EvoCard title="Asset class" points={trendClasse} dimension="classe" />}
-              {trendSecteur.length >= 2 && <EvoCard title="Sector" points={trendSecteur} dimension="secteur" />}
-              {trendCurrency.length >= 2 && <EvoCard title="Currency" points={trendCurrency} dimension="currency" />}
+              {trendGeo.length >= 2 && <EvoCard title={i18n.t('ui.allocationcharts.geography')} points={trendGeo} dimension="geo" />}
+              {trendClasse.length >= 2 && <EvoCard title={i18n.t('ui.allocationcharts.assetClass')} points={trendClasse} dimension="classe" />}
+              {trendSecteur.length >= 2 && <EvoCard title={i18n.t('ui.allocationcharts.sector')} points={trendSecteur} dimension="secteur" />}
+              {trendCurrency.length >= 2 && <EvoCard title={i18n.t('ui.allocationcharts.currency')} points={trendCurrency} dimension="currency" />}
             </div>
-          </section> : <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">Not enough portfolio breakdown history.</div>}
+          </section> : <div className="rounded-xl border border-gray-800 bg-gray-900 p-8 text-center text-sm text-gray-500">{i18n.t('ui.allocationcharts.notEnoughPortfolioBreakdownHistory')}</div>}
         </>
       )}
 

@@ -6,7 +6,7 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/helpers/quality/accountApplicability'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { AllocationFilter, MatchingIsinRow } from '../../allocationCharts.types'
-import { groupAllocationTail } from '../presenters/groupAllocationTail'
+import { formatGroupedAllocationLabel, groupAllocationTail } from '../presenters/groupAllocationTail'
 
 function dateTimestamp(date: string | undefined): number | null {
   if (!date) return null
@@ -45,7 +45,7 @@ export function buildAllocationTrend(points: AllocationPoint[]): {
   )
   const mainNames = main.map((category) => category.name)
   const groupedNames = new Set(grouped.map((category) => category.name))
-  const groupedKey = grouped.length > 1 ? `others (${grouped.length})` : null
+  const groupedKey = grouped.length > 1 ? formatGroupedAllocationLabel(grouped.length) : null
   const categories = [...mainNames, ...(groupedKey ? [groupedKey] : [])]
 
   const rows = points.map((point) => {

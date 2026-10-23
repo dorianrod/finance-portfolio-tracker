@@ -5,11 +5,13 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import componentRole from './eslint-rules/component-role.js'
+import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
+import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
 export default defineConfig([
@@ -36,11 +38,13 @@ export default defineConfig([
       local: {
         rules: {
           'component-role': componentRole,
+          'i18n-consistency': i18nConsistency,
           'max-hooks-per-component': maxHooksPerComponent,
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
           'no-component-module-logic': noComponentModuleLogic,
           'no-effects-in-components': noEffectsInComponents,
+          'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-prop-drilling': noPropDrilling,
         },
       },
@@ -76,11 +80,13 @@ export default defineConfig([
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       'local/component-role': 'error',
+      'local/i18n-consistency': 'error',
       'local/max-hooks-per-component': ['warn', { max: 6 }],
       'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
       'local/no-component-module-logic': 'warn',
       'local/no-effects-in-components': 'warn',
+      'local/no-hardcoded-ui-strings': 'error',
       'local/no-prop-drilling': 'warn',
     },
   },
@@ -89,6 +95,12 @@ export default defineConfig([
     rules: {
       'no-restricted-properties': 'off',
       'no-restricted-syntax': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'local/no-hardcoded-ui-strings': 'off',
     },
   },
   {

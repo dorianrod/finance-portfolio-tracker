@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import {
   CartesianGrid,
   Cell,
@@ -86,12 +87,12 @@ function RelationshipTooltip({ active, payload }: {
   return (
     <TooltipBox minWidth={220}>
       <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>{point.year}</div>
-      <div style={{ color: 'var(--tooltip-label)' }}>Total net income: {formatMoney(point.totalIncome, { style: 'full' })}</div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {formatMoney(point.netSalary, { style: 'full' })}</div>
-      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {formatMoney(point.otherIncome, { style: 'full' })}</div>
-      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}>Net contributions: {formatMoney(point.placedSavings ?? 0, { style: 'full' })}</div>
-      <div style={{ color: SEMANTIC_COLORS.returnRate }}>Placement rate: {formatPercentage(point.placementRate ?? 0)}</div>
-      <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>Unplaced income proxy: {formatMoney(point.unplacedIncomeProxy ?? 0, { style: 'full' })}</div>
+      <div style={{ color: 'var(--tooltip-label)' }}>{i18n.t('ui.incomeplacementrelationshipchart.totalNetIncome')} {formatMoney(point.totalIncome, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>{i18n.t('ui.incomeplacementrelationshipchart.netSalary')} {formatMoney(point.netSalary, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>{i18n.t('ui.incomeplacementrelationshipchart.otherIncome')} {formatMoney(point.otherIncome, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}>{i18n.t('ui.incomeplacementrelationshipchart.netContributions')} {formatMoney(point.placedSavings ?? 0, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.returnRate }}>{i18n.t('ui.incomeplacementrelationshipchart.placementRate')} {formatPercentage(point.placementRate ?? 0)}</div>
+      <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>{i18n.t('ui.incomeplacementrelationshipchart.unplacedIncomeProxy')} {formatMoney(point.unplacedIncomeProxy ?? 0, { style: 'full' })}</div>
     </TooltipBox>
   )
 }
@@ -113,18 +114,18 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-gray-300">Income level vs placement rate<ScopedInfoTooltip text="Relationship between annual declared income and the share placed into the portfolio, using comparable actual years." scope={{ account: 'global', period: 'year-range' }} /></h2>
-        <p className="mt-1 text-xs text-gray-500">Comparable actual years only · All accounts · Latest 3 years highlighted</p>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.incomeplacementrelationshipchart.incomeLevelVsPlacementRate')}<ScopedInfoTooltip text={i18n.t('ui.incomeplacementrelationshipchart.relationshipBetweenAnnualDeclaredIncomeAndTheSharePlaced')} scope={{ account: 'global', period: 'year-range' }} /></h2>
+        <p className="mt-1 text-xs text-gray-500">{i18n.t('ui.incomeplacementrelationshipchart.comparableActualYearsOnlyAllAccountsLatest3Years')}</p>
       </div>
       <div className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-xs">
-        <span className="text-gray-500">Correlation <strong className="font-semibold text-gray-300">{analysis.correlation == null ? '—' : formatNumber(analysis.correlation, { maximumFractionDigits: 2, minimumFractionDigits: 2, signDisplay: 'always' })}</strong></span>
-        <span className="text-gray-500">Trend per €10k income <strong className="font-semibold text-gray-300">{analysis.slopePerTenThousand == null ? '—' : formatPercentage(analysis.slopePerTenThousand, { signed: true, unit: ' pp' })}</strong></span>
+        <span className="text-gray-500">{i18n.t('ui.incomeplacementrelationshipchart.correlation')} <strong className="font-semibold text-gray-300">{analysis.correlation == null ? '—' : formatNumber(analysis.correlation, { maximumFractionDigits: 2, minimumFractionDigits: 2, signDisplay: 'always' })}</strong></span>
+        <span className="text-gray-500">{i18n.t('ui.incomeplacementrelationshipchart.trendPer10kIncome')} <strong className="font-semibold text-gray-300">{analysis.slopePerTenThousand == null ? '—' : formatPercentage(analysis.slopePerTenThousand, { signed: true, unit: ' pp' })}</strong></span>
       </div>
       <ResponsiveContainer width="100%" height={285} onResize={(width) => setChartWidth(width)}>
         <ScatterChart margin={{ top: 18, right: 24, left: 4, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis type="number" dataKey="totalIncome" name="Net income" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis type="number" dataKey="placementRate" name="Placement rate" tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
+          <XAxis type="number" dataKey="totalIncome" name={i18n.t('ui.incomeplacementrelationshipchart.netIncome')} tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
+          <YAxis type="number" dataKey="placementRate" name={i18n.t('ui.incomeplacementrelationshipchart.placementRate.5df16e')} tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<RelationshipTooltip />} />
           {trendLine && (
             <ReferenceLine
@@ -156,7 +157,8 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
         </ScatterChart>
       </ResponsiveContainer>
       <p className="mt-3 border-t border-gray-800 pt-3 text-xs leading-relaxed text-gray-500">
-        The unplaced amount is income minus observed net contributions: it is a proxy, not measured spending. Other income comes only from salaries.csv; internal reallocations such as private equity are not income. Correlation and trend are descriptive, not causal.
+
+        {i18n.t('ui.incomeplacementrelationshipchart.theUnplacedAmountIsIncomeMinusObservedNetContributions')}
       </p>
     </div>
   )

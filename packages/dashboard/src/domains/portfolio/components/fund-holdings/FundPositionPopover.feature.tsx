@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
 import { useAtomValue } from 'jotai'
 import {
@@ -72,13 +73,14 @@ export function FundPositionPopover({
           <p className="mt-0.5 truncate font-mono text-[10px] text-gray-600">{position.isin || position.ticker}</p>
         </div>
         <button type="button" onClick={() => openCompleteHoldings(position.name)} className="shrink-0 text-xs font-medium text-blue-400 hover:text-blue-300">
-          Open all →
+
+          {i18n.t('ui.fundpositionpopover.openAll')}
         </button>
       </div>
 
       <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 border-b border-gray-800 pb-3 text-xs text-gray-500">
-        <span>{status.sourceName}{status.proxyName ? ` · exact proxy ${status.proxyName}` : ''}</span>
-        <span>Holdings {status.holdingsDate || 'unknown'} · {formatNumber(status.holdingCount)} rows</span>
+        <span>{status.sourceName}{status.proxyName ? i18n.t('ui.fundpositionpopover.exactProxyValue0', { value0: status.proxyName }) : ''}</span>
+        <span>{i18n.t('ui.fundpositionpopover.holdings')} {status.holdingsDate || i18n.t('ui.fundpositionpopover.unknown')} · {formatNumber(status.holdingCount)}  {i18n.t('ui.fundpositionpopover.rows')}</span>
       </div>
 
       {rows.length > 0 ? (
@@ -86,12 +88,12 @@ export function FundPositionPopover({
           {rows.map((holding) => <FundPositionHoldingRow key={holding.holdingId} holding={holding} positionValue={positionValue} />)}
         </div>
       ) : (
-        <p className="py-5 text-center text-xs text-gray-500">No underlying holdings available.</p>
+        <p className="py-5 text-center text-xs text-gray-500">{i18n.t('ui.fundpositionpopover.noUnderlyingHoldingsAvailable')}</p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span>{formatPercentage(status.explainedPct)} explained ({formatMoney(status.explainedValue, { style: 'full' })})</span>
-        <span>{formatPercentage(status.residualPct)} undisclosed ({formatMoney(status.residualValue, { style: 'full' })})</span>
+        <span>{formatPercentage(status.explainedPct)}  {i18n.t('ui.fundpositionpopover.explained')}{formatMoney(status.explainedValue, { style: 'full' })})</span>
+        <span>{formatPercentage(status.residualPct)}  {i18n.t('ui.fundpositionpopover.undisclosed')}{formatMoney(status.residualValue, { style: 'full' })})</span>
         {status.issues && <span className="basis-full text-amber-300">{status.issues}</span>}
       </div>
     </div>,

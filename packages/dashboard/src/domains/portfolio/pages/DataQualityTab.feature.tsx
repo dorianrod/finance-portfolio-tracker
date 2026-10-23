@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
 import type { PositionRow } from '@/domains/portfolio/types/domain'
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
@@ -105,8 +106,8 @@ export function DataQualityTab({
       && scopedFundData.statuses.length > 0
     ) {
       return {
-        label: 'Inspect',
-        detail: `${fundIssueCount} issue${fundIssueCount === 1 ? '' : 's'} to inspect`,
+        label: i18n.t('ui.dataqualitytab.inspect'),
+        detail: i18n.t('ui.dataqualitytab.issuesToInspect', { count: fundIssueCount }),
         expanded: fundDiagnosticsOpen,
         onClick: openFundDiagnostics,
       }
@@ -114,10 +115,10 @@ export function DataQualityTab({
 
     if (activeThemeId === 'classification' && classificationApplicableValue > 0) {
       return {
-        label: 'Inspect',
+        label: i18n.t('ui.dataqualitytab.inspect'),
         detail: affectedAssets.length > 0
-          ? `${affectedAssets.length} asset${affectedAssets.length === 1 ? '' : 's'} to inspect`
-          : 'No affected asset',
+          ? i18n.t('ui.dataqualitytab.assetsToInspect', { count: affectedAssets.length })
+          : i18n.t('ui.dataqualitytab.noAffectedAsset'),
         expanded: classificationDetailsOpen,
         onClick: openAllClassificationDetails,
       }
@@ -138,10 +139,10 @@ export function DataQualityTab({
   ])
   let classificationContent = (
     // eslint-disable-next-line local/no-prop-drilling -- Loading-state copy is selected by the owning page feature.
-    <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />
+    <EmptyQualityState message={rawData.loading ? i18n.t('ui.dataqualitytab.loadingClassificationCoverage') : i18n.t('ui.dataqualitytab.noClassificationCoverageDataAvailable')} />
   )
   if (classificationIsNotApplicable) {
-    classificationContent = <EmptyQualityState message="Classification is not applicable to savings, checking and brokerage-cash accounts." />
+    classificationContent = <EmptyQualityState message={i18n.t('ui.dataqualitytab.classificationIsNotApplicableToSavingsCheckingAndBrokerage')} />
   } else if (coverage.length > 0) {
     classificationContent = (
       <AllocationCoverageCard
@@ -153,8 +154,8 @@ export function DataQualityTab({
 
   let lookThroughContent = (
     <EmptyQualityState message={scopedFundData.report
-      ? 'Look-through is not applicable to savings, checking and brokerage-cash accounts.'
-      : 'No look-through quality report. Run the portfolio pipeline to generate it.'} />
+      ? i18n.t('ui.dataqualitytab.lookThroughIsNotApplicableToSavingsCheckingAnd')
+      : i18n.t('ui.dataqualitytab.noLookThroughQualityReportRunThePortfolioPipeline')} />
   )
   if (hasLookThroughScope) {
     lookThroughContent = (
@@ -169,7 +170,7 @@ export function DataQualityTab({
     <div className="data-quality-view mb-6">
       <div className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]">
         <div className="md:hidden">
-          <label htmlFor="quality-theme" className="mb-1.5 block text-xs font-medium text-gray-500">Quality theme</label>
+          <label htmlFor="quality-theme" className="mb-1.5 block text-xs font-medium text-gray-500">{i18n.t('ui.dataqualitytab.qualityTheme')}</label>
           <select
             id="quality-theme"
             value={activeThemeId}
@@ -180,7 +181,7 @@ export function DataQualityTab({
           </select>
         </div>
 
-        <nav className="hidden space-y-1 md:block md:border-r md:border-gray-800 md:pr-4" aria-label="Data quality themes" role="tablist" aria-orientation="vertical">
+        <nav className="hidden space-y-1 md:block md:border-r md:border-gray-800 md:pr-4" aria-label={i18n.t('ui.dataqualitytab.dataQualityThemes')} role="tablist" aria-orientation="vertical">
           {themes.map((theme) => <QualityThemeTab key={theme.id} activeThemeId={activeThemeId} onSelect={setSelectedQualityTheme} theme={theme} />)}
         </nav>
 
@@ -241,10 +242,10 @@ export function DataQualityTab({
 
       {classificationDetailsOpen && (
         <SidePanel
-          title={classificationDimension ? `Affected assets · ${DATA_QUALITY_DIMENSION_LABELS[classificationDimension]}` : 'Affected assets'}
-          description="Positions contributing to undocumented diversification data, sorted by their largest monetary gap."
+          title={classificationDimension ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', { value0: DATA_QUALITY_DIMENSION_LABELS[classificationDimension] }) : i18n.t('ui.dataqualitytab.affectedAssets')}
+          description={i18n.t('ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir')}
           onClose={closeClassificationDetails}
-          closeLabel="Close affected assets details"
+          closeLabel={i18n.t('ui.dataqualitytab.closeAffectedAssetsDetails')}
           size="medium"
         >
           <AffectedAssetsTable
@@ -258,7 +259,7 @@ export function DataQualityTab({
 
 function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
   if (assets.length === 0) {
-    return <p className="p-6 text-center text-sm text-gray-500">No affected asset for this scope.</p>
+    return <p className="p-6 text-center text-sm text-gray-500">{i18n.t('ui.dataqualitytab.noAffectedAssetForThisScope')}</p>
   }
 
   return (
@@ -266,10 +267,10 @@ function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
       <table className="w-full text-left text-xs">
         <thead className="sticky top-0 z-10 bg-gray-900 text-gray-500">
           <tr className="border-b border-gray-800">
-            <th className="px-4 py-3 font-medium">Asset</th>
-            <th className="px-4 py-3 font-medium">Affected dimensions</th>
-            <th className="px-4 py-3 text-right font-medium">Largest gap</th>
-            <th className="px-4 py-3 text-right font-medium">Position value</th>
+            <th className="px-4 py-3 font-medium">{i18n.t('ui.dataqualitytab.asset')}</th>
+            <th className="px-4 py-3 font-medium">{i18n.t('ui.dataqualitytab.affectedDimensions')}</th>
+            <th className="px-4 py-3 text-right font-medium">{i18n.t('ui.dataqualitytab.largestGap')}</th>
+            <th className="px-4 py-3 text-right font-medium">{i18n.t('ui.dataqualitytab.positionValue')}</th>
           </tr>
         </thead>
         <tbody>

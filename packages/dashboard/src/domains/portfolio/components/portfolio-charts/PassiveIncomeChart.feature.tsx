@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
@@ -10,7 +11,7 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
   const formatMoney = useFormatMoney()
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">Passive income per year<ScopedInfoTooltip text="Net dividends and interest grouped by calendar year." scope={{ account: 'filterable', period: 'range' }} /></h2>
+      <h2 className="mb-3 flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.passiveincomechart.passiveIncomePerYear')}<ScopedInfoTooltip text={i18n.t('ui.passiveincomechart.netDividendsAndInterestGroupedByCalendarYear')} scope={{ account: 'filterable', period: 'range' }} /></h2>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
@@ -19,7 +20,7 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
           <Tooltip content={<PassiveIncomeTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
           <Legend formatter={(value) => (
             <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
-              {value === 'dividends' ? 'Dividends' : 'Interest'}
+              {value === 'dividends' ? i18n.t('ui.passiveincomechart.dividends') : i18n.t('ui.passiveincomechart.interest')}
             </span>
           )} />
           <Bar dataKey="dividends" stackId="a" fill={SEMANTIC_COLORS.passiveIncome} radius={[0, 0, 0, 0]}>

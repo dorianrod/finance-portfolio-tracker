@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import {
   Bar,
   CartesianGrid,
@@ -26,26 +27,29 @@ function IncomeSavingsTooltip({ active, payload }: {
   const formatPercentage = useFormatPercentage()
   const point = payload?.[0]?.payload
   if (!active || !point) return null
-  const suffix = point.incomeStatus === 'forecast' ? ' · forecast' : ''
+  const suffix = point.incomeStatus === 'forecast' ? i18n.t('ui.annualincomesavingschart.forecast') : ''
   const savingsSuffix = point.savingsStatus === 'partial'
-    ? ` · YTD through ${point.savingsThrough}`
+    ? i18n.t('ui.annualincomesavingschart.ytdThrough', { date: point.savingsThrough })
     : ''
   return (
     <TooltipBox minWidth={235}>
       <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>
         {point.year}{suffix}
       </div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>Net salary: {formatMoney(point.netSalary, { style: 'full' })}</div>
-      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>Other income: {formatMoney(point.otherIncome, { style: 'full' })}</div>
-      <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>Total net income: {formatMoney(point.totalIncome, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>{i18n.t('ui.annualincomesavingschart.netSalary')} {formatMoney(point.netSalary, { style: 'full' })}</div>
+      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>{i18n.t('ui.annualincomesavingschart.otherIncome')} {formatMoney(point.otherIncome, { style: 'full' })}</div>
+      <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>{i18n.t('ui.annualincomesavingschart.totalNetIncome')} {formatMoney(point.totalIncome, { style: 'full' })}</div>
       <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}>
-        Net contributions: {point.placedSavings == null ? '—' : formatMoney(point.placedSavings, { style: 'full' })}{savingsSuffix}
+
+        {i18n.t('ui.annualincomesavingschart.netContributions')} {point.placedSavings == null ? '—' : formatMoney(point.placedSavings, { style: 'full' })}{savingsSuffix}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate, marginTop: 4 }}>
-        Placement rate: {point.placementRate == null ? 'Not comparable' : formatPercentage(point.placementRate)}
+
+        {i18n.t('ui.annualincomesavingschart.placementRate')} {point.placementRate == null ? i18n.t('ui.annualincomesavingschart.notComparable') : formatPercentage(point.placementRate)}
       </div>
       <div style={{ color: 'var(--tooltip-dim)', marginTop: 7, borderTop: '1px solid var(--tooltip-border)', paddingTop: 7 }}>
-        Unplaced income proxy: {point.unplacedIncomeProxy == null ? '—' : formatMoney(point.unplacedIncomeProxy, { style: 'full' })}
+
+        {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxy')} {point.unplacedIncomeProxy == null ? '—' : formatMoney(point.unplacedIncomeProxy, { style: 'full' })}
       </div>
     </TooltipBox>
   )
@@ -65,8 +69,8 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3 flex items-start gap-3">
         <div>
-          <h2 className="flex items-center text-sm font-medium text-gray-300">Income vs net contributions<ScopedInfoTooltip text="Annual declared income compared with deposits minus withdrawals across all accounts." scope={{ account: 'global', period: 'year-range' }} /></h2>
-          <p className="mt-1 text-xs text-gray-500">Annual · All accounts</p>
+          <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.annualincomesavingschart.incomeVsNetContributions')}<ScopedInfoTooltip text={i18n.t('ui.annualincomesavingschart.annualDeclaredIncomeComparedWithDepositsMinusWithdrawalsAcross')} scope={{ account: 'global', period: 'year-range' }} /></h2>
+          <p className="mt-1 text-xs text-gray-500">{i18n.t('ui.annualincomesavingschart.annualAllAccounts')}</p>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={285}>
@@ -89,10 +93,10 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
         </ComposedChart>
       </ResponsiveContainer>
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-gray-800 pt-3 text-xs text-gray-500">
-        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.costBasis }} />Net salary</span>
-        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.passiveIncome }} />Other income</span>
-        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} />Net contributions</span>
-        <span className="flex items-center gap-2"><i className="h-0.5 w-4" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />Placement rate</span>
+        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.costBasis }} />{i18n.t('ui.annualincomesavingschart.netSalary.970d84')}</span>
+        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.passiveIncome }} />{i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}</span>
+        <span className="flex items-center gap-2"><i className="h-2.5 w-3 rounded-sm" style={{ backgroundColor: SEMANTIC_COLORS.netContributions }} />{i18n.t('ui.annualincomesavingschart.netContributions.643e29')}</span>
+        <span className="flex items-center gap-2"><i className="h-0.5 w-4" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />{i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}</span>
       </div>
     </div>
   )

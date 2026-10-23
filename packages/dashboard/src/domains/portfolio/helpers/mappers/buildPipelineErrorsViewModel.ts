@@ -1,12 +1,13 @@
 import type { ErrorRow } from '@/domains/portfolio/apis/queries/useErrors'
 import type { AssetLabelSource } from '@/domains/portfolio/helpers/formatters/useFormatAssetLabel'
+import i18n from '@/i18n/i18n'
 
 export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
-  unresolved_ticker: 'Unresolved ticker',
-  missing_price: 'Missing price',
-  missing_fx_rate: 'Missing FX rate',
-  parsing_error: 'Parsing error',
-  missing_data: 'Missing data',
+  unresolved_ticker: i18n.t('ui.buildpipelineerrorsviewmodel.unresolvedTicker'),
+  missing_price: i18n.t('ui.buildpipelineerrorsviewmodel.missingPrice'),
+  missing_fx_rate: i18n.t('ui.buildpipelineerrorsviewmodel.missingFxRate'),
+  parsing_error: i18n.t('ui.buildpipelineerrorsviewmodel.parsingError'),
+  missing_data: i18n.t('ui.buildpipelineerrorsviewmodel.missingData'),
 }
 
 export type PipelineErrorSortColumn =

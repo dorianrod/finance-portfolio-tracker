@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import { useAtomValue } from 'jotai'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -57,7 +58,7 @@ export function EvoCard({ title, points, dimension }: EvoCardProps) {
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-2 flex items-start justify-between gap-3">
         {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the chart copy passed to the tooltip feature adapter. */}
-        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={`Historical portfolio allocation by ${title.toLowerCase()}.`} scope={{ account: 'filterable', period: 'range' }} /></h2>
+        <h2 className="flex items-center text-sm font-medium text-gray-400">{title}<ScopedInfoTooltip text={i18n.t('ui.evocard.historicalPortfolioAllocationByValue0', { value0: title.toLowerCase() })} scope={{ account: 'filterable', period: 'range' }} /></h2>
         {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">

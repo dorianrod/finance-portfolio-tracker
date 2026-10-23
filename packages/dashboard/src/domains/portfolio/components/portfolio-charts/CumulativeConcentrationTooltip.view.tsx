@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
@@ -22,7 +23,8 @@ export function CumulativeConcentrationTooltip({
   return (
     <TooltipBox minWidth={220}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
-        Top {point.rank} {assetLabel} · {formatPercentage(point.cumulativeWeight)}
+
+        {i18n.t('ui.cumulativeconcentrationtooltip.top')} {point.rank} {assetLabel} · {formatPercentage(point.cumulativeWeight)}
       </div>
       <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
         #{point.rank} {point.name}

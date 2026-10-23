@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import type { PassiveIncomePoint } from '@/domains/portfolio/apis/queries/usePassiveIncome'
@@ -57,7 +58,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
     <div className="mb-6 space-y-4">
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <section className="border-b border-gray-800 pb-4">
-          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Performance</h2>
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">{i18n.t('ui.performancetab.performance')}</h2>
           <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <TotalNetPerformanceKpi performance={performance} />
             <NetUnrealizedKpi performance={performance} />
@@ -66,7 +67,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
         </section>
 
         <section className="border-b border-gray-800 pb-4">
-          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Returns &amp; passive income</h2>
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">{i18n.t('ui.performancetab.returnsAndPassiveIncome')}</h2>
           <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <PassiveIncomeKpi income={income} />
             <IrrSinceTrackingKpi value={globalTri} status={irrStatus} scopeLabel={irrScopeLabel} />

@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/types/history'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -35,15 +36,18 @@ function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
     <TooltipBox>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{date}</div>
       <div style={{ color: valueColor, fontWeight: 600 }}>
-        Gross unrealized P&amp;L: {formatMoney(point.unrealized_gain, { style: 'full' })}
+
+        {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandl')} {formatMoney(point.unrealized_gain, { style: 'full' })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>
-        P&amp;L / total capital placed: {point.unrealized_gain_pct == null ? '—' : formatPercentage(point.unrealized_gain_pct, { signed: true })}
+
+        {i18n.t('ui.unrealizedpnlchart.pandlTotalCapitalPlaced')} {point.unrealized_gain_pct == null ? '—' : formatPercentage(point.unrealized_gain_pct, { signed: true })}
       </div>
-      <div style={{ color: CHART_THEME.label, marginTop: 4 }}>Cost basis: {formatMoney(point.total_cost_basis, { style: 'full' })}</div>
+      <div style={{ color: CHART_THEME.label, marginTop: 4 }}>{i18n.t('ui.unrealizedpnlchart.costBasis')} {formatMoney(point.total_cost_basis, { style: 'full' })}</div>
       {point.snapshot_change != null && (
         <div style={{ borderTop: '1px solid var(--tooltip-border)', color: CHART_THEME.label, marginTop: 6, paddingTop: 6 }}>
-          Change since previous snapshot: {formatMoney(point.snapshot_change, { style: 'full' })}
+
+          {i18n.t('ui.unrealizedpnlchart.changeSincePreviousSnapshot')} {formatMoney(point.snapshot_change, { style: 'full' })}
         </div>
       )}
     </TooltipBox>
@@ -73,8 +77,8 @@ export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-gray-300">Gross unrealized P&amp;L over time<ScopedInfoTooltip text="Amount before estimated tax and percentage of the total cost basis." scope={{ account: 'filterable', period: 'range' }} /></h2>
-        <p className="mt-0.5 text-xs text-gray-600">Amount before estimated tax and percentage of the total cost basis.</p>
+        <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandlOverTime')}<ScopedInfoTooltip text={i18n.t('ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal')} scope={{ account: 'filterable', period: 'range' }} /></h2>
+        <p className="mt-0.5 text-xs text-gray-600">{i18n.t('ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal')}</p>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart data={data} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
@@ -91,9 +95,9 @@ export function UnrealizedPnlChart({ history }: { history: PortfolioHistoryPoint
         </ComposedChart>
       </ResponsiveContainer>
       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performancePositive }} />Gross unrealized gain</span>
-        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performanceNegative }} />Gross unrealized loss</span>
-        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />P&amp;L / capital placed</span>
+        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performancePositive }} />{i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}</span>
+        <span><i className="mr-1.5 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: SEMANTIC_COLORS.performanceNegative }} />{i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}</span>
+        <span><i className="mr-1.5 inline-block h-0.5 w-3 align-middle" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />{i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}</span>
       </div>
     </div>
   )

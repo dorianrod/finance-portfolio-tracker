@@ -1,3 +1,4 @@
+import i18n from '@/i18n/i18n'
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { catColor } from '@/shared/theme/chartColors'
@@ -98,8 +99,8 @@ export function AccountTypeBreakdownChart({ data }: { data: AccountTypeDonutPoin
 
   return (
     <div className="flex-1 bg-gray-900 rounded-xl p-4">
-      <h2 className="flex items-center text-sm font-medium text-gray-400">Breakdown by account type<ScopedInfoTooltip text="Each slice is an account type. The radial split separates cost basis from gross unrealized profit or loss." scope={{ account: 'filterable', period: 'as-of' }} /></h2>
-      <p className="mt-1 text-xs text-gray-600">Each slice is an account type · Radial split: cost basis / unrealized P&amp;L</p>
+      <h2 className="flex items-center text-sm font-medium text-gray-400">{i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}<ScopedInfoTooltip text={i18n.t('ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit')} scope={{ account: 'filterable', period: 'as-of' }} /></h2>
+      <p className="mt-1 text-xs text-gray-600">{i18n.t('ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost')}</p>
 
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
