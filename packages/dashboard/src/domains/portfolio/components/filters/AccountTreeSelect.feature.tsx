@@ -17,6 +17,21 @@ interface AccountTreeProps {
   onChange: (next: Set<string>) => void
 }
 
+function useCloseAccountTreeOnOutsideClick(open: boolean, setOpen: (open: boolean) => void) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleMouseDown(event: MouseEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [open, setOpen])
+
+  return containerRef
+}
+
 function TreeAccountRow({ account, accountLabels, onChange, selected }: { account: string; accountLabels: Record<string, string>; onChange: (next: Set<string>) => void; selected: Set<string> }) {
   return <label className="flex cursor-pointer items-center gap-2 py-1.5 pl-8 pr-3 hover:bg-gray-800/80"><input type="checkbox" checked={selected.has(account)} onChange={() => onChange(toggle(selected, account))} className="h-3.5 w-3.5 cursor-pointer accent-blue-500" /><span className="min-w-0 truncate text-xs text-gray-300">{accountLabel(account, accountLabels)}</span></label>
 }
@@ -66,16 +81,7 @@ export function AccountTreeSelect({
   allAccountTypes, accountToType, allAccounts, accountLabels, selected, onChange,
 }: AccountTreeProps) {
   const [open, setOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    function handler(e: MouseEvent) {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [open])
+  const containerRef = useCloseAccountTreeOnOutsideClick(open, setOpen)
 
   function typeAccounts(type: string) {
     return accountsForType(type, allAccounts, accountToType)

@@ -39,14 +39,15 @@ export function TooltipPortfolio({
   const valueEntry = payload.find((item) => item.dataKey === 'Value')
   const costEntry = payload.find((item) => item.dataKey === 'Cost basis')
   const data = payload[0]?.payload
+  const unrealized = valueEntry && costEntry && data ? data.unrealized : null
   return (
     <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
       <p className="text-gray-400 mb-2">{label}</p>
       {valueEntry && <p style={{ color: valueEntry.color }}>{valueEntry.name}: {formatMoney(valueEntry.value ?? 0)}</p>}
       {costEntry && <p style={{ color: costEntry.color }}>{costEntry.name}: {formatMoney(costEntry.value ?? 0)}</p>}
-      {valueEntry && costEntry && data && (
-        <p className={`mt-1 font-semibold ${data.unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
-          Unrealized: {formatMoney(data.unrealized)}
+      {unrealized != null && (
+        <p className={`mt-1 font-semibold ${unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
+          Unrealized: {formatMoney(unrealized)}
         </p>
       )}
       <OpSummary data={data} />

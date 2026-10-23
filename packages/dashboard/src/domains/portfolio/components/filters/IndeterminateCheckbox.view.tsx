@@ -1,5 +1,13 @@
 import { useEffect, useRef } from 'react'
 
+function useIndeterminateInput(indeterminate: boolean | undefined) {
+  const ref = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = indeterminate ?? false
+  }, [indeterminate])
+  return ref
+}
+
 // Needs a ref to set the DOM-only `indeterminate` property.
 export function IndeterminateCheckbox({
   checked, indeterminate, onChange, className,
@@ -9,10 +17,7 @@ export function IndeterminateCheckbox({
   onChange: () => void
   className?: string
 }) {
-  const ref = useRef<HTMLInputElement>(null)
-  useEffect(() => {
-    if (ref.current) ref.current.indeterminate = indeterminate ?? false
-  }, [indeterminate])
+  const ref = useIndeterminateInput(indeterminate)
   return (
     <input
       ref={ref}

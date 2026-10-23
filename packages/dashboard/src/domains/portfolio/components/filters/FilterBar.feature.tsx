@@ -94,6 +94,7 @@ export function FilterPanel({
     allOperationTypes,
   } = usePortfolioFilterOptions()
   if (!open) return null
+  const hasPeriodFilter = Boolean(filters.dateFrom || filters.dateTo)
 
   return (
     <SidePanel
@@ -133,7 +134,7 @@ export function FilterPanel({
               className={dateInputClass}
             />
           </div>
-          {(filters.dateFrom || filters.dateTo) && (
+          {hasPeriodFilter && (
             <button
               type="button"
               onClick={() => setFilters({ ...filters, dateFrom: undefined, dateTo: undefined })}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Bar, BarChart, CartesianGrid, Cell, LabelList, Line, LineChart,
   matchByDataKey, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis,
@@ -138,14 +138,11 @@ function delta(current: number | null, previous: number | null | undefined): num
   return current == null || previous == null ? null : current - previous
 }
 
-export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookThroughAvailable }: {
-  heldPoints: HistoricalConcentrationPoint[]
-  lookThroughPoints: HistoricalConcentrationPoint[]
-  lookThroughAvailable: boolean
-}) {
-  const formatDate = useFormatDate()
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
+function useConcentrationTrendController(
+  heldPoints: HistoricalConcentrationPoint[],
+  lookThroughPoints: HistoricalConcentrationPoint[],
+  lookThroughAvailable: boolean,
+) {
   const [mode, setMode] = useState<ConcentrationMode>('held')
   const [selectedDate, setSelectedDate] = useState(() => heldPoints.at(-1)?.date ?? '')
   const [isPlaying, setIsPlaying] = useState(false)
@@ -153,7 +150,6 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
   const prefersReducedMotion = usePrefersReducedMotion()
   const animationEnabled = shouldAnimateConcentration(prefersReducedMotion)
   const points = mode === 'held' ? heldPoints : lookThroughPoints
-
   const chartData = useMemo<ConcentrationChartRow[]>(() => points.map((point, index) => {
     const previous = points[index - 1]
     return {
@@ -181,7 +177,7 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
     return () => window.clearInterval(interval)
   }, [isPlaying, points])
 
-  function changeMode(nextMode: ConcentrationMode) {
+  const changeMode = useCallback((nextMode: ConcentrationMode) => {
     if (nextMode === 'lookThrough' && !lookThroughAvailable) return
     setIsPlaying(false)
     setHoveredPointIndex(null)
@@ -190,7 +186,85 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
     if (!nextPoints.some((point) => point.date === selectedDate)) {
       setSelectedDate(nextPoints.at(-1)?.date ?? '')
     }
+  }, [heldPoints, lookThroughAvailable, lookThroughPoints, selectedDate])
+
+  const togglePlayback = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false)
+      return
+    }
+    if (selectedIndex >= points.length - 1) setSelectedDate(points[0].date)
+    setHoveredPointIndex(null)
+    setIsPlaying(true)
+  }, [isPlaying, points, selectedIndex])
+
+  const selectPoint = useCallback((index: number) => {
+    setIsPlaying(false)
+    setHoveredPointIndex(null)
+    const safeIndex = Math.max(0, Math.min(index, points.length - 1))
+    setSelectedDate(points[safeIndex].date)
+  }, [points])
+
+  const selectHoveredPoint = useCallback((index: string | number | null | undefined) => {
+    const pointIndex = Number(index)
+    if (!Number.isInteger(pointIndex) || pointIndex < 0 || pointIndex >= points.length) return
+    setIsPlaying(false)
+    setHoveredPointIndex(pointIndex)
+  }, [points])
+
+  const selectedPoint = points[selectedIndex] ?? points.at(-1)
+  const hoveredPoint = hoveredPointIndex == null ? undefined : points[hoveredPointIndex]
+  const displayedPoint = hoveredPoint ?? selectedPoint
+  const displayedHoldings = displayedPoint?.holdings.slice(0, 10) ?? []
+  const selectedTimestamp = selectedPoint ? timestamp(selectedPoint.date) : undefined
+  const dateDomain: [number, number] = chartData.length > 0
+    ? [chartData[0].timestamp, chartData.at(-1)!.timestamp]
+    : [0, 0]
+
+  return {
+    animationEnabled,
+    changeMode,
+    chartData,
+    dateDomain,
+    displayedHoldings,
+    displayedPoint,
+    isPlaying,
+    mode,
+    points,
+    selectHoveredPoint,
+    selectPoint,
+    selectedIndex,
+    selectedTimestamp,
+    setHoveredPointIndex,
+    togglePlayback,
   }
+}
+
+export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookThroughAvailable }: {
+  heldPoints: HistoricalConcentrationPoint[]
+  lookThroughPoints: HistoricalConcentrationPoint[]
+  lookThroughAvailable: boolean
+}) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const {
+    animationEnabled,
+    changeMode,
+    chartData,
+    dateDomain,
+    displayedHoldings,
+    displayedPoint,
+    isPlaying,
+    mode,
+    points,
+    selectHoveredPoint,
+    selectPoint,
+    selectedIndex,
+    selectedTimestamp,
+    setHoveredPointIndex,
+    togglePlayback,
+  } = useConcentrationTrendController(heldPoints, lookThroughPoints, lookThroughAvailable)
 
   const heading = mode === 'held' ? 'Held-position concentration' : 'Underlying concentration'
   const description = mode === 'held'
@@ -213,37 +287,6 @@ export function ConcentrationTrendSection({ heldPoints, lookThroughPoints, lookT
         </div>
       </section>
     )
-  }
-
-  const selectedPoint = points[selectedIndex] ?? points.at(-1)
-  const hoveredPoint = hoveredPointIndex == null ? undefined : points[hoveredPointIndex]
-  const displayedPoint = hoveredPoint ?? selectedPoint
-  const displayedHoldings = displayedPoint?.holdings.slice(0, 10) ?? []
-  const selectedTimestamp = selectedPoint ? timestamp(selectedPoint.date) : undefined
-  const dateDomain: [number, number] = [chartData[0].timestamp, chartData.at(-1)!.timestamp]
-
-  function togglePlayback() {
-    if (isPlaying) {
-      setIsPlaying(false)
-      return
-    }
-    if (selectedIndex >= points.length - 1) setSelectedDate(points[0].date)
-    setHoveredPointIndex(null)
-    setIsPlaying(true)
-  }
-
-  function selectPoint(index: number) {
-    setIsPlaying(false)
-    setHoveredPointIndex(null)
-    const safeIndex = Math.max(0, Math.min(index, points.length - 1))
-    setSelectedDate(points[safeIndex].date)
-  }
-
-  function selectHoveredPoint(index: string | number | null | undefined) {
-    const pointIndex = Number(index)
-    if (!Number.isInteger(pointIndex) || pointIndex < 0 || pointIndex >= points.length) return
-    setIsPlaying(false)
-    setHoveredPointIndex(pointIndex)
   }
 
   return (

@@ -31,6 +31,18 @@ import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/pages/das
 
 export type { QualityThemeId } from '@/domains/portfolio/types/quality'
 
+interface DataQualityTabProps {
+  positions: PositionRow[]
+  errors: ErrorRow[]
+  manualPriceOverrides: ManualPriceOverride[]
+  fundStatuses: FundHoldingStatus[]
+  fundReport: FundCoverageReport | null
+  fundHoldings: FundHolding[]
+  fundSnapshots: FundSnapshot[]
+  fundUnresolved: FundUnresolved[]
+  rawData: RawIsinData
+}
+
 const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> = {
   healthy: {
     dot: 'bg-emerald-500',
@@ -60,35 +72,14 @@ function QualityThemeTab({ activeThemeId, onSelect, theme }: { activeThemeId: Qu
   return <button type="button" role="tab" aria-selected={active} aria-controls="quality-theme-panel" onClick={() => onSelect(theme.id)} className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-blue-900/50' : 'hover:bg-gray-900'}`}><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-900 ring-1 ring-gray-800" aria-hidden="true"><span className={`h-2 w-2 rounded-full ${styles.dot}`} /></span><span className="min-w-0 flex-1"><span className={`block text-sm font-medium ${active ? 'text-white' : 'text-gray-300'}`}>{theme.label}</span><span className="mt-0.5 block truncate text-[11px] text-gray-600">{theme.metricLabel}</span></span><span className="shrink-0 text-sm font-semibold tabular-nums text-gray-100">{theme.metric}</span></button>
 }
 
-export function DataQualityTab({
+function useDataQualityViewModel({
   positions, errors, manualPriceOverrides, fundStatuses, fundReport,
   fundHoldings, fundSnapshots, fundUnresolved, rawData,
-}: {
-  positions: PositionRow[]
-  errors: ErrorRow[]
-  manualPriceOverrides: ManualPriceOverride[]
-  fundStatuses: FundHoldingStatus[]
-  fundReport: FundCoverageReport | null
-  fundHoldings: FundHolding[]
-  fundSnapshots: FundSnapshot[]
-  fundUnresolved: FundUnresolved[]
-  rawData: RawIsinData
-}) {
+}: DataQualityTabProps) {
   const formatPercentage = useFormatPercentage()
   const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
   const { setSelectedQualityTheme } = useDashboardQuality()
-  const {
-    affectedAssets,
-    classificationApplicableValue,
-    classificationIsNotApplicable,
-    coverage,
-    dimensionCoverage,
-    fundIssueCount,
-    hasLookThroughScope,
-    recommendedTheme,
-    scopedFundData,
-    themes,
-  } = useMemo(
+  const viewModel = useMemo(
     () => buildDataQualityViewModel({
       positions,
       errors,
@@ -114,8 +105,12 @@ export function DataQualityTab({
       formatPercentage,
     ],
   )
-  const activeThemeId = selectedTheme ?? recommendedTheme.id
-  const activeTheme = themes.find((theme) => theme.id === activeThemeId) ?? themes[0]
+  const activeThemeId = selectedTheme ?? viewModel.recommendedTheme.id
+  const activeTheme = viewModel.themes.find((theme) => theme.id === activeThemeId) ?? viewModel.themes[0]
+  return { ...viewModel, activeTheme, activeThemeId, setSelectedQualityTheme }
+}
+
+function useDataQualityPanels() {
   const fundDiagnosticsOpen = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
   const classificationDetailsOpen = useAtomValue(dataQualityClassificationDetailsOpenAtom)
   const classificationDimension = useAtomValue(dataQualityClassificationDimensionAtom)
@@ -127,6 +122,51 @@ export function DataQualityTab({
     closeFundDiagnostics,
     openFundDiagnostics,
   } = useDataQualityFundDiagnostics()
+
+  useEffect(() => () => {
+    closeClassificationDetails()
+    closeFundDiagnostics()
+  }, [closeClassificationDetails, closeFundDiagnostics])
+
+  return {
+    classificationDetailsOpen,
+    classificationDimension,
+    closeClassificationDetails,
+    fundDiagnosticsOpen,
+    openAllClassificationDetails,
+    openFundDiagnostics,
+  }
+}
+
+export function DataQualityTab({
+  positions, errors, manualPriceOverrides, fundStatuses, fundReport,
+  fundHoldings, fundSnapshots, fundUnresolved, rawData,
+}: DataQualityTabProps) {
+  const {
+    activeTheme,
+    activeThemeId,
+    affectedAssets,
+    classificationApplicableValue,
+    classificationIsNotApplicable,
+    coverage,
+    dimensionCoverage,
+    fundIssueCount,
+    hasLookThroughScope,
+    scopedFundData,
+    setSelectedQualityTheme,
+    themes,
+  } = useDataQualityViewModel({
+    positions, errors, manualPriceOverrides, fundStatuses, fundReport,
+    fundHoldings, fundSnapshots, fundUnresolved, rawData,
+  })
+  const {
+    classificationDetailsOpen,
+    classificationDimension,
+    closeClassificationDetails,
+    fundDiagnosticsOpen,
+    openAllClassificationDetails,
+    openFundDiagnostics,
+  } = useDataQualityPanels()
   const visibleAffectedAssets = useMemo(
     () => classificationDimension
       ? affectedAssets.filter((asset) => asset.dimensions.includes(classificationDimension))
@@ -171,11 +211,6 @@ export function DataQualityTab({
     openFundDiagnostics,
     scopedFundData.statuses.length,
   ])
-  useEffect(() => () => {
-    closeClassificationDetails()
-    closeFundDiagnostics()
-  }, [closeClassificationDetails, closeFundDiagnostics])
-
   let classificationContent = (
     // eslint-disable-next-line local/no-prop-drilling -- Loading-state copy is selected by the owning page feature.
     <EmptyQualityState message={rawData.loading ? 'Loading classification coverage…' : 'No classification coverage data available.'} />

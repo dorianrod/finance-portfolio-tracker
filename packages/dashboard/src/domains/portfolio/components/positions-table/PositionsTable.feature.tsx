@@ -10,7 +10,7 @@ import {
   type Row,
 } from '@tanstack/react-table'
 import { useAtomValue } from 'jotai'
-import { Fragment, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useMemo, useRef, useState } from 'react'
 import type { PositionRow, TableRow } from '@/domains/portfolio/types/domain'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
@@ -128,36 +128,80 @@ function PositionBodyRow({ cancelHide, row, scheduleHide, separatorType, setAllo
   return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || 'Other'}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
 }
 
-export function PositionsTable({
-  data,
-  grouping = 'flat',
-  fundStatuses = [],
-}: Props) {
+function usePositionTableFormatters() {
   const formatMoney = useFormatMoney()
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
+  return { formatMoney, formatNumber, formatPercentage }
+}
+
+function usePositionTableState() {
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
   const expanded = useAtomValue(dashboardExpandedPositionRowsAtom)
   const { setExpanded, sort: onSort } = useDashboardPositionsTable()
+  return { expanded, onSort, setExpanded, sortDir, sortKey }
+}
+
+function usePositionTableOverlays() {
   const [chart, setChart] = useState<ChartTarget | null>(null)
   const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
   const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
   const [underlyingPopover, setUnderlyingPopover] = useState<FundPositionPopoverTarget | null>(null)
-  const { data: allocationData } = useAllocationByIsin()
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const cancelHide = () => { if (hideTimeout.current) clearTimeout(hideTimeout.current) }
-  const scheduleHide = () => {
+  const cancelHide = useCallback(() => {
+    if (hideTimeout.current) clearTimeout(hideTimeout.current)
+  }, [])
+  const scheduleHide = useCallback(() => {
     hideTimeout.current = setTimeout(() => {
       setChart(null)
       setSavingsChart(null)
       setAllocationHover(null)
       setUnderlyingPopover(null)
     }, 200)
-  }
+  }, [])
 
+  return {
+    allocationHover,
+    cancelHide,
+    chart,
+    savingsChart,
+    scheduleHide,
+    setAllocationHover,
+    setChart,
+    setSavingsChart,
+    setUnderlyingPopover,
+    underlyingPopover,
+  }
+}
+
+function usePositionTableData(data: PositionRow[]) {
+  const { data: allocationData } = useAllocationByIsin()
   const groupTotals = useMemo(() => calculatePositionGroupTotals(data), [data])
+  return { allocationData, groupTotals }
+}
+
+export function PositionsTable({
+  data,
+  grouping = 'flat',
+  fundStatuses = [],
+}: Props) {
+  const { formatMoney, formatNumber, formatPercentage } = usePositionTableFormatters()
+  const { expanded, onSort, setExpanded, sortDir, sortKey } = usePositionTableState()
+  const {
+    allocationHover,
+    cancelHide,
+    chart,
+    savingsChart,
+    scheduleHide,
+    setAllocationHover,
+    setChart,
+    setSavingsChart,
+    setUnderlyingPopover,
+    underlyingPopover,
+  } = usePositionTableOverlays()
+  const { allocationData, groupTotals } = usePositionTableData(data)
 
   const columns = useMemo(() => [
     col.display({
@@ -176,6 +220,8 @@ export function PositionsTable({
       cell: ({ row }) => {
         const r = row.original
         if (r.kind === 'position') {
+          const hasIdentifier = Boolean(r.ticker || r.isin)
+          const showIdentifierSeparator = Boolean(r.isin && r.ticker)
           return (
             <span className="flex flex-col gap-0.5">
               <span className="flex items-center gap-2">
@@ -184,10 +230,10 @@ export function PositionsTable({
                   <span className="text-xs bg-gray-700 text-gray-400 px-1.5 py-0.5 rounded">Closed</span>
                 )}
               </span>
-              {(r.ticker || r.isin) && (
+              {hasIdentifier && (
                 <span className="flex items-center gap-1.5">
                   {r.isin && <span className="text-xs text-gray-600 font-mono">{r.isin}</span>}
-                  {r.isin && r.ticker && <span className="text-gray-700 text-xs">·</span>}
+                  {showIdentifierSeparator && <span className="text-gray-700 text-xs">·</span>}
                   {r.ticker && <span className="text-xs text-gray-400 font-mono">{r.ticker}</span>}
                 </span>
               )}
@@ -273,6 +319,7 @@ export function PositionsTable({
         const allocKey = r.isin || `NC-${r.name}`
         const allocation = allocationData.get(allocKey)
         const fundStatus = statusForPosition(r, fundStatuses)
+        const hasNoBreakdown = !allocation && !fundStatus
         const showAllocation = (button: HTMLButtonElement) => {
           if (!allocation) return
           cancelHide()
@@ -334,7 +381,7 @@ export function PositionsTable({
               />
             )}
             {!fundStatus && <span className="block size-8" aria-hidden="true" />}
-            {!allocation && !fundStatus && <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-700">—</span>}
+            {hasNoBreakdown && <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-gray-700">—</span>}
           </span>
         )
       },
@@ -410,20 +457,22 @@ export function PositionsTable({
             r.total_interest_net,
             r.tax_rate,
           )
+          const displayedDividendTax = divTax != null && divTax > 0 ? divTax : null
+          const displayedInterestTax = intTax != null && intTax > 0 ? intTax : null
           return (
             <span className="flex flex-col leading-tight text-xs">
               <span className="space-x-2">
                 {hasDivs && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_dividends)}</span>}
                 {hasInt && <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>{formatMoney(r.total_interest)} int.</span>}
               </span>
-              {divTax != null && divTax > 0 && (
+              {displayedDividendTax != null && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{formatMoney(-divTax)} tax on div. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                  ~{formatMoney(-displayedDividendTax)} tax on div. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
-              {intTax != null && intTax > 0 && (
+              {displayedInterestTax != null && (
                 <span className="text-[10px] text-gray-500 mt-0.5">
-                  ~{formatMoney(-intTax)} tax on int. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                  ~{formatMoney(-displayedInterestTax)} tax on int. ({formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
                 </span>
               )}
               {isTaxFreePassiveIncome(r) && (
@@ -494,7 +543,7 @@ export function PositionsTable({
         )
       },
     }),
-  ], [setChart, sortKey, sortDir, onSort, allocationData, fundStatuses, underlyingPopover, formatMoney, formatNumber, formatPercentage])
+  ], [allocationData, cancelHide, formatMoney, formatNumber, formatPercentage, fundStatuses, onSort, scheduleHide, setAllocationHover, setChart, setSavingsChart, setUnderlyingPopover, sortDir, sortKey, underlyingPopover])
 
   // @tanstack/react-table returns fresh row/column helper functions on every
   // call, which the React Compiler can never safely memoize — not fixable here.

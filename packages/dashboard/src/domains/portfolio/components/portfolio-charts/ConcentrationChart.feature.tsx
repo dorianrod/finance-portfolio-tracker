@@ -33,6 +33,9 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const height = Math.max(250, data.length * 30)
+  const topTenSummary = topTenValue != null && topTenPct != null
+    ? { percentage: topTenPct, value: topTenValue }
+    : null
   return (
     <div className="rounded-xl bg-gray-900 p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -42,7 +45,7 @@ export function ConcentrationChart({ data, topTenValue, topTenPct, description, 
           <p className="mt-0.5 text-xs text-gray-600">{description ?? 'Aggregated across accounts.'}</p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          {topTenValue != null && topTenPct != null && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">Top 10 total</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{formatMoney(topTenValue, { style: 'full' })} · {formatPercentage(topTenPct)}</div></div>}
+          {topTenSummary && <div className="text-right"><div className="text-[10px] uppercase tracking-wider text-gray-600">Top 10 total</div><div className="mt-0.5 text-xs font-semibold tabular-nums text-gray-300">{formatMoney(topTenSummary.value, { style: 'full' })} · {formatPercentage(topTenSummary.percentage)}</div></div>}
         </div>
       </div>
       <div className="overflow-x-auto">

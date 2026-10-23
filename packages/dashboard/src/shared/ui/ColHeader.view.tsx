@@ -6,25 +6,30 @@ interface Props {
   content: string
 }
 
-export function ColHeader({ label, content }: Props) {
-  const [visible, setVisible] = useState(false)
-  const [pos, setPos] = useState({ top: 0, left: 0 })
-  const iconRef = useRef<HTMLButtonElement>(null)
-  const tooltipId = useId()
+function useTooltipPosition(visible: boolean) {
+  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const anchorRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (visible && iconRef.current) {
-      const r = iconRef.current.getBoundingClientRect()
-      setPos({ top: r.bottom + 6, left: r.left })
-    }
+    if (!visible || !anchorRef.current) return
+    const rect = anchorRef.current.getBoundingClientRect()
+    setPosition({ top: rect.bottom + 6, left: rect.left })
   }, [visible])
+
+  return { anchorRef, position }
+}
+
+export function ColHeader({ label, content }: Props) {
+  const [visible, setVisible] = useState(false)
+  const { anchorRef, position } = useTooltipPosition(visible)
+  const tooltipId = useId()
 
   return (
     <span className="inline-flex items-center gap-1">
       {label}
       <button
         type="button"
-        ref={iconRef}
+        ref={anchorRef}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
         onFocus={() => setVisible(true)}
@@ -48,7 +53,7 @@ export function ColHeader({ label, content }: Props) {
           <div
             id={tooltipId}
             role="tooltip"
-            style={{ top: pos.top, left: pos.left }}
+            style={{ top: position.top, left: position.left }}
             className="pointer-events-none fixed z-[9999] w-72 rounded-control border border-border-strong bg-surface-raised p-3 text-xs leading-relaxed text-content-secondary shadow-xl"
           >
             {content}

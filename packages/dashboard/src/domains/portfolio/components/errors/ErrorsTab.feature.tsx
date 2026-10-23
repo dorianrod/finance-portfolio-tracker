@@ -89,6 +89,7 @@ export function ErrorsTab({ errors }: Props) {
     }),
     [errors, filterLevel, filterType, formatAssetLabel, sortCol, sortDir],
   )
+  const hasActiveFilters = filterLevel !== 'all' || filterType !== 'all'
 
   return (
     <div className="space-y-4">
@@ -127,7 +128,7 @@ export function ErrorsTab({ errors }: Props) {
             <option value="all">All types</option>
             {types.filter((type) => type !== 'all').map((type) => <ErrorTypeOption key={type} type={type} />)}
           </select>
-          {(filterLevel !== 'all' || filterType !== 'all') && (
+          {hasActiveFilters && (
             <button
               onClick={() => { setFilterLevel('all'); setFilterType('all') }}
               className="px-2 py-1 text-xs text-gray-500 hover:text-gray-300"

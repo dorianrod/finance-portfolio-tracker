@@ -21,6 +21,8 @@ A component reads hooks and renders. Each kind of logic has a fixed home outside
 
 `useState` stays acceptable for pure UI state (hover, open accordion).
 
+A high number of direct hooks indicates that the component may be coordinating several responsibilities; split it according to `arch-decompose-hook-heavy-components`. Effects that remain after removing derived state and event-driven logic belong in an intent-named hook as described by `arch-isolate-effects-in-hooks`.
+
 **Incorrect (the action is orchestrated inside the component):**
 
 ```tsx
@@ -54,4 +56,4 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 }
 ```
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`

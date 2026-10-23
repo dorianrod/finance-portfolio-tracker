@@ -5,7 +5,10 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import componentRole from './eslint-rules/component-role.js'
+import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
+import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
+import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 
 export default defineConfig([
@@ -32,7 +35,10 @@ export default defineConfig([
       local: {
         rules: {
           'component-role': componentRole,
+          'max-hooks-per-component': maxHooksPerComponent,
+          'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
+          'no-effects-in-components': noEffectsInComponents,
           'no-prop-drilling': noPropDrilling,
         },
       },
@@ -68,7 +74,10 @@ export default defineConfig([
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       'local/component-role': 'error',
+      'local/max-hooks-per-component': ['warn', { max: 6 }],
+      'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
+      'local/no-effects-in-components': 'warn',
       'local/no-prop-drilling': 'warn',
     },
   },

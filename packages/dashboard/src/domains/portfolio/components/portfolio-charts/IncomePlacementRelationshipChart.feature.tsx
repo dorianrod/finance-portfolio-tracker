@@ -199,16 +199,10 @@ function RelationshipTooltip({ active, payload }: {
   )
 }
 
-export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
-  const formatMoney = useFormatMoney()
-  const formatNumber = useFormatNumber()
-  const formatPercentage = useFormatPercentage()
+function useIncomePlacementChart(data: AnnualIncomeSavingsPoint[]) {
   const analysis = useMemo(() => analyseIncomePlacement(data), [data])
-  const [trendStart, trendEnd] = analysis.trendLine
   const [chartWidth, setChartWidth] = useState(600)
   const years = useMemo(() => analysis.points.map((point) => point.year), [analysis.points])
-  const oldestYear = years.length > 0 ? Math.min(...years) : 0
-  const newestYear = years.length > 0 ? Math.max(...years) : 0
   const recentYears = useMemo(
     () => new Set([...years].sort((a, b) => b - a).slice(0, 3)),
     [years],
@@ -217,6 +211,30 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
     () => createYearLabelLayout(analysis.points, chartWidth),
     [analysis.points, chartWidth],
   )
+  return {
+    analysis,
+    labelPlacements,
+    newestYear: years.length > 0 ? Math.max(...years) : 0,
+    oldestYear: years.length > 0 ? Math.min(...years) : 0,
+    recentYears,
+    setChartWidth,
+  }
+}
+
+export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
+  const {
+    analysis,
+    labelPlacements,
+    newestYear,
+    oldestYear,
+    recentYears,
+    setChartWidth,
+  } = useIncomePlacementChart(data)
+  const [trendStart, trendEnd] = analysis.trendLine
+  const trendLine = trendStart && trendEnd ? { end: trendEnd, start: trendStart } : null
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <div className="mb-3">
@@ -233,11 +251,11 @@ export function IncomePlacementRelationshipChart({ data }: { data: AnnualIncomeS
           <XAxis type="number" dataKey="totalIncome" name="Net income" tickFormatter={(value) => formatMoney(value, { style: 'compact' })} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} />
           <YAxis type="number" dataKey="placementRate" name="Placement rate" tickFormatter={(value) => `${value}%`} tick={{ fill: CHART_THEME.tick, fontSize: 11 }} tickLine={false} axisLine={false} width={48} />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<RelationshipTooltip />} />
-          {trendStart && trendEnd && (
+          {trendLine && (
             <ReferenceLine
               segment={[
-                { x: trendStart.totalIncome, y: trendStart.placementRate },
-                { x: trendEnd.totalIncome, y: trendEnd.placementRate },
+                { x: trendLine.start.totalIncome, y: trendLine.start.placementRate },
+                { x: trendLine.end.totalIncome, y: trendLine.end.placementRate },
               ]}
               stroke={SEMANTIC_COLORS.neutralSeries}
               strokeDasharray="5 4"

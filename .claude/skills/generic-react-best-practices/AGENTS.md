@@ -2,8 +2,10 @@
 
 # Generic React Best Practices
 
-**Version 1.0.0**  
-Frontend Engineering  
+**Version 1.1.0**
+
+Frontend Engineering
+
 October 2026
 
 > **Note:**  
@@ -27,11 +29,13 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.4 [Keep Shared Code Free of Domain Knowledge](#14-keep-shared-code-free-of-domain-knowledge)
    - 1.5 [Share Client State Through Jotai, Not Prop Chains or Context](#15-share-client-state-through-jotai-not-prop-chains-or-context)
    - 1.6 [Choose helpers/ or services/ by Asking "Does It Need a Hook?"](#16-choose-helpers-or-services-by-asking-does-it-need-a-hook)
-   - 1.7 [Gate Experimental Features With a Typed Flag Registry](#17-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.8 [Keep Components Thin](#18-keep-components-thin)
-   - 1.9 [Keep Visual Logic Out of apis/, services/ and helpers/](#19-keep-visual-logic-out-of-apis-services-and-helpers)
-   - 1.10 [No index.ts in stores/, One File per Concern](#110-no-indexts-in-stores-one-file-per-concern)
-   - 1.11 [Create a Sub-Domain Only for a Distinct Business Entity](#111-create-a-sub-domain-only-for-a-distinct-business-entity)
+   - 1.7 [Decompose Hook-Heavy Components by Responsibility](#17-decompose-hook-heavy-components-by-responsibility)
+   - 1.8 [Gate Experimental Features With a Typed Flag Registry](#18-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.9 [Isolate Effects in Intent-Named Hooks](#19-isolate-effects-in-intent-named-hooks)
+   - 1.10 [Keep Components Thin](#110-keep-components-thin)
+   - 1.11 [Keep Visual Logic Out of apis/, services/ and helpers/](#111-keep-visual-logic-out-of-apis-services-and-helpers)
+   - 1.12 [No index.ts in stores/, One File per Concern](#112-no-indexts-in-stores-one-file-per-concern)
+   - 1.13 [Create a Sub-Domain Only for a Distinct Business Entity](#113-create-a-sub-domain-only-for-a-distinct-business-entity)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -76,10 +80,11 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 7.1 [Delegate Mapped JSX to a Component](#71-delegate-mapped-jsx-to-a-component)
    - 7.2 [Keep Compound Component Slots as Direct, Renderable Children](#72-keep-compound-component-slots-as-direct-renderable-children)
    - 7.3 [Keep Dialog Mounted and Drive It with a Boolean open](#73-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
-   - 7.4 [Never Nest a form Inside a form](#74-never-nest-a-form-inside-a-form)
-   - 7.5 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#75-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
-   - 7.6 [Style with Design System Components, Utility Classes Only for Layout](#76-style-with-design-system-components-utility-classes-only-for-layout)
-   - 7.7 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#77-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.4 [Name Compound Render Conditions by Intent](#74-name-compound-render-conditions-by-intent)
+   - 7.5 [Never Nest a form Inside a form](#75-never-nest-a-form-inside-a-form)
+   - 7.6 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#76-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
+   - 7.7 [Style with Design System Components, Utility Classes Only for Layout](#77-style-with-design-system-components-utility-classes-only-for-layout)
+   - 7.8 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#78-give-icon-only-buttons-and-custom-controls-an-accessible-name)
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
@@ -495,7 +500,52 @@ src/domains/sales/shared/
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`.
 
-### 1.7 Gate Experimental Features With a Typed Flag Registry
+### 1.7 Decompose Hook-Heavy Components by Responsibility
+
+**Impact: HIGH (hook count reveals components coordinating too many concerns)**
+
+A component with many direct hook calls is a refactoring signal. Group related subscriptions, actions and derived values behind an intent-named custom hook when they form one responsibility; extract a child component when the concern also owns an independent rendered region. Keep pure calculations outside hooks.
+
+Do not game a hook-count warning with a generic umbrella hook that merely returns every value. The extraction must create a cohesive boundary with a small interface, such as search state, selection actions or virtual-list measurement.
+
+**Incorrect (the component coordinates unrelated concerns directly):**
+
+```tsx
+function OrdersWorkspace() {
+  const { data: orders } = useOrdersQuery()
+  const filters = useAtomValue(orderFiltersAtom)
+  const selection = useAtomValue(orderSelectionAtom)
+  const setSelection = useSetAtom(orderSelectionAtom)
+  const formatMoney = useFormatMoney()
+  const [panelOpen, setPanelOpen] = useState(false)
+  const rows = useMemo(() => buildOrderRows(orders, filters), [orders, filters])
+  // filtering, selection, panel actions and rendering continue here
+}
+```
+
+**Correct (each extracted boundary owns one responsibility):**
+
+```tsx
+function OrdersWorkspace() {
+  const { rows, selection, selectOrder } = useOrdersTable()
+  const panel = useOrderDetailsPanel()
+
+  return (
+    <OrdersTable
+      rows={rows}
+      selection={selection}
+      onSelect={selectOrder}
+      onOpenDetails={panel.open}
+    />
+  )
+}
+```
+
+The lint threshold is diagnostic, not a target for every component. When a component legitimately wires several facets of one cohesive primitive, document the narrow exception instead of inventing an artificial abstraction.
+
+See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
+
+### 1.8 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -536,7 +586,44 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.8 Keep Components Thin
+### 1.9 Isolate Effects in Intent-Named Hooks
+
+**Impact: HIGH (synchronization responsibilities stay explicit and independently testable)**
+
+Do not place `useEffect` or `useLayoutEffect` directly in a component. First remove effects that only derive render state or respond to a user action. When synchronization with an external system is genuinely required, isolate it in a custom hook named after the synchronization intent, not after the React primitive.
+
+**Incorrect (the rendering component owns browser synchronization):**
+
+```tsx
+function OrderPanel({ orderId }: { orderId: string }) {
+  useEffect(() => {
+    document.title = `Order ${orderId}`
+  }, [orderId])
+
+  return <OrderDetails orderId={orderId} />
+}
+```
+
+**Correct (the effect has a focused, intention-revealing boundary):**
+
+```tsx
+function useOrderDocumentTitle(orderId: string): void {
+  useEffect(() => {
+    document.title = `Order ${orderId}`
+  }, [orderId])
+}
+
+function OrderPanel({ orderId }: { orderId: string }) {
+  useOrderDocumentTitle(orderId)
+  return <OrderDetails orderId={orderId} />
+}
+```
+
+Keep the hook close to a single-use component or move it to the owning domain service when reused. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
+
+See also: `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+
+### 1.10 Keep Components Thin
 
 **Impact: HIGH (logic becomes reusable and testable without rendering)**
 
@@ -551,6 +638,8 @@ A component reads hooks and renders. Each kind of logic has a fixed home outside
 | Side effect reused by several pages | domain `services/` |
 
 `useState` stays acceptable for pure UI state (hover, open accordion).
+
+A high number of direct hooks indicates that the component may be coordinating several responsibilities; split it according to `arch-decompose-hook-heavy-components`. Effects that remain after removing derived state and event-driven logic belong in an intent-named hook as described by `arch-isolate-effects-in-hooks`.
 
 **Incorrect (the action is orchestrated inside the component):**
 
@@ -585,9 +674,9 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 }
 ```
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.9 Keep Visual Logic Out of apis/, services/ and helpers/
+### 1.11 Keep Visual Logic Out of apis/, services/ and helpers/
 
 **Impact: HIGH (domain hooks stay reusable across pages and contexts)**
 
@@ -649,7 +738,7 @@ How the page action gives feedback:
 
 See also: `vercel-react-best-practices` → `async-parallel`
 
-### 1.10 No index.ts in stores/, One File per Concern
+### 1.12 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
 
@@ -687,7 +776,7 @@ Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. D
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.11 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.13 Create a Sub-Domain Only for a Distinct Business Entity
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
@@ -2386,7 +2475,35 @@ return (
 
 While the exit transition plays, the target may already be `null`: keep the last displayed values (or render stable text) so the content does not flash empty during the close animation.
 
-### 7.4 Never Nest a form Inside a form
+### 7.4 Name Compound Render Conditions by Intent
+
+**Impact: HIGH (display decisions become readable and reviewable at the JSX boundary)**
+
+Give every compound condition that controls whether a JSX subtree appears an intention-revealing name. Keep a presentation-only decision as a boolean derived during render. Move it to `helpers/businessRules/` as a pure `shouldShowX`, `canX`, `hasX` or `isX` predicate when it expresses a business rule or deserves focused tests.
+
+Simple flags and single comparisons do not require extraction. Conditions used only to choose a class, attribute or text value are also outside this rule.
+
+**Incorrect (the reader must decode the display decision inside JSX):**
+
+```tsx
+{order.status === 'READY' && order.total != null && (
+  <OrderTotal value={order.total} />
+)}
+```
+
+**Correct (the JSX states why the subtree is rendered):**
+
+```tsx
+const shouldShowOrderTotal = order.status === 'READY' && order.total != null
+
+return shouldShowOrderTotal ? <OrderTotal value={order.total} /> : null
+```
+
+Do not store the boolean in state or wrap a cheap condition in `useMemo`. Prefer a local name unless extracting a pure business predicate creates a meaningful reusable or testable boundary.
+
+See also: `helpers-business-rules-pure`; `vercel-react-best-practices` → `rendering-conditional-render`, `rerender-simple-expression-in-memo`
+
+### 7.5 Never Nest a form Inside a form
 
 **Impact: HIGH (prevents native submit that reloads the SPA and loses data)**
 
@@ -2414,7 +2531,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 
 With a form library, use its "render as div" option or `useForm().handleSubmit` from a button `onClick`. The trade-off is losing native Enter-to-submit on the outer form. Check in the browser console with `document.querySelectorAll('form form').length === 0`.
 
-### 7.5 Wrap the Whole Dialog in a Form Keyed on the Open Target
+### 7.6 Wrap the Whole Dialog in a Form Keyed on the Open Target
 
 **Impact: HIGH (submit button inside the form, fresh values on each open)**
 
@@ -2462,7 +2579,7 @@ function SubmitButton() {
 
 Do not let a generic "confirm" action close the dialog by itself: it would close even when validation fails. Close it from the submit handler on success.
 
-### 7.6 Style with Design System Components, Utility Classes Only for Layout
+### 7.7 Style with Design System Components, Utility Classes Only for Layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
@@ -2492,7 +2609,7 @@ Visual styling (text size, color, weight, background, border, radius, shadow, pa
 
 If no design-system component fits, add or extend one in the shared UI layer instead of styling locally. Detection hint: search feature code for `className=` values containing `bg-`, `text-`, `border-`, `rounded-` or `shadow-`.
 
-### 7.7 Give Icon-Only Buttons and Custom Controls an Accessible Name
+### 7.8 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
 **Impact: MEDIUM (usable with assistive tech, queryable by role in tests)**
 

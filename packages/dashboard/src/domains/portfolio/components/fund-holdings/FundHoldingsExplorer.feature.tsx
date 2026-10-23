@@ -32,6 +32,54 @@ const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
 interface VirtualExposureItem { index: number; size: number; start: number }
 
+function useFundExposureViewModel(positions: PositionRow[], holdings: FundHolding[]) {
+  const { data: fundData } = useFundHoldingsData()
+  const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
+  const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
+  const query = useAtomValue(dashboardUnderlyingQueryAtom)
+  const sort = useAtomValue(dashboardUnderlyingSortAtom)
+  const actions = useDashboardUnderlyingHoldings()
+  const exposure = useMemo(
+    () => buildFundExposureViewModel({
+      expanded,
+      holdings,
+      positions,
+      query,
+      sort,
+      statuses,
+    }),
+    [expanded, holdings, positions, query, sort, statuses],
+  )
+  return { ...actions, ...exposure, query, sort }
+}
+
+function useVirtualExposureList(rows: ExposureRow[]) {
+  const listRef = useRef<HTMLDivElement>(null)
+  const [scrollMargin, setScrollMargin] = useState(0)
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (listRef.current) setScrollMargin(listRef.current.getBoundingClientRect().top + window.scrollY)
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
+
+  const virtualizer = useWindowVirtualizer({
+    count: rows.length,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 12,
+    scrollMargin,
+  })
+  const virtualRows = virtualizer.getVirtualItems().map((item) => {
+    const row = rows[item.index]
+    return { item, key: rowKey(row), row }
+  })
+
+  return { listRef, scrollMargin, virtualizer, virtualRows }
+}
+
 function VirtualExposureRow({ item, onToggle, row, scrollMargin }: { item: VirtualExposureItem; onToggle: (id: string) => void; row: ExposureRow; scrollMargin: number }) {
   return <div className="absolute left-0 top-0 w-full" style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}>{row.kind === 'issuer' && <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />}{row.kind === 'security' && <SecurityRow security={row.security} />}{row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}</div>
 }
@@ -46,43 +94,18 @@ export function FundHoldingsExplorer({
   holdings: FundHolding[]
 }) {
   const formatNumber = useFormatNumber()
-  const { data: fundData } = useFundHoldingsData()
-  const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
-  const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
-  const query = useAtomValue(dashboardUnderlyingQueryAtom)
-  const sort = useAtomValue(dashboardUnderlyingSortAtom)
-  const { setQuery, setSort, toggleIssuer } = useDashboardUnderlyingHoldings()
-  const { displayed, rows, securityCount, totalIssuerCount } = useMemo(
-    () => buildFundExposureViewModel({
-      expanded,
-      holdings,
-      positions,
-      query,
-      sort,
-      statuses,
-    }),
-    [expanded, holdings, positions, query, sort, statuses],
-  )
-  const listRef = useRef<HTMLDivElement>(null)
-  const [scrollMargin, setScrollMargin] = useState(0)
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (listRef.current) setScrollMargin(listRef.current.getBoundingClientRect().top + window.scrollY)
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [])
-  const virtualizer = useWindowVirtualizer({
-    count: rows.length,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 12,
-    scrollMargin,
-  })
-  const virtualRows = virtualizer.getVirtualItems().map((item) => {
-    const row = rows[item.index]
-    return { item, key: rowKey(row), row }
-  })
+  const {
+    displayed,
+    query,
+    rows,
+    securityCount,
+    setQuery,
+    setSort,
+    sort,
+    toggleIssuer,
+    totalIssuerCount,
+  } = useFundExposureViewModel(positions, holdings)
+  const { listRef, scrollMargin, virtualizer, virtualRows } = useVirtualExposureList(rows)
 
   return (
     <section className={DATA_TABLE_STYLES.panel}>

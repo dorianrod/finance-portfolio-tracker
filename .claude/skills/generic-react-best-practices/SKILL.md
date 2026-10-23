@@ -11,12 +11,12 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 84 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 87 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
 
@@ -60,7 +60,9 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-shared-no-domain-knowledge` - Keep Shared Code Free of Domain Knowledge
 - `arch-no-prop-drilling` - Share Client State Through Jotai, Not Prop Chains or Context
 - `arch-helpers-vs-services` - Choose helpers/ or services/ by Asking "Does It Need a Hook?"
+- `arch-decompose-hook-heavy-components` - Decompose Hook-Heavy Components by Responsibility
 - `arch-feature-flags` - Gate Experimental Features With a Typed Flag Registry
+- `arch-isolate-effects-in-hooks` - Isolate Effects in Intent-Named Hooks
 - `arch-thin-components` - Keep Components Thin
 - `arch-no-visual-logic-below-page` - Keep Visual Logic Out of apis/, services/ and helpers/
 - `arch-stores-no-index` - No index.ts in stores/, One File per Concern
@@ -121,6 +123,7 @@ Several rules describe the target standard, not the current state of every file.
 - `ui-delegate-mapped-jsx` - Delegate Mapped JSX to a Component
 - `ui-compound-slots-direct-children` - Keep Compound Component Slots as Direct, Renderable Children
 - `ui-dialog-controlled` - Keep Dialog Mounted and Drive It with a Boolean open
+- `ui-name-compound-render-conditions` - Name Compound Render Conditions by Intent
 - `ui-no-nested-form` - Never Nest a form Inside a form
 - `ui-form-wraps-dialog` - Wrap the Whole Dialog in a Form Keyed on the Open Target
 - `ui-no-adhoc-styling` - Style with Design System Components, Utility Classes Only for Layout

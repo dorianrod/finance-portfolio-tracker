@@ -33,6 +33,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
 
   const chartData = history ? buildHoverChartSeries(history, target.operations) : undefined
   const unitPriceDomain = chartData ? computeUnitPriceDomain(chartData) : undefined
+  const displayedChartData = chartData?.length ? chartData : null
 
   return createPortal(
     <div
@@ -48,12 +49,12 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
 
       {!history && <p className="text-gray-400 text-xs py-4 text-center">Loading…</p>}
 
-      {chartData && chartData.length > 0 && (
+      {displayedChartData && (
         <>
           {/* Chart 1: position value */}
           <p className="text-gray-400 text-xs mb-1">Position value</p>
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={chartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+            <AreaChart data={displayedChartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
               <defs>
                 <linearGradient id="gVal" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0.25} />
@@ -82,7 +83,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
             <>
               <p className="text-gray-400 text-xs mb-1">Unit price</p>
               <ResponsiveContainer width="100%" height={160}>
-                <LineChart data={chartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                <LineChart data={displayedChartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
                   <XAxis dataKey="date" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
                   <YAxis tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(value) => formatMoney(value, { style: 'decimal' })} width={64} domain={unitPriceDomain} />

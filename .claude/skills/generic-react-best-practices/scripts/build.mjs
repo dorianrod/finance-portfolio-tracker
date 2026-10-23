@@ -235,8 +235,10 @@ const buildAgents = (sections, rules) => {
 
 # ${metadata.title}
 
-**Version ${metadata.version}**  
-${metadata.organization}  
+**Version ${metadata.version}**
+
+${metadata.organization}
+
 ${metadata.date}
 
 > **Note:**  

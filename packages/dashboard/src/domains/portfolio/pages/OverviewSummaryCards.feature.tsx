@@ -55,11 +55,14 @@ function DeltaBadge({ metric, tone = 'performance' }: {
   if (tone === 'concentration') {
     label = metric.delta == null ? '—' : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
   }
+  const deltaPercentage = tone !== 'concentration' && metric.deltaPct != null
+    ? metric.deltaPct
+    : null
   return (
     <span className={`inline-flex items-center gap-1 rounded-full bg-gray-950/55 px-2 py-1 text-[11px] font-semibold tabular-nums ${color}`}>
       {label}
-      {tone !== 'concentration' && metric.deltaPct != null && (
-        <span className="font-medium opacity-75">· {formatPercentage(metric.deltaPct, { signed: true })}</span>
+      {deltaPercentage != null && (
+        <span className="font-medium opacity-75">· {formatPercentage(deltaPercentage, { signed: true })}</span>
       )}
     </span>
   )
@@ -129,6 +132,9 @@ export function OverviewSummaryCards({
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable ? underlyingConcentration : heldConcentration
   const primaryLabel = underlyingAvailable ? 'Underlying assets' : 'Held positions · limited view'
+  const rollingThreeYearDelta = irrStatus === 'ready' && rollingThreeYearTri.delta != null
+    ? rollingThreeYearTri.delta
+    : null
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -176,9 +182,9 @@ export function OverviewSummaryCards({
           <span className={`font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.current)}`}>
             {irrValueLabel(irrStatus, rollingThreeYearTri.current, formatPercentage)}
           </span>
-          {irrStatus === 'ready' && rollingThreeYearTri.delta != null && (
-            <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${performanceTone(rollingThreeYearTri.delta)}`}>
-              {formatPercentage(rollingThreeYearTri.delta, { signed: true, unit: ' pp' })}
+          {rollingThreeYearDelta != null && (
+            <span className={`inline-flex rounded-full bg-gray-950/55 px-1.5 py-0.5 font-semibold tabular-nums ${performanceTone(rollingThreeYearDelta)}`}>
+              {formatPercentage(rollingThreeYearDelta, { signed: true, unit: ' pp' })}
             </span>
           )}
           <span className="text-gray-600">

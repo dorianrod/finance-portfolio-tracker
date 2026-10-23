@@ -29,9 +29,16 @@ interface Props {
   dateTo?: string
 }
 
-export function PortfolioCharts({ history, accounts, accountTypeData, positions, dateFrom, dateTo }: Props) {
+function useAccountTypeLabels(accountTypeData: AccountTypePoint[] | undefined) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  return (accountTypeData ?? []).map((point) => {
+    const percentage = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
+    return { ...point, _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(percentage, { decimals: 0, signed: true })}` }
+  })
+}
+
+export function PortfolioCharts({ history, accounts, accountTypeData, positions, dateFrom, dateTo }: Props) {
   const { data: allOps = new Map() } = useMonthlyOps()
   const ops = filterMonthlyOpsByAccounts(allOps, accounts)
 
@@ -41,10 +48,7 @@ export function PortfolioCharts({ history, accounts, accountTypeData, positions,
   const { data: passiveIncome = [] } = usePassiveIncome(accounts, dateFrom, dateTo)
   const { data: typeHistory, accountTypes, typeCategories } = useAccountTypeHistory(accounts)
 
-  const accountTypeWithLabels = (accountTypeData ?? []).map((point) => {
-    const percentage = point.total_cost_basis > 0 ? point.unrealized_gain / point.total_cost_basis * 100 : 0
-    return { ...point, _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(percentage, { decimals: 0, signed: true })}` }
-  })
+  const accountTypeWithLabels = useAccountTypeLabels(accountTypeData)
   const topPerformers = useMemo(() => computeTopPerformers(positions), [positions])
   const topPerformersHeight = Math.max(240, topPerformers.length * 26)
 
@@ -53,7 +57,6 @@ export function PortfolioCharts({ history, accounts, accountTypeData, positions,
 
       {/* ── Row 1: Breakdown by type + Savings capacity ────────────── */}
       <div className="flex gap-4">
-        {/* eslint-disable-next-line local/no-prop-drilling -- This orchestration feature owns chart-ready account labels. */}
         {accountTypeWithLabels.length > 0 && <AccountTypeBreakdownChart data={accountTypeWithLabels} />}
         {/* eslint-disable-next-line local/no-prop-drilling -- This orchestration feature joins monthly data with its matching operations. */}
         <MonthlySavingsChart data={last12} ops={ops} />

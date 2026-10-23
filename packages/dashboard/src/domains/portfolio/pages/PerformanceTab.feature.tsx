@@ -51,6 +51,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
   let assetIrrStatus: IrrStatus = 'ready'
   if (assetIrr.loading) assetIrrStatus = 'loading'
   else if (assetIrr.error) assetIrrStatus = 'error'
+  const hasChartData = history.length > 0 || passiveIncome.length > 0
 
   return (
     <div className="mb-6 space-y-4">
@@ -74,7 +75,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
           </div>
         </section>
       </div>
-      {(history.length > 0 || passiveIncome.length > 0) && (
+      {hasChartData && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {history.length > 0 && <UnrealizedPnlChart history={history} />}
           {history.length > 0 && <TriChart history={history} />}

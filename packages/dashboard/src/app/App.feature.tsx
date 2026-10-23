@@ -159,16 +159,77 @@ function DashboardPanelFallback() {
   );
 }
 
+function DashboardHeader() {
+  const theme = useAtomValue(dashboardThemeAtom);
+  const { toggleTheme } = useDashboardTheme();
+  useDashboardThemeSync();
+
+  return (
+    <header className="mb-5 flex items-start gap-4">
+      <div>
+        <h1 className="text-2xl font-bold text-content">Portfolio</h1>
+      </div>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        aria-pressed={theme === "dark"}
+        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
+      >
+        {theme === "dark" ? "Light mode" : "Dark mode"}
+      </button>
+    </header>
+  );
+}
+
+function DashboardNavigation({
+  activeTab,
+  hasFundValidationError,
+  hasPipelineError,
+  qualityCount,
+}: {
+  activeTab: AnalysisTab;
+  hasFundValidationError: boolean;
+  hasPipelineError: boolean;
+  qualityCount: number;
+}) {
+  const { navigateTo } = useDashboardNavigation();
+  const { openQualityOverview } = useDashboardQuality();
+
+  return (
+    <nav
+      className="mb-5 flex overflow-x-auto border-b border-border"
+      aria-label="Portfolio analyses"
+    >
+      {PRIMARY_TABS.map((tab) => (
+        <PrimaryTabButton key={tab.id} activeTab={activeTab} onNavigate={navigateTo} tab={tab} />
+      ))}
+      <button
+        type="button"
+        onClick={openQualityOverview}
+        onMouseEnter={() => preloadTab("quality")}
+        onFocus={() => preloadTab("quality")}
+        aria-current={activeTab === "quality" ? "page" : undefined}
+        className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-accent text-content" : "border-b-transparent text-content-subtle hover:text-content-secondary"}`}
+      >
+        Data quality
+        {qualityCount > 0 && (
+          <span
+            className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${hasPipelineError || hasFundValidationError ? SEMANTIC_STATUS_BADGE_CLASSES.critical : SEMANTIC_STATUS_BADGE_CLASSES.warning}`}
+          >
+            {qualityCount}
+          </span>
+        )}
+      </button>
+    </nav>
+  );
+}
+
 export default function App() {
   const activeTab = useAtomValue(dashboardActiveTabAtom);
   const filters = useAtomValue(dashboardFiltersAtom);
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom);
   const allocationFilter = useAtomValue(dashboardAllocationFilterAtom);
-  const theme = useAtomValue(dashboardThemeAtom);
-  const { toggleTheme } = useDashboardTheme();
-  useDashboardThemeSync();
-  const { navigateTo } = useDashboardNavigation();
-  const { openQualityOverview } = useDashboardQuality();
   const {
     accountFilterLabels,
     accountTypeData,
@@ -237,54 +298,31 @@ export default function App() {
     activeFilterSummaries,
     activeTab,
   );
+  const dashboardReady = !loading && !error;
+  const showPipelineReliability = activeTab !== "overview"
+    && activeTab !== "allocation"
+    && activeTab !== "quality"
+    && !(activeTab === "holdings" && holdingsView === "underlying");
+  const showUnderlyingReliability = activeTab === "holdings" && holdingsView === "underlying";
+  const showResetFilters = activeFilterSummaries.length > 0
+    || (activeTab === "allocation" && allocationFilter !== null);
+  const showAllocationFilter = activeTab === "allocation" && allocationFilter !== null;
 
   return (
     <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
-        <header className="mb-5 flex items-start gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-content">Portfolio</h1>
-          </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-pressed={theme === "dark"}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
-          >
-            {theme === "dark" ? "Light mode" : "Dark mode"}
-          </button>
-        </header>
+        <DashboardHeader />
 
         {loading && <p className="text-content-muted">Loading…</p>}
         {error && <p className="text-danger">Error: {error}</p>}
-        {!loading && !error && (
+        {dashboardReady && (
           <>
-            <nav
-              className="mb-5 flex overflow-x-auto border-b border-border"
-              aria-label="Portfolio analyses"
-            >
-              {PRIMARY_TABS.map((tab) => (
-                <PrimaryTabButton key={tab.id} activeTab={activeTab} onNavigate={navigateTo} tab={tab} />
-              ))}
-              <button
-                type="button"
-                onClick={openQualityOverview}
-                onMouseEnter={() => preloadTab("quality")}
-                onFocus={() => preloadTab("quality")}
-                aria-current={activeTab === "quality" ? "page" : undefined}
-                className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === "quality" ? "border-b-accent text-content" : "border-b-transparent text-content-subtle hover:text-content-secondary"}`}
-              >
-                Data quality
-                {qualityCount > 0 && (
-                  <span
-                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${hasPipelineError || hasFundValidationError ? SEMANTIC_STATUS_BADGE_CLASSES.critical : SEMANTIC_STATUS_BADGE_CLASSES.warning}`}
-                  >
-                    {qualityCount}
-                  </span>
-                )}
-              </button>
-            </nav>
+            <DashboardNavigation
+              activeTab={activeTab}
+              hasFundValidationError={hasFundValidationError}
+              hasPipelineError={hasPipelineError}
+              qualityCount={qualityCount}
+            />
 
             {activeTab === "holdings" && (
               <HoldingsViewTabs />
@@ -295,7 +333,7 @@ export default function App() {
                 <h2 className="text-lg font-semibold text-content">
                   {copy.title}
                 </h2>
-                {activeTab !== "overview" && activeTab !== "allocation" && activeTab !== "quality" && !(activeTab === "holdings" && holdingsView === "underlying") && (
+                {showPipelineReliability && (
                   <div className="mt-2">
                     <PipelineReliabilityKpi
                       errorCount={scopedPipelineErrorCount}
@@ -358,7 +396,7 @@ export default function App() {
                     />
                   </div>
                 )}
-                {activeTab === "holdings" && holdingsView === "underlying" && (
+                {showUnderlyingReliability && (
                   <div className="mt-2">
                     <AnalysisReliabilityKpi
                       percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
@@ -390,11 +428,11 @@ export default function App() {
                   windows={overviewComparison.windows}
                 />
               ) : undefined}
-              actions={activeFilterSummaries.length > 0 || (activeTab === "allocation" && allocationFilter !== null)
+              actions={showResetFilters
                 ? <ResetFiltersButton />
                 : undefined}
             >
-              {activeTab === "allocation" && allocationFilter && (
+              {showAllocationFilter && (
                 <FilterChipBar />
               )}
             </ActiveFilterSummary>

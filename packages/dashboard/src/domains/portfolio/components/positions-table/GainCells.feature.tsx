@@ -13,15 +13,19 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
   const taxAmount = net != null && taxRate != null && taxRate > 0 && gross > 0
     ? gross - net
     : null
+  const taxDetails = taxRate != null && taxAmount != null && taxAmount > 0
+    ? { amount: taxAmount, rate: taxRate }
+    : null
+  const isTaxFreeGain = taxRate === 0 && gross !== 0
   return (
     <span className="flex flex-col leading-tight">
       <GainCell value={gross} pct={position.unrealized_gain_pct} />
-      {taxRate != null && taxAmount != null && taxAmount > 0 && (
+      {taxDetails && (
         <span className="mt-0.5 text-[10px] text-gray-500">
-          ~{formatMoney(-taxAmount)} tax ({formatPercentage(taxRate * 100, { decimals: 0 })})
+          ~{formatMoney(-taxDetails.amount)} tax ({formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
         </span>
       )}
-      {taxRate === 0 && gross !== 0 && (
+      {isTaxFreeGain && (
         <span className="mt-0.5 text-[10px] text-gray-500">net (0% tax)</span>
       )}
     </span>
@@ -38,15 +42,19 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
   const taxAmount = net != null && taxRate != null && taxRate > 0 && gross > 0
     ? gross - net
     : null
+  const taxDetails = taxRate != null && taxAmount != null && taxAmount > 0
+    ? { amount: taxAmount, rate: taxRate }
+    : null
+  const isTaxFreeGain = taxRate === 0 && gross > 0
   return (
     <span className="flex flex-col leading-tight">
       <GainCell value={gross} />
-      {taxRate != null && taxAmount != null && taxAmount > 0 && (
+      {taxDetails && (
         <span className="mt-0.5 text-[10px] text-gray-500">
-          ~{formatMoney(-taxAmount)} tax ({formatPercentage(taxRate * 100, { decimals: 0 })})
+          ~{formatMoney(-taxDetails.amount)} tax ({formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
         </span>
       )}
-      {taxRate === 0 && gross > 0 && (
+      {isTaxFreeGain && (
         <span className="mt-0.5 text-[10px] text-gray-500">net (0% tax)</span>
       )}
     </span>

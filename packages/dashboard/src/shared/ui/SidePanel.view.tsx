@@ -19,17 +19,7 @@ const WIDTH_BY_SIZE = {
   wide: 'w-[min(100vw,1200px)]',
 } as const
 
-export function SidePanel({
-  title,
-  description,
-  headerActions,
-  children,
-  onClose,
-  closeLabel,
-  size = 'default',
-  bodyClassName = 'overflow-auto',
-}: SidePanelProps) {
-  const titleId = useId()
+function useSidePanelDialog(onClose: () => void) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLElement>(null)
   const onCloseRef = useRef(onClose)
@@ -74,6 +64,22 @@ export function SidePanel({
       previouslyFocused?.focus()
     }
   }, [])
+
+  return { closeButtonRef, panelRef }
+}
+
+export function SidePanel({
+  title,
+  description,
+  headerActions,
+  children,
+  onClose,
+  closeLabel,
+  size = 'default',
+  bodyClassName = 'overflow-auto',
+}: SidePanelProps) {
+  const titleId = useId()
+  const { closeButtonRef, panelRef } = useSidePanelDialog(onClose)
 
   return createPortal(
     <div className="fixed inset-0 z-[9990]">

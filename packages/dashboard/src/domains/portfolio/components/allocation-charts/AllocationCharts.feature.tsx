@@ -34,9 +34,23 @@ interface AllocationChartsProps {
   dateTo?: string
 }
 
-export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, rawData, dateFrom, dateTo }: AllocationChartsProps) {
+function useConcentrationDescriptions(
+  concentration: ReturnType<typeof useAllocationCharts>['concentration'],
+  mode: ConcentrationMode,
+) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  return {
+    cumulativeDescription: mode === 'held'
+      ? 'Share of the applicable portfolio held in the largest N positions.'
+      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${formatPercentage(concentration.coveragePct)} coverage.`,
+    holdingsDescription: mode === 'held'
+      ? 'Positions effectively held, aggregated across accounts.'
+      : `Identified ${formatMoney(concentration.identifiedValue, { style: 'full' })} · undisclosed funds ${formatMoney(concentration.undisclosedValue, { style: 'full' })} · opaque ${formatMoney(concentration.opaqueValue, { style: 'full' })}.`,
+  }
+}
+
+export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHoldingsHistory, accountFilters, accountTypeFilters, rawData, dateFrom, dateTo }: AllocationChartsProps) {
   const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const view = useAtomValue(dashboardAllocationViewAtom)
@@ -77,6 +91,10 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
     dateFrom,
     dateTo,
   })
+  const { cumulativeDescription, holdingsDescription } = useConcentrationDescriptions(concentration, concentrationMode)
+  const hasConcentrationData = heldAssetConcentration.allHoldings.length > 0
+    || lookThroughConcentration.allHoldings.length > 0
+  const showFilteredPositions = positionsOpen && activeFilter != null && tableRows.length > 0
   if (rawData.loading) return <p className="text-gray-400 text-sm">Loading breakdowns…</p>
 
   if (hasSelectedValue && !hasApplicableValue) {
@@ -91,7 +109,7 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
     <div className="flex flex-col gap-4 mb-6">
       {view === 'current' && (
         <>
-          {(heldAssetConcentration.allHoldings.length > 0 || lookThroughConcentration.allHoldings.length > 0) && (
+          {hasConcentrationData && (
             <section>
               <div className="mb-3 flex items-center justify-between gap-4">
                 <div>
@@ -105,18 +123,14 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
                   <CumulativeConcentrationChart
                     data={cumulativeConcentration}
                     effectiveDate={dateTo}
-                    description={concentrationMode === 'held'
-                      ? 'Share of the applicable portfolio held in the largest N positions.'
-                      : `Share of the applicable portfolio identified in the largest N look-through exposures · ${formatPercentage(concentration.coveragePct)} coverage.`}
+                    description={cumulativeDescription}
                   />
                   <ConcentrationChart
                     data={concentration.holdings}
                     effectiveDate={dateTo}
                     topTenValue={concentration.topTenValue}
                     topTenPct={concentration.topTenPct}
-                    description={concentrationMode === 'held'
-                      ? 'Positions effectively held, aggregated across accounts.'
-                      : `Identified ${formatMoney(concentration.identifiedValue, { style: 'full' })} · undisclosed funds ${formatMoney(concentration.undisclosedValue, { style: 'full' })} · opaque ${formatMoney(concentration.opaqueValue, { style: 'full' })}.`}
+                    description={holdingsDescription}
                   />
                 </div>
               ) : (
@@ -165,7 +179,7 @@ export function AllocationCharts({ positions, rawPositions, fundHoldings, fundHo
       )}
 
       {/* ── Panneau positions ─────────────────────────────────────────────── */}
-      {positionsOpen && activeFilter && tableRows.length > 0 && (
+      {showFilteredPositions && (
         <FilteredPositionsTable
           rows={tableRows}
         />
