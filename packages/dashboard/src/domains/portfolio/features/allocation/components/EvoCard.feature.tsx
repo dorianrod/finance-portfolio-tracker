@@ -55,7 +55,8 @@ export function EvoCard({
       }
       isFiltered={activeFilter !== null}
       onSelect={selectCategory}
-      tooltip={
+    >
+      <EvoCardView.Tooltip>
         <ScopedInfoTooltip
           // eslint-disable-next-line local/no-prop-drilling -- The chart feature owns its translated description; the adapter adds live filter scope.
           text={i18n.t('ui.evocard.historicalPortfolioAllocationByValue0', {
@@ -63,12 +64,12 @@ export function EvoCard({
           })}
           scope={{ account: 'filterable', period: 'range' }}
         />
-      }
-      positionsControl={
-        activeFilter?.type === dimension ? (
+      </EvoCardView.Tooltip>
+      <EvoCardView.PositionsControl>
+        {activeFilter?.type === dimension ? (
           <PositionsToggle open={positionsOpen} onClick={togglePositions} />
-        ) : null
-      }
-    />
+        ) : null}
+      </EvoCardView.PositionsControl>
+    </EvoCardView>
   )
 }

@@ -23,22 +23,23 @@ export function ConcentrationTrendSection({
     <ConcentrationTrendSectionView
       controller={controller}
       lookThroughAvailable={lookThroughAvailable}
-      thresholdTooltip={
+    >
+      <ConcentrationTrendSectionView.ThresholdTooltip>
         <ScopedInfoTooltip
           text={i18n.t(
             'ui.concentrationtrendsection.minimumNumberOfTheLargestExposuresNeededToReach',
           )}
           scope={{ account: 'filterable', period: 'range' }}
         />
-      }
-      holdingsTooltip={
+      </ConcentrationTrendSectionView.ThresholdTooltip>
+      <ConcentrationTrendSectionView.HoldingsTooltip>
         <ScopedInfoTooltip
           text={i18n.t(
             'ui.concentrationtrendsection.rankedPortfolioExposuresAtEachMonthlySnapshotHoverUse',
           )}
           scope={{ account: 'filterable', period: 'range' }}
         />
-      }
-    />
+      </ConcentrationTrendSectionView.HoldingsTooltip>
+    </ConcentrationTrendSectionView>
   )
 }

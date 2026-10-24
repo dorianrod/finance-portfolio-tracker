@@ -25,7 +25,10 @@ export function LookThroughCoverageSummary({
       report={report}
       model={model}
       variant={variant}
-      tooltipFooter={<FilterScopeBadges account="filterable" period="latest" />}
-    />
+    >
+      <LookThroughCoverageSummaryView.TooltipFooter>
+        <FilterScopeBadges account="filterable" period="latest" />
+      </LookThroughCoverageSummaryView.TooltipFooter>
+    </LookThroughCoverageSummaryView>
   )
 }

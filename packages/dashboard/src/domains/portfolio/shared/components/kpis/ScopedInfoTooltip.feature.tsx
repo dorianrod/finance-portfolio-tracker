@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react'
-
 import {
   FilterScopeBadges,
   type FilterScopeSpec,
@@ -11,13 +9,16 @@ export function ScopedInfoTooltip({
   text,
   scope,
 }: {
-  text: ReactNode
+  text: string
   scope?: FilterScopeSpec
 }) {
   return (
-    <InfoTooltip
-      text={text}
-      footer={scope ? <FilterScopeBadges {...scope} /> : undefined}
-    />
+    <InfoTooltip text={text}>
+      {scope && (
+        <InfoTooltip.Footer>
+          <FilterScopeBadges {...scope} />
+        </InfoTooltip.Footer>
+      )}
+    </InfoTooltip>
   )
 }

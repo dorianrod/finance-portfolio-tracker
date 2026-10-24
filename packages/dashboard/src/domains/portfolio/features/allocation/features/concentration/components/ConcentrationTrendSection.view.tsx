@@ -23,6 +23,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 
@@ -37,14 +38,18 @@ const matchHoldingByKey = matchByDataKey('key')
 export function ConcentrationTrendSectionView({
   controller,
   lookThroughAvailable,
-  thresholdTooltip,
-  holdingsTooltip,
+  children,
 }: {
+  children: ReactNode
   controller: ReturnType<typeof useConcentrationTrendController>
   lookThroughAvailable: boolean
-  thresholdTooltip: ReactNode
-  holdingsTooltip: ReactNode
 }) {
+  const { slot: thresholdTooltip, content: afterThresholdTooltip } =
+    partitionSlot(children, ConcentrationTrendSectionViewThresholdTooltip)
+  const { slot: holdingsTooltip } = partitionSlot(
+    afterThresholdTooltip,
+    ConcentrationTrendSectionViewHoldingsTooltip,
+  )
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
@@ -420,3 +425,25 @@ export function ConcentrationTrendSectionView({
     </section>
   )
 }
+
+function ConcentrationTrendSectionViewThresholdTooltip({
+  children,
+}: {
+  children: ReactNode
+}) {
+  return children
+}
+
+ConcentrationTrendSectionView.ThresholdTooltip =
+  ConcentrationTrendSectionViewThresholdTooltip
+
+function ConcentrationTrendSectionViewHoldingsTooltip({
+  children,
+}: {
+  children: ReactNode
+}) {
+  return children
+}
+
+ConcentrationTrendSectionView.HoldingsTooltip =
+  ConcentrationTrendSectionViewHoldingsTooltip

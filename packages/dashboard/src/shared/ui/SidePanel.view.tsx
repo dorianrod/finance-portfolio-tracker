@@ -2,13 +2,12 @@ import type { ReactNode } from 'react'
 import { useId } from 'react'
 import { createPortal } from 'react-dom'
 
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+
 import { useSidePanelDialog } from './helpers/presenters/useSidePanelDialog'
 
 type SidePanelProps = {
   open: boolean
-  title: ReactNode
-  description?: ReactNode
-  headerActions?: ReactNode
   children: ReactNode
   onClose: () => void
   closeLabel: string
@@ -24,9 +23,6 @@ const WIDTH_BY_SIZE = {
 
 export function SidePanel({
   open,
-  title,
-  description,
-  headerActions,
   children,
   onClose,
   closeLabel,
@@ -35,6 +31,18 @@ export function SidePanel({
 }: SidePanelProps) {
   const titleId = useId()
   const { closeButtonRef, panelRef } = useSidePanelDialog(open, onClose)
+  const { slot: title, content: afterTitle } = partitionSlot(
+    children,
+    SidePanelTitle,
+  )
+  const { slot: description, content: afterDescription } = partitionSlot(
+    afterTitle,
+    SidePanelDescription,
+  )
+  const { slot: headerActions, content } = partitionSlot(
+    afterDescription,
+    SidePanelHeaderActions,
+  )
   if (!open) return null
 
   return createPortal(
@@ -58,7 +66,7 @@ export function SidePanel({
             <h2 id={titleId} className="text-sm font-semibold text-content">
               {title}
             </h2>
-            {description && (
+            {description.length > 0 && (
               <div className="mt-0.5 text-xs text-content-subtle">
                 {description}
               </div>
@@ -75,9 +83,25 @@ export function SidePanel({
             ✕
           </button>
         </div>
-        <div className={`min-h-0 flex-1 ${bodyClassName}`}>{children}</div>
+        <div className={`min-h-0 flex-1 ${bodyClassName}`}>{content}</div>
       </aside>
     </div>,
     document.body,
   )
 }
+
+function SidePanelTitle({ children }: { children: ReactNode }) {
+  return children
+}
+
+function SidePanelDescription({ children }: { children: ReactNode }) {
+  return children
+}
+
+function SidePanelHeaderActions({ children }: { children: ReactNode }) {
+  return children
+}
+
+SidePanel.Title = SidePanelTitle
+SidePanel.Description = SidePanelDescription
+SidePanel.HeaderActions = SidePanelHeaderActions

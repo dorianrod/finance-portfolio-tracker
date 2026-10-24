@@ -8,6 +8,35 @@ import { SidePanel } from './SidePanel.view'
 afterEach(cleanup)
 
 describe('SidePanel', () => {
+  it('renders a rich accessible title, description, header actions and body once', async () => {
+    const user = userEvent.setup()
+    const onReset = vi.fn()
+    render(
+      <SidePanel open closeLabel="Close details" onClose={vi.fn()}>
+        <SidePanel.Title>
+          Positions <strong>Europe</strong>
+        </SidePanel.Title>
+        <SidePanel.Description>Two matching positions</SidePanel.Description>
+        <SidePanel.HeaderActions>
+          <button onClick={onReset}>Reset filter</button>
+        </SidePanel.HeaderActions>
+        <p>Position details</p>
+      </SidePanel>,
+    )
+    const dialog = screen.getByRole('dialog', { name: 'Positions Europe' })
+    expect(within(dialog).getByRole('heading', { level: 2 }).textContent).toBe(
+      'Positions Europe',
+    )
+    expect(within(dialog).getAllByText('Two matching positions')).toHaveLength(
+      1,
+    )
+    expect(within(dialog).getAllByText('Position details')).toHaveLength(1)
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Reset filter' }),
+    )
+    expect(onReset).toHaveBeenCalledOnce()
+  })
+
   it('locks scroll only while open, traps focus, closes on Escape and restores focus', async () => {
     const user = userEvent.setup()
     const onClose = vi.fn()
@@ -16,24 +45,16 @@ describe('SidePanel', () => {
     trigger.focus()
     document.body.style.overflow = 'auto'
     const { rerender } = render(
-      <SidePanel
-        open={false}
-        title="Details"
-        closeLabel="Close details"
-        onClose={onClose}
-      >
+      <SidePanel open={false} closeLabel="Close details" onClose={onClose}>
+        <SidePanel.Title>Details</SidePanel.Title>
         <button>Last action</button>
       </SidePanel>,
     )
     expect(screen.queryByRole('dialog')).toBeNull()
     expect(document.body.style.overflow).toBe('auto')
     rerender(
-      <SidePanel
-        open
-        title="Details"
-        closeLabel="Close details"
-        onClose={onClose}
-      >
+      <SidePanel open closeLabel="Close details" onClose={onClose}>
+        <SidePanel.Title>Details</SidePanel.Title>
         <button>Last action</button>
       </SidePanel>,
     )
@@ -52,12 +73,8 @@ describe('SidePanel', () => {
     await user.keyboard('{Escape}')
     expect(onClose).toHaveBeenCalledOnce()
     rerender(
-      <SidePanel
-        open={false}
-        title="Details"
-        closeLabel="Close details"
-        onClose={onClose}
-      >
+      <SidePanel open={false} closeLabel="Close details" onClose={onClose}>
+        <SidePanel.Title>Details</SidePanel.Title>
         <button>Last action</button>
       </SidePanel>,
     )

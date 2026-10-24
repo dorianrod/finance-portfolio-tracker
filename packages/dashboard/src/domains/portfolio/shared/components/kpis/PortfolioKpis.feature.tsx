@@ -27,10 +27,10 @@ export function NetPortfolioValueKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.currentMarketValueAfterEstimatedTaxOnUnrealizedGains',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="as-of" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="as-of" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.netPortfolioValue')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -60,10 +60,10 @@ export function TotalNetPerformanceKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.netUnrealizedAndRealizedPLPlusNetPassive',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="since-tracking" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="since-tracking" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.totalNetPerformance')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -102,10 +102,10 @@ export function NetContributionsKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.depositsMinusWithdrawalsOverTheSelectedPeriod',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="range" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="range" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.netContributions')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -131,10 +131,10 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
         tooltip={i18n.t(
           'ui.portfoliokpis.dividendsAndInterestOverTheLatestTwelveMonthsThe',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="trailing-12m" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="trailing-12m" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.passiveIncomeTrailing12m')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -177,10 +177,10 @@ export function IrrSinceTrackingKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.annualizedMoneyWeightedReturnSinceTheFirstRecordedDeposit',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="since-tracking" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="since-tracking" />
+        </Kpi.TooltipFooter>
         {scopeLabel
           ? i18n.t('ui.portfoliokpis.irrSinceTrackingSelectedAccounts')
           : i18n.t('ui.portfoliokpis.irrSinceTracking')}
@@ -208,10 +208,10 @@ export function NetUnrealizedKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.currentUnrealizedGainAfterEstimatedTax',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="as-of" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="as-of" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.netUnrealizedPandl')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -243,10 +243,10 @@ export function NetRealizedKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.crystallizedGainsAndLossesAfterEstimatedTax',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="range" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="range" />
+        </Kpi.TooltipFooter>
         {i18n.t('ui.portfoliokpis.netRealizedPandl')}
       </Kpi.Label>
       <Kpi.ValueRow>
@@ -279,10 +279,10 @@ export function TrailingThreeYearIrrKpi({
         tooltip={i18n.t(
           'ui.portfoliokpis.annualizedMoneyWeightedReturnOverTheLatestThreeYears',
         )}
-        tooltipFooter={
-          <FilterScopeBadges account="filterable" period="trailing-3y" />
-        }
       >
+        <Kpi.TooltipFooter>
+          <FilterScopeBadges account="filterable" period="trailing-3y" />
+        </Kpi.TooltipFooter>
         {scopeLabel
           ? i18n.t('ui.portfoliokpis.irrTrailing3ySelectedAccounts')
           : i18n.t('ui.portfoliokpis.irrTrailing3y')}

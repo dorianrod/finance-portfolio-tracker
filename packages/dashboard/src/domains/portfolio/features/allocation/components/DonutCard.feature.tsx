@@ -74,12 +74,13 @@ export function DonutCard({
       }
       isFiltered={activeFilter !== null}
       onSelect={selectCategory}
-      positionsControl={
-        activeFilter?.type === dimension ? (
+    >
+      <DonutCardView.PositionsControl>
+        {activeFilter?.type === dimension ? (
           <PositionsToggle open={positionsOpen} onClick={togglePositions} />
-        ) : null
-      }
-      tooltip={
+        ) : null}
+      </DonutCardView.PositionsControl>
+      <DonutCardView.Tooltip>
         <ScopedInfoTooltip
           // eslint-disable-next-line local/no-prop-drilling -- The chart feature owns its translated description; the adapter adds live filter scope.
           text={i18n.t(
@@ -95,7 +96,7 @@ export function DonutCard({
             effectiveDate: point.date,
           }}
         />
-      }
-    />
+      </DonutCardView.Tooltip>
+    </DonutCardView>
   )
 }

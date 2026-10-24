@@ -10,6 +10,7 @@ import {
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 import i18n from '@/i18n/i18n'
 import { toDateInputValue } from '@/shared/helpers/mappers/toDateInputValue'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { DATE_FILTER_SCHEMA } from '@/shared/schemas/calendarDate.schema'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 
@@ -129,11 +130,14 @@ export function FilterPanel({
   return (
     <SidePanel
       open={open}
-      title={i18n.t('ui.filterbar.filters')}
-      description={i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
       onClose={closeFilters}
       closeLabel={i18n.t('ui.filterbar.closeFilters')}
-      headerActions={
+    >
+      <SidePanel.Title>{i18n.t('ui.filterbar.filters')}</SidePanel.Title>
+      <SidePanel.Description>
+        {i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
+      </SidePanel.Description>
+      <SidePanel.HeaderActions>
         <button
           type="button"
           onClick={resetDashboardFilters}
@@ -141,8 +145,7 @@ export function FilterPanel({
         >
           {i18n.t('ui.filterbar.resetAll')}
         </button>
-      }
-    >
+      </SidePanel.HeaderActions>
       {visibility.showPeriod && (
         <FilterSection
           title={i18n.t('ui.filterbar.period')}
@@ -333,16 +336,26 @@ export function FilterButton({ activeCount }: { activeCount: number }) {
 
 export function ActiveFilterSummary({
   items,
-  leading,
   children,
-  actions,
 }: {
   items: FilterSummaryItem[]
-  leading?: ReactNode
   children?: ReactNode
-  actions?: ReactNode
 }) {
-  if (items.length === 0 && !leading && !children && !actions) return null
+  const { slot: leading, content: afterLeading } = partitionSlot(
+    children,
+    ActiveFilterLeading,
+  )
+  const { slot: actions, content } = partitionSlot(
+    afterLeading,
+    ActiveFilterActions,
+  )
+  if (
+    items.length === 0 &&
+    leading.length === 0 &&
+    content.length === 0 &&
+    actions.length === 0
+  )
+    return null
 
   return (
     <div
@@ -353,7 +366,7 @@ export function ActiveFilterSummary({
       {items.map((item) => (
         <ActiveFilterChip key={item.key} item={item} />
       ))}
-      {children}
+      {content}
       {actions}
     </div>
   )
@@ -372,3 +385,12 @@ export function ResetFiltersButton() {
     </button>
   )
 }
+
+function ActiveFilterLeading({ children }: { children: ReactNode }) {
+  return children
+}
+function ActiveFilterActions({ children }: { children: ReactNode }) {
+  return children
+}
+ActiveFilterSummary.Leading = ActiveFilterLeading
+ActiveFilterSummary.Actions = ActiveFilterActions

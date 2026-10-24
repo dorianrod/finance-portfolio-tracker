@@ -6,6 +6,7 @@ import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 
@@ -18,20 +19,26 @@ export function DonutCardView({
   data,
   activeCategory,
   isFiltered,
-  positionsControl,
-  tooltip,
   onSelect,
+  children,
 }: {
+  children: ReactNode
   title: string
   date: Date
   total: number
   data: PieEntry[]
   activeCategory: string | null
   isFiltered: boolean
-  positionsControl: ReactNode
-  tooltip: ReactNode
   onSelect: (entry: PieEntry | undefined) => void
 }) {
+  const { slot: tooltip, content: remainingChildren } = partitionSlot(
+    children,
+    DonutCardViewTooltip,
+  )
+  const { slot: positionsControl } = partitionSlot(
+    remainingChildren,
+    DonutCardViewPositionsControl,
+  )
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const dateLabel = formatDate(date, { style: 'longMonthYear' })
@@ -86,3 +93,15 @@ export function DonutCardView({
     </div>
   )
 }
+
+function DonutCardViewTooltip({ children }: { children: ReactNode }) {
+  return children
+}
+
+DonutCardView.Tooltip = DonutCardViewTooltip
+
+function DonutCardViewPositionsControl({ children }: { children: ReactNode }) {
+  return children
+}
+
+DonutCardView.PositionsControl = DonutCardViewPositionsControl

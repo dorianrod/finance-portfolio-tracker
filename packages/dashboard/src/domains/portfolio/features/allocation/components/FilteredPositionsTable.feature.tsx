@@ -27,19 +27,22 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   return (
     <SidePanel
       open={positionsOpen && filter !== null && rows.length > 0}
-      title={
+      onClose={closePositions}
+      closeLabel={i18n.t('ui.filteredpositionstable.closePositions')}
+    >
+      <SidePanel.Title>
         <>
           {i18n.t('ui.filteredpositionstable.positions')}{' '}
           <span style={{ color: catColor(filterValue) }}>{filterValue}</span>
         </>
-      }
-      description={i18n.t('ui.filteredpositionstable.exposureSummary', {
-        count: rows.length,
-        amount: formatMoney(totalFiltered, { style: 'full' }),
-      })}
-      onClose={closePositions}
-      closeLabel={i18n.t('ui.filteredpositionstable.closePositions')}
-      headerActions={
+      </SidePanel.Title>
+      <SidePanel.Description>
+        {i18n.t('ui.filteredpositionstable.exposureSummary', {
+          count: rows.length,
+          amount: formatMoney(totalFiltered, { style: 'full' }),
+        })}
+      </SidePanel.Description>
+      <SidePanel.HeaderActions>
         <button
           type="button"
           onClick={clearFilter}
@@ -47,8 +50,7 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
         >
           {i18n.t('ui.filteredpositionstable.clearFilter')}
         </button>
-      }
-    >
+      </SidePanel.HeaderActions>
       <table className="w-full text-sm">
         <thead className="sticky top-0 z-10 bg-surface">
           <tr className="border-b border-border">

@@ -21,24 +21,24 @@ type CompactCoverageCardData = {
 
 function CompactCoverageCard({
   card,
-  tooltipFooter,
+  children,
 }: {
   card: CompactCoverageCardData
-  tooltipFooter: ReactNode
+  children: ReactNode
 }) {
-  return <QualityIndicatorCard tooltipFooter={tooltipFooter} {...card} />
+  return <QualityIndicatorCard {...card}>{children}</QualityIndicatorCard>
 }
 
 export function LookThroughCoverageSummaryView({
   report,
   model,
   variant = 'detailed',
-  tooltipFooter,
+  children,
 }: {
   report: FundCoverageReport
   model: ReturnType<typeof buildLookThroughSummary>
   variant?: 'compact' | 'detailed'
-  tooltipFooter: ReactNode
+  children: ReactNode
 }) {
   const formatMoney = useFormatMoney()
   const formatDate = useFormatDate()
@@ -136,11 +136,9 @@ export function LookThroughCoverageSummaryView({
         className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}
       >
         {cards.map((card) => (
-          <CompactCoverageCard
-            key={card.label}
-            card={card}
-            tooltipFooter={tooltipFooter}
-          />
+          <CompactCoverageCard key={card.label} card={card}>
+            {children}
+          </CompactCoverageCard>
         ))}
       </div>
     )
@@ -150,7 +148,6 @@ export function LookThroughCoverageSummaryView({
     <div>
       <div className="mx-auto max-w-sm">
         <QualityIndicatorCard
-          tooltipFooter={tooltipFooter}
           label={i18n.t('ui.lookthroughcoveragesummary.portfolioScope')}
           tooltip={i18n.t(
             'ui.lookthroughcoveragesummary.totalSelectedPortfolioValueIncludingCashAccountsShownSeparately',
@@ -160,7 +157,9 @@ export function LookThroughCoverageSummaryView({
           detail={i18n.t('ui.lookthroughcoveragesummary.asOfDate', {
             date: formatDate(report.asOfDate, { style: 'isoDate' }),
           })}
-        />
+        >
+          {children}
+        </QualityIndicatorCard>
       </div>
 
       <div className="relative mx-auto hidden h-10 sm:block" aria-hidden="true">
@@ -194,7 +193,6 @@ export function LookThroughCoverageSummaryView({
       >
         <div>
           <QualityIndicatorCard
-            tooltipFooter={tooltipFooter}
             label={i18n.t('ui.lookthroughcoveragesummary.identifiedExposure')}
             tooltip={i18n.t(
               'ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs',
@@ -206,21 +204,17 @@ export function LookThroughCoverageSummaryView({
             )}
             tone="coverage"
           >
+            {children}
             <SourceReliability
               status={report.feasibilityStatus}
-
               reliableValue={reliableValue}
-
               reliablePercentage={reliablePercentage}
-
               otherSourceValue={otherSourceValue}
-
               otherSourcePercentage={otherSourcePercentage}
             />
           </QualityIndicatorCard>
 
           <ExposureChildNodes
-            tooltipFooter={tooltipFooter}
             nodes={[
               {
                 label: i18n.t('ui.lookthroughcoveragesummary.directPositions'),
@@ -241,12 +235,13 @@ export function LookThroughCoverageSummaryView({
                 tone: 'neutral',
               },
             ]}
-          />
+          >
+            {children}
+          </ExposureChildNodes>
         </div>
 
         <div>
           <QualityIndicatorCard
-            tooltipFooter={tooltipFooter}
             label={i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure')}
             tooltip={i18n.t(
               'ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect',
@@ -257,10 +252,11 @@ export function LookThroughCoverageSummaryView({
               'ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis',
             )}
             tone={hasUnresolvedGap ? 'warning' : 'coverage'}
-          />
+          >
+            {children}
+          </QualityIndicatorCard>
 
           <ExposureChildNodes
-            tooltipFooter={tooltipFooter}
             nodes={[
               {
                 label: i18n.t(
@@ -285,11 +281,12 @@ export function LookThroughCoverageSummaryView({
                 tone: opaqueTone,
               },
             ]}
-          />
+          >
+            {children}
+          </ExposureChildNodes>
         </div>
         {hasNotApplicable && (
           <QualityIndicatorCard
-            tooltipFooter={tooltipFooter}
             label={i18n.t('ui.lookthroughcoveragesummary.notApplicable')}
             tooltip={i18n.t(
               'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded',
@@ -300,7 +297,9 @@ export function LookThroughCoverageSummaryView({
               'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
             )}
             tone="muted"
-          />
+          >
+            {children}
+          </QualityIndicatorCard>
         )}
       </div>
     </div>
@@ -401,7 +400,6 @@ function SourceReliability({
             note={i18n.t(
               'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
             )}
-
             rows={[
               {
                 label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
@@ -430,10 +428,10 @@ function SourceReliability({
 
 function ExposureChildNodes({
   nodes,
-  tooltipFooter,
+  children,
 }: {
   nodes: [ExposureChildNode, ExposureChildNode]
-  tooltipFooter: ReactNode
+  children: ReactNode
 }) {
   return (
     <div>
@@ -449,11 +447,9 @@ function ExposureChildNodes({
       />
       <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
         {nodes.map((node) => (
-          <ExposureChildNodeCard
-            key={node.label}
-            node={node}
-            tooltipFooter={tooltipFooter}
-          />
+          <ExposureChildNodeCard key={node.label} node={node}>
+            {children}
+          </ExposureChildNodeCard>
         ))}
       </div>
     </div>
@@ -462,21 +458,22 @@ function ExposureChildNodes({
 
 function ExposureChildNodeCard({
   node,
-  tooltipFooter,
+  children,
 }: {
   node: ExposureChildNode
-  tooltipFooter: ReactNode
+  children: ReactNode
 }) {
   return (
     <QualityIndicatorCard
-      tooltipFooter={tooltipFooter}
       label={node.label}
       tooltip={node.tooltip}
       amount={node.amount}
       percentage={node.percentage}
       detail={i18n.t('ui.lookthroughcoveragesummary.shareOfTotalPortfolio')}
       tone={node.tone}
-    />
+    >
+      {children}
+    </QualityIndicatorCard>
   )
 }
 
@@ -559,3 +556,6 @@ export function UnavailableLookThroughSummary() {
     </div>
   )
 }
+
+LookThroughCoverageSummaryView.TooltipFooter =
+  QualityIndicatorCard.TooltipFooter

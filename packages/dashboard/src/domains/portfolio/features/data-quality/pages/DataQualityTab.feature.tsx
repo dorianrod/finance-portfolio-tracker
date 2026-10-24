@@ -280,20 +280,22 @@ export function DataQualityTab({
 
       <SidePanel
         open={classificationDetailsOpen}
-        title={
-          classificationDimension
-            ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
-                value0: DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
-              })
-            : i18n.t('ui.dataqualitytab.affectedAssets')
-        }
-        description={i18n.t(
-          'ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir',
-        )}
         onClose={closeClassificationDetails}
         closeLabel={i18n.t('ui.dataqualitytab.closeAffectedAssetsDetails')}
         size="medium"
       >
+        <SidePanel.Title>
+          {classificationDimension
+            ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
+                value0: DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
+              })
+            : i18n.t('ui.dataqualitytab.affectedAssets')}
+        </SidePanel.Title>
+        <SidePanel.Description>
+          {i18n.t(
+            'ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir',
+          )}
+        </SidePanel.Description>
         <AffectedAssetsTable assets={visibleAffectedAssets} />
       </SidePanel>
     </div>

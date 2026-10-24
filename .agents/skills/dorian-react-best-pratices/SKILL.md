@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules. Use when writing, reviewing, or refactoring React code against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Dorian React Best Practices
@@ -27,12 +27,17 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 | Priority | Category | Prefix |
 | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` |
+| 2 | Component Composition | `composition-` |
 
 ## Quick Reference
 
 ### Styling Boundaries
 
 - [`styling-semantic-colors`](rules/styling-semantic-colors.md) — Keep raw and palette-specific colors out of business components.
+
+### Component Composition
+
+- [`composition-required-children`](rules/composition-required-children.md) — Compose UI through nested children and compound components; never pass content through named props or `children={...}`.
 
 ## Add or Change a Rule
 

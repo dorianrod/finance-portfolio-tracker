@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import {
   SEMANTIC_COLORS,
   SEMANTIC_TEXT_CLASSES,
@@ -34,7 +35,6 @@ export function QualityIndicatorCard({
   percentage,
   detail,
   tone = 'neutral',
-  tooltipFooter,
   children,
 }: {
   label: string
@@ -43,9 +43,9 @@ export function QualityIndicatorCard({
   percentage: number
   detail?: string
   tone?: QualityTone
-  tooltipFooter?: ReactNode
   children?: ReactNode
 }) {
+  const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const safePercentage = Number.isFinite(percentage)
@@ -58,7 +58,7 @@ export function QualityIndicatorCard({
     <div className="quality-indicator-card rounded-card border border-border bg-surface p-4 shadow-sm">
       <div className="flex items-center text-xs font-medium text-content-muted">
         <span>{label}</span>
-        <InfoTooltip text={tooltip} footer={tooltipFooter} />
+        <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-3">
         <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>
@@ -84,7 +84,9 @@ export function QualityIndicatorCard({
       {detail && (
         <div className="mt-2 text-xs text-content-subtle">{detail}</div>
       )}
-      {children}
+      {content}
     </div>
   )
 }
+
+QualityIndicatorCard.TooltipFooter = InfoTooltip.Footer

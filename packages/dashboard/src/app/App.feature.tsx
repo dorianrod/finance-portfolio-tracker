@@ -194,6 +194,8 @@ export default function App() {
     (activeTab === 'allocation' && allocationFilter !== null)
   const showAllocationFilter =
     activeTab === 'allocation' && allocationFilter !== null
+  const showOverviewPeriodFilter =
+    activeTab === 'overview' && overviewComparison !== null
 
   return (
     <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
@@ -320,16 +322,18 @@ export default function App() {
             </div>
           </div>
 
-          <ActiveFilterSummary
-            items={visibleFilterSummaries}
-            leading={
-              activeTab === 'overview' && overviewComparison ? (
+          <ActiveFilterSummary items={visibleFilterSummaries}>
+            {showOverviewPeriodFilter && (
+              <ActiveFilterSummary.Leading>
                 <OverviewPeriodFilter windows={overviewComparison.windows} />
-              ) : undefined
-            }
-            actions={showResetFilters ? <ResetFiltersButton /> : undefined}
-          >
+              </ActiveFilterSummary.Leading>
+            )}
             {showAllocationFilter && <FilterChipBar />}
+            {showResetFilters && (
+              <ActiveFilterSummary.Actions>
+                <ResetFiltersButton />
+              </ActiveFilterSummary.Actions>
+            )}
           </ActiveFilterSummary>
 
           <FilterPanel

@@ -124,7 +124,6 @@ export function AllocationCoverageCard({
     <div>
       <div className="mx-auto max-w-sm">
         <QualityIndicatorCard
-          tooltipFooter={<LatestQualityScope />}
           label={i18n.t('ui.allocationcoveragecard.portfolioScope')}
           tooltip={i18n.t(
             'ui.allocationcoveragecard.totalValueOfTheCurrentActivePositionsIncludedIn',
@@ -132,7 +131,11 @@ export function AllocationCoverageCard({
           amount={total}
           percentage={100}
           detail={i18n.t('ui.allocationcoveragecard.currentActivePortfolio')}
-        />
+        >
+          <QualityIndicatorCard.TooltipFooter>
+            <LatestQualityScope />
+          </QualityIndicatorCard.TooltipFooter>
+        </QualityIndicatorCard>
       </div>
 
       <div className="relative mx-auto hidden h-10 sm:block" aria-hidden="true">
@@ -151,7 +154,6 @@ export function AllocationCoverageCard({
 
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-3">
         <QualityIndicatorCard
-          tooltipFooter={<LatestQualityScope />}
           label={i18n.t('ui.allocationcoveragecard.mappedPositions')}
           tooltip={i18n.t(
             'ui.allocationcoveragecard.currentPositionValueFoundInAtLeastOneAllocation',
@@ -161,6 +163,9 @@ export function AllocationCoverageCard({
           detail={i18n.t('ui.allocationcoveragecard.shareOfSelectedPortfolio')}
           tone="coverage"
         >
+          <QualityIndicatorCard.TooltipFooter>
+            <LatestQualityScope />
+          </QualityIndicatorCard.TooltipFooter>
           <DetailToggle
             label={i18n.t('ui.allocationcoveragecard.detailsByAccount')}
             expanded={expandedDetail === 'accounts'}
@@ -187,7 +192,6 @@ export function AllocationCoverageCard({
           )}
         </QualityIndicatorCard>
         <QualityIndicatorCard
-          tooltipFooter={<LatestQualityScope />}
           label={i18n.t('ui.allocationcoveragecard.unmappedPositions')}
           tooltip={i18n.t(
             'ui.allocationcoveragecard.positionValueWithNoAllocationRowFoundTogetherWith',
@@ -201,6 +205,9 @@ export function AllocationCoverageCard({
           }
           tone={hasMaterialQualityGap(unmappedPct) ? 'warning' : 'coverage'}
         >
+          <QualityIndicatorCard.TooltipFooter>
+            <LatestQualityScope />
+          </QualityIndicatorCard.TooltipFooter>
           <DetailToggle
             label={i18n.t('ui.allocationcoveragecard.detailsByDimension')}
             expanded={expandedDetail === 'dimensions'}
@@ -226,7 +233,6 @@ export function AllocationCoverageCard({
           )}
         </QualityIndicatorCard>
         <QualityIndicatorCard
-          tooltipFooter={<LatestQualityScope />}
           label={i18n.t('ui.allocationcoveragecard.notApplicable')}
           tooltip={i18n.t(
             'ui.allocationcoveragecard.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded',
@@ -237,7 +243,11 @@ export function AllocationCoverageCard({
             'ui.allocationcoveragecard.savingsCheckingAndBrokerageCash',
           )}
           tone="muted"
-        />
+        >
+          <QualityIndicatorCard.TooltipFooter>
+            <LatestQualityScope />
+          </QualityIndicatorCard.TooltipFooter>
+        </QualityIndicatorCard>
       </div>
     </div>
   )

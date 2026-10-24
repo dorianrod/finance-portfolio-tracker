@@ -11,6 +11,7 @@ import {
 
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 
@@ -114,9 +115,9 @@ export function EvoCardView({
   activeCategory,
   isFiltered,
   onSelect,
-  tooltip,
-  positionsControl,
+  children,
 }: {
+  children: ReactNode
   title: string
   categories: string[]
   chartData: Array<Record<string, number | null>>
@@ -125,9 +126,15 @@ export function EvoCardView({
   activeCategory: string | null
   isFiltered: boolean
   onSelect: (category: string) => void
-  tooltip: ReactNode
-  positionsControl: ReactNode
 }) {
+  const { slot: tooltip, content: remainingChildren } = partitionSlot(
+    children,
+    EvoCardViewTooltip,
+  )
+  const { slot: positionsControl } = partitionSlot(
+    remainingChildren,
+    EvoCardViewPositionsControl,
+  )
   const formatDate = useFormatDate()
   const id = useId()
   const series = categories.map((category, index) => ({
@@ -204,3 +211,15 @@ export function EvoCardView({
     </div>
   )
 }
+
+function EvoCardViewTooltip({ children }: { children: ReactNode }) {
+  return children
+}
+
+EvoCardView.Tooltip = EvoCardViewTooltip
+
+function EvoCardViewPositionsControl({ children }: { children: ReactNode }) {
+  return children
+}
+
+EvoCardView.PositionsControl = EvoCardViewPositionsControl

@@ -321,15 +321,19 @@ export function FundDataQualityPanelView({
   return (
     <SidePanel
       open={open}
-      title={i18n.t('ui.funddataqualitypanel.fundDataDiagnostics')}
-      description={i18n.t(
-        'ui.funddataqualitypanel.sortedByUnexplainedMonetaryImpactManualAndAgentSnapshots',
-      )}
       onClose={onClose}
       closeLabel={i18n.t('ui.funddataqualitypanel.closeFundDataDiagnostics')}
       size="wide"
       bodyClassName="overflow-y-auto overflow-x-hidden"
     >
+      <SidePanel.Title>
+        {i18n.t('ui.funddataqualitypanel.fundDataDiagnostics')}
+      </SidePanel.Title>
+      <SidePanel.Description>
+        {i18n.t(
+          'ui.funddataqualitypanel.sortedByUnexplainedMonetaryImpactManualAndAgentSnapshots',
+        )}
+      </SidePanel.Description>
       <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
         <span className="mr-1 text-xs font-medium text-content-subtle">
           {i18n.t('ui.funddataqualitypanel.show')}

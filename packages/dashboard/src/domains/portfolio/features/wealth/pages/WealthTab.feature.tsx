@@ -77,10 +77,10 @@ function ComparisonKpi({
           tooltip={i18n.t(
             'ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared',
           )}
-          tooltipFooter={
-            <FilterScopeBadges account="filterable" period="trailing-12m" />
-          }
         >
+          <Kpi.TooltipFooter>
+            <FilterScopeBadges account="filterable" period="trailing-12m" />
+          </Kpi.TooltipFooter>
           {label}
         </Kpi.Label>
         <Kpi.ValueRow>

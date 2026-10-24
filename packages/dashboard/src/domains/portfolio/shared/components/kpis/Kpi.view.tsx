@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+
 import { InfoTooltip } from './InfoTooltip.view'
 
 export type KpiAccent =
@@ -42,16 +44,15 @@ function KpiRoot({
 function KpiLabel({
   children,
   tooltip,
-  tooltipFooter,
 }: {
   children: ReactNode
   tooltip: string
-  tooltipFooter?: ReactNode
 }) {
+  const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
   return (
     <span className="flex items-center text-[11px] font-semibold uppercase tracking-[0.09em] text-content-subtle">
-      {children}
-      <InfoTooltip text={tooltip} footer={tooltipFooter} />
+      {content}
+      <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
     </span>
   )
 }
@@ -142,6 +143,7 @@ export function Kpi({ children }: { children: ReactNode }) {
 
 Kpi.Root = KpiRoot
 Kpi.Label = KpiLabel
+Kpi.TooltipFooter = InfoTooltip.Footer
 Kpi.ValueRow = KpiValueRow
 Kpi.Value = KpiValue
 Kpi.InlineNote = KpiInlineNote
