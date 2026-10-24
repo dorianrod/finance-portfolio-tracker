@@ -11,7 +11,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.4.0"
+  version: "1.4.1"
 ---
 
 # Generic React Best Practices
@@ -54,7 +54,7 @@ Several rules describe the target standard, not the current state of every file.
 
 ### 1. Architecture & Boundaries (CRITICAL)
 
-- `arch-component-roles` - Declare Every React Component as a View or Feature
+- `arch-component-roles` - Declare Every React Component as a View, State Renderer or Feature
 - `arch-domain-first-layout` - Follow the Domain-First Folder Layout
 - `arch-transverse-only-imports` - Import Other Domains Only Through Transverse Domains
 - `arch-shared-no-domain-knowledge` - Keep Shared Code Within Its Ownership Boundary

@@ -21,6 +21,7 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
 import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/quality'
+import { buildClassificationViewState } from './buildClassificationViewState'
 
 export const DATA_QUALITY_DIMENSION_LABELS = {
   geo: i18n.t('ui.builddataqualityviewmodel.geography'),
@@ -146,6 +147,12 @@ export function buildDataQualityViewModel({
   const classificationIsNotApplicable = !rawData.loading
     && classificationApplicableValue <= 0
     && classificationNotApplicableValue > 0
+  const classificationViewState = buildClassificationViewState({
+    loading: rawData.loading,
+    classificationIsNotApplicable,
+    coverage,
+    dimensionCoverage,
+  })
   const affectedAssets = buildAffectedAssets(dimensionCoverage)
 
   const unresolvedValue = scopedFundData.report
@@ -265,9 +272,7 @@ export function buildDataQualityViewModel({
   return {
     affectedAssets,
     classificationApplicableValue,
-    classificationIsNotApplicable,
-    coverage,
-    dimensionCoverage,
+    classificationViewState,
     fundIssueCount,
     hasLookThroughScope,
     recommendedTheme,

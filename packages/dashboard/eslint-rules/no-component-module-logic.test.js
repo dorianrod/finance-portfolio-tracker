@@ -28,7 +28,7 @@ function lint(code, filename = 'OrderPanel.feature.tsx') {
 }
 
 describe('no-component-module-logic', () => {
-  it.each(['OrderPanel.feature.tsx', 'OrderPanel.view.tsx'])(
+  it.each(['OrderPanel.feature.tsx', 'OrderPanel.state.tsx', 'OrderPanel.view.tsx'])(
     'reports module-level function declarations as hooks or helpers in %s',
     (filename) => {
       const code = `

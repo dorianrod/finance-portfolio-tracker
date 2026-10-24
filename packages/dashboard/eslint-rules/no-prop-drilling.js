@@ -105,6 +105,7 @@ function isClassNode(node) {
 
 function roleFromPath(value) {
   if (value.endsWith('.view') || value.endsWith('.view.tsx')) return 'view'
+  if (value.endsWith('.state') || value.endsWith('.state.tsx')) return 'state'
   if (value.endsWith('.feature') || value.endsWith('.feature.tsx')) return 'feature'
   return null
 }
@@ -354,7 +355,7 @@ function createRule(context) {
     if (node.value?.type !== 'JSXExpressionContainer') return
 
     const child = getApplicationComponent(node.parent.name)
-    if (!child || child.role !== 'feature') return
+    if (!child || (child.role !== 'feature' && child.role !== 'state')) return
 
     for (const componentContext of getEnclosingComponentContexts(node)) {
       const analysis = analyzeExpression(node.value.expression, componentContext)
@@ -363,10 +364,11 @@ function createRule(context) {
       if (analysis.derived) {
         context.report({
           node,
-          messageId: 'derivedBusinessProp',
+          messageId: child.role === 'state' ? 'inlineStateConstruction' : 'derivedBusinessProp',
           data: {
             attributeName,
             childName: child.name,
+            childRole: child.role,
             parentName: componentContext.name,
           },
         })
@@ -377,6 +379,7 @@ function createRule(context) {
         forwardingEdges.push({
           attributeName,
           childName: child.name,
+          childRole: child.role,
           node,
           parentName: componentContext.name,
           sourcePropName: analysis.propName,
@@ -404,6 +407,7 @@ function createRule(context) {
         data: {
           attributeName: edge.attributeName,
           childName: edge.childName,
+          childRole: edge.childRole,
           parentName: edge.parentName,
           sourcePropName: edge.sourcePropName,
         },
@@ -421,12 +425,13 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Detect prop chains and calculations assigned to feature components',
+      description: 'Detect prop chains and calculations assigned to feature or state-rendering components',
     },
     schema: [],
     messages: {
-      derivedBusinessProp: 'Business ownership: "{{parentName}}" calculates "{{childName}}.{{attributeName}}" from its props. Pass raw inputs and let the feature own the calculation, or classify the child as a view.',
-      propDrilling: 'Prop drilling: "{{parentName}}" forwards its "{{sourcePropName}}" prop to feature "{{childName}}.{{attributeName}}".',
+      derivedBusinessProp: 'Business ownership: "{{parentName}}" calculates "{{childName}}.{{attributeName}}" from its props. Pass raw inputs and let the {{childRole}} component own the calculation, or classify the child as a view.',
+      inlineStateConstruction: 'State ownership: "{{parentName}}" constructs "{{childName}}.{{attributeName}}" inline. Resolve the discriminated union before rendering and pass it directly.',
+      propDrilling: 'Prop drilling: "{{parentName}}" forwards its "{{sourcePropName}}" prop to {{childRole}} component "{{childName}}.{{attributeName}}".',
     },
   },
   create: createRule,

@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.4.0**
+**Version 1.4.1**
 
 Frontend Engineering
 
@@ -23,7 +23,7 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 ## Table of Contents
 
 1. [Architecture & Boundaries](#1-architecture--boundaries) — **CRITICAL**
-   - 1.1 [Declare Every React Component as a View or Feature](#11-declare-every-react-component-as-a-view-or-feature)
+   - 1.1 [Declare Every React Component as a View, State Renderer or Feature](#11-declare-every-react-component-as-a-view-state-renderer-or-feature)
    - 1.2 [Follow the Domain-First Folder Layout](#12-follow-the-domain-first-folder-layout)
    - 1.3 [Import Other Domains Only Through Transverse Domains](#13-import-other-domains-only-through-transverse-domains)
    - 1.4 [Keep Shared Code Within Its Ownership Boundary](#14-keep-shared-code-within-its-ownership-boundary)
@@ -132,18 +132,21 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
 
 A domain-first layout, vertical feature slices and strict import boundaries keep capabilities cohesive, prevent circular dependencies and make every file's ownership and responsibility obvious from its location.
 
-### 1.1 Declare Every React Component as a View or Feature
+### 1.1 Declare Every React Component as a View, State Renderer or Feature
 
 **Impact: CRITICAL (makes component ownership and data-flow boundaries explicit)**
 
 Classify every production React component module by responsibility:
 
 - `*.view.tsx` renders display-ready data. It may format or clamp values for display, manage accessibility, and keep local visual state such as hover, tooltip or accordion state.
+- `*.state.tsx` receives one resolved discriminated union and exhaustively maps its variants to UI. It may translate semantic state reasons and compose views, state renderers or features, but it does not build the union, call hooks or read business state at runtime.
 - `*.feature.tsx` owns business orchestration. It reads queries or atoms, invokes actions and pure business helpers, and supplies display-ready props to views.
 
 The suffix is a controlled declaration, not proof that the implementation is correctly classified. During review, verify the imports and responsibilities. Split a file that mixes feature orchestration with reusable presentation components; every component left in a module inherits that module's role. Entrypoints and test modules may remain unsuffixed, while colocated tests should follow the classified source name.
 
-A view may import React, visual libraries, other views, types, formatters, and colocalized purely visual logic. It must not import a feature or runtime dependencies from server-state hooks, client stores, APIs, services, or business helpers. If a deep component needs shared client state, classify it as a feature and let it read the atom directly.
+A view may import React, visual libraries, other views, types, formatters, and colocalized purely visual logic. It must not import a state renderer, feature or runtime dependencies from server-state hooks, client stores, APIs, services, or business helpers. If a deep component needs shared client state, classify it as a feature and let it read the atom directly.
+
+A state renderer is a narrow composition boundary for states such as loading, error, empty, unavailable, degraded and ready. Its owning feature or a pure mapper resolves precedence and constructs the union before rendering. Each union variant carries only the data valid for that state, and the state renderer handles every variant exhaustively with a `never` check. Keep one-off optional sections and simple visual variants in their owning component instead of creating a state renderer.
 
 ### Choose the boundary by ownership
 
@@ -158,9 +161,11 @@ Create a feature only when the component owns an autonomous business responsibil
 
 Use a view when its complete behavior can be exercised with display-ready props and interaction callbacks, without installing business providers or mocking queries and stores.
 
+Use a state renderer when a surface has multiple mutually exclusive UI states and naming the boundary removes boolean combinations or repeated fallback conditions from its parent. A state renderer may accept explicit interaction callbacks such as `onRetry`, but it never discovers those actions through hooks.
+
 Do not create a feature merely because a component receives raw props, and do not create a matching view for every feature. Split a feature from its view only when the visual part has an independent contract: it is reused with another data source, has meaningful visual variants or interactions, benefits from isolated rendering tests, or contains enough layout to obscure the orchestration. A feature with trivial markup may render that markup directly.
 
-### Audit every feature boundary
+### Audit every component boundary
 
 An architecture audit is incomplete if it only verifies suffixes and import restrictions. For every `.feature.tsx`, inspect the component responsibilities and reach an explicit boundary decision:
 
@@ -168,6 +173,8 @@ An architecture audit is incomplete if it only verifies suffixes and import rest
 2. Identify the JSX and local components that only present display-ready data.
 3. Decide whether that presentation has an independent visual contract and should move to a `.view.tsx` module.
 4. If the feature remains unsplit, verify that its JSX is trivial, tightly coupled to its orchestration, or otherwise has no useful independent contract.
+
+For every `.state.tsx`, verify that the discriminated union is constructed outside the component, its branches are exhaustive, and it contains no hooks or runtime business imports.
 
 Flag the feature when its business orchestration is mixed with a substantial presentational subtree, reusable visual states, or local display-only components that could be rendered without business dependencies. Recommend a `feature + view` split and keep queries, atoms, actions and business transformations in the feature.
 
@@ -212,6 +219,43 @@ export function OrderTotalView(props: { label: string; formattedTotal: string })
 
 The split above is justified only if `OrderTotalView` has an independent visual contract. Otherwise the feature may render the small result directly.
 
+**Incorrect (the component receives combinations that permit impossible states):**
+
+```tsx
+// OrdersState.feature.tsx
+export function OrdersState({ loading, error, orders }: Props) {
+  if (loading) return <Spinner />
+  if (error) return <ErrorMessage error={error} />
+  if (orders.length === 0) return <EmptyOrders />
+  return <OrdersList orders={orders} />
+}
+```
+
+**Correct (a mapper resolves one union before an exhaustive state renderer):**
+
+```tsx
+// OrdersState.state.tsx
+type OrdersViewState =
+  | { status: 'loading' }
+  | { status: 'error'; error: unknown }
+  | { status: 'empty' }
+  | { status: 'ready'; orders: Order[] }
+
+export function OrdersState({ state, onRetry }: {
+  state: OrdersViewState
+  onRetry: () => void
+}) {
+  switch (state.status) {
+    case 'loading': return <Spinner />
+    case 'error': return <ErrorMessage error={state.error} onRetry={onRetry} />
+    case 'empty': return <EmptyOrders />
+    case 'ready': return <OrdersList orders={state.orders} />
+  }
+  const exhaustiveState: never = state
+  return exhaustiveState
+}
+```
+
 **Incorrect (a feature exists only as a pass-through wrapper):**
 
 ```tsx
@@ -244,8 +288,9 @@ Composition is valid: a feature may pass a calculated expression to a view. When
 
 ### Review checklist
 
-- Every production component module declares `.view.tsx` or `.feature.tsx`.
-- A view has no runtime import of a feature, query, atom, API, service, store or business helper.
+- Every production component module declares `.view.tsx`, `.state.tsx` or `.feature.tsx`.
+- A view has no runtime import of a state renderer, feature, query, atom, API, service, store or business helper.
+- A state renderer receives a resolved discriminated union, renders it exhaustively and has no hooks or runtime business imports.
 - Type-only imports do not create a runtime boundary violation.
 - Every feature audit explicitly decides whether its presentation should be extracted to a view.
 - An unsplit feature keeps only presentation that is trivial, tightly coupled or lacks an independent visual contract.
@@ -650,7 +695,7 @@ See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-deco
 
 **Impact: HIGH (component files stay readable while logic gains explicit ownership)**
 
-A `.view.tsx` or `.feature.tsx` module declares components, component-local prop or view types, and inert configuration constants; it does not declare module-level custom hooks or lowercase helper functions. Local callbacks and event handlers may stay inside the component only when they adapt an event and delegate to an imported action or service. Extract business orchestration and every module-level callable into a file whose path states its responsibility.
+A `.view.tsx`, `.state.tsx` or `.feature.tsx` module declares components, component-local prop or view types, and inert configuration constants; it does not declare module-level custom hooks or lowercase helper functions. Local callbacks and event handlers may stay inside the component only when they adapt an event and delegate to an imported action or service. Extract business orchestration and every module-level callable into a file whose path states its responsibility.
 
 When a component needs supporting files, give it a named directory. Put an effectful or orchestrating hook in `services/`, and put a pure or read-only helper in `helpers/<category>/`. Use one public helper export per file, name the file after that export, and keep supporting functions private. Do not create `*.logic.ts`: the suffix hides whether the module selects, aggregates, calculates, presents or performs effects.
 
@@ -694,7 +739,7 @@ export function OrderPanel({ order }: { order: Order }) {
 
 Place logic at the narrowest scope that owns it: component-only logic stays in the component directory, page-shared logic goes under that page, and domain-shared logic goes under the domain. Only helpers without business vocabulary belong in application-wide shared code. Presenter helpers stay at component or page scope because their output is coupled to the UI.
 
-PascalCase components may share a component module when they all have the module's declared view or feature role; otherwise split the mixed roles according to `arch-component-roles`. The ESLint rule treats a PascalCase callable as a component candidate, not as proof that it renders React UI, so review its actual role when auditing the module. Inline callbacks and local UI event handlers are allowed, but they must not hide mutations, navigation, notifications or multi-source orchestration that belongs in a service according to `arch-thin-components`.
+PascalCase components may share a component module when they all have the module's declared view, state-renderer or feature role; otherwise split the mixed roles according to `arch-component-roles`. The ESLint rule treats a PascalCase callable as a component candidate, not as proof that it renders React UI, so review its actual role when auditing the module. Inline callbacks and local UI event handlers are allowed, but they must not hide mutations, navigation, notifications or multi-source orchestration that belongs in a service according to `arch-thin-components`.
 
 See also: `arch-helpers-vs-services`, `arch-isolate-effects-in-hooks`, `arch-thin-components`, `helpers-categories`
 

@@ -4,7 +4,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
 import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
 import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
-import { AllocationCoverageCard } from '@/domains/portfolio/features/data-quality/components/AllocationCoverageCard.feature'
+import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/components/ClassificationCoverageState.state'
 import { ErrorsTab, ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab.feature'
 import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
 import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/components/LookThroughCoverageSummary.feature'
@@ -73,9 +73,7 @@ export function DataQualityTab({
     activeThemeId,
     affectedAssets,
     classificationApplicableValue,
-    classificationIsNotApplicable,
-    coverage,
-    dimensionCoverage,
+    classificationViewState,
     fundIssueCount,
     hasLookThroughScope,
     scopedFundData,
@@ -137,21 +135,6 @@ export function DataQualityTab({
     openFundDiagnostics,
     scopedFundData.statuses.length,
   ])
-  let classificationContent = (
-    // eslint-disable-next-line local/no-prop-drilling -- Loading-state copy is selected by the owning page feature.
-    <EmptyQualityState message={rawData.loading ? i18n.t('ui.dataqualitytab.loadingClassificationCoverage') : i18n.t('ui.dataqualitytab.noClassificationCoverageDataAvailable')} />
-  )
-  if (classificationIsNotApplicable) {
-    classificationContent = <EmptyQualityState message={i18n.t('ui.dataqualitytab.classificationIsNotApplicableToSavingsCheckingAndBrokerage')} />
-  } else if (coverage.length > 0) {
-    classificationContent = (
-      <AllocationCoverageCard
-        coverage={coverage}
-        dimensionCoverage={dimensionCoverage}
-      />
-    )
-  }
-
   let lookThroughContent = (
     <EmptyQualityState message={scopedFundData.report
       ? i18n.t('ui.dataqualitytab.lookThroughIsNotApplicableToSavingsCheckingAnd')
@@ -225,7 +208,9 @@ export function DataQualityTab({
             <ManualPriceOverridesTable manualPriceOverrides={manualPriceOverrides} />
           )}
 
-          {activeThemeId === 'classification' && classificationContent}
+          {activeThemeId === 'classification' && (
+            <ClassificationCoverageState state={classificationViewState} />
+          )}
 
           {activeThemeId === 'lookthrough' && lookThroughContent}
         </section>

@@ -82,6 +82,16 @@ describe('no-prop-drilling', () => {
     expect(lint(code)).toEqual([])
   })
 
+  it('reports a state object constructed inline for a state-rendering component', () => {
+    const code = `
+      import { Child } from './Child.state'
+      function Parent({ loading }: { loading: boolean }) {
+        return <Child state={{ status: loading ? 'loading' : 'ready' }} />
+      }
+    `
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['inlineStateConstruction'])
+  })
+
   it('treats values returned by a hook as owned feature inputs', () => {
     const code = `
       import { Child } from './Child.feature'

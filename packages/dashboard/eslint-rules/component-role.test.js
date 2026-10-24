@@ -49,6 +49,14 @@ describe('component-role', () => {
     expect(lint(code, 'Orders.feature.tsx')).toEqual([])
   })
 
+  it('recognizes state-rendering component modules', () => {
+    const code = `
+      import { Orders } from './Orders.feature'
+      export function OrdersState({ state }) { return state.status === 'ready' ? <Orders /> : null }
+    `
+    expect(lint(code, 'OrdersState.state.tsx')).toEqual([])
+  })
+
   it.each([
     'jotai',
     'jotai/utils',
@@ -76,6 +84,14 @@ describe('component-role', () => {
       'Card.view.tsx',
     )
     expect(messages.map(({ messageId }) => messageId)).toEqual(['viewImportsFeature'])
+  })
+
+  it('rejects a state-rendering component imported by a view', () => {
+    const messages = lint(
+      `import { OrdersState } from './OrdersState.state'; export function Card() { return <OrdersState /> }`,
+      'Card.view.tsx',
+    )
+    expect(messages.map(({ messageId }) => messageId)).toEqual(['viewImportsState'])
   })
 
   it('allows type-only business imports from a view', () => {

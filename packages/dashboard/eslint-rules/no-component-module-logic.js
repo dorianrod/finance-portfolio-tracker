@@ -1,6 +1,6 @@
 import { isFunctionNode, isTestFile } from './react-component-utils.js'
 
-const COMPONENT_MODULE_SUFFIXES = ['.feature.tsx', '.view.tsx']
+const COMPONENT_MODULE_SUFFIXES = ['.feature.tsx', '.state.tsx', '.view.tsx']
 const OPAQUE_LOGIC_MODULE_PATTERN = /\.logic(?:\.(?:test|spec))?\.tsx?$/u
 const TYPESCRIPT_EXPRESSION_WRAPPERS = new Set([
   'TSAsExpression',

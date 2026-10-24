@@ -15,6 +15,7 @@ const BUSINESS_PATH_SEGMENTS = [
 
 function componentRole(filename) {
   if (filename.endsWith('.view.tsx')) return 'view'
+  if (filename.endsWith('.state.tsx')) return 'state'
   if (filename.endsWith('.feature.tsx')) return 'feature'
   return null
 }
@@ -49,8 +50,9 @@ export default {
     },
     schema: [],
     messages: {
-      missingRole: 'React component modules must end in .view.tsx or .feature.tsx.',
+      missingRole: 'React component modules must end in .view.tsx, .state.tsx or .feature.tsx.',
       viewImportsFeature: 'A view cannot import the feature module "{{source}}".',
+      viewImportsState: 'A view cannot import the state-rendering module "{{source}}".',
       viewImportsBusiness: 'A view cannot import runtime business state or logic from "{{source}}".',
     },
   },
@@ -70,6 +72,15 @@ export default {
         context.report({
           node: sourceNode,
           messageId: 'viewImportsFeature',
+          data: { source },
+        })
+        return
+      }
+
+      if (source.includes('.state')) {
+        context.report({
+          node: sourceNode,
+          messageId: 'viewImportsState',
           data: { source },
         })
         return
