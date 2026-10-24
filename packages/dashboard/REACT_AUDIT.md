@@ -1,0 +1,47 @@
+# React audit — 2026-10-24
+
+Scope: the dashboard's React/TypeScript application, its six main sections, shared data access, schemas, stores, chart rendering, dialogs, translations and ESLint rules. References: `generic-react-best-practices`, `vercel-react-best-practices` and the project's semantic-color rules.
+
+## Corrected findings
+
+| Area | Findings and resulting behavior | Relevant rules |
+| --- | --- | --- |
+| API and loading | Failed supplementary requests now produce a visible loading/error state with retry instead of silently contributing empty financial data. HTTP errors retain their status and readable messages. Only a missing optional holdings file (404) becomes an empty dataset. | `api-error-message-helper`, `api-wrap-in-domain-hooks` |
+| CSV validation | The real CSV parser runs after a checked HTTP response. HTML fallbacks, malformed CSV, invalid calendar dates and nonfinite amounts are rejected. Failed requests and validation failures are evicted so retry can recover. | `api-use-transformation`, `yup-last-coercion-barrier`, `yup-module-level-schemas` |
+| Query identity | Account selections use sorted arrays, preserving names containing commas. Empty allocation placeholders no longer prevent an infinitely fresh query from fetching. Allocation snapshots aggregate all accounts at the latest date for each ISIN. Query hooks have explicit endpoint-oriented names and centralized keys. | `api-naming`, `api-typed-entity-generic`, `cache-one-key-convention` |
+| Domain modeling | Calendar dates become `Date` at the schema boundary; month keys remain explicit strings. Numeric timestamp keys preserve joins/grouping after that conversion. Operation and computation statuses are closed unions, monetary values are numbers, and object contracts use type aliases. | `types-dates-as-date`, `types-amounts-as-number`, `types-no-any-or-wide`, `yup-last-coercion-barrier` |
+| Period calculations | Cash-group deposits and withdrawals are recalculated over the selected interval. Group behavior uses a stable discriminator rather than translated labels. Savings operations include withdrawals. Date presets use UTC and clamp month ends. | `helpers-business-rules-pure`, `types-no-dead-record-fallback` |
+| Charts | Direct Recharts `Cell` children restore per-segment colors and opacity. A lint rule prevents wrappers from hiding these children. Date labels are formatted before rendering, including the wealth tooltip found during browser validation. Gradient IDs are unique where multiple evolution cards coexist. | `ui-compound-slots-direct-children`, `helpers-formatter-hooks` |
+| Component boundaries | Presentation was extracted from orchestration across allocation, concentration, overview, performance, wealth, holdings, filters, errors and data quality. Helpers were moved into calculator, business-rule and presenter ownership. Parent-directory imports use the source alias. | `arch-component-roles`, `arch-component-module-boundaries`, `arch-thin-components`, `helpers-categories` |
+| State and rendering | Hook return objects and derived arrays have stable memoized identities. Sort and composition controls subscribe directly to their state so opening a popover or sorting does not remount the focused button. Pending overlay timers are cancelled before rescheduling and on cleanup. Playback uses current state without side effects inside state updaters. | `arch-no-prop-drilling`, `state-hook-variants`, `quality-usecallback-for-functions` |
+| Persisted theme | A versioned, validated `atomWithStorage` owns persistence, tolerates blocked/full storage, and preserves legacy preferences through the initial document theme. | `state-atom-with-storage`, `state-explicit-types-defaults` |
+| Accessibility and safety | Dialog owners remain mounted and drive a boolean `open`; close restores focus and scrolling. Quality tabs support vertical arrows, wrapping, Home/End and a single tab stop. External links accept HTTP(S) and carry `noopener noreferrer`. Quality tooltips fit the mobile viewport. | `ui-dialog-controlled`, `ui-accessible-names`, `security-window-open-noopener` |
+| Styling and translation | Palette utilities became semantic tokens. Technical class names were removed from translations. Counts use plural keys, dynamic phrases use interpolation, filters have labels, and unused catalog entries were removed. | `i18n-interpolation`, `i18n-no-hardcoded-strings`, project semantic-color rules |
+| Dependency security | Updated the vulnerable transitive dependency reported by npm audit. Added DOM testing dependencies for real focus and interaction regressions. | Dependency verification |
+
+## Component review coverage
+
+- Application shell: loading/error rendering, navigation, lazy panels, header/theme, filter scopes and source-data composition.
+- Overview: summary cards, comparison dates, portfolio evolution, change drivers and concentration summaries.
+- Wealth: portfolio/account evolution, cash flow, savings, income/placement relationship and date-sensitive tooltips.
+- Performance: contribution horizons, rankings, passive income, returns and unrealized P&L.
+- Diversification: donuts, evolution cards, filtered positions, concentration charts and historical playback.
+- Holdings: sorting, expansion, composition controls, hover charts, underlying exposure, virtualization and fund-source links.
+- Data quality: theme tabs, affected assets, coverage, diagnostics, pipeline errors and manual overrides.
+- Shared: API hooks and query keys, Yup schemas, financial/date helpers, Jotai atoms, formatters, dialogs, tooltips and lint rules.
+
+Scoped lint exceptions retain explicit ownership reasons for controlled account-picker composition and reporting-scope orchestration. Recharts `Cell` elements intentionally remain direct chart children; installed Recharts 3 registers rendered `Area` components, so its supported area wrappers remain. Month identifiers such as `YYYY-MM` are keys, rather than calendar-date entities.
+
+SSR/RSC-specific rules do not apply to this Vite client SPA. Authentication/logout, optimistic mutations, protected-file downloads and nested form workflows are absent from the audited application. Existing Vitest infrastructure was retained; new interaction regressions use React Testing Library and isolated Jotai/query providers.
+
+## Validation
+
+- Full suite: **82 files, 413 tests passed** (baseline: 72 files, 366 tests).
+- TypeScript build check, ESLint with zero warnings, and translation-catalog audit passed.
+- Production Vite build and isolated static-demo pipeline/build passed.
+- npm audit: **0 reported vulnerabilities**.
+- Chromium smoke checks used generated demonstration data, without changing the user's portfolio inputs. All six main sections rendered without JavaScript errors or console warnings at desktop and 390px mobile widths, with no page-level horizontal overflow.
+- Browser interactions covered chart hover/date labels, distinct donut fills, historical playback, composition focus and navigation, underlying search, quality tabs, diagnostics/source links, Escape/focus restoration, and theme persistence after reload.
+- Targeted regressions cover failed HTTP/CSV/schema requests and retry, comma-containing account names, allocation fetch/aggregation, date coercion, cash-period totals, storage failures, sort/popover focus, dialog keyboard behavior, safe links, date tooltip rendering and quality-tab keyboard navigation.
+
+No changes were committed or published as part of this audit.

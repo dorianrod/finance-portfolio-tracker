@@ -1,33 +1,58 @@
 import { describe, expect, it } from 'vitest'
 
+import { getFundQualityCategory as fundQualityCategory } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityCategory'
+import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/shared/helpers/presenters/getFundQualitySourceLabel'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import {
-  buildIssuerExposures,
-} from './buildFundHoldingsViewModel'
-import { getFundQualityCategory as fundQualityCategory } from '../presenters/getFundQualityCategory'
-import { getFundQualitySourceLabel as fundQualitySourceLabel } from '../presenters/getFundQualitySourceLabel'
+import { buildIssuerExposures } from './buildFundHoldingsViewModel'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
-    kind: 'position', id: 'x', name: 'Asset', ticker: '', isin: '', account: 'account',
-    status: 'active', operationTypes: new Set(), quantity: 1, last_price: 1,
-    total_value: 0, unrealized_gain: 0, unrealized_gain_net: 0,
-    unrealized_gain_pct: 0, realized_gain: 0, realized_gain_net: 0,
-    tax_rate: 0, total_dividends: 0, total_dividends_net: 0,
-    total_interest: 0, total_interest_net: 0, total_realized_return: 0,
-    total_invested: 0, total_return_pct: 0, xirr: null,
-    xirr_rolling_3y: null, xirr_rolling_period_years: null, subRows: [],
+    kind: 'position',
+    id: 'x',
+    name: 'Asset',
+    ticker: '',
+    isin: '',
+    account: 'account',
+    status: 'active',
+    operationTypes: new Set(),
+    quantity: 1,
+    last_price: 1,
+    total_value: 0,
+    unrealized_gain: 0,
+    unrealized_gain_net: 0,
+    unrealized_gain_pct: 0,
+    realized_gain: 0,
+    realized_gain_net: 0,
+    tax_rate: 0,
+    total_dividends: 0,
+    total_dividends_net: 0,
+    total_interest: 0,
+    total_interest_net: 0,
+    total_realized_return: 0,
+    total_invested: 0,
+    total_return_pct: 0,
+    xirr: null,
+    xirr_rolling_3y: null,
+    xirr_rolling_period_years: null,
+    subRows: [],
     ...overrides,
   }
 }
 
 function holding(overrides: Partial<FundHolding>): FundHolding {
   return {
-    parentIsin: 'FUND', parentTicker: '', parentName: 'World ETF',
-    holdingId: 'SECURITY', holdingName: 'Company class A',
-    issuerId: 'COMPANY', issuerName: 'Company', weight: 0.1,
-    sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-12',
+    parentIsin: 'FUND',
+    parentTicker: '',
+    parentName: 'World ETF',
+    holdingId: 'SECURITY',
+    holdingName: 'Company class A',
+    issuerId: 'COMPANY',
+    issuerName: 'Company',
+    weight: 0.1,
+    sourceTier: 'A',
+    sourceName: 'Official',
+    holdingsDate: new Date('2026-10-12'),
     ...overrides,
   }
 }
@@ -48,7 +73,9 @@ describe('buildIssuerExposures', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0]).toMatchObject({ id: 'COMPANY', name: 'Company', value: 250, weight: 12.5 })
-    expect(new Set(result[0].securities.map((security) => security.id))).toEqual(new Set(['COMPANY', 'CLASS-A', 'CLASS-C']))
+    expect(new Set(result[0].securities.map((security) => security.id))).toEqual(
+      new Set(['COMPANY', 'CLASS-A', 'CLASS-C']),
+    )
     expect(result[0].funds).toEqual(['Direct', 'World ETF'])
     expect(result[0].sources).toEqual([
       { fund: 'World ETF', value: 150 },
@@ -76,16 +103,27 @@ describe('buildIssuerExposures', () => {
   it('scales provider rounding above 100% back to the fund value', () => {
     const result = buildIssuerExposures(
       [position({ isin: 'FUND', name: 'World ETF', total_value: 100 })],
-      [holding({ weight: 0.6 }), holding({ holdingId: 'SECOND', issuerId: 'SECOND', issuerName: 'Second', weight: 0.5 })],
+      [
+        holding({ weight: 0.6 }),
+        holding({ holdingId: 'SECOND', issuerId: 'SECOND', issuerName: 'Second', weight: 0.5 }),
+      ],
     )
     expect(result.reduce((sum, issuer) => sum + issuer.value, 0)).toBeCloseTo(100)
   })
 
   it('excludes synthetic brokerage cash from underlying exposure and its denominator', () => {
-    const result = buildIssuerExposures([
-      position({ isin: 'COMPANY', name: 'Company', total_value: 100 }),
-      position({ name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage', total_value: 900 }),
-    ], [])
+    const result = buildIssuerExposures(
+      [
+        position({ isin: 'COMPANY', name: 'Company', total_value: 100 }),
+        position({
+          name: 'Cash CTO',
+          account_type: 'Bourse – Cash',
+          account_category: 'brokerage',
+          total_value: 900,
+        }),
+      ],
+      [],
+    )
 
     expect(result).toHaveLength(1)
     expect(result[0]).toMatchObject({ name: 'Company', value: 100, weight: 100 })
@@ -95,8 +133,17 @@ describe('buildIssuerExposures', () => {
     const result = buildIssuerExposures(
       [position({ isin: 'FUND', name: 'World ETF', total_value: 100 })],
       [
-        holding({ issuerId: 'taiwansemiconductormanufac', issuerName: 'TAIWAN SEMICONDUCTOR MANUFAC', weight: 0.1 }),
-        holding({ holdingId: 'SECOND', issuerId: 'taiwansemiconductormanufacturing', issuerName: 'TAIWAN SEMICONDUCTOR MANUFACTURING', weight: 0.1 }),
+        holding({
+          issuerId: 'taiwansemiconductormanufac',
+          issuerName: 'TAIWAN SEMICONDUCTOR MANUFAC',
+          weight: 0.1,
+        }),
+        holding({
+          holdingId: 'SECOND',
+          issuerId: 'taiwansemiconductormanufacturing',
+          issuerName: 'TAIWAN SEMICONDUCTOR MANUFACTURING',
+          weight: 0.1,
+        }),
       ],
     )
     expect(result).toHaveLength(1)

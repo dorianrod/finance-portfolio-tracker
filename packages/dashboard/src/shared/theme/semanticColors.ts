@@ -32,34 +32,34 @@ export const SEMANTIC_COLORS = {
 } as const
 
 export const SEMANTIC_TEXT_CLASSES = {
-  netContributions: 'text-blue-400',
-  netContributionsDetail: 'text-blue-300',
-  netContributionsDecoration: 'decoration-blue-400/50',
-  performancePositive: 'text-emerald-400',
-  performanceNegative: 'text-red-400',
-  outflowDetail: 'text-red-300',
-  passiveIncome: 'text-violet-400',
-  passiveIncomeDetail: 'text-violet-300',
-  risk: 'text-orange-400',
-  riskSecondary: 'text-orange-300',
-  coverage: 'text-emerald-400',
-  warning: 'text-amber-400',
-  error: 'text-red-400',
+  netContributions: 'text-accent',
+  netContributionsDetail: 'text-accent',
+  netContributionsDecoration: 'decoration-accent/50',
+  performancePositive: 'text-positive',
+  performanceNegative: 'text-danger',
+  outflowDetail: 'text-danger',
+  passiveIncome: 'text-income',
+  passiveIncomeDetail: 'text-income',
+  risk: 'text-risk',
+  riskSecondary: 'text-risk',
+  coverage: 'text-positive',
+  warning: 'text-warning',
+  error: 'text-danger',
 } as const
 
 export const SEMANTIC_BADGE_CLASSES = {
-  transactionBuy: 'bg-blue-900 text-blue-300',
-  transactionSell: 'bg-orange-900 text-orange-300',
-  transactionOther: 'bg-violet-900 text-violet-300',
+  transactionBuy: 'bg-accent-muted text-accent',
+  transactionSell: 'bg-risk-muted text-risk',
+  transactionOther: 'bg-income-muted text-income',
 } as const
 
 export const SEMANTIC_STATUS_BADGE_CLASSES = {
-  critical: 'bg-red-900/60 text-red-300',
-  warning: 'bg-amber-900/60 text-amber-300',
+  critical: 'bg-danger-muted/60 text-danger',
+  warning: 'bg-warning-muted/60 text-warning',
 } as const
 
 export const SEMANTIC_ACCENT_CLASSES = {
-  coverage: { border: 'border-l-emerald-500', dot: 'bg-emerald-500' },
-  warning: { border: 'border-l-amber-500', dot: 'bg-amber-500' },
-  error: { border: 'border-l-red-500', dot: 'bg-red-500' },
+  coverage: { border: 'border-l-positive', dot: 'bg-positive' },
+  warning: { border: 'border-l-warning', dot: 'bg-warning' },
+  error: { border: 'border-l-danger', dot: 'bg-danger' },
 } as const

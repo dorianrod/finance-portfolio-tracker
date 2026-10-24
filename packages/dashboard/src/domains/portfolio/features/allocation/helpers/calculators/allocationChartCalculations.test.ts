@@ -1,12 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { computeMatchingIsins, computeTableRows, aggregateAllocationPoints, aggregateFilteredPoints, allocationTrendDomain, buildAllocationTrend, excludeNonApplicableAllocationData, scopeRawAllocationData } from './allocationChartCalculations'
-import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
-import { computeAllocationPopoverPosition as computePopoverPos } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { computeAllocationPopoverPosition as computePopoverPos } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
+import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import {
+  aggregateAllocationPoints,
+  aggregateFilteredPoints,
+  allocationTrendDomain,
+  buildAllocationTrend,
+  computeMatchingIsins,
+  computeTableRows,
+  excludeNonApplicableAllocationData,
+  scopeRawAllocationData,
+} from './allocationChartCalculations'
 
 function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
   return { geo: [], secteur: [], currency: [], classe: [], loading: false, ...overrides }
@@ -14,7 +23,10 @@ function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
 
 describe('groupTail', () => {
   it('returns all categories with no grouping when there are 3 or fewer', () => {
-    const cats = [{ name: 'a', value: 10 }, { name: 'b', value: 5 }]
+    const cats = [
+      { name: 'a', value: 10 },
+      { name: 'b', value: 5 },
+    ]
     expect(groupTail(cats)).toEqual({ main: cats, grouped: [] })
   })
 
@@ -63,8 +75,8 @@ describe('groupTail', () => {
 
 describe('allocationTrendDomain', () => {
   const points = [
-    { date: '2026-01-31', categories: [] },
-    { date: '2026-10-13', categories: [] },
+    { date: new Date('2026-01-31'), categories: [] },
+    { date: new Date('2026-10-13'), categories: [] },
   ]
 
   it('always spans the complete available allocation history', () => {
@@ -79,14 +91,14 @@ describe('buildAllocationTrend', () => {
   it('uses one category base for the whole period and totals 100% on every populated date', () => {
     const trend = buildAllocationTrend([
       {
-        date: '2024-01-31',
+        date: new Date('2024-01-31'),
         categories: [
           { name: 'historic only', value: 20 },
           { name: 'shared', value: 80 },
         ],
       },
       {
-        date: '2024-02-29',
+        date: new Date('2024-02-29'),
         categories: [
           { name: 'shared', value: 50 },
           { name: 'current only', value: 50 },
@@ -112,8 +124,8 @@ describe('buildAllocationTrend', () => {
 
   it('uses null values to leave a visible gap when a date has no allocation data', () => {
     const trend = buildAllocationTrend([
-      { date: '2024-01-31', categories: [{ name: 'equity', value: 100 }] },
-      { date: '2024-02-29', categories: [] },
+      { date: new Date('2024-01-31'), categories: [{ name: 'equity', value: 100 }] },
+      { date: new Date('2024-02-29'), categories: [] },
     ])
 
     expect(trend.rows[1].equity).toBeNull()
@@ -124,10 +136,20 @@ describe('computeMatchingIsins', () => {
   it('returns isins whose latest snapshot has a positive value for the filtered category', () => {
     const data = rawData({
       geo: [
-        { snapshot_date: '2024-01-01', isin: 'A', name: 'A', values: { france: 100 } },
-        { snapshot_date: '2024-02-01', isin: 'A', name: 'A', values: { france: 0, europe: 50 } },
-        { snapshot_date: '2024-02-01', isin: 'B', name: 'B', values: { france: 30 } },
-        { snapshot_date: '2024-01-01', isin: 'OLD', name: 'Closed position', values: { france: 500 } },
+        { snapshot_date: new Date('2024-01-01'), isin: 'A', name: 'A', values: { france: 100 } },
+        {
+          snapshot_date: new Date('2024-02-01'),
+          isin: 'A',
+          name: 'A',
+          values: { france: 0, europe: 50 },
+        },
+        { snapshot_date: new Date('2024-02-01'), isin: 'B', name: 'B', values: { france: 30 } },
+        {
+          snapshot_date: new Date('2024-01-01'),
+          isin: 'OLD',
+          name: 'Closed position',
+          values: { france: 500 },
+        },
       ],
     })
     expect(computeMatchingIsins(data, { type: 'geo', value: 'france' })).toEqual(new Set(['B']))
@@ -142,10 +164,30 @@ describe('computeTableRows', () => {
   it('uses only the global latest snapshot and combines duplicate isin rows', () => {
     const data = rawData({
       geo: [
-        { snapshot_date: '2024-01-01', isin: 'OLD', name: 'Closed asset', values: { france: 500 } },
-        { snapshot_date: '2024-02-01', isin: 'A', name: 'Asset A', values: { france: 100, europe: 50 } },
-        { snapshot_date: '2024-02-01', isin: 'B', name: 'Asset B', values: { france: 20 } },
-        { snapshot_date: '2024-02-01', isin: 'B', name: 'Asset B', values: { france: 5, europe: 5 } },
+        {
+          snapshot_date: new Date('2024-01-01'),
+          isin: 'OLD',
+          name: 'Closed asset',
+          values: { france: 500 },
+        },
+        {
+          snapshot_date: new Date('2024-02-01'),
+          isin: 'A',
+          name: 'Asset A',
+          values: { france: 100, europe: 50 },
+        },
+        {
+          snapshot_date: new Date('2024-02-01'),
+          isin: 'B',
+          name: 'Asset B',
+          values: { france: 20 },
+        },
+        {
+          snapshot_date: new Date('2024-02-01'),
+          isin: 'B',
+          name: 'Asset B',
+          values: { france: 5, europe: 5 },
+        },
       ],
     })
     const matching = new Set(['OLD', 'A', 'B'])
@@ -160,33 +202,94 @@ describe('computeTableRows', () => {
 describe('aggregateFilteredPoints', () => {
   it('sums category values across matching isins by date, sorted with nc last', () => {
     const rows: RawIsinRow[] = [
-      { snapshot_date: '2024-01-01', isin: 'A', name: 'A', values: { france: 10, nc: 2 } },
-      { snapshot_date: '2024-01-01', isin: 'B', name: 'B', values: { france: 5, europe: 20 } },
-      { snapshot_date: '2024-01-01', isin: 'C', name: 'C', values: { france: 999 } }, // not in matchingIsins
+      {
+        snapshot_date: new Date('2024-01-01'),
+        isin: 'A',
+        name: 'A',
+        values: { france: 10, nc: 2 },
+      },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        isin: 'B',
+        name: 'B',
+        values: { france: 5, europe: 20 },
+      },
+      { snapshot_date: new Date('2024-01-01'), isin: 'C', name: 'C', values: { france: 999 } }, // not in matchingIsins
     ]
     const result = aggregateFilteredPoints(rows, new Set(['A', 'B']))
     expect(result).toEqual([
-      { date: '2024-01-01', categories: [{ name: 'europe', value: 20 }, { name: 'france', value: 15 }, { name: 'nc', value: 2 }] },
+      {
+        date: new Date('2024-01-01'),
+        categories: [
+          { name: 'europe', value: 20 },
+          { name: 'france', value: 15 },
+          { name: 'nc', value: 2 },
+        ],
+      },
     ])
   })
 
   it('restricts to a single category when restrictToCategory is provided', () => {
-    const rows: RawIsinRow[] = [{ snapshot_date: '2024-01-01', isin: 'A', name: 'A', values: { france: 10, europe: 20 } }]
+    const rows: RawIsinRow[] = [
+      {
+        snapshot_date: new Date('2024-01-01'),
+        isin: 'A',
+        name: 'A',
+        values: { france: 10, europe: 20 },
+      },
+    ]
     const result = aggregateFilteredPoints(rows, new Set(['A']), 'france')
-    expect(result).toEqual([{ date: '2024-01-01', categories: [{ name: 'france', value: 10 }] }])
+    expect(result).toEqual([
+      { date: new Date('2024-01-01'), categories: [{ name: 'france', value: 10 }] },
+    ])
   })
 })
 
 describe('account allocation scope', () => {
   const data = rawData({
     geo: [
-      { snapshot_date: '2024-01-01', account: 'PEA', account_type: 'Brokerage', isin: 'A', name: 'A', values: { france: 10 } },
-      { snapshot_date: '2024-01-01', account: 'CTO', account_type: 'Brokerage', isin: 'A', name: 'A', values: { europe: 20 } },
-      { snapshot_date: '2024-01-01', account: 'CTO', account_type: 'Brokerage – Cash', isin: 'NC-Cash CTO', name: 'Cash CTO', values: { 'Not concerned': 5 } },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'PEA',
+        account_type: 'Brokerage',
+        isin: 'A',
+        name: 'A',
+        values: { france: 10 },
+      },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'CTO',
+        account_type: 'Brokerage',
+        isin: 'A',
+        name: 'A',
+        values: { europe: 20 },
+      },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'CTO',
+        account_type: 'Brokerage – Cash',
+        isin: 'NC-Cash CTO',
+        name: 'Cash CTO',
+        values: { 'Not concerned': 5 },
+      },
     ],
     classe: [
-      { snapshot_date: '2024-01-01', account: 'PEA', account_type: 'Brokerage', isin: 'A', name: 'A', values: { equity: 10 } },
-      { snapshot_date: '2024-01-01', account: 'CTO', account_type: 'Brokerage', isin: 'A', name: 'A', values: { equity: 20 } },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'PEA',
+        account_type: 'Brokerage',
+        isin: 'A',
+        name: 'A',
+        values: { equity: 10 },
+      },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'CTO',
+        account_type: 'Brokerage',
+        isin: 'A',
+        name: 'A',
+        values: { equity: 20 },
+      },
     ],
   })
 
@@ -194,10 +297,10 @@ describe('account allocation scope', () => {
     const scoped = scopeRawAllocationData(data, new Set(['PEA']))
 
     expect(aggregateAllocationPoints(scoped.geo)).toEqual([
-      { date: '2024-01-01', categories: [{ name: 'france', value: 10 }] },
+      { date: new Date('2024-01-01'), categories: [{ name: 'france', value: 10 }] },
     ])
     expect(aggregateAllocationPoints(scoped.classe)).toEqual([
-      { date: '2024-01-01', categories: [{ name: 'equity', value: 10 }] },
+      { date: new Date('2024-01-01'), categories: [{ name: 'equity', value: 10 }] },
     ])
   })
 
@@ -212,11 +315,13 @@ describe('account allocation scope', () => {
   })
 
   it('removes synthetic brokerage cash from allocation analysis', () => {
-    const scoped = excludeNonApplicableAllocationData(data, [{
-      account: 'CTO',
-      account_type: 'Brokerage – Cash',
-      account_category: 'brokerage',
-    } as PositionRow])
+    const scoped = excludeNonApplicableAllocationData(data, [
+      {
+        account: 'CTO',
+        account_type: 'Brokerage – Cash',
+        account_category: 'brokerage',
+      } as PositionRow,
+    ])
 
     expect(scoped.geo.map((row) => row.isin)).toEqual(['A', 'A'])
   })

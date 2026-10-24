@@ -1,10 +1,3 @@
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { AccountCoverage } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
-import {
-  computeFundExposurePercentages,
-  type ScopedFundQualityData,
-} from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
 import {
   aggregateReliabilityTone,
   percentageReliabilityTone,
@@ -12,11 +5,18 @@ import {
   pipelineStatusLabel,
   type AnalysisReliabilityTone,
 } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
+import type { AccountCoverage } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
-import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
+import {
+  computeFundExposurePercentages,
+  type ScopedFundQualityData,
+} from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 
-interface BuildDataQualitySummaryInput {
+type BuildDataQualitySummaryInput = {
   allocationLoading: boolean
   coverage: AccountCoverage[]
   pipelineErrorsLoading: boolean
@@ -35,11 +35,11 @@ const RELIABILITY_PRIORITY: Record<AnalysisReliabilityTone, number> = {
 function weakestQualityTheme(
   metrics: Array<{ theme: QualityThemeId; tone: AnalysisReliabilityTone }>,
 ): QualityThemeId {
-  return metrics.reduce((mostRelevant, candidate) => (
+  return metrics.reduce((mostRelevant, candidate) =>
     RELIABILITY_PRIORITY[candidate.tone] > RELIABILITY_PRIORITY[mostRelevant.tone]
       ? candidate
-      : mostRelevant
-  )).theme
+      : mostRelevant,
+  ).theme
 }
 
 export function buildDataQualitySummary({
@@ -50,22 +50,17 @@ export function buildDataQualitySummary({
   scopedManualPriceOverrides,
   scopedPipelineErrors,
 }: BuildDataQualitySummaryInput) {
-  const classificationMappedValue = coverage.reduce(
-    (sum, item) => sum + item.allocated,
-    0,
-  )
-  const classificationUnmappedValue = coverage.reduce(
-    (sum, item) => sum + item.unallocated,
-    0,
-  )
+  const classificationMappedValue = coverage.reduce((sum, item) => sum + item.allocated, 0)
+  const classificationUnmappedValue = coverage.reduce((sum, item) => sum + item.unallocated, 0)
   const classificationNotApplicableValue = coverage.reduce(
     (sum, item) => sum + item.notApplicable,
     0,
   )
   const classificationApplicableValue = classificationMappedValue + classificationUnmappedValue
-  const classificationReliabilityPct = classificationApplicableValue > 0
-    ? classificationMappedValue / classificationApplicableValue * 100
-    : null
+  const classificationReliabilityPct =
+    classificationApplicableValue > 0
+      ? (classificationMappedValue / classificationApplicableValue) * 100
+      : null
   const unallocatedPct = allocationLoading
     ? null
     : partitionPercentages([
@@ -91,8 +86,8 @@ export function buildDataQualitySummary({
   const underlyingReliabilityPct = scopedFundQuality.report
     ? fundExposurePercentages.identified
     : null
-  const underlyingCritical = hasFundValidationError
-    || scopedFundQuality.report?.feasibilityStatus === 'limited'
+  const underlyingCritical =
+    hasFundValidationError || scopedFundQuality.report?.feasibilityStatus === 'limited'
   const classificationMetricTone = percentageReliabilityTone(
     allocationLoading ? null : classificationReliabilityPct,
   )
@@ -136,13 +131,11 @@ export function buildDataQualitySummary({
     { theme: 'classification', tone: classificationMetricTone },
     { theme: 'lookthrough', tone: underlyingMetricTone },
   ])
-  const qualityCount = Number(scopedPipelineErrors.length > 0)
-    + Number(scopedManualPriceOverrides.length > 0)
-    + Number(hasMaterialQualityGap(unallocatedPct ?? 0))
-    + Number(
-      hasFundValidationError
-      || hasMaterialQualityGap(fundExposurePercentages.unresolved),
-    )
+  const qualityCount =
+    Number(scopedPipelineErrors.length > 0) +
+    Number(scopedManualPriceOverrides.length > 0) +
+    Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
+    Number(hasFundValidationError || hasMaterialQualityGap(fundExposurePercentages.unresolved))
 
   return {
     classificationMappedValue,

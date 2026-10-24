@@ -7,10 +7,11 @@
     <meta name="theme-color" content="#f9fafb" />
     <script>
       (() => {
-        const key = 'finance-dashboard-theme'
+        const key = 'finance-dashboard-theme:v1'
         let theme
         try {
-          const stored = localStorage.getItem(key)
+          const value = localStorage.getItem(key)
+          const stored = value === null ? localStorage.getItem('finance-dashboard-theme') : JSON.parse(value)
           if (stored === 'dark' || stored === 'light') theme = stored
         } catch {}
         theme ??= matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'

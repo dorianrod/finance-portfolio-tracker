@@ -1,4 +1,13 @@
-import i18n from '@/i18n/i18n'
+import {
+  computeAllocationCoverageByAccount,
+  computeAllocationCoverageByDimension,
+} from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
+import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
+import {
+  computeFundExposurePercentages,
+  scopeFundQualityData,
+} from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
+import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -6,32 +15,18 @@ import type {
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-import {
-  computeAllocationCoverageByAccount,
-  computeAllocationCoverageByDimension,
-} from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
-import {
-  computeFundExposurePercentages,
-  scopeFundQualityData,
-} from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import i18n from '@/i18n/i18n'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { buildClassificationViewState } from './buildClassificationViewState'
 
-export const DATA_QUALITY_DIMENSION_LABELS = {
-  geo: i18n.t('ui.builddataqualityviewmodel.geography'),
-  secteur: i18n.t('ui.builddataqualityviewmodel.sector'),
-  currency: i18n.t('ui.builddataqualityviewmodel.currency'),
-  classe: i18n.t('ui.builddataqualityviewmodel.assetClass'),
-} as const
+import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
 
 export type DataQualityDimension = keyof typeof DATA_QUALITY_DIMENSION_LABELS
-export interface QualityTheme {
+export type QualityTheme = {
   id: QualityThemeId
   label: string
   description: string
@@ -41,7 +36,7 @@ export interface QualityTheme {
   priority: number
 }
 
-export interface AffectedAsset {
+export type AffectedAsset = {
   id: string
   name: string
   value: number
@@ -50,7 +45,7 @@ export interface AffectedAsset {
   largestGapPct: number
 }
 
-interface BuildDataQualityViewModelInput {
+type BuildDataQualityViewModelInput = {
   positions: PositionRow[]
   errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
@@ -70,7 +65,7 @@ function buildAffectedAssets(
 
   for (const dimension of dimensionCoverage) {
     for (const issue of dimension.issues) {
-      const gapPct = issue.value > 0 ? issue.unallocated / issue.value * 100 : 0
+      const gapPct = issue.value > 0 ? (issue.unallocated / issue.value) * 100 : 0
       const current = byAsset.get(issue.id) ?? {
         id: issue.id,
         name: issue.name,
@@ -109,9 +104,7 @@ export function buildDataQualityViewModel({
   rawData,
   formatPercentage,
 }: BuildDataQualityViewModelInput) {
-  const coverage = rawData.loading
-    ? []
-    : computeAllocationCoverageByAccount(positions, rawData)
+  const coverage = rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData)
   const dimensionCoverage = rawData.loading
     ? []
     : computeAllocationCoverageByDimension(positions, rawData)
@@ -126,14 +119,8 @@ export function buildDataQualityViewModel({
 
   const errorCount = errors.filter((item) => item.level === 'error').length
   const warningCount = errors.length - errorCount
-  const classificationMappedValue = coverage.reduce(
-    (sum, item) => sum + item.allocated,
-    0,
-  )
-  const classificationUnmappedValue = coverage.reduce(
-    (sum, item) => sum + item.unallocated,
-    0,
-  )
+  const classificationMappedValue = coverage.reduce((sum, item) => sum + item.allocated, 0)
+  const classificationUnmappedValue = coverage.reduce((sum, item) => sum + item.unallocated, 0)
   const classificationApplicableValue = classificationMappedValue + classificationUnmappedValue
   const classificationNotApplicableValue = coverage.reduce(
     (sum, item) => sum + item.notApplicable,
@@ -144,9 +131,8 @@ export function buildDataQualityViewModel({
     classificationUnmappedValue,
     classificationNotApplicableValue,
   ])
-  const classificationIsNotApplicable = !rawData.loading
-    && classificationApplicableValue <= 0
-    && classificationNotApplicableValue > 0
+  const classificationIsNotApplicable =
+    !rawData.loading && classificationApplicableValue <= 0 && classificationNotApplicableValue > 0
   const classificationViewState = buildClassificationViewState({
     loading: rawData.loading,
     classificationIsNotApplicable,
@@ -186,8 +172,12 @@ export function buildDataQualityViewModel({
 
   let classificationMetric = formatPercentage(classificationGap)
   let classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.unmapped')
-  let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap) ? 'warning' : 'healthy'
-  let classificationPriority = hasMaterialQualityGap(classificationGap) ? 500 + classificationGap : 0
+  let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap)
+    ? 'warning'
+    : 'healthy'
+  let classificationPriority = hasMaterialQualityGap(classificationGap)
+    ? 500 + classificationGap
+    : 0
   if (rawData.loading) {
     classificationMetric = '—'
     classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.loading')
@@ -227,7 +217,9 @@ export function buildDataQualityViewModel({
     {
       id: 'pipeline',
       label: i18n.t('ui.builddataqualityviewmodelTs.portfolioData'),
-      description: i18n.t('ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe'),
+      description: i18n.t(
+        'ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe',
+      ),
       metric: String(errors.length),
       metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', { count: errors.length }),
       tone: pipelineTone,
@@ -236,7 +228,9 @@ export function buildDataQualityViewModel({
     {
       id: 'prices',
       label: i18n.t('ui.builddataqualityviewmodelTs.manualPrices'),
-      description: i18n.t('ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices'),
+      description: i18n.t(
+        'ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices',
+      ),
       metric: String(manualPriceOverrides.length),
       metricLabel: i18n.t('ui.builddataqualityviewmodel.overrideLabel', {
         count: manualPriceOverrides.length,
@@ -247,7 +241,9 @@ export function buildDataQualityViewModel({
     {
       id: 'classification',
       label: i18n.t('ui.builddataqualityviewmodelTs.diversification'),
-      description: i18n.t('ui.builddataqualityviewmodelTs.completenessOfAssetClassGeographySectorAndCurrencyData'),
+      description: i18n.t(
+        'ui.builddataqualityviewmodelTs.completenessOfAssetClassGeographySectorAndCurrencyData',
+      ),
       metric: classificationMetric,
       metricLabel: classificationMetricLabel,
       tone: classificationTone,
@@ -256,7 +252,9 @@ export function buildDataQualityViewModel({
     {
       id: 'lookthrough',
       label: i18n.t('ui.builddataqualityviewmodelTs.underlyingExposure'),
-      description: i18n.t('ui.builddataqualityviewmodelTs.transparencyAndSourceReliabilityOfUnderlyingFundExposures'),
+      description: i18n.t(
+        'ui.builddataqualityviewmodelTs.transparencyAndSourceReliabilityOfUnderlyingFundExposures',
+      ),
       metric: lookThroughMetric,
       metricLabel: lookThroughMetricLabel,
       tone: lookThroughTone,
@@ -265,7 +263,7 @@ export function buildDataQualityViewModel({
   ]
 
   const recommendedTheme = themes.reduce(
-    (highest, theme) => theme.priority > highest.priority ? theme : highest,
+    (highest, theme) => (theme.priority > highest.priority ? theme : highest),
     themes[0],
   )
 

@@ -1,5 +1,5 @@
 export type HistoryPoint = {
-  date: string
+  date: Date
   value: number
   costBasis: number
   pct: number | null

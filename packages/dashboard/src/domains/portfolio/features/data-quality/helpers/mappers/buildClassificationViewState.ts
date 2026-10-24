@@ -13,7 +13,7 @@ export type ClassificationViewState =
       dimensionCoverage: DimensionCoverage[]
     }
 
-interface BuildClassificationViewStateInput {
+type BuildClassificationViewStateInput = {
   loading: boolean
   classificationIsNotApplicable: boolean
   coverage: AccountCoverage[]

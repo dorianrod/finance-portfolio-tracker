@@ -1,5 +1,5 @@
 export type RawPosition = {
-  snapshot_date: string
+  snapshot_date: Date
   account: string
   account_type: string
   account_category: string

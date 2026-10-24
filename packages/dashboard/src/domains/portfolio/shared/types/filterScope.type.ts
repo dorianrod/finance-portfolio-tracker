@@ -15,5 +15,5 @@ export type PeriodScopeMode =
 export type FilterScopeSpec = {
   account: AccountScopeMode
   period: PeriodScopeMode
-  effectiveDate?: string | null
+  effectiveDate?: Date | null
 }

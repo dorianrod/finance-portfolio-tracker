@@ -16,7 +16,7 @@ function point(overrides: Partial<AnnualIncomeSavingsPoint>): AnnualIncomeSaving
     totalIncome: 60000,
     grossSalary: 75000,
     placedSavings: 30000,
-    savingsThrough: '2024-12-31',
+    savingsThrough: new Date('2024-12-31'),
     savingsStatus: 'complete',
     placementRate: 50,
     unplacedIncomeProxy: 30000,
@@ -27,35 +27,39 @@ function point(overrides: Partial<AnnualIncomeSavingsPoint>): AnnualIncomeSaving
 
 describe('mapAnnualIncomeSavings', () => {
   it('maps nullable values, statuses and booleans', () => {
-    const result = mapAnnualIncomeSavings([{
-      year: 2026,
-      income_status: 'forecast',
-      net_salary: 60000,
-      other_income: 12000,
-      total_income: 72000,
-      gross_salary: 90000,
-      placed_savings: 10000,
-      savings_through: '2026-10-17',
-      savings_status: 'partial',
-      placement_rate: null,
-      unplaced_income_proxy: null,
-      comparable: false,
-    }])
+    const result = mapAnnualIncomeSavings([
+      {
+        year: 2026,
+        income_status: 'forecast',
+        net_salary: 60000,
+        other_income: 12000,
+        total_income: 72000,
+        gross_salary: 90000,
+        placed_savings: 10000,
+        savings_through: new Date('2026-10-17'),
+        savings_status: 'partial',
+        placement_rate: null,
+        unplaced_income_proxy: null,
+        comparable: false,
+      },
+    ])
 
-    expect(result).toEqual([point({
-      year: 2026,
-      incomeStatus: 'forecast',
-      netSalary: 60000,
-      otherIncome: 12000,
-      totalIncome: 72000,
-      grossSalary: 90000,
-      placedSavings: 10000,
-      savingsThrough: '2026-10-17',
-      savingsStatus: 'partial',
-      placementRate: null,
-      unplacedIncomeProxy: null,
-      comparable: false,
-    })])
+    expect(result).toEqual([
+      point({
+        year: 2026,
+        incomeStatus: 'forecast',
+        netSalary: 60000,
+        otherIncome: 12000,
+        totalIncome: 72000,
+        grossSalary: 90000,
+        placedSavings: 10000,
+        savingsThrough: new Date('2026-10-17'),
+        savingsStatus: 'partial',
+        placementRate: null,
+        unplacedIncomeProxy: null,
+        comparable: false,
+      }),
+    ])
   })
 })
 
@@ -83,10 +87,12 @@ describe('analyseIncomePlacement', () => {
       slopePerTenThousand: null,
       trendLine: [],
     })
-    expect(analyseIncomePlacement([
-      point({ year: 2023, totalIncome: 60000, placementRate: 40 }),
-      point({ year: 2024, totalIncome: 60000, placementRate: 50 }),
-    ])).toMatchObject({
+    expect(
+      analyseIncomePlacement([
+        point({ year: 2023, totalIncome: 60000, placementRate: 40 }),
+        point({ year: 2024, totalIncome: 60000, placementRate: 50 }),
+      ]),
+    ).toMatchObject({
       correlation: null,
       slopePerTenThousand: null,
       trendLine: [],
@@ -108,7 +114,10 @@ describe('analyseIncomePlacement', () => {
 describe('filterAnnualIncomeSavingsByPeriod', () => {
   it('keeps calendar years intersecting the selected period', () => {
     const points = [point({ year: 2023 }), point({ year: 2024 }), point({ year: 2025 })]
-    expect(filterAnnualIncomeSavingsByPeriod(points, '2024-03-01', '2025-02-01').map(({ year }) => year))
-      .toEqual([2024, 2025])
+    expect(
+      filterAnnualIncomeSavingsByPeriod(points, new Date('2024-03-01'), new Date('2025-02-01')).map(
+        ({ year }) => year,
+      ),
+    ).toEqual([2024, 2025])
   })
 })

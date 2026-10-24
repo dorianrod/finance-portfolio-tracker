@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-interface PercentageFormatOptions {
+type PercentageFormatOptions = {
   decimals?: number
   signed?: boolean
   unit?: '%' | ' %' | ' pp' | ''

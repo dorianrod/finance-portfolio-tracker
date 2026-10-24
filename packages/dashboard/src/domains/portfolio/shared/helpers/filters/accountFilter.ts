@@ -2,7 +2,7 @@ import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategor
 
 export const CASH_ACCOUNT_FILTER_SUFFIX = '::cash'
 
-export interface AccountFilterRow {
+export type AccountFilterRow = {
   account: string
   account_type?: string
 }

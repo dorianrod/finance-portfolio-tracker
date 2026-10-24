@@ -12,7 +12,7 @@ export type FundHolding = {
   weight: number
   sourceTier: FundQualityTier | ''
   sourceName: string
-  holdingsDate: string
+  holdingsDate: Date | null
   holdingKind?: string
   lookthroughPath?: string
   depth?: number
@@ -22,9 +22,9 @@ export type FundHolding = {
 }
 
 export type HistoricalFundHolding = FundHolding & {
-  effectiveDate: string
+  effectiveDate: Date
   historySnapshotId: string
-  capturedAt: string
+  capturedAt: Date | null
 }
 
 export type FundHoldingStatus = {
@@ -41,8 +41,8 @@ export type FundHoldingStatus = {
   replicationMethod: string
   proxyName: string
   proxyIsin: string
-  fetchedAt: string
-  holdingsDate: string
+  fetchedAt: Date | null
+  holdingsDate: Date | null
   freshnessDays: number
   isStale: boolean
   holdingCount: number
@@ -65,9 +65,9 @@ export type FundSnapshot = {
   fundId: string
   fundName: string
   snapshotId: string
-  snapshotDate: string
-  asOfDate: string
-  generatedAt: string
+  snapshotDate: Date
+  asOfDate: Date
+  generatedAt: Date | null
   origin: string
   status: string
   isActive: boolean
@@ -95,11 +95,11 @@ export type FundUnresolved = {
   weight: number
   marketValue: number
   queuedForResearch: boolean
-  detectedAt: string
+  detectedAt: Date | null
 }
 
 export type FundCoverageReport = {
-  asOfDate: string
+  asOfDate: Date
   portfolioValue: number
   fundValue: number
   directIdentifiedValue: number

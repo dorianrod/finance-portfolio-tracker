@@ -1,9 +1,6 @@
-import { useMemo } from 'react'
-import { useAtomValue } from 'jotai'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { buildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualityViewModel'
+import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
+import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/shared/stores/dashboardQuality.atoms'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -11,12 +8,15 @@ import type {
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
-import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/shared/stores/dashboardQuality.atoms'
-import { buildDataQualityViewModel } from '../helpers/mappers/buildDataQualityViewModel'
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
 
-interface DataQualityViewModelInput {
+type DataQualityViewModelInput = {
   positions: PositionRow[]
   errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
@@ -43,18 +43,19 @@ export function useDataQualityViewModel({
   const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
   const { setSelectedQualityTheme } = useDashboardQuality()
   const viewModel = useMemo(
-    () => buildDataQualityViewModel({
-      positions,
-      errors,
-      manualPriceOverrides,
-      fundStatuses,
-      fundReport,
-      fundHoldings,
-      fundSnapshots,
-      fundUnresolved,
-      rawData,
-      formatPercentage,
-    }),
+    () =>
+      buildDataQualityViewModel({
+        positions,
+        errors,
+        manualPriceOverrides,
+        fundStatuses,
+        fundReport,
+        fundHoldings,
+        fundSnapshots,
+        fundUnresolved,
+        rawData,
+        formatPercentage,
+      }),
     [
       positions,
       errors,
@@ -69,6 +70,10 @@ export function useDataQualityViewModel({
     ],
   )
   const activeThemeId = selectedTheme ?? viewModel.recommendedTheme.id
-  const activeTheme = viewModel.themes.find((theme) => theme.id === activeThemeId) ?? viewModel.themes[0]
-  return { ...viewModel, activeTheme, activeThemeId, setSelectedQualityTheme }
+  const activeTheme =
+    viewModel.themes.find((theme) => theme.id === activeThemeId) ?? viewModel.themes[0]
+  return useMemo(
+    () => ({ ...viewModel, activeTheme, activeThemeId, setSelectedQualityTheme }),
+    [viewModel, activeTheme, activeThemeId, setSelectedQualityTheme],
+  )
 }

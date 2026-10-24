@@ -1,16 +1,19 @@
-import { useMemo } from 'react'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
-import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualitySummary'
-import { scopeManualPriceOverrides, scopePipelineErrors } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
+import {
+  scopeManualPriceOverrides,
+  scopePipelineErrors,
+} from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
 import { scopeFundQualityData } from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
-import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { useMemo } from 'react'
 
 type DashboardQualityInput = {
   activeTab: AnalysisTab
@@ -38,20 +41,22 @@ export function useDashboardQuality({
   tableFiltered,
 }: DashboardQualityInput) {
   const coverage = useMemo(
-    () => rawAllocationData.loading
-      ? []
-      : computeAllocationCoverageByAccount(latestAccountPositions, rawAllocationData),
+    () =>
+      rawAllocationData.loading
+        ? []
+        : computeAllocationCoverageByAccount(latestAccountPositions, rawAllocationData),
     [latestAccountPositions, rawAllocationData],
   )
   const scopedFundQuality = useMemo(
-    () => scopeFundQualityData(
-      latestAccountPositions,
-      fundData.holdings,
-      fundData.statuses,
-      fundData.snapshots,
-      fundData.unresolved,
-      fundData.report,
-    ),
+    () =>
+      scopeFundQualityData(
+        latestAccountPositions,
+        fundData.holdings,
+        fundData.statuses,
+        fundData.snapshots,
+        fundData.unresolved,
+        fundData.report,
+      ),
     [
       fundData.holdings,
       fundData.report,
@@ -61,9 +66,10 @@ export function useDashboardQuality({
       latestAccountPositions,
     ],
   )
-  const pipelineQualityPositions = activeTab === 'holdings' && holdingsView === 'positions'
-    ? tableFiltered
-    : latestAccountPositions
+  const pipelineQualityPositions =
+    activeTab === 'holdings' && holdingsView === 'positions'
+      ? tableFiltered
+      : latestAccountPositions
   const scopedPipelineErrors = useMemo(
     () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
     [filters, pipelineErrors, pipelineQualityPositions],
@@ -73,14 +79,15 @@ export function useDashboardQuality({
     [filters, latestAccountPositions, manualPriceOverrides],
   )
   const qualitySummary = useMemo(
-    () => buildDataQualitySummary({
-      allocationLoading: rawAllocationData.loading,
-      coverage,
-      pipelineErrorsLoading,
-      scopedFundQuality,
-      scopedManualPriceOverrides,
-      scopedPipelineErrors,
-    }),
+    () =>
+      buildDataQualitySummary({
+        allocationLoading: rawAllocationData.loading,
+        coverage,
+        pipelineErrorsLoading,
+        scopedFundQuality,
+        scopedManualPriceOverrides,
+        scopedPipelineErrors,
+      }),
     [
       coverage,
       pipelineErrorsLoading,
@@ -91,10 +98,13 @@ export function useDashboardQuality({
     ],
   )
 
-  return {
-    qualitySummary,
-    scopedFundQuality,
-    scopedManualPriceOverrides,
-    scopedPipelineErrors,
-  }
+  return useMemo(
+    () => ({
+      qualitySummary,
+      scopedFundQuality,
+      scopedManualPriceOverrides,
+      scopedPipelineErrors,
+    }),
+    [qualitySummary, scopedFundQuality, scopedManualPriceOverrides, scopedPipelineErrors],
+  )
 }

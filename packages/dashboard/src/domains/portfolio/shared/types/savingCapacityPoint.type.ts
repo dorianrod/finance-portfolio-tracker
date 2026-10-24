@@ -1,5 +1,5 @@
 export type SavingCapacityPoint = {
-  date: string
+  date: Date
   savings_delta: number
   perf_delta: number
 }

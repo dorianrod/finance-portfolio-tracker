@@ -1,5 +1,5 @@
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { AssetLabelSource } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
 
 export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
@@ -11,13 +11,7 @@ export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
 }
 
 export type PipelineErrorSortColumn =
-  | 'level'
-  | 'type'
-  | 'source'
-  | 'date'
-  | 'name'
-  | 'isin'
-  | 'message'
+  'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message'
 
 export function buildPipelineErrorsViewModel({
   errors,
@@ -35,20 +29,32 @@ export function buildPipelineErrorsViewModel({
   formatAssetLabel: (source: AssetLabelSource, fallback?: string) => string
 }) {
   const types = ['all', ...new Set(errors.map((error) => error.type))].toSorted()
-  const filtered = errors.filter((error) => (
-    (filterLevel === 'all' || error.level === filterLevel)
-    && (filterType === 'all' || error.type === filterType)
-  ))
+  const filtered = errors
+    .map((error, index) => ({ ...error, id: String(index) }))
+    .filter(
+      (error) =>
+        (filterLevel === 'all' || error.level === filterLevel) &&
+        (filterType === 'all' || error.type === filterType),
+    )
   const rows = filtered.toSorted((left, right) => {
+    if (sortColumn === 'date') {
+      const comparison = (left.date?.getTime() ?? 0) - (right.date?.getTime() ?? 0)
+      return sortDirection === 'asc' ? comparison : -comparison
+    }
     const value = (error: PipelineError): string => {
       switch (sortColumn) {
-        case 'level': return error.level
-        case 'type': return PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type
-        case 'source': return error.source
-        case 'date': return error.date
-        case 'name': return formatAssetLabel(error)
-        case 'isin': return error.isin
-        case 'message': return error.message
+        case 'level':
+          return error.level
+        case 'type':
+          return PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type
+        case 'source':
+          return error.source
+        case 'name':
+          return formatAssetLabel(error)
+        case 'isin':
+          return error.isin
+        case 'message':
+          return error.message
       }
     }
     const comparison = value(left).localeCompare(value(right), 'en')

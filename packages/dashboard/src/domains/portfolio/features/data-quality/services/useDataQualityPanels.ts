@@ -1,37 +1,45 @@
-import { useEffect } from 'react'
-import { useAtomValue } from 'jotai'
-import { useDataQualityClassificationDetails } from './actions/useDataQualityClassificationDetails'
-import { useDataQualityFundDiagnostics } from './actions/useDataQualityFundDiagnostics'
 import {
   dataQualityClassificationDetailsOpenAtom,
   dataQualityClassificationDimensionAtom,
   dataQualityFundDiagnosticsOpenAtom,
-} from '../stores/dataQualityPanels.atoms'
+} from '@/domains/portfolio/features/data-quality/stores/dataQualityPanels.atoms'
+import { useAtomValue } from 'jotai'
+import { useEffect, useMemo } from 'react'
+import { useDataQualityClassificationDetails } from './actions/useDataQualityClassificationDetails'
+import { useDataQualityFundDiagnostics } from './actions/useDataQualityFundDiagnostics'
 
 export function useDataQualityPanels() {
   const fundDiagnosticsOpen = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
   const classificationDetailsOpen = useAtomValue(dataQualityClassificationDetailsOpenAtom)
   const classificationDimension = useAtomValue(dataQualityClassificationDimensionAtom)
-  const {
-    closeClassificationDetails,
-    openAllClassificationDetails,
-  } = useDataQualityClassificationDetails()
-  const {
-    closeFundDiagnostics,
-    openFundDiagnostics,
-  } = useDataQualityFundDiagnostics()
+  const { closeClassificationDetails, openAllClassificationDetails } =
+    useDataQualityClassificationDetails()
+  const { closeFundDiagnostics, openFundDiagnostics } = useDataQualityFundDiagnostics()
 
-  useEffect(() => () => {
-    closeClassificationDetails()
-    closeFundDiagnostics()
-  }, [closeClassificationDetails, closeFundDiagnostics])
+  useEffect(
+    () => () => {
+      closeClassificationDetails()
+      closeFundDiagnostics()
+    },
+    [closeClassificationDetails, closeFundDiagnostics],
+  )
 
-  return {
-    classificationDetailsOpen,
-    classificationDimension,
-    closeClassificationDetails,
-    fundDiagnosticsOpen,
-    openAllClassificationDetails,
-    openFundDiagnostics,
-  }
+  return useMemo(
+    () => ({
+      classificationDetailsOpen,
+      classificationDimension,
+      closeClassificationDetails,
+      fundDiagnosticsOpen,
+      openAllClassificationDetails,
+      openFundDiagnostics,
+    }),
+    [
+      classificationDetailsOpen,
+      classificationDimension,
+      closeClassificationDetails,
+      fundDiagnosticsOpen,
+      openAllClassificationDetails,
+      openFundDiagnostics,
+    ],
+  )
 }

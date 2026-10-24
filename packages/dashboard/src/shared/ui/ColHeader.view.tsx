@@ -3,7 +3,7 @@ import { useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTooltipPosition } from './helpers/presenters/useTooltipPosition'
 
-interface Props {
+type Props = {
   label: string
   content: string
 }
@@ -49,7 +49,7 @@ export function ColHeader({ label, content }: Props) {
           >
             {content}
           </div>,
-          document.body
+          document.body,
         )}
     </span>
   )

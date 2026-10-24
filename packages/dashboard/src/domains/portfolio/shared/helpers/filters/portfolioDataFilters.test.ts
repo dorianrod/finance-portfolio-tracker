@@ -1,12 +1,24 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue, scopeManualPriceOverrides, scopePipelineErrors } from './portfolioDataFilters'
-import type { PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
-import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type {
+  GroupRow,
+  OperationRow,
+  PositionRow,
+} from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+import {
+  applyAccountFilterToHistory,
+  applyPositionFilters,
+  buildAccountTypeBreakdown,
+  getSortValue,
+  scopeManualPriceOverrides,
+  scopePipelineErrors,
+  sortPositionsForTable,
+} from './portfolioDataFilters'
 
 function baseFilters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
   return {
@@ -22,7 +34,7 @@ function op(overrides: Partial<OperationRow>): OperationRow {
   return {
     kind: 'operation',
     id: 'op1',
-    date: '2024-01-01',
+    date: new Date('2024-01-01'),
     account: 'acc1',
     operation_type: 'BUY',
     quantity: 1,
@@ -37,6 +49,7 @@ function group(overrides: Partial<GroupRow>): GroupRow {
   return {
     kind: 'group',
     id: 'g1',
+    groupType: 'trades',
     label: 'Buys / Sells',
     subRows: [],
     ...overrides,
@@ -82,7 +95,7 @@ function pipelineError(overrides: Partial<PipelineError>): PipelineError {
     source: 'main',
     level: 'warning',
     type: 'missing_price',
-    date: '',
+    date: null,
     account: '',
     isin: '',
     ticker: '',
@@ -95,15 +108,15 @@ function pipelineError(overrides: Partial<PipelineError>): PipelineError {
 describe('scopePipelineErrors', () => {
   it('keeps only anomalies in the selected account and period', () => {
     const errors = [
-      pipelineError({ message: 'selected', account: 'acc1', date: '2026-05' }),
-      pipelineError({ message: 'other account', account: 'acc2', date: '2026-05' }),
-      pipelineError({ message: 'other period', account: 'acc1', date: '2025-12' }),
+      pipelineError({ message: 'selected', account: 'acc1', date: new Date('2026-05') }),
+      pipelineError({ message: 'other account', account: 'acc2', date: new Date('2026-05') }),
+      pipelineError({ message: 'other period', account: 'acc1', date: new Date('2025-12') }),
     ]
 
     const result = scopePipelineErrors(
       errors,
       [position({ account: 'acc1' })],
-      baseFilters({ accounts: new Set(['acc1']), dateFrom: '2026-01-15' }),
+      baseFilters({ accounts: new Set(['acc1']), dateFrom: new Date('2026-01-15') }),
     )
 
     expect(result.map((error) => error.message)).toEqual(['selected'])
@@ -122,25 +135,59 @@ describe('scopePipelineErrors', () => {
       baseFilters({ accountTypes: new Set(['PEA']) }),
     )
 
-    expect(result.map((error) => error.message)).toEqual([
-      'selected asset',
-      'global parsing issue',
-    ])
+    expect(result.map((error) => error.message)).toEqual(['selected asset', 'global parsing issue'])
   })
 
   it('does not hide anomalies when no position filter is active', () => {
-    const errors = [
-      pipelineError({ account: 'acc1' }),
-      pipelineError({ account: 'acc2' }),
-    ]
+    const errors = [pipelineError({ account: 'acc1' }), pipelineError({ account: 'acc2' })]
 
-    expect(scopePipelineErrors(errors, [position({ account: 'acc1' })], baseFilters())).toEqual(errors)
+    expect(scopePipelineErrors(errors, [position({ account: 'acc1' })], baseFilters())).toEqual(
+      errors,
+    )
   })
 })
 
 describe('applyPositionFilters', () => {
+  it('recomputes cash totals for the selected period independently of the translated label', () => {
+    const cash = group({
+      groupType: 'cash',
+      label: 'Versements et retraits',
+      deposit_total: 1500,
+      withdrawal_total: 250,
+      subRows: [
+        op({ id: 'old', operation_type: 'DEPOSIT', total_amount: 1000 }),
+        op({
+          id: 'deposit',
+          date: new Date('2024-02-01'),
+          operation_type: 'DEPOSIT',
+          total_amount: 500,
+        }),
+        op({
+          id: 'withdrawal',
+          date: new Date('2024-02-02'),
+          operation_type: 'WITHDRAWAL',
+          total_amount: -250,
+        }),
+      ],
+    })
+    const [filtered] = applyPositionFilters(
+      [position({ subRows: [cash] })],
+      baseFilters({ dateFrom: new Date('2024-02-01') }),
+    )
+    expect(filtered.subRows[0]).toMatchObject({
+      groupType: 'cash',
+      deposit_total: 500,
+      withdrawal_total: 250,
+    })
+    expect(filtered.subRows[0].subRows.map(({ id }) => id)).toEqual(['deposit', 'withdrawal'])
+    expect(cash.deposit_total).toBe(1500)
+  })
+
   it('filters by account when no date range is set, leaving snapshot values untouched', () => {
-    const positions = [position({ id: 'a', account: 'acc1' }), position({ id: 'b', account: 'acc2' })]
+    const positions = [
+      position({ id: 'a', account: 'acc1' }),
+      position({ id: 'b', account: 'acc2' }),
+    ]
     const result = applyPositionFilters(positions, baseFilters({ accounts: new Set(['acc1']) }))
     expect(result.map((p) => p.id)).toEqual(['a'])
     expect(result[0].total_value).toBe(1000)
@@ -161,24 +208,59 @@ describe('applyPositionFilters', () => {
 
   it('recomputes realized gain and dividends from only the operations within the date range', () => {
     const buySellGroup = group({
+      groupType: 'trades',
       label: 'Buys / Sells',
       subRows: [
-        op({ id: 'sell-in', date: '2024-03-01', operation_type: 'SELL', total_amount: 500, realized_gain: 80 }),
-        op({ id: 'sell-out', date: '2024-09-01', operation_type: 'SELL', total_amount: 300, realized_gain: 40 }),
+        op({
+          id: 'sell-in',
+          date: new Date('2024-03-01'),
+          operation_type: 'SELL',
+          total_amount: 500,
+          realized_gain: 80,
+        }),
+        op({
+          id: 'sell-out',
+          date: new Date('2024-09-01'),
+          operation_type: 'SELL',
+          total_amount: 300,
+          realized_gain: 40,
+        }),
       ],
     })
     const dividendGroup = group({
+      groupType: 'dividends',
       label: 'Dividends',
       total_dividends: 999, // stale snapshot value; must be recomputed from ops
       dividend_count: 999,
       subRows: [
-        op({ id: 'div-in', date: '2024-02-01', operation_type: 'DIVIDEND', total_amount: 15, realized_gain: null }),
-        op({ id: 'div-out', date: '2024-12-01', operation_type: 'DIVIDEND', total_amount: 25, realized_gain: null }),
+        op({
+          id: 'div-in',
+          date: new Date('2024-02-01'),
+          operation_type: 'DIVIDEND',
+          total_amount: 15,
+          realized_gain: null,
+        }),
+        op({
+          id: 'div-out',
+          date: new Date('2024-12-01'),
+          operation_type: 'DIVIDEND',
+          total_amount: 25,
+          realized_gain: null,
+        }),
       ],
     })
-    const positions = [position({ subRows: [buySellGroup, dividendGroup], realized_gain: 999, total_dividends: 999 })]
+    const positions = [
+      position({
+        subRows: [buySellGroup, dividendGroup],
+        realized_gain: 999,
+        total_dividends: 999,
+      }),
+    ]
 
-    const result = applyPositionFilters(positions, baseFilters({ dateFrom: '2024-01-01', dateTo: '2024-06-01' }))
+    const result = applyPositionFilters(
+      positions,
+      baseFilters({ dateFrom: new Date('2024-01-01'), dateTo: new Date('2024-06-01') }),
+    )
 
     expect(result).toHaveLength(1)
     expect(result[0].realized_gain).toBe(80) // only sell-in falls in range
@@ -189,50 +271,99 @@ describe('applyPositionFilters', () => {
   })
 
   it('keeps an active end-snapshot position even if it has no operation in the date range', () => {
-    const positions = [position({ subRows: [group({ label: 'Buys / Sells', subRows: [op({ date: '2023-01-01' })] })] })]
-    const result = applyPositionFilters(positions, baseFilters({ dateFrom: '2024-01-01' }))
+    const positions = [
+      position({
+        subRows: [
+          group({
+            groupType: 'trades',
+            label: 'Buys / Sells',
+            subRows: [op({ date: new Date('2023-01-01') })],
+          }),
+        ],
+      }),
+    ]
+    const result = applyPositionFilters(
+      positions,
+      baseFilters({ dateFrom: new Date('2024-01-01') }),
+    )
     expect(result).toHaveLength(1)
     expect(result[0].subRows).toEqual([])
   })
 
   it('drops a closed position with no operation in the date range', () => {
-    const positions = [position({ status: 'closed', subRows: [group({ label: 'Buys / Sells', subRows: [op({ date: '2023-01-01' })] })] })]
-    expect(applyPositionFilters(positions, baseFilters({ dateFrom: '2024-01-01' }))).toEqual([])
+    const positions = [
+      position({
+        status: 'closed',
+        subRows: [
+          group({
+            groupType: 'trades',
+            label: 'Buys / Sells',
+            subRows: [op({ date: new Date('2023-01-01') })],
+          }),
+        ],
+      }),
+    ]
+    expect(
+      applyPositionFilters(positions, baseFilters({ dateFrom: new Date('2024-01-01') })),
+    ).toEqual([])
   })
 })
 
 describe('scopeManualPriceOverrides', () => {
   const override = {
-    name: 'Asset', ticker: 'AAA', isin: 'FR1', price: '100', currency: 'EUR',
-    date_from: '2025-01-01', date_to: '', source_file: 'manual.csv',
+    name: 'Asset',
+    ticker: 'AAA',
+    isin: 'FR1',
+    price: 100,
+    currency: 'EUR',
+    date_from: new Date('2025-01-01'),
+    date_to: null,
+    source_file: 'manual.csv',
   }
 
   it('matches selected-account assets and overlapping dates', () => {
     const result = scopeManualPriceOverrides(
       [override, { ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }],
       [position({ name: 'Asset', ticker: 'AAA', isin: 'FR1' })],
-      baseFilters({ accounts: new Set(['acc1']), dateFrom: '2026-01-01', dateTo: '2026-12-31' }),
+      baseFilters({
+        accounts: new Set(['acc1']),
+        dateFrom: new Date('2026-01-01'),
+        dateTo: new Date('2026-12-31'),
+      }),
     )
     expect(result).toEqual([override])
   })
 
   it('excludes overrides ending before the selected period', () => {
-    expect(scopeManualPriceOverrides(
-      [{ ...override, date_to: '2024-12-31' }],
-      [position({ isin: 'FR1' })],
-      baseFilters({ dateFrom: '2025-01-01' }),
-    )).toEqual([])
+    expect(
+      scopeManualPriceOverrides(
+        [{ ...override, date_to: new Date('2024-12-31') }],
+        [position({ isin: 'FR1' })],
+        baseFilters({ dateFrom: new Date('2025-01-01') }),
+      ),
+    ).toEqual([])
   })
 })
 
 describe('applyAccountFilterToHistory', () => {
   const enrichedHistory: PortfolioHistoryPoint[] = [
-    { date: '2024-01-01', total_value: 999, total_cost_basis: 999, unrealized_gain: 999, net_cash_injected: 0, cash_delta: null, tri: 1.5, tri_rolling_1y: null, tri_rolling_3y: null, total_broker_cash: 50 },
+    {
+      date: new Date('2024-01-01'),
+      total_value: 999,
+      total_cost_basis: 999,
+      unrealized_gain: 999,
+      net_cash_injected: 0,
+      cash_delta: null,
+      tri: 1.5,
+      tri_rolling_1y: null,
+      tri_rolling_3y: null,
+      total_broker_cash: 50,
+    },
   ]
 
   function rawRow(overrides: Partial<RawPositionRow>): RawPositionRow {
     return {
-      snapshot_date: '2024-01-01',
+      snapshot_date: new Date('2024-01-01'),
       account: 'acc1',
       account_type: 'PEA',
       account_category: 'brokerage',
@@ -250,28 +381,54 @@ describe('applyAccountFilterToHistory', () => {
 
   it('rebuilds the history from raw per-account snapshots restricted to the selected accounts', () => {
     const rows = [
-      rawRow({ account: 'acc1', total_value: 600, quantity: 10, avg_buy_price: 50, unrealized_gain: 100 }),
-      rawRow({ account: 'acc2', total_value: 9999, quantity: 1, avg_buy_price: 1, unrealized_gain: 9999 }),
+      rawRow({
+        account: 'acc1',
+        total_value: 600,
+        quantity: 10,
+        avg_buy_price: 50,
+        unrealized_gain: 100,
+      }),
+      rawRow({
+        account: 'acc2',
+        total_value: 9999,
+        quantity: 1,
+        avg_buy_price: 1,
+        unrealized_gain: 9999,
+      }),
     ]
     const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1']))
-    expect(result).toEqual([{
-      date: '2024-01-01',
-      total_value: 600,
-      total_cost_basis: 500, // quantity * avg_buy_price
-      unrealized_gain: 100,
-      net_cash_injected: 0,
-      cash_delta: null,
-      tri: null,
-      tri_rolling_1y: null,
-      tri_rolling_3y: null,
-      total_broker_cash: 0,
-    }])
+    expect(result).toEqual([
+      {
+        date: new Date('2024-01-01'),
+        total_value: 600,
+        total_cost_basis: 500, // quantity * avg_buy_price
+        unrealized_gain: 100,
+        net_cash_injected: 0,
+        cash_delta: null,
+        tri: null,
+        tri_rolling_1y: null,
+        tri_rolling_3y: null,
+        total_broker_cash: 0,
+      },
+    ])
   })
 
   it('sums multiple accounts on the same date', () => {
     const rows = [
-      rawRow({ account: 'acc1', total_value: 600, quantity: 10, avg_buy_price: 50, unrealized_gain: 100 }),
-      rawRow({ account: 'acc2', total_value: 300, quantity: 5, avg_buy_price: 50, unrealized_gain: 50 }),
+      rawRow({
+        account: 'acc1',
+        total_value: 600,
+        quantity: 10,
+        avg_buy_price: 50,
+        unrealized_gain: 100,
+      }),
+      rawRow({
+        account: 'acc2',
+        total_value: 300,
+        quantity: 5,
+        avg_buy_price: 50,
+        unrealized_gain: 50,
+      }),
     ]
     const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1', 'acc2']))
     expect(result[0].total_value).toBe(900)
@@ -320,7 +477,10 @@ describe('sortPositionsForTable', () => {
   })
 
   it('hides closed positions when requested', () => {
-    const positions = [position({ id: 'open', status: 'active' }), position({ id: 'closed', status: 'closed' })]
+    const positions = [
+      position({ id: 'open', status: 'active' }),
+      position({ id: 'closed', status: 'closed' }),
+    ]
     const result = sortPositionsForTable(positions, true, [], 'total_value', 'desc')
     expect(result.map((p) => p.id)).toEqual(['open'])
   })
@@ -328,6 +488,8 @@ describe('sortPositionsForTable', () => {
 
 describe('getSortValue', () => {
   it('reads total_dividends as dividends + interest combined', () => {
-    expect(getSortValue(position({ total_dividends: 10, total_interest: 5 }), 'total_dividends')).toBe(15)
+    expect(
+      getSortValue(position({ total_dividends: 10, total_interest: 5 }), 'total_dividends'),
+    ).toBe(15)
   })
 })

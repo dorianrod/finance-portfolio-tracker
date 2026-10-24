@@ -1,13 +1,13 @@
 export type RawAnnualIncomeSavingsRow = {
   year: number
-  income_status: string
+  income_status: AnnualIncomeSavingsPoint['incomeStatus']
   net_salary: number
   other_income: number
   total_income: number
   gross_salary: number
   placed_savings: number | null
-  savings_through: string
-  savings_status: string
+  savings_through: Date | null
+  savings_status: AnnualIncomeSavingsPoint['savingsStatus']
   placement_rate: number | null
   unplaced_income_proxy: number | null
   comparable: boolean
@@ -21,7 +21,7 @@ export type AnnualIncomeSavingsPoint = {
   totalIncome: number
   grossSalary: number
   placedSavings: number | null
-  savingsThrough: string | null
+  savingsThrough: Date | null
   savingsStatus: 'complete' | 'partial' | 'missing'
   placementRate: number | null
   unplacedIncomeProxy: number | null
@@ -41,14 +41,14 @@ export function mapAnnualIncomeSavings(
   return rows
     .map((row) => ({
       year: Math.trunc(row.year),
-      incomeStatus: row.income_status === 'forecast' ? 'forecast' as const : 'actual' as const,
+      incomeStatus: row.income_status,
       netSalary: row.net_salary,
       otherIncome: row.other_income,
       totalIncome: row.total_income,
       grossSalary: row.gross_salary,
       placedSavings: row.placed_savings,
       savingsThrough: row.savings_through || null,
-      savingsStatus: parseSavingsStatus(row.savings_status),
+      savingsStatus: row.savings_status,
       placementRate: row.placement_rate,
       unplacedIncomeProxy: row.unplaced_income_proxy,
       comparable: row.comparable,
@@ -57,33 +57,26 @@ export function mapAnnualIncomeSavings(
     .toSorted((a, b) => a.year - b.year)
 }
 
-function parseSavingsStatus(status: string): AnnualIncomeSavingsPoint['savingsStatus'] {
-  if (status === 'complete') return 'complete'
-  if (status === 'partial') return 'partial'
-  return 'missing'
-}
-
 export function filterAnnualIncomeSavingsByPeriod(
   points: AnnualIncomeSavingsPoint[],
-  dateFrom?: string,
-  dateTo?: string,
+  dateFrom?: Date,
+  dateTo?: Date,
 ): AnnualIncomeSavingsPoint[] {
-  const fromYear = dateFrom ? Number(dateFrom.slice(0, 4)) : null
-  const toYear = dateTo ? Number(dateTo.slice(0, 4)) : null
-  return points.filter((point) => (
-    (fromYear == null || point.year >= fromYear)
-    && (toYear == null || point.year <= toYear)
-  ))
+  const fromYear = dateFrom ? Number(String(dateFrom.getUTCFullYear())) : null
+  const toYear = dateTo ? Number(String(dateTo.getUTCFullYear())) : null
+  return points.filter(
+    (point) =>
+      (fromYear == null || point.year >= fromYear) && (toYear == null || point.year <= toYear),
+  )
 }
 
-export function analyseIncomePlacement(
-  data: AnnualIncomeSavingsPoint[],
-): IncomePlacementAnalysis {
+export function analyseIncomePlacement(data: AnnualIncomeSavingsPoint[]): IncomePlacementAnalysis {
   const points = data.filter(
-    (point) => point.comparable
-      && point.incomeStatus === 'actual'
-      && point.savingsStatus === 'complete'
-      && point.placementRate !== null,
+    (point) =>
+      point.comparable &&
+      point.incomeStatus === 'actual' &&
+      point.savingsStatus === 'complete' &&
+      point.placementRate !== null,
   )
   if (points.length < 2) {
     return {

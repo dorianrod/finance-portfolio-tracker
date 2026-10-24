@@ -1,17 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 import {
-  computeMonthlyBalances, computeRollingReturns, computeUnitPriceDomain, computePosition, buildHoverChartSeries,
+  buildHoverChartSeries,
+  computeMonthlyBalances,
+  computePosition,
+  computeRollingReturns,
+  computeUnitPriceDomain,
   type HoverChartDataPoint,
 } from './buildHoverChartData'
-import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 
 describe('computeMonthlyBalances', () => {
   it('accumulates a running balance per month from dated deltas', () => {
     const ops = [
-      { date: '2024-01-15', total_amount: 100 },
-      { date: '2024-01-20', total_amount: 50 },
-      { date: '2024-02-05', total_amount: -30 },
+      { date: new Date('2024-01-15'), total_amount: 100 },
+      { date: new Date('2024-01-20'), total_amount: 50 },
+      { date: new Date('2024-02-05'), total_amount: -30 },
     ]
     expect(computeMonthlyBalances(ops)).toEqual([
       { month: '2024-01', balance: 150, delta: 150 },
@@ -66,25 +70,50 @@ describe('computeUnitPriceDomain', () => {
 })
 
 describe('buildHoverChartSeries', () => {
-  it('attaches each month\'s buy/sell activity to its position snapshot', () => {
+  it("attaches each month's buy/sell activity to its position snapshot", () => {
     const history: HistoryPoint[] = [
-      { date: '2024-01-15', value: 1000, costBasis: 900, pct: 11, last_price: 100 },
-      { date: '2024-02-10', value: 1100, costBasis: 900, pct: 22, last_price: 110 },
+      { date: new Date('2024-01-15'), value: 1000, costBasis: 900, pct: 11, last_price: 100 },
+      { date: new Date('2024-02-10'), value: 1100, costBasis: 900, pct: 22, last_price: 110 },
     ]
     const operations = [
-      { date: '2024-01-05', operation_type: 'BUY', total_amount: -900, realized_gain: null },
-      { date: '2024-02-20', operation_type: 'SELL', total_amount: 500, realized_gain: 50 },
+      {
+        date: new Date('2024-01-05'),
+        operation_type: 'BUY',
+        total_amount: -900,
+        realized_gain: null,
+      },
+      {
+        date: new Date('2024-02-20'),
+        operation_type: 'SELL',
+        total_amount: 500,
+        realized_gain: 50,
+      },
     ]
     const series = buildHoverChartSeries(history, operations)
     expect(series).toEqual([
       {
-        date: '2024-01', Value: 1000, 'Cost basis': 900, 'Unit price': 100,
-        hasBuy: true, hasSell: false, buyAmount: 900, sellAmount: undefined, sellGain: undefined,
-        unrealized: 100, rollingReturns: [],
+        date: '2024-01',
+        Value: 1000,
+        'Cost basis': 900,
+        'Unit price': 100,
+        hasBuy: true,
+        hasSell: false,
+        buyAmount: 900,
+        sellAmount: undefined,
+        sellGain: undefined,
+        unrealized: 100,
+        rollingReturns: [],
       },
       {
-        date: '2024-02', Value: 1100, 'Cost basis': 900, 'Unit price': 110,
-        hasBuy: false, hasSell: true, buyAmount: undefined, sellAmount: 500, sellGain: 50,
+        date: '2024-02',
+        Value: 1100,
+        'Cost basis': 900,
+        'Unit price': 110,
+        hasBuy: false,
+        hasSell: true,
+        buyAmount: undefined,
+        sellAmount: 500,
+        sellGain: 50,
         unrealized: 200,
         rollingReturns: [{ label: 'Since start', pct: (110 / 100 - 1) * 100 }],
       },
@@ -92,7 +121,9 @@ describe('buildHoverChartSeries', () => {
   })
 
   it('returns no buy/sell flags when there is no matching activity that month', () => {
-    const history: HistoryPoint[] = [{ date: '2024-01-15', value: 1000, costBasis: 900, pct: null, last_price: 100 }]
+    const history: HistoryPoint[] = [
+      { date: new Date('2024-01-15'), value: 1000, costBasis: 900, pct: null, last_price: 100 },
+    ]
     const series = buildHoverChartSeries(history, [])
     expect(series[0].hasBuy).toBe(false)
     expect(series[0].hasSell).toBe(false)

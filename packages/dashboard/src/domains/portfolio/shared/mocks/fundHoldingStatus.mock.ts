@@ -1,0 +1,40 @@
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+
+export function makeFundHoldingStatus(
+  overrides: Partial<FundHoldingStatus> = {},
+): FundHoldingStatus {
+  return {
+    parentId: 'FR0000000001',
+    parentIsin: 'FR0000000001',
+    parentTicker: 'ASSET',
+    parentName: 'Asset',
+    qualityTier: 'A',
+    validationStatus: 'ok',
+    sourceName: 'Official source',
+    sourceType: 'official',
+    sourceUrl: 'https://example.com/fund',
+    indexName: '',
+    replicationMethod: '',
+    proxyName: '',
+    proxyIsin: '',
+    fetchedAt: new Date('2026-09-30T12:00:00Z'),
+    holdingsDate: new Date('2026-09-30'),
+    freshnessDays: 1,
+    isStale: false,
+    holdingCount: 10,
+    rawWeightSum: 1,
+    explainedPct: 90,
+    residualPct: 10,
+    marketValue: 1100,
+    explainedValue: 990,
+    residualValue: 110,
+    refreshStreak: 2,
+    issues: '',
+    decompositionState: 'partial',
+    snapshotId: 'snapshot-1',
+    sourceOrigin: 'deterministic',
+    manualAttention: false,
+    checksumSha256: '',
+    ...overrides,
+  }
+}

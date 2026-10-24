@@ -6,7 +6,7 @@ import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/res
 
 export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
 
-export interface PerformanceContribution {
+export type PerformanceContribution = {
   key: string
   label: string
   name: string
@@ -15,11 +15,11 @@ export interface PerformanceContribution {
   accounts: string[]
 }
 
-export interface PerformanceContributionSummary {
+export type PerformanceContributionSummary = {
   horizon: ContributionHorizon
   available: boolean
-  startDate: string | null
-  endDate: string | null
+  startDate: Date | null
+  endDate: Date | null
   netContribution: number
   positiveTotal: number
   negativeTotal: number
@@ -27,12 +27,12 @@ export interface PerformanceContributionSummary {
   detractors: PerformanceContribution[]
 }
 
-export interface PerformanceContributionFilters {
+export type PerformanceContributionFilters = {
   accounts: Set<string>
   accountTypes: Set<string>
 }
 
-interface AssetMeta {
+type AssetMeta = {
   key: string
   name: string
   ticker: string
@@ -41,7 +41,7 @@ interface AssetMeta {
   filterId: string
 }
 
-interface ContributionAccumulator {
+type ContributionAccumulator = {
   key: string
   name: string
   ticker: string
@@ -69,13 +69,12 @@ function accountAssetKey(account: string, key: string): string {
   return `${account}\u0000${key}`
 }
 
-function datePart(value: string): string {
-  return value.slice(0, 10)
+function datePart(value: Date): number {
+  return value.getTime()
 }
 
-function subtractDays(date: string, days: number): string {
-  const timestamp = Date.parse(`${date}T00:00:00Z`)
-  return new Date(timestamp - days * DAY_MS).toISOString().slice(0, 10)
+function subtractDays(date: number, days: number): number {
+  return date - days * DAY_MS
 }
 
 function unavailableSummary(horizon: ContributionHorizon): PerformanceContributionSummary {
@@ -93,7 +92,8 @@ function unavailableSummary(horizon: ContributionHorizon): PerformanceContributi
 }
 
 function isPositionInScope(row: RawPosition, filters: PerformanceContributionFilters): boolean {
-  if (filters.accountTypes.size > 0 && !filters.accountTypes.has(clean(row.account_type))) return false
+  if (filters.accountTypes.size > 0 && !filters.accountTypes.has(clean(row.account_type)))
+    return false
   if (filters.accounts.size > 0 && !filters.accounts.has(accountFilterId(row))) return false
   return true
 }
@@ -140,7 +140,7 @@ function makeContribution(
     label: resolveAssetName(item, item.key),
     name: item.name,
     amount: Math.round(item.amount * 100) / 100,
-    share: denominator > 0 ? Math.abs(item.amount) / denominator * 100 : 0,
+    share: denominator > 0 ? (Math.abs(item.amount) / denominator) * 100 : 0,
     accounts: [...item.accounts].toSorted(),
   }
 }
@@ -149,13 +149,15 @@ export function computePerformanceContributions(
   rawPositions: RawPosition[],
   rawOperations: RawOperation[],
   horizon: ContributionHorizon,
-  asOfDate: string | undefined,
+  asOfDate: Date | undefined,
   filters: PerformanceContributionFilters,
 ): PerformanceContributionSummary {
   if (!asOfDate) return unavailableSummary(horizon)
 
   const requestedEnd = datePart(asOfDate)
-  const positionsThroughEnd = rawPositions.filter((row) => datePart(row.snapshot_date) <= requestedEnd)
+  const positionsThroughEnd = rawPositions.filter(
+    (row) => datePart(row.snapshot_date) <= requestedEnd,
+  )
   const metaByAccountAsset = new Map<string, AssetMeta>()
   const accountTypes = new Map<string, Set<string>>()
 
@@ -169,12 +171,14 @@ export function computePerformanceContributions(
   }
 
   const positions = positionsThroughEnd.filter((row) => isPositionInScope(row, filters))
-  const snapshotDates = [...new Set(positions.map((row) => datePart(row.snapshot_date)))].toSorted()
+  const snapshotDates = [...new Set(positions.map((row) => datePart(row.snapshot_date)))].toSorted(
+    (left, right) => left - right,
+  )
   const endDate = snapshotDates.at(-1)
   if (!endDate) return unavailableSummary(horizon)
 
-  const startsByFilterId = new Map<string, string>()
-  let startDate: string | null
+  const startsByFilterId = new Map<string, number>()
+  let startDate: number | null
   if (horizon === 'since-tracking') {
     for (const row of positions) {
       const filterId = accountFilterId(row)
@@ -182,11 +186,11 @@ export function computePerformanceContributions(
       const current = startsByFilterId.get(filterId)
       if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
     }
-    startDate = [...startsByFilterId.values()].toSorted()[0] ?? null
+    startDate = [...startsByFilterId.values()].toSorted((left, right) => left - right)[0] ?? null
   } else {
     const firstSnapshot = snapshotDates[0]
     const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
-    if (Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${firstSnapshot}T00:00:00Z`) < THREE_YEAR_DAYS * DAY_MS) {
+    if (endDate - firstSnapshot < THREE_YEAR_DAYS * DAY_MS) {
       return unavailableSummary(horizon)
     }
     startDate = snapshotDates.filter((date) => date <= cutoff).at(-1) ?? null
@@ -195,7 +199,12 @@ export function computePerformanceContributions(
   if (!startDate) return unavailableSummary(horizon)
 
   const contributions = new Map<string, ContributionAccumulator>()
-  const touch = (key: string, name: string, ticker: string, account: string): ContributionAccumulator => {
+  const touch = (
+    key: string,
+    name: string,
+    ticker: string,
+    account: string,
+  ): ContributionAccumulator => {
     const current = contributions.get(key) ?? {
       key,
       name: resolveAssetName({ name, ticker }, key),
@@ -214,11 +223,12 @@ export function computePerformanceContributions(
     const key = assetKey(row)
     if (!key) continue
     const rowDate = datePart(row.snapshot_date)
-    const endValue = rowDate === endDate ? row.unrealized_gain ?? 0 : 0
-    const isOpeningRow = horizon === 'since-tracking'
-      ? rowDate === startsByFilterId.get(accountFilterId(row))
-      : rowDate === startDate
-    const openingValue = isOpeningRow ? row.unrealized_gain ?? 0 : 0
+    const endValue = rowDate === endDate ? (row.unrealized_gain ?? 0) : 0
+    const isOpeningRow =
+      horizon === 'since-tracking'
+        ? rowDate === startsByFilterId.get(accountFilterId(row))
+        : rowDate === startDate
+    const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
     if (endValue === 0 && openingValue === 0) continue
     touch(key, clean(row.name), clean(row.ticker), row.account).amount += endValue - openingValue
   }
@@ -232,15 +242,14 @@ export function computePerformanceContributions(
     const meta = metaByAccountAsset.get(accountAssetKey(operation.account, key))
     if (!operationIsInScope(operation, meta, filters, accountTypes)) continue
 
-    let lowerBound: string | undefined = startDate
+    let lowerBound: number | undefined = startDate
     if (horizon === 'since-tracking') {
       lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
     }
     if (!lowerBound || operationDate <= lowerBound) continue
 
-    const amount = operation.operation_type === 'SELL'
-      ? operation.realized_gain
-      : operation.total_amount
+    const amount =
+      operation.operation_type === 'SELL' ? operation.realized_gain : operation.total_amount
     if (amount === 0) continue
     touch(
       key,
@@ -267,8 +276,8 @@ export function computePerformanceContributions(
   return {
     horizon,
     available: true,
-    startDate,
-    endDate,
+    startDate: new Date(startDate),
+    endDate: new Date(endDate),
     netContribution: Math.round((positiveTotal - negativeTotal) * 100) / 100,
     positiveTotal: Math.round(positiveTotal * 100) / 100,
     negativeTotal: Math.round(negativeTotal * 100) / 100,

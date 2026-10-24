@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+const formatDate = (date: Date) => date.toISOString().slice(0, 10)
+import { describe, expect, it } from 'vitest'
 
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import {
@@ -45,24 +46,18 @@ describe('toggle', () => {
 })
 
 describe('presetDateFrom', () => {
-  it('returns the first day of the current month for the 0-month preset', () => {
-    const now = new Date()
-    const expected = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-    expect(presetDateFrom(0)).toBe(expected)
-  })
-
-  it('subtracts the given number of months from today otherwise', () => {
-    const now = new Date()
-    const d = new Date(now)
-    d.setMonth(d.getMonth() - 6)
-    expect(presetDateFrom(6)).toBe(d.toISOString().slice(0, 10))
+  it.each([
+    [0, new Date('2026-10-01')],
+    [6, new Date('2026-04-30')],
+    [1, new Date('2026-09-30')],
+  ])('anchors the %i-month preset without rolling into another month', (months, expected) => {
+    expect(presetDateFrom(months, new Date('2026-10-31T12:00:00Z'))).toEqual(expected)
   })
 })
 
 describe('filterVisibilityForTab', () => {
-  it.each(['overview', 'wealth', 'performance'])(
-    'shows the period filter on %s',
-    (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
+  it.each(['overview', 'wealth', 'performance'])('shows the period filter on %s', (tab) =>
+    expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
 
   it.each(['allocation', 'underlying', 'quality'])('shows the period filter on %s', (tab) => {
@@ -84,13 +79,20 @@ describe('filterVisibilityForTab', () => {
 
 describe('filterSummaries', () => {
   it('summarizes account, period, and operation groups', () => {
-    expect(filterSummaries(filters({
-      accounts: new Set(['pea', 'cto']),
-      dateFrom: '2026-01-01',
-      dateTo: '2026-06-30',
-      operationTypes: new Set(['BUY']),
-      hideClosedPositions: false,
-    }), {}, filterVisibilityForTab('holdings', 'positions'))).toEqual([
+    expect(
+      filterSummaries(
+        filters({
+          accounts: new Set(['pea', 'cto']),
+          dateFrom: new Date('2026-01-01'),
+          dateTo: new Date('2026-06-30'),
+          operationTypes: new Set(['BUY']),
+          hideClosedPositions: false,
+        }),
+        {},
+        filterVisibilityForTab('holdings', 'positions'),
+        formatDate,
+      ),
+    ).toEqual([
       { key: 'accounts', label: '2 accounts' },
       { key: 'period', label: '2026-01-01 → 2026-06-30' },
       { key: 'operations', label: 'Buy' },
@@ -99,20 +101,28 @@ describe('filterSummaries', () => {
   })
 
   it('uses a friendly account name for a single selection', () => {
-    expect(filterSummaries(
-      filters({ accounts: new Set(['pea']) }),
-      { pea: 'My PEA' },
-      filterVisibilityForTab('overview'),
-    )[0]).toEqual({ key: 'accounts', label: 'My PEA' })
+    expect(
+      filterSummaries(
+        filters({ accounts: new Set(['pea']) }),
+        { pea: 'My PEA' },
+        filterVisibilityForTab('overview'),
+        formatDate,
+      )[0],
+    ).toEqual({ key: 'accounts', label: 'My PEA' })
   })
 
   it('keeps the period visible while hiding position-only filters', () => {
-    expect(filterSummaries(filters({
-      dateFrom: '2026-01-01',
-      operationTypes: new Set(['BUY']),
-    }), {}, filterVisibilityForTab('holdings', 'underlying'))).toEqual([
-      { key: 'period', label: 'Since 2026-01-01' },
-    ])
+    expect(
+      filterSummaries(
+        filters({
+          dateFrom: new Date('2026-01-01'),
+          operationTypes: new Set(['BUY']),
+        }),
+        {},
+        filterVisibilityForTab('holdings', 'underlying'),
+        formatDate,
+      ),
+    ).toEqual([{ key: 'period', label: 'Since 2026-01-01' }])
   })
 })
 
@@ -122,7 +132,7 @@ describe('filter reset helpers', () => {
     accounts: new Set(['pea']),
     operationTypes: new Set(['BUY']),
     hideClosedPositions: false,
-    dateFrom: '2026-01-01',
+    dateFrom: new Date('2026-01-01'),
   })
 
   it('clears one summary group without changing the others', () => {
@@ -130,7 +140,7 @@ describe('filter reset helpers', () => {
     expect(next.accounts).toEqual(new Set())
     expect(next.accountTypes).toEqual(new Set())
     expect(next.operationTypes).toEqual(new Set(['BUY']))
-    expect(next.dateFrom).toBe('2026-01-01')
+    expect(next.dateFrom).toEqual(new Date('2026-01-01'))
   })
 
   it('restores every filter to its default', () => {

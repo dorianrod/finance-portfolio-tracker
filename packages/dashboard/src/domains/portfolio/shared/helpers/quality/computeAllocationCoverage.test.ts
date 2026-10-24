@@ -1,9 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { computeAllocationCoverageByAccount, computeAllocationCoverageByDimension } from './computeAllocationCoverage'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import {
+  computeAllocationCoverageByAccount,
+  computeAllocationCoverageByDimension,
+} from './computeAllocationCoverage'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
@@ -40,7 +43,13 @@ function position(overrides: Partial<PositionRow>): PositionRow {
 }
 
 function isinRow(overrides: Partial<RawIsinRow>): RawIsinRow {
-  return { snapshot_date: '2026-09-30', isin: 'FR0000000000', name: 'Fund', values: { 'actions': 100 }, ...overrides }
+  return {
+    snapshot_date: new Date('2026-09-30'),
+    isin: 'FR0000000000',
+    name: 'Fund',
+    values: { actions: 100 },
+    ...overrides,
+  }
 }
 
 function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
@@ -97,10 +106,34 @@ describe('computeAllocationCoverageByAccount', () => {
 
   it('separates savings and checking balances as not applicable', () => {
     const positions = [
-      position({ account: 'livret', account_category: 'savings', isin: '', name: 'Livret A', total_value: 1_000 }),
-      position({ account: 'courant', account_category: 'checking', isin: '', name: 'Compte courant', total_value: 500 }),
-      position({ account: 'cto', account_type: 'Bourse – Cash', account_category: 'brokerage', isin: '', name: 'Cash CTO', total_value: 900 }),
-      position({ account: 'pea', account_category: 'brokerage', isin: 'FR0000000000', total_value: 300 }),
+      position({
+        account: 'livret',
+        account_category: 'savings',
+        isin: '',
+        name: 'Livret A',
+        total_value: 1_000,
+      }),
+      position({
+        account: 'courant',
+        account_category: 'checking',
+        isin: '',
+        name: 'Compte courant',
+        total_value: 500,
+      }),
+      position({
+        account: 'cto',
+        account_type: 'Bourse – Cash',
+        account_category: 'brokerage',
+        isin: '',
+        name: 'Cash CTO',
+        total_value: 900,
+      }),
+      position({
+        account: 'pea',
+        account_category: 'brokerage',
+        isin: 'FR0000000000',
+        total_value: 300,
+      }),
     ]
     const data = rawData({
       classe: [
@@ -150,9 +183,25 @@ describe('computeAllocationCoverageByDimension', () => {
   it('excludes savings and checking balances from dimension gaps', () => {
     const positions = [
       position({ account_category: 'savings', isin: '', name: 'Livret A', total_value: 1_000 }),
-      position({ account_category: 'checking', isin: '', name: 'Compte courant', total_value: 500 }),
-      position({ account_type: 'Bourse – Cash', account_category: 'brokerage', isin: '', name: 'Cash CTO', total_value: 900 }),
-      position({ account_category: 'brokerage', isin: 'KNOWN', name: 'Known asset', total_value: 300 }),
+      position({
+        account_category: 'checking',
+        isin: '',
+        name: 'Compte courant',
+        total_value: 500,
+      }),
+      position({
+        account_type: 'Bourse – Cash',
+        account_category: 'brokerage',
+        isin: '',
+        name: 'Cash CTO',
+        total_value: 900,
+      }),
+      position({
+        account_category: 'brokerage',
+        isin: 'KNOWN',
+        name: 'Known asset',
+        total_value: 300,
+      }),
     ]
     const data = rawData({ geo: [isinRow({ isin: 'KNOWN', values: { france: 100 } })] })
 

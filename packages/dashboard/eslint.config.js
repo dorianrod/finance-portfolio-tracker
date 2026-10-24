@@ -14,6 +14,7 @@ import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
+import noWrappedChartCell from './eslint-rules/no-wrapped-chart-cell.js'
 
 export default defineConfig([
   globalIgnores(['dist']),
@@ -48,6 +49,7 @@ export default defineConfig([
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-prop-drilling': noPropDrilling,
           'state-component-contract': stateComponentContract,
+          'no-wrapped-chart-cell': noWrappedChartCell,
         },
       },
     },
@@ -59,15 +61,18 @@ export default defineConfig([
       'no-lonely-if': 'error',
       'no-negated-condition': 'error',
       'no-nested-ternary': 'error',
-      'no-restricted-properties': ['error',
+      'no-restricted-properties': [
+        'error',
         { property: 'toFixed', message: 'Format display values through a formatter hook.' },
         { property: 'toLocaleDateString', message: 'Format dates through useFormatDate.' },
         { property: 'toLocaleString', message: 'Format display values through a formatter hook.' },
         { property: 'toLocaleTimeString', message: 'Format dates through useFormatDate.' },
       ],
-      'no-restricted-syntax': ['error',
+      'no-restricted-syntax': [
+        'error',
         {
-          selector: "NewExpression[callee.object.name='Intl'][callee.property.name='DateTimeFormat']",
+          selector:
+            "NewExpression[callee.object.name='Intl'][callee.property.name='DateTimeFormat']",
           message: 'Format dates through useFormatDate.',
         },
         {
@@ -91,6 +96,7 @@ export default defineConfig([
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-prop-drilling': 'warn',
       'local/state-component-contract': 'error',
+      'local/no-wrapped-chart-cell': 'error',
     },
   },
   {
@@ -109,23 +115,33 @@ export default defineConfig([
   {
     files: ['src/shared/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', {
-        patterns: [{
-          group: ['@/domains/**'],
-          message: 'Shared code must not depend on business domains.',
-        }],
-      }],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/domains/**'],
+              message: 'Shared code must not depend on business domains.',
+            },
+          ],
+        },
+      ],
     },
   },
   {
     files: ['src/domains/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': ['error', {
-        patterns: [{
-          group: ['@/app/**'],
-          message: 'Business domains must not depend on the application shell.',
-        }],
-      }],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/app/**'],
+              message: 'Business domains must not depend on the application shell.',
+            },
+          ],
+        },
+      ],
     },
   },
 ])

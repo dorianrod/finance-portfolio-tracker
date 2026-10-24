@@ -1,4 +1,4 @@
 export type CashHistoryPoint = {
-  date: string
+  date: Date
   total_broker_cash: number
 }

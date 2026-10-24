@@ -1,9 +1,13 @@
-import i18n from '@/i18n/i18n'
+import type {
+  GroupRow,
+  OperationRow,
+  PositionRow,
+} from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import type { PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import i18n from '@/i18n/i18n'
 
-import { CATEGORY_ORDER, CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
+import { CASH_SUFFIX, CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 
 function assetKey(op: RawOperation): string {
@@ -18,7 +22,9 @@ function positionKey(asset: string, account: string): string {
   return `${asset}|${account}`
 }
 
-export function buildAccountLabels(accountRows: { account: string; label: string }[]): Record<string, string> {
+export function buildAccountLabels(
+  accountRows: { account: string; label: string }[],
+): Record<string, string> {
   const labels: Record<string, string> = {}
   for (const r of accountRows) {
     if (r.account && r.label) labels[r.account] = r.label
@@ -29,22 +35,22 @@ export function buildAccountLabels(accountRows: { account: string; label: string
 export function buildPositionRows(
   ops: RawOperation[],
   rawPositions: RawPosition[],
-  asOfDate?: string,
+  asOfDate?: Date,
 ): PositionRow[] {
   const eligiblePositions = asOfDate
-    ? rawPositions.filter((position) => position.snapshot_date.slice(0, 10) <= asOfDate)
+    ? rawPositions.filter((position) => position.snapshot_date <= asOfDate)
     : rawPositions
-  const eligibleOperations = asOfDate
-    ? ops.filter((operation) => operation.date.slice(0, 10) <= asOfDate)
-    : ops
+  const eligibleOperations = asOfDate ? ops.filter((operation) => operation.date <= asOfDate) : ops
 
   // Build map of positions at the latest complete snapshot on or before asOfDate.
-  const latestDateStr = eligiblePositions
-    .reduce((max, p) => (p.snapshot_date > max ? p.snapshot_date : max), '')
+  const latestTimestamp = eligiblePositions.reduce(
+    (max, p) => Math.max(p.snapshot_date.getTime(), max),
+    Number.NEGATIVE_INFINITY,
+  )
 
   const latestByKey = new Map<string, RawPosition>()
   eligiblePositions
-    .filter((p) => p.snapshot_date === latestDateStr)
+    .filter((p) => p.snapshot_date.getTime() === latestTimestamp)
     .forEach((p) => {
       const key = positionKey(p.isin || p.ticker || p.name, p.account)
       // Defensive: keep the row with highest total_value on a key clash
@@ -74,17 +80,17 @@ export function buildPositionRows(
     const dividendOps = assetOps.filter((o) => o.operation_type === 'DIVIDEND')
     const interestOps = assetOps.filter((o) => o.operation_type === 'INTEREST')
     const tradeOps = assetOps.filter(
-      (o) => o.operation_type === 'BUY' || o.operation_type === 'SELL'
+      (o) => o.operation_type === 'BUY' || o.operation_type === 'SELL',
     )
     const depositOps = assetOps.filter(
-      (o) => o.operation_type === 'DEPOSIT' || o.operation_type === 'WITHDRAWAL'
+      (o) => o.operation_type === 'DEPOSIT' || o.operation_type === 'WITHDRAWAL',
     )
 
     const totalDividends = lp
-      ? lp.total_dividends ?? 0
+      ? (lp.total_dividends ?? 0)
       : dividendOps.reduce((sum, o) => sum + o.total_amount, 0)
     const totalInterest = lp
-      ? lp.total_interest ?? 0
+      ? (lp.total_interest ?? 0)
       : interestOps.reduce((sum, o) => sum + o.total_amount, 0)
 
     const totalDeposits = depositOps
@@ -103,15 +109,13 @@ export function buildPositionRows(
       .reduce((sum, o) => sum + Math.abs(o.total_amount), 0)
 
     const realizedPnl = lp
-      ? lp.realized_gain ?? 0
+      ? (lp.realized_gain ?? 0)
       : tradeOps
           .filter((o) => o.operation_type === 'SELL')
           .reduce((sum, o) => sum + o.realized_gain, 0)
 
     // Annualized dividends: total / years of holding
-    const dates = assetOps
-      .map((o) => new Date(o.date).getTime())
-      .filter((d) => !isNaN(d))
+    const dates = assetOps.map((o) => o.date.getTime()).filter((d) => !isNaN(d))
     const minDate = Math.min(...dates)
     const maxDate = Math.max(...dates)
     const yearsHeld = Math.max((maxDate - minDate) / (1000 * 60 * 60 * 24 * 365.25), 1 / 12)
@@ -121,11 +125,11 @@ export function buildPositionRows(
 
     if (dividendOps.length > 0) {
       const divOpRows: OperationRow[] = dividendOps
-        .toSorted((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.getTime() - a.date.getTime())
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-div-${i}`,
-          date: o.date.slice(0, 10),
+          date: o.date,
           account: o.account,
           operation_type: o.operation_type,
           quantity: o.quantity,
@@ -137,6 +141,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-dividends`,
+        groupType: 'dividends',
         label: i18n.t('ui.buildpositionhierarchyTs.dividends'),
         total_dividends: totalDividends,
         dividend_count: dividendOps.length,
@@ -147,11 +152,11 @@ export function buildPositionRows(
 
     if (interestOps.length > 0) {
       const intOpRows: OperationRow[] = interestOps
-        .toSorted((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.getTime() - a.date.getTime())
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-int-${i}`,
-          date: o.date.slice(0, 10),
+          date: o.date,
           account: o.account,
           operation_type: o.operation_type,
           quantity: o.quantity,
@@ -163,6 +168,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-interest`,
+        groupType: 'interest',
         label: i18n.t('ui.buildpositionhierarchyTs.interest'),
         total_interest: totalInterest,
         interest_count: interestOps.length,
@@ -172,11 +178,11 @@ export function buildPositionRows(
 
     if (depositOps.length > 0) {
       const depOpRows: OperationRow[] = depositOps
-        .toSorted((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.getTime() - a.date.getTime())
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-dep-${i}`,
-          date: o.date.slice(0, 10),
+          date: o.date,
           account: o.account,
           operation_type: o.operation_type,
           quantity: o.quantity,
@@ -188,6 +194,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-deposits`,
+        groupType: 'cash',
         label: i18n.t('ui.buildpositionhierarchyTs.depositsWithdrawals'),
         deposit_total: totalDeposits,
         withdrawal_total: totalWithdrawals,
@@ -197,11 +204,11 @@ export function buildPositionRows(
 
     if (tradeOps.length > 0) {
       const tradeOpRows: OperationRow[] = tradeOps
-        .toSorted((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.getTime() - a.date.getTime())
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-trade-${i}`,
-          date: o.date.slice(0, 10),
+          date: o.date,
           account: o.account,
           operation_type: o.operation_type,
           quantity: o.quantity,
@@ -213,6 +220,7 @@ export function buildPositionRows(
       subRows.push({
         kind: 'group',
         id: `${key}-trades`,
+        groupType: 'trades',
         label: i18n.t('ui.buildpositionhierarchyTs.buysSells'),
         total_invested: totalInvested,
         total_sold: totalSold,
@@ -232,10 +240,13 @@ export function buildPositionRows(
     rows.push({
       kind: 'position',
       id: key,
-      name: resolveAssetName({
-        name: lp?.name || first.name,
-        ticker: lp?.ticker || first.ticker,
-      }, key),
+      name: resolveAssetName(
+        {
+          name: lp?.name || first.name,
+          ticker: lp?.ticker || first.ticker,
+        },
+        key,
+      ),
       ticker: lp?.ticker || first.ticker || '',
       isin: lp?.isin || first.isin || '',
       account,
@@ -281,5 +292,4 @@ export function buildPositionRows(
     if (ta !== tb) return ta - tb
     return (b.total_value ?? 0) - (a.total_value ?? 0)
   })
-
 }

@@ -10,7 +10,7 @@ export type AssetIrrItem = {
 
 export type AssetIrrSummary = {
   available: boolean
-  start_date: string | null
-  end_date: string | null
+  start_date: Date | null
+  end_date: Date | null
   assets: AssetIrrItem[]
 }

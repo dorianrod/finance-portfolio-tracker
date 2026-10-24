@@ -1,8 +1,4 @@
-import { useMemo } from 'react'
-import { useAtomValue } from 'jotai'
-import { useFundHoldingsData } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import { buildFundExposureViewModel } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/shared/services/actions/useDashboardUnderlyingHoldings'
 import {
@@ -10,26 +6,34 @@ import {
   dashboardUnderlyingQueryAtom,
   dashboardUnderlyingSortAtom,
 } from '@/domains/portfolio/shared/stores/dashboardUnderlyingHoldings.atoms'
+import type {
+  FundHolding,
+  FundHoldingStatus,
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
 
 const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
 export function useFundExposureViewModel(positions: PositionRow[], holdings: FundHolding[]) {
-  const { data: fundData } = useFundHoldingsData()
+  const { data: fundData } = useFundHoldingsQuery()
   const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
   const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
   const query = useAtomValue(dashboardUnderlyingQueryAtom)
   const sort = useAtomValue(dashboardUnderlyingSortAtom)
   const actions = useDashboardUnderlyingHoldings()
   const exposure = useMemo(
-    () => buildFundExposureViewModel({
-      expanded,
-      holdings,
-      positions,
-      query,
-      sort,
-      statuses,
-    }),
+    () =>
+      buildFundExposureViewModel({
+        expanded,
+        holdings,
+        positions,
+        query,
+        sort,
+        statuses,
+      }),
     [expanded, holdings, positions, query, sort, statuses],
   )
-  return { ...actions, ...exposure, query, sort }
+  return useMemo(() => ({ ...actions, ...exposure, query, sort }), [actions, exposure, query, sort])
 }

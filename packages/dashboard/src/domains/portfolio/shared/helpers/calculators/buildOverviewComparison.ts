@@ -1,59 +1,62 @@
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-import { CASH_ACCOUNT_FILTER_SUFFIX, accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
   type HistoricalConcentrationHolding,
   type HistoricalConcentrationPoint,
 } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+import {
+  CASH_ACCOUNT_FILTER_SUFFIX,
+  accountFilterId,
+} from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-export interface OverviewPeriod {
-  start: string
-  end: string
+export type OverviewPeriod = {
+  start: Date
+  end: Date
 }
 
-export interface OverviewWindows {
+export type OverviewWindows = {
   current: OverviewPeriod
   previous: OverviewPeriod
   defaultedToTrailingYear: boolean
 }
 
-export interface ComparedMetric {
+export type ComparedMetric = {
   current: number | null
   previous: number | null
   delta: number | null
   deltaPct: number | null
 }
 
-export interface OverviewValuePoint {
-  date: string
+export type OverviewValuePoint = {
+  date: Date
   value: number
   window: 'previous' | 'current'
 }
 
-export interface OverviewConcentrationPoint {
-  date: string
+export type OverviewConcentrationPoint = {
+  date: Date
   topHoldingPct: number
   topFivePct: number
   coveragePct: number
   holdings: HistoricalConcentrationHolding[]
 }
 
-export interface OverviewConcentrationComparison {
+export type OverviewConcentrationComparison = {
   current: OverviewConcentrationPoint | null
   previous: OverviewConcentrationPoint | null
   topHolding: ComparedMetric
   topFive: ComparedMetric
 }
 
-export interface OverviewComparison {
+export type OverviewComparison = {
   windows: OverviewWindows
   value: ComparedMetric
   contributions: ComparedMetric
@@ -64,63 +67,48 @@ export interface OverviewComparison {
   lookThroughConcentration: OverviewConcentrationComparison
 }
 
-interface OverviewComparisonInput {
+type OverviewComparisonInput = {
   rawPositions: RawPosition[]
   rawOperations: RawOperation[]
   savingCapacity: SavingCapacityPoint[]
   fundHoldingsHistory: HistoricalFundHolding[]
   accountFilters?: Set<string>
   accountTypeFilters?: Set<string>
-  dateFrom?: string
-  dateTo?: string
+  dateFrom?: Date
+  dateTo?: Date
 }
 
-function parseDate(date: string): Date {
-  return new Date(`${date.slice(0, 10)}T00:00:00Z`)
+function addDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * DAY_MS)
 }
 
-function formatDate(date: Date): string {
-  return date.toISOString().slice(0, 10)
+function shiftYear(date: Date, offset: number): Date {
+  const targetYear = date.getUTCFullYear() + offset
+  const month = date.getUTCMonth()
+  const day = Math.min(date.getUTCDate(), new Date(Date.UTC(targetYear, month + 1, 0)).getUTCDate())
+  return new Date(Date.UTC(targetYear, month, day))
 }
 
-function addDays(date: string, days: number): string {
-  return formatDate(new Date(parseDate(date).getTime() + days * DAY_MS))
-}
-
-function shiftYear(date: string, offset: number): string {
-  const source = parseDate(date)
-  const targetYear = source.getUTCFullYear() + offset
-  const month = source.getUTCMonth()
-  const day = Math.min(
-    source.getUTCDate(),
-    new Date(Date.UTC(targetYear, month + 1, 0)).getUTCDate(),
-  )
-  return formatDate(new Date(Date.UTC(targetYear, month, day)))
-}
-
-function minDate(left: string, right: string): string {
+function minDate(left: Date, right: Date): Date {
   return left < right ? left : right
 }
 
 export function resolveOverviewWindows(
-  availableDates: string[],
-  dateFrom?: string,
-  dateTo?: string,
+  availableDates: Date[],
+  dateFrom?: Date,
+  dateTo?: Date,
 ): OverviewWindows | null {
-  const dates = availableDates.filter(Boolean).toSorted()
+  const dates = availableDates.toSorted((left, right) => left.getTime() - right.getTime())
   const earliest = dates[0]
   const latest = dates.at(-1)
   if (!earliest || !latest) return null
 
   const currentEnd = dateTo ? minDate(dateTo, latest) : latest
   const defaultedToTrailingYear = !dateFrom && !dateTo
-  const currentStart = dateFrom
-    ?? (dateTo ? earliest : addDays(shiftYear(currentEnd, -1), 1))
+  const currentStart = dateFrom ?? (dateTo ? earliest : addDays(shiftYear(currentEnd, -1), 1))
   if (currentStart > currentEnd) return null
 
-  const durationDays = Math.round(
-    (parseDate(currentEnd).getTime() - parseDate(currentStart).getTime()) / DAY_MS,
-  ) + 1
+  const durationDays = Math.round((currentEnd.getTime() - currentStart.getTime()) / DAY_MS) + 1
   const previousEnd = addDays(currentStart, -1)
   const previousStart = addDays(previousEnd, -(durationDays - 1))
 
@@ -149,28 +137,34 @@ function matchesPositionScope(
   accountFilters: Set<string>,
   accountTypeFilters: Set<string>,
 ): boolean {
-  return (accountFilters.size === 0 || accountFilters.has(accountFilterId(row)))
-    && (accountTypeFilters.size === 0 || accountTypeFilters.has(row.account_type ?? ''))
+  return (
+    (accountFilters.size === 0 || accountFilters.has(accountFilterId(row))) &&
+    (accountTypeFilters.size === 0 || accountTypeFilters.has(row.account_type ?? ''))
+  )
 }
 
 export function buildGrossValueHistory(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),
   accountTypeFilters: Set<string> = new Set(),
-): Array<{ date: string; value: number }> {
-  const byDate = new Map<string, number>()
+): Array<{ date: Date; value: number }> {
+  const byDate = new Map<number, number>()
   for (const row of rows) {
-    if (!row.snapshot_date || !matchesPositionScope(row, accountFilters, accountTypeFilters)) continue
+    if (!row.snapshot_date || !matchesPositionScope(row, accountFilters, accountTypeFilters))
+      continue
     const grossValue = row.total_value
     if (grossValue == null || !Number.isFinite(grossValue)) continue
-    byDate.set(row.snapshot_date, (byDate.get(row.snapshot_date) ?? 0) + grossValue)
+    byDate.set(
+      row.snapshot_date.getTime(),
+      (byDate.get(row.snapshot_date.getTime()) ?? 0) + grossValue,
+    )
   }
   return [...byDate.entries()]
-    .toSorted(([left], [right]) => left.localeCompare(right))
-    .map(([date, value]) => ({ date, value: Math.round(value) }))
+    .toSorted(([left], [right]) => left - right)
+    .map(([date, value]) => ({ date: new Date(date), value: Math.round(value) }))
 }
 
-function latestAtOrBefore<T extends { date: string }>(points: T[], end: string): T | null {
+function latestAtOrBefore<T extends { date: Date }>(points: T[], end: Date): T | null {
   for (let index = points.length - 1; index >= 0; index -= 1) {
     if (points[index].date <= end) return points[index]
   }
@@ -181,13 +175,13 @@ export function compareRollingThreeYearIrr(
   history: PortfolioHistoryPoint[],
   windows: OverviewWindows,
 ): ComparedMetric {
-  const points = [...history].toSorted((left, right) => left.date.localeCompare(right.date))
+  const points = [...history].toSorted((left, right) => left.date.getTime() - right.date.getTime())
   const current = latestAtOrBefore(points, windows.current.end)?.tri_rolling_3y ?? null
   const previous = latestAtOrBefore(points, windows.previous.end)?.tri_rolling_3y ?? null
   return compared(current, previous)
 }
 
-function sumWindow<T extends { date: string }>(
+function sumWindow<T extends { date: Date }>(
   points: T[],
   period: OverviewPeriod,
   value: (point: T) => number,
@@ -200,8 +194,7 @@ function sumWindow<T extends { date: string }>(
 function selectedOperationAccounts(accountFilters: Set<string>): Set<string> | null {
   if (accountFilters.size === 0) return null
   return new Set(
-    [...accountFilters]
-      .filter((account) => !account.endsWith(CASH_ACCOUNT_FILTER_SUFFIX))
+    [...accountFilters].filter((account) => !account.endsWith(CASH_ACCOUNT_FILTER_SUFFIX)),
   )
 }
 
@@ -211,17 +204,20 @@ function incomeInWindow(
   accountFilters: Set<string>,
 ): number | null {
   const selectedAccounts = selectedOperationAccounts(accountFilters)
-  const relevant = operations.filter((operation) => (
-    (operation.operation_type === 'DIVIDEND' || operation.operation_type === 'INTEREST')
-    && operation.date >= period.start
-    && operation.date <= period.end
-    && (selectedAccounts === null || selectedAccounts.has(operation.account))
-  ))
+  const relevant = operations.filter(
+    (operation) =>
+      (operation.operation_type === 'DIVIDEND' || operation.operation_type === 'INTEREST') &&
+      operation.date >= period.start &&
+      operation.date <= period.end &&
+      (selectedAccounts === null || selectedAccounts.has(operation.account)),
+  )
   if (relevant.length === 0) return 0
-  return Math.round(relevant.reduce((sum, operation) => {
-    const amount = operation.total_amount
-    return sum + (Number.isFinite(amount) ? amount : 0)
-  }, 0))
+  return Math.round(
+    relevant.reduce((sum, operation) => {
+      const amount = operation.total_amount
+      return sum + (Number.isFinite(amount) ? amount : 0)
+    }, 0),
+  )
 }
 
 function toOverviewConcentration(
@@ -264,12 +260,32 @@ export function buildOverviewComparison(input: OverviewComparisonInput): Overvie
 
   const currentValue = latestAtOrBefore(valuePoints, windows.current.end)?.value ?? null
   const previousValue = latestAtOrBefore(valuePoints, windows.previous.end)?.value ?? null
-  const currentContributions = sumWindow(input.savingCapacity, windows.current, (point) => point.savings_delta)
-  const previousContributions = sumWindow(input.savingCapacity, windows.previous, (point) => point.savings_delta)
-  const currentPerformance = sumWindow(input.savingCapacity, windows.current, (point) => point.perf_delta)
-  const previousPerformance = sumWindow(input.savingCapacity, windows.previous, (point) => point.perf_delta)
+  const currentContributions = sumWindow(
+    input.savingCapacity,
+    windows.current,
+    (point) => point.savings_delta,
+  )
+  const previousContributions = sumWindow(
+    input.savingCapacity,
+    windows.previous,
+    (point) => point.savings_delta,
+  )
+  const currentPerformance = sumWindow(
+    input.savingCapacity,
+    windows.current,
+    (point) => point.perf_delta,
+  )
+  const previousPerformance = sumWindow(
+    input.savingCapacity,
+    windows.previous,
+    (point) => point.perf_delta,
+  )
 
-  const heldPoints = buildHistoricalConcentration(input.rawPositions, accountFilters, accountTypeFilters)
+  const heldPoints = buildHistoricalConcentration(
+    input.rawPositions,
+    accountFilters,
+    accountTypeFilters,
+  )
   const lookThroughPoints = buildHistoricalLookThroughConcentration(
     input.rawPositions,
     input.fundHoldingsHistory,

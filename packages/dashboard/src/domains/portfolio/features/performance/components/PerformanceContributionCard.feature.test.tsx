@@ -1,20 +1,26 @@
+import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { AssetIrrView, PerformanceContributionCard } from './PerformanceContributionCard.feature'
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
-import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 
-function summary(overrides: Partial<PerformanceContributionSummary> = {}): PerformanceContributionSummary {
+function summary(
+  overrides: Partial<PerformanceContributionSummary> = {},
+): PerformanceContributionSummary {
   return {
     horizon: 'since-tracking',
     available: true,
-    startDate: '2021-01-31',
-    endDate: '2026-10-12',
+    startDate: new Date('2021-01-31'),
+    endDate: new Date('2026-10-12'),
     netContribution: 750,
     positiveTotal: 1000,
     negativeTotal: 250,
-    contributors: [{ key: 'a', label: 'AAA', name: 'Asset A', amount: 1000, share: 100, accounts: ['PEA'] }],
-    detractors: [{ key: 'b', label: 'BBB', name: 'Asset B', amount: -250, share: 100, accounts: ['CTO'] }],
+    contributors: [
+      { key: 'a', label: 'AAA', name: 'Asset A', amount: 1000, share: 100, accounts: ['PEA'] },
+    ],
+    detractors: [
+      { key: 'b', label: 'BBB', name: 'Asset B', amount: -250, share: 100, accounts: ['CTO'] },
+    ],
     ...overrides,
   }
 }
@@ -22,12 +28,36 @@ function summary(overrides: Partial<PerformanceContributionSummary> = {}): Perfo
 function assetIrr(overrides: Partial<AssetIrrSummary> = {}): AssetIrrSummary {
   return {
     available: true,
-    start_date: '2025-10-12',
-    end_date: '2026-10-12',
+    start_date: new Date('2025-10-12'),
+    end_date: new Date('2026-10-12'),
     assets: [
-      { key: 'win', label: 'WIN', name: 'Winner', irr: 20, value: 1200, accounts: ['PEA'], account_types: ['PEA'] },
-      { key: 'small', label: 'SMALL', name: 'Small winner', irr: 5, value: 525, accounts: ['CTO'], account_types: ['CTO'] },
-      { key: 'lose', label: 'LOSE', name: 'Loser', irr: -10, value: 900, accounts: ['PEA'], account_types: ['PEA'] },
+      {
+        key: 'win',
+        label: 'WIN',
+        name: 'Winner',
+        irr: 20,
+        value: 1200,
+        accounts: ['PEA'],
+        account_types: ['PEA'],
+      },
+      {
+        key: 'small',
+        label: 'SMALL',
+        name: 'Small winner',
+        irr: 5,
+        value: 525,
+        accounts: ['CTO'],
+        account_types: ['CTO'],
+      },
+      {
+        key: 'lose',
+        label: 'LOSE',
+        name: 'Loser',
+        irr: -10,
+        value: 900,
+        accounts: ['PEA'],
+        account_types: ['PEA'],
+      },
     ],
     ...overrides,
   }
@@ -35,9 +65,7 @@ function assetIrr(overrides: Partial<AssetIrrSummary> = {}): AssetIrrSummary {
 
 describe('PerformanceContributionCard', () => {
   it('uses the same ranked-list visual for positive and negative IRRs', () => {
-    const html = renderToStaticMarkup(
-      <AssetIrrView summary={assetIrr()} status="ready" />,
-    )
+    const html = renderToStaticMarkup(<AssetIrrView summary={assetIrr()} status="ready" />)
 
     expect(html).not.toContain('IRR method')
     expect(html).toContain('Assets measured')
@@ -61,7 +89,7 @@ describe('PerformanceContributionCard', () => {
         assetIrr={assetIrr()}
         assetIrrStatus="ready"
         sinceTracking={summary()}
-        trailingThreeYears={summary({ horizon: 'trailing-3y', startDate: '2023-09-30' })}
+        trailingThreeYears={summary({ horizon: 'trailing-3y', startDate: new Date('2023-09-30') })}
         sinceTrackingIrr={12.34}
         trailingThreeYearIrr={8.5}
         irrStatus="ready"

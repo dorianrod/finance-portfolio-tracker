@@ -1,4 +1,4 @@
 export type AllocationPoint = {
-  date: string
+  date: Date
   categories: Array<{ name: string; value: number }>
 }

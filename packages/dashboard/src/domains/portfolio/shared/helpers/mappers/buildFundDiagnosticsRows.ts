@@ -1,18 +1,18 @@
+import {
+  getFundQualityPresentation,
+  type FundQualityCategory,
+} from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
+import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 import type {
   FundHolding,
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import {
-  getFundQualityPresentation,
-  type FundQualityCategory,
-} from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 
 export type FundDiagnosticsFilter = 'all' | 'issues' | FundQualityCategory
 
-export interface FundDiagnosticsRow {
+export type FundDiagnosticsRow = {
   holdings: FundHolding[]
   snapshots: FundSnapshot[]
   status: FundHoldingStatus
@@ -33,18 +33,16 @@ export function buildFundDiagnosticsRows({
   unresolved: FundUnresolved[]
 }): FundDiagnosticsRow[] {
   return statuses
-    .filter((status) => filter === 'all'
-      || filter === getFundQualityPresentation(status.qualityTier).category
-      || (
-        filter === 'issues'
-        && (
-          status.validationStatus !== 'ok'
-          || hasMaterialQualityGap(status.residualPct)
-        )
-      ))
+    .filter(
+      (status) =>
+        filter === 'all' ||
+        filter === getFundQualityPresentation(status.qualityTier).category ||
+        (filter === 'issues' &&
+          (status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct))),
+    )
     .toSorted(
-      (left, right) => right.residualValue - left.residualValue
-        || right.marketValue - left.marketValue,
+      (left, right) =>
+        right.residualValue - left.residualValue || right.marketValue - left.marketValue,
     )
     .map((status) => ({
       holdings: holdings.filter(

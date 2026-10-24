@@ -1,6 +1,6 @@
-import { useLayoutEffect, useRef, useState } from 'react'
-import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import type { ExposureRow } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
+import { useWindowVirtualizer } from '@tanstack/react-virtual'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 const ROW_HEIGHT = 40
 
@@ -16,7 +16,8 @@ export function useVirtualExposureList(rows: ExposureRow[]) {
 
   useLayoutEffect(() => {
     const measure = () => {
-      if (listRef.current) setScrollMargin(listRef.current.getBoundingClientRect().top + window.scrollY)
+      if (listRef.current)
+        setScrollMargin(listRef.current.getBoundingClientRect().top + window.scrollY)
     }
     measure()
     window.addEventListener('resize', measure)
@@ -29,10 +30,18 @@ export function useVirtualExposureList(rows: ExposureRow[]) {
     overscan: 12,
     scrollMargin,
   })
-  const virtualRows = virtualizer.getVirtualItems().map((item) => {
-    const row = rows[item.index]
-    return { item, key: rowKey(row), row }
-  })
+  const virtualItems = virtualizer.getVirtualItems()
+  const virtualRows = useMemo(
+    () =>
+      virtualItems.map((item) => {
+        const row = rows[item.index]
+        return { item, key: rowKey(row), row }
+      }),
+    [rows, virtualItems],
+  )
 
-  return { listRef, scrollMargin, virtualizer, virtualRows }
+  return useMemo(
+    () => ({ listRef, scrollMargin, virtualizer, virtualRows }),
+    [listRef, scrollMargin, virtualizer, virtualRows],
+  )
 }

@@ -5,13 +5,13 @@ function getStaticPropertyName(node) {
 }
 
 function isMapCall(node) {
-  return node.callee.type === 'MemberExpression'
-    && getStaticPropertyName(node.callee.property) === 'map'
+  return (
+    node.callee.type === 'MemberExpression' && getStaticPropertyName(node.callee.property) === 'map'
+  )
 }
 
 function isFunction(node) {
-  return node?.type === 'ArrowFunctionExpression'
-    || node?.type === 'FunctionExpression'
+  return node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression'
 }
 
 function isComponentName(node) {
@@ -23,10 +23,12 @@ function isComponentName(node) {
 function isSimpleValue(node) {
   if (!node || node.type === 'JSXEmptyExpression') return true
   if (node.type === 'Identifier' || node.type === 'Literal') return true
-  if (node.type === 'ChainExpression'
-    || node.type === 'TSAsExpression'
-    || node.type === 'TSNonNullExpression'
-    || node.type === 'TSTypeAssertion') {
+  if (
+    node.type === 'ChainExpression' ||
+    node.type === 'TSAsExpression' ||
+    node.type === 'TSNonNullExpression' ||
+    node.type === 'TSTypeAssertion'
+  ) {
     return isSimpleValue(node.expression)
   }
   if (node.type !== 'MemberExpression') return false
@@ -39,8 +41,11 @@ function hasComplexPropsOrChildren(element) {
       if (!isSimpleValue(attribute.argument)) return true
       continue
     }
-    if (attribute.value?.type === 'JSXExpressionContainer'
-      && !isSimpleValue(attribute.value.expression)) return true
+    if (
+      attribute.value?.type === 'JSXExpressionContainer' &&
+      !isSimpleValue(attribute.value.expression)
+    )
+      return true
   }
 
   return element.children.some((child) => {
@@ -50,11 +55,13 @@ function hasComplexPropsOrChildren(element) {
 }
 
 function isDirectComponentRender(callback) {
-  return callback.type === 'ArrowFunctionExpression'
-    && callback.expression
-    && callback.body.type === 'JSXElement'
-    && isComponentName(callback.body.openingElement.name)
-    && !hasComplexPropsOrChildren(callback.body)
+  return (
+    callback.type === 'ArrowFunctionExpression' &&
+    callback.expression &&
+    callback.body.type === 'JSXElement' &&
+    isComponentName(callback.body.openingElement.name) &&
+    !hasComplexPropsOrChildren(callback.body)
+  )
 }
 
 function containsJsx(node, sourceCode) {
@@ -78,18 +85,34 @@ export default {
     },
     schema: [],
     messages: {
-      extractComponent: 'Extract mapped JSX into a component and keep the callback declarative: items.map((item) => <Item key={item.id} item={item} />).',
+      extractComponent:
+        'Extract mapped JSX into a component and keep the callback declarative: items.map((item) => <Item key={item.id} item={item} />).',
     },
   },
   create(context) {
     const sourceCode = context.sourceCode
+    const directSlots = new Set()
 
     return {
+      ImportDeclaration(node) {
+        if (node.source.value !== 'recharts') return
+        for (const specifier of node.specifiers) {
+          if (specifier.type === 'ImportSpecifier' && specifier.imported.name === 'Cell') {
+            directSlots.add(specifier.local.name)
+          }
+        }
+      },
       CallExpression(node) {
         if (!isMapCall(node)) return
 
         const callback = node.arguments[0]
         if (!isFunction(callback) || !containsJsx(callback.body, sourceCode)) return
+        // Recharts reads Cell props from direct children; a component wrapper hides the slot.
+        if (
+          callback.body.type === 'JSXElement' &&
+          directSlots.has(callback.body.openingElement.name.name)
+        )
+          return
         if (isDirectComponentRender(callback)) return
 
         context.report({

@@ -2,7 +2,7 @@ export type PipelineError = {
   source: string
   level: 'error' | 'warning'
   type: string
-  date: string
+  date: Date | null
   account: string
   isin: string
   ticker: string

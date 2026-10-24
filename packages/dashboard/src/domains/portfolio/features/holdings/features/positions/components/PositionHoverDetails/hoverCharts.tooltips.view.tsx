@@ -1,3 +1,4 @@
+import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -5,23 +6,31 @@ import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticC
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { RollingUnitPricePerf } from './RollingUnitPricePerf.view'
-import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
 
 export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
   const formatMoney = useFormatMoney()
   if (!data) return null
   if (!data.buyAmount && !data.sellAmount) return null
   return (
-    <div className="mt-2 pt-2 border-t border-gray-600 space-y-1">
+    <div className="mt-2 pt-2 border-t border-border-strong space-y-1">
       {data.buyAmount != null && (
-        <p style={{ color: SEMANTIC_COLORS.transactionBuy }}>{i18n.t('ui.hoverchartsTooltips.buy')} {formatMoney(data.buyAmount)}</p>
+        <p style={{ color: SEMANTIC_COLORS.transactionBuy }}>
+          {i18n.t('ui.hoverchartsTooltips.buy')} {formatMoney(data.buyAmount)}
+        </p>
       )}
       {data.sellAmount != null && (
         <>
-          <p style={{ color: SEMANTIC_COLORS.transactionSell }}>{i18n.t('ui.hoverchartsTooltips.sell')} {formatMoney(data.sellAmount)}</p>
+          <p style={{ color: SEMANTIC_COLORS.transactionSell }}>
+            {i18n.t('ui.hoverchartsTooltips.sell')} {formatMoney(data.sellAmount)}
+          </p>
           {data.sellGain != null && (
-            <p className={data.sellGain >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}>
-
+            <p
+              className={
+                data.sellGain >= 0
+                  ? SEMANTIC_TEXT_CLASSES.performancePositive
+                  : SEMANTIC_TEXT_CLASSES.performanceNegative
+              }
+            >
               {i18n.t('ui.hoverchartsTooltips.pL')} {formatMoney(data.sellGain)}
             </p>
           )}
@@ -43,13 +52,22 @@ export function TooltipPortfolio({
   const data = payload[0]?.payload
   const unrealized = valueEntry && costEntry && data ? data.unrealized : null
   return (
-    <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
-      <p className="text-gray-400 mb-2">{label}</p>
-      {valueEntry && <p style={{ color: valueEntry.color }}>{valueEntry.name}: {formatMoney(valueEntry.value ?? 0)}</p>}
-      {costEntry && <p style={{ color: costEntry.color }}>{costEntry.name}: {formatMoney(costEntry.value ?? 0)}</p>}
+    <TooltipBox className="bg-surface-raised border border-border-strong rounded-lg p-3 text-xs shadow-xl">
+      <p className="text-content-muted mb-2">{label}</p>
+      {valueEntry && (
+        <p style={{ color: valueEntry.color }}>
+          {valueEntry.name}: {formatMoney(valueEntry.value ?? 0)}
+        </p>
+      )}
+      {costEntry && (
+        <p style={{ color: costEntry.color }}>
+          {costEntry.name}: {formatMoney(costEntry.value ?? 0)}
+        </p>
+      )}
       {unrealized != null && (
-        <p className={`mt-1 font-semibold ${unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}>
-
+        <p
+          className={`mt-1 font-semibold ${unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}
+        >
           {i18n.t('ui.hoverchartsTooltips.unrealized')} {formatMoney(unrealized)}
         </p>
       )}
@@ -64,16 +82,19 @@ export function TooltipUnit({ active, payload, label }: NumericTooltipProps<Hove
   const p = payload[0]
   const data = p?.payload
   return (
-    <TooltipBox className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs shadow-xl">
-      <p className="text-gray-400 mb-1">{label}</p>
-      <p style={{ color: p.color }}>{i18n.t('ui.hoverchartsTooltips.unitPrice')} {formatMoney(p.value ?? 0, { style: 'decimal' })}</p>
+    <TooltipBox className="bg-surface-raised border border-border-strong rounded-lg p-3 text-xs shadow-xl">
+      <p className="text-content-muted mb-1">{label}</p>
+      <p style={{ color: p.color }}>
+        {i18n.t('ui.hoverchartsTooltips.unitPrice')}{' '}
+        {formatMoney(p.value ?? 0, { style: 'decimal' })}
+      </p>
       <RollingUnitPricePerf rows={data?.rollingReturns ?? []} />
       <OpSummary data={data} />
     </TooltipBox>
   )
 }
 
-interface SavingsPoint {
+type SavingsPoint = {
   balance: number
   delta: number
   month: string
@@ -91,9 +112,18 @@ export function SavingsTooltip({ active, payload }: NumericTooltipProps<SavingsP
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {formatDate(`${monthStr}-02`, { style: 'longMonthYear' })}
       </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>{i18n.t('ui.hoverchartsTooltips.balance')} {formatMoney(balance)}</div>
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>
+        {i18n.t('ui.hoverchartsTooltips.balance')} {formatMoney(balance)}
+      </div>
       {delta !== 0 && (
-        <div style={{ color: delta >= 0 ? SEMANTIC_COLORS.netContributionsText : SEMANTIC_COLORS.performanceNegativeText }}>
+        <div
+          style={{
+            color:
+              delta >= 0
+                ? SEMANTIC_COLORS.netContributionsText
+                : SEMANTIC_COLORS.performanceNegativeText,
+          }}
+        >
           {delta >= 0 ? '▲' : '▼'} {formatMoney(Math.abs(delta))}
         </div>
       )}

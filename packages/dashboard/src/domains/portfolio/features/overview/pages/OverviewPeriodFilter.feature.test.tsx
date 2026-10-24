@@ -1,5 +1,5 @@
-import { renderToStaticMarkup } from 'react-dom/server'
 import { Provider } from 'jotai'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { OverviewPeriodFilter } from './OverviewPeriodFilter.feature'
 
@@ -9,8 +9,8 @@ describe('OverviewPeriodFilter', () => {
       <Provider>
         <OverviewPeriodFilter
           windows={{
-            current: { start: '2025-10-21', end: '2026-10-20' },
-            previous: { start: '2024-10-21', end: '2025-10-20' },
+            current: { start: new Date('2025-10-21'), end: new Date('2026-10-20') },
+            previous: { start: new Date('2024-10-21'), end: new Date('2025-10-20') },
             defaultedToTrailingYear: true,
           }}
         />

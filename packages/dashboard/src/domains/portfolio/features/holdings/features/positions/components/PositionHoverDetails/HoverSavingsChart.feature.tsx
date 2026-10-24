@@ -1,23 +1,32 @@
-import i18n from '@/i18n/i18n'
-import { createPortal } from 'react-dom'
 import {
-  ResponsiveContainer, AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip,
-} from 'recharts'
+  computeMonthlyBalances,
+  computePosition,
+} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
+import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { usePositionsHistory } from '@/domains/portfolio/shared/apis/queries/usePositionsHistory'
-import { computeMonthlyBalances, computePosition } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { createPortal } from 'react-dom'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { SavingsTooltip } from './hoverCharts.tooltips.view'
 
-export interface SavingsChartTarget {
+export type SavingsChartTarget = {
   name: string
-  operations: { date: string; total_amount: number; operation_type: string }[]
+  operations: { date: Date; total_amount: number; operation_type: string }[]
   buttonRect: DOMRect
 }
 
-interface SavingsProps {
+type SavingsProps = {
   target: SavingsChartTarget
   onMouseEnter: () => void
   onMouseLeave: () => void
@@ -25,30 +34,33 @@ interface SavingsProps {
 
 export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: SavingsProps) {
   const formatMoney = useFormatMoney()
-  const { data: history } = usePositionsHistory(target.name)
+  const { data: history } = usePositionHistoryQuery(target.name)
   const { top, left } = computePosition(target.buttonRect)
 
-  const chartData = history && history.length > 0
-    ? history.map((p, i) => {
-        const prev = history[i - 1]
-        return {
-          month: p.date.slice(0, 7),
-          balance: Math.round(p.value),
-          delta: prev ? Math.round(p.value - prev.value) : 0,
-        }
-      })
-    : computeMonthlyBalances(target.operations)
+  const chartData =
+    history && history.length > 0
+      ? history.map((p, i) => {
+          const prev = history[i - 1]
+          return {
+            month: toCalendarMonth(p.date),
+            balance: Math.round(p.value),
+            delta: prev ? Math.round(p.value - prev.value) : 0,
+          }
+        })
+      : computeMonthlyBalances(target.operations)
 
   return createPortal(
     <div
       style={{ top, left, width: 480 }}
-      className="fixed z-[9999] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4"
+      className="fixed z-[9999] bg-surface border border-border-strong rounded-xl shadow-2xl p-4"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div className="mb-3">
-        <p className="text-white text-sm font-semibold">{target.name}</p>
-        <p className="text-gray-500 text-xs">{i18n.t('ui.hoversavingschart.balanceOverTime')}</p>
+        <p className="text-content text-sm font-semibold">{target.name}</p>
+        <p className="text-content-subtle text-xs">
+          {i18n.t('ui.hoversavingschart.balanceOverTime')}
+        </p>
       </div>
 
       {chartData.length > 0 && (
@@ -61,7 +73,11 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-            <XAxis dataKey="month" tick={{ fill: CHART_THEME.tick, fontSize: 10 }} tickLine={false} />
+            <XAxis
+              dataKey="month"
+              tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
+              tickLine={false}
+            />
             <YAxis
               tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
               tickLine={false}
@@ -83,6 +99,6 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
         </ResponsiveContainer>
       )}
     </div>,
-    document.body
+    document.body,
   )
 }

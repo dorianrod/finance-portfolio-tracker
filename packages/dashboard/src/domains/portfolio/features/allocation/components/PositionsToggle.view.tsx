@@ -5,11 +5,15 @@ export function PositionsToggle({ open, onClick }: { open: boolean; onClick: () 
       type="button"
       onClick={onClick}
       aria-pressed={open}
-      title={open ? i18n.t('ui.positionstoggle.hidePositions') : i18n.t('ui.positionstoggle.viewPositions')}
+      title={
+        open
+          ? i18n.t('ui.positionstoggle.hidePositions')
+          : i18n.t('ui.positionstoggle.viewPositions')
+      }
       className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
         open
-          ? 'border-blue-500 bg-blue-600 text-white'
-          : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:bg-gray-800 hover:text-gray-200'
+          ? 'border-accent bg-accent-solid text-content'
+          : 'border-border-strong text-content-muted hover:border-border-strong hover:bg-surface-raised hover:text-content-secondary'
       }`}
     >
       <svg aria-hidden="true" width="13" height="13" viewBox="0 0 16 16" fill="currentColor">

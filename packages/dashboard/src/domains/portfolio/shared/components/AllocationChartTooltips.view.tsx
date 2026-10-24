@@ -1,3 +1,4 @@
+import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -5,9 +6,14 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { catColor } from '@/shared/theme/chartColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
-import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 
-function PieTooltipSubItem({ item, subItem }: { item: PieEntry; subItem: NonNullable<PieEntry['subItems']>[number] }) {
+function PieTooltipSubItem({
+  item,
+  subItem,
+}: {
+  item: PieEntry
+  subItem: NonNullable<PieEntry['subItems']>[number]
+}) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const percentage = formatPercentage(item.total > 0 ? (subItem.value / item.total) * 100 : 0)
@@ -19,7 +25,7 @@ function PieTooltipSubItem({ item, subItem }: { item: PieEntry; subItem: NonNull
   )
 }
 
-interface EvolutionTooltipRowProps {
+type EvolutionTooltipRowProps = {
   category: string
   payload: NonNullable<NumericTooltipProps<Record<string, number | string>>['payload']>
 }
@@ -29,7 +35,11 @@ function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
   const value = tooltipValue(payload, category)
   if (!value) return null
 
-  return <div style={{ color: catColor(category) }}>{category}: {formatPercentage(value)}</div>
+  return (
+    <div style={{ color: catColor(category) }}>
+      {category}: {formatPercentage(value)}
+    </div>
+  )
 }
 
 export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
@@ -41,17 +51,23 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   const percentage = formatPercentage(item.total > 0 ? (item.value / item.total) * 100 : 0)
   return (
     <TooltipBox minWidth={160}>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>{item.name}</div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 700 }}>{formatMoney(item.value, { style: 'full' })}</div>
-      <div style={{ color: 'var(--tooltip-dim)', marginBottom: item.subItems?.length ? 6 : 0 }}>
-        {percentage}  {i18n.t('ui.allocationchartsTooltips.ofTotalAllocated')}
+      <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>
+        {item.name}
       </div>
-      {item.subItems?.map((subItem) => <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />)}
+      <div style={{ color: 'var(--tooltip-label)', fontWeight: 700 }}>
+        {formatMoney(item.value, { style: 'full' })}
+      </div>
+      <div style={{ color: 'var(--tooltip-dim)', marginBottom: item.subItems?.length ? 6 : 0 }}>
+        {percentage} {i18n.t('ui.allocationchartsTooltips.ofTotalAllocated')}
+      </div>
+      {item.subItems?.map((subItem) => (
+        <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />
+      ))}
     </TooltipBox>
   )
 }
 
-interface EvolutionTooltipProps extends NumericTooltipProps<Record<string, number | string>> {
+type EvolutionTooltipProps = NumericTooltipProps<Record<string, number | string>> & {
   categories: string[]
 }
 
@@ -61,9 +77,11 @@ export function EvolutionTooltip({ active, payload, label, categories }: Evoluti
   return (
     <TooltipBox maxWidth={220}>
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
-        {formatDate(String(label), { style: 'longMonthYear' })}
+        {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
       </div>
-      {categories.toReversed().map((category) => <EvolutionTooltipRow key={category} category={category} payload={payload} />)}
+      {categories.toReversed().map((category) => (
+        <EvolutionTooltipRow key={category} category={category} payload={payload} />
+      ))}
     </TooltipBox>
   )
 }

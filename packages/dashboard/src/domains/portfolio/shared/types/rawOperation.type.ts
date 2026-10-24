@@ -1,10 +1,11 @@
+import type { OperationType } from './operationType.type'
 export type RawOperation = {
-  date: string
+  date: Date
   account: string
   isin: string
   ticker: string
   name: string
-  operation_type: string
+  operation_type: OperationType
   quantity: number
   price_per_unit: number
   total_amount: number

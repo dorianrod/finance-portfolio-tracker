@@ -1,7 +1,7 @@
 export type MonthlyOperationType = 'DEPOSIT' | 'WITHDRAWAL'
 
 export type MonthlyOperation = {
-  date: string
+  date: Date
   account: string
   operation_type: MonthlyOperationType
   total_amount: number

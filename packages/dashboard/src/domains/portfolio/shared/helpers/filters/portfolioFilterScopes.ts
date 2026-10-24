@@ -1,12 +1,13 @@
-import { normalizeAccountSelection } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistory'
+import { normalizeAccountSelection } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery'
+import type { FilterSummaryItem } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { FilterSummaryItem } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
+import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 
 export function withoutOperationAndPeriodFilters(filters: DashboardFilters): DashboardFilters {
   return {
     ...filters,
-    operationTypes: new Set<string>(),
+    operationTypes: new Set<OperationType>(),
     hideClosedPositions: false,
     dateFrom: undefined,
     dateTo: undefined,
@@ -16,7 +17,7 @@ export function withoutOperationAndPeriodFilters(filters: DashboardFilters): Das
 export function withoutOperationFilters(filters: DashboardFilters): DashboardFilters {
   return {
     ...filters,
-    operationTypes: new Set<string>(),
+    operationTypes: new Set<OperationType>(),
     hideClosedPositions: false,
   }
 }
@@ -27,9 +28,7 @@ export function buildDemoPresetSelection(
 ): Set<string> | null {
   if (!demoPresetAccounts) return null
   const included = new Set(demoPresetAccounts)
-  return new Set(
-    allAccounts.filter((account) => included.has(rawAccountId(account))),
-  )
+  return new Set(allAccounts.filter((account) => included.has(rawAccountId(account))))
 }
 
 export function isDemoPresetActive(
@@ -38,15 +37,15 @@ export function isDemoPresetActive(
 ): boolean {
   if (!demoPresetAccounts) return false
   const selected = normalizeAccountSelection(selectedAccounts)
-  return selected.length === demoPresetAccounts.length
-    && selected.every((account, index) => account === demoPresetAccounts[index])
+  return (
+    selected.length === demoPresetAccounts.length &&
+    selected.every((account, index) => account === demoPresetAccounts[index])
+  )
 }
 
 export function filterSummariesForTab(
   summaries: FilterSummaryItem[],
   tab: string,
 ): FilterSummaryItem[] {
-  return tab === 'overview'
-    ? summaries.filter((item) => item.key !== 'period')
-    : summaries
+  return tab === 'overview' ? summaries.filter((item) => item.key !== 'period') : summaries
 }

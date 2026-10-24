@@ -1,4 +1,4 @@
-interface HoldingLabelTickProps {
+type HoldingLabelTickProps = {
   x?: number
   y?: number
   payload?: { value?: string | number }

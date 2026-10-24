@@ -1,5 +1,5 @@
 export type PortfolioHistoryPoint = {
-  date: string
+  date: Date
   total_value: number
   total_cost_basis: number
   unrealized_gain: number

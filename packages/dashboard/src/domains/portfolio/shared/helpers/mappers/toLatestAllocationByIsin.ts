@@ -1,33 +1,37 @@
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
-
-export function toLatestByIsin(rows: Record<string, string>[]): Map<string, { name: string; point: AllocationPoint }> {
-  const byIsin = new Map<string, Record<string, string>[]>()
-  const nameByIsin = new Map<string, string>()
+export function toLatestByIsin(
+  rows: RawIsinRow[],
+): Map<string, { name: string; point: AllocationPoint }> {
+  const latestByIsin = new Map<
+    string,
+    { timestamp: number; name: string; values: Map<string, number> }
+  >()
   for (const row of rows) {
-    const { isin, name } = row
-    if (!isin) continue
-    nameByIsin.set(isin, name)
-    const arr = byIsin.get(isin) ?? []
-    arr.push(row)
-    byIsin.set(isin, arr)
+    if (!row.isin) continue
+    const timestamp = row.snapshot_date.getTime()
+    let latest = latestByIsin.get(row.isin)
+    if (latest && latest.timestamp > timestamp) continue
+    if (!latest || latest.timestamp < timestamp) {
+      latest = { timestamp, name: row.name, values: new Map() }
+      latestByIsin.set(row.isin, latest)
+    }
+    for (const [name, value] of Object.entries(row.values)) {
+      latest.values.set(name, (latest.values.get(name) ?? 0) + value)
+    }
   }
   const result = new Map<string, { name: string; point: AllocationPoint }>()
-  for (const [isin, isinRows] of byIsin) {
-    const latest = [...isinRows].toSorted((a, b) => b.snapshot_date.localeCompare(a.snapshot_date))[0]
-    const categories = Object.entries(latest)
-      .filter(([k]) => !['snapshot_date', 'isin', 'name'].includes(k))
-      .map(([catName, val]) => ({ name: catName, value: parseFloat(val) || 0 }))
-      .filter((c) => c.value > 0)
-      .toSorted((a, b) => {
-      if (a.name === 'nc') return 1
-      if (b.name === 'nc') return -1
-      return b.value - a.value
+  for (const [isin, latest] of latestByIsin) {
+    const categories = [...latest.values]
+      .map(([name, value]) => ({ name, value }))
+      .filter((category) => category.value > 0)
+      .toSorted((left, right) => {
+        if (left.name === 'nc') return 1
+        if (right.name === 'nc') return -1
+        return right.value - left.value
       })
-    result.set(isin, {
-      name: nameByIsin.get(isin) ?? isin,
-      point: { date: latest.snapshot_date, categories },
-    })
+    result.set(isin, { name: latest.name, point: { date: new Date(latest.timestamp), categories } })
   }
   return result
 }

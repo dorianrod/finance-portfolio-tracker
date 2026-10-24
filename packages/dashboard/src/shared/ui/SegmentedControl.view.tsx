@@ -1,4 +1,3 @@
-import i18n from '@/i18n/i18n'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 type SegmentedControlSize = 'compact' | 'default' | 'large'
@@ -6,7 +5,7 @@ type SegmentedControlTone = 'accent' | 'neutral'
 
 const SIZE_CLASSES: Record<SegmentedControlSize, string> = {
   compact: 'px-2 py-1 text-[11px]',
-  default: i18n.t('ui.segmentedcontrol.px3Py15TextXs'),
+  default: 'px-3 py-1.5 text-xs',
   large: 'px-3 py-2 text-sm',
 }
 
@@ -30,7 +29,7 @@ export function SegmentedControl({
     <div
       role="group"
       aria-label={label}
-      className={`inline-flex max-w-full rounded-control border border-border bg-surface ${density === 'compact' ? i18n.t('ui.segmentedcontrol.p05') : 'p-1'} ${className}`}
+      className={`inline-flex max-w-full rounded-control border border-border bg-surface ${density === 'compact' ? 'p-0.5' : 'p-1'} ${className}`}
     >
       {children}
     </div>

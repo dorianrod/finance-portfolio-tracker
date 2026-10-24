@@ -1,12 +1,43 @@
+import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationTrendSection.feature'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+import {
+  nextPlaybackIndex,
+  shouldAnimateConcentration,
+} from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { nextPlaybackIndex, shouldAnimateConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationTrendSection.feature'
 
 const points: HistoricalConcentrationPoint[] = [
-  { date: '2024-12-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 1.92, holdingCount: 2, coveragePct: 100, identifiedValue: 200, undisclosedValue: 0, opaqueValue: 0, selectedValue: 200, holdings: [] },
-  { date: '2025-01-31', positionsTo25Pct: 1, positionsTo50Pct: 1, positionsTo75Pct: 2, positionsTo90Pct: 2, effectiveCount: 2, holdingCount: 2, coveragePct: 100, identifiedValue: 200, undisclosedValue: 0, opaqueValue: 0, selectedValue: 200, holdings: [] },
+  {
+    date: new Date('2024-12-31'),
+    positionsTo25Pct: 1,
+    positionsTo50Pct: 1,
+    positionsTo75Pct: 2,
+    positionsTo90Pct: 2,
+    effectiveCount: 1.92,
+    holdingCount: 2,
+    coveragePct: 100,
+    identifiedValue: 200,
+    undisclosedValue: 0,
+    opaqueValue: 0,
+    selectedValue: 200,
+    holdings: [],
+  },
+  {
+    date: new Date('2025-01-31'),
+    positionsTo25Pct: 1,
+    positionsTo50Pct: 1,
+    positionsTo75Pct: 2,
+    positionsTo90Pct: 2,
+    effectiveCount: 2,
+    holdingCount: 2,
+    coveragePct: 100,
+    identifiedValue: 200,
+    undisclosedValue: 0,
+    opaqueValue: 0,
+    selectedValue: 200,
+    holdings: [],
+  },
 ]
 
 describe('ConcentrationTrendSection helpers', () => {
@@ -24,7 +55,13 @@ describe('ConcentrationTrendSection helpers', () => {
 
 describe('ConcentrationTrendSection', () => {
   it('renders trend charts and accessible playback controls', () => {
-    const html = renderToStaticMarkup(<ConcentrationTrendSection heldPoints={points} lookThroughPoints={points} lookThroughAvailable />)
+    const html = renderToStaticMarkup(
+      <ConcentrationTrendSection
+        heldPoints={points}
+        lookThroughPoints={points}
+        lookThroughAvailable
+      />,
+    )
 
     expect(html).toContain('Held-position concentration')
     expect(html).toContain('Minimum positions to reach portfolio share')
@@ -34,12 +71,22 @@ describe('ConcentrationTrendSection', () => {
     expect(html).toContain('Underlying assets')
     expect(html).toContain('aria-label="Play concentration history"')
     expect(html).toContain('aria-label="Concentration month"')
-    expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(html.indexOf('aria-label="Previous concentration month"'))
-    expect(html.indexOf('aria-label="Previous concentration month"')).toBeLessThan(html.indexOf('aria-label="Next concentration month"'))
+    expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(
+      html.indexOf('aria-label="Previous concentration month"'),
+    )
+    expect(html.indexOf('aria-label="Previous concentration month"')).toBeLessThan(
+      html.indexOf('aria-label="Next concentration month"'),
+    )
   })
 
   it('renders a focused empty state with fewer than two snapshots', () => {
-    const html = renderToStaticMarkup(<ConcentrationTrendSection heldPoints={points.slice(0, 1)} lookThroughPoints={[]} lookThroughAvailable={false} />)
+    const html = renderToStaticMarkup(
+      <ConcentrationTrendSection
+        heldPoints={points.slice(0, 1)}
+        lookThroughPoints={[]}
+        lookThroughAvailable={false}
+      />,
+    )
     expect(html).toContain('Not enough concentration history for the current selection.')
     expect(html).toContain('fund_holdings_history.csv')
     expect(html).toContain('disabled=""')

@@ -1,29 +1,30 @@
-import { renderToStaticMarkup } from 'react-dom/server'
-import { Provider, createStore } from 'jotai'
-import { describe, expect, it } from 'vitest'
 import type { OverviewComparison } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+import { Provider, createStore } from 'jotai'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
 const metric = (current: number | null, previous: number | null) => ({
   current,
   previous,
   delta: current == null || previous == null ? null : current - previous,
-  deltaPct: current == null || previous == null || previous === 0
-    ? null
-    : ((current - previous) / Math.abs(previous)) * 100,
+  deltaPct:
+    current == null || previous == null || previous === 0
+      ? null
+      : ((current - previous) / Math.abs(previous)) * 100,
 })
 
 function comparison(): OverviewComparison {
   const concentration = {
     current: {
-      date: '2026-10-20',
+      date: new Date('2026-10-20'),
       topHoldingPct: 24,
       topFivePct: 62,
       coveragePct: 88,
       holdings: [{ key: 'A', label: 'AAA', name: 'Asset A', value: 240, weight: 24 }],
     },
     previous: {
-      date: '2025-10-20',
+      date: new Date('2025-10-20'),
       topHoldingPct: 26,
       topFivePct: 65,
       coveragePct: 86,
@@ -34,8 +35,8 @@ function comparison(): OverviewComparison {
   }
   return {
     windows: {
-      current: { start: '2025-10-21', end: '2026-10-20' },
-      previous: { start: '2024-10-21', end: '2025-10-20' },
+      current: { start: new Date('2025-10-21'), end: new Date('2026-10-20') },
+      previous: { start: new Date('2024-10-21'), end: new Date('2025-10-20') },
       defaultedToTrailingYear: true,
     },
     value: metric(120_000, 100_000),
@@ -70,7 +71,9 @@ describe('OverviewSummaryCards', () => {
     expect(html).toContain('Open Concentration details')
     expect(html).toContain('IRR · trailing 3y')
     expect(html).toContain('+2.2 pp')
-    expect(html).toContain('Previous <span class="font-medium tabular-nums text-gray-400">+6.20%</span>')
+    expect(html).toContain(
+      'Previous <span class="font-medium tabular-nums text-content-muted">+6.20%</span>',
+    )
     expect(html).toContain('-2.0 pp')
     expect(html).toContain('Underlying assets')
     expect(html).toContain('Held positions · largest 24.0% · top five 62.0%')
@@ -101,7 +104,9 @@ describe('OverviewSummaryCards', () => {
       </Provider>,
     )
 
-    expect(html).toContain('Previous <span class="font-medium tabular-nums text-gray-400">Unavailable</span>')
+    expect(html).toContain(
+      'Previous <span class="font-medium tabular-nums text-content-muted">Unavailable</span>',
+    )
     expect(html).toContain('Underlying detail unavailable · showing held positions')
   })
 })

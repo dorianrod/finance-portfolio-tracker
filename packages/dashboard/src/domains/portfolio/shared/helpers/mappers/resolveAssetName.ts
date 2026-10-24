@@ -1,4 +1,4 @@
-export interface AssetNameSource {
+export type AssetNameSource = {
   name?: string | null
   ticker?: string | null
 }

@@ -3,19 +3,22 @@ import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCate
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-export interface AccountTypeHistoryPoint {
-  date: string
-  [key: string]: number | string
+export type AccountTypeHistoryPoint = {
+  date: Date
+  [key: string]: number | Date
 }
 
-export interface AccountTypeHistory {
+export type AccountTypeHistory = {
   data: AccountTypeHistoryPoint[]
   accountTypes: string[]
   typeCategories: Record<string, string>
 }
 
-export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<string> | null): AccountTypeHistory {
-  const byDate = new Map<string, Map<string, number>>()
+export function buildAccountTypeHistory(
+  rows: RawPositionRow[],
+  accountSet: Set<string> | null,
+): AccountTypeHistory {
+  const byDate = new Map<number, Map<string, number>>()
   const typeSet = new Set<string>()
   const typeCategories: Record<string, string> = {}
 
@@ -25,9 +28,9 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
     const tv = row.total_value || 0
     typeSet.add(row.account_type)
     if (row.account_category) typeCategories[row.account_type] = row.account_category
-    const dateMap = byDate.get(row.snapshot_date) ?? new Map<string, number>()
+    const dateMap = byDate.get(row.snapshot_date.getTime()) ?? new Map<string, number>()
     dateMap.set(row.account_type, (dateMap.get(row.account_type) ?? 0) + tv)
-    byDate.set(row.snapshot_date, dateMap)
+    byDate.set(row.snapshot_date.getTime(), dateMap)
   }
 
   const accountTypes = [...typeSet].toSorted((a, b) => {
@@ -40,9 +43,9 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
   })
 
   const data: AccountTypeHistoryPoint[] = [...byDate.entries()]
-    .toSorted(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a - b)
     .map(([date, typeMap]) => {
-      const point: AccountTypeHistoryPoint = { date }
+      const point: AccountTypeHistoryPoint = { date: new Date(date) }
       for (const t of accountTypes) {
         point[t] = Math.round(typeMap.get(t) ?? 0)
       }

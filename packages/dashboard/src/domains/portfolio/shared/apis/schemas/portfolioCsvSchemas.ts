@@ -1,33 +1,54 @@
-import * as yup from 'yup'
-import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import type { RawPortfolioHistory } from '@/domains/portfolio/shared/types/rawPortfolioHistory.type'
-import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import type { RawCashRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
 import type {
   RawSavingCapacityByAccountRow,
   RawSavingCapacityRow,
 } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity'
+import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import {
+  ALL_OPERATION_TYPES,
+  type OperationType,
+} from '@/domains/portfolio/shared/types/operationType.type'
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPortfolioHistory } from '@/domains/portfolio/shared/types/rawPortfolioHistory.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import {
+  CALENDAR_DATE_SCHEMA,
+  OPTIONAL_CALENDAR_DATE_SCHEMA,
+} from '@/shared/schemas/calendarDate.schema'
+import * as yup from 'yup'
 
 const requiredText = () => yup.string().defined()
-const requiredNumber = () => yup.number().transform((value, originalValue) => (
-  originalValue === '' || originalValue == null ? 0 : value
-)).defined()
-const nullableNumber = () => yup.number().transform((value, originalValue) => (
-  originalValue === '' || originalValue == null ? null : value
-)).nullable().defined()
+const requiredNumber = () =>
+  yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === '' || originalValue == null ? 0 : value,
+    )
+    .defined()
+    .test('finite', 'Amount must be finite', Number.isFinite)
+const nullableNumber = () =>
+  yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === '' || originalValue == null ? null : value,
+    )
+    .nullable()
+    .default(null)
+    .defined()
+    .test('finite', 'Amount must be finite', (value) => value === null || Number.isFinite(value))
 export const ACCOUNT_ROW_SCHEMA = yup.object({
   account: requiredText(),
   label: requiredText(),
 })
 
 export const RAW_OPERATION_SCHEMA: yup.ObjectSchema<RawOperation> = yup.object({
-  date: requiredText(),
+  date: CALENDAR_DATE_SCHEMA.required(),
   account: requiredText(),
   isin: requiredText(),
   ticker: requiredText(),
   name: requiredText(),
-  operation_type: requiredText(),
+  operation_type: yup.mixed<OperationType>().oneOf(ALL_OPERATION_TYPES).required(),
   quantity: requiredNumber(),
   price_per_unit: requiredNumber(),
   total_amount: requiredNumber(),
@@ -36,7 +57,7 @@ export const RAW_OPERATION_SCHEMA: yup.ObjectSchema<RawOperation> = yup.object({
 })
 
 export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
-  snapshot_date: requiredText(),
+  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
   account: requiredText(),
   account_type: requiredText(),
   account_category: requiredText(),
@@ -64,7 +85,7 @@ export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
 })
 
 export const RAW_PORTFOLIO_HISTORY_SCHEMA: yup.ObjectSchema<RawPortfolioHistory> = yup.object({
-  snapshot_date: requiredText(),
+  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
   total_value: requiredNumber(),
   total_cost_basis: requiredNumber(),
   unrealized_gain: requiredNumber(),
@@ -76,61 +97,100 @@ export const RAW_PORTFOLIO_HISTORY_SCHEMA: yup.ObjectSchema<RawPortfolioHistory>
 })
 
 export const RAW_CASH_ROW_SCHEMA: yup.ObjectSchema<RawCashRow> = yup.object({
-  snapshot_date: requiredText(),
+  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
   account: requiredText(),
   account_type: requiredText(),
   account_category: requiredText(),
   cumulative_cash: requiredNumber(),
 })
 
-export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeSavingsRow> = yup.object({
-  year: requiredNumber(),
-  income_status: requiredText(),
-  net_salary: requiredNumber(),
-  other_income: requiredNumber(),
-  total_income: requiredNumber(),
-  gross_salary: requiredNumber(),
-  placed_savings: nullableNumber(),
-  savings_through: requiredText(),
-  savings_status: requiredText(),
-  placement_rate: nullableNumber(),
-  unplaced_income_proxy: nullableNumber(),
-  comparable: yup.boolean().transform((_value, originalValue) => (
-    originalValue === true || String(originalValue).trim().toLowerCase() === 'true'
-  )).defined(),
-})
+export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeSavingsRow> =
+  yup.object({
+    year: requiredNumber(),
+    income_status: yup
+      .string<RawAnnualIncomeSavingsRow['income_status']>()
+      .oneOf(['actual', 'forecast'])
+      .required(),
+    net_salary: requiredNumber(),
+    other_income: requiredNumber(),
+    total_income: requiredNumber(),
+    gross_salary: requiredNumber(),
+    placed_savings: nullableNumber(),
+    savings_through: OPTIONAL_CALENDAR_DATE_SCHEMA,
+    savings_status: yup
+      .string<RawAnnualIncomeSavingsRow['savings_status']>()
+      .oneOf(['complete', 'partial', 'missing'])
+      .required(),
+    placement_rate: nullableNumber(),
+    unplaced_income_proxy: nullableNumber(),
+    comparable: yup
+      .boolean()
+      .transform(
+        (_value, originalValue) =>
+          originalValue === true || String(originalValue).trim().toLowerCase() === 'true',
+      )
+      .defined(),
+  })
 
 export const RAW_SAVING_CAPACITY_SCHEMA: yup.ObjectSchema<RawSavingCapacityRow> = yup.object({
-  snapshot_date: requiredText(),
+  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
   savings_delta: requiredNumber(),
   perf_delta: requiredNumber(),
 })
 
-export const RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA: yup.ObjectSchema<RawSavingCapacityByAccountRow> = yup.object({
-  snapshot_date: requiredText(),
-  account: requiredText(),
-  savings_delta: requiredNumber(),
-  perf_delta: requiredNumber(),
-})
+export const RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA: yup.ObjectSchema<RawSavingCapacityByAccountRow> =
+  yup.object({
+    snapshot_date: CALENDAR_DATE_SCHEMA.required(),
+    account: requiredText(),
+    savings_delta: requiredNumber(),
+    perf_delta: requiredNumber(),
+  })
 
-const CSV_RECORD_SCHEMA: yup.MixedSchema<Record<string, string>> = yup
-  .mixed<Record<string, string>>()
+const ALLOCATION_METADATA_COLUMNS = new Set([
+  'snapshot_date',
+  'account',
+  'account_type',
+  'isin',
+  'name',
+])
+
+const ALLOCATION_VALUES_SCHEMA = yup
+  .mixed<Record<string, number>>()
   .defined()
-  .test('csv-record', 'CSV row must contain only string values', (value) => (
-    typeof value === 'object'
-      && value !== null
-      && !Array.isArray(value)
-      && Object.values(value).every((field) => typeof field === 'string')
-  ))
+  .test(
+    'allocation-values',
+    'Allocation values must be finite numbers',
+    (values) =>
+      typeof values === 'object' &&
+      values !== null &&
+      !Array.isArray(values) &&
+      Object.values(values).every((value) => typeof value === 'number' && Number.isFinite(value)),
+  )
 
-export const ALLOCATION_ROW_SCHEMA: yup.MixedSchema<Record<string, string>> = CSV_RECORD_SCHEMA.test(
-  'allocation-row',
-  'Allocation row requires snapshot_date',
-  (value) => typeof value.snapshot_date === 'string' && value.snapshot_date.length > 0,
-)
-
-export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.MixedSchema<Record<string, string>> = ALLOCATION_ROW_SCHEMA.test(
-  'allocation-by-isin-row',
-  'Allocation-by-ISIN row requires isin and name',
-  (value) => typeof value.isin === 'string' && typeof value.name === 'string',
-)
+export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
+  .object({
+    snapshot_date: CALENDAR_DATE_SCHEMA.required(),
+    account: yup.string().optional(),
+    account_type: yup.string().optional(),
+    isin: yup.string().defined(),
+    name: yup.string().defined(),
+    values: ALLOCATION_VALUES_SCHEMA,
+  })
+  .transform((row: unknown) => {
+    if (typeof row !== 'object' || row === null || Array.isArray(row)) return row
+    const source = row as Record<string, unknown>
+    const values = Object.fromEntries(
+      Object.entries(source)
+        .filter(([key]) => !ALLOCATION_METADATA_COLUMNS.has(key))
+        .map(([key, value]) => [key, Number(value)] as const)
+        .filter(([, value]) => !Number.isFinite(value) || value > 0),
+    )
+    return {
+      snapshot_date: source.snapshot_date,
+      account: source.account || undefined,
+      account_type: source.account_type || undefined,
+      isin: source.isin,
+      name: source.name,
+      values,
+    }
+  })

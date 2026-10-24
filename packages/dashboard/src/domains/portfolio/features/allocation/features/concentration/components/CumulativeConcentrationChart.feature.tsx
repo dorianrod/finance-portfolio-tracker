@@ -1,5 +1,11 @@
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { useState } from 'react'
+import type { MouseHandlerDataParam } from 'recharts'
 import {
   CartesianGrid,
   Line,
@@ -10,12 +16,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { MouseHandlerDataParam } from 'recharts'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 
 export function CumulativeConcentrationChart({
@@ -25,7 +25,7 @@ export function CumulativeConcentrationChart({
 }: {
   data: CumulativeConcentrationPoint[]
   description?: string
-  effectiveDate?: string | null
+  effectiveDate?: Date | null
 }) {
   const [activePoint, setActivePoint] = useState<CumulativeConcentrationPoint | null>(null)
   const crosshair = cumulativeConcentrationCrosshair(activePoint)
@@ -37,16 +37,29 @@ export function CumulativeConcentrationChart({
       return
     }
     const index = Number(state.activeTooltipIndex)
-    setActivePoint(Number.isInteger(index) ? data[index] ?? null : null)
+    setActivePoint(Number.isInteger(index) ? (data[index] ?? null) : null)
   }
 
   return (
-    <div className="rounded-xl bg-gray-900 p-4">
+    <div className="rounded-xl bg-surface p-4">
       <div className="mb-3">
-        {/* eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter. */}
-        <h2 className="flex items-center text-sm font-medium text-gray-300">{i18n.t('ui.cumulativeconcentrationchart.cumulativeConcentration')}<ScopedInfoTooltip text={description ?? i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')} scope={{ account: 'filterable', period: 'as-of', effectiveDate }} /></h2>
-        <p className="mt-0.5 text-xs text-gray-600">
-          {description ?? i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')}
+        <h2 className="flex items-center text-sm font-medium text-content-secondary">
+          {i18n.t('ui.cumulativeconcentrationchart.cumulativeConcentration')}
+          <ScopedInfoTooltip
+            // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+            text={
+              description ??
+              i18n.t(
+                'ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest',
+              )
+            }
+            // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+            scope={{ account: 'filterable', period: 'as-of', effectiveDate }}
+          />
+        </h2>
+        <p className="mt-0.5 text-xs text-content-subtle">
+          {description ??
+            i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')}
         </p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
@@ -95,7 +108,9 @@ export function CumulativeConcentrationChart({
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-1 text-center text-[11px] text-gray-600">{i18n.t('ui.cumulativeconcentrationchart.numberOfAssets')}</div>
+      <div className="mt-1 text-center text-[11px] text-content-subtle">
+        {i18n.t('ui.cumulativeconcentrationchart.numberOfAssets')}
+      </div>
     </div>
   )
 }

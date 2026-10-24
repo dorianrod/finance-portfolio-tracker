@@ -1,17 +1,19 @@
 import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-export type RawPositionsHistoryRow = {
-  snapshot_date: string
-  account: string
-  isin: string
-  ticker: string
-  name: string
-  total_value: number | null
-  avg_buy_price: number | null
-  quantity: number | null
-  last_price: number | null
-  unrealized_gain_pct: number | null
-}
+export type RawPositionsHistoryRow = Pick<
+  RawPosition,
+  | 'snapshot_date'
+  | 'account'
+  | 'isin'
+  | 'ticker'
+  | 'name'
+  | 'total_value'
+  | 'avg_buy_price'
+  | 'quantity'
+  | 'last_price'
+  | 'unrealized_gain_pct'
+>
 
 export type HistoryMap = Map<string, HistoryPoint[]>
 
@@ -41,19 +43,29 @@ export function buildPositionsHistory(rows: RawPositionsHistoryRow[]): HistoryMa
   // sort by date asc, aggregate across accounts by summing value/costBasis
   const result: HistoryMap = new Map()
   for (const [key, points] of map) {
-    const byDate = new Map<string, { value: number; costBasis: number; pct: number | null; last_price: number }>()
+    const byDate = new Map<
+      number,
+      { value: number; costBasis: number; pct: number | null; last_price: number }
+    >()
     for (const p of points) {
-      const existing = byDate.get(p.date)
+      const existing = byDate.get(p.date.getTime())
       if (existing) {
         existing.value += p.value
         existing.costBasis += p.costBasis
       } else {
-        byDate.set(p.date, { value: p.value, costBasis: p.costBasis, pct: p.pct, last_price: p.last_price })
+        byDate.set(p.date.getTime(), {
+          value: p.value,
+          costBasis: p.costBasis,
+          pct: p.pct,
+          last_price: p.last_price,
+        })
       }
     }
-    result.set(key, [...byDate.entries()]
-      .toSorted(([a], [b]) => a.localeCompare(b))
-      .map(([date, v]) => ({ date, ...v }))
+    result.set(
+      key,
+      [...byDate.entries()]
+        .toSorted(([a], [b]) => a - b)
+        .map(([date, v]) => ({ date: new Date(date), ...v })),
     )
   }
   return result

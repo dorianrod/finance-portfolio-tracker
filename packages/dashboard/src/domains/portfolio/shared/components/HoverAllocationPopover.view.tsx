@@ -1,11 +1,11 @@
-import i18n from '@/i18n/i18n'
-import { createPortal } from 'react-dom'
+import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
-import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
+import i18n from '@/i18n/i18n'
+import { createPortal } from 'react-dom'
 import { MiniDonut } from './MiniDonut.view'
 
-export interface AllocationHoverTarget {
+export type AllocationHoverTarget = {
   isin: string
   name: string
   buttonRect: DOMRect
@@ -27,7 +27,10 @@ export function HoverAllocationPopover({
     { title: i18n.t('ui.hoverallocationpopover.assetClass'), point: allocation.classe },
     { title: i18n.t('ui.hoverallocationpopover.sector'), point: allocation.secteur },
     { title: i18n.t('ui.hoverallocationpopover.currency'), point: allocation.currency },
-  ].filter((c): c is { title: string; point: AllocationPoint } => c.point != null && c.point.categories.length > 0)
+  ].filter(
+    (c): c is { title: string; point: AllocationPoint } =>
+      c.point != null && c.point.categories.length > 0,
+  )
 
   if (!charts.length) return null
 
@@ -39,11 +42,11 @@ export function HoverAllocationPopover({
   return createPortal(
     <div
       style={{ position: 'fixed', top, left, width: W, zIndex: 9999, pointerEvents: 'auto' }}
-      className="bg-gray-900 border border-gray-700 rounded-xl p-3 shadow-2xl"
+      className="bg-surface border border-border-strong rounded-xl p-3 shadow-2xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <p className="text-sm font-semibold text-white mb-3 truncate">{target.name}</p>
+      <p className="text-sm font-semibold text-content mb-3 truncate">{target.name}</p>
       <div className={`grid gap-3 ${cols === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
         {charts.map((c) => (
           <MiniDonut key={c.title} title={c.title} point={c.point} />

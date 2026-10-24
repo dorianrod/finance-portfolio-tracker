@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   applyPositionFilters,
@@ -10,11 +8,13 @@ import {
   withoutOperationFilters,
 } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
 import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
+import { useMemo } from 'react'
 
 type DashboardPositionsInput = {
   allAccountTypes: string[]
@@ -37,10 +37,7 @@ export function useDashboardPositions({
   sortDirection,
   sortKey,
 }: DashboardPositionsInput) {
-  const currentFilters = useMemo(
-    () => withoutOperationAndPeriodFilters(filters),
-    [filters],
-  )
+  const currentFilters = useMemo(() => withoutOperationAndPeriodFilters(filters), [filters])
   const latestAccountPositions = useMemo(
     () => applyPositionFilters(positions, currentFilters),
     [currentFilters, positions],
@@ -54,9 +51,10 @@ export function useDashboardPositions({
     [currentFilters, positionsAtPeriodEnd],
   )
   const periodEndFundHoldings = useMemo(
-    () => filters.dateTo
-      ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
-      : fundData.holdings,
+    () =>
+      filters.dateTo
+        ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
+        : fundData.holdings,
     [filters.dateTo, fundData.history, fundData.holdings],
   )
   const tableFiltered = useMemo(
@@ -68,22 +66,33 @@ export function useDashboardPositions({
     [filters, positionsAtPeriodEnd],
   )
   const tableData = useMemo(
-    () => sortPositionsForTable(
-      tableFiltered,
-      filters.hideClosedPositions,
-      allAccountTypes,
-      sortKey,
-      sortDirection,
-    ),
+    () =>
+      sortPositionsForTable(
+        tableFiltered,
+        filters.hideClosedPositions,
+        allAccountTypes,
+        sortKey,
+        sortDirection,
+      ),
     [allAccountTypes, filters.hideClosedPositions, sortDirection, sortKey, tableFiltered],
   )
 
-  return {
-    currentPositions,
-    latestAccountPositions,
-    periodEndFundHoldings,
-    periodPositions,
-    tableData,
-    tableFiltered,
-  }
+  return useMemo(
+    () => ({
+      currentPositions,
+      latestAccountPositions,
+      periodEndFundHoldings,
+      periodPositions,
+      tableData,
+      tableFiltered,
+    }),
+    [
+      currentPositions,
+      latestAccountPositions,
+      periodEndFundHoldings,
+      periodPositions,
+      tableData,
+      tableFiltered,
+    ],
+  )
 }

@@ -1,16 +1,19 @@
-import i18n from '@/i18n/i18n'
-import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
   FUND_QUALITY_LABELS,
   getFundQualityPresentation,
 } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
+import type {
+  FundHoldingStatus,
+  FundQualityTier,
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import i18n from '@/i18n/i18n'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 const TIER_CLASSES: Record<FundQualityTier, string> = {
-  A: 'border-emerald-700 bg-emerald-950/60 text-emerald-300',
-  B: 'border-blue-700 bg-blue-950/60 text-blue-300',
-  C: 'border-amber-700 bg-amber-950/60 text-amber-300',
-  D: 'border-red-800 bg-red-950/60 text-red-300',
+  A: 'border-positive bg-positive-muted/60 text-positive',
+  B: 'border-accent bg-accent-muted/60 text-accent',
+  C: 'border-warning bg-warning-muted/60 text-warning',
+  D: 'border-danger bg-danger-muted/60 text-danger',
 }
 
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
@@ -30,7 +33,9 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
       ? i18n.t('ui.fundqualitybadge.compositionDate', { date: status.holdingsDate })
       : i18n.t('ui.fundqualitybadge.unknownCompositionDate'),
     status.issues,
-  ].filter(Boolean).join(' · ')
+  ]
+    .filter(Boolean)
+    .join(' · ')
   return (
     <span
       title={title}

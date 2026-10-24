@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
-export function useSidePanelDialog(onClose: () => void) {
+export function useSidePanelDialog(open: boolean, onClose: () => void) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLElement>(null)
   const onCloseRef = useRef(onClose)
@@ -10,7 +10,9 @@ export function useSidePanelDialog(onClose: () => void) {
   }, [onClose])
 
   useEffect(() => {
-    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    if (!open) return
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null
     const previousOverflow = document.body.style.overflow
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -44,7 +46,7 @@ export function useSidePanelDialog(onClose: () => void) {
       window.removeEventListener('keydown', handleKeyDown)
       previouslyFocused?.focus()
     }
-  }, [])
+  }, [open])
 
-  return { closeButtonRef, panelRef }
+  return useMemo(() => ({ closeButtonRef, panelRef }), [closeButtonRef, panelRef])
 }

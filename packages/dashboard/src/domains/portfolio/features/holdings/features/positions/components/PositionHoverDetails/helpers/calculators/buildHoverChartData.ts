@@ -1,15 +1,16 @@
-import i18n from '@/i18n/i18n'
 import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
+import i18n from '@/i18n/i18n'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
-
-export interface Operation {
-  date: string
+export type Operation = {
+  date: Date
   operation_type: string
   total_amount: number
   realized_gain: number | null
 }
 
-export interface HoverChartDataPoint {
+export type HoverChartDataPoint = {
+  // Calendar-month key used to align monthly price and operation series.
   date: string
   Value: number
   'Cost basis': number
@@ -26,11 +27,18 @@ export interface HoverChartDataPoint {
 // Builds one point per month: the position's value/cost-basis/unit-price
 // snapshot, plus that month's buy/sell activity (for the dot markers and
 // tooltip breakdown).
-export function buildHoverChartSeries(history: HistoryPoint[], operations: Operation[]): HoverChartDataPoint[] {
+export function buildHoverChartSeries(
+  history: HistoryPoint[],
+  operations: Operation[],
+): HoverChartDataPoint[] {
   const series = history.map((p) => {
-    const month = p.date.slice(0, 7)
-    const buysThisMonth = operations.filter((o) => o.date.slice(0, 7) === month && o.operation_type === 'BUY')
-    const sellsThisMonth = operations.filter((o) => o.date.slice(0, 7) === month && o.operation_type === 'SELL')
+    const month = toCalendarMonth(p.date)
+    const buysThisMonth = operations.filter(
+      (o) => toCalendarMonth(o.date) === month && o.operation_type === 'BUY',
+    )
+    const sellsThisMonth = operations.filter(
+      (o) => toCalendarMonth(o.date) === month && o.operation_type === 'SELL',
+    )
     const buyAmount = buysThisMonth.reduce((s, o) => s + Math.abs(o.total_amount), 0)
     const sellAmount = sellsThisMonth.reduce((s, o) => s + Math.abs(o.total_amount), 0)
     const sellGain = sellsThisMonth.reduce((s, o) => s + (o.realized_gain ?? 0), 0)
@@ -54,7 +62,9 @@ export function buildHoverChartSeries(history: HistoryPoint[], operations: Opera
   }))
 }
 
-export function computeUnitPriceDomain(chartData: HoverChartDataPoint[]): [number, number] | undefined {
+export function computeUnitPriceDomain(
+  chartData: HoverChartDataPoint[],
+): [number, number] | undefined {
   const unitPrices = chartData.map((d) => d['Unit price']).filter((v) => v > 0)
   if (unitPrices.length === 0) return undefined
   const min = Math.min(...unitPrices)
@@ -63,34 +73,44 @@ export function computeUnitPriceDomain(chartData: HoverChartDataPoint[]): [numbe
   return [Math.max(0, min - padding), max + padding]
 }
 
-export interface RollingReturn {
+export type RollingReturn = {
   label: string
   pct: number
 }
 
 // 6-month, 1-year and since-start rolling unit-price performance as of the
 // hovered `label` (a 'Unit price' series keyed by month).
-export function computeRollingReturns(series: Array<{ date: string; 'Unit price': number }>, label: string): RollingReturn[] {
+export function computeRollingReturns(
+  series: Array<{ date: string; 'Unit price': number }>,
+  label: string,
+): RollingReturn[] {
   const idx = series.findIndex((d) => d.date === label)
   if (idx < 0) return []
   const current = series[idx]['Unit price']
   if (current == null) return []
 
   const rows: RollingReturn[] = []
-  for (const [lbl, months] of [['6m', 6], ['1y', 12]] as const) {
+  for (const [lbl, months] of [
+    ['6m', 6],
+    ['1y', 12],
+  ] as const) {
     const ref = series[idx - months]?.['Unit price']
     if (ref != null && ref !== 0) rows.push({ label: lbl, pct: (current / ref - 1) * 100 })
   }
   const first = series[0]?.['Unit price']
-  if (idx > 0 && first != null && first !== 0) rows.push({ label: i18n.t('ui.buildhoverchartdataTs.sinceStart'), pct: (current / first - 1) * 100 })
+  if (idx > 0 && first != null && first !== 0)
+    rows.push({
+      label: i18n.t('ui.buildhoverchartdataTs.sinceStart'),
+      pct: (current / first - 1) * 100,
+    })
 
   return rows
 }
 
-export function computeMonthlyBalances(ops: { date: string; total_amount: number }[]) {
+export function computeMonthlyBalances(ops: { date: Date; total_amount: number }[]) {
   const netByMonth = new Map<string, number>()
   for (const op of ops) {
-    const month = op.date.slice(0, 7)
+    const month = toCalendarMonth(op.date)
     netByMonth.set(month, (netByMonth.get(month) ?? 0) + op.total_amount)
   }
   const months = [...netByMonth.keys()].toSorted()
@@ -103,7 +123,9 @@ export function computeMonthlyBalances(ops: { date: string; total_amount: number
 }
 
 export function computePosition(rect: DOMRect): { top: number; left: number } {
-  const W = 600, H = 460, M = 10
+  const W = 600,
+    H = 460,
+    M = 10
   let left = rect.right + M
   let top = rect.top + rect.height / 2 - H / 2
   if (left + W > window.innerWidth - M) left = rect.left - W - M

@@ -1,10 +1,10 @@
 import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 
-export interface AccountTypeDonutPoint extends AccountTypePoint {
+export type AccountTypeDonutPoint = AccountTypePoint & {
   _label: string
 }
 
-export interface AccountTypeLabelPosition {
+export type AccountTypeLabelPosition = {
   x: number
   y: number
   isRight: boolean
@@ -20,10 +20,10 @@ export function resolveAccountTypeLabelPositions(
   const labelRadius = outerRadius + 24
   let cursorAngle = 90
   const positions = data.map((point, index) => {
-    const sweep = total > 0 ? point.total_value / total * 360 : 0
+    const sweep = total > 0 ? (point.total_value / total) * 360 : 0
     const midAngle = cursorAngle - sweep / 2
     cursorAngle -= sweep
-    const radians = -midAngle * Math.PI / 180
+    const radians = (-midAngle * Math.PI) / 180
     const isRight = Math.cos(radians) >= 0
     return {
       index,
@@ -37,7 +37,9 @@ export function resolveAccountTypeLabelPositions(
   const minY = cy - labelRadius + 6
   const maxY = cy + labelRadius - 6
   for (const isRight of [false, true]) {
-    const side = positions.filter((position) => position.isRight === isRight).toSorted((a, b) => a.desiredY - b.desiredY)
+    const side = positions
+      .filter((position) => position.isRight === isRight)
+      .toSorted((a, b) => a.desiredY - b.desiredY)
     if (side.length === 0) continue
     const gap = side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
 
@@ -53,7 +55,9 @@ export function resolveAccountTypeLabelPositions(
     }
     if (side[0].y < minY) {
       const shift = minY - side[0].y
-      side.forEach((position) => { position.y += shift })
+      side.forEach((position) => {
+        position.y += shift
+      })
     }
   }
 

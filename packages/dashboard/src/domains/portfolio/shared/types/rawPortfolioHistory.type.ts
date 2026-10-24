@@ -1,5 +1,5 @@
 export type RawPortfolioHistory = {
-  snapshot_date: string
+  snapshot_date: Date
   total_value: number
   total_cost_basis: number
   unrealized_gain: number

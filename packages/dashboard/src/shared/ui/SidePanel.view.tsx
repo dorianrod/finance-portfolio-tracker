@@ -1,9 +1,10 @@
-import { useId } from 'react'
 import type { ReactNode } from 'react'
+import { useId } from 'react'
 import { createPortal } from 'react-dom'
 import { useSidePanelDialog } from './helpers/presenters/useSidePanelDialog'
 
-interface SidePanelProps {
+type SidePanelProps = {
+  open: boolean
   title: ReactNode
   description?: ReactNode
   headerActions?: ReactNode
@@ -21,6 +22,7 @@ const WIDTH_BY_SIZE = {
 } as const
 
 export function SidePanel({
+  open,
   title,
   description,
   headerActions,
@@ -31,7 +33,8 @@ export function SidePanel({
   bodyClassName = 'overflow-auto',
 }: SidePanelProps) {
   const titleId = useId()
-  const { closeButtonRef, panelRef } = useSidePanelDialog(onClose)
+  const { closeButtonRef, panelRef } = useSidePanelDialog(open, onClose)
+  if (!open) return null
 
   return createPortal(
     <div className="fixed inset-0 z-[9990]">
@@ -40,7 +43,7 @@ export function SidePanel({
         tabIndex={-1}
         aria-label={closeLabel}
         onClick={onClose}
-        className="absolute inset-0 cursor-default bg-black/45 backdrop-blur-xs"
+        className="absolute inset-0 cursor-default bg-overlay/45 backdrop-blur-xs"
       />
       <aside
         ref={panelRef}
@@ -51,7 +54,9 @@ export function SidePanel({
       >
         <div className="flex shrink-0 items-start gap-3 border-b border-border px-4 py-3">
           <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="text-sm font-semibold text-content">{title}</h2>
+            <h2 id={titleId} className="text-sm font-semibold text-content">
+              {title}
+            </h2>
             {description && <div className="mt-0.5 text-xs text-content-subtle">{description}</div>}
           </div>
           {headerActions}
@@ -65,9 +70,7 @@ export function SidePanel({
             ✕
           </button>
         </div>
-        <div className={`min-h-0 flex-1 ${bodyClassName}`}>
-          {children}
-        </div>
+        <div className={`min-h-0 flex-1 ${bodyClassName}`}>{children}</div>
       </aside>
     </div>,
     document.body,

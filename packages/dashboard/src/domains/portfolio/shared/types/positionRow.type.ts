@@ -1,11 +1,12 @@
+import type { OperationType } from './operationType.type'
 export type RowKind = 'position' | 'group' | 'operation'
 
 export type OperationRow = {
   kind: 'operation'
   id: string
-  date: string
+  date: Date
   account: string
-  operation_type: string
+  operation_type: OperationType
   quantity: number | null
   price_per_unit: number | null
   total_amount: number
@@ -14,6 +15,7 @@ export type OperationRow = {
 
 export type GroupRow = {
   kind: 'group'
+  groupType: 'trades' | 'dividends' | 'interest' | 'cash'
   id: string
   label: string
   total_dividends?: number
@@ -41,7 +43,7 @@ export type PositionRow = {
   account_type?: string
   account_category?: string
   status: 'active' | 'closed'
-  operationTypes: Set<string>
+  operationTypes: Set<OperationType>
   quantity: number | null
   last_price: number | null
   total_value: number | null

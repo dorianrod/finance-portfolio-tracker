@@ -1,9 +1,3 @@
-import { useCallback, useMemo } from 'react'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-import type {
-  FundHolding,
-  HistoricalFundHolding,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   aggregateAllocationPoints,
   aggregateFilteredPoints,
@@ -12,7 +6,7 @@ import {
   excludeNonApplicableAllocationData,
   scopeRawAllocationData,
 } from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
-import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -23,12 +17,18 @@ import {
   computeHeldAssetConcentration,
   filterPointsByPeriod,
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
+import type {
+  FundHolding,
+  HistoricalFundHolding,
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import { useCallback, useMemo } from 'react'
 
-interface UseAllocationChartsInput {
+type UseAllocationChartsInput = {
   positions: PositionRow[]
   rawPositions: RawPosition[]
   fundHoldings: FundHolding[]
@@ -38,11 +38,11 @@ interface UseAllocationChartsInput {
   activeFilter: AllocationFilter | null
   concentrationMode: ConcentrationMode
   rawData: RawIsinData
-  dateFrom?: string
-  dateTo?: string
+  dateFrom?: Date
+  dateTo?: Date
 }
 
-function latestAsOf<T extends { date: string }>(points: T[], dateTo?: string): T | undefined {
+function latestAsOf<T extends { date: Date }>(points: T[], dateTo?: Date): T | undefined {
   return points.filter((point) => !dateTo || point.date <= dateTo).at(-1)
 }
 
@@ -77,52 +77,44 @@ export function useAllocationCharts({
     () => computeHeldAssetConcentration(applicablePositions),
     [applicablePositions],
   )
-  const concentration = concentrationMode === 'held'
-    ? heldAssetConcentration
-    : lookThroughConcentration
+  const concentration =
+    concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
   const cumulativeConcentration = useMemo(
     () => buildCumulativeConcentration(concentration.allHoldings),
     [concentration],
   )
   const heldConcentrationHistory = useMemo(
-    () => filterPointsByPeriod(
-      buildHistoricalConcentration(rawPositions, accountFilters, accountTypeFilters),
-      dateFrom,
-      dateTo,
-    ),
+    () =>
+      filterPointsByPeriod(
+        buildHistoricalConcentration(rawPositions, accountFilters, accountTypeFilters),
+        dateFrom,
+        dateTo,
+      ),
     [rawPositions, accountFilters, accountTypeFilters, dateFrom, dateTo],
   )
   const lookThroughConcentrationHistory = useMemo(
-    () => filterPointsByPeriod(
-      buildHistoricalLookThroughConcentration(
-        rawPositions,
-        fundHoldingsHistory,
-        accountFilters,
-        accountTypeFilters,
+    () =>
+      filterPointsByPeriod(
+        buildHistoricalLookThroughConcentration(
+          rawPositions,
+          fundHoldingsHistory,
+          accountFilters,
+          accountTypeFilters,
+        ),
+        dateFrom,
+        dateTo,
       ),
-      dateFrom,
-      dateTo,
-    ),
-    [
-      rawPositions,
-      fundHoldingsHistory,
-      accountFilters,
-      accountTypeFilters,
-      dateFrom,
-      dateTo,
-    ],
+    [rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters, dateFrom, dateTo],
   )
   const scopedRawData = useMemo(
-    () => excludeNonApplicableAllocationData(
-      scopeRawAllocationData(rawData, accountFilters),
-      positions,
-    ),
+    () =>
+      excludeNonApplicableAllocationData(
+        scopeRawAllocationData(rawData, accountFilters),
+        positions,
+      ),
     [rawData, accountFilters, positions],
   )
-  const baseGeo = useMemo(
-    () => aggregateAllocationPoints(scopedRawData.geo),
-    [scopedRawData.geo],
-  )
+  const baseGeo = useMemo(() => aggregateAllocationPoints(scopedRawData.geo), [scopedRawData.geo])
   const baseSecteur = useMemo(
     () => aggregateAllocationPoints(scopedRawData.secteur),
     [scopedRawData.secteur],
@@ -140,23 +132,23 @@ export function useAllocationCharts({
     [scopedRawData, activeFilter, dateTo],
   )
 
-  const displayPoints = useCallback(<T extends keyof Pick<RawIsinData, 'geo' | 'secteur' | 'currency' | 'classe'>>(
-    dimension: T,
-    basePoints: ReturnType<typeof aggregateAllocationPoints>,
-  ) => {
-    if (!activeFilter || scopedRawData.loading) return basePoints
-    const points = aggregateFilteredPoints(
-      scopedRawData[dimension],
-      matchingIsins,
-      activeFilter.type === dimension ? activeFilter.value : undefined,
-    )
-    return points.length > 0 ? points : basePoints
-  }, [activeFilter, matchingIsins, scopedRawData])
-
-  const displayGeo = useMemo(
-    () => displayPoints('geo', baseGeo),
-    [displayPoints, baseGeo],
+  const displayPoints = useCallback(
+    <T extends keyof Pick<RawIsinData, 'geo' | 'secteur' | 'currency' | 'classe'>>(
+      dimension: T,
+      basePoints: ReturnType<typeof aggregateAllocationPoints>,
+    ) => {
+      if (!activeFilter || scopedRawData.loading) return basePoints
+      const points = aggregateFilteredPoints(
+        scopedRawData[dimension],
+        matchingIsins,
+        activeFilter.type === dimension ? activeFilter.value : undefined,
+      )
+      return points.length > 0 ? points : basePoints
+    },
+    [activeFilter, matchingIsins, scopedRawData],
   )
+
+  const displayGeo = useMemo(() => displayPoints('geo', baseGeo), [displayPoints, baseGeo])
   const displaySecteur = useMemo(
     () => displayPoints('secteur', baseSecteur),
     [displayPoints, baseSecteur],
@@ -170,48 +162,83 @@ export function useAllocationCharts({
     [displayPoints, baseClasse],
   )
   const tableRows = useMemo(
-    () => !activeFilter || scopedRawData.loading
-      ? []
-      : computeTableRows(scopedRawData, matchingIsins, activeFilter, dateTo),
+    () =>
+      !activeFilter || scopedRawData.loading
+        ? []
+        : computeTableRows(scopedRawData, matchingIsins, activeFilter, dateTo),
     [activeFilter, scopedRawData, matchingIsins, dateTo],
   )
   const latestGeo = latestAsOf(displayGeo, dateTo)
   const latestSecteur = latestAsOf(displaySecteur, dateTo)
   const latestCurrency = latestAsOf(displayCurrency, dateTo)
   const latestClasse = latestAsOf(displayClasse, dateTo)
-  const trendGeo = filterPointsByPeriod(displayGeo, dateFrom, dateTo)
-  const trendSecteur = filterPointsByPeriod(displaySecteur, dateFrom, dateTo)
-  const trendCurrency = filterPointsByPeriod(displayCurrency, dateFrom, dateTo)
-  const trendClasse = filterPointsByPeriod(displayClasse, dateFrom, dateTo)
-  const hasEvolution = Math.max(
-    trendGeo.length,
-    trendSecteur.length,
-    trendCurrency.length,
-    trendClasse.length,
-  ) >= 2
+  const trendGeo = useMemo(
+    () => filterPointsByPeriod(displayGeo, dateFrom, dateTo),
+    [displayGeo, dateFrom, dateTo],
+  )
+  const trendSecteur = useMemo(
+    () => filterPointsByPeriod(displaySecteur, dateFrom, dateTo),
+    [displaySecteur, dateFrom, dateTo],
+  )
+  const trendCurrency = useMemo(
+    () => filterPointsByPeriod(displayCurrency, dateFrom, dateTo),
+    [displayCurrency, dateFrom, dateTo],
+  )
+  const trendClasse = useMemo(
+    () => filterPointsByPeriod(displayClasse, dateFrom, dateTo),
+    [displayClasse, dateFrom, dateTo],
+  )
+  const hasEvolution =
+    Math.max(trendGeo.length, trendSecteur.length, trendCurrency.length, trendClasse.length) >= 2
 
-  return {
-    baseClasse,
-    baseCurrency,
-    baseGeo,
-    baseSecteur,
-    concentration,
-    cumulativeConcentration,
-    hasApplicableValue,
-    hasEvolution,
-    hasSelectedValue,
-    heldAssetConcentration,
-    heldConcentrationHistory,
-    latestClasse,
-    latestCurrency,
-    latestGeo,
-    latestSecteur,
-    lookThroughConcentration,
-    lookThroughConcentrationHistory,
-    tableRows,
-    trendClasse,
-    trendCurrency,
-    trendGeo,
-    trendSecteur,
-  }
+  return useMemo(
+    () => ({
+      baseClasse,
+      baseCurrency,
+      baseGeo,
+      baseSecteur,
+      concentration,
+      cumulativeConcentration,
+      hasApplicableValue,
+      hasEvolution,
+      hasSelectedValue,
+      heldAssetConcentration,
+      heldConcentrationHistory,
+      latestClasse,
+      latestCurrency,
+      latestGeo,
+      latestSecteur,
+      lookThroughConcentration,
+      lookThroughConcentrationHistory,
+      tableRows,
+      trendClasse,
+      trendCurrency,
+      trendGeo,
+      trendSecteur,
+    }),
+    [
+      baseClasse,
+      baseCurrency,
+      baseGeo,
+      baseSecteur,
+      concentration,
+      cumulativeConcentration,
+      hasApplicableValue,
+      hasEvolution,
+      hasSelectedValue,
+      heldAssetConcentration,
+      heldConcentrationHistory,
+      latestClasse,
+      latestCurrency,
+      latestGeo,
+      latestSecteur,
+      lookThroughConcentration,
+      lookThroughConcentrationHistory,
+      tableRows,
+      trendClasse,
+      trendCurrency,
+      trendGeo,
+      trendSecteur,
+    ],
+  )
 }

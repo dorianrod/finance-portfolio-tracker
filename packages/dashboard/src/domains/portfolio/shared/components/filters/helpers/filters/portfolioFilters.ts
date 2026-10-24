@@ -1,8 +1,9 @@
-import i18n from '@/i18n/i18n'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
+import i18n from '@/i18n/i18n'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function accountLabel(account: string, labels: Record<string, string>): string {
   if (labels[account]) return labels[account]
@@ -17,9 +18,8 @@ export function buildAccountFilterLabels(
   for (const position of positions) {
     const id = accountFilterId(position)
     if (!resolvedLabels[id]) {
-      resolvedLabels[id] = id === position.account
-        ? accountLabel(position.account, labels)
-        : position.name
+      resolvedLabels[id] =
+        id === position.account ? accountLabel(position.account, labels) : position.name
     }
   }
   return resolvedLabels
@@ -41,9 +41,7 @@ export function buildPortfolioFilterOptions(
     allAccounts: [...new Set(positions.map(accountFilterId))].toSorted(),
     allAccountTypes: [
       ...new Set(
-        positions
-          .map((position) => position.account_type)
-          .filter((type): type is string => !!type),
+        positions.map((position) => position.account_type).filter((type): type is string => !!type),
       ),
     ].toSorted(),
     allOperationTypes: [
@@ -54,17 +52,17 @@ export function buildPortfolioFilterOptions(
 
 export type FilterSummaryKey = 'accounts' | 'period' | 'operations' | 'closed-positions'
 
-export interface FilterSummaryItem {
+export type FilterSummaryItem = {
   key: FilterSummaryKey
   label: string
 }
 
-export interface FilterVisibility {
+export type FilterVisibility = {
   showPeriod: boolean
   showPositionFilters: boolean
 }
 
-const OP_LABELS: Record<string, string> = {
+const OP_LABELS: Record<OperationType, string> = {
   BUY: i18n.t('ui.portfoliofilters.buy'),
   SELL: i18n.t('ui.portfoliofilters.sell'),
   DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
@@ -88,6 +86,7 @@ export function filterSummaries(
   filters: DashboardFilters,
   accountLabels: Record<string, string>,
   visibility: FilterVisibility,
+  formatDate: (date: Date) => string,
 ): FilterSummaryItem[] {
   const summaries: FilterSummaryItem[] = []
 
@@ -95,34 +94,53 @@ export function filterSummaries(
     const account = [...filters.accounts][0]
     summaries.push({ key: 'accounts', label: accountLabel(account, accountLabels) })
   } else if (filters.accounts.size > 1) {
-    summaries.push({ key: 'accounts', label: i18n.t('ui.portfoliofiltersTs.value0Accounts', { value0: filters.accounts.size }) })
+    summaries.push({
+      key: 'accounts',
+      label: i18n.t('ui.portfoliofiltersTs.value0Accounts', { value0: filters.accounts.size }),
+    })
   }
 
   if (visibility.showPeriod && (filters.dateFrom || filters.dateTo)) {
-    let label = i18n.t('ui.portfoliofilters.untilDate', { date: filters.dateTo })
+    let label = i18n.t('ui.portfoliofilters.untilDate', {
+      date: filters.dateTo ? formatDate(filters.dateTo) : '',
+    })
     if (filters.dateFrom && filters.dateTo) {
-      label = i18n.t('ui.portfoliofilters.dateRange', { from: filters.dateFrom, to: filters.dateTo })
+      label = i18n.t('ui.portfoliofilters.dateRange', {
+        from: formatDate(filters.dateFrom),
+        to: formatDate(filters.dateTo),
+      })
     } else if (filters.dateFrom) {
-      label = i18n.t('ui.portfoliofilters.sinceDate', { date: filters.dateFrom })
+      label = i18n.t('ui.portfoliofilters.sinceDate', { date: formatDate(filters.dateFrom) })
     }
     summaries.push({ key: 'period', label })
   }
 
   if (visibility.showPositionFilters && filters.operationTypes.size === 1) {
     const operation = [...filters.operationTypes][0]
-    summaries.push({ key: 'operations', label: OP_LABELS[operation] ?? operation })
+    summaries.push({ key: 'operations', label: OP_LABELS[operation] })
   } else if (visibility.showPositionFilters && filters.operationTypes.size > 1) {
-    summaries.push({ key: 'operations', label: i18n.t('ui.portfoliofiltersTs.value0OperationTypes', { value0: filters.operationTypes.size }) })
+    summaries.push({
+      key: 'operations',
+      label: i18n.t('ui.portfoliofiltersTs.value0OperationTypes', {
+        value0: filters.operationTypes.size,
+      }),
+    })
   }
 
   if (visibility.showPositionFilters && !filters.hideClosedPositions) {
-    summaries.push({ key: 'closed-positions', label: i18n.t('ui.portfoliofiltersTs.closedPositionsIncluded') })
+    summaries.push({
+      key: 'closed-positions',
+      label: i18n.t('ui.portfoliofiltersTs.closedPositionsIncluded'),
+    })
   }
 
   return summaries
 }
 
-export function clearFilterGroup(filters: DashboardFilters, key: FilterSummaryKey): DashboardFilters {
+export function clearFilterGroup(
+  filters: DashboardFilters,
+  key: FilterSummaryKey,
+): DashboardFilters {
   if (key === 'accounts') return { ...filters, accounts: new Set(), accountTypes: new Set() }
   if (key === 'period') return { ...filters, dateFrom: undefined, dateTo: undefined }
   if (key === 'operations') return { ...filters, operationTypes: new Set() }
@@ -133,22 +151,24 @@ export function resetFilters(): DashboardFilters {
   return {
     accountTypes: new Set<string>(),
     accounts: new Set<string>(),
-    operationTypes: new Set<string>(),
+    operationTypes: new Set<OperationType>(),
     hideClosedPositions: true,
   }
 }
 
-export function toggle(set: Set<string>, value: string): Set<string> {
+export function toggle<T>(set: Set<T>, value: T): Set<T> {
   const next = new Set(set)
   if (next.has(value)) next.delete(value)
   else next.add(value)
   return next
 }
 
-export function presetDateFrom(months: number): string {
-  const now = new Date()
-  if (months === 0) return new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-  const d = new Date(now)
-  d.setMonth(d.getMonth() - months)
-  return d.toISOString().slice(0, 10)
+export function presetDateFrom(months: number, now = new Date()): Date {
+  const year = now.getFullYear()
+  const targetMonth = now.getMonth() - months
+  const day =
+    months === 0
+      ? 1
+      : Math.min(now.getDate(), new Date(Date.UTC(year, targetMonth + 1, 0)).getUTCDate())
+  return new Date(Date.UTC(year, targetMonth, day))
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export function useTooltipPosition(visible: boolean) {
   const [position, setPosition] = useState({ top: 0, left: 0 })
@@ -10,5 +10,5 @@ export function useTooltipPosition(visible: boolean) {
     setPosition({ top: rect.bottom + 6, left: rect.left })
   }, [visible])
 
-  return { anchorRef, position }
+  return useMemo(() => ({ anchorRef, position }), [anchorRef, position])
 }

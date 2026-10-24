@@ -1,12 +1,12 @@
-import type {
-  FundHolding,
-  FundHoldingStatus,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   buildIssuerExposures,
   type IssuerExposure,
   type SecurityExposure,
 } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
+import type {
+  FundHolding,
+  FundHoldingStatus,
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export type FundExposureSort = 'value' | 'name'
@@ -22,7 +22,7 @@ export type ExposureRow =
       value: number
     }
 
-interface BuildFundExposureViewModelInput {
+type BuildFundExposureViewModelInput = {
   expanded: Set<string>
   holdings: FundHolding[]
   positions: PositionRow[]
@@ -32,11 +32,12 @@ interface BuildFundExposureViewModelInput {
 }
 
 function matchesFundStatus(position: PositionRow, statuses: FundHoldingStatus[]): boolean {
-  return statuses.some((status) => (
-    status.parentId === (position.isin || position.ticker)
-    || (!!position.isin && status.parentIsin === position.isin)
-    || (!!position.ticker && status.parentTicker === position.ticker)
-  ))
+  return statuses.some(
+    (status) =>
+      status.parentId === (position.isin || position.ticker) ||
+      (!!position.isin && status.parentIsin === position.isin) ||
+      (!!position.ticker && status.parentTicker === position.ticker),
+  )
 }
 
 export function buildFundExposureViewModel({
@@ -49,10 +50,10 @@ export function buildFundExposureViewModel({
 }: BuildFundExposureViewModelInput) {
   const needle = query.trim().toLocaleLowerCase()
   const selectedFundName = needle
-    ? positions.find((position) => (
-        position.name.toLocaleLowerCase() === needle
-        && matchesFundStatus(position, statuses)
-      ))?.name ?? ''
+    ? (positions.find(
+        (position) =>
+          position.name.toLocaleLowerCase() === needle && matchesFundStatus(position, statuses),
+      )?.name ?? '')
     : ''
   const scopedPositions = selectedFundName
     ? positions.filter((position) => position.name === selectedFundName)
@@ -61,23 +62,26 @@ export function buildFundExposureViewModel({
     scopedPositions.flatMap((position) => [position.isin, position.ticker]).filter(Boolean),
   )
   const scopedHoldings = selectedFundName
-    ? holdings.filter((holding) => (
-        holding.parentName === selectedFundName
-        || parentIds.has(holding.parentIsin)
-        || parentIds.has(holding.parentTicker)
-      ))
+    ? holdings.filter(
+        (holding) =>
+          holding.parentName === selectedFundName ||
+          parentIds.has(holding.parentIsin) ||
+          parentIds.has(holding.parentTicker),
+      )
     : holdings
   const exposures = buildIssuerExposures(scopedPositions, scopedHoldings, statuses)
-  const filtered = needle && !selectedFundName
-    ? exposures.filter((issuer) => (
-        issuer.name.toLocaleLowerCase().includes(needle)
-        || issuer.id.toLocaleLowerCase().includes(needle)
-        || issuer.securities.some(
-          (security) => security.name.toLocaleLowerCase().includes(needle),
+  const filtered =
+    needle && !selectedFundName
+      ? exposures.filter(
+          (issuer) =>
+            issuer.name.toLocaleLowerCase().includes(needle) ||
+            issuer.id.toLocaleLowerCase().includes(needle) ||
+            issuer.securities.some((security) =>
+              security.name.toLocaleLowerCase().includes(needle),
+            ) ||
+            issuer.funds.some((fund) => fund.toLocaleLowerCase().includes(needle)),
         )
-        || issuer.funds.some((fund) => fund.toLocaleLowerCase().includes(needle))
-      ))
-    : exposures
+      : exposures
   const displayed = [...filtered].toSorted(
     sort === 'value'
       ? (left, right) => right.value - left.value
@@ -104,10 +108,7 @@ export function buildFundExposureViewModel({
   return {
     displayed,
     rows,
-    securityCount: displayed.reduce(
-      (sum, issuer) => sum + issuer.securities.length,
-      0,
-    ),
+    securityCount: displayed.reduce((sum, issuer) => sum + issuer.securities.length, 0),
     totalIssuerCount: exposures.length,
   }
 }

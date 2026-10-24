@@ -29,7 +29,7 @@ const positionRow = {
   ticker: 'ETF',
   name: 'ETF',
   quantity: '2.5',
-  avg_buy_price: '100',
+  avg_buy_price: 100,
   last_price: '110',
   total_value: '275',
   unrealized_gain: '25',
@@ -64,21 +64,25 @@ describe('portfolio CSV schemas', () => {
       total_value: 275,
       xirr_rolling_3y: null,
     })
-    await expect(RAW_POSITION_SCHEMA.validate({ ...positionRow, total_value: 'invalid' })).rejects.toThrow()
+    await expect(
+      RAW_POSITION_SCHEMA.validate({ ...positionRow, total_value: 'invalid' }),
+    ).rejects.toThrow()
   })
 
   it('normalizes optional history metrics to null', async () => {
-    await expect(RAW_PORTFOLIO_HISTORY_SCHEMA.validate({
-      snapshot_date: '2026-01-31',
-      total_value: '1000',
-      total_cost_basis: '900',
-      unrealized_gain: '100',
-      net_cash_injected: '900',
-      cash_delta: '',
-      tri: '',
-      tri_rolling_1y: '4.2',
-      tri_rolling_3y: '',
-    })).resolves.toMatchObject({
+    await expect(
+      RAW_PORTFOLIO_HISTORY_SCHEMA.validate({
+        snapshot_date: '2026-01-31',
+        total_value: '1000',
+        total_cost_basis: '900',
+        unrealized_gain: '100',
+        net_cash_injected: '900',
+        cash_delta: '',
+        tri: '',
+        tri_rolling_1y: '4.2',
+        tri_rolling_3y: '',
+      }),
+    ).resolves.toMatchObject({
       total_value: 1000,
       cash_delta: null,
       tri: null,

@@ -1,23 +1,23 @@
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-export interface AccountCoverage {
+export type AccountCoverage = {
   account: string
   allocated: number
   unallocated: number
   notApplicable: number
 }
 
-export interface AllocationCoverageIssue {
+export type AllocationCoverageIssue = {
   id: string
   name: string
   value: number
   unallocated: number
 }
 
-export interface DimensionCoverage {
+export type DimensionCoverage = {
   dimension: 'geo' | 'secteur' | 'currency' | 'classe'
   allocated: number
   unallocated: number
@@ -31,12 +31,7 @@ export interface DimensionCoverage {
 function allocatedKeys(rawData: RawIsinData): Set<string> {
   const keys = new Set<string>()
   for (const dim of ['geo', 'secteur', 'currency', 'classe'] as const) {
-    const latestDateByKey = new Map<string, string>()
-    for (const row of rawData[dim]) {
-      const cur = latestDateByKey.get(row.isin)
-      if (!cur || row.snapshot_date > cur) latestDateByKey.set(row.isin, row.snapshot_date)
-    }
-    for (const key of latestDateByKey.keys()) keys.add(key)
+    for (const row of rawData[dim]) keys.add(row.isin)
   }
   return keys
 }
@@ -73,8 +68,11 @@ export function computeAllocationCoverageByAccount(
   }
 
   return [...byAccount.values()].toSorted(
-    (a, b) => b.allocated + b.unallocated + b.notApplicable
-      - (a.allocated + a.unallocated + a.notApplicable),
+    (a, b) =>
+      b.allocated +
+      b.unallocated +
+      b.notApplicable -
+      (a.allocated + a.unallocated + a.notApplicable),
   )
 }
 
@@ -104,14 +102,20 @@ export function computeAllocationCoverageByDimension(
       const allocationTotal = allocation
         ? Object.values(allocation.values).reduce((sum, amount) => sum + amount, 0)
         : 0
-      const ncRatio = allocationTotal > 0
-        ? Math.min(1, Math.max(0, (allocation?.values.nc ?? 0) / allocationTotal))
-        : 1
+      const ncRatio =
+        allocationTotal > 0
+          ? Math.min(1, Math.max(0, (allocation?.values.nc ?? 0) / allocationTotal))
+          : 1
       const missing = value * ncRatio
       allocated += value - missing
       unallocated += missing
       if (missing > 0.01) {
-        const current = issues.get(key) ?? { id: key, name: position.name, value: 0, unallocated: 0 }
+        const current = issues.get(key) ?? {
+          id: key,
+          name: position.name,
+          value: 0,
+          unallocated: 0,
+        }
         current.value += value
         current.unallocated += missing
         issues.set(key, current)

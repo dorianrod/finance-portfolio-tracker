@@ -1,9 +1,9 @@
-import { useCallback } from 'react'
 import i18n from '@/i18n/i18n'
+import { useCallback } from 'react'
 
 type MoneyStyle = 'currency' | 'decimal' | 'compact' | 'full'
 
-interface MoneyFormatOptions {
+type MoneyFormatOptions = {
   currency?: string
   maximumFractionDigits?: number
   minimumFractionDigits?: number
@@ -26,8 +26,10 @@ const DECIMAL_EUR_FORMATTER = new Intl.NumberFormat('en-GB', {
 const FULL_EUR_FORMATTER = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 })
 
 function formatCompactEuro(value: number): string {
-  if (Math.abs(value) >= 1_000_000) return i18n.t('ui.useformatmoney.millions', { value: (value / 1_000_000).toFixed(1) })
-  if (Math.abs(value) >= 1_000) return i18n.t('ui.useformatmoney.thousands', { value: (value / 1_000).toFixed(0) })
+  if (Math.abs(value) >= 1_000_000)
+    return i18n.t('ui.useformatmoney.millions', { value: (value / 1_000_000).toFixed(1) })
+  if (Math.abs(value) >= 1_000)
+    return i18n.t('ui.useformatmoney.thousands', { value: (value / 1_000).toFixed(0) })
   return i18n.t('ui.useformatmoney.euros', { value: Math.round(value) })
 }
 
@@ -37,10 +39,17 @@ function formatFullEuro(value: number): string {
 
 export function useFormatMoney() {
   return useCallback((value: number, options: MoneyFormatOptions = {}): string => {
-    const { currency = 'EUR', maximumFractionDigits, minimumFractionDigits, style = 'currency' } = options
+    const {
+      currency = 'EUR',
+      maximumFractionDigits,
+      minimumFractionDigits,
+      style = 'currency',
+    } = options
 
-    if (style === 'compact' && currency === 'EUR' && maximumFractionDigits == null) return formatCompactEuro(value)
-    if (style === 'full' && currency === 'EUR' && maximumFractionDigits == null) return formatFullEuro(value)
+    if (style === 'compact' && currency === 'EUR' && maximumFractionDigits == null)
+      return formatCompactEuro(value)
+    if (style === 'full' && currency === 'EUR' && maximumFractionDigits == null)
+      return formatFullEuro(value)
     if (currency === 'EUR' && maximumFractionDigits == null && minimumFractionDigits == null) {
       return style === 'decimal'
         ? DECIMAL_EUR_FORMATTER.format(value)

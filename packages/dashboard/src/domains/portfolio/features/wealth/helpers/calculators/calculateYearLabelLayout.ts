@@ -2,13 +2,13 @@ import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helper
 
 export type YearLabelTextAnchor = 'start' | 'middle' | 'end'
 
-export interface YearLabelPlacement {
+export type YearLabelPlacement = {
   dx: number
   dy: number
   textAnchor: YearLabelTextAnchor
 }
 
-interface LabelBox {
+type LabelBox = {
   left: number
   right: number
   top: number
@@ -43,8 +43,10 @@ function labelBox(x: number, y: number, placement: YearLabelPlacement): LabelBox
 }
 
 function overlapArea(a: LabelBox, b: LabelBox): number {
-  return Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left))
-    * Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
+  return (
+    Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
+    Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
+  )
 }
 
 /** Greedily gives the newest years first choice, then moves colliding labels around their point. */
@@ -83,14 +85,18 @@ export function calculateYearLabelLayout(
       const box = labelBox(coordinate.x, coordinate.y, candidate)
       const labelOverlap = occupied.reduce((sum, other) => sum + overlapArea(box, other), 0)
       const pointOverlap = coordinates.reduce((sum, point) => {
-        const inside = point.x >= box.left - 4 && point.x <= box.right + 4
-          && point.y >= box.top - 4 && point.y <= box.bottom + 4
+        const inside =
+          point.x >= box.left - 4 &&
+          point.x <= box.right + 4 &&
+          point.y >= box.top - 4 &&
+          point.y <= box.bottom + 4
         return sum + (inside ? 1 : 0)
       }, 0)
-      const outside = Math.max(0, -box.left)
-        + Math.max(0, box.right - plotWidth)
-        + Math.max(0, -box.top)
-        + Math.max(0, box.bottom - plotHeight)
+      const outside =
+        Math.max(0, -box.left) +
+        Math.max(0, box.right - plotWidth) +
+        Math.max(0, -box.top) +
+        Math.max(0, box.bottom - plotHeight)
       const score = labelOverlap * 100 + pointOverlap * 1_000 + outside * 1_000 + candidateIndex
 
       if (score < bestScore) {

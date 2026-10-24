@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { buildAccountLabels, buildPositionRows } from './buildPositionHierarchy'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import { buildAccountLabels, buildPositionRows } from './buildPositionHierarchy'
 
 function op(overrides: Partial<RawOperation>): RawOperation {
   return {
-    date: '2024-01-01',
+    date: new Date('2024-01-01'),
     account: 'acc1',
     isin: 'FR0000000001',
     ticker: '',
@@ -23,7 +23,7 @@ function op(overrides: Partial<RawOperation>): RawOperation {
 
 function pos(overrides: Partial<RawPosition>): RawPosition {
   return {
-    snapshot_date: '2024-06-01',
+    snapshot_date: new Date('2024-06-01'),
     account: 'acc1',
     account_type: 'PEA',
     account_category: 'brokerage',
@@ -54,19 +54,33 @@ function pos(overrides: Partial<RawPosition>): RawPosition {
 
 describe('buildAccountLabels', () => {
   it('maps account -> label, skipping rows missing either field', () => {
-    expect(buildAccountLabels([
-      { account: 'acc1', label: 'Compte 1' },
-      { account: '', label: 'ignored' },
-      { account: 'acc2', label: '' },
-    ])).toEqual({ acc1: 'Compte 1' })
+    expect(
+      buildAccountLabels([
+        { account: 'acc1', label: 'Compte 1' },
+        { account: '', label: 'ignored' },
+        { account: 'acc2', label: '' },
+      ]),
+    ).toEqual({ acc1: 'Compte 1' })
   })
 })
 
 describe('buildPositionRows', () => {
   it('builds an active position with a Dividends group and a Buys / Sells group', () => {
     const ops = [
-      op({ operation_type: 'BUY', date: '2023-01-01', total_amount: -1000, quantity: 10, price_per_unit: 100 }),
-      op({ operation_type: 'DIVIDEND', date: '2024-01-01', total_amount: 50, quantity: 0, price_per_unit: 0 }),
+      op({
+        operation_type: 'BUY',
+        date: new Date('2023-01-01'),
+        total_amount: -1000,
+        quantity: 10,
+        price_per_unit: 100,
+      }),
+      op({
+        operation_type: 'DIVIDEND',
+        date: new Date('2024-01-01'),
+        total_amount: 50,
+        quantity: 0,
+        price_per_unit: 0,
+      }),
     ]
     const rows = buildPositionRows(ops, [pos({})])
 
@@ -84,28 +98,51 @@ describe('buildPositionRows', () => {
   })
 
   it('marks a position with no matching latest snapshot as closed and sums realized gain from sells', () => {
-    const ops = [op({ isin: 'FR9999', operation_type: 'SELL', total_amount: 500, realized_gain: 50 })]
+    const ops = [
+      op({ isin: 'FR9999', operation_type: 'SELL', total_amount: 500, realized_gain: 50 }),
+    ]
     const rows = buildPositionRows(ops, [])
     expect(rows[0].status).toBe('closed')
     expect(rows[0].realized_gain).toBe(50)
   })
 
   it('passes through account_type from the pipeline CSV including "– Cash" suffix', () => {
-    const ops = [op({ isin: '', ticker: '', name: 'Cash CTO', operation_type: 'DEPOSIT', total_amount: 1000 })]
-    const rows = buildPositionRows(ops, [pos({ isin: '', ticker: '', name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage' })])
+    const ops = [
+      op({ isin: '', ticker: '', name: 'Cash CTO', operation_type: 'DEPOSIT', total_amount: 1000 }),
+    ]
+    const rows = buildPositionRows(ops, [
+      pos({
+        isin: '',
+        ticker: '',
+        name: 'Cash CTO',
+        account_type: 'Bourse – Cash',
+        account_category: 'brokerage',
+      }),
+    ])
     expect(rows[0].account_type).toBe('Bourse – Cash')
   })
 
   it('sorts active positions before closed ones', () => {
     const activeOp = op({ isin: 'ACTIVE', operation_type: 'BUY' })
-    const closedOp = op({ isin: 'CLOSED', operation_type: 'SELL', total_amount: 100, realized_gain: 0 })
+    const closedOp = op({
+      isin: 'CLOSED',
+      operation_type: 'SELL',
+      total_amount: 100,
+      realized_gain: 0,
+    })
     const rows = buildPositionRows([closedOp, activeOp], [pos({ isin: 'ACTIVE' })])
     expect(rows.map((r) => r.id)).toEqual(['ACTIVE|acc1', 'CLOSED|acc1'])
   })
 
   it('gives the same asset held in two accounts one row per account, each with its own account_type', () => {
     const ops = [
-      op({ isin: 'SPLIT', account: 'pea', operation_type: 'BUY', quantity: 10, total_amount: -1000 }),
+      op({
+        isin: 'SPLIT',
+        account: 'pea',
+        operation_type: 'BUY',
+        quantity: 10,
+        total_amount: -1000,
+      }),
       op({ isin: 'SPLIT', account: 'cto', operation_type: 'BUY', quantity: 5, total_amount: -500 }),
     ]
     const rows = buildPositionRows(ops, [
@@ -120,16 +157,18 @@ describe('buildPositionRows', () => {
   it('uses the latest snapshot and operations on or before an as-of date', () => {
     const rows = buildPositionRows(
       [
-        op({ date: '2024-01-01', total_amount: -1000 }),
-        op({ date: '2025-01-01', operation_type: 'DIVIDEND', total_amount: 99 }),
+        op({ date: new Date('2024-01-01'), total_amount: -1000 }),
+        op({ date: new Date('2025-01-01'), operation_type: 'DIVIDEND', total_amount: 99 }),
       ],
       [
-        pos({ snapshot_date: '2024-06-01', total_value: 1200 }),
-        pos({ snapshot_date: '2025-06-01', total_value: 1800 }),
+        pos({ snapshot_date: new Date('2024-06-01'), total_value: 1200 }),
+        pos({ snapshot_date: new Date('2025-06-01'), total_value: 1800 }),
       ],
-      '2024-12-31',
+      new Date('2024-12-31'),
     )
     expect(rows[0].total_value).toBe(1200)
-    expect(rows[0].subRows.flatMap((group) => group.subRows).map((item) => item.date)).toEqual(['2024-01-01'])
+    expect(rows[0].subRows.flatMap((group) => group.subRows).map((item) => item.date)).toEqual([
+      new Date('2024-01-01'),
+    ])
   })
 })

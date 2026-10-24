@@ -1,4 +1,4 @@
-export interface NumericTooltipPayload<TPayload> {
+export type NumericTooltipPayload<TPayload> = {
   color?: string
   dataKey?: string | number
   name?: string | number
@@ -6,9 +6,9 @@ export interface NumericTooltipPayload<TPayload> {
   value?: number
 }
 
-export interface NumericTooltipProps<TPayload> {
+export type NumericTooltipProps<TPayload, TLabel = string | number> = {
   active?: boolean
-  label?: string | number
+  label?: TLabel
   payload?: ReadonlyArray<NumericTooltipPayload<TPayload>>
 }
 

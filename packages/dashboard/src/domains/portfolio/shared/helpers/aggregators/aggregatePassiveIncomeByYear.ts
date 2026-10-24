@@ -1,17 +1,16 @@
 import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 
-export type RawPassiveIncomeOp = {
-  date: string
-  account: string
-  operation_type: string
-  total_amount: number
-}
+export type RawPassiveIncomeOp = Pick<
+  RawOperation,
+  'date' | 'account' | 'operation_type' | 'total_amount'
+>
 
 export function aggregatePassiveIncomeByYear(
   rows: RawPassiveIncomeOp[],
   accountSet: Set<string> | null,
-  dateFrom?: string,
-  dateTo?: string,
+  dateFrom?: Date,
+  dateTo?: Date,
 ): PassiveIncomePoint[] {
   const byYear = new Map<string, { dividends: number; interest: number }>()
 
@@ -20,7 +19,7 @@ export function aggregatePassiveIncomeByYear(
     if (accountSet && !accountSet.has(row.account)) continue
     if (dateFrom && row.date < dateFrom) continue
     if (dateTo && row.date > dateTo) continue
-    const year = row.date?.slice(0, 4)
+    const year = String(row.date.getUTCFullYear())
     if (!year) continue
     const amount = row.total_amount
     const cur = byYear.get(year) ?? { dividends: 0, interest: 0 }

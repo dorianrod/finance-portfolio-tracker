@@ -1,26 +1,29 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import type {
+  MonthlyOperation,
+  MonthlyOperationsByMonth,
+} from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 import {
   buildCumulativeConcentration,
-  buildTriChartData,
   buildCumulativeWealthDrivers,
+  buildTriChartData,
   computeConcentration,
-  cumulativeConcentrationCrosshair,
   computeHeldAssetConcentration,
   computePerformanceSummary,
   computePeriodDrivers,
-  computeTrailing12mYearOverYear,
   computeTopPerformers,
   computeTrailing12mIncome,
   computeTrailing12mSavings,
+  computeTrailing12mYearOverYear,
+  cumulativeConcentrationCrosshair,
   filterMonthlyOpsByAccounts,
   filterPointsByPeriod,
 } from './calculatePortfolioCharts'
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-import type { MonthlyOperation, MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 describe('cumulativeConcentrationCrosshair', () => {
   it('uses the active rank and cumulative share', () => {
@@ -39,7 +42,7 @@ describe('cumulativeConcentrationCrosshair', () => {
 })
 
 function historyPoint(
-  date: string,
+  date: Date,
   tri1y: number | null,
   tri3y: number | null,
 ): PortfolioHistoryPoint {
@@ -59,15 +62,19 @@ function historyPoint(
 describe('buildTriChartData', () => {
   it('starts at the first history point and backfills each missing rolling span with its first value', () => {
     const result = buildTriChartData([
-      historyPoint('2021-01-01', null, null),
-      historyPoint('2022-01-01', 8, null),
-      historyPoint('2023-01-01', 10, null),
-      historyPoint('2024-01-01', 12, 7),
-      historyPoint('2025-01-01', 9, 6),
+      historyPoint(new Date('2021-01-01'), null, null),
+      historyPoint(new Date('2022-01-01'), 8, null),
+      historyPoint(new Date('2023-01-01'), 10, null),
+      historyPoint(new Date('2024-01-01'), 12, 7),
+      historyPoint(new Date('2025-01-01'), 9, 6),
     ])
 
     expect(result.map((point) => point.date)).toEqual([
-      '2021-01-01', '2022-01-01', '2023-01-01', '2024-01-01', '2025-01-01',
+      new Date('2021-01-01'),
+      new Date('2022-01-01'),
+      new Date('2023-01-01'),
+      new Date('2024-01-01'),
+      new Date('2025-01-01'),
     ])
     expect(result.map((point) => point.tri_rolling_1y_backfill)).toEqual([8, 8, null, null, null])
     expect(result.map((point) => point.tri_rolling_3y_backfill)).toEqual([7, 7, 7, 7, null])
@@ -75,7 +82,7 @@ describe('buildTriChartData', () => {
   })
 
   it('returns no chart data when no rolling IRR exists', () => {
-    expect(buildTriChartData([historyPoint('2021-01-01', null, null)])).toEqual([])
+    expect(buildTriChartData([historyPoint(new Date('2021-01-01'), null, null)])).toEqual([])
   })
 })
 
@@ -116,8 +123,24 @@ function position(overrides: Partial<PositionRow>): PositionRow {
 describe('computeTopPerformers', () => {
   it('keeps only active positions with non-zero unrealized P&L, sorted best to worst', () => {
     const positions = [
-      position({ id: 'a', name: 'Winner', ticker: 'WIN', unrealized_gain_pct: 25, unrealized_gain: 250, total_value: 1250, account_type: 'PEA' }),
-      position({ id: 'b', name: 'Loser', ticker: 'LOSE', unrealized_gain_pct: -10, unrealized_gain: -100, total_value: 900, account_type: 'CTO' }),
+      position({
+        id: 'a',
+        name: 'Winner',
+        ticker: 'WIN',
+        unrealized_gain_pct: 25,
+        unrealized_gain: 250,
+        total_value: 1250,
+        account_type: 'PEA',
+      }),
+      position({
+        id: 'b',
+        name: 'Loser',
+        ticker: 'LOSE',
+        unrealized_gain_pct: -10,
+        unrealized_gain: -100,
+        total_value: 900,
+        account_type: 'CTO',
+      }),
       position({ id: 'c', name: 'Flat', ticker: 'FLAT', unrealized_gain_pct: 0 }),
       position({ id: 'd', name: 'Closed', status: 'closed', unrealized_gain_pct: 50 }),
     ]
@@ -135,7 +158,7 @@ describe('computeTopPerformers', () => {
 describe('computeTrailing12mSavings', () => {
   it('sums the trailing 12-month window for each of the last 12 months', () => {
     const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, i) => ({
-      date: `idx-${i}`,
+      date: new Date(Date.UTC(2024, i, 1)),
       savings_delta: 100,
       perf_delta: 10,
     }))
@@ -148,8 +171,8 @@ describe('computeTrailing12mSavings', () => {
 
   it('clamps the rolling window when there is less than 12 months of history', () => {
     const points: SavingCapacityPoint[] = [
-      { date: '2024-01', savings_delta: 100, perf_delta: 5 },
-      { date: '2024-02', savings_delta: 200, perf_delta: 5 },
+      { date: new Date('2024-01'), savings_delta: 100, perf_delta: 5 },
+      { date: new Date('2024-02'), savings_delta: 200, perf_delta: 5 },
     ]
     const last12 = computeTrailing12mSavings(points)
     expect(last12).toHaveLength(2)
@@ -162,8 +185,8 @@ describe('filterMonthlyOpsByAccounts', () => {
   function makeOps(): MonthlyOperationsByMonth {
     const map: MonthlyOperationsByMonth = new Map()
     map.set('2024-01', [
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
-      { date: '2024-01-10', account: 'a2', operation_type: 'DEPOSIT', total_amount: 50 },
+      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      { date: new Date('2024-01-10'), account: 'a2', operation_type: 'DEPOSIT', total_amount: 50 },
     ] as MonthlyOperation[])
     return map
   }
@@ -174,10 +197,10 @@ describe('filterMonthlyOpsByAccounts', () => {
     expect(filterMonthlyOpsByAccounts(ops, new Set())).toBe(ops)
   })
 
-  it('filters each month\'s operations down to the selected accounts', () => {
+  it("filters each month's operations down to the selected accounts", () => {
     const result = filterMonthlyOpsByAccounts(makeOps(), new Set(['a1']))
     expect(result.get('2024-01')).toEqual([
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
     ])
   })
 
@@ -188,20 +211,22 @@ describe('filterMonthlyOpsByAccounts', () => {
     )
 
     expect(result.get('2024-01')).toEqual([
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
     ])
   })
 })
 
 describe('wealth driver helpers', () => {
   const points: SavingCapacityPoint[] = [
-    { date: '2024-01-31', savings_delta: 100, perf_delta: 10 },
-    { date: '2024-02-29', savings_delta: 50, perf_delta: -20 },
-    { date: '2024-03-31', savings_delta: -25, perf_delta: 30 },
+    { date: new Date('2024-01-31'), savings_delta: 100, perf_delta: 10 },
+    { date: new Date('2024-02-29'), savings_delta: 50, perf_delta: -20 },
+    { date: new Date('2024-03-31'), savings_delta: -25, perf_delta: 30 },
   ]
 
   it('filters points inclusively by date', () => {
-    expect(filterPointsByPeriod(points, '2024-02-01', '2024-02-29')).toEqual([points[1]])
+    expect(filterPointsByPeriod(points, new Date('2024-02-01'), new Date('2024-02-29'))).toEqual([
+      points[1],
+    ])
   })
 
   it('builds cumulative savings, performance and total change', () => {
@@ -218,7 +243,7 @@ describe('wealth driver helpers', () => {
 
   it('compares the trailing twelve months with the preceding twelve-month window', () => {
     const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, index) => ({
-      date: new Date(Date.UTC(2024, 10 + index, 28)).toISOString().slice(0, 10),
+      date: new Date(Date.UTC(2024, 10 + index, 28)),
       savings_delta: index < 12 ? 100 : 150,
       perf_delta: index < 12 ? 50 : -25,
     }))
@@ -226,12 +251,32 @@ describe('wealth driver helpers', () => {
 
     expect(result).toEqual({
       currentMonths: [
-        '2025-11', '2025-12', '2026-01', '2026-02', '2026-03', '2026-04',
-        '2026-05', '2026-06', '2026-07', '2026-08', '2026-09', '2026-10',
+        '2025-11',
+        '2025-12',
+        '2026-01',
+        '2026-02',
+        '2026-03',
+        '2026-04',
+        '2026-05',
+        '2026-06',
+        '2026-07',
+        '2026-08',
+        '2026-09',
+        '2026-10',
       ],
       comparisonMonths: [
-        '2024-11', '2024-12', '2025-01', '2025-02', '2025-03', '2025-04',
-        '2025-05', '2025-06', '2025-07', '2025-08', '2025-09', '2025-10',
+        '2024-11',
+        '2024-12',
+        '2025-01',
+        '2025-02',
+        '2025-03',
+        '2025-04',
+        '2025-05',
+        '2025-06',
+        '2025-07',
+        '2025-08',
+        '2025-09',
+        '2025-10',
       ],
       savings: { current: 1800, previous: 1200, changePct: 50 },
       performance: { current: -300, previous: 600, changePct: -150 },
@@ -240,8 +285,8 @@ describe('wealth driver helpers', () => {
 
   it('does not report an incomplete trailing twelve-month window', () => {
     const result = computeTrailing12mYearOverYear([
-      { date: '2025-10-31', savings_delta: 1000, perf_delta: 100 },
-      { date: '2026-10-11', savings_delta: 2000, perf_delta: 200 },
+      { date: new Date('2025-10-31'), savings_delta: 1000, perf_delta: 100 },
+      { date: new Date('2026-10-11'), savings_delta: 2000, perf_delta: 200 },
     ])
 
     expect(result.savings).toEqual({ current: null, previous: null, changePct: null })
@@ -250,11 +295,11 @@ describe('wealth driver helpers', () => {
 
   it('anchors the trailing comparison at the selected end date', () => {
     const points: SavingCapacityPoint[] = Array.from({ length: 36 }, (_, index) => ({
-      date: new Date(Date.UTC(2023, index, 28)).toISOString().slice(0, 10),
+      date: new Date(Date.UTC(2023, index, 28)),
       savings_delta: index < 24 ? 100 : 999,
       perf_delta: index < 24 ? 10 : 999,
     }))
-    const result = computeTrailing12mYearOverYear(points, '2024-12-31')
+    const result = computeTrailing12mYearOverYear(points, new Date('2024-12-31'))
     expect(result.currentMonths.at(-1)).toBe('2024-12')
     expect(result.savings.current).toBe(1200)
     expect(result.savings.previous).toBe(1200)
@@ -264,13 +309,49 @@ describe('wealth driver helpers', () => {
 describe('computeTrailing12mIncome', () => {
   it('uses the latest recorded income date as the end of its trailing window', () => {
     const p = position({
-      subRows: [{
-        kind: 'group', id: 'income', label: 'Dividends', subRows: [
-          { kind: 'operation', id: 'old', date: '2023-12-31', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 100, realized_gain: null },
-          { kind: 'operation', id: 'div', date: '2024-06-01', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 25, realized_gain: null },
-          { kind: 'operation', id: 'interest', date: '2024-12-31', account: 'acc1', operation_type: 'INTEREST', quantity: null, price_per_unit: null, total_amount: 10, realized_gain: null },
-        ],
-      }],
+      subRows: [
+        {
+          kind: 'group',
+          id: 'income',
+          groupType: 'dividends',
+          label: 'Dividends',
+          subRows: [
+            {
+              kind: 'operation',
+              id: 'old',
+              date: new Date('2023-12-31'),
+              account: 'acc1',
+              operation_type: 'DIVIDEND',
+              quantity: null,
+              price_per_unit: null,
+              total_amount: 100,
+              realized_gain: null,
+            },
+            {
+              kind: 'operation',
+              id: 'div',
+              date: new Date('2024-06-01'),
+              account: 'acc1',
+              operation_type: 'DIVIDEND',
+              quantity: null,
+              price_per_unit: null,
+              total_amount: 25,
+              realized_gain: null,
+            },
+            {
+              kind: 'operation',
+              id: 'interest',
+              date: new Date('2024-12-31'),
+              account: 'acc1',
+              operation_type: 'INTEREST',
+              quantity: null,
+              price_per_unit: null,
+              total_amount: 10,
+              realized_gain: null,
+            },
+          ],
+        },
+      ],
     })
     expect(computeTrailing12mIncome([p])).toEqual({
       dividends: 25,
@@ -278,27 +359,53 @@ describe('computeTrailing12mIncome', () => {
       total: 35,
       previousTotal: 100,
       changePct: -65,
-      dateFrom: '2023-12-31',
-      dateTo: '2024-12-31',
+      dateFrom: new Date('2023-12-31'),
+      dateTo: new Date('2024-12-31'),
     })
   })
 
   it('anchors both rolling income windows to the supplied portfolio date', () => {
     const p = position({
-      subRows: [{
-        kind: 'group', id: 'income', label: 'Passive income', subRows: [
-          { kind: 'operation', id: 'previous', date: '2024-06-01', account: 'acc1', operation_type: 'DIVIDEND', quantity: null, price_per_unit: null, total_amount: 100, realized_gain: null },
-          { kind: 'operation', id: 'current', date: '2025-06-01', account: 'acc1', operation_type: 'INTEREST', quantity: null, price_per_unit: null, total_amount: 150, realized_gain: null },
-        ],
-      }],
+      subRows: [
+        {
+          kind: 'group',
+          groupType: 'dividends',
+          id: 'income',
+          label: 'Passive income',
+          subRows: [
+            {
+              kind: 'operation',
+              id: 'previous',
+              date: new Date('2024-06-01'),
+              account: 'acc1',
+              operation_type: 'DIVIDEND',
+              quantity: null,
+              price_per_unit: null,
+              total_amount: 100,
+              realized_gain: null,
+            },
+            {
+              kind: 'operation',
+              id: 'current',
+              date: new Date('2025-06-01'),
+              account: 'acc1',
+              operation_type: 'INTEREST',
+              quantity: null,
+              price_per_unit: null,
+              total_amount: 150,
+              realized_gain: null,
+            },
+          ],
+        },
+      ],
     })
 
-    expect(computeTrailing12mIncome([p], '2025-12-31')).toMatchObject({
+    expect(computeTrailing12mIncome([p], new Date('2025-12-31'))).toMatchObject({
       total: 150,
       previousTotal: 100,
       changePct: 50,
-      dateFrom: '2024-12-31',
-      dateTo: '2025-12-31',
+      dateFrom: new Date('2024-12-31'),
+      dateTo: new Date('2025-12-31'),
     })
   })
 })
@@ -306,17 +413,21 @@ describe('computeTrailing12mIncome', () => {
 describe('portfolio summaries', () => {
   it('keeps the full ranked concentration while preserving the top-ten summary', () => {
     const result = computeHeldAssetConcentration(
-      Array.from({ length: 12 }, (_, index) => position({
-        id: `asset-${index}`,
-        isin: `ISIN-${index}`,
-        name: `Asset ${index}`,
-        total_value: 12 - index,
-      })),
+      Array.from({ length: 12 }, (_, index) =>
+        position({
+          id: `asset-${index}`,
+          isin: `ISIN-${index}`,
+          name: `Asset ${index}`,
+          total_value: 12 - index,
+        }),
+      ),
     )
 
     expect(result.allHoldings).toHaveLength(12)
     expect(result.holdings).toHaveLength(10)
-    expect(result.allHoldings.map((holding) => holding.value)).toEqual([12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+    expect(result.allHoldings.map((holding) => holding.value)).toEqual([
+      12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,
+    ])
     expect(result.topTenValue).toBe(75)
   })
 
@@ -334,8 +445,20 @@ describe('portfolio summaries', () => {
 
   it('computes the non-decomposed concentration at held-asset grain', () => {
     const result = computeHeldAssetConcentration([
-      position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', account: 'acc1', total_value: 600 }),
-      position({ id: 'fund-b', isin: 'FUND-A', name: 'World ETF', account: 'acc2', total_value: 200 }),
+      position({
+        id: 'fund-a',
+        isin: 'FUND-A',
+        name: 'World ETF',
+        account: 'acc1',
+        total_value: 600,
+      }),
+      position({
+        id: 'fund-b',
+        isin: 'FUND-A',
+        name: 'World ETF',
+        account: 'acc2',
+        total_value: 200,
+      }),
       position({ id: 'account', isin: '', ticker: '', name: 'PEE product', total_value: 200 }),
     ])
 
@@ -362,7 +485,15 @@ describe('portfolio summaries', () => {
   it('excludes synthetic brokerage cash from concentration', () => {
     const positions = [
       position({ id: 'asset', isin: 'FR1', name: 'Invested asset', total_value: 100 }),
-      position({ id: 'cash', isin: '', ticker: '', name: 'Cash CTO', account_type: 'Bourse – Cash', account_category: 'brokerage', total_value: 900 }),
+      position({
+        id: 'cash',
+        isin: '',
+        ticker: '',
+        name: 'Cash CTO',
+        account_type: 'Bourse – Cash',
+        account_category: 'brokerage',
+        total_value: 900,
+      }),
     ]
 
     const held = computeHeldAssetConcentration(positions)
@@ -375,31 +506,77 @@ describe('portfolio summaries', () => {
   })
 
   it('looks through funds and aggregates the same underlying direct and indirect exposure', () => {
-    const result = computeConcentration([
-      position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', total_value: 1_000 }),
-      position({ id: 'fund-b', isin: 'FUND-B', name: 'US UCITS ETF', total_value: 500 }),
-      position({ id: 'direct', isin: 'DIRECT-ASSET', name: 'Direct Asset', total_value: 100 }),
-      position({ id: 'account', isin: '', ticker: '', name: 'Broker account', total_value: 10_000 }),
-    ], [
-      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', issuerId: 'DIRECT-ASSET', issuerName: 'Direct Asset', weight: 0.1, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
-      { parentIsin: 'FUND-A', parentTicker: '', parentName: 'World ETF', holdingId: 'US0378331005', holdingName: 'Apple', issuerId: 'apple', issuerName: 'Apple', weight: 0.08, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
-      { parentIsin: 'FUND-B', parentTicker: '', parentName: 'US UCITS ETF', holdingId: 'DIRECT-ASSET', holdingName: 'Direct Asset', issuerId: 'DIRECT-ASSET', issuerName: 'Direct Asset', weight: 0.2, sourceTier: 'A', sourceName: 'Official', holdingsDate: '2026-10-01' },
-    ])
+    const result = computeConcentration(
+      [
+        position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', total_value: 1_000 }),
+        position({ id: 'fund-b', isin: 'FUND-B', name: 'US UCITS ETF', total_value: 500 }),
+        position({ id: 'direct', isin: 'DIRECT-ASSET', name: 'Direct Asset', total_value: 100 }),
+        position({
+          id: 'account',
+          isin: '',
+          ticker: '',
+          name: 'Broker account',
+          total_value: 10_000,
+        }),
+      ],
+      [
+        {
+          parentIsin: 'FUND-A',
+          parentTicker: '',
+          parentName: 'World ETF',
+          holdingId: 'DIRECT-ASSET',
+          holdingName: 'Direct Asset',
+          issuerId: 'DIRECT-ASSET',
+          issuerName: 'Direct Asset',
+          weight: 0.1,
+          sourceTier: 'A',
+          sourceName: 'Official',
+          holdingsDate: new Date('2026-10-01'),
+        },
+        {
+          parentIsin: 'FUND-A',
+          parentTicker: '',
+          parentName: 'World ETF',
+          holdingId: 'US0378331005',
+          holdingName: 'Apple',
+          issuerId: 'apple',
+          issuerName: 'Apple',
+          weight: 0.08,
+          sourceTier: 'A',
+          sourceName: 'Official',
+          holdingsDate: new Date('2026-10-01'),
+        },
+        {
+          parentIsin: 'FUND-B',
+          parentTicker: '',
+          parentName: 'US UCITS ETF',
+          holdingId: 'DIRECT-ASSET',
+          holdingName: 'Direct Asset',
+          issuerId: 'DIRECT-ASSET',
+          issuerName: 'Direct Asset',
+          weight: 0.2,
+          sourceTier: 'A',
+          sourceName: 'Official',
+          holdingsDate: new Date('2026-10-01'),
+        },
+      ],
+    )
 
     expect(result.holdings[0]).toMatchObject({
       label: 'Direct Asset',
       name: 'Direct Asset',
       value: 300,
-      weight: 300 / 11600 * 100,
+      weight: (300 / 11600) * 100,
     })
     expect(result.holdings[1].value).toBe(80)
     expect(result.topTenValue).toBe(380)
-    expect(result.topTenPct).toBeCloseTo(380 / 11600 * 100)
-    expect(result.coveragePct).toBeCloseTo(380 / 11600 * 100)
+    expect(result.topTenPct).toBeCloseTo((380 / 11600) * 100)
+    expect(result.coveragePct).toBeCloseTo((380 / 11600) * 100)
     expect(result.undisclosedValue).toBe(1_220)
     expect(result.opaqueValue).toBe(10_000)
-    expect(buildCumulativeConcentration(result.allHoldings).at(-1)?.cumulativeWeight)
-      .toBeCloseTo(result.coveragePct)
+    expect(buildCumulativeConcentration(result.allHoldings).at(-1)?.cumulativeWeight).toBeCloseTo(
+      result.coveragePct,
+    )
   })
 
   it('does not rank account valuations or opaque funds as underlying assets', () => {

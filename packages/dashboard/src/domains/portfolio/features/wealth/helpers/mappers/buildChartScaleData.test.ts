@@ -10,7 +10,7 @@ import {
 } from './buildChartScaleData'
 
 const historyPoint: PortfolioHistoryPoint = {
-  date: '2026-01-31',
+  date: new Date('2026-01-31'),
   total_value: 100,
   total_cost_basis: 80,
   unrealized_gain: 20,
@@ -30,23 +30,30 @@ describe('chart percentage scales', () => {
   })
 
   it('keeps signed portfolio attribution when performance is negative', () => {
-    const [point] = withPortfolioComposition([{
-      ...historyPoint,
-      total_value: 100,
-      total_cost_basis: 125,
-      unrealized_gain: -25,
-    }])
+    const [point] = withPortfolioComposition([
+      {
+        ...historyPoint,
+        total_value: 100,
+        total_cost_basis: 125,
+        unrealized_gain: -25,
+      },
+    ])
 
     expect(point[PORTFOLIO_COST_SHARE_KEY]).toBe(125)
     expect(point[PORTFOLIO_GAIN_SHARE_KEY]).toBe(-25)
   })
 
   it('partitions account types into exactly 100%', () => {
-    const [point] = withAccountTypeShares([{
-      date: '2026-01-31',
-      Brokerage: 1,
-      Savings: 2,
-    }], ['Brokerage', 'Savings'])
+    const [point] = withAccountTypeShares(
+      [
+        {
+          date: new Date('2026-01-31'),
+          Brokerage: 1,
+          Savings: 2,
+        },
+      ],
+      ['Brokerage', 'Savings'],
+    )
 
     expect(point[accountTypeShareKey(0)]).toBe(33.3)
     expect(point[accountTypeShareKey(1)]).toBe(66.7)

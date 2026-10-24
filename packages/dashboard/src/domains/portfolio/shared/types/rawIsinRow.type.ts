@@ -1,5 +1,5 @@
 export type RawIsinRow = {
-  snapshot_date: string
+  snapshot_date: Date
   account?: string
   account_type?: string
   isin: string

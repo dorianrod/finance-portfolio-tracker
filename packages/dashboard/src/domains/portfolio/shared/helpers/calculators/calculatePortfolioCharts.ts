@@ -1,66 +1,70 @@
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { MonthlyOperation, MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type {
+  MonthlyOperation,
+  MonthlyOperationsByMonth,
+} from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
-export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
+export type TrailingSavingCapacityPoint = SavingCapacityPoint & {
   rolling_12m: number
   rolling_perf_12m: number
 }
 
-export interface WealthDriverPoint extends SavingCapacityPoint {
+export type WealthDriverPoint = SavingCapacityPoint & {
   cumulative_savings: number
   cumulative_performance: number
   cumulative_change: number
 }
 
-export interface PeriodDrivers {
+export type PeriodDrivers = {
   savings: number
   performance: number
   change: number
 }
 
-export interface YearOverYearMetric {
+export type YearOverYearMetric = {
   current: number | null
   previous: number | null
   changePct: number | null
 }
 
-export interface TrailingYearOverYear {
+export type TrailingYearOverYear = {
   currentMonths: string[]
   comparisonMonths: string[]
   savings: YearOverYearMetric
   performance: YearOverYearMetric
 }
 
-export interface IncomeSummary {
+export type IncomeSummary = {
   dividends: number
   interest: number
   total: number
   previousTotal: number
   changePct: number | null
-  dateFrom: string | null
-  dateTo: string | null
+  dateFrom: Date | null
+  dateTo: Date | null
 }
 
-export interface HoldingConcentration {
+export type HoldingConcentration = {
   label: string
   name: string
   value: number
   weight: number
 }
 
-export interface CumulativeConcentrationPoint extends HoldingConcentration {
+export type CumulativeConcentrationPoint = HoldingConcentration & {
   rank: number
   cumulativeWeight: number
 }
 
-export interface ConcentrationSummary {
+export type ConcentrationSummary = {
   topHoldingPct: number
   topFivePct: number
   topTenPct: number
@@ -75,7 +79,7 @@ export interface ConcentrationSummary {
   holdings: HoldingConcentration[]
 }
 
-export interface PerformanceSummary {
+export type PerformanceSummary = {
   currentValueNet: number
   currentValueGross: number
   unrealizedNet: number
@@ -88,40 +92,35 @@ export interface PerformanceSummary {
   totalPerformancePct: number
 }
 
-export interface TriChartPoint extends PortfolioHistoryPoint {
+export type TriChartPoint = PortfolioHistoryPoint & {
   tri_rolling_1y_backfill: number | null
   tri_rolling_3y_backfill: number | null
 }
 
 export function buildTriChartData(history: PortfolioHistoryPoint[]): TriChartPoint[] {
-  if (!history.some((point) => point.tri_rolling_1y !== null || point.tri_rolling_3y !== null)) return []
+  if (!history.some((point) => point.tri_rolling_1y !== null || point.tri_rolling_3y !== null))
+    return []
 
   const firstOneYearIndex = history.findIndex((point) => point.tri_rolling_1y !== null)
-  const firstOneYearValue = firstOneYearIndex === -1
-    ? null
-    : history[firstOneYearIndex].tri_rolling_1y
+  const firstOneYearValue =
+    firstOneYearIndex === -1 ? null : history[firstOneYearIndex].tri_rolling_1y
   const firstThreeYearIndex = history.findIndex((point) => point.tri_rolling_3y !== null)
-  const firstThreeYearValue = firstThreeYearIndex === -1
-    ? null
-    : history[firstThreeYearIndex].tri_rolling_3y
+  const firstThreeYearValue =
+    firstThreeYearIndex === -1 ? null : history[firstThreeYearIndex].tri_rolling_3y
 
   return history.map((point, index) => ({
     ...point,
     tri_rolling_1y_backfill:
-      firstOneYearValue !== null && index <= firstOneYearIndex
-        ? firstOneYearValue
-        : null,
+      firstOneYearValue !== null && index <= firstOneYearIndex ? firstOneYearValue : null,
     tri_rolling_3y_backfill:
-      firstThreeYearValue !== null && index <= firstThreeYearIndex
-        ? firstThreeYearValue
-        : null,
+      firstThreeYearValue !== null && index <= firstThreeYearIndex ? firstThreeYearValue : null,
   }))
 }
 
-export function filterPointsByPeriod<T extends { date: string }>(
+export function filterPointsByPeriod<T extends { date: Date }>(
   points: T[],
-  dateFrom?: string,
-  dateTo?: string,
+  dateFrom?: Date,
+  dateTo?: Date,
 ): T[] {
   return points.filter((point) => {
     if (dateFrom && point.date < dateFrom) return false
@@ -164,12 +163,12 @@ function shiftMonth(month: string, offset: number): string {
 
 export function computeTrailing12mYearOverYear(
   points: SavingCapacityPoint[],
-  asOfDate?: string,
+  asOfDate?: Date,
 ): TrailingYearOverYear {
   const byMonth = new Map<string, { savings: number; performance: number }>()
   for (const point of points) {
     if (asOfDate && point.date > asOfDate) continue
-    const month = point.date.slice(0, 7)
+    const month = toCalendarMonth(point.date)
     const totals = byMonth.get(month) ?? { savings: 0, performance: 0 }
     totals.savings += point.savings_delta
     totals.performance += point.perf_delta
@@ -179,10 +178,17 @@ export function computeTrailing12mYearOverYear(
   const latestMonth = [...byMonth.keys()].toSorted().at(-1)
   if (!latestMonth) {
     const emptyMetric = { current: null, previous: null, changePct: null }
-    return { currentMonths: [], comparisonMonths: [], savings: emptyMetric, performance: { ...emptyMetric } }
+    return {
+      currentMonths: [],
+      comparisonMonths: [],
+      savings: emptyMetric,
+      performance: { ...emptyMetric },
+    }
   }
 
-  const currentMonths = Array.from({ length: 12 }, (_, index) => shiftMonth(latestMonth, index - 11))
+  const currentMonths = Array.from({ length: 12 }, (_, index) =>
+    shiftMonth(latestMonth, index - 11),
+  )
   const comparisonMonths = currentMonths.map((month) => shiftMonth(month, -12))
 
   const metric = (key: 'savings' | 'performance'): YearOverYearMetric => {
@@ -209,37 +215,49 @@ export function computeTrailing12mYearOverYear(
   }
 }
 
-function shiftDateByYears(dateString: string, yearOffset: number): string {
-  const date = new Date(`${dateString.slice(0, 10)}T00:00:00Z`)
+function shiftDateByYears(date: Date, yearOffset: number): Date {
   const targetYear = date.getUTCFullYear() + yearOffset
   const targetMonth = date.getUTCMonth()
   const targetDay = Math.min(
     date.getUTCDate(),
     new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate(),
   )
-  return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10)
+  return new Date(Date.UTC(targetYear, targetMonth, targetDay))
 }
 
-export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: string): IncomeSummary {
+export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: Date): IncomeSummary {
   const operations = positions.flatMap((position) =>
     position.subRows.flatMap((group) => group.subRows),
   )
-  const incomeOps = operations.filter((operation) =>
-    operation.operation_type === 'DIVIDEND' || operation.operation_type === 'INTEREST',
+  const incomeOps = operations.filter(
+    (operation) =>
+      operation.operation_type === 'DIVIDEND' || operation.operation_type === 'INTEREST',
   )
 
   if (incomeOps.length === 0 && !asOfDate) {
-    return { dividends: 0, interest: 0, total: 0, previousTotal: 0, changePct: null, dateFrom: null, dateTo: null }
+    return {
+      dividends: 0,
+      interest: 0,
+      total: 0,
+      previousTotal: 0,
+      changePct: null,
+      dateFrom: null,
+      dateTo: null,
+    }
   }
 
-  const dateTo = asOfDate?.slice(0, 10) ?? incomeOps.reduce(
-    (latest, operation) => operation.date > latest ? operation.date : latest,
-    incomeOps[0].date,
-  )
+  const dateTo =
+    asOfDate ??
+    incomeOps.reduce(
+      (latest, operation) => (operation.date > latest ? operation.date : latest),
+      incomeOps[0].date,
+    )
   const dateFrom = shiftDateByYears(dateTo, -1)
   const previousDateFrom = shiftDateByYears(dateTo, -2)
 
-  const trailing = incomeOps.filter((operation) => operation.date > dateFrom && operation.date <= dateTo)
+  const trailing = incomeOps.filter(
+    (operation) => operation.date > dateFrom && operation.date <= dateTo,
+  )
   const previousTrailing = incomeOps.filter(
     (operation) => operation.date > previousDateFrom && operation.date <= dateFrom,
   )
@@ -293,8 +311,10 @@ export function computeConcentration(
   }
 
   function isFundPosition(position: PositionRow): boolean {
-    return /\b(?:ETF|UCITS|FUND)\b/i.test(position.name)
-      || /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(position.name)
+    return (
+      /\b(?:ETF|UCITS|FUND)\b/i.test(position.name) ||
+      /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(position.name)
+    )
   }
 
   for (const position of positions) {
@@ -303,8 +323,7 @@ export function computeConcentration(
     const positionValue = position.total_value ?? 0
     selectedValue += positionValue
 
-    const lookThrough = holdingsByParent.get(position.isin)
-      ?? holdingsByParent.get(position.ticker)
+    const lookThrough = holdingsByParent.get(position.isin) ?? holdingsByParent.get(position.ticker)
     if (lookThrough?.length) {
       const disclosedWeight = lookThrough.reduce((sum, holding) => sum + holding.weight, 0)
       const scale = disclosedWeight > 1 ? 1 / disclosedWeight : 1
@@ -364,9 +383,7 @@ export function computeConcentration(
   }
 }
 
-export function computeHeldAssetConcentration(
-  positions: PositionRow[],
-): ConcentrationSummary {
+export function computeHeldAssetConcentration(positions: PositionRow[]): ConcentrationSummary {
   const byAsset = new Map<string, { label: string; name: string; value: number }>()
 
   for (const position of positions) {
@@ -449,9 +466,10 @@ export function computePerformanceSummary(positions: PositionRow[]): Performance
     0,
   )
   const incomeNet = positions.reduce(
-    (sum, position) => sum
-      + (position.total_dividends_net ?? position.total_dividends)
-      + (position.total_interest_net ?? position.total_interest),
+    (sum, position) =>
+      sum +
+      (position.total_dividends_net ?? position.total_dividends) +
+      (position.total_interest_net ?? position.total_interest),
     0,
   )
   const realizedGross = positions.reduce((sum, position) => sum + position.realized_gain, 0)
@@ -482,8 +500,8 @@ export function computePerformanceSummary(positions: PositionRow[]): Performance
 // truncated slice).
 export function computeTrailing12mSavings(
   savingCapacity: SavingCapacityPoint[],
-  dateFrom?: string,
-  dateTo?: string,
+  dateFrom?: Date,
+  dateTo?: Date,
 ): TrailingSavingCapacityPoint[] {
   const enriched = savingCapacity.map((pt, fullIdx) => {
     const window = savingCapacity.slice(Math.max(0, fullIdx - 11), fullIdx + 1)
@@ -495,7 +513,7 @@ export function computeTrailing12mSavings(
   return dateFrom || dateTo ? visible : visible.slice(-12)
 }
 
-export interface TopPerformer {
+export type TopPerformer = {
   label: string
   name: string
   pct: number
@@ -508,7 +526,9 @@ export interface TopPerformer {
 export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] {
   if (!positions) return []
   return positions
-    .filter((p) => p.status === 'active' && p.unrealized_gain_pct !== null && p.unrealized_gain_pct !== 0)
+    .filter(
+      (p) => p.status === 'active' && p.unrealized_gain_pct !== null && p.unrealized_gain_pct !== 0,
+    )
     .map((p) => ({
       label: resolveAssetName(p, p.isin),
       name: p.name,
@@ -520,7 +540,10 @@ export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] 
     .toSorted((a, b) => b.pct - a.pct)
 }
 
-export function filterMonthlyOpsByAccounts(allOps: MonthlyOperationsByMonth, accounts?: Set<string>): MonthlyOperationsByMonth {
+export function filterMonthlyOpsByAccounts(
+  allOps: MonthlyOperationsByMonth,
+  accounts?: Set<string>,
+): MonthlyOperationsByMonth {
   if (!accounts || accounts.size === 0) return allOps
   const rawAccounts = rawAccountSet(accounts)
   return new Map<string, MonthlyOperation[]>(
