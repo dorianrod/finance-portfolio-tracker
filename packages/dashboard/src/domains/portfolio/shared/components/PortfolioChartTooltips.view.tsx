@@ -5,9 +5,9 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { typeColor } from '@/shared/theme/chartColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import type { MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/helpers/aggregators/aggregatePassiveIncomeByYear'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import type { TopPerformer, TrailingSavingCapacityPoint, TriChartPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 
@@ -38,10 +38,10 @@ export function EvolutionTooltip({ active, payload, label, percentageMode = fals
 }
 
 interface MonthlyTooltipProps extends NumericTooltipProps<TrailingSavingCapacityPoint> {
-  ops: MonthlyOpsMap
+  ops: MonthlyOperationsByMonth
 }
 
-type MonthlyOperation = NonNullable<ReturnType<MonthlyOpsMap['get']>>[number]
+type MonthlyOperation = NonNullable<ReturnType<MonthlyOperationsByMonth['get']>>[number]
 
 function MonthlyOperationRow({ operation, withdrawal }: { operation: MonthlyOperation; withdrawal: boolean }) {
   const formatMoney = useFormatMoney()
@@ -58,7 +58,7 @@ export function MonthlyTooltip({ active, payload, label, ops }: MonthlyTooltipPr
   const rolling12m = tooltipValue(payload, 'rolling_12m')
   const rollingPerf12m = tooltipValue(payload, 'rolling_perf_12m')
   const month = String(label).slice(0, 7)
-  const monthOps: ReturnType<MonthlyOpsMap['get']> = ops.get(month) ?? []
+  const monthOps: ReturnType<MonthlyOperationsByMonth['get']> = ops.get(month) ?? []
   const deposits    = monthOps.filter((o) => o.operation_type === 'DEPOSIT' && o.total_amount > 0)
   const withdrawals = monthOps.filter((o) => o.operation_type === 'WITHDRAWAL' || (o.operation_type === 'DEPOSIT' && o.total_amount < 0))
   return (

@@ -1,14 +1,15 @@
 import i18n from '@/i18n/i18n'
 import { useState } from 'react'
 import { useAtomValue } from 'jotai'
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import { DonutCard } from './DonutCard.feature'
 import { EvoCard } from './EvoCard.feature'
 import { FilteredPositionsTable } from './FilteredPositionsTable.feature'
-import type { PositionRow, RawPosition } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import { ConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationChart.feature'
 import { CumulativeConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/CumulativeConcentrationChart.feature'
-import type { FundHolding, HistoricalFundHolding } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHolding, HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   ConcentrationModeToggle,
   type ConcentrationMode,

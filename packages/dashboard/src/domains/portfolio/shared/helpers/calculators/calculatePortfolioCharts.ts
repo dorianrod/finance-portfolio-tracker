@@ -1,12 +1,12 @@
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { MonthlyOp, MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/apis/queries/useSavingCapacity'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { MonthlyOperation, MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
-import type { FundHolding } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
 export interface TrailingSavingCapacityPoint extends SavingCapacityPoint {
   rolling_12m: number
@@ -176,7 +176,7 @@ export function computeTrailing12mYearOverYear(
     byMonth.set(month, totals)
   }
 
-  const latestMonth = [...byMonth.keys()].sort().at(-1)
+  const latestMonth = [...byMonth.keys()].toSorted().at(-1)
   if (!latestMonth) {
     const emptyMetric = { current: null, previous: null, changePct: null }
     return { currentMonths: [], comparisonMonths: [], savings: emptyMetric, performance: { ...emptyMetric } }
@@ -340,7 +340,7 @@ export function computeConcentration(
   }
 
   const allHoldings = [...byAsset.values()]
-    .sort((a, b) => b.value - a.value)
+    .toSorted((a, b) => b.value - a.value)
     .map((holding) => ({
       ...holding,
       value: Math.round(holding.value),
@@ -387,7 +387,7 @@ export function computeHeldAssetConcentration(
 
   const total = [...byAsset.values()].reduce((sum, holding) => sum + holding.value, 0)
   const allHoldings = [...byAsset.values()]
-    .sort((a, b) => b.value - a.value)
+    .toSorted((a, b) => b.value - a.value)
     .map((holding) => ({
       ...holding,
       value: Math.round(holding.value),
@@ -417,7 +417,7 @@ export function buildCumulativeConcentration(
   let cumulativeWeight = 0
 
   return [...holdings]
-    .sort((a, b) => b.value - a.value)
+    .toSorted((a, b) => b.value - a.value)
     .map((holding, index) => {
       cumulativeWeight += holding.weight
       return {
@@ -517,13 +517,13 @@ export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] 
       value: Math.round(p.total_value ?? 0),
       account_type: p.account_type ?? '',
     }))
-    .sort((a, b) => b.pct - a.pct)
+    .toSorted((a, b) => b.pct - a.pct)
 }
 
-export function filterMonthlyOpsByAccounts(allOps: MonthlyOpsMap, accounts?: Set<string>): MonthlyOpsMap {
+export function filterMonthlyOpsByAccounts(allOps: MonthlyOperationsByMonth, accounts?: Set<string>): MonthlyOperationsByMonth {
   if (!accounts || accounts.size === 0) return allOps
   const rawAccounts = rawAccountSet(accounts)
-  return new Map<string, MonthlyOp[]>(
+  return new Map<string, MonthlyOperation[]>(
     [...allOps.entries()].map(([month, list]) => [
       month,
       list.filter((o) => rawAccounts?.has(o.account)),

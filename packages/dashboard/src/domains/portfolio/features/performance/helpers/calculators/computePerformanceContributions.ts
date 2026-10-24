@@ -1,7 +1,7 @@
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import { parseNum } from '@/shared/csv/parseNum'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 
 export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
@@ -141,7 +141,7 @@ function makeContribution(
     name: item.name,
     amount: Math.round(item.amount * 100) / 100,
     share: denominator > 0 ? Math.abs(item.amount) / denominator * 100 : 0,
-    accounts: [...item.accounts].sort(),
+    accounts: [...item.accounts].toSorted(),
   }
 }
 
@@ -169,7 +169,7 @@ export function computePerformanceContributions(
   }
 
   const positions = positionsThroughEnd.filter((row) => isPositionInScope(row, filters))
-  const snapshotDates = [...new Set(positions.map((row) => datePart(row.snapshot_date)))].sort()
+  const snapshotDates = [...new Set(positions.map((row) => datePart(row.snapshot_date)))].toSorted()
   const endDate = snapshotDates.at(-1)
   if (!endDate) return unavailableSummary(horizon)
 
@@ -182,7 +182,7 @@ export function computePerformanceContributions(
       const current = startsByFilterId.get(filterId)
       if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
     }
-    startDate = [...startsByFilterId.values()].sort()[0] ?? null
+    startDate = [...startsByFilterId.values()].toSorted()[0] ?? null
   } else {
     const firstSnapshot = snapshotDates[0]
     const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
@@ -214,11 +214,11 @@ export function computePerformanceContributions(
     const key = assetKey(row)
     if (!key) continue
     const rowDate = datePart(row.snapshot_date)
-    const endValue = rowDate === endDate ? (parseNum(row.unrealized_gain) ?? 0) : 0
+    const endValue = rowDate === endDate ? row.unrealized_gain ?? 0 : 0
     const isOpeningRow = horizon === 'since-tracking'
       ? rowDate === startsByFilterId.get(accountFilterId(row))
       : rowDate === startDate
-    const openingValue = isOpeningRow ? (parseNum(row.unrealized_gain) ?? 0) : 0
+    const openingValue = isOpeningRow ? row.unrealized_gain ?? 0 : 0
     if (endValue === 0 && openingValue === 0) continue
     touch(key, clean(row.name), clean(row.ticker), row.account).amount += endValue - openingValue
   }
@@ -239,8 +239,8 @@ export function computePerformanceContributions(
     if (!lowerBound || operationDate <= lowerBound) continue
 
     const amount = operation.operation_type === 'SELL'
-      ? (parseNum(operation.realized_gain) ?? 0)
-      : (parseNum(operation.total_amount) ?? 0)
+      ? operation.realized_gain
+      : operation.total_amount
     if (amount === 0) continue
     touch(
       key,
@@ -255,12 +255,12 @@ export function computePerformanceContributions(
   const negativeTotal = nonZero.reduce((sum, item) => sum + Math.max(-item.amount, 0), 0)
   const contributors = nonZero
     .filter((item) => item.amount > 0)
-    .sort((left, right) => right.amount - left.amount)
+    .toSorted((left, right) => right.amount - left.amount)
     .slice(0, 5)
     .map((item) => makeContribution(item, positiveTotal))
   const detractors = nonZero
     .filter((item) => item.amount < 0)
-    .sort((left, right) => left.amount - right.amount)
+    .toSorted((left, right) => left.amount - right.amount)
     .slice(0, 5)
     .map((item) => makeContribution(item, negativeTotal))
 

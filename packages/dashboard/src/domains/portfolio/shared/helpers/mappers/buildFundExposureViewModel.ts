@@ -1,13 +1,13 @@
 import type {
   FundHolding,
   FundHoldingStatus,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   buildIssuerExposures,
   type IssuerExposure,
   type SecurityExposure,
 } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export type FundExposureSort = 'value' | 'name'
 
@@ -78,7 +78,7 @@ export function buildFundExposureViewModel({
         || issuer.funds.some((fund) => fund.toLocaleLowerCase().includes(needle))
       ))
     : exposures
-  const displayed = [...filtered].sort(
+  const displayed = [...filtered].toSorted(
     sort === 'value'
       ? (left, right) => right.value - left.value
       : (left, right) => left.name.localeCompare(right.name),

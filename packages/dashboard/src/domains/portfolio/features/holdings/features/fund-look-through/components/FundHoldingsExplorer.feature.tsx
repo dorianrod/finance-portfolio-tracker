@@ -3,8 +3,8 @@ import { memo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
   type FundHolding,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -141,6 +141,7 @@ function SourcesTooltip({ anchor, sources, total }: { anchor: DOMRect; sources: 
     >
       <div className="mb-2 text-[10px] uppercase tracking-wider text-gray-500">{i18n.t('ui.fundholdingsexplorer.heldThrough')} {sources.length}  {i18n.t('ui.fundholdingsexplorer.funds')}</div>
       <ul className="max-h-64 space-y-1 overflow-hidden">
+        {/* eslint-disable-next-line local/no-prop-drilling -- Tooltip rows receive the enclosing tooltip's display total directly. */}
         {sources.map((source) => <SourceTooltipRow key={source.fund} source={source} total={total} />)}
       </ul>
     </div>
@@ -170,12 +171,14 @@ const IssuerRow = memo(function IssuerRow({ issuer, open, onToggle }: {
         aria-expanded={open}
         className="flex min-w-0 items-center gap-2 text-left"
       >
+        {/* eslint-disable-next-line local/no-prop-drilling -- Chevron is a co-located visual primitive of this directly owning row. */}
         <Chevron open={open} />
         <span className="truncate font-medium text-gray-100">{issuer.name}</span>
         <span className="font-mono text-[10px] text-gray-600">{issuer.id}</span>
       </button>
       <span className="text-right font-medium tabular-nums text-gray-200">{formatMoney(issuer.value, { style: 'full' })}</span>
       <span className="text-right tabular-nums text-gray-400">{formatPercentage(issuer.weight, { decimals: 2 })}</span>
+      {/* eslint-disable-next-line local/no-prop-drilling -- SourcesCell is the direct visual renderer for the issuer source summary. */}
       <SourcesCell sources={issuer.sources} total={issuer.value} empty={i18n.t('ui.fundholdingsexplorer.direct')} className="text-xs text-gray-500" />
     </div>
   )
@@ -191,6 +194,7 @@ const SecurityRow = memo(function SecurityRow({ security }: { security: Security
       <span />
       {security.funds.length <= 1
         ? <span className="truncate text-gray-500" title={single}>{single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}</span>
+        // eslint-disable-next-line local/no-prop-drilling -- SourcesCell is the direct visual renderer for the security source summary.
         : <SourcesCell sources={security.sources} total={security.value} empty={i18n.t('ui.fundholdingsexplorer.directHolding')} className="text-gray-600" />}
     </div>
   )

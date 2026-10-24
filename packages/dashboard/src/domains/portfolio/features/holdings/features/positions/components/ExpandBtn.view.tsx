@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
 import type { Row } from '@tanstack/react-table'
-import type { TableRow } from '@/domains/portfolio/shared/types/domain'
+import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function ExpandBtn({ row }: { row: Row<TableRow> }) {
   if (!row.getCanExpand()) return <span className="w-4 inline-block" />

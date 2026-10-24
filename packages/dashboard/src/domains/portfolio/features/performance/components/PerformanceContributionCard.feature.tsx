@@ -1,13 +1,13 @@
 import i18n from '@/i18n/i18n'
 import { useState } from 'react'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/history'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
-import type { AssetIrrItem, AssetIrrSummary } from '@/domains/portfolio/shared/apis/queries/useAssetIrr'
+import type { AssetIrrItem, AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import type {
   ContributionHorizon,
   PerformanceContribution,
@@ -123,6 +123,7 @@ function IrrList({
         </p>
       ) : (
         <ol className="space-y-3">
+          {/* eslint-disable-next-line local/no-prop-drilling -- List items receive the list-wide visual scale from their direct parent. */}
           {items.map((item) => <IrrListItem key={item.key} item={item} positive={positive} strongestIrr={strongestIrr} />)}
         </ol>
       )}

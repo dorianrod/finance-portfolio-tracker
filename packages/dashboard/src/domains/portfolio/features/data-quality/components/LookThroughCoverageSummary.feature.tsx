@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
 import { useId, useState } from 'react'
-import type { FundCoverageReport } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'

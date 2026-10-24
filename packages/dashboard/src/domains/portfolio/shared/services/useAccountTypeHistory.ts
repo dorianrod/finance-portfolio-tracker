@@ -1,19 +1,19 @@
 import { useMemo } from 'react'
-import { useAllPositions } from './useAllPositions'
-import { buildAccountTypeHistory, type AccountTypeHistoryPoint, type AccountTypeHistory } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
-
-export type { AccountTypeHistoryPoint }
+import { useAllPositions } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
+import {
+  buildAccountTypeHistory,
+  type AccountTypeHistory,
+} from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 
 export function useAccountTypeHistory(accounts?: Set<string>): AccountTypeHistory {
   const { data: rows = [] } = useAllPositions()
-
   const accountsKey = useMemo(
-    () => (accounts && accounts.size > 0 ? [...accounts].sort().join(',') : ''),
+    () => (accounts && accounts.size > 0 ? [...accounts].toSorted().join(',') : ''),
     [accounts],
   )
 
   return useMemo(() => {
     const accountSet = accountsKey ? new Set(accountsKey.split(',')) : null
     return buildAccountTypeHistory(rows, accountSet)
-  }, [rows, accountsKey])
+  }, [accountsKey, rows])
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type { FundHolding } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import {
   buildIssuerExposures,
 } from './buildFundHoldingsViewModel'

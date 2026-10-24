@@ -1,7 +1,7 @@
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { Kpi } from './Kpi.view'
 import { calculatePortfolioKpis } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioKpis'
 import { getPerformanceColor } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceColor'

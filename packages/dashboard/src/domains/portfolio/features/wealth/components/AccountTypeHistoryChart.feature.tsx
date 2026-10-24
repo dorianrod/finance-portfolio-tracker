@@ -8,7 +8,7 @@ import { typeColor } from '@/shared/theme/chartColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { AccountTypeHistoryTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { accountTypeShareKey, withAccountTypeShares } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/apis/queries/useAccountTypeHistory'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 
 function AccountTypeGradient({ accountType, index, typeCategories }: { accountType: string; index: number; typeCategories: Record<string, string> }) {

@@ -1,7 +1,7 @@
 import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories'
 
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { RawPositionRow } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 export interface AccountTypeHistoryPoint {
   date: string
@@ -22,7 +22,7 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
   for (const row of rows) {
     if (!row.account_type || !row.total_value) continue
     if (accountSet && !accountSet.has(accountFilterId(row))) continue
-    const tv = parseFloat(row.total_value) || 0
+    const tv = row.total_value || 0
     typeSet.add(row.account_type)
     if (row.account_category) typeCategories[row.account_type] = row.account_category
     const dateMap = byDate.get(row.snapshot_date) ?? new Map<string, number>()
@@ -30,7 +30,7 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
     byDate.set(row.snapshot_date, dateMap)
   }
 
-  const accountTypes = [...typeSet].sort((a, b) => {
+  const accountTypes = [...typeSet].toSorted((a, b) => {
     const ia = CATEGORY_ORDER[typeCategories[a] ?? ''] ?? -1
     const ib = CATEGORY_ORDER[typeCategories[b] ?? ''] ?? -1
     if (ia !== -1 && ib !== -1) return ia - ib
@@ -40,7 +40,7 @@ export function buildAccountTypeHistory(rows: RawPositionRow[], accountSet: Set<
   })
 
   const data: AccountTypeHistoryPoint[] = [...byDate.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([date, typeMap]) => {
       const point: AccountTypeHistoryPoint = { date }
       for (const t of accountTypes) {

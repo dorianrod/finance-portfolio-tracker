@@ -1,4 +1,4 @@
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/apis/queries/useAssetIrr'
+import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import type {
   ContributionHorizon,
   PerformanceContributionSummary,

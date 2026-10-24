@@ -1,5 +1,5 @@
 import i18n from '@/i18n/i18n'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/history'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import type { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function formatPerformanceIrrLabel(

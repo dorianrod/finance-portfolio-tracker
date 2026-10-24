@@ -1,7 +1,7 @@
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/apis/queries/useAccountTypeHistory'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 export const PORTFOLIO_COST_SHARE_KEY = '__cost_share'
 export const PORTFOLIO_GAIN_SHARE_KEY = '__gain_share'

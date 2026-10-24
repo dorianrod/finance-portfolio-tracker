@@ -5,8 +5,8 @@ import type {
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import {
   computeAllocationCoverageByAccount,
   computeAllocationCoverageByDimension,
@@ -16,11 +16,11 @@ import {
   scopeFundQualityData,
 } from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
-import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/quality'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
 import { buildClassificationViewState } from './buildClassificationViewState'
 
 export const DATA_QUALITY_DIMENSION_LABELS = {
@@ -52,7 +52,7 @@ export interface AffectedAsset {
 
 interface BuildDataQualityViewModelInput {
   positions: PositionRow[]
-  errors: ErrorRow[]
+  errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
   fundStatuses: FundHoldingStatus[]
   fundReport: FundCoverageReport | null
@@ -92,7 +92,7 @@ function buildAffectedAssets(
     }
   }
 
-  return [...byAsset.values()].sort(
+  return [...byAsset.values()].toSorted(
     (left, right) => right.largestGapValue - left.largestGapValue,
   )
 }

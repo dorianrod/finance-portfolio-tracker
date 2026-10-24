@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { computePerformanceContributions } from './computePerformanceContributions'
 
@@ -13,24 +14,24 @@ function position(overrides: Partial<RawPosition>): RawPosition {
     isin: 'FR0000000001',
     ticker: 'AAA',
     name: 'Asset A',
-    quantity: '10',
-    avg_buy_price: '100',
-    last_price: '101',
-    total_value: '1010',
-    unrealized_gain: '10',
-    unrealized_gain_pct: '1',
-    realized_gain: '0',
-    total_dividends: '0',
-    total_dividends_net: '0',
-    total_interest: '0',
-    total_interest_net: '0',
-    tax_rate: '0.3',
-    unrealized_gain_net: '7',
-    realized_gain_net: '0',
-    xirr: '1',
-    xirr_rolling_3y: '',
-    xirr_rolling_period_years: '',
-    total_return_pct: '1',
+    quantity: 10,
+    avg_buy_price: 100,
+    last_price: 101,
+    total_value: 1010,
+    unrealized_gain: 10,
+    unrealized_gain_pct: 1,
+    realized_gain: 0,
+    total_dividends: 0,
+    total_dividends_net: 0,
+    total_interest: 0,
+    total_interest_net: 0,
+    tax_rate: 0.3,
+    unrealized_gain_net: 7,
+    realized_gain_net: 0,
+    xirr: 1,
+    xirr_rolling_3y: 0,
+    xirr_rolling_period_years: 0,
+    total_return_pct: 1,
     ...overrides,
   }
 }
@@ -43,11 +44,11 @@ function operation(overrides: Partial<RawOperation>): RawOperation {
     ticker: 'AAA',
     name: 'Asset A',
     operation_type: 'SELL',
-    quantity: '1',
-    price_per_unit: '100',
-    total_amount: '100',
+    quantity: 1,
+    price_per_unit: 100,
+    total_amount: 100,
     currency: 'EUR',
-    realized_gain: '20',
+    realized_gain: 20,
     ...overrides,
   }
 }
@@ -57,17 +58,17 @@ const noFilters = { accounts: new Set<string>(), accountTypes: new Set<string>()
 describe('computePerformanceContributions', () => {
   it('combines unrealized change, realized gains and income, including closed positions', () => {
     const positions = [
-      position({ snapshot_date: '2021-01-31', unrealized_gain: '10' }),
-      position({ snapshot_date: '2024-01-31', unrealized_gain: '100' }),
-      position({ snapshot_date: '2021-01-31', isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', unrealized_gain: '0' }),
-      position({ snapshot_date: '2024-01-31', isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', unrealized_gain: '-40' }),
-      position({ snapshot_date: '2022-01-31', isin: 'FR0000000003', ticker: 'CCC', name: 'Closed asset', unrealized_gain: '0' }),
+      position({ snapshot_date: '2021-01-31', unrealized_gain: 10 }),
+      position({ snapshot_date: '2024-01-31', unrealized_gain: 100 }),
+      position({ snapshot_date: '2021-01-31', isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', unrealized_gain: 0 }),
+      position({ snapshot_date: '2024-01-31', isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', unrealized_gain: -40 }),
+      position({ snapshot_date: '2022-01-31', isin: 'FR0000000003', ticker: 'CCC', name: 'Closed asset', unrealized_gain: 0 }),
     ]
     const operations = [
-      operation({ operation_type: 'SELL', realized_gain: '20' }),
-      operation({ operation_type: 'DIVIDEND', total_amount: '5', realized_gain: '' }),
-      operation({ isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', operation_type: 'SELL', realized_gain: '-10' }),
-      operation({ isin: 'FR0000000003', ticker: 'CCC', name: 'Closed asset', operation_type: 'SELL', realized_gain: '30' }),
+      operation({ operation_type: 'SELL', realized_gain: 20 }),
+      operation({ operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
+      operation({ isin: 'FR0000000002', ticker: 'BBB', name: 'Asset B', operation_type: 'SELL', realized_gain: -10 }),
+      operation({ isin: 'FR0000000003', ticker: 'CCC', name: 'Closed asset', operation_type: 'SELL', realized_gain: 30 }),
     ]
 
     const result = computePerformanceContributions(positions, operations, 'since-tracking', '2024-01-31', noFilters)
@@ -83,10 +84,10 @@ describe('computePerformanceContributions', () => {
 
   it('groups the same asset across accounts', () => {
     const positions = [
-      position({ account: 'acc1', snapshot_date: '2021-01-31', unrealized_gain: '0' }),
-      position({ account: 'acc1', snapshot_date: '2024-01-31', unrealized_gain: '40' }),
-      position({ account: 'acc2', snapshot_date: '2021-01-31', unrealized_gain: '10' }),
-      position({ account: 'acc2', snapshot_date: '2024-01-31', unrealized_gain: '70' }),
+      position({ account: 'acc1', snapshot_date: '2021-01-31', unrealized_gain: 0 }),
+      position({ account: 'acc1', snapshot_date: '2024-01-31', unrealized_gain: 40 }),
+      position({ account: 'acc2', snapshot_date: '2021-01-31', unrealized_gain: 10 }),
+      position({ account: 'acc2', snapshot_date: '2024-01-31', unrealized_gain: 70 }),
     ]
 
     const result = computePerformanceContributions(positions, [], 'since-tracking', '2024-01-31', noFilters)
@@ -97,14 +98,14 @@ describe('computePerformanceContributions', () => {
 
   it('uses the same preceding snapshot boundary as trailing three-year IRR', () => {
     const positions = [
-      position({ snapshot_date: '2021-01-31', unrealized_gain: '0' }),
-      position({ snapshot_date: '2023-09-30', unrealized_gain: '10' }),
-      position({ snapshot_date: '2023-10-31', unrealized_gain: '20' }),
-      position({ snapshot_date: '2026-10-12', unrealized_gain: '70' }),
+      position({ snapshot_date: '2021-01-31', unrealized_gain: 0 }),
+      position({ snapshot_date: '2023-09-30', unrealized_gain: 10 }),
+      position({ snapshot_date: '2023-10-31', unrealized_gain: 20 }),
+      position({ snapshot_date: '2026-10-12', unrealized_gain: 70 }),
     ]
     const operations = [
-      operation({ date: '2023-09-30', operation_type: 'DIVIDEND', total_amount: '99', realized_gain: '' }),
-      operation({ date: '2023-10-01', operation_type: 'DIVIDEND', total_amount: '5', realized_gain: '' }),
+      operation({ date: '2023-09-30', operation_type: 'DIVIDEND', total_amount: 99, realized_gain: 0 }),
+      operation({ date: '2023-10-01', operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
     ]
 
     const result = computePerformanceContributions(positions, operations, 'trailing-3y', '2026-10-12', noFilters)
@@ -116,13 +117,13 @@ describe('computePerformanceContributions', () => {
 
   it('stops positions and operations at the selected end date', () => {
     const positions = [
-      position({ snapshot_date: '2021-01-31', unrealized_gain: '0' }),
-      position({ snapshot_date: '2024-01-31', unrealized_gain: '40' }),
-      position({ snapshot_date: '2025-01-31', unrealized_gain: '400' }),
+      position({ snapshot_date: '2021-01-31', unrealized_gain: 0 }),
+      position({ snapshot_date: '2024-01-31', unrealized_gain: 40 }),
+      position({ snapshot_date: '2025-01-31', unrealized_gain: 400 }),
     ]
     const operations = [
-      operation({ date: '2023-01-01', operation_type: 'DIVIDEND', total_amount: '5', realized_gain: '' }),
-      operation({ date: '2024-06-01', operation_type: 'DIVIDEND', total_amount: '50', realized_gain: '' }),
+      operation({ date: '2023-01-01', operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
+      operation({ date: '2024-06-01', operation_type: 'DIVIDEND', total_amount: 50, realized_gain: 0 }),
     ]
 
     const result = computePerformanceContributions(positions, operations, 'since-tracking', '2024-03-01', noFilters)
@@ -133,16 +134,16 @@ describe('computePerformanceContributions', () => {
 
   it('applies account, account-type and synthetic-cash filters to positions and operations', () => {
     const positions = [
-      position({ snapshot_date: '2021-01-31', unrealized_gain: '0' }),
-      position({ snapshot_date: '2024-01-31', unrealized_gain: '100' }),
-      position({ snapshot_date: '2021-01-31', isin: '', ticker: '', name: 'Cash PEA', account_type: 'Bourse – Cash', unrealized_gain: '0' }),
-      position({ snapshot_date: '2024-01-31', isin: '', ticker: '', name: 'Cash PEA', account_type: 'Bourse – Cash', unrealized_gain: '0' }),
-      position({ snapshot_date: '2021-01-31', account: 'acc2', account_type: 'PEE', unrealized_gain: '0' }),
-      position({ snapshot_date: '2024-01-31', account: 'acc2', account_type: 'PEE', unrealized_gain: '200' }),
+      position({ snapshot_date: '2021-01-31', unrealized_gain: 0 }),
+      position({ snapshot_date: '2024-01-31', unrealized_gain: 100 }),
+      position({ snapshot_date: '2021-01-31', isin: '', ticker: '', name: 'Cash PEA', account_type: 'Bourse – Cash', unrealized_gain: 0 }),
+      position({ snapshot_date: '2024-01-31', isin: '', ticker: '', name: 'Cash PEA', account_type: 'Bourse – Cash', unrealized_gain: 0 }),
+      position({ snapshot_date: '2021-01-31', account: 'acc2', account_type: 'PEE', unrealized_gain: 0 }),
+      position({ snapshot_date: '2024-01-31', account: 'acc2', account_type: 'PEE', unrealized_gain: 200 }),
     ]
     const operations = [
-      operation({ operation_type: 'DIVIDEND', total_amount: '5', realized_gain: '' }),
-      operation({ isin: '', ticker: '', name: 'Cash PEA', operation_type: 'INTEREST', total_amount: '3', realized_gain: '' }),
+      operation({ operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
+      operation({ isin: '', ticker: '', name: 'Cash PEA', operation_type: 'INTEREST', total_amount: 3, realized_gain: 0 }),
     ]
 
     const cashOnly = computePerformanceContributions(
@@ -166,8 +167,8 @@ describe('computePerformanceContributions', () => {
 
   it('keeps only the five largest contributors and reports an unavailable short three-year history', () => {
     const positions = Array.from({ length: 7 }, (_, index) => [
-      position({ snapshot_date: '2024-01-31', isin: `FR${index}`, ticker: `A${index}`, name: `Asset ${index}`, unrealized_gain: '0' }),
-      position({ snapshot_date: '2025-01-31', isin: `FR${index}`, ticker: `A${index}`, name: `Asset ${index}`, unrealized_gain: String(index + 1) }),
+      position({ snapshot_date: '2024-01-31', isin: `FR${index}`, ticker: `A${index}`, name: `Asset ${index}`, unrealized_gain: 0 }),
+      position({ snapshot_date: '2025-01-31', isin: `FR${index}`, ticker: `A${index}`, name: `Asset ${index}`, unrealized_gain: index + 1 }),
     ]).flat()
 
     const sinceTracking = computePerformanceContributions(positions, [], 'since-tracking', '2025-01-31', noFilters)

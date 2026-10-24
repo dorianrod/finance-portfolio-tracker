@@ -1,6 +1,5 @@
 {
   "ui.accounttreeselect.allAccounts": "All accounts",
-  "ui.accounttreeselect.flexItemsCenterGap15Px3Py": "flex items-center gap-1.5 px-3 py-1 rounded-lg border text-xs transition-colors cursor-pointer",
   "ui.accounttreeselect.reset": "Reset",
   "ui.accounttreeselect.selectAll": "Select all",
   "ui.accounttreeselect.selected": "Selected",
@@ -774,7 +773,6 @@
   "ui.portfoliofilters.sinceDate": "Since {{date}}",
   "ui.portfoliofilters.untilDate": "Until {{date}}",
   "ui.portfoliofilters.withdrawal": "Withdrawal",
-  "ui.useassetirr.localDashboardOnly": "Asset IRR is available in the local dashboard.",
   "ui.useconcentrationdescriptions.heldCumulativeDescription": "Share of the applicable portfolio held in the largest N positions.",
   "ui.useconcentrationdescriptions.heldPositionsDescription": "Positions effectively held, aggregated across accounts.",
   "ui.useconcentrationdescriptions.underlyingCumulativeDescription": "Share of the applicable portfolio identified in the largest N look-through exposures · {{coverage}} coverage.",

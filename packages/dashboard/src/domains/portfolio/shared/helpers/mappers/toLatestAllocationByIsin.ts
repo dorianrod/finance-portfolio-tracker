@@ -1,4 +1,4 @@
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 
 
 export function toLatestByIsin(rows: Record<string, string>[]): Map<string, { name: string; point: AllocationPoint }> {
@@ -14,16 +14,16 @@ export function toLatestByIsin(rows: Record<string, string>[]): Map<string, { na
   }
   const result = new Map<string, { name: string; point: AllocationPoint }>()
   for (const [isin, isinRows] of byIsin) {
-    const latest = [...isinRows].sort((a, b) => b.snapshot_date.localeCompare(a.snapshot_date))[0]
+    const latest = [...isinRows].toSorted((a, b) => b.snapshot_date.localeCompare(a.snapshot_date))[0]
     const categories = Object.entries(latest)
       .filter(([k]) => !['snapshot_date', 'isin', 'name'].includes(k))
       .map(([catName, val]) => ({ name: catName, value: parseFloat(val) || 0 }))
       .filter((c) => c.value > 0)
-    categories.sort((a, b) => {
+      .toSorted((a, b) => {
       if (a.name === 'nc') return 1
       if (b.name === 'nc') return -1
       return b.value - a.value
-    })
+      })
     result.set(isin, {
       name: nameByIsin.get(isin) ?? isin,
       point: { date: latest.snapshot_date, categories },

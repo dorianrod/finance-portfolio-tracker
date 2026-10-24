@@ -4,7 +4,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { PassiveIncomeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/apis/queries/usePassiveIncome'
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 
 export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {

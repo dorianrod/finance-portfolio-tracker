@@ -3,7 +3,7 @@ import type {
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   getFundQualityPresentation,
   type FundQualityCategory,

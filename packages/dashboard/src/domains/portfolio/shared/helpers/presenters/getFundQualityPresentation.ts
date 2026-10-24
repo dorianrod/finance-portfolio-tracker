@@ -1,4 +1,4 @@
-import type { FundQualityTier } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 
 export type FundQualityCategory = 'reliable' | 'partial' | 'unavailable'

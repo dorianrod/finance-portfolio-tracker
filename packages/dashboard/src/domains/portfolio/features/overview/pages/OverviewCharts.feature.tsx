@@ -234,6 +234,7 @@ export function OverviewConcentrationChart({
         <div className="flex h-48 items-center justify-center text-center text-sm text-gray-600">{i18n.t('ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod')}</div>
       ) : (
         <div className="mt-5 space-y-4">
+          {/* eslint-disable-next-line local/no-prop-drilling -- Rows receive chart-wide display normalization owned by their direct chart parent. */}
           {rows.map((row) => <OverviewConcentrationRow key={row.key} previousAvailable={previousAvailable} row={row} scaleMax={scaleMax} />)}
           <div className="flex items-center justify-end gap-1.5 pt-1 text-[10px] text-gray-600">
             <span className="h-3 w-0.5 bg-gray-300" />  {i18n.t('ui.overviewcharts.previousPeriodEnd')}

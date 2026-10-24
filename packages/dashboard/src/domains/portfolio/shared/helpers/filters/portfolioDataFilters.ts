@@ -1,10 +1,12 @@
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-import type { Filters, SortKey } from '@/domains/portfolio/shared/types/filters'
-import type { PortfolioHistoryPoint, AccountTypePoint } from '@/domains/portfolio/shared/types/history'
-import type { RawPositionRow } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 
 function errorMonth(date: string): string | null {
@@ -13,10 +15,10 @@ function errorMonth(date: string): string | null {
 }
 
 export function scopePipelineErrors(
-  errors: ErrorRow[],
+  errors: PipelineError[],
   positions: PositionRow[],
-  filters: Filters,
-): ErrorRow[] {
+  filters: DashboardFilters,
+): PipelineError[] {
   const selectedAccounts = new Set(positions.map((position) => position.account))
   const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
   const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
@@ -43,7 +45,7 @@ export function scopePipelineErrors(
 export function scopeManualPriceOverrides(
   overrides: ManualPriceOverride[],
   positions: PositionRow[],
-  filters: Filters,
+  filters: DashboardFilters,
 ): ManualPriceOverride[] {
   const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
   const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
@@ -60,7 +62,7 @@ export function scopeManualPriceOverrides(
   })
 }
 
-export function getSortValue(row: PositionRow, key: SortKey): number {
+export function getSortValue(row: PositionRow, key: PositionSortKey): number {
   switch (key) {
     case 'total_value':           return row.total_value ?? 0
     case 'unrealized_gain':       return row.unrealized_gain ?? 0
@@ -76,7 +78,7 @@ export function getSortValue(row: PositionRow, key: SortKey): number {
 // date range is set — recomputes each position's period-scoped dividends,
 // interest and realized gain from only the operations within that range
 // (current value and unrealized gain stay as point-in-time snapshots).
-export function applyPositionFilters(positions: PositionRow[], filters: Filters): PositionRow[] {
+export function applyPositionFilters(positions: PositionRow[], filters: DashboardFilters): PositionRow[] {
   const hasDateFilter = !!(filters.dateFrom || filters.dateTo)
 
   return positions
@@ -170,15 +172,15 @@ export function applyAccountFilterToHistory(
   const byDate = new Map<string, { tv: number; cb: number; ug: number }>()
   for (const p of allPositionRows) {
     if (!accounts.has(accountFilterId(p))) continue
-    const tv = parseFloat(p.total_value) || 0
-    const cb = (parseFloat(p.quantity) || 0) * (parseFloat(p.avg_buy_price) || 0)
-    const ug = parseFloat(p.unrealized_gain) || 0
+    const tv = p.total_value || 0
+    const cb = (p.quantity || 0) * (p.avg_buy_price || 0)
+    const ug = p.unrealized_gain || 0
     const cur = byDate.get(p.snapshot_date) ?? { tv: 0, cb: 0, ug: 0 }
     byDate.set(p.snapshot_date, { tv: cur.tv + tv, cb: cur.cb + cb, ug: cur.ug + ug })
   }
 
   return [...byDate.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([date, { tv, cb, ug }]) => ({
       date,
       total_value: tv,
@@ -211,19 +213,19 @@ export function buildAccountTypeBreakdown(filtered: PositionRow[]): AccountTypeP
       unrealized_gain: Math.round(gain),
       total_value: Math.round(cost + gain),
     }))
-    .sort((a, b) => b.total_value - a.total_value)
+    .toSorted((a, b) => b.total_value - a.total_value)
 }
 
 export function sortPositionsForTable(
   filtered: PositionRow[],
   hideClosedPositions: boolean,
   allAccountTypes: string[],
-  sortKey: SortKey,
+  sortKey: PositionSortKey,
   sortDir: 'asc' | 'desc',
 ): PositionRow[] {
   const rows = filtered.filter((p) => !hideClosedPositions || p.status !== 'closed')
   if (allAccountTypes.length === 0) return rows
-  return [...rows].sort((a, b) => {
+  return [...rows].toSorted((a, b) => {
     const ta = a.account_type ?? ''
     const tb = b.account_type ?? ''
     if (ta !== tb) return ta.localeCompare(tb, 'en')

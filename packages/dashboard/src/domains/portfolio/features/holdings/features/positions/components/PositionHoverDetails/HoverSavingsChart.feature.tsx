@@ -25,7 +25,7 @@ interface SavingsProps {
 
 export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: SavingsProps) {
   const formatMoney = useFormatMoney()
-  const history = usePositionsHistory(target.name)
+  const { data: history } = usePositionsHistory(target.name)
   const { top, left } = computePosition(target.buttonRect)
 
   const chartData = history && history.length > 0

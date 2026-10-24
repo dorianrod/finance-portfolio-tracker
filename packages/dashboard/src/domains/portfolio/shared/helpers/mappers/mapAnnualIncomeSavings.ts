@@ -1,22 +1,19 @@
-import { parseNum } from '@/shared/csv/parseNum'
-
-
-export interface RawAnnualIncomeSavingsRow {
-  year: string
+export type RawAnnualIncomeSavingsRow = {
+  year: number
   income_status: string
-  net_salary: string
-  other_income: string
-  total_income: string
-  gross_salary: string
-  placed_savings: string
+  net_salary: number
+  other_income: number
+  total_income: number
+  gross_salary: number
+  placed_savings: number | null
   savings_through: string
   savings_status: string
-  placement_rate: string
-  unplaced_income_proxy: string
-  comparable: string
+  placement_rate: number | null
+  unplaced_income_proxy: number | null
+  comparable: boolean
 }
 
-export interface AnnualIncomeSavingsPoint {
+export type AnnualIncomeSavingsPoint = {
   year: number
   incomeStatus: 'actual' | 'forecast'
   netSalary: number
@@ -31,15 +28,11 @@ export interface AnnualIncomeSavingsPoint {
   comparable: boolean
 }
 
-export interface IncomePlacementAnalysis {
+export type IncomePlacementAnalysis = {
   points: AnnualIncomeSavingsPoint[]
   correlation: number | null
   slopePerTenThousand: number | null
   trendLine: Array<{ totalIncome: number; placementRate: number }>
-}
-
-function parseRequired(value: string): number {
-  return parseNum(value) ?? 0
 }
 
 export function mapAnnualIncomeSavings(
@@ -47,21 +40,21 @@ export function mapAnnualIncomeSavings(
 ): AnnualIncomeSavingsPoint[] {
   return rows
     .map((row) => ({
-      year: Math.trunc(parseRequired(row.year)),
+      year: Math.trunc(row.year),
       incomeStatus: row.income_status === 'forecast' ? 'forecast' as const : 'actual' as const,
-      netSalary: parseRequired(row.net_salary),
-      otherIncome: parseRequired(row.other_income),
-      totalIncome: parseRequired(row.total_income),
-      grossSalary: parseRequired(row.gross_salary),
-      placedSavings: parseNum(row.placed_savings),
+      netSalary: row.net_salary,
+      otherIncome: row.other_income,
+      totalIncome: row.total_income,
+      grossSalary: row.gross_salary,
+      placedSavings: row.placed_savings,
       savingsThrough: row.savings_through || null,
       savingsStatus: parseSavingsStatus(row.savings_status),
-      placementRate: parseNum(row.placement_rate),
-      unplacedIncomeProxy: parseNum(row.unplaced_income_proxy),
-      comparable: row.comparable.toLowerCase() === 'true',
+      placementRate: row.placement_rate,
+      unplacedIncomeProxy: row.unplaced_income_proxy,
+      comparable: row.comparable,
     }))
     .filter((point) => point.year > 0)
-    .sort((a, b) => a.year - b.year)
+    .toSorted((a, b) => a.year - b.year)
 }
 
 function parseSavingsStatus(status: string): AnnualIncomeSavingsPoint['savingsStatus'] {

@@ -2,7 +2,7 @@ import i18n from '@/i18n/i18n'
 import { useAtomValue } from 'jotai'
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
-import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
   geo: i18n.t('ui.filterchipbar.geo'),

@@ -1,4 +1,4 @@
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/history'
+import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 

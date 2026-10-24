@@ -1,21 +1,12 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
 import { toLatestByIsin } from '@/domains/portfolio/shared/helpers/mappers/toLatestAllocationByIsin'
 import { ALLOCATION_BY_ISIN_ROW_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 
 const EMPTY_ISIN_ALLOCATIONS = new Map<string, IsinAllocation>()
-
-export interface IsinAllocation {
-  isin: string
-  name: string
-  geo: AllocationPoint | null
-  secteur: AllocationPoint | null
-  currency: AllocationPoint | null
-  classe: AllocationPoint | null
-}
 
 export function useAllocationByIsin() {
   return useQuery({

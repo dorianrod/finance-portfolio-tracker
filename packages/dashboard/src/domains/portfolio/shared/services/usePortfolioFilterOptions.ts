@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { skipToken, useQuery } from '@tanstack/react-query'
-import type { DashboardData } from '@/domains/portfolio/shared/apis/queries/useData'
+import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 

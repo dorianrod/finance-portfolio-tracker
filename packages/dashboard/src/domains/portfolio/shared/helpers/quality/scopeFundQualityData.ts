@@ -5,8 +5,8 @@ import type {
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { isFundPosition } from '../mappers/buildFundHoldingsViewModel'
@@ -129,7 +129,7 @@ export function scopeFundQualityData(
     ? (directIdentifiedValue + highConfidenceExplainedValue) / portfolioValue * 100
     : 0
 
-  const ranked = [...scopedStatuses].sort((a, b) => b.marketValue - a.marketValue).slice(0, 7)
+  const ranked = [...scopedStatuses].toSorted((a, b) => b.marketValue - a.marketValue).slice(0, 7)
   const coverageGatePass = fundValue === 0 || fundCoveragePct >= 85
   const topFundsGatePass = ranked.length === 0 || ranked.every(
     (status) => (status.qualityTier === 'A' || status.qualityTier === 'B') && status.explainedPct >= 98,

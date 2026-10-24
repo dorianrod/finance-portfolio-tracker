@@ -1,10 +1,10 @@
 import i18n from '@/i18n/i18n'
-import type { SortKey } from '@/domains/portfolio/shared/types/filters'
+import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
 
 export function SortHeader({ label, tooltip, col: sk, activeKey, dir, onSort }: {
-  label: string; tooltip: string; col: SortKey
-  activeKey: SortKey; dir: 'asc' | 'desc'; onSort: (k: SortKey) => void
+  label: string; tooltip: string; col: PositionSortKey
+  activeKey: PositionSortKey; dir: 'asc' | 'desc'; onSort: (k: PositionSortKey) => void
 }) {
   const active = activeKey === sk
   let sortState = i18n.t('ui.sortheader.notSorted')

@@ -1,30 +1,27 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import type {
+  MonthlyOperation,
+  MonthlyOperationsByMonth,
+  MonthlyOperationType,
+} from '@/domains/portfolio/shared/types/monthlyOperation.type'
 
-export interface MonthlyOp {
-  date: string
-  account: string
-  operation_type: string
-  total_amount: number
-  label: string
+function isMonthlyOperationType(value: string): value is MonthlyOperationType {
+  return value === 'DEPOSIT' || value === 'WITHDRAWAL'
 }
 
-export type MonthlyOpsMap = Map<string, MonthlyOp[]>
-
 export function useMonthlyOps() {
-  const formatAssetLabel = useFormatAssetLabel()
-  return useQuery<MonthlyOpsMap>({
+  return useQuery<MonthlyOperationsByMonth>({
     queryKey: portfolioQueryKeys.data('monthly-operations'),
     queryFn: async () => {
       const rows = await parseCsv(PORTFOLIO_ENDPOINTS.data.operations, RAW_OPERATION_SCHEMA)
-      const map = new Map<string, MonthlyOp[]>()
+      const map = new Map<string, MonthlyOperation[]>()
       for (const row of rows) {
-        if (!['DEPOSIT', 'WITHDRAWAL'].includes(row.operation_type)) continue
-        const amount = parseFloat(row.total_amount) || 0
+        if (!isMonthlyOperationType(row.operation_type)) continue
+        const amount = row.total_amount
         // month key = YYYY-MM
         const month = row.date.slice(0, 7)
         if (!map.has(month)) map.set(month, [])
@@ -33,7 +30,6 @@ export function useMonthlyOps() {
           account: row.account,
           operation_type: row.operation_type,
           total_amount: amount,
-          label: formatAssetLabel(row),
         })
       }
       return map

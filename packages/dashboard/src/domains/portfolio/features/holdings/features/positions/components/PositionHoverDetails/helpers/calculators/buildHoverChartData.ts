@@ -1,5 +1,5 @@
 import i18n from '@/i18n/i18n'
-import type { HistoryPoint } from '@/domains/portfolio/shared/apis/queries/usePositionsHistory'
+import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 
 
 export interface Operation {
@@ -93,7 +93,7 @@ export function computeMonthlyBalances(ops: { date: string; total_amount: number
     const month = op.date.slice(0, 7)
     netByMonth.set(month, (netByMonth.get(month) ?? 0) + op.total_amount)
   }
-  const months = [...netByMonth.keys()].sort()
+  const months = [...netByMonth.keys()].toSorted()
   let balance = 0
   return months.map((month) => {
     const delta = netByMonth.get(month)!

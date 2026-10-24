@@ -1,6 +1,6 @@
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 
 export interface AccountCoverage {
@@ -72,7 +72,7 @@ export function computeAllocationCoverageByAccount(
     byAccount.set(p.account, cur)
   }
 
-  return [...byAccount.values()].sort(
+  return [...byAccount.values()].toSorted(
     (a, b) => b.allocated + b.unallocated + b.notApplicable
       - (a.allocated + a.unallocated + a.notApplicable),
   )
@@ -121,7 +121,7 @@ export function computeAllocationCoverageByDimension(
       dimension,
       allocated,
       unallocated,
-      issues: [...issues.values()].sort((a, b) => b.unallocated - a.unallocated),
+      issues: [...issues.values()].toSorted((a, b) => b.unallocated - a.unallocated),
     }
   })
 }

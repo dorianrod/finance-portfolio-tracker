@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { useAllocationByIsin } from '@/domains/portfolio/shared/apis/queries/useAllocationByIsin'
 import { calculatePositionGroupTotals } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculatePositionTableValues'
 

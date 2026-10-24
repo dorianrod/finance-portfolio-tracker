@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
-import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
 import {
   dashboardAllocationFilterAtom,
   dashboardAllocationPositionsOpenAtom,

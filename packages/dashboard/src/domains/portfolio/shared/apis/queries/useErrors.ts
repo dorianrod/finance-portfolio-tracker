@@ -3,22 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import * as yup from 'yup'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 
-export interface ErrorRow {
-  source: string   // "main" | "fetch_prices"
-  level: string    // "error" | "warning"
-  type: string     // "unresolved_ticker" | "missing_price" | "missing_fx_rate" | "parsing_error" | "missing_data"
-  date: string
-  account: string
-  isin: string
-  ticker: string
-  name: string
-  message: string
-}
-
-const ERROR_ROW_SCHEMA: yup.ObjectSchema<ErrorRow> = yup.object({
+const ERROR_ROW_SCHEMA: yup.ObjectSchema<PipelineError> = yup.object({
   source: yup.string().defined(),
-  level: yup.string().defined(),
+  level: yup.string<PipelineError['level']>().oneOf(['error', 'warning']).defined(),
   type: yup.string().defined(),
   date: yup.string().defined(),
   account: yup.string().defined(),

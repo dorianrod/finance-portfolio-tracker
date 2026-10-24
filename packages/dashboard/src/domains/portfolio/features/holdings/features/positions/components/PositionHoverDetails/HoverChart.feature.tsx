@@ -27,7 +27,7 @@ interface Props {
 
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const formatMoney = useFormatMoney()
-  const history = usePositionsHistory(target.isin)
+  const { data: history } = usePositionsHistory(target.isin)
   const { top, left } = computePosition(target.buttonRect)
 
   const showUnitPrice = history != null && history.some(p => Math.abs(p.last_price - p.value) > 0.01)

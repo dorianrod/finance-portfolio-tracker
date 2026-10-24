@@ -1,28 +1,11 @@
 import { useMemo } from 'react'
-import i18n from '@/i18n/i18n'
 import { useQuery } from '@tanstack/react-query'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import * as yup from 'yup'
+import type { AssetIrrItem, AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
-
-export interface AssetIrrItem {
-  key: string
-  label: string
-  name: string
-  irr: number
-  value: number
-  accounts: string[]
-  account_types: string[]
-}
-
-export interface AssetIrrSummary {
-  available: boolean
-  start_date: string | null
-  end_date: string | null
-  assets: AssetIrrItem[]
-}
 
 const ASSET_IRR_REQUEST_SCHEMA = yup.object({
   accounts: yup.array(yup.string().defined()).defined(),
@@ -52,7 +35,7 @@ const ERROR_RESPONSE_SCHEMA = yup.object({
   error: yup.string().ensure().defined(),
 })
 
-const unavailable: AssetIrrSummary = {
+export const UNAVAILABLE_ASSET_IRR_SUMMARY: AssetIrrSummary = {
   available: false,
   start_date: null,
   end_date: null,
@@ -98,23 +81,11 @@ export function useAssetIrr(
     () => [...selectedAccountTypes].toSorted(),
     [selectedAccountTypes],
   )
-  const query = useQuery({
+  return useQuery({
     queryKey: portfolioQueryKeys.data('asset-irr', accounts, accountTypes, dateFrom, dateTo),
-    queryFn: ({ signal }) => requestAssetIrr(accounts, accountTypes, dateFrom, dateTo, signal),
-    enabled: Boolean(dateTo) && !STATIC_DEMO,
+    queryFn: ({ signal }) => STATIC_DEMO
+      ? UNAVAILABLE_ASSET_IRR_SUMMARY
+      : requestAssetIrr(accounts, accountTypes, dateFrom, dateTo, signal),
+    enabled: Boolean(dateTo),
   })
-
-  if (STATIC_DEMO) {
-    return {
-      summary: unavailable,
-      loading: false,
-      error: i18n.t('ui.useassetirr.localDashboardOnly'),
-    }
-  }
-
-  return {
-    summary: query.data ?? unavailable,
-    loading: query.isPending && query.fetchStatus === 'fetching',
-    error: query.error instanceof Error ? query.error.message : null,
-  }
 }

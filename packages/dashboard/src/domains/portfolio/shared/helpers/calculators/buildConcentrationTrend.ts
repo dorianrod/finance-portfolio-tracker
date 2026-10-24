@@ -1,8 +1,8 @@
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
-import type { RawPosition } from '@/domains/portfolio/shared/types/domain'
-import type { HistoricalFundHolding } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
 const NON_INVESTMENT_CATEGORIES = new Set(['savings', 'checking'])
 
@@ -85,7 +85,7 @@ function concentrationPoint(
 ): HistoricalConcentrationPoint {
   const ranked = [...assets.entries()]
     .map(([key, asset]) => ({ key, ...asset }))
-    .sort((left, right) => right.value - left.value || left.key.localeCompare(right.key))
+    .toSorted((left, right) => right.value - left.value || left.key.localeCompare(right.key))
   const holdings = ranked.map((holding) => ({
     ...holding,
     weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,
@@ -122,9 +122,9 @@ export function buildHistoricalConcentration(
   for (const row of rows) {
     if (!row.snapshot_date || !matchesFilters(row, accountFilters, accountTypeFilters)) continue
 
-    const value = Number.parseFloat(row.total_value)
+    const value = row.total_value
     const key = assetKey(row)
-    if (!key || !Number.isFinite(value) || value <= 0) continue
+    if (!key || value == null || !Number.isFinite(value) || value <= 0) continue
 
     const assets = byDate.get(row.snapshot_date) ?? new Map()
     const current = assets.get(key) ?? {
@@ -138,7 +138,7 @@ export function buildHistoricalConcentration(
   }
 
   return [...byDate.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
+    .toSorted(([left], [right]) => left.localeCompare(right))
     .map(([date, assets]) => {
       const total = [...assets.values()].reduce((sum, holding) => sum + holding.value, 0)
       return concentrationPoint(date, assets, total, total, 0, 0)
@@ -175,10 +175,10 @@ function historicalSnapshotsByParent(
       byParent.set(key, current)
     }
   }
-  for (const snapshots of byParent.values()) {
-    snapshots.sort((left, right) =>
+  for (const [key, snapshots] of byParent) {
+    byParent.set(key, snapshots.toSorted((left, right) =>
       left.effectiveDate.localeCompare(right.effectiveDate)
-      || left.capturedAt.localeCompare(right.capturedAt))
+      || left.capturedAt.localeCompare(right.capturedAt)))
   }
   return byParent
 }
@@ -225,15 +225,15 @@ export function buildHistoricalLookThroughConcentration(
   const byDate = new Map<string, RawPosition[]>()
   for (const row of rows) {
     if (!row.snapshot_date || !matchesFilters(row, accountFilters, accountTypeFilters)) continue
-    const value = Number.parseFloat(row.total_value)
-    if (!Number.isFinite(value) || value <= 0) continue
+    const value = row.total_value
+    if (value == null || !Number.isFinite(value) || value <= 0) continue
     const current = byDate.get(row.snapshot_date) ?? []
     current.push(row)
     byDate.set(row.snapshot_date, current)
   }
 
   return [...byDate.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
+    .toSorted(([left], [right]) => left.localeCompare(right))
     .map(([date, positions]) => {
       const assets = new Map<string, { label: string; name: string; value: number }>()
       let hasApplicableHistoricalSnapshot = false
@@ -249,7 +249,8 @@ export function buildHistoricalLookThroughConcentration(
       }
 
       for (const position of positions) {
-        const value = Number.parseFloat(position.total_value)
+        const value = position.total_value
+        if (value == null) continue
         selectedValue += value
         const parentKey = position.isin.trim() || position.ticker.trim() || position.name.trim()
         const snapshot = latestSnapshotAt(snapshotsByParent.get(parentKey), date)

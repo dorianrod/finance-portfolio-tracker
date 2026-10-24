@@ -1,5 +1,5 @@
 import i18n from '@/i18n/i18n'
-import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHoldingStatus, FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import {
   FUND_QUALITY_LABELS,

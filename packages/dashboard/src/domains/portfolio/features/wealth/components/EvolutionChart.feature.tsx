@@ -8,7 +8,7 @@ import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_COST_SHARE_KEY, PORTFOLIO_GAIN_SHARE_KEY, withPortfolioComposition } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 
 export function EvolutionChart({ history, title = i18n.t('ui.evolutionchart.portfolioValueOverTime'), height = 220 }: {

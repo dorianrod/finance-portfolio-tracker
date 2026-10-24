@@ -1,23 +1,16 @@
-export interface RawPositionsHistoryRow {
+import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 
+export type RawPositionsHistoryRow = {
   snapshot_date: string
   account: string
   isin: string
   ticker: string
   name: string
-  total_value: string
-  avg_buy_price: string
-  quantity: string
-  last_price: string
-  unrealized_gain_pct: string
-}
-
-export interface HistoryPoint {
-  date: string
-  value: number
-  costBasis: number
-  pct: number | null
-  last_price: number
+  total_value: number | null
+  avg_buy_price: number | null
+  quantity: number | null
+  last_price: number | null
+  unrealized_gain_pct: number | null
 }
 
 export type HistoryMap = Map<string, HistoryPoint[]>
@@ -30,18 +23,18 @@ export function buildPositionsHistory(rows: RawPositionsHistoryRow[]): HistoryMa
   for (const row of rows) {
     const key = row.isin || row.ticker || row.name
     if (!key) continue
-    const val = parseFloat(row.total_value)
-    const avgP = parseFloat(row.avg_buy_price)
-    const qty = parseFloat(row.quantity)
-    const lp = parseFloat(row.last_price)
-    if (isNaN(val) || isNaN(avgP) || isNaN(qty)) continue
+    const val = row.total_value
+    const avgP = row.avg_buy_price
+    const qty = row.quantity
+    const lp = row.last_price
+    if (val == null || avgP == null || qty == null) continue
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push({
       date: row.snapshot_date,
       value: val,
       costBasis: Math.round(avgP * qty * 100) / 100,
-      pct: isNaN(parseFloat(row.unrealized_gain_pct)) ? null : parseFloat(row.unrealized_gain_pct),
-      last_price: isNaN(lp) ? 0 : lp,
+      pct: row.unrealized_gain_pct,
+      last_price: lp ?? 0,
     })
   }
 
@@ -59,7 +52,7 @@ export function buildPositionsHistory(rows: RawPositionsHistoryRow[]): HistoryMa
       }
     }
     result.set(key, [...byDate.entries()]
-      .sort(([a], [b]) => a.localeCompare(b))
+      .toSorted(([a], [b]) => a.localeCompare(b))
       .map(([date, v]) => ({ date, ...v }))
     )
   }

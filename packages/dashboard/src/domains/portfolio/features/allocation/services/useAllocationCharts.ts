@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react'
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type {
   FundHolding,
   HistoricalFundHolding,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   aggregateAllocationPoints,
   aggregateFilteredPoints,
@@ -12,7 +12,7 @@ import {
   excludeNonApplicableAllocationData,
   scopeRawAllocationData,
 } from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
-import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -25,7 +25,8 @@ import {
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
-import type { PositionRow, RawPosition } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 interface UseAllocationChartsInput {
   positions: PositionRow[]

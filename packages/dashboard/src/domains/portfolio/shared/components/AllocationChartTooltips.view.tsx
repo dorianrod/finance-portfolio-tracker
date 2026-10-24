@@ -5,7 +5,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { catColor } from '@/shared/theme/chartColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
-import type { PieEntry } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 
 function PieTooltipSubItem({ item, subItem }: { item: PieEntry; subItem: NonNullable<PieEntry['subItems']>[number] }) {
   const formatMoney = useFormatMoney()

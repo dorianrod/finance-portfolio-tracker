@@ -3,17 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import * as yup from 'yup'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-
-export interface ManualPriceOverride {
-  name: string
-  ticker: string
-  isin: string
-  price: string
-  currency: string
-  date_from: string
-  date_to: string
-  source_file: string
-}
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 
 const MANUAL_PRICE_OVERRIDE_SCHEMA: yup.ObjectSchema<ManualPriceOverride> = yup.object({
   name: yup.string().defined(),

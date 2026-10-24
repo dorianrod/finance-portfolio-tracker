@@ -1,4 +1,4 @@
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { AssetLabelSource } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import i18n from '@/i18n/i18n'
 
@@ -27,7 +27,7 @@ export function buildPipelineErrorsViewModel({
   sortDirection,
   formatAssetLabel,
 }: {
-  errors: ErrorRow[]
+  errors: PipelineError[]
   filterLevel: 'all' | 'error' | 'warning'
   filterType: string
   sortColumn: PipelineErrorSortColumn
@@ -40,7 +40,7 @@ export function buildPipelineErrorsViewModel({
     && (filterType === 'all' || error.type === filterType)
   ))
   const rows = filtered.toSorted((left, right) => {
-    const value = (error: ErrorRow): string => {
+    const value = (error: PipelineError): string => {
       switch (sortColumn) {
         case 'level': return error.level
         case 'type': return PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type

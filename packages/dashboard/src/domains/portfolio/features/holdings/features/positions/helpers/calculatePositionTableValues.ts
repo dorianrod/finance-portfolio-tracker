@@ -1,5 +1,5 @@
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export interface PositionGroupTotal {
   dividends: number

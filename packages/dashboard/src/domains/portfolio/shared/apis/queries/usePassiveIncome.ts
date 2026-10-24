@@ -3,11 +3,10 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
 import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import { aggregatePassiveIncomeByYear, type PassiveIncomePoint } from '@/domains/portfolio/shared/helpers/aggregators/aggregatePassiveIncomeByYear'
+import { aggregatePassiveIncomeByYear } from '@/domains/portfolio/shared/helpers/aggregators/aggregatePassiveIncomeByYear'
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-
-export type { PassiveIncomePoint }
 
 export function usePassiveIncome(
   accounts?: Set<string>,

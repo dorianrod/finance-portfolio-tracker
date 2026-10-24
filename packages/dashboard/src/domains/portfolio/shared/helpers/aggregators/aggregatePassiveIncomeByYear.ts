@@ -1,15 +1,10 @@
-export interface RawPassiveIncomeOp {
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 
+export type RawPassiveIncomeOp = {
   date: string
   account: string
   operation_type: string
-  total_amount: string
-}
-
-export interface PassiveIncomePoint {
-  year: string
-  dividends: number
-  interest: number
+  total_amount: number
 }
 
 export function aggregatePassiveIncomeByYear(
@@ -27,7 +22,7 @@ export function aggregatePassiveIncomeByYear(
     if (dateTo && row.date > dateTo) continue
     const year = row.date?.slice(0, 4)
     if (!year) continue
-    const amount = parseFloat(row.total_amount) || 0
+    const amount = row.total_amount
     const cur = byYear.get(year) ?? { dividends: 0, interest: 0 }
     if (row.operation_type === 'DIVIDEND') cur.dividends += amount
     else cur.interest += amount
@@ -35,9 +30,9 @@ export function aggregatePassiveIncomeByYear(
   }
 
   return [...byYear.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([year, { dividends, interest }]) => ({
-      year,
+      year: Number(year),
       dividends: Math.round(dividends),
       interest: Math.round(interest),
     }))

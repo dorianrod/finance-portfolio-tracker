@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import { useAtomValue } from 'jotai'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type {
   FundCoverageReport,
   FundHolding,
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/shared/stores/dashboardQuality.atoms'
@@ -18,7 +18,7 @@ import { buildDataQualityViewModel } from '../helpers/mappers/buildDataQualityVi
 
 interface DataQualityViewModelInput {
   positions: PositionRow[]
-  errors: ErrorRow[]
+  errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
   fundStatuses: FundHoldingStatus[]
   fundReport: FundCoverageReport | null

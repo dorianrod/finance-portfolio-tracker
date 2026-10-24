@@ -28,18 +28,18 @@ function point(overrides: Partial<AnnualIncomeSavingsPoint>): AnnualIncomeSaving
 describe('mapAnnualIncomeSavings', () => {
   it('maps nullable values, statuses and booleans', () => {
     const result = mapAnnualIncomeSavings([{
-      year: '2026',
+      year: 2026,
       income_status: 'forecast',
-      net_salary: '60000',
-      other_income: '12000',
-      total_income: '72000',
-      gross_salary: '90000',
-      placed_savings: '10000',
+      net_salary: 60000,
+      other_income: 12000,
+      total_income: 72000,
+      gross_salary: 90000,
+      placed_savings: 10000,
       savings_through: '2026-10-17',
       savings_status: 'partial',
-      placement_rate: '',
-      unplaced_income_proxy: '',
-      comparable: 'False',
+      placement_rate: null,
+      unplaced_income_proxy: null,
+      comparable: false,
     }])
 
     expect(result).toEqual([point({

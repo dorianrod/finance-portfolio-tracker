@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 import type { ExpandedState } from '@tanstack/react-table'
-import type { SortKey } from '@/domains/portfolio/shared/types/filters'
+import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 
 export const dashboardExpandedPositionRowsAtom = atom<ExpandedState>({})
-export const dashboardPositionSortKeyAtom = atom<SortKey>('total_value')
+export const dashboardPositionSortKeyAtom = atom<PositionSortKey>('total_value')
 export const dashboardPositionSortDirectionAtom = atom<'asc' | 'desc'>('desc')

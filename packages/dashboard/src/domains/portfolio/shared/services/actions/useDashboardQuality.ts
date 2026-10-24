@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/shared/stores/dashboardQuality.atoms'
-import type { QualityThemeId } from '@/domains/portfolio/shared/types/quality'
+import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 
 export function useDashboardQuality() {
   const setActiveTab = useSetAtom(dashboardActiveTabAtom)

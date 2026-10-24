@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import { FilterScopeBadges } from './FilterScopeBadges.feature'
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
-function render(filters: Filters, period: Parameters<typeof FilterScopeBadges>[0]['period'], account: Parameters<typeof FilterScopeBadges>[0]['account'] = 'filterable') {
+function render(filters: DashboardFilters, period: Parameters<typeof FilterScopeBadges>[0]['period'], account: Parameters<typeof FilterScopeBadges>[0]['account'] = 'filterable') {
   const store = createStore()
   store.set(dashboardFiltersAtom, filters)
   const queryClient = new QueryClient()
@@ -27,7 +27,7 @@ function render(filters: Filters, period: Parameters<typeof FilterScopeBadges>[0
   )
 }
 
-function filters(overrides: Partial<Filters> = {}): Filters {
+function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
   return {
     accounts: new Set(), accountTypes: new Set(), operationTypes: new Set(), hideClosedPositions: true,
     ...overrides,

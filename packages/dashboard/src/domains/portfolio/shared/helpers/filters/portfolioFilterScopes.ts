@@ -1,9 +1,9 @@
 import { normalizeAccountSelection } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistory'
 import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { FilterSummaryItem } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 
-export function withoutOperationAndPeriodFilters(filters: Filters): Filters {
+export function withoutOperationAndPeriodFilters(filters: DashboardFilters): DashboardFilters {
   return {
     ...filters,
     operationTypes: new Set<string>(),
@@ -13,7 +13,7 @@ export function withoutOperationAndPeriodFilters(filters: Filters): Filters {
   }
 }
 
-export function withoutOperationFilters(filters: Filters): Filters {
+export function withoutOperationFilters(filters: DashboardFilters): DashboardFilters {
   return {
     ...filters,
     operationTypes: new Set<string>(),

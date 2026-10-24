@@ -1,4 +1,4 @@
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
 
 const NON_INVESTMENT_ACCOUNT_CATEGORIES = new Set(['savings', 'checking'])

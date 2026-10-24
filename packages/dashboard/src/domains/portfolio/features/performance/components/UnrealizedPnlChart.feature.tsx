@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
 import { Bar, CartesianGrid, Cell, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

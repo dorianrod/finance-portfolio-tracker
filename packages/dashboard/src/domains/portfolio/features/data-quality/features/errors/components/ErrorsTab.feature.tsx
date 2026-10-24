@@ -2,8 +2,8 @@ import i18n from '@/i18n/i18n'
 import { useMemo, useState } from 'react'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import {
   buildPipelineErrorsViewModel,
   PIPELINE_ERROR_TYPE_LABELS,
@@ -21,7 +21,7 @@ const ERROR_COLUMNS: [PipelineErrorSortColumn, string, string][] = [
 ]
 
 interface Props {
-  errors: ErrorRow[]
+  errors: PipelineError[]
 }
 
 interface ManualPriceOverridesProps {

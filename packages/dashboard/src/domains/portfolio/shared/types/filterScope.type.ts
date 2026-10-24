@@ -12,7 +12,7 @@ export type PeriodScopeMode =
   | 'latest'
   | 'mixed'
 
-export interface FilterScopeSpec {
+export type FilterScopeSpec = {
   account: AccountScopeMode
   period: PeriodScopeMode
   effectiveDate?: string | null

@@ -1,5 +1,5 @@
 import i18n from '@/i18n/i18n'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/history'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import type { ComparedMetric, OverviewComparison } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 import { OverviewConcentrationChart, OverviewDriversChart, OverviewValueChart } from './OverviewCharts.feature'

@@ -1,50 +1,19 @@
 import { useMemo } from 'react'
-import i18n from '@/i18n/i18n'
 import { useAtomValue } from 'jotai'
-import { useAccountTypeHistory } from '@/domains/portfolio/shared/apis/queries/useAccountTypeHistory'
-import { useAllPositions, type RawPositionRow } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
+import { useAllPositions } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
 import { useAnnualIncomeSavings } from '@/domains/portfolio/shared/apis/queries/useAnnualIncomeSavings'
-import { useCashHistory, type CashHistoryPoint } from '@/domains/portfolio/shared/apis/queries/useCashHistory'
-import { useData, type DashboardData } from '@/domains/portfolio/shared/apis/queries/useData'
-import { useErrors, type ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import { useFilteredPortfolioHistory } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistory'
-import { useFundHoldingsData, type FundHoldingsData } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import { useManualPriceOverrides, type ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
-import { useMonthlyOps, type MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
-import { usePassiveIncome, type PassiveIncomePoint } from '@/domains/portfolio/shared/apis/queries/usePassiveIncome'
+import { useCashHistory } from '@/domains/portfolio/shared/apis/queries/useCashHistory'
+import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
+import { useData } from '@/domains/portfolio/shared/apis/queries/useData'
+import { useErrors } from '@/domains/portfolio/shared/apis/queries/useErrors'
+import { useFundHoldingsData } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
+import { useManualPriceOverrides } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
+import { useMonthlyOps } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
 import { usePortfolioHistory } from '@/domains/portfolio/shared/apis/queries/usePortfolioHistory'
-import { useRawIsinData, type RawIsinRows } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
-import { useSavingCapacity, type SavingCapacityPoint } from '@/domains/portfolio/shared/apis/queries/useSavingCapacity'
-import { computeAllocationCoverageByAccount } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { scopeFundQualityData } from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
-import {
-  buildCumulativeWealthDrivers,
-  computePerformanceSummary,
-  computeTrailing12mIncome,
-  computeTrailing12mSavings,
-  computeTrailing12mYearOverYear,
-  filterMonthlyOpsByAccounts,
-  filterPointsByPeriod,
-} from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import { filterAnnualIncomeSavingsByPeriod, type AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
-import {
-  applyAccountFilterToHistory,
-  applyPositionFilters,
-  buildAccountTypeBreakdown,
-  scopeManualPriceOverrides,
-  scopePipelineErrors,
-  sortPositionsForTable,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
-import {
-  buildDemoPresetSelection,
-  isDemoPresetActive,
-  withoutOperationAndPeriodFilters,
-  withoutOperationFilters,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
-import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy'
-import { buildOverviewComparison, compareRollingThreeYearIrr } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
-import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualitySummary'
+import { useRawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import { buildDashboardSourceData } from '@/app/helpers/mappers/buildDashboardSourceData'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import {
@@ -55,7 +24,17 @@ import {
   dashboardPositionSortDirectionAtom,
   dashboardPositionSortKeyAtom,
 } from '@/domains/portfolio/shared/stores/dashboardPositionsTable.atoms'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import { useDashboardHistory } from '@/app/services/useDashboardHistory'
+import { useDashboardPositions } from '@/app/services/useDashboardPositions'
+import { useDashboardPerformance } from '@/app/services/useDashboardPerformance'
+import { useDashboardWealth } from '@/app/services/useDashboardWealth'
+import { useDashboardQuality } from '@/app/services/useDashboardQuality'
+import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 const EMPTY_DASHBOARD_DATA: DashboardData = {
   positions: [],
@@ -73,7 +52,7 @@ const EMPTY_RAW_ISIN_DATA: RawIsinRows = {
 
 const EMPTY_ANNUAL_INCOME_SAVINGS: AnnualIncomeSavingsPoint[] = []
 const EMPTY_CASH_HISTORY: CashHistoryPoint[] = []
-const EMPTY_ERRORS: ErrorRow[] = []
+const EMPTY_ERRORS: PipelineError[] = []
 const EMPTY_FUND_HOLDINGS: FundHoldingsData = {
   holdings: [],
   history: [],
@@ -83,11 +62,9 @@ const EMPTY_FUND_HOLDINGS: FundHoldingsData = {
   unresolved: [],
 }
 const EMPTY_MANUAL_PRICE_OVERRIDES: ManualPriceOverride[] = []
-const EMPTY_MONTHLY_OPS: MonthlyOpsMap = new Map()
-const EMPTY_PASSIVE_INCOME: PassiveIncomePoint[] = []
+const EMPTY_MONTHLY_OPS: MonthlyOperationsByMonth = new Map()
 const EMPTY_PORTFOLIO_HISTORY: PortfolioHistoryPoint[] = []
 const EMPTY_RAW_POSITIONS: RawPositionRow[] = []
-const EMPTY_SAVING_CAPACITY: SavingCapacityPoint[] = []
 
 export function useDashboardViewModel() {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
@@ -139,219 +116,78 @@ export function useDashboardViewModel() {
     [accountLabels, cashHistory, history, positions],
   )
 
-  const currentFilters = useMemo(
-    () => withoutOperationAndPeriodFilters(filters),
-    [filters],
-  )
-  const latestAccountPositions = useMemo(
-    () => applyPositionFilters(positions, currentFilters),
-    [currentFilters, positions],
-  )
-  const positionsAtPeriodEnd = useMemo(
-    () => buildPositionRows(rawOperations, rawPositions, filters.dateTo),
-    [filters.dateTo, rawOperations, rawPositions],
-  )
-  const currentPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, currentFilters),
-    [currentFilters, positionsAtPeriodEnd],
-  )
-  const periodEndFundHoldings = useMemo(
-    () => filters.dateTo
-      ? selectHistoricalFundHoldingsAtDate(fundData.history, filters.dateTo)
-      : fundData.holdings,
-    [filters.dateTo, fundData.history, fundData.holdings],
-  )
-  const tableFiltered = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, filters),
-    [filters, positionsAtPeriodEnd],
-  )
-  const periodPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, withoutOperationFilters(filters)),
-    [filters, positionsAtPeriodEnd],
-  )
-  const tableData = useMemo(
-    () => sortPositionsForTable(
-      tableFiltered,
-      filters.hideClosedPositions,
-      allAccountTypes,
-      sortKey,
-      sortDir,
-    ),
-    [allAccountTypes, filters.hideClosedPositions, sortDir, sortKey, tableFiltered],
-  )
+  const {
+    currentPositions,
+    latestAccountPositions,
+    periodEndFundHoldings,
+    periodPositions,
+    tableData,
+    tableFiltered,
+  } = useDashboardPositions({
+    allAccountTypes,
+    filters,
+    fundData,
+    positions,
+    rawOperations,
+    rawPositions,
+    sortDirection: sortDir,
+    sortKey,
+  })
 
-  const fallbackAccountHistory = useMemo(
-    () => applyAccountFilterToHistory(allPositionRows, enrichedHistory, filters.accounts),
-    [allPositionRows, enrichedHistory, filters.accounts],
-  )
-  const filteredHistory = useFilteredPortfolioHistory(fallbackAccountHistory, filters.accounts)
-  const accountHistory = filteredHistory.history
-  const displayedHistory = useMemo(
-    () => filterPointsByPeriod(accountHistory, filters.dateFrom, filters.dateTo),
-    [accountHistory, filters.dateFrom, filters.dateTo],
-  )
-  const globalTri = displayedHistory.at(-1)?.tri ?? null
-  let irrStatus: 'loading' | 'error' | 'ready' = 'ready'
-  if (filteredHistory.loading) irrStatus = 'loading'
-  else if (filteredHistory.error) irrStatus = 'error'
-  const irrScopeLabel = filteredHistory.isFiltered && irrStatus === 'ready'
-    ? i18n.t('ui.usedashboardviewmodel.selectedAccounts')
-    : undefined
-  const demoPresetSelection = useMemo(
-    () => buildDemoPresetSelection(allAccounts, filteredHistory.demoPresetAccounts),
-    [allAccounts, filteredHistory.demoPresetAccounts],
-  )
-  const demoPresetActive = useMemo(
-    () => isDemoPresetActive(filters.accounts, filteredHistory.demoPresetAccounts),
-    [filteredHistory.demoPresetAccounts, filters.accounts],
-  )
+  const {
+    accountHistory,
+    demoPresetActive,
+    demoPresetSelection,
+    displayedHistory,
+    globalTri,
+    irrScopeLabel,
+    irrStatus,
+  } = useDashboardHistory({ allAccounts, allPositionRows, enrichedHistory, filters })
 
-  const savingCapacityQuery = useSavingCapacity(filters.accounts)
-  const savingCapacity = savingCapacityQuery.data ?? EMPTY_SAVING_CAPACITY
-  const overviewComparison = useMemo(
-    () => buildOverviewComparison({
-      rawPositions,
-      rawOperations,
-      savingCapacity,
-      fundHoldingsHistory: fundData.history,
-      accountFilters: filters.accounts,
-      accountTypeFilters: filters.accountTypes,
-      dateFrom: filters.dateFrom,
-      dateTo: filters.dateTo,
-    }),
-    [
-      filters.accountTypes,
-      filters.accounts,
-      filters.dateFrom,
-      filters.dateTo,
-      fundData.history,
-      rawOperations,
-      rawPositions,
-      savingCapacity,
-    ],
-  )
-  const rollingThreeYearTriComparison = useMemo(
-    () => overviewComparison
-      ? compareRollingThreeYearIrr(accountHistory, overviewComparison.windows)
-      : { current: null, previous: null, delta: null, deltaPct: null },
-    [accountHistory, overviewComparison],
-  )
-  const periodSavings = useMemo(
-    () => filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
-    [filters.dateFrom, filters.dateTo, savingCapacity],
-  )
-  const trailingSavings = useMemo(
-    () => computeTrailing12mSavings(savingCapacity, filters.dateFrom, filters.dateTo),
-    [filters.dateFrom, filters.dateTo, savingCapacity],
-  )
-  const trailingYearComparison = useMemo(
-    () => computeTrailing12mYearOverYear(savingCapacity, filters.dateTo),
-    [filters.dateTo, savingCapacity],
-  )
-  const wealthDrivers = useMemo(
-    () => buildCumulativeWealthDrivers(periodSavings),
-    [periodSavings],
-  )
-  const monthlyOps = useMemo(
-    () => filterMonthlyOpsByAccounts(allMonthlyOps, filters.accounts),
-    [allMonthlyOps, filters.accounts],
-  )
-  const passiveIncomeQuery = usePassiveIncome(
-    filters.accounts,
-    filters.dateFrom,
-    filters.dateTo,
-  )
-  const passiveIncome = passiveIncomeQuery.data ?? EMPTY_PASSIVE_INCOME
-  const typeHistory = useAccountTypeHistory(filters.accounts)
-  const displayedTypeHistory = useMemo(
-    () => filterPointsByPeriod(typeHistory.data, filters.dateFrom, filters.dateTo),
-    [filters.dateFrom, filters.dateTo, typeHistory.data],
-  )
-  const accountTypeData = useMemo(
-    () => buildAccountTypeBreakdown(currentPositions),
-    [currentPositions],
-  )
-  const displayedAnnualIncomeSavings = useMemo(
-    () => filterAnnualIncomeSavingsByPeriod(
-      annualIncomeSavings,
-      filters.dateFrom,
-      filters.dateTo,
-    ),
-    [annualIncomeSavings, filters.dateFrom, filters.dateTo],
-  )
-  const asOfPerformance = useMemo(
-    () => computePerformanceSummary(currentPositions),
-    [currentPositions],
-  )
-  const periodPerformance = useMemo(
-    () => computePerformanceSummary(periodPositions),
-    [periodPositions],
-  )
-  const performance = useMemo(
-    () => ({
-      ...asOfPerformance,
-      realizedNet: periodPerformance.realizedNet,
-      realizedGross: periodPerformance.realizedGross,
-    }),
-    [asOfPerformance, periodPerformance],
-  )
-  const trailingIncome = useMemo(
-    () => computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
-    [currentPositions, displayedHistory],
-  )
-  const coverage = useMemo(
-    () => rawAllocationData.loading
-      ? []
-      : computeAllocationCoverageByAccount(latestAccountPositions, rawAllocationData),
-    [latestAccountPositions, rawAllocationData],
-  )
-  const scopedFundQuality = useMemo(
-    () => scopeFundQualityData(
-      latestAccountPositions,
-      fundData.holdings,
-      fundData.statuses,
-      fundData.snapshots,
-      fundData.unresolved,
-      fundData.report,
-    ),
-    [
-      fundData.holdings,
-      fundData.report,
-      fundData.snapshots,
-      fundData.statuses,
-      fundData.unresolved,
-      latestAccountPositions,
-    ],
-  )
-  const pipelineQualityPositions = activeTab === 'holdings' && holdingsView === 'positions'
-    ? tableFiltered
-    : latestAccountPositions
-  const scopedPipelineErrors = useMemo(
-    () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
-    [filters, pipelineErrors, pipelineQualityPositions],
-  )
-  const scopedManualPriceOverrides = useMemo(
-    () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
-    [filters, latestAccountPositions, manualPriceOverrides],
-  )
-  const qualitySummary = useMemo(
-    () => buildDataQualitySummary({
-      allocationLoading: rawAllocationData.loading,
-      coverage,
-      pipelineErrorsLoading,
-      scopedFundQuality,
-      scopedManualPriceOverrides,
-      scopedPipelineErrors,
-    }),
-    [
-      coverage,
-      pipelineErrorsLoading,
-      rawAllocationData.loading,
-      scopedFundQuality,
-      scopedManualPriceOverrides,
-      scopedPipelineErrors,
-    ],
-  )
+  const {
+    accountTypeData,
+    displayedAnnualIncomeSavings,
+    displayedTypeHistory,
+    monthlyOps,
+    overviewComparison,
+    rollingThreeYearTriComparison,
+    trailingSavings,
+    trailingYearComparison,
+    typeHistory,
+    wealthDrivers,
+  } = useDashboardWealth({
+    accountHistory,
+    allMonthlyOps,
+    annualIncomeSavings,
+    currentPositions,
+    filters,
+    fundHoldingsHistory: fundData.history,
+    rawOperations,
+    rawPositions,
+  })
+  const { passiveIncome, performance, trailingIncome } = useDashboardPerformance({
+    currentPositions,
+    displayedHistory,
+    filters,
+    periodPositions,
+  })
+  const {
+    qualitySummary,
+    scopedFundQuality,
+    scopedManualPriceOverrides,
+    scopedPipelineErrors,
+  } = useDashboardQuality({
+    activeTab,
+    filters,
+    fundData,
+    holdingsView,
+    latestAccountPositions,
+    manualPriceOverrides,
+    pipelineErrors,
+    pipelineErrorsLoading,
+    rawAllocationData,
+    tableFiltered,
+  })
 
   return useMemo(() => ({
     accountFilterLabels,

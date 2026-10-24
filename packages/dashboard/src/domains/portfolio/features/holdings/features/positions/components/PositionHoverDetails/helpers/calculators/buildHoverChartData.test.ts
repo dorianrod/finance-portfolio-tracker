@@ -4,7 +4,7 @@ import {
   computeMonthlyBalances, computeRollingReturns, computeUnitPriceDomain, computePosition, buildHoverChartSeries,
   type HoverChartDataPoint,
 } from './buildHoverChartData'
-import type { HistoryPoint } from '@/domains/portfolio/shared/apis/queries/usePositionsHistory'
+import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 
 describe('computeMonthlyBalances', () => {
   it('accumulates a running balance per month from dated deltas', () => {

@@ -1,9 +1,10 @@
-import type { HistoricalFundHolding } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/apis/queries/useSavingCapacity'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 import { CASH_ACCOUNT_FILTER_SUFFIX, accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -106,7 +107,7 @@ export function resolveOverviewWindows(
   dateFrom?: string,
   dateTo?: string,
 ): OverviewWindows | null {
-  const dates = availableDates.filter(Boolean).sort()
+  const dates = availableDates.filter(Boolean).toSorted()
   const earliest = dates[0]
   const latest = dates.at(-1)
   if (!earliest || !latest) return null
@@ -160,12 +161,12 @@ export function buildGrossValueHistory(
   const byDate = new Map<string, number>()
   for (const row of rows) {
     if (!row.snapshot_date || !matchesPositionScope(row, accountFilters, accountTypeFilters)) continue
-    const grossValue = Number.parseFloat(row.total_value)
-    if (!Number.isFinite(grossValue)) continue
+    const grossValue = row.total_value
+    if (grossValue == null || !Number.isFinite(grossValue)) continue
     byDate.set(row.snapshot_date, (byDate.get(row.snapshot_date) ?? 0) + grossValue)
   }
   return [...byDate.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
+    .toSorted(([left], [right]) => left.localeCompare(right))
     .map(([date, value]) => ({ date, value: Math.round(value) }))
 }
 
@@ -180,7 +181,7 @@ export function compareRollingThreeYearIrr(
   history: PortfolioHistoryPoint[],
   windows: OverviewWindows,
 ): ComparedMetric {
-  const points = [...history].sort((left, right) => left.date.localeCompare(right.date))
+  const points = [...history].toSorted((left, right) => left.date.localeCompare(right.date))
   const current = latestAtOrBefore(points, windows.current.end)?.tri_rolling_3y ?? null
   const previous = latestAtOrBefore(points, windows.previous.end)?.tri_rolling_3y ?? null
   return compared(current, previous)
@@ -218,7 +219,7 @@ function incomeInWindow(
   ))
   if (relevant.length === 0) return 0
   return Math.round(relevant.reduce((sum, operation) => {
-    const amount = Number.parseFloat(operation.total_amount)
+    const amount = operation.total_amount
     return sum + (Number.isFinite(amount) ? amount : 0)
   }, 0))
 }

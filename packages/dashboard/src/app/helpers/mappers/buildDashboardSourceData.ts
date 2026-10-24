@@ -1,7 +1,7 @@
-import type { CashHistoryPoint } from '@/domains/portfolio/shared/apis/queries/useCashHistory'
+import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 interface BuildDashboardSourceDataInput {
   accountLabels: Record<string, string>

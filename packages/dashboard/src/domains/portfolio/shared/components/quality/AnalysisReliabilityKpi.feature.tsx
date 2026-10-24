@@ -14,7 +14,7 @@ import {
   type FilterScopeSpec,
 } from "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature";
 import { useDashboardQuality } from "@/domains/portfolio/shared/services/actions/useDashboardQuality";
-import type { QualityThemeId } from "@/domains/portfolio/shared/types/quality";
+import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 
 interface QualityTooltipRow {
   label: string;

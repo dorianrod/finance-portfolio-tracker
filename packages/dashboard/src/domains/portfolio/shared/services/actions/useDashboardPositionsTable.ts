@@ -5,7 +5,7 @@ import {
   dashboardPositionSortDirectionAtom,
   dashboardPositionSortKeyAtom,
 } from '@/domains/portfolio/shared/stores/dashboardPositionsTable.atoms'
-import type { SortKey } from '@/domains/portfolio/shared/types/filters'
+import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 
 export function useDashboardPositionsTable() {
   const setExpanded = useSetAtom(dashboardExpandedPositionRowsAtom)
@@ -13,7 +13,7 @@ export function useDashboardPositionsTable() {
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
   const setSortKey = useSetAtom(dashboardPositionSortKeyAtom)
 
-  const sort = useCallback((key: SortKey) => {
+  const sort = useCallback((key: PositionSortKey) => {
     if (key === sortKey) {
       setSortDir((direction) => direction === 'desc' ? 'asc' : 'desc')
       return

@@ -17,10 +17,10 @@ import {
   filterPointsByPeriod,
 } from './calculatePortfolioCharts'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/apis/queries/useSavingCapacity'
-import type { MonthlyOp, MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
+import type { MonthlyOperation, MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 describe('cumulativeConcentrationCrosshair', () => {
   it('uses the active rank and cumulative share', () => {
@@ -159,12 +159,12 @@ describe('computeTrailing12mSavings', () => {
 })
 
 describe('filterMonthlyOpsByAccounts', () => {
-  function makeOps(): MonthlyOpsMap {
-    const map: MonthlyOpsMap = new Map()
+  function makeOps(): MonthlyOperationsByMonth {
+    const map: MonthlyOperationsByMonth = new Map()
     map.set('2024-01', [
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
-      { date: '2024-01-10', account: 'a2', operation_type: 'DEPOSIT', total_amount: 50, label: '' },
-    ] as MonthlyOp[])
+      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      { date: '2024-01-10', account: 'a2', operation_type: 'DEPOSIT', total_amount: 50 },
+    ] as MonthlyOperation[])
     return map
   }
 
@@ -177,7 +177,7 @@ describe('filterMonthlyOpsByAccounts', () => {
   it('filters each month\'s operations down to the selected accounts', () => {
     const result = filterMonthlyOpsByAccounts(makeOps(), new Set(['a1']))
     expect(result.get('2024-01')).toEqual([
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
+      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
     ])
   })
 
@@ -188,7 +188,7 @@ describe('filterMonthlyOpsByAccounts', () => {
     )
 
     expect(result.get('2024-01')).toEqual([
-      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100, label: '' },
+      { date: '2024-01-05', account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
     ])
   })
 })

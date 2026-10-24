@@ -6,8 +6,8 @@ import type {
   FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { computeFundExposurePercentages, scopeFundQualityData } from './scopeFundQualityData'
 
 function position(overrides: Partial<PositionRow>): PositionRow {

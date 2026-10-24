@@ -1,8 +1,8 @@
 import i18n from '@/i18n/i18n'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
 export function accountLabel(account: string, labels: Record<string, string>): string {
   if (labels[account]) return labels[account]
@@ -38,17 +38,17 @@ export function buildPortfolioFilterOptions(
   return {
     accountFilterLabels: buildAccountFilterLabels(positions, accountLabels),
     accountToType,
-    allAccounts: [...new Set(positions.map(accountFilterId))].sort(),
+    allAccounts: [...new Set(positions.map(accountFilterId))].toSorted(),
     allAccountTypes: [
       ...new Set(
         positions
           .map((position) => position.account_type)
           .filter((type): type is string => !!type),
       ),
-    ].sort(),
+    ].toSorted(),
     allOperationTypes: [
       ...new Set(positions.flatMap((position) => [...position.operationTypes])),
-    ].sort(),
+    ].toSorted(),
   }
 }
 
@@ -85,7 +85,7 @@ export function filterVisibilityForTab(
 }
 
 export function filterSummaries(
-  filters: Filters,
+  filters: DashboardFilters,
   accountLabels: Record<string, string>,
   visibility: FilterVisibility,
 ): FilterSummaryItem[] {
@@ -122,14 +122,14 @@ export function filterSummaries(
   return summaries
 }
 
-export function clearFilterGroup(filters: Filters, key: FilterSummaryKey): Filters {
+export function clearFilterGroup(filters: DashboardFilters, key: FilterSummaryKey): DashboardFilters {
   if (key === 'accounts') return { ...filters, accounts: new Set(), accountTypes: new Set() }
   if (key === 'period') return { ...filters, dateFrom: undefined, dateTo: undefined }
   if (key === 'operations') return { ...filters, operationTypes: new Set() }
   return { ...filters, hideClosedPositions: true }
 }
 
-export function resetFilters(): Filters {
+export function resetFilters(): DashboardFilters {
   return {
     accountTypes: new Set<string>(),
     accounts: new Set<string>(),

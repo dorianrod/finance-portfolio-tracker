@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
 import type { ReactNode } from 'react'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/history'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import type {
   ComparedMetric,
   OverviewConcentrationComparison,

@@ -1,9 +1,9 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { catColor } from '@/shared/theme/chartColors'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { formatGroupedAllocationLabel, groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
-import type { PieEntry } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 function MiniDonutCell({ entry }: { entry: PieEntry }) {

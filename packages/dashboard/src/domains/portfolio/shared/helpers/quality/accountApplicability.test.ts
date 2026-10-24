@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { isAssetAnalysisApplicablePosition } from './accountApplicability'
 
 function position(account_category: string, account_type: string): PositionRow {

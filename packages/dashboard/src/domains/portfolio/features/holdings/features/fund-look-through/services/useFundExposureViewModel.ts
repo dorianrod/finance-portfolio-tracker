@@ -1,11 +1,8 @@
 import { useMemo } from 'react'
 import { useAtomValue } from 'jotai'
-import {
-  useFundHoldingsData,
-  type FundHolding,
-  type FundHoldingStatus,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import { useFundHoldingsData } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { buildFundExposureViewModel } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/shared/services/actions/useDashboardUnderlyingHoldings'
 import {

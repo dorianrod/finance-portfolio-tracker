@@ -1,7 +1,7 @@
 import i18n from '@/i18n/i18n'
 import type { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
-import type { AccountScopeMode, FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/shared/types/filterScope'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { AccountScopeMode, FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/shared/types/filterScope.type'
 
 export interface ScopeBadge {
   label: string
@@ -19,7 +19,7 @@ function friendlyDate(
 
 function accountBadge(
   mode: AccountScopeMode,
-  filters: Filters,
+  filters: DashboardFilters,
   labels: Record<string, string>,
 ): ScopeBadge {
   if (mode === 'global') {
@@ -51,7 +51,7 @@ function accountBadge(
 
 function periodBadge(
   mode: PeriodScopeMode,
-  filters: Filters,
+  filters: DashboardFilters,
   formatDate: ReturnType<typeof useFormatDate>,
   effectiveDate?: string | null,
 ): ScopeBadge {
@@ -138,7 +138,7 @@ export function buildFilterScopeBadges({
   period,
 }: FilterScopeSpec & {
   accountLabels: Record<string, string>
-  filters: Filters
+  filters: DashboardFilters
   formatDate: ReturnType<typeof useFormatDate>
 }): ScopeBadge[] {
   return [

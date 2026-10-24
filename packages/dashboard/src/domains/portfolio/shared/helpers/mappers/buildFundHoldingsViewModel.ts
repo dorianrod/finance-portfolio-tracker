@@ -1,6 +1,6 @@
-import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHolding, FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
 
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import i18n from '@/i18n/i18n'
 
@@ -80,7 +80,7 @@ export function buildIssuerExposures(
       Math.min(candidate.length, id.length) >= 12
       && (candidate.startsWith(id) || id.startsWith(candidate))
     ))
-    canonicalIssuerById.set(id, matches.sort((a, b) => b.length - a.length)[0] ?? id)
+    canonicalIssuerById.set(id, matches.toSorted((a, b) => b.length - a.length)[0] ?? id)
   }
   const canonicalIssuer = (id: string): { id: string; name: string } => {
     const canonicalId = canonicalIssuerById.get(id) ?? id
@@ -154,17 +154,17 @@ export function buildIssuerExposures(
       name: issuer.name,
       value: issuer.value,
       weight: total > 0 ? issuer.value / total * 100 : 0,
-      funds: [...issuer.funds.keys()].sort(),
-      sources: [...issuer.funds].map(([fund, value]) => ({ fund, value })).sort((a, b) => b.value - a.value),
+      funds: [...issuer.funds.keys()].toSorted(),
+      sources: [...issuer.funds].map(([fund, value]) => ({ fund, value })).toSorted((a, b) => b.value - a.value),
       securities: [...issuer.securities.values()]
         .map((security) => ({
           id: security.id,
           name: security.name,
           value: security.value,
-          funds: [...security.funds.keys()].sort(),
-          sources: [...security.funds].map(([fund, value]) => ({ fund, value })).sort((a, b) => b.value - a.value),
+          funds: [...security.funds.keys()].toSorted(),
+          sources: [...security.funds].map(([fund, value]) => ({ fund, value })).toSorted((a, b) => b.value - a.value),
         }))
-        .sort((a, b) => b.value - a.value),
+        .toSorted((a, b) => b.value - a.value),
     }))
-    .sort((a, b) => b.value - a.value)
+    .toSorted((a, b) => b.value - a.value)
 }

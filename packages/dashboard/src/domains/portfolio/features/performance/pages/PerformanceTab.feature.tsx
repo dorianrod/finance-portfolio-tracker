@@ -1,9 +1,10 @@
 import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/apis/queries/usePassiveIncome'
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import type { IncomeSummary, PerformanceSummary } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import {
   IrrSinceTrackingKpi,
@@ -18,7 +19,10 @@ import { TriChart } from '@/domains/portfolio/features/performance/components/Tr
 import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
 import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/PerformanceContributionCard.feature'
 import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import { useAssetIrr } from '@/domains/portfolio/shared/apis/queries/useAssetIrr'
+import {
+  UNAVAILABLE_ASSET_IRR_SUMMARY,
+  useAssetIrr,
+} from '@/domains/portfolio/shared/apis/queries/useAssetIrr'
 
 export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperations, accountFilters, accountTypeFilters, dateFrom, performance, income, globalTri, irrStatus, irrScopeLabel }: {
   history: PortfolioHistoryPoint[]
@@ -48,10 +52,10 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
     () => computePerformanceContributions(rawPositions, rawOperations, 'trailing-3y', asOfDate, contributionFilters),
     [rawPositions, rawOperations, asOfDate, contributionFilters],
   )
-  const assetIrr = useAssetIrr(accountFilters, accountTypeFilters, dateFrom, asOfDate)
+  const assetIrrQuery = useAssetIrr(accountFilters, accountTypeFilters, dateFrom, asOfDate)
   let assetIrrStatus: IrrStatus = 'ready'
-  if (assetIrr.loading) assetIrrStatus = 'loading'
-  else if (assetIrr.error) assetIrrStatus = 'error'
+  if (assetIrrQuery.isPending && assetIrrQuery.fetchStatus === 'fetching') assetIrrStatus = 'loading'
+  else if (assetIrrQuery.isError) assetIrrStatus = 'error'
   const hasChartData = history.length > 0 || passiveIncome.length > 0
 
   return (
@@ -84,7 +88,7 @@ export function PerformanceTab({ history, passiveIncome, rawPositions, rawOperat
         </div>
       )}
       <PerformanceContributionCard
-        assetIrr={assetIrr.summary}
+        assetIrr={assetIrrQuery.data ?? UNAVAILABLE_ASSET_IRR_SUMMARY}
         assetIrrStatus={assetIrrStatus}
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}

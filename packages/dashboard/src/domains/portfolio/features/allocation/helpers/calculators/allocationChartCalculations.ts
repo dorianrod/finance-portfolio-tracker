@@ -1,11 +1,12 @@
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 
-import type { RawIsinRow, RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { AllocationFilter, MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { AllocationFilter, MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { formatGroupedAllocationLabel, groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
 
 function dateTimestamp(date: string | undefined): number | null {
@@ -41,7 +42,7 @@ export function buildAllocationTrend(points: AllocationPoint[]): {
   const { main, grouped } = groupAllocationTail(
     [...totalsByCategory]
       .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value),
+      .toSorted((a, b) => b.value - a.value),
   )
   const mainNames = main.map((category) => category.name)
   const groupedNames = new Set(grouped.map((category) => category.name))
@@ -154,12 +155,12 @@ export function aggregateFilteredPoints(
     byDate.set(row.snapshot_date, catMap)
   }
   return [...byDate.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([date, catMap]) => {
       const categories = [...catMap.entries()]
         .map(([name, value]) => ({ name, value }))
         .filter((c) => c.value > 0)
-        .sort((a, b) => {
+        .toSorted((a, b) => {
           if (a.name === 'nc') return 1
           if (b.name === 'nc') return -1
           return b.value - a.value
@@ -194,6 +195,6 @@ export function computeTableRows(
   }
 
   return [...byIsin.values()]
-    .sort((a, b) => b.filteredValue - a.filteredValue)
+    .toSorted((a, b) => b.filteredValue - a.filteredValue)
 }
 

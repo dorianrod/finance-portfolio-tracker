@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import {
   buildGrossValueHistory,
   buildOverviewComparison,
   compareRollingThreeYearIrr,
   resolveOverviewWindows,
 } from './buildOverviewComparison'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 function position(overrides: Partial<RawPosition> = {}): RawPosition {
   return {
@@ -18,24 +19,24 @@ function position(overrides: Partial<RawPosition> = {}): RawPosition {
     isin: 'ASSET-A',
     ticker: 'AAA',
     name: 'Asset A',
-    quantity: '1',
-    avg_buy_price: '100',
-    last_price: '100',
-    total_value: '100',
-    unrealized_gain: '10',
-    unrealized_gain_net: '7',
-    unrealized_gain_pct: '10',
-    realized_gain: '0',
-    realized_gain_net: '0',
-    total_dividends: '0',
-    total_dividends_net: '0',
-    total_interest: '0',
-    total_interest_net: '0',
-    tax_rate: '0.3',
-    xirr: '',
-    xirr_rolling_3y: '',
-    xirr_rolling_period_years: '',
-    total_return_pct: '',
+    quantity: 1,
+    avg_buy_price: 100,
+    last_price: 100,
+    total_value: 100,
+    unrealized_gain: 10,
+    unrealized_gain_net: 7,
+    unrealized_gain_pct: 10,
+    realized_gain: 0,
+    realized_gain_net: 0,
+    total_dividends: 0,
+    total_dividends_net: 0,
+    total_interest: 0,
+    total_interest_net: 0,
+    tax_rate: 0.3,
+    xirr: 0,
+    xirr_rolling_3y: 0,
+    xirr_rolling_period_years: 0,
+    total_return_pct: 0,
     ...overrides,
   }
 }
@@ -48,11 +49,11 @@ function operation(overrides: Partial<RawOperation> = {}): RawOperation {
     ticker: 'AAA',
     name: 'Asset A',
     operation_type: 'DIVIDEND',
-    quantity: '',
-    price_per_unit: '',
-    total_amount: '10',
+    quantity: 0,
+    price_per_unit: 0,
+    total_amount: 10,
     currency: 'EUR',
-    realized_gain: '',
+    realized_gain: 0,
     ...overrides,
   }
 }
@@ -95,8 +96,8 @@ describe('resolveOverviewWindows', () => {
 describe('buildGrossValueHistory', () => {
   it('computes historical gross value and respects account filters', () => {
     const rows = [
-      position({ account: 'A', total_value: '100', unrealized_gain: '20', unrealized_gain_net: '14' }),
-      position({ account: 'B', total_value: '300', unrealized_gain: '50', unrealized_gain_net: '35' }),
+      position({ account: 'A', total_value: 100, unrealized_gain: 20, unrealized_gain_net: 14 }),
+      position({ account: 'B', total_value: 300, unrealized_gain: 50, unrealized_gain_net: 35 }),
     ]
 
     expect(buildGrossValueHistory(rows, new Set(['A']))).toEqual([
@@ -106,7 +107,7 @@ describe('buildGrossValueHistory', () => {
 
   it('does not adjust the market value for unrealized tax fields', () => {
     expect(buildGrossValueHistory([
-      position({ total_value: '100', unrealized_gain: '20', unrealized_gain_net: '14' }),
+      position({ total_value: 100, unrealized_gain: 20, unrealized_gain_net: 14 }),
     ])[0].value).toBe(100)
   })
 })
@@ -141,16 +142,16 @@ describe('buildOverviewComparison', () => {
   it('compares point-in-time values and period flows for the selected account', () => {
     const comparison = buildOverviewComparison({
       rawPositions: [
-        position({ snapshot_date: '2025-01-31', isin: 'A1', name: 'A1', total_value: '70', unrealized_gain: '0', unrealized_gain_net: '0' }),
-        position({ snapshot_date: '2025-01-31', isin: 'A2', name: 'A2', total_value: '30', unrealized_gain: '0', unrealized_gain_net: '0' }),
-        position({ snapshot_date: '2025-02-28', isin: 'A1', name: 'A1', total_value: '70', unrealized_gain: '0', unrealized_gain_net: '0' }),
-        position({ snapshot_date: '2025-02-28', isin: 'A2', name: 'A2', total_value: '70', unrealized_gain: '0', unrealized_gain_net: '0' }),
-        position({ snapshot_date: '2025-02-28', account: 'B', isin: 'B1', total_value: '1000', unrealized_gain: '0', unrealized_gain_net: '0' }),
+        position({ snapshot_date: '2025-01-31', isin: 'A1', name: 'A1', total_value: 70, unrealized_gain: 0, unrealized_gain_net: 0 }),
+        position({ snapshot_date: '2025-01-31', isin: 'A2', name: 'A2', total_value: 30, unrealized_gain: 0, unrealized_gain_net: 0 }),
+        position({ snapshot_date: '2025-02-28', isin: 'A1', name: 'A1', total_value: 70, unrealized_gain: 0, unrealized_gain_net: 0 }),
+        position({ snapshot_date: '2025-02-28', isin: 'A2', name: 'A2', total_value: 70, unrealized_gain: 0, unrealized_gain_net: 0 }),
+        position({ snapshot_date: '2025-02-28', account: 'B', isin: 'B1', total_value: 1000, unrealized_gain: 0, unrealized_gain_net: 0 }),
       ],
       rawOperations: [
-        operation({ date: '2025-01-15', total_amount: '10' }),
-        operation({ date: '2025-02-15', operation_type: 'INTEREST', total_amount: '25' }),
-        operation({ date: '2025-02-15', account: 'B', total_amount: '999' }),
+        operation({ date: '2025-01-15', total_amount: 10 }),
+        operation({ date: '2025-02-15', operation_type: 'INTEREST', total_amount: 25 }),
+        operation({ date: '2025-02-15', account: 'B', total_amount: 999 }),
       ],
       savingCapacity: [
         { date: '2025-01-31', savings_delta: 100, perf_delta: 20 },
@@ -174,8 +175,8 @@ describe('buildOverviewComparison', () => {
   it('does not invent a relative percentage when the previous value is zero', () => {
     const comparison = buildOverviewComparison({
       rawPositions: [
-        position({ snapshot_date: '2025-01-31', total_value: '0', unrealized_gain: '0', unrealized_gain_net: '0' }),
-        position({ snapshot_date: '2025-02-28', total_value: '100', unrealized_gain: '0', unrealized_gain_net: '0' }),
+        position({ snapshot_date: '2025-01-31', total_value: 0, unrealized_gain: 0, unrealized_gain_net: 0 }),
+        position({ snapshot_date: '2025-02-28', total_value: 100, unrealized_gain: 0, unrealized_gain_net: 0 }),
       ],
       rawOperations: [],
       savingCapacity: [

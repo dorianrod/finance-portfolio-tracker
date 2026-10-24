@@ -1,8 +1,9 @@
 import i18n from '@/i18n/i18n'
-import type { RawOperation, RawPosition, PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/domain'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 import { CATEGORY_ORDER, CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
-import { parseNum } from '@/shared/csv/parseNum'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 
 function assetKey(op: RawOperation): string {
@@ -48,7 +49,7 @@ export function buildPositionRows(
       const key = positionKey(p.isin || p.ticker || p.name, p.account)
       // Defensive: keep the row with highest total_value on a key clash
       const existing = latestByKey.get(key)
-      if (!existing || parseFloat(p.total_value) > parseFloat(existing.total_value)) {
+      if (!existing || (p.total_value ?? 0) > (existing.total_value ?? 0)) {
         latestByKey.set(key, p)
       }
     })
@@ -80,32 +81,32 @@ export function buildPositionRows(
     )
 
     const totalDividends = lp
-      ? (parseNum(lp.total_dividends) ?? 0)
-      : dividendOps.reduce((sum, o) => sum + (parseNum(o.total_amount) ?? 0), 0)
+      ? lp.total_dividends ?? 0
+      : dividendOps.reduce((sum, o) => sum + o.total_amount, 0)
     const totalInterest = lp
-      ? (parseNum(lp.total_interest) ?? 0)
-      : interestOps.reduce((sum, o) => sum + (parseNum(o.total_amount) ?? 0), 0)
+      ? lp.total_interest ?? 0
+      : interestOps.reduce((sum, o) => sum + o.total_amount, 0)
 
     const totalDeposits = depositOps
-      .filter((o) => (parseNum(o.total_amount) ?? 0) > 0)
-      .reduce((sum, o) => sum + (parseNum(o.total_amount) ?? 0), 0)
+      .filter((o) => o.total_amount > 0)
+      .reduce((sum, o) => sum + o.total_amount, 0)
     const totalWithdrawals = depositOps
-      .filter((o) => (parseNum(o.total_amount) ?? 0) < 0)
-      .reduce((sum, o) => sum + Math.abs(parseNum(o.total_amount) ?? 0), 0)
+      .filter((o) => o.total_amount < 0)
+      .reduce((sum, o) => sum + Math.abs(o.total_amount), 0)
 
     const totalInvested = tradeOps
       .filter((o) => o.operation_type === 'BUY')
-      .reduce((sum, o) => sum + Math.abs(parseNum(o.total_amount) ?? 0), 0)
+      .reduce((sum, o) => sum + Math.abs(o.total_amount), 0)
 
     const totalSold = tradeOps
       .filter((o) => o.operation_type === 'SELL')
-      .reduce((sum, o) => sum + Math.abs(parseNum(o.total_amount) ?? 0), 0)
+      .reduce((sum, o) => sum + Math.abs(o.total_amount), 0)
 
     const realizedPnl = lp
-      ? (parseNum(lp.realized_gain) ?? 0)
+      ? lp.realized_gain ?? 0
       : tradeOps
           .filter((o) => o.operation_type === 'SELL')
-          .reduce((sum, o) => sum + (parseNum(o.realized_gain) ?? 0), 0)
+          .reduce((sum, o) => sum + o.realized_gain, 0)
 
     // Annualized dividends: total / years of holding
     const dates = assetOps
@@ -120,17 +121,17 @@ export function buildPositionRows(
 
     if (dividendOps.length > 0) {
       const divOpRows: OperationRow[] = dividendOps
-        .sort((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.localeCompare(a.date))
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-div-${i}`,
           date: o.date.slice(0, 10),
           account: o.account,
           operation_type: o.operation_type,
-          quantity: parseNum(o.quantity),
-          price_per_unit: parseNum(o.price_per_unit),
-          total_amount: parseNum(o.total_amount) ?? 0,
-          realized_gain: parseNum(o.realized_gain),
+          quantity: o.quantity,
+          price_per_unit: o.price_per_unit,
+          total_amount: o.total_amount,
+          realized_gain: o.realized_gain,
         }))
 
       subRows.push({
@@ -146,17 +147,17 @@ export function buildPositionRows(
 
     if (interestOps.length > 0) {
       const intOpRows: OperationRow[] = interestOps
-        .sort((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.localeCompare(a.date))
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-int-${i}`,
           date: o.date.slice(0, 10),
           account: o.account,
           operation_type: o.operation_type,
-          quantity: parseNum(o.quantity),
-          price_per_unit: parseNum(o.price_per_unit),
-          total_amount: parseNum(o.total_amount) ?? 0,
-          realized_gain: parseNum(o.realized_gain),
+          quantity: o.quantity,
+          price_per_unit: o.price_per_unit,
+          total_amount: o.total_amount,
+          realized_gain: o.realized_gain,
         }))
 
       subRows.push({
@@ -171,17 +172,17 @@ export function buildPositionRows(
 
     if (depositOps.length > 0) {
       const depOpRows: OperationRow[] = depositOps
-        .sort((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.localeCompare(a.date))
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-dep-${i}`,
           date: o.date.slice(0, 10),
           account: o.account,
           operation_type: o.operation_type,
-          quantity: parseNum(o.quantity),
-          price_per_unit: parseNum(o.price_per_unit),
-          total_amount: parseNum(o.total_amount) ?? 0,
-          realized_gain: parseNum(o.realized_gain),
+          quantity: o.quantity,
+          price_per_unit: o.price_per_unit,
+          total_amount: o.total_amount,
+          realized_gain: o.realized_gain,
         }))
 
       subRows.push({
@@ -196,17 +197,17 @@ export function buildPositionRows(
 
     if (tradeOps.length > 0) {
       const tradeOpRows: OperationRow[] = tradeOps
-        .sort((a, b) => b.date.localeCompare(a.date))
+        .toSorted((a, b) => b.date.localeCompare(a.date))
         .map((o, i) => ({
           kind: 'operation',
           id: `${key}-trade-${i}`,
           date: o.date.slice(0, 10),
           account: o.account,
           operation_type: o.operation_type,
-          quantity: parseNum(o.quantity),
-          price_per_unit: parseNum(o.price_per_unit),
-          total_amount: parseNum(o.total_amount) ?? 0,
-          realized_gain: parseNum(o.realized_gain),
+          quantity: o.quantity,
+          price_per_unit: o.price_per_unit,
+          total_amount: o.total_amount,
+          realized_gain: o.realized_gain,
         }))
 
       subRows.push({
@@ -217,7 +218,7 @@ export function buildPositionRows(
         total_sold: totalSold,
         realized_pnl: realizedPnl,
         trade_count: tradeOps.length,
-        avg_buy_price: lp ? parseNum(lp.avg_buy_price) ?? undefined : undefined,
+        avg_buy_price: lp?.avg_buy_price ?? undefined,
         subRows: tradeOpRows,
       })
     }
@@ -242,25 +243,25 @@ export function buildPositionRows(
       account_category,
       status: lp ? 'active' : 'closed',
       operationTypes: new Set(assetOps.map((o) => o.operation_type)),
-      quantity: lp ? parseNum(lp.quantity) : null,
-      last_price: lp ? parseNum(lp.last_price) : null,
-      total_value: lp ? parseNum(lp.total_value) : null,
-      unrealized_gain: lp ? parseNum(lp.unrealized_gain) : null,
-      unrealized_gain_net: lp ? parseNum(lp.unrealized_gain_net) : null,
-      total_dividends_net: lp ? parseNum(lp.total_dividends_net) : null,
-      total_interest_net: lp ? parseNum(lp.total_interest_net) : null,
-      unrealized_gain_pct: lp ? parseNum(lp.unrealized_gain_pct) : null,
+      quantity: lp ? lp.quantity : null,
+      last_price: lp ? lp.last_price : null,
+      total_value: lp ? lp.total_value : null,
+      unrealized_gain: lp ? lp.unrealized_gain : null,
+      unrealized_gain_net: lp ? lp.unrealized_gain_net : null,
+      total_dividends_net: lp ? lp.total_dividends_net : null,
+      total_interest_net: lp ? lp.total_interest_net : null,
+      unrealized_gain_pct: lp ? lp.unrealized_gain_pct : null,
       realized_gain: realizedPnl,
-      realized_gain_net: lp ? parseNum(lp.realized_gain_net) : null,
-      tax_rate: lp ? parseNum(lp.tax_rate) : null,
+      realized_gain_net: lp ? lp.realized_gain_net : null,
+      tax_rate: lp ? lp.tax_rate : null,
       total_dividends: totalDividends,
       total_interest: totalInterest,
       total_realized_return: realizedPnl + totalDividends + totalInterest,
       total_invested: totalInvested,
-      total_return_pct: lp ? parseNum(lp.total_return_pct) : null,
-      xirr: lp ? parseNum(lp.xirr) : null,
-      xirr_rolling_3y: lp ? parseNum(lp.xirr_rolling_3y) : null,
-      xirr_rolling_period_years: lp ? parseNum(lp.xirr_rolling_period_years) : null,
+      total_return_pct: lp ? lp.total_return_pct : null,
+      xirr: lp ? lp.xirr : null,
+      xirr_rolling_3y: lp ? lp.xirr_rolling_3y : null,
+      xirr_rolling_period_years: lp ? lp.xirr_rolling_period_years : null,
       subRows,
     })
   }
@@ -273,7 +274,7 @@ export function buildPositionRows(
     const isCash = (row.account_type ?? '').endsWith(CASH_SUFFIX)
     return base * 2 + (isCash ? 1 : 0)
   }
-  rows.sort((a, b) => {
+  return rows.toSorted((a, b) => {
     if (a.status !== b.status) return a.status === 'active' ? -1 : 1
     const ta = categoryRank(a)
     const tb = categoryRank(b)
@@ -281,5 +282,4 @@ export function buildPositionRows(
     return (b.total_value ?? 0) - (a.total_value ?? 0)
   })
 
-  return rows
 }

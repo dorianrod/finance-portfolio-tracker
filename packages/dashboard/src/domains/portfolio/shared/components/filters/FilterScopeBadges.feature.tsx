@@ -3,10 +3,10 @@ import { useAtomValue } from 'jotai'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import { buildFilterScopeBadges, type ScopeBadge } from './helpers/presenters/buildFilterScopeBadges'
 
-export type { AccountScopeMode, FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/shared/types/filterScope'
+export type { AccountScopeMode, FilterScopeSpec, PeriodScopeMode } from '@/domains/portfolio/shared/types/filterScope.type'
 
 const TONE_CLASSES = {
   applied: 'border-blue-700/70 bg-blue-900/60 text-blue-300',

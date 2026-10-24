@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
 
 import { applyPositionFilters, applyAccountFilterToHistory, buildAccountTypeBreakdown, sortPositionsForTable, getSortValue, scopeManualPriceOverrides, scopePipelineErrors } from './portfolioDataFilters'
-import type { PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/domain'
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
-import type { RawPositionRow } from '@/domains/portfolio/shared/apis/queries/useAllPositions'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
+import type { PositionRow, GroupRow, OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 
-function baseFilters(overrides: Partial<Filters> = {}): Filters {
+function baseFilters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
   return {
     accountTypes: new Set(),
     accounts: new Set(),
@@ -77,7 +77,7 @@ function position(overrides: Partial<PositionRow>): PositionRow {
   }
 }
 
-function pipelineError(overrides: Partial<ErrorRow>): ErrorRow {
+function pipelineError(overrides: Partial<PipelineError>): PipelineError {
   return {
     source: 'main',
     level: 'warning',
@@ -236,10 +236,10 @@ describe('applyAccountFilterToHistory', () => {
       account: 'acc1',
       account_type: 'PEA',
       account_category: 'brokerage',
-      quantity: '10',
-      avg_buy_price: '50',
-      total_value: '600',
-      unrealized_gain: '100',
+      quantity: 10,
+      avg_buy_price: 50,
+      total_value: 600,
+      unrealized_gain: 100,
       ...overrides,
     }
   }
@@ -250,8 +250,8 @@ describe('applyAccountFilterToHistory', () => {
 
   it('rebuilds the history from raw per-account snapshots restricted to the selected accounts', () => {
     const rows = [
-      rawRow({ account: 'acc1', total_value: '600', quantity: '10', avg_buy_price: '50', unrealized_gain: '100' }),
-      rawRow({ account: 'acc2', total_value: '9999', quantity: '1', avg_buy_price: '1', unrealized_gain: '9999' }),
+      rawRow({ account: 'acc1', total_value: 600, quantity: 10, avg_buy_price: 50, unrealized_gain: 100 }),
+      rawRow({ account: 'acc2', total_value: 9999, quantity: 1, avg_buy_price: 1, unrealized_gain: 9999 }),
     ]
     const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1']))
     expect(result).toEqual([{
@@ -270,8 +270,8 @@ describe('applyAccountFilterToHistory', () => {
 
   it('sums multiple accounts on the same date', () => {
     const rows = [
-      rawRow({ account: 'acc1', total_value: '600', quantity: '10', avg_buy_price: '50', unrealized_gain: '100' }),
-      rawRow({ account: 'acc2', total_value: '300', quantity: '5', avg_buy_price: '50', unrealized_gain: '50' }),
+      rawRow({ account: 'acc1', total_value: 600, quantity: 10, avg_buy_price: 50, unrealized_gain: 100 }),
+      rawRow({ account: 'acc2', total_value: 300, quantity: 5, avg_buy_price: 50, unrealized_gain: 50 }),
     ]
     const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1', 'acc2']))
     expect(result[0].total_value).toBe(900)
@@ -281,8 +281,8 @@ describe('applyAccountFilterToHistory', () => {
 
   it('rebuilds history for synthetic cash separately from the same account positions', () => {
     const rows = [
-      rawRow({ account: 'acc1', account_type: 'Bourse', total_value: '600' }),
-      rawRow({ account: 'acc1', account_type: 'Bourse – Cash', total_value: '50' }),
+      rawRow({ account: 'acc1', account_type: 'Bourse', total_value: 600 }),
+      rawRow({ account: 'acc1', account_type: 'Bourse – Cash', total_value: 50 }),
     ]
     const result = applyAccountFilterToHistory(
       rows,

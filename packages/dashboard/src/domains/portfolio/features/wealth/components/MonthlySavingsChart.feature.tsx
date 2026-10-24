@@ -5,7 +5,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { MonthlyTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
-import type { MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 
@@ -13,7 +13,7 @@ function MonthlyPerformanceCell({ entry }: { entry: TrailingSavingCapacityPoint 
   return <Cell fill={(entry.perf_delta ?? 0) >= 0 ? SEMANTIC_COLORS.performancePositive : SEMANTIC_COLORS.performanceNegative} />
 }
 
-export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacityPoint[]; ops: MonthlyOpsMap }) {
+export function MonthlySavingsChart({ data, ops }: { data: TrailingSavingCapacityPoint[]; ops: MonthlyOperationsByMonth }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   return (

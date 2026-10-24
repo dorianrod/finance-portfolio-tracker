@@ -1,12 +1,12 @@
 import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
-import type { RawIsinData } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/components/ClassificationCoverageState.state'
 import { ErrorsTab, ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab.feature'
-import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundCoverageReport, FundHolding, FundHoldingStatus, FundSnapshot, FundUnresolved } from '@/domains/portfolio/shared/types/fundHolding.type'
 import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/components/LookThroughCoverageSummary.feature'
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/components/FundDataQualityPanel.feature'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
@@ -17,15 +17,15 @@ import {
   type AffectedAsset,
   type QualityTheme,
 } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualityViewModel'
-import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/quality'
+import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/services/useDataQualityViewModel'
 
-export type { QualityThemeId } from '@/domains/portfolio/shared/types/quality'
+export type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 
 interface DataQualityTabProps {
   positions: PositionRow[]
-  errors: ErrorRow[]
+  errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
   fundStatuses: FundHoldingStatus[]
   fundReport: FundCoverageReport | null

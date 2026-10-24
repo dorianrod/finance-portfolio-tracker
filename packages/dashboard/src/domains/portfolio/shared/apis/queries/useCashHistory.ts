@@ -1,11 +1,9 @@
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { useQuery } from '@tanstack/react-query'
 import { parseCsv } from '@/shared/csv/csvData'
-import { aggregateBrokerageCash, type CashHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
+import { aggregateBrokerageCash } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
 import { RAW_CASH_ROW_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-
-export type { CashHistoryPoint }
 
 export function useCashHistory() {
   return useQuery({

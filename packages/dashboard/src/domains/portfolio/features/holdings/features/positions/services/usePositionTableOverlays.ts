@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
 import type { AllocationHoverTarget } from '@/domains/portfolio/shared/components/HoverAllocationPopover.view'
@@ -12,7 +12,10 @@ export function usePositionTableOverlays() {
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const cancelHide = useCallback(() => {
-    if (hideTimeout.current) clearTimeout(hideTimeout.current)
+    if (hideTimeout.current) {
+      clearTimeout(hideTimeout.current)
+      hideTimeout.current = null
+    }
   }, [])
   const scheduleHide = useCallback(() => {
     hideTimeout.current = setTimeout(() => {
@@ -20,7 +23,12 @@ export function usePositionTableOverlays() {
       setSavingsChart(null)
       setAllocationHover(null)
       setUnderlyingPopover(null)
+      hideTimeout.current = null
     }, 200)
+  }, [])
+
+  useEffect(() => () => {
+    if (hideTimeout.current) clearTimeout(hideTimeout.current)
   }, [])
 
   return {

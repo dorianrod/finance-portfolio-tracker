@@ -1,15 +1,11 @@
-export interface RawCashRow {
+import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 
+export type RawCashRow = {
   snapshot_date: string
   account: string
   account_type: string
   account_category: string
-  cumulative_cash: string
-}
-
-export interface CashHistoryPoint {
-  date: string
-  total_broker_cash: number
+  cumulative_cash: number
 }
 
 // Only brokerage accounts hold real free cash; other categories
@@ -19,10 +15,9 @@ export function aggregateBrokerageCash(rows: RawCashRow[]): CashHistoryPoint[] {
   const byDate = new Map<string, number>()
   for (const row of rows) {
     if (row.account_category !== 'brokerage') continue
-    const val = parseFloat(row.cumulative_cash) || 0
-    byDate.set(row.snapshot_date, (byDate.get(row.snapshot_date) ?? 0) + val)
+    byDate.set(row.snapshot_date, (byDate.get(row.snapshot_date) ?? 0) + row.cumulative_cash)
   }
   return [...byDate.entries()]
     .map(([date, total_broker_cash]) => ({ date, total_broker_cash }))
-    .sort((a, b) => a.date.localeCompare(b.date))
+    .toSorted((a, b) => a.date.localeCompare(b.date))
 }

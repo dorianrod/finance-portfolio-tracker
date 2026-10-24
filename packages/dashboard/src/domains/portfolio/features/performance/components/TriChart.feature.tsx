@@ -6,7 +6,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TriTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { buildTriChartData } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 
 // Fixed-window annualised IRRs, separate from the since-tracking KPI. Solid

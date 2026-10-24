@@ -4,8 +4,9 @@ import { computeMatchingIsins, computeTableRows, aggregateAllocationPoints, aggr
 import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
 import { computeAllocationPopoverPosition as computePopoverPos } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { RawIsinData, RawIsinRow } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
   return { geo: [], secteur: [], currency: [], classe: [], loading: false, ...overrides }

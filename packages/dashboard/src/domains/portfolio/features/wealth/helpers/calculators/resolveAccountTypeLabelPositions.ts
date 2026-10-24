@@ -1,4 +1,4 @@
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/history'
+import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 
 export interface AccountTypeDonutPoint extends AccountTypePoint {
   _label: string
@@ -37,7 +37,7 @@ export function resolveAccountTypeLabelPositions(
   const minY = cy - labelRadius + 6
   const maxY = cy + labelRadius - 6
   for (const isRight of [false, true]) {
-    const side = positions.filter((position) => position.isRight === isRight).sort((a, b) => a.desiredY - b.desiredY)
+    const side = positions.filter((position) => position.isRight === isRight).toSorted((a, b) => a.desiredY - b.desiredY)
     if (side.length === 0) continue
     const gap = side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
 

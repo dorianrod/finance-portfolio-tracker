@@ -1,6 +1,7 @@
 import * as yup from 'yup'
-import type { RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
-import type { RawPortfolioHistory } from '@/domains/portfolio/shared/types/history'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+import type { RawPortfolioHistory } from '@/domains/portfolio/shared/types/rawPortfolioHistory.type'
 import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import type { RawCashRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
 import type {
@@ -9,6 +10,12 @@ import type {
 } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity'
 
 const requiredText = () => yup.string().defined()
+const requiredNumber = () => yup.number().transform((value, originalValue) => (
+  originalValue === '' || originalValue == null ? 0 : value
+)).defined()
+const nullableNumber = () => yup.number().transform((value, originalValue) => (
+  originalValue === '' || originalValue == null ? null : value
+)).nullable().defined()
 export const ACCOUNT_ROW_SCHEMA = yup.object({
   account: requiredText(),
   label: requiredText(),
@@ -21,11 +28,11 @@ export const RAW_OPERATION_SCHEMA: yup.ObjectSchema<RawOperation> = yup.object({
   ticker: requiredText(),
   name: requiredText(),
   operation_type: requiredText(),
-  quantity: requiredText(),
-  price_per_unit: requiredText(),
-  total_amount: requiredText(),
+  quantity: requiredNumber(),
+  price_per_unit: requiredNumber(),
+  total_amount: requiredNumber(),
   currency: requiredText(),
-  realized_gain: requiredText(),
+  realized_gain: requiredNumber(),
 })
 
 export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
@@ -36,36 +43,36 @@ export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
   isin: requiredText(),
   ticker: requiredText(),
   name: requiredText(),
-  quantity: requiredText(),
-  avg_buy_price: requiredText(),
-  last_price: requiredText(),
-  total_value: requiredText(),
-  unrealized_gain: requiredText(),
-  unrealized_gain_pct: requiredText(),
-  realized_gain: requiredText(),
-  total_dividends: requiredText(),
-  total_dividends_net: requiredText(),
-  total_interest: requiredText(),
-  total_interest_net: requiredText(),
-  tax_rate: requiredText(),
-  unrealized_gain_net: requiredText(),
-  realized_gain_net: requiredText(),
-  xirr: requiredText(),
-  xirr_rolling_3y: requiredText(),
-  xirr_rolling_period_years: requiredText(),
-  total_return_pct: requiredText(),
+  quantity: nullableNumber(),
+  avg_buy_price: nullableNumber(),
+  last_price: nullableNumber(),
+  total_value: nullableNumber(),
+  unrealized_gain: nullableNumber(),
+  unrealized_gain_pct: nullableNumber(),
+  realized_gain: nullableNumber(),
+  total_dividends: nullableNumber(),
+  total_dividends_net: nullableNumber(),
+  total_interest: nullableNumber(),
+  total_interest_net: nullableNumber(),
+  tax_rate: nullableNumber(),
+  unrealized_gain_net: nullableNumber(),
+  realized_gain_net: nullableNumber(),
+  xirr: nullableNumber(),
+  xirr_rolling_3y: nullableNumber(),
+  xirr_rolling_period_years: nullableNumber(),
+  total_return_pct: nullableNumber(),
 })
 
 export const RAW_PORTFOLIO_HISTORY_SCHEMA: yup.ObjectSchema<RawPortfolioHistory> = yup.object({
   snapshot_date: requiredText(),
-  total_value: requiredText(),
-  total_cost_basis: requiredText(),
-  unrealized_gain: requiredText(),
-  net_cash_injected: requiredText(),
-  cash_delta: requiredText(),
-  tri: requiredText(),
-  tri_rolling_1y: requiredText(),
-  tri_rolling_3y: requiredText(),
+  total_value: requiredNumber(),
+  total_cost_basis: requiredNumber(),
+  unrealized_gain: requiredNumber(),
+  net_cash_injected: requiredNumber(),
+  cash_delta: nullableNumber(),
+  tri: nullableNumber(),
+  tri_rolling_1y: nullableNumber(),
+  tri_rolling_3y: nullableNumber(),
 })
 
 export const RAW_CASH_ROW_SCHEMA: yup.ObjectSchema<RawCashRow> = yup.object({
@@ -73,35 +80,37 @@ export const RAW_CASH_ROW_SCHEMA: yup.ObjectSchema<RawCashRow> = yup.object({
   account: requiredText(),
   account_type: requiredText(),
   account_category: requiredText(),
-  cumulative_cash: requiredText(),
+  cumulative_cash: requiredNumber(),
 })
 
 export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeSavingsRow> = yup.object({
-  year: requiredText(),
+  year: requiredNumber(),
   income_status: requiredText(),
-  net_salary: requiredText(),
-  other_income: requiredText(),
-  total_income: requiredText(),
-  gross_salary: requiredText(),
-  placed_savings: requiredText(),
+  net_salary: requiredNumber(),
+  other_income: requiredNumber(),
+  total_income: requiredNumber(),
+  gross_salary: requiredNumber(),
+  placed_savings: nullableNumber(),
   savings_through: requiredText(),
   savings_status: requiredText(),
-  placement_rate: requiredText(),
-  unplaced_income_proxy: requiredText(),
-  comparable: requiredText(),
+  placement_rate: nullableNumber(),
+  unplaced_income_proxy: nullableNumber(),
+  comparable: yup.boolean().transform((_value, originalValue) => (
+    originalValue === true || String(originalValue).trim().toLowerCase() === 'true'
+  )).defined(),
 })
 
 export const RAW_SAVING_CAPACITY_SCHEMA: yup.ObjectSchema<RawSavingCapacityRow> = yup.object({
   snapshot_date: requiredText(),
-  savings_delta: requiredText(),
-  perf_delta: requiredText(),
+  savings_delta: requiredNumber(),
+  perf_delta: requiredNumber(),
 })
 
 export const RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA: yup.ObjectSchema<RawSavingCapacityByAccountRow> = yup.object({
   snapshot_date: requiredText(),
   account: requiredText(),
-  savings_delta: requiredText(),
-  perf_delta: requiredText(),
+  savings_delta: requiredNumber(),
+  perf_delta: requiredNumber(),
 })
 
 const CSV_RECORD_SCHEMA: yup.MixedSchema<Record<string, string>> = yup

@@ -1,19 +1,14 @@
-export interface RawSavingCapacityRow {
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
+export type RawSavingCapacityRow = {
   snapshot_date: string
-  savings_delta: string
-  perf_delta: string
+  savings_delta: number
+  perf_delta: number
 }
 
-export interface RawSavingCapacityByAccountRow {
+export type RawSavingCapacityByAccountRow = {
   snapshot_date: string
   account: string
-  savings_delta: string
-  perf_delta: string
-}
-
-export interface SavingCapacityPoint {
-  date: string
   savings_delta: number
   perf_delta: number
 }
@@ -21,8 +16,8 @@ export interface SavingCapacityPoint {
 export function mapSavingCapacity(rows: RawSavingCapacityRow[]): SavingCapacityPoint[] {
   return rows.map((r) => ({
     date: r.snapshot_date,
-    savings_delta: parseFloat(r.savings_delta) || 0,
-    perf_delta: parseFloat(r.perf_delta) || 0,
+    savings_delta: r.savings_delta,
+    perf_delta: r.perf_delta,
   }))
 }
 
@@ -36,11 +31,11 @@ export function aggregateSavingCapacityByAccount(
     const d = r.snapshot_date
     if (!byDate.has(d)) byDate.set(d, { savings_delta: 0, perf_delta: 0 })
     const entry = byDate.get(d)!
-    entry.savings_delta += parseFloat(r.savings_delta) || 0
-    entry.perf_delta += parseFloat(r.perf_delta) || 0
+    entry.savings_delta += r.savings_delta
+    entry.perf_delta += r.perf_delta
   }
   return Array.from(byDate.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
+    .toSorted(([a], [b]) => a.localeCompare(b))
     .map(([date, vals]) => ({
       date,
       savings_delta: Math.round(vals.savings_delta * 100) / 100,

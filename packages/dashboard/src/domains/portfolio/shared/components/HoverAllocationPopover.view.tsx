@@ -1,7 +1,7 @@
 import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
-import type { IsinAllocation } from '@/domains/portfolio/shared/apis/queries/useAllocationByIsin'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
+import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
 import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { MiniDonut } from './MiniDonut.view'
 

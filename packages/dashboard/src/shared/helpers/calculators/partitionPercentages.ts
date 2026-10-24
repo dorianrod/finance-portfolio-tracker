@@ -12,7 +12,7 @@ export function partitionPercentages(values: number[]): number[] {
   const missingUnits = targetUnits - roundedUnits.reduce((sum, value) => sum + value, 0)
   const remainderOrder = exactUnits
     .map((value, index) => ({ index, remainder: value - roundedUnits[index] }))
-    .sort((a, b) => b.remainder - a.remainder || a.index - b.index)
+    .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index)
 
   for (let index = 0; index < missingUnits; index += 1) {
     roundedUnits[remainderOrder[index].index] += 1

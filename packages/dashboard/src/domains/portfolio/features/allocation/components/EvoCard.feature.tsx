@@ -4,11 +4,11 @@ import { useAtomValue } from 'jotai'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { catColor } from '@/shared/theme/chartColors'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { allocationTrendDomain, buildAllocationTrend } from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import { PositionsToggle } from './PositionsToggle.view'
-import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
@@ -23,11 +23,11 @@ interface EvoCardProps {
   dimension: AllocationDimension
 }
 
-function EvolutionLegendItem({ activeFilter, activeSegment, category, dimension }: { activeFilter: ReturnType<typeof useAtomValue<typeof dashboardAllocationFilterAtom>>; activeSegment: string | null; category: string; dimension: AllocationDimension }) {
+function EvolutionLegendItem({ activeFilter, category, dimension }: { activeFilter: ReturnType<typeof useAtomValue<typeof dashboardAllocationFilterAtom>>; category: string; dimension: AllocationDimension }) {
   const { toggleFilter } = useDashboardAllocationFilters()
   const color = catColor(category)
   if (category.startsWith('others (')) return <span className="inline-flex items-center gap-1 text-[11px] text-gray-500"><span style={{ width: 8, height: 8, borderRadius: 2, background: color, display: 'inline-block', flexShrink: 0 }} />{category}</span>
-  const isActive = activeSegment === category
+  const isActive = activeFilter?.type === dimension && activeFilter.value === category
   const isDimmed = activeFilter !== null && !isActive
   return <button type="button" onClick={() => toggleFilter({ type: dimension, value: category })} className="inline-flex cursor-pointer items-center gap-1 text-[11px] transition-opacity" style={{ opacity: isDimmed ? 0.35 : 1 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: color, display: 'inline-block', flexShrink: 0, outline: isActive ? '2px solid white' : 'none', outlineOffset: 1 }} /><span style={{ color }}>{category}</span></button>
 }
@@ -47,7 +47,6 @@ export function EvoCard({ title, points, dimension }: EvoCardProps) {
   const { togglePositions } = useDashboardAllocationPositions()
   const { categories, rows: chartData } = buildAllocationTrend(points)
 
-  const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
   const dateDomain = allocationTrendDomain(points)
   const series = categories.map((category, index) => ({
     category,
@@ -62,7 +61,7 @@ export function EvoCard({ title, points, dimension }: EvoCardProps) {
         {activeFilter?.type === dimension && <PositionsToggle open={positionsOpen} onClick={togglePositions} />}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
-        {categories.map((category) => <EvolutionLegendItem key={category} activeFilter={activeFilter} activeSegment={activeSeg} category={category} dimension={dimension} />)}
+        {categories.map((category) => <EvolutionLegendItem key={category} activeFilter={activeFilter} category={category} dimension={dimension} />)}
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>

@@ -1,7 +1,8 @@
 import i18n from '@/i18n/i18n'
-import type { AccountTypePoint, PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
-import type { MonthlyOpsMap } from '@/domains/portfolio/shared/apis/queries/useMonthlyOps'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/apis/queries/useAccountTypeHistory'
+import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 import type { TrailingSavingCapacityPoint, TrailingYearOverYear, WealthDriverPoint, YearOverYearMetric } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { AccountTypeBreakdownChart } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart.feature'
 import { AccountTypeHistoryChart } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart.feature'
@@ -27,7 +28,7 @@ interface WealthTabProps {
   accountTypes: string[]
   typeCategories: Record<string, string>
   savings: TrailingSavingCapacityPoint[]
-  monthlyOps: MonthlyOpsMap
+  monthlyOps: MonthlyOperationsByMonth
   drivers: WealthDriverPoint[]
   trailingYearComparison: TrailingYearOverYear
   annualIncomeSavings: AnnualIncomeSavingsPoint[]

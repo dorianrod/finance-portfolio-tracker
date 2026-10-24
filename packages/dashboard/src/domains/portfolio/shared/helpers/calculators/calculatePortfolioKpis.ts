@@ -1,4 +1,4 @@
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function calculatePortfolioKpis(rows: PositionRow[]) {
   const activePositions = rows.filter((row) => row.status === 'active')

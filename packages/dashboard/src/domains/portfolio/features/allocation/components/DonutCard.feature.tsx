@@ -5,12 +5,12 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { catColor } from '@/shared/theme/chartColors'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocation'
+import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { formatGroupedAllocationLabel, groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import { PieLabel } from './PieLabel.view'
 import { PositionsToggle } from './PositionsToggle.view'
-import type { AllocationDimension, PieEntry } from '@/domains/portfolio/shared/types/allocationCharts.types'
+import type { AllocationDimension, PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
@@ -27,12 +27,12 @@ interface DonutCardProps {
 
 interface DonutCellProps {
   activeFilter: ReturnType<typeof useAtomValue<typeof dashboardAllocationFilterAtom>>
-  activeSegment: string | null
+  dimension: AllocationDimension
   entry: PieEntry
 }
 
-function DonutCell({ activeFilter, activeSegment, entry }: DonutCellProps) {
-  const isActive = activeSegment === entry.name
+function DonutCell({ activeFilter, dimension, entry }: DonutCellProps) {
+  const isActive = activeFilter?.type === dimension && activeFilter.value === entry.name
   const isDimmed = activeFilter !== null && !isActive
 
   return (
@@ -63,8 +63,6 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
       ? [{ name: formatGroupedAllocationLabel(grouped.length), value: groupedTotal, total, subItems: grouped }]
       : []),
   ]
-
-  const activeSeg = activeFilter?.type === dimension ? activeFilter.value : null
 
   return (
     <div className="bg-gray-900 rounded-xl p-4">
@@ -97,7 +95,7 @@ export function DonutCard({ title, point, dimension }: DonutCardProps) {
             style={{ cursor: 'pointer' }}
           >
             {data.map((entry) => (
-              <DonutCell key={entry.name} activeFilter={activeFilter} activeSegment={activeSeg} entry={entry} />
+              <DonutCell key={entry.name} activeFilter={activeFilter} dimension={dimension} entry={entry} />
             ))}
           </Pie>
           <Tooltip content={<PieTooltip />} />

@@ -1,12 +1,4 @@
-export interface RawIsinRow {
-
-  snapshot_date: string
-  account?: string
-  account_type?: string
-  isin: string
-  name: string
-  values: Record<string, number>
-}
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
 const METADATA_COLUMNS = new Set(['snapshot_date', 'account', 'account_type', 'isin', 'name'])
 

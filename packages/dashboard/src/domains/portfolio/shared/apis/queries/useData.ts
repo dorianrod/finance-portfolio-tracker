@@ -8,14 +8,7 @@ import {
   RAW_POSITION_SCHEMA,
 } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import type { PositionRow, RawOperation, RawPosition } from '@/domains/portfolio/shared/types/domain'
-
-export interface DashboardData {
-  accountLabels: Record<string, string>
-  positions: PositionRow[]
-  rawOperations: RawOperation[]
-  rawPositions: RawPosition[]
-}
+import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 
 export function useData() {
   return useQuery<DashboardData>({

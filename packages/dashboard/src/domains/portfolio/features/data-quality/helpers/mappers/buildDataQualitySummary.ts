@@ -1,5 +1,5 @@
-import type { ErrorRow } from '@/domains/portfolio/shared/apis/queries/useErrors'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
+import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import type { AccountCoverage } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
 import {
   computeFundExposurePercentages,
@@ -14,7 +14,7 @@ import {
 } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import type { QualityThemeId } from '@/domains/portfolio/shared/types/quality'
+import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 
 interface BuildDataQualitySummaryInput {
   allocationLoading: boolean
@@ -22,7 +22,7 @@ interface BuildDataQualitySummaryInput {
   pipelineErrorsLoading: boolean
   scopedFundQuality: ScopedFundQualityData
   scopedManualPriceOverrides: ManualPriceOverride[]
-  scopedPipelineErrors: ErrorRow[]
+  scopedPipelineErrors: PipelineError[]
 }
 
 const RELIABILITY_PRIORITY: Record<AnalysisReliabilityTone, number> = {

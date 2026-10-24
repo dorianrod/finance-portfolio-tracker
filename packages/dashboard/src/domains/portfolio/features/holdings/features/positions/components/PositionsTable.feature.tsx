@@ -11,7 +11,7 @@ import {
   type Row,
 } from '@tanstack/react-table'
 import { Fragment, useMemo } from 'react'
-import type { PositionRow, TableRow } from '@/domains/portfolio/shared/types/domain'
+import type { PositionRow, TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_BADGE_CLASSES, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
@@ -23,7 +23,7 @@ import { SortHeader } from './SortHeader.view'
 import { HoverChart, type ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import { HoverSavingsChart, type SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
 import { HoverAllocationPopover, type AllocationHoverTarget } from '@/domains/portfolio/shared/components/HoverAllocationPopover.view'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
 import {
   FundPositionPopover,
   type FundPositionPopoverTarget,
@@ -114,6 +114,7 @@ function PositionBodyRow({ cancelHide, row, scheduleHide, separatorType, setAllo
     if (parent?.kind === 'position') savingsHandlers = { onMouseEnter: (event) => { cancelHide(); setChart(null); setAllocationHover(null); setUnderlyingPopover(null); setSavingsChart({ name: parent.name, operations: getPositionSavingsOperations(parent), buttonRect: event.currentTarget.getBoundingClientRect() }) }, onMouseLeave: scheduleHide }
   }
   const td = 'px-3 py-1.5 text-xs bg-gray-800 border-t-2 border-gray-600 border-b border-gray-700'
+  // eslint-disable-next-line local/no-prop-drilling -- PositionBodyCell is the direct visual renderer for handlers owned by its row.
   return <Fragment>{separatorType !== undefined && <tr><td className={td} /><td className={`${td} font-semibold uppercase tracking-widest text-gray-400`}>{separatorType || i18n.t('ui.positionstable.other')}</td><td className={`${td} font-medium text-gray-200`}>{totals && totals.value > 0 ? formatMoney(totals.value) : ''}</td><td className={td} /><td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>{totals && totals.unrealized !== 0 ? formatMoney(totals.unrealized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>{totals && totals.realized !== 0 ? formatMoney(totals.realized) : ''}</td><td className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}>{totals && totals.totalRealized !== 0 ? formatMoney(totals.totalRealized) : ''}</td><td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>{totals && totals.dividends !== 0 ? formatMoney(totals.dividends) : ''}</td><td className={td} /><td className={td} /></tr>}<tr className={['border-b transition-colors', isClosed ? 'border-gray-900 opacity-40 hover:opacity-70' : 'border-gray-800', isPosition && !isClosed ? 'cursor-pointer bg-gray-900 hover:bg-gray-800' : '', isPosition && isClosed ? 'cursor-pointer bg-gray-950' : '', isGroup && !isClosed ? 'bg-gray-850 cursor-pointer hover:bg-gray-800' : '', isGroup && isClosed ? 'cursor-pointer bg-gray-950' : '', !isPosition && !isGroup ? 'bg-gray-950' : ''].join(' ')} onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}>{row.getVisibleCells().map((cell) => <PositionBodyCell key={cell.id} cell={cell} chartHandlers={chartHandlers} savingsHandlers={savingsHandlers} />)}</tr></Fragment>
 }
 

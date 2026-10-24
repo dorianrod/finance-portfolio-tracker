@@ -1,13 +1,13 @@
 import i18n from '@/i18n/i18n'
 import { createPortal } from 'react-dom'
 import { useAtomValue } from 'jotai'
-import {
-  useFundHoldingsData,
-  type FundHolding,
-  type FundHoldingStatus,
-  type HistoricalFundHolding,
-} from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import { useFundHoldingsData } from '@/domains/portfolio/shared/apis/queries/useFundHoldings'
+import type {
+  FundHolding,
+  FundHoldingStatus,
+  HistoricalFundHolding,
+} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -26,9 +26,10 @@ export interface FundPositionPopoverTarget {
   buttonRect: DOMRect
 }
 
-function FundPositionHoldingRow({ holding, positionValue }: { holding: FundHolding; positionValue: number }) {
+function FundPositionHoldingRow({ holding, position }: { holding: FundHolding; position: PositionRow }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
+  const positionValue = position.total_value ?? 0
   return <div className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-gray-800/70 py-1.5 text-xs"><span className="truncate text-gray-300" title={holding.holdingName}>{holding.holdingName}</span><span className="text-right tabular-nums text-gray-500">{formatPercentage(holding.weight * 100, { decimals: 2 })}</span><span className="text-right tabular-nums text-gray-400">{formatMoney(positionValue * holding.weight, { style: 'full' })}</span></div>
 }
 
@@ -53,9 +54,8 @@ export function FundPositionPopover({
   const { position, status } = target
   const rows = holdingsForPosition(position, holdings)
     .slice()
-    .sort((a, b) => b.weight - a.weight)
+    .toSorted((a, b) => b.weight - a.weight)
     .slice(0, 8)
-  const positionValue = position.total_value ?? 0
   const width = Math.min(560, window.innerWidth - 20)
   const estimatedHeight = Math.min(430, window.innerHeight - 20)
   const { top, left } = computeAllocationPopoverPosition(target.buttonRect, width, estimatedHeight)
@@ -85,7 +85,7 @@ export function FundPositionPopover({
 
       {rows.length > 0 ? (
         <div>
-          {rows.map((holding) => <FundPositionHoldingRow key={holding.holdingId} holding={holding} positionValue={positionValue} />)}
+          {rows.map((holding) => <FundPositionHoldingRow key={holding.holdingId} holding={holding} position={position} />)}
         </div>
       ) : (
         <p className="py-5 text-center text-xs text-gray-500">{i18n.t('ui.fundpositionpopover.noUnderlyingHoldingsAvailable')}</p>

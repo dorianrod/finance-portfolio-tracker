@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import {
   accountTypeShareKey,
   PORTFOLIO_COST_SHARE_KEY,

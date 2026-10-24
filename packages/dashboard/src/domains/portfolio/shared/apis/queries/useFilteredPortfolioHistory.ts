@@ -3,28 +3,13 @@ import i18n from '@/i18n/i18n'
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/history'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { ApiHistoryPoint } from '@/domains/portfolio/shared/types/apiHistoryPoint.type'
+import type { PortfolioHistoryResponse } from '@/domains/portfolio/shared/types/portfolioHistoryResponse.type'
 import * as yup from 'yup'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
-
-interface ApiHistoryPoint {
-  snapshot_date: string
-  total_value: number
-  total_cost_basis: number
-  unrealized_gain: number
-  net_cash_injected: number
-  cash_delta: number | null
-  tri: number | null
-  tri_rolling_1y: number | null
-  tri_rolling_3y: number | null
-}
-
-export interface PortfolioHistoryResponse {
-  accounts: string[]
-  history: ApiHistoryPoint[]
-}
 
 const FILTERED_HISTORY_REQUEST_SCHEMA = yup.object({
   accounts: yup.array(yup.string().defined()).defined(),
@@ -141,55 +126,23 @@ async function requestDemoPresetAccounts(signal: AbortSignal): Promise<string[] 
   return normalizeAccountSelection(fixture.accounts)
 }
 
-export function useFilteredPortfolioHistory(
-  fallbackHistory: PortfolioHistoryPoint[],
-  selectedAccounts: Set<string>,
-) {
+export function useFilteredPortfolioHistory(selectedAccounts: Set<string>) {
   const normalizedAccounts = useMemo(
     () => normalizeAccountSelection(selectedAccounts),
     [selectedAccounts],
   )
-  const accountKey = normalizedAccounts.join('\u0000')
-  const isFiltered = selectedAccounts.size > 0
-  const demoPresetQuery = useQuery({
+  return useQuery({
+    queryKey: portfolioQueryKeys.data('filtered-history', ...normalizedAccounts),
+    queryFn: ({ signal }) => requestFilteredPortfolioHistory(normalizedAccounts, signal),
+    select: toHistory,
+    enabled: selectedAccounts.size > 0,
+  })
+}
+
+export function useDemoFilteredHistoryAccounts() {
+  return useQuery({
     queryKey: portfolioQueryKeys.data('demo-filtered-history-accounts'),
     queryFn: ({ signal }) => requestDemoPresetAccounts(signal),
     enabled: STATIC_DEMO,
   })
-  const filteredHistoryQuery = useQuery({
-    queryKey: portfolioQueryKeys.data('filtered-history', ...normalizedAccounts),
-    queryFn: ({ signal }) => requestFilteredPortfolioHistory(normalizedAccounts, signal),
-    enabled: isFiltered,
-  })
-  let responseState: FilteredResponseState | null = null
-  if (filteredHistoryQuery.data) {
-    responseState = {
-      key: accountKey,
-      history: toHistory(filteredHistoryQuery.data),
-      error: null,
-    }
-  } else if (filteredHistoryQuery.error) {
-    responseState = {
-      key: accountKey,
-      history: null,
-      error: filteredHistoryQuery.error instanceof Error
-        ? filteredHistoryQuery.error.message
-        : String(filteredHistoryQuery.error),
-    }
-  }
-
-  const { history, loading, error } = resolveFilteredHistoryState(
-    fallbackHistory,
-    isFiltered,
-    accountKey,
-    responseState,
-  )
-
-  return {
-    history,
-    loading,
-    error,
-    isFiltered,
-    demoPresetAccounts: demoPresetQuery.data ?? null,
-  }
 }

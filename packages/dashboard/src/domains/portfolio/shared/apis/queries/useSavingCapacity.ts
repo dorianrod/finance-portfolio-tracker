@@ -10,11 +10,9 @@ import {
 import {
   mapSavingCapacity,
   aggregateSavingCapacityByAccount,
-  type SavingCapacityPoint,
 } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-
-export type { SavingCapacityPoint }
 
 export function useSavingCapacity(accounts?: Set<string>) {
   const accountsKey = useMemo(

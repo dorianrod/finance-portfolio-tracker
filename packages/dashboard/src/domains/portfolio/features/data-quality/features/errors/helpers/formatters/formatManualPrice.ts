@@ -1,4 +1,4 @@
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/apis/queries/useManualPriceOverrides'
+import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import type { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 
 export function formatManualPrice(

@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 
 import { computeAllocationCoverageByAccount, computeAllocationCoverageByDimension } from './computeAllocationCoverage'
-import type { RawIsinData, RawIsinRow } from '@/domains/portfolio/shared/apis/queries/useRawIsinData'
-import type { PositionRow } from '@/domains/portfolio/shared/types/domain'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {

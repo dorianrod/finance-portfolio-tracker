@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import type { Filters } from '@/domains/portfolio/shared/types/filters'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import {
   accountLabel,
   clearFilterGroup,
@@ -11,7 +11,7 @@ import {
   toggle,
 } from './portfolioFilters'
 
-function filters(overrides: Partial<Filters> = {}): Filters {
+function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
   return {
     accountTypes: new Set(),
     accounts: new Set(),
