@@ -1,11 +1,19 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { IrrSinceTrackingKpi, TrailingThreeYearIrrKpi } from './PortfolioKpis.feature'
+
+import {
+  IrrSinceTrackingKpi,
+  TrailingThreeYearIrrKpi,
+} from './PortfolioKpis.feature'
 
 describe('filtered IRR KPIs', () => {
   it('labels a successfully calculated account scope', () => {
     const html = renderToStaticMarkup(
-      <IrrSinceTrackingKpi value={12.74} status="ready" scopeLabel="Selected accounts" />,
+      <IrrSinceTrackingKpi
+        value={12.74}
+        status="ready"
+        scopeLabel="Selected accounts"
+      />,
     )
 
     expect(html).toContain('IRR since tracking · selected accounts')
@@ -14,7 +22,11 @@ describe('filtered IRR KPIs', () => {
 
   it('does not expose a stale value while calculating', () => {
     const html = renderToStaticMarkup(
-      <TrailingThreeYearIrrKpi value={17.95} status="loading" scopeLabel="Selected accounts" />,
+      <TrailingThreeYearIrrKpi
+        value={17.95}
+        status="loading"
+        scopeLabel="Selected accounts"
+      />,
     )
 
     expect(html).toContain('Calculating…')

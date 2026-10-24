@@ -1,12 +1,3 @@
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { MonthlyTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
-import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
-import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import {
   Bar,
   CartesianGrid,
@@ -19,6 +10,16 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { MonthlyTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 
 export function MonthlySavingsChart({
   data,
@@ -41,11 +42,17 @@ export function MonthlySavingsChart({
         />
       </h2>
       <ResponsiveContainer width="100%" height={220}>
-        <ComposedChart data={data} margin={{ top: 4, right: 52, left: 0, bottom: 0 }} barGap={2}>
+        <ComposedChart
+          data={data}
+          margin={{ top: 4, right: 52, left: 0, bottom: 0 }}
+          barGap={2}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis
             dataKey="date"
-            tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })}
+            tickFormatter={(value) =>
+              formatDate(value, { style: 'shortMonthShortYear' })
+            }
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}
             axisLine={false}
@@ -127,14 +134,21 @@ export function MonthlySavingsChart({
               <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-3 overflow-hidden rounded-sm" aria-hidden="true">
+              <span
+                className="flex h-2.5 w-3 overflow-hidden rounded-sm"
+                aria-hidden="true"
+              >
                 <i
                   className="h-full w-1/2"
-                  style={{ backgroundColor: SEMANTIC_COLORS.performancePositive }}
+                  style={{
+                    backgroundColor: SEMANTIC_COLORS.performancePositive,
+                  }}
                 />
                 <i
                   className="h-full w-1/2"
-                  style={{ backgroundColor: SEMANTIC_COLORS.performanceNegative }}
+                  style={{
+                    backgroundColor: SEMANTIC_COLORS.performanceNegative,
+                  }}
                 />
               </span>
               <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>

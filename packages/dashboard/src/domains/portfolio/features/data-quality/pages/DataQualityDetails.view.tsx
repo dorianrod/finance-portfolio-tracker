@@ -1,4 +1,3 @@
-import { navigateQualityTabs } from './helpers/presenters/navigateQualityTabs'
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
 import {
   type AffectedAsset,
@@ -9,6 +8,8 @@ import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+
+import { navigateQualityTabs } from './helpers/presenters/navigateQualityTabs'
 
 export function QualityThemeOption({ theme }: { theme: QualityTheme }) {
   return (
@@ -78,7 +79,9 @@ export function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
       <table className="w-full text-left text-xs">
         <thead className="sticky top-0 z-10 bg-surface text-content-subtle">
           <tr className="border-b border-border">
-            <th className="px-4 py-3 font-medium">{i18n.t('ui.dataqualitytab.asset')}</th>
+            <th className="px-4 py-3 font-medium">
+              {i18n.t('ui.dataqualitytab.asset')}
+            </th>
             <th className="px-4 py-3 font-medium">
               {i18n.t('ui.dataqualitytab.affectedDimensions')}
             </th>
@@ -119,7 +122,9 @@ export function AffectedAssetRow({ asset }: { asset: AffectedAsset }) {
     <tr className="border-b border-border/70 align-top hover:bg-canvas/40">
       <td className="px-4 py-3">
         <div className="font-medium text-content-secondary">{asset.name}</div>
-        <div className="mt-1 break-all font-mono text-[10px] text-content-subtle">{asset.id}</div>
+        <div className="mt-1 break-all font-mono text-[10px] text-content-subtle">
+          {asset.id}
+        </div>
       </td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-1.5">
@@ -179,8 +184,12 @@ export function DetailKpiButton({
       </span>
       <span className="ml-auto flex items-center gap-3 border-l border-border pl-4">
         <span>
-          <span className="block text-xs font-semibold text-accent">{actionLabel}</span>
-          <span className="mt-0.5 block text-[10px] text-content-subtle">{detailLabel}</span>
+          <span className="block text-xs font-semibold text-accent">
+            {actionLabel}
+          </span>
+          <span className="mt-0.5 block text-[10px] text-content-subtle">
+            {detailLabel}
+          </span>
         </span>
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-muted/60 text-accent">
           <svg

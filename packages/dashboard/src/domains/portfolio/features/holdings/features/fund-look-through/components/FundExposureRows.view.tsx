@@ -1,3 +1,6 @@
+import { memo, useState } from 'react'
+import { createPortal } from 'react-dom'
+
 import type { ExposureRow } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import type {
   IssuerExposure,
@@ -6,8 +9,6 @@ import type {
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { memo, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 export const GRID =
   'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -28,7 +29,10 @@ export function VirtualExposureRow({
   return (
     <div
       className="absolute left-0 top-0 w-full"
-      style={{ height: item.size, transform: `translateY(${item.start - scrollMargin}px)` }}
+      style={{
+        height: item.size,
+        transform: `translateY(${item.start - scrollMargin}px)`,
+      }}
     >
       {row.kind === 'issuer' && (
         <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />
@@ -63,9 +67,13 @@ export function SourcesCell({
   return (
     <span
       tabIndex={0}
-      onMouseEnter={(event) => setAnchor(event.currentTarget.getBoundingClientRect())}
+      onMouseEnter={(event) =>
+        setAnchor(event.currentTarget.getBoundingClientRect())
+      }
       onMouseLeave={() => setAnchor(null)}
-      onFocus={(event) => setAnchor(event.currentTarget.getBoundingClientRect())}
+      onFocus={(event) =>
+        setAnchor(event.currentTarget.getBoundingClientRect())
+      }
       onBlur={() => setAnchor(null)}
       className={`w-fit cursor-help truncate underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
     >
@@ -81,17 +89,27 @@ export function SourcesCell({
 
 export const TOOLTIP_WIDTH = 340
 
-export function SourceTooltipRow({ source, total }: { source: Source; total: number }) {
+export function SourceTooltipRow({
+  source,
+  total,
+}: {
+  source: Source
+  total: number
+}) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
     <li className="flex items-baseline gap-3">
-      <span className="min-w-0 flex-1 truncate text-content-secondary">{source.fund}</span>
+      <span className="min-w-0 flex-1 truncate text-content-secondary">
+        {source.fund}
+      </span>
       <span className="tabular-nums text-content-muted">
         {formatMoney(source.value, { style: 'full' })}
       </span>
       <span className="w-12 text-right tabular-nums text-content-subtle">
-        {formatPercentage(total > 0 ? (source.value / total) * 100 : 0, { decimals: 0 })}
+        {formatPercentage(total > 0 ? (source.value / total) * 100 : 0, {
+          decimals: 0,
+        })}
       </span>
     </li>
   )
@@ -106,8 +124,12 @@ export function SourcesTooltip({
   sources: Source[]
   total: number
 }) {
-  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - TOOLTIP_WIDTH - 8))
-  const below = anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
+  const left = Math.max(
+    8,
+    Math.min(anchor.left, window.innerWidth - TOOLTIP_WIDTH - 8),
+  )
+  const below =
+    anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
   const position = below
     ? { top: anchor.bottom + 6 }
     : { bottom: window.innerHeight - anchor.top + 6 }
@@ -161,7 +183,9 @@ export const IssuerRow = memo(function IssuerRow({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <div className={`${GRID} h-full border-b border-border text-sm hover:bg-surface-raised/60`}>
+    <div
+      className={`${GRID} h-full border-b border-border text-sm hover:bg-surface-raised/60`}
+    >
       <button
         type="button"
         onClick={() => onToggle(issuer.id)}
@@ -170,7 +194,9 @@ export const IssuerRow = memo(function IssuerRow({
       >
         <Chevron open={open} />
         <span className="truncate font-medium text-content">{issuer.name}</span>
-        <span className="font-mono text-[10px] text-content-subtle">{issuer.id}</span>
+        <span className="font-mono text-[10px] text-content-subtle">
+          {issuer.id}
+        </span>
       </button>
       <span className="text-right font-medium tabular-nums text-content-secondary">
         {formatMoney(issuer.value, { style: 'full' })}
@@ -189,14 +215,22 @@ export const IssuerRow = memo(function IssuerRow({
   )
 })
 
-export const SecurityRow = memo(function SecurityRow({ security }: { security: SecurityExposure }) {
+export const SecurityRow = memo(function SecurityRow({
+  security,
+}: {
+  security: SecurityExposure
+}) {
   const formatMoney = useFormatMoney()
   const [single] = security.funds
   return (
-    <div className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}>
+    <div
+      className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}
+    >
       <span className="min-w-0 truncate pl-6">
         <span className="text-content-secondary">{security.name}</span>
-        <span className="ml-2 font-mono text-[10px] text-content-subtle">{security.id}</span>
+        <span className="ml-2 font-mono text-[10px] text-content-subtle">
+          {security.id}
+        </span>
       </span>
       <span className="text-right tabular-nums text-content-muted">
         {formatMoney(security.value, { style: 'full' })}
@@ -218,10 +252,18 @@ export const SecurityRow = memo(function SecurityRow({ security }: { security: S
   )
 })
 
-export const SourceRow = memo(function SourceRow({ fund, value }: { fund: string; value: number }) {
+export const SourceRow = memo(function SourceRow({
+  fund,
+  value,
+}: {
+  fund: string
+  value: number
+}) {
   const formatMoney = useFormatMoney()
   return (
-    <div className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}>
+    <div
+      className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}
+    >
       <span />
       <span className="text-right tabular-nums text-content-subtle">
         {formatMoney(value, { style: 'full' })}

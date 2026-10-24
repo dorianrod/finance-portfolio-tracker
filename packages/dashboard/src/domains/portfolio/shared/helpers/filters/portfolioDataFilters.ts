@@ -1,14 +1,13 @@
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
 function errorMonth(date: Date | null): string | null {
   return date ? toCalendarMonth(date) : null
@@ -19,16 +18,26 @@ export function scopePipelineErrors(
   positions: PositionRow[],
   filters: DashboardFilters,
 ): PipelineError[] {
-  const selectedAccounts = new Set(positions.map((position) => position.account))
-  const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
-  const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
+  const selectedAccounts = new Set(
+    positions.map((position) => position.account),
+  )
+  const selectedIsins = new Set(
+    positions.map((position) => position.isin).filter(Boolean),
+  )
+  const selectedTickers = new Set(
+    positions.map((position) => position.ticker).filter(Boolean),
+  )
   const hasPositionScope =
-    filters.accounts.size > 0 || filters.accountTypes.size > 0 || filters.operationTypes.size > 0
+    filters.accounts.size > 0 ||
+    filters.accountTypes.size > 0 ||
+    filters.operationTypes.size > 0
 
   return errors.filter((error) => {
     const month = errorMonth(error.date)
-    if (month && filters.dateFrom && month < toCalendarMonth(filters.dateFrom)) return false
-    if (month && filters.dateTo && month > toCalendarMonth(filters.dateTo)) return false
+    if (month && filters.dateFrom && month < toCalendarMonth(filters.dateFrom))
+      return false
+    if (month && filters.dateTo && month > toCalendarMonth(filters.dateTo))
+      return false
 
     if (!hasPositionScope) return true
     if (error.account) return selectedAccounts.has(error.account)
@@ -46,14 +55,31 @@ export function scopeManualPriceOverrides(
   positions: PositionRow[],
   filters: DashboardFilters,
 ): ManualPriceOverride[] {
-  const selectedIsins = new Set(positions.map((position) => position.isin).filter(Boolean))
-  const selectedTickers = new Set(positions.map((position) => position.ticker).filter(Boolean))
-  const selectedNames = new Set(positions.map((position) => position.name).filter(Boolean))
-  const hasAccountScope = filters.accounts.size > 0 || filters.accountTypes.size > 0
+  const selectedIsins = new Set(
+    positions.map((position) => position.isin).filter(Boolean),
+  )
+  const selectedTickers = new Set(
+    positions.map((position) => position.ticker).filter(Boolean),
+  )
+  const selectedNames = new Set(
+    positions.map((position) => position.name).filter(Boolean),
+  )
+  const hasAccountScope =
+    filters.accounts.size > 0 || filters.accountTypes.size > 0
 
   return overrides.filter((override) => {
-    if (filters.dateFrom && override.date_to && override.date_to < filters.dateFrom) return false
-    if (filters.dateTo && override.date_from && override.date_from > filters.dateTo) return false
+    if (
+      filters.dateFrom &&
+      override.date_to &&
+      override.date_to < filters.dateFrom
+    )
+      return false
+    if (
+      filters.dateTo &&
+      override.date_from &&
+      override.date_from > filters.dateTo
+    )
+      return false
     if (!hasAccountScope) return true
     return (
       (!!override.isin && selectedIsins.has(override.isin)) ||
@@ -95,11 +121,20 @@ export function applyPositionFilters(
   return (
     positions
       .filter((p) => {
-        if (filters.accountTypes.size > 0 && !filters.accountTypes.has(p.account_type ?? ''))
+        if (
+          filters.accountTypes.size > 0 &&
+          !filters.accountTypes.has(p.account_type ?? '')
+        )
           return false
-        if (filters.accounts.size > 0 && !filters.accounts.has(accountFilterId(p))) return false
+        if (
+          filters.accounts.size > 0 &&
+          !filters.accounts.has(accountFilterId(p))
+        )
+          return false
         if (filters.operationTypes.size > 0) {
-          const hasType = [...filters.operationTypes].some((t) => p.operationTypes.has(t))
+          const hasType = [...filters.operationTypes].some((t) =>
+            p.operationTypes.has(t),
+          )
           if (!hasType) return false
         }
         return true
@@ -126,7 +161,12 @@ export function applyPositionFilters(
             }
             if (group.groupType === 'interest') {
               const total = ops.reduce((s, o) => s + o.total_amount, 0)
-              return { ...group, subRows: ops, total_interest: total, interest_count: ops.length }
+              return {
+                ...group,
+                subRows: ops,
+                total_interest: total,
+                interest_count: ops.length,
+              }
             }
             if (group.groupType === 'cash') {
               return {
@@ -134,10 +174,18 @@ export function applyPositionFilters(
                 subRows: ops,
                 deposit_total: ops
                   .filter((operation) => operation.operation_type === 'DEPOSIT')
-                  .reduce((sum, operation) => sum + Math.abs(operation.total_amount), 0),
+                  .reduce(
+                    (sum, operation) => sum + Math.abs(operation.total_amount),
+                    0,
+                  ),
                 withdrawal_total: ops
-                  .filter((operation) => operation.operation_type === 'WITHDRAWAL')
-                  .reduce((sum, operation) => sum + Math.abs(operation.total_amount), 0),
+                  .filter(
+                    (operation) => operation.operation_type === 'WITHDRAWAL',
+                  )
+                  .reduce(
+                    (sum, operation) => sum + Math.abs(operation.total_amount),
+                    0,
+                  ),
               }
             }
             // Trade groups use period-specific invested, sold and realized amounts.
@@ -146,9 +194,18 @@ export function applyPositionFilters(
             return {
               ...group,
               subRows: ops,
-              total_invested: buyOps.reduce((s, o) => s + Math.abs(o.total_amount), 0),
-              total_sold: sellOps.reduce((s, o) => s + Math.abs(o.total_amount), 0),
-              realized_pnl: sellOps.reduce((s, o) => s + (o.realized_gain ?? 0), 0),
+              total_invested: buyOps.reduce(
+                (s, o) => s + Math.abs(o.total_amount),
+                0,
+              ),
+              total_sold: sellOps.reduce(
+                (s, o) => s + Math.abs(o.total_amount),
+                0,
+              ),
+              realized_pnl: sellOps.reduce(
+                (s, o) => s + (o.realized_gain ?? 0),
+                0,
+              ),
               trade_count: ops.length,
             }
           })
@@ -166,25 +223,34 @@ export function applyPositionFilters(
           .filter((o) => o.operation_type === 'INTEREST')
           .reduce((s, o) => s + o.total_amount, 0)
         const netRatio = (net: number | null, gross: number) =>
-          net != null && Math.abs(gross) > 0.005 ? net / gross : 1 - (p.tax_rate ?? 0)
+          net != null && Math.abs(gross) > 0.005
+            ? net / gross
+            : 1 - (p.tax_rate ?? 0)
 
         return {
           ...p,
           subRows: filteredSubRows,
           // total_value and unrealized_gain stay as snapshot values (independent of date filter)
           realized_gain,
-          realized_gain_net: realized_gain * netRatio(p.realized_gain_net, p.realized_gain),
+          realized_gain_net:
+            realized_gain * netRatio(p.realized_gain_net, p.realized_gain),
           total_dividends,
-          total_dividends_net: total_dividends * netRatio(p.total_dividends_net, p.total_dividends),
+          total_dividends_net:
+            total_dividends *
+            netRatio(p.total_dividends_net, p.total_dividends),
           total_interest,
-          total_interest_net: total_interest * netRatio(p.total_interest_net, p.total_interest),
-          total_realized_return: realized_gain + total_dividends + total_interest,
+          total_interest_net:
+            total_interest * netRatio(p.total_interest_net, p.total_interest),
+          total_realized_return:
+            realized_gain + total_dividends + total_interest,
         }
       })
       // A held position remains visible at the selected end snapshot even when
       // it had no operation during the interval. Closed positions are retained
       // only when they contain an operation in the selected interval.
-      .filter((p) => !hasDateFilter || p.status === 'active' || p.subRows.length > 0)
+      .filter(
+        (p) => !hasDateFilter || p.status === 'active' || p.subRows.length > 0,
+      )
   )
 }
 
@@ -205,7 +271,11 @@ export function applyAccountFilterToHistory(
     const cb = (p.quantity || 0) * (p.avg_buy_price || 0)
     const ug = p.unrealized_gain || 0
     const cur = byDate.get(p.snapshot_date.getTime()) ?? { tv: 0, cb: 0, ug: 0 }
-    byDate.set(p.snapshot_date.getTime(), { tv: cur.tv + tv, cb: cur.cb + cb, ug: cur.ug + ug })
+    byDate.set(p.snapshot_date.getTime(), {
+      tv: cur.tv + tv,
+      cb: cur.cb + cb,
+      ug: cur.ug + ug,
+    })
   }
 
   return [...byDate.entries()]
@@ -224,7 +294,9 @@ export function applyAccountFilterToHistory(
     }))
 }
 
-export function buildAccountTypeBreakdown(filtered: PositionRow[]): AccountTypePoint[] {
+export function buildAccountTypeBreakdown(
+  filtered: PositionRow[],
+): AccountTypePoint[] {
   const map = new Map<string, { cost: number; gain: number }>()
   for (const p of filtered) {
     if (p.status !== 'active') continue
@@ -252,7 +324,9 @@ export function sortPositionsForTable(
   sortKey: PositionSortKey,
   sortDir: 'asc' | 'desc',
 ): PositionRow[] {
-  const rows = filtered.filter((p) => !hideClosedPositions || p.status !== 'closed')
+  const rows = filtered.filter(
+    (p) => !hideClosedPositions || p.status !== 'closed',
+  )
   if (allAccountTypes.length === 0) return rows
   return [...rows].toSorted((a, b) => {
     const ta = a.account_type ?? ''

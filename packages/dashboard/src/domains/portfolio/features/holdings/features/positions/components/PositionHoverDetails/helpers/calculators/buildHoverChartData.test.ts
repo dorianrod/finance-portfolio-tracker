@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
+
 import {
   buildHoverChartSeries,
   computeMonthlyBalances,
@@ -72,8 +73,20 @@ describe('computeUnitPriceDomain', () => {
 describe('buildHoverChartSeries', () => {
   it("attaches each month's buy/sell activity to its position snapshot", () => {
     const history: HistoryPoint[] = [
-      { date: new Date('2024-01-15'), value: 1000, costBasis: 900, pct: 11, last_price: 100 },
-      { date: new Date('2024-02-10'), value: 1100, costBasis: 900, pct: 22, last_price: 110 },
+      {
+        date: new Date('2024-01-15'),
+        value: 1000,
+        costBasis: 900,
+        pct: 11,
+        last_price: 100,
+      },
+      {
+        date: new Date('2024-02-10'),
+        value: 1100,
+        costBasis: 900,
+        pct: 22,
+        last_price: 110,
+      },
     ]
     const operations = [
       {
@@ -122,7 +135,13 @@ describe('buildHoverChartSeries', () => {
 
   it('returns no buy/sell flags when there is no matching activity that month', () => {
     const history: HistoryPoint[] = [
-      { date: new Date('2024-01-15'), value: 1000, costBasis: 900, pct: null, last_price: 100 },
+      {
+        date: new Date('2024-01-15'),
+        value: 1000,
+        costBasis: 900,
+        pct: null,
+        last_price: 100,
+      },
     ]
     const series = buildHoverChartSeries(history, [])
     expect(series[0].hasBuy).toBe(false)

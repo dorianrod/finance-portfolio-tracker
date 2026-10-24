@@ -6,7 +6,11 @@ type HoldingLabelTickProps = {
 
 export const HOLDING_LABEL_WIDTH = 260
 
-export function HoldingLabelTick({ x = 0, y = 0, payload }: HoldingLabelTickProps) {
+export function HoldingLabelTick({
+  x = 0,
+  y = 0,
+  payload,
+}: HoldingLabelTickProps) {
   const label = String(payload?.value ?? '')
 
   return (

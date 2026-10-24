@@ -15,7 +15,8 @@ export function aggregatePassiveIncomeByYear(
   const byYear = new Map<string, { dividends: number; interest: number }>()
 
   for (const row of rows) {
-    if (row.operation_type !== 'DIVIDEND' && row.operation_type !== 'INTEREST') continue
+    if (row.operation_type !== 'DIVIDEND' && row.operation_type !== 'INTEREST')
+      continue
     if (accountSet && !accountSet.has(row.account)) continue
     if (dateFrom && row.date < dateFrom) continue
     if (dateTo && row.date > dateTo) continue

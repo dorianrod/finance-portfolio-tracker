@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
@@ -5,8 +8,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
-import type { ReactNode } from 'react'
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+
 import { PieLabel } from './PieLabel.view'
 
 export function DonutCardView({
@@ -46,7 +48,8 @@ export function DonutCardView({
         </div>
       </div>
       <div className="text-xs text-content-subtle mb-1">
-        {i18n.t('ui.donutcard.allocated')} {formatMoney(total, { style: 'full' })}
+        {i18n.t('ui.donutcard.allocated')}{' '}
+        {formatMoney(total, { style: 'full' })}
       </div>
       <div className="text-xs text-content-subtle mb-2">
         {i18n.t('ui.donutcard.clickASegmentToFilter')}
@@ -70,7 +73,9 @@ export function DonutCardView({
                 key={entry.name}
                 fill={catColor(entry.name)}
                 opacity={isFiltered && activeCategory !== entry.name ? 0.25 : 1}
-                stroke={activeCategory === entry.name ? CHART_THEME.label : 'none'}
+                stroke={
+                  activeCategory === entry.name ? CHART_THEME.label : 'none'
+                }
                 strokeWidth={activeCategory === entry.name ? 2 : 0}
               />
             ))}

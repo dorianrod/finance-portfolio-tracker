@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import {
   aggregateReliabilityTone,
   percentageReliabilityTone,
@@ -20,15 +21,29 @@ describe('analysis reliability', () => {
     expect(aggregateReliabilityTone(['healthy', 'healthy'])).toBe('healthy')
     expect(aggregateReliabilityTone(['healthy', 'warning'])).toBe('warning')
     expect(aggregateReliabilityTone(['healthy', 'critical'])).toBe('critical')
-    expect(aggregateReliabilityTone(['healthy', 'healthy', 'critical'])).toBe('critical')
-    expect(aggregateReliabilityTone(['unavailable', 'unavailable'])).toBe('unavailable')
+    expect(aggregateReliabilityTone(['healthy', 'healthy', 'critical'])).toBe(
+      'critical',
+    )
+    expect(aggregateReliabilityTone(['unavailable', 'unavailable'])).toBe(
+      'unavailable',
+    )
   })
 
   it('derives the portfolio status from scoped anomalies', () => {
-    expect(pipelineReliabilityTone({ errorCount: 0, warningCount: 0 })).toBe('healthy')
-    expect(pipelineReliabilityTone({ errorCount: 0, warningCount: 2 })).toBe('warning')
-    expect(pipelineReliabilityTone({ errorCount: 1, warningCount: 0 })).toBe('critical')
-    expect(pipelineStatusLabel({ errorCount: 0, warningCount: 0 })).toBe('No anomaly')
-    expect(pipelineStatusLabel({ errorCount: 0, warningCount: 2 })).toBe('2 anomalies')
+    expect(pipelineReliabilityTone({ errorCount: 0, warningCount: 0 })).toBe(
+      'healthy',
+    )
+    expect(pipelineReliabilityTone({ errorCount: 0, warningCount: 2 })).toBe(
+      'warning',
+    )
+    expect(pipelineReliabilityTone({ errorCount: 1, warningCount: 0 })).toBe(
+      'critical',
+    )
+    expect(pipelineStatusLabel({ errorCount: 0, warningCount: 0 })).toBe(
+      'No anomaly',
+    )
+    expect(pipelineStatusLabel({ errorCount: 0, warningCount: 2 })).toBe(
+      '2 anomalies',
+    )
   })
 })

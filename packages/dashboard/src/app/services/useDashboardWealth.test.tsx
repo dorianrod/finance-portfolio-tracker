@@ -1,8 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { useDashboardWealth } from './useDashboardWealth'
+
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+
+import { useDashboardWealth } from './useDashboardWealth'
 
 const FILTERS: DashboardFilters = {
   accountTypes: new Set(),
@@ -22,14 +24,23 @@ function Probe() {
     rawOperations: [],
     rawPositions: [],
   })
-  return <output data-history={model.displayedTypeHistory.length} data-drivers={model.wealthDrivers.length} />
+  return (
+    <output
+      data-history={model.displayedTypeHistory.length}
+      data-drivers={model.wealthDrivers.length}
+    />
+  )
 }
 
 describe('useDashboardWealth', () => {
   it('provides empty chart models before source queries resolve', () => {
-    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
     const html = renderToStaticMarkup(
-      <QueryClientProvider client={client}><Probe /></QueryClientProvider>,
+      <QueryClientProvider client={client}>
+        <Probe />
+      </QueryClientProvider>,
     )
     expect(html).toContain('data-history="0"')
     expect(html).toContain('data-drivers="0"')

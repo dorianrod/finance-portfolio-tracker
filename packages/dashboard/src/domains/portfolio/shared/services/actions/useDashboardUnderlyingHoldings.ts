@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import {
   dashboardExpandedUnderlyingIssuersAtom,
   dashboardUnderlyingQueryAtom,
@@ -11,18 +12,24 @@ export function useDashboardUnderlyingHoldings() {
   const setQuery = useSetAtom(dashboardUnderlyingQueryAtom)
   const setSort = useSetAtom(dashboardUnderlyingSortAtom)
 
-  const toggleIssuer = useCallback((id: string) => {
-    setExpanded((current) => {
-      const next = new Set(current)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }, [setExpanded])
+  const toggleIssuer = useCallback(
+    (id: string) => {
+      setExpanded((current) => {
+        const next = new Set(current)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        return next
+      })
+    },
+    [setExpanded],
+  )
 
-  return useMemo(() => ({
-    setQuery,
-    setSort,
-    toggleIssuer,
-  }), [setQuery, setSort, toggleIssuer])
+  return useMemo(
+    () => ({
+      setQuery,
+      setSort,
+      toggleIssuer,
+    }),
+    [setQuery, setSort, toggleIssuer],
+  )
 }

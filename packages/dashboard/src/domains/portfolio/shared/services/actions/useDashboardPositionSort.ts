@@ -1,10 +1,11 @@
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import {
   dashboardPositionSortDirectionAtom,
   dashboardPositionSortKeyAtom,
 } from '@/domains/portfolio/shared/stores/dashboardPositionsTable.atoms'
 import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useMemo } from 'react'
 
 export function useDashboardPositionSort() {
   const setSortDir = useSetAtom(dashboardPositionSortDirectionAtom)

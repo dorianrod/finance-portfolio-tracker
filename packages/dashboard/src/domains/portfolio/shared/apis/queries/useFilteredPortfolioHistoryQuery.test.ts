@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+
 import {
   DemoScopeUnavailableError,
   normalizeAccountSelection,
@@ -90,11 +91,15 @@ describe('requestFilteredPortfolioHistory', () => {
 
     expect(result).toEqual(payload)
     expect(fetchMock).toHaveBeenCalledOnce()
-    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({ accounts: ['a', 'b'] })
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
+      accounts: ['a', 'b'],
+    })
   })
 
   it('returns the static demo fixture for its exact recorded scope', async () => {
-    const fetchImpl = vi.fn(async () => jsonResponse(payload)) as unknown as typeof fetch
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(payload),
+    ) as unknown as typeof fetch
 
     const result = await requestFilteredPortfolioHistory(
       ['b::cash', 'a'],
@@ -110,7 +115,9 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('rejects arbitrary scopes in the static demo', async () => {
-    const fetchImpl = vi.fn(async () => jsonResponse(payload)) as unknown as typeof fetch
+    const fetchImpl = vi.fn(async () =>
+      jsonResponse(payload),
+    ) as unknown as typeof fetch
 
     await expect(
       requestFilteredPortfolioHistory(['a'], new AbortController().signal, {
@@ -134,7 +141,9 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('rejects a successful response whose history data is incomplete', async () => {
-    const incompletePoint: Partial<(typeof payload.history)[number]> = { ...payload.history[0] }
+    const incompletePoint: Partial<(typeof payload.history)[number]> = {
+      ...payload.history[0],
+    }
     delete incompletePoint.total_value
     const fetchImpl = vi.fn(async () =>
       jsonResponse({

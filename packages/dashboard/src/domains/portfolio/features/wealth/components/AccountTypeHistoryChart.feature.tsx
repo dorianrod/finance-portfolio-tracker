@@ -1,3 +1,15 @@
+import { useMemo, useState } from 'react'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+
 import {
   accountTypeShareKey,
   withAccountTypeShares,
@@ -10,18 +22,10 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { typeColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
-import { useMemo, useState } from 'react'
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+  type ChartScaleMode,
+  ChartScaleToggle,
+} from '@/shared/ui/ChartScaleToggle.view'
 
 function AccountTypeGradient({
   accountType,
@@ -78,7 +82,10 @@ export function AccountTypeHistoryChart({
   const formatMoney = useFormatMoney()
   const [scale, setScale] = useState<ChartScaleMode>('value')
   const percentageMode = scale === 'percentage'
-  const chartData = useMemo(() => withAccountTypeShares(data, accountTypes), [data, accountTypes])
+  const chartData = useMemo(
+    () => withAccountTypeShares(data, accountTypes),
+    [data, accountTypes],
+  )
 
   return (
     <div className="flex-1 bg-surface rounded-xl p-4">
@@ -95,7 +102,11 @@ export function AccountTypeHistoryChart({
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={220}>
-        <AreaChart key={scale} data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+        <AreaChart
+          key={scale}
+          data={chartData}
+          margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+        >
           <defs>
             {accountTypes.map((accountType, index) => (
               <AccountTypeGradient
@@ -109,7 +120,9 @@ export function AccountTypeHistoryChart({
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis
             dataKey="date"
-            tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })}
+            tickFormatter={(value) =>
+              formatDate(value, { style: 'shortMonthShortYear' })
+            }
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}
             axisLine={false}
@@ -138,7 +151,9 @@ export function AccountTypeHistoryChart({
           />
           <Legend
             formatter={(value) => (
-              <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>
+              <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
+                {value}
+              </span>
             )}
           />
           {accountTypes.map((accountType, index) => (

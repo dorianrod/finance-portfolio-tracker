@@ -28,15 +28,19 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
         <span
           className={`shrink-0 text-[11px] tabular-nums ${materialGap ? 'text-warning' : 'text-positive'}`}
         >
-          {formatMoney(item.unallocated, { style: 'full' })} · {formatPercentage(missingPct)}
+          {formatMoney(item.unallocated, { style: 'full' })} ·{' '}
+          {formatPercentage(missingPct)}
         </span>
       </div>
       <div
         className="h-1.5 overflow-hidden rounded-full bg-surface-raised"
-        title={i18n.t('ui.allocationdimensionquality.value0NotClassifiedForValue1', {
-          value0: formatPercentage(missingPct),
-          value1: label.toLowerCase(),
-        })}
+        title={i18n.t(
+          'ui.allocationdimensionquality.value0NotClassifiedForValue1',
+          {
+            value0: formatPercentage(missingPct),
+            value1: label.toLowerCase(),
+          },
+        )}
       >
         <div
           className={`h-full rounded-full ${materialGap ? 'bg-warning' : 'bg-positive'}`}
@@ -48,13 +52,18 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
         onClick={() => openClassificationDetails(item.dimension)}
         className="mt-1.5 text-[11px] text-accent hover:text-accent"
       >
-        {item.issues.length} {i18n.t('ui.allocationdimensionquality.responsibleAssetsViewDetails')}
+        {item.issues.length}{' '}
+        {i18n.t('ui.allocationdimensionquality.responsibleAssetsViewDetails')}
       </button>
     </div>
   )
 }
 
-export function AllocationDimensionQuality({ coverage }: { coverage: DimensionCoverage[] }) {
+export function AllocationDimensionQuality({
+  coverage,
+}: {
+  coverage: DimensionCoverage[]
+}) {
   return (
     <div className="space-y-4">
       {coverage.map((item) => (

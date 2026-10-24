@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -39,7 +40,9 @@ function row(overrides: Partial<RawPosition> = {}): RawPosition {
   }
 }
 
-function historicalHolding(overrides: Partial<HistoricalFundHolding> = {}): HistoricalFundHolding {
+function historicalHolding(
+  overrides: Partial<HistoricalFundHolding> = {},
+): HistoricalFundHolding {
   return {
     parentIsin: 'ISIN-FUND',
     parentTicker: '',
@@ -83,7 +86,10 @@ describe('buildHistoricalConcentration', () => {
       row({ isin: '', ticker: '', name: 'Named asset', total_value: 40 }),
     ])
 
-    expect(result[0].holdings.map((holding) => holding.key)).toEqual(['TICK', 'Named asset'])
+    expect(result[0].holdings.map((holding) => holding.key)).toEqual([
+      'TICK',
+      'Named asset',
+    ])
   })
 
   it('computes minimum position counts for each threshold and the effective count', () => {
@@ -131,12 +137,17 @@ describe('buildHistoricalConcentration', () => {
       ),
     ).toEqual(['A'])
     expect(
-      buildHistoricalConcentration(rows, new Set(), new Set(['Brokerage']))[0].holdings.map(
-        (holding) => holding.key,
-      ),
+      buildHistoricalConcentration(
+        rows,
+        new Set(),
+        new Set(['Brokerage']),
+      )[0].holdings.map((holding) => holding.key),
     ).toEqual(['A', 'B'])
     expect(
-      buildHistoricalConcentration(rows, new Set([`CTO${CASH_ACCOUNT_FILTER_SUFFIX}`])),
+      buildHistoricalConcentration(
+        rows,
+        new Set([`CTO${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+      ),
     ).toEqual([])
   })
 
@@ -144,7 +155,10 @@ describe('buildHistoricalConcentration', () => {
     expect(
       buildHistoricalConcentration([
         row({ snapshot_date: new Date('2025-01-31'), total_value: 0 }),
-        row({ snapshot_date: new Date('2025-02-28'), account_category: 'savings' }),
+        row({
+          snapshot_date: new Date('2025-02-28'),
+          account_category: 'savings',
+        }),
       ]),
     ).toEqual([])
   })
@@ -191,7 +205,10 @@ describe('buildHistoricalLookThroughConcentration', () => {
     )
 
     expect(result[0].date).toEqual(new Date('2025-01-31'))
-    expect(result[0].holdings[0]).toMatchObject({ key: 'ISSUER-UNDERLYING', value: 100 })
+    expect(result[0].holdings[0]).toMatchObject({
+      key: 'ISSUER-UNDERLYING',
+      value: 100,
+    })
     expect(result[0]).toMatchObject({
       selectedValue: 140,
       identifiedValue: 100,
@@ -206,8 +223,17 @@ describe('buildHistoricalLookThroughConcentration', () => {
   it('returns no trend when no historical underlying data exists', () => {
     const result = buildHistoricalLookThroughConcentration(
       [
-        row({ isin: 'UNKNOWN-FUND', name: 'Unknown UCITS Fund', total_value: 60 }),
-        row({ isin: '', ticker: '', name: 'Opaque retirement wrapper', total_value: 40 }),
+        row({
+          isin: 'UNKNOWN-FUND',
+          name: 'Unknown UCITS Fund',
+          total_value: 60,
+        }),
+        row({
+          isin: '',
+          ticker: '',
+          name: 'Opaque retirement wrapper',
+          total_value: 40,
+        }),
       ],
       [],
     )
@@ -218,8 +244,17 @@ describe('buildHistoricalLookThroughConcentration', () => {
   it('keeps unresolved funds and opaque wrappers in the denominator after history begins', () => {
     const result = buildHistoricalLookThroughConcentration(
       [
-        row({ isin: 'UNKNOWN-FUND', name: 'Unknown UCITS Fund', total_value: 60 }),
-        row({ isin: '', ticker: '', name: 'Opaque retirement wrapper', total_value: 40 }),
+        row({
+          isin: 'UNKNOWN-FUND',
+          name: 'Unknown UCITS Fund',
+          total_value: 60,
+        }),
+        row({
+          isin: '',
+          ticker: '',
+          name: 'Opaque retirement wrapper',
+          total_value: 40,
+        }),
         row({ isin: 'ISIN-FUND', name: 'Example UCITS ETF', total_value: 10 }),
       ],
       [historicalHolding()],

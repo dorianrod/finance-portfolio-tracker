@@ -17,16 +17,20 @@ function rectangleFor(item: AnimationItem<BarRectangleItem>): BarRectangleItem {
  * Keeps ranked bars at their current width while they enter or leave, so a
  * date change reads as a reordering rather than a fresh chart reveal.
  */
-export const interpolateRankedBars: AnimationInterpolateFn<BarRectangleItem, CartesianLayout> = (
-  items,
-  progress,
-) => {
+export const interpolateRankedBars: AnimationInterpolateFn<
+  BarRectangleItem,
+  CartesianLayout
+> = (items, progress) => {
   if (!items?.length) return []
 
   const rectangles = items.map(rectangleFor)
-  const rowStep = Math.max(30, ...rectangles.map((rectangle) => rectangle.height + 6))
+  const rowStep = Math.max(
+    30,
+    ...rectangles.map((rectangle) => rectangle.height + 6),
+  )
   const exitStart =
-    Math.max(...rectangles.map((rectangle) => rectangle.y + rectangle.height)) + rowStep
+    Math.max(...rectangles.map((rectangle) => rectangle.y + rectangle.height)) +
+    rowStep
   let addedIndex = 0
   let removedIndex = 0
 

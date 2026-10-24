@@ -1,4 +1,7 @@
-import { getFunctionComponentName, isFunctionNode } from './react-component-utils.js'
+import {
+  getFunctionComponentName,
+  isFunctionNode,
+} from './react-component-utils.js'
 
 export default {
   meta: {
@@ -15,7 +18,10 @@ export default {
       ImportDeclaration(node) {
         if (node.source.value !== 'recharts') return
         for (const specifier of node.specifiers) {
-          if (specifier.type === 'ImportSpecifier' && specifier.imported.name === 'Cell') {
+          if (
+            specifier.type === 'ImportSpecifier' &&
+            specifier.imported.name === 'Cell'
+          ) {
             cells.add(specifier.local.name)
           }
         }
@@ -27,7 +33,10 @@ export default {
         while (parent && !isFunctionNode(parent)) parent = parent.parent
         if (getFunctionComponentName(parent)) {
           const directParent = node.parent
-          if (directParent?.type === 'ReturnStatement' || directParent === parent) {
+          if (
+            directParent?.type === 'ReturnStatement' ||
+            directParent === parent
+          ) {
             context.report({ node, messageId: 'directCell' })
           }
         }

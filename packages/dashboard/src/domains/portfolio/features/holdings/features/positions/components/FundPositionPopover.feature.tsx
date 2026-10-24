@@ -1,3 +1,5 @@
+import { createPortal } from 'react-dom'
+
 import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/useFundPositionHoldings'
 import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
@@ -8,7 +10,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { createPortal } from 'react-dom'
+
 import { FundPositionHoldingRow } from './FundPositionHoldingRow.feature'
 
 export type FundPositionPopoverTarget = {
@@ -35,18 +37,31 @@ export function FundPositionPopover({
   const rows = useFundPositionHoldings(position)
   const width = Math.min(560, window.innerWidth - 20)
   const estimatedHeight = Math.min(430, window.innerHeight - 20)
-  const { top, left } = computeAllocationPopoverPosition(target.buttonRect, width, estimatedHeight)
+  const { top, left } = computeAllocationPopoverPosition(
+    target.buttonRect,
+    width,
+    estimatedHeight,
+  )
 
   return createPortal(
     <div
-      style={{ position: 'fixed', top, left, width, maxHeight: 'calc(100vh - 20px)', zIndex: 9999 }}
+      style={{
+        position: 'fixed',
+        top,
+        left,
+        width,
+        maxHeight: 'calc(100vh - 20px)',
+        zIndex: 9999,
+      }}
       className="overflow-y-auto rounded-xl border border-border-strong bg-surface p-4 shadow-2xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div className="mb-3 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-content">{position.name}</p>
+          <p className="truncate text-sm font-semibold text-content">
+            {position.name}
+          </p>
           <p className="mt-0.5 truncate font-mono text-[10px] text-content-subtle">
             {position.isin || position.ticker}
           </p>
@@ -64,7 +79,9 @@ export function FundPositionPopover({
         <span>
           {status.sourceName}
           {status.proxyName
-            ? i18n.t('ui.fundpositionpopover.exactProxyValue0', { value0: status.proxyName })
+            ? i18n.t('ui.fundpositionpopover.exactProxyValue0', {
+                value0: status.proxyName,
+              })
             : ''}
         </span>
         <span>
@@ -72,14 +89,19 @@ export function FundPositionPopover({
           {status.holdingsDate
             ? formatDate(status.holdingsDate, { style: 'isoDate' })
             : i18n.t('ui.fundpositionpopover.unknown')}{' '}
-          · {formatNumber(status.holdingCount)} {i18n.t('ui.fundpositionpopover.rows')}
+          · {formatNumber(status.holdingCount)}{' '}
+          {i18n.t('ui.fundpositionpopover.rows')}
         </span>
       </div>
 
       {rows.length > 0 ? (
         <div>
           {rows.map((holding) => (
-            <FundPositionHoldingRow key={holding.holdingId} holding={holding} position={position} />
+            <FundPositionHoldingRow
+              key={holding.holdingId}
+              holding={holding}
+              position={position}
+            />
           ))}
         </div>
       ) : (
@@ -90,14 +112,18 @@ export function FundPositionPopover({
 
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
         <span>
-          {formatPercentage(status.explainedPct)} {i18n.t('ui.fundpositionpopover.explained')}
+          {formatPercentage(status.explainedPct)}{' '}
+          {i18n.t('ui.fundpositionpopover.explained')}
           {formatMoney(status.explainedValue, { style: 'full' })})
         </span>
         <span>
-          {formatPercentage(status.residualPct)} {i18n.t('ui.fundpositionpopover.undisclosed')}
+          {formatPercentage(status.residualPct)}{' '}
+          {i18n.t('ui.fundpositionpopover.undisclosed')}
           {formatMoney(status.residualValue, { style: 'full' })})
         </span>
-        {status.issues && <span className="basis-full text-warning">{status.issues}</span>}
+        {status.issues && (
+          <span className="basis-full text-warning">{status.issues}</span>
+        )}
       </div>
     </div>,
     document.body,

@@ -1,9 +1,11 @@
 import js from '@eslint/js'
-import globals from 'globals'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
+
 import componentRole from './eslint-rules/component-role.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
@@ -13,11 +15,21 @@ import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
-import stateComponentContract from './eslint-rules/state-component-contract.js'
 import noWrappedChartCell from './eslint-rules/no-wrapped-chart-cell.js'
+import stateComponentContract from './eslint-rules/state-component-contract.js'
 
 export default defineConfig([
   globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+    },
+    rules: {
+      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': 'error',
+    },
+  },
   {
     files: ['eslint-rules/**/*.js'],
     extends: [js.configs.recommended],
@@ -52,6 +64,7 @@ export default defineConfig([
           'no-wrapped-chart-cell': noWrappedChartCell,
         },
       },
+      'simple-import-sort': simpleImportSort,
     },
     rules: {
       'default-case-last': 'error',
@@ -63,10 +76,22 @@ export default defineConfig([
       'no-nested-ternary': 'error',
       'no-restricted-properties': [
         'error',
-        { property: 'toFixed', message: 'Format display values through a formatter hook.' },
-        { property: 'toLocaleDateString', message: 'Format dates through useFormatDate.' },
-        { property: 'toLocaleString', message: 'Format display values through a formatter hook.' },
-        { property: 'toLocaleTimeString', message: 'Format dates through useFormatDate.' },
+        {
+          property: 'toFixed',
+          message: 'Format display values through a formatter hook.',
+        },
+        {
+          property: 'toLocaleDateString',
+          message: 'Format dates through useFormatDate.',
+        },
+        {
+          property: 'toLocaleString',
+          message: 'Format display values through a formatter hook.',
+        },
+        {
+          property: 'toLocaleTimeString',
+          message: 'Format dates through useFormatDate.',
+        },
       ],
       'no-restricted-syntax': [
         'error',
@@ -76,7 +101,8 @@ export default defineConfig([
           message: 'Format dates through useFormatDate.',
         },
         {
-          selector: "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+          selector:
+            "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
           message: 'Format display values through a formatter hook.',
         },
       ],
@@ -86,6 +112,8 @@ export default defineConfig([
       'prefer-template': 'error',
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
       'local/i18n-consistency': 'error',
       'local/max-hooks-per-component': ['warn', { max: 6 }],
@@ -137,7 +165,8 @@ export default defineConfig([
           patterns: [
             {
               group: ['@/app/**'],
-              message: 'Business domains must not depend on the application shell.',
+              message:
+                'Business domains must not depend on the application shell.',
             },
           ],
         },

@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react'
+import { useId, useState } from 'react'
+
 import type { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/components/helpers/presenters/buildLookThroughSummary'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
@@ -6,8 +9,6 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { ReactNode } from 'react'
-import { useId, useState } from 'react'
 
 type CompactCoverageCardData = {
   label: string
@@ -64,7 +65,9 @@ export function LookThroughCoverageSummaryView({
   } = model
   const readiness = {
     passed: i18n.t('ui.lookthroughcoveragesummary.ready'),
-    pending_repeatability: i18n.t('ui.lookthroughcoveragesummary.pendingVerification'),
+    pending_repeatability: i18n.t(
+      'ui.lookthroughcoveragesummary.pendingVerification',
+    ),
     limited: i18n.t('ui.lookthroughcoveragesummary.limited'),
   }[report.feasibilityStatus]
 
@@ -101,7 +104,9 @@ export function LookThroughCoverageSummaryView({
         amount: unresolvedValue,
         percentage: unresolvedPercentage,
         detail: i18n.t('ui.lookthroughcoveragesummary.unresolvedDetail', {
-          remainder: formatMoney(report.undisclosedFundValue, { style: 'full' }),
+          remainder: formatMoney(report.undisclosedFundValue, {
+            style: 'full',
+          }),
           opaque: formatMoney(report.opaqueValue, { style: 'full' }),
         }),
         tooltip: i18n.t(
@@ -115,7 +120,9 @@ export function LookThroughCoverageSummaryView({
               label: i18n.t('ui.lookthroughcoveragesummary.notApplicable'),
               amount: notApplicableValue,
               percentage: notApplicablePercentage,
-              detail: i18n.t('ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash'),
+              detail: i18n.t(
+                'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
+              ),
               tooltip: i18n.t(
                 'ui.lookthroughcoveragesummary.cashAccountBalancesIntentionallyExcludedFromLookThroughAnalysis',
               ),
@@ -129,7 +136,11 @@ export function LookThroughCoverageSummaryView({
         className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}
       >
         {cards.map((card) => (
-          <CompactCoverageCard key={card.label} card={card} tooltipFooter={tooltipFooter} />
+          <CompactCoverageCard
+            key={card.label}
+            card={card}
+            tooltipFooter={tooltipFooter}
+          />
         ))}
       </div>
     )
@@ -173,7 +184,10 @@ export function LookThroughCoverageSummaryView({
           </>
         )}
       </div>
-      <div className="mx-auto h-6 w-px bg-surface-hover sm:hidden" aria-hidden="true" />
+      <div
+        className="mx-auto h-6 w-px bg-surface-hover sm:hidden"
+        aria-hidden="true"
+      />
 
       <div
         className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
@@ -187,7 +201,9 @@ export function LookThroughCoverageSummaryView({
             )}
             amount={identifiedValue}
             percentage={identifiedPercentage}
-            detail={i18n.t('ui.lookthroughcoveragesummary.directPositionsDecomposedFunds')}
+            detail={i18n.t(
+              'ui.lookthroughcoveragesummary.directPositionsDecomposedFunds',
+            )}
             tone="coverage"
           >
             <SourceReliability
@@ -237,7 +253,9 @@ export function LookThroughCoverageSummaryView({
             )}
             amount={unresolvedValue}
             percentage={unresolvedPercentage}
-            detail={i18n.t('ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis')}
+            detail={i18n.t(
+              'ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis',
+            )}
             tone={hasUnresolvedGap ? 'warning' : 'coverage'}
           />
 
@@ -245,7 +263,9 @@ export function LookThroughCoverageSummaryView({
             tooltipFooter={tooltipFooter}
             nodes={[
               {
-                label: i18n.t('ui.lookthroughcoveragesummary.undisclosedFundRemainder'),
+                label: i18n.t(
+                  'ui.lookthroughcoveragesummary.undisclosedFundRemainder',
+                ),
                 tooltip: i18n.t(
                   'ui.lookthroughcoveragesummary.fundValueNotCoveredByTheAvailableUnderlyingHoldings',
                 ),
@@ -254,7 +274,9 @@ export function LookThroughCoverageSummaryView({
                 tone: undisclosedTone,
               },
               {
-                label: i18n.t('ui.lookthroughcoveragesummary.opaquePositionsWithoutId'),
+                label: i18n.t(
+                  'ui.lookthroughcoveragesummary.opaquePositionsWithoutId',
+                ),
                 tooltip: i18n.t(
                   'ui.lookthroughcoveragesummary.directNonFundPositionsWithoutAnIsinOrTicker',
                 ),
@@ -274,7 +296,9 @@ export function LookThroughCoverageSummaryView({
             )}
             amount={notApplicableValue}
             percentage={notApplicablePercentage}
-            detail={i18n.t('ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash')}
+            detail={i18n.t(
+              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
+            )}
             tone="muted"
           />
         )}
@@ -371,8 +395,12 @@ function SourceReliability({
         <div id={detailsId} className="mt-3 border-t border-border pt-3">
           <BreakdownGroupContent
             className="mt-3"
-            title={i18n.t('ui.lookthroughcoveragesummary.sourceReliabilityDetails')}
-            note={i18n.t('ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure')}
+            title={i18n.t(
+              'ui.lookthroughcoveragesummary.sourceReliabilityDetails',
+            )}
+            note={i18n.t(
+              'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
+            )}
 
             rows={[
               {
@@ -415,10 +443,17 @@ function ExposureChildNodes({
         <div className="absolute bottom-0 left-1/4 top-4 w-px bg-surface-hover" />
         <div className="absolute bottom-0 left-3/4 top-4 w-px bg-surface-hover" />
       </div>
-      <div className="mx-auto h-4 w-px bg-surface-hover lg:hidden" aria-hidden="true" />
+      <div
+        className="mx-auto h-4 w-px bg-surface-hover lg:hidden"
+        aria-hidden="true"
+      />
       <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
         {nodes.map((node) => (
-          <ExposureChildNodeCard key={node.label} node={node} tooltipFooter={tooltipFooter} />
+          <ExposureChildNodeCard
+            key={node.label}
+            node={node}
+            tooltipFooter={tooltipFooter}
+          />
         ))}
       </div>
     </div>
@@ -467,7 +502,8 @@ function BreakdownRowView({ row }: { row: BreakdownRow }) {
       <div className="mb-1 flex items-baseline justify-between gap-3 text-[11px]">
         <span className="truncate text-content-subtle">{row.label}</span>
         <span className="shrink-0 tabular-nums text-content-subtle">
-          {formatMoney(row.amount, { style: 'full' })} · {formatPercentage(row.percentage)}
+          {formatMoney(row.amount, { style: 'full' })} ·{' '}
+          {formatPercentage(row.percentage)}
         </span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
@@ -494,7 +530,9 @@ function BreakdownGroupContent({
     <div className={className}>
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <div className="text-[11px] font-semibold text-content-muted">{title}</div>
+          <div className="text-[11px] font-semibold text-content-muted">
+            {title}
+          </div>
           <div className="mt-0.5 text-[10px] text-content-subtle">{note}</div>
         </div>
         {badge && (
@@ -515,7 +553,9 @@ function BreakdownGroupContent({
 export function UnavailableLookThroughSummary() {
   return (
     <div className="rounded-xl border border-border bg-surface p-4 text-sm text-content-subtle">
-      {i18n.t('ui.lookthroughcoveragesummary.noLookThroughQualityReportRunThePortfolioPipeline')}
+      {i18n.t(
+        'ui.lookthroughcoveragesummary.noLookThroughQualityReportRunThePortfolioPipeline',
+      )}
     </div>
   )
 }

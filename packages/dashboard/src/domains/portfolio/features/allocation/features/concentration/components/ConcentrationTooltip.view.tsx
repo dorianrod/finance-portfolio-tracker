@@ -7,7 +7,10 @@ export type ConcentrationTooltipProps = {
   payload?: Array<{ payload: HoldingConcentration }>
 }
 
-export function ConcentrationTooltip({ active, payload }: ConcentrationTooltipProps) {
+export function ConcentrationTooltip({
+  active,
+  payload,
+}: ConcentrationTooltipProps) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
@@ -16,7 +19,8 @@ export function ConcentrationTooltip({ active, payload }: ConcentrationTooltipPr
     <div className="rounded-lg border border-border-strong bg-surface px-3 py-2 text-xs shadow-xl">
       <div className="font-semibold text-content">{row.name}</div>
       <div className="mt-1 text-content-secondary">
-        {formatMoney(row.value, { style: 'full' })} · {formatPercentage(row.weight)}
+        {formatMoney(row.value, { style: 'full' })} ·{' '}
+        {formatPercentage(row.weight)}
       </div>
     </div>
   )

@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import {
   normalizeAccountSelection,
   resolveFilteredHistoryState,
@@ -16,7 +18,6 @@ import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPositio
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
-import { useMemo } from 'react'
 
 type DashboardHistoryInput = {
   allAccounts: string[]
@@ -32,10 +33,17 @@ export function useDashboardHistory({
   filters,
 }: DashboardHistoryInput) {
   const fallbackAccountHistory = useMemo(
-    () => applyAccountFilterToHistory(allPositionRows, enrichedHistory, filters.accounts),
+    () =>
+      applyAccountFilterToHistory(
+        allPositionRows,
+        enrichedHistory,
+        filters.accounts,
+      ),
     [allPositionRows, enrichedHistory, filters.accounts],
   )
-  const filteredHistoryQuery = useFilteredPortfolioHistoryQuery(filters.accounts)
+  const filteredHistoryQuery = useFilteredPortfolioHistoryQuery(
+    filters.accounts,
+  )
   const demoFilteredHistoryAccountsQuery = useDemoFilteredHistoryAccountsQuery()
   const filteredAccountKey = useMemo(
     () => normalizeAccountSelection(filters.accounts).join('\u0000'),
@@ -46,7 +54,9 @@ export function useDashboardHistory({
       ? {
           key: filteredAccountKey,
           history: filteredHistoryQuery.data ?? null,
-          error: filteredHistoryQuery.error ? getErrorMessage(filteredHistoryQuery.error) : null,
+          error: filteredHistoryQuery.error
+            ? getErrorMessage(filteredHistoryQuery.error)
+            : null,
         }
       : null
   const filteredHistory = resolveFilteredHistoryState(
@@ -56,7 +66,12 @@ export function useDashboardHistory({
     filteredResponseState,
   )
   const displayedHistory = useMemo(
-    () => filterPointsByPeriod(filteredHistory.history, filters.dateFrom, filters.dateTo),
+    () =>
+      filterPointsByPeriod(
+        filteredHistory.history,
+        filters.dateFrom,
+        filters.dateTo,
+      ),
     [filteredHistory.history, filters.dateFrom, filters.dateTo],
   )
   const globalTri = displayedHistory.at(-1)?.tri ?? null

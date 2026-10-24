@@ -1,30 +1,35 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
+
 import noEffectsInComponents from './no-effects-in-components.js'
 
 const linter = new Linter({ configType: 'flat' })
 
 function lint(code, filename = 'Panel.feature.tsx') {
-  return linter.verify(code, {
-    files: ['**/*.tsx'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  return linter.verify(
+    code,
+    {
+      files: ['**/*.tsx'],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        local: {
+          rules: { 'no-effects-in-components': noEffectsInComponents },
+        },
+      },
+      rules: {
+        'local/no-effects-in-components': 'error',
       },
     },
-    plugins: {
-      local: {
-        rules: { 'no-effects-in-components': noEffectsInComponents },
-      },
-    },
-    rules: {
-      'local/no-effects-in-components': 'error',
-    },
-  }, { filename })
+    { filename },
+  )
 }
 
 describe('no-effects-in-components', () => {
@@ -48,14 +53,24 @@ describe('no-effects-in-components', () => {
       import { useEffect as useReactEffect } from 'react'
       const Panel = () => { useReactEffect(() => {}, []); return <div /> }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['extractEffect'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'extractEffect',
+    ])
   })
 
   it.each([
-    ['a namespace import', `import * as React from 'react'; const Panel = () => { React.useEffect(() => {}, []); return <div /> }`],
-    ['a default import', `import React from 'react'; const Panel = () => { React.useLayoutEffect(() => {}, []); return <div /> }`],
+    [
+      'a namespace import',
+      `import * as React from 'react'; const Panel = () => { React.useEffect(() => {}, []); return <div /> }`,
+    ],
+    [
+      'a default import',
+      `import React from 'react'; const Panel = () => { React.useLayoutEffect(() => {}, []); return <div /> }`,
+    ],
   ])('recognizes effects through %s', (_name, code) => {
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['extractEffect'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'extractEffect',
+    ])
   })
 
   it('allows effects isolated in custom hooks', () => {

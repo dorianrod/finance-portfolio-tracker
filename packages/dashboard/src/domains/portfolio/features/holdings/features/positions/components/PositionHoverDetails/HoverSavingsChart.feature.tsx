@@ -1,13 +1,3 @@
-import {
-  computeMonthlyBalances,
-  computePosition,
-} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
-import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
-import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { createPortal } from 'react-dom'
 import {
   Area,
@@ -18,6 +8,18 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import {
+  computeMonthlyBalances,
+  computePosition,
+} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
+import i18n from '@/i18n/i18n'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import { SavingsTooltip } from './hoverCharts.tooltips.view'
 
 export type SavingsChartTarget = {
@@ -32,7 +34,11 @@ type SavingsProps = {
   onMouseLeave: () => void
 }
 
-export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: SavingsProps) {
+export function HoverSavingsChart({
+  target,
+  onMouseEnter,
+  onMouseLeave,
+}: SavingsProps) {
   const formatMoney = useFormatMoney()
   const { data: history } = usePositionHistoryQuery(target.name)
   const { top, left } = computePosition(target.buttonRect)
@@ -65,11 +71,22 @@ export function HoverSavingsChart({ target, onMouseEnter, onMouseLeave }: Saving
 
       {chartData.length > 0 && (
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={chartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+          <AreaChart
+            data={chartData}
+            margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="gSavings" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0.35} />
-                <stop offset="95%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0} />
+                <stop
+                  offset="5%"
+                  stopColor={SEMANTIC_COLORS.portfolioValue}
+                  stopOpacity={0.35}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={SEMANTIC_COLORS.portfolioValue}
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />

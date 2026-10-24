@@ -1,30 +1,35 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
+
 import noPropDrilling from './no-prop-drilling.js'
 
 const linter = new Linter({ configType: 'flat' })
 
 function lint(code, filename = 'component.feature.tsx') {
-  return linter.verify(code, {
-    files: ['**/*.tsx'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  return linter.verify(
+    code,
+    {
+      files: ['**/*.tsx'],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        local: {
+          rules: { 'no-prop-drilling': noPropDrilling },
+        },
+      },
+      rules: {
+        'local/no-prop-drilling': 'warn',
       },
     },
-    plugins: {
-      local: {
-        rules: { 'no-prop-drilling': noPropDrilling },
-      },
-    },
-    rules: {
-      'local/no-prop-drilling': 'warn',
-    },
-  }, { filename })
+    { filename },
+  )
 }
 
 describe('no-prop-drilling', () => {
@@ -34,7 +39,9 @@ describe('no-prop-drilling', () => {
       function Middle({ value }: { value: string }) { return <Leaf value={value} /> }
       function Root({ value }: { value: string }) { return <Middle value={value} /> }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['propDrilling'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'propDrilling',
+    ])
   })
 
   it.each([
@@ -53,7 +60,9 @@ describe('no-prop-drilling', () => {
         return <Child result={${expression}} />
       }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['derivedBusinessProp'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'derivedBusinessProp',
+    ])
   })
 
   it('traces calculations through aliases and destructuring', () => {
@@ -89,7 +98,9 @@ describe('no-prop-drilling', () => {
         return <Child state={{ status: loading ? 'loading' : 'ready' }} />
       }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['inlineStateConstruction'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'inlineStateConstruction',
+    ])
   })
 
   it('treats values returned by a hook as owned feature inputs', () => {
@@ -125,7 +136,9 @@ describe('no-prop-drilling', () => {
         return <BusinessChild result={props.value * 2} />
       }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['derivedBusinessProp'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'derivedBusinessProp',
+    ])
   })
 
   it('ignores intrinsic elements, external components, children, key and ref', () => {

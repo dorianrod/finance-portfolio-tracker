@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest'
 
 import {
   analyseIncomePlacement,
+  type AnnualIncomeSavingsPoint,
   filterAnnualIncomeSavingsByPeriod,
   mapAnnualIncomeSavings,
-  type AnnualIncomeSavingsPoint,
 } from './mapAnnualIncomeSavings'
 
-function point(overrides: Partial<AnnualIncomeSavingsPoint>): AnnualIncomeSavingsPoint {
+function point(
+  overrides: Partial<AnnualIncomeSavingsPoint>,
+): AnnualIncomeSavingsPoint {
   return {
     year: 2024,
     incomeStatus: 'actual',
@@ -69,7 +71,12 @@ describe('analyseIncomePlacement', () => {
       point({ year: 2023, totalIncome: 50000, placementRate: 40 }),
       point({ year: 2024, totalIncome: 60000, placementRate: 50 }),
       point({ year: 2025, comparable: false, placementRate: null }),
-      point({ year: 2026, incomeStatus: 'forecast', comparable: true, placementRate: 60 }),
+      point({
+        year: 2026,
+        incomeStatus: 'forecast',
+        comparable: true,
+        placementRate: 60,
+      }),
     ])
 
     expect(result.points.map(({ year }) => year)).toEqual([2023, 2024])
@@ -113,11 +120,17 @@ describe('analyseIncomePlacement', () => {
 
 describe('filterAnnualIncomeSavingsByPeriod', () => {
   it('keeps calendar years intersecting the selected period', () => {
-    const points = [point({ year: 2023 }), point({ year: 2024 }), point({ year: 2025 })]
+    const points = [
+      point({ year: 2023 }),
+      point({ year: 2024 }),
+      point({ year: 2025 }),
+    ]
     expect(
-      filterAnnualIncomeSavingsByPeriod(points, new Date('2024-03-01'), new Date('2025-02-01')).map(
-        ({ year }) => year,
-      ),
+      filterAnnualIncomeSavingsByPeriod(
+        points,
+        new Date('2024-03-01'),
+        new Date('2025-02-01'),
+      ).map(({ year }) => year),
     ).toEqual([2024, 2025])
   })
 })

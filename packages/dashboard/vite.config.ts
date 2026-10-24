@@ -1,8 +1,9 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { resolve, sep } from 'node:path'
-import { defineConfig, type Connect, type Plugin } from 'vite'
-import react from '@vitejs/plugin-react'
+
 import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { type Connect, defineConfig, type Plugin } from 'vite'
 
 // Mirrors the Python pipeline's data-dir resolution (FINANCE_DATA_DIR env
 // var, falling back to the monorepo's shared data/ folder) so `npm run dev`

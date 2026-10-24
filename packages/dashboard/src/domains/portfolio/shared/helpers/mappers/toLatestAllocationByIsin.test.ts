@@ -1,5 +1,7 @@
-import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 import { describe, expect, it } from 'vitest'
+
+import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+
 import { toLatestByIsin } from './toLatestAllocationByIsin'
 
 describe('toLatestByIsin', () => {
@@ -25,7 +27,12 @@ describe('toLatestByIsin', () => {
         account: 'CTO',
         values: { france: 10, europe: 20, nc: 5 },
       },
-      { snapshot_date: new Date('2024-02-01'), isin: 'B', name: 'Asset B', values: { usa: 40 } },
+      {
+        snapshot_date: new Date('2024-02-01'),
+        isin: 'B',
+        name: 'Asset B',
+        values: { usa: 40 },
+      },
     ]
     const result = toLatestByIsin(rows)
     expect(result.get('A')).toEqual({
@@ -41,14 +48,23 @@ describe('toLatestByIsin', () => {
     })
     expect(result.get('B')).toEqual({
       name: 'Asset B',
-      point: { date: new Date('2024-02-01'), categories: [{ name: 'usa', value: 40 }] },
+      point: {
+        date: new Date('2024-02-01'),
+        categories: [{ name: 'usa', value: 40 }],
+      },
     })
   })
 
   it('skips rows without an isin', () => {
     expect(
-      toLatestByIsin([{ snapshot_date: new Date('2024-01-01'), isin: '', name: 'x', values: {} }])
-        .size,
+      toLatestByIsin([
+        {
+          snapshot_date: new Date('2024-01-01'),
+          isin: '',
+          name: 'x',
+          values: {},
+        },
+      ]).size,
     ).toBe(0)
   })
 })

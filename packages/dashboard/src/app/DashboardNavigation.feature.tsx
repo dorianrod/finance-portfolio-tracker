@@ -22,7 +22,11 @@ export type PrimaryTabButtonProps = {
   tab: (typeof PRIMARY_TABS)[number]
 }
 
-export function PrimaryTabButton({ activeTab, onNavigate, tab }: PrimaryTabButtonProps) {
+export function PrimaryTabButton({
+  activeTab,
+  onNavigate,
+  tab,
+}: PrimaryTabButtonProps) {
   return (
     <button
       type="button"
@@ -57,7 +61,12 @@ export function DashboardNavigation({
       aria-label={i18n.t('ui.app.portfolioAnalyses')}
     >
       {PRIMARY_TABS.map((tab) => (
-        <PrimaryTabButton key={tab.id} activeTab={activeTab} onNavigate={navigateTo} tab={tab} />
+        <PrimaryTabButton
+          key={tab.id}
+          activeTab={activeTab}
+          onNavigate={navigateTo}
+          tab={tab}
+        />
       ))}
       <button
         type="button"

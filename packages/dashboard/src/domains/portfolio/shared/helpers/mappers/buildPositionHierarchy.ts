@@ -1,3 +1,8 @@
+import {
+  CASH_SUFFIX,
+  CATEGORY_ORDER,
+} from '@/domains/portfolio/shared/constants/accountCategories'
+import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import type {
   GroupRow,
   OperationRow,
@@ -6,9 +11,6 @@ import type {
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import i18n from '@/i18n/i18n'
-
-import { CASH_SUFFIX, CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories'
-import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 
 function assetKey(op: RawOperation): string {
   return op.isin || op.ticker || op.name
@@ -40,7 +42,9 @@ export function buildPositionRows(
   const eligiblePositions = asOfDate
     ? rawPositions.filter((position) => position.snapshot_date <= asOfDate)
     : rawPositions
-  const eligibleOperations = asOfDate ? ops.filter((operation) => operation.date <= asOfDate) : ops
+  const eligibleOperations = asOfDate
+    ? ops.filter((operation) => operation.date <= asOfDate)
+    : ops
 
   // Build map of positions at the latest complete snapshot on or before asOfDate.
   const latestTimestamp = eligiblePositions.reduce(
@@ -83,7 +87,8 @@ export function buildPositionRows(
       (o) => o.operation_type === 'BUY' || o.operation_type === 'SELL',
     )
     const depositOps = assetOps.filter(
-      (o) => o.operation_type === 'DEPOSIT' || o.operation_type === 'WITHDRAWAL',
+      (o) =>
+        o.operation_type === 'DEPOSIT' || o.operation_type === 'WITHDRAWAL',
     )
 
     const totalDividends = lp
@@ -118,8 +123,12 @@ export function buildPositionRows(
     const dates = assetOps.map((o) => o.date.getTime()).filter((d) => !isNaN(d))
     const minDate = Math.min(...dates)
     const maxDate = Math.max(...dates)
-    const yearsHeld = Math.max((maxDate - minDate) / (1000 * 60 * 60 * 24 * 365.25), 1 / 12)
-    const annualizedDividends = dividendOps.length > 0 ? totalDividends / yearsHeld : 0
+    const yearsHeld = Math.max(
+      (maxDate - minDate) / (1000 * 60 * 60 * 24 * 365.25),
+      1 / 12,
+    )
+    const annualizedDividends =
+      dividendOps.length > 0 ? totalDividends / yearsHeld : 0
 
     const subRows: GroupRow[] = []
 

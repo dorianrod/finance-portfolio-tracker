@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   accountsForType,
   accountTypeSelectionState,
@@ -5,7 +7,7 @@ import {
   toggleAccountTypeSelection,
 } from '@/domains/portfolio/shared/helpers/filters/accountTreeSelection'
 import i18n from '@/i18n/i18n'
-import { useState } from 'react'
+
 import { accountLabel, toggle } from './helpers/filters/portfolioFilters'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
 import { useCloseAccountTreeOnOutsideClick } from './services/useCloseAccountTreeOnOutsideClick'
@@ -59,17 +61,17 @@ function TreeAccountType({
   type: string
 }) {
   if (accounts.length === 0) return null
-  const { allSelected, partiallySelected, selectedCount } = accountTypeSelectionState(
-    accounts,
-    selected,
-  )
+  const { allSelected, partiallySelected, selectedCount } =
+    accountTypeSelectionState(accounts, selected)
   return (
     <div className="py-1">
       <label className="flex cursor-pointer items-center gap-2 px-3 py-1.5 hover:bg-surface-raised/80">
         <IndeterminateCheckbox
           checked={allSelected}
           indeterminate={partiallySelected}
-          onChange={() => onChange(toggleAccountTypeSelection(accounts, selected))}
+          onChange={() =>
+            onChange(toggleAccountTypeSelection(accounts, selected))
+          }
         />
         <span className="text-xs font-semibold uppercase tracking-wide text-content-muted">
           {type}
@@ -115,7 +117,9 @@ function SelectAccountRow({
         onChange={() => onChange(toggle(selected, account))}
         className="h-3.5 w-3.5 cursor-pointer accent-accent"
       />
-      <span className="text-xs text-content-muted">{accountLabel(account, accountLabels)}</span>
+      <span className="text-xs text-content-muted">
+        {accountLabel(account, accountLabels)}
+      </span>
     </label>
   )
 }
@@ -134,16 +138,23 @@ function SelectAccountType({
   type: string
 }) {
   if (accounts.length === 0) return null
-  const { allSelected, partiallySelected } = accountTypeSelectionState(accounts, selected)
+  const { allSelected, partiallySelected } = accountTypeSelectionState(
+    accounts,
+    selected,
+  )
   return (
     <div>
       <label className="flex cursor-pointer items-center gap-2 px-3 py-1.5 hover:bg-surface-hover">
         <IndeterminateCheckbox
           checked={allSelected}
           indeterminate={partiallySelected}
-          onChange={() => onChange(toggleAccountTypeSelection(accounts, selected))}
+          onChange={() =>
+            onChange(toggleAccountTypeSelection(accounts, selected))
+          }
         />
-        <span className="text-xs font-semibold text-content-secondary">{type}</span>
+        <span className="text-xs font-semibold text-content-secondary">
+          {type}
+        </span>
       </label>
       {accounts.map((account) => (
         <SelectAccountRow
@@ -180,7 +191,9 @@ export function AccountTree({
         onClick={() => onChange(new Set())}
         className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${selected.size === 0 ? 'bg-accent-muted/35 text-accent' : 'text-content-secondary hover:bg-surface-raised'}`}
       >
-        <span className="font-medium">{i18n.t('ui.accounttreeselect.allAccounts')}</span>
+        <span className="font-medium">
+          {i18n.t('ui.accounttreeselect.allAccounts')}
+        </span>
         {selected.size === 0 && (
           <span className="text-xs font-semibold text-accent">
             {i18n.t('ui.accounttreeselect.selected')}
@@ -228,7 +241,10 @@ export function AccountTreeSelect({
   })
 
   const hasSelection = selected.size > 0
-  const accountGroups = allAccountTypes.map((type) => ({ accounts: typeAccounts(type), type }))
+  const accountGroups = allAccountTypes.map((type) => ({
+    accounts: typeAccounts(type),
+    type,
+  }))
 
   return (
     <div ref={containerRef} className="relative">
@@ -270,8 +286,12 @@ export function AccountTreeSelect({
           <div className="border-b border-border-strong pb-1 mb-1">
             <label className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-hover cursor-pointer">
               <IndeterminateCheckbox
-                checked={selected.size === allAccounts.length && allAccounts.length > 0}
-                indeterminate={selected.size > 0 && selected.size < allAccounts.length}
+                checked={
+                  selected.size === allAccounts.length && allAccounts.length > 0
+                }
+                indeterminate={
+                  selected.size > 0 && selected.size < allAccounts.length
+                }
                 onChange={() => {
                   if (selected.size === allAccounts.length) onChange(new Set())
                   else onChange(new Set(allAccounts))

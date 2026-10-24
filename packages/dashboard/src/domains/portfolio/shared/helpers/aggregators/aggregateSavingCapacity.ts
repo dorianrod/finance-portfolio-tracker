@@ -13,7 +13,9 @@ export type RawSavingCapacityByAccountRow = {
   perf_delta: number
 }
 
-export function mapSavingCapacity(rows: RawSavingCapacityRow[]): SavingCapacityPoint[] {
+export function mapSavingCapacity(
+  rows: RawSavingCapacityRow[],
+): SavingCapacityPoint[] {
   return rows.map((r) => ({
     date: r.snapshot_date,
     savings_delta: r.savings_delta,
@@ -26,10 +28,14 @@ export function aggregateSavingCapacityByAccount(
   accountSet: Set<string>,
 ): SavingCapacityPoint[] {
   const filtered = rows.filter((r) => accountSet.has(r.account))
-  const byDate = new Map<number, { savings_delta: number; perf_delta: number }>()
+  const byDate = new Map<
+    number,
+    { savings_delta: number; perf_delta: number }
+  >()
   for (const r of filtered) {
     const d = r.snapshot_date
-    if (!byDate.has(d.getTime())) byDate.set(d.getTime(), { savings_delta: 0, perf_delta: 0 })
+    if (!byDate.has(d.getTime()))
+      byDate.set(d.getTime(), { savings_delta: 0, perf_delta: 0 })
     const entry = byDate.get(d.getTime())!
     entry.savings_delta += r.savings_delta
     entry.perf_delta += r.perf_delta

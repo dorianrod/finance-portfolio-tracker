@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+
 import { computePerformanceContributions } from './computePerformanceContributions'
 
 function position(overrides: Partial<RawPosition>): RawPosition {
@@ -53,7 +54,10 @@ function operation(overrides: Partial<RawOperation>): RawOperation {
   }
 }
 
-const noFilters = { accounts: new Set<string>(), accountTypes: new Set<string>() }
+const noFilters = {
+  accounts: new Set<string>(),
+  accountTypes: new Set<string>(),
+}
 
 describe('computePerformanceContributions', () => {
   it('combines unrealized change, realized gains and income, including closed positions', () => {
@@ -84,7 +88,11 @@ describe('computePerformanceContributions', () => {
     ]
     const operations = [
       operation({ operation_type: 'SELL', realized_gain: 20 }),
-      operation({ operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
+      operation({
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
       operation({
         isin: 'FR0000000002',
         ticker: 'BBB',
@@ -112,20 +120,42 @@ describe('computePerformanceContributions', () => {
     expect(result.available).toBe(true)
     expect(result.netContribution).toBe(95)
     expect(
-      result.contributors.map(({ label, amount, share }) => ({ label, amount, share })),
+      result.contributors.map(({ label, amount, share }) => ({
+        label,
+        amount,
+        share,
+      })),
     ).toEqual([
       { label: 'Asset A', amount: 115, share: expect.closeTo(79.31, 2) },
       { label: 'Closed asset', amount: 30, share: expect.closeTo(20.69, 2) },
     ])
-    expect(result.detractors).toMatchObject([{ label: 'Asset B', amount: -50, share: 100 }])
+    expect(result.detractors).toMatchObject([
+      { label: 'Asset B', amount: -50, share: 100 },
+    ])
   })
 
   it('groups the same asset across accounts', () => {
     const positions = [
-      position({ account: 'acc1', snapshot_date: new Date('2021-01-31'), unrealized_gain: 0 }),
-      position({ account: 'acc1', snapshot_date: new Date('2024-01-31'), unrealized_gain: 40 }),
-      position({ account: 'acc2', snapshot_date: new Date('2021-01-31'), unrealized_gain: 10 }),
-      position({ account: 'acc2', snapshot_date: new Date('2024-01-31'), unrealized_gain: 70 }),
+      position({
+        account: 'acc1',
+        snapshot_date: new Date('2021-01-31'),
+        unrealized_gain: 0,
+      }),
+      position({
+        account: 'acc1',
+        snapshot_date: new Date('2024-01-31'),
+        unrealized_gain: 40,
+      }),
+      position({
+        account: 'acc2',
+        snapshot_date: new Date('2021-01-31'),
+        unrealized_gain: 10,
+      }),
+      position({
+        account: 'acc2',
+        snapshot_date: new Date('2024-01-31'),
+        unrealized_gain: 70,
+      }),
     ]
 
     const result = computePerformanceContributions(
@@ -246,7 +276,11 @@ describe('computePerformanceContributions', () => {
       }),
     ]
     const operations = [
-      operation({ operation_type: 'DIVIDEND', total_amount: 5, realized_gain: 0 }),
+      operation({
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
       operation({
         isin: '',
         ticker: '',
@@ -262,7 +296,10 @@ describe('computePerformanceContributions', () => {
       operations,
       'since-tracking',
       new Date('2024-01-31'),
-      { accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]), accountTypes: new Set() },
+      {
+        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+        accountTypes: new Set(),
+      },
     )
     const peeOnly = computePerformanceContributions(
       positions,
@@ -272,7 +309,9 @@ describe('computePerformanceContributions', () => {
       { accounts: new Set(), accountTypes: new Set(['PEE']) },
     )
 
-    expect(cashOnly.contributors).toMatchObject([{ label: 'Cash PEA', amount: 3 }])
+    expect(cashOnly.contributors).toMatchObject([
+      { label: 'Cash PEA', amount: 3 },
+    ])
     expect(peeOnly.contributors).toMatchObject([
       { label: 'Asset A', amount: 200, accounts: ['acc2'] },
     ])

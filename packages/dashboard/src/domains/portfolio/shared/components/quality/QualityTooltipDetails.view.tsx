@@ -1,7 +1,8 @@
 import i18n from '@/i18n/i18n'
+
 import {
-  RELIABILITY_TONES,
   type QualityTooltipRow,
+  RELIABILITY_TONES,
 } from './helpers/presenters/qualityReliabilityPresentation'
 
 export function InfoIcon() {
@@ -20,11 +21,16 @@ export function QualityTooltipMetricRow({ row }: { row: QualityTooltipRow }) {
   return (
     <span className="flex items-center justify-between gap-4 py-1.5">
       <span className="flex min-w-0 items-center gap-2">
-        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${rowStyles.dot}`} aria-hidden="true" />
+        <span
+          className={`h-1.5 w-1.5 shrink-0 rounded-full ${rowStyles.dot}`}
+          aria-hidden="true"
+        />
         <span className="text-[11px] text-content-secondary">{row.label}</span>
       </span>
       <span className="shrink-0 text-right">
-        <span className={`block text-xs font-semibold tabular-nums ${rowStyles.value}`}>
+        <span
+          className={`block text-xs font-semibold tabular-nums ${rowStyles.value}`}
+        >
           {row.value}
         </span>
         {row.secondary && (

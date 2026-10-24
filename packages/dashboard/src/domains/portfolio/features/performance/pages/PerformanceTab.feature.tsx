@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
 import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/PerformanceContributionCard.feature'
 import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart.feature'
@@ -25,7 +27,6 @@ import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { useMemo } from 'react'
 
 export function PerformanceTab({
   history,
@@ -85,7 +86,12 @@ export function PerformanceTab({
       ),
     [rawPositions, rawOperations, asOfDate, contributionFilters],
   )
-  const assetIrrQuery = useAssetIrrQuery(accountFilters, accountTypeFilters, dateFrom, asOfDate)
+  const assetIrrQuery = useAssetIrrQuery(
+    accountFilters,
+    accountTypeFilters,
+    dateFrom,
+    asOfDate,
+  )
   let assetIrrStatus: IrrStatus = 'ready'
   if (assetIrrQuery.isPending && assetIrrQuery.fetchStatus === 'fetching')
     assetIrrStatus = 'loading'
@@ -112,7 +118,11 @@ export function PerformanceTab({
           </h2>
           <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <PassiveIncomeKpi income={income} />
-            <IrrSinceTrackingKpi value={globalTri} status={irrStatus} scopeLabel={irrScopeLabel} />
+            <IrrSinceTrackingKpi
+              value={globalTri}
+              status={irrStatus}
+              scopeLabel={irrScopeLabel}
+            />
             <TrailingThreeYearIrrKpi
               // eslint-disable-next-line local/no-prop-drilling -- The page feature owns trailing-period selection.
               value={rollingTri3y}
@@ -126,7 +136,9 @@ export function PerformanceTab({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {history.length > 0 && <UnrealizedPnlChart history={history} />}
           {history.length > 0 && <TriChart history={history} />}
-          {passiveIncome.length > 0 && <PassiveIncomeChart data={passiveIncome} />}
+          {passiveIncome.length > 0 && (
+            <PassiveIncomeChart data={passiveIncome} />
+          )}
         </div>
       )}
       <PerformanceContributionCard

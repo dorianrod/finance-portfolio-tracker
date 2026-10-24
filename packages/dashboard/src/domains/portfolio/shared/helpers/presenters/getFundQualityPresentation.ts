@@ -19,8 +19,11 @@ export function getFundQualityPresentation(tier: FundQualityTier): {
   else if (tier === 'C') category = 'partial'
 
   let sourceLabel = i18n.t('ui.getfundqualitypresentation.noUsableComposition')
-  if (tier === 'A') sourceLabel = i18n.t('ui.getfundqualitypresentation.officialSource')
-  else if (tier === 'B') sourceLabel = i18n.t('ui.getfundqualitypresentation.exactProxy')
-  else if (tier === 'C') sourceLabel = i18n.t('ui.getfundqualitypresentation.partialSource')
+  if (tier === 'A')
+    sourceLabel = i18n.t('ui.getfundqualitypresentation.officialSource')
+  else if (tier === 'B')
+    sourceLabel = i18n.t('ui.getfundqualitypresentation.exactProxy')
+  else if (tier === 'C')
+    sourceLabel = i18n.t('ui.getfundqualitypresentation.partialSource')
   return { category, label: FUND_QUALITY_LABELS[category], sourceLabel }
 }

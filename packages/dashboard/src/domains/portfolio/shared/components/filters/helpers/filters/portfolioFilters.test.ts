@@ -2,6 +2,7 @@ const formatDate = (date: Date) => date.toISOString().slice(0, 10)
 import { describe, expect, it } from 'vitest'
 
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+
 import {
   accountLabel,
   clearFilterGroup,
@@ -24,7 +25,9 @@ function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
 
 describe('accountLabel', () => {
   it('uses the provided label when one exists for the account', () => {
-    expect(accountLabel('acc1', { acc1: 'Compte Bourse' })).toBe('Compte Bourse')
+    expect(accountLabel('acc1', { acc1: 'Compte Bourse' })).toBe(
+      'Compte Bourse',
+    )
   })
 
   it('falls back to title-casing the account key when no label exists', () => {
@@ -50,19 +53,28 @@ describe('presetDateFrom', () => {
     [0, new Date('2026-10-01')],
     [6, new Date('2026-04-30')],
     [1, new Date('2026-09-30')],
-  ])('anchors the %i-month preset without rolling into another month', (months, expected) => {
-    expect(presetDateFrom(months, new Date('2026-10-31T12:00:00Z'))).toEqual(expected)
-  })
+  ])(
+    'anchors the %i-month preset without rolling into another month',
+    (months, expected) => {
+      expect(presetDateFrom(months, new Date('2026-10-31T12:00:00Z'))).toEqual(
+        expected,
+      )
+    },
+  )
 })
 
 describe('filterVisibilityForTab', () => {
-  it.each(['overview', 'wealth', 'performance'])('shows the period filter on %s', (tab) =>
-    expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
+  it.each(['overview', 'wealth', 'performance'])(
+    'shows the period filter on %s',
+    (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
 
-  it.each(['allocation', 'underlying', 'quality'])('shows the period filter on %s', (tab) => {
-    expect(filterVisibilityForTab(tab).showPeriod).toBe(true)
-  })
+  it.each(['allocation', 'underlying', 'quality'])(
+    'shows the period filter on %s',
+    (tab) => {
+      expect(filterVisibilityForTab(tab).showPeriod).toBe(true)
+    },
+  )
 
   it('uses the active Holdings view to expose the relevant filters', () => {
     expect(filterVisibilityForTab('holdings', 'positions')).toEqual({

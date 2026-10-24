@@ -44,8 +44,20 @@ describe('buildPositionsHistory', () => {
     ]
     const map = buildPositionsHistory(rows)
     expect(map.get('X')).toEqual([
-      { date: new Date('2024-01-01'), value: 150, costBasis: 70, pct: 5, last_price: 20 },
-      { date: new Date('2024-02-01'), value: 120, costBasis: 50, pct: 20, last_price: 24 },
+      {
+        date: new Date('2024-01-01'),
+        value: 150,
+        costBasis: 70,
+        pct: 5,
+        last_price: 20,
+      },
+      {
+        date: new Date('2024-02-01'),
+        value: 120,
+        costBasis: 50,
+        pct: 20,
+        last_price: 24,
+      },
     ])
   })
 

@@ -28,7 +28,10 @@ export function buildPipelineErrorsViewModel({
   sortDirection: 'asc' | 'desc'
   formatAssetLabel: (source: AssetLabelSource, fallback?: string) => string
 }) {
-  const types = ['all', ...new Set(errors.map((error) => error.type))].toSorted()
+  const types = [
+    'all',
+    ...new Set(errors.map((error) => error.type)),
+  ].toSorted()
   const filtered = errors
     .map((error, index) => ({ ...error, id: String(index) }))
     .filter(
@@ -38,7 +41,8 @@ export function buildPipelineErrorsViewModel({
     )
   const rows = filtered.toSorted((left, right) => {
     if (sortColumn === 'date') {
-      const comparison = (left.date?.getTime() ?? 0) - (right.date?.getTime() ?? 0)
+      const comparison =
+        (left.date?.getTime() ?? 0) - (right.date?.getTime() ?? 0)
       return sortDirection === 'asc' ? comparison : -comparison
     }
     const value = (error: PipelineError): string => {

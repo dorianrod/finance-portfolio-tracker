@@ -10,6 +10,7 @@ import type {
   PositionRow,
 } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+
 import {
   applyAccountFilterToHistory,
   applyPositionFilters,
@@ -20,7 +21,9 @@ import {
   sortPositionsForTable,
 } from './portfolioDataFilters'
 
-function baseFilters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
+function baseFilters(
+  overrides: Partial<DashboardFilters> = {},
+): DashboardFilters {
   return {
     accountTypes: new Set(),
     accounts: new Set(),
@@ -108,15 +111,30 @@ function pipelineError(overrides: Partial<PipelineError>): PipelineError {
 describe('scopePipelineErrors', () => {
   it('keeps only anomalies in the selected account and period', () => {
     const errors = [
-      pipelineError({ message: 'selected', account: 'acc1', date: new Date('2026-05') }),
-      pipelineError({ message: 'other account', account: 'acc2', date: new Date('2026-05') }),
-      pipelineError({ message: 'other period', account: 'acc1', date: new Date('2025-12') }),
+      pipelineError({
+        message: 'selected',
+        account: 'acc1',
+        date: new Date('2026-05'),
+      }),
+      pipelineError({
+        message: 'other account',
+        account: 'acc2',
+        date: new Date('2026-05'),
+      }),
+      pipelineError({
+        message: 'other period',
+        account: 'acc1',
+        date: new Date('2025-12'),
+      }),
     ]
 
     const result = scopePipelineErrors(
       errors,
       [position({ account: 'acc1' })],
-      baseFilters({ accounts: new Set(['acc1']), dateFrom: new Date('2026-01-15') }),
+      baseFilters({
+        accounts: new Set(['acc1']),
+        dateFrom: new Date('2026-01-15'),
+      }),
     )
 
     expect(result.map((error) => error.message)).toEqual(['selected'])
@@ -135,15 +153,25 @@ describe('scopePipelineErrors', () => {
       baseFilters({ accountTypes: new Set(['PEA']) }),
     )
 
-    expect(result.map((error) => error.message)).toEqual(['selected asset', 'global parsing issue'])
+    expect(result.map((error) => error.message)).toEqual([
+      'selected asset',
+      'global parsing issue',
+    ])
   })
 
   it('does not hide anomalies when no position filter is active', () => {
-    const errors = [pipelineError({ account: 'acc1' }), pipelineError({ account: 'acc2' })]
+    const errors = [
+      pipelineError({ account: 'acc1' }),
+      pipelineError({ account: 'acc2' }),
+    ]
 
-    expect(scopePipelineErrors(errors, [position({ account: 'acc1' })], baseFilters())).toEqual(
-      errors,
-    )
+    expect(
+      scopePipelineErrors(
+        errors,
+        [position({ account: 'acc1' })],
+        baseFilters(),
+      ),
+    ).toEqual(errors)
   })
 })
 
@@ -179,7 +207,10 @@ describe('applyPositionFilters', () => {
       deposit_total: 500,
       withdrawal_total: 250,
     })
-    expect(filtered.subRows[0].subRows.map(({ id }) => id)).toEqual(['deposit', 'withdrawal'])
+    expect(filtered.subRows[0].subRows.map(({ id }) => id)).toEqual([
+      'deposit',
+      'withdrawal',
+    ])
     expect(cash.deposit_total).toBe(1500)
   })
 
@@ -188,7 +219,10 @@ describe('applyPositionFilters', () => {
       position({ id: 'a', account: 'acc1' }),
       position({ id: 'b', account: 'acc2' }),
     ]
-    const result = applyPositionFilters(positions, baseFilters({ accounts: new Set(['acc1']) }))
+    const result = applyPositionFilters(
+      positions,
+      baseFilters({ accounts: new Set(['acc1']) }),
+    )
     expect(result.map((p) => p.id)).toEqual(['a'])
     expect(result[0].total_value).toBe(1000)
   })
@@ -259,7 +293,10 @@ describe('applyPositionFilters', () => {
 
     const result = applyPositionFilters(
       positions,
-      baseFilters({ dateFrom: new Date('2024-01-01'), dateTo: new Date('2024-06-01') }),
+      baseFilters({
+        dateFrom: new Date('2024-01-01'),
+        dateTo: new Date('2024-06-01'),
+      }),
     )
 
     expect(result).toHaveLength(1)
@@ -304,7 +341,10 @@ describe('applyPositionFilters', () => {
       }),
     ]
     expect(
-      applyPositionFilters(positions, baseFilters({ dateFrom: new Date('2024-01-01') })),
+      applyPositionFilters(
+        positions,
+        baseFilters({ dateFrom: new Date('2024-01-01') }),
+      ),
     ).toEqual([])
   })
 })
@@ -376,7 +416,9 @@ describe('applyAccountFilterToHistory', () => {
   }
 
   it('returns the precomputed history unchanged when no account filter is set', () => {
-    expect(applyAccountFilterToHistory([], enrichedHistory, new Set())).toBe(enrichedHistory)
+    expect(applyAccountFilterToHistory([], enrichedHistory, new Set())).toBe(
+      enrichedHistory,
+    )
   })
 
   it('rebuilds the history from raw per-account snapshots restricted to the selected accounts', () => {
@@ -396,7 +438,11 @@ describe('applyAccountFilterToHistory', () => {
         unrealized_gain: 9999,
       }),
     ]
-    const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1']))
+    const result = applyAccountFilterToHistory(
+      rows,
+      enrichedHistory,
+      new Set(['acc1']),
+    )
     expect(result).toEqual([
       {
         date: new Date('2024-01-01'),
@@ -430,7 +476,11 @@ describe('applyAccountFilterToHistory', () => {
         unrealized_gain: 50,
       }),
     ]
-    const result = applyAccountFilterToHistory(rows, enrichedHistory, new Set(['acc1', 'acc2']))
+    const result = applyAccountFilterToHistory(
+      rows,
+      enrichedHistory,
+      new Set(['acc1', 'acc2']),
+    )
     expect(result[0].total_value).toBe(900)
     expect(result[0].total_cost_basis).toBe(750)
     expect(result[0].unrealized_gain).toBe(150)
@@ -439,7 +489,11 @@ describe('applyAccountFilterToHistory', () => {
   it('rebuilds history for synthetic cash separately from the same account positions', () => {
     const rows = [
       rawRow({ account: 'acc1', account_type: 'Bourse', total_value: 600 }),
-      rawRow({ account: 'acc1', account_type: 'Bourse – Cash', total_value: 50 }),
+      rawRow({
+        account: 'acc1',
+        account_type: 'Bourse – Cash',
+        total_value: 50,
+      }),
     ]
     const result = applyAccountFilterToHistory(
       rows,
@@ -454,14 +508,37 @@ describe('applyAccountFilterToHistory', () => {
 describe('buildAccountTypeBreakdown', () => {
   it('aggregates active positions cost basis and gain by account type, sorted by total value desc', () => {
     const positions = [
-      position({ account_type: 'PEA', total_value: 1000, unrealized_gain: 100 }),
+      position({
+        account_type: 'PEA',
+        total_value: 1000,
+        unrealized_gain: 100,
+      }),
       position({ account_type: 'PEA', total_value: 500, unrealized_gain: -50 }),
-      position({ account_type: 'CTO', total_value: 2000, unrealized_gain: 200 }),
-      position({ account_type: 'PEA', status: 'closed', total_value: 9999, unrealized_gain: 9999 }),
+      position({
+        account_type: 'CTO',
+        total_value: 2000,
+        unrealized_gain: 200,
+      }),
+      position({
+        account_type: 'PEA',
+        status: 'closed',
+        total_value: 9999,
+        unrealized_gain: 9999,
+      }),
     ]
     expect(buildAccountTypeBreakdown(positions)).toEqual([
-      { account_type: 'CTO', total_cost_basis: 1800, unrealized_gain: 200, total_value: 2000 },
-      { account_type: 'PEA', total_cost_basis: 1450, unrealized_gain: 50, total_value: 1500 },
+      {
+        account_type: 'CTO',
+        total_cost_basis: 1800,
+        unrealized_gain: 200,
+        total_value: 2000,
+      },
+      {
+        account_type: 'PEA',
+        total_cost_basis: 1450,
+        unrealized_gain: 50,
+        total_value: 1500,
+      },
     ])
   })
 })
@@ -472,7 +549,13 @@ describe('sortPositionsForTable', () => {
       position({ id: 'low', account_type: 'PEA', total_value: 100 }),
       position({ id: 'high', account_type: 'PEA', total_value: 900 }),
     ]
-    const result = sortPositionsForTable(positions, false, ['PEA'], 'total_value', 'desc')
+    const result = sortPositionsForTable(
+      positions,
+      false,
+      ['PEA'],
+      'total_value',
+      'desc',
+    )
     expect(result.map((p) => p.id)).toEqual(['high', 'low'])
   })
 
@@ -481,7 +564,13 @@ describe('sortPositionsForTable', () => {
       position({ id: 'open', status: 'active' }),
       position({ id: 'closed', status: 'closed' }),
     ]
-    const result = sortPositionsForTable(positions, true, [], 'total_value', 'desc')
+    const result = sortPositionsForTable(
+      positions,
+      true,
+      [],
+      'total_value',
+      'desc',
+    )
     expect(result.map((p) => p.id)).toEqual(['open'])
   })
 })
@@ -489,7 +578,10 @@ describe('sortPositionsForTable', () => {
 describe('getSortValue', () => {
   it('reads total_dividends as dividends + interest combined', () => {
     expect(
-      getSortValue(position({ total_dividends: 10, total_interest: 5 }), 'total_dividends'),
+      getSortValue(
+        position({ total_dividends: 10, total_interest: 5 }),
+        'total_dividends',
+      ),
     ).toBe(15)
   })
 })

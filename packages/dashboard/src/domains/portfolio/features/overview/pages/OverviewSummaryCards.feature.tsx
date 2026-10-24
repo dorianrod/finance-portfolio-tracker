@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { formatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewIrrValue'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
@@ -14,7 +16,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
-import type { ReactNode } from 'react'
+
 import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
 
 export type OverviewDestination = 'wealth' | 'performance' | 'allocation'
@@ -51,7 +53,9 @@ function CardShell({
       <button
         type="button"
         onClick={() => navigateTo(destination)}
-        aria-label={i18n.t('ui.overviewsummarycards.openValue0Details', { value0: title })}
+        aria-label={i18n.t('ui.overviewsummarycards.openValue0Details', {
+          value0: title,
+        })}
         className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
       />
       <span
@@ -85,7 +89,9 @@ function CardShell({
           />
         </svg>
       </span>
-      <span className="pointer-events-none relative z-10 mt-4 block">{children}</span>
+      <span className="pointer-events-none relative z-10 mt-4 block">
+        {children}
+      </span>
     </article>
   )
 }
@@ -99,18 +105,23 @@ export function OverviewSummaryCards({
 }: SummaryCardsProps) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const money = (value: number | null) => (value == null ? '—' : formatMoney(value))
+  const money = (value: number | null) =>
+    value == null ? '—' : formatMoney(value)
   const signedMoney = (value: number | null) =>
     value == null ? '—' : `${value > 0 ? '+' : ''}${formatMoney(value)}`
   const points = (value: number | null) =>
     value == null ? '—' : formatPercentage(value, { signed: true, unit: ' pp' })
   const underlyingAvailable = underlyingConcentration.current != null
-  const primaryConcentration = underlyingAvailable ? underlyingConcentration : heldConcentration
+  const primaryConcentration = underlyingAvailable
+    ? underlyingConcentration
+    : heldConcentration
   const primaryLabel = underlyingAvailable
     ? i18n.t('ui.overviewsummarycards.underlyingAssets')
     : i18n.t('ui.overviewsummarycards.heldPositionsLimitedView')
   const rollingThreeYearDelta =
-    irrStatus === 'ready' && rollingThreeYearTri.delta != null ? rollingThreeYearTri.delta : null
+    irrStatus === 'ready' && rollingThreeYearTri.delta != null
+      ? rollingThreeYearTri.delta
+      : null
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -161,7 +172,9 @@ export function OverviewSummaryCards({
           <PreviousValue value={comparison.contributions.previous} />
         </span>
         <span className="mt-3 block text-[11px] text-content-subtle">
-          {i18n.t('ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod')}
+          {i18n.t(
+            'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
+          )}
         </span>
       </CardShell>
 
@@ -187,7 +200,9 @@ export function OverviewSummaryCards({
           <span className="text-content-subtle">
             {i18n.t('ui.overviewsummarycards.passiveIncome')}
           </span>
-          <span className={`font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.passiveIncome}`}>
+          <span
+            className={`font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.passiveIncome}`}
+          >
             {money(comparison.passiveIncome.current)}
             {comparison.passiveIncome.delta != null && (
               <span className="ml-1.5 text-[10px] text-content-subtle">
@@ -216,20 +231,30 @@ export function OverviewSummaryCards({
           <span
             className={`font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearTri.current)}`}
           >
-            {formatOverviewIrrValue(irrStatus, rollingThreeYearTri.current, formatPercentage)}
+            {formatOverviewIrrValue(
+              irrStatus,
+              rollingThreeYearTri.current,
+              formatPercentage,
+            )}
           </span>
           {rollingThreeYearDelta != null && (
             <span
               className={`inline-flex rounded-full bg-canvas/55 px-1.5 py-0.5 font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearDelta)}`}
             >
-              {formatPercentage(rollingThreeYearDelta, { signed: true, unit: ' pp' })}
+              {formatPercentage(rollingThreeYearDelta, {
+                signed: true,
+                unit: ' pp',
+              })}
             </span>
           )}
           <span className="text-content-subtle">
             {i18n.t('ui.overviewsummarycards.previous')}{' '}
             <span className="font-medium tabular-nums text-content-muted">
               {irrStatus === 'ready' && rollingThreeYearTri.previous != null
-                ? formatPercentage(rollingThreeYearTri.previous, { decimals: 2, signed: true })
+                ? formatPercentage(rollingThreeYearTri.previous, {
+                    decimals: 2,
+                    signed: true,
+                  })
                 : '—'}
             </span>
           </span>
@@ -302,7 +327,9 @@ export function OverviewSummaryCards({
             </span>
           ) : (
             <span className="block">
-              {i18n.t('ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions')}
+              {i18n.t(
+                'ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions',
+              )}
             </span>
           )}
         </span>

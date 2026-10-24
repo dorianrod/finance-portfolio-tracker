@@ -1,8 +1,4 @@
-import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { catColor } from '@/shared/theme/chartColors'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { useId, type ReactNode } from 'react'
+import { type ReactNode, useId } from 'react'
 import {
   Area,
   AreaChart,
@@ -12,6 +8,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { catColor } from '@/shared/theme/chartColors'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
 
 function EvolutionLegendItem({
   activeCategory,
@@ -70,7 +71,13 @@ function EvolutionLegendItem({
   )
 }
 
-function EvolutionGradient({ category, gradientId }: { category: string; gradientId: string }) {
+function EvolutionGradient({
+  category,
+  gradientId,
+}: {
+  category: string
+  gradientId: string
+}) {
   return (
     <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
       <stop offset="5%" stopColor={catColor(category)} stopOpacity={0.8} />
@@ -79,7 +86,13 @@ function EvolutionGradient({ category, gradientId }: { category: string; gradien
   )
 }
 
-function EvolutionArea({ category, gradientId }: { category: string; gradientId: string }) {
+function EvolutionArea({
+  category,
+  gradientId,
+}: {
+  category: string
+  gradientId: string
+}) {
   return (
     <Area
       type="monotone"
@@ -143,7 +156,10 @@ export function EvoCardView({
         ))}
       </div>
       <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+        <AreaChart
+          data={chartData}
+          margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+        >
           <defs>
             {series.map((item) => (
               <EvolutionGradient
@@ -160,7 +176,9 @@ export function EvoCardView({
             scale="time"
             domain={dateDomain}
             allowDataOverflow
-            tickFormatter={(timestamp) => formatDate(timestamp, { style: 'shortMonthShortYear' })}
+            tickFormatter={(timestamp) =>
+              formatDate(timestamp, { style: 'shortMonthShortYear' })
+            }
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}
             axisLine={false}

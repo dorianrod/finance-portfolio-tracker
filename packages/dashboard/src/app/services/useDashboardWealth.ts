@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { useSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useSavingCapacityQuery'
 import {
   buildOverviewComparison,
@@ -12,8 +14,8 @@ import {
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { buildAccountTypeBreakdown } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
 import {
-  filterAnnualIncomeSavingsByPeriod,
   type AnnualIncomeSavingsPoint,
+  filterAnnualIncomeSavingsByPeriod,
 } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import { useAccountTypeHistory } from '@/domains/portfolio/shared/services/useAccountTypeHistory'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
@@ -24,7 +26,6 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-import { useMemo } from 'react'
 
 const EMPTY_SAVING_CAPACITY: SavingCapacityPoint[] = []
 
@@ -82,25 +83,35 @@ export function useDashboardWealth({
     [accountHistory, overviewComparison],
   )
   const periodSavings = useMemo(
-    () => filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
+    () =>
+      filterPointsByPeriod(savingCapacity, filters.dateFrom, filters.dateTo),
     [filters.dateFrom, filters.dateTo, savingCapacity],
   )
   const trailingSavings = useMemo(
-    () => computeTrailing12mSavings(savingCapacity, filters.dateFrom, filters.dateTo),
+    () =>
+      computeTrailing12mSavings(
+        savingCapacity,
+        filters.dateFrom,
+        filters.dateTo,
+      ),
     [filters.dateFrom, filters.dateTo, savingCapacity],
   )
   const trailingYearComparison = useMemo(
     () => computeTrailing12mYearOverYear(savingCapacity, filters.dateTo),
     [filters.dateTo, savingCapacity],
   )
-  const wealthDrivers = useMemo(() => buildCumulativeWealthDrivers(periodSavings), [periodSavings])
+  const wealthDrivers = useMemo(
+    () => buildCumulativeWealthDrivers(periodSavings),
+    [periodSavings],
+  )
   const monthlyOps = useMemo(
     () => filterMonthlyOpsByAccounts(allMonthlyOps, filters.accounts),
     [allMonthlyOps, filters.accounts],
   )
   const typeHistory = useAccountTypeHistory(filters.accounts)
   const displayedTypeHistory = useMemo(
-    () => filterPointsByPeriod(typeHistory.data, filters.dateFrom, filters.dateTo),
+    () =>
+      filterPointsByPeriod(typeHistory.data, filters.dateFrom, filters.dateTo),
     [filters.dateFrom, filters.dateTo, typeHistory.data],
   )
   const accountTypeData = useMemo(
@@ -108,7 +119,12 @@ export function useDashboardWealth({
     [currentPositions],
   )
   const displayedAnnualIncomeSavings = useMemo(
-    () => filterAnnualIncomeSavingsByPeriod(annualIncomeSavings, filters.dateFrom, filters.dateTo),
+    () =>
+      filterAnnualIncomeSavingsByPeriod(
+        annualIncomeSavings,
+        filters.dateFrom,
+        filters.dateTo,
+      ),
     [annualIncomeSavings, filters.dateFrom, filters.dateTo],
   )
 

@@ -1,6 +1,8 @@
-import i18n from '@/i18n/i18n'
 import { useId, useState } from 'react'
 import { createPortal } from 'react-dom'
+
+import i18n from '@/i18n/i18n'
+
 import { useTooltipPosition } from './helpers/presenters/useTooltipPosition'
 
 type Props = {

@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
+
 import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import { buildFundExposureViewModel } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/shared/services/actions/useDashboardUnderlyingHoldings'
@@ -11,12 +14,13 @@ import type {
   FundHoldingStatus,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { useAtomValue } from 'jotai'
-import { useMemo } from 'react'
 
 const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
-export function useFundExposureViewModel(positions: PositionRow[], holdings: FundHolding[]) {
+export function useFundExposureViewModel(
+  positions: PositionRow[],
+  holdings: FundHolding[],
+) {
   const { data: fundData } = useFundHoldingsQuery()
   const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
   const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
@@ -35,5 +39,8 @@ export function useFundExposureViewModel(positions: PositionRow[], holdings: Fun
       }),
     [expanded, holdings, positions, query, sort, statuses],
   )
-  return useMemo(() => ({ ...actions, ...exposure, query, sort }), [actions, exposure, query, sort])
+  return useMemo(
+    () => ({ ...actions, ...exposure, query, sort }),
+    [actions, exposure, query, sort],
+  )
 }

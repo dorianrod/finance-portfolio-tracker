@@ -1,9 +1,9 @@
 import {
   aggregateReliabilityTone,
+  type AnalysisReliabilityTone,
   percentageReliabilityTone,
   pipelineReliabilityTone,
   pipelineStatusLabel,
-  type AnalysisReliabilityTone,
 } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
 import type { AccountCoverage } from '@/domains/portfolio/shared/helpers/quality/computeAllocationCoverage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
@@ -36,7 +36,8 @@ function weakestQualityTheme(
   metrics: Array<{ theme: QualityThemeId; tone: AnalysisReliabilityTone }>,
 ): QualityThemeId {
   return metrics.reduce((mostRelevant, candidate) =>
-    RELIABILITY_PRIORITY[candidate.tone] > RELIABILITY_PRIORITY[mostRelevant.tone]
+    RELIABILITY_PRIORITY[candidate.tone] >
+    RELIABILITY_PRIORITY[mostRelevant.tone]
       ? candidate
       : mostRelevant,
   ).theme
@@ -50,13 +51,20 @@ export function buildDataQualitySummary({
   scopedManualPriceOverrides,
   scopedPipelineErrors,
 }: BuildDataQualitySummaryInput) {
-  const classificationMappedValue = coverage.reduce((sum, item) => sum + item.allocated, 0)
-  const classificationUnmappedValue = coverage.reduce((sum, item) => sum + item.unallocated, 0)
+  const classificationMappedValue = coverage.reduce(
+    (sum, item) => sum + item.allocated,
+    0,
+  )
+  const classificationUnmappedValue = coverage.reduce(
+    (sum, item) => sum + item.unallocated,
+    0,
+  )
   const classificationNotApplicableValue = coverage.reduce(
     (sum, item) => sum + item.notApplicable,
     0,
   )
-  const classificationApplicableValue = classificationMappedValue + classificationUnmappedValue
+  const classificationApplicableValue =
+    classificationMappedValue + classificationUnmappedValue
   const classificationReliabilityPct =
     classificationApplicableValue > 0
       ? (classificationMappedValue / classificationApplicableValue) * 100
@@ -73,10 +81,12 @@ export function buildDataQualitySummary({
     (status) => status.validationStatus === 'error',
   )
   const unresolvedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.undisclosedFundValue + scopedFundQuality.report.opaqueValue
+    ? scopedFundQuality.report.undisclosedFundValue +
+      scopedFundQuality.report.opaqueValue
     : 0
   const identifiedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.directIdentifiedValue + scopedFundQuality.report.decomposedValue
+    ? scopedFundQuality.report.directIdentifiedValue +
+      scopedFundQuality.report.decomposedValue
     : 0
   const fundExposurePercentages = computeFundExposurePercentages(
     identifiedFundValue,
@@ -87,7 +97,8 @@ export function buildDataQualitySummary({
     ? fundExposurePercentages.identified
     : null
   const underlyingCritical =
-    hasFundValidationError || scopedFundQuality.report?.feasibilityStatus === 'limited'
+    hasFundValidationError ||
+    scopedFundQuality.report?.feasibilityStatus === 'limited'
   const classificationMetricTone = percentageReliabilityTone(
     allocationLoading ? null : classificationReliabilityPct,
   )
@@ -95,7 +106,9 @@ export function buildDataQualitySummary({
     scopedFundQuality.report ? underlyingReliabilityPct : null,
   )
   if (underlyingCritical) underlyingMetricTone = 'critical'
-  else if (scopedFundQuality.report?.feasibilityStatus === 'pending_repeatability') {
+  else if (
+    scopedFundQuality.report?.feasibilityStatus === 'pending_repeatability'
+  ) {
     underlyingMetricTone = 'warning'
   }
   const diversificationReliabilityTone = aggregateReliabilityTone([
@@ -110,7 +123,8 @@ export function buildDataQualitySummary({
   const scopedPipelineErrorCount = scopedPipelineErrors.filter(
     (item) => item.level === 'error',
   ).length
-  const scopedPipelineWarningCount = scopedPipelineErrors.length - scopedPipelineErrorCount
+  const scopedPipelineWarningCount =
+    scopedPipelineErrors.length - scopedPipelineErrorCount
   const portfolioDataTone = pipelineReliabilityTone({
     errorCount: scopedPipelineErrorCount,
     warningCount: scopedPipelineWarningCount,
@@ -135,7 +149,10 @@ export function buildDataQualitySummary({
     Number(scopedPipelineErrors.length > 0) +
     Number(scopedManualPriceOverrides.length > 0) +
     Number(hasMaterialQualityGap(unallocatedPct ?? 0)) +
-    Number(hasFundValidationError || hasMaterialQualityGap(fundExposurePercentages.unresolved))
+    Number(
+      hasFundValidationError ||
+        hasMaterialQualityGap(fundExposurePercentages.unresolved),
+    )
 
   return {
     classificationMappedValue,

@@ -1,15 +1,16 @@
+import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
+import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
+
 import {
-  resolveAccountTypeLabelPositions,
   type AccountTypeDonutPoint,
+  resolveAccountTypeLabelPositions,
 } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
-import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { catColor } from '@/shared/theme/chartColors'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
-import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
 
 function AccountTypeLabel({
   data,
@@ -25,7 +26,9 @@ function AccountTypeLabel({
   )
     return null
   const point = payload as AccountTypeDonutPoint
-  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[index]
+  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
+    index
+  ]
   if (!position) return null
 
   const radians = (-midAngle * Math.PI) / 180
@@ -53,7 +56,8 @@ function AccountTypeLabel({
         textAnchor={position.isRight ? 'start' : 'end'}
         dominantBaseline="central"
       >
-        {point.account_type} · {formatPercentage((percent ?? 0) * 100, { decimals: 0 })}
+        {point.account_type} ·{' '}
+        {formatPercentage((percent ?? 0) * 100, { decimals: 0 })}
       </text>
     </g>
   )
@@ -83,7 +87,10 @@ function AccountTypeSector({
   if (point.unrealized_gain < 0) {
     const lossRatio =
       point.total_cost_basis > 0
-        ? Math.min(Math.abs(point.unrealized_gain) / point.total_cost_basis, 0.95)
+        ? Math.min(
+            Math.abs(point.unrealized_gain) / point.total_cost_basis,
+            0.95,
+          )
         : 1
     const lossInnerRadius = radius * Math.sqrt(1 - lossRatio)
     return (
@@ -107,7 +114,8 @@ function AccountTypeSector({
   }
 
   const positiveTotal = point.total_cost_basis + point.unrealized_gain
-  const costRatio = positiveTotal > 0 ? Math.min(point.total_cost_basis / positiveTotal, 1) : 0
+  const costRatio =
+    positiveTotal > 0 ? Math.min(point.total_cost_basis / positiveTotal, 1) : 0
   const splitRadius = radius * Math.sqrt(costRatio)
   return (
     <g>
@@ -133,7 +141,11 @@ function AccountTypeSector({
   )
 }
 
-export function AccountTypeBreakdownChart({ data }: { data: AccountTypeDonutPoint[] }) {
+export function AccountTypeBreakdownChart({
+  data,
+}: {
+  data: AccountTypeDonutPoint[]
+}) {
   const donutData: AccountTypeDonutPoint[] = data.map((point) => ({
     ...point,
     total_cost_basis: Math.max(0, point.total_cost_basis),
@@ -146,12 +158,16 @@ export function AccountTypeBreakdownChart({ data }: { data: AccountTypeDonutPoin
       <h2 className="flex items-center text-sm font-medium text-content-muted">
         {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
         <ScopedInfoTooltip
-          text={i18n.t('ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit')}
+          text={i18n.t(
+            'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
+          )}
           scope={{ account: 'filterable', period: 'as-of' }}
         />
       </h2>
       <p className="mt-1 text-xs text-content-subtle">
-        {i18n.t('ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost')}
+        {i18n.t(
+          'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
+        )}
       </p>
 
       <ResponsiveContainer width="100%" height={280}>
@@ -170,7 +186,9 @@ export function AccountTypeBreakdownChart({ data }: { data: AccountTypeDonutPoin
             label={(props) => <AccountTypeLabel {...props} data={pieData} />}
             labelLine={false}
           />
-          <Tooltip content={<AccountTypeTooltip portfolioTotal={totalValue} />} />
+          <Tooltip
+            content={<AccountTypeTooltip portfolioTotal={totalValue} />}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>

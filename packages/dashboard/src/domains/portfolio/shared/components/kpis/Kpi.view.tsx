@@ -1,8 +1,15 @@
 import type { ReactNode } from 'react'
+
 import { InfoTooltip } from './InfoTooltip.view'
 
 export type KpiAccent =
-  'neutral' | 'portfolio' | 'contributions' | 'positive' | 'negative' | 'income' | 'return'
+  | 'neutral'
+  | 'portfolio'
+  | 'contributions'
+  | 'positive'
+  | 'negative'
+  | 'income'
+  | 'return'
 
 const ACCENT_CLASSES: Record<KpiAccent, string> = {
   neutral: 'bg-content-subtle',
@@ -14,7 +21,13 @@ const ACCENT_CLASSES: Record<KpiAccent, string> = {
   return: 'bg-return',
 }
 
-function KpiRoot({ accent = 'neutral', children }: { accent?: KpiAccent; children: ReactNode }) {
+function KpiRoot({
+  accent = 'neutral',
+  children,
+}: {
+  accent?: KpiAccent
+  children: ReactNode
+}) {
   return (
     <div className="relative min-w-0 flex-1 basis-40 py-1 pl-4">
       <span
@@ -44,7 +57,11 @@ function KpiLabel({
 }
 
 function KpiValueRow({ children }: { children: ReactNode }) {
-  return <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">{children}</div>
+  return (
+    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+      {children}
+    </div>
+  )
 }
 
 function KpiValue({
@@ -66,7 +83,13 @@ function KpiValue({
   )
 }
 
-function KpiInlineNote({ children, color }: { children: ReactNode; color?: string }) {
+function KpiInlineNote({
+  children,
+  color,
+}: {
+  children: ReactNode
+  color?: string
+}) {
   return (
     <span
       className={`shrink-0 text-xs font-semibold tabular-nums ${color ?? 'text-content-muted'}`}
@@ -86,13 +109,22 @@ function KpiNote({
   title?: string
 }) {
   return (
-    <span className={`truncate text-xs ${color ?? 'text-content-muted'}`} title={title}>
+    <span
+      className={`truncate text-xs ${color ?? 'text-content-muted'}`}
+      title={title}
+    >
       {children}
     </span>
   )
 }
 
-function KpiDetail({ children, title }: { children: ReactNode; title?: string }) {
+function KpiDetail({
+  children,
+  title,
+}: {
+  children: ReactNode
+  title?: string
+}) {
   return (
     <span className="truncate text-xs text-content-subtle" title={title}>
       {children}

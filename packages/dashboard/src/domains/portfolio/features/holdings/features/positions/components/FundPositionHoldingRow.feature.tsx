@@ -15,7 +15,10 @@ export function FundPositionHoldingRow({
   const positionValue = position.total_value ?? 0
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-border/70 py-1.5 text-xs">
-      <span className="truncate text-content-secondary" title={holding.holdingName}>
+      <span
+        className="truncate text-content-secondary"
+        title={holding.holdingName}
+      >
         {holding.holdingName}
       </span>
       <span className="text-right tabular-nums text-content-subtle">

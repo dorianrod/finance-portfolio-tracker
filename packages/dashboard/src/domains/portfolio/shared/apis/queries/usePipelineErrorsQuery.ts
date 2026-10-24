@@ -1,14 +1,18 @@
+import { useQuery } from '@tanstack/react-query'
+import * as yup from 'yup'
+
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import { parseCsv } from '@/shared/csv/csvData'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
-import { useQuery } from '@tanstack/react-query'
-import * as yup from 'yup'
 
 const ERROR_ROW_SCHEMA: yup.ObjectSchema<PipelineError> = yup.object({
   source: yup.string().defined(),
-  level: yup.string<PipelineError['level']>().oneOf(['error', 'warning']).defined(),
+  level: yup
+    .string<PipelineError['level']>()
+    .oneOf(['error', 'warning'])
+    .defined(),
   type: yup.string().defined(),
   date: OPTIONAL_CALENDAR_DATE_SCHEMA,
   account: yup.string().defined(),

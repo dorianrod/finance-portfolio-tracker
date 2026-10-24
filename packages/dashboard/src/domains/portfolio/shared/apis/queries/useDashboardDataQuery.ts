@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query'
+
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import {
@@ -11,7 +13,6 @@ import {
 } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 import { parseCsv } from '@/shared/csv/csvData'
-import { useQuery } from '@tanstack/react-query'
 
 export function useDashboardDataQuery() {
   return useQuery<DashboardData>({

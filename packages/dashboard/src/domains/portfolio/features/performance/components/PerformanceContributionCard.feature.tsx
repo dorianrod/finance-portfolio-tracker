@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import type {
   ContributionHorizon,
   PerformanceContribution,
@@ -22,7 +24,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
-import { useState } from 'react'
+
 import { ContributionListItem, IrrList } from './PerformanceRankingLists.view'
 
 type Props = {
@@ -99,7 +101,11 @@ function ContributionList({
       ) : (
         <ol className="space-y-3">
           {items.map((item) => (
-            <ContributionListItem key={item.key} item={item} positive={positive} />
+            <ContributionListItem
+              key={item.key}
+              item={item}
+              positive={positive}
+            />
           ))}
         </ol>
       )}
@@ -107,7 +113,13 @@ function ContributionList({
   )
 }
 
-export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; status: IrrStatus }) {
+export function AssetIrrView({
+  summary,
+  status,
+}: {
+  summary: AssetIrrSummary
+  status: IrrStatus
+}) {
   const formatDate = useFormatDate()
   if (status === 'loading') {
     return (
@@ -119,12 +131,15 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
   if (status === 'error' || !summary.available) {
     return (
       <div className="mt-5 rounded-lg border border-dashed border-border py-10 text-center text-sm text-content-subtle">
-        {i18n.t('ui.performancecontributioncard.assetIrrIsNotAvailableForThisSelection')}
+        {i18n.t(
+          'ui.performancecontributioncard.assetIrrIsNotAvailableForThisSelection',
+        )}
       </div>
     )
   }
 
-  const { measuredCount, topReturns, underperformers } = buildAssetIrrRankings(summary)
+  const { measuredCount, topReturns, underperformers } =
+    buildAssetIrrRankings(summary)
 
   return (
     <>
@@ -136,7 +151,11 @@ export function AssetIrrView({ summary, status }: { summary: AssetIrrSummary; st
               'ui.performancecontributioncard.numberOfAssetsWithEnoughPositiveAndNegativeCash',
             )}
             // eslint-disable-next-line local/no-prop-drilling -- The asset-IRR feature owns its effective reporting scope.
-            scope={{ account: 'filterable', period: 'range', effectiveDate: summary.end_date }}
+            scope={{
+              account: 'filterable',
+              period: 'range',
+              effectiveDate: summary.end_date,
+            }}
           />
           <div className="mt-1 text-lg font-semibold tabular-nums text-content-secondary">
             {measuredCount}
@@ -185,13 +204,14 @@ export function PerformanceContributionCard({
   const formatPercentage = useFormatPercentage()
   const [view, setView] = useState<PerformanceView>('contribution')
   const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
-  const { activeHorizon, irr, summary, threeYearUnavailable } = resolveContributionHorizon({
-    horizon,
-    sinceTracking,
-    sinceTrackingIrr,
-    trailingThreeYears,
-    trailingThreeYearIrr,
-  })
+  const { activeHorizon, irr, summary, threeYearUnavailable } =
+    resolveContributionHorizon({
+      horizon,
+      sinceTracking,
+      sinceTrackingIrr,
+      trailingThreeYears,
+      trailingThreeYearIrr,
+    })
   const netTone =
     summary.netContribution >= 0
       ? SEMANTIC_TEXT_CLASSES.performancePositive
@@ -199,11 +219,16 @@ export function PerformanceContributionCard({
 
   const description =
     view === 'contribution'
-      ? i18n.t('ui.performancecontributioncard.mainAssetsCreatingOrReducingPortfolioValue')
-      : i18n.t('ui.performancecontributioncard.annualizedMoneyWeightedReturnByAssetOverTheSelected')
+      ? i18n.t(
+          'ui.performancecontributioncard.mainAssetsCreatingOrReducingPortfolioValue',
+        )
+      : i18n.t(
+          'ui.performancecontributioncard.annualizedMoneyWeightedReturnByAssetOverTheSelected',
+        )
   let scopePeriod: PeriodScopeMode = activeHorizon
   if (view === 'irr') scopePeriod = 'range'
-  const showUnavailableContribution = view === 'contribution' && !summary.available
+  const showUnavailableContribution =
+    view === 'contribution' && !summary.available
   const showContributionDetails = view === 'contribution' && summary.available
 
   return (
@@ -217,7 +242,9 @@ export function PerformanceContributionCard({
         </div>
         <div
           className="inline-flex self-start rounded-lg border border-border-strong bg-canvas p-0.5"
-          aria-label={i18n.t('ui.performancecontributioncard.performanceMetric')}
+          aria-label={i18n.t(
+            'ui.performancecontributioncard.performanceMetric',
+          )}
         >
           <button
             type="button"
@@ -238,7 +265,9 @@ export function PerformanceContributionCard({
         </div>
       </div>
 
-      {view === 'irr' && <AssetIrrView summary={assetIrr} status={assetIrrStatus} />}
+      {view === 'irr' && (
+        <AssetIrrView summary={assetIrr} status={assetIrrStatus} />
+      )}
       {showUnavailableContribution && (
         <div className="mt-5 rounded-lg border border-dashed border-border py-10 text-center text-sm text-content-subtle">
           {i18n.t(
@@ -268,7 +297,9 @@ export function PerformanceContributionCard({
             </div>
             <div>
               <MetricLabel
-                label={i18n.t('ui.performancecontributioncard.attributedNetPerformance')}
+                label={i18n.t(
+                  'ui.performancecontributioncard.attributedNetPerformance',
+                )}
                 tooltip={i18n.t(
                   'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
                 )}
@@ -279,7 +310,9 @@ export function PerformanceContributionCard({
                   effectiveDate: summary.endDate,
                 }}
               />
-              <div className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}>
+              <div
+                className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}
+              >
                 {formatMoney(summary.netContribution, { style: 'full' })}
               </div>
             </div>
@@ -293,7 +326,9 @@ export function PerformanceContributionCard({
                 </div>
                 <div
                   className="inline-flex shrink-0 rounded-lg border border-border bg-canvas/40 p-0.5"
-                  aria-label={i18n.t('ui.performancecontributioncard.contributionHorizon')}
+                  aria-label={i18n.t(
+                    'ui.performancecontributioncard.contributionHorizon',
+                  )}
                 >
                   <button
                     type="button"
@@ -331,7 +366,11 @@ export function PerformanceContributionCard({
               items={summary.contributors}
               positive
               // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
+              scope={{
+                account: 'filterable',
+                period: scopePeriod,
+                effectiveDate: summary.endDate,
+              }}
             />
             <ContributionList
               title={i18n.t('ui.performancecontributioncard.mainDetractors')}
@@ -339,7 +378,11 @@ export function PerformanceContributionCard({
               items={summary.detractors}
               positive={false}
               // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              scope={{ account: 'filterable', period: scopePeriod, effectiveDate: summary.endDate }}
+              scope={{
+                account: 'filterable',
+                period: scopePeriod,
+                effectiveDate: summary.endDate,
+              }}
             />
           </div>
         </>

@@ -23,14 +23,15 @@ export function CumulativeConcentrationTooltip({
   return (
     <TooltipBox minWidth={220}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
-        {i18n.t('ui.cumulativeconcentrationtooltip.top')} {point.rank} {assetLabel} ·{' '}
-        {formatPercentage(point.cumulativeWeight)}
+        {i18n.t('ui.cumulativeconcentrationtooltip.top')} {point.rank}{' '}
+        {assetLabel} · {formatPercentage(point.cumulativeWeight)}
       </div>
       <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
         #{point.rank} {point.name}
       </div>
       <div className="mt-0.5" style={{ color: SEMANTIC_COLORS.riskSecondary }}>
-        {formatMoney(point.value, { style: 'full' })} · {formatPercentage(point.weight)}
+        {formatMoney(point.value, { style: 'full' })} ·{' '}
+        {formatPercentage(point.weight)}
       </div>
     </TooltipBox>
   )

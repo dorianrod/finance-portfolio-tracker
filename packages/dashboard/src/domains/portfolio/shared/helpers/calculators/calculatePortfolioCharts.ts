@@ -1,6 +1,3 @@
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
 import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
@@ -9,8 +6,10 @@ import type {
   MonthlyOperation,
   MonthlyOperationsByMonth,
 } from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
 export type TrailingSavingCapacityPoint = SavingCapacityPoint & {
   rolling_12m: number
@@ -97,23 +96,39 @@ export type TriChartPoint = PortfolioHistoryPoint & {
   tri_rolling_3y_backfill: number | null
 }
 
-export function buildTriChartData(history: PortfolioHistoryPoint[]): TriChartPoint[] {
-  if (!history.some((point) => point.tri_rolling_1y !== null || point.tri_rolling_3y !== null))
+export function buildTriChartData(
+  history: PortfolioHistoryPoint[],
+): TriChartPoint[] {
+  if (
+    !history.some(
+      (point) => point.tri_rolling_1y !== null || point.tri_rolling_3y !== null,
+    )
+  )
     return []
 
-  const firstOneYearIndex = history.findIndex((point) => point.tri_rolling_1y !== null)
+  const firstOneYearIndex = history.findIndex(
+    (point) => point.tri_rolling_1y !== null,
+  )
   const firstOneYearValue =
     firstOneYearIndex === -1 ? null : history[firstOneYearIndex].tri_rolling_1y
-  const firstThreeYearIndex = history.findIndex((point) => point.tri_rolling_3y !== null)
+  const firstThreeYearIndex = history.findIndex(
+    (point) => point.tri_rolling_3y !== null,
+  )
   const firstThreeYearValue =
-    firstThreeYearIndex === -1 ? null : history[firstThreeYearIndex].tri_rolling_3y
+    firstThreeYearIndex === -1
+      ? null
+      : history[firstThreeYearIndex].tri_rolling_3y
 
   return history.map((point, index) => ({
     ...point,
     tri_rolling_1y_backfill:
-      firstOneYearValue !== null && index <= firstOneYearIndex ? firstOneYearValue : null,
+      firstOneYearValue !== null && index <= firstOneYearIndex
+        ? firstOneYearValue
+        : null,
     tri_rolling_3y_backfill:
-      firstThreeYearValue !== null && index <= firstThreeYearIndex ? firstThreeYearValue : null,
+      firstThreeYearValue !== null && index <= firstThreeYearIndex
+        ? firstThreeYearValue
+        : null,
   }))
 }
 
@@ -129,7 +144,9 @@ export function filterPointsByPeriod<T extends { date: Date }>(
   })
 }
 
-export function buildCumulativeWealthDrivers(points: SavingCapacityPoint[]): WealthDriverPoint[] {
+export function buildCumulativeWealthDrivers(
+  points: SavingCapacityPoint[],
+): WealthDriverPoint[] {
   let cumulativeSavings = 0
   let cumulativePerformance = 0
 
@@ -145,7 +162,9 @@ export function buildCumulativeWealthDrivers(points: SavingCapacityPoint[]): Wea
   })
 }
 
-export function computePeriodDrivers(points: SavingCapacityPoint[]): PeriodDrivers {
+export function computePeriodDrivers(
+  points: SavingCapacityPoint[],
+): PeriodDrivers {
   const savings = points.reduce((sum, point) => sum + point.savings_delta, 0)
   const performance = points.reduce((sum, point) => sum + point.perf_delta, 0)
   return {
@@ -196,7 +215,10 @@ export function computeTrailing12mYearOverYear(
       ? currentMonths.reduce((sum, month) => sum + byMonth.get(month)![key], 0)
       : null
     const previous = comparisonMonths.every((month) => byMonth.has(month))
-      ? comparisonMonths.reduce((sum, month) => sum + byMonth.get(month)![key], 0)
+      ? comparisonMonths.reduce(
+          (sum, month) => sum + byMonth.get(month)![key],
+          0,
+        )
       : null
     let changePct: number | null = null
     if (current === 0 && previous === 0) changePct = 0
@@ -225,13 +247,17 @@ function shiftDateByYears(date: Date, yearOffset: number): Date {
   return new Date(Date.UTC(targetYear, targetMonth, targetDay))
 }
 
-export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: Date): IncomeSummary {
+export function computeTrailing12mIncome(
+  positions: PositionRow[],
+  asOfDate?: Date,
+): IncomeSummary {
   const operations = positions.flatMap((position) =>
     position.subRows.flatMap((group) => group.subRows),
   )
   const incomeOps = operations.filter(
     (operation) =>
-      operation.operation_type === 'DIVIDEND' || operation.operation_type === 'INTEREST',
+      operation.operation_type === 'DIVIDEND' ||
+      operation.operation_type === 'INTEREST',
   )
 
   if (incomeOps.length === 0 && !asOfDate) {
@@ -249,7 +275,8 @@ export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: Da
   const dateTo =
     asOfDate ??
     incomeOps.reduce(
-      (latest, operation) => (operation.date > latest ? operation.date : latest),
+      (latest, operation) =>
+        operation.date > latest ? operation.date : latest,
       incomeOps[0].date,
     )
   const dateFrom = shiftDateByYears(dateTo, -1)
@@ -259,7 +286,8 @@ export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: Da
     (operation) => operation.date > dateFrom && operation.date <= dateTo,
   )
   const previousTrailing = incomeOps.filter(
-    (operation) => operation.date > previousDateFrom && operation.date <= dateFrom,
+    (operation) =>
+      operation.date > previousDateFrom && operation.date <= dateFrom,
   )
   const dividends = trailing
     .filter((operation) => operation.operation_type === 'DIVIDEND')
@@ -267,10 +295,14 @@ export function computeTrailing12mIncome(positions: PositionRow[], asOfDate?: Da
   const interest = trailing
     .filter((operation) => operation.operation_type === 'INTEREST')
     .reduce((sum, operation) => sum + operation.total_amount, 0)
-  const previousTotal = previousTrailing.reduce((sum, operation) => sum + operation.total_amount, 0)
+  const previousTotal = previousTrailing.reduce(
+    (sum, operation) => sum + operation.total_amount,
+    0,
+  )
   const total = dividends + interest
   let changePct: number | null = null
-  if (previousTotal !== 0) changePct = ((total - previousTotal) / Math.abs(previousTotal)) * 100
+  if (previousTotal !== 0)
+    changePct = ((total - previousTotal) / Math.abs(previousTotal)) * 100
   else if (total === 0) changePct = 0
 
   return {
@@ -288,11 +320,16 @@ export function computeConcentration(
   positions: PositionRow[],
   fundHoldings: FundHolding[] = [],
 ): ConcentrationSummary {
-  const byAsset = new Map<string, { label: string; name: string; value: number }>()
+  const byAsset = new Map<
+    string,
+    { label: string; name: string; value: number }
+  >()
   const holdingsByParent = new Map<string, FundHolding[]>()
 
   for (const holding of fundHoldings) {
-    for (const key of [holding.parentIsin, holding.parentTicker].filter(Boolean)) {
+    for (const key of [holding.parentIsin, holding.parentTicker].filter(
+      Boolean,
+    )) {
       const current = holdingsByParent.get(key) ?? []
       current.push(holding)
       holdingsByParent.set(key, current)
@@ -313,19 +350,27 @@ export function computeConcentration(
   function isFundPosition(position: PositionRow): boolean {
     return (
       /\b(?:ETF|UCITS|FUND)\b/i.test(position.name) ||
-      /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(position.name)
+      /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(
+        position.name,
+      )
     )
   }
 
   for (const position of positions) {
-    if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    if (position.status !== 'active' || (position.total_value ?? 0) <= 0)
+      continue
     if (!isAssetAnalysisApplicablePosition(position)) continue
     const positionValue = position.total_value ?? 0
     selectedValue += positionValue
 
-    const lookThrough = holdingsByParent.get(position.isin) ?? holdingsByParent.get(position.ticker)
+    const lookThrough =
+      holdingsByParent.get(position.isin) ??
+      holdingsByParent.get(position.ticker)
     if (lookThrough?.length) {
-      const disclosedWeight = lookThrough.reduce((sum, holding) => sum + holding.weight, 0)
+      const disclosedWeight = lookThrough.reduce(
+        (sum, holding) => sum + holding.weight,
+        0,
+      )
       const scale = disclosedWeight > 1 ? 1 / disclosedWeight : 1
       for (const holding of lookThrough) {
         addAsset(
@@ -369,10 +414,13 @@ export function computeConcentration(
 
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
-    topFivePct: holdings.slice(0, 5).reduce((sum, holding) => sum + holding.weight, 0),
+    topFivePct: holdings
+      .slice(0, 5)
+      .reduce((sum, holding) => sum + holding.weight, 0),
     topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
     topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
-    coveragePct: selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
+    coveragePct:
+      selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
     identifiedValue,
     undisclosedValue,
     opaqueValue,
@@ -383,11 +431,17 @@ export function computeConcentration(
   }
 }
 
-export function computeHeldAssetConcentration(positions: PositionRow[]): ConcentrationSummary {
-  const byAsset = new Map<string, { label: string; name: string; value: number }>()
+export function computeHeldAssetConcentration(
+  positions: PositionRow[],
+): ConcentrationSummary {
+  const byAsset = new Map<
+    string,
+    { label: string; name: string; value: number }
+  >()
 
   for (const position of positions) {
-    if (position.status !== 'active' || (position.total_value ?? 0) <= 0) continue
+    if (position.status !== 'active' || (position.total_value ?? 0) <= 0)
+      continue
     if (!isAssetAnalysisApplicablePosition(position)) continue
     // This is deliberately the allocation-file grain: the instrument or
     // product actually held, aggregated across accounts when its market
@@ -402,7 +456,10 @@ export function computeHeldAssetConcentration(positions: PositionRow[]): Concent
     byAsset.set(key, current)
   }
 
-  const total = [...byAsset.values()].reduce((sum, holding) => sum + holding.value, 0)
+  const total = [...byAsset.values()].reduce(
+    (sum, holding) => sum + holding.value,
+    0,
+  )
   const allHoldings = [...byAsset.values()]
     .toSorted((a, b) => b.value - a.value)
     .map((holding) => ({
@@ -414,7 +471,9 @@ export function computeHeldAssetConcentration(positions: PositionRow[]): Concent
 
   return {
     topHoldingPct: holdings[0]?.weight ?? 0,
-    topFivePct: holdings.slice(0, 5).reduce((sum, holding) => sum + holding.weight, 0),
+    topFivePct: holdings
+      .slice(0, 5)
+      .reduce((sum, holding) => sum + holding.weight, 0),
     topTenPct: holdings.reduce((sum, holding) => sum + holding.weight, 0),
     topTenValue: holdings.reduce((sum, holding) => sum + holding.value, 0),
     coveragePct: total > 0 ? 100 : 0,
@@ -451,18 +510,28 @@ export function cumulativeConcentrationCrosshair(
   return point ? { x: point.rank, y: point.cumulativeWeight } : null
 }
 
-export function computePerformanceSummary(positions: PositionRow[]): PerformanceSummary {
+export function computePerformanceSummary(
+  positions: PositionRow[],
+): PerformanceSummary {
   const active = positions.filter((position) => position.status === 'active')
-  const currentValueGross = active.reduce((sum, position) => sum + (position.total_value ?? 0), 0)
-  const unrealizedGross = active.reduce((sum, position) => sum + (position.unrealized_gain ?? 0), 0)
+  const currentValueGross = active.reduce(
+    (sum, position) => sum + (position.total_value ?? 0),
+    0,
+  )
+  const unrealizedGross = active.reduce(
+    (sum, position) => sum + (position.unrealized_gain ?? 0),
+    0,
+  )
   const unrealizedNet = active.reduce(
-    (sum, position) => sum + (position.unrealized_gain_net ?? position.unrealized_gain ?? 0),
+    (sum, position) =>
+      sum + (position.unrealized_gain_net ?? position.unrealized_gain ?? 0),
     0,
   )
   const currentCostBasis = currentValueGross - unrealizedGross
   const currentValueNet = currentCostBasis + unrealizedNet
   const realizedNet = positions.reduce(
-    (sum, position) => sum + (position.realized_gain_net ?? position.realized_gain),
+    (sum, position) =>
+      sum + (position.realized_gain_net ?? position.realized_gain),
     0,
   )
   const incomeNet = positions.reduce(
@@ -472,14 +541,20 @@ export function computePerformanceSummary(positions: PositionRow[]): Performance
       (position.total_interest_net ?? position.total_interest),
     0,
   )
-  const realizedGross = positions.reduce((sum, position) => sum + position.realized_gain, 0)
+  const realizedGross = positions.reduce(
+    (sum, position) => sum + position.realized_gain,
+    0,
+  )
   const incomeGross = positions.reduce(
     (sum, position) => sum + position.total_dividends + position.total_interest,
     0,
   )
   const totalPerformanceGross = unrealizedGross + realizedGross + incomeGross
   const totalPerformanceNet = unrealizedNet + realizedNet + incomeNet
-  const totalInvested = positions.reduce((sum, position) => sum + position.total_invested, 0)
+  const totalInvested = positions.reduce(
+    (sum, position) => sum + position.total_invested,
+    0,
+  )
 
   return {
     currentValueNet: Math.round(currentValueNet),
@@ -491,7 +566,8 @@ export function computePerformanceSummary(positions: PositionRow[]): Performance
     incomeNet: Math.round(incomeNet),
     totalPerformanceGross: Math.round(totalPerformanceGross),
     totalPerformanceNet: Math.round(totalPerformanceNet),
-    totalPerformancePct: totalInvested > 0 ? (totalPerformanceNet / totalInvested) * 100 : 0,
+    totalPerformancePct:
+      totalInvested > 0 ? (totalPerformanceNet / totalInvested) * 100 : 0,
   }
 }
 
@@ -505,8 +581,12 @@ export function computeTrailing12mSavings(
 ): TrailingSavingCapacityPoint[] {
   const enriched = savingCapacity.map((pt, fullIdx) => {
     const window = savingCapacity.slice(Math.max(0, fullIdx - 11), fullIdx + 1)
-    const rolling_12m = Math.round(window.reduce((sum, p) => sum + p.savings_delta, 0))
-    const rolling_perf_12m = Math.round(window.reduce((sum, p) => sum + p.perf_delta, 0))
+    const rolling_12m = Math.round(
+      window.reduce((sum, p) => sum + p.savings_delta, 0),
+    )
+    const rolling_perf_12m = Math.round(
+      window.reduce((sum, p) => sum + p.perf_delta, 0),
+    )
     return { ...pt, rolling_12m, rolling_perf_12m }
   })
   const visible = filterPointsByPeriod(enriched, dateFrom, dateTo)
@@ -523,11 +603,16 @@ export type TopPerformer = {
 }
 
 // Active positions with non-zero unrealized P&L, sorted best to worst.
-export function computeTopPerformers(positions?: PositionRow[]): TopPerformer[] {
+export function computeTopPerformers(
+  positions?: PositionRow[],
+): TopPerformer[] {
   if (!positions) return []
   return positions
     .filter(
-      (p) => p.status === 'active' && p.unrealized_gain_pct !== null && p.unrealized_gain_pct !== 0,
+      (p) =>
+        p.status === 'active' &&
+        p.unrealized_gain_pct !== null &&
+        p.unrealized_gain_pct !== 0,
     )
     .map((p) => ({
       label: resolveAssetName(p, p.isin),

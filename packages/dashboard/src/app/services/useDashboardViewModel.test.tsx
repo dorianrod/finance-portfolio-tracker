@@ -1,7 +1,8 @@
-import { renderToStaticMarkup } from 'react-dom/server'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Provider, createStore } from 'jotai'
+import { createStore, Provider } from 'jotai'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+
 import { useDashboardViewModel } from './useDashboardViewModel'
 
 function DashboardViewModelProbe() {

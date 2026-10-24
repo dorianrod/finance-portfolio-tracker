@@ -5,7 +5,9 @@ export function getPositionTradeOperations(position: PositionRow): Operation[] {
   return position.subRows
     .flatMap((group) => group.subRows)
     .filter(
-      (operation) => operation.operation_type === 'BUY' || operation.operation_type === 'SELL',
+      (operation) =>
+        operation.operation_type === 'BUY' ||
+        operation.operation_type === 'SELL',
     )
     .map((operation) => ({
       date: operation.date,

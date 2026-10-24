@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import {
   formatGroupedAllocationLabel,
@@ -15,8 +18,7 @@ import type {
 } from '@/domains/portfolio/shared/types/allocationChart.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
-import { useAtomValue } from 'jotai'
-import { useCallback, useMemo } from 'react'
+
 import { DonutCardView } from './DonutCard.view'
 import { PositionsToggle } from './PositionsToggle.view'
 
@@ -56,7 +58,8 @@ export function DonutCard({
   }, [point])
   const selectCategory = useCallback(
     (entry: PieEntry | undefined) => {
-      if (entry && !entry.subItems?.length) toggleFilter({ type: dimension, value: entry.name })
+      if (entry && !entry.subItems?.length)
+        toggleFilter({ type: dimension, value: entry.name })
     },
     [dimension, toggleFilter],
   )
@@ -66,7 +69,9 @@ export function DonutCard({
       date={point.date}
       total={total}
       data={data}
-      activeCategory={activeFilter?.type === dimension ? activeFilter.value : null}
+      activeCategory={
+        activeFilter?.type === dimension ? activeFilter.value : null
+      }
       isFiltered={activeFilter !== null}
       onSelect={selectCategory}
       positionsControl={
@@ -77,11 +82,18 @@ export function DonutCard({
       tooltip={
         <ScopedInfoTooltip
           // eslint-disable-next-line local/no-prop-drilling -- The chart feature owns its translated description; the adapter adds live filter scope.
-          text={i18n.t('ui.donutcard.portfolioAllocationByValue0AtTheDisplayedSnapshot', {
-            value0: title.toLowerCase(),
-          })}
+          text={i18n.t(
+            'ui.donutcard.portfolioAllocationByValue0AtTheDisplayedSnapshot',
+            {
+              value0: title.toLowerCase(),
+            },
+          )}
           // eslint-disable-next-line local/no-prop-drilling -- This feature owns the chart's reporting snapshot.
-          scope={{ account: 'filterable', period: 'as-of', effectiveDate: point.date }}
+          scope={{
+            account: 'filterable',
+            period: 'as-of',
+            effectiveDate: point.date,
+          }}
         />
       }
     />

@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualitySummary'
 import {
   scopeManualPriceOverrides,
@@ -13,7 +15,6 @@ import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manua
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-import { useMemo } from 'react'
 
 type DashboardQualityInput = {
   activeTab: AnalysisTab
@@ -44,7 +45,10 @@ export function useDashboardQuality({
     () =>
       rawAllocationData.loading
         ? []
-        : computeAllocationCoverageByAccount(latestAccountPositions, rawAllocationData),
+        : computeAllocationCoverageByAccount(
+            latestAccountPositions,
+            rawAllocationData,
+          ),
     [latestAccountPositions, rawAllocationData],
   )
   const scopedFundQuality = useMemo(
@@ -71,11 +75,17 @@ export function useDashboardQuality({
       ? tableFiltered
       : latestAccountPositions
   const scopedPipelineErrors = useMemo(
-    () => scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
+    () =>
+      scopePipelineErrors(pipelineErrors, pipelineQualityPositions, filters),
     [filters, pipelineErrors, pipelineQualityPositions],
   )
   const scopedManualPriceOverrides = useMemo(
-    () => scopeManualPriceOverrides(manualPriceOverrides, latestAccountPositions, filters),
+    () =>
+      scopeManualPriceOverrides(
+        manualPriceOverrides,
+        latestAccountPositions,
+        filters,
+      ),
     [filters, latestAccountPositions, manualPriceOverrides],
   )
   const qualitySummary = useMemo(
@@ -105,6 +115,11 @@ export function useDashboardQuality({
       scopedManualPriceOverrides,
       scopedPipelineErrors,
     }),
-    [qualitySummary, scopedFundQuality, scopedManualPriceOverrides, scopedPipelineErrors],
+    [
+      qualitySummary,
+      scopedFundQuality,
+      scopedManualPriceOverrides,
+      scopedPipelineErrors,
+    ],
   )
 }

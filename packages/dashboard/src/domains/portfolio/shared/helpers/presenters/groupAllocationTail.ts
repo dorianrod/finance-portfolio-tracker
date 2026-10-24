@@ -6,7 +6,9 @@ export function formatGroupedAllocationLabel(count: number): string {
   return i18n.t('ui.groupallocationtail.othersCount', { count })
 }
 
-export function groupAllocationTail(cats: Array<{ name: string; value: number }>): {
+export function groupAllocationTail(
+  cats: Array<{ name: string; value: number }>,
+): {
   main: Array<{ name: string; value: number }>
   grouped: Array<{ name: string; value: number }>
 } {
@@ -22,8 +24,15 @@ export function groupAllocationTail(cats: Array<{ name: string; value: number }>
     if (cumulative >= total * 0.85) break
   }
   const grouped = sorted.slice(splitIndex)
-  const pinned = grouped.filter((category) => PINNED_CATEGORIES.has(category.name))
-  const groupable = grouped.filter((category) => !PINNED_CATEGORIES.has(category.name))
+  const pinned = grouped.filter((category) =>
+    PINNED_CATEGORIES.has(category.name),
+  )
+  const groupable = grouped.filter(
+    (category) => !PINNED_CATEGORIES.has(category.name),
+  )
   if (groupable.length <= 1) return { main: sorted, grouped: [] }
-  return { main: [...sorted.slice(0, splitIndex), ...pinned], grouped: groupable }
+  return {
+    main: [...sorted.slice(0, splitIndex), ...pinned],
+    grouped: groupable,
+  }
 }

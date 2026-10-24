@@ -8,6 +8,9 @@ function clean(value: string | null | undefined): string {
 }
 
 /** Resolves the canonical asset name stored in domain view models. */
-export function resolveAssetName(source: AssetNameSource, fallback = ''): string {
+export function resolveAssetName(
+  source: AssetNameSource,
+  fallback = '',
+): string {
   return clean(source.name) || clean(source.ticker) || clean(fallback)
 }

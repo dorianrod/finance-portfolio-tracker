@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { lazy, Suspense } from 'react'
+
 import { DashboardLoadState } from '@/app/DashboardLoadState.state'
 import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.view'
 import { DASHBOARD_TAB_LOADERS } from '@/app/services/dashboardTabLoaders'
@@ -5,8 +8,8 @@ import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
 import { AllocationViewToggle } from '@/domains/portfolio/features/allocation/components/AllocationViewToggle.feature'
 import { FilterChipBar } from '@/domains/portfolio/features/allocation/components/FilterChipBar.feature'
 import {
-  HoldingsViewTabs,
   type HoldingsView,
+  HoldingsViewTabs,
 } from '@/domains/portfolio/features/holdings/components/HoldingsViewTabs.feature'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature'
 import {
@@ -28,14 +31,13 @@ import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filter
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import {
+  type AnalysisTab,
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
-  type AnalysisTab,
 } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useAtomValue } from 'jotai'
-import { lazy, Suspense } from 'react'
+
 import { DashboardHeader } from './DashboardHeader.feature'
 import { DashboardNavigation } from './DashboardNavigation.feature'
 import { DashboardPanelFallback } from './DashboardPanelFallback.view'
@@ -51,38 +53,57 @@ const DataQualityTab = lazy(DASHBOARD_TAB_LOADERS.quality)
 const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   overview: {
     title: i18n.t('ui.app.portfolioOverview'),
-    description: i18n.t('ui.app.currentPositionRecentChangeDriversAndTheMainSignals'),
+    description: i18n.t(
+      'ui.app.currentPositionRecentChangeDriversAndTheMainSignals',
+    ),
   },
   wealth: {
     title: i18n.t('ui.app.wealthCashFlow'),
-    description: i18n.t('ui.app.howContributionsAndMarketPerformanceBuiltThePortfolioOver'),
+    description: i18n.t(
+      'ui.app.howContributionsAndMarketPerformanceBuiltThePortfolioOver',
+    ),
   },
   performance: {
     title: i18n.t('ui.app.performancePassiveIncome'),
-    description: i18n.t('ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome'),
+    description: i18n.t(
+      'ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome',
+    ),
   },
   allocation: {
     title: i18n.t('ui.app.diversification'),
-    description: i18n.t('ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs'),
+    description: i18n.t(
+      'ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs',
+    ),
   },
   holdings: {
     title: i18n.t('ui.app.holdings'),
-    description: i18n.t('ui.app.inspectHeldPositionsAndTheirUnderlyingEconomicExposure'),
+    description: i18n.t(
+      'ui.app.inspectHeldPositionsAndTheirUnderlyingEconomicExposure',
+    ),
   },
   quality: {
     title: i18n.t('ui.app.dataQuality'),
-    description: i18n.t('ui.app.aFocusedReviewOfPipelinePricingClassificationAndLook'),
+    description: i18n.t(
+      'ui.app.aFocusedReviewOfPipelinePricingClassificationAndLook',
+    ),
   },
 }
 
-const HOLDINGS_COPY: Record<HoldingsView, { title: string; description: string }> = {
+const HOLDINGS_COPY: Record<
+  HoldingsView,
+  { title: string; description: string }
+> = {
   positions: {
     title: i18n.t('ui.app.positions'),
-    description: i18n.t('ui.app.inspectEveryHoldingTransactionAndPositionLevelResult'),
+    description: i18n.t(
+      'ui.app.inspectEveryHoldingTransactionAndPositionLevelResult',
+    ),
   },
   underlying: {
     title: i18n.t('ui.app.underlyingExposure'),
-    description: i18n.t('ui.app.reviewIdentifiedEconomicExposureThroughEtfsAndFundsGrouped'),
+    description: i18n.t(
+      'ui.app.reviewIdentifiedEconomicExposureThroughEtfsAndFundsGrouped',
+    ),
   },
 }
 
@@ -148,7 +169,8 @@ export default function App() {
     underlyingMetricTone,
     underlyingReliabilityPct,
   } = qualitySummary
-  const copy = activeTab === 'holdings' ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab]
+  const copy =
+    activeTab === 'holdings' ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab]
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView)
   const activeFilterSummaries = filterSummaries(
     filters,
@@ -156,23 +178,32 @@ export default function App() {
     filterVisibility,
     (date) => formatDate(date, { style: 'isoDate' }),
   )
-  const visibleFilterSummaries = filterSummariesForTab(activeFilterSummaries, activeTab)
+  const visibleFilterSummaries = filterSummariesForTab(
+    activeFilterSummaries,
+    activeTab,
+  )
   const showPipelineReliability =
     activeTab !== 'overview' &&
     activeTab !== 'allocation' &&
     activeTab !== 'quality' &&
     !(activeTab === 'holdings' && holdingsView === 'underlying')
-  const showUnderlyingReliability = activeTab === 'holdings' && holdingsView === 'underlying'
+  const showUnderlyingReliability =
+    activeTab === 'holdings' && holdingsView === 'underlying'
   const showResetFilters =
-    activeFilterSummaries.length > 0 || (activeTab === 'allocation' && allocationFilter !== null)
-  const showAllocationFilter = activeTab === 'allocation' && allocationFilter !== null
+    activeFilterSummaries.length > 0 ||
+    (activeTab === 'allocation' && allocationFilter !== null)
+  const showAllocationFilter =
+    activeTab === 'allocation' && allocationFilter !== null
 
   return (
     <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
       <div className="mx-auto max-w-screen-2xl">
         <DashboardHeader />
 
-        <DashboardLoadState state={loadState} onRetry={() => window.location.reload()}>
+        <DashboardLoadState
+          state={loadState}
+          onRetry={() => window.location.reload()}
+        >
           <DashboardNavigation
             activeTab={activeTab}
             hasFundValidationError={hasFundValidationError}
@@ -184,7 +215,9 @@ export default function App() {
 
           <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-5">
             <div className="min-w-0">
-              <h2 className="text-lg font-semibold text-content">{copy.title}</h2>
+              <h2 className="text-lg font-semibold text-content">
+                {copy.title}
+              </h2>
               {showPipelineReliability && (
                 <div className="mt-2">
                   <PipelineReliabilityKpi
@@ -205,13 +238,17 @@ export default function App() {
                     }}
                     metrics={[
                       {
-                        percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                        percentage: rawAllocationData.loading
+                          ? null
+                          : classificationReliabilityPct,
                         amount: classificationMappedValue,
                         metricLabel: i18n.t('ui.app.diversification'),
                         tone: classificationMetricTone,
                       },
                       {
-                        percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                        percentage: scopedFundQuality.report
+                          ? underlyingReliabilityPct
+                          : null,
                         amount: identifiedFundValue,
                         metricLabel: i18n.t('ui.app.underlyingAssets'),
                         tone: underlyingMetricTone,
@@ -231,13 +268,17 @@ export default function App() {
                   <CombinedAnalysisReliabilityKpi
                     metrics={[
                       {
-                        percentage: rawAllocationData.loading ? null : classificationReliabilityPct,
+                        percentage: rawAllocationData.loading
+                          ? null
+                          : classificationReliabilityPct,
                         amount: classificationMappedValue,
                         metricLabel: i18n.t('ui.app.diversification'),
                         tone: classificationMetricTone,
                       },
                       {
-                        percentage: scopedFundQuality.report ? underlyingReliabilityPct : null,
+                        percentage: scopedFundQuality.report
+                          ? underlyingReliabilityPct
+                          : null,
                         amount: identifiedFundValue,
                         metricLabel: i18n.t('ui.app.underlyingAssets'),
                         tone: underlyingMetricTone,
@@ -255,17 +296,23 @@ export default function App() {
               {showUnderlyingReliability && (
                 <div className="mt-2">
                   <AnalysisReliabilityKpi
-                    percentage={scopedFundQuality.report ? underlyingReliabilityPct : null}
+                    percentage={
+                      scopedFundQuality.report ? underlyingReliabilityPct : null
+                    }
                     amount={identifiedFundValue}
                     metricLabel={i18n.t('ui.app.underlyingAssets')}
                     tone={underlyingMetricTone}
-                    tooltip={i18n.t('ui.app.reliabilityOfTheLookThroughDataUsedByThe')}
+                    tooltip={i18n.t(
+                      'ui.app.reliabilityOfTheLookThroughDataUsedByThe',
+                    )}
                     qualityTheme="lookthrough"
                     scope={{ account: 'filterable', period: 'latest' }}
                   />
                 </div>
               )}
-              <p className="mt-2 text-sm text-content-subtle">{copy.description}</p>
+              <p className="mt-2 text-sm text-content-subtle">
+                {copy.description}
+              </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               {activeTab === 'allocation' && <AllocationViewToggle />}
@@ -291,7 +338,10 @@ export default function App() {
             demoPresetActive={demoPresetActive}
           />
 
-          <DashboardPanelErrorBoundary key={activeTab} onRetry={() => window.location.reload()}>
+          <DashboardPanelErrorBoundary
+            key={activeTab}
+            onRetry={() => window.location.reload()}
+          >
             <Suspense fallback={<DashboardPanelFallback />}>
               {activeTab === 'overview' && (
                 <OverviewTab
@@ -353,7 +403,9 @@ export default function App() {
                     <PositionsTable
                       data={tableData}
                       fundStatuses={fundData.statuses}
-                      grouping={useGroupedPositionsTable ? 'account-type' : 'flat'}
+                      grouping={
+                        useGroupedPositionsTable ? 'account-type' : 'flat'
+                      }
                     />
                   ) : (
                     <FundLookThroughTab

@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import {
   allocationTrendDomain,
   buildAllocationTrend,
@@ -12,8 +15,7 @@ import {
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
-import { useAtomValue } from 'jotai'
-import { useCallback, useMemo } from 'react'
+
 import { EvoCardView } from './EvoCard.view'
 import { PositionsToggle } from './PositionsToggle.view'
 
@@ -31,7 +33,10 @@ export function EvoCard({
   const { toggleFilter } = useDashboardAllocationFilters()
   const { togglePositions } = useDashboardAllocationPositions()
   const model = useMemo(
-    () => ({ ...buildAllocationTrend(points), dateDomain: allocationTrendDomain(points) }),
+    () => ({
+      ...buildAllocationTrend(points),
+      dateDomain: allocationTrendDomain(points),
+    }),
     [points],
   )
   const selectCategory = useCallback(
@@ -45,7 +50,9 @@ export function EvoCard({
       chartData={model.rows}
       groupedCategory={model.groupedCategory}
       dateDomain={model.dateDomain}
-      activeCategory={activeFilter?.type === dimension ? activeFilter.value : null}
+      activeCategory={
+        activeFilter?.type === dimension ? activeFilter.value : null
+      }
       isFiltered={activeFilter !== null}
       onSelect={selectCategory}
       tooltip={

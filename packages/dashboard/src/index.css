@@ -149,7 +149,12 @@
   cursor: pointer;
 }
 
-:where(button:disabled, select:disabled, [role='button'][aria-disabled='true'], input:disabled) {
+:where(
+  button:disabled,
+  select:disabled,
+  [role='button'][aria-disabled='true'],
+  input:disabled
+) {
   cursor: not-allowed;
 }
 
@@ -228,19 +233,27 @@
   /* ─── Muted semantic colors for light backgrounds ─── */
 
   /* Blue: light-mode "900" → pastel bg, "200/300" → dark readable text */
-  --color-blue-200: oklch(48.8% 0.243 264.376); /* blue-700: dark text on white */
-  --color-blue-300: oklch(48.8% 0.243 264.376); /* blue-700: group labels, deposits */
+  --color-blue-200: oklch(
+    48.8% 0.243 264.376
+  ); /* blue-700: dark text on white */
+  --color-blue-300: oklch(
+    48.8% 0.243 264.376
+  ); /* blue-700: group labels, deposits */
   --color-blue-900: oklch(93.2% 0.032 255.585); /* blue-100: light badge bg */
 
   /* Purple: dividends */
   --color-purple-300: oklch(49.6% 0.265 301.924); /* purple-700: dark text */
   --color-purple-400: oklch(49.6% 0.265 301.924); /* purple-700 */
-  --color-purple-900: oklch(94.6% 0.033 307.174); /* purple-100: light badge bg */
+  --color-purple-900: oklch(
+    94.6% 0.033 307.174
+  ); /* purple-100: light badge bg */
 
   /* Orange: SELL operations */
   --color-orange-300: oklch(55.3% 0.195 38.402); /* orange-700: dark text */
   --color-orange-400: oklch(55.3% 0.195 38.402); /* orange-700 */
-  --color-orange-900: oklch(95.4% 0.038 75.164); /* orange-100: light badge bg */
+  --color-orange-900: oklch(
+    95.4% 0.038 75.164
+  ); /* orange-100: light badge bg */
 
   /* Red: losses & withdrawals */
   --color-red-300: oklch(50.5% 0.213 27.518); /* red-700: darker */
@@ -249,10 +262,16 @@
   --color-red-950: oklch(97.1% 0.013 17.38); /* red-50: subtle status bg */
 
   /* Green: gains (slightly more muted on white) */
-  --color-emerald-300: oklch(50.8% 0.118 165.612); /* emerald-700: readable text */
+  --color-emerald-300: oklch(
+    50.8% 0.118 165.612
+  ); /* emerald-700: readable text */
   --color-emerald-400: oklch(59.6% 0.145 163.225); /* emerald-600 */
-  --color-emerald-900: oklch(95% 0.052 163.051); /* emerald-100: light badge bg */
-  --color-emerald-950: oklch(97.9% 0.021 166.113); /* emerald-50: subtle status bg */
+  --color-emerald-900: oklch(
+    95% 0.052 163.051
+  ); /* emerald-100: light badge bg */
+  --color-emerald-950: oklch(
+    97.9% 0.021 166.113
+  ); /* emerald-50: subtle status bg */
 
   /* Amber: warnings */
   --color-amber-300: oklch(47.3% 0.137 46.201); /* amber-800: readable text */

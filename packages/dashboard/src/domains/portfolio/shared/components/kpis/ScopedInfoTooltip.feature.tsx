@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
+
 import {
   FilterScopeBadges,
   type FilterScopeSpec,
 } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+
 import { InfoTooltip } from './InfoTooltip.view'
 
 export function ScopedInfoTooltip({

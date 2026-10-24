@@ -1,10 +1,12 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createStore, Provider } from 'jotai'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
+
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Provider, createStore } from 'jotai'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
+
 import { FilterScopeBadges } from './FilterScopeBadges.feature'
 
 function render(
@@ -56,17 +58,21 @@ describe('FilterScopeBadges', () => {
   })
 
   it('warns when a global account scope ignores an active selection', () => {
-    const html = render(filters({ accounts: new Set(['acc1']) }), 'year-range', 'global')
+    const html = render(
+      filters({ accounts: new Set(['acc1']) }),
+      'year-range',
+      'global',
+    )
     expect(html).toContain('Global accounts')
     expect(html).toContain('text-warning')
   })
 
   it('distinguishes an as-of date from a start-only filter', () => {
-    expect(render(filters({ dateTo: new Date('2026-06-30') }), 'as-of')).toContain(
-      'As of 30 Jun 2026',
-    )
-    expect(render(filters({ dateFrom: new Date('2026-01-01') }), 'as-of')).toContain(
-      'Latest snapshot · start ignored',
-    )
+    expect(
+      render(filters({ dateTo: new Date('2026-06-30') }), 'as-of'),
+    ).toContain('As of 30 Jun 2026')
+    expect(
+      render(filters({ dateFrom: new Date('2026-01-01') }), 'as-of'),
+    ).toContain('Latest snapshot · start ignored')
   })
 })

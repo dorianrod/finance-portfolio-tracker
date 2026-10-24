@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
+
 import { buildDashboardSourceData } from '@/app/helpers/mappers/buildDashboardSourceData'
 import { resolveDashboardLoadState } from '@/app/helpers/mappers/resolveDashboardLoadState'
 import { useDashboardHistory } from '@/app/services/useDashboardHistory'
@@ -34,8 +37,6 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
-import { useAtomValue } from 'jotai'
-import { useMemo } from 'react'
 
 const EMPTY_DASHBOARD_DATA: DashboardData = {
   positions: [],
@@ -91,7 +92,8 @@ export function useDashboardViewModel() {
   const allPositionRows = allPositionsQuery.data ?? EMPTY_RAW_POSITIONS
   const pipelineErrors = pipelineErrorsQuery.data ?? EMPTY_ERRORS
   const pipelineErrorsLoading = pipelineErrorsQuery.isPending
-  const manualPriceOverrides = manualPriceOverridesQuery.data ?? EMPTY_MANUAL_PRICE_OVERRIDES
+  const manualPriceOverrides =
+    manualPriceOverridesQuery.data ?? EMPTY_MANUAL_PRICE_OVERRIDES
   const allMonthlyOps = monthlyOpsQuery.data ?? EMPTY_MONTHLY_OPS
   const rawAllocationData = useMemo(
     () => ({
@@ -100,7 +102,8 @@ export function useDashboardViewModel() {
     }),
     [rawAllocationQuery.data, rawAllocationQuery.isPending],
   )
-  const annualIncomeSavings = annualIncomeSavingsQuery.data ?? EMPTY_ANNUAL_INCOME_SAVINGS
+  const annualIncomeSavings =
+    annualIncomeSavingsQuery.data ?? EMPTY_ANNUAL_INCOME_SAVINGS
 
   const {
     accountFilterLabels,
@@ -110,7 +113,13 @@ export function useDashboardViewModel() {
     allOperationTypes,
     enrichedHistory,
   } = useMemo(
-    () => buildDashboardSourceData({ accountLabels, cashHistory, history, positions }),
+    () =>
+      buildDashboardSourceData({
+        accountLabels,
+        cashHistory,
+        history,
+        positions,
+      }),
     [accountLabels, cashHistory, history, positions],
   )
 
@@ -140,7 +149,12 @@ export function useDashboardViewModel() {
     globalTri,
     irrScopeLabel,
     irrStatus,
-  } = useDashboardHistory({ allAccounts, allPositionRows, enrichedHistory, filters })
+  } = useDashboardHistory({
+    allAccounts,
+    allPositionRows,
+    enrichedHistory,
+    filters,
+  })
 
   const {
     accountTypeData,
@@ -165,40 +179,70 @@ export function useDashboardViewModel() {
     rawOperations,
     rawPositions,
   })
-  const { passiveIncome, performance, trailingIncome, passiveIncomeLoading, passiveIncomeError } =
-    useDashboardPerformance({
-      currentPositions,
-      displayedHistory,
-      filters,
-      periodPositions,
-    })
-  const { qualitySummary, scopedFundQuality, scopedManualPriceOverrides, scopedPipelineErrors } =
-    useDashboardQuality({
-      activeTab,
-      filters,
-      fundData,
-      holdingsView,
-      latestAccountPositions,
-      manualPriceOverrides,
-      pipelineErrors,
-      pipelineErrorsLoading,
-      rawAllocationData,
-      tableFiltered,
-    })
+  const {
+    passiveIncome,
+    performance,
+    trailingIncome,
+    passiveIncomeLoading,
+    passiveIncomeError,
+  } = useDashboardPerformance({
+    currentPositions,
+    displayedHistory,
+    filters,
+    periodPositions,
+  })
+  const {
+    qualitySummary,
+    scopedFundQuality,
+    scopedManualPriceOverrides,
+    scopedPipelineErrors,
+  } = useDashboardQuality({
+    activeTab,
+    filters,
+    fundData,
+    holdingsView,
+    latestAccountPositions,
+    manualPriceOverrides,
+    pipelineErrors,
+    pipelineErrorsLoading,
+    rawAllocationData,
+    tableFiltered,
+  })
 
   const loadState = useMemo(
     () =>
       resolveDashboardLoadState([
         { error: dashboardQuery.error, isPending: dashboardQuery.isPending },
         { error: historyQuery.error, isPending: historyQuery.isPending },
-        { error: cashHistoryQuery.error, isPending: cashHistoryQuery.isPending },
-        { error: allPositionsQuery.error, isPending: allPositionsQuery.isPending },
-        { error: pipelineErrorsQuery.error, isPending: pipelineErrorsQuery.isPending },
-        { error: manualPriceOverridesQuery.error, isPending: manualPriceOverridesQuery.isPending },
+        {
+          error: cashHistoryQuery.error,
+          isPending: cashHistoryQuery.isPending,
+        },
+        {
+          error: allPositionsQuery.error,
+          isPending: allPositionsQuery.isPending,
+        },
+        {
+          error: pipelineErrorsQuery.error,
+          isPending: pipelineErrorsQuery.isPending,
+        },
+        {
+          error: manualPriceOverridesQuery.error,
+          isPending: manualPriceOverridesQuery.isPending,
+        },
         { error: monthlyOpsQuery.error, isPending: monthlyOpsQuery.isPending },
-        { error: rawAllocationQuery.error, isPending: rawAllocationQuery.isPending },
-        { error: fundHoldingsQuery.error, isPending: fundHoldingsQuery.isPending },
-        { error: annualIncomeSavingsQuery.error, isPending: annualIncomeSavingsQuery.isPending },
+        {
+          error: rawAllocationQuery.error,
+          isPending: rawAllocationQuery.isPending,
+        },
+        {
+          error: fundHoldingsQuery.error,
+          isPending: fundHoldingsQuery.isPending,
+        },
+        {
+          error: annualIncomeSavingsQuery.error,
+          isPending: annualIncomeSavingsQuery.isPending,
+        },
         { isPending: savingCapacityLoading, error: savingCapacityError },
         { isPending: passiveIncomeLoading, error: passiveIncomeError },
       ]),

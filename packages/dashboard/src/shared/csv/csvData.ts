@@ -1,6 +1,7 @@
-import { HttpError } from '@/shared/http/httpError'
 import Papa from 'papaparse'
 import { array, type InferType, type Schema } from 'yup'
+
+import { HttpError } from '@/shared/http/httpError'
 
 const csvRequests = new Map<string, Promise<unknown[]>>()
 
@@ -17,7 +18,9 @@ function loadCsv(url: string): Promise<unknown[]> {
       header: true,
       skipEmptyLines: true,
     })
-    const parseError = result.errors.find((error) => error.code !== 'UndetectableDelimiter')
+    const parseError = result.errors.find(
+      (error) => error.code !== 'UndetectableDelimiter',
+    )
     if (parseError) throw new Error(parseError.message)
     return result.data
   })

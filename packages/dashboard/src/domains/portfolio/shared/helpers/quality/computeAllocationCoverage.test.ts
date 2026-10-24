@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+
 import {
   computeAllocationCoverageByAccount,
   computeAllocationCoverageByDimension,
@@ -53,7 +54,14 @@ function isinRow(overrides: Partial<RawIsinRow>): RawIsinRow {
 }
 
 function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
-  return { geo: [], secteur: [], currency: [], classe: [], loading: false, ...overrides }
+  return {
+    geo: [],
+    secteur: [],
+    currency: [],
+    classe: [],
+    loading: false,
+    ...overrides,
+  }
 }
 
 describe('computeAllocationCoverageByAccount', () => {
@@ -74,12 +82,18 @@ describe('computeAllocationCoverageByAccount', () => {
   })
 
   it('treats positions with no ISIN as allocated when their synthetic NC-<name> key matches', () => {
-    const positions = [position({ account: 'bnp', isin: '', name: 'Epargne', total_value: 200 })]
-    const data = rawData({ classe: [isinRow({ isin: 'NC-Epargne', name: 'Epargne' })] })
+    const positions = [
+      position({ account: 'bnp', isin: '', name: 'Epargne', total_value: 200 }),
+    ]
+    const data = rawData({
+      classe: [isinRow({ isin: 'NC-Epargne', name: 'Epargne' })],
+    })
 
     const result = computeAllocationCoverageByAccount(positions, data)
 
-    expect(result).toEqual([{ account: 'bnp', allocated: 200, unallocated: 0, notApplicable: 0 }])
+    expect(result).toEqual([
+      { account: 'bnp', allocated: 200, unallocated: 0, notApplicable: 0 },
+    ])
   })
 
   it('ignores closed positions and non-positive values', () => {
@@ -156,8 +170,18 @@ describe('computeAllocationCoverageByAccount', () => {
 describe('computeAllocationCoverageByDimension', () => {
   it('counts explicit nc and missing rows, with responsible assets', () => {
     const positions = [
-      position({ id: 'known', isin: 'KNOWN', name: 'Partially documented', total_value: 1_000 }),
-      position({ id: 'missing', isin: 'MISSING', name: 'Missing', total_value: 500 }),
+      position({
+        id: 'known',
+        isin: 'KNOWN',
+        name: 'Partially documented',
+        total_value: 1_000,
+      }),
+      position({
+        id: 'missing',
+        isin: 'MISSING',
+        name: 'Missing',
+        total_value: 500,
+      }),
     ]
     const data = rawData({
       geo: [isinRow({ isin: 'KNOWN', values: { france: 80, nc: 20 } })],
@@ -172,7 +196,12 @@ describe('computeAllocationCoverageByDimension', () => {
     })
     expect(result.find((item) => item.dimension === 'geo')?.issues).toEqual([
       { id: 'MISSING', name: 'Missing', value: 500, unallocated: 500 },
-      { id: 'KNOWN', name: 'Partially documented', value: 1000, unallocated: 200 },
+      {
+        id: 'KNOWN',
+        name: 'Partially documented',
+        value: 1000,
+        unallocated: 200,
+      },
     ])
     expect(result.find((item) => item.dimension === 'secteur')).toMatchObject({
       allocated: 1_000,
@@ -182,7 +211,12 @@ describe('computeAllocationCoverageByDimension', () => {
 
   it('excludes savings and checking balances from dimension gaps', () => {
     const positions = [
-      position({ account_category: 'savings', isin: '', name: 'Livret A', total_value: 1_000 }),
+      position({
+        account_category: 'savings',
+        isin: '',
+        name: 'Livret A',
+        total_value: 1_000,
+      }),
       position({
         account_category: 'checking',
         isin: '',
@@ -203,7 +237,9 @@ describe('computeAllocationCoverageByDimension', () => {
         total_value: 300,
       }),
     ]
-    const data = rawData({ geo: [isinRow({ isin: 'KNOWN', values: { france: 100 } })] })
+    const data = rawData({
+      geo: [isinRow({ isin: 'KNOWN', values: { france: 100 } })],
+    })
 
     const result = computeAllocationCoverageByDimension(positions, data)
 

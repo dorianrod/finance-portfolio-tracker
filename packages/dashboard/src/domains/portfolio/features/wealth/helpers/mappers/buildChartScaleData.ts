@@ -1,7 +1,6 @@
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
-
-import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 
 export const PORTFOLIO_COST_SHARE_KEY = '__cost_share'
 export const PORTFOLIO_GAIN_SHARE_KEY = '__gain_share'
@@ -11,7 +10,7 @@ export function accountTypeShareKey(index: number): string {
 }
 
 function signedShare(value: number, total: number): number | null {
-  return total === 0 ? null : value / total * 100
+  return total === 0 ? null : (value / total) * 100
 }
 
 export function withPortfolioComposition(history: PortfolioHistoryPoint[]) {
@@ -25,7 +24,10 @@ export function withPortfolioComposition(history: PortfolioHistoryPoint[]) {
   })
 }
 
-export function withAccountTypeShares(data: AccountTypeHistoryPoint[], accountTypes: string[]) {
+export function withAccountTypeShares(
+  data: AccountTypeHistoryPoint[],
+  accountTypes: string[],
+) {
   return data.map((point) => {
     const values = accountTypes.map((accountType) => {
       const value = point[accountType]

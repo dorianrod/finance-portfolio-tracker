@@ -1,3 +1,5 @@
+import { type LabelProps } from 'recharts'
+
 import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/helpers/calculators/calculateYearLabelLayout'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import i18n from '@/i18n/i18n'
@@ -5,9 +7,12 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import { type LabelProps } from 'recharts'
 
-const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = { dx: 0, dy: -12, textAnchor: 'middle' }
+const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = {
+  dx: 0,
+  dy: -12,
+  textAnchor: 'middle',
+}
 
 export function YearLabel({
   index,
@@ -25,7 +30,8 @@ export function YearLabel({
   oldestYear: number
   newestYear: number
 }) {
-  if (index == null || !viewBox || !('x' in viewBox) || !('y' in viewBox)) return null
+  if (index == null || !viewBox || !('x' in viewBox) || !('y' in viewBox))
+    return null
   const placement = placements[index] ?? DEFAULT_YEAR_LABEL_PLACEMENT
   const point = chartPoints[index]
   if (!point) return null
@@ -35,7 +41,8 @@ export function YearLabel({
   const x = Number(viewBox.x) + width / 2 + placement.dx
   const y = Number(viewBox.y) + height / 2 + placement.dy
   const isRecent = recentYears.has(point.year)
-  const ageProgress = (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
+  const ageProgress =
+    (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
   const opacity = isRecent ? 1 : 0.3 + ageProgress * 0.35
 
   return (
@@ -43,7 +50,9 @@ export function YearLabel({
       x={x}
       y={y}
       textAnchor={placement.textAnchor}
-      fill={isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries}
+      fill={
+        isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries
+      }
       fillOpacity={opacity}
       fontSize={11}
       fontWeight={isRecent ? 600 : 400}
@@ -67,7 +76,13 @@ export function RelationshipTooltip({
   if (!active || !point) return null
   return (
     <TooltipBox minWidth={220}>
-      <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>
+      <div
+        style={{
+          color: 'var(--tooltip-text)',
+          fontWeight: 600,
+          marginBottom: 7,
+        }}
+      >
         {point.year}
       </div>
       <div style={{ color: 'var(--tooltip-label)' }}>
@@ -82,7 +97,9 @@ export function RelationshipTooltip({
         {i18n.t('ui.incomeplacementrelationshipchart.otherIncome')}{' '}
         {formatMoney(point.otherIncome, { style: 'full' })}
       </div>
-      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}>
+      <div
+        style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}
+      >
         {i18n.t('ui.incomeplacementrelationshipchart.netContributions')}{' '}
         {formatMoney(point.placedSavings ?? 0, { style: 'full' })}
       </div>

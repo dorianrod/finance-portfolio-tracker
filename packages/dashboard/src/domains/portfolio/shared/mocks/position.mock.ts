@@ -1,6 +1,8 @@
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-export function makePosition(overrides: Partial<PositionRow> = {}): PositionRow {
+export function makePosition(
+  overrides: Partial<PositionRow> = {},
+): PositionRow {
   return {
     kind: 'position',
     id: 'asset-1',

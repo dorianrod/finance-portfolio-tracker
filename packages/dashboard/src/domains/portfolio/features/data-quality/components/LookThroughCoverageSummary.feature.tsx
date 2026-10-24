@@ -1,6 +1,7 @@
 import { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/components/helpers/presenters/buildLookThroughSummary'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
+
 import {
   LookThroughCoverageSummaryView,
   UnavailableLookThroughSummary,

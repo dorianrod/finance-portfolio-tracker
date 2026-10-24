@@ -1,9 +1,11 @@
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 const NON_INVESTMENT_ACCOUNT_CATEGORIES = new Set(['savings', 'checking'])
 
-export function isAssetAnalysisApplicablePosition(position: PositionRow): boolean {
+export function isAssetAnalysisApplicablePosition(
+  position: PositionRow,
+): boolean {
   const category = position.account_category?.trim().toLowerCase() ?? ''
   const accountType = position.account_type?.trim().toLowerCase() ?? ''
   const isBrokerageCash = accountType.endsWith(CASH_SUFFIX.toLowerCase())

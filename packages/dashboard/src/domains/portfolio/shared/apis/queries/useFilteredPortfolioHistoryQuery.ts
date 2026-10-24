@@ -1,3 +1,7 @@
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import * as yup from 'yup'
+
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
@@ -7,9 +11,6 @@ import type { PortfolioHistoryResponse } from '@/domains/portfolio/shared/types/
 import i18n from '@/i18n/i18n'
 import { readJsonResponse } from '@/shared/http/readJsonResponse'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import * as yup from 'yup'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -29,10 +30,11 @@ const API_HISTORY_POINT_SCHEMA: yup.ObjectSchema<ApiHistoryPoint> = yup.object({
   tri_rolling_3y: yup.number().nullable().default(null).defined(),
 })
 
-const FILTERED_HISTORY_RESPONSE_SCHEMA: yup.ObjectSchema<PortfolioHistoryResponse> = yup.object({
-  accounts: yup.array(yup.string().defined()).default([]).defined(),
-  history: yup.array(API_HISTORY_POINT_SCHEMA).default([]).defined(),
-})
+const FILTERED_HISTORY_RESPONSE_SCHEMA: yup.ObjectSchema<PortfolioHistoryResponse> =
+  yup.object({
+    accounts: yup.array(yup.string().defined()).default([]).defined(),
+    history: yup.array(API_HISTORY_POINT_SCHEMA).default([]).defined(),
+  })
 
 export class DemoScopeUnavailableError extends Error {}
 
@@ -42,15 +44,22 @@ type FilteredResponseState = {
   error: string | null
 }
 
-export function normalizeAccountSelection(accounts: Iterable<string>): string[] {
+export function normalizeAccountSelection(
+  accounts: Iterable<string>,
+): string[] {
   return [...new Set([...accounts].map(rawAccountId))].toSorted()
 }
 
 function sameAccounts(left: string[], right: string[]): boolean {
-  return left.length === right.length && left.every((value, index) => value === right[index])
+  return (
+    left.length === right.length &&
+    left.every((value, index) => value === right[index])
+  )
 }
 
-function toHistory(response: PortfolioHistoryResponse): PortfolioHistoryPoint[] {
+function toHistory(
+  response: PortfolioHistoryResponse,
+): PortfolioHistoryPoint[] {
   return response.history.map((point) => ({
     date: point.snapshot_date,
     total_value: point.total_value,
@@ -71,17 +80,24 @@ export function resolveFilteredHistoryState(
   accountKey: string,
   responseState: FilteredResponseState | null,
 ) {
-  const matchingResponse = responseState?.key === accountKey ? responseState : null
+  const matchingResponse =
+    responseState?.key === accountKey ? responseState : null
   return {
-    history: isFiltered ? (matchingResponse?.history ?? fallbackHistory) : fallbackHistory,
+    history: isFiltered
+      ? (matchingResponse?.history ?? fallbackHistory)
+      : fallbackHistory,
     loading: isFiltered && matchingResponse === null,
     error: matchingResponse?.error ?? null,
   }
 }
 
-async function readResponse(response: Response): Promise<PortfolioHistoryResponse> {
+async function readResponse(
+  response: Response,
+): Promise<PortfolioHistoryResponse> {
   const payload = await readJsonResponse(response)
-  return FILTERED_HISTORY_RESPONSE_SCHEMA.validate(payload, { stripUnknown: true })
+  return FILTERED_HISTORY_RESPONSE_SCHEMA.validate(payload, {
+    stripUnknown: true,
+  })
 }
 
 export async function requestFilteredPortfolioHistory(
@@ -118,7 +134,9 @@ export async function requestFilteredPortfolioHistory(
   )
 }
 
-async function requestDemoPresetAccounts(signal: AbortSignal): Promise<string[] | null> {
+async function requestDemoPresetAccounts(
+  signal: AbortSignal,
+): Promise<string[] | null> {
   if (!STATIC_DEMO) return null
   const fixture = await readResponse(
     await fetch(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }),
@@ -126,14 +144,20 @@ async function requestDemoPresetAccounts(signal: AbortSignal): Promise<string[] 
   return normalizeAccountSelection(fixture.accounts)
 }
 
-export function useFilteredPortfolioHistoryQuery(selectedAccounts: Set<string>) {
+export function useFilteredPortfolioHistoryQuery(
+  selectedAccounts: Set<string>,
+) {
   const normalizedAccounts = useMemo(
     () => normalizeAccountSelection(selectedAccounts),
     [selectedAccounts],
   )
   return useQuery<PortfolioHistoryResponse, Error, PortfolioHistoryPoint[]>({
-    queryKey: portfolioQueryKeys.data('filtered-history', ...normalizedAccounts),
-    queryFn: ({ signal }) => requestFilteredPortfolioHistory(normalizedAccounts, signal),
+    queryKey: portfolioQueryKeys.data(
+      'filtered-history',
+      ...normalizedAccounts,
+    ),
+    queryFn: ({ signal }) =>
+      requestFilteredPortfolioHistory(normalizedAccounts, signal),
     select: toHistory,
     enabled: selectedAccounts.size > 0,
   })

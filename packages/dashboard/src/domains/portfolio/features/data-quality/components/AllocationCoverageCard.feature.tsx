@@ -1,3 +1,5 @@
+import { useId, useState } from 'react'
+
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { accountLabel } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
@@ -12,7 +14,7 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { useId, useState } from 'react'
+
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
 import { DetailToggle } from './DetailToggle.view'
 
@@ -34,13 +36,12 @@ function AccountCoverageRow({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const rowTotal = coverage.allocated + coverage.unallocated + coverage.notApplicable
+  const rowTotal =
+    coverage.allocated + coverage.unallocated + coverage.notApplicable
   if (rowTotal <= 0) return null
-  const [allocatedPct, unallocatedPct, notApplicablePct] = partitionPercentages([
-    coverage.allocated,
-    coverage.unallocated,
-    coverage.notApplicable,
-  ])
+  const [allocatedPct, unallocatedPct, notApplicablePct] = partitionPercentages(
+    [coverage.allocated, coverage.unallocated, coverage.notApplicable],
+  )
   const label = accountLabel(coverage.account, accountLabels)
   const summary =
     coverage.allocated + coverage.unallocated > 0
@@ -62,19 +63,35 @@ function AccountCoverageRow({
         <span className="truncate text-xs text-content-muted" title={label}>
           {label}
         </span>
-        <span className="shrink-0 text-[11px] tabular-nums text-content-subtle">{summary}</span>
+        <span className="shrink-0 text-[11px] tabular-nums text-content-subtle">
+          {summary}
+        </span>
       </div>
-      <div className="flex h-1.5 overflow-hidden rounded-full bg-surface-raised" title={detail}>
+      <div
+        className="flex h-1.5 overflow-hidden rounded-full bg-surface-raised"
+        title={detail}
+      >
         {coverage.allocated > 0 && (
-          <div style={{ width: `${allocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverage }} />
+          <div
+            style={{
+              width: `${allocatedPct}%`,
+              backgroundColor: SEMANTIC_COLORS.coverage,
+            }}
+          />
         )}
         {coverage.unallocated > 0 && (
           <div
-            style={{ width: `${unallocatedPct}%`, backgroundColor: SEMANTIC_COLORS.coverageGap }}
+            style={{
+              width: `${unallocatedPct}%`,
+              backgroundColor: SEMANTIC_COLORS.coverageGap,
+            }}
           />
         )}
         {coverage.notApplicable > 0 && (
-          <div className="bg-content-subtle" style={{ width: `${notApplicablePct}%` }} />
+          <div
+            className="bg-content-subtle"
+            style={{ width: `${notApplicablePct}%` }}
+          />
         )}
       </div>
     </div>
@@ -86,7 +103,9 @@ export function AllocationCoverageCard({
   dimensionCoverage,
 }: AllocationCoverageCardProps) {
   const accountLabels = useAccountFilterLabels()
-  const [expandedDetail, setExpandedDetail] = useState<'accounts' | 'dimensions' | null>(null)
+  const [expandedDetail, setExpandedDetail] = useState<
+    'accounts' | 'dimensions' | null
+  >(null)
   const accountDetailsId = useId()
   const dimensionDetailsId = useId()
   const totalAllocated = coverage.reduce((s, c) => s + c.allocated, 0)
@@ -125,7 +144,10 @@ export function AllocationCoverageCard({
         />
         <div className="absolute bottom-0 left-[83.333%] top-5 w-px bg-gradient-to-b from-border-strong to-border-strong/40" />
       </div>
-      <div className="mx-auto h-6 w-px bg-surface-hover sm:hidden" aria-hidden="true" />
+      <div
+        className="mx-auto h-6 w-px bg-surface-hover sm:hidden"
+        aria-hidden="true"
+      />
 
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-3">
         <QualityIndicatorCard
@@ -144,11 +166,16 @@ export function AllocationCoverageCard({
             expanded={expandedDetail === 'accounts'}
             controls={accountDetailsId}
             onClick={() =>
-              setExpandedDetail((current) => (current === 'accounts' ? null : 'accounts'))
+              setExpandedDetail((current) =>
+                current === 'accounts' ? null : 'accounts',
+              )
             }
           />
           {expandedDetail === 'accounts' && (
-            <div id={accountDetailsId} className="mt-3 space-y-4 border-t border-border pt-3">
+            <div
+              id={accountDetailsId}
+              className="mt-3 space-y-4 border-t border-border pt-3"
+            >
               {coverage.map((item) => (
                 <AccountCoverageRow
                   key={item.account}
@@ -179,11 +206,16 @@ export function AllocationCoverageCard({
             expanded={expandedDetail === 'dimensions'}
             controls={dimensionDetailsId}
             onClick={() =>
-              setExpandedDetail((current) => (current === 'dimensions' ? null : 'dimensions'))
+              setExpandedDetail((current) =>
+                current === 'dimensions' ? null : 'dimensions',
+              )
             }
           />
           {expandedDetail === 'dimensions' && (
-            <div id={dimensionDetailsId} className="mt-3 border-t border-border pt-3">
+            <div
+              id={dimensionDetailsId}
+              className="mt-3 border-t border-border pt-3"
+            >
               <p className="mb-3 text-[11px] leading-4 text-content-subtle">
                 {i18n.t(
                   'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
@@ -201,7 +233,9 @@ export function AllocationCoverageCard({
           )}
           amount={totalNotApplicable}
           percentage={notApplicablePct}
-          detail={i18n.t('ui.allocationcoveragecard.savingsCheckingAndBrokerageCash')}
+          detail={i18n.t(
+            'ui.allocationcoveragecard.savingsCheckingAndBrokerageCash',
+          )}
           tone="muted"
         />
       </div>

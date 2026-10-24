@@ -6,7 +6,9 @@ type ClassificationCoverageStateProps = {
   state: ClassificationViewState
 }
 
-export function ClassificationCoverageState({ state }: ClassificationCoverageStateProps) {
+export function ClassificationCoverageState({
+  state,
+}: ClassificationCoverageStateProps) {
   switch (state.status) {
     case 'loading':
       return (
@@ -17,7 +19,9 @@ export function ClassificationCoverageState({ state }: ClassificationCoverageSta
     case 'empty':
       return (
         <EmptyClassificationState
-          message={i18n.t('ui.dataqualitytab.noClassificationCoverageDataAvailable')}
+          message={i18n.t(
+            'ui.dataqualitytab.noClassificationCoverageDataAvailable',
+          )}
         />
       )
     case 'not-applicable':

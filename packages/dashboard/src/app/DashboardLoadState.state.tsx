@@ -1,8 +1,11 @@
-import i18n from '@/i18n/i18n'
 import type { ReactNode } from 'react'
 
+import i18n from '@/i18n/i18n'
+
 export type DashboardLoadState =
-  { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready' }
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'ready' }
 
 export function DashboardLoadState({
   state,
@@ -22,7 +25,10 @@ export function DashboardLoadState({
       )
     case 'error':
       return (
-        <div role="alert" className="rounded-card border border-danger/40 bg-surface p-6">
+        <div
+          role="alert"
+          className="rounded-card border border-danger/40 bg-surface p-6"
+        >
           <p className="text-danger">
             {i18n.t('ui.app.error')} {state.message}
           </p>

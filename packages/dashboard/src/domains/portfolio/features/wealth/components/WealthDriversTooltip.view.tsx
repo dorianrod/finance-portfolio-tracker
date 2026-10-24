@@ -10,7 +10,11 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 
-export function DriversTooltip({ active, payload, label }: DriversTooltipProps) {
+export function DriversTooltip({
+  active,
+  payload,
+  label,
+}: DriversTooltipProps) {
   const formatMoney = useFormatMoney()
   const formatDate = useFormatDate()
   if (!active || !payload?.length) return null
@@ -23,7 +27,10 @@ export function DriversTooltip({ active, payload, label }: DriversTooltipProps) 
       <div className="space-y-1 text-content-secondary">
         <div className="flex justify-between gap-6">
           <span>{i18n.t('ui.wealthdriverschart.netContributions')}</span>
-          <span className="font-medium" style={{ color: SEMANTIC_COLORS.netContributionsText }}>
+          <span
+            className="font-medium"
+            style={{ color: SEMANTIC_COLORS.netContributionsText }}
+          >
             {formatMoney(row.cumulative_savings, { style: 'full' })}
           </span>
         </div>

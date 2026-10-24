@@ -1,7 +1,9 @@
-import type { OverviewComparison } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
-import { Provider, createStore } from 'jotai'
+import { createStore, Provider } from 'jotai'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+
+import type { OverviewComparison } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
 const metric = (current: number | null, previous: number | null) => ({
@@ -21,14 +23,18 @@ function comparison(): OverviewComparison {
       topHoldingPct: 24,
       topFivePct: 62,
       coveragePct: 88,
-      holdings: [{ key: 'A', label: 'AAA', name: 'Asset A', value: 240, weight: 24 }],
+      holdings: [
+        { key: 'A', label: 'AAA', name: 'Asset A', value: 240, weight: 24 },
+      ],
     },
     previous: {
       date: new Date('2025-10-20'),
       topHoldingPct: 26,
       topFivePct: 65,
       coveragePct: 86,
-      holdings: [{ key: 'A', label: 'AAA', name: 'Asset A', value: 260, weight: 26 }],
+      holdings: [
+        { key: 'A', label: 'AAA', name: 'Asset A', value: 260, weight: 26 },
+      ],
     },
     topHolding: metric(24, 26),
     topFive: metric(62, 65),
@@ -107,6 +113,8 @@ describe('OverviewSummaryCards', () => {
     expect(html).toContain(
       'Previous <span class="font-medium tabular-nums text-content-muted">Unavailable</span>',
     )
-    expect(html).toContain('Underlying detail unavailable · showing held positions')
+    expect(html).toContain(
+      'Underlying detail unavailable · showing held positions',
+    )
   })
 })

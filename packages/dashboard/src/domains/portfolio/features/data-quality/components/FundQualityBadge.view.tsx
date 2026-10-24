@@ -19,7 +19,9 @@ const TIER_CLASSES: Record<FundQualityTier, string> = {
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
   const formatPercentage = useFormatPercentage()
   const warning = status.validationStatus !== 'ok' || status.isStale
-  const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
+  const { category, sourceLabel } = getFundQualityPresentation(
+    status.qualityTier,
+  )
   const title = [
     i18n.t('ui.fundqualitybadge.qualityAndSource', {
       quality: FUND_QUALITY_LABELS[category],
@@ -30,7 +32,9 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
       percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
     }),
     status.holdingsDate
-      ? i18n.t('ui.fundqualitybadge.compositionDate', { date: status.holdingsDate })
+      ? i18n.t('ui.fundqualitybadge.compositionDate', {
+          date: status.holdingsDate,
+        })
       : i18n.t('ui.fundqualitybadge.unknownCompositionDate'),
     status.issues,
   ]
@@ -42,8 +46,12 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
       className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${TIER_CLASSES[status.qualityTier]}`}
     >
       {FUND_QUALITY_LABELS[category]}
-      <span className="font-normal opacity-80">{formatPercentage(status.explainedPct)}</span>
-      {warning && <span aria-label={i18n.t('ui.fundqualitybadge.dataWarning')}>!</span>}
+      <span className="font-normal opacity-80">
+        {formatPercentage(status.explainedPct)}
+      </span>
+      {warning && (
+        <span aria-label={i18n.t('ui.fundqualitybadge.dataWarning')}>!</span>
+      )}
     </span>
   )
 }

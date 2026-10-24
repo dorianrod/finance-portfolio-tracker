@@ -1,14 +1,19 @@
+import { useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import type { DataQualityDimension } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualityViewModel'
 import {
   dataQualityClassificationDetailsOpenAtom,
   dataQualityClassificationDimensionAtom,
 } from '@/domains/portfolio/features/data-quality/stores/dataQualityPanels.atoms'
-import { useSetAtom } from 'jotai'
-import { useCallback, useMemo } from 'react'
 
 export function useDataQualityClassificationDetails() {
-  const setClassificationDetailsOpen = useSetAtom(dataQualityClassificationDetailsOpenAtom)
-  const setClassificationDimension = useSetAtom(dataQualityClassificationDimensionAtom)
+  const setClassificationDetailsOpen = useSetAtom(
+    dataQualityClassificationDetailsOpenAtom,
+  )
+  const setClassificationDimension = useSetAtom(
+    dataQualityClassificationDimensionAtom,
+  )
 
   const openClassificationDetails = useCallback(
     (dimension?: DataQualityDimension) => {
@@ -32,6 +37,10 @@ export function useDataQualityClassificationDetails() {
       openAllClassificationDetails,
       openClassificationDetails,
     }),
-    [closeClassificationDetails, openAllClassificationDetails, openClassificationDetails],
+    [
+      closeClassificationDetails,
+      openAllClassificationDetails,
+      openClassificationDetails,
+    ],
   )
 }

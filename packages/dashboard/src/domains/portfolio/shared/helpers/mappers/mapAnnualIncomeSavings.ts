@@ -66,11 +66,14 @@ export function filterAnnualIncomeSavingsByPeriod(
   const toYear = dateTo ? Number(String(dateTo.getUTCFullYear())) : null
   return points.filter(
     (point) =>
-      (fromYear == null || point.year >= fromYear) && (toYear == null || point.year <= toYear),
+      (fromYear == null || point.year >= fromYear) &&
+      (toYear == null || point.year <= toYear),
   )
 }
 
-export function analyseIncomePlacement(data: AnnualIncomeSavingsPoint[]): IncomePlacementAnalysis {
+export function analyseIncomePlacement(
+  data: AnnualIncomeSavingsPoint[],
+): IncomePlacementAnalysis {
   const points = data.filter(
     (point) =>
       point.comparable &&
@@ -87,10 +90,14 @@ export function analyseIncomePlacement(data: AnnualIncomeSavingsPoint[]): Income
     }
   }
 
-  const meanIncome = points.reduce((sum, point) => sum + point.totalIncome, 0) / points.length
-  const meanRate = points.reduce((sum, point) => sum + point.placementRate!, 0) / points.length
+  const meanIncome =
+    points.reduce((sum, point) => sum + point.totalIncome, 0) / points.length
+  const meanRate =
+    points.reduce((sum, point) => sum + point.placementRate!, 0) / points.length
   const covariance = points.reduce(
-    (sum, point) => sum + (point.totalIncome - meanIncome) * (point.placementRate! - meanRate),
+    (sum, point) =>
+      sum +
+      (point.totalIncome - meanIncome) * (point.placementRate! - meanRate),
     0,
   )
   const incomeVariance = points.reduce(

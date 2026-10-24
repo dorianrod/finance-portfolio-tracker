@@ -1,5 +1,11 @@
 import i18n from '@/i18n/i18n'
-export function PositionsToggle({ open, onClick }: { open: boolean; onClick: () => void }) {
+export function PositionsToggle({
+  open,
+  onClick,
+}: {
+  open: boolean
+  onClick: () => void
+}) {
   return (
     <button
       type="button"
@@ -16,7 +22,13 @@ export function PositionsToggle({ open, onClick }: { open: boolean; onClick: () 
           : 'border-border-strong text-content-muted hover:border-border-strong hover:bg-surface-raised hover:text-content-secondary'
       }`}
     >
-      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+      <svg
+        aria-hidden="true"
+        width="13"
+        height="13"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+      >
         <rect x="1" y="1" width="6" height="6" rx="1" opacity=".7" />
         <rect x="9" y="1" width="6" height="6" rx="1" opacity=".7" />
         <rect x="1" y="9" width="6" height="6" rx="1" opacity=".7" />

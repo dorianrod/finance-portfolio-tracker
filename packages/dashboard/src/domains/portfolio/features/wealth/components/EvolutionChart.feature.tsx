@@ -1,3 +1,15 @@
+import { useMemo, useState } from 'react'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+
 import {
   PORTFOLIO_COST_SHARE_KEY,
   PORTFOLIO_GAIN_SHARE_KEY,
@@ -11,18 +23,10 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
-import { ChartScaleToggle, type ChartScaleMode } from '@/shared/ui/ChartScaleToggle.view'
-import { useMemo, useState } from 'react'
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+  type ChartScaleMode,
+  ChartScaleToggle,
+} from '@/shared/ui/ChartScaleToggle.view'
 
 export function EvolutionChart({
   history,
@@ -45,21 +49,39 @@ export function EvolutionChart({
         <h2 className="flex items-center text-sm font-medium text-content-muted">
           {title}
           <ScopedInfoTooltip
-            text={i18n.t('ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis')}
+            text={i18n.t(
+              'ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis',
+            )}
             scope={{ account: 'filterable', period: 'range' }}
           />
         </h2>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={height}>
-        <AreaChart key={scale} data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+        <AreaChart
+          key={scale}
+          data={chartData}
+          margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+        >
           <defs>
             <linearGradient id="gradCost" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={SEMANTIC_COLORS.costBasis} stopOpacity={0.6} />
-              <stop offset="95%" stopColor={SEMANTIC_COLORS.costBasis} stopOpacity={0.2} />
+              <stop
+                offset="5%"
+                stopColor={SEMANTIC_COLORS.costBasis}
+                stopOpacity={0.6}
+              />
+              <stop
+                offset="95%"
+                stopColor={SEMANTIC_COLORS.costBasis}
+                stopOpacity={0.2}
+              />
             </linearGradient>
             <linearGradient id="gradGain" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={SEMANTIC_COLORS.performancePositive} stopOpacity={0.7} />
+              <stop
+                offset="5%"
+                stopColor={SEMANTIC_COLORS.performancePositive}
+                stopOpacity={0.7}
+              />
               <stop
                 offset="95%"
                 stopColor={SEMANTIC_COLORS.performancePositive}
@@ -70,7 +92,9 @@ export function EvolutionChart({
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis
             dataKey="date"
-            tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })}
+            tickFormatter={(value) =>
+              formatDate(value, { style: 'shortMonthShortYear' })
+            }
             tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
             tickLine={false}
             axisLine={false}
@@ -88,7 +112,9 @@ export function EvolutionChart({
             axisLine={false}
             width={percentageMode ? 48 : 52}
           />
-          <Tooltip content={<EvolutionTooltip percentageMode={percentageMode} />} />
+          <Tooltip
+            content={<EvolutionTooltip percentageMode={percentageMode} />}
+          />
           <Legend
             formatter={(value) => (
               <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
@@ -100,7 +126,9 @@ export function EvolutionChart({
           />
           <Area
             type="monotone"
-            dataKey={percentageMode ? PORTFOLIO_COST_SHARE_KEY : 'total_cost_basis'}
+            dataKey={
+              percentageMode ? PORTFOLIO_COST_SHARE_KEY : 'total_cost_basis'
+            }
             name={i18n.t('ui.evolutionchart.costBasis')}
             stackId="a"
             stroke={SEMANTIC_COLORS.costBasis}
@@ -109,7 +137,9 @@ export function EvolutionChart({
           />
           <Area
             type="monotone"
-            dataKey={percentageMode ? PORTFOLIO_GAIN_SHARE_KEY : 'unrealized_gain'}
+            dataKey={
+              percentageMode ? PORTFOLIO_GAIN_SHARE_KEY : 'unrealized_gain'
+            }
             name={i18n.t('ui.evolutionchart.unrealizedPL')}
             stackId="a"
             stroke={SEMANTIC_COLORS.performancePositive}

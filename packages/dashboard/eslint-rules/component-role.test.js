@@ -1,42 +1,52 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
+
 import componentRole from './component-role.js'
 
 const linter = new Linter({ configType: 'flat' })
 
 function lint(code, filename) {
-  return linter.verify(code, {
-    files: ['**/*.tsx'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  return linter.verify(
+    code,
+    {
+      files: ['**/*.tsx'],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        local: {
+          rules: { 'component-role': componentRole },
+        },
+      },
+      rules: {
+        'local/component-role': 'error',
       },
     },
-    plugins: {
-      local: {
-        rules: { 'component-role': componentRole },
-      },
-    },
-    rules: {
-      'local/component-role': 'error',
-    },
-  }, { filename })
+    { filename },
+  )
 }
 
 describe('component-role', () => {
   it('requires a role suffix on production component modules', () => {
-    const messages = lint('export function Card() { return <div /> }', 'Card.tsx')
+    const messages = lint(
+      'export function Card() { return <div /> }',
+      'Card.tsx',
+    )
     expect(messages.map(({ messageId }) => messageId)).toEqual(['missingRole'])
   })
 
   it.each(['main.tsx', 'Card.test.tsx', 'Card.spec.tsx'])(
     'exempts %s from role naming',
     (filename) => {
-      expect(lint('export function Card() { return <div /> }', filename)).toEqual([])
+      expect(
+        lint('export function Card() { return <div /> }', filename),
+      ).toEqual([])
     },
   )
 
@@ -75,7 +85,9 @@ describe('component-role', () => {
       `import { dependency } from '${source}'; export function Card() { return <div>{dependency}</div> }`,
       'Card.view.tsx',
     )
-    expect(messages.map(({ messageId }) => messageId)).toEqual(['viewImportsBusiness'])
+    expect(messages.map(({ messageId }) => messageId)).toEqual([
+      'viewImportsBusiness',
+    ])
   })
 
   it('rejects a feature imported by a view', () => {
@@ -83,7 +95,9 @@ describe('component-role', () => {
       `import { Orders } from './Orders.feature'; export function Card() { return <Orders /> }`,
       'Card.view.tsx',
     )
-    expect(messages.map(({ messageId }) => messageId)).toEqual(['viewImportsFeature'])
+    expect(messages.map(({ messageId }) => messageId)).toEqual([
+      'viewImportsFeature',
+    ])
   })
 
   it('rejects a state-rendering component imported by a view', () => {
@@ -91,7 +105,9 @@ describe('component-role', () => {
       `import { OrdersState } from './OrdersState.state'; export function Card() { return <OrdersState /> }`,
       'Card.view.tsx',
     )
-    expect(messages.map(({ messageId }) => messageId)).toEqual(['viewImportsState'])
+    expect(messages.map(({ messageId }) => messageId)).toEqual([
+      'viewImportsState',
+    ])
   })
 
   it('allows type-only business imports from a view', () => {
@@ -108,12 +124,16 @@ describe('component-role', () => {
       `export { Orders } from './Orders.feature'`,
       'Card.view.tsx',
     )
-    expect(rejected.map(({ messageId }) => messageId)).toEqual(['viewImportsFeature'])
+    expect(rejected.map(({ messageId }) => messageId)).toEqual([
+      'viewImportsFeature',
+    ])
 
-    expect(lint(
-      `export type { Order } from '@/domains/orders/apis/useOrders'`,
-      'Card.view.tsx',
-    )).toEqual([])
+    expect(
+      lint(
+        `export type { Order } from '@/domains/orders/apis/useOrders'`,
+        'Card.view.tsx',
+      ),
+    ).toEqual([])
   })
 
   it('allows React, visual modules, formatters and other views', () => {

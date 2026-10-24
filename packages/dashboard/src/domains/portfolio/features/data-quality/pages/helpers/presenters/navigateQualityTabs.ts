@@ -1,6 +1,8 @@
 import type { KeyboardEvent } from 'react'
 
-export function navigateQualityTabs(event: KeyboardEvent<HTMLButtonElement>): void {
+export function navigateQualityTabs(
+  event: KeyboardEvent<HTMLButtonElement>,
+): void {
   if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
   const tabs = Array.from(
     event.currentTarget
@@ -10,7 +12,8 @@ export function navigateQualityTabs(event: KeyboardEvent<HTMLButtonElement>): vo
   if (tabs.length === 0) return
   event.preventDefault()
   const current = tabs.indexOf(event.currentTarget)
-  let next = (current + (event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length
+  let next =
+    (current + (event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length
   if (event.key === 'Home') next = 0
   if (event.key === 'End') next = tabs.length - 1
   tabs[next].focus()

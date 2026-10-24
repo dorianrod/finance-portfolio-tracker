@@ -1,12 +1,14 @@
+import { useCallback, useId } from 'react'
+
 import {
   FilterScopeBadges,
   type FilterScopeSpec,
 } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import {
-  pipelineReliabilityTone,
-  pipelineStatusLabel,
   type AnalysisReliabilityMetric,
   type AnalysisReliabilityTone,
+  pipelineReliabilityTone,
+  pipelineStatusLabel,
   type StatusReliabilityMetric,
 } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
 import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
@@ -14,10 +16,10 @@ import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { useCallback, useId } from 'react'
+
 import {
-  RELIABILITY_TONES,
   type QualityTooltipRow,
+  RELIABILITY_TONES,
 } from './helpers/presenters/qualityReliabilityPresentation'
 import { InfoIcon, QualityTooltipMetricRow } from './QualityTooltipDetails.view'
 
@@ -55,8 +57,13 @@ function CompactDataQualityKpi({
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-content-subtle">
           {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
         </span>
-        <span className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`} aria-hidden="true" />
-        <span className={`text-[10px] font-semibold uppercase tracking-wider ${styles.status}`}>
+        <span
+          className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`}
+          aria-hidden="true"
+        />
+        <span
+          className={`text-[10px] font-semibold uppercase tracking-wider ${styles.status}`}
+        >
           {styles.label}
         </span>
       </button>
@@ -72,7 +79,9 @@ function CompactDataQualityKpi({
           role="tooltip"
           className="data-quality-tooltip pointer-events-none invisible absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-border-strong bg-surface p-3 text-left opacity-0 shadow-xl transition-[opacity,visibility] duration-150"
         >
-          <span className="block text-xs leading-relaxed text-content-muted">{tooltip}</span>
+          <span className="block text-xs leading-relaxed text-content-muted">
+            {tooltip}
+          </span>
           <span className="mt-2.5 block border-t border-border pt-2">
             <span className="block text-[10px] font-semibold uppercase tracking-wider text-content-subtle">
               {i18n.t('ui.analysisreliabilitykpi.filterScope')}
@@ -114,7 +123,8 @@ export function AnalysisReliabilityKpi({
       ? null
       : Math.max(0, Math.min(100, percentage))
   const styles = RELIABILITY_TONES[tone]
-  const percentageLabel = safePercentage == null ? '—' : formatPercentage(safePercentage)
+  const percentageLabel =
+    safePercentage == null ? '—' : formatPercentage(safePercentage)
 
   return (
     <CompactDataQualityKpi
@@ -134,11 +144,14 @@ export function AnalysisReliabilityKpi({
       qualityTheme={qualityTheme}
       scope={scope}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
-      ariaLabel={i18n.t('ui.analysisreliabilitykpi.dataQualityValue0Value1Value2OpenDataQuality', {
-        value0: styles.label,
-        value1: percentageLabel,
-        value2: metricLabel,
-      })}
+      ariaLabel={i18n.t(
+        'ui.analysisreliabilitykpi.dataQualityValue0Value1Value2OpenDataQuality',
+        {
+          value0: styles.label,
+          value1: percentageLabel,
+          value2: metricLabel,
+        },
+      )}
     />
   )
 }
@@ -183,7 +196,9 @@ export function CombinedAnalysisReliabilityKpi({
       tone: metric.tone,
     })),
   ]
-  const metricSummary = rows.map((row) => `${row.value} ${row.label}`).join('; ')
+  const metricSummary = rows
+    .map((row) => `${row.value} ${row.label}`)
+    .join('; ')
 
   return (
     <CompactDataQualityKpi
@@ -194,10 +209,13 @@ export function CombinedAnalysisReliabilityKpi({
       qualityTheme={qualityTheme}
       scope={scope}
       // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
-      ariaLabel={i18n.t('ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality', {
-        value0: styles.label,
-        value1: metricSummary,
-      })}
+      ariaLabel={i18n.t(
+        'ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality',
+        {
+          value0: styles.label,
+          value1: metricSummary,
+        },
+      )}
     />
   )
 }
@@ -236,8 +254,12 @@ export function PipelineReliabilityKpi({
           secondary: loading
             ? undefined
             : i18n.t('ui.analysisreliabilitykpi.errorWarningSummary', {
-                errors: i18n.t('ui.analysisreliabilitykpi.errorCount', { count: errorCount }),
-                warnings: i18n.t('ui.analysisreliabilitykpi.warningCount', { count: warningCount }),
+                errors: i18n.t('ui.analysisreliabilitykpi.errorCount', {
+                  count: errorCount,
+                }),
+                warnings: i18n.t('ui.analysisreliabilitykpi.warningCount', {
+                  count: warningCount,
+                }),
               }),
           tone,
         },

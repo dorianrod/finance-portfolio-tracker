@@ -1,5 +1,4 @@
 import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories'
-
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
@@ -27,8 +26,10 @@ export function buildAccountTypeHistory(
     if (accountSet && !accountSet.has(accountFilterId(row))) continue
     const tv = row.total_value || 0
     typeSet.add(row.account_type)
-    if (row.account_category) typeCategories[row.account_type] = row.account_category
-    const dateMap = byDate.get(row.snapshot_date.getTime()) ?? new Map<string, number>()
+    if (row.account_category)
+      typeCategories[row.account_type] = row.account_category
+    const dateMap =
+      byDate.get(row.snapshot_date.getTime()) ?? new Map<string, number>()
     dateMap.set(row.account_type, (dateMap.get(row.account_type) ?? 0) + tv)
     byDate.set(row.snapshot_date.getTime(), dateMap)
   }

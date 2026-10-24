@@ -1,10 +1,3 @@
-import { getIncomeYearOpacity } from '@/domains/portfolio/features/wealth/helpers/presenters/getIncomeYearOpacity'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
-import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import {
   Bar,
   CartesianGrid,
@@ -16,9 +9,22 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { getIncomeYearOpacity } from '@/domains/portfolio/features/wealth/helpers/presenters/getIncomeYearOpacity'
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import i18n from '@/i18n/i18n'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import { IncomeSavingsTooltip } from './IncomeSavingsTooltip.view'
 
-export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPoint[] }) {
+export function AnnualIncomeSavingsChart({
+  data,
+}: {
+  data: AnnualIncomeSavingsPoint[]
+}) {
   const formatMoney = useFormatMoney()
   return (
     <div className="bg-surface rounded-xl p-4">
@@ -39,7 +45,11 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
         </div>
       </div>
       <ResponsiveContainer width="100%" height={285}>
-        <ComposedChart data={data} margin={{ top: 8, right: 48, left: 0, bottom: 0 }} barGap={3}>
+        <ComposedChart
+          data={data}
+          margin={{ top: 8, right: 48, left: 0, bottom: 0 }}
+          barGap={3}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis
             dataKey="year"
@@ -73,7 +83,10 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
             radius={[0, 0, 3, 3]}
           >
             {data.map((point) => (
-              <Cell key={point.year} fillOpacity={getIncomeYearOpacity(point)} />
+              <Cell
+                key={point.year}
+                fillOpacity={getIncomeYearOpacity(point)}
+              />
             ))}
           </Bar>
           <Bar
@@ -84,7 +97,10 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
             radius={[3, 3, 0, 0]}
           >
             {data.map((point) => (
-              <Cell key={point.year} fillOpacity={getIncomeYearOpacity(point)} />
+              <Cell
+                key={point.year}
+                fillOpacity={getIncomeYearOpacity(point)}
+              />
             ))}
           </Bar>
           <Bar
@@ -94,7 +110,10 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
             radius={[3, 3, 0, 0]}
           >
             {data.map((point) => (
-              <Cell key={point.year} fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4} />
+              <Cell
+                key={point.year}
+                fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
+              />
             ))}
           </Bar>
           <Line
@@ -132,7 +151,10 @@ export function AnnualIncomeSavingsChart({ data }: { data: AnnualIncomeSavingsPo
           {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
         </span>
         <span className="flex items-center gap-2">
-          <i className="h-0.5 w-4" style={{ backgroundColor: SEMANTIC_COLORS.returnRate }} />
+          <i
+            className="h-0.5 w-4"
+            style={{ backgroundColor: SEMANTIC_COLORS.returnRate }}
+          />
           {i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}
         </span>
       </div>

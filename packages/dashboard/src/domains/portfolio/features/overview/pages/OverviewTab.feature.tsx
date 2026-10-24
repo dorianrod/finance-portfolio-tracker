@@ -4,6 +4,7 @@ import type {
 } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+
 import {
   OverviewConcentrationChart,
   OverviewDriversChart,
@@ -17,7 +18,11 @@ type OverviewTabProps = {
   irrStatus: IrrStatus
 }
 
-export function OverviewTab({ comparison, rollingThreeYearTri, irrStatus }: OverviewTabProps) {
+export function OverviewTab({
+  comparison,
+  rollingThreeYearTri,
+  irrStatus,
+}: OverviewTabProps) {
   if (!comparison) {
     return (
       <div className="mb-6 rounded-2xl border border-border bg-surface p-8 text-center">
@@ -25,7 +30,9 @@ export function OverviewTab({ comparison, rollingThreeYearTri, irrStatus }: Over
           {i18n.t('ui.overviewtab.overviewUnavailable')}
         </h3>
         <p className="mt-2 text-sm text-content-subtle">
-          {i18n.t('ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory')}
+          {i18n.t(
+            'ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory',
+          )}
         </p>
       </div>
     )

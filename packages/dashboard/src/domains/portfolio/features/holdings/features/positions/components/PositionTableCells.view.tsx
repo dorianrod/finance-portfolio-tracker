@@ -1,4 +1,11 @@
 import {
+  type Cell,
+  flexRender,
+  type Header,
+  type HeaderGroup,
+} from '@tanstack/react-table'
+
+import {
   FUND_QUALITY_LABELS,
   getFundQualityPresentation,
 } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
@@ -6,11 +13,16 @@ import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHol
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { flexRender, type Cell, type Header, type HeaderGroup } from '@tanstack/react-table'
 
-export function PositionHeaderCell({ header }: { header: Header<TableRow, unknown> }) {
+export function PositionHeaderCell({
+  header,
+}: {
+  header: Header<TableRow, unknown>
+}) {
   return (
-    <th className="px-3 py-2">{flexRender(header.column.columnDef.header, header.getContext())}</th>
+    <th className="px-3 py-2">
+      {flexRender(header.column.columnDef.header, header.getContext())}
+    </th>
   )
 }
 
@@ -39,7 +51,9 @@ export function PositionBodyCell({
     <td
       className="overflow-hidden px-3 py-2"
       {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})}
-      {...(savingsHandlers && cell.column.id === 'value' ? savingsHandlers : {})}
+      {...(savingsHandlers && cell.column.id === 'value'
+        ? savingsHandlers
+        : {})}
     >
       {flexRender(cell.column.columnDef.cell, cell.getContext())}
     </td>
@@ -60,7 +74,9 @@ export function UnderlyingStatusButton({
   onHide: () => void
 }) {
   const formatPercentage = useFormatPercentage()
-  const { category, sourceLabel } = getFundQualityPresentation(status.qualityTier)
+  const { category, sourceLabel } = getFundQualityPresentation(
+    status.qualityTier,
+  )
   const label = FUND_QUALITY_LABELS[category]
   const title = i18n.t('ui.positionstable.fundQualitySummary', {
     label,
@@ -70,8 +86,10 @@ export function UnderlyingStatusButton({
   const tone = {
     reliable:
       'text-positive hover:bg-positive-muted/60 hover:text-positive focus-visible:ring-positive',
-    partial: 'text-warning hover:bg-warning-muted/60 hover:text-warning focus-visible:ring-warning',
-    unavailable: 'text-danger hover:bg-danger-muted/60 hover:text-danger focus-visible:ring-danger',
+    partial:
+      'text-warning hover:bg-warning-muted/60 hover:text-warning focus-visible:ring-warning',
+    unavailable:
+      'text-danger hover:bg-danger-muted/60 hover:text-danger focus-visible:ring-danger',
   }[category]
 
   return (
@@ -79,8 +97,14 @@ export function UnderlyingStatusButton({
       type="button"
       aria-label={
         isOpen
-          ? i18n.t('ui.positionstable.hideCompositionForAsset', { title, assetName })
-          : i18n.t('ui.positionstable.showCompositionForAsset', { title, assetName })
+          ? i18n.t('ui.positionstable.hideCompositionForAsset', {
+              title,
+              assetName,
+            })
+          : i18n.t('ui.positionstable.showCompositionForAsset', {
+              title,
+              assetName,
+            })
       }
       aria-expanded={isOpen}
       title={

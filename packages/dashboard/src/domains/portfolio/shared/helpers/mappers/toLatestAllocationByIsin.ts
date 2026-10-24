@@ -31,7 +31,10 @@ export function toLatestByIsin(
         if (right.name === 'nc') return -1
         return right.value - left.value
       })
-    result.set(isin, { name: latest.name, point: { date: new Date(latest.timestamp), categories } })
+    result.set(isin, {
+      name: latest.name,
+      point: { date: new Date(latest.timestamp), categories },
+    })
   }
   return result
 }

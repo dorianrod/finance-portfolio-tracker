@@ -1,6 +1,7 @@
-import { renderToStaticMarkup } from 'react-dom/server'
 import { Provider } from 'jotai'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+
 import { HoldingsViewTabs } from './HoldingsViewTabs.feature'
 
 describe('HoldingsViewTabs', () => {

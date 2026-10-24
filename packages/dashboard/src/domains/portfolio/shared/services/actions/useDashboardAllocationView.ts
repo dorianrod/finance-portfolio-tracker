@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
 import { useSetAtom } from 'jotai'
+import { useMemo } from 'react'
+
 import { dashboardAllocationViewAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 
 export function useDashboardAllocationView() {

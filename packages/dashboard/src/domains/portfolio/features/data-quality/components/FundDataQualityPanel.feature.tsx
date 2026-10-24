@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useMemo, useState } from 'react'
+
 import { useDataQualityFundDiagnostics } from '@/domains/portfolio/features/data-quality/services/actions/useDataQualityFundDiagnostics'
 import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/stores/dataQualityPanels.atoms'
 import {
@@ -10,8 +13,7 @@ import type {
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import { useAtomValue } from 'jotai'
-import { useMemo, useState } from 'react'
+
 import { FundDataQualityPanelView } from './FundDataQualityPanel.view'
 
 type Props = {
@@ -21,12 +23,24 @@ type Props = {
   unresolved: FundUnresolved[]
 }
 
-export function FundDataQualityPanel({ statuses, holdings, snapshots, unresolved }: Props) {
+export function FundDataQualityPanel({
+  statuses,
+  holdings,
+  snapshots,
+  unresolved,
+}: Props) {
   const open = useAtomValue(dataQualityFundDiagnosticsOpenAtom)
   const { closeFundDiagnostics } = useDataQualityFundDiagnostics()
   const [filter, setFilter] = useState<FundDiagnosticsFilter>('issues')
   const rows = useMemo(
-    () => buildFundDiagnosticsRows({ filter, holdings, snapshots, statuses, unresolved }),
+    () =>
+      buildFundDiagnosticsRows({
+        filter,
+        holdings,
+        snapshots,
+        statuses,
+        unresolved,
+      }),
     [filter, holdings, snapshots, statuses, unresolved],
   )
   return (

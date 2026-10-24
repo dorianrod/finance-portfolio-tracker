@@ -8,8 +8,12 @@ type NumberFormatOptions = {
 }
 
 const DEFAULT_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB')
-const INTEGER_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 })
-const TWO_DECIMAL_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 2 })
+const INTEGER_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', {
+  maximumFractionDigits: 0,
+})
+const TWO_DECIMAL_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', {
+  maximumFractionDigits: 2,
+})
 const SIGNED_TWO_DECIMAL_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
@@ -33,8 +37,11 @@ function formatterFor(options: NumberFormatOptions): Intl.NumberFormat {
 }
 
 export function useFormatNumber() {
-  return useCallback((value: number, options: NumberFormatOptions = {}): string => {
-    const formatter = formatterFor(options)
-    return formatter.format(Number.isFinite(value) ? value : 0)
-  }, [])
+  return useCallback(
+    (value: number, options: NumberFormatOptions = {}): string => {
+      const formatter = formatterFor(options)
+      return formatter.format(Number.isFinite(value) ? value : 0)
+    },
+    [],
+  )
 }

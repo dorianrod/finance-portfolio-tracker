@@ -4,6 +4,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+
 import { Kpi } from './Kpi.view'
 
 type Props = {
@@ -33,7 +34,9 @@ export function KpiBar({ rows, globalTri }: Props) {
     <div className="mb-4 flex flex-wrap items-start gap-6 border-b border-border pb-4">
       <Kpi.Root accent="portfolio">
         <Kpi.Label
-          tooltip={i18n.t('ui.kpibar.marketValueAfterDeductingEstimatedTaxesOnUnrealizedGains')}
+          tooltip={i18n.t(
+            'ui.kpibar.marketValueAfterDeductingEstimatedTaxesOnUnrealizedGains',
+          )}
         >
           {i18n.t('ui.kpibar.netPortfolioValue')}
         </Kpi.Label>
@@ -47,7 +50,9 @@ export function KpiBar({ rows, globalTri }: Props) {
       <div className="w-px bg-surface-hover" />
       <Kpi.Root accent={totalUnrealizedNet >= 0 ? 'positive' : 'negative'}>
         <Kpi.Label
-          tooltip={i18n.t('ui.kpibar.unrealizedGainNetOfEstimatedTaxesTaxRateConfigurable')}
+          tooltip={i18n.t(
+            'ui.kpibar.unrealizedGainNetOfEstimatedTaxesTaxRateConfigurable',
+          )}
         >
           {i18n.t('ui.kpibar.netUnrealizedPandl')}
         </Kpi.Label>
@@ -64,7 +69,11 @@ export function KpiBar({ rows, globalTri }: Props) {
       </Kpi.Root>
       <div className="w-px bg-surface-hover" />
       <Kpi.Root accent={totalRealized >= 0 ? 'positive' : 'negative'}>
-        <Kpi.Label tooltip={i18n.t('ui.kpibar.sumOfGainsLossesCrystallizedAcrossAllSalesAcross')}>
+        <Kpi.Label
+          tooltip={i18n.t(
+            'ui.kpibar.sumOfGainsLossesCrystallizedAcrossAllSalesAcross',
+          )}
+        >
           {i18n.t('ui.kpibar.realizedPandl')}
         </Kpi.Label>
         <Kpi.ValueRow>
@@ -74,7 +83,9 @@ export function KpiBar({ rows, globalTri }: Props) {
       <div className="w-px bg-surface-hover" />
       <Kpi.Root accent="income">
         <Kpi.Label
-          tooltip={i18n.t('ui.kpibar.totalDividendsReceivedAcrossAllPositionsActiveAndClosed')}
+          tooltip={i18n.t(
+            'ui.kpibar.totalDividendsReceivedAcrossAllPositionsActiveAndClosed',
+          )}
         >
           {i18n.t('ui.kpibar.dividends')}
         </Kpi.Label>
@@ -87,7 +98,9 @@ export function KpiBar({ rows, globalTri }: Props) {
         <>
           <Kpi.Root accent="income">
             <Kpi.Label
-              tooltip={i18n.t('ui.kpibar.totalInterestReceivedSavingsAccountsBondsIncludedInThe')}
+              tooltip={i18n.t(
+                'ui.kpibar.totalInterestReceivedSavingsAccountsBondsIncludedInThe',
+              )}
             >
               {i18n.t('ui.kpibar.interest')}
             </Kpi.Label>
@@ -100,7 +113,9 @@ export function KpiBar({ rows, globalTri }: Props) {
       ) : null}
       <Kpi.Root accent={totalReturn >= 0 ? 'positive' : 'negative'}>
         <Kpi.Label
-          tooltip={i18n.t('ui.kpibar.realizedPLDividendsInterestDoesNotIncludeUnrealized')}
+          tooltip={i18n.t(
+            'ui.kpibar.realizedPLDividendsInterestDoesNotIncludeUnrealized',
+          )}
         >
           {i18n.t('ui.kpibar.totalRealizedReturn')}
         </Kpi.Label>
@@ -131,7 +146,9 @@ export function KpiBar({ rows, globalTri }: Props) {
       <div className="w-px bg-surface-hover" />
       <Kpi.Root>
         <Kpi.Label
-          tooltip={i18n.t('ui.kpibar.numberOfActivePositionsValuedTodayAndClosedPositions')}
+          tooltip={i18n.t(
+            'ui.kpibar.numberOfActivePositionsValuedTodayAndClosedPositions',
+          )}
         >
           {i18n.t('ui.kpibar.positions')}
         </Kpi.Label>

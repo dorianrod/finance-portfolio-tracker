@@ -1,9 +1,11 @@
+import { useAtomValue } from 'jotai'
+
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 import i18n from '@/i18n/i18n'
 import { SegmentedControl } from '@/shared/ui/SegmentedControl.view'
-import { useAtomValue } from 'jotai'
+
 import { HoldingsViewTab } from './HoldingsViewTab.view'
 
 export type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
@@ -23,7 +25,12 @@ export function HoldingsViewTabs() {
       className="mb-5 w-full overflow-x-auto sm:w-fit"
     >
       {HOLDINGS_VIEWS.map((view) => (
-        <HoldingsViewTab key={view.id} activeView={value} onSelect={setHoldingsView} view={view} />
+        <HoldingsViewTab
+          key={view.id}
+          activeView={value}
+          onSelect={setHoldingsView}
+          view={view}
+        />
       ))}
     </SegmentedControl>
   )

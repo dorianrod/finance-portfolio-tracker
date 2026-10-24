@@ -22,20 +22,27 @@ function componentRole(filename) {
 
 function isExempt(filename) {
   const basename = path.basename(filename)
-  return basename === 'main.tsx'
-    || basename.endsWith('.test.tsx')
-    || basename.endsWith('.spec.tsx')
+  return (
+    basename === 'main.tsx' ||
+    basename.endsWith('.test.tsx') ||
+    basename.endsWith('.spec.tsx')
+  )
 }
 
 function isTypeOnlyImport(node) {
   if (node.importKind === 'type') return true
-  return node.specifiers.length > 0
-    && node.specifiers.every((specifier) => specifier.importKind === 'type')
+  return (
+    node.specifiers.length > 0 &&
+    node.specifiers.every((specifier) => specifier.importKind === 'type')
+  )
 }
 
 function isBusinessSource(source) {
-  return BUSINESS_MODULES.some((module) => source === module || source.startsWith(`${module}/`))
-    || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
+  return (
+    BUSINESS_MODULES.some(
+      (module) => source === module || source.startsWith(`${module}/`),
+    ) || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
+  )
 }
 
 function declarationIsTypeOnly(node) {
@@ -46,14 +53,19 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Require explicit React component roles and enforce view import boundaries',
+      description:
+        'Require explicit React component roles and enforce view import boundaries',
     },
     schema: [],
     messages: {
-      missingRole: 'React component modules must end in .view.tsx, .state.tsx or .feature.tsx.',
-      viewImportsFeature: 'A view cannot import the feature module "{{source}}".',
-      viewImportsState: 'A view cannot import the state-rendering module "{{source}}".',
-      viewImportsBusiness: 'A view cannot import runtime business state or logic from "{{source}}".',
+      missingRole:
+        'React component modules must end in .view.tsx, .state.tsx or .feature.tsx.',
+      viewImportsFeature:
+        'A view cannot import the feature module "{{source}}".',
+      viewImportsState:
+        'A view cannot import the state-rendering module "{{source}}".',
+      viewImportsBusiness:
+        'A view cannot import runtime business state or logic from "{{source}}".',
     },
   },
   create(context) {
@@ -107,9 +119,12 @@ export default {
       },
       ExportNamedDeclaration(node) {
         if (!node.source) return
-        const typeOnly = declarationIsTypeOnly(node)
-          || (node.specifiers.length > 0
-            && node.specifiers.every((specifier) => specifier.exportKind === 'type'))
+        const typeOnly =
+          declarationIsTypeOnly(node) ||
+          (node.specifiers.length > 0 &&
+            node.specifiers.every(
+              (specifier) => specifier.exportKind === 'type',
+            ))
         inspectSource(node, node.source, typeOnly)
       },
     }

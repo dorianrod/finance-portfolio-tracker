@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as yup from 'yup'
+
 import { clearCsvCache, parseCsv, parseOptionalCsv } from './csvData'
 
 const CSV_ROW_SCHEMA = yup.object({ id: yup.string().required() })
@@ -35,10 +36,16 @@ describe('parseCsv', () => {
 
   it.each([
     ['a network error', () => Promise.reject(new Error('Network error'))],
-    ['an HTTP failure', async () => new Response('unavailable', { status: 503 })],
+    [
+      'an HTTP failure',
+      async () => new Response('unavailable', { status: 503 }),
+    ],
     [
       'an HTML fallback',
-      async () => new Response('<html></html>', { headers: { 'Content-Type': 'text/html' } }),
+      async () =>
+        new Response('<html></html>', {
+          headers: { 'Content-Type': 'text/html' },
+        }),
     ],
     ['malformed CSV', async () => csvResponse('id,name\n"unclosed')],
     ['invalid rows', async () => csvResponse('name\nmissing-id')],
@@ -48,10 +55,12 @@ describe('parseCsv', () => {
       .mockImplementationOnce(failure)
       .mockImplementation(async () => csvResponse())
     vi.stubGlobal('fetch', fetchMock)
-    await expect(parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)).rejects.toThrow()
-    await expect(parseCsv('/data/positions.csv', CSV_ROW_SCHEMA)).resolves.toEqual([
-      { id: 'position-1' },
-    ])
+    await expect(
+      parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+    ).rejects.toThrow()
+    await expect(
+      parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+    ).resolves.toEqual([{ id: 'position-1' }])
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
@@ -60,14 +69,21 @@ describe('parseCsv', () => {
       'fetch',
       vi.fn(async () => new Response('', { status: 404 })),
     )
-    await expect(parseOptionalCsv('/missing.csv', CSV_ROW_SCHEMA)).resolves.toEqual([])
+    await expect(
+      parseOptionalCsv('/missing.csv', CSV_ROW_SCHEMA),
+    ).resolves.toEqual([])
   })
 
-  it.each([403, 500])('rejects HTTP %s for an optional file', async (status) => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => new Response('', { status })),
-    )
-    await expect(parseOptionalCsv('/broken.csv', CSV_ROW_SCHEMA)).rejects.toThrow(`HTTP ${status}`)
-  })
+  it.each([403, 500])(
+    'rejects HTTP %s for an optional file',
+    async (status) => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => new Response('', { status })),
+      )
+      await expect(
+        parseOptionalCsv('/broken.csv', CSV_ROW_SCHEMA),
+      ).rejects.toThrow(`HTTP ${status}`)
+    },
+  )
 })

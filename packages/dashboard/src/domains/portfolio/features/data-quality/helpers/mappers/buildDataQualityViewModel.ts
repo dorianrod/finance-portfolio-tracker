@@ -1,3 +1,4 @@
+import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
 import {
   computeAllocationCoverageByAccount,
   computeAllocationCoverageByDimension,
@@ -7,7 +8,10 @@ import {
   computeFundExposurePercentages,
   scopeFundQualityData,
 } from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
-import type { QualityThemeId, QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
+import type {
+  QualityThemeId,
+  QualityTone,
+} from '@/domains/portfolio/shared/types/dataQuality.type'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -21,9 +25,8 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import { buildClassificationViewState } from './buildClassificationViewState'
 
-import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
+import { buildClassificationViewState } from './buildClassificationViewState'
 
 export type DataQualityDimension = keyof typeof DATA_QUALITY_DIMENSION_LABELS
 export type QualityTheme = {
@@ -65,7 +68,8 @@ function buildAffectedAssets(
 
   for (const dimension of dimensionCoverage) {
     for (const issue of dimension.issues) {
-      const gapPct = issue.value > 0 ? (issue.unallocated / issue.value) * 100 : 0
+      const gapPct =
+        issue.value > 0 ? (issue.unallocated / issue.value) * 100 : 0
       const current = byAsset.get(issue.id) ?? {
         id: issue.id,
         name: issue.name,
@@ -104,7 +108,9 @@ export function buildDataQualityViewModel({
   rawData,
   formatPercentage,
 }: BuildDataQualityViewModelInput) {
-  const coverage = rawData.loading ? [] : computeAllocationCoverageByAccount(positions, rawData)
+  const coverage = rawData.loading
+    ? []
+    : computeAllocationCoverageByAccount(positions, rawData)
   const dimensionCoverage = rawData.loading
     ? []
     : computeAllocationCoverageByDimension(positions, rawData)
@@ -119,9 +125,16 @@ export function buildDataQualityViewModel({
 
   const errorCount = errors.filter((item) => item.level === 'error').length
   const warningCount = errors.length - errorCount
-  const classificationMappedValue = coverage.reduce((sum, item) => sum + item.allocated, 0)
-  const classificationUnmappedValue = coverage.reduce((sum, item) => sum + item.unallocated, 0)
-  const classificationApplicableValue = classificationMappedValue + classificationUnmappedValue
+  const classificationMappedValue = coverage.reduce(
+    (sum, item) => sum + item.allocated,
+    0,
+  )
+  const classificationUnmappedValue = coverage.reduce(
+    (sum, item) => sum + item.unallocated,
+    0,
+  )
+  const classificationApplicableValue =
+    classificationMappedValue + classificationUnmappedValue
   const classificationNotApplicableValue = coverage.reduce(
     (sum, item) => sum + item.notApplicable,
     0,
@@ -132,7 +145,9 @@ export function buildDataQualityViewModel({
     classificationNotApplicableValue,
   ])
   const classificationIsNotApplicable =
-    !rawData.loading && classificationApplicableValue <= 0 && classificationNotApplicableValue > 0
+    !rawData.loading &&
+    classificationApplicableValue <= 0 &&
+    classificationNotApplicableValue > 0
   const classificationViewState = buildClassificationViewState({
     loading: rawData.loading,
     classificationIsNotApplicable,
@@ -142,10 +157,12 @@ export function buildDataQualityViewModel({
   const affectedAssets = buildAffectedAssets(dimensionCoverage)
 
   const unresolvedValue = scopedFundData.report
-    ? scopedFundData.report.undisclosedFundValue + scopedFundData.report.opaqueValue
+    ? scopedFundData.report.undisclosedFundValue +
+      scopedFundData.report.opaqueValue
     : 0
   const identifiedValue = scopedFundData.report
-    ? scopedFundData.report.directIdentifiedValue + scopedFundData.report.decomposedValue
+    ? scopedFundData.report.directIdentifiedValue +
+      scopedFundData.report.decomposedValue
     : 0
   const unresolvedPct = computeFundExposurePercentages(
     identifiedValue,
@@ -156,9 +173,12 @@ export function buildDataQualityViewModel({
     (status) => status.validationStatus === 'error',
   ).length
   const fundIssueCount = scopedFundData.statuses.filter(
-    (status) => status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct),
+    (status) =>
+      status.validationStatus !== 'ok' ||
+      hasMaterialQualityGap(status.residualPct),
   ).length
-  const hasLookThroughScope = !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
+  const hasLookThroughScope =
+    !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
   let pipelineTone: QualityTone = 'healthy'
   let pipelinePriority = 0
@@ -171,7 +191,9 @@ export function buildDataQualityViewModel({
   }
 
   let classificationMetric = formatPercentage(classificationGap)
-  let classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.unmapped')
+  let classificationMetricLabel = i18n.t(
+    'ui.builddataqualityviewmodel.unmapped',
+  )
   let classificationTone: QualityTone = hasMaterialQualityGap(classificationGap)
     ? 'warning'
     : 'healthy'
@@ -184,8 +206,12 @@ export function buildDataQualityViewModel({
     classificationTone = 'unavailable'
     classificationPriority = -1
   } else if (classificationIsNotApplicable) {
-    classificationMetric = i18n.t('ui.builddataqualityviewmodel.notApplicableShort')
-    classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.notApplicable')
+    classificationMetric = i18n.t(
+      'ui.builddataqualityviewmodel.notApplicableShort',
+    )
+    classificationMetricLabel = i18n.t(
+      'ui.builddataqualityviewmodel.notApplicable',
+    )
     classificationTone = 'unavailable'
     classificationPriority = -1
   }
@@ -221,7 +247,9 @@ export function buildDataQualityViewModel({
         'ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe',
       ),
       metric: String(errors.length),
-      metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', { count: errors.length }),
+      metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', {
+        count: errors.length,
+      }),
       tone: pipelineTone,
       priority: pipelinePriority,
     },
@@ -236,7 +264,8 @@ export function buildDataQualityViewModel({
         count: manualPriceOverrides.length,
       }),
       tone: manualPriceOverrides.length > 0 ? 'warning' : 'healthy',
-      priority: manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
+      priority:
+        manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
     },
     {
       id: 'classification',

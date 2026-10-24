@@ -20,7 +20,9 @@ export type HistoryMap = Map<string, HistoryPoint[]>
 // Aggregates raw per-account-per-date rows into one time series per asset
 // (isin/ticker/name), summing value/cost basis across accounts that hold
 // the same asset on the same date.
-export function buildPositionsHistory(rows: RawPositionsHistoryRow[]): HistoryMap {
+export function buildPositionsHistory(
+  rows: RawPositionsHistoryRow[],
+): HistoryMap {
   const map: HistoryMap = new Map()
   for (const row of rows) {
     const key = row.isin || row.ticker || row.name
@@ -45,7 +47,12 @@ export function buildPositionsHistory(rows: RawPositionsHistoryRow[]): HistoryMa
   for (const [key, points] of map) {
     const byDate = new Map<
       number,
-      { value: number; costBasis: number; pct: number | null; last_price: number }
+      {
+        value: number
+        costBasis: number
+        pct: number | null
+        last_price: number
+      }
     >()
     for (const p of points) {
       const existing = byDate.get(p.date.getTime())

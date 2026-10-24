@@ -1,8 +1,9 @@
+import { useMemo } from 'react'
+
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { useMemo } from 'react'
 
 export function usePositionTableFormatters() {
   const formatDate = useFormatDate()

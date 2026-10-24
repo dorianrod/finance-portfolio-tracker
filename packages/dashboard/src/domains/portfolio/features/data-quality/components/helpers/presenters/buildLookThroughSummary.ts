@@ -2,10 +2,14 @@ import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/qualit
 import { computeFundExposurePercentages } from '@/domains/portfolio/shared/helpers/quality/scopeFundQualityData'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
 
-export function buildLookThroughSummary(report: FundCoverageReport, notApplicableValue: number) {
+export function buildLookThroughSummary(
+  report: FundCoverageReport,
+  notApplicableValue: number,
+) {
   const identifiedValue = report.directIdentifiedValue + report.decomposedValue
   const unresolvedValue = report.undisclosedFundValue + report.opaqueValue
-  const selectedPortfolioValue = identifiedValue + unresolvedValue + notApplicableValue
+  const selectedPortfolioValue =
+    identifiedValue + unresolvedValue + notApplicableValue
   const percentages = computeFundExposurePercentages(
     identifiedValue,
     unresolvedValue,

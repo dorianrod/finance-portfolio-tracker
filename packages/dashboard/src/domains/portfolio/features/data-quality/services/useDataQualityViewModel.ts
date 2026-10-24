@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
+
 import { buildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualityViewModel'
 import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/shared/stores/dashboardQuality.atoms'
@@ -13,8 +16,6 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { useAtomValue } from 'jotai'
-import { useMemo } from 'react'
 
 type DataQualityViewModelInput = {
   positions: PositionRow[]
@@ -71,9 +72,15 @@ export function useDataQualityViewModel({
   )
   const activeThemeId = selectedTheme ?? viewModel.recommendedTheme.id
   const activeTheme =
-    viewModel.themes.find((theme) => theme.id === activeThemeId) ?? viewModel.themes[0]
+    viewModel.themes.find((theme) => theme.id === activeThemeId) ??
+    viewModel.themes[0]
   return useMemo(
-    () => ({ ...viewModel, activeTheme, activeThemeId, setSelectedQualityTheme }),
+    () => ({
+      ...viewModel,
+      activeTheme,
+      activeThemeId,
+      setSelectedQualityTheme,
+    }),
     [viewModel, activeTheme, activeThemeId, setSelectedQualityTheme],
   )
 }

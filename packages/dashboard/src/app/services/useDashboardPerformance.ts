@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { usePassiveIncomeQuery } from '@/domains/portfolio/shared/apis/queries/usePassiveIncomeQuery'
 import {
   computePerformanceSummary,
@@ -6,9 +8,10 @@ import {
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { useMemo } from 'react'
 
-const EMPTY_PASSIVE_INCOME: NonNullable<ReturnType<typeof usePassiveIncomeQuery>['data']> = []
+const EMPTY_PASSIVE_INCOME: NonNullable<
+  ReturnType<typeof usePassiveIncomeQuery>['data']
+> = []
 
 type DashboardPerformanceInput = {
   currentPositions: PositionRow[]
@@ -46,7 +49,8 @@ export function useDashboardPerformance({
     [asOfPerformance, periodPerformance],
   )
   const trailingIncome = useMemo(
-    () => computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
+    () =>
+      computeTrailing12mIncome(currentPositions, displayedHistory.at(-1)?.date),
     [currentPositions, displayedHistory],
   )
 
@@ -60,6 +64,12 @@ export function useDashboardPerformance({
       performance,
       trailingIncome,
     }),
-    [passiveIncomeLoading, passiveIncomeError, passiveIncome, performance, trailingIncome],
+    [
+      passiveIncomeLoading,
+      passiveIncomeError,
+      passiveIncome,
+      performance,
+      trailingIncome,
+    ],
   )
 }

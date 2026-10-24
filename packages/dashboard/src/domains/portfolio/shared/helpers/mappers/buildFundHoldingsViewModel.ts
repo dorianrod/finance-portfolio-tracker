@@ -1,9 +1,8 @@
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import type {
   FundHolding,
   FundHoldingStatus,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 
@@ -33,11 +32,16 @@ export type IssuerExposure = {
 export function isFundPosition(position: PositionRow): boolean {
   return (
     /\b(?:ETF|UCITS|FUND)\b/i.test(position.name) ||
-    /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(position.name)
+    /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(
+      position.name,
+    )
   )
 }
 
-export function holdingsForPosition(position: PositionRow, holdings: FundHolding[]): FundHolding[] {
+export function holdingsForPosition(
+  position: PositionRow,
+  holdings: FundHolding[],
+): FundHolding[] {
   return holdings.filter(
     (holding) =>
       (!!position.isin && holding.parentIsin === position.isin) ||
@@ -62,10 +66,14 @@ export function buildIssuerExposures(
   holdings: FundHolding[],
   statuses: FundHoldingStatus[] = [],
 ): IssuerExposure[] {
-  const applicablePositions = positions.filter(isAssetAnalysisApplicablePosition)
+  const applicablePositions = positions.filter(
+    isAssetAnalysisApplicablePosition,
+  )
   const byParent = new Map<string, FundHolding[]>()
   for (const holding of holdings) {
-    for (const key of [holding.parentIsin, holding.parentTicker].filter(Boolean)) {
+    for (const key of [holding.parentIsin, holding.parentTicker].filter(
+      Boolean,
+    )) {
       const rows = byParent.get(key) ?? []
       rows.push(holding)
       byParent.set(key, rows)
@@ -76,7 +84,8 @@ export function buildIssuerExposures(
   // out. Merge only strong normalized-prefix matches; market identifiers
   // (ISIN-like values) remain authoritative and are never fuzzily merged.
   const issuerNames = new Map<string, string>()
-  for (const holding of holdings) issuerNames.set(holding.issuerId, holding.issuerName)
+  for (const holding of holdings)
+    issuerNames.set(holding.issuerId, holding.issuerName)
   const normalizedIssuerIds = [...issuerNames.keys()].filter(
     (id) => !/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(id),
   )
@@ -87,14 +96,25 @@ export function buildIssuerExposures(
         Math.min(candidate.length, id.length) >= 12 &&
         (candidate.startsWith(id) || id.startsWith(candidate)),
     )
-    canonicalIssuerById.set(id, matches.toSorted((a, b) => b.length - a.length)[0] ?? id)
+    canonicalIssuerById.set(
+      id,
+      matches.toSorted((a, b) => b.length - a.length)[0] ?? id,
+    )
   }
   const canonicalIssuer = (id: string): { id: string; name: string } => {
     const canonicalId = canonicalIssuerById.get(id) ?? id
-    return { id: canonicalId, name: issuerNames.get(canonicalId) ?? issuerNames.get(id) ?? id }
+    return {
+      id: canonicalId,
+      name: issuerNames.get(canonicalId) ?? issuerNames.get(id) ?? id,
+    }
   }
 
-  type MutableSecurity = { id: string; name: string; value: number; funds: Map<string, number> }
+  type MutableSecurity = {
+    id: string
+    name: string
+    value: number
+    funds: Map<string, number>
+  }
   type MutableIssuer = {
     id: string
     name: string
@@ -105,12 +125,18 @@ export function buildIssuerExposures(
   const issuers = new Map<string, MutableIssuer>()
   const compositeIds = new Set(
     statuses
-      .flatMap((status) => [status.parentId, status.parentIsin, status.parentTicker])
+      .flatMap((status) => [
+        status.parentId,
+        status.parentIsin,
+        status.parentTicker,
+      ])
       .filter(Boolean),
   )
   const total = applicablePositions.reduce(
     (sum, position) =>
-      position.status === 'active' ? sum + Math.max(0, position.total_value ?? 0) : sum,
+      position.status === 'active'
+        ? sum + Math.max(0, position.total_value ?? 0)
+        : sum,
     0,
   )
 
@@ -130,7 +156,8 @@ export function buildIssuerExposures(
       funds: new Map<string, number>(),
     }
     issuer.value += value
-    if (fundName) issuer.funds.set(fundName, (issuer.funds.get(fundName) ?? 0) + value)
+    if (fundName)
+      issuer.funds.set(fundName, (issuer.funds.get(fundName) ?? 0) + value)
     const security = issuer.securities.get(securityId) ?? {
       id: securityId,
       name: securityName,
@@ -138,15 +165,18 @@ export function buildIssuerExposures(
       funds: new Map<string, number>(),
     }
     security.value += value
-    if (fundName) security.funds.set(fundName, (security.funds.get(fundName) ?? 0) + value)
+    if (fundName)
+      security.funds.set(fundName, (security.funds.get(fundName) ?? 0) + value)
     issuer.securities.set(securityId, security)
     issuers.set(issuerId, issuer)
   }
 
   for (const position of applicablePositions) {
-    const positionValue = position.status === 'active' ? Math.max(0, position.total_value ?? 0) : 0
+    const positionValue =
+      position.status === 'active' ? Math.max(0, position.total_value ?? 0) : 0
     if (positionValue <= 0) continue
-    const fundRows = byParent.get(position.isin) ?? byParent.get(position.ticker)
+    const fundRows =
+      byParent.get(position.isin) ?? byParent.get(position.ticker)
     if (fundRows?.length) {
       const totalWeight = fundRows.reduce((sum, row) => sum + row.weight, 0)
       const scale = totalWeight > 1 ? 1 / totalWeight : 1
@@ -165,7 +195,14 @@ export function buildIssuerExposures(
     }
     const directId = position.isin || position.ticker
     if (directId && !compositeIds.has(directId) && !isFundPosition(position)) {
-      add(directId, position.name, directId, position.name, positionValue, DIRECT_SOURCE)
+      add(
+        directId,
+        position.name,
+        directId,
+        position.name,
+        positionValue,
+        DIRECT_SOURCE,
+      )
     }
   }
 

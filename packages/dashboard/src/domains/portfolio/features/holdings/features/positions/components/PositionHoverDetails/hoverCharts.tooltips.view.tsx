@@ -2,9 +2,16 @@ import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { SEMANTIC_COLORS, SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import {
+  SEMANTIC_COLORS,
+  SEMANTIC_TEXT_CLASSES,
+} from '@/shared/theme/semanticColors'
+import {
+  type NumericTooltipProps,
+  tooltipValue,
+} from '@/shared/ui/chartTooltip'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
+
 import { RollingUnitPricePerf } from './RollingUnitPricePerf.view'
 
 export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
@@ -21,7 +28,8 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
       {data.sellAmount != null && (
         <>
           <p style={{ color: SEMANTIC_COLORS.transactionSell }}>
-            {i18n.t('ui.hoverchartsTooltips.sell')} {formatMoney(data.sellAmount)}
+            {i18n.t('ui.hoverchartsTooltips.sell')}{' '}
+            {formatMoney(data.sellAmount)}
           </p>
           {data.sellGain != null && (
             <p
@@ -68,7 +76,8 @@ export function TooltipPortfolio({
         <p
           className={`mt-1 font-semibold ${unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}
         >
-          {i18n.t('ui.hoverchartsTooltips.unrealized')} {formatMoney(unrealized)}
+          {i18n.t('ui.hoverchartsTooltips.unrealized')}{' '}
+          {formatMoney(unrealized)}
         </p>
       )}
       <OpSummary data={data} />
@@ -76,7 +85,11 @@ export function TooltipPortfolio({
   )
 }
 
-export function TooltipUnit({ active, payload, label }: NumericTooltipProps<HoverChartDataPoint>) {
+export function TooltipUnit({
+  active,
+  payload,
+  label,
+}: NumericTooltipProps<HoverChartDataPoint>) {
   const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const p = payload[0]
@@ -100,7 +113,10 @@ type SavingsPoint = {
   month: string
 }
 
-export function SavingsTooltip({ active, payload }: NumericTooltipProps<SavingsPoint>) {
+export function SavingsTooltip({
+  active,
+  payload,
+}: NumericTooltipProps<SavingsPoint>) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
@@ -112,7 +128,13 @@ export function SavingsTooltip({ active, payload }: NumericTooltipProps<SavingsP
       <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
         {formatDate(`${monthStr}-02`, { style: 'longMonthYear' })}
       </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 600, marginBottom: 4 }}>
+      <div
+        style={{
+          color: 'var(--tooltip-label)',
+          fontWeight: 600,
+          marginBottom: 4,
+        }}
+      >
         {i18n.t('ui.hoverchartsTooltips.balance')} {formatMoney(balance)}
       </div>
       {delta !== 0 && (

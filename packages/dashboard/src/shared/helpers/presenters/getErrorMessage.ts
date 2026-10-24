@@ -1,6 +1,7 @@
+import { ValidationError } from 'yup'
+
 import i18n from '@/i18n/i18n'
 import { HttpError } from '@/shared/http/httpError'
-import { ValidationError } from 'yup'
 
 export function getErrorMessage(error: unknown): string {
   if (error instanceof ValidationError) return i18n.t('ui.errors.invalidData')

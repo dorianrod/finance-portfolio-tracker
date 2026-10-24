@@ -1,15 +1,21 @@
+import { useAtom } from 'jotai'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
 import { positionUnderlyingPopoverAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms'
 import type { AllocationHoverTarget } from '@/domains/portfolio/shared/components/HoverAllocationPopover.view'
-import { useAtom } from 'jotai'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export function usePositionTableOverlays() {
   const [chart, setChart] = useState<ChartTarget | null>(null)
-  const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(null)
-  const [allocationHover, setAllocationHover] = useState<AllocationHoverTarget | null>(null)
-  const [underlyingPopover, setUnderlyingPopover] = useAtom(positionUnderlyingPopoverAtom)
+  const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(
+    null,
+  )
+  const [allocationHover, setAllocationHover] =
+    useState<AllocationHoverTarget | null>(null)
+  const [underlyingPopover, setUnderlyingPopover] = useAtom(
+    positionUnderlyingPopoverAtom,
+  )
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const cancelHide = useCallback(() => {

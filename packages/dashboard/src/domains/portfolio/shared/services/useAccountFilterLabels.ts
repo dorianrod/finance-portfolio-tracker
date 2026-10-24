@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
 import { skipToken, useQuery } from '@tanstack/react-query'
-import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
+import { useMemo } from 'react'
+
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { buildAccountFilterLabels } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
+import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 
 export function useAccountFilterLabels() {
   const dashboardQuery = useQuery<DashboardData>({
@@ -11,10 +12,11 @@ export function useAccountFilterLabels() {
   })
 
   return useMemo(
-    () => buildAccountFilterLabels(
-      dashboardQuery.data?.positions ?? [],
-      dashboardQuery.data?.accountLabels ?? {},
-    ),
+    () =>
+      buildAccountFilterLabels(
+        dashboardQuery.data?.positions ?? [],
+        dashboardQuery.data?.accountLabels ?? {},
+      ),
     [dashboardQuery.data?.accountLabels, dashboardQuery.data?.positions],
   )
 }

@@ -20,7 +20,9 @@ export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
       <button
         type="button"
         onClick={openFilters}
-        aria-label={i18n.t('ui.overviewperiodfilter.editCurrentComparisonPeriod')}
+        aria-label={i18n.t(
+          'ui.overviewperiodfilter.editCurrentComparisonPeriod',
+        )}
         className="group flex min-w-0 items-center gap-2.5 px-3 py-2 text-left transition-colors hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus"
       >
         <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-accent">

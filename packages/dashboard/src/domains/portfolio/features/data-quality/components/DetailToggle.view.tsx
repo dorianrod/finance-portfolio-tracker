@@ -21,7 +21,9 @@ export function DetailToggle({
     >
       <span>
         {expanded
-          ? i18n.t('ui.allocationcoveragecard.hideValue0', { value0: label.toLowerCase() })
+          ? i18n.t('ui.allocationcoveragecard.hideValue0', {
+              value0: label.toLowerCase(),
+            })
           : label}
       </span>
       <svg

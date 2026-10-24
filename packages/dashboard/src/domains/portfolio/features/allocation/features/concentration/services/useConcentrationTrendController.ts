@@ -1,10 +1,17 @@
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useState,
+} from 'react'
+
 import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   nextPlaybackIndex,
   shouldAnimateConcentration,
 } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { useCallback, useEffect, useEffectEvent, useMemo, useState } from 'react'
 
 export type ConcentrationChartRow = HistoricalConcentrationPoint & {
   timestamp: number
@@ -18,7 +25,10 @@ function timestamp(date: Date): number {
   return date.getTime()
 }
 
-function delta(current: number | null, previous: number | null | undefined): number | null {
+function delta(
+  current: number | null,
+  previous: number | null | undefined,
+): number | null {
   return current == null || previous == null ? null : current - previous
 }
 
@@ -40,9 +50,13 @@ export function useConcentrationTrendController(
   lookThroughAvailable: boolean,
 ) {
   const [mode, setMode] = useState<ConcentrationMode>('held')
-  const [selectedDate, setSelectedDate] = useState(() => heldPoints.at(-1)?.date ?? null)
+  const [selectedDate, setSelectedDate] = useState(
+    () => heldPoints.at(-1)?.date ?? null,
+  )
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null)
+  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(
+    null,
+  )
   const prefersReducedMotion = usePrefersReducedMotion()
   const animationEnabled = shouldAnimateConcentration(prefersReducedMotion)
   const points = mode === 'held' ? heldPoints : lookThroughPoints
@@ -53,16 +67,31 @@ export function useConcentrationTrendController(
         return {
           ...point,
           timestamp: timestamp(point.date),
-          positionsTo25Delta: delta(point.positionsTo25Pct, previous?.positionsTo25Pct),
-          positionsTo50Delta: delta(point.positionsTo50Pct, previous?.positionsTo50Pct),
-          positionsTo75Delta: delta(point.positionsTo75Pct, previous?.positionsTo75Pct),
-          positionsTo90Delta: delta(point.positionsTo90Pct, previous?.positionsTo90Pct),
+          positionsTo25Delta: delta(
+            point.positionsTo25Pct,
+            previous?.positionsTo25Pct,
+          ),
+          positionsTo50Delta: delta(
+            point.positionsTo50Pct,
+            previous?.positionsTo50Pct,
+          ),
+          positionsTo75Delta: delta(
+            point.positionsTo75Pct,
+            previous?.positionsTo75Pct,
+          ),
+          positionsTo90Delta: delta(
+            point.positionsTo90Pct,
+            previous?.positionsTo90Pct,
+          ),
         }
       }),
     [points],
   )
-  const exactIndex = points.findIndex((point) => point.date.getTime() === selectedDate?.getTime())
-  const selectedIndex = exactIndex >= 0 ? exactIndex : Math.max(0, points.length - 1)
+  const exactIndex = points.findIndex(
+    (point) => point.date.getTime() === selectedDate?.getTime(),
+  )
+  const selectedIndex =
+    exactIndex >= 0 ? exactIndex : Math.max(0, points.length - 1)
 
   const advancePlayback = useEffectEvent(() => {
     const next = nextPlaybackIndex(selectedIndex, points.length)
@@ -83,7 +112,11 @@ export function useConcentrationTrendController(
       setHoveredPointIndex(null)
       setMode(nextMode)
       const nextPoints = nextMode === 'held' ? heldPoints : lookThroughPoints
-      if (!nextPoints.some((point) => point.date.getTime() === selectedDate?.getTime())) {
+      if (
+        !nextPoints.some(
+          (point) => point.date.getTime() === selectedDate?.getTime(),
+        )
+      ) {
         setSelectedDate(nextPoints.at(-1)?.date ?? null)
       }
     },
@@ -116,7 +149,12 @@ export function useConcentrationTrendController(
     (index: string | number | null | undefined) => {
       if (index == null || index === '') return
       const pointIndex = Number(index)
-      if (!Number.isInteger(pointIndex) || pointIndex < 0 || pointIndex >= points.length) return
+      if (
+        !Number.isInteger(pointIndex) ||
+        pointIndex < 0 ||
+        pointIndex >= points.length
+      )
+        return
       setIsPlaying(false)
       setHoveredPointIndex(pointIndex)
     },
@@ -124,15 +162,21 @@ export function useConcentrationTrendController(
   )
 
   const selectedPoint = points[selectedIndex] ?? points.at(-1)
-  const hoveredPoint = hoveredPointIndex == null ? undefined : points[hoveredPointIndex]
+  const hoveredPoint =
+    hoveredPointIndex == null ? undefined : points[hoveredPointIndex]
   const displayedPoint = hoveredPoint ?? selectedPoint
   const displayedHoldings = useMemo(
     () => displayedPoint?.holdings.slice(0, 10) ?? [],
     [displayedPoint],
   )
-  const selectedTimestamp = selectedPoint ? timestamp(selectedPoint.date) : undefined
+  const selectedTimestamp = selectedPoint
+    ? timestamp(selectedPoint.date)
+    : undefined
   const dateDomain = useMemo<[number, number]>(
-    () => (chartData.length > 0 ? [chartData[0].timestamp, chartData.at(-1)!.timestamp] : [0, 0]),
+    () =>
+      chartData.length > 0
+        ? [chartData[0].timestamp, chartData.at(-1)!.timestamp]
+        : [0, 0],
     [chartData],
   )
 

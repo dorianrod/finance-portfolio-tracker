@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   applyPositionFilters,
@@ -14,7 +16,6 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import { useMemo } from 'react'
 
 type DashboardPositionsInput = {
   allAccountTypes: string[]
@@ -37,7 +38,10 @@ export function useDashboardPositions({
   sortDirection,
   sortKey,
 }: DashboardPositionsInput) {
-  const currentFilters = useMemo(() => withoutOperationAndPeriodFilters(filters), [filters])
+  const currentFilters = useMemo(
+    () => withoutOperationAndPeriodFilters(filters),
+    [filters],
+  )
   const latestAccountPositions = useMemo(
     () => applyPositionFilters(positions, currentFilters),
     [currentFilters, positions],
@@ -62,7 +66,11 @@ export function useDashboardPositions({
     [filters, positionsAtPeriodEnd],
   )
   const periodPositions = useMemo(
-    () => applyPositionFilters(positionsAtPeriodEnd, withoutOperationFilters(filters)),
+    () =>
+      applyPositionFilters(
+        positionsAtPeriodEnd,
+        withoutOperationFilters(filters),
+      ),
     [filters, positionsAtPeriodEnd],
   )
   const tableData = useMemo(
@@ -74,7 +82,13 @@ export function useDashboardPositions({
         sortKey,
         sortDirection,
       ),
-    [allAccountTypes, filters.hideClosedPositions, sortDirection, sortKey, tableFiltered],
+    [
+      allAccountTypes,
+      filters.hideClosedPositions,
+      sortDirection,
+      sortKey,
+      tableFiltered,
+    ],
   )
 
   return useMemo(

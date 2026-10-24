@@ -50,7 +50,9 @@ const positionRow = {
 
 describe('portfolio CSV schemas', () => {
   it('coerces operation amounts at the API boundary', async () => {
-    await expect(RAW_OPERATION_SCHEMA.validate(operationRow)).resolves.toMatchObject({
+    await expect(
+      RAW_OPERATION_SCHEMA.validate(operationRow),
+    ).resolves.toMatchObject({
       quantity: 2.5,
       price_per_unit: 100,
       total_amount: 250,
@@ -59,7 +61,9 @@ describe('portfolio CSV schemas', () => {
   })
 
   it('coerces position amounts and rejects malformed numbers', async () => {
-    await expect(RAW_POSITION_SCHEMA.validate(positionRow)).resolves.toMatchObject({
+    await expect(
+      RAW_POSITION_SCHEMA.validate(positionRow),
+    ).resolves.toMatchObject({
       quantity: 2.5,
       total_value: 275,
       xirr_rolling_3y: null,

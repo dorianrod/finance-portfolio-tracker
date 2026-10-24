@@ -1,6 +1,7 @@
-import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme.atoms'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useEffect, useMemo } from 'react'
+
+import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme.atoms'
 
 export function useDashboardTheme() {
   const setTheme = useSetAtom(dashboardThemeAtom)

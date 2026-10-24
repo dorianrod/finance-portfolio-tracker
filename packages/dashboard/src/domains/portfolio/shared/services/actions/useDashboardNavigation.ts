@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import {
+  type AnalysisTab,
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
-  type AnalysisTab,
 } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import { dashboardUnderlyingQueryAtom } from '@/domains/portfolio/shared/stores/dashboardUnderlyingHoldings.atoms'
 
@@ -16,11 +17,14 @@ export function useDashboardNavigation() {
     (tab: AnalysisTab) => setActiveTab(tab),
     [setActiveTab],
   )
-  const openCompleteHoldings = useCallback((fundName: string) => {
-    setUnderlyingQuery(fundName)
-    setHoldingsView('underlying')
-    setActiveTab('holdings')
-  }, [setActiveTab, setHoldingsView, setUnderlyingQuery])
+  const openCompleteHoldings = useCallback(
+    (fundName: string) => {
+      setUnderlyingQuery(fundName)
+      setHoldingsView('underlying')
+      setActiveTab('holdings')
+    },
+    [setActiveTab, setHoldingsView, setUnderlyingQuery],
+  )
 
   return useMemo(
     () => ({ navigateTo, openCompleteHoldings, setHoldingsView }),

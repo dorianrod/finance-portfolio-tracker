@@ -7,7 +7,12 @@ type ExternalLinkProps = Omit<
   href: string
 }
 
-export function ExternalLink({ href, children, className, ...props }: ExternalLinkProps) {
+export function ExternalLink({
+  href,
+  children,
+  className,
+  ...props
+}: ExternalLinkProps) {
   let safeUrl: URL | null = null
   try {
     const url = new URL(href)

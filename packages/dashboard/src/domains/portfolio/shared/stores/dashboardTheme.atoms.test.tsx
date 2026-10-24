@@ -3,6 +3,7 @@ import { act, cleanup, renderHook } from '@testing-library/react'
 import { createStore, Provider, useAtomValue } from 'jotai'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import {
   dashboardThemeAtom,
   DEFAULT_DASHBOARD_THEME,
@@ -14,7 +15,9 @@ function mountTheme() {
   function Wrapper({ children }: PropsWithChildren) {
     return <Provider store={store}>{children}</Provider>
   }
-  const hook = renderHook(() => useAtomValue(dashboardThemeAtom), { wrapper: Wrapper })
+  const hook = renderHook(() => useAtomValue(dashboardThemeAtom), {
+    wrapper: Wrapper,
+  })
   return { ...hook, store }
 }
 
@@ -30,7 +33,9 @@ describe('stored dashboard theme', () => {
     const { result, store } = mountTheme()
     expect(result.current).toBe('dark')
     act(() => store.set(dashboardThemeAtom, 'light'))
-    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(JSON.stringify('light'))
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe(
+      JSON.stringify('light'),
+    )
   })
   it.each(['invalid-json', '"unknown"', '{"theme":"dark"}'])(
     'ignores invalid persisted data %s',

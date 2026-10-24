@@ -28,7 +28,11 @@ const LABEL_CANDIDATES: YearLabelPlacement[] = [
   { dx: -10, dy: 17, textAnchor: 'end' },
 ]
 
-function labelBox(x: number, y: number, placement: YearLabelPlacement): LabelBox {
+function labelBox(
+  x: number,
+  y: number,
+  placement: YearLabelPlacement,
+): LabelBox {
   const labelX = x + placement.dx
   let left = labelX - LABEL_WIDTH
   if (placement.textAnchor === 'middle') left = labelX - LABEL_WIDTH / 2
@@ -68,7 +72,9 @@ export function calculateYearLabelLayout(
   const rateRange = Math.max(1, maxRate - minRate)
   const coordinates = points.map((point) => ({
     x: 16 + ((point.totalIncome - minIncome) / incomeRange) * (plotWidth - 32),
-    y: 16 + ((maxRate - (point.placementRate ?? 0)) / rateRange) * (plotHeight - 32),
+    y:
+      16 +
+      ((maxRate - (point.placementRate ?? 0)) / rateRange) * (plotHeight - 32),
   }))
   const placements: YearLabelPlacement[] = points.map(() => LABEL_CANDIDATES[0])
   const occupied: LabelBox[] = []
@@ -83,7 +89,10 @@ export function calculateYearLabelLayout(
 
     for (const [candidateIndex, candidate] of LABEL_CANDIDATES.entries()) {
       const box = labelBox(coordinate.x, coordinate.y, candidate)
-      const labelOverlap = occupied.reduce((sum, other) => sum + overlapArea(box, other), 0)
+      const labelOverlap = occupied.reduce(
+        (sum, other) => sum + overlapArea(box, other),
+        0,
+      )
       const pointOverlap = coordinates.reduce((sum, point) => {
         const inside =
           point.x >= box.left - 4 &&
@@ -97,7 +106,11 @@ export function calculateYearLabelLayout(
         Math.max(0, box.right - plotWidth) +
         Math.max(0, -box.top) +
         Math.max(0, box.bottom - plotHeight)
-      const score = labelOverlap * 100 + pointOverlap * 1_000 + outside * 1_000 + candidateIndex
+      const score =
+        labelOverlap * 100 +
+        pointOverlap * 1_000 +
+        outside * 1_000 +
+        candidateIndex
 
       if (score < bestScore) {
         best = candidate

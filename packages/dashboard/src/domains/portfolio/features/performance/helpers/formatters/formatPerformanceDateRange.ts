@@ -5,6 +5,7 @@ export function formatPerformanceDateRange(
   formatDate: ReturnType<typeof useFormatDate>,
 ): string {
   if (!summary.startDate || !summary.endDate) return ''
-  const format = (date: Date) => formatDate(date, { style: 'shortMonthYear', timeZone: 'UTC' })
+  const format = (date: Date) =>
+    formatDate(date, { style: 'shortMonthYear', timeZone: 'UTC' })
   return `${format(summary.startDate)} – ${format(summary.endDate)}`
 }

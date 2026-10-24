@@ -1,3 +1,5 @@
+import * as yup from 'yup'
+
 import type { RawCashRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
 import type {
   RawSavingCapacityByAccountRow,
@@ -16,7 +18,6 @@ import {
   CALENDAR_DATE_SCHEMA,
   OPTIONAL_CALENDAR_DATE_SCHEMA,
 } from '@/shared/schemas/calendarDate.schema'
-import * as yup from 'yup'
 
 const requiredText = () => yup.string().defined()
 const requiredNumber = () =>
@@ -36,7 +37,11 @@ const nullableNumber = () =>
     .nullable()
     .default(null)
     .defined()
-    .test('finite', 'Amount must be finite', (value) => value === null || Number.isFinite(value))
+    .test(
+      'finite',
+      'Amount must be finite',
+      (value) => value === null || Number.isFinite(value),
+    )
 export const ACCOUNT_ROW_SCHEMA = yup.object({
   account: requiredText(),
   label: requiredText(),
@@ -48,7 +53,10 @@ export const RAW_OPERATION_SCHEMA: yup.ObjectSchema<RawOperation> = yup.object({
   isin: requiredText(),
   ticker: requiredText(),
   name: requiredText(),
-  operation_type: yup.mixed<OperationType>().oneOf(ALL_OPERATION_TYPES).required(),
+  operation_type: yup
+    .mixed<OperationType>()
+    .oneOf(ALL_OPERATION_TYPES)
+    .required(),
   quantity: requiredNumber(),
   price_per_unit: requiredNumber(),
   total_amount: requiredNumber(),
@@ -84,17 +92,18 @@ export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
   total_return_pct: nullableNumber(),
 })
 
-export const RAW_PORTFOLIO_HISTORY_SCHEMA: yup.ObjectSchema<RawPortfolioHistory> = yup.object({
-  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
-  total_value: requiredNumber(),
-  total_cost_basis: requiredNumber(),
-  unrealized_gain: requiredNumber(),
-  net_cash_injected: requiredNumber(),
-  cash_delta: nullableNumber(),
-  tri: nullableNumber(),
-  tri_rolling_1y: nullableNumber(),
-  tri_rolling_3y: nullableNumber(),
-})
+export const RAW_PORTFOLIO_HISTORY_SCHEMA: yup.ObjectSchema<RawPortfolioHistory> =
+  yup.object({
+    snapshot_date: CALENDAR_DATE_SCHEMA.required(),
+    total_value: requiredNumber(),
+    total_cost_basis: requiredNumber(),
+    unrealized_gain: requiredNumber(),
+    net_cash_injected: requiredNumber(),
+    cash_delta: nullableNumber(),
+    tri: nullableNumber(),
+    tri_rolling_1y: nullableNumber(),
+    tri_rolling_3y: nullableNumber(),
+  })
 
 export const RAW_CASH_ROW_SCHEMA: yup.ObjectSchema<RawCashRow> = yup.object({
   snapshot_date: CALENDAR_DATE_SCHEMA.required(),
@@ -127,16 +136,18 @@ export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeS
       .boolean()
       .transform(
         (_value, originalValue) =>
-          originalValue === true || String(originalValue).trim().toLowerCase() === 'true',
+          originalValue === true ||
+          String(originalValue).trim().toLowerCase() === 'true',
       )
       .defined(),
   })
 
-export const RAW_SAVING_CAPACITY_SCHEMA: yup.ObjectSchema<RawSavingCapacityRow> = yup.object({
-  snapshot_date: CALENDAR_DATE_SCHEMA.required(),
-  savings_delta: requiredNumber(),
-  perf_delta: requiredNumber(),
-})
+export const RAW_SAVING_CAPACITY_SCHEMA: yup.ObjectSchema<RawSavingCapacityRow> =
+  yup.object({
+    snapshot_date: CALENDAR_DATE_SCHEMA.required(),
+    savings_delta: requiredNumber(),
+    perf_delta: requiredNumber(),
+  })
 
 export const RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA: yup.ObjectSchema<RawSavingCapacityByAccountRow> =
   yup.object({
@@ -164,7 +175,9 @@ const ALLOCATION_VALUES_SCHEMA = yup
       typeof values === 'object' &&
       values !== null &&
       !Array.isArray(values) &&
-      Object.values(values).every((value) => typeof value === 'number' && Number.isFinite(value)),
+      Object.values(values).every(
+        (value) => typeof value === 'number' && Number.isFinite(value),
+      ),
   )
 
 export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
@@ -177,7 +190,8 @@ export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
     values: ALLOCATION_VALUES_SCHEMA,
   })
   .transform((row: unknown) => {
-    if (typeof row !== 'object' || row === null || Array.isArray(row)) return row
+    if (typeof row !== 'object' || row === null || Array.isArray(row))
+      return row
     const source = row as Record<string, unknown>
     const values = Object.fromEntries(
       Object.entries(source)

@@ -22,7 +22,10 @@ export function ContributionListItem({
     <li>
       <div className="flex items-start justify-between gap-4 text-sm">
         <div className="min-w-0">
-          <div className="truncate font-medium text-content-secondary" title={item.name}>
+          <div
+            className="truncate font-medium text-content-secondary"
+            title={item.name}
+          >
             {item.label}
           </div>
           <div
@@ -36,7 +39,9 @@ export function ContributionListItem({
           <div className={`font-semibold ${tone}`}>
             {formatMoney(item.amount, { style: 'full' })}
           </div>
-          <div className="text-[11px] text-content-subtle">{formatPercentage(item.share)}</div>
+          <div className="text-[11px] text-content-subtle">
+            {formatPercentage(item.share)}
+          </div>
         </div>
       </div>
       <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-raised">
@@ -68,7 +73,10 @@ export function IrrListItem({
     <li>
       <div className="flex items-start justify-between gap-4 text-sm">
         <div className="min-w-0">
-          <div className="truncate font-medium text-content-secondary" title={item.name}>
+          <div
+            className="truncate font-medium text-content-secondary"
+            title={item.name}
+          >
             {formatAssetLabel(item, item.label)}
           </div>
           <div
@@ -91,7 +99,9 @@ export function IrrListItem({
       <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-surface-raised">
         <div
           className={`h-full rounded-full ${positive ? 'bg-positive' : 'bg-danger'}`}
-          style={{ width: `${strongestIrr > 0 ? (Math.abs(item.irr) / strongestIrr) * 100 : 0}%` }}
+          style={{
+            width: `${strongestIrr > 0 ? (Math.abs(item.irr) / strongestIrr) * 100 : 0}%`,
+          }}
         />
       </div>
     </li>

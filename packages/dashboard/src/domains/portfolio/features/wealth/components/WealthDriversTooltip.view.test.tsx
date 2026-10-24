@@ -1,6 +1,8 @@
+import '@/i18n/i18n'
+
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import '@/i18n/i18n'
+
 import { DriversTooltip } from './WealthDriversTooltip.view'
 
 const point = {

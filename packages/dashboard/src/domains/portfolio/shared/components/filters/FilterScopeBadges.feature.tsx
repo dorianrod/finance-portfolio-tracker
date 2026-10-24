@@ -1,9 +1,11 @@
+import { useAtomValue } from 'jotai'
+
 import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useAtomValue } from 'jotai'
+
 import { FilterScopeBadge } from './FilterScopeBadges.view'
 import { buildFilterScopeBadges } from './helpers/presenters/buildFilterScopeBadges'
 
@@ -13,7 +15,11 @@ export type {
   PeriodScopeMode,
 } from '@/domains/portfolio/shared/types/filterScope.type'
 
-export function FilterScopeBadges({ account, period, effectiveDate }: FilterScopeSpec) {
+export function FilterScopeBadges({
+  account,
+  period,
+  effectiveDate,
+}: FilterScopeSpec) {
   const formatDate = useFormatDate()
   const filters = useAtomValue(dashboardFiltersAtom)
   const accountLabels = useAccountFilterLabels()

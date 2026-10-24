@@ -1,7 +1,8 @@
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 import i18n from '@/i18n/i18n'
 
-export type AnalysisReliabilityTone = 'healthy' | 'warning' | 'critical' | 'unavailable'
+export type AnalysisReliabilityTone =
+  'healthy' | 'warning' | 'critical' | 'unavailable'
 
 export type AnalysisReliabilityMetric = {
   percentage: number | null
@@ -18,7 +19,9 @@ export type StatusReliabilityMetric = {
 
 const CRITICAL_RELIABILITY_PCT = 80
 
-export function percentageReliabilityTone(percentage: number | null): AnalysisReliabilityTone {
+export function percentageReliabilityTone(
+  percentage: number | null,
+): AnalysisReliabilityTone {
   if (percentage == null || !Number.isFinite(percentage)) return 'unavailable'
   const safePercentage = Math.max(0, Math.min(100, percentage))
   if (!hasMaterialQualityGap(100 - safePercentage)) return 'healthy'
@@ -30,7 +33,8 @@ export function aggregateReliabilityTone(
 ): AnalysisReliabilityTone {
   if (tones.every((tone) => tone === 'unavailable')) return 'unavailable'
   if (tones.includes('critical')) return 'critical'
-  if (tones.some((tone) => tone === 'warning' || tone === 'unavailable')) return 'warning'
+  if (tones.some((tone) => tone === 'warning' || tone === 'unavailable'))
+    return 'warning'
   return 'healthy'
 }
 

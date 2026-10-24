@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from 'react'
+
 import {
   aggregateAllocationPoints,
   aggregateFilteredPoints,
@@ -26,7 +28,6 @@ import type {
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import { useCallback, useMemo } from 'react'
 
 type UseAllocationChartsInput = {
   positions: PositionRow[]
@@ -42,7 +43,10 @@ type UseAllocationChartsInput = {
   dateTo?: Date
 }
 
-function latestAsOf<T extends { date: Date }>(points: T[], dateTo?: Date): T | undefined {
+function latestAsOf<T extends { date: Date }>(
+  points: T[],
+  dateTo?: Date,
+): T | undefined {
   return points.filter((point) => !dateTo || point.date <= dateTo).at(-1)
 }
 
@@ -64,10 +68,12 @@ export function useAllocationCharts({
     [positions],
   )
   const hasSelectedValue = positions.some(
-    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
+    (position) =>
+      position.status === 'active' && (position.total_value ?? 0) > 0,
   )
   const hasApplicableValue = applicablePositions.some(
-    (position) => position.status === 'active' && (position.total_value ?? 0) > 0,
+    (position) =>
+      position.status === 'active' && (position.total_value ?? 0) > 0,
   )
   const lookThroughConcentration = useMemo(
     () => computeConcentration(applicablePositions, fundHoldings),
@@ -78,7 +84,9 @@ export function useAllocationCharts({
     [applicablePositions],
   )
   const concentration =
-    concentrationMode === 'held' ? heldAssetConcentration : lookThroughConcentration
+    concentrationMode === 'held'
+      ? heldAssetConcentration
+      : lookThroughConcentration
   const cumulativeConcentration = useMemo(
     () => buildCumulativeConcentration(concentration.allHoldings),
     [concentration],
@@ -86,7 +94,11 @@ export function useAllocationCharts({
   const heldConcentrationHistory = useMemo(
     () =>
       filterPointsByPeriod(
-        buildHistoricalConcentration(rawPositions, accountFilters, accountTypeFilters),
+        buildHistoricalConcentration(
+          rawPositions,
+          accountFilters,
+          accountTypeFilters,
+        ),
         dateFrom,
         dateTo,
       ),
@@ -104,7 +116,14 @@ export function useAllocationCharts({
         dateFrom,
         dateTo,
       ),
-    [rawPositions, fundHoldingsHistory, accountFilters, accountTypeFilters, dateFrom, dateTo],
+    [
+      rawPositions,
+      fundHoldingsHistory,
+      accountFilters,
+      accountTypeFilters,
+      dateFrom,
+      dateTo,
+    ],
   )
   const scopedRawData = useMemo(
     () =>
@@ -114,7 +133,10 @@ export function useAllocationCharts({
       ),
     [rawData, accountFilters, positions],
   )
-  const baseGeo = useMemo(() => aggregateAllocationPoints(scopedRawData.geo), [scopedRawData.geo])
+  const baseGeo = useMemo(
+    () => aggregateAllocationPoints(scopedRawData.geo),
+    [scopedRawData.geo],
+  )
   const baseSecteur = useMemo(
     () => aggregateAllocationPoints(scopedRawData.secteur),
     [scopedRawData.secteur],
@@ -133,7 +155,12 @@ export function useAllocationCharts({
   )
 
   const displayPoints = useCallback(
-    <T extends keyof Pick<RawIsinData, 'geo' | 'secteur' | 'currency' | 'classe'>>(
+    <
+      T extends keyof Pick<
+        RawIsinData,
+        'geo' | 'secteur' | 'currency' | 'classe'
+      >,
+    >(
       dimension: T,
       basePoints: ReturnType<typeof aggregateAllocationPoints>,
     ) => {
@@ -148,7 +175,10 @@ export function useAllocationCharts({
     [activeFilter, matchingIsins, scopedRawData],
   )
 
-  const displayGeo = useMemo(() => displayPoints('geo', baseGeo), [displayPoints, baseGeo])
+  const displayGeo = useMemo(
+    () => displayPoints('geo', baseGeo),
+    [displayPoints, baseGeo],
+  )
   const displaySecteur = useMemo(
     () => displayPoints('secteur', baseSecteur),
     [displayPoints, baseSecteur],
@@ -189,7 +219,12 @@ export function useAllocationCharts({
     [displayClasse, dateFrom, dateTo],
   )
   const hasEvolution =
-    Math.max(trendGeo.length, trendSecteur.length, trendCurrency.length, trendClasse.length) >= 2
+    Math.max(
+      trendGeo.length,
+      trendSecteur.length,
+      trendCurrency.length,
+      trendClasse.length,
+    ) >= 2
 
   return useMemo(
     () => ({

@@ -41,7 +41,8 @@ export function resolveAccountTypeLabelPositions(
       .filter((position) => position.isRight === isRight)
       .toSorted((a, b) => a.desiredY - b.desiredY)
     if (side.length === 0) continue
-    const gap = side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
+    const gap =
+      side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
 
     side[0].y = Math.max(minY, side[0].desiredY)
     for (let i = 1; i < side.length; i++) {

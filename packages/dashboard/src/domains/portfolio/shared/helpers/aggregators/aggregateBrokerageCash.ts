@@ -21,6 +21,9 @@ export function aggregateBrokerageCash(rows: RawCashRow[]): CashHistoryPoint[] {
     )
   }
   return [...byDate.entries()]
-    .map(([date, total_broker_cash]) => ({ date: new Date(date), total_broker_cash }))
+    .map(([date, total_broker_cash]) => ({
+      date: new Date(date),
+      total_broker_cash,
+    }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime())
 }

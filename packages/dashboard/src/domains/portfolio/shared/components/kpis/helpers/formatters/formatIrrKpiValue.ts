@@ -1,6 +1,6 @@
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import type { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 
 export function formatIrrKpiValue(
   value: number | null,
@@ -8,5 +8,7 @@ export function formatIrrKpiValue(
   formatPercentage: ReturnType<typeof useFormatPercentage>,
 ): string {
   if (status === 'loading') return i18n.t('ui.formatirrkpivalueTs.calculating')
-  return value == null ? '—' : formatPercentage(value, { decimals: 2, signed: true })
+  return value == null
+    ? '—'
+    : formatPercentage(value, { decimals: 2, signed: true })
 }

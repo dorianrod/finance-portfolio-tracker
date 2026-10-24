@@ -1,6 +1,5 @@
-import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
+import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
@@ -42,7 +41,9 @@ export function nextPlaybackIndex(
   return { index: nextIndex, complete: nextIndex >= frameCount - 1 }
 }
 
-export function shouldAnimateConcentration(prefersReducedMotion: boolean): boolean {
+export function shouldAnimateConcentration(
+  prefersReducedMotion: boolean,
+): boolean {
   return !prefersReducedMotion
 }
 
@@ -50,7 +51,8 @@ function isApplicable(row: RawPosition): boolean {
   const category = row.account_category?.trim().toLowerCase() ?? ''
   const accountType = row.account_type?.trim().toLowerCase() ?? ''
   return (
-    !NON_INVESTMENT_CATEGORIES.has(category) && !accountType.endsWith(CASH_SUFFIX.toLowerCase())
+    !NON_INVESTMENT_CATEGORIES.has(category) &&
+    !accountType.endsWith(CASH_SUFFIX.toLowerCase())
   )
 }
 
@@ -78,7 +80,8 @@ function matchesFilters(
   return (
     isApplicable(row) &&
     (accountFilters.size === 0 || accountFilters.has(accountFilterId(row))) &&
-    (accountTypeFilters.size === 0 || accountTypeFilters.has(row.account_type ?? ''))
+    (accountTypeFilters.size === 0 ||
+      accountTypeFilters.has(row.account_type ?? ''))
   )
 }
 
@@ -92,7 +95,10 @@ function concentrationPoint(
 ): HistoricalConcentrationPoint {
   const ranked = [...assets.entries()]
     .map(([key, asset]) => ({ key, ...asset }))
-    .toSorted((left, right) => right.value - left.value || left.key.localeCompare(right.key))
+    .toSorted(
+      (left, right) =>
+        right.value - left.value || left.key.localeCompare(right.key),
+    )
   const holdings = ranked.map((holding) => ({
     ...holding,
     weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,
@@ -110,7 +116,8 @@ function concentrationPoint(
     positionsTo90Pct: positionsNeededForShare(holdings, 90),
     effectiveCount: squaredWeightSum > 0 ? 1 / squaredWeightSum : 0,
     holdingCount: holdings.length,
-    coveragePct: selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
+    coveragePct:
+      selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
     identifiedValue,
     undisclosedValue,
     opaqueValue,
@@ -124,10 +131,17 @@ export function buildHistoricalConcentration(
   accountFilters: Set<string> = new Set(),
   accountTypeFilters: Set<string> = new Set(),
 ): HistoricalConcentrationPoint[] {
-  const byDate = new Map<number, Map<string, { label: string; name: string; value: number }>>()
+  const byDate = new Map<
+    number,
+    Map<string, { label: string; name: string; value: number }>
+  >()
 
   for (const row of rows) {
-    if (!row.snapshot_date || !matchesFilters(row, accountFilters, accountTypeFilters)) continue
+    if (
+      !row.snapshot_date ||
+      !matchesFilters(row, accountFilters, accountTypeFilters)
+    )
+      continue
 
     const value = row.total_value
     const key = assetKey(row)
@@ -147,7 +161,10 @@ export function buildHistoricalConcentration(
   return [...byDate.entries()]
     .toSorted(([left], [right]) => left - right)
     .map(([date, assets]) => {
-      const total = [...assets.values()].reduce((sum, holding) => sum + holding.value, 0)
+      const total = [...assets.values()].reduce(
+        (sum, holding) => sum + holding.value,
+        0,
+      )
       return concentrationPoint(new Date(date), assets, total, total, 0, 0)
     })
 }
@@ -176,7 +193,11 @@ function historicalSnapshotsByParent(
       capturedAt: first.capturedAt,
       holdings,
     }
-    for (const key of [first.parentIsin, first.parentTicker, first.parentName].filter(Boolean)) {
+    for (const key of [
+      first.parentIsin,
+      first.parentTicker,
+      first.parentName,
+    ].filter(Boolean)) {
       const current = byParent.get(key) ?? []
       current.push(snapshot)
       byParent.set(key, current)
@@ -188,7 +209,8 @@ function historicalSnapshotsByParent(
       snapshots.toSorted(
         (left, right) =>
           left.effectiveDate.getTime() - right.effectiveDate.getTime() ||
-          (left.capturedAt?.getTime() ?? 0) - (right.capturedAt?.getTime() ?? 0),
+          (left.capturedAt?.getTime() ?? 0) -
+            (right.capturedAt?.getTime() ?? 0),
       ),
     )
   }
@@ -213,9 +235,13 @@ export function selectHistoricalFundHoldingsAtDate(
   const snapshotsByParent = historicalSnapshotsByParent(history)
   const selected = new Map<string, HistoricalSnapshot>()
   for (const holding of history) {
-    const parentKey = holding.parentIsin || holding.parentTicker || holding.parentName
+    const parentKey =
+      holding.parentIsin || holding.parentTicker || holding.parentName
     if (!parentKey || selected.has(parentKey)) continue
-    const snapshot = latestSnapshotAt(snapshotsByParent.get(parentKey), new Date(date))
+    const snapshot = latestSnapshotAt(
+      snapshotsByParent.get(parentKey),
+      new Date(date),
+    )
     if (snapshot) selected.set(parentKey, snapshot)
   }
   return [...selected.values()].flatMap((snapshot) => snapshot.holdings)
@@ -223,7 +249,9 @@ export function selectHistoricalFundHoldingsAtDate(
 
 function isFundPosition(row: RawPosition): boolean {
   return (
-    /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(row.name) ||
+    /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(
+      row.name,
+    ) ||
     /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers|DWS|SPDR|Vanguard|Invesco|UBS|HSBC)\b/i.test(
       row.name,
     )
@@ -240,7 +268,11 @@ export function buildHistoricalLookThroughConcentration(
   const snapshotsByParent = historicalSnapshotsByParent(history)
   const byDate = new Map<number, RawPosition[]>()
   for (const row of rows) {
-    if (!row.snapshot_date || !matchesFilters(row, accountFilters, accountTypeFilters)) continue
+    if (
+      !row.snapshot_date ||
+      !matchesFilters(row, accountFilters, accountTypeFilters)
+    )
+      continue
     const value = row.total_value
     if (value == null || !Number.isFinite(value) || value <= 0) continue
     const current = byDate.get(row.snapshot_date.getTime()) ?? []
@@ -251,14 +283,22 @@ export function buildHistoricalLookThroughConcentration(
   return [...byDate.entries()]
     .toSorted(([left], [right]) => left - right)
     .map(([date, positions]) => {
-      const assets = new Map<string, { label: string; name: string; value: number }>()
+      const assets = new Map<
+        string,
+        { label: string; name: string; value: number }
+      >()
       let hasApplicableHistoricalSnapshot = false
       let selectedValue = 0
       let identifiedValue = 0
       let undisclosedValue = 0
       let opaqueValue = 0
 
-      const addAsset = (key: string, label: string, name: string, value: number) => {
+      const addAsset = (
+        key: string,
+        label: string,
+        name: string,
+        value: number,
+      ) => {
         const current = assets.get(key) ?? { label, name, value: 0 }
         current.value += value
         assets.set(key, current)
@@ -268,8 +308,12 @@ export function buildHistoricalLookThroughConcentration(
         const value = position.total_value
         if (value == null) continue
         selectedValue += value
-        const parentKey = position.isin.trim() || position.ticker.trim() || position.name.trim()
-        const snapshot = latestSnapshotAt(snapshotsByParent.get(parentKey), new Date(date))
+        const parentKey =
+          position.isin.trim() || position.ticker.trim() || position.name.trim()
+        const snapshot = latestSnapshotAt(
+          snapshotsByParent.get(parentKey),
+          new Date(date),
+        )
         if (snapshot) {
           hasApplicableHistoricalSnapshot = true
           const disclosedWeight = snapshot.holdings.reduce(
@@ -294,7 +338,10 @@ export function buildHistoricalLookThroughConcentration(
         const directKey = position.isin.trim() || position.ticker.trim()
         if (!directKey) {
           opaqueValue += value
-        } else if (isFundPosition(position) || snapshotsByParent.has(parentKey)) {
+        } else if (
+          isFundPosition(position) ||
+          snapshotsByParent.has(parentKey)
+        ) {
           undisclosedValue += value
         } else {
           addAsset(
@@ -319,6 +366,8 @@ export function buildHistoricalLookThroughConcentration(
         hasApplicableHistoricalSnapshot,
       }
     })
-    .filter(({ hasApplicableHistoricalSnapshot }) => hasApplicableHistoricalSnapshot)
+    .filter(
+      ({ hasApplicableHistoricalSnapshot }) => hasApplicableHistoricalSnapshot,
+    )
     .map(({ point }) => point)
 }

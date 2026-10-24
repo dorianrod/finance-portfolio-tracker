@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
-import { clearCsvCache } from '@/shared/csv/csvData'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { clearCsvCache } from '@/shared/csv/csvData'
+
 import { useAllocationsByIsinQuery } from './useAllocationsByIsinQuery'
 
 afterEach(() => {
@@ -14,7 +16,9 @@ afterEach(() => {
 
 function wrapper() {
   const client = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: Infinity, gcTime: 0 } },
+    defaultOptions: {
+      queries: { retry: false, staleTime: Infinity, gcTime: 0 },
+    },
   })
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -31,7 +35,9 @@ describe('useAllocationsByIsinQuery', () => {
         ),
     )
     vi.stubGlobal('fetch', fetchMock)
-    const { result } = renderHook(useAllocationsByIsinQuery, { wrapper: wrapper() })
+    const { result } = renderHook(useAllocationsByIsinQuery, {
+      wrapper: wrapper(),
+    })
     await waitFor(() =>
       expect(result.current.data?.get('FR1')?.geo).toEqual({
         date: new Date('2026-01-31'),

@@ -8,6 +8,7 @@ import type {
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
+
 import {
   buildCumulativeConcentration,
   buildCumulativeWealthDrivers,
@@ -76,13 +77,33 @@ describe('buildTriChartData', () => {
       new Date('2024-01-01'),
       new Date('2025-01-01'),
     ])
-    expect(result.map((point) => point.tri_rolling_1y_backfill)).toEqual([8, 8, null, null, null])
-    expect(result.map((point) => point.tri_rolling_3y_backfill)).toEqual([7, 7, 7, 7, null])
-    expect(result.map((point) => point.tri_rolling_3y)).toEqual([null, null, null, 7, 6])
+    expect(result.map((point) => point.tri_rolling_1y_backfill)).toEqual([
+      8,
+      8,
+      null,
+      null,
+      null,
+    ])
+    expect(result.map((point) => point.tri_rolling_3y_backfill)).toEqual([
+      7,
+      7,
+      7,
+      7,
+      null,
+    ])
+    expect(result.map((point) => point.tri_rolling_3y)).toEqual([
+      null,
+      null,
+      null,
+      7,
+      6,
+    ])
   })
 
   it('returns no chart data when no rolling IRR exists', () => {
-    expect(buildTriChartData([historyPoint(new Date('2021-01-01'), null, null)])).toEqual([])
+    expect(
+      buildTriChartData([historyPoint(new Date('2021-01-01'), null, null)]),
+    ).toEqual([])
   })
 })
 
@@ -141,12 +162,36 @@ describe('computeTopPerformers', () => {
         total_value: 900,
         account_type: 'CTO',
       }),
-      position({ id: 'c', name: 'Flat', ticker: 'FLAT', unrealized_gain_pct: 0 }),
-      position({ id: 'd', name: 'Closed', status: 'closed', unrealized_gain_pct: 50 }),
+      position({
+        id: 'c',
+        name: 'Flat',
+        ticker: 'FLAT',
+        unrealized_gain_pct: 0,
+      }),
+      position({
+        id: 'd',
+        name: 'Closed',
+        status: 'closed',
+        unrealized_gain_pct: 50,
+      }),
     ]
     expect(computeTopPerformers(positions)).toEqual([
-      { label: 'Winner', name: 'Winner', pct: 25, gain: 250, value: 1250, account_type: 'PEA' },
-      { label: 'Loser', name: 'Loser', pct: -10, gain: -100, value: 900, account_type: 'CTO' },
+      {
+        label: 'Winner',
+        name: 'Winner',
+        pct: 25,
+        gain: 250,
+        value: 1250,
+        account_type: 'PEA',
+      },
+      {
+        label: 'Loser',
+        name: 'Loser',
+        pct: -10,
+        gain: -100,
+        value: 900,
+        account_type: 'CTO',
+      },
     ])
   })
 
@@ -157,11 +202,14 @@ describe('computeTopPerformers', () => {
 
 describe('computeTrailing12mSavings', () => {
   it('sums the trailing 12-month window for each of the last 12 months', () => {
-    const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, i) => ({
-      date: new Date(Date.UTC(2024, i, 1)),
-      savings_delta: 100,
-      perf_delta: 10,
-    }))
+    const points: SavingCapacityPoint[] = Array.from(
+      { length: 24 },
+      (_, i) => ({
+        date: new Date(Date.UTC(2024, i, 1)),
+        savings_delta: 100,
+        perf_delta: 10,
+      }),
+    )
     const last12 = computeTrailing12mSavings(points)
     expect(last12).toHaveLength(12)
     expect(last12[0].rolling_12m).toBe(1200)
@@ -185,8 +233,18 @@ describe('filterMonthlyOpsByAccounts', () => {
   function makeOps(): MonthlyOperationsByMonth {
     const map: MonthlyOperationsByMonth = new Map()
     map.set('2024-01', [
-      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
-      { date: new Date('2024-01-10'), account: 'a2', operation_type: 'DEPOSIT', total_amount: 50 },
+      {
+        date: new Date('2024-01-05'),
+        account: 'a1',
+        operation_type: 'DEPOSIT',
+        total_amount: 100,
+      },
+      {
+        date: new Date('2024-01-10'),
+        account: 'a2',
+        operation_type: 'DEPOSIT',
+        total_amount: 50,
+      },
     ] as MonthlyOperation[])
     return map
   }
@@ -200,7 +258,12 @@ describe('filterMonthlyOpsByAccounts', () => {
   it("filters each month's operations down to the selected accounts", () => {
     const result = filterMonthlyOpsByAccounts(makeOps(), new Set(['a1']))
     expect(result.get('2024-01')).toEqual([
-      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      {
+        date: new Date('2024-01-05'),
+        account: 'a1',
+        operation_type: 'DEPOSIT',
+        total_amount: 100,
+      },
     ])
   })
 
@@ -211,7 +274,12 @@ describe('filterMonthlyOpsByAccounts', () => {
     )
 
     expect(result.get('2024-01')).toEqual([
-      { date: new Date('2024-01-05'), account: 'a1', operation_type: 'DEPOSIT', total_amount: 100 },
+      {
+        date: new Date('2024-01-05'),
+        account: 'a1',
+        operation_type: 'DEPOSIT',
+        total_amount: 100,
+      },
     ])
   })
 })
@@ -224,9 +292,13 @@ describe('wealth driver helpers', () => {
   ]
 
   it('filters points inclusively by date', () => {
-    expect(filterPointsByPeriod(points, new Date('2024-02-01'), new Date('2024-02-29'))).toEqual([
-      points[1],
-    ])
+    expect(
+      filterPointsByPeriod(
+        points,
+        new Date('2024-02-01'),
+        new Date('2024-02-29'),
+      ),
+    ).toEqual([points[1]])
   })
 
   it('builds cumulative savings, performance and total change', () => {
@@ -238,15 +310,22 @@ describe('wealth driver helpers', () => {
   })
 
   it('summarises change drivers for a period', () => {
-    expect(computePeriodDrivers(points)).toEqual({ savings: 125, performance: 20, change: 145 })
+    expect(computePeriodDrivers(points)).toEqual({
+      savings: 125,
+      performance: 20,
+      change: 145,
+    })
   })
 
   it('compares the trailing twelve months with the preceding twelve-month window', () => {
-    const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, index) => ({
-      date: new Date(Date.UTC(2024, 10 + index, 28)),
-      savings_delta: index < 12 ? 100 : 150,
-      perf_delta: index < 12 ? 50 : -25,
-    }))
+    const points: SavingCapacityPoint[] = Array.from(
+      { length: 24 },
+      (_, index) => ({
+        date: new Date(Date.UTC(2024, 10 + index, 28)),
+        savings_delta: index < 12 ? 100 : 150,
+        perf_delta: index < 12 ? 50 : -25,
+      }),
+    )
     const result = computeTrailing12mYearOverYear(points)
 
     expect(result).toEqual({
@@ -289,17 +368,31 @@ describe('wealth driver helpers', () => {
       { date: new Date('2026-10-11'), savings_delta: 2000, perf_delta: 200 },
     ])
 
-    expect(result.savings).toEqual({ current: null, previous: null, changePct: null })
-    expect(result.performance).toEqual({ current: null, previous: null, changePct: null })
+    expect(result.savings).toEqual({
+      current: null,
+      previous: null,
+      changePct: null,
+    })
+    expect(result.performance).toEqual({
+      current: null,
+      previous: null,
+      changePct: null,
+    })
   })
 
   it('anchors the trailing comparison at the selected end date', () => {
-    const points: SavingCapacityPoint[] = Array.from({ length: 36 }, (_, index) => ({
-      date: new Date(Date.UTC(2023, index, 28)),
-      savings_delta: index < 24 ? 100 : 999,
-      perf_delta: index < 24 ? 10 : 999,
-    }))
-    const result = computeTrailing12mYearOverYear(points, new Date('2024-12-31'))
+    const points: SavingCapacityPoint[] = Array.from(
+      { length: 36 },
+      (_, index) => ({
+        date: new Date(Date.UTC(2023, index, 28)),
+        savings_delta: index < 24 ? 100 : 999,
+        perf_delta: index < 24 ? 10 : 999,
+      }),
+    )
+    const result = computeTrailing12mYearOverYear(
+      points,
+      new Date('2024-12-31'),
+    )
     expect(result.currentMonths.at(-1)).toBe('2024-12')
     expect(result.savings.current).toBe(1200)
     expect(result.savings.previous).toBe(1200)
@@ -400,13 +493,15 @@ describe('computeTrailing12mIncome', () => {
       ],
     })
 
-    expect(computeTrailing12mIncome([p], new Date('2025-12-31'))).toMatchObject({
-      total: 150,
-      previousTotal: 100,
-      changePct: 50,
-      dateFrom: new Date('2024-12-31'),
-      dateTo: new Date('2025-12-31'),
-    })
+    expect(computeTrailing12mIncome([p], new Date('2025-12-31'))).toMatchObject(
+      {
+        total: 150,
+        previousTotal: 100,
+        changePct: 50,
+        dateFrom: new Date('2024-12-31'),
+        dateTo: new Date('2025-12-31'),
+      },
+    )
   })
 })
 
@@ -438,7 +533,11 @@ describe('portfolio summaries', () => {
       { label: 'Medium', name: 'Medium', value: 30, weight: 30 },
     ])
 
-    expect(result.map((point) => point.name)).toEqual(['Large', 'Medium', 'Small'])
+    expect(result.map((point) => point.name)).toEqual([
+      'Large',
+      'Medium',
+      'Small',
+    ])
     expect(result.map((point) => point.rank)).toEqual([1, 2, 3])
     expect(result.map((point) => point.cumulativeWeight)).toEqual([50, 80, 100])
   })
@@ -459,12 +558,26 @@ describe('portfolio summaries', () => {
         account: 'acc2',
         total_value: 200,
       }),
-      position({ id: 'account', isin: '', ticker: '', name: 'PEE product', total_value: 200 }),
+      position({
+        id: 'account',
+        isin: '',
+        ticker: '',
+        name: 'PEE product',
+        total_value: 200,
+      }),
     ])
 
     expect(result.holdings).toHaveLength(2)
-    expect(result.holdings[0]).toMatchObject({ name: 'World ETF', value: 800, weight: 80 })
-    expect(result.holdings[1]).toMatchObject({ name: 'PEE product', value: 200, weight: 20 })
+    expect(result.holdings[0]).toMatchObject({
+      name: 'World ETF',
+      value: 800,
+      weight: 80,
+    })
+    expect(result.holdings[1]).toMatchObject({
+      name: 'PEE product',
+      value: 200,
+      weight: 20,
+    })
     expect(result.topTenValue).toBe(1_000)
     expect(result.topTenPct).toBe(100)
     expect(result.coveragePct).toBe(100)
@@ -484,7 +597,12 @@ describe('portfolio summaries', () => {
 
   it('excludes synthetic brokerage cash from concentration', () => {
     const positions = [
-      position({ id: 'asset', isin: 'FR1', name: 'Invested asset', total_value: 100 }),
+      position({
+        id: 'asset',
+        isin: 'FR1',
+        name: 'Invested asset',
+        total_value: 100,
+      }),
       position({
         id: 'cash',
         isin: '',
@@ -500,17 +618,40 @@ describe('portfolio summaries', () => {
     const lookThrough = computeConcentration(positions)
 
     expect(held).toMatchObject({ identifiedValue: 100, selectedValue: 100 })
-    expect(held.holdings).toMatchObject([{ name: 'Invested asset', weight: 100 }])
-    expect(lookThrough).toMatchObject({ identifiedValue: 100, opaqueValue: 0, selectedValue: 100 })
-    expect(lookThrough.holdings).toMatchObject([{ name: 'Invested asset', weight: 100 }])
+    expect(held.holdings).toMatchObject([
+      { name: 'Invested asset', weight: 100 },
+    ])
+    expect(lookThrough).toMatchObject({
+      identifiedValue: 100,
+      opaqueValue: 0,
+      selectedValue: 100,
+    })
+    expect(lookThrough.holdings).toMatchObject([
+      { name: 'Invested asset', weight: 100 },
+    ])
   })
 
   it('looks through funds and aggregates the same underlying direct and indirect exposure', () => {
     const result = computeConcentration(
       [
-        position({ id: 'fund-a', isin: 'FUND-A', name: 'World ETF', total_value: 1_000 }),
-        position({ id: 'fund-b', isin: 'FUND-B', name: 'US UCITS ETF', total_value: 500 }),
-        position({ id: 'direct', isin: 'DIRECT-ASSET', name: 'Direct Asset', total_value: 100 }),
+        position({
+          id: 'fund-a',
+          isin: 'FUND-A',
+          name: 'World ETF',
+          total_value: 1_000,
+        }),
+        position({
+          id: 'fund-b',
+          isin: 'FUND-B',
+          name: 'US UCITS ETF',
+          total_value: 500,
+        }),
+        position({
+          id: 'direct',
+          isin: 'DIRECT-ASSET',
+          name: 'Direct Asset',
+          total_value: 100,
+        }),
         position({
           id: 'account',
           isin: '',
@@ -574,15 +715,26 @@ describe('portfolio summaries', () => {
     expect(result.coveragePct).toBeCloseTo((380 / 11600) * 100)
     expect(result.undisclosedValue).toBe(1_220)
     expect(result.opaqueValue).toBe(10_000)
-    expect(buildCumulativeConcentration(result.allHoldings).at(-1)?.cumulativeWeight).toBeCloseTo(
-      result.coveragePct,
-    )
+    expect(
+      buildCumulativeConcentration(result.allHoldings).at(-1)?.cumulativeWeight,
+    ).toBeCloseTo(result.coveragePct)
   })
 
   it('does not rank account valuations or opaque funds as underlying assets', () => {
     const result = computeConcentration([
-      position({ id: 'account', isin: '', ticker: '', name: 'PEE account', total_value: 1_000 }),
-      position({ id: 'opaque-fund', isin: 'FUND-X', name: 'Opaque ETF', total_value: 500 }),
+      position({
+        id: 'account',
+        isin: '',
+        ticker: '',
+        name: 'PEE account',
+        total_value: 1_000,
+      }),
+      position({
+        id: 'opaque-fund',
+        isin: 'FUND-X',
+        name: 'Opaque ETF',
+        total_value: 500,
+      }),
     ])
 
     expect(result.holdings).toEqual([])

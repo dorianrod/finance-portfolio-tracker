@@ -1,8 +1,13 @@
-import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { AssetIrrView, PerformanceContributionCard } from './PerformanceContributionCard.feature'
+
+import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
+
+import {
+  AssetIrrView,
+  PerformanceContributionCard,
+} from './PerformanceContributionCard.feature'
 
 function summary(
   overrides: Partial<PerformanceContributionSummary> = {},
@@ -16,10 +21,24 @@ function summary(
     positiveTotal: 1000,
     negativeTotal: 250,
     contributors: [
-      { key: 'a', label: 'AAA', name: 'Asset A', amount: 1000, share: 100, accounts: ['PEA'] },
+      {
+        key: 'a',
+        label: 'AAA',
+        name: 'Asset A',
+        amount: 1000,
+        share: 100,
+        accounts: ['PEA'],
+      },
     ],
     detractors: [
-      { key: 'b', label: 'BBB', name: 'Asset B', amount: -250, share: 100, accounts: ['CTO'] },
+      {
+        key: 'b',
+        label: 'BBB',
+        name: 'Asset B',
+        amount: -250,
+        share: 100,
+        accounts: ['CTO'],
+      },
     ],
     ...overrides,
   }
@@ -65,7 +84,9 @@ function assetIrr(overrides: Partial<AssetIrrSummary> = {}): AssetIrrSummary {
 
 describe('PerformanceContributionCard', () => {
   it('uses the same ranked-list visual for positive and negative IRRs', () => {
-    const html = renderToStaticMarkup(<AssetIrrView summary={assetIrr()} status="ready" />)
+    const html = renderToStaticMarkup(
+      <AssetIrrView summary={assetIrr()} status="ready" />,
+    )
 
     expect(html).not.toContain('IRR method')
     expect(html).toContain('Assets measured')
@@ -89,7 +110,10 @@ describe('PerformanceContributionCard', () => {
         assetIrr={assetIrr()}
         assetIrrStatus="ready"
         sinceTracking={summary()}
-        trailingThreeYears={summary({ horizon: 'trailing-3y', startDate: new Date('2023-09-30') })}
+        trailingThreeYears={summary({
+          horizon: 'trailing-3y',
+          startDate: new Date('2023-09-30'),
+        })}
         sinceTrackingIrr={12.34}
         trailingThreeYearIrr={8.5}
         irrStatus="ready"
@@ -115,7 +139,10 @@ describe('PerformanceContributionCard', () => {
         assetIrr={assetIrr()}
         assetIrrStatus="ready"
         sinceTracking={summary()}
-        trailingThreeYears={summary({ horizon: 'trailing-3y', available: false })}
+        trailingThreeYears={summary({
+          horizon: 'trailing-3y',
+          available: false,
+        })}
         sinceTrackingIrr={12.34}
         trailingThreeYearIrr={null}
         irrStatus="ready"
@@ -157,9 +184,14 @@ describe('PerformanceContributionCard', () => {
   })
 
   it('shows asset IRR loading and unavailable states', () => {
-    const loading = renderToStaticMarkup(<AssetIrrView summary={assetIrr()} status="loading" />)
+    const loading = renderToStaticMarkup(
+      <AssetIrrView summary={assetIrr()} status="loading" />,
+    )
     const unavailable = renderToStaticMarkup(
-      <AssetIrrView summary={assetIrr({ available: false, assets: [] })} status="ready" />,
+      <AssetIrrView
+        summary={assetIrr({ available: false, assets: [] })}
+        status="ready"
+      />,
     )
 
     expect(loading).toContain('Calculating asset IRR')

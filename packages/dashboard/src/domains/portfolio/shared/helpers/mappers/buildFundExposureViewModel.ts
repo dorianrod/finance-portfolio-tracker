@@ -31,7 +31,10 @@ type BuildFundExposureViewModelInput = {
   statuses: FundHoldingStatus[]
 }
 
-function matchesFundStatus(position: PositionRow, statuses: FundHoldingStatus[]): boolean {
+function matchesFundStatus(
+  position: PositionRow,
+  statuses: FundHoldingStatus[],
+): boolean {
   return statuses.some(
     (status) =>
       status.parentId === (position.isin || position.ticker) ||
@@ -52,14 +55,17 @@ export function buildFundExposureViewModel({
   const selectedFundName = needle
     ? (positions.find(
         (position) =>
-          position.name.toLocaleLowerCase() === needle && matchesFundStatus(position, statuses),
+          position.name.toLocaleLowerCase() === needle &&
+          matchesFundStatus(position, statuses),
       )?.name ?? '')
     : ''
   const scopedPositions = selectedFundName
     ? positions.filter((position) => position.name === selectedFundName)
     : positions
   const parentIds = new Set(
-    scopedPositions.flatMap((position) => [position.isin, position.ticker]).filter(Boolean),
+    scopedPositions
+      .flatMap((position) => [position.isin, position.ticker])
+      .filter(Boolean),
   )
   const scopedHoldings = selectedFundName
     ? holdings.filter(
@@ -69,7 +75,11 @@ export function buildFundExposureViewModel({
           parentIds.has(holding.parentTicker),
       )
     : holdings
-  const exposures = buildIssuerExposures(scopedPositions, scopedHoldings, statuses)
+  const exposures = buildIssuerExposures(
+    scopedPositions,
+    scopedHoldings,
+    statuses,
+  )
   const filtered =
     needle && !selectedFundName
       ? exposures.filter(
@@ -79,7 +89,9 @@ export function buildFundExposureViewModel({
             issuer.securities.some((security) =>
               security.name.toLocaleLowerCase().includes(needle),
             ) ||
-            issuer.funds.some((fund) => fund.toLocaleLowerCase().includes(needle)),
+            issuer.funds.some((fund) =>
+              fund.toLocaleLowerCase().includes(needle),
+            ),
         )
       : exposures
   const displayed = [...filtered].toSorted(
@@ -108,7 +120,10 @@ export function buildFundExposureViewModel({
   return {
     displayed,
     rows,
-    securityCount: displayed.reduce((sum, issuer) => sum + issuer.securities.length, 0),
+    securityCount: displayed.reduce(
+      (sum, issuer) => sum + issuer.securities.length,
+      0,
+    ),
     totalIssuerCount: exposures.length,
   }
 }

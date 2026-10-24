@@ -17,8 +17,10 @@ function isComponentModule(filename) {
 function isProgramDeclaration(node) {
   let current = node.parent
   if (current?.type === 'VariableDeclaration') current = current.parent
-  if (current?.type === 'ExportDefaultDeclaration'
-    || current?.type === 'ExportNamedDeclaration') {
+  if (
+    current?.type === 'ExportDefaultDeclaration' ||
+    current?.type === 'ExportNamedDeclaration'
+  ) {
     current = current.parent
   }
   return current?.type === 'Program'
@@ -52,13 +54,17 @@ export default {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Keep module-level hooks and helpers out of React component modules',
+      description:
+        'Keep module-level hooks and helpers out of React component modules',
     },
     schema: [],
     messages: {
-      extractHook: 'Move custom hook "{{name}}" out of this component module: read-only hooks go to a categorized helper file; effects and orchestration go to services. [arch-component-module-boundaries]',
-      extractHelper: 'Move module helper "{{name}}" out of this component module into a component-, page-, or domain-owned categorized helper file. [arch-component-module-boundaries]',
-      renameLogicModule: 'Replace this opaque *.logic module with a categorized helper or service whose path states its responsibility. [arch-component-module-boundaries]',
+      extractHook:
+        'Move custom hook "{{name}}" out of this component module: read-only hooks go to a categorized helper file; effects and orchestration go to services. [arch-component-module-boundaries]',
+      extractHelper:
+        'Move module helper "{{name}}" out of this component module into a component-, page-, or domain-owned categorized helper file. [arch-component-module-boundaries]',
+      renameLogicModule:
+        'Replace this opaque *.logic module with a categorized helper or service whose path states its responsibility. [arch-component-module-boundaries]',
     },
   },
   create(context) {

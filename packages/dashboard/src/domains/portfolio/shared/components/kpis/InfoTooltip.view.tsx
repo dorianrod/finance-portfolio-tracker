@@ -1,7 +1,14 @@
-import i18n from '@/i18n/i18n'
-import { useId, useState, type ReactNode } from 'react'
+import { type ReactNode, useId, useState } from 'react'
 
-export function InfoTooltip({ text, footer }: { text: ReactNode; footer?: ReactNode }) {
+import i18n from '@/i18n/i18n'
+
+export function InfoTooltip({
+  text,
+  footer,
+}: {
+  text: ReactNode
+  footer?: ReactNode
+}) {
   const [visible, setVisible] = useState(false)
   const tooltipId = useId()
 
@@ -27,7 +34,6 @@ export function InfoTooltip({ text, footer }: { text: ReactNode; footer?: ReactN
           }
         }}
       >
-
         {i18n.t('ui.infotooltip.i')}
       </button>
       {visible && (
@@ -39,7 +45,9 @@ export function InfoTooltip({ text, footer }: { text: ReactNode; footer?: ReactN
           <span className="block">{text}</span>
           {footer && (
             <span className="mt-2.5 block border-t border-border-strong pt-2">
-              <span className="block text-[10px] font-semibold uppercase tracking-wider text-content-subtle">{i18n.t('ui.infotooltip.filterScope')}</span>
+              <span className="block text-[10px] font-semibold uppercase tracking-wider text-content-subtle">
+                {i18n.t('ui.infotooltip.filterScope')}
+              </span>
               {footer}
             </span>
           )}

@@ -1,30 +1,35 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
+
 import maxHooksPerComponent from './max-hooks-per-component.js'
 
 const linter = new Linter({ configType: 'flat' })
 
 function lint(code, filename = 'Dashboard.feature.tsx', max = 6) {
-  return linter.verify(code, {
-    files: ['**/*.tsx'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  return linter.verify(
+    code,
+    {
+      files: ['**/*.tsx'],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        local: {
+          rules: { 'max-hooks-per-component': maxHooksPerComponent },
+        },
+      },
+      rules: {
+        'local/max-hooks-per-component': ['error', { max }],
       },
     },
-    plugins: {
-      local: {
-        rules: { 'max-hooks-per-component': maxHooksPerComponent },
-      },
-    },
-    rules: {
-      'local/max-hooks-per-component': ['error', { max }],
-    },
-  }, { filename })
+    { filename },
+  )
 }
 
 describe('max-hooks-per-component', () => {
@@ -59,17 +64,28 @@ describe('max-hooks-per-component', () => {
       }
       function Small() { useA(); return <div /> }
     `
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['tooManyHooks'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'tooManyHooks',
+    ])
   })
 
   it.each([
-    ['memo', 'const Dashboard = memo(() => { useA(); useB(); return <div /> })'],
-    ['forwardRef', 'const Dashboard = forwardRef((props, ref) => { useA(); useB(); return <div ref={ref} /> })'],
-    ['React member hooks', 'const Dashboard = () => { React.useState(); React.useMemo(); return <div /> }'],
+    [
+      'memo',
+      'const Dashboard = memo(() => { useA(); useB(); return <div /> })',
+    ],
+    [
+      'forwardRef',
+      'const Dashboard = forwardRef((props, ref) => { useA(); useB(); return <div ref={ref} /> })',
+    ],
+    [
+      'React member hooks',
+      'const Dashboard = () => { React.useState(); React.useMemo(); return <div /> }',
+    ],
   ])('recognizes %s components and hooks', (_name, code) => {
-    expect(lint(code, 'Dashboard.feature.tsx', 1).map(({ messageId }) => messageId)).toEqual([
-      'tooManyHooks',
-    ])
+    expect(
+      lint(code, 'Dashboard.feature.tsx', 1).map(({ messageId }) => messageId),
+    ).toEqual(['tooManyHooks'])
   })
 
   it.each(['Dashboard.test.tsx', 'Dashboard.spec.tsx'])(

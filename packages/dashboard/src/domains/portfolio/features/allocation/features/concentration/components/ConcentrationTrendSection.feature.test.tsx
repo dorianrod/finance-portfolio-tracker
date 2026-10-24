@@ -1,11 +1,12 @@
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
+
 import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationTrendSection.feature'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   nextPlaybackIndex,
   shouldAnimateConcentration,
 } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
 
 const points: HistoricalConcentrationPoint[] = [
   {
@@ -71,12 +72,12 @@ describe('ConcentrationTrendSection', () => {
     expect(html).toContain('Underlying assets')
     expect(html).toContain('aria-label="Play concentration history"')
     expect(html).toContain('aria-label="Concentration month"')
-    expect(html.indexOf('aria-label="Play concentration history"')).toBeLessThan(
+    expect(
+      html.indexOf('aria-label="Play concentration history"'),
+    ).toBeLessThan(html.indexOf('aria-label="Previous concentration month"'))
+    expect(
       html.indexOf('aria-label="Previous concentration month"'),
-    )
-    expect(html.indexOf('aria-label="Previous concentration month"')).toBeLessThan(
-      html.indexOf('aria-label="Next concentration month"'),
-    )
+    ).toBeLessThan(html.indexOf('aria-label="Next concentration month"'))
   })
 
   it('renders a focused empty state with fewer than two snapshots', () => {
@@ -87,7 +88,9 @@ describe('ConcentrationTrendSection', () => {
         lookThroughAvailable={false}
       />,
     )
-    expect(html).toContain('Not enough concentration history for the current selection.')
+    expect(html).toContain(
+      'Not enough concentration history for the current selection.',
+    )
     expect(html).toContain('fund_holdings_history.csv')
     expect(html).toContain('disabled=""')
     expect(html).not.toContain('Play concentration history')

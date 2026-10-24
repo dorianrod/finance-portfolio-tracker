@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import type { ReactNode } from 'react'
+
 import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
 import { usePortfolioFilterOptions } from '@/domains/portfolio/shared/services/usePortfolioFilterOptions'
 import {
@@ -9,17 +12,16 @@ import i18n from '@/i18n/i18n'
 import { toDateInputValue } from '@/shared/helpers/mappers/toDateInputValue'
 import { DATE_FILTER_SCHEMA } from '@/shared/schemas/calendarDate.schema'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-import { useAtomValue } from 'jotai'
-import type { ReactNode } from 'react'
+
 import { AccountTree } from './AccountTreeSelect.feature'
 import { Chip } from './Chip.view'
 import { FilterSection } from './FilterSection.view'
 import {
   clearFilterGroup,
-  presetDateFrom,
-  toggle,
   type FilterSummaryItem,
   type FilterVisibility,
+  presetDateFrom,
+  toggle,
 } from './helpers/filters/portfolioFilters'
 
 type FilterPanelProps = {
@@ -62,7 +64,9 @@ function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {
   return (
     <Chip
       label={preset.label}
-      active={filters.dateFrom?.getTime() === dateFrom.getTime() && !filters.dateTo}
+      active={
+        filters.dateFrom?.getTime() === dateFrom.getTime() && !filters.dateTo
+      }
       onClick={applyPreset}
     />
   )
@@ -76,7 +80,10 @@ function OperationTypeChip({ operation }: { operation: OperationType }) {
       label={OP_LABELS[operation]}
       active={filters.operationTypes.has(operation)}
       onClick={() =>
-        setFilters({ ...filters, operationTypes: toggle(filters.operationTypes, operation) })
+        setFilters({
+          ...filters,
+          operationTypes: toggle(filters.operationTypes, operation),
+        })
       }
     />
   )
@@ -87,7 +94,9 @@ function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
   return (
     <button
       type="button"
-      onClick={() => setFilters((current) => clearFilterGroup(current, item.key))}
+      onClick={() =>
+        setFilters((current) => clearFilterGroup(current, item.key))
+      }
       title={i18n.t('ui.filterbar.clearValue0Filter', { value0: item.key })}
       className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-accent bg-accent-muted/35 px-3 py-1 text-xs text-accent transition-colors hover:bg-accent-muted/55"
     >
@@ -106,9 +115,15 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const filters = useAtomValue(dashboardFiltersAtom)
   const open = useAtomValue(dashboardFiltersOpenAtom)
-  const { closeFilters, resetDashboardFilters, setFilters } = useDashboardFilters()
-  const { accountFilterLabels, accountToType, allAccounts, allAccountTypes, allOperationTypes } =
-    usePortfolioFilterOptions()
+  const { closeFilters, resetDashboardFilters, setFilters } =
+    useDashboardFilters()
+  const {
+    accountFilterLabels,
+    accountToType,
+    allAccounts,
+    allAccountTypes,
+    allOperationTypes,
+  } = usePortfolioFilterOptions()
   const hasPeriodFilter = Boolean(filters.dateFrom || filters.dateTo)
 
   return (
@@ -131,7 +146,9 @@ export function FilterPanel({
       {visibility.showPeriod && (
         <FilterSection
           title={i18n.t('ui.filterbar.period')}
-          description={i18n.t('ui.filterbar.limitTimeBasedChartsAndCalculationsToASpecific')}
+          description={i18n.t(
+            'ui.filterbar.limitTimeBasedChartsAndCalculationsToASpecific',
+          )}
         >
           <div className="flex flex-wrap gap-1.5">
             {DATE_PRESETS.map((preset) => (
@@ -170,7 +187,13 @@ export function FilterPanel({
           {hasPeriodFilter && (
             <button
               type="button"
-              onClick={() => setFilters({ ...filters, dateFrom: undefined, dateTo: undefined })}
+              onClick={() =>
+                setFilters({
+                  ...filters,
+                  dateFrom: undefined,
+                  dateTo: undefined,
+                })
+              }
               className="mt-2 text-xs font-medium text-content-subtle transition-colors hover:text-content-secondary"
             >
               {i18n.t('ui.filterbar.clearPeriod')}
@@ -182,7 +205,9 @@ export function FilterPanel({
       {allAccounts.length > 0 && (
         <FilterSection
           title={i18n.t('ui.filterbar.accounts')}
-          description={i18n.t('ui.filterbar.chooseThePortfolioScopeUsedAcrossEveryView')}
+          description={i18n.t(
+            'ui.filterbar.chooseThePortfolioScopeUsedAcrossEveryView',
+          )}
         >
           <AccountTree
             allAccountTypes={allAccountTypes}
@@ -190,7 +215,9 @@ export function FilterPanel({
             allAccounts={allAccounts}
             accountLabels={accountFilterLabels}
             selected={filters.accounts}
-            onChange={(accounts) => setFilters({ ...filters, accounts, accountTypes: new Set() })}
+            onChange={(accounts) =>
+              setFilters({ ...filters, accounts, accountTypes: new Set() })
+            }
           />
           {demoPresetSelection && (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-surface-raised/60 px-3 py-2.5">
@@ -205,7 +232,11 @@ export function FilterPanel({
               <button
                 type="button"
                 onClick={() =>
-                  setFilters({ ...filters, accounts: demoPresetSelection, accountTypes: new Set() })
+                  setFilters({
+                    ...filters,
+                    accounts: demoPresetSelection,
+                    accountTypes: new Set(),
+                  })
                 }
                 className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-accent bg-accent-muted/40 text-accent' : 'border-border-strong text-content-muted hover:border-border-strong hover:text-content-secondary'}`}
               >
@@ -219,7 +250,9 @@ export function FilterPanel({
       {visibility.showPositionFilters && (
         <FilterSection
           title={i18n.t('ui.filterbar.positions')}
-          description={i18n.t('ui.filterbar.refineTheTransactionsAndHoldingsShownInTheTable')}
+          description={i18n.t(
+            'ui.filterbar.refineTheTransactionsAndHoldingsShownInTheTable',
+          )}
         >
           <div className="text-xs font-medium text-content-muted">
             {i18n.t('ui.filterbar.operationType')}
@@ -228,7 +261,9 @@ export function FilterPanel({
             <Chip
               label={i18n.t('ui.filterbar.all')}
               active={filters.operationTypes.size === 0}
-              onClick={() => setFilters({ ...filters, operationTypes: new Set() })}
+              onClick={() =>
+                setFilters({ ...filters, operationTypes: new Set() })
+              }
             />
             {allOperationTypes.map((operation) => (
               <OperationTypeChip key={operation} operation={operation} />
@@ -247,7 +282,10 @@ export function FilterPanel({
               type="checkbox"
               checked={filters.hideClosedPositions}
               onChange={(event) =>
-                setFilters({ ...filters, hideClosedPositions: event.target.checked })
+                setFilters({
+                  ...filters,
+                  hideClosedPositions: event.target.checked,
+                })
               }
               className="h-4 w-4 shrink-0 accent-accent"
             />
@@ -270,7 +308,12 @@ export function FilterButton({ activeCount }: { activeCount: number }) {
       aria-expanded={open}
       className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${activeCount > 0 ? 'border-accent bg-accent-muted/30 text-accent hover:bg-accent-muted/45' : 'border-border-strong bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'}`}
     >
-      <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        fill="none"
+        className="h-4 w-4"
+      >
         <path
           d="M3 5h14M5.5 10h9M8 15h4"
           stroke="currentColor"

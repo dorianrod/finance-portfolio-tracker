@@ -39,9 +39,18 @@ export function buildHoverChartSeries(
     const sellsThisMonth = operations.filter(
       (o) => toCalendarMonth(o.date) === month && o.operation_type === 'SELL',
     )
-    const buyAmount = buysThisMonth.reduce((s, o) => s + Math.abs(o.total_amount), 0)
-    const sellAmount = sellsThisMonth.reduce((s, o) => s + Math.abs(o.total_amount), 0)
-    const sellGain = sellsThisMonth.reduce((s, o) => s + (o.realized_gain ?? 0), 0)
+    const buyAmount = buysThisMonth.reduce(
+      (s, o) => s + Math.abs(o.total_amount),
+      0,
+    )
+    const sellAmount = sellsThisMonth.reduce(
+      (s, o) => s + Math.abs(o.total_amount),
+      0,
+    )
+    const sellGain = sellsThisMonth.reduce(
+      (s, o) => s + (o.realized_gain ?? 0),
+      0,
+    )
     return {
       date: month,
       Value: p.value,
@@ -95,7 +104,8 @@ export function computeRollingReturns(
     ['1y', 12],
   ] as const) {
     const ref = series[idx - months]?.['Unit price']
-    if (ref != null && ref !== 0) rows.push({ label: lbl, pct: (current / ref - 1) * 100 })
+    if (ref != null && ref !== 0)
+      rows.push({ label: lbl, pct: (current / ref - 1) * 100 })
   }
   const first = series[0]?.['Unit price']
   if (idx > 0 && first != null && first !== 0)
@@ -107,7 +117,9 @@ export function computeRollingReturns(
   return rows
 }
 
-export function computeMonthlyBalances(ops: { date: Date; total_amount: number }[]) {
+export function computeMonthlyBalances(
+  ops: { date: Date; total_amount: number }[],
+) {
   const netByMonth = new Map<string, number>()
   for (const op of ops) {
     const month = toCalendarMonth(op.date)

@@ -1,34 +1,43 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
+
 import noComponentModuleLogic from './no-component-module-logic.js'
 
 const linter = new Linter({ configType: 'flat' })
 
 function lint(code, filename = 'OrderPanel.feature.tsx') {
-  return linter.verify(code, {
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  return linter.verify(
+    code,
+    {
+      files: ['**/*.{ts,tsx}'],
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        local: {
+          rules: { 'no-component-module-logic': noComponentModuleLogic },
+        },
+      },
+      rules: {
+        'local/no-component-module-logic': 'error',
       },
     },
-    plugins: {
-      local: {
-        rules: { 'no-component-module-logic': noComponentModuleLogic },
-      },
-    },
-    rules: {
-      'local/no-component-module-logic': 'error',
-    },
-  }, { filename })
+    { filename },
+  )
 }
 
 describe('no-component-module-logic', () => {
-  it.each(['OrderPanel.feature.tsx', 'OrderPanel.state.tsx', 'OrderPanel.view.tsx'])(
+  it.each([
+    'OrderPanel.feature.tsx',
+    'OrderPanel.state.tsx',
+    'OrderPanel.view.tsx',
+  ])(
     'reports module-level function declarations as hooks or helpers in %s',
     (filename) => {
       const code = `
@@ -102,7 +111,9 @@ describe('no-component-module-logic', () => {
       export function OrderPanel() { return <div /> }
     `
 
-    expect(lint(code).map(({ messageId }) => messageId)).toEqual(['extractHelper'])
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'extractHelper',
+    ])
   })
 
   it('allows PascalCase components wrapped in TypeScript expressions', () => {
@@ -116,8 +127,11 @@ describe('no-component-module-logic', () => {
   })
 
   it('reports a named lowercase default function and allows an anonymous default component', () => {
-    expect(lint('export default function selectOrders() { return [] }')
-      .map(({ messageId }) => messageId)).toEqual(['extractHelper'])
+    expect(
+      lint('export default function selectOrders() { return [] }').map(
+        ({ messageId }) => messageId,
+      ),
+    ).toEqual(['extractHelper'])
     expect(lint('export default function () { return <div /> }')).toEqual([])
   })
 
@@ -133,8 +147,11 @@ describe('no-component-module-logic', () => {
   it.each(['order.logic.ts', 'OrderPanel.logic.tsx', 'order.logic.test.ts'])(
     'reports opaque logic module %s',
     (filename) => {
-      expect(lint('export const value = 1', filename).map(({ messageId }) => messageId))
-        .toEqual(['renameLogicModule'])
+      expect(
+        lint('export const value = 1', filename).map(
+          ({ messageId }) => messageId,
+        ),
+      ).toEqual(['renameLogicModule'])
     },
   )
 })

@@ -38,14 +38,19 @@ export function ThresholdRow({
       <span className="text-content-subtle">
         ·{' '}
         {value == null
-          ? i18n.t('ui.concentrationtrendsection.insufficientIdentifiedCoverage')
+          ? i18n.t(
+              'ui.concentrationtrendsection.insufficientIdentifiedCoverage',
+            )
           : formatConcentrationDelta(delta, formatNumber)}
       </span>
     </div>
   )
 }
 
-export function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps) {
+export function ConcentrationTrendTooltip({
+  active,
+  payload,
+}: TrendTooltipProps) {
   const formatDate = useFormatDate()
   const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
@@ -56,7 +61,8 @@ export function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps
         {formatDate(row.date, { style: 'shortMonthShortYear' })}
       </div>
       <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>
-        {i18n.t('ui.concentrationtrendsection.coverage')} {formatPercentage(row.coveragePct)}
+        {i18n.t('ui.concentrationtrendsection.coverage')}{' '}
+        {formatPercentage(row.coveragePct)}
       </div>
       <div className="mt-2 space-y-1" style={{ color: 'var(--tooltip-label)' }}>
         <ThresholdRow
@@ -88,7 +94,10 @@ export function ConcentrationTrendTooltip({ active, payload }: TrendTooltipProps
   )
 }
 
-export function HistoricalHoldingTooltip({ active, payload }: HoldingTooltipProps) {
+export function HistoricalHoldingTooltip({
+  active,
+  payload,
+}: HoldingTooltipProps) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
@@ -99,7 +108,8 @@ export function HistoricalHoldingTooltip({ active, payload }: HoldingTooltipProp
         {holding.name}
       </div>
       <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
-        {formatMoney(holding.value, { style: 'full' })} · {formatPercentage(holding.weight)}
+        {formatMoney(holding.value, { style: 'full' })} ·{' '}
+        {formatPercentage(holding.weight)}
       </div>
     </TooltipBox>
   )
@@ -120,7 +130,13 @@ export function ChartLegend() {
   )
 }
 
-export function ChartLegendItem({ color, label }: { color: string; label: string }) {
+export function ChartLegendItem({
+  color,
+  label,
+}: {
+  color: string
+  label: string
+}) {
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className="h-0.5 w-3 rounded" style={{ background: color }} />

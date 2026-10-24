@@ -1,9 +1,3 @@
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import i18n from '@/i18n/i18n'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { useState } from 'react'
 import type { MouseHandlerDataParam } from 'recharts'
 import {
@@ -16,6 +10,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import i18n from '@/i18n/i18n'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 
 export function CumulativeConcentrationChart({
@@ -27,7 +29,8 @@ export function CumulativeConcentrationChart({
   description?: string
   effectiveDate?: Date | null
 }) {
-  const [activePoint, setActivePoint] = useState<CumulativeConcentrationPoint | null>(null)
+  const [activePoint, setActivePoint] =
+    useState<CumulativeConcentrationPoint | null>(null)
   const crosshair = cumulativeConcentrationCrosshair(activePoint)
   const maxRank = data.at(-1)?.rank ?? 1
 
@@ -59,7 +62,9 @@ export function CumulativeConcentrationChart({
         </h2>
         <p className="mt-0.5 text-xs text-content-subtle">
           {description ??
-            i18n.t('ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest')}
+            i18n.t(
+              'ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest',
+            )}
         </p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
@@ -92,11 +97,22 @@ export function CumulativeConcentrationChart({
           />
           {crosshair && (
             <>
-              <ReferenceLine x={crosshair.x} stroke={CHART_THEME.label} strokeDasharray="4 4" />
-              <ReferenceLine y={crosshair.y} stroke={CHART_THEME.label} strokeDasharray="4 4" />
+              <ReferenceLine
+                x={crosshair.x}
+                stroke={CHART_THEME.label}
+                strokeDasharray="4 4"
+              />
+              <ReferenceLine
+                y={crosshair.y}
+                stroke={CHART_THEME.label}
+                strokeDasharray="4 4"
+              />
             </>
           )}
-          <Tooltip content={<CumulativeConcentrationTooltip />} cursor={false} />
+          <Tooltip
+            content={<CumulativeConcentrationTooltip />}
+            cursor={false}
+          />
           <Line
             type="linear"
             dataKey="cumulativeWeight"

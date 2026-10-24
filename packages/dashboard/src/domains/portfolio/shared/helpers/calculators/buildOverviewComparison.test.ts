@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+
 import {
   buildGrossValueHistory,
   buildOverviewComparison,
@@ -70,7 +71,13 @@ describe('resolveOverviewWindows', () => {
   })
 
   it('keeps custom month boundaries equal and non-overlapping', () => {
-    expect(resolveOverviewWindows(dates, new Date('2026-01-01'), new Date('2026-01-31'))).toEqual({
+    expect(
+      resolveOverviewWindows(
+        dates,
+        new Date('2026-01-01'),
+        new Date('2026-01-31'),
+      ),
+    ).toEqual({
       current: { start: new Date('2026-01-01'), end: new Date('2026-01-31') },
       previous: { start: new Date('2025-12-01'), end: new Date('2025-12-31') },
       defaultedToTrailingYear: false,
@@ -78,26 +85,46 @@ describe('resolveOverviewWindows', () => {
   })
 
   it('uses the latest observation for a start-only period', () => {
-    expect(resolveOverviewWindows(dates, new Date('2026-10-01'))?.current).toEqual({
+    expect(
+      resolveOverviewWindows(dates, new Date('2026-10-01'))?.current,
+    ).toEqual({
       start: new Date('2026-10-01'),
       end: new Date('2026-10-20'),
     })
   })
 
   it('uses available history for an end-only period and rejects reversed ranges', () => {
-    expect(resolveOverviewWindows(dates, undefined, new Date('2026-01-31'))?.current).toEqual({
+    expect(
+      resolveOverviewWindows(dates, undefined, new Date('2026-01-31'))?.current,
+    ).toEqual({
       start: new Date('2024-01-31'),
       end: new Date('2026-01-31'),
     })
-    expect(resolveOverviewWindows(dates, new Date('2026-05-01'), new Date('2026-01-31'))).toBeNull()
+    expect(
+      resolveOverviewWindows(
+        dates,
+        new Date('2026-05-01'),
+        new Date('2026-01-31'),
+      ),
+    ).toBeNull()
   })
 })
 
 describe('buildGrossValueHistory', () => {
   it('computes historical gross value and respects account filters', () => {
     const rows = [
-      position({ account: 'A', total_value: 100, unrealized_gain: 20, unrealized_gain_net: 14 }),
-      position({ account: 'B', total_value: 300, unrealized_gain: 50, unrealized_gain_net: 35 }),
+      position({
+        account: 'A',
+        total_value: 100,
+        unrealized_gain: 20,
+        unrealized_gain_net: 14,
+      }),
+      position({
+        account: 'B',
+        total_value: 300,
+        unrealized_gain: 50,
+        unrealized_gain_net: 35,
+      }),
     ]
 
     expect(buildGrossValueHistory(rows, new Set(['A']))).toEqual([
@@ -108,7 +135,11 @@ describe('buildGrossValueHistory', () => {
   it('does not adjust the market value for unrealized tax fields', () => {
     expect(
       buildGrossValueHistory([
-        position({ total_value: 100, unrealized_gain: 20, unrealized_gain_net: 14 }),
+        position({
+          total_value: 100,
+          unrealized_gain: 20,
+          unrealized_gain_net: 14,
+        }),
       ])[0].value,
     ).toBe(100)
   })
@@ -131,7 +162,10 @@ describe('compareRollingThreeYearIrr', () => {
       [point(new Date('2025-10-20'), 6.2), point(new Date('2026-10-20'), 8.4)],
       {
         current: { start: new Date('2025-10-21'), end: new Date('2026-10-20') },
-        previous: { start: new Date('2024-10-21'), end: new Date('2025-10-20') },
+        previous: {
+          start: new Date('2024-10-21'),
+          end: new Date('2025-10-20'),
+        },
         defaultedToTrailingYear: true,
       },
     )
@@ -187,8 +221,16 @@ describe('buildOverviewComparison', () => {
       ],
       rawOperations: [
         operation({ date: new Date('2025-01-15'), total_amount: 10 }),
-        operation({ date: new Date('2025-02-15'), operation_type: 'INTEREST', total_amount: 25 }),
-        operation({ date: new Date('2025-02-15'), account: 'B', total_amount: 999 }),
+        operation({
+          date: new Date('2025-02-15'),
+          operation_type: 'INTEREST',
+          total_amount: 25,
+        }),
+        operation({
+          date: new Date('2025-02-15'),
+          account: 'B',
+          total_amount: 999,
+        }),
       ],
       savingCapacity: [
         { date: new Date('2025-01-31'), savings_delta: 100, perf_delta: 20 },

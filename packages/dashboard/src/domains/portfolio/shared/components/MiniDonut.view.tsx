@@ -1,3 +1,5 @@
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import {
   formatGroupedAllocationLabel,
@@ -7,11 +9,19 @@ import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { catColor } from '@/shared/theme/chartColors'
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
-function MiniDonutLegendItem({ entry, total }: { entry: PieEntry; total: number }) {
+function MiniDonutLegendItem({
+  entry,
+  total,
+}: {
+  entry: PieEntry
+  total: number
+}) {
   const formatPercentage = useFormatPercentage()
-  const percentage = formatPercentage(total > 0 ? (entry.value / total) * 100 : 0, { decimals: 0 })
+  const percentage = formatPercentage(
+    total > 0 ? (entry.value / total) * 100 : 0,
+    { decimals: 0 },
+  )
 
   return (
     <span className="inline-flex items-center gap-1 text-[10px] text-content-muted">
@@ -30,7 +40,13 @@ function MiniDonutLegendItem({ entry, total }: { entry: PieEntry; total: number 
   )
 }
 
-export function MiniDonut({ title, point }: { title: string; point: AllocationPoint }) {
+export function MiniDonut({
+  title,
+  point,
+}: {
+  title: string
+  point: AllocationPoint
+}) {
   const total = point.categories.reduce((s, c) => s + c.value, 0)
   const { main, grouped } = groupAllocationTail(point.categories)
   const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
@@ -54,7 +70,13 @@ export function MiniDonut({ title, point }: { title: string; point: AllocationPo
       </p>
       <ResponsiveContainer width="100%" height={110}>
         <PieChart>
-          <Pie data={data} dataKey="value" innerRadius="30%" outerRadius="56%" paddingAngle={1}>
+          <Pie
+            data={data}
+            dataKey="value"
+            innerRadius="30%"
+            outerRadius="56%"
+            paddingAngle={1}
+          >
             {data.map((entry) => (
               <Cell key={entry.name} fill={catColor(entry.name)} />
             ))}

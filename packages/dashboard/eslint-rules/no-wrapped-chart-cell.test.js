@@ -1,15 +1,19 @@
 import { Linter } from 'eslint'
 import tseslint from 'typescript-eslint'
 import { describe, expect, it } from 'vitest'
-import noWrappedChartCell from './no-wrapped-chart-cell.js'
+
 import noComplexJsxMap from './no-complex-jsx-map.js'
+import noWrappedChartCell from './no-wrapped-chart-cell.js'
 
 function lint(code) {
   return new Linter().verify(
     code,
     {
       files: ['**/*.tsx'],
-      languageOptions: { parser: tseslint.parser, parserOptions: { ecmaFeatures: { jsx: true } } },
+      languageOptions: {
+        parser: tseslint.parser,
+        parserOptions: { ecmaFeatures: { jsx: true } },
+      },
       plugins: {
         local: {
           rules: {
@@ -18,7 +22,10 @@ function lint(code) {
           },
         },
       },
-      rules: { 'local/no-wrapped-chart-cell': 'error', 'local/no-complex-jsx-map': 'error' },
+      rules: {
+        'local/no-wrapped-chart-cell': 'error',
+        'local/no-complex-jsx-map': 'error',
+      },
     },
     { filename: 'Chart.view.tsx' },
   )
@@ -31,7 +38,9 @@ describe('Recharts Cell boundaries', () => {
     'const ColoredCell = memo(() => <Cell fill="red" />)',
   ])('rejects an opaque component wrapper: %s', (code) => {
     expect(
-      lint(`import { Cell } from 'recharts'; ${code}`).map(({ messageId }) => messageId),
+      lint(`import { Cell } from 'recharts'; ${code}`).map(
+        ({ messageId }) => messageId,
+      ),
     ).toEqual(['directCell'])
   })
 
@@ -45,9 +54,9 @@ describe('Recharts Cell boundaries', () => {
 
   it('does not exempt unrelated components named Cell from map delegation', () => {
     expect(
-      lint(`function Chart() { return rows.map((row) => <Cell fill={color(row)} />) }`).map(
-        ({ messageId }) => messageId,
-      ),
+      lint(
+        `function Chart() { return rows.map((row) => <Cell fill={color(row)} />) }`,
+      ).map(({ messageId }) => messageId),
     ).toEqual(['extractComponent'])
   })
 })

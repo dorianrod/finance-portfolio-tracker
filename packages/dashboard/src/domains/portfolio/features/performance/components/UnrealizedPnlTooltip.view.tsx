@@ -17,7 +17,10 @@ export type UnrealizedPnlTooltipProps = {
   payload?: Array<{ payload: UnrealizedPnlPoint }>
 }
 
-export function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipProps) {
+export function UnrealizedPnlTooltip({
+  active,
+  payload,
+}: UnrealizedPnlTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
@@ -33,7 +36,15 @@ export function UnrealizedPnlTooltip({ active, payload }: UnrealizedPnlTooltipPr
 
   return (
     <TooltipBox>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6, fontWeight: 600 }}>{date}</div>
+      <div
+        style={{
+          color: 'var(--tooltip-text)',
+          marginBottom: 6,
+          fontWeight: 600,
+        }}
+      >
+        {date}
+      </div>
       <div style={{ color: valueColor, fontWeight: 600 }}>
         {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandl')}{' '}
         {formatMoney(point.unrealized_gain, { style: 'full' })}

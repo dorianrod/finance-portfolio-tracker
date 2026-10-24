@@ -1,15 +1,19 @@
 // @vitest-environment jsdom
-import { useAccountTypeHistory } from '@/domains/portfolio/shared/services/useAccountTypeHistory'
-import { clearCsvCache } from '@/shared/csv/csvData'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { useAccountTypeHistory } from '@/domains/portfolio/shared/services/useAccountTypeHistory'
+import { clearCsvCache } from '@/shared/csv/csvData'
+
 import { usePassiveIncomeQuery } from './usePassiveIncomeQuery'
 import { useSavingCapacityQuery } from './useSavingCapacityQuery'
 
 function queryWrapper() {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  })
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>
   }
@@ -35,15 +39,22 @@ describe('account-scoped queries', () => {
         ),
       ),
     )
-    const { result, rerender } = renderHook(({ accounts }) => usePassiveIncomeQuery(accounts), {
-      initialProps: { accounts: new Set(['A,B']) },
-      wrapper: queryWrapper(),
-    })
+    const { result, rerender } = renderHook(
+      ({ accounts }) => usePassiveIncomeQuery(accounts),
+      {
+        initialProps: { accounts: new Set(['A,B']) },
+        wrapper: queryWrapper(),
+      },
+    )
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data).toEqual([{ year: 2026, dividends: 42, interest: 0 }])
+    expect(result.current.data).toEqual([
+      { year: 2026, dividends: 42, interest: 0 },
+    ])
     rerender({ accounts: new Set(['A', 'B']) })
     await waitFor(() =>
-      expect(result.current.data).toEqual([{ year: 2026, dividends: 10, interest: 0 }]),
+      expect(result.current.data).toEqual([
+        { year: 2026, dividends: 10, interest: 0 },
+      ]),
     )
   })
 
@@ -56,9 +67,12 @@ describe('account-scoped queries', () => {
         ),
       ),
     )
-    const { result } = renderHook(() => useSavingCapacityQuery(new Set(['A,B'])), {
-      wrapper: queryWrapper(),
-    })
+    const { result } = renderHook(
+      () => useSavingCapacityQuery(new Set(['A,B'])),
+      {
+        wrapper: queryWrapper(),
+      },
+    )
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual([
       { date: new Date('2026-01-31'), savings_delta: 42, perf_delta: 2 },
@@ -74,11 +88,16 @@ describe('account-scoped queries', () => {
         ),
       ),
     )
-    const { result } = renderHook(() => useAccountTypeHistory(new Set(['A,B'])), {
-      wrapper: queryWrapper(),
-    })
+    const { result } = renderHook(
+      () => useAccountTypeHistory(new Set(['A,B'])),
+      {
+        wrapper: queryWrapper(),
+      },
+    )
     await waitFor(() =>
-      expect(result.current.data).toEqual([{ date: new Date('2026-01-31'), PEA: 42 }]),
+      expect(result.current.data).toEqual([
+        { date: new Date('2026-01-31'), PEA: 42 },
+      ]),
     )
   })
 })

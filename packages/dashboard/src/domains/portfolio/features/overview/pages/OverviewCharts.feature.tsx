@@ -1,18 +1,3 @@
-import { toUtcDateTimestamp } from '@/domains/portfolio/features/overview/helpers/formatters/toUtcDateTimestamp'
-import type { DriverRow } from '@/domains/portfolio/features/overview/types/overviewChart.type'
-import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
-import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
-import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type {
-  OverviewComparison,
-  OverviewConcentrationComparison,
-} from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
-import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { useState } from 'react'
 import {
   Bar,
@@ -28,9 +13,34 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { DriversTooltip, OverviewConcentrationRow, ValueTooltip } from './OverviewChartDetails.view'
 
-export function OverviewValueChart({ comparison }: { comparison: OverviewComparison }) {
+import { toUtcDateTimestamp } from '@/domains/portfolio/features/overview/helpers/formatters/toUtcDateTimestamp'
+import type { DriverRow } from '@/domains/portfolio/features/overview/types/overviewChart.type'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
+import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type {
+  OverviewComparison,
+  OverviewConcentrationComparison,
+} from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
+import {
+  DriversTooltip,
+  OverviewConcentrationRow,
+  ValueTooltip,
+} from './OverviewChartDetails.view'
+
+export function OverviewValueChart({
+  comparison,
+}: {
+  comparison: OverviewComparison
+}) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const chartData = comparison.valueHistory.map((point) => ({
@@ -43,7 +53,9 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
     return (
       <EmptyChart
         title={i18n.t('ui.overviewcharts.portfolioValue')}
-        message={i18n.t('ui.overviewcharts.noValueHistoryIsAvailableForThesePeriods')}
+        message={i18n.t(
+          'ui.overviewcharts.noValueHistoryIsAvailableForThesePeriods',
+        )}
         scope={{ account: 'filterable', period: 'comparison-range' }}
       />
     )
@@ -61,12 +73,16 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
           <h3 className="flex items-center text-sm font-semibold text-content-secondary">
             {i18n.t('ui.overviewcharts.portfolioValue')}
             <ScopedInfoTooltip
-              text={i18n.t('ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods')}
+              text={i18n.t(
+                'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
+              )}
               scope={{ account: 'filterable', period: 'comparison-range' }}
             />
           </h3>
           <p className="mt-0.5 text-xs text-content-subtle">
-            {i18n.t('ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods')}
+            {i18n.t(
+              'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
+            )}
           </p>
         </div>
         <div className="flex items-center gap-3 text-[11px] text-content-subtle">
@@ -81,8 +97,15 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
         </div>
       </div>
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={chartData} margin={{ top: 6, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
+        <LineChart
+          data={chartData}
+          margin={{ top: 6, right: 10, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke={CHART_THEME.grid}
+            vertical={false}
+          />
           <ReferenceArea
             x1={domain[0]}
             x2={currentStart}
@@ -106,7 +129,9 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
             type="number"
             scale="time"
             domain={domain}
-            tickFormatter={(value) => formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })}
+            tickFormatter={(value) =>
+              formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })
+            }
             tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
             tickLine={false}
             axisLine={false}
@@ -148,7 +173,11 @@ export function OverviewValueChart({ comparison }: { comparison: OverviewCompari
   )
 }
 
-export function OverviewDriversChart({ comparison }: { comparison: OverviewComparison }) {
+export function OverviewDriversChart({
+  comparison,
+}: {
+  comparison: OverviewComparison
+}) {
   const formatMoney = useFormatMoney()
   const rows: DriverRow[] = [
     {
@@ -162,29 +191,36 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
       previous: comparison.marketPerformance.previous,
       current: comparison.marketPerformance.current,
       color:
-        comparison.marketPerformance.current != null && comparison.marketPerformance.current < 0
+        comparison.marketPerformance.current != null &&
+        comparison.marketPerformance.current < 0
           ? SEMANTIC_COLORS.performanceNegative
           : SEMANTIC_COLORS.performancePositive,
     },
   ]
   const unavailable =
-    comparison.contributions.current == null && comparison.marketPerformance.current == null
+    comparison.contributions.current == null &&
+    comparison.marketPerformance.current == null
   if (unavailable)
     return (
       <EmptyChart
         title={i18n.t('ui.overviewcharts.changeDrivers')}
-        message={i18n.t('ui.overviewcharts.noCashFlowHistoryIsAvailableForThisPeriod')}
+        message={i18n.t(
+          'ui.overviewcharts.noCashFlowHistoryIsAvailableForThisPeriod',
+        )}
         scope={{ account: 'filterable', period: 'comparison-range' }}
       />
     )
   const currentChange =
-    comparison.contributions.current == null || comparison.marketPerformance.current == null
+    comparison.contributions.current == null ||
+    comparison.marketPerformance.current == null
       ? null
       : comparison.contributions.current + comparison.marketPerformance.current
   const previousChange =
-    comparison.contributions.previous == null || comparison.marketPerformance.previous == null
+    comparison.contributions.previous == null ||
+    comparison.marketPerformance.previous == null
       ? null
-      : comparison.contributions.previous + comparison.marketPerformance.previous
+      : comparison.contributions.previous +
+        comparison.marketPerformance.previous
 
   return (
     <section className="rounded-2xl border border-border bg-surface p-4">
@@ -192,12 +228,16 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
         <h3 className="flex items-center text-sm font-semibold text-content-secondary">
           {i18n.t('ui.overviewcharts.changeDrivers')}
           <ScopedInfoTooltip
-            text={i18n.t('ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance')}
+            text={i18n.t(
+              'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
+            )}
             scope={{ account: 'filterable', period: 'comparison-range' }}
           />
         </h3>
         <p className="mt-0.5 text-xs text-content-subtle">
-          {i18n.t('ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance')}
+          {i18n.t(
+            'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
+          )}
         </p>
       </div>
       <div className="mb-2 flex items-baseline justify-between gap-3 rounded-lg bg-canvas/45 px-3 py-2">
@@ -217,8 +257,16 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
         </span>
       </div>
       <ResponsiveContainer width="100%" height={190}>
-        <BarChart data={rows} margin={{ top: 8, right: 4, left: 0, bottom: 0 }} barGap={3}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} vertical={false} />
+        <BarChart
+          data={rows}
+          margin={{ top: 8, right: 4, left: 0, bottom: 0 }}
+          barGap={3}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke={CHART_THEME.grid}
+            vertical={false}
+          />
           <XAxis
             dataKey="label"
             tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
@@ -233,7 +281,10 @@ export function OverviewDriversChart({ comparison }: { comparison: OverviewCompa
             width={48}
           />
           <ReferenceLine y={0} stroke={CHART_THEME.zeroLine} />
-          <Tooltip content={<DriversTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
+          <Tooltip
+            content={<DriversTooltip />}
+            cursor={{ fill: CHART_THEME.cursor }}
+          />
           <Bar
             dataKey="previous"
             name={i18n.t('ui.overviewcharts.previous')}
@@ -289,18 +340,28 @@ export function OverviewConcentrationChart({
 }) {
   const [mode, setMode] = useState<ConcentrationMode>('lookThrough')
   const lookThroughDisabled = underlyingConcentration.current == null
-  const displayedMode = mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
-  const concentration = displayedMode === 'held' ? heldConcentration : underlyingConcentration
+  const displayedMode =
+    mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
+  const concentration =
+    displayedMode === 'held' ? heldConcentration : underlyingConcentration
   const current = concentration.current
   const previousByKey = new Map(
-    concentration.previous?.holdings.map((holding) => [holding.key, holding.weight]) ?? [],
+    concentration.previous?.holdings.map((holding) => [
+      holding.key,
+      holding.weight,
+    ]) ?? [],
   )
   const rows =
     current?.holdings.slice(0, 5).map((holding) => ({
       ...holding,
-      previousWeight: concentration.previous ? (previousByKey.get(holding.key) ?? 0) : null,
+      previousWeight: concentration.previous
+        ? (previousByKey.get(holding.key) ?? 0)
+        : null,
     })) ?? []
-  const scaleMax = Math.max(1, ...rows.flatMap((row) => [row.weight, row.previousWeight ?? 0]))
+  const scaleMax = Math.max(
+    1,
+    ...rows.flatMap((row) => [row.weight, row.previousWeight ?? 0]),
+  )
   const previousAvailable = concentration.previous != null
 
   return (
@@ -315,7 +376,9 @@ export function OverviewConcentrationChart({
               // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
               text={
                 displayedMode === 'lookThrough'
-                  ? i18n.t('ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel')
+                  ? i18n.t(
+                      'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
+                    )
                   : i18n.t(
                       'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
                     )
@@ -330,8 +393,12 @@ export function OverviewConcentrationChart({
           </h3>
           <p className="mt-0.5 text-xs text-content-subtle">
             {displayedMode === 'lookThrough'
-              ? i18n.t('ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel')
-              : i18n.t('ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers')}
+              ? i18n.t(
+                  'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
+                )
+              : i18n.t(
+                  'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
+                )}
           </p>
         </div>
         <ConcentrationModeToggle
@@ -342,7 +409,9 @@ export function OverviewConcentrationChart({
       </div>
       {rows.length === 0 ? (
         <div className="flex h-48 items-center justify-center text-center text-sm text-content-subtle">
-          {i18n.t('ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod')}
+          {i18n.t(
+            'ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod',
+          )}
         </div>
       ) : (
         <div className="mt-5 space-y-4">

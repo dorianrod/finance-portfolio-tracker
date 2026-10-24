@@ -1,3 +1,5 @@
+import { useAtomValue } from 'jotai'
+
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
 import {
@@ -9,7 +11,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { catColor } from '@/shared/theme/chartColors'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-import { useAtomValue } from 'jotai'
+
 import { FilteredPositionRow } from './FilteredPositionRow.view'
 
 export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
@@ -66,7 +68,12 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <FilteredPositionRow key={row.isin} color={filterColor} index={index} row={row} />
+            <FilteredPositionRow
+              key={row.isin}
+              color={filterColor}
+              index={index}
+              row={row}
+            />
           ))}
         </tbody>
       </table>

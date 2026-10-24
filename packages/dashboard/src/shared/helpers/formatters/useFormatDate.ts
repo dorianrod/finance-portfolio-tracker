@@ -8,7 +8,10 @@ type DateStyle =
   | 'shortMonthYear'
   | 'shortMonthShortYear'
 
-const DATE_OPTIONS: Record<Exclude<DateStyle, 'isoDate'>, Intl.DateTimeFormatOptions> = {
+const DATE_OPTIONS: Record<
+  Exclude<DateStyle, 'isoDate'>,
+  Intl.DateTimeFormatOptions
+> = {
   dayMonthYear: { day: 'numeric', month: 'short', year: 'numeric' },
   longDayMonthYear: { day: 'numeric', month: 'long', year: 'numeric' },
   longMonthYear: { month: 'long', year: 'numeric' },
@@ -29,11 +32,17 @@ const UTC_DATE_FORMATTERS = Object.fromEntries(
 ) as Record<Exclude<DateStyle, 'isoDate'>, Intl.DateTimeFormat>
 
 export function useFormatDate() {
-  return useCallback((value: Date | number | string, options: DateFormatOptions = {}): string => {
-    const { style = 'dayMonthYear' } = options
-    const date = value instanceof Date ? value : new Date(value)
-    if (Number.isNaN(date.getTime())) return '—'
-    if (style === 'isoDate') return date.toISOString().slice(0, 10)
-    return UTC_DATE_FORMATTERS[style].format(date)
-  }, [])
+  return useCallback(
+    (
+      value: Date | number | string,
+      options: DateFormatOptions = {},
+    ): string => {
+      const { style = 'dayMonthYear' } = options
+      const date = value instanceof Date ? value : new Date(value)
+      if (Number.isNaN(date.getTime())) return '—'
+      if (style === 'isoDate') return date.toISOString().slice(0, 10)
+      return UTC_DATE_FORMATTERS[style].format(date)
+    },
+    [],
+  )
 }

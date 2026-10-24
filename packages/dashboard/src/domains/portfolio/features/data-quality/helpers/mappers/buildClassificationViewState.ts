@@ -28,6 +28,7 @@ export function buildClassificationViewState({
 }: BuildClassificationViewStateInput): ClassificationViewState {
   if (loading) return { status: 'loading' }
   if (classificationIsNotApplicable) return { status: 'not-applicable' }
-  if (coverage.length > 0) return { status: 'ready', coverage, dimensionCoverage }
+  if (coverage.length > 0)
+    return { status: 'ready', coverage, dimensionCoverage }
   return { status: 'empty' }
 }

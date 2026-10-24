@@ -13,7 +13,13 @@ export function ValueTooltip({
   payload,
 }: {
   active?: boolean
-  payload?: Array<{ payload: { timestamp: number; value: number; window: 'previous' | 'current' } }>
+  payload?: Array<{
+    payload: {
+      timestamp: number
+      value: number
+      window: 'previous' | 'current'
+    }
+  }>
 }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -22,12 +28,21 @@ export function ValueTooltip({
   return (
     <TooltipBox minWidth={190}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
-        {formatDate(point.timestamp, { style: 'dayMonthYear', timeZone: 'UTC' })}
+        {formatDate(point.timestamp, {
+          style: 'dayMonthYear',
+          timeZone: 'UTC',
+        })}
       </div>
-      <div className="mt-1 tabular-nums" style={{ color: 'var(--tooltip-label)' }}>
+      <div
+        className="mt-1 tabular-nums"
+        style={{ color: 'var(--tooltip-label)' }}
+      >
         {formatMoney(point.value)}
       </div>
-      <div className="mt-1 text-xs capitalize" style={{ color: 'var(--tooltip-dim)' }}>
+      <div
+        className="mt-1 text-xs capitalize"
+        style={{ color: 'var(--tooltip-dim)' }}
+      >
         {point.window} {i18n.t('ui.overviewcharts.period')}
       </div>
     </TooltipBox>
@@ -50,17 +65,29 @@ export function DriversTooltip({
         {row.label}
       </div>
       <div className="mt-2 space-y-1 text-xs">
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}>
+        <div
+          className="flex justify-between gap-6"
+          style={{ color: 'var(--tooltip-dim)' }}
+        >
           <span>{i18n.t('ui.overviewcharts.current')}</span>
-          <span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>
+          <span
+            className="tabular-nums"
+            style={{ color: 'var(--tooltip-label)' }}
+          >
             {row.current == null
               ? i18n.t('ui.overviewcharts.unavailable')
               : formatMoney(row.current)}
           </span>
         </div>
-        <div className="flex justify-between gap-6" style={{ color: 'var(--tooltip-dim)' }}>
+        <div
+          className="flex justify-between gap-6"
+          style={{ color: 'var(--tooltip-dim)' }}
+        >
           <span>{i18n.t('ui.overviewcharts.previous')}</span>
-          <span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>
+          <span
+            className="tabular-nums"
+            style={{ color: 'var(--tooltip-label)' }}
+          >
             {row.previous == null
               ? i18n.t('ui.overviewcharts.unavailable')
               : formatMoney(row.previous)}
@@ -68,10 +95,16 @@ export function DriversTooltip({
         </div>
         <div
           className="flex justify-between gap-6 border-t pt-1"
-          style={{ color: 'var(--tooltip-dim)', borderColor: 'var(--tooltip-border)' }}
+          style={{
+            color: 'var(--tooltip-dim)',
+            borderColor: 'var(--tooltip-border)',
+          }}
         >
           <span>{i18n.t('ui.overviewcharts.difference')}</span>
-          <span className="tabular-nums" style={{ color: 'var(--tooltip-label)' }}>
+          <span
+            className="tabular-nums"
+            style={{ color: 'var(--tooltip-label)' }}
+          >
             {row.current == null || row.previous == null
               ? i18n.t('ui.overviewcharts.unavailable')
               : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}
@@ -92,7 +125,8 @@ export function OverviewConcentrationRow({
   scaleMax: number
 }) {
   const formatPercentage = useFormatPercentage()
-  const delta = row.previousWeight == null ? null : row.weight - row.previousWeight
+  const delta =
+    row.previousWeight == null ? null : row.weight - row.previousWeight
   let deltaTone = 'text-content-subtle'
   if (delta != null && delta > 0) deltaTone = 'text-danger'
   else if (delta != null && delta < 0) deltaTone = 'text-positive'
@@ -111,7 +145,9 @@ export function OverviewConcentrationRow({
         <span
           className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}
         >
-          {delta == null ? '—' : formatPercentage(delta, { signed: true, unit: ' pp' })}
+          {delta == null
+            ? '—'
+            : formatPercentage(delta, { signed: true, unit: ' pp' })}
         </span>
       </div>
       <div className="relative h-2.5 rounded-full bg-surface-raised">

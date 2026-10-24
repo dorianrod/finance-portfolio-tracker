@@ -12,7 +12,9 @@ export function useSidePanelDialog(open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return
     const previouslyFocused =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
     const previousOverflow = document.body.style.overflow
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -48,5 +50,8 @@ export function useSidePanelDialog(open: boolean, onClose: () => void) {
     }
   }, [open])
 
-  return useMemo(() => ({ closeButtonRef, panelRef }), [closeButtonRef, panelRef])
+  return useMemo(
+    () => ({ closeButtonRef, panelRef }),
+    [closeButtonRef, panelRef],
+  )
 }

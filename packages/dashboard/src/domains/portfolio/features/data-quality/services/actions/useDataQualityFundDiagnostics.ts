@@ -1,6 +1,7 @@
-import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/stores/dataQualityPanels.atoms'
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
+
+import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/stores/dataQualityPanels.atoms'
 
 export function useDataQualityFundDiagnostics() {
   const setFundDiagnosticsOpen = useSetAtom(dataQualityFundDiagnosticsOpenAtom)

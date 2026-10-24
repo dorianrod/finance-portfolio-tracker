@@ -1,3 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+import * as yup from 'yup'
+
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import type {
@@ -16,8 +19,6 @@ import {
   CALENDAR_DATE_SCHEMA,
   OPTIONAL_CALENDAR_DATE_SCHEMA,
 } from '@/shared/schemas/calendarDate.schema'
-import { useQuery } from '@tanstack/react-query'
-import * as yup from 'yup'
 
 type RawFundHolding = {
   parent_isin: string
@@ -157,7 +158,8 @@ const requiredBoolean = () =>
     .boolean()
     .transform(
       (_value, originalValue) =>
-        originalValue === true || String(originalValue).trim().toLowerCase() === 'true',
+        originalValue === true ||
+        String(originalValue).trim().toLowerCase() === 'true',
     )
     .defined()
 const optionalBoolean = () =>
@@ -166,7 +168,8 @@ const optionalBoolean = () =>
     .transform((_value, originalValue) =>
       originalValue === '' || originalValue == null
         ? undefined
-        : originalValue === true || String(originalValue).trim().toLowerCase() === 'true',
+        : originalValue === true ||
+          String(originalValue).trim().toLowerCase() === 'true',
     )
     .optional()
 
@@ -179,7 +182,10 @@ const RAW_FUND_HOLDING_SCHEMA: yup.ObjectSchema<RawFundHolding> = yup.object({
   issuer_id: optionalText(),
   issuer_name: optionalText(),
   weight: requiredNumber(),
-  source_tier: yup.string<FundQualityTier | ''>().oneOf(['A', 'B', 'C', 'D', '']).optional(),
+  source_tier: yup
+    .string<FundQualityTier | ''>()
+    .oneOf(['A', 'B', 'C', 'D', ''])
+    .optional(),
   source_name: optionalText(),
   holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
   holding_kind: optionalText(),
@@ -197,45 +203,49 @@ const RAW_FUND_HOLDING_HISTORY_SCHEMA: yup.ObjectSchema<RawFundHoldingHistory> =
     captured_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
   })
 
-const RAW_FUND_HOLDING_STATUS_SCHEMA: yup.ObjectSchema<RawFundHoldingStatus> = yup.object({
-  parent_id: requiredText(),
-  parent_isin: requiredText(),
-  parent_ticker: requiredText(),
-  parent_name: requiredText(),
-  quality_tier: yup.string<FundQualityTier | ''>().oneOf(['A', 'B', 'C', 'D', '']).defined(),
-  validation_status: yup
-    .string<FundValidationStatus | ''>()
-    .oneOf(['ok', 'warning', 'error', ''])
-    .defined(),
-  source_name: requiredText(),
-  source_type: requiredText(),
-  source_url: requiredText(),
-  index_name: requiredText(),
-  replication_method: requiredText(),
-  proxy_name: requiredText(),
-  proxy_isin: requiredText(),
-  fetched_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
-  holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
-  freshness_days: requiredNumber(),
-  is_stale: requiredBoolean(),
-  holding_count: requiredNumber(),
-  raw_weight_sum: requiredNumber(),
-  explained_pct: requiredNumber(),
-  residual_pct: requiredNumber(),
-  market_value: requiredNumber(),
-  explained_value: requiredNumber(),
-  residual_value: requiredNumber(),
-  refresh_streak: requiredNumber(),
-  issues: requiredText(),
-  decomposition_state: yup
-    .string<FundHoldingStatus['decompositionState'] | ''>()
-    .oneOf(['resolved', 'partial', 'unresolved', 'stale', ''])
-    .optional(),
-  snapshot_id: optionalText(),
-  source_origin: optionalText(),
-  manual_attention: optionalBoolean(),
-  checksum_sha256: optionalText(),
-})
+const RAW_FUND_HOLDING_STATUS_SCHEMA: yup.ObjectSchema<RawFundHoldingStatus> =
+  yup.object({
+    parent_id: requiredText(),
+    parent_isin: requiredText(),
+    parent_ticker: requiredText(),
+    parent_name: requiredText(),
+    quality_tier: yup
+      .string<FundQualityTier | ''>()
+      .oneOf(['A', 'B', 'C', 'D', ''])
+      .defined(),
+    validation_status: yup
+      .string<FundValidationStatus | ''>()
+      .oneOf(['ok', 'warning', 'error', ''])
+      .defined(),
+    source_name: requiredText(),
+    source_type: requiredText(),
+    source_url: requiredText(),
+    index_name: requiredText(),
+    replication_method: requiredText(),
+    proxy_name: requiredText(),
+    proxy_isin: requiredText(),
+    fetched_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
+    holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
+    freshness_days: requiredNumber(),
+    is_stale: requiredBoolean(),
+    holding_count: requiredNumber(),
+    raw_weight_sum: requiredNumber(),
+    explained_pct: requiredNumber(),
+    residual_pct: requiredNumber(),
+    market_value: requiredNumber(),
+    explained_value: requiredNumber(),
+    residual_value: requiredNumber(),
+    refresh_streak: requiredNumber(),
+    issues: requiredText(),
+    decomposition_state: yup
+      .string<FundHoldingStatus['decompositionState'] | ''>()
+      .oneOf(['resolved', 'partial', 'unresolved', 'stale', ''])
+      .optional(),
+    snapshot_id: optionalText(),
+    source_origin: optionalText(),
+    manual_attention: optionalBoolean(),
+    checksum_sha256: optionalText(),
+  })
 
 const RAW_FUND_SNAPSHOT_SCHEMA: yup.ObjectSchema<RawFundSnapshot> = yup.object({
   fund_id: requiredText(),
@@ -261,64 +271,81 @@ const RAW_FUND_SNAPSHOT_SCHEMA: yup.ObjectSchema<RawFundSnapshot> = yup.object({
   validation_errors: requiredText(),
 })
 
-const RAW_FUND_UNRESOLVED_SCHEMA: yup.ObjectSchema<RawFundUnresolved> = yup.object({
-  parent_id: requiredText(),
-  parent_name: requiredText(),
-  unresolved_id: requiredText(),
-  unresolved_name: requiredText(),
-  reason: requiredText(),
-  path: requiredText(),
-  weight: requiredNumber(),
-  market_value: requiredNumber(),
-  queued_for_research: requiredBoolean(),
-  detected_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
-})
+const RAW_FUND_UNRESOLVED_SCHEMA: yup.ObjectSchema<RawFundUnresolved> =
+  yup.object({
+    parent_id: requiredText(),
+    parent_name: requiredText(),
+    unresolved_id: requiredText(),
+    unresolved_name: requiredText(),
+    reason: requiredText(),
+    path: requiredText(),
+    weight: requiredNumber(),
+    market_value: requiredNumber(),
+    queued_for_research: requiredBoolean(),
+    detected_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
+  })
 
-const RAW_FUND_COVERAGE_REPORT_SCHEMA: yup.ObjectSchema<RawFundCoverageReport> = yup.object({
-  as_of_date: CALENDAR_DATE_SCHEMA.required(),
-  portfolio_value: requiredNumber(),
-  fund_value: requiredNumber(),
-  direct_identified_value: requiredNumber(),
-  opaque_value: requiredNumber(),
-  decomposed_value: requiredNumber(),
-  high_confidence_explained_value: requiredNumber(),
-  undisclosed_fund_value: requiredNumber(),
-  fund_coverage_pct: requiredNumber(),
-  portfolio_coverage_pct: requiredNumber(),
-  coverage_gate_pass: requiredBoolean(),
-  top_funds_gate_pass: requiredBoolean(),
-  exact_proxy_gate_pass: requiredBoolean(),
-  repeatability_gate_pass: requiredBoolean(),
-  feasibility_status: yup
-    .string<FundCoverageReport['feasibilityStatus']>()
-    .oneOf(['passed', 'pending_repeatability', 'limited'])
-    .defined(),
-  fund_count: requiredNumber(),
-  issue_count: requiredNumber(),
-})
+const RAW_FUND_COVERAGE_REPORT_SCHEMA: yup.ObjectSchema<RawFundCoverageReport> =
+  yup.object({
+    as_of_date: CALENDAR_DATE_SCHEMA.required(),
+    portfolio_value: requiredNumber(),
+    fund_value: requiredNumber(),
+    direct_identified_value: requiredNumber(),
+    opaque_value: requiredNumber(),
+    decomposed_value: requiredNumber(),
+    high_confidence_explained_value: requiredNumber(),
+    undisclosed_fund_value: requiredNumber(),
+    fund_coverage_pct: requiredNumber(),
+    portfolio_coverage_pct: requiredNumber(),
+    coverage_gate_pass: requiredBoolean(),
+    top_funds_gate_pass: requiredBoolean(),
+    exact_proxy_gate_pass: requiredBoolean(),
+    repeatability_gate_pass: requiredBoolean(),
+    feasibility_status: yup
+      .string<FundCoverageReport['feasibilityStatus']>()
+      .oneOf(['passed', 'pending_repeatability', 'limited'])
+      .defined(),
+    fund_count: requiredNumber(),
+    issue_count: requiredNumber(),
+  })
 
 export function useFundHoldingsQuery() {
   return useQuery<FundHoldingsData>({
     queryKey: portfolioQueryKeys.data('fund-holdings'),
     queryFn: async () => {
-      const [holdingRows, historyRows, statusRows, reportRows, snapshotRows, unresolvedRows] =
-        await Promise.all([
-          parseOptionalCsv(PORTFOLIO_ENDPOINTS.data.fundHoldings, RAW_FUND_HOLDING_SCHEMA),
-          parseOptionalCsv(
-            PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory,
-            RAW_FUND_HOLDING_HISTORY_SCHEMA,
-          ),
-          parseOptionalCsv(
-            PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus,
-            RAW_FUND_HOLDING_STATUS_SCHEMA,
-          ),
-          parseOptionalCsv(
-            PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage,
-            RAW_FUND_COVERAGE_REPORT_SCHEMA,
-          ),
-          parseOptionalCsv(PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest, RAW_FUND_SNAPSHOT_SCHEMA),
-          parseOptionalCsv(PORTFOLIO_ENDPOINTS.data.fundUnresolved, RAW_FUND_UNRESOLVED_SCHEMA),
-        ])
+      const [
+        holdingRows,
+        historyRows,
+        statusRows,
+        reportRows,
+        snapshotRows,
+        unresolvedRows,
+      ] = await Promise.all([
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundHoldings,
+          RAW_FUND_HOLDING_SCHEMA,
+        ),
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundHoldingsHistory,
+          RAW_FUND_HOLDING_HISTORY_SCHEMA,
+        ),
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundHoldingsStatus,
+          RAW_FUND_HOLDING_STATUS_SCHEMA,
+        ),
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundHoldingsCoverage,
+          RAW_FUND_COVERAGE_REPORT_SCHEMA,
+        ),
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundSnapshotManifest,
+          RAW_FUND_SNAPSHOT_SCHEMA,
+        ),
+        parseOptionalCsv(
+          PORTFOLIO_ENDPOINTS.data.fundUnresolved,
+          RAW_FUND_UNRESOLVED_SCHEMA,
+        ),
+      ])
       const holdings = holdingRows
         .map((row): FundHolding => ({
           parentIsin: row.parent_isin?.trim() || '',
@@ -375,7 +402,10 @@ export function useFundHoldingsQuery() {
 
       const statuses = statusRows.map((row): FundHoldingStatus => ({
         parentId:
-          row.parent_id?.trim() || row.parent_isin?.trim() || row.parent_ticker?.trim() || '',
+          row.parent_id?.trim() ||
+          row.parent_isin?.trim() ||
+          row.parent_ticker?.trim() ||
+          '',
         parentIsin: row.parent_isin?.trim() || '',
         parentTicker: row.parent_ticker?.trim() || '',
         parentName: row.parent_name?.trim() || '',
@@ -457,7 +487,8 @@ export function useFundHoldingsQuery() {
             directIdentifiedValue: rawReport.direct_identified_value,
             opaqueValue: rawReport.opaque_value,
             decomposedValue: rawReport.decomposed_value,
-            highConfidenceExplainedValue: rawReport.high_confidence_explained_value,
+            highConfidenceExplainedValue:
+              rawReport.high_confidence_explained_value,
             undisclosedFundValue: rawReport.undisclosed_fund_value,
             fundCoveragePct: rawReport.fund_coverage_pct,
             portfolioCoveragePct: rawReport.portfolio_coverage_pct,

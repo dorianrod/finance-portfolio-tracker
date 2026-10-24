@@ -23,7 +23,8 @@ function isPascalCase(name) {
 function getStaticPropertyName(node) {
   if (!node) return null
   if (node.type === 'Identifier') return node.name
-  if (node.type === 'Literal' && typeof node.value === 'string') return node.value
+  if (node.type === 'Literal' && typeof node.value === 'string')
+    return node.value
   return null
 }
 
@@ -42,35 +43,44 @@ function getCalleeName(node) {
 }
 
 function isHookCall(node) {
-  const name = node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
+  const name =
+    node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
   return typeof name === 'string' && /^use[A-Z0-9]/u.test(name)
 }
 
 function isReactComponentWrapper(node) {
-  return node?.type === 'CallExpression'
-    && REACT_COMPONENT_WRAPPERS.has(getCalleeName(node.callee))
+  return (
+    node?.type === 'CallExpression' &&
+    REACT_COMPONENT_WRAPPERS.has(getCalleeName(node.callee))
+  )
 }
 
 function getFunctionComponentName(node) {
   if (isPascalCase(node.id?.name)) return node.id.name
 
   let current = node
-  while (isReactComponentWrapper(current.parent)
-    && current.parent.arguments.includes(current)) {
+  while (
+    isReactComponentWrapper(current.parent) &&
+    current.parent.arguments.includes(current)
+  ) {
     current = current.parent
   }
 
-  if (current.parent?.type === 'VariableDeclarator'
-    && current.parent.init === current
-    && current.parent.id.type === 'Identifier'
-    && isPascalCase(current.parent.id.name)) {
+  if (
+    current.parent?.type === 'VariableDeclarator' &&
+    current.parent.init === current &&
+    current.parent.id.type === 'Identifier' &&
+    isPascalCase(current.parent.id.name)
+  ) {
     return current.parent.id.name
   }
 
-  if (current.parent?.type === 'AssignmentExpression'
-    && current.parent.right === current
-    && current.parent.left.type === 'Identifier'
-    && isPascalCase(current.parent.left.name)) {
+  if (
+    current.parent?.type === 'AssignmentExpression' &&
+    current.parent.right === current &&
+    current.parent.left.type === 'Identifier' &&
+    isPascalCase(current.parent.left.name)
+  ) {
     return current.parent.left.name
   }
 
@@ -80,13 +90,16 @@ function getFunctionComponentName(node) {
 
 function getClassComponentName(node) {
   const superClassName = getCalleeName(node.superClass)
-  if (superClassName !== 'Component' && superClassName !== 'PureComponent') return null
+  if (superClassName !== 'Component' && superClassName !== 'PureComponent')
+    return null
 
   if (isPascalCase(node.id?.name)) return node.id.name
-  if (node.parent?.type === 'VariableDeclarator'
-    && node.parent.init === node
-    && node.parent.id.type === 'Identifier'
-    && isPascalCase(node.parent.id.name)) {
+  if (
+    node.parent?.type === 'VariableDeclarator' &&
+    node.parent.init === node &&
+    node.parent.id.type === 'Identifier' &&
+    isPascalCase(node.parent.id.name)
+  ) {
     return node.parent.id.name
   }
   if (node.parent?.type === 'ExportDefaultDeclaration') return 'default'
@@ -94,9 +107,11 @@ function getClassComponentName(node) {
 }
 
 function isFunctionNode(node) {
-  return node?.type === 'FunctionDeclaration'
-    || node?.type === 'FunctionExpression'
-    || node?.type === 'ArrowFunctionExpression'
+  return (
+    node?.type === 'FunctionDeclaration' ||
+    node?.type === 'FunctionExpression' ||
+    node?.type === 'ArrowFunctionExpression'
+  )
 }
 
 function isClassNode(node) {
@@ -106,16 +121,19 @@ function isClassNode(node) {
 function roleFromPath(value) {
   if (value.endsWith('.view') || value.endsWith('.view.tsx')) return 'view'
   if (value.endsWith('.state') || value.endsWith('.state.tsx')) return 'state'
-  if (value.endsWith('.feature') || value.endsWith('.feature.tsx')) return 'feature'
+  if (value.endsWith('.feature') || value.endsWith('.feature.tsx'))
+    return 'feature'
   return null
 }
 
 function unwrapExpression(node) {
   let current = node
-  while (current?.type === 'ChainExpression'
-    || current?.type === 'TSAsExpression'
-    || current?.type === 'TSNonNullExpression'
-    || current?.type === 'TSTypeAssertion') {
+  while (
+    current?.type === 'ChainExpression' ||
+    current?.type === 'TSAsExpression' ||
+    current?.type === 'TSNonNullExpression' ||
+    current?.type === 'TSTypeAssertion'
+  ) {
     current = current.expression
   }
   return current
@@ -127,7 +145,9 @@ function combineAnalyses(analyses, derived = false) {
     return { dependsOnProps: false, derived: false, propName: null }
   }
 
-  const propNames = new Set(relevant.map(({ propName }) => propName).filter(Boolean))
+  const propNames = new Set(
+    relevant.map(({ propName }) => propName).filter(Boolean),
+  )
   return {
     dependsOnProps: true,
     derived: derived || relevant.some((analysis) => analysis.derived),
@@ -173,7 +193,9 @@ function createRule(context) {
         registerPattern(property.argument, null, propVariables)
         continue
       }
-      const name = property.computed ? null : getStaticPropertyName(property.key)
+      const name = property.computed
+        ? null
+        : getStaticPropertyName(property.key)
       registerPattern(property.value, name, propVariables)
     }
   }
@@ -209,12 +231,14 @@ function createRule(context) {
   function getClassContext(node) {
     if (componentContexts.has(node)) return componentContexts.get(node)
     const name = getClassComponentName(node)
-    const componentContext = name ? {
-      kind: 'class',
-      name,
-      propVariables: new Map(),
-      propsObjectVariable: null,
-    } : null
+    const componentContext = name
+      ? {
+          kind: 'class',
+          name,
+          propVariables: new Map(),
+          propsObjectVariable: null,
+        }
+      : null
     componentContexts.set(node, componentContext)
     return componentContext
   }
@@ -256,18 +280,24 @@ function createRule(context) {
     return { name: sourceCode.getText(nameNode), role: moduleRole }
   }
 
-  function analyzeExpression(node, componentContext, state = {
-    seenNodes: new Set(),
-    seenVariables: new Set(),
-  }) {
+  function analyzeExpression(
+    node,
+    componentContext,
+    state = {
+      seenNodes: new Set(),
+      seenVariables: new Set(),
+    },
+  ) {
     const expression = unwrapExpression(node)
     if (!expression || state.seenNodes.has(expression)) {
       return { dependsOnProps: false, derived: false, propName: null }
     }
     state.seenNodes.add(expression)
 
-    if (expression.type === 'ArrowFunctionExpression'
-      || expression.type === 'FunctionExpression') {
+    if (
+      expression.type === 'ArrowFunctionExpression' ||
+      expression.type === 'FunctionExpression'
+    ) {
       return { dependsOnProps: false, derived: false, propName: null }
     }
 
@@ -278,13 +308,15 @@ function createRule(context) {
       return { dependsOnProps: false, derived: false, propName: null }
     }
 
-    if (componentContext.kind === 'class'
-      && expression.type === 'MemberExpression'
-      && !expression.computed
-      && expression.object.type === 'MemberExpression'
-      && !expression.object.computed
-      && expression.object.object.type === 'ThisExpression'
-      && getStaticPropertyName(expression.object.property) === 'props') {
+    if (
+      componentContext.kind === 'class' &&
+      expression.type === 'MemberExpression' &&
+      !expression.computed &&
+      expression.object.type === 'MemberExpression' &&
+      !expression.object.computed &&
+      expression.object.object.type === 'ThisExpression' &&
+      getStaticPropertyName(expression.object.property) === 'props'
+    ) {
       return {
         dependsOnProps: true,
         derived: false,
@@ -294,12 +326,16 @@ function createRule(context) {
 
     if (expression.type === 'MemberExpression') {
       const object = unwrapExpression(expression.object)
-      if (object?.type === 'Identifier'
-        && findVariable(object) === componentContext.propsObjectVariable) {
+      if (
+        object?.type === 'Identifier' &&
+        findVariable(object) === componentContext.propsObjectVariable
+      ) {
         return {
           dependsOnProps: true,
           derived: false,
-          propName: expression.computed ? null : getStaticPropertyName(expression.property),
+          propName: expression.computed
+            ? null
+            : getStaticPropertyName(expression.property),
         }
       }
       return analyzeExpression(expression.object, componentContext, state)
@@ -307,7 +343,8 @@ function createRule(context) {
 
     if (expression.type === 'Identifier') {
       const variable = findVariable(expression)
-      if (!variable) return { dependsOnProps: false, derived: false, propName: null }
+      if (!variable)
+        return { dependsOnProps: false, derived: false, propName: null }
       if (componentContext.propVariables.has(variable)) {
         return {
           dependsOnProps: true,
@@ -323,12 +360,16 @@ function createRule(context) {
       const analyses = []
       for (const definition of variable.defs) {
         if (definition.type === 'Variable' && definition.node.init) {
-          analyses.push(analyzeExpression(definition.node.init, componentContext, state))
+          analyses.push(
+            analyzeExpression(definition.node.init, componentContext, state),
+          )
         }
       }
       for (const reference of variable.references) {
         if (reference.writeExpr) {
-          analyses.push(analyzeExpression(reference.writeExpr, componentContext, state))
+          analyses.push(
+            analyzeExpression(reference.writeExpr, componentContext, state),
+          )
         }
       }
       return combineAnalyses(analyses)
@@ -346,11 +387,15 @@ function createRule(context) {
       }
     }
 
-    return combineAnalyses(analyses, DERIVED_EXPRESSION_TYPES.has(expression.type))
+    return combineAnalyses(
+      analyses,
+      DERIVED_EXPRESSION_TYPES.has(expression.type),
+    )
   }
 
   function inspectAttribute(node) {
-    const attributeName = node.name.type === 'JSXIdentifier' ? node.name.name : null
+    const attributeName =
+      node.name.type === 'JSXIdentifier' ? node.name.name : null
     if (!attributeName || EXCLUDED_ATTRIBUTE_NAMES.has(attributeName)) return
     if (node.value?.type !== 'JSXExpressionContainer') return
 
@@ -358,13 +403,19 @@ function createRule(context) {
     if (!child || (child.role !== 'feature' && child.role !== 'state')) return
 
     for (const componentContext of getEnclosingComponentContexts(node)) {
-      const analysis = analyzeExpression(node.value.expression, componentContext)
+      const analysis = analyzeExpression(
+        node.value.expression,
+        componentContext,
+      )
       if (!analysis.dependsOnProps) continue
 
       if (analysis.derived) {
         context.report({
           node,
-          messageId: child.role === 'state' ? 'inlineStateConstruction' : 'derivedBusinessProp',
+          messageId:
+            child.role === 'state'
+              ? 'inlineStateConstruction'
+              : 'derivedBusinessProp',
           data: {
             attributeName,
             childName: child.name,
@@ -425,13 +476,17 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Detect prop chains and calculations assigned to feature or state-rendering components',
+      description:
+        'Detect prop chains and calculations assigned to feature or state-rendering components',
     },
     schema: [],
     messages: {
-      derivedBusinessProp: 'Business ownership: "{{parentName}}" calculates "{{childName}}.{{attributeName}}" from its props. Pass raw inputs and let the {{childRole}} component own the calculation, or classify the child as a view.',
-      inlineStateConstruction: 'State ownership: "{{parentName}}" constructs "{{childName}}.{{attributeName}}" inline. Resolve the discriminated union before rendering and pass it directly.',
-      propDrilling: 'Prop drilling: "{{parentName}}" forwards its "{{sourcePropName}}" prop to {{childRole}} component "{{childName}}.{{attributeName}}".',
+      derivedBusinessProp:
+        'Business ownership: "{{parentName}}" calculates "{{childName}}.{{attributeName}}" from its props. Pass raw inputs and let the {{childRole}} component own the calculation, or classify the child as a view.',
+      inlineStateConstruction:
+        'State ownership: "{{parentName}}" constructs "{{childName}}.{{attributeName}}" inline. Resolve the discriminated union before rendering and pass it directly.',
+      propDrilling:
+        'Prop drilling: "{{parentName}}" forwards its "{{sourcePropName}}" prop to {{childRole}} component "{{childName}}.{{attributeName}}".',
     },
   },
   create: createRule,

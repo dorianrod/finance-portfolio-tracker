@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useId } from 'react'
 import { createPortal } from 'react-dom'
+
 import { useSidePanelDialog } from './helpers/presenters/useSidePanelDialog'
 
 type SidePanelProps = {
@@ -57,7 +58,11 @@ export function SidePanel({
             <h2 id={titleId} className="text-sm font-semibold text-content">
               {title}
             </h2>
-            {description && <div className="mt-0.5 text-xs text-content-subtle">{description}</div>}
+            {description && (
+              <div className="mt-0.5 text-xs text-content-subtle">
+                {description}
+              </div>
+            )}
           </div>
           {headerActions}
           <button

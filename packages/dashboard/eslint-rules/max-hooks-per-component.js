@@ -8,7 +8,8 @@ import {
 const DEFAULT_MAX = 6
 
 function isHookCall(node) {
-  const name = node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
+  const name =
+    node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
   return typeof name === 'string' && /^use[A-Z0-9]/u.test(name)
 }
 
@@ -16,17 +17,21 @@ export default {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Limit direct hook orchestration in React function components',
+      description:
+        'Limit direct hook orchestration in React function components',
     },
-    schema: [{
-      type: 'object',
-      properties: {
-        max: { type: 'integer', minimum: 0 },
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          max: { type: 'integer', minimum: 0 },
+        },
+        additionalProperties: false,
       },
-      additionalProperties: false,
-    }],
+    ],
     messages: {
-      tooManyHooks: 'Component "{{name}}" uses {{count}} direct hooks (maximum: {{max}}). Extract cohesive responsibilities into intent-named custom hooks or child components. [arch-decompose-hook-heavy-components]',
+      tooManyHooks:
+        'Component "{{name}}" uses {{count}} direct hooks (maximum: {{max}}). Extract cohesive responsibilities into intent-named custom hooks or child components. [arch-decompose-hook-heavy-components]',
     },
   },
   create(context) {

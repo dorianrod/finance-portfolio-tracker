@@ -1,5 +1,6 @@
 import i18n from '@/i18n/i18n'
 import type { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+
 import { formatPerformanceAsOfDate } from './formatPerformanceAsOfDate'
 
 export function formatExactPerformanceDateRange(

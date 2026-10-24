@@ -1,11 +1,13 @@
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-export function accountLabel(account: string, labels: Record<string, string>): string {
+export function accountLabel(
+  account: string,
+  labels: Record<string, string>,
+): string {
   if (labels[account]) return labels[account]
   return account.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
@@ -19,7 +21,9 @@ export function buildAccountFilterLabels(
     const id = accountFilterId(position)
     if (!resolvedLabels[id]) {
       resolvedLabels[id] =
-        id === position.account ? accountLabel(position.account, labels) : position.name
+        id === position.account
+          ? accountLabel(position.account, labels)
+          : position.name
     }
   }
   return resolvedLabels
@@ -41,7 +45,9 @@ export function buildPortfolioFilterOptions(
     allAccounts: [...new Set(positions.map(accountFilterId))].toSorted(),
     allAccountTypes: [
       ...new Set(
-        positions.map((position) => position.account_type).filter((type): type is string => !!type),
+        positions
+          .map((position) => position.account_type)
+          .filter((type): type is string => !!type),
       ),
     ].toSorted(),
     allOperationTypes: [
@@ -50,7 +56,8 @@ export function buildPortfolioFilterOptions(
   }
 }
 
-export type FilterSummaryKey = 'accounts' | 'period' | 'operations' | 'closed-positions'
+export type FilterSummaryKey =
+  'accounts' | 'period' | 'operations' | 'closed-positions'
 
 export type FilterSummaryItem = {
   key: FilterSummaryKey
@@ -75,7 +82,8 @@ export function filterVisibilityForTab(
   tab: string,
   holdingsView: 'positions' | 'underlying' = 'positions',
 ): FilterVisibility {
-  const positionsView = tab === 'positions' || (tab === 'holdings' && holdingsView === 'positions')
+  const positionsView =
+    tab === 'positions' || (tab === 'holdings' && holdingsView === 'positions')
   return {
     showPeriod: true,
     showPositionFilters: positionsView,
@@ -92,11 +100,16 @@ export function filterSummaries(
 
   if (filters.accounts.size === 1) {
     const account = [...filters.accounts][0]
-    summaries.push({ key: 'accounts', label: accountLabel(account, accountLabels) })
+    summaries.push({
+      key: 'accounts',
+      label: accountLabel(account, accountLabels),
+    })
   } else if (filters.accounts.size > 1) {
     summaries.push({
       key: 'accounts',
-      label: i18n.t('ui.portfoliofiltersTs.value0Accounts', { value0: filters.accounts.size }),
+      label: i18n.t('ui.portfoliofiltersTs.value0Accounts', {
+        value0: filters.accounts.size,
+      }),
     })
   }
 
@@ -110,7 +123,9 @@ export function filterSummaries(
         to: formatDate(filters.dateTo),
       })
     } else if (filters.dateFrom) {
-      label = i18n.t('ui.portfoliofilters.sinceDate', { date: formatDate(filters.dateFrom) })
+      label = i18n.t('ui.portfoliofilters.sinceDate', {
+        date: formatDate(filters.dateFrom),
+      })
     }
     summaries.push({ key: 'period', label })
   }
@@ -118,7 +133,10 @@ export function filterSummaries(
   if (visibility.showPositionFilters && filters.operationTypes.size === 1) {
     const operation = [...filters.operationTypes][0]
     summaries.push({ key: 'operations', label: OP_LABELS[operation] })
-  } else if (visibility.showPositionFilters && filters.operationTypes.size > 1) {
+  } else if (
+    visibility.showPositionFilters &&
+    filters.operationTypes.size > 1
+  ) {
     summaries.push({
       key: 'operations',
       label: i18n.t('ui.portfoliofiltersTs.value0OperationTypes', {
@@ -141,8 +159,10 @@ export function clearFilterGroup(
   filters: DashboardFilters,
   key: FilterSummaryKey,
 ): DashboardFilters {
-  if (key === 'accounts') return { ...filters, accounts: new Set(), accountTypes: new Set() }
-  if (key === 'period') return { ...filters, dateFrom: undefined, dateTo: undefined }
+  if (key === 'accounts')
+    return { ...filters, accounts: new Set(), accountTypes: new Set() }
+  if (key === 'period')
+    return { ...filters, dateFrom: undefined, dateTo: undefined }
   if (key === 'operations') return { ...filters, operationTypes: new Set() }
   return { ...filters, hideClosedPositions: true }
 }
@@ -169,6 +189,9 @@ export function presetDateFrom(months: number, now = new Date()): Date {
   const day =
     months === 0
       ? 1
-      : Math.min(now.getDate(), new Date(Date.UTC(year, targetMonth + 1, 0)).getUTCDate())
+      : Math.min(
+          now.getDate(),
+          new Date(Date.UTC(year, targetMonth + 1, 0)).getUTCDate(),
+        )
   return new Date(Date.UTC(year, targetMonth, day))
 }

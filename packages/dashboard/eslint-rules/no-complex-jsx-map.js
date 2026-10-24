@@ -1,17 +1,22 @@
 function getStaticPropertyName(node) {
   if (node?.type === 'Identifier') return node.name
-  if (node?.type === 'Literal' && typeof node.value === 'string') return node.value
+  if (node?.type === 'Literal' && typeof node.value === 'string')
+    return node.value
   return null
 }
 
 function isMapCall(node) {
   return (
-    node.callee.type === 'MemberExpression' && getStaticPropertyName(node.callee.property) === 'map'
+    node.callee.type === 'MemberExpression' &&
+    getStaticPropertyName(node.callee.property) === 'map'
   )
 }
 
 function isFunction(node) {
-  return node?.type === 'ArrowFunctionExpression' || node?.type === 'FunctionExpression'
+  return (
+    node?.type === 'ArrowFunctionExpression' ||
+    node?.type === 'FunctionExpression'
+  )
 }
 
 function isComponentName(node) {
@@ -32,7 +37,10 @@ function isSimpleValue(node) {
     return isSimpleValue(node.expression)
   }
   if (node.type !== 'MemberExpression') return false
-  return isSimpleValue(node.object) && (!node.computed || isSimpleValue(node.property))
+  return (
+    isSimpleValue(node.object) &&
+    (!node.computed || isSimpleValue(node.property))
+  )
 }
 
 function hasComplexPropsOrChildren(element) {
@@ -49,7 +57,8 @@ function hasComplexPropsOrChildren(element) {
   }
 
   return element.children.some((child) => {
-    if (child.type === 'JSXExpressionContainer') return !isSimpleValue(child.expression)
+    if (child.type === 'JSXExpressionContainer')
+      return !isSimpleValue(child.expression)
     return child.type === 'JSXElement' || child.type === 'JSXFragment'
   })
 }
@@ -81,7 +90,8 @@ export default {
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Require JSX-producing map callbacks to delegate rendering to a component',
+      description:
+        'Require JSX-producing map callbacks to delegate rendering to a component',
     },
     schema: [],
     messages: {
@@ -97,7 +107,10 @@ export default {
       ImportDeclaration(node) {
         if (node.source.value !== 'recharts') return
         for (const specifier of node.specifiers) {
-          if (specifier.type === 'ImportSpecifier' && specifier.imported.name === 'Cell') {
+          if (
+            specifier.type === 'ImportSpecifier' &&
+            specifier.imported.name === 'Cell'
+          ) {
             directSlots.add(specifier.local.name)
           }
         }
@@ -106,7 +119,8 @@ export default {
         if (!isMapCall(node)) return
 
         const callback = node.arguments[0]
-        if (!isFunction(callback) || !containsJsx(callback.body, sourceCode)) return
+        if (!isFunction(callback) || !containsJsx(callback.body, sourceCode))
+          return
         // Recharts reads Cell props from direct children; a component wrapper hides the slot.
         if (
           callback.body.type === 'JSXElement' &&

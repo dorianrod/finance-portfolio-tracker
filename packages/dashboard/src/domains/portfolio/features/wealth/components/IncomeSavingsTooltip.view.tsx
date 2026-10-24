@@ -17,14 +17,24 @@ export function IncomeSavingsTooltip({
   const point = payload?.[0]?.payload
   if (!active || !point) return null
   const suffix =
-    point.incomeStatus === 'forecast' ? i18n.t('ui.annualincomesavingschart.forecast') : ''
+    point.incomeStatus === 'forecast'
+      ? i18n.t('ui.annualincomesavingschart.forecast')
+      : ''
   const savingsSuffix =
     point.savingsStatus === 'partial'
-      ? i18n.t('ui.annualincomesavingschart.ytdThrough', { date: point.savingsThrough })
+      ? i18n.t('ui.annualincomesavingschart.ytdThrough', {
+          date: point.savingsThrough,
+        })
       : ''
   return (
     <TooltipBox minWidth={235}>
-      <div style={{ color: 'var(--tooltip-text)', fontWeight: 600, marginBottom: 7 }}>
+      <div
+        style={{
+          color: 'var(--tooltip-text)',
+          fontWeight: 600,
+          marginBottom: 7,
+        }}
+      >
         {point.year}
         {suffix}
       </div>
@@ -40,9 +50,13 @@ export function IncomeSavingsTooltip({
         {i18n.t('ui.annualincomesavingschart.totalNetIncome')}{' '}
         {formatMoney(point.totalIncome, { style: 'full' })}
       </div>
-      <div style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}>
+      <div
+        style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}
+      >
         {i18n.t('ui.annualincomesavingschart.netContributions')}{' '}
-        {point.placedSavings == null ? '—' : formatMoney(point.placedSavings, { style: 'full' })}
+        {point.placedSavings == null
+          ? '—'
+          : formatMoney(point.placedSavings, { style: 'full' })}
         {savingsSuffix}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate, marginTop: 4 }}>

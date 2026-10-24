@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/components/ClassificationCoverageState.state'
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/components/FundDataQualityPanel.feature'
 import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/components/LookThroughCoverageSummary.feature'
@@ -21,7 +23,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-import { useMemo } from 'react'
+
 import {
   AffectedAssetsTable,
   DetailKpiButton,
@@ -88,7 +90,9 @@ export function DataQualityTab({
   const visibleAffectedAssets = useMemo(
     () =>
       classificationDimension
-        ? affectedAssets.filter((asset) => asset.dimensions.includes(classificationDimension))
+        ? affectedAssets.filter((asset) =>
+            asset.dimensions.includes(classificationDimension),
+          )
         : affectedAssets,
     [affectedAssets, classificationDimension],
   )
@@ -100,18 +104,25 @@ export function DataQualityTab({
     ) {
       return {
         label: i18n.t('ui.dataqualitytab.inspect'),
-        detail: i18n.t('ui.dataqualitytab.issuesToInspect', { count: fundIssueCount }),
+        detail: i18n.t('ui.dataqualitytab.issuesToInspect', {
+          count: fundIssueCount,
+        }),
         expanded: fundDiagnosticsOpen,
         onClick: openFundDiagnostics,
       }
     }
 
-    if (activeThemeId === 'classification' && classificationApplicableValue > 0) {
+    if (
+      activeThemeId === 'classification' &&
+      classificationApplicableValue > 0
+    ) {
       return {
         label: i18n.t('ui.dataqualitytab.inspect'),
         detail:
           affectedAssets.length > 0
-            ? i18n.t('ui.dataqualitytab.assetsToInspect', { count: affectedAssets.length })
+            ? i18n.t('ui.dataqualitytab.assetsToInspect', {
+                count: affectedAssets.length,
+              })
             : i18n.t('ui.dataqualitytab.noAffectedAsset'),
         expanded: classificationDetailsOpen,
         onClick: openAllClassificationDetails,
@@ -135,8 +146,12 @@ export function DataQualityTab({
     <EmptyQualityState
       message={
         scopedFundData.report
-          ? i18n.t('ui.dataqualitytab.lookThroughIsNotApplicableToSavingsCheckingAnd')
-          : i18n.t('ui.dataqualitytab.noLookThroughQualityReportRunThePortfolioPipeline')
+          ? i18n.t(
+              'ui.dataqualitytab.lookThroughIsNotApplicableToSavingsCheckingAnd',
+            )
+          : i18n.t(
+              'ui.dataqualitytab.noLookThroughQualityReportRunThePortfolioPipeline',
+            )
       }
     />
   )
@@ -162,7 +177,9 @@ export function DataQualityTab({
           <select
             id="quality-theme"
             value={activeThemeId}
-            onChange={(event) => setSelectedQualityTheme(event.target.value as QualityThemeId)}
+            onChange={(event) =>
+              setSelectedQualityTheme(event.target.value as QualityThemeId)
+            }
             className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm text-content-secondary focus:border-accent focus:outline-none"
           >
             {themes.map((theme) => (
@@ -200,9 +217,13 @@ export function DataQualityTab({
                   className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-canvas ring-1 ring-border"
                   aria-hidden="true"
                 >
-                  <span className={`h-2 w-2 rounded-full ${TONE_STYLES[activeTheme.tone].dot}`} />
+                  <span
+                    className={`h-2 w-2 rounded-full ${TONE_STYLES[activeTheme.tone].dot}`}
+                  />
                 </span>
-                <h2 className="text-base font-semibold text-content">{activeTheme.label}</h2>
+                <h2 className="text-base font-semibold text-content">
+                  {activeTheme.label}
+                </h2>
               </div>
               <p className="mt-1 max-w-2xl text-xs leading-5 text-content-subtle">
                 {activeTheme.description}
@@ -237,7 +258,9 @@ export function DataQualityTab({
           {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
 
           {activeThemeId === 'prices' && (
-            <ManualPriceOverridesTable manualPriceOverrides={manualPriceOverrides} />
+            <ManualPriceOverridesTable
+              manualPriceOverrides={manualPriceOverrides}
+            />
           )}
 
           {activeThemeId === 'classification' && (

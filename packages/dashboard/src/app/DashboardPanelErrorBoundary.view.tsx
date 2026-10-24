@@ -1,5 +1,6 @@
-import i18n from '@/i18n/i18n'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+
+import i18n from '@/i18n/i18n'
 
 type DashboardPanelErrorBoundaryProps = {
   children: ReactNode
@@ -16,7 +17,9 @@ export class DashboardPanelErrorBoundary extends Component<
 > {
   state: DashboardPanelErrorBoundaryState = { error: null }
 
-  static getDerivedStateFromError(error: Error): DashboardPanelErrorBoundaryState {
+  static getDerivedStateFromError(
+    error: Error,
+  ): DashboardPanelErrorBoundaryState {
     return { error }
   }
 
@@ -36,7 +39,9 @@ export class DashboardPanelErrorBoundary extends Component<
           {i18n.t('ui.dashboardpanelerrorboundary.unableToLoadThisAnalysis')}
         </p>
         <p className="mt-2 text-sm text-content-subtle">
-          {i18n.t('ui.dashboardpanelerrorboundary.reloadTheDashboardToTryDownloadingThePanelAgain')}
+          {i18n.t(
+            'ui.dashboardpanelerrorboundary.reloadTheDashboardToTryDownloadingThePanelAgain',
+          )}
         </p>
         <button
           type="button"

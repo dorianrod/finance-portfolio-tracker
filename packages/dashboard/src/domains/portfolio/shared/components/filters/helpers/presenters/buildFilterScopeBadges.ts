@@ -34,7 +34,9 @@ function accountBadge(
           ? i18n.t(
               'ui.buildfilterscopebadgesTs.thisAnalysisIntentionallyRemainsGlobalAndDoesNotUse',
             )
-          : i18n.t('ui.buildfilterscopebadgesTs.thisAnalysisIsDefinedForTheWholePortfolioRather'),
+          : i18n.t(
+              'ui.buildfilterscopebadgesTs.thisAnalysisIsDefinedForTheWholePortfolioRather',
+            ),
       tone: filters.accounts.size > 0 ? 'ignored' : 'default',
     }
   }
@@ -49,13 +51,19 @@ function accountBadge(
     const account = [...filters.accounts][0]
     return {
       label: labels[account] ?? account,
-      detail: i18n.t('ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccount'),
+      detail: i18n.t(
+        'ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccount',
+      ),
       tone: 'applied',
     }
   }
   return {
-    label: i18n.t('ui.buildfilterscopebadgesTs.value0Accounts', { value0: filters.accounts.size }),
-    detail: i18n.t('ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccounts'),
+    label: i18n.t('ui.buildfilterscopebadgesTs.value0Accounts', {
+      value0: filters.accounts.size,
+    }),
+    detail: i18n.t(
+      'ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccounts',
+    ),
     tone: 'applied',
   }
 }
@@ -125,12 +133,16 @@ function periodBadge(
     return active
       ? {
           label: i18n.t('ui.buildfilterscopebadgesTs.selectedPeriod'),
-          detail: i18n.t('ui.buildfilterscopebadgesTs.usesValue0', { value0: range }),
+          detail: i18n.t('ui.buildfilterscopebadgesTs.usesValue0', {
+            value0: range,
+          }),
           tone: 'applied',
         }
       : {
           label: i18n.t('ui.buildfilterscopebadgesTs.trailing12m'),
-          detail: i18n.t('ui.buildfilterscopebadgesTs.showsTheLatestTwelveMonthsByDefault'),
+          detail: i18n.t(
+            'ui.buildfilterscopebadgesTs.showsTheLatestTwelveMonthsByDefault',
+          ),
           tone: 'default',
         }
   }
@@ -138,7 +150,9 @@ function periodBadge(
     return active
       ? {
           label: i18n.t('ui.buildfilterscopebadgesTs.selectedPeriod'),
-          detail: i18n.t('ui.buildfilterscopebadgesTs.usesValue0', { value0: range }),
+          detail: i18n.t('ui.buildfilterscopebadgesTs.usesValue0', {
+            value0: range,
+          }),
           tone: 'applied',
         }
       : {
@@ -151,35 +165,48 @@ function periodBadge(
     return active
       ? {
           label: i18n.t('ui.buildfilterscopebadgesTs.selectedYears'),
-          detail: i18n.t('ui.buildfilterscopebadgesTs.usesCalendarYearsIntersectingValue0', {
-            value0: range,
-          }),
+          detail: i18n.t(
+            'ui.buildfilterscopebadgesTs.usesCalendarYearsIntersectingValue0',
+            {
+              value0: range,
+            },
+          ),
           tone: 'applied',
         }
       : {
           label: i18n.t('ui.buildfilterscopebadgesTs.allYears'),
-          detail: i18n.t('ui.buildfilterscopebadgesTs.usesAllAvailableCalendarYears'),
+          detail: i18n.t(
+            'ui.buildfilterscopebadgesTs.usesAllAvailableCalendarYears',
+          ),
           tone: 'default',
         }
   }
   if (mode === 'as-of') {
     if (filters.dateTo)
       return {
-        label: i18n.t('ui.buildfilterscopebadgesTs.asOfValue0', { value0: end }),
-        detail: i18n.t('ui.buildfilterscopebadgesTs.usesTheLatestSnapshotOnOrBeforeTheSelected'),
+        label: i18n.t('ui.buildfilterscopebadgesTs.asOfValue0', {
+          value0: end,
+        }),
+        detail: i18n.t(
+          'ui.buildfilterscopebadgesTs.usesTheLatestSnapshotOnOrBeforeTheSelected',
+        ),
         tone: 'applied',
       }
     if (filters.dateFrom)
       return {
         label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotStartIgnored'),
-        detail: i18n.t('ui.buildfilterscopebadgesTs.aPointInTimeValueNeedsAnEndDate'),
+        detail: i18n.t(
+          'ui.buildfilterscopebadgesTs.aPointInTimeValueNeedsAnEndDate',
+        ),
         tone: 'ignored',
       }
     return {
       label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotValue0', {
         value0: end ? ` · ${end}` : '',
       }),
-      detail: i18n.t('ui.buildfilterscopebadgesTs.usesTheLatestAvailablePortfolioSnapshot'),
+      detail: i18n.t(
+        'ui.buildfilterscopebadgesTs.usesTheLatestAvailablePortfolioSnapshot',
+      ),
       tone: 'default',
     }
   }
@@ -192,23 +219,35 @@ function periodBadge(
   const horizon = horizonByMode[mode]
   if (filters.dateTo) {
     return {
-      label: i18n.t('ui.buildfilterscopebadgesTs.value0ToValue1', { value0: horizon, value1: end }),
-      detail: i18n.t('ui.buildfilterscopebadgesTs.theSelectedEndDateAnchorsThisFixedHorizonThe'),
+      label: i18n.t('ui.buildfilterscopebadgesTs.value0ToValue1', {
+        value0: horizon,
+        value1: end,
+      }),
+      detail: i18n.t(
+        'ui.buildfilterscopebadgesTs.theSelectedEndDateAnchorsThisFixedHorizonThe',
+      ),
       tone: 'applied',
     }
   }
   if (filters.dateFrom) {
     return {
-      label: i18n.t('ui.buildfilterscopebadgesTs.value0StartIgnored', { value0: horizon }),
-      detail: i18n.t('ui.buildfilterscopebadgesTs.thisFixedHorizonIndicatorDoesNotUseAStart'),
+      label: i18n.t('ui.buildfilterscopebadgesTs.value0StartIgnored', {
+        value0: horizon,
+      }),
+      detail: i18n.t(
+        'ui.buildfilterscopebadgesTs.thisFixedHorizonIndicatorDoesNotUseAStart',
+      ),
       tone: 'ignored',
     }
   }
   return {
     label: horizon,
-    detail: i18n.t('ui.buildfilterscopebadgesTs.usesTheValue0EndingAtTheLatestSnapshot', {
-      value0: horizon.toLowerCase(),
-    }),
+    detail: i18n.t(
+      'ui.buildfilterscopebadgesTs.usesTheValue0EndingAtTheLatestSnapshot',
+      {
+        value0: horizon.toLowerCase(),
+      },
+    ),
     tone: 'default',
   }
 }

@@ -4,7 +4,9 @@ import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/account
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 
-export function withoutOperationAndPeriodFilters(filters: DashboardFilters): DashboardFilters {
+export function withoutOperationAndPeriodFilters(
+  filters: DashboardFilters,
+): DashboardFilters {
   return {
     ...filters,
     operationTypes: new Set<OperationType>(),
@@ -14,7 +16,9 @@ export function withoutOperationAndPeriodFilters(filters: DashboardFilters): Das
   }
 }
 
-export function withoutOperationFilters(filters: DashboardFilters): DashboardFilters {
+export function withoutOperationFilters(
+  filters: DashboardFilters,
+): DashboardFilters {
   return {
     ...filters,
     operationTypes: new Set<OperationType>(),
@@ -28,7 +32,9 @@ export function buildDemoPresetSelection(
 ): Set<string> | null {
   if (!demoPresetAccounts) return null
   const included = new Set(demoPresetAccounts)
-  return new Set(allAccounts.filter((account) => included.has(rawAccountId(account))))
+  return new Set(
+    allAccounts.filter((account) => included.has(rawAccountId(account))),
+  )
 }
 
 export function isDemoPresetActive(
@@ -47,5 +53,7 @@ export function filterSummariesForTab(
   summaries: FilterSummaryItem[],
   tab: string,
 ): FilterSummaryItem[] {
-  return tab === 'overview' ? summaries.filter((item) => item.key !== 'period') : summaries
+  return tab === 'overview'
+    ? summaries.filter((item) => item.key !== 'period')
+    : summaries
 }

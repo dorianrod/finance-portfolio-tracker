@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+
 import { TriTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 
 describe('TriTooltip', () => {

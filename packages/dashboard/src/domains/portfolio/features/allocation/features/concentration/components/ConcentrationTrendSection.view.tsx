@@ -1,13 +1,3 @@
-import { HoldingLabelTick } from '@/domains/portfolio/features/allocation/features/concentration/components/HoldingLabelTick.view'
-import { interpolateRankedBars } from '@/domains/portfolio/features/allocation/features/concentration/helpers/presenters/rankedBarAnimation'
-import type { useConcentrationTrendController } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationTrendController'
-import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
-import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { ReactNode } from 'react'
 import {
   Bar,
@@ -24,6 +14,18 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { HoldingLabelTick } from '@/domains/portfolio/features/allocation/features/concentration/components/HoldingLabelTick.view'
+import { interpolateRankedBars } from '@/domains/portfolio/features/allocation/features/concentration/helpers/presenters/rankedBarAnimation'
+import type { useConcentrationTrendController } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationTrendController'
+import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import {
   ChartLegend,
   ConcentrationTrendTooltip,
@@ -70,7 +72,9 @@ export function ConcentrationTrendSectionView({
       : i18n.t('ui.concentrationtrendsection.underlyingConcentration')
   const description =
     mode === 'held'
-      ? i18n.t('ui.concentrationtrendsection.trackHowManyOfTheLargestHeldPositionsAccount')
+      ? i18n.t(
+          'ui.concentrationtrendsection.trackHowManyOfTheLargestHeldPositionsAccount',
+        )
       : i18n.t(
           'ui.concentrationtrendsection.trackIdentifiedDirectAndFundLookThroughExposureMissing',
         )
@@ -80,7 +84,9 @@ export function ConcentrationTrendSectionView({
       <section>
         <div className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-sm font-medium text-content-secondary">{heading}</h3>
+            <h3 className="text-sm font-medium text-content-secondary">
+              {heading}
+            </h3>
             <p className="mt-0.5 text-xs text-content-subtle">{description}</p>
           </div>
           <ConcentrationModeToggle
@@ -109,7 +115,9 @@ export function ConcentrationTrendSectionView({
     <section>
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-sm font-medium text-content-secondary">{heading}</h3>
+          <h3 className="text-sm font-medium text-content-secondary">
+            {heading}
+          </h3>
           <p className="mt-0.5 text-xs text-content-subtle">{description}</p>
           {!lookThroughAvailable && (
             <p className="mt-1 text-xs text-warning">
@@ -129,7 +137,9 @@ export function ConcentrationTrendSectionView({
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <div className="rounded-xl bg-surface p-4">
           <h2 className="mb-1 flex items-center text-sm font-medium text-content-muted">
-            {i18n.t('ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare')}
+            {i18n.t(
+              'ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare',
+            )}
             {thresholdTooltip}
           </h2>
           <p className="mb-3 text-xs text-content-subtle">
@@ -143,7 +153,8 @@ export function ConcentrationTrendSectionView({
               data={chartData}
               margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
               onMouseMove={(state) => {
-                if (state.isTooltipActive) selectHoveredPoint(state.activeTooltipIndex)
+                if (state.isTooltipActive)
+                  selectHoveredPoint(state.activeTooltipIndex)
               }}
               onMouseLeave={() => setHoveredPointIndex(null)}
             >
@@ -153,7 +164,9 @@ export function ConcentrationTrendSectionView({
                 type="number"
                 scale="time"
                 domain={dateDomain}
-                tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })}
+                tickFormatter={(value) =>
+                  formatDate(value, { style: 'shortMonthShortYear' })
+                }
                 tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
                 tickLine={false}
                 axisLine={false}
@@ -219,7 +232,9 @@ export function ConcentrationTrendSectionView({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 className="flex items-center text-sm font-medium text-content-secondary">
-                  {i18n.t('ui.concentrationtrendsection.largestHoldingsOverTime')}
+                  {i18n.t(
+                    'ui.concentrationtrendsection.largestHoldingsOverTime',
+                  )}
                   {holdingsTooltip}
                 </h2>
                 <p className="mt-0.5 text-xs text-content-subtle">
@@ -230,7 +245,9 @@ export function ConcentrationTrendSectionView({
               </div>
               <div className="text-left sm:text-right">
                 <div className="text-lg font-semibold tabular-nums text-content-secondary">
-                  {formatDate(displayedPoint.date, { style: 'shortMonthShortYear' })}
+                  {formatDate(displayedPoint.date, {
+                    style: 'shortMonthShortYear',
+                  })}
                 </div>
                 <div className="text-[11px] text-content-subtle">
                   {i18n.t('ui.concentrationtrendsection.snapshot')}{' '}
@@ -249,13 +266,17 @@ export function ConcentrationTrendSectionView({
               <span>
                 {i18n.t('ui.concentrationtrendsection.identified')}{' '}
                 <strong className="font-semibold text-content-secondary">
-                  {formatMoney(displayedPoint.identifiedValue, { style: 'full' })}
+                  {formatMoney(displayedPoint.identifiedValue, {
+                    style: 'full',
+                  })}
                 </strong>
               </span>
               <span>
                 {i18n.t('ui.concentrationtrendsection.undisclosedFunds')}{' '}
                 <strong className="font-semibold text-content-secondary">
-                  {formatMoney(displayedPoint.undisclosedValue, { style: 'full' })}
+                  {formatMoney(displayedPoint.undisclosedValue, {
+                    style: 'full',
+                  })}
                 </strong>
               </span>
               <span>
@@ -271,8 +292,12 @@ export function ConcentrationTrendSectionView({
                 type="button"
                 aria-label={
                   isPlaying
-                    ? i18n.t('ui.concentrationtrendsection.pauseConcentrationHistory')
-                    : i18n.t('ui.concentrationtrendsection.playConcentrationHistory')
+                    ? i18n.t(
+                        'ui.concentrationtrendsection.pauseConcentrationHistory',
+                      )
+                    : i18n.t(
+                        'ui.concentrationtrendsection.playConcentrationHistory',
+                      )
                 }
                 aria-pressed={isPlaying}
                 onClick={togglePlayback}
@@ -284,7 +309,9 @@ export function ConcentrationTrendSectionView({
               </button>
               <button
                 type="button"
-                aria-label={i18n.t('ui.concentrationtrendsection.previousConcentrationMonth')}
+                aria-label={i18n.t(
+                  'ui.concentrationtrendsection.previousConcentrationMonth',
+                )}
                 disabled={selectedIndex === 0}
                 onClick={() => selectPoint(selectedIndex - 1)}
                 className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
@@ -293,7 +320,9 @@ export function ConcentrationTrendSectionView({
               </button>
               <button
                 type="button"
-                aria-label={i18n.t('ui.concentrationtrendsection.nextConcentrationMonth')}
+                aria-label={i18n.t(
+                  'ui.concentrationtrendsection.nextConcentrationMonth',
+                )}
                 disabled={selectedIndex >= points.length - 1}
                 onClick={() => selectPoint(selectedIndex + 1)}
                 className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
@@ -301,9 +330,13 @@ export function ConcentrationTrendSectionView({
                 {i18n.t('ui.concentrationtrendsection.next')}
               </button>
               <label className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 text-[11px] text-content-subtle sm:ml-2">
-                <span>{formatDate(points[0].date, { style: 'shortMonthShortYear' })}</span>
+                <span>
+                  {formatDate(points[0].date, { style: 'shortMonthShortYear' })}
+                </span>
                 <input
-                  aria-label={i18n.t('ui.concentrationtrendsection.concentrationMonth')}
+                  aria-label={i18n.t(
+                    'ui.concentrationtrendsection.concentrationMonth',
+                  )}
                   type="range"
                   min={0}
                   max={points.length - 1}
@@ -312,7 +345,11 @@ export function ConcentrationTrendSectionView({
                   onChange={(event) => selectPoint(Number(event.target.value))}
                   className="min-w-0 flex-1 accent-accent"
                 />
-                <span>{formatDate(points.at(-1)!.date, { style: 'shortMonthShortYear' })}</span>
+                <span>
+                  {formatDate(points.at(-1)!.date, {
+                    style: 'shortMonthShortYear',
+                  })}
+                </span>
               </label>
             </div>
 
@@ -357,13 +394,19 @@ export function ConcentrationTrendSectionView({
                       {displayedHoldings.map((holding, index) => (
                         <Cell
                           key={holding.key}
-                          fill={index === 0 ? SEMANTIC_COLORS.risk : SEMANTIC_COLORS.neutralSeries}
+                          fill={
+                            index === 0
+                              ? SEMANTIC_COLORS.risk
+                              : SEMANTIC_COLORS.neutralSeries
+                          }
                         />
                       ))}
                       <LabelList
                         dataKey="weight"
                         position="right"
-                        formatter={(value: unknown) => formatPercentage(Number(value))}
+                        formatter={(value: unknown) =>
+                          formatPercentage(Number(value))
+                        }
                         style={{ fill: 'var(--chart-label)', fontSize: 11 }}
                       />
                     </Bar>

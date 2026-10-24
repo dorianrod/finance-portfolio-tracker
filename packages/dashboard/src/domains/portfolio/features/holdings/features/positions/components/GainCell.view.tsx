@@ -2,7 +2,13 @@ import { gainClass } from '@/domains/portfolio/features/holdings/features/positi
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
-export function GainCell({ value, pct }: { value: number | null; pct?: number | null }) {
+export function GainCell({
+  value,
+  pct,
+}: {
+  value: number | null
+  pct?: number | null
+}) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   if (value == null) return <span className="text-content-subtle">—</span>

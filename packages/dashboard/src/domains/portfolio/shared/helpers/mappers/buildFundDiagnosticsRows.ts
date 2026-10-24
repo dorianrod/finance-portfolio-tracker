@@ -1,6 +1,6 @@
 import {
-  getFundQualityPresentation,
   type FundQualityCategory,
+  getFundQualityPresentation,
 } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 import type {
@@ -38,18 +38,24 @@ export function buildFundDiagnosticsRows({
         filter === 'all' ||
         filter === getFundQualityPresentation(status.qualityTier).category ||
         (filter === 'issues' &&
-          (status.validationStatus !== 'ok' || hasMaterialQualityGap(status.residualPct))),
+          (status.validationStatus !== 'ok' ||
+            hasMaterialQualityGap(status.residualPct))),
     )
     .toSorted(
       (left, right) =>
-        right.residualValue - left.residualValue || right.marketValue - left.marketValue,
+        right.residualValue - left.residualValue ||
+        right.marketValue - left.marketValue,
     )
     .map((status) => ({
       holdings: holdings.filter(
-        (item) => (item.parentIsin || item.parentTicker || item.parentName) === status.parentId,
+        (item) =>
+          (item.parentIsin || item.parentTicker || item.parentName) ===
+          status.parentId,
       ),
       snapshots: snapshots.filter((item) => item.fundId === status.parentId),
       status,
-      unresolved: unresolved.filter((item) => item.parentId === status.parentId),
+      unresolved: unresolved.filter(
+        (item) => item.parentId === status.parentId,
+      ),
     }))
 }

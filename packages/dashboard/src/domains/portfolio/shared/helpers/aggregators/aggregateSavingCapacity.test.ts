@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest'
 
-import { aggregateSavingCapacityByAccount, mapSavingCapacity } from './aggregateSavingCapacity'
+import {
+  aggregateSavingCapacityByAccount,
+  mapSavingCapacity,
+} from './aggregateSavingCapacity'
 
 describe('mapSavingCapacity', () => {
   it('parses the portfolio-wide saving capacity rows', () => {
-    const rows = [{ snapshot_date: new Date('2024-01-01'), savings_delta: 100.5, perf_delta: -20 }]
+    const rows = [
+      {
+        snapshot_date: new Date('2024-01-01'),
+        savings_delta: 100.5,
+        perf_delta: -20,
+      },
+    ]
     expect(mapSavingCapacity(rows)).toEqual([
       { date: new Date('2024-01-01'), savings_delta: 100.5, perf_delta: -20 },
     ])
@@ -33,19 +42,32 @@ describe('aggregateSavingCapacityByAccount', () => {
         perf_delta: 999,
       },
     ]
-    expect(aggregateSavingCapacityByAccount(rows, new Set(['a1', 'a2']))).toEqual([
+    expect(
+      aggregateSavingCapacityByAccount(rows, new Set(['a1', 'a2'])),
+    ).toEqual([
       { date: new Date('2024-01-01'), savings_delta: 20, perf_delta: 2 },
     ])
   })
 
   it('sorts the result chronologically', () => {
     const rows = [
-      { snapshot_date: new Date('2024-02-01'), account: 'a1', savings_delta: 1, perf_delta: 1 },
-      { snapshot_date: new Date('2024-01-01'), account: 'a1', savings_delta: 2, perf_delta: 2 },
+      {
+        snapshot_date: new Date('2024-02-01'),
+        account: 'a1',
+        savings_delta: 1,
+        perf_delta: 1,
+      },
+      {
+        snapshot_date: new Date('2024-01-01'),
+        account: 'a1',
+        savings_delta: 2,
+        perf_delta: 2,
+      },
     ]
-    expect(aggregateSavingCapacityByAccount(rows, new Set(['a1'])).map((p) => p.date)).toEqual([
-      new Date('2024-01-01'),
-      new Date('2024-02-01'),
-    ])
+    expect(
+      aggregateSavingCapacityByAccount(rows, new Set(['a1'])).map(
+        (p) => p.date,
+      ),
+    ).toEqual([new Date('2024-01-01'), new Date('2024-02-01')])
   })
 })

@@ -1,8 +1,8 @@
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import type {
   ContributionHorizon,
   PerformanceContributionSummary,
 } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 
 const MINIMUM_DISPLAYED_IRR = 0.005
 const RANKING_SIZE = 5
@@ -37,14 +37,20 @@ export function resolveContributionHorizon({
   trailingThreeYears: PerformanceContributionSummary
   trailingThreeYearIrr: number | null
 }) {
-  const threeYearUnavailable = !trailingThreeYears.available || trailingThreeYearIrr === null
-  const activeHorizon = horizon === 'trailing-3y' && threeYearUnavailable
-    ? 'since-tracking'
-    : horizon
+  const threeYearUnavailable =
+    !trailingThreeYears.available || trailingThreeYearIrr === null
+  const activeHorizon =
+    horizon === 'trailing-3y' && threeYearUnavailable
+      ? 'since-tracking'
+      : horizon
   return {
     activeHorizon,
-    irr: activeHorizon === 'since-tracking' ? sinceTrackingIrr : trailingThreeYearIrr,
-    summary: activeHorizon === 'since-tracking' ? sinceTracking : trailingThreeYears,
+    irr:
+      activeHorizon === 'since-tracking'
+        ? sinceTrackingIrr
+        : trailingThreeYearIrr,
+    summary:
+      activeHorizon === 'since-tracking' ? sinceTracking : trailingThreeYears,
     threeYearUnavailable,
   }
 }

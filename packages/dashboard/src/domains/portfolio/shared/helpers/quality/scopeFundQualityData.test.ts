@@ -8,7 +8,11 @@ import type {
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { computeFundExposurePercentages, scopeFundQualityData } from './scopeFundQualityData'
+
+import {
+  computeFundExposurePercentages,
+  scopeFundQualityData,
+} from './scopeFundQualityData'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
@@ -127,7 +131,14 @@ describe('scopeFundQualityData', () => {
         total_value: 100,
       }),
     ]
-    const result = scopeFundQualityData(selected, [], [status({})], [], [], report)
+    const result = scopeFundQualityData(
+      selected,
+      [],
+      [status({})],
+      [],
+      [],
+      report,
+    )
 
     expect(result.report).toMatchObject({
       portfolioValue: 300,
@@ -155,7 +166,11 @@ describe('scopeFundQualityData', () => {
       explainedPct: 0,
       residualPct: 100,
     })
-    const holding = { parentIsin: '', parentTicker: '', parentName: 'Employee fund' } as FundHolding
+    const holding = {
+      parentIsin: '',
+      parentTicker: '',
+      parentName: 'Employee fund',
+    } as FundHolding
     const snapshot = { fundId: 'Employee fund' } as FundSnapshot
     const unresolved = { parentId: 'Employee fund' } as FundUnresolved
     const result = scopeFundQualityData(
@@ -264,7 +279,13 @@ describe('scopeFundQualityData', () => {
         }),
       ],
       [],
-      [status({ parentId: 'Livret A', parentIsin: '', parentName: 'Livret A' })],
+      [
+        status({
+          parentId: 'Livret A',
+          parentIsin: '',
+          parentName: 'Livret A',
+        }),
+      ],
       [],
       [],
       report,

@@ -1,25 +1,34 @@
 // @vitest-environment jsdom
-import { makeFundHoldingStatus } from '@/domains/portfolio/shared/mocks/fundHoldingStatus.mock'
-import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
-import { clearCsvCache } from '@/shared/csv/csvData'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Provider, createStore } from 'jotai'
+import { createStore, Provider } from 'jotai'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { makeFundHoldingStatus } from '@/domains/portfolio/shared/mocks/fundHoldingStatus.mock'
+import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
+import { clearCsvCache } from '@/shared/csv/csvData'
+
 import { PositionsTable } from './PositionsTable.feature'
 
 function renderTable() {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () => new Response('', { headers: { 'Content-Type': 'text/csv' } })),
+    vi.fn(
+      async () => new Response('', { headers: { 'Content-Type': 'text/csv' } }),
+    ),
   )
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  })
   const store = createStore()
   render(
     <QueryClientProvider client={client}>
       <Provider store={store}>
-        <PositionsTable data={[makePosition()]} fundStatuses={[makeFundHoldingStatus()]} />
+        <PositionsTable
+          data={[makePosition()]}
+          fundStatuses={[makeFundHoldingStatus()]}
+        />
       </Provider>
     </QueryClientProvider>,
   )
@@ -48,7 +57,9 @@ describe('PositionsTable keyboard focus', () => {
     const user = userEvent.setup()
     const client = renderTable()
     await waitFor(() => expect(client.isFetching()).toBe(0))
-    const button = screen.getByRole('button', { name: /for Asset\. Show composition/ })
+    const button = screen.getByRole('button', {
+      name: /for Asset\. Show composition/,
+    })
     await user.click(button)
     expect(document.activeElement).toBe(button)
     expect(button.getAttribute('aria-expanded')).toBe('true')

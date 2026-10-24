@@ -1,8 +1,7 @@
-import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
+import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
 
@@ -56,7 +55,9 @@ function clean(value: string | undefined): string {
   return (value ?? '').trim()
 }
 
-function assetKey(row: Pick<RawPosition | RawOperation, 'isin' | 'ticker' | 'name'>): string {
+function assetKey(
+  row: Pick<RawPosition | RawOperation, 'isin' | 'ticker' | 'name'>,
+): string {
   const isin = clean(row.isin)
   if (isin) return `isin:${isin.toUpperCase()}`
   const ticker = clean(row.ticker)
@@ -77,7 +78,9 @@ function subtractDays(date: number, days: number): number {
   return date - days * DAY_MS
 }
 
-function unavailableSummary(horizon: ContributionHorizon): PerformanceContributionSummary {
+function unavailableSummary(
+  horizon: ContributionHorizon,
+): PerformanceContributionSummary {
   return {
     horizon,
     available: false,
@@ -91,10 +94,17 @@ function unavailableSummary(horizon: ContributionHorizon): PerformanceContributi
   }
 }
 
-function isPositionInScope(row: RawPosition, filters: PerformanceContributionFilters): boolean {
-  if (filters.accountTypes.size > 0 && !filters.accountTypes.has(clean(row.account_type)))
+function isPositionInScope(
+  row: RawPosition,
+  filters: PerformanceContributionFilters,
+): boolean {
+  if (
+    filters.accountTypes.size > 0 &&
+    !filters.accountTypes.has(clean(row.account_type))
+  )
     return false
-  if (filters.accounts.size > 0 && !filters.accounts.has(accountFilterId(row))) return false
+  if (filters.accounts.size > 0 && !filters.accounts.has(accountFilterId(row)))
+    return false
   return true
 }
 
@@ -128,7 +138,10 @@ function operationIsInScope(
   if (filters.accountTypes.size === 0) return true
   if (meta) return filters.accountTypes.has(meta.accountType)
   const types = accountTypes.get(operation.account)
-  return types !== undefined && [...types].some((type) => filters.accountTypes.has(type))
+  return (
+    types !== undefined &&
+    [...types].some((type) => filters.accountTypes.has(type))
+  )
 }
 
 function makeContribution(
@@ -170,10 +183,12 @@ export function computePerformanceContributions(
     accountTypes.set(row.account, types)
   }
 
-  const positions = positionsThroughEnd.filter((row) => isPositionInScope(row, filters))
-  const snapshotDates = [...new Set(positions.map((row) => datePart(row.snapshot_date)))].toSorted(
-    (left, right) => left - right,
+  const positions = positionsThroughEnd.filter((row) =>
+    isPositionInScope(row, filters),
   )
+  const snapshotDates = [
+    ...new Set(positions.map((row) => datePart(row.snapshot_date))),
+  ].toSorted((left, right) => left - right)
   const endDate = snapshotDates.at(-1)
   if (!endDate) return unavailableSummary(horizon)
 
@@ -186,7 +201,10 @@ export function computePerformanceContributions(
       const current = startsByFilterId.get(filterId)
       if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
     }
-    startDate = [...startsByFilterId.values()].toSorted((left, right) => left - right)[0] ?? null
+    startDate =
+      [...startsByFilterId.values()].toSorted(
+        (left, right) => left - right,
+      )[0] ?? null
   } else {
     const firstSnapshot = snapshotDates[0]
     const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
@@ -213,7 +231,8 @@ export function computePerformanceContributions(
       accounts: new Set<string>(),
     }
     if (!current.ticker && ticker) current.ticker = ticker
-    if ((!current.name || current.name === current.key) && name) current.name = name
+    if ((!current.name || current.name === current.key) && name)
+      current.name = name
     current.accounts.add(account)
     contributions.set(key, current)
     return current
@@ -230,11 +249,13 @@ export function computePerformanceContributions(
         : rowDate === startDate
     const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
     if (endValue === 0 && openingValue === 0) continue
-    touch(key, clean(row.name), clean(row.ticker), row.account).amount += endValue - openingValue
+    touch(key, clean(row.name), clean(row.ticker), row.account).amount +=
+      endValue - openingValue
   }
 
   for (const operation of rawOperations) {
-    if (!['SELL', 'DIVIDEND', 'INTEREST'].includes(operation.operation_type)) continue
+    if (!['SELL', 'DIVIDEND', 'INTEREST'].includes(operation.operation_type))
+      continue
     const operationDate = datePart(operation.date)
     if (operationDate > endDate) continue
     const key = assetKey(operation)
@@ -249,7 +270,9 @@ export function computePerformanceContributions(
     if (!lowerBound || operationDate <= lowerBound) continue
 
     const amount =
-      operation.operation_type === 'SELL' ? operation.realized_gain : operation.total_amount
+      operation.operation_type === 'SELL'
+        ? operation.realized_gain
+        : operation.total_amount
     if (amount === 0) continue
     touch(
       key,
@@ -259,9 +282,17 @@ export function computePerformanceContributions(
     ).amount += amount
   }
 
-  const nonZero = [...contributions.values()].filter((item) => Math.abs(item.amount) >= 0.005)
-  const positiveTotal = nonZero.reduce((sum, item) => sum + Math.max(item.amount, 0), 0)
-  const negativeTotal = nonZero.reduce((sum, item) => sum + Math.max(-item.amount, 0), 0)
+  const nonZero = [...contributions.values()].filter(
+    (item) => Math.abs(item.amount) >= 0.005,
+  )
+  const positiveTotal = nonZero.reduce(
+    (sum, item) => sum + Math.max(item.amount, 0),
+    0,
+  )
+  const negativeTotal = nonZero.reduce(
+    (sum, item) => sum + Math.max(-item.amount, 0),
+    0,
+  )
   const contributors = nonZero
     .filter((item) => item.amount > 0)
     .toSorted((left, right) => right.amount - left.amount)

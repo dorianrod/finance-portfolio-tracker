@@ -1,11 +1,14 @@
+import { useAtomValue } from 'jotai'
+import { useState } from 'react'
+
 import { ConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationChart.feature'
 import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationTrendSection.feature'
 import { CumulativeConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/CumulativeConcentrationChart.feature'
 import { useConcentrationDescriptions } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationDescriptions'
 import { useAllocationCharts } from '@/domains/portfolio/features/allocation/services/useAllocationCharts'
 import {
-  ConcentrationModeToggle,
   type ConcentrationMode,
+  ConcentrationModeToggle,
 } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import {
   dashboardAllocationFilterAtom,
@@ -19,8 +22,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import i18n from '@/i18n/i18n'
-import { useAtomValue } from 'jotai'
-import { useState } from 'react'
+
 import { DonutCard } from './DonutCard.feature'
 import { EvoCard } from './EvoCard.feature'
 import { FilteredPositionsTable } from './FilteredPositionsTable.feature'
@@ -48,7 +50,8 @@ export function AllocationCharts({
   dateFrom,
   dateTo,
 }: AllocationChartsProps) {
-  const [concentrationMode, setConcentrationMode] = useState<ConcentrationMode>('held')
+  const [concentrationMode, setConcentrationMode] =
+    useState<ConcentrationMode>('held')
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const view = useAtomValue(dashboardAllocationViewAtom)
   const {
@@ -87,12 +90,11 @@ export function AllocationCharts({
     dateFrom,
     dateTo,
   })
-  const { cumulativeDescription, holdingsDescription } = useConcentrationDescriptions(
-    concentration,
-    concentrationMode,
-  )
+  const { cumulativeDescription, holdingsDescription } =
+    useConcentrationDescriptions(concentration, concentrationMode)
   const hasConcentrationData =
-    heldAssetConcentration.allHoldings.length > 0 || lookThroughConcentration.allHoldings.length > 0
+    heldAssetConcentration.allHoldings.length > 0 ||
+    lookThroughConcentration.allHoldings.length > 0
   if (rawData.loading)
     return (
       <p className="text-content-muted text-sm">
@@ -103,7 +105,9 @@ export function AllocationCharts({
   if (hasSelectedValue && !hasApplicableValue) {
     return (
       <p className="text-sm text-content-subtle">
-        {i18n.t('ui.allocationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage')}
+        {i18n.t(
+          'ui.allocationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage',
+        )}
       </p>
     )
   }
@@ -117,7 +121,9 @@ export function AllocationCharts({
   ) {
     return (
       <p className="text-content-subtle text-sm">
-        {i18n.t('ui.allocationcharts.noAllocationDataAvailableRunThePipelineToGenerate')}
+        {i18n.t(
+          'ui.allocationcharts.noAllocationDataAvailableRunThePipelineToGenerate',
+        )}
       </p>
     )
   }
@@ -134,7 +140,9 @@ export function AllocationCharts({
                     {i18n.t('ui.allocationcharts.assetConcentration')}
                   </h3>
                   <p className="mt-0.5 text-xs text-content-subtle">
-                    {i18n.t('ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn')}
+                    {i18n.t(
+                      'ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn',
+                    )}
                   </p>
                 </div>
                 <ConcentrationModeToggle
@@ -172,7 +180,9 @@ export function AllocationCharts({
                 {i18n.t('ui.allocationcharts.portfolioBreakdown')}
               </h3>
               <p className="mt-0.5 text-xs text-content-subtle">
-                {i18n.t('ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector')}
+                {i18n.t(
+                  'ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector',
+                )}
               </p>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -199,7 +209,9 @@ export function AllocationCharts({
               )}
               {latestCurrency && (
                 <DonutCard
-                  title={i18n.t('ui.allocationcharts.currencyEquitiesFixedIncome')}
+                  title={i18n.t(
+                    'ui.allocationcharts.currencyEquitiesFixedIncome',
+                  )}
                   point={latestCurrency}
                   dimension="currency"
                 />
@@ -224,7 +236,9 @@ export function AllocationCharts({
                   {i18n.t('ui.allocationcharts.portfolioBreakdownTrends')}
                 </h3>
                 <p className="mt-0.5 text-xs text-content-subtle">
-                  {i18n.t('ui.allocationcharts.trackHowTheMixChangedByGeographyAssetClass')}
+                  {i18n.t(
+                    'ui.allocationcharts.trackHowTheMixChangedByGeographyAssetClass',
+                  )}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">

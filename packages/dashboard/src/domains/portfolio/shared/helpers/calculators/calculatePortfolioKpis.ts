@@ -31,7 +31,9 @@ export function calculatePortfolioKpis(rows: PositionRow[]) {
     totalUnrealizedNet,
     totalValue,
     totalValueNet: totalCostBasis + totalUnrealizedNet,
-    unrealizedPctGross: totalInvested > 0 ? totalUnrealized / totalInvested * 100 : 0,
-    unrealizedPctNet: totalInvested > 0 ? totalUnrealizedNet / totalInvested * 100 : 0,
+    unrealizedPctGross:
+      totalInvested > 0 ? (totalUnrealized / totalInvested) * 100 : 0,
+    unrealizedPctNet:
+      totalInvested > 0 ? (totalUnrealizedNet / totalInvested) * 100 : 0,
   }
 }

@@ -3,6 +3,7 @@ import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/he
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
+
 import { FundHoldingsExplorer } from './FundHoldingsExplorer.feature'
 
 export function FundLookThroughTab({
@@ -50,13 +51,19 @@ export function FundLookThroughTab({
           />
         </h2>
         <p className="mt-1 text-sm text-content-subtle">
-          {i18n.t('ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking')}
+          {i18n.t(
+            'ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking',
+          )}
         </p>
       </section>
     )
   } else if (holdings.length > 0) {
-    // eslint-disable-next-line local/no-prop-drilling -- Applicability filtering belongs to this tab-level orchestration feature.
-    content = <FundHoldingsExplorer positions={applicablePositions} holdings={holdings} />
+    content = (
+      <FundHoldingsExplorer
+        positions={applicablePositions}
+        holdings={holdings}
+      />
+    )
   }
 
   return <div className="mb-6 space-y-4">{content}</div>

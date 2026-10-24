@@ -1,9 +1,3 @@
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import {
   Area,
   CartesianGrid,
@@ -14,6 +8,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import { DriversTooltip } from './WealthDriversTooltip.view'
 
 export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
@@ -32,25 +34,48 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
           />
         </h2>
         <p className="mt-0.5 text-xs text-content-subtle">
-          {i18n.t('ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange')}
+          {i18n.t(
+            'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
+          )}
         </p>
       </div>
       <ResponsiveContainer width="100%" height={240}>
-        <ComposedChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+        <ComposedChart
+          data={data}
+          margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+        >
           <defs>
             <linearGradient id="driversSavings" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={SEMANTIC_COLORS.netContributions} stopOpacity={0.35} />
-              <stop offset="95%" stopColor={SEMANTIC_COLORS.netContributions} stopOpacity={0.04} />
+              <stop
+                offset="5%"
+                stopColor={SEMANTIC_COLORS.netContributions}
+                stopOpacity={0.35}
+              />
+              <stop
+                offset="95%"
+                stopColor={SEMANTIC_COLORS.netContributions}
+                stopOpacity={0.04}
+              />
             </linearGradient>
             <linearGradient id="driversPerformance" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={SEMANTIC_COLORS.performance} stopOpacity={0.3} />
-              <stop offset="95%" stopColor={SEMANTIC_COLORS.performance} stopOpacity={0.03} />
+              <stop
+                offset="5%"
+                stopColor={SEMANTIC_COLORS.performance}
+                stopOpacity={0.3}
+              />
+              <stop
+                offset="95%"
+                stopColor={SEMANTIC_COLORS.performance}
+                stopOpacity={0.03}
+              />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
           <XAxis
             dataKey="date"
-            tickFormatter={(value) => formatDate(value, { style: 'shortMonthShortYear' })}
+            tickFormatter={(value) =>
+              formatDate(value, { style: 'shortMonthShortYear' })
+            }
             tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
             tickLine={false}
             axisLine={false}

@@ -5,7 +5,10 @@ export function formatOverviewPeriodRange(
   period: OverviewPeriod,
   formatDate: ReturnType<typeof useFormatDate>,
 ): string {
-  const start = formatDate(period.start, { style: 'dayMonthYear', timeZone: 'UTC' })
+  const start = formatDate(period.start, {
+    style: 'dayMonthYear',
+    timeZone: 'UTC',
+  })
   const end = formatDate(period.end, { style: 'dayMonthYear', timeZone: 'UTC' })
   return `${start} – ${end}`
 }

@@ -1,3 +1,6 @@
+import { useAtomValue } from 'jotai'
+import { useMemo } from 'react'
+
 import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import { holdingsForPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
@@ -7,8 +10,6 @@ import type {
   HistoricalFundHolding,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import { useAtomValue } from 'jotai'
-import { useMemo } from 'react'
 
 const EMPTY_FUND_HOLDINGS: FundHolding[] = []
 const EMPTY_HISTORICAL_FUND_HOLDINGS: HistoricalFundHolding[] = []

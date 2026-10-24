@@ -15,7 +15,8 @@ export default {
     },
     schema: [],
     messages: {
-      extractEffect: 'Move {{hook}} out of component "{{name}}" into an intent-named custom hook. [arch-isolate-effects-in-hooks]',
+      extractEffect:
+        'Move {{hook}} out of component "{{name}}" into an intent-named custom hook. [arch-isolate-effects-in-hooks]',
     },
   },
   create(context) {
@@ -34,13 +35,20 @@ export default {
     }
 
     function effectName(node) {
-      if (node.type === 'Identifier') return directEffectBindings.get(node.name) ?? null
-      if (node.type !== 'MemberExpression' || node.computed || node.object.type !== 'Identifier') {
+      if (node.type === 'Identifier')
+        return directEffectBindings.get(node.name) ?? null
+      if (
+        node.type !== 'MemberExpression' ||
+        node.computed ||
+        node.object.type !== 'Identifier'
+      ) {
         return null
       }
 
       const name = getStaticPropertyName(node.property)
-      return reactObjectBindings.has(node.object.name) && EFFECT_HOOKS.has(name) ? name : null
+      return reactObjectBindings.has(node.object.name) && EFFECT_HOOKS.has(name)
+        ? name
+        : null
     }
 
     return {
@@ -49,8 +57,10 @@ export default {
         if (node.source.value !== 'react') return
 
         for (const specifier of node.specifiers) {
-          if (specifier.type === 'ImportDefaultSpecifier'
-            || specifier.type === 'ImportNamespaceSpecifier') {
+          if (
+            specifier.type === 'ImportDefaultSpecifier' ||
+            specifier.type === 'ImportNamespaceSpecifier'
+          ) {
             reactObjectBindings.add(specifier.local.name)
             continue
           }

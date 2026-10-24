@@ -1,5 +1,8 @@
 import i18n from '@/i18n/i18n'
-import { SegmentedControl, SegmentedControlItem } from '@/shared/ui/SegmentedControl.view'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@/shared/ui/SegmentedControl.view'
 
 export type ConcentrationMode = 'held' | 'lookThrough'
 
@@ -13,14 +16,19 @@ export function ConcentrationModeToggle({
   lookThroughDisabled?: boolean
 }) {
   return (
-    <SegmentedControl label={i18n.t('ui.concentrationmodetoggle.concentrationMethod')} density="compact" className="shrink-0">
+    <SegmentedControl
+      label={i18n.t('ui.concentrationmodetoggle.concentrationMethod')}
+      density="compact"
+      className="shrink-0"
+    >
       <SegmentedControlItem
         active={value === 'held'}
         size="compact"
         onClick={() => onChange('held')}
-        title={i18n.t('ui.concentrationmodetoggle.assetsEffectivelyHeldAtTheAllocationFileLevel')}
+        title={i18n.t(
+          'ui.concentrationmodetoggle.assetsEffectivelyHeldAtTheAllocationFileLevel',
+        )}
       >
-
         {i18n.t('ui.concentrationmodetoggle.heldPositions')}
       </SegmentedControlItem>
       <SegmentedControlItem
@@ -28,9 +36,16 @@ export function ConcentrationModeToggle({
         size="compact"
         onClick={() => onChange('lookThrough')}
         disabled={lookThroughDisabled}
-        title={lookThroughDisabled ? i18n.t('ui.concentrationmodetoggle.historicalUnderlyingHoldingsAreUnavailable') : i18n.t('ui.concentrationmodetoggle.assetsHeldDirectlyAndThroughFunds')}
+        title={
+          lookThroughDisabled
+            ? i18n.t(
+                'ui.concentrationmodetoggle.historicalUnderlyingHoldingsAreUnavailable',
+              )
+            : i18n.t(
+                'ui.concentrationmodetoggle.assetsHeldDirectlyAndThroughFunds',
+              )
+        }
       >
-
         {i18n.t('ui.concentrationmodetoggle.underlyingAssets')}
       </SegmentedControlItem>
     </SegmentedControl>

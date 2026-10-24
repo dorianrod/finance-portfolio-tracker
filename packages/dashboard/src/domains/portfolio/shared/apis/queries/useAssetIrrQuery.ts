@@ -1,14 +1,18 @@
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import * as yup from 'yup'
+
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import type { AssetIrrItem, AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
+import type {
+  AssetIrrItem,
+  AssetIrrSummary,
+} from '@/domains/portfolio/shared/types/assetIrr.type'
 import { readJsonResponse } from '@/shared/http/readJsonResponse'
 import {
   DATE_REQUEST_SCHEMA,
   OPTIONAL_CALENDAR_DATE_SCHEMA,
 } from '@/shared/schemas/calendarDate.schema'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
-import * as yup from 'yup'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -29,12 +33,14 @@ const ASSET_IRR_ITEM_SCHEMA: yup.ObjectSchema<AssetIrrItem> = yup.object({
   account_types: yup.array(yup.string().defined()).default([]).defined(),
 })
 
-const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> = yup.object({
-  available: yup.boolean().defined(),
-  start_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
-  end_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
-  assets: yup.array(ASSET_IRR_ITEM_SCHEMA).default([]).defined(),
-})
+const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> = yup.object(
+  {
+    available: yup.boolean().defined(),
+    start_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
+    end_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
+    assets: yup.array(ASSET_IRR_ITEM_SCHEMA).default([]).defined(),
+  },
+)
 
 export const UNAVAILABLE_ASSET_IRR_SUMMARY: AssetIrrSummary = {
   available: false,
@@ -76,10 +82,22 @@ export function useAssetIrrQuery(
   dateFrom: Date | undefined,
   dateTo: Date | undefined,
 ) {
-  const accounts = useMemo(() => [...selectedAccounts].toSorted(), [selectedAccounts])
-  const accountTypes = useMemo(() => [...selectedAccountTypes].toSorted(), [selectedAccountTypes])
+  const accounts = useMemo(
+    () => [...selectedAccounts].toSorted(),
+    [selectedAccounts],
+  )
+  const accountTypes = useMemo(
+    () => [...selectedAccountTypes].toSorted(),
+    [selectedAccountTypes],
+  )
   return useQuery<AssetIrrSummary>({
-    queryKey: portfolioQueryKeys.data('asset-irr', accounts, accountTypes, dateFrom, dateTo),
+    queryKey: portfolioQueryKeys.data(
+      'asset-irr',
+      accounts,
+      accountTypes,
+      dateFrom,
+      dateTo,
+    ),
     queryFn: ({ signal }) =>
       STATIC_DEMO
         ? UNAVAILABLE_ASSET_IRR_SUMMARY

@@ -1,14 +1,3 @@
-import {
-  buildHoverChartSeries,
-  computePosition,
-  computeUnitPriceDomain,
-  type Operation,
-} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
-import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
-import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { createPortal } from 'react-dom'
 import {
   Area,
@@ -22,6 +11,19 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+
+import {
+  buildHoverChartSeries,
+  computePosition,
+  computeUnitPriceDomain,
+  type Operation,
+} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
+import i18n from '@/i18n/i18n'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 import { BuySellDot, BuySellDotUnit } from './BuySellDots.view'
 import { TooltipPortfolio, TooltipUnit } from './hoverCharts.tooltips.view'
 
@@ -44,10 +46,15 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const { top, left } = computePosition(target.buttonRect)
 
   const showUnitPrice =
-    history != null && history.some((p) => Math.abs(p.last_price - p.value) > 0.01)
+    history != null &&
+    history.some((p) => Math.abs(p.last_price - p.value) > 0.01)
 
-  const chartData = history ? buildHoverChartSeries(history, target.operations) : undefined
-  const unitPriceDomain = chartData ? computeUnitPriceDomain(chartData) : undefined
+  const chartData = history
+    ? buildHoverChartSeries(history, target.operations)
+    : undefined
+  const unitPriceDomain = chartData
+    ? computeUnitPriceDomain(chartData)
+    : undefined
   const displayedChartData = chartData?.length ? chartData : null
 
   return createPortal(
@@ -71,13 +78,26 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
       {displayedChartData && (
         <>
           {/* Chart 1: position value */}
-          <p className="text-content-muted text-xs mb-1">{i18n.t('ui.hoverchart.positionValue')}</p>
+          <p className="text-content-muted text-xs mb-1">
+            {i18n.t('ui.hoverchart.positionValue')}
+          </p>
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={displayedChartData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+            <AreaChart
+              data={displayedChartData}
+              margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="gVal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0.25} />
-                  <stop offset="95%" stopColor={SEMANTIC_COLORS.portfolioValue} stopOpacity={0} />
+                  <stop
+                    offset="5%"
+                    stopColor={SEMANTIC_COLORS.portfolioValue}
+                    stopOpacity={0.25}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={SEMANTIC_COLORS.portfolioValue}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
@@ -94,7 +114,9 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
                 width={64}
               />
               <Tooltip content={<TooltipPortfolio />} />
-              <Legend wrapperStyle={{ fontSize: 11, color: CHART_THEME.tick }} />
+              <Legend
+                wrapperStyle={{ fontSize: 11, color: CHART_THEME.tick }}
+              />
               <Area
                 type="monotone"
                 dataKey="Cost basis"
@@ -137,13 +159,18 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
           {/* Chart 2: unit price — only when real market data is available */}
           {showUnitPrice && (
             <>
-              <p className="text-content-muted text-xs mb-1">{i18n.t('ui.hoverchart.unitPrice')}</p>
+              <p className="text-content-muted text-xs mb-1">
+                {i18n.t('ui.hoverchart.unitPrice')}
+              </p>
               <ResponsiveContainer width="100%" height={160}>
                 <LineChart
                   data={displayedChartData}
                   margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={CHART_THEME.grid}
+                  />
                   <XAxis
                     dataKey="date"
                     tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
@@ -153,7 +180,9 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
                     tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => formatMoney(value, { style: 'decimal' })}
+                    tickFormatter={(value) =>
+                      formatMoney(value, { style: 'decimal' })
+                    }
                     width={64}
                     domain={unitPriceDomain}
                   />

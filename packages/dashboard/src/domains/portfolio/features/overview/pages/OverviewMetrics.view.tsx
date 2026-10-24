@@ -19,10 +19,14 @@ export function DeltaBadge({
   if (tone === 'contributions') color = SEMANTIC_TEXT_CLASSES.netContributions
   else if (tone === 'concentration') color = getConcentrationTone(metric.delta)
   let label =
-    metric.delta == null ? '—' : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
+    metric.delta == null
+      ? '—'
+      : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
   if (tone === 'concentration') {
     label =
-      metric.delta == null ? '—' : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
+      metric.delta == null
+        ? '—'
+        : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
   }
   const deltaPercentage =
     tone !== 'concentration' && metric.deltaPct != null ? metric.deltaPct : null
@@ -40,7 +44,13 @@ export function DeltaBadge({
   )
 }
 
-export function PreviousValue({ value, suffix = '' }: { value: number | null; suffix?: string }) {
+export function PreviousValue({
+  value,
+  suffix = '',
+}: {
+  value: number | null
+  suffix?: string
+}) {
   const formatMoney = useFormatMoney()
   return (
     <span className="text-[11px] text-content-subtle">

@@ -1,8 +1,9 @@
+import { useAtomValue } from 'jotai'
+
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
-import { useAtomValue } from 'jotai'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
   geo: i18n.t('ui.filterchipbar.geo'),
@@ -27,7 +28,9 @@ export function FilterChipBar() {
         title={i18n.t('ui.filterchipbar.clearAllocationFilter')}
         className="inline-flex max-w-full cursor-pointer items-center gap-1 rounded-full border border-accent bg-accent-solid px-3 py-1 text-xs text-content transition-colors hover:border-accent hover:bg-accent-solid"
       >
-        <span className="font-medium opacity-80">{DIM_LABELS[filter.type]}</span>
+        <span className="font-medium opacity-80">
+          {DIM_LABELS[filter.type]}
+        </span>
         <span aria-hidden="true" className="opacity-60">
           :
         </span>

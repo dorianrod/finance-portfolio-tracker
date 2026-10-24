@@ -12,12 +12,19 @@ function getInitialTheme(): Theme {
     const theme = document.documentElement.dataset.theme
     if (isTheme(theme)) return theme
   }
-  if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
+  if (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-color-scheme: dark)').matches
+  )
     return 'dark'
   return 'light'
 }
 
-const NOOP_STORAGE = { getItem: () => null, setItem: () => {}, removeItem: () => {} }
+const NOOP_STORAGE = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+}
 
 const jsonStorage = createJSONStorage<Theme>(() => {
   try {
@@ -50,7 +57,11 @@ const themeStorage = {
       /* Storage may be disabled. */
     }
   },
-  subscribe(key: string, callback: (value: Theme) => void, initialValue: Theme) {
+  subscribe(
+    key: string,
+    callback: (value: Theme) => void,
+    initialValue: Theme,
+  ) {
     return (
       jsonStorage.subscribe?.(
         key,

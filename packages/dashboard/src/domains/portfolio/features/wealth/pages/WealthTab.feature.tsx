@@ -7,7 +7,10 @@ import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/compone
 import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.feature'
 import { formatMonthRange } from '@/domains/portfolio/features/wealth/helpers/formatters/formatMonthRange'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { Kpi, KpiCard } from '@/domains/portfolio/shared/components/kpis/Kpi.view'
+import {
+  Kpi,
+  KpiCard,
+} from '@/domains/portfolio/shared/components/kpis/Kpi.view'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 import type {
   TrailingSavingCapacityPoint,
@@ -54,9 +57,13 @@ function ComparisonKpi({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const valueColor =
-    tone === 'blue' ? SEMANTIC_TEXT_CLASSES.netContributions : getPerformanceColor(metric.current)
+    tone === 'blue'
+      ? SEMANTIC_TEXT_CLASSES.netContributions
+      : getPerformanceColor(metric.current)
   const changeColor =
-    metric.changePct == null ? 'text-content-subtle' : getPerformanceColor(metric.changePct)
+    metric.changePct == null
+      ? 'text-content-subtle'
+      : getPerformanceColor(metric.changePct)
   const currentLabel = formatMonthRange(currentMonths, formatDate)
   const value = metric.current == null ? '—' : formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
@@ -67,8 +74,12 @@ function ComparisonKpi({
     <KpiCard>
       <Kpi.Root accent={accent}>
         <Kpi.Label
-          tooltip={i18n.t('ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared')}
-          tooltipFooter={<FilterScopeBadges account="filterable" period="trailing-12m" />}
+          tooltip={i18n.t(
+            'ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared',
+          )}
+          tooltipFooter={
+            <FilterScopeBadges account="filterable" period="trailing-12m" />
+          }
         >
           {label}
         </Kpi.Label>
@@ -77,10 +88,14 @@ function ComparisonKpi({
             {value}
           </Kpi.Value>
           <Kpi.InlineNote color={changeColor}>
-            {metric.changePct == null ? '—' : formatPercentage(metric.changePct, { signed: true })}
+            {metric.changePct == null
+              ? '—'
+              : formatPercentage(metric.changePct, { signed: true })}
           </Kpi.InlineNote>
         </Kpi.ValueRow>
-        <Kpi.Detail>{currentLabel || i18n.t('ui.wealthtab.insufficientHistory')}</Kpi.Detail>
+        <Kpi.Detail>
+          {currentLabel || i18n.t('ui.wealthtab.insufficientHistory')}
+        </Kpi.Detail>
         <Kpi.Footer>
           {i18n.t('ui.wealthtab.previous12m')}{' '}
           <span className="font-medium text-content-secondary">
@@ -108,7 +123,9 @@ export function WealthTab({
   const formatPercentage = useFormatPercentage()
   const labelledTypes = accountTypeData.map((point) => {
     const pct =
-      point.total_cost_basis > 0 ? (point.unrealized_gain / point.total_cost_basis) * 100 : 0
+      point.total_cost_basis > 0
+        ? (point.unrealized_gain / point.total_cost_basis) * 100
+        : 0
     return {
       ...point,
       _label: `${formatMoney(point.total_value, { style: 'full' })} ${formatPercentage(pct, { decimals: 0, signed: true })}`,
@@ -132,8 +149,10 @@ export function WealthTab({
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {history.length > 0 && <EvolutionChart history={history} />}
-        {/* eslint-disable-next-line local/no-prop-drilling -- Account label enrichment is owned by the wealth orchestration feature. */}
-        {labelledTypes.length > 0 && <AccountTypeBreakdownChart data={labelledTypes} />}
+        {}
+        {labelledTypes.length > 0 && (
+          <AccountTypeBreakdownChart data={labelledTypes} />
+        )}
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <MonthlySavingsChart data={savings} ops={monthlyOps} />

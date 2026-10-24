@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from 'react'
 import { useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+
 import { dashboardAllocationPositionsOpenAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 
 export function useDashboardAllocationPositions() {
@@ -9,7 +10,10 @@ export function useDashboardAllocationPositions() {
     () => setPositionsOpen((open) => !open),
     [setPositionsOpen],
   )
-  const closePositions = useCallback(() => setPositionsOpen(false), [setPositionsOpen])
+  const closePositions = useCallback(
+    () => setPositionsOpen(false),
+    [setPositionsOpen],
+  )
 
   return useMemo(
     () => ({ closePositions, togglePositions }),

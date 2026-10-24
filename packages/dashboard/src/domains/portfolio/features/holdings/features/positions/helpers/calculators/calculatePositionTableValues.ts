@@ -23,7 +23,8 @@ export function calculatePositionGroupTotals(
       value: 0,
     }
     totals.set(type, {
-      dividends: current.dividends + position.total_dividends + position.total_interest,
+      dividends:
+        current.dividends + position.total_dividends + position.total_interest,
       realized: current.realized + position.realized_gain,
       totalRealized: current.totalRealized + position.total_realized_return,
       unrealized: current.unrealized + (position.unrealized_gain ?? 0),
@@ -46,5 +47,7 @@ export function calculatePassiveIncomeTax(
   net: number | null,
   taxRate: number | null,
 ): number | null {
-  return gross > 0 && net != null && taxRate != null && taxRate > 0 ? gross - net : null
+  return gross > 0 && net != null && taxRate != null && taxRate > 0
+    ? gross - net
+    : null
 }

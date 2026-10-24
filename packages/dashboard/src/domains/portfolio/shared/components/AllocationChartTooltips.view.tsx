@@ -4,8 +4,11 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { catColor } from '@/shared/theme/chartColors'
+import {
+  type NumericTooltipProps,
+  tooltipValue,
+} from '@/shared/ui/chartTooltip'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-import { tooltipValue, type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 
 function PieTooltipSubItem({
   item,
@@ -16,18 +19,23 @@ function PieTooltipSubItem({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const percentage = formatPercentage(item.total > 0 ? (subItem.value / item.total) * 100 : 0)
+  const percentage = formatPercentage(
+    item.total > 0 ? (subItem.value / item.total) * 100 : 0,
+  )
 
   return (
     <div style={{ color: 'var(--tooltip-dim)', marginTop: 2 }}>
-      {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} · {percentage}
+      {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} ·{' '}
+      {percentage}
     </div>
   )
 }
 
 type EvolutionTooltipRowProps = {
   category: string
-  payload: NonNullable<NumericTooltipProps<Record<string, number | string>>['payload']>
+  payload: NonNullable<
+    NumericTooltipProps<Record<string, number | string>>['payload']
+  >
 }
 
 function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
@@ -48,16 +56,29 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   if (!active || !payload?.length) return null
   const item = payload[0]?.payload
   if (!item) return null
-  const percentage = formatPercentage(item.total > 0 ? (item.value / item.total) * 100 : 0)
+  const percentage = formatPercentage(
+    item.total > 0 ? (item.value / item.total) * 100 : 0,
+  )
   return (
     <TooltipBox minWidth={160}>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 4, fontWeight: 600 }}>
+      <div
+        style={{
+          color: 'var(--tooltip-text)',
+          marginBottom: 4,
+          fontWeight: 600,
+        }}
+      >
         {item.name}
       </div>
       <div style={{ color: 'var(--tooltip-label)', fontWeight: 700 }}>
         {formatMoney(item.value, { style: 'full' })}
       </div>
-      <div style={{ color: 'var(--tooltip-dim)', marginBottom: item.subItems?.length ? 6 : 0 }}>
+      <div
+        style={{
+          color: 'var(--tooltip-dim)',
+          marginBottom: item.subItems?.length ? 6 : 0,
+        }}
+      >
         {percentage} {i18n.t('ui.allocationchartsTooltips.ofTotalAllocated')}
       </div>
       {item.subItems?.map((subItem) => (
@@ -67,11 +88,18 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   )
 }
 
-type EvolutionTooltipProps = NumericTooltipProps<Record<string, number | string>> & {
+type EvolutionTooltipProps = NumericTooltipProps<
+  Record<string, number | string>
+> & {
   categories: string[]
 }
 
-export function EvolutionTooltip({ active, payload, label, categories }: EvolutionTooltipProps) {
+export function EvolutionTooltip({
+  active,
+  payload,
+  label,
+  categories,
+}: EvolutionTooltipProps) {
   const formatDate = useFormatDate()
   if (!active || !payload?.length) return null
   return (
@@ -80,7 +108,11 @@ export function EvolutionTooltip({ active, payload, label, categories }: Evoluti
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
       </div>
       {categories.toReversed().map((category) => (
-        <EvolutionTooltipRow key={category} category={category} payload={payload} />
+        <EvolutionTooltipRow
+          key={category}
+          category={category}
+          payload={payload}
+        />
       ))}
     </TooltipBox>
   )

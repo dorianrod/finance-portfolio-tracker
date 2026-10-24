@@ -5,5 +5,8 @@ export function formatManualPrice(
   row: ManualPriceOverride,
   formatMoney: ReturnType<typeof useFormatMoney>,
 ): string {
-  return formatMoney(row.price, { currency: row.currency, maximumFractionDigits: 4 })
+  return formatMoney(row.price, {
+    currency: row.currency,
+    maximumFractionDigits: 4,
+  })
 }

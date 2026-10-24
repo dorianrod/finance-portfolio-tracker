@@ -1,10 +1,3 @@
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { PassiveIncomeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
-import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import {
   Bar,
   BarChart,
@@ -17,6 +10,14 @@ import {
   YAxis,
 } from 'recharts'
 
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PassiveIncomeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
+import i18n from '@/i18n/i18n'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+
 export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
   const formatMoney = useFormatMoney()
   return (
@@ -24,12 +25,17 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
       <h2 className="mb-3 flex items-center text-sm font-medium text-content-muted">
         {i18n.t('ui.passiveincomechart.passiveIncomePerYear')}
         <ScopedInfoTooltip
-          text={i18n.t('ui.passiveincomechart.netDividendsAndInterestGroupedByCalendarYear')}
+          text={i18n.t(
+            'ui.passiveincomechart.netDividendsAndInterestGroupedByCalendarYear',
+          )}
           scope={{ account: 'filterable', period: 'range' }}
         />
       </h2>
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+        <BarChart
+          data={data}
+          margin={{ top: 4, right: 16, left: 0, bottom: 0 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
           <XAxis
             dataKey="year"
@@ -44,7 +50,10 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
             axisLine={false}
             width={52}
           />
-          <Tooltip content={<PassiveIncomeTooltip />} cursor={{ fill: CHART_THEME.cursor }} />
+          <Tooltip
+            content={<PassiveIncomeTooltip />}
+            cursor={{ fill: CHART_THEME.cursor }}
+          />
           <Legend
             formatter={(value) => (
               <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
@@ -63,7 +72,9 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
             <LabelList
               dataKey="dividends"
               position="inside"
-              formatter={(value: unknown) => formatMoney(value as number, { style: 'compact' })}
+              formatter={(value: unknown) =>
+                formatMoney(value as number, { style: 'compact' })
+              }
               style={{ fill: 'var(--tooltip-label)', fontSize: 10 }}
             />
           </Bar>

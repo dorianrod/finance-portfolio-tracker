@@ -7,6 +7,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
+
 import { GRID, VirtualExposureRow } from './FundExposureRows.view'
 
 export type { FundExposureSort } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
@@ -30,7 +31,8 @@ export function FundHoldingsExplorer({
     toggleIssuer,
     totalIssuerCount,
   } = useFundExposureViewModel(positions, holdings)
-  const { listRef, scrollMargin, virtualizer, virtualRows } = useVirtualExposureList(rows)
+  const { listRef, scrollMargin, virtualizer, virtualRows } =
+    useVirtualExposureList(rows)
 
   return (
     <section className={DATA_TABLE_STYLES.panel}>
@@ -46,7 +48,9 @@ export function FundHoldingsExplorer({
             />
           </h2>
           <p className={DATA_TABLE_STYLES.description}>
-            {i18n.t('ui.fundholdingsexplorer.groupedByIssuerWithSecurityAndSourceFundDetail')}
+            {i18n.t(
+              'ui.fundholdingsexplorer.groupedByIssuerWithSecurityAndSourceFundDetail',
+            )}
           </p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>
@@ -54,18 +58,30 @@ export function FundHoldingsExplorer({
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder={i18n.t('ui.fundholdingsexplorer.searchIssuerSecurityOrFund')}
-            aria-label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
+            placeholder={i18n.t(
+              'ui.fundholdingsexplorer.searchIssuerSecurityOrFund',
+            )}
+            aria-label={i18n.t(
+              'ui.fundholdingsexplorer.searchUnderlyingExposure',
+            )}
             className="min-w-0 flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary outline-none focus:border-accent sm:w-72"
           />
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as FundExposureSort)}
-            aria-label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
+            onChange={(event) =>
+              setSort(event.target.value as FundExposureSort)
+            }
+            aria-label={i18n.t(
+              'ui.fundholdingsexplorer.sortUnderlyingExposure',
+            )}
             className="rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary"
           >
-            <option value="value">{i18n.t('ui.fundholdingsexplorer.largestFirst')}</option>
-            <option value="name">{i18n.t('ui.fundholdingsexplorer.name')}</option>
+            <option value="value">
+              {i18n.t('ui.fundholdingsexplorer.largestFirst')}
+            </option>
+            <option value="name">
+              {i18n.t('ui.fundholdingsexplorer.name')}
+            </option>
           </select>
         </div>
       </div>
@@ -73,11 +89,19 @@ export function FundHoldingsExplorer({
         <div>
           <div className={`${GRID} ${DATA_TABLE_STYLES.columnHeader} py-2`}>
             <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
-            <span className="text-right">{i18n.t('ui.fundholdingsexplorer.exposure')}</span>
-            <span className="text-right">{i18n.t('ui.fundholdingsexplorer.portfolio')}</span>
+            <span className="text-right">
+              {i18n.t('ui.fundholdingsexplorer.exposure')}
+            </span>
+            <span className="text-right">
+              {i18n.t('ui.fundholdingsexplorer.portfolio')}
+            </span>
             <span>{i18n.t('ui.fundholdingsexplorer.sources')}</span>
           </div>
-          <div ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>
+          <div
+            ref={listRef}
+            className="relative"
+            style={{ height: virtualizer.getTotalSize() }}
+          >
             {virtualRows.map((virtualRow) => (
               <VirtualExposureRow
                 key={virtualRow.key}
@@ -96,12 +120,15 @@ export function FundHoldingsExplorer({
         )}
       </div>
       <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-border bg-surface px-4 py-2 text-xs text-content-muted">
-        {formatNumber(displayed.length)} {i18n.t('ui.fundholdingsexplorer.issuers')}{' '}
-        {formatNumber(securityCount)} {i18n.t('ui.fundholdingsexplorer.securities')}
+        {formatNumber(displayed.length)}{' '}
+        {i18n.t('ui.fundholdingsexplorer.issuers')}{' '}
+        {formatNumber(securityCount)}{' '}
+        {i18n.t('ui.fundholdingsexplorer.securities')}
         {displayed.length !== totalIssuerCount && (
           <span className="text-content-subtle">
             {' '}
-            {i18n.t('ui.fundholdingsexplorer.filteredFrom')} {formatNumber(totalIssuerCount)}{' '}
+            {i18n.t('ui.fundholdingsexplorer.filteredFrom')}{' '}
+            {formatNumber(totalIssuerCount)}{' '}
             {i18n.t('ui.fundholdingsexplorer.issuers.64f16f')}
           </span>
         )}

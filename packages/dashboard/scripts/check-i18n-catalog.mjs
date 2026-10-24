@@ -1,10 +1,13 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+
 import ts from 'typescript'
 
 const root = new URL('..', import.meta.url).pathname
 const sourceRoot = join(root, 'src')
-const catalog = JSON.parse(readFileSync(join(sourceRoot, 'i18n', 'locales', 'en.json'), 'utf8'))
+const catalog = JSON.parse(
+  readFileSync(join(sourceRoot, 'i18n', 'locales', 'en.json'), 'utf8'),
+)
 const usedKeys = new Set()
 
 function visitSourceFile(path) {
@@ -16,12 +19,14 @@ function visitSourceFile(path) {
     path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
   const visit = (node) => {
-    if (ts.isCallExpression(node)
-      && ts.isPropertyAccessExpression(node.expression)
-      && node.expression.expression.getText(sourceFile) === 'i18n'
-      && node.expression.name.text === 't'
-      && node.arguments[0]
-      && ts.isStringLiteral(node.arguments[0])) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.expression.getText(sourceFile) === 'i18n' &&
+      node.expression.name.text === 't' &&
+      node.arguments[0] &&
+      ts.isStringLiteral(node.arguments[0])
+    ) {
       usedKeys.add(node.arguments[0].text)
     }
     ts.forEachChild(node, visit)
