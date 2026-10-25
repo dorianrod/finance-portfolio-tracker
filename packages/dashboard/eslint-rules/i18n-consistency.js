@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 
 const catalogUrl = new URL('../src/i18n/locales/en.json', import.meta.url)
-const catalog = JSON.parse(readFileSync(catalogUrl, 'utf8'))
 
 function translationCall(node) {
   return (
@@ -50,6 +49,9 @@ export default {
     schema: [],
   },
   create(context) {
+    // ESLint keeps rule modules loaded in the editor across catalog edits.
+    const catalog = JSON.parse(readFileSync(catalogUrl, 'utf8'))
+
     return {
       CallExpression(node) {
         if (!translationCall(node)) return
