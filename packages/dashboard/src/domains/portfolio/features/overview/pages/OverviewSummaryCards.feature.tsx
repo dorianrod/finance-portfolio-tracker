@@ -105,12 +105,8 @@ export function OverviewSummaryCards({
 }: SummaryCardsProps) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const money = (value: number | null) =>
-    value == null ? '—' : formatMoney(value)
   const signedMoney = (value: number | null) =>
     value == null ? '—' : `${value > 0 ? '+' : ''}${formatMoney(value)}`
-  const points = (value: number | null) =>
-    value == null ? '—' : formatPercentage(value, { signed: true, unit: ' pp' })
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable
     ? underlyingConcentration
@@ -141,7 +137,7 @@ export function OverviewSummaryCards({
         accent="bg-value"
       >
         <span className="block text-2xl font-semibold tracking-tight tabular-nums text-content">
-          {money(comparison.value.current)}
+          {formatMoney(comparison.value.current)}
         </span>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.value} />
@@ -165,7 +161,7 @@ export function OverviewSummaryCards({
         <span
           className={`block text-2xl font-semibold tracking-tight tabular-nums ${SEMANTIC_TEXT_CLASSES.netContributions}`}
         >
-          {money(comparison.contributions.current)}
+          {formatMoney(comparison.contributions.current)}
         </span>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.contributions} tone="contributions" />
@@ -192,7 +188,7 @@ export function OverviewSummaryCards({
           <span
             className={`text-2xl font-semibold tracking-tight tabular-nums ${getOverviewPerformanceTone(comparison.marketPerformance.current)}`}
           >
-            {money(comparison.marketPerformance.current)}
+            {formatMoney(comparison.marketPerformance.current)}
           </span>
           <DeltaBadge metric={comparison.marketPerformance} />
         </span>
@@ -203,7 +199,7 @@ export function OverviewSummaryCards({
           <span
             className={`font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.passiveIncome}`}
           >
-            {money(comparison.passiveIncome.current)}
+            {formatMoney(comparison.passiveIncome.current)}
             {comparison.passiveIncome.delta != null && (
               <span className="ml-1.5 text-[10px] text-content-subtle">
                 ({signedMoney(comparison.passiveIncome.delta)})
@@ -292,7 +288,10 @@ export function OverviewSummaryCards({
             <span
               className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topHolding.delta)}`}
             >
-              {points(primaryConcentration.topHolding.delta)}
+              {formatPercentage(primaryConcentration.topHolding.delta, {
+                signed: true,
+                unit: ' pp',
+              })}
             </span>
           </span>
           <span>
@@ -309,7 +308,10 @@ export function OverviewSummaryCards({
             <span
               className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topFive.delta)}`}
             >
-              {points(primaryConcentration.topFive.delta)}
+              {formatPercentage(primaryConcentration.topFive.delta, {
+                signed: true,
+                unit: ' pp',
+              })}
             </span>
           </span>
         </span>

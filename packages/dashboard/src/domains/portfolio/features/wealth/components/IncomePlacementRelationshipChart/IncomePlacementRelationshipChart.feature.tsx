@@ -69,24 +69,20 @@ export function IncomePlacementRelationshipChart({
         <span className="text-content-subtle">
           {i18n.t('ui.incomeplacementrelationshipchart.correlation')}{' '}
           <strong className="font-semibold text-content-secondary">
-            {analysis.correlation == null
-              ? '—'
-              : formatNumber(analysis.correlation, {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                  signDisplay: 'always',
-                })}
+            {formatNumber(analysis.correlation, {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2,
+              signDisplay: 'always',
+            })}
           </strong>
         </span>
         <span className="text-content-subtle">
           {i18n.t('ui.incomeplacementrelationshipchart.trendPer10kIncome')}{' '}
           <strong className="font-semibold text-content-secondary">
-            {analysis.slopePerTenThousand == null
-              ? '—'
-              : formatPercentage(analysis.slopePerTenThousand, {
-                  signed: true,
-                  unit: ' pp',
-                })}
+            {formatPercentage(analysis.slopePerTenThousand, {
+              signed: true,
+              unit: ' pp',
+            })}
           </strong>
         </span>
       </div>

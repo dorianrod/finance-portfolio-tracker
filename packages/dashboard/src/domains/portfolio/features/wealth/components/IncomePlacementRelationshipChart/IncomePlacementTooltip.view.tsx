@@ -109,20 +109,26 @@ export function RelationshipTooltip({
       >
         {i18n.t(
           'ui.incomeplacementrelationshipchart.netContributionsWithValues',
-          { amount: formatMoney(point.placedSavings ?? 0, { style: 'full' }) },
+          {
+            amount: formatMoney(point.placedSavings, {
+              style: 'full',
+              fallback: 0,
+            }),
+          },
         )}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate }}>
         {i18n.t('ui.incomeplacementrelationshipchart.placementRateWithValues', {
-          percentage: formatPercentage(point.placementRate ?? 0),
+          percentage: formatPercentage(point.placementRate, { fallback: 0 }),
         })}
       </div>
       <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>
         {i18n.t(
           'ui.incomeplacementrelationshipchart.unplacedIncomeProxyWithValues',
           {
-            amount: formatMoney(point.unplacedIncomeProxy ?? 0, {
+            amount: formatMoney(point.unplacedIncomeProxy, {
               style: 'full',
+              fallback: 0,
             }),
           },
         )}

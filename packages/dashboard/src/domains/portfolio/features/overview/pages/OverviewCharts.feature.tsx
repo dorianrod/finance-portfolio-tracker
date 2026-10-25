@@ -252,10 +252,9 @@ export function OverviewDriversChart({
             : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
           <span className="ml-1 text-[10px] font-normal text-content-subtle">
             {i18n.t('ui.overviewcharts.vsWithValues', {
-              value:
-                previousChange == null
-                  ? i18n.t('ui.overviewcharts.unavailable')
-                  : formatMoney(previousChange),
+              value: formatMoney(previousChange, {
+                fallback: i18n.t('ui.overviewcharts.unavailable'),
+              }),
             })}
           </span>
         </span>

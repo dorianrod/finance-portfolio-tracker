@@ -37,7 +37,7 @@ export function WealthComparisonKpi({
       ? 'text-content-subtle'
       : getPerformanceColor(metric.changePct)
   const currentLabel = formatMonthRange(currentMonths)
-  const value = metric.current == null ? '—' : formatMoney(metric.current)
+  const value = formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
   if (tone === 'blue') accent = 'contributions'
   else if (metric.current != null && metric.current < 0) accent = 'negative'
@@ -58,9 +58,7 @@ export function WealthComparisonKpi({
             {value}
           </Kpi.Value>
           <Kpi.InlineNote color={changeColor}>
-            {metric.changePct == null
-              ? '—'
-              : formatPercentage(metric.changePct, { signed: true })}
+            {formatPercentage(metric.changePct, { signed: true })}
           </Kpi.InlineNote>
         </Kpi.ValueRow>
         <Kpi.Detail>
@@ -69,7 +67,7 @@ export function WealthComparisonKpi({
         <Kpi.Footer>
           {i18n.t('ui.wealthtab.previous12m')}{' '}
           <span className="font-medium text-content-secondary">
-            {metric.previous == null ? '—' : formatMoney(metric.previous)}
+            {formatMoney(metric.previous)}
           </span>
         </Kpi.Footer>
       </Kpi.Root>

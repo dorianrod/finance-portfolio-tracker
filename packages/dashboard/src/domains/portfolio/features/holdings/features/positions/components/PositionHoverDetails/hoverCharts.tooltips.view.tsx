@@ -69,12 +69,12 @@ export function TooltipPortfolio({
       <p className="text-content-muted mb-2">{label}</p>
       {valueEntry && (
         <p style={{ color: valueEntry.color }}>
-          {valueEntry.name}: {formatMoney(valueEntry.value ?? 0)}
+          {valueEntry.name}: {formatMoney(valueEntry.value, { fallback: 0 })}
         </p>
       )}
       {costEntry && (
         <p style={{ color: costEntry.color }}>
-          {costEntry.name}: {formatMoney(costEntry.value ?? 0)}
+          {costEntry.name}: {formatMoney(costEntry.value, { fallback: 0 })}
         </p>
       )}
       {unrealized != null && (
@@ -105,7 +105,7 @@ export function TooltipUnit({
       <p className="text-content-muted mb-1">{label}</p>
       <p style={{ color: p.color }}>
         {i18n.t('ui.hoverchartsTooltips.unitPriceWithValues', {
-          amount: formatMoney(p.value ?? 0, { style: 'decimal' }),
+          amount: formatMoney(p.value, { style: 'decimal', fallback: 0 }),
         })}
       </p>
       <RollingUnitPricePerf rows={data?.rollingReturns ?? []} />

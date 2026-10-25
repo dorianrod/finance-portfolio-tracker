@@ -52,10 +52,9 @@ export function UnrealizedPnlTooltip({
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>
         {i18n.t('ui.unrealizedpnlchart.capitalReturn', {
-          percentage:
-            point.unrealized_gain_pct == null
-              ? '—'
-              : formatPercentage(point.unrealized_gain_pct, { signed: true }),
+          percentage: formatPercentage(point.unrealized_gain_pct, {
+            signed: true,
+          }),
         })}
       </div>
       <div style={{ color: CHART_THEME.label, marginTop: 4 }}>

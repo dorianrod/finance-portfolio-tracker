@@ -6,9 +6,11 @@ type MoneyStyle = 'currency' | 'decimal' | 'compact' | 'full'
 
 type MoneyFormatOptions = {
   currency?: string
+  fallback?: string | number
   maximumFractionDigits?: number
   minimumFractionDigits?: number
   style?: MoneyStyle
+  zeroAsFallback?: boolean
 }
 
 const INTEGER_EUR_FORMATTER = new Intl.NumberFormat('en-GB', {
@@ -46,13 +48,21 @@ function formatFullEuro(value: number): string {
 
 export function useFormatMoney() {
   return useCallback(
-    (value: number, options: MoneyFormatOptions = {}): string => {
+    (
+      value: number | null | undefined,
+      options: MoneyFormatOptions = {},
+    ): string => {
       const {
         currency = 'EUR',
+        fallback = '—',
         maximumFractionDigits,
         minimumFractionDigits,
         style = 'currency',
+        zeroAsFallback = false,
       } = options
+      const displayValue =
+        value == null || (zeroAsFallback && value === 0) ? fallback : value
+      if (typeof displayValue === 'string') return displayValue
 
       if (
         style === 'compact' &&
@@ -60,22 +70,22 @@ export function useFormatMoney() {
         maximumFractionDigits == null &&
         minimumFractionDigits == null
       )
-        return formatCompactEuro(value)
+        return formatCompactEuro(displayValue)
       if (
         style === 'full' &&
         currency === 'EUR' &&
         maximumFractionDigits == null &&
         minimumFractionDigits == null
       )
-        return formatFullEuro(value)
+        return formatFullEuro(displayValue)
       if (
         currency === 'EUR' &&
         maximumFractionDigits == null &&
         minimumFractionDigits == null
       ) {
         return style === 'decimal'
-          ? DECIMAL_EUR_FORMATTER.format(value)
-          : INTEGER_EUR_FORMATTER.format(value)
+          ? DECIMAL_EUR_FORMATTER.format(displayValue)
+          : INTEGER_EUR_FORMATTER.format(displayValue)
       }
 
       const defaultDigits = style === 'decimal' ? 2 : 0
@@ -92,8 +102,8 @@ export function useFormatMoney() {
         style: isFullEuro ? 'decimal' : 'currency',
       })
       return isFullEuro
-        ? `${formatter.format(value)} €`
-        : formatter.format(value)
+        ? `${formatter.format(displayValue)} €`
+        : formatter.format(displayValue)
     },
     [],
   )

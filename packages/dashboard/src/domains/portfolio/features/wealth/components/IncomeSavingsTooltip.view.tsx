@@ -57,19 +57,15 @@ export function IncomeSavingsTooltip({
         style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}
       >
         {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
-          value:
-            point.placedSavings == null
-              ? '—'
-              : formatMoney(point.placedSavings, { style: 'full' }),
+          value: formatMoney(point.placedSavings, { style: 'full' }),
           savingsSuffix,
         })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate, marginTop: 4 }}>
         {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
-          value:
-            point.placementRate == null
-              ? i18n.t('ui.annualincomesavingschart.notComparable')
-              : formatPercentage(point.placementRate),
+          value: formatPercentage(point.placementRate, {
+            fallback: i18n.t('ui.annualincomesavingschart.notComparable'),
+          }),
         })}
       </div>
       <div
@@ -81,10 +77,7 @@ export function IncomeSavingsTooltip({
         }}
       >
         {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxyWithValues', {
-          value:
-            point.unplacedIncomeProxy == null
-              ? '—'
-              : formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
+          value: formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
         })}
       </div>
     </TooltipBox>

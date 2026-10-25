@@ -185,26 +185,30 @@ function PositionBodyRow({
           </td>
           <td className={td} />
           <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
-            {totals && totals.unrealized !== 0
-              ? formatMoney(totals.unrealized)
-              : ''}
+            {formatMoney(totals?.unrealized, {
+              fallback: '',
+              zeroAsFallback: true,
+            })}
           </td>
           <td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>
-            {totals && totals.realized !== 0
-              ? formatMoney(totals.realized)
-              : ''}
+            {formatMoney(totals?.realized, {
+              fallback: '',
+              zeroAsFallback: true,
+            })}
           </td>
           <td
             className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}
           >
-            {totals && totals.totalRealized !== 0
-              ? formatMoney(totals.totalRealized)
-              : ''}
+            {formatMoney(totals?.totalRealized, {
+              fallback: '',
+              zeroAsFallback: true,
+            })}
           </td>
           <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
-            {totals && totals.dividends !== 0
-              ? formatMoney(totals.dividends)
-              : ''}
+            {formatMoney(totals?.dividends, {
+              fallback: '',
+              zeroAsFallback: true,
+            })}
           </td>
           <td className={td} />
           <td className={td} />
@@ -413,13 +417,13 @@ export function PositionsTable({
                   className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}
                 >
                   {i18n.t('ui.positionstable.depositedWithValues', {
-                    amount: formatMoney(r.deposit_total ?? 0),
+                    amount: formatMoney(r.deposit_total, { fallback: 0 }),
                   })}
                 </span>
                 {(r.withdrawal_total ?? 0) > 0 && (
                   <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>
                     {i18n.t('ui.positionstable.withdrawnWithValues', {
-                      amount: formatMoney(r.withdrawal_total ?? 0),
+                      amount: formatMoney(r.withdrawal_total, { fallback: 0 }),
                     })}
                   </span>
                 )}
@@ -573,9 +577,7 @@ export function PositionsTable({
             return (
               <span className="text-xs text-content-muted">
                 {formatNumber(r.quantity, { maximumFractionDigits: 2 })} ×{' '}
-                {r.price_per_unit == null
-                  ? '—'
-                  : formatMoney(r.price_per_unit, { style: 'decimal' })}
+                {formatMoney(r.price_per_unit, { style: 'decimal' })}
               </span>
             )
           }
@@ -603,7 +605,7 @@ export function PositionsTable({
               <span className="text-xs space-x-2">
                 <span className="text-content-muted">
                   {i18n.t('ui.positionstable.soldWithValues', {
-                    amount: formatMoney(r.total_sold ?? 0),
+                    amount: formatMoney(r.total_sold, { fallback: 0 }),
                   })}
                 </span>
                 <GainCell value={r.realized_pnl ?? null} />
@@ -719,12 +721,14 @@ export function PositionsTable({
             return (
               <span className="text-xs space-x-2">
                 <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
-                  {formatMoney(r.total_dividends ?? 0)}
+                  {formatMoney(r.total_dividends, { fallback: 0 })}
                 </span>
                 <span className="text-content-muted">
                   {i18n.t('ui.positionstable.dividendPayments', {
                     count: r.dividend_count ?? 0,
-                    annualAmount: formatMoney(r.annualized_dividends ?? 0),
+                    annualAmount: formatMoney(r.annualized_dividends, {
+                      fallback: 0,
+                    }),
                   })}
                 </span>
               </span>
@@ -734,7 +738,7 @@ export function PositionsTable({
             return (
               <span className="text-xs space-x-2">
                 <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
-                  {formatMoney(r.total_interest ?? 0)}
+                  {formatMoney(r.total_interest, { fallback: 0 })}
                 </span>
                 <span className="text-content-muted">
                   {i18n.t('ui.positionstable.interestPayments', {

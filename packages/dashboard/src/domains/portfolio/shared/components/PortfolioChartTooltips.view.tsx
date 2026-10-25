@@ -258,10 +258,11 @@ export function TriTooltip({
       {showTri1y && (
         <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
           {i18n.t('ui.portfoliochartsTooltips.irr1yWithValues', {
-            value:
-              tri1y === null
-                ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
-                : formatPercentage(tri1y, { decimals: 2, signed: true }),
+            value: formatPercentage(tri1y, {
+              decimals: 2,
+              signed: true,
+              fallback: i18n.t('ui.portfoliochartsTooltips.notYetAvailable'),
+            }),
           })}
         </div>
       )}
@@ -274,10 +275,11 @@ export function TriTooltip({
           }}
         >
           {i18n.t('ui.portfoliochartsTooltips.irr3yWithValues', {
-            value:
-              tri3y === null
-                ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
-                : formatPercentage(tri3y, { decimals: 2, signed: true }),
+            value: formatPercentage(tri3y, {
+              decimals: 2,
+              signed: true,
+              fallback: i18n.t('ui.portfoliochartsTooltips.notYetAvailable'),
+            }),
           })}
         </div>
       )}
@@ -396,7 +398,7 @@ export function TopPerformersTooltip({
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>
         {i18n.t('ui.portfoliochartsTooltips.valueWithValues', {
-          amount: formatMoney(entry?.value ?? 0, { style: 'full' }),
+          amount: formatMoney(entry?.value, { style: 'full', fallback: 0 }),
         })}
       </div>
       <div
@@ -409,8 +411,11 @@ export function TopPerformersTooltip({
         }}
       >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
-          amount: formatMoney(entry?.gain ?? 0, { style: 'full' }),
-          percentage: formatPercentage(entry?.pct ?? 0, { signed: true }),
+          amount: formatMoney(entry?.gain, { style: 'full', fallback: 0 }),
+          percentage: formatPercentage(entry?.pct, {
+            signed: true,
+            fallback: 0,
+          }),
         })}
       </div>
     </TooltipBox>

@@ -23,10 +23,7 @@ export function DeltaBadge({
       ? '—'
       : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
   if (tone === 'concentration') {
-    label =
-      metric.delta == null
-        ? '—'
-        : formatPercentage(metric.delta, { signed: true, unit: ' pp' })
+    label = formatPercentage(metric.delta, { signed: true, unit: ' pp' })
   }
   const deltaPercentage =
     tone !== 'concentration' && metric.deltaPct != null ? metric.deltaPct : null

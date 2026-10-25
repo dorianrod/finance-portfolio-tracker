@@ -1,10 +1,12 @@
 import { useCallback } from 'react'
 
 type NumberFormatOptions = {
+  fallback?: string | number
   maximumFractionDigits?: number
   minimumFractionDigits?: number
   signDisplay?: Intl.NumberFormatOptions['signDisplay']
   useGrouping?: boolean
+  zeroAsFallback?: boolean
 }
 
 const DEFAULT_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB')
@@ -38,9 +40,20 @@ function formatterFor(options: NumberFormatOptions): Intl.NumberFormat {
 
 export function useFormatNumber() {
   return useCallback(
-    (value: number, options: NumberFormatOptions = {}): string => {
-      const formatter = formatterFor(options)
-      return formatter.format(Number.isFinite(value) ? value : 0)
+    (
+      value: number | null | undefined,
+      options: NumberFormatOptions = {},
+    ): string => {
+      const {
+        fallback = '—',
+        zeroAsFallback = false,
+        ...numberOptions
+      } = options
+      const displayValue =
+        value == null || (zeroAsFallback && value === 0) ? fallback : value
+      if (typeof displayValue === 'string') return displayValue
+      const formatter = formatterFor(numberOptions)
+      return formatter.format(Number.isFinite(displayValue) ? displayValue : 0)
     },
     [],
   )

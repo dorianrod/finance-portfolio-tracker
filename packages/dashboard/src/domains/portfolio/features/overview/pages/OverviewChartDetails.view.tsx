@@ -74,9 +74,9 @@ export function DriversTooltip({
             className="tabular-nums"
             style={{ color: 'var(--tooltip-label)' }}
           >
-            {row.current == null
-              ? i18n.t('ui.overviewcharts.unavailable')
-              : formatMoney(row.current)}
+            {formatMoney(row.current, {
+              fallback: i18n.t('ui.overviewcharts.unavailable'),
+            })}
           </span>
         </div>
         <div
@@ -88,9 +88,9 @@ export function DriversTooltip({
             className="tabular-nums"
             style={{ color: 'var(--tooltip-label)' }}
           >
-            {row.previous == null
-              ? i18n.t('ui.overviewcharts.unavailable')
-              : formatMoney(row.previous)}
+            {formatMoney(row.previous, {
+              fallback: i18n.t('ui.overviewcharts.unavailable'),
+            })}
           </span>
         </div>
         <div
@@ -145,9 +145,7 @@ export function OverviewConcentrationRow({
         <span
           className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}
         >
-          {delta == null
-            ? '—'
-            : formatPercentage(delta, { signed: true, unit: ' pp' })}
+          {formatPercentage(delta, { signed: true, unit: ' pp' })}
         </span>
       </div>
       <div className="relative h-2.5 rounded-full bg-surface-raised">
@@ -160,7 +158,7 @@ export function OverviewConcentrationRow({
             className="absolute -top-1 h-4 w-0.5 rounded-full bg-content-secondary shadow-[0_0_0_1px_var(--color-gray-900)]"
             style={{ left: `${((row.previousWeight ?? 0) / scaleMax) * 100}%` }}
             title={i18n.t('ui.overviewcharts.previousValue0', {
-              value0: formatPercentage(row.previousWeight ?? 0),
+              value0: formatPercentage(row.previousWeight, { fallback: 0 }),
             })}
           />
         )}

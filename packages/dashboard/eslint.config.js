@@ -15,6 +15,7 @@ import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
+import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
@@ -65,6 +66,7 @@ export default defineConfig([
           'no-component-module-logic': noComponentModuleLogic,
           'no-effects-in-components': noEffectsInComponents,
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
+          'no-inline-format-fallback': noInlineFormatFallback,
           'no-prop-drilling': noPropDrilling,
           'require-children-composition': requireChildrenComposition,
           'state-component-contract': stateComponentContract,
@@ -130,6 +132,7 @@ export default defineConfig([
       'local/no-component-module-logic': 'warn',
       'local/no-effects-in-components': 'warn',
       'local/no-hardcoded-ui-strings': 'error',
+      'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'warn',
       'local/require-children-composition': 'error',
       'local/state-component-contract': 'error',

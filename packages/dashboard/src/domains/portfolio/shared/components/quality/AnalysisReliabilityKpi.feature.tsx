@@ -123,8 +123,7 @@ export function AnalysisReliabilityKpi({
       ? null
       : Math.max(0, Math.min(100, percentage))
   const styles = RELIABILITY_TONES[tone]
-  const percentageLabel =
-    safePercentage == null ? '—' : formatPercentage(safePercentage)
+  const percentageLabel = formatPercentage(safePercentage)
 
   return (
     <CompactDataQualityKpi

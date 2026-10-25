@@ -150,9 +150,7 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
               : getPerformanceColor(income.changePct)
           }
         >
-          {income.changePct == null
-            ? '—'
-            : formatPercentage(income.changePct, { signed: true })}
+          {formatPercentage(income.changePct, { signed: true })}
         </Kpi.InlineNote>
       </Kpi.ValueRow>
     </Kpi.Root>
