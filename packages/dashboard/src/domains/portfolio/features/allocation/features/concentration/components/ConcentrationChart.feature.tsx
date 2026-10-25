@@ -108,18 +108,7 @@ export function ConcentrationChart({
               <Bar
                 dataKey="weight"
                 radius={[0, 4, 4, 0]}
-                shape={(shapeProps: BarShapeProps) => {
-                  return (
-                    <Rectangle
-                      {...shapeProps}
-                      fill={
-                        shapeProps.index === 0
-                          ? SEMANTIC_COLORS.risk
-                          : SEMANTIC_COLORS.neutralSeries
-                      }
-                    />
-                  )
-                }}
+                shape={LeadingHoldingBar}
               >
                 <LabelList
                   dataKey="weight"
@@ -135,5 +124,18 @@ export function ConcentrationChart({
         </div>
       </div>
     </div>
+  )
+}
+
+function LeadingHoldingBar(shapeProps: BarShapeProps) {
+  return (
+    <Rectangle
+      {...shapeProps}
+      fill={
+        shapeProps.index === 0
+          ? SEMANTIC_COLORS.risk
+          : SEMANTIC_COLORS.neutralSeries
+      }
+    />
   )
 }

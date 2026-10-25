@@ -149,13 +149,7 @@ export function AccountTypeHistoryChart({
               />
             }
           />
-          <Legend
-            formatter={(value) => (
-              <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
-                {value}
-              </span>
-            )}
-          />
+          <Legend formatter={AccountTypeLegendLabel} />
           {accountTypes.map((accountType, index) => (
             <AccountTypeArea
               key={accountType}
@@ -168,5 +162,11 @@ export function AccountTypeHistoryChart({
         </AreaChart>
       </ResponsiveContainer>
     </div>
+  )
+}
+
+function AccountTypeLegendLabel(value: string) {
+  return (
+    <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>
   )
 }

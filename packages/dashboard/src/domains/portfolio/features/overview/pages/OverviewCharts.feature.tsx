@@ -302,13 +302,7 @@ export function OverviewDriversChart({
             name={i18n.t('ui.overviewcharts.current')}
             radius={[3, 3, 0, 0]}
             isAnimationActive={false}
-            shape={(
-              shapeProps: ChartShapeProps<BarShapeProps, (typeof rows)[number]>,
-            ) => {
-              const row = shapeProps.payload
-              if (!row) return null
-              return <Rectangle {...shapeProps} fill={row.color} />
-            }}
+            shape={CurrentDriverBar}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -438,4 +432,12 @@ export function OverviewConcentrationChart({
       )}
     </section>
   )
+}
+
+function CurrentDriverBar(
+  shapeProps: ChartShapeProps<BarShapeProps, DriverRow>,
+) {
+  const row = shapeProps.payload
+  if (!row) return null
+  return <Rectangle {...shapeProps} fill={row.color} />
 }

@@ -84,13 +84,7 @@ export function MiniDonut({
             innerRadius="30%"
             outerRadius="56%"
             paddingAngle={1}
-            shape={(
-              shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
-            ) => {
-              const entry = shapeProps.payload
-              if (!entry) return null
-              return <Sector {...shapeProps} fill={catColor(entry.name)} />
-            }}
+            shape={MiniDonutSector}
           />
           <Tooltip content={<PieTooltip />} />
         </PieChart>
@@ -102,4 +96,12 @@ export function MiniDonut({
       </div>
     </div>
   )
+}
+
+function MiniDonutSector(
+  shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
+) {
+  const entry = shapeProps.payload
+  if (!entry) return null
+  return <Sector {...shapeProps} fill={catColor(entry.name)} />
 }

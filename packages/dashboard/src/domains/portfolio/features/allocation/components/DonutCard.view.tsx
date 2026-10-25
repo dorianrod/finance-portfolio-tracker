@@ -83,30 +83,38 @@ export function DonutCardView({
             labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
             onClick={(_entry, index) => onSelect(data[index])}
             style={{ cursor: 'pointer' }}
-            shape={(
-              shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
-            ) => {
-              const entry = shapeProps.payload
-              if (!entry) return null
-              return (
-                <Sector
-                  {...shapeProps}
-                  fill={catColor(entry.name)}
-                  opacity={
-                    isFiltered && activeCategory !== entry.name ? 0.25 : 1
-                  }
-                  stroke={
-                    activeCategory === entry.name ? CHART_THEME.label : 'none'
-                  }
-                  strokeWidth={activeCategory === entry.name ? 2 : 0}
-                />
-              )
-            }}
+            shape={
+              <DonutSector
+                activeCategory={activeCategory}
+                isFiltered={isFiltered}
+              />
+            }
           />
           <Tooltip content={<PieTooltip />} />
         </PieChart>
       </ResponsiveContainer>
     </div>
+  )
+}
+
+function DonutSector({
+  activeCategory,
+  isFiltered,
+  ...shapeProps
+}: Partial<ChartShapeProps<PieSectorShapeProps, PieEntry>> & {
+  activeCategory: string | null
+  isFiltered: boolean
+}) {
+  const entry = shapeProps.payload
+  if (!entry) return null
+  return (
+    <Sector
+      {...shapeProps}
+      fill={catColor(entry.name)}
+      opacity={isFiltered && activeCategory !== entry.name ? 0.25 : 1}
+      stroke={activeCategory === entry.name ? CHART_THEME.label : 'none'}
+      strokeWidth={activeCategory === entry.name ? 2 : 0}
+    />
   )
 }
 

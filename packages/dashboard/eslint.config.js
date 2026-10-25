@@ -16,6 +16,7 @@ import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
+import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
 export default defineConfig([
@@ -65,6 +66,7 @@ export default defineConfig([
           'no-effects-in-components': noEffectsInComponents,
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-prop-drilling': noPropDrilling,
+          'require-children-composition': requireChildrenComposition,
           'state-component-contract': stateComponentContract,
         },
       },
@@ -129,6 +131,7 @@ export default defineConfig([
       'local/no-effects-in-components': 'warn',
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-prop-drilling': 'warn',
+      'local/require-children-composition': 'error',
       'local/state-component-contract': 'error',
     },
   },

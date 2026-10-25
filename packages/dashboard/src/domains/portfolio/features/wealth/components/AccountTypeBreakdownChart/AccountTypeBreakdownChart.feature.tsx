@@ -16,14 +16,15 @@ import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSp
 function AccountTypeLabel({
   data,
   ...props
-}: PieLabelRenderProps & { data: AccountTypePoint[] }) {
+}: Partial<PieLabelRenderProps> & { data: AccountTypePoint[] }) {
   const formatPercentage = useFormatPercentage()
   const { cx, cy, midAngle, outerRadius, payload, percent, index } = props
   if (
     typeof cx !== 'number' ||
     typeof cy !== 'number' ||
     typeof midAngle !== 'number' ||
-    typeof outerRadius !== 'number'
+    typeof outerRadius !== 'number' ||
+    typeof index !== 'number'
   )
     return null
   const point = payload as AccountTypePoint
@@ -171,8 +172,7 @@ export function AccountTypeBreakdownChart({
             startAngle={90}
             endAngle={-270}
             shape={AccountTypeSector}
-            // eslint-disable-next-line local/no-prop-drilling -- Recharts label payload adaptation is visual logic owned by this chart feature.
-            label={(props) => <AccountTypeLabel {...props} data={pieData} />}
+            label={<AccountTypeLabel data={pieData} />}
             labelLine={false}
           />
           <Tooltip

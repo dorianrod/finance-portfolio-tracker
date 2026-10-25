@@ -89,25 +89,7 @@ export function MonthlySavingsChart({
             dataKey="perf_delta"
             fill={SEMANTIC_COLORS.performancePositive}
             radius={[3, 3, 0, 0]}
-            shape={(
-              shapeProps: ChartShapeProps<
-                BarShapeProps,
-                TrailingSavingCapacityPoint
-              >,
-            ) => {
-              const entry = shapeProps.payload
-              if (!entry) return null
-              return (
-                <Rectangle
-                  {...shapeProps}
-                  fill={
-                    (entry.perf_delta ?? 0) >= 0
-                      ? SEMANTIC_COLORS.performancePositive
-                      : SEMANTIC_COLORS.performanceNegative
-                  }
-                />
-              )
-            }}
+            shape={MonthlyPerformanceBar}
           />
           <Line
             yAxisId="right"
@@ -190,5 +172,22 @@ export function MonthlySavingsChart({
         </div>
       </div>
     </div>
+  )
+}
+
+function MonthlyPerformanceBar(
+  shapeProps: ChartShapeProps<BarShapeProps, TrailingSavingCapacityPoint>,
+) {
+  const entry = shapeProps.payload
+  if (!entry) return null
+  return (
+    <Rectangle
+      {...shapeProps}
+      fill={
+        (entry.perf_delta ?? 0) >= 0
+          ? SEMANTIC_COLORS.performancePositive
+          : SEMANTIC_COLORS.performanceNegative
+      }
+    />
   )
 }

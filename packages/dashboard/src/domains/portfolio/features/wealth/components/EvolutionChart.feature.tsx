@@ -115,15 +115,7 @@ export function EvolutionChart({
           <Tooltip
             content={<EvolutionTooltip percentageMode={percentageMode} />}
           />
-          <Legend
-            formatter={(value) => (
-              <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
-                {value === 'Cost basis'
-                  ? i18n.t('ui.evolutionchart.costBasis')
-                  : i18n.t('ui.evolutionchart.unrealizedPL')}
-              </span>
-            )}
-          />
+          <Legend formatter={EvolutionLegendLabel} />
           <Area
             type="monotone"
             dataKey={
@@ -149,5 +141,15 @@ export function EvolutionChart({
         </AreaChart>
       </ResponsiveContainer>
     </div>
+  )
+}
+
+function EvolutionLegendLabel(value: string) {
+  return (
+    <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
+      {value === 'Cost basis'
+        ? i18n.t('ui.evolutionchart.costBasis')
+        : i18n.t('ui.evolutionchart.unrealizedPL')}
+    </span>
   )
 }

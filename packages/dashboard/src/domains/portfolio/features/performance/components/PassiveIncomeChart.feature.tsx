@@ -54,15 +54,7 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
             content={<PassiveIncomeTooltip />}
             cursor={{ fill: CHART_THEME.cursor }}
           />
-          <Legend
-            formatter={(value) => (
-              <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
-                {value === 'dividends'
-                  ? i18n.t('ui.passiveincomechart.dividends')
-                  : i18n.t('ui.passiveincomechart.interest')}
-              </span>
-            )}
-          />
+          <Legend formatter={PassiveIncomeLegendLabel} />
           <Bar
             dataKey="dividends"
             stackId="a"
@@ -87,5 +79,15 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
         </BarChart>
       </ResponsiveContainer>
     </div>
+  )
+}
+
+function PassiveIncomeLegendLabel(value: string) {
+  return (
+    <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
+      {value === 'dividends'
+        ? i18n.t('ui.passiveincomechart.dividends')
+        : i18n.t('ui.passiveincomechart.interest')}
+    </span>
   )
 }

@@ -397,18 +397,7 @@ export function ConcentrationTrendSectionView({
                       animationEasing="ease-in-out"
                       animationMatchBy={matchHoldingByKey}
                       animationInterpolateFn={interpolateRankedBars}
-                      shape={(shapeProps: BarShapeProps) => {
-                        return (
-                          <Rectangle
-                            {...shapeProps}
-                            fill={
-                              shapeProps.index === 0
-                                ? SEMANTIC_COLORS.risk
-                                : SEMANTIC_COLORS.neutralSeries
-                            }
-                          />
-                        )
-                      }}
+                      shape={LeadingHoldingBar}
                     >
                       <LabelList
                         dataKey="weight"
@@ -451,3 +440,16 @@ function ConcentrationTrendSectionViewHoldingsTooltip({
 
 ConcentrationTrendSectionView.HoldingsTooltip =
   ConcentrationTrendSectionViewHoldingsTooltip
+
+function LeadingHoldingBar(shapeProps: BarShapeProps) {
+  return (
+    <Rectangle
+      {...shapeProps}
+      fill={
+        shapeProps.index === 0
+          ? SEMANTIC_COLORS.risk
+          : SEMANTIC_COLORS.neutralSeries
+      }
+    />
+  )
+}

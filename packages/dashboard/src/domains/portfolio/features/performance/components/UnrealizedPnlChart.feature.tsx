@@ -117,22 +117,7 @@ export function UnrealizedPnlChart({
             maxBarSize={24}
             radius={3}
             isAnimationActive={false}
-            shape={(
-              shapeProps: ChartShapeProps<BarShapeProps, UnrealizedPnlPoint>,
-            ) => {
-              const point = shapeProps.payload
-              if (!point) return null
-              return (
-                <Rectangle
-                  {...shapeProps}
-                  fill={
-                    point.unrealized_gain >= 0
-                      ? SEMANTIC_COLORS.performancePositive
-                      : SEMANTIC_COLORS.performanceNegative
-                  }
-                />
-              )
-            }}
+            shape={UnrealizedPnlBar}
           />
           <Line
             yAxisId="pct"
@@ -171,5 +156,22 @@ export function UnrealizedPnlChart({
         </span>
       </div>
     </div>
+  )
+}
+
+function UnrealizedPnlBar(
+  shapeProps: ChartShapeProps<BarShapeProps, UnrealizedPnlPoint>,
+) {
+  const point = shapeProps.payload
+  if (!point) return null
+  return (
+    <Rectangle
+      {...shapeProps}
+      fill={
+        point.unrealized_gain >= 0
+          ? SEMANTIC_COLORS.performancePositive
+          : SEMANTIC_COLORS.performanceNegative
+      }
+    />
   )
 }

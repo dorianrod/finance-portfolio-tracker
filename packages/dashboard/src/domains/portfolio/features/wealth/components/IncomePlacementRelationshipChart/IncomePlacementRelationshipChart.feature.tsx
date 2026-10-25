@@ -142,47 +142,25 @@ export function IncomePlacementRelationshipChart({
           <Scatter
             data={analysis.points}
             fill={SEMANTIC_COLORS.returnRate}
-            shape={(
-              shapeProps: ChartShapeProps<
-                ScatterShapeProps,
-                (typeof analysis.points)[number]
-              >,
-            ) => {
-              const point = shapeProps.payload
-              if (!point) return null
-              return (
-                <Symbols
-                  {...shapeProps}
-                  type="circle"
-                  fill={
-                    recentYears.has(point.year)
-                      ? SEMANTIC_COLORS.returnRate
-                      : SEMANTIC_COLORS.neutralSeries
-                  }
-                  fillOpacity={
-                    getRelationshipYearOpacity(
-                      point.year,
-                      recentYears.has(point.year),
-                      oldestYear,
-                      newestYear,
-                    )
-                  }
-                />
-              )
-            }}
+            shape={
+              <IncomePlacementPoint
+                recentYears={recentYears}
+                oldestYear={oldestYear}
+                newestYear={newestYear}
+              />
+            }
           >
             <LabelList
               dataKey="year"
-              content={(props) => (
+              content={
                 <YearLabel
-                  {...props}
                   placements={labelPlacements}
                   chartPoints={analysis.points}
                   recentYears={recentYears}
                   oldestYear={oldestYear}
                   newestYear={newestYear}
                 />
-              )}
+              }
             />
           </Scatter>
         </ScatterChart>
@@ -193,5 +171,35 @@ export function IncomePlacementRelationshipChart({
         )}
       </p>
     </div>
+  )
+}
+
+function IncomePlacementPoint({
+  recentYears,
+  oldestYear,
+  newestYear,
+  ...shapeProps
+}: Partial<ChartShapeProps<ScatterShapeProps, AnnualIncomeSavingsPoint>> & {
+  recentYears: Set<number>
+  oldestYear: number
+  newestYear: number
+}) {
+  const point = shapeProps.payload
+  if (!point) return null
+  const isRecent = recentYears.has(point.year)
+  return (
+    <Symbols
+      {...shapeProps}
+      type="circle"
+      fill={
+        isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries
+      }
+      fillOpacity={getRelationshipYearOpacity(
+        point.year,
+        isRecent,
+        oldestYear,
+        newestYear,
+      )}
+    />
   )
 }

@@ -83,21 +83,7 @@ export function AnnualIncomeSavingsChart({
             stackId="income"
             fill={SEMANTIC_COLORS.costBasis}
             radius={[0, 0, 3, 3]}
-            shape={(
-              shapeProps: ChartShapeProps<
-                BarShapeProps,
-                AnnualIncomeSavingsPoint
-              >,
-            ) => {
-              const point = shapeProps.payload
-              if (!point) return null
-              return (
-                <Rectangle
-                  {...shapeProps}
-                  fillOpacity={getIncomeYearOpacity(point)}
-                />
-              )
-            }}
+            shape={IncomeBar}
           />
           <Bar
             yAxisId="amount"
@@ -105,42 +91,14 @@ export function AnnualIncomeSavingsChart({
             stackId="income"
             fill={SEMANTIC_COLORS.passiveIncome}
             radius={[3, 3, 0, 0]}
-            shape={(
-              shapeProps: ChartShapeProps<
-                BarShapeProps,
-                AnnualIncomeSavingsPoint
-              >,
-            ) => {
-              const point = shapeProps.payload
-              if (!point) return null
-              return (
-                <Rectangle
-                  {...shapeProps}
-                  fillOpacity={getIncomeYearOpacity(point)}
-                />
-              )
-            }}
+            shape={IncomeBar}
           />
           <Bar
             yAxisId="amount"
             dataKey="placedSavings"
             fill={SEMANTIC_COLORS.netContributions}
             radius={[3, 3, 0, 0]}
-            shape={(
-              shapeProps: ChartShapeProps<
-                BarShapeProps,
-                AnnualIncomeSavingsPoint
-              >,
-            ) => {
-              const point = shapeProps.payload
-              if (!point) return null
-              return (
-                <Rectangle
-                  {...shapeProps}
-                  fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
-                />
-              )
-            }}
+            shape={SavingsBar}
           />
           <Line
             yAxisId="rate"
@@ -185,5 +143,26 @@ export function AnnualIncomeSavingsChart({
         </span>
       </div>
     </div>
+  )
+}
+
+function IncomeBar(
+  shapeProps: ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>,
+) {
+  const point = shapeProps.payload
+  if (!point) return null
+  return <Rectangle {...shapeProps} fillOpacity={getIncomeYearOpacity(point)} />
+}
+
+function SavingsBar(
+  shapeProps: ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>,
+) {
+  const point = shapeProps.payload
+  if (!point) return null
+  return (
+    <Rectangle
+      {...shapeProps}
+      fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
+    />
   )
 }
