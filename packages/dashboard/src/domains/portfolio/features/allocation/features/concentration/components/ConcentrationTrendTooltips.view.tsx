@@ -61,8 +61,9 @@ export function ConcentrationTrendTooltip({
         {formatDate(row.date, { style: 'shortMonthShortYear' })}
       </div>
       <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>
-        {i18n.t('ui.concentrationtrendsection.coverage')}{' '}
-        {formatPercentage(row.coveragePct)}
+        {i18n.t('ui.concentrationtrendsection.coverageWithValues', {
+          percentage: formatPercentage(row.coveragePct),
+        })}
       </div>
       <div className="mt-2 space-y-1" style={{ color: 'var(--tooltip-label)' }}>
         <ThresholdRow

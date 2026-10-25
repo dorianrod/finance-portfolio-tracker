@@ -18,3 +18,5 @@ Routing rules:
 | The request asks to introduce, review, centralize, or name colors used by business UI. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
 | A component accepts or forwards UI slots as named ReactNode/ReactElement props (title, header, actions, footer, tooltip, etc.), or callers pass JSX, a JSX-valued variable, or static render callbacks through those props. | `composition-` | [`composition-required-children.md`](composition-required-children.md) |
 | JSX supplies an explicit children attribute, spreads an object containing UI slots, or the request asks to enforce or audit mandatory composition. | `composition-` | [`composition-required-children.md`](composition-required-children.md) |
+| A resolved method, function, component, prop, type, or other API carries `@deprecated`, or its official documentation marks it deprecated for the installed version. | `quality-` | [`quality-no-deprecated-apis.md`](quality-no-deprecated-apis.md) |
+| The request asks to detect, prohibit, or migrate deprecated API usage. | `quality-` | [`quality-no-deprecated-apis.md`](quality-no-deprecated-apis.md) |

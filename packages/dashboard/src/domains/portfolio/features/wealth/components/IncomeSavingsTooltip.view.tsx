@@ -39,31 +39,38 @@ export function IncomeSavingsTooltip({
         {suffix}
       </div>
       <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
-        {i18n.t('ui.annualincomesavingschart.netSalary')}{' '}
-        {formatMoney(point.netSalary, { style: 'full' })}
+        {i18n.t('ui.annualincomesavingschart.netSalaryWithValues', {
+          amount: formatMoney(point.netSalary, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>
-        {i18n.t('ui.annualincomesavingschart.otherIncome')}{' '}
-        {formatMoney(point.otherIncome, { style: 'full' })}
+        {i18n.t('ui.annualincomesavingschart.otherIncomeWithValues', {
+          amount: formatMoney(point.otherIncome, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>
-        {i18n.t('ui.annualincomesavingschart.totalNetIncome')}{' '}
-        {formatMoney(point.totalIncome, { style: 'full' })}
+        {i18n.t('ui.annualincomesavingschart.totalNetIncomeWithValues', {
+          amount: formatMoney(point.totalIncome, { style: 'full' }),
+        })}
       </div>
       <div
         style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 7 }}
       >
-        {i18n.t('ui.annualincomesavingschart.netContributions')}{' '}
-        {point.placedSavings == null
-          ? '—'
-          : formatMoney(point.placedSavings, { style: 'full' })}
-        {savingsSuffix}
+        {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
+          value:
+            point.placedSavings == null
+              ? '—'
+              : formatMoney(point.placedSavings, { style: 'full' }),
+          savingsSuffix,
+        })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate, marginTop: 4 }}>
-        {i18n.t('ui.annualincomesavingschart.placementRate')}{' '}
-        {point.placementRate == null
-          ? i18n.t('ui.annualincomesavingschart.notComparable')
-          : formatPercentage(point.placementRate)}
+        {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
+          value:
+            point.placementRate == null
+              ? i18n.t('ui.annualincomesavingschart.notComparable')
+              : formatPercentage(point.placementRate),
+        })}
       </div>
       <div
         style={{
@@ -73,10 +80,12 @@ export function IncomeSavingsTooltip({
           paddingTop: 7,
         }}
       >
-        {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxy')}{' '}
-        {point.unplacedIncomeProxy == null
-          ? '—'
-          : formatMoney(point.unplacedIncomeProxy, { style: 'full' })}
+        {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxyWithValues', {
+          value:
+            point.unplacedIncomeProxy == null
+              ? '—'
+              : formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
+        })}
       </div>
     </TooltipBox>
   )

@@ -1,9 +1,10 @@
 import {
   Bar,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   ComposedChart,
   Line,
+  Rectangle,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -20,6 +21,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 export function MonthlySavingsChart({
   data,
@@ -87,18 +89,26 @@ export function MonthlySavingsChart({
             dataKey="perf_delta"
             fill={SEMANTIC_COLORS.performancePositive}
             radius={[3, 3, 0, 0]}
-          >
-            {data.map((entry) => (
-              <Cell
-                key={entry.date.getTime()}
-                fill={
-                  (entry.perf_delta ?? 0) >= 0
-                    ? SEMANTIC_COLORS.performancePositive
-                    : SEMANTIC_COLORS.performanceNegative
-                }
-              />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<
+                BarShapeProps,
+                TrailingSavingCapacityPoint
+              >,
+            ) => {
+              const entry = shapeProps.payload
+              if (!entry) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fill={
+                    (entry.perf_delta ?? 0) >= 0
+                      ? SEMANTIC_COLORS.performancePositive
+                      : SEMANTIC_COLORS.performanceNegative
+                  }
+                />
+              )
+            }}
+          />
           <Line
             yAxisId="right"
             type="monotone"

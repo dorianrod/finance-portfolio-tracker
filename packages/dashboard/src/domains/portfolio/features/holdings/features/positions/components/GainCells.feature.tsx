@@ -26,8 +26,12 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
       <GainCell value={gross} pct={position.unrealized_gain_pct} />
       {taxDetails && (
         <span className="mt-0.5 text-[10px] text-content-subtle">
-          ~{formatMoney(-taxDetails.amount)} {i18n.t('ui.gaincells.tax')}
-          {formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
+          {i18n.t('ui.gaincells.taxWithValues', {
+            amount: formatMoney(-taxDetails.amount),
+            percentage: formatPercentage(taxDetails.rate * 100, {
+              decimals: 0,
+            }),
+          })}
         </span>
       )}
       {isTaxFreeGain && (
@@ -60,8 +64,12 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
       <GainCell value={gross} />
       {taxDetails && (
         <span className="mt-0.5 text-[10px] text-content-subtle">
-          ~{formatMoney(-taxDetails.amount)} {i18n.t('ui.gaincells.tax')}
-          {formatPercentage(taxDetails.rate * 100, { decimals: 0 })})
+          {i18n.t('ui.gaincells.taxWithValues', {
+            amount: formatMoney(-taxDetails.amount),
+            percentage: formatPercentage(taxDetails.rate * 100, {
+              decimals: 0,
+            }),
+          })}
         </span>
       )}
       {isTaxFreeGain && (

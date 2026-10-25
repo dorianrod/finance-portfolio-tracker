@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { clearCsvCache } from '@/shared/csv/csvData'
 
+import { useAllocationRowsQuery } from './useAllocationRowsQuery'
 import { useAllocationsByIsinQuery } from './useAllocationsByIsinQuery'
 
 afterEach(() => {
@@ -46,6 +47,29 @@ describe('useAllocationsByIsinQuery', () => {
           { name: 'nc', value: 15 },
         ],
       }),
+    )
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+  })
+
+  it('reuses allocation rows already loaded before opening the positions table', async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          'snapshot_date,account,account_type,isin,name,france\n2026-01-31,A,PEA,FR1,Fund,100\n',
+          { headers: { 'Content-Type': 'text/csv' } },
+        ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const sharedWrapper = wrapper()
+    const rows = renderHook(useAllocationRowsQuery, { wrapper: sharedWrapper })
+    await waitFor(() => expect(rows.result.current.isSuccess).toBe(true))
+    const { result } = renderHook(useAllocationsByIsinQuery, {
+      wrapper: sharedWrapper,
+    })
+    await waitFor(() =>
+      expect(result.current.data?.get('FR1')?.geo?.categories).toEqual([
+        { name: 'france', value: 100 },
+      ]),
     )
     expect(fetchMock).toHaveBeenCalledTimes(4)
   })

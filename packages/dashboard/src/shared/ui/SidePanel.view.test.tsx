@@ -24,6 +24,9 @@ describe('SidePanel', () => {
       </SidePanel>,
     )
     const dialog = screen.getByRole('dialog', { name: 'Positions Europe' })
+    expect(dialog.getAttribute('aria-describedby')).toBe(
+      within(dialog).getByText('Two matching positions').id,
+    )
     expect(within(dialog).getByRole('heading', { level: 2 }).textContent).toBe(
       'Positions Europe',
     )

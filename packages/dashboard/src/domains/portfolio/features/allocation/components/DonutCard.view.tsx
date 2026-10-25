@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react'
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import {
+  Pie,
+  PieChart,
+  type PieSectorShapeProps,
+  ResponsiveContainer,
+  Sector,
+  Tooltip,
+} from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
@@ -9,6 +16,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 import { PieLabel } from './PieLabel.view'
 
@@ -55,8 +63,9 @@ export function DonutCardView({
         </div>
       </div>
       <div className="text-xs text-content-subtle mb-1">
-        {i18n.t('ui.donutcard.allocated')}{' '}
-        {formatMoney(total, { style: 'full' })}
+        {i18n.t('ui.donutcard.allocatedWithValues', {
+          amount: formatMoney(total, { style: 'full' }),
+        })}
       </div>
       <div className="text-xs text-content-subtle mb-2">
         {i18n.t('ui.donutcard.clickASegmentToFilter')}
@@ -74,19 +83,26 @@ export function DonutCardView({
             labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
             onClick={(_entry, index) => onSelect(data[index])}
             style={{ cursor: 'pointer' }}
-          >
-            {data.map((entry) => (
-              <Cell
-                key={entry.name}
-                fill={catColor(entry.name)}
-                opacity={isFiltered && activeCategory !== entry.name ? 0.25 : 1}
-                stroke={
-                  activeCategory === entry.name ? CHART_THEME.label : 'none'
-                }
-                strokeWidth={activeCategory === entry.name ? 2 : 0}
-              />
-            ))}
-          </Pie>
+            shape={(
+              shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
+            ) => {
+              const entry = shapeProps.payload
+              if (!entry) return null
+              return (
+                <Sector
+                  {...shapeProps}
+                  fill={catColor(entry.name)}
+                  opacity={
+                    isFiltered && activeCategory !== entry.name ? 0.25 : 1
+                  }
+                  stroke={
+                    activeCategory === entry.name ? CHART_THEME.label : 'none'
+                  }
+                  strokeWidth={activeCategory === entry.name ? 2 : 0}
+                />
+              )
+            }}
+          />
           <Tooltip content={<PieTooltip />} />
         </PieChart>
       </ResponsiveContainer>

@@ -1,9 +1,10 @@
 import {
   Bar,
   BarChart,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   LabelList,
+  Rectangle,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -18,6 +19,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 export function TopPerformersChart({
   data,
@@ -71,17 +73,26 @@ export function TopPerformersChart({
             cursor={{ fill: CHART_THEME.cursor }}
           />
           <ReferenceLine x={0} stroke={CHART_THEME.zeroLine} />
-          <Bar dataKey="pct" radius={[0, 3, 3, 0]}>
-            {data.map((entry) => (
-              <Cell
-                key={entry.label}
-                fill={
-                  entry.pct >= 0
-                    ? SEMANTIC_COLORS.performancePositive
-                    : SEMANTIC_COLORS.performanceNegative
-                }
-              />
-            ))}
+          <Bar
+            dataKey="pct"
+            radius={[0, 3, 3, 0]}
+            shape={(
+              shapeProps: ChartShapeProps<BarShapeProps, TopPerformer>,
+            ) => {
+              const entry = shapeProps.payload
+              if (!entry) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fill={
+                    entry.pct >= 0
+                      ? SEMANTIC_COLORS.performancePositive
+                      : SEMANTIC_COLORS.performanceNegative
+                  }
+                />
+              )
+            }}
+          >
             <LabelList
               dataKey="pct"
               position="right"

@@ -8,3 +8,4 @@ When adding the first rule, create only the category needed for it. Use a short,
 | --- | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` | Keep feature and domain components decoupled from raw visual values and design-token implementation. |
 | 2 | Component Composition | `composition-` | Require nested children and compound components for caller-supplied UI structure instead of content props. |
+| 3 | API Maintenance | `quality-` | Keep authored code on supported APIs and prevent deprecated dependency or platform API usage. |

@@ -52,8 +52,9 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
         onClick={() => openClassificationDetails(item.dimension)}
         className="mt-1.5 text-[11px] text-accent hover:text-accent"
       >
-        {item.issues.length}{' '}
-        {i18n.t('ui.allocationdimensionquality.responsibleAssetsViewDetails')}
+        {i18n.t('ui.allocationdimensionquality.responsibleAssetCount', {
+          count: item.issues.length,
+        })}
       </button>
     </div>
   )

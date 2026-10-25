@@ -15,7 +15,6 @@ import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
-import noWrappedChartCell from './eslint-rules/no-wrapped-chart-cell.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
 export default defineConfig([
@@ -47,6 +46,10 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       local: {
@@ -61,7 +64,6 @@ export default defineConfig([
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-prop-drilling': noPropDrilling,
           'state-component-contract': stateComponentContract,
-          'no-wrapped-chart-cell': noWrappedChartCell,
         },
       },
       'simple-import-sort': simpleImportSort,
@@ -112,6 +114,7 @@ export default defineConfig([
       'prefer-template': 'error',
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-deprecated': 'error',
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
@@ -124,7 +127,6 @@ export default defineConfig([
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-prop-drilling': 'warn',
       'local/state-component-contract': 'error',
-      'local/no-wrapped-chart-cell': 'error',
     },
   },
   {

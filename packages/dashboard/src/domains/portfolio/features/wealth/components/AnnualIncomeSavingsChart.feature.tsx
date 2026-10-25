@@ -1,9 +1,10 @@
 import {
   Bar,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   ComposedChart,
   Line,
+  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,6 +18,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 import { IncomeSavingsTooltip } from './IncomeSavingsTooltip.view'
 
@@ -81,41 +83,65 @@ export function AnnualIncomeSavingsChart({
             stackId="income"
             fill={SEMANTIC_COLORS.costBasis}
             radius={[0, 0, 3, 3]}
-          >
-            {data.map((point) => (
-              <Cell
-                key={point.year}
-                fillOpacity={getIncomeYearOpacity(point)}
-              />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<
+                BarShapeProps,
+                AnnualIncomeSavingsPoint
+              >,
+            ) => {
+              const point = shapeProps.payload
+              if (!point) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fillOpacity={getIncomeYearOpacity(point)}
+                />
+              )
+            }}
+          />
           <Bar
             yAxisId="amount"
             dataKey="otherIncome"
             stackId="income"
             fill={SEMANTIC_COLORS.passiveIncome}
             radius={[3, 3, 0, 0]}
-          >
-            {data.map((point) => (
-              <Cell
-                key={point.year}
-                fillOpacity={getIncomeYearOpacity(point)}
-              />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<
+                BarShapeProps,
+                AnnualIncomeSavingsPoint
+              >,
+            ) => {
+              const point = shapeProps.payload
+              if (!point) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fillOpacity={getIncomeYearOpacity(point)}
+                />
+              )
+            }}
+          />
           <Bar
             yAxisId="amount"
             dataKey="placedSavings"
             fill={SEMANTIC_COLORS.netContributions}
             radius={[3, 3, 0, 0]}
-          >
-            {data.map((point) => (
-              <Cell
-                key={point.year}
-                fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
-              />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<
+                BarShapeProps,
+                AnnualIncomeSavingsPoint
+              >,
+            ) => {
+              const point = shapeProps.payload
+              if (!point) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
+                />
+              )
+            }}
+          />
           <Line
             yAxisId="rate"
             type="monotone"

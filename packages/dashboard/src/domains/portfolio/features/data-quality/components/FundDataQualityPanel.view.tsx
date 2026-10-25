@@ -66,6 +66,7 @@ function SnapshotSourceLink({ url }: { url: string }) {
 }
 
 function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
+  const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   return (
     <div className="mt-2 border-t border-border pt-2">
@@ -74,9 +75,16 @@ function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
         {snapshot.isActive ? i18n.t('ui.funddataqualitypanel.active') : ''}
       </div>
       <div>
-        {formatPercentage(snapshot.coveragePct)} · {snapshot.holdingCount}{' '}
-        {i18n.t('ui.funddataqualitypanel.rows')} {snapshot.ageDays}{' '}
-        {i18n.t('ui.funddataqualitypanel.days')}
+        {i18n.t('ui.funddataqualitypanel.snapshotMetrics', {
+          coverage: formatPercentage(snapshot.coveragePct),
+          rows: i18n.t('ui.funddataqualitypanel.rowCount', {
+            count: snapshot.holdingCount,
+            formattedCount: formatNumber(snapshot.holdingCount),
+          }),
+          age: i18n.t('ui.funddataqualitypanel.ageDays', {
+            count: snapshot.ageDays,
+          }),
+        })}
       </div>
       {snapshot.notes && (
         <div className="mt-1 text-content-muted">{snapshot.notes}</div>
@@ -89,7 +97,9 @@ function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
       ))}
       {snapshot.evidencePath && (
         <div className="mt-1 break-all font-mono text-[10px] text-content-subtle">
-          {i18n.t('ui.funddataqualitypanel.evidence')} {snapshot.evidencePath}
+          {i18n.t('ui.funddataqualitypanel.evidenceWithValues', {
+            evidencePath: snapshot.evidencePath,
+          })}
         </div>
       )}
     </div>
@@ -188,9 +198,15 @@ function FundDiagnosticsRow({
             ? formatDate(status.holdingsDate, { style: 'isoDate' })
             : i18n.t('ui.funddataqualitypanel.unknown')}
           <div className="mt-1 text-content-subtle">
-            {formatNumber(status.holdingCount)}{' '}
-            {i18n.t('ui.funddataqualitypanel.rows')} {status.refreshStreak}{' '}
-            {i18n.t('ui.funddataqualitypanel.successfulRefreshes')}
+            {i18n.t('ui.funddataqualitypanel.refreshMetrics', {
+              rows: i18n.t('ui.funddataqualitypanel.rowCount', {
+                count: status.holdingCount,
+                formattedCount: formatNumber(status.holdingCount),
+              }),
+              refreshes: i18n.t('ui.funddataqualitypanel.refreshCount', {
+                count: status.refreshStreak,
+              }),
+            })}
           </div>
         </td>
         <td className="px-4 py-3 text-right tabular-nums text-content-secondary">
@@ -287,8 +303,9 @@ function FundDiagnosticsRow({
                 ))}
                 {holdings.length > 20 && (
                   <div className="mt-2">
-                    + {holdings.length - 20}{' '}
-                    {i18n.t('ui.funddataqualitypanel.moreRows')}
+                    {i18n.t('ui.funddataqualitypanel.additionalHoldings', {
+                      count: holdings.length - 20,
+                    })}
                   </div>
                 )}
               </DetailBlock>

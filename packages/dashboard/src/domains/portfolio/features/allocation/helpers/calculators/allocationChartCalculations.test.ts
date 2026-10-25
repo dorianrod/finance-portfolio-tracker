@@ -1,7 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import { computeAllocationPopoverPosition as computePopoverPos } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
@@ -376,34 +375,5 @@ describe('account allocation scope', () => {
     ])
 
     expect(scoped.geo.map((row) => row.isin)).toEqual(['A', 'A'])
-  })
-})
-
-describe('computePopoverPos', () => {
-  const rect = { left: 1000, right: 1050, top: 100, height: 20 } as DOMRect
-
-  beforeEach(() => {
-    // @ts-expect-error minimal window stub for layout math only
-    globalThis.window = { innerWidth: 1200, innerHeight: 800 }
-  })
-  afterEach(() => {
-    // @ts-expect-error cleanup
-    delete globalThis.window
-  })
-
-  it('places the popover to the right of the anchor when there is room', () => {
-    // top = rect.top + rect.height/2 - h/2 = 100 + 10 - 25
-    expect(computePopoverPos(rect, 100, 50)).toEqual({ top: 85, left: 1060 })
-  })
-
-  it('flips to the left of the anchor when it would overflow the right edge', () => {
-    const result = computePopoverPos(rect, 300, 50)
-    expect(result.left).toBe(1000 - 300 - 10)
-  })
-
-  it('clamps to the viewport bottom when it would overflow', () => {
-    const tallRect = { left: 0, right: 50, top: 750, height: 20 } as DOMRect
-    const result = computePopoverPos(tallRect, 100, 200)
-    expect(result.top).toBe(800 - 200 - 10)
   })
 })

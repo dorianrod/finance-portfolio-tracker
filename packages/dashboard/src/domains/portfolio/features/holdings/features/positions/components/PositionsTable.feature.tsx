@@ -389,13 +389,17 @@ export function PositionsTable({
             return (
               <span className="text-xs text-content-muted flex flex-col gap-0.5">
                 <span className="underline decoration-dashed decoration-border-strong underline-offset-2">
-                  {i18n.t('ui.positionstable.invested')}{' '}
-                  {formatMoney(r.total_invested)}
+                  {i18n.t('ui.positionstable.investedWithValues', {
+                    amount: formatMoney(r.total_invested),
+                  })}
                 </span>
                 {r.avg_buy_price != null && (
                   <span className="text-content-subtle">
-                    {i18n.t('ui.positionstable.avgPrice')}{' '}
-                    {formatMoney(r.avg_buy_price, { style: 'decimal' })}
+                    {i18n.t('ui.positionstable.avgPriceWithValues', {
+                      amount: formatMoney(r.avg_buy_price, {
+                        style: 'decimal',
+                      }),
+                    })}
                     <span className="ml-1 opacity-40 text-[9px]">▲</span>
                   </span>
                 )}
@@ -408,13 +412,15 @@ export function PositionsTable({
                 <span
                   className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}
                 >
-                  {i18n.t('ui.positionstable.deposited')}{' '}
-                  {formatMoney(r.deposit_total ?? 0)}
+                  {i18n.t('ui.positionstable.depositedWithValues', {
+                    amount: formatMoney(r.deposit_total ?? 0),
+                  })}
                 </span>
                 {(r.withdrawal_total ?? 0) > 0 && (
                   <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>
-                    {i18n.t('ui.positionstable.withdrawn')}{' '}
-                    {formatMoney(r.withdrawal_total ?? 0)}
+                    {i18n.t('ui.positionstable.withdrawnWithValues', {
+                      amount: formatMoney(r.withdrawal_total ?? 0),
+                    })}
                   </span>
                 )}
               </span>
@@ -596,8 +602,9 @@ export function PositionsTable({
             return (
               <span className="text-xs space-x-2">
                 <span className="text-content-muted">
-                  {i18n.t('ui.positionstable.sold')}{' '}
-                  {formatMoney(r.total_sold ?? 0)}
+                  {i18n.t('ui.positionstable.soldWithValues', {
+                    amount: formatMoney(r.total_sold ?? 0),
+                  })}
                 </span>
                 <GainCell value={r.realized_pnl ?? null} />
               </span>
@@ -674,23 +681,30 @@ export function PositionsTable({
                   )}
                   {hasInt && (
                     <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
-                      {formatMoney(r.total_interest)}{' '}
-                      {i18n.t('ui.positionstable.int')}
+                      {i18n.t('ui.positionstable.intWithValues', {
+                        amount: formatMoney(r.total_interest),
+                      })}
                     </span>
                   )}
                 </span>
                 {displayedDividendTax != null && (
                   <span className="text-[10px] text-content-subtle mt-0.5">
-                    ~{formatMoney(-displayedDividendTax)}{' '}
-                    {i18n.t('ui.positionstable.taxOnDiv')}
-                    {formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                    {i18n.t('ui.positionstable.taxOnDivWithValues', {
+                      amount: formatMoney(-displayedDividendTax),
+                      percentage: formatPercentage(r.tax_rate! * 100, {
+                        decimals: 0,
+                      }),
+                    })}
                   </span>
                 )}
                 {displayedInterestTax != null && (
                   <span className="text-[10px] text-content-subtle mt-0.5">
-                    ~{formatMoney(-displayedInterestTax)}{' '}
-                    {i18n.t('ui.positionstable.taxOnInt')}
-                    {formatPercentage(r.tax_rate! * 100, { decimals: 0 })})
+                    {i18n.t('ui.positionstable.taxOnIntWithValues', {
+                      amount: formatMoney(-displayedInterestTax),
+                      percentage: formatPercentage(r.tax_rate! * 100, {
+                        decimals: 0,
+                      }),
+                    })}
                   </span>
                 )}
                 {isTaxFreePassiveIncome(r) && (
@@ -708,9 +722,10 @@ export function PositionsTable({
                   {formatMoney(r.total_dividends ?? 0)}
                 </span>
                 <span className="text-content-muted">
-                  ({r.dividend_count} {i18n.t('ui.positionstable.payments')}
-                  {formatMoney(r.annualized_dividends ?? 0)}
-                  {i18n.t('ui.positionstable.yr')}
+                  {i18n.t('ui.positionstable.dividendPayments', {
+                    count: r.dividend_count ?? 0,
+                    annualAmount: formatMoney(r.annualized_dividends ?? 0),
+                  })}
                 </span>
               </span>
             )
@@ -722,8 +737,9 @@ export function PositionsTable({
                   {formatMoney(r.total_interest ?? 0)}
                 </span>
                 <span className="text-content-muted">
-                  ({r.interest_count}{' '}
-                  {i18n.t('ui.positionstable.payments.137c46')}
+                  {i18n.t('ui.positionstable.interestPayments', {
+                    count: r.interest_count ?? 0,
+                  })}
                 </span>
               </span>
             )

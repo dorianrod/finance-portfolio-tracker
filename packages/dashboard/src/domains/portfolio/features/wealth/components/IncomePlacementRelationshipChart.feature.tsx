@@ -1,11 +1,12 @@
 import {
   CartesianGrid,
-  Cell,
   LabelList,
   ReferenceLine,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
+  type ScatterShapeProps,
+  Symbols,
   Tooltip,
   XAxis,
   YAxis,
@@ -20,6 +21,7 @@ import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 import { RelationshipTooltip, YearLabel } from './IncomePlacementTooltip.view'
 
@@ -136,25 +138,38 @@ export function IncomePlacementRelationshipChart({
               strokeWidth={2}
             />
           )}
-          <Scatter data={analysis.points} fill={SEMANTIC_COLORS.returnRate}>
-            {analysis.points.map((point) => (
-              <Cell
-                key={point.year}
-                fill={
-                  recentYears.has(point.year)
-                    ? SEMANTIC_COLORS.returnRate
-                    : SEMANTIC_COLORS.neutralSeries
-                }
-                fillOpacity={
-                  recentYears.has(point.year)
-                    ? 1
-                    : 0.3 +
-                      ((point.year - oldestYear) /
-                        Math.max(1, newestYear - oldestYear)) *
-                        0.35
-                }
-              />
-            ))}
+          <Scatter
+            data={analysis.points}
+            fill={SEMANTIC_COLORS.returnRate}
+            shape={(
+              shapeProps: ChartShapeProps<
+                ScatterShapeProps,
+                (typeof analysis.points)[number]
+              >,
+            ) => {
+              const point = shapeProps.payload
+              if (!point) return null
+              return (
+                <Symbols
+                  {...shapeProps}
+                  type="circle"
+                  fill={
+                    recentYears.has(point.year)
+                      ? SEMANTIC_COLORS.returnRate
+                      : SEMANTIC_COLORS.neutralSeries
+                  }
+                  fillOpacity={
+                    recentYears.has(point.year)
+                      ? 1
+                      : 0.3 +
+                        ((point.year - oldestYear) /
+                          Math.max(1, newestYear - oldestYear)) *
+                          0.35
+                  }
+                />
+              )
+            }}
+          >
             <LabelList
               dataKey="year"
               content={(props) => (

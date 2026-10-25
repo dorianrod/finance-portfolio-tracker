@@ -79,7 +79,9 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
           marginBottom: item.subItems?.length ? 6 : 0,
         }}
       >
-        {percentage} {i18n.t('ui.allocationchartsTooltips.ofTotalAllocated')}
+        {i18n.t('ui.allocationchartsTooltips.ofTotalAllocatedWithValues', {
+          percentage,
+        })}
       </div>
       {item.subItems?.map((subItem) => (
         <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />

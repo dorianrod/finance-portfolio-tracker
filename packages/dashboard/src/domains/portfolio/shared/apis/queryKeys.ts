@@ -1,6 +1,9 @@
 type PortfolioResource =
   | 'dashboard'
   | 'all-positions'
+  | 'operations'
+  | 'saving-capacity-source'
+  | 'account-savings-source'
   | 'positions-history'
   | 'portfolio-history'
   | 'cash-history'

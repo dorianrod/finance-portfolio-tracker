@@ -22,14 +22,17 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
     <div className="mt-2 pt-2 border-t border-border-strong space-y-1">
       {data.buyAmount != null && (
         <p style={{ color: SEMANTIC_COLORS.transactionBuy }}>
-          {i18n.t('ui.hoverchartsTooltips.buy')} {formatMoney(data.buyAmount)}
+          {i18n.t('ui.hoverchartsTooltips.buyWithValues', {
+            amount: formatMoney(data.buyAmount),
+          })}
         </p>
       )}
       {data.sellAmount != null && (
         <>
           <p style={{ color: SEMANTIC_COLORS.transactionSell }}>
-            {i18n.t('ui.hoverchartsTooltips.sell')}{' '}
-            {formatMoney(data.sellAmount)}
+            {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
+              amount: formatMoney(data.sellAmount),
+            })}
           </p>
           {data.sellGain != null && (
             <p
@@ -39,7 +42,9 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
                   : SEMANTIC_TEXT_CLASSES.performanceNegative
               }
             >
-              {i18n.t('ui.hoverchartsTooltips.pL')} {formatMoney(data.sellGain)}
+              {i18n.t('ui.hoverchartsTooltips.profitLoss', {
+                amount: formatMoney(data.sellGain),
+              })}
             </p>
           )}
         </>
@@ -76,8 +81,9 @@ export function TooltipPortfolio({
         <p
           className={`mt-1 font-semibold ${unrealized >= 0 ? SEMANTIC_TEXT_CLASSES.performancePositive : SEMANTIC_TEXT_CLASSES.performanceNegative}`}
         >
-          {i18n.t('ui.hoverchartsTooltips.unrealized')}{' '}
-          {formatMoney(unrealized)}
+          {i18n.t('ui.hoverchartsTooltips.unrealizedWithValues', {
+            amount: formatMoney(unrealized),
+          })}
         </p>
       )}
       <OpSummary data={data} />
@@ -98,8 +104,9 @@ export function TooltipUnit({
     <TooltipBox className="bg-surface-raised border border-border-strong rounded-lg p-3 text-xs shadow-xl">
       <p className="text-content-muted mb-1">{label}</p>
       <p style={{ color: p.color }}>
-        {i18n.t('ui.hoverchartsTooltips.unitPrice')}{' '}
-        {formatMoney(p.value ?? 0, { style: 'decimal' })}
+        {i18n.t('ui.hoverchartsTooltips.unitPriceWithValues', {
+          amount: formatMoney(p.value ?? 0, { style: 'decimal' }),
+        })}
       </p>
       <RollingUnitPricePerf rows={data?.rollingReturns ?? []} />
       <OpSummary data={data} />
@@ -135,7 +142,9 @@ export function SavingsTooltip({
           marginBottom: 4,
         }}
       >
-        {i18n.t('ui.hoverchartsTooltips.balance')} {formatMoney(balance)}
+        {i18n.t('ui.hoverchartsTooltips.balanceWithValues', {
+          amount: formatMoney(balance),
+        })}
       </div>
       {delta !== 0 && (
         <div

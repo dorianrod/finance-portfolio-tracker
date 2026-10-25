@@ -41,4 +41,21 @@ describe('calendar dates at data boundaries', () => {
       DATE_REQUEST_SCHEMA.validate(new Date('2026-10-24')),
     ).resolves.toBe('2026-10-24')
   })
+
+  it.each([
+    '2025-02-29',
+    '2026-04-31',
+    '2026-13-01',
+    '2026-10',
+    '',
+    'invalid',
+    new Date(NaN),
+  ])(
+    'rejects an invalid request date %s at the validation boundary',
+    async (value) => {
+      await expect(DATE_REQUEST_SCHEMA.validate(value)).rejects.toMatchObject({
+        name: 'ValidationError',
+      })
+    },
+  )
 })

@@ -18,13 +18,14 @@ export function CumulativeConcentrationTooltip({
   const formatPercentage = useFormatPercentage()
   if (!active || !payload?.length) return null
   const point = payload[0].payload
-  const assetLabel = point.rank === 1 ? 'asset' : 'assets'
 
   return (
     <TooltipBox minWidth={220}>
       <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
-        {i18n.t('ui.cumulativeconcentrationtooltip.top')} {point.rank}{' '}
-        {assetLabel} · {formatPercentage(point.cumulativeWeight)}
+        {i18n.t('ui.cumulativeconcentrationtooltip.topAssets', {
+          count: point.rank,
+          percentage: formatPercentage(point.cumulativeWeight),
+        })}
       </div>
       <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
         #{point.rank} {point.name}

@@ -1,9 +1,10 @@
 import {
   Bar,
   BarChart,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   LabelList,
+  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -104,17 +105,22 @@ export function ConcentrationChart({
                 content={<ConcentrationTooltip />}
                 cursor={{ fill: CHART_THEME.cursor }}
               />
-              <Bar dataKey="weight" radius={[0, 4, 4, 0]}>
-                {data.map((point, index) => (
-                  <Cell
-                    key={point.label}
-                    fill={
-                      index === 0
-                        ? SEMANTIC_COLORS.risk
-                        : SEMANTIC_COLORS.neutralSeries
-                    }
-                  />
-                ))}
+              <Bar
+                dataKey="weight"
+                radius={[0, 4, 4, 0]}
+                shape={(shapeProps: BarShapeProps) => {
+                  return (
+                    <Rectangle
+                      {...shapeProps}
+                      fill={
+                        shapeProps.index === 0
+                          ? SEMANTIC_COLORS.risk
+                          : SEMANTIC_COLORS.neutralSeries
+                      }
+                    />
+                  )
+                }}
+              >
                 <LabelList
                   dataKey="weight"
                   position="right"

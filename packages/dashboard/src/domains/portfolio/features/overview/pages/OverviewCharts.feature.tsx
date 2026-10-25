@@ -2,10 +2,11 @@ import { useState } from 'react'
 import {
   Bar,
   BarChart,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   Line,
   LineChart,
+  Rectangle,
   ReferenceArea,
   ReferenceLine,
   ResponsiveContainer,
@@ -29,6 +30,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 import {
   DriversTooltip,
@@ -249,10 +251,12 @@ export function OverviewDriversChart({
             ? '—'
             : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
           <span className="ml-1 text-[10px] font-normal text-content-subtle">
-            {i18n.t('ui.overviewcharts.vs')}{' '}
-            {previousChange == null
-              ? i18n.t('ui.overviewcharts.unavailable')
-              : formatMoney(previousChange)}
+            {i18n.t('ui.overviewcharts.vsWithValues', {
+              value:
+                previousChange == null
+                  ? i18n.t('ui.overviewcharts.unavailable')
+                  : formatMoney(previousChange),
+            })}
           </span>
         </span>
       </div>
@@ -298,11 +302,14 @@ export function OverviewDriversChart({
             name={i18n.t('ui.overviewcharts.current')}
             radius={[3, 3, 0, 0]}
             isAnimationActive={false}
-          >
-            {rows.map((row) => (
-              <Cell key={row.label} fill={row.color} />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<BarShapeProps, (typeof rows)[number]>,
+            ) => {
+              const row = shapeProps.payload
+              if (!row) return null
+              return <Rectangle {...shapeProps} fill={row.color} />
+            }}
+          />
         </BarChart>
       </ResponsiveContainer>
     </section>

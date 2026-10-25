@@ -46,18 +46,22 @@ export function UnrealizedPnlTooltip({
         {date}
       </div>
       <div style={{ color: valueColor, fontWeight: 600 }}>
-        {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandl')}{' '}
-        {formatMoney(point.unrealized_gain, { style: 'full' })}
+        {i18n.t('ui.unrealizedpnlchart.grossUnrealizedAmount', {
+          amount: formatMoney(point.unrealized_gain, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginTop: 4 }}>
-        {i18n.t('ui.unrealizedpnlchart.pandlTotalCapitalPlaced')}{' '}
-        {point.unrealized_gain_pct == null
-          ? '—'
-          : formatPercentage(point.unrealized_gain_pct, { signed: true })}
+        {i18n.t('ui.unrealizedpnlchart.capitalReturn', {
+          percentage:
+            point.unrealized_gain_pct == null
+              ? '—'
+              : formatPercentage(point.unrealized_gain_pct, { signed: true }),
+        })}
       </div>
       <div style={{ color: CHART_THEME.label, marginTop: 4 }}>
-        {i18n.t('ui.unrealizedpnlchart.costBasis')}{' '}
-        {formatMoney(point.total_cost_basis, { style: 'full' })}
+        {i18n.t('ui.unrealizedpnlchart.costBasisWithValues', {
+          amount: formatMoney(point.total_cost_basis, { style: 'full' }),
+        })}
       </div>
       {point.snapshot_change != null && (
         <div
@@ -68,8 +72,10 @@ export function UnrealizedPnlTooltip({
             paddingTop: 6,
           }}
         >
-          {i18n.t('ui.unrealizedpnlchart.changeSincePreviousSnapshot')}{' '}
-          {formatMoney(point.snapshot_change, { style: 'full' })}
+          {i18n.t(
+            'ui.unrealizedpnlchart.changeSincePreviousSnapshotWithValues',
+            { amount: formatMoney(point.snapshot_change, { style: 'full' }) },
+          )}
         </div>
       )}
     </TooltipBox>

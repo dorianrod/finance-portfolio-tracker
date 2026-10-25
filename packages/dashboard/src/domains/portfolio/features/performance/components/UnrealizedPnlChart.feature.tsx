@@ -1,9 +1,10 @@
 import {
   Bar,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   ComposedChart,
   Line,
+  Rectangle,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -19,6 +20,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 import {
   type UnrealizedPnlPoint,
@@ -115,18 +117,23 @@ export function UnrealizedPnlChart({
             maxBarSize={24}
             radius={3}
             isAnimationActive={false}
-          >
-            {data.map((point) => (
-              <Cell
-                key={point.date.getTime()}
-                fill={
-                  point.unrealized_gain >= 0
-                    ? SEMANTIC_COLORS.performancePositive
-                    : SEMANTIC_COLORS.performanceNegative
-                }
-              />
-            ))}
-          </Bar>
+            shape={(
+              shapeProps: ChartShapeProps<BarShapeProps, UnrealizedPnlPoint>,
+            ) => {
+              const point = shapeProps.payload
+              if (!point) return null
+              return (
+                <Rectangle
+                  {...shapeProps}
+                  fill={
+                    point.unrealized_gain >= 0
+                      ? SEMANTIC_COLORS.performancePositive
+                      : SEMANTIC_COLORS.performanceNegative
+                  }
+                />
+              )
+            }}
+          />
           <Line
             yAxisId="pct"
             type="monotone"

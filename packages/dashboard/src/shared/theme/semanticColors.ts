@@ -19,6 +19,7 @@ export const SEMANTIC_COLORS = {
   risk: '#f97316',
   riskSecondary: '#fb923c',
   neutralSeries: '#64748b',
+  mutedIndicator: 'var(--color-content-muted)',
   coverage: '#10b981',
   coverageGap: '#f59e0b',
   transactionBuy: '#3b82f6',

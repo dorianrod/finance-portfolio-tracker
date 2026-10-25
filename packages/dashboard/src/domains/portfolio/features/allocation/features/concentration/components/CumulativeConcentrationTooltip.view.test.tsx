@@ -15,6 +15,19 @@ const point: CumulativeConcentrationPoint = {
 }
 
 describe('CumulativeConcentrationTooltip', () => {
+  it.each([
+    [1, 'Top 1 asset'],
+    [2, 'Top 2 assets'],
+  ])('pluralizes the asset count %s', (rank, expected) => {
+    const html = renderToStaticMarkup(
+      <CumulativeConcentrationTooltip
+        active
+        payload={[{ payload: { ...point, rank } }]}
+      />,
+    )
+    expect(html).toContain(expected)
+  })
+
   it('renders the rank, cumulative share and marginal holding', () => {
     const html = renderToStaticMarkup(
       <CumulativeConcentrationTooltip active payload={[{ payload: point }]} />,

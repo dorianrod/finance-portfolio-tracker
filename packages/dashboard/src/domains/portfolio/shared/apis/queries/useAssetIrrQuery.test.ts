@@ -27,11 +27,35 @@ function jsonResponse(body: object, status = 200): Response {
 }
 
 describe('requestAssetIrr', () => {
+  it.each([
+    { start: new Date(NaN), end: new Date('2026-10-13') },
+    { start: undefined, end: new Date(NaN) },
+    { start: new Date('2026-10-14'), end: new Date('2026-10-13') },
+  ])(
+    'rejects invalid dates before sending a request: $start to $end',
+    async ({ start, end }) => {
+      const fetchMock = vi.fn<typeof fetch>()
+      await expect(
+        requestAssetIrr(
+          [],
+          [],
+          start,
+          end,
+          new AbortController().signal,
+          fetchMock,
+        ),
+      ).rejects.toMatchObject({ name: 'ValidationError' })
+      expect(fetchMock).not.toHaveBeenCalled()
+    },
+  )
+
   it('posts the selected scope and date range to the local pipeline API', async () => {
-    const fetchMock = vi.fn(async (...request: Parameters<typeof fetch>) => {
-      void request
-      return jsonResponse(payload)
-    })
+    const fetchMock = vi.fn<typeof fetch>(
+      async (...request: Parameters<typeof fetch>) => {
+        void request
+        return jsonResponse(payload)
+      },
+    )
 
     const result = await requestAssetIrr(
       ['Example Employee Savings'],
@@ -39,7 +63,7 @@ describe('requestAssetIrr', () => {
       new Date('2026-06-30'),
       new Date('2026-10-13'),
       new AbortController().signal,
-      fetchMock as unknown as typeof fetch,
+      fetchMock,
     )
 
     expect(result).toEqual({
@@ -57,9 +81,9 @@ describe('requestAssetIrr', () => {
   })
 
   it('surfaces an API calculation error', async () => {
-    const fetchImpl = vi.fn(async () =>
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
       jsonResponse({ error: 'Unable to calculate asset IRR' }, 500),
-    ) as unknown as typeof fetch
+    )
 
     await expect(
       requestAssetIrr(
@@ -76,12 +100,12 @@ describe('requestAssetIrr', () => {
   it.each(['not-a-number', 'Infinity', '-Infinity'])(
     'rejects the invalid IRR %s',
     async (irr) => {
-      const fetchImpl = vi.fn(async () =>
+      const fetchImpl = vi.fn<typeof fetch>(async () =>
         jsonResponse({
           ...payload,
           assets: [{ ...payload.assets[0], irr }],
         }),
-      ) as unknown as typeof fetch
+      )
 
       await expect(
         requestAssetIrr(

@@ -1,37 +1,23 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { ALLOCATION_BY_ISIN_ROW_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import { toLatestByIsin } from '@/domains/portfolio/shared/helpers/mappers/toLatestAllocationByIsin'
 import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
-import { parseCsv } from '@/shared/csv/csvData'
+
+import { PORTFOLIO_ALLOCATION_QUERY_OPTIONS } from './portfolioSourceQueries'
 
 const EMPTY_ISIN_ALLOCATIONS = new Map<string, IsinAllocation>()
 
 export function useAllocationsByIsinQuery() {
+  const queryClient = useQueryClient()
   return useQuery<Map<string, IsinAllocation>>({
     queryKey: portfolioQueryKeys.data('allocation-by-isin'),
     placeholderData: EMPTY_ISIN_ALLOCATIONS,
     queryFn: async () => {
-      const [geo, secteur, currency, classe] = await Promise.all([
-        parseCsv(
-          PORTFOLIO_ENDPOINTS.data.positionsGeoByIsin,
-          ALLOCATION_BY_ISIN_ROW_SCHEMA,
-        ),
-        parseCsv(
-          PORTFOLIO_ENDPOINTS.data.positionsSecteurByIsin,
-          ALLOCATION_BY_ISIN_ROW_SCHEMA,
-        ),
-        parseCsv(
-          PORTFOLIO_ENDPOINTS.data.positionsCurrencyByIsin,
-          ALLOCATION_BY_ISIN_ROW_SCHEMA,
-        ),
-        parseCsv(
-          PORTFOLIO_ENDPOINTS.data.positionsClasseByIsin,
-          ALLOCATION_BY_ISIN_ROW_SCHEMA,
-        ),
-      ])
+      const { geo, secteur, currency, classe } = await queryClient.query({
+        ...PORTFOLIO_ALLOCATION_QUERY_OPTIONS,
+        staleTime: 'static',
+      })
       const geoMap = toLatestByIsin(geo)
       const secteurMap = toLatestByIsin(secteur)
       const currencyMap = toLatestByIsin(currency)

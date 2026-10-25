@@ -30,7 +30,7 @@ export function DashboardLoadState({
           className="rounded-card border border-danger/40 bg-surface p-6"
         >
           <p className="text-danger">
-            {i18n.t('ui.app.error')} {state.message}
+            {i18n.t('ui.app.errorWithValues', { message: state.message })}
           </p>
           <button
             type="button"

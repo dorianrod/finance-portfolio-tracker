@@ -1,11 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 
 import {
   buildHoverChartSeries,
   computeMonthlyBalances,
-  computePosition,
   computeRollingReturns,
   computeUnitPriceDomain,
   type HoverChartDataPoint,
@@ -146,28 +145,5 @@ describe('buildHoverChartSeries', () => {
     const series = buildHoverChartSeries(history, [])
     expect(series[0].hasBuy).toBe(false)
     expect(series[0].hasSell).toBe(false)
-  })
-})
-
-describe('computePosition', () => {
-  beforeEach(() => {
-    // @ts-expect-error minimal window stub for layout math only
-    globalThis.window = { innerWidth: 1200, innerHeight: 800 }
-  })
-  afterEach(() => {
-    // @ts-expect-error cleanup
-    delete globalThis.window
-  })
-
-  it('places the popover to the right of the anchor, clamped to the top margin when centering would go off-screen', () => {
-    const rect = { left: 100, right: 150, top: 200, height: 20 } as DOMRect
-    // W=600, H=460 are fixed; naive top = rect.top + height/2 - H/2 = 200 + 10 - 230 = -20, clamped to the 10px margin
-    expect(computePosition(rect)).toEqual({ top: 10, left: 160 })
-  })
-
-  it('flips to the left of the anchor when it would overflow the right edge', () => {
-    const rect = { left: 1000, right: 1050, top: 200, height: 20 } as DOMRect
-    const result = computePosition(rect)
-    expect(result.left).toBe(1000 - 600 - 10)
   })
 })

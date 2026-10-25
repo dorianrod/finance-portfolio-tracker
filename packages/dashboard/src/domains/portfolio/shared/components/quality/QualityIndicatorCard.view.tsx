@@ -25,7 +25,7 @@ const TONES: Record<QualityTone, { text: string; bar: string }> = {
     text: SEMANTIC_TEXT_CLASSES.error,
     bar: SEMANTIC_COLORS.performanceNegative,
   },
-  muted: { text: 'text-content-muted', bar: '#6b7280' },
+  muted: { text: 'text-content-muted', bar: SEMANTIC_COLORS.mutedIndicator },
 }
 
 export function QualityIndicatorCard({

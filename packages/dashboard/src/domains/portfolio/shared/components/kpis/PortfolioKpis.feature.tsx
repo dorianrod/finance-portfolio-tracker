@@ -37,8 +37,9 @@ export function NetPortfolioValueKpi({
         <Kpi.Value title={value}>{value}</Kpi.Value>
       </Kpi.ValueRow>
       <Kpi.Detail>
-        {i18n.t('ui.portfoliokpis.gross')}{' '}
-        {formatMoney(performance.currentValueGross)}
+        {i18n.t('ui.portfoliokpis.grossWithValues', {
+          amount: formatMoney(performance.currentValueGross),
+        })}
       </Kpi.Detail>
     </Kpi.Root>
   )
@@ -80,8 +81,9 @@ export function TotalNetPerformanceKpi({
         </Kpi.InlineNote>
       </Kpi.ValueRow>
       <Kpi.Detail>
-        {i18n.t('ui.portfoliokpis.gross')}{' '}
-        {formatMoney(performance.totalPerformanceGross)}
+        {i18n.t('ui.portfoliokpis.grossWithValues', {
+          amount: formatMoney(performance.totalPerformanceGross),
+        })}
       </Kpi.Detail>
     </Kpi.Root>
   )
@@ -223,8 +225,9 @@ export function NetUnrealizedKpi({
         </Kpi.Value>
       </Kpi.ValueRow>
       <Kpi.Detail>
-        {i18n.t('ui.portfoliokpis.gross')}{' '}
-        {formatMoney(performance.unrealizedGross)}
+        {i18n.t('ui.portfoliokpis.grossWithValues', {
+          amount: formatMoney(performance.unrealizedGross),
+        })}
       </Kpi.Detail>
     </Kpi.Root>
   )
@@ -258,8 +261,9 @@ export function NetRealizedKpi({
         </Kpi.Value>
       </Kpi.ValueRow>
       <Kpi.Detail>
-        {i18n.t('ui.portfoliokpis.gross')}{' '}
-        {formatMoney(performance.realizedGross)}
+        {i18n.t('ui.portfoliokpis.grossWithValues', {
+          amount: formatMoney(performance.realizedGross),
+        })}
       </Kpi.Detail>
     </Kpi.Root>
   )

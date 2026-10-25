@@ -31,11 +31,13 @@ function jsonResponse(body: object, status = 200): Response {
 
 describe('requestFilteredPortfolioHistory', () => {
   it('posts normalized accounts to the local Python API', async () => {
-    const fetchMock = vi.fn(async (...request: Parameters<typeof fetch>) => {
-      void request
-      return jsonResponse(payload)
-    })
-    const fetchImpl = fetchMock as unknown as typeof fetch
+    const fetchMock = vi.fn<typeof fetch>(
+      async (...request: Parameters<typeof fetch>) => {
+        void request
+        return jsonResponse(payload)
+      },
+    )
+    const fetchImpl = fetchMock
 
     const result = await requestFilteredPortfolioHistory(
       ['b::cash', 'a', 'b'],
@@ -51,9 +53,7 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('returns the static demo fixture for its exact recorded scope', async () => {
-    const fetchImpl = vi.fn(async () =>
-      jsonResponse(payload),
-    ) as unknown as typeof fetch
+    const fetchImpl = vi.fn<typeof fetch>(async () => jsonResponse(payload))
 
     const result = await requestFilteredPortfolioHistory(
       ['b::cash', 'a'],
@@ -69,9 +69,7 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('rejects arbitrary scopes in the static demo', async () => {
-    const fetchImpl = vi.fn(async () =>
-      jsonResponse(payload),
-    ) as unknown as typeof fetch
+    const fetchImpl = vi.fn<typeof fetch>(async () => jsonResponse(payload))
 
     await expect(
       requestFilteredPortfolioHistory(['a'], new AbortController().signal, {
@@ -82,9 +80,9 @@ describe('requestFilteredPortfolioHistory', () => {
   })
 
   it('surfaces the API error message', async () => {
-    const fetchImpl = vi.fn(async () =>
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
       jsonResponse({ error: 'Unknown accounts: x' }, 400),
-    ) as unknown as typeof fetch
+    )
 
     await expect(
       requestFilteredPortfolioHistory(['x'], new AbortController().signal, {
@@ -99,12 +97,12 @@ describe('requestFilteredPortfolioHistory', () => {
       ...payload.history[0],
     }
     delete incompletePoint.total_value
-    const fetchImpl = vi.fn(async () =>
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
       jsonResponse({
         ...payload,
         history: [incompletePoint],
       }),
-    ) as unknown as typeof fetch
+    )
 
     await expect(
       requestFilteredPortfolioHistory(['a'], new AbortController().signal, {

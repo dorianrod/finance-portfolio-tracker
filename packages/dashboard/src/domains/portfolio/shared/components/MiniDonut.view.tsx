@@ -1,4 +1,11 @@
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import {
+  Pie,
+  PieChart,
+  type PieSectorShapeProps,
+  ResponsiveContainer,
+  Sector,
+  Tooltip,
+} from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import {
@@ -9,6 +16,7 @@ import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { catColor } from '@/shared/theme/chartColors'
+import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
 function MiniDonutLegendItem({
   entry,
@@ -76,11 +84,14 @@ export function MiniDonut({
             innerRadius="30%"
             outerRadius="56%"
             paddingAngle={1}
-          >
-            {data.map((entry) => (
-              <Cell key={entry.name} fill={catColor(entry.name)} />
-            ))}
-          </Pie>
+            shape={(
+              shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
+            ) => {
+              const entry = shapeProps.payload
+              if (!entry) return null
+              return <Sector {...shapeProps} fill={catColor(entry.name)} />
+            }}
+          />
           <Tooltip content={<PieTooltip />} />
         </PieChart>
       </ResponsiveContainer>

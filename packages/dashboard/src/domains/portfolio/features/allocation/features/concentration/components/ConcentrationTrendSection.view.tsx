@@ -2,12 +2,13 @@ import type { ReactNode } from 'react'
 import {
   Bar,
   BarChart,
+  type BarShapeProps,
   CartesianGrid,
-  Cell,
   LabelList,
   Line,
   LineChart,
   matchByDataKey,
+  Rectangle,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -255,8 +256,9 @@ export function ConcentrationTrendSectionView({
                   })}
                 </div>
                 <div className="text-[11px] text-content-subtle">
-                  {i18n.t('ui.concentrationtrendsection.snapshot')}{' '}
-                  {formatDate(displayedPoint.date, { style: 'isoDate' })}
+                  {i18n.t('ui.concentrationtrendsection.snapshotWithValues', {
+                    date: formatDate(displayedPoint.date, { style: 'isoDate' }),
+                  })}
                 </div>
               </div>
             </div>
@@ -395,17 +397,19 @@ export function ConcentrationTrendSectionView({
                       animationEasing="ease-in-out"
                       animationMatchBy={matchHoldingByKey}
                       animationInterpolateFn={interpolateRankedBars}
+                      shape={(shapeProps: BarShapeProps) => {
+                        return (
+                          <Rectangle
+                            {...shapeProps}
+                            fill={
+                              shapeProps.index === 0
+                                ? SEMANTIC_COLORS.risk
+                                : SEMANTIC_COLORS.neutralSeries
+                            }
+                          />
+                        )
+                      }}
                     >
-                      {displayedHoldings.map((holding, index) => (
-                        <Cell
-                          key={holding.key}
-                          fill={
-                            index === 0
-                              ? SEMANTIC_COLORS.risk
-                              : SEMANTIC_COLORS.neutralSeries
-                          }
-                        />
-                      ))}
                       <LabelList
                         dataKey="weight"
                         position="right"

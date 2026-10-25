@@ -91,8 +91,9 @@ export function IrrListItem({
             {formatPercentage(item.irr, { decimals: 2, signed: true })}
           </div>
           <div className="text-[11px] text-content-subtle">
-            {i18n.t('ui.performancecontributioncard.value')}{' '}
-            {formatMoney(item.value, { style: 'full' })}
+            {i18n.t('ui.performancecontributioncard.valueWithValues', {
+              amount: formatMoney(item.value, { style: 'full' }),
+            })}
           </div>
         </div>
       </div>

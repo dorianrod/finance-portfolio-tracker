@@ -1,28 +1,28 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
 import type {
   MonthlyOperation,
   MonthlyOperationsByMonth,
   MonthlyOperationType,
 } from '@/domains/portfolio/shared/types/monthlyOperation.type'
-import { parseCsv } from '@/shared/csv/csvData'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
+
+import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from './portfolioSourceQueries'
 
 function isMonthlyOperationType(value: string): value is MonthlyOperationType {
   return value === 'DEPOSIT' || value === 'WITHDRAWAL'
 }
 
 export function useMonthlyOperationsQuery() {
+  const queryClient = useQueryClient()
   return useQuery<MonthlyOperationsByMonth>({
     queryKey: portfolioQueryKeys.data('monthly-operations'),
     queryFn: async () => {
-      const rows = await parseCsv(
-        PORTFOLIO_ENDPOINTS.data.operations,
-        RAW_OPERATION_SCHEMA,
-      )
+      const rows = await queryClient.query({
+        ...PORTFOLIO_OPERATIONS_QUERY_OPTIONS,
+        staleTime: 'static',
+      })
       const map = new Map<string, MonthlyOperation[]>()
       for (const row of rows) {
         if (!isMonthlyOperationType(row.operation_type)) continue

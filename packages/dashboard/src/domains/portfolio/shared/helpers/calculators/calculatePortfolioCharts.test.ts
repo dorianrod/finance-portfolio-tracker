@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import type {
-  MonthlyOperation,
-  MonthlyOperationsByMonth,
-} from '@/domains/portfolio/shared/types/monthlyOperation.type'
+import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
@@ -245,7 +242,7 @@ describe('filterMonthlyOpsByAccounts', () => {
         operation_type: 'DEPOSIT',
         total_amount: 50,
       },
-    ] as MonthlyOperation[])
+    ])
     return map
   }
 

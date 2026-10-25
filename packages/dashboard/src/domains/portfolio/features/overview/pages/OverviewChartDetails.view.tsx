@@ -43,7 +43,7 @@ export function ValueTooltip({
         className="mt-1 text-xs capitalize"
         style={{ color: 'var(--tooltip-dim)' }}
       >
-        {point.window} {i18n.t('ui.overviewcharts.period')}
+        {i18n.t('ui.overviewcharts.periodWithValues', { window: point.window })}
       </div>
     </TooltipBox>
   )

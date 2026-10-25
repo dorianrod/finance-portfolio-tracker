@@ -56,6 +56,7 @@ describe('account-scoped queries', () => {
         { year: 2026, dividends: 10, interest: 0 },
       ]),
     )
+    expect(fetch).toHaveBeenCalledOnce()
   })
 
   it('preserves commas in savings account names', async () => {
@@ -67,16 +68,24 @@ describe('account-scoped queries', () => {
         ),
       ),
     )
-    const { result } = renderHook(
-      () => useSavingCapacityQuery(new Set(['A,B'])),
+    const { result, rerender } = renderHook(
+      ({ accounts }) => useSavingCapacityQuery(accounts),
       {
         wrapper: queryWrapper(),
+        initialProps: { accounts: new Set(['A,B']) },
       },
     )
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual([
       { date: new Date('2026-01-31'), savings_delta: 42, perf_delta: 2 },
     ])
+    rerender({ accounts: new Set(['A']) })
+    await waitFor(() =>
+      expect(result.current.data).toEqual([
+        { date: new Date('2026-01-31'), savings_delta: 10, perf_delta: 1 },
+      ]),
+    )
+    expect(fetch).toHaveBeenCalledOnce()
   })
 
   it('preserves commas when aggregating account types', async () => {

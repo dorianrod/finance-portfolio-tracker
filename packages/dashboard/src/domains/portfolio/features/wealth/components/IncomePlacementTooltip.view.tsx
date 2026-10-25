@@ -86,30 +86,43 @@ export function RelationshipTooltip({
         {point.year}
       </div>
       <div style={{ color: 'var(--tooltip-label)' }}>
-        {i18n.t('ui.incomeplacementrelationshipchart.totalNetIncome')}{' '}
-        {formatMoney(point.totalIncome, { style: 'full' })}
+        {i18n.t(
+          'ui.incomeplacementrelationshipchart.totalNetIncomeWithValues',
+          { amount: formatMoney(point.totalIncome, { style: 'full' }) },
+        )}
       </div>
       <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
-        {i18n.t('ui.incomeplacementrelationshipchart.netSalary')}{' '}
-        {formatMoney(point.netSalary, { style: 'full' })}
+        {i18n.t('ui.incomeplacementrelationshipchart.netSalaryWithValues', {
+          amount: formatMoney(point.netSalary, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>
-        {i18n.t('ui.incomeplacementrelationshipchart.otherIncome')}{' '}
-        {formatMoney(point.otherIncome, { style: 'full' })}
+        {i18n.t('ui.incomeplacementrelationshipchart.otherIncomeWithValues', {
+          amount: formatMoney(point.otherIncome, { style: 'full' }),
+        })}
       </div>
       <div
         style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}
       >
-        {i18n.t('ui.incomeplacementrelationshipchart.netContributions')}{' '}
-        {formatMoney(point.placedSavings ?? 0, { style: 'full' })}
+        {i18n.t(
+          'ui.incomeplacementrelationshipchart.netContributionsWithValues',
+          { amount: formatMoney(point.placedSavings ?? 0, { style: 'full' }) },
+        )}
       </div>
       <div style={{ color: SEMANTIC_COLORS.returnRate }}>
-        {i18n.t('ui.incomeplacementrelationshipchart.placementRate')}{' '}
-        {formatPercentage(point.placementRate ?? 0)}
+        {i18n.t('ui.incomeplacementrelationshipchart.placementRateWithValues', {
+          percentage: formatPercentage(point.placementRate ?? 0),
+        })}
       </div>
       <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>
-        {i18n.t('ui.incomeplacementrelationshipchart.unplacedIncomeProxy')}{' '}
-        {formatMoney(point.unplacedIncomeProxy ?? 0, { style: 'full' })}
+        {i18n.t(
+          'ui.incomeplacementrelationshipchart.unplacedIncomeProxyWithValues',
+          {
+            amount: formatMoney(point.unplacedIncomeProxy ?? 0, {
+              style: 'full',
+            }),
+          },
+        )}
       </div>
     </TooltipBox>
   )

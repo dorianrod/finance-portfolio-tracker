@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules. Use when writing, reviewing, or refactoring React code against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.3.0"
+  version: "0.4.0"
 ---
 
 # Dorian React Best Practices
@@ -28,6 +28,7 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` |
 | 2 | Component Composition | `composition-` |
+| 3 | API Maintenance | `quality-` |
 
 ## Quick Reference
 
@@ -38,6 +39,10 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 ### Component Composition
 
 - [`composition-required-children`](rules/composition-required-children.md) — Compose UI through nested children and compound components; never pass content through named props or `children={...}`.
+
+### API Maintenance
+
+- [`quality-no-deprecated-apis`](rules/quality-no-deprecated-apis.md) — Replace deprecated APIs with supported alternatives and enforce annotated deprecations with typed ESLint.
 
 ## Add or Change a Rule
 

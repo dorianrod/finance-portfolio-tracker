@@ -31,6 +31,7 @@ export function SidePanel({
   bodyClassName = 'overflow-auto',
 }: SidePanelProps) {
   const titleId = useId()
+  const descriptionId = useId()
   const { closeButtonRef, panelRef } = useSidePanelDialog(open, onClose)
   const { slot: title, content: afterTitle } = partitionSlot(
     children,
@@ -60,6 +61,7 @@ export function SidePanel({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={description.length > 0 ? descriptionId : undefined}
         className={`absolute inset-y-0 right-0 flex max-w-full flex-col border-l border-border-strong bg-surface shadow-2xl ${WIDTH_BY_SIZE[size]}`}
       >
         <div className="flex shrink-0 items-start gap-3 border-b border-border px-4 py-3">
@@ -68,7 +70,10 @@ export function SidePanel({
               {title}
             </h2>
             {description.length > 0 && (
-              <div className="mt-0.5 text-xs text-content-subtle">
+              <div
+                id={descriptionId}
+                className="mt-0.5 text-xs text-content-subtle"
+              >
                 {description}
               </div>
             )}

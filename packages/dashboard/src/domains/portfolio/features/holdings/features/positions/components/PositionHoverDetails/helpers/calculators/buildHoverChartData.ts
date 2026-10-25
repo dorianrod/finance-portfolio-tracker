@@ -133,16 +133,3 @@ export function computeMonthlyBalances(
     return { month, balance: Math.round(balance), delta: Math.round(delta) }
   })
 }
-
-export function computePosition(rect: DOMRect): { top: number; left: number } {
-  const W = 600,
-    H = 460,
-    M = 10
-  let left = rect.right + M
-  let top = rect.top + rect.height / 2 - H / 2
-  if (left + W > window.innerWidth - M) left = rect.left - W - M
-  if (left < M) left = M
-  if (top < M) top = M
-  if (top + H > window.innerHeight - M) top = window.innerHeight - H - M
-  return { top, left }
-}

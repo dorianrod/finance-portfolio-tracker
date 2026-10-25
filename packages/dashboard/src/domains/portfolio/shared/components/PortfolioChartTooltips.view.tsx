@@ -53,13 +53,15 @@ export function EvolutionTooltip({
           marginBottom: 4,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.total')}{' '}
-        {formatMoney(total, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
+          amount: formatMoney(total, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
-        {i18n.t('ui.portfoliochartsTooltips.costBasis')}{' '}
-        {formatMoney(cost, { style: 'full' })}
-        {percentageMode && ` · ${share(cost)}`}
+        {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues', {
+          amount: formatMoney(cost, { style: 'full' }),
+          value: percentageMode ? ` · ${share(cost)}` : '',
+        })}
       </div>
       <div
         style={{
@@ -69,9 +71,10 @@ export function EvolutionTooltip({
               : SEMANTIC_COLORS.performanceNegativeText,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.unrealizedPL')}{' '}
-        {formatMoney(gain, { style: 'full' })}
-        {percentageMode && ` · ${share(gain)}`}
+        {i18n.t('ui.portfoliochartsTooltips.unrealizedProfitLoss', {
+          amount: formatMoney(gain, { style: 'full' }),
+          share: percentageMode ? ` · ${share(gain)}` : '',
+        })}
       </div>
     </TooltipBox>
   )
@@ -155,8 +158,9 @@ export function MonthlyTooltip({
       <div
         style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.netContributions')}{' '}
-        {formatMoney(savingsDelta, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.netContributionsWithValues', {
+          amount: formatMoney(savingsDelta, { style: 'full' }),
+        })}
       </div>
       {deposits.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
@@ -191,8 +195,9 @@ export function MonthlyTooltip({
               : SEMANTIC_COLORS.performanceNegativeText,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.marketPerformance')}{' '}
-        {formatMoney(perfDelta, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.marketPerformanceWithValues', {
+          amount: formatMoney(perfDelta, { style: 'full' }),
+        })}
       </div>
       <div
         style={{
@@ -202,8 +207,10 @@ export function MonthlyTooltip({
           color: SEMANTIC_COLORS.netContributionsText,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.trailing12MonthNetContributions')}{' '}
-        {formatMoney(rolling12m, { style: 'full' })}
+        {i18n.t(
+          'ui.portfoliochartsTooltips.trailing12MonthNetContributionsWithValues',
+          { amount: formatMoney(rolling12m, { style: 'full' }) },
+        )}
       </div>
       <div
         style={{
@@ -214,8 +221,10 @@ export function MonthlyTooltip({
               : SEMANTIC_COLORS.performanceNegativeText,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.trailing12MonthPerformance')}{' '}
-        {formatMoney(rollingPerf12m, { style: 'full' })}
+        {i18n.t(
+          'ui.portfoliochartsTooltips.trailing12MonthPerformanceWithValues',
+          { amount: formatMoney(rollingPerf12m, { style: 'full' }) },
+        )}
       </div>
     </TooltipBox>
   )
@@ -248,10 +257,12 @@ export function TriTooltip({
       </div>
       {showTri1y && (
         <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
-          {i18n.t('ui.portfoliochartsTooltips.irr1y')}{' '}
-          {tri1y === null
-            ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
-            : formatPercentage(tri1y, { decimals: 2, signed: true })}
+          {i18n.t('ui.portfoliochartsTooltips.irr1yWithValues', {
+            value:
+              tri1y === null
+                ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
+                : formatPercentage(tri1y, { decimals: 2, signed: true }),
+          })}
         </div>
       )}
       {showTri3y && (
@@ -262,10 +273,12 @@ export function TriTooltip({
             marginTop: showTri1y ? 4 : 0,
           }}
         >
-          {i18n.t('ui.portfoliochartsTooltips.irr3y')}{' '}
-          {tri3y === null
-            ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
-            : formatPercentage(tri3y, { decimals: 2, signed: true })}
+          {i18n.t('ui.portfoliochartsTooltips.irr3yWithValues', {
+            value:
+              tri3y === null
+                ? i18n.t('ui.portfoliochartsTooltips.notYetAvailable')
+                : formatPercentage(tri3y, { decimals: 2, signed: true }),
+          })}
         </div>
       )}
     </TooltipBox>
@@ -330,23 +343,27 @@ export function AccountTypeTooltip({
           marginBottom: 4,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.total')}{' '}
-        {formatMoney(total, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
+          amount: formatMoney(total, { style: 'full' }),
+        })}
       </div>
       {portfolioTotal != null && (
         <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6 }}>
-          {i18n.t('ui.portfoliochartsTooltips.portfolioShare')}{' '}
-          {formatPercentage(portfolioShare)}
+          {i18n.t('ui.portfoliochartsTooltips.portfolioShareWithValues', {
+            percentage: formatPercentage(portfolioShare),
+          })}
         </div>
       )}
       <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
-        {i18n.t('ui.portfoliochartsTooltips.costBasis')}{' '}
-        {formatMoney(cost, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues2', {
+          amount: formatMoney(cost, { style: 'full' }),
+        })}
       </div>
       <div style={{ color: SEMANTIC_COLORS.performancePositiveText }}>
-        {i18n.t('ui.portfoliochartsTooltips.unrealized')}{' '}
-        {formatMoney(gain, { style: 'full' })} (
-        {formatPercentage(gainPct, { signed: true })})
+        {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
+          amount: formatMoney(gain, { style: 'full' }),
+          percentage: formatPercentage(gainPct, { signed: true }),
+        })}
       </div>
     </TooltipBox>
   )
@@ -378,8 +395,9 @@ export function TopPerformersTooltip({
         {entry?.account_type}
       </div>
       <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>
-        {i18n.t('ui.portfoliochartsTooltips.value')}{' '}
-        {formatMoney(entry?.value ?? 0, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.valueWithValues', {
+          amount: formatMoney(entry?.value ?? 0, { style: 'full' }),
+        })}
       </div>
       <div
         style={{
@@ -390,9 +408,10 @@ export function TopPerformersTooltip({
           fontWeight: 600,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.unrealized')}{' '}
-        {formatMoney(entry?.gain ?? 0, { style: 'full' })} (
-        {formatPercentage(entry?.pct ?? 0, { signed: true })})
+        {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
+          amount: formatMoney(entry?.gain ?? 0, { style: 'full' }),
+          percentage: formatPercentage(entry?.pct ?? 0, { signed: true }),
+        })}
       </div>
     </TooltipBox>
   )
@@ -425,19 +444,22 @@ export function PassiveIncomeTooltip({
           marginBottom: 4,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.total')}{' '}
-        {formatMoney(div + int, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
+          amount: formatMoney(div + int, { style: 'full' }),
+        })}
       </div>
       {div > 0 && (
         <div style={{ color: SEMANTIC_COLORS.passiveIncome }}>
-          {i18n.t('ui.portfoliochartsTooltips.dividends')}{' '}
-          {formatMoney(div, { style: 'full' })}
+          {i18n.t('ui.portfoliochartsTooltips.dividendsWithValues', {
+            amount: formatMoney(div, { style: 'full' }),
+          })}
         </div>
       )}
       {int > 0 && (
         <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>
-          {i18n.t('ui.portfoliochartsTooltips.interest')}{' '}
-          {formatMoney(int, { style: 'full' })}
+          {i18n.t('ui.portfoliochartsTooltips.interestWithValues', {
+            amount: formatMoney(int, { style: 'full' }),
+          })}
         </div>
       )}
     </TooltipBox>
@@ -510,8 +532,9 @@ export function AccountTypeHistoryTooltip({
           marginBottom: 4,
         }}
       >
-        {i18n.t('ui.portfoliochartsTooltips.total')}{' '}
-        {formatMoney(total, { style: 'full' })}
+        {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
+          amount: formatMoney(total, { style: 'full' }),
+        })}
       </div>
       {accountTypes.map((accountType, index) => (
         <AccountTypeTooltipRow

@@ -101,31 +101,12 @@ export default {
   },
   create(context) {
     const sourceCode = context.sourceCode
-    const directSlots = new Set()
-
     return {
-      ImportDeclaration(node) {
-        if (node.source.value !== 'recharts') return
-        for (const specifier of node.specifiers) {
-          if (
-            specifier.type === 'ImportSpecifier' &&
-            specifier.imported.name === 'Cell'
-          ) {
-            directSlots.add(specifier.local.name)
-          }
-        }
-      },
       CallExpression(node) {
         if (!isMapCall(node)) return
 
         const callback = node.arguments[0]
         if (!isFunction(callback) || !containsJsx(callback.body, sourceCode))
-          return
-        // Recharts reads Cell props from direct children; a component wrapper hides the slot.
-        if (
-          callback.body.type === 'JSXElement' &&
-          directSlots.has(callback.body.openingElement.name.name)
-        )
           return
         if (isDirectComponentRender(callback)) return
 

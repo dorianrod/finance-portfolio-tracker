@@ -44,7 +44,9 @@ export function KpiBar({ rows, globalTri }: Props) {
           <Kpi.Value>{formatMoney(totalValueNet)}</Kpi.Value>
         </Kpi.ValueRow>
         <Kpi.Detail>
-          {i18n.t('ui.kpibar.gross')} {formatMoney(totalValue)}
+          {i18n.t('ui.kpibar.grossWithValues', {
+            amount: formatMoney(totalValue),
+          })}
         </Kpi.Detail>
       </Kpi.Root>
       <div className="w-px bg-surface-hover" />
@@ -63,8 +65,10 @@ export function KpiBar({ rows, globalTri }: Props) {
           {formatPercentage(unrealizedPctNet, { signed: true })}
         </Kpi.Note>
         <Kpi.Detail>
-          {i18n.t('ui.kpibar.gross')} {formatMoney(totalUnrealized)} (
-          {formatPercentage(unrealizedPctGross, { signed: true })})
+          {i18n.t('ui.kpibar.grossWithValues2', {
+            amount: formatMoney(totalUnrealized),
+            percentage: formatPercentage(unrealizedPctGross, { signed: true }),
+          })}
         </Kpi.Detail>
       </Kpi.Root>
       <div className="w-px bg-surface-hover" />
@@ -156,7 +160,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           <Kpi.Value>{activeCount}</Kpi.Value>
         </Kpi.ValueRow>
         <Kpi.Note>
-          {closedCount} {i18n.t('ui.kpibar.closed')}
+          {i18n.t('ui.kpibar.closedWithValues', { closedCount })}
         </Kpi.Note>
       </Kpi.Root>
     </div>

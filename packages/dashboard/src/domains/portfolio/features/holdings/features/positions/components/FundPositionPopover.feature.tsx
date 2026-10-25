@@ -1,7 +1,6 @@
 import { createPortal } from 'react-dom'
 
 import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/useFundPositionHoldings'
-import { computeAllocationPopoverPosition } from '@/domains/portfolio/shared/helpers/presenters/computeAllocationPopoverPosition'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
@@ -10,6 +9,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { computePopoverPosition } from '@/shared/ui/helpers/presenters/computePopoverPosition'
 
 import { FundPositionHoldingRow } from './FundPositionHoldingRow.feature'
 
@@ -37,20 +37,18 @@ export function FundPositionPopover({
   const rows = useFundPositionHoldings(position)
   const width = Math.min(560, window.innerWidth - 20)
   const estimatedHeight = Math.min(430, window.innerHeight - 20)
-  const { top, left } = computeAllocationPopoverPosition(
+  const popoverPosition = computePopoverPosition(
     target.buttonRect,
     width,
     estimatedHeight,
+    { width: window.innerWidth, height: window.innerHeight },
   )
 
   return createPortal(
     <div
       style={{
         position: 'fixed',
-        top,
-        left,
-        width,
-        maxHeight: 'calc(100vh - 20px)',
+        ...popoverPosition,
         zIndex: 9999,
       }}
       className="overflow-y-auto rounded-xl border border-border-strong bg-surface p-4 shadow-2xl"
@@ -85,12 +83,13 @@ export function FundPositionPopover({
             : ''}
         </span>
         <span>
-          {i18n.t('ui.fundpositionpopover.holdings')}{' '}
-          {status.holdingsDate
-            ? formatDate(status.holdingsDate, { style: 'isoDate' })
-            : i18n.t('ui.fundpositionpopover.unknown')}{' '}
-          · {formatNumber(status.holdingCount)}{' '}
-          {i18n.t('ui.fundpositionpopover.rows')}
+          {i18n.t('ui.fundpositionpopover.holdingsSummary', {
+            count: status.holdingCount,
+            formattedCount: formatNumber(status.holdingCount),
+            date: status.holdingsDate
+              ? formatDate(status.holdingsDate, { style: 'isoDate' })
+              : i18n.t('ui.fundpositionpopover.unknown'),
+          })}
         </span>
       </div>
 
@@ -112,14 +111,16 @@ export function FundPositionPopover({
 
       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
         <span>
-          {formatPercentage(status.explainedPct)}{' '}
-          {i18n.t('ui.fundpositionpopover.explained')}
-          {formatMoney(status.explainedValue, { style: 'full' })})
+          {i18n.t('ui.fundpositionpopover.explainedWithValues', {
+            percentage: formatPercentage(status.explainedPct),
+            amount: formatMoney(status.explainedValue, { style: 'full' }),
+          })}
         </span>
         <span>
-          {formatPercentage(status.residualPct)}{' '}
-          {i18n.t('ui.fundpositionpopover.undisclosed')}
-          {formatMoney(status.residualValue, { style: 'full' })})
+          {i18n.t('ui.fundpositionpopover.undisclosedWithValues', {
+            percentage: formatPercentage(status.residualPct),
+            amount: formatMoney(status.residualValue, { style: 'full' }),
+          })}
         </span>
         {status.issues && (
           <span className="basis-full text-warning">{status.issues}</span>
