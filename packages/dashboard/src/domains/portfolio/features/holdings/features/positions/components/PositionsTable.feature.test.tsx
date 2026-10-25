@@ -46,7 +46,9 @@ describe('PositionsTable keyboard focus', () => {
     const user = userEvent.setup()
     const client = renderTable()
     await waitFor(() => expect(client.isFetching()).toBe(0))
-    const button = screen.getByRole('button', { name: /Current value/ })
+    const button = screen.getByRole('button', {
+      name: /^Sort by Current value,/,
+    })
     await user.click(button)
     expect(document.activeElement).toBe(button)
     await user.keyboard('{Enter}')

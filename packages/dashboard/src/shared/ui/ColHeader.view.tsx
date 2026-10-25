@@ -3,16 +3,18 @@ import { createPortal } from 'react-dom'
 
 import i18n from '@/i18n/i18n'
 
-import { useTooltipPosition } from './helpers/presenters/useTooltipPosition'
+// eslint-disable-next-line local/component-role -- This UI service only positions the visual tooltip.
+import { useTooltipPosition } from './services/useTooltipPosition'
 
 type Props = {
   label: string
+  columnName?: string
   content: string
 }
 
-export function ColHeader({ label, content }: Props) {
+export function ColHeader({ label, columnName = label, content }: Props) {
   const [visible, setVisible] = useState(false)
-  const { anchorRef, position } = useTooltipPosition(visible)
+  const { anchorRef, tooltipRef, position } = useTooltipPosition(visible)
   const tooltipId = useId()
 
   return (
@@ -22,18 +24,20 @@ export function ColHeader({ label, content }: Props) {
         type="button"
         ref={anchorRef}
         onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
+        onMouseLeave={(event) => {
+          if (document.activeElement !== event.currentTarget) setVisible(false)
+        }}
         onFocus={() => setVisible(true)}
         onBlur={() => setVisible(false)}
-        onClick={() => setVisible((current) => !current)}
+        onClick={() => setVisible(true)}
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === 'Escape' && visible) {
+            event.stopPropagation()
             setVisible(false)
-            event.currentTarget.blur()
           }
         }}
         aria-label={i18n.t('ui.colheader.moreInformationAbout', {
-          column: label || i18n.t('ui.colheader.thisColumn'),
+          column: columnName || i18n.t('ui.colheader.thisColumn'),
         })}
         aria-describedby={visible ? tooltipId : undefined}
         aria-expanded={visible}
@@ -44,10 +48,11 @@ export function ColHeader({ label, content }: Props) {
       {visible &&
         createPortal(
           <div
+            ref={tooltipRef}
             id={tooltipId}
             role="tooltip"
             style={{ top: position.top, left: position.left }}
-            className="pointer-events-none fixed z-[9999] w-72 rounded-control border border-border-strong bg-surface-raised p-3 text-xs leading-relaxed text-content-secondary shadow-xl"
+            className="pointer-events-none fixed z-[9999] w-72 max-w-[calc(100vw-1rem)] rounded-control border border-border-strong bg-surface-raised p-3 text-xs leading-relaxed text-content-secondary shadow-xl"
           >
             {content}
           </div>,

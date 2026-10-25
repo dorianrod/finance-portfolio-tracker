@@ -73,14 +73,67 @@ describe('requestAssetIrr', () => {
     ).rejects.toThrow('Unable to calculate asset IRR')
   })
 
-  it('rejects a successful response whose asset data is invalid', async () => {
-    const fetchImpl = vi.fn(async () =>
+  it.each(['not-a-number', 'Infinity', '-Infinity'])(
+    'rejects the invalid IRR %s',
+    async (irr) => {
+      const fetchImpl = vi.fn(async () =>
+        jsonResponse({
+          ...payload,
+          assets: [{ ...payload.assets[0], irr }],
+        }),
+      ) as unknown as typeof fetch
+
+      await expect(
+        requestAssetIrr(
+          [],
+          [],
+          undefined,
+          new Date('2026-10-13'),
+          new AbortController().signal,
+          fetchImpl,
+        ),
+      ).rejects.toThrow()
+    },
+  )
+
+  it('defaults null response arrays and display strings', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
       jsonResponse({
         ...payload,
-        assets: [{ ...payload.assets[0], irr: 'not-a-number' }],
+        assets: [
+          {
+            ...payload.assets[0],
+            name: null,
+            label: null,
+            accounts: null,
+            account_types: null,
+          },
+        ],
       }),
-    ) as unknown as typeof fetch
+    )
+    const result = await requestAssetIrr(
+      [],
+      [],
+      undefined,
+      new Date('2026-10-13'),
+      new AbortController().signal,
+      fetchImpl,
+    )
+    expect(result.assets).toEqual([
+      {
+        ...payload.assets[0],
+        name: '',
+        label: '',
+        accounts: [],
+        account_types: [],
+      },
+    ])
+  })
 
+  it('accepts an unavailable response with a null asset list', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      jsonResponse({ available: false, assets: null }),
+    )
     await expect(
       requestAssetIrr(
         [],
@@ -90,6 +143,11 @@ describe('requestAssetIrr', () => {
         new AbortController().signal,
         fetchImpl,
       ),
-    ).rejects.toThrow()
+    ).resolves.toEqual({
+      available: false,
+      start_date: null,
+      end_date: null,
+      assets: [],
+    })
   })
 })

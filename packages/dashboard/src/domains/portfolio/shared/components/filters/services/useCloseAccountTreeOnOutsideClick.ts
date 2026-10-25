@@ -9,7 +9,11 @@ export function useCloseAccountTreeOnOutsideClick(
   useEffect(() => {
     if (!open) return
     function handleMouseDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
+      if (
+        event.target instanceof Node &&
+        !containerRef.current?.contains(event.target)
+      )
+        setOpen(false)
     }
     document.addEventListener('mousedown', handleMouseDown)
     return () => document.removeEventListener('mousedown', handleMouseDown)

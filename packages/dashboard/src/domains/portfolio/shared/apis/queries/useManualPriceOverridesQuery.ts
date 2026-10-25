@@ -6,16 +6,14 @@ import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import { parseCsv } from '@/shared/csv/csvData'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
+import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 const MANUAL_PRICE_OVERRIDE_SCHEMA: yup.ObjectSchema<ManualPriceOverride> =
   yup.object({
     name: yup.string().defined(),
     ticker: yup.string().defined(),
     isin: yup.string().defined(),
-    price: yup
-      .number()
-      .required()
-      .test('finite', 'Price must be finite', Number.isFinite),
+    price: FINITE_NUMBER_SCHEMA.required(),
     currency: yup
       .string()
       .trim()

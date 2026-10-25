@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import type { ExposureRow } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
@@ -8,6 +8,7 @@ import type {
 } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export const GRID =
@@ -57,6 +58,8 @@ export function SourcesCell({
   className: string
 }) {
   const [anchor, setAnchor] = useState<DOMRect | null>(null)
+  const tooltipId = useId()
+  const formatNumber = useFormatNumber()
   if (sources.length <= 1) {
     return (
       <span className={`truncate ${className}`} title={sources[0]?.fund}>
@@ -65,25 +68,43 @@ export function SourcesCell({
     )
   }
   return (
-    <span
-      tabIndex={0}
+    <button
+      type="button"
+      aria-describedby={anchor ? tooltipId : undefined}
+      aria-expanded={anchor !== null}
       onMouseEnter={(event) =>
         setAnchor(event.currentTarget.getBoundingClientRect())
       }
-      onMouseLeave={() => setAnchor(null)}
+      onMouseLeave={(event) => {
+        if (document.activeElement !== event.currentTarget) setAnchor(null)
+      }}
       onFocus={(event) =>
         setAnchor(event.currentTarget.getBoundingClientRect())
       }
       onBlur={() => setAnchor(null)}
-      className={`w-fit cursor-help truncate underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && anchor) {
+          event.stopPropagation()
+          setAnchor(null)
+        }
+      }}
+      className={`w-fit cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
     >
-      {sources.length} {i18n.t('ui.fundholdingsexplorer.funds')}
+      {i18n.t('ui.fundholdingsexplorer.fundCount', {
+        count: sources.length,
+        formattedCount: formatNumber(sources.length),
+      })}
       {anchor &&
         createPortal(
-          <SourcesTooltip anchor={anchor} sources={sources} total={total} />,
+          <SourcesTooltip
+            id={tooltipId}
+            anchor={anchor}
+            sources={sources}
+            total={total}
+          />,
           document.body,
         )}
-    </span>
+    </button>
   )
 }
 
@@ -116,18 +137,19 @@ export function SourceTooltipRow({
 }
 
 export function SourcesTooltip({
+  id,
   anchor,
   sources,
   total,
 }: {
+  id: string
   anchor: DOMRect
   sources: Source[]
   total: number
 }) {
-  const left = Math.max(
-    8,
-    Math.min(anchor.left, window.innerWidth - TOOLTIP_WIDTH - 8),
-  )
+  const formatNumber = useFormatNumber()
+  const width = Math.min(TOOLTIP_WIDTH, window.innerWidth - 16)
+  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - width - 8))
   const below =
     anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
   const position = below
@@ -135,13 +157,16 @@ export function SourcesTooltip({
     : { bottom: window.innerHeight - anchor.top + 6 }
   return (
     <div
+      id={id}
       role="tooltip"
-      style={{ left, width: TOOLTIP_WIDTH, ...position }}
+      style={{ left, width, ...position }}
       className="pointer-events-none fixed z-50 rounded-lg border border-border-strong bg-canvas p-3 text-xs shadow-xl"
     >
       <div className="mb-2 text-[10px] uppercase tracking-wider text-content-subtle">
-        {i18n.t('ui.fundholdingsexplorer.heldThrough')} {sources.length}{' '}
-        {i18n.t('ui.fundholdingsexplorer.funds')}
+        {i18n.t('ui.fundholdingsexplorer.heldThroughFunds', {
+          count: sources.length,
+          formattedCount: formatNumber(sources.length),
+        })}
       </div>
       <ul className="max-h-64 space-y-1 overflow-hidden">
         {sources.map((source) => (

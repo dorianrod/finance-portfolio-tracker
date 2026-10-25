@@ -18,30 +18,22 @@ import {
   CALENDAR_DATE_SCHEMA,
   OPTIONAL_CALENDAR_DATE_SCHEMA,
 } from '@/shared/schemas/calendarDate.schema'
+import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 const requiredText = () => yup.string().defined()
 const requiredNumber = () =>
-  yup
-    .number()
-    .transform((value, originalValue) =>
-      originalValue === '' || originalValue == null ? 0 : value,
-    )
-    .defined()
-    .test('finite', 'Amount must be finite', Number.isFinite)
+  FINITE_NUMBER_SCHEMA.transform((value, originalValue) =>
+    originalValue === '' || originalValue == null ? 0 : value,
+  ).defined()
+
 const nullableNumber = () =>
-  yup
-    .number()
-    .transform((value, originalValue) =>
-      originalValue === '' || originalValue == null ? null : value,
-    )
+  FINITE_NUMBER_SCHEMA.transform((value, originalValue) =>
+    originalValue === '' || originalValue == null ? null : value,
+  )
     .nullable()
     .default(null)
     .defined()
-    .test(
-      'finite',
-      'Amount must be finite',
-      (value) => value === null || Number.isFinite(value),
-    )
+
 export const ACCOUNT_ROW_SCHEMA = yup.object({
   account: requiredText(),
   label: requiredText(),

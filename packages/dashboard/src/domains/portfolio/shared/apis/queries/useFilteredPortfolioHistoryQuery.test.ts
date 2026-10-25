@@ -2,9 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import {
   DemoScopeUnavailableError,
-  normalizeAccountSelection,
   requestFilteredPortfolioHistory,
-  resolveFilteredHistoryState,
 } from './useFilteredPortfolioHistoryQuery'
 
 const payload = {
@@ -30,50 +28,6 @@ function jsonResponse(body: object, status = 200): Response {
     headers: { 'Content-Type': 'application/json' },
   })
 }
-
-describe('normalizeAccountSelection', () => {
-  it('deduplicates raw accounts and groups their cash rows', () => {
-    expect(normalizeAccountSelection(['b::cash', 'a', 'b'])).toEqual(['a', 'b'])
-  })
-})
-
-describe('resolveFilteredHistoryState', () => {
-  const fallback = [
-    {
-      date: new Date('2026-10-12'),
-      total_value: 100,
-      total_cost_basis: 90,
-      unrealized_gain: 10,
-      net_cash_injected: 80,
-      cash_delta: 0,
-      tri: null,
-      tri_rolling_1y: null,
-      tri_rolling_3y: null,
-    },
-  ]
-
-  it('never exposes a response belonging to an older selection', () => {
-    const state = resolveFilteredHistoryState(fallback, true, 'new-account', {
-      key: 'old-account',
-      history: [{ ...fallback[0], tri: 99 }],
-      error: null,
-    })
-
-    expect(state.history).toBe(fallback)
-    expect(state.loading).toBe(true)
-    expect(state.history[0].tri).toBeNull()
-  })
-
-  it('uses the global fallback immediately when the filter is cleared', () => {
-    const state = resolveFilteredHistoryState(fallback, false, '', {
-      key: 'old-account',
-      history: [{ ...fallback[0], tri: 99 }],
-      error: null,
-    })
-
-    expect(state).toEqual({ history: fallback, loading: false, error: null })
-  })
-})
 
 describe('requestFilteredPortfolioHistory', () => {
   it('posts normalized accounts to the local Python API', async () => {
@@ -158,5 +112,35 @@ describe('requestFilteredPortfolioHistory', () => {
         fetchImpl,
       }),
     ).rejects.toThrow()
+  })
+
+  it.each(['total_value', 'tri_rolling_3y'])(
+    'rejects a nonfinite %s in the history response',
+    async (field) => {
+      const fetchImpl = vi.fn<typeof fetch>(async () =>
+        jsonResponse({
+          ...payload,
+          history: [{ ...payload.history[0], [field]: 'Infinity' }],
+        }),
+      )
+      await expect(
+        requestFilteredPortfolioHistory(['a'], new AbortController().signal, {
+          staticDemo: false,
+          fetchImpl,
+        }),
+      ).rejects.toThrow()
+    },
+  )
+
+  it('defaults null history and account arrays without accepting malformed rows', async () => {
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      jsonResponse({ accounts: null, history: null }),
+    )
+    await expect(
+      requestFilteredPortfolioHistory(['a'], new AbortController().signal, {
+        staticDemo: false,
+        fetchImpl,
+      }),
+    ).resolves.toEqual({ accounts: [], history: [] })
   })
 })

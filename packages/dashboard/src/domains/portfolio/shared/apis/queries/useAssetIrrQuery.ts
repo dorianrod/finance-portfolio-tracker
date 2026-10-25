@@ -13,6 +13,7 @@ import {
   DATE_REQUEST_SCHEMA,
   OPTIONAL_CALENDAR_DATE_SCHEMA,
 } from '@/shared/schemas/calendarDate.schema'
+import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -27,10 +28,18 @@ const ASSET_IRR_ITEM_SCHEMA: yup.ObjectSchema<AssetIrrItem> = yup.object({
   key: yup.string().defined(),
   label: yup.string().ensure().defined(),
   name: yup.string().ensure().defined(),
-  irr: yup.number().defined(),
-  value: yup.number().defined(),
-  accounts: yup.array(yup.string().defined()).default([]).defined(),
-  account_types: yup.array(yup.string().defined()).default([]).defined(),
+  irr: FINITE_NUMBER_SCHEMA.defined(),
+  value: FINITE_NUMBER_SCHEMA.defined(),
+  accounts: yup
+    .array(yup.string().defined())
+    .transform((value) => value ?? [])
+    .default([])
+    .defined(),
+  account_types: yup
+    .array(yup.string().defined())
+    .transform((value) => value ?? [])
+    .default([])
+    .defined(),
 })
 
 const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> = yup.object(
@@ -38,7 +47,11 @@ const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> = yup.object(
     available: yup.boolean().defined(),
     start_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
     end_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
-    assets: yup.array(ASSET_IRR_ITEM_SCHEMA).default([]).defined(),
+    assets: yup
+      .array(ASSET_IRR_ITEM_SCHEMA)
+      .transform((value) => value ?? [])
+      .default([])
+      .defined(),
   },
 )
 

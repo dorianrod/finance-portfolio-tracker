@@ -4,7 +4,8 @@ import { createPortal } from 'react-dom'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 
-import { useSidePanelDialog } from './helpers/presenters/useSidePanelDialog'
+// eslint-disable-next-line local/component-role -- This UI service owns focus and scrolling, without business state.
+import { useSidePanelDialog } from './services/useSidePanelDialog'
 
 type SidePanelProps = {
   open: boolean

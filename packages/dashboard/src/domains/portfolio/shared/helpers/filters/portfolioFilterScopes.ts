@@ -1,6 +1,6 @@
-import { normalizeAccountSelection } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery'
 import type { FilterSummaryItem } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { normalizeAccountSelection } from '@/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 

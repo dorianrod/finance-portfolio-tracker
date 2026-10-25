@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import {
   accountsForType,
@@ -226,6 +226,7 @@ export function AccountTreeSelect({
   onChange,
 }: AccountTreeProps) {
   const [open, setOpen] = useState(false)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const containerRef = useCloseAccountTreeOnOutsideClick(open, setOpen)
 
   function typeAccounts(type: string) {
@@ -247,7 +248,20 @@ export function AccountTreeSelect({
   }))
 
   return (
-    <div ref={containerRef} className="relative">
+    <div
+      ref={containerRef}
+      className="relative"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false)
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape' && open) {
+          event.stopPropagation()
+          setOpen(false)
+          triggerRef.current?.focus()
+        }
+      }}
+    >
       <div
         className={[
           'inline-flex items-center rounded-lg border text-xs transition-colors',
@@ -257,6 +271,7 @@ export function AccountTreeSelect({
         ].join(' ')}
       >
         <button
+          ref={triggerRef}
           type="button"
           aria-expanded={open}
           onClick={() => setOpen((current) => !current)}

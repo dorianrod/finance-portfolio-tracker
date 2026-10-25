@@ -120,16 +120,22 @@ export function FundHoldingsExplorer({
         )}
       </div>
       <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-border bg-surface px-4 py-2 text-xs text-content-muted">
-        {formatNumber(displayed.length)}{' '}
-        {i18n.t('ui.fundholdingsexplorer.issuers')}{' '}
-        {formatNumber(securityCount)}{' '}
-        {i18n.t('ui.fundholdingsexplorer.securities')}
+        {i18n.t('ui.fundholdingsexplorer.issuerCount', {
+          count: displayed.length,
+          formattedCount: formatNumber(displayed.length),
+        })}
+        {' · '}
+        {i18n.t('ui.fundholdingsexplorer.securityCount', {
+          count: securityCount,
+          formattedCount: formatNumber(securityCount),
+        })}
         {displayed.length !== totalIssuerCount && (
           <span className="text-content-subtle">
             {' '}
-            {i18n.t('ui.fundholdingsexplorer.filteredFrom')}{' '}
-            {formatNumber(totalIssuerCount)}{' '}
-            {i18n.t('ui.fundholdingsexplorer.issuers.64f16f')}
+            {i18n.t('ui.fundholdingsexplorer.filteredFromIssuers', {
+              count: totalIssuerCount,
+              formattedCount: formatNumber(totalIssuerCount),
+            })}
           </span>
         )}
       </div>

@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
+import { selectExposurePositions } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions'
 import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import { buildFundExposureViewModel } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/shared/services/actions/useDashboardUnderlyingHoldings'
@@ -32,7 +33,7 @@ export function useFundExposureViewModel(
       buildFundExposureViewModel({
         expanded,
         holdings,
-        positions,
+        positions: selectExposurePositions(positions),
         query,
         sort,
         statuses,

@@ -913,7 +913,7 @@ export function PositionsTable({
         </div>
       </div>
       <div className="overflow-x-auto rounded-b-xl">
-        <table className="w-full text-sm text-left table-fixed">
+        <table className="w-full min-w-[1100px] text-sm text-left table-fixed">
           <colgroup>
             <col style={{ width: '28px' }} />
             <col style={{ width: '27%' }} />

@@ -16,7 +16,10 @@ export function InfoTooltip({
     <span
       className="relative ml-1 inline-flex items-center"
       onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
+      onMouseLeave={(event) => {
+        if (!event.currentTarget.contains(document.activeElement))
+          setVisible(false)
+      }}
     >
       <button
         type="button"
@@ -28,9 +31,9 @@ export function InfoTooltip({
         onFocus={() => setVisible(true)}
         onBlur={() => setVisible(false)}
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === 'Escape' && visible) {
+            event.stopPropagation()
             setVisible(false)
-            event.currentTarget.blur()
           }
         }}
       >

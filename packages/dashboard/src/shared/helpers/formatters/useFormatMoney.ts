@@ -57,13 +57,15 @@ export function useFormatMoney() {
       if (
         style === 'compact' &&
         currency === 'EUR' &&
-        maximumFractionDigits == null
+        maximumFractionDigits == null &&
+        minimumFractionDigits == null
       )
         return formatCompactEuro(value)
       if (
         style === 'full' &&
         currency === 'EUR' &&
-        maximumFractionDigits == null
+        maximumFractionDigits == null &&
+        minimumFractionDigits == null
       )
         return formatFullEuro(value)
       if (
@@ -76,15 +78,22 @@ export function useFormatMoney() {
           : INTEGER_EUR_FORMATTER.format(value)
       }
 
+      const defaultDigits = style === 'decimal' ? 2 : 0
+      const minimumDigits =
+        minimumFractionDigits ??
+        Math.min(defaultDigits, maximumFractionDigits ?? defaultDigits)
+      const maximumDigits =
+        maximumFractionDigits ?? Math.max(defaultDigits, minimumDigits)
+      const isFullEuro = style === 'full' && currency === 'EUR'
       const formatter = new Intl.NumberFormat('en-GB', {
         currency,
-        maximumFractionDigits:
-          maximumFractionDigits ?? (style === 'decimal' ? 2 : 0),
-        minimumFractionDigits:
-          minimumFractionDigits ?? (style === 'decimal' ? 2 : 0),
-        style: 'currency',
+        maximumFractionDigits: maximumDigits,
+        minimumFractionDigits: minimumDigits,
+        style: isFullEuro ? 'decimal' : 'currency',
       })
-      return formatter.format(value)
+      return isFullEuro
+        ? `${formatter.format(value)} €`
+        : formatter.format(value)
     },
     [],
   )

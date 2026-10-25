@@ -34,6 +34,22 @@ describe('parseCsv', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('reads fresh data when the query requests the resource again', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(csvResponse())
+      .mockResolvedValueOnce(csvResponse('id\nposition-2\n'))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(
+      parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+    ).resolves.toEqual([{ id: 'position-1' }])
+    await expect(
+      parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+    ).resolves.toEqual([{ id: 'position-2' }])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
   it.each([
     ['a network error', () => Promise.reject(new Error('Network error'))],
     [

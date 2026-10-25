@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 
+import { resolveFilteredHistoryState } from '@/app/helpers/mappers/resolveFilteredHistoryState'
 import {
-  normalizeAccountSelection,
-  resolveFilteredHistoryState,
   useDemoFilteredHistoryAccountsQuery,
   useFilteredPortfolioHistoryQuery,
 } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery'
@@ -12,6 +11,7 @@ import {
   buildDemoPresetSelection,
   isDemoPresetActive,
 } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
+import { normalizeAccountSelection } from '@/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -49,21 +49,29 @@ export function useDashboardHistory({
     () => normalizeAccountSelection(filters.accounts).join('\u0000'),
     [filters.accounts],
   )
-  const filteredResponseState =
-    filteredHistoryQuery.data || filteredHistoryQuery.error
-      ? {
-          key: filteredAccountKey,
-          history: filteredHistoryQuery.data ?? null,
-          error: filteredHistoryQuery.error
-            ? getErrorMessage(filteredHistoryQuery.error)
-            : null,
-        }
-      : null
-  const filteredHistory = resolveFilteredHistoryState(
-    fallbackAccountHistory,
-    filters.accounts.size > 0,
-    filteredAccountKey,
-    filteredResponseState,
+  const filteredHistory = useMemo(
+    () =>
+      resolveFilteredHistoryState(
+        fallbackAccountHistory,
+        filters.accounts.size > 0,
+        filteredAccountKey,
+        filteredHistoryQuery.data || filteredHistoryQuery.error
+          ? {
+              key: filteredAccountKey,
+              history: filteredHistoryQuery.data ?? null,
+              error: filteredHistoryQuery.error
+                ? getErrorMessage(filteredHistoryQuery.error)
+                : null,
+            }
+          : null,
+      ),
+    [
+      fallbackAccountHistory,
+      filters.accounts.size,
+      filteredAccountKey,
+      filteredHistoryQuery.data,
+      filteredHistoryQuery.error,
+    ],
   )
   const displayedHistory = useMemo(
     () =>

@@ -1,9 +1,5 @@
 import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 
-export type AccountTypeDonutPoint = AccountTypePoint & {
-  _label: string
-}
-
 export type AccountTypeLabelPosition = {
   x: number
   y: number
@@ -11,7 +7,7 @@ export type AccountTypeLabelPosition = {
 }
 
 export function resolveAccountTypeLabelPositions(
-  data: AccountTypeDonutPoint[],
+  data: AccountTypePoint[],
   cx: number,
   cy: number,
   outerRadius: number,

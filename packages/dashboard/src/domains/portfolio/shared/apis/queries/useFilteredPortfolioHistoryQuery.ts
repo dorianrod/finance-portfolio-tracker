@@ -4,13 +4,14 @@ import * as yup from 'yup'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { normalizeAccountSelection } from '@/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection'
 import type { ApiHistoryPoint } from '@/domains/portfolio/shared/types/apiHistoryPoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PortfolioHistoryResponse } from '@/domains/portfolio/shared/types/portfolioHistoryResponse.type'
 import i18n from '@/i18n/i18n'
 import { readJsonResponse } from '@/shared/http/readJsonResponse'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
+import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
@@ -20,35 +21,31 @@ const FILTERED_HISTORY_REQUEST_SCHEMA = yup.object({
 
 const API_HISTORY_POINT_SCHEMA: yup.ObjectSchema<ApiHistoryPoint> = yup.object({
   snapshot_date: CALENDAR_DATE_SCHEMA.required(),
-  total_value: yup.number().defined(),
-  total_cost_basis: yup.number().defined(),
-  unrealized_gain: yup.number().defined(),
-  net_cash_injected: yup.number().defined(),
-  cash_delta: yup.number().nullable().default(null).defined(),
-  tri: yup.number().nullable().default(null).defined(),
-  tri_rolling_1y: yup.number().nullable().default(null).defined(),
-  tri_rolling_3y: yup.number().nullable().default(null).defined(),
+  total_value: FINITE_NUMBER_SCHEMA.defined(),
+  total_cost_basis: FINITE_NUMBER_SCHEMA.defined(),
+  unrealized_gain: FINITE_NUMBER_SCHEMA.defined(),
+  net_cash_injected: FINITE_NUMBER_SCHEMA.defined(),
+  cash_delta: FINITE_NUMBER_SCHEMA.nullable().default(null).defined(),
+  tri: FINITE_NUMBER_SCHEMA.nullable().default(null).defined(),
+  tri_rolling_1y: FINITE_NUMBER_SCHEMA.nullable().default(null).defined(),
+  tri_rolling_3y: FINITE_NUMBER_SCHEMA.nullable().default(null).defined(),
 })
 
 const FILTERED_HISTORY_RESPONSE_SCHEMA: yup.ObjectSchema<PortfolioHistoryResponse> =
   yup.object({
-    accounts: yup.array(yup.string().defined()).default([]).defined(),
-    history: yup.array(API_HISTORY_POINT_SCHEMA).default([]).defined(),
+    accounts: yup
+      .array(yup.string().defined())
+      .transform((value) => value ?? [])
+      .default([])
+      .defined(),
+    history: yup
+      .array(API_HISTORY_POINT_SCHEMA)
+      .transform((value) => value ?? [])
+      .default([])
+      .defined(),
   })
 
 export class DemoScopeUnavailableError extends Error {}
-
-type FilteredResponseState = {
-  key: string
-  history: PortfolioHistoryPoint[] | null
-  error: string | null
-}
-
-export function normalizeAccountSelection(
-  accounts: Iterable<string>,
-): string[] {
-  return [...new Set([...accounts].map(rawAccountId))].toSorted()
-}
 
 function sameAccounts(left: string[], right: string[]): boolean {
   return (
@@ -72,23 +69,6 @@ function toHistory(
     tri_rolling_3y: point.tri_rolling_3y,
     total_broker_cash: 0,
   }))
-}
-
-export function resolveFilteredHistoryState(
-  fallbackHistory: PortfolioHistoryPoint[],
-  isFiltered: boolean,
-  accountKey: string,
-  responseState: FilteredResponseState | null,
-) {
-  const matchingResponse =
-    responseState?.key === accountKey ? responseState : null
-  return {
-    history: isFiltered
-      ? (matchingResponse?.history ?? fallbackHistory)
-      : fallbackHistory,
-    loading: isFiltered && matchingResponse === null,
-    error: matchingResponse?.error ?? null,
-  }
 }
 
 async function readResponse(

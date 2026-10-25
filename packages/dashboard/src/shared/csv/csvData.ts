@@ -9,26 +9,28 @@ function loadCsv(url: string): Promise<unknown[]> {
   const cachedRequest = csvRequests.get(url)
   if (cachedRequest) return cachedRequest
 
-  const request = fetch(url).then(async (response) => {
-    if (!response.ok) throw new HttpError(response.status)
-    if (response.headers.get('content-type')?.includes('text/html')) {
-      throw new Error('Expected CSV data, received HTML')
-    }
-    const result = Papa.parse<unknown>(await response.text(), {
-      header: true,
-      skipEmptyLines: true,
+  const request = fetch(url)
+    .then(async (response) => {
+      if (!response.ok) throw new HttpError(response.status)
+      if (response.headers.get('content-type')?.includes('text/html')) {
+        throw new Error('Expected CSV data, received HTML')
+      }
+      const result = Papa.parse<unknown>(await response.text(), {
+        header: true,
+        skipEmptyLines: true,
+      })
+      const parseError = result.errors.find(
+        (error) => error.code !== 'UndetectableDelimiter',
+      )
+      if (parseError) throw new Error(parseError.message)
+      return result.data
     })
-    const parseError = result.errors.find(
-      (error) => error.code !== 'UndetectableDelimiter',
-    )
-    if (parseError) throw new Error(parseError.message)
-    return result.data
-  })
+    .finally(() => {
+      if (csvRequests.get(url) === request) csvRequests.delete(url)
+    })
 
+  // Only deduplicate in-flight requests; TanStack Query owns cached server data.
   csvRequests.set(url, request)
-  void request.catch(() => {
-    if (csvRequests.get(url) === request) csvRequests.delete(url)
-  })
 
   return request
 }
@@ -38,15 +40,10 @@ export async function parseCsv<S extends Schema>(
   rowSchema: S,
 ): Promise<InferType<S>[]> {
   const rows = await loadCsv(url)
-  try {
-    return await array(rowSchema).defined().validate(rows, {
-      abortEarly: false,
-      stripUnknown: true,
-    })
-  } catch (error) {
-    csvRequests.delete(url)
-    throw error
-  }
+  return array(rowSchema).defined().validate(rows, {
+    abortEarly: false,
+    stripUnknown: true,
+  })
 }
 
 export async function parseOptionalCsv<S extends Schema>(

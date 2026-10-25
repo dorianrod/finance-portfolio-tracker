@@ -1,5 +1,5 @@
+import { selectExposurePositions } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
@@ -13,12 +13,7 @@ export function FundLookThroughTab({
   positions: PositionRow[]
   holdings: FundHolding[]
 }) {
-  const applicablePositions = positions.filter(
-    (position) =>
-      position.status === 'active' &&
-      (position.total_value ?? 0) > 0 &&
-      isAssetAnalysisApplicablePosition(position),
-  )
+  const applicablePositions = selectExposurePositions(positions)
 
   let content = (
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -58,12 +53,7 @@ export function FundLookThroughTab({
       </section>
     )
   } else if (holdings.length > 0) {
-    content = (
-      <FundHoldingsExplorer
-        positions={applicablePositions}
-        holdings={holdings}
-      />
-    )
+    content = <FundHoldingsExplorer positions={positions} holdings={holdings} />
   }
 
   return <div className="mb-6 space-y-4">{content}</div>

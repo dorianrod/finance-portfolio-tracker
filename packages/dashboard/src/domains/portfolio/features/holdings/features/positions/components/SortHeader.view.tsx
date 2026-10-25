@@ -27,7 +27,7 @@ export function SortHeader({
   }
   const sortIndicator = active ? { asc: '↑', desc: '↓' }[dir] : '⇅'
   return (
-    <span className="inline-flex items-center gap-1">
+    <span className="inline-flex max-w-full flex-wrap items-center gap-1">
       <button
         type="button"
         onClick={() => onSort(sk)}
@@ -35,7 +35,7 @@ export function SortHeader({
           value0: label,
           value1: sortState,
         })}
-        className="rounded-control p-1 text-content-muted transition-colors hover:text-content-secondary"
+        className="min-w-0 max-w-full break-words rounded-control p-1 text-content-muted transition-colors hover:text-content-secondary"
       >
         {label}
         <span
@@ -44,7 +44,7 @@ export function SortHeader({
           {sortIndicator}
         </span>
       </button>
-      <ColHeader label="" content={tooltip} />
+      <ColHeader label="" columnName={label} content={tooltip} />
     </span>
   )
 }

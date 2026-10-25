@@ -1,12 +1,10 @@
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
 
-import {
-  type AccountTypeDonutPoint,
-  resolveAccountTypeLabelPositions,
-} from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
+import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { catColor } from '@/shared/theme/chartColors'
@@ -15,7 +13,7 @@ import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 function AccountTypeLabel({
   data,
   ...props
-}: PieLabelRenderProps & { data: AccountTypeDonutPoint[] }) {
+}: PieLabelRenderProps & { data: AccountTypePoint[] }) {
   const formatPercentage = useFormatPercentage()
   const { cx, cy, midAngle, outerRadius, payload, percent, index } = props
   if (
@@ -25,7 +23,7 @@ function AccountTypeLabel({
     typeof outerRadius !== 'number'
   )
     return null
-  const point = payload as AccountTypeDonutPoint
+  const point = payload as AccountTypePoint
   const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
     index
   ]
@@ -71,7 +69,7 @@ function AccountTypeSector({
   outerRadius,
   payload,
 }: PieSectorShapeProps) {
-  const point = payload as AccountTypeDonutPoint
+  const point = payload as AccountTypePoint
   const radius = outerRadius ?? 0
   const accountColor = catColor(point.account_type)
   const sectorBase = {
@@ -106,7 +104,7 @@ function AccountTypeSector({
           {...sectorBase}
           innerRadius={lossInnerRadius}
           outerRadius={radius}
-          fill={SEMANTIC_COLORS.performancePositive}
+          fill={SEMANTIC_COLORS.performanceNegative}
           fillOpacity={0.68}
         />
       </g>
@@ -144,9 +142,9 @@ function AccountTypeSector({
 export function AccountTypeBreakdownChart({
   data,
 }: {
-  data: AccountTypeDonutPoint[]
+  data: AccountTypePoint[]
 }) {
-  const donutData: AccountTypeDonutPoint[] = data.map((point) => ({
+  const donutData: AccountTypePoint[] = data.map((point) => ({
     ...point,
     total_cost_basis: Math.max(0, point.total_cost_basis),
   }))
