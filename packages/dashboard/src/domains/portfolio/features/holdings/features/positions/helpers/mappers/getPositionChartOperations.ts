@@ -1,4 +1,4 @@
-import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function getPositionTradeOperations(position: PositionRow): Operation[] {

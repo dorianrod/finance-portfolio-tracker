@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { resetFilters } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
+import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import {
   dashboardAllocationFilterAtom,
   dashboardAllocationPositionsOpenAtom,

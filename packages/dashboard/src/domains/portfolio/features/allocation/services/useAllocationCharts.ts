@@ -8,7 +8,6 @@ import {
   excludeNonApplicableAllocationData,
   scopeRawAllocationData,
 } from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
-import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -21,6 +20,7 @@ import {
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import type {
   FundHolding,
   HistoricalFundHolding,

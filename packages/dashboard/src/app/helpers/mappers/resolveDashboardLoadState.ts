@@ -1,4 +1,4 @@
-import type { DashboardLoadState } from '@/app/DashboardLoadState.state'
+import type { DashboardLoadState } from '@/app/types/dashboardLoadState.type'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 
 type SourceQuery = { error: unknown; isPending: boolean }

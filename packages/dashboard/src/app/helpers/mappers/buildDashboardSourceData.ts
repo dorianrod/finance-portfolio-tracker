@@ -1,4 +1,4 @@
-import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
+import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

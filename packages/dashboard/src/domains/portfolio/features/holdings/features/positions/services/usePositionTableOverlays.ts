@@ -1,10 +1,10 @@
 import { useAtom } from 'jotai'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
-import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
 import { positionUnderlyingPopoverAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms'
-import type { AllocationHoverTarget } from '@/domains/portfolio/shared/components/HoverAllocationPopover.view'
+import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
+import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
+import type { AllocationHoverTarget } from '@/domains/portfolio/shared/types/allocationHoverTarget.type'
 import { useDelayedDismiss } from '@/shared/ui/services/useDelayedDismiss'
 
 export function usePositionTableOverlays() {

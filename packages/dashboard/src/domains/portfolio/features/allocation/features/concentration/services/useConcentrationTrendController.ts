@@ -6,12 +6,12 @@ import {
   useState,
 } from 'react'
 
-import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   nextPlaybackIndex,
   shouldAnimateConcentration,
 } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 
 export type ConcentrationChartRow = HistoricalConcentrationPoint & {
   timestamp: number

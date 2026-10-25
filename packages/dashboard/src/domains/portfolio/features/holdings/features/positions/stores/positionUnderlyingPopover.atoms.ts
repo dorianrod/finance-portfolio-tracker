@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 
-import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover.feature'
+import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
 
 const DEFAULT_POSITION_UNDERLYING_POPOVER: FundPositionPopoverTarget | null =
   null

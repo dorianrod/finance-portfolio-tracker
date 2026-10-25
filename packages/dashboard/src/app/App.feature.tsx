@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react'
 
 import { DashboardLoadState } from '@/app/DashboardLoadState.state'
 import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.view'
-import { DASHBOARD_TAB_LOADERS } from '@/app/services/dashboardTabLoaders'
+import { DASHBOARD_TAB_LOADERS } from '@/app/routing/dashboardTabLoaders'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
 import { AllocationViewToggle } from '@/domains/portfolio/features/allocation/components/AllocationViewToggle.feature'
 import { FilterChipBar } from '@/domains/portfolio/features/allocation/components/FilterChipBar.feature'
@@ -19,14 +19,14 @@ import {
   ResetFiltersButton,
 } from '@/domains/portfolio/shared/components/filters/FilterBar.feature'
 import {
-  filterSummaries,
-  filterVisibilityForTab,
-} from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
-import {
   AnalysisReliabilityKpi,
   CombinedAnalysisReliabilityKpi,
   PipelineReliabilityKpi,
 } from '@/domains/portfolio/shared/components/quality/AnalysisReliabilityKpi.feature'
+import {
+  filterSummaries,
+  filterVisibilityForTab,
+} from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'

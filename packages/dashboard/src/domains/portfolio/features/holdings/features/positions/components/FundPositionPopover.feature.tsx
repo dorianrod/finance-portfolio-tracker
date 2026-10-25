@@ -1,7 +1,6 @@
 import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/useFundPositionHoldings'
+import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -10,12 +9,6 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { Preview } from '@/shared/ui/Preview.view'
 
 import { FundPositionHoldingRow } from './FundPositionHoldingRow.feature'
-
-export type FundPositionPopoverTarget = {
-  position: PositionRow
-  status: FundHoldingStatus
-  buttonRect: DOMRect
-}
 
 export function FundPositionPopover({
   target,

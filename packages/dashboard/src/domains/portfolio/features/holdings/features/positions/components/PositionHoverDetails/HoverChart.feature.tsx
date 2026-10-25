@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import {
   buildHoverChartSeries,
   computeUnitPriceDomain,
-  type Operation,
 } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
@@ -12,13 +12,6 @@ import { StatusMessage } from '@/shared/ui/Controls.view'
 import { Preview } from '@/shared/ui/Preview.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
-
-export type ChartTarget = {
-  isin: string
-  name: string
-  operations: Operation[]
-  buttonRect: DOMRect
-}
 
 type Props = {
   target: ChartTarget

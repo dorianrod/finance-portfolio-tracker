@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
 import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
@@ -9,12 +10,6 @@ import { StatusMessage } from '@/shared/ui/Controls.view'
 import { Preview } from '@/shared/ui/Preview.view'
 
 import { SavingsHistoryChart } from './SavingsHistoryChart.view'
-
-export type SavingsChartTarget = {
-  name: string
-  operations: { date: Date; total_amount: number; operation_type: string }[]
-  buttonRect: DOMRect
-}
 
 type SavingsProps = {
   target: SavingsChartTarget

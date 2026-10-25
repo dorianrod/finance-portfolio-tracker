@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import type { ConcentrationMode } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { ConcentrationSummary } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

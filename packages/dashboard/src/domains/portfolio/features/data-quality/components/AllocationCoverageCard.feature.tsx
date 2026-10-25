@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { accountLabel } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
+import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import type {
   AccountCoverage,
   DimensionCoverage,

@@ -1,13 +1,7 @@
+import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
 import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
-export type Operation = {
-  date: Date
-  operation_type: string
-  total_amount: number
-  realized_gain: number | null
-}
 
 export type HoverChartDataPoint = {
   // Calendar-month key used to align monthly price and operation series.

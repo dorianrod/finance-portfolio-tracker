@@ -6,14 +6,12 @@ import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocati
 import { CumulativeConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/CumulativeConcentrationChart.feature'
 import { useConcentrationDescriptions } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationDescriptions'
 import { useAllocationCharts } from '@/domains/portfolio/features/allocation/services/useAllocationCharts'
-import {
-  type ConcentrationMode,
-  ConcentrationModeToggle,
-} from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
+import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import {
   dashboardAllocationFilterAtom,
   dashboardAllocationViewAtom,
 } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import type {
   FundHolding,
   HistoricalFundHolding,

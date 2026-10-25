@@ -1,19 +1,15 @@
 import type { ReactNode } from 'react'
 
+import type { DashboardLoadState as DashboardLoadStateModel } from '@/app/types/dashboardLoadState.type'
 import i18n from '@/i18n/i18n'
 import { StatusMessage } from '@/shared/ui/Controls.view'
-
-export type DashboardLoadState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | { status: 'ready' }
 
 export function DashboardLoadState({
   state,
   onRetry,
   children,
 }: {
-  state: DashboardLoadState
+  state: DashboardLoadStateModel
   onRetry: () => void
   children: ReactNode
 }) {

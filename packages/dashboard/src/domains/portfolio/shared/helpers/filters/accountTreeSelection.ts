@@ -1,4 +1,4 @@
-import { accountLabel } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
+import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import i18n from '@/i18n/i18n'
 
 export function accountsForType(

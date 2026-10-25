@@ -1,16 +1,9 @@
+import type { AllocationHoverTarget } from '@/domains/portfolio/shared/types/allocationHoverTarget.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
-import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
 import i18n from '@/i18n/i18n'
 import { Preview } from '@/shared/ui/Preview.view'
 
 import { MiniDonut } from './MiniDonut.view'
-
-export type AllocationHoverTarget = {
-  isin: string
-  name: string
-  buttonRect: DOMRect
-  allocation: IsinAllocation
-}
 
 export function HoverAllocationPopover({
   target,

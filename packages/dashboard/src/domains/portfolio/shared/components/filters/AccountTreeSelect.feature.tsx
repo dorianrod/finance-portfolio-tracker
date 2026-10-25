@@ -6,11 +6,14 @@ import {
   buildAccountSelectionLabel,
   toggleAccountTypeSelection,
 } from '@/domains/portfolio/shared/helpers/filters/accountTreeSelection'
+import {
+  accountLabel,
+  toggle,
+} from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import i18n from '@/i18n/i18n'
 import { Button, Decorative } from '@/shared/ui/Controls.view'
 import { Popover } from '@/shared/ui/Popover.view'
 
-import { accountLabel, toggle } from './helpers/filters/portfolioFilters'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
 
 type AccountTreeProps = {

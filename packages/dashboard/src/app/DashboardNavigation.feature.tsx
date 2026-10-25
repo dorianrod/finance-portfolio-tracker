@@ -1,4 +1,4 @@
-import { preloadDashboardTab } from '@/app/services/dashboardTabLoaders'
+import { preloadDashboardTab } from '@/app/routing/dashboardTabLoaders'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
 import { type AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'

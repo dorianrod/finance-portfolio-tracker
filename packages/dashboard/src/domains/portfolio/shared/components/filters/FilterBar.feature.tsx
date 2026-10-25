@@ -1,6 +1,13 @@
 import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 
+import {
+  clearFilterGroup,
+  type FilterSummaryItem,
+  type FilterVisibility,
+  presetDateFrom,
+  toggle,
+} from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
 import { usePortfolioFilterOptions } from '@/domains/portfolio/shared/services/usePortfolioFilterOptions'
 import {
@@ -24,13 +31,6 @@ import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { AccountTree } from './AccountTreeSelect.feature'
 import { Chip } from './Chip.view'
 import { FilterSection } from './FilterSection.view'
-import {
-  clearFilterGroup,
-  type FilterSummaryItem,
-  type FilterVisibility,
-  presetDateFrom,
-  toggle,
-} from './helpers/filters/portfolioFilters'
 
 type FilterPanelProps = {
   visibility: FilterVisibility

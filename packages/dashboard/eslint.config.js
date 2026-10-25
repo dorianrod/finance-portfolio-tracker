@@ -8,6 +8,7 @@ import tseslint from 'typescript-eslint'
 
 import componentRole from './eslint-rules/component-role.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
+import importBoundaries from './eslint-rules/import-boundaries.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
 import noComplexComponentCalculation from './eslint-rules/no-complex-component-calculation.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
@@ -60,6 +61,7 @@ export default defineConfig([
         rules: {
           'component-role': componentRole,
           'i18n-consistency': i18nConsistency,
+          'import-boundaries': importBoundaries,
           'max-hooks-per-component': maxHooksPerComponent,
           'no-complex-component-calculation': noComplexComponentCalculation,
           'no-complex-jsx-condition': noComplexJsxCondition,
@@ -127,6 +129,7 @@ export default defineConfig([
       'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
       'local/i18n-consistency': 'error',
+      'local/import-boundaries': 'error',
       'local/max-hooks-per-component': ['warn', { max: 6 }],
       'local/no-complex-component-calculation': 'error',
       'local/no-complex-jsx-condition': 'warn',
@@ -152,39 +155,6 @@ export default defineConfig([
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       'local/no-hardcoded-ui-strings': 'off',
-    },
-  },
-  {
-    files: ['src/shared/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/domains/**'],
-              message: 'Shared code must not depend on business domains.',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ['src/domains/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/app/**'],
-              message:
-                'Business domains must not depend on the application shell.',
-            },
-          ],
-        },
-      ],
     },
   },
 ])
