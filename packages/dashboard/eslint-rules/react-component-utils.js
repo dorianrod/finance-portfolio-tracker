@@ -1,6 +1,13 @@
 import path from 'node:path'
 
 const REACT_COMPONENT_WRAPPERS = new Set(['forwardRef', 'memo'])
+const TYPESCRIPT_EXPRESSION_WRAPPERS = new Set([
+  'TSAsExpression',
+  'TSInstantiationExpression',
+  'TSNonNullExpression',
+  'TSSatisfiesExpression',
+  'TSTypeAssertion',
+])
 
 export function isFunctionNode(node) {
   return (
@@ -42,8 +49,10 @@ export function getFunctionComponentName(node) {
 
   let current = node
   while (
-    isComponentWrapper(current.parent) &&
-    current.parent.arguments.includes(current)
+    (isComponentWrapper(current.parent) &&
+      current.parent.arguments.includes(current)) ||
+    (TYPESCRIPT_EXPRESSION_WRAPPERS.has(current.parent?.type) &&
+      current.parent.expression === current)
   ) {
     current = current.parent
   }

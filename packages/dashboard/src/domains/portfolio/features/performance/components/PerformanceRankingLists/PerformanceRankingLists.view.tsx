@@ -6,6 +6,8 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 
+import { getIrrBarWidth } from './helpers/presenters/getIrrBarWidth'
+
 export function ContributionListItem({
   item,
   positive,
@@ -101,7 +103,7 @@ export function IrrListItem({
         <div
           className={`h-full rounded-full ${positive ? 'bg-positive' : 'bg-danger'}`}
           style={{
-            width: `${strongestIrr > 0 ? (Math.abs(item.irr) / strongestIrr) * 100 : 0}%`,
+            width: getIrrBarWidth(item.irr, strongestIrr),
           }}
         />
       </div>

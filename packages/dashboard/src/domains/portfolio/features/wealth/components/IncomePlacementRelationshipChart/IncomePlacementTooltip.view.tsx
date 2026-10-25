@@ -8,6 +8,9 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+import { getRelationshipYearOpacity } from './helpers/presenters/getRelationshipYearOpacity'
+import { getYearLabelPosition } from './helpers/presenters/getYearLabelPosition'
+
 const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = {
   dx: 0,
   dy: -12,
@@ -36,14 +39,14 @@ export function YearLabel({
   const point = chartPoints[index]
   if (!point) return null
 
-  const width = 'width' in viewBox ? Number(viewBox.width ?? 0) : 0
-  const height = 'height' in viewBox ? Number(viewBox.height ?? 0) : 0
-  const x = Number(viewBox.x) + width / 2 + placement.dx
-  const y = Number(viewBox.y) + height / 2 + placement.dy
+  const { x, y } = getYearLabelPosition(viewBox, placement)
   const isRecent = recentYears.has(point.year)
-  const ageProgress =
-    (point.year - oldestYear) / Math.max(1, newestYear - oldestYear)
-  const opacity = isRecent ? 1 : 0.3 + ageProgress * 0.35
+  const opacity = getRelationshipYearOpacity(
+    point.year,
+    isRecent,
+    oldestYear,
+    newestYear,
+  )
 
   return (
     <text

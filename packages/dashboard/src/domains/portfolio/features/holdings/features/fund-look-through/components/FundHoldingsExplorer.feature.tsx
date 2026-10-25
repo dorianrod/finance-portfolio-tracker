@@ -8,7 +8,10 @@ import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 
-import { GRID, VirtualExposureRow } from './FundExposureRows.view'
+import {
+  GRID,
+  VirtualExposureRow,
+} from './FundExposureRows/FundExposureRows.view'
 
 export type { FundExposureSort } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 

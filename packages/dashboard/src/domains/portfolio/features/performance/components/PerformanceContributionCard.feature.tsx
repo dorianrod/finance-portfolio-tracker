@@ -25,7 +25,10 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 
-import { ContributionListItem, IrrList } from './PerformanceRankingLists.view'
+import {
+  ContributionListItem,
+  IrrList,
+} from './PerformanceRankingLists/PerformanceRankingLists.view'
 
 type Props = {
   assetIrr: AssetIrrSummary

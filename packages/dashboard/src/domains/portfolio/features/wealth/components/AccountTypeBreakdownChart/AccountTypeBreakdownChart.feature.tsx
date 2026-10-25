@@ -10,6 +10,9 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { catColor } from '@/shared/theme/chartColors'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 
+import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
+import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
+
 function AccountTypeLabel({
   data,
   ...props
@@ -29,19 +32,18 @@ function AccountTypeLabel({
   ]
   if (!position) return null
 
-  const radians = (-midAngle * Math.PI) / 180
-  const edgeRadius = outerRadius + 2
-  const elbowRadius = outerRadius + 10
-  const edgeX = cx + edgeRadius * Math.cos(radians)
-  const edgeY = cy + edgeRadius * Math.sin(radians)
-  const elbowX = cx + elbowRadius * Math.cos(radians)
-  const elbowY = cy + elbowRadius * Math.sin(radians)
-  const lineEndX = position.x + (position.isRight ? -4 : 4)
+  const leaderLine = getAccountTypeLeaderLine(
+    cx,
+    cy,
+    midAngle,
+    outerRadius,
+    position,
+  )
 
   return (
     <g>
       <polyline
-        points={`${edgeX},${edgeY} ${elbowX},${elbowY} ${lineEndX},${position.y}`}
+        points={leaderLine}
         fill="none"
         stroke="var(--chart-zero)"
         strokeWidth={0.75}
@@ -71,6 +73,7 @@ function AccountTypeSector({
 }: PieSectorShapeProps) {
   const point = payload as AccountTypePoint
   const radius = outerRadius ?? 0
+  const splitRadius = getAccountTypeSplitRadius(point, radius)
   const accountColor = catColor(point.account_type)
   const sectorBase = {
     cx,
@@ -83,14 +86,6 @@ function AccountTypeSector({
   }
 
   if (point.unrealized_gain < 0) {
-    const lossRatio =
-      point.total_cost_basis > 0
-        ? Math.min(
-            Math.abs(point.unrealized_gain) / point.total_cost_basis,
-            0.95,
-          )
-        : 1
-    const lossInnerRadius = radius * Math.sqrt(1 - lossRatio)
     return (
       <g>
         <Sector
@@ -102,7 +97,7 @@ function AccountTypeSector({
         />
         <Sector
           {...sectorBase}
-          innerRadius={lossInnerRadius}
+          innerRadius={splitRadius}
           outerRadius={radius}
           fill={SEMANTIC_COLORS.performanceNegative}
           fillOpacity={0.68}
@@ -111,10 +106,6 @@ function AccountTypeSector({
     )
   }
 
-  const positiveTotal = point.total_cost_basis + point.unrealized_gain
-  const costRatio =
-    positiveTotal > 0 ? Math.min(point.total_cost_basis / positiveTotal, 1) : 0
-  const splitRadius = radius * Math.sqrt(costRatio)
   return (
     <g>
       {splitRadius > 0 && (

@@ -18,7 +18,7 @@ import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
-import { PieLabel } from './PieLabel.view'
+import { PieLabel } from './PieLabel/PieLabel.view'
 
 export function DonutCardView({
   title,

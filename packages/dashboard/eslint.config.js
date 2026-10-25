@@ -9,6 +9,7 @@ import tseslint from 'typescript-eslint'
 import componentRole from './eslint-rules/component-role.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
+import noComplexComponentCalculation from './eslint-rules/no-complex-component-calculation.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
@@ -57,6 +58,7 @@ export default defineConfig([
           'component-role': componentRole,
           'i18n-consistency': i18nConsistency,
           'max-hooks-per-component': maxHooksPerComponent,
+          'no-complex-component-calculation': noComplexComponentCalculation,
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
           'no-component-module-logic': noComponentModuleLogic,
@@ -120,6 +122,7 @@ export default defineConfig([
       'local/component-role': 'error',
       'local/i18n-consistency': 'error',
       'local/max-hooks-per-component': ['warn', { max: 6 }],
+      'local/no-complex-component-calculation': 'error',
       'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
       'local/no-component-module-logic': 'warn',

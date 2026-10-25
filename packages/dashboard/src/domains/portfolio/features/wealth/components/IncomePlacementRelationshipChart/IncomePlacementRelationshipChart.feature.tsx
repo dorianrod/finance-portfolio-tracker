@@ -23,6 +23,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 
+import { getRelationshipYearOpacity } from './helpers/presenters/getRelationshipYearOpacity'
 import { RelationshipTooltip, YearLabel } from './IncomePlacementTooltip.view'
 
 export function IncomePlacementRelationshipChart({
@@ -159,12 +160,12 @@ export function IncomePlacementRelationshipChart({
                       : SEMANTIC_COLORS.neutralSeries
                   }
                   fillOpacity={
-                    recentYears.has(point.year)
-                      ? 1
-                      : 0.3 +
-                        ((point.year - oldestYear) /
-                          Math.max(1, newestYear - oldestYear)) *
-                          0.35
+                    getRelationshipYearOpacity(
+                      point.year,
+                      recentYears.has(point.year),
+                      oldestYear,
+                      newestYear,
+                    )
                   }
                 />
               )

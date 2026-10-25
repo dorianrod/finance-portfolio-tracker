@@ -11,6 +11,8 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
+import { getSourcesTooltipStyle } from './helpers/presenters/getSourcesTooltipStyle'
+
 export const GRID =
   'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
 
@@ -108,8 +110,6 @@ export function SourcesCell({
   )
 }
 
-export const TOOLTIP_WIDTH = 340
-
 export function SourceTooltipRow({
   source,
   total,
@@ -148,18 +148,15 @@ export function SourcesTooltip({
   total: number
 }) {
   const formatNumber = useFormatNumber()
-  const width = Math.min(TOOLTIP_WIDTH, window.innerWidth - 16)
-  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - width - 8))
-  const below =
-    anchor.bottom + 8 + 40 + sources.length * 24 < window.innerHeight
-  const position = below
-    ? { top: anchor.bottom + 6 }
-    : { bottom: window.innerHeight - anchor.top + 6 }
+  const style = getSourcesTooltipStyle(anchor, sources.length, {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
   return (
     <div
       id={id}
       role="tooltip"
-      style={{ left, width, ...position }}
+      style={style}
       className="pointer-events-none fixed z-50 rounded-lg border border-border-strong bg-canvas p-3 text-xs shadow-xl"
     >
       <div className="mb-2 text-[10px] uppercase tracking-wider text-content-subtle">

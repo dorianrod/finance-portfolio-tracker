@@ -28,7 +28,8 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` |
 | 2 | Component Composition | `composition-` |
-| 3 | API Maintenance | `quality-` |
+| 3 | Component Logic | `architecture-` |
+| 4 | API Maintenance | `quality-` |
 
 ## Quick Reference
 
@@ -39,6 +40,10 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 ### Component Composition
 
 - [`composition-required-children`](rules/composition-required-children.md) — Compose UI through nested children and compound components; never pass content through named props or `children={...}`.
+
+### Component Logic
+
+- [`architecture-extract-component-calculations`](rules/architecture-extract-component-calculations.md) — Extract compound numeric and layout calculations into categorized helpers; use presenters for UI geometry.
 
 ### API Maintenance
 
