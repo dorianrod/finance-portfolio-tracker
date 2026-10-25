@@ -27,6 +27,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { Button, Input, ToggleButton } from '@/shared/ui/Controls.view'
 
 import {
   ChartLegend,
@@ -295,9 +296,9 @@ export function ConcentrationTrendSectionView({
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
+              <ToggleButton
                 type="button"
-                aria-label={
+                label={
                   isPlaying
                     ? i18n.t(
                         'ui.concentrationtrendsection.pauseConcentrationHistory',
@@ -306,17 +307,17 @@ export function ConcentrationTrendSectionView({
                         'ui.concentrationtrendsection.playConcentrationHistory',
                       )
                 }
-                aria-pressed={isPlaying}
+                active={isPlaying}
                 onClick={togglePlayback}
                 className="rounded-md bg-accent-solid px-3 py-1.5 text-xs font-medium text-on-accent"
               >
                 {isPlaying
                   ? i18n.t('ui.concentrationtrendsection.pause')
                   : i18n.t('ui.concentrationtrendsection.play')}
-              </button>
-              <button
+              </ToggleButton>
+              <Button
                 type="button"
-                aria-label={i18n.t(
+                label={i18n.t(
                   'ui.concentrationtrendsection.previousConcentrationMonth',
                 )}
                 disabled={selectedIndex === 0}
@@ -324,10 +325,10 @@ export function ConcentrationTrendSectionView({
                 className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {i18n.t('ui.concentrationtrendsection.previous')}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                aria-label={i18n.t(
+                label={i18n.t(
                   'ui.concentrationtrendsection.nextConcentrationMonth',
                 )}
                 disabled={selectedIndex >= points.length - 1}
@@ -335,13 +336,13 @@ export function ConcentrationTrendSectionView({
                 className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {i18n.t('ui.concentrationtrendsection.next')}
-              </button>
+              </Button>
               <label className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 text-[11px] text-content-subtle sm:ml-2">
                 <span>
                   {formatDate(points[0].date, { style: 'shortMonthShortYear' })}
                 </span>
-                <input
-                  aria-label={i18n.t(
+                <Input
+                  label={i18n.t(
                     'ui.concentrationtrendsection.concentrationMonth',
                   )}
                   type="range"

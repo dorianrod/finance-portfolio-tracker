@@ -12,6 +12,13 @@ import i18n from '@/i18n/i18n'
 import { toDateInputValue } from '@/shared/helpers/mappers/toDateInputValue'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { DATE_FILTER_SCHEMA } from '@/shared/schemas/calendarDate.schema'
+import {
+  Decorative,
+  DecorativeSvg,
+  DialogButton,
+  Group,
+  Input,
+} from '@/shared/ui/Controls.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 
 import { AccountTree } from './AccountTreeSelect.feature'
@@ -102,9 +109,7 @@ function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
       className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-accent bg-accent-muted/35 px-3 py-1 text-xs text-accent transition-colors hover:bg-accent-muted/55"
     >
       <span className="truncate">{item.label}</span>
-      <span aria-hidden="true" className="text-accent">
-        ×
-      </span>
+      <Decorative className="text-accent">×</Decorative>
     </button>
   )
 }
@@ -159,9 +164,9 @@ export function FilterPanel({
             ))}
           </div>
           <div className="mt-3 flex items-center gap-2">
-            <input
+            <Input
               type="date"
-              aria-label={i18n.t('ui.filterbar.periodStart')}
+              label={i18n.t('ui.filterbar.periodStart')}
               value={toDateInputValue(filters.dateFrom)}
               onChange={(event) =>
                 setFilters({
@@ -171,12 +176,10 @@ export function FilterPanel({
               }
               className={dateInputClass}
             />
-            <span aria-hidden="true" className="text-xs text-content-subtle">
-              →
-            </span>
-            <input
+            <Decorative className="text-xs text-content-subtle">→</Decorative>
+            <Input
               type="date"
-              aria-label={i18n.t('ui.filterbar.periodEnd')}
+              label={i18n.t('ui.filterbar.periodEnd')}
               value={toDateInputValue(filters.dateTo)}
               onChange={(event) =>
                 setFilters({
@@ -304,33 +307,27 @@ export function FilterButton({ activeCount }: { activeCount: number }) {
   const { openFilters } = useDashboardFilters()
 
   return (
-    <button
+    <DialogButton
       type="button"
       onClick={openFilters}
-      aria-haspopup="dialog"
-      aria-expanded={open}
+      expanded={open}
       className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${activeCount > 0 ? 'border-accent bg-accent-muted/30 text-accent hover:bg-accent-muted/45' : 'border-border-strong bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'}`}
     >
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 20 20"
-        fill="none"
-        className="h-4 w-4"
-      >
+      <DecorativeSvg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
         <path
           d="M3 5h14M5.5 10h9M8 15h4"
           stroke="currentColor"
           strokeWidth="1.6"
           strokeLinecap="round"
         />
-      </svg>
+      </DecorativeSvg>
       <span>{i18n.t('ui.filterbar.filters')}</span>
       {activeCount > 0 && (
         <span className="min-w-5 rounded-full bg-accent-solid px-1.5 py-0.5 text-center text-[10px] font-bold leading-4 text-content">
           {activeCount}
         </span>
       )}
-    </button>
+    </DialogButton>
   )
 }
 
@@ -358,9 +355,9 @@ export function ActiveFilterSummary({
     return null
 
   return (
-    <div
+    <Group
       className="mb-4 flex flex-wrap items-center gap-2"
-      aria-label={i18n.t('ui.filterbar.activeFilters')}
+      label={i18n.t('ui.filterbar.activeFilters')}
     >
       {leading}
       {items.map((item) => (
@@ -368,7 +365,7 @@ export function ActiveFilterSummary({
       ))}
       {content}
       {actions}
-    </div>
+    </Group>
   )
 }
 

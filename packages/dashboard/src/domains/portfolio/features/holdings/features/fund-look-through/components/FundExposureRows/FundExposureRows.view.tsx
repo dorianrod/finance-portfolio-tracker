@@ -1,5 +1,4 @@
-import { memo, useId, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { memo } from 'react'
 
 import type { ExposureRow } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import type {
@@ -10,8 +9,8 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-
-import { getSourcesTooltipStyle } from './helpers/presenters/getSourcesTooltipStyle'
+import { DecorativeSvg, DisclosureButton } from '@/shared/ui/Controls.view'
+import { Tooltip } from '@/shared/ui/Tooltip.view'
 
 export const GRID =
   'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -59,8 +58,6 @@ export function SourcesCell({
   empty: string
   className: string
 }) {
-  const [anchor, setAnchor] = useState<DOMRect | null>(null)
-  const tooltipId = useId()
   const formatNumber = useFormatNumber()
   if (sources.length <= 1) {
     return (
@@ -70,43 +67,19 @@ export function SourcesCell({
     )
   }
   return (
-    <button
-      type="button"
-      aria-describedby={anchor ? tooltipId : undefined}
-      aria-expanded={anchor !== null}
-      onMouseEnter={(event) =>
-        setAnchor(event.currentTarget.getBoundingClientRect())
-      }
-      onMouseLeave={(event) => {
-        if (document.activeElement !== event.currentTarget) setAnchor(null)
-      }}
-      onFocus={(event) =>
-        setAnchor(event.currentTarget.getBoundingClientRect())
-      }
-      onBlur={() => setAnchor(null)}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape' && anchor) {
-          event.stopPropagation()
-          setAnchor(null)
-        }
-      }}
-      className={`w-fit cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
-    >
-      {i18n.t('ui.fundholdingsexplorer.fundCount', {
-        count: sources.length,
-        formattedCount: formatNumber(sources.length),
-      })}
-      {anchor &&
-        createPortal(
-          <SourcesTooltip
-            id={tooltipId}
-            anchor={anchor}
-            sources={sources}
-            total={total}
-          />,
-          document.body,
-        )}
-    </button>
+    <Tooltip>
+      <Tooltip.Trigger
+        className={`w-fit cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
+      >
+        {i18n.t('ui.fundholdingsexplorer.fundCount', {
+          count: sources.length,
+          formattedCount: formatNumber(sources.length),
+        })}
+      </Tooltip.Trigger>
+      <Tooltip.Content className="w-96">
+        <SourcesTooltip sources={sources} total={total} />
+      </Tooltip.Content>
+    </Tooltip>
   )
 }
 
@@ -137,28 +110,15 @@ export function SourceTooltipRow({
 }
 
 export function SourcesTooltip({
-  id,
-  anchor,
   sources,
   total,
 }: {
-  id: string
-  anchor: DOMRect
   sources: Source[]
   total: number
 }) {
   const formatNumber = useFormatNumber()
-  const style = getSourcesTooltipStyle(anchor, sources.length, {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  })
   return (
-    <div
-      id={id}
-      role="tooltip"
-      style={style}
-      className="pointer-events-none fixed z-50 rounded-lg border border-border-strong bg-canvas p-3 text-xs shadow-xl"
-    >
+    <div>
       <div className="mb-2 text-[10px] uppercase tracking-wider text-content-subtle">
         {i18n.t('ui.fundholdingsexplorer.heldThroughFunds', {
           count: sources.length,
@@ -176,7 +136,7 @@ export function SourcesTooltip({
 
 export function Chevron({ open }: { open: boolean }) {
   return (
-    <svg
+    <DecorativeSvg
       viewBox="0 0 20 20"
       width="16"
       height="16"
@@ -185,11 +145,10 @@ export function Chevron({ open }: { open: boolean }) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      aria-hidden="true"
       className="shrink-0 text-content-subtle"
     >
       <path d={open ? 'M5 8l5 5 5-5' : 'M8 5l5 5-5 5'} />
-    </svg>
+    </DecorativeSvg>
   )
 }
 
@@ -208,10 +167,10 @@ export const IssuerRow = memo(function IssuerRow({
     <div
       className={`${GRID} h-full border-b border-border text-sm hover:bg-surface-raised/60`}
     >
-      <button
+      <DisclosureButton
         type="button"
         onClick={() => onToggle(issuer.id)}
-        aria-expanded={open}
+        expanded={open}
         className="flex min-w-0 items-center gap-2 text-left"
       >
         <Chevron open={open} />
@@ -219,7 +178,7 @@ export const IssuerRow = memo(function IssuerRow({
         <span className="font-mono text-[10px] text-content-subtle">
           {issuer.id}
         </span>
-      </button>
+      </DisclosureButton>
       <span className="text-right font-medium tabular-nums text-content-secondary">
         {formatMoney(issuer.value, { style: 'full' })}
       </span>

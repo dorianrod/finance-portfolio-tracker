@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { createPortal } from 'react-dom'
 
 import {
   buildHoverChartSeries,
@@ -9,7 +8,8 @@ import {
 import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
-import { computePopoverPosition } from '@/shared/ui/helpers/presenters/computePopoverPosition'
+import { StatusMessage } from '@/shared/ui/Controls.view'
+import { Preview } from '@/shared/ui/Preview.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
 
@@ -32,10 +32,6 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
     isPending,
     error,
   } = usePositionHistoryQuery(target.isin)
-  const popoverPosition = computePopoverPosition(target.buttonRect, 600, 460, {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  })
 
   const showUnitPrice =
     history != null &&
@@ -52,10 +48,12 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const showEmptyHistory = !isPending && !error && chartData.length === 0
   const displayedChartData = chartData?.length ? chartData : null
 
-  return createPortal(
-    <div
-      style={popoverPosition}
-      className="fixed z-[9999] overflow-y-auto bg-surface border border-border-strong rounded-xl shadow-2xl p-4"
+  return (
+    <Preview.Content
+      anchor={target.buttonRect}
+      label={target.name}
+      style={{ width: `min(600px, calc(100vw - 20px))` }}
+      className="z-[9999] overflow-y-auto bg-surface border border-border-strong rounded-xl shadow-2xl p-4"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -65,26 +63,20 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
       </div>
 
       {isPending && (
-        <p
-          role="status"
-          className="text-content-muted text-xs py-4 text-center"
-        >
+        <StatusMessage className="text-content-muted text-xs py-4 text-center">
           {i18n.t('ui.hoverchart.loading')}
-        </p>
+        </StatusMessage>
       )}
 
       {error && (
-        <p role="alert" className="py-4 text-center text-xs text-danger">
+        <StatusMessage urgent className="py-4 text-center text-xs text-danger">
           {getErrorMessage(error)}
-        </p>
+        </StatusMessage>
       )}
       {showEmptyHistory && (
-        <p
-          role="status"
-          className="py-4 text-center text-xs text-content-muted"
-        >
+        <StatusMessage className="py-4 text-center text-xs text-content-muted">
           {i18n.t('ui.hoverchart.noHistory')}
-        </p>
+        </StatusMessage>
       )}
 
       {displayedChartData && (
@@ -94,7 +86,6 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
           showUnitPrice={showUnitPrice}
         />
       )}
-    </div>,
-    document.body,
+    </Preview.Content>
   )
 }

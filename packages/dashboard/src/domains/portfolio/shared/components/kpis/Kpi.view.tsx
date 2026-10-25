@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+import { Decorative } from '@/shared/ui/Controls.view'
 
 import { InfoTooltip } from './InfoTooltip.view'
 
@@ -32,9 +33,8 @@ function KpiRoot({
 }) {
   return (
     <div className="relative min-w-0 flex-1 basis-40 py-1 pl-4">
-      <span
+      <Decorative
         className={`absolute bottom-1 left-0 top-1 w-[3px] rounded-full ${ACCENT_CLASSES[accent]}`}
-        aria-hidden="true"
       />
       <div className="flex min-w-0 flex-col gap-0.5">{children}</div>
     </div>

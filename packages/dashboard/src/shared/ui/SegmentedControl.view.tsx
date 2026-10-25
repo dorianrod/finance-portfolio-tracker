@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
+import type { ControlProps } from './controlProps'
+
 type SegmentedControlSize = 'compact' | 'default' | 'large'
 type SegmentedControlTone = 'accent' | 'neutral'
 
@@ -44,7 +46,7 @@ export function SegmentedControlItem({
   className = '',
   type = 'button',
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
+}: ControlProps<ButtonHTMLAttributes<HTMLButtonElement>> & {
   active: boolean
   size?: SegmentedControlSize
   tone?: SegmentedControlTone

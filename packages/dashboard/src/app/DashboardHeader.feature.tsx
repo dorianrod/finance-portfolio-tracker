@@ -6,6 +6,7 @@ import {
 } from '@/domains/portfolio/shared/services/actions/useDashboardTheme'
 import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme.atoms'
 import i18n from '@/i18n/i18n'
+import { ToggleButton } from '@/shared/ui/Controls.view'
 
 export function DashboardHeader() {
   const theme = useAtomValue(dashboardThemeAtom)
@@ -19,11 +20,11 @@ export function DashboardHeader() {
           {i18n.t('ui.app.portfolio')}
         </h1>
       </div>
-      <button
+      <ToggleButton
         type="button"
         onClick={toggleTheme}
-        aria-pressed={theme === 'dark'}
-        aria-label={
+        active={theme === 'dark'}
+        label={
           theme === 'dark'
             ? i18n.t('ui.app.switchToLightMode')
             : i18n.t('ui.app.switchToDarkMode')
@@ -33,7 +34,7 @@ export function DashboardHeader() {
         {theme === 'dark'
           ? i18n.t('ui.app.lightMode')
           : i18n.t('ui.app.darkMode')}
-      </button>
+      </ToggleButton>
     </header>
   )
 }

@@ -54,7 +54,7 @@ describe('composed information tooltips', () => {
       expect(screen.getAllByText('Selected accounts')).toHaveLength(1)
       await user.keyboard('{Escape}')
       expect(screen.queryByRole('tooltip')).toBeNull()
-      expect(trigger.getAttribute('aria-expanded')).toBe('false')
+      expect(trigger.getAttribute('aria-describedby')).toBeNull()
     },
   )
 

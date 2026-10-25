@@ -8,8 +8,12 @@ import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-
-import { navigateQualityTabs } from './helpers/presenters/navigateQualityTabs'
+import {
+  Decorative,
+  DecorativeSvg,
+  DialogButton,
+} from '@/shared/ui/Controls.view'
+import { Tabs } from '@/shared/ui/Tabs.view'
 
 export function QualityThemeOption({ theme }: { theme: QualityTheme }) {
   return (
@@ -21,33 +25,21 @@ export function QualityThemeOption({ theme }: { theme: QualityTheme }) {
 
 export function QualityThemeTab({
   activeThemeId,
-  onSelect,
   theme,
 }: {
   activeThemeId: QualityThemeId
-  onSelect: (theme: QualityThemeId) => void
   theme: QualityTheme
 }) {
   const active = theme.id === activeThemeId
   const styles = TONE_STYLES[theme.tone]
   return (
-    <button
-      type="button"
-      role="tab"
-      id={`quality-theme-${theme.id}`}
-      tabIndex={active ? 0 : -1}
-      onKeyDown={navigateQualityTabs}
-      aria-selected={active}
-      aria-controls="quality-theme-panel"
-      onClick={() => onSelect(theme.id)}
+    <Tabs.Trigger
+      value={theme.id}
       className={`flex w-full items-center gap-3 rounded-md px-3 py-3 text-left transition-colors ${active ? 'bg-accent-muted/50' : 'hover:bg-surface'}`}
     >
-      <span
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface ring-1 ring-border"
-        aria-hidden="true"
-      >
+      <Decorative className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-surface ring-1 ring-border">
         <span className={`h-2 w-2 rounded-full ${styles.dot}`} />
-      </span>
+      </Decorative>
       <span className="min-w-0 flex-1">
         <span
           className={`block text-sm font-medium ${active ? 'text-content' : 'text-content-secondary'}`}
@@ -61,7 +53,7 @@ export function QualityThemeTab({
       <span className="shrink-0 text-sm font-semibold tabular-nums text-content">
         {theme.metric}
       </span>
-    </button>
+    </Tabs.Trigger>
   )
 }
 
@@ -162,17 +154,15 @@ export function DetailKpiButton({
   onClick: () => void
 }) {
   return (
-    <button
+    <DialogButton
       type="button"
       onClick={onClick}
-      aria-haspopup="dialog"
-      aria-expanded={expanded}
-      aria-label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
+      expanded={expanded}
+      label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
       className="group relative flex min-w-[19rem] items-center gap-4 overflow-hidden rounded-md bg-canvas/70 px-5 py-4 text-left text-content transition-colors hover:bg-canvas focus:outline-none focus:ring-2 focus:ring-focus/70"
     >
-      <span
+      <Decorative
         className={`absolute inset-y-2 left-0 w-0.5 rounded-r-full ${TONE_STYLES[theme.tone].accent}`}
-        aria-hidden="true"
       />
       <span>
         <span className="block text-2xl font-semibold tabular-nums leading-none tracking-tight">
@@ -192,21 +182,20 @@ export function DetailKpiButton({
           </span>
         </span>
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent-muted/60 text-accent">
-          <svg
+          <DecorativeSvg
             className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
             viewBox="0 0 20 20"
             fill="currentColor"
-            aria-hidden="true"
           >
             <path
               fillRule="evenodd"
               d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 0 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
               clipRule="evenodd"
             />
-          </svg>
+          </DecorativeSvg>
         </span>
       </span>
-    </button>
+    </DialogButton>
   )
 }
 

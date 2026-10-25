@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
+import { StatusMessage } from '@/shared/ui/Controls.view'
 
 export type DashboardLoadState =
   | { status: 'loading' }
@@ -19,14 +20,15 @@ export function DashboardLoadState({
   switch (state.status) {
     case 'loading':
       return (
-        <p role="status" className="text-content-muted">
+        <StatusMessage className="text-content-muted">
           {i18n.t('ui.app.loading')}
-        </p>
+        </StatusMessage>
       )
     case 'error':
       return (
-        <div
-          role="alert"
+        <StatusMessage
+          as="div"
+          urgent
           className="rounded-card border border-danger/40 bg-surface p-6"
         >
           <p className="text-danger">
@@ -39,7 +41,7 @@ export function DashboardLoadState({
           >
             {i18n.t('ui.dashboardpanelerrorboundary.reloadDashboard')}
           </button>
-        </div>
+        </StatusMessage>
       )
     case 'ready':
       return children

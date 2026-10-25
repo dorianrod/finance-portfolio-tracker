@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, within } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -65,7 +71,7 @@ describe('SidePanel', () => {
     const closeButton = within(dialog).getByRole('button', {
       name: 'Close details',
     })
-    expect(document.body.style.overflow).toBe('hidden')
+    expect(getComputedStyle(document.body).overflow).toBe('hidden')
     expect(document.activeElement).toBe(closeButton)
     await user.tab({ shift: true })
     expect(document.activeElement).toBe(
@@ -81,7 +87,7 @@ describe('SidePanel', () => {
         <button>Last action</button>
       </SidePanel>,
     )
-    expect(document.activeElement).toBe(trigger)
+    await waitFor(() => expect(document.activeElement).toBe(trigger))
     expect(document.body.style.overflow).toBe('auto')
     trigger.remove()
   })

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useId, useState } from 'react'
+import { useState } from 'react'
 
 import type { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/components/helpers/presenters/buildLookThroughSummary'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
@@ -9,6 +9,12 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import {
+  Decorative,
+  DecorativeBlock,
+  DecorativeSvg,
+} from '@/shared/ui/Controls.view'
+import { Disclosure } from '@/shared/ui/Disclosure.view'
 
 type CompactCoverageCardData = {
   label: string
@@ -162,7 +168,7 @@ export function LookThroughCoverageSummaryView({
         </QualityIndicatorCard>
       </div>
 
-      <div className="relative mx-auto hidden h-10 sm:block" aria-hidden="true">
+      <DecorativeBlock className="relative mx-auto hidden h-10 sm:block">
         <div className="absolute left-1/2 top-0 h-5 w-px -translate-x-1/2 bg-surface-hover" />
         {hasNotApplicable ? (
           <>
@@ -182,11 +188,8 @@ export function LookThroughCoverageSummaryView({
             />
           </>
         )}
-      </div>
-      <div
-        className="mx-auto h-6 w-px bg-surface-hover sm:hidden"
-        aria-hidden="true"
-      />
+      </DecorativeBlock>
+      <DecorativeBlock className="mx-auto h-6 w-px bg-surface-hover sm:hidden" />
 
       <div
         className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
@@ -328,7 +331,6 @@ function SourceReliability({
   otherSourcePercentage: number
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const detailsId = useId()
   const indicator = {
     passed: {
       label: i18n.t('ui.lookthroughcoveragesummary.good'),
@@ -348,18 +350,15 @@ function SourceReliability({
   }[status]
 
   return (
-    <div>
-      <button
+    <Disclosure expanded={isExpanded}>
+      <Disclosure.Trigger
         type="button"
         className="group mt-3 flex w-full items-center justify-between gap-3 border-t border-border pt-3 text-xs font-medium"
-        aria-expanded={isExpanded}
-        aria-controls={detailsId}
         onClick={() => setIsExpanded((expanded) => !expanded)}
       >
         <div className="flex min-w-0 items-center gap-2">
-          <span
+          <Decorative
             className={`h-2.5 w-2.5 shrink-0 rounded-full ${indicator.dot}`}
-            aria-hidden="true"
           />
           <span className="truncate text-xs font-medium text-content-muted">
             {i18n.t('ui.lookthroughcoveragesummary.sourceReliability')}
@@ -376,53 +375,50 @@ function SourceReliability({
               ? i18n.t('ui.lookthroughcoveragesummary.hideDetails')
               : i18n.t('ui.lookthroughcoveragesummary.details')}
           </span>
-          <svg
+          <DecorativeSvg
             className={`h-3.5 w-3.5 shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             viewBox="0 0 20 20"
             fill="currentColor"
-            aria-hidden="true"
           >
             <path
               fillRule="evenodd"
               d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z"
               clipRule="evenodd"
             />
-          </svg>
+          </DecorativeSvg>
         </span>
-      </button>
-      {isExpanded && (
-        <div id={detailsId} className="mt-3 border-t border-border pt-3">
-          <BreakdownGroupContent
-            className="mt-3"
-            title={i18n.t(
-              'ui.lookthroughcoveragesummary.sourceReliabilityDetails',
-            )}
-            note={i18n.t(
-              'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
-            )}
-            rows={[
-              {
-                label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
-                amount: reliableValue,
-                percentage: reliablePercentage,
-                color: SEMANTIC_COLORS.coverage,
-              },
-              {
-                label: i18n.t('ui.lookthroughcoveragesummary.otherSourceTiers'),
-                amount: otherSourceValue,
-                percentage: otherSourcePercentage,
-                color: SEMANTIC_COLORS.netContributions,
-              },
-            ]}
-          />
-          <p className="mt-3 text-[10px] leading-4 text-content-subtle">
-            {i18n.t(
-              'ui.lookthroughcoveragesummary.reliableIsAQualityFilteredSubsetDirectPositionsPlus',
-            )}
-          </p>
-        </div>
-      )}
-    </div>
+      </Disclosure.Trigger>
+      <Disclosure.Content className="mt-3 border-t border-border pt-3">
+        <BreakdownGroupContent
+          className="mt-3"
+          title={i18n.t(
+            'ui.lookthroughcoveragesummary.sourceReliabilityDetails',
+          )}
+          note={i18n.t(
+            'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
+          )}
+          rows={[
+            {
+              label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
+              amount: reliableValue,
+              percentage: reliablePercentage,
+              color: SEMANTIC_COLORS.coverage,
+            },
+            {
+              label: i18n.t('ui.lookthroughcoveragesummary.otherSourceTiers'),
+              amount: otherSourceValue,
+              percentage: otherSourcePercentage,
+              color: SEMANTIC_COLORS.netContributions,
+            },
+          ]}
+        />
+        <p className="mt-3 text-[10px] leading-4 text-content-subtle">
+          {i18n.t(
+            'ui.lookthroughcoveragesummary.reliableIsAQualityFilteredSubsetDirectPositionsPlus',
+          )}
+        </p>
+      </Disclosure.Content>
+    </Disclosure>
   )
 }
 
@@ -435,16 +431,13 @@ function ExposureChildNodes({
 }) {
   return (
     <div>
-      <div className="relative hidden h-8 lg:block" aria-hidden="true">
+      <DecorativeBlock className="relative hidden h-8 lg:block">
         <div className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-surface-hover" />
         <div className="absolute left-1/4 right-1/4 top-4 h-px bg-surface-hover" />
         <div className="absolute bottom-0 left-1/4 top-4 w-px bg-surface-hover" />
         <div className="absolute bottom-0 left-3/4 top-4 w-px bg-surface-hover" />
-      </div>
-      <div
-        className="mx-auto h-4 w-px bg-surface-hover lg:hidden"
-        aria-hidden="true"
-      />
+      </DecorativeBlock>
+      <DecorativeBlock className="mx-auto h-4 w-px bg-surface-hover lg:hidden" />
       <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
         {nodes.map((node) => (
           <ExposureChildNodeCard key={node.label} node={node}>

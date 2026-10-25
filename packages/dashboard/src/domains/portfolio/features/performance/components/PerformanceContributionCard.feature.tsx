@@ -24,6 +24,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { Group, ToggleButton } from '@/shared/ui/Controls.view'
 
 import {
   ContributionListItem,
@@ -243,29 +244,27 @@ export function PerformanceContributionCard({
           </h2>
           <p className="mt-1 text-xs text-content-subtle">{description}</p>
         </div>
-        <div
+        <Group
           className="inline-flex self-start rounded-lg border border-border-strong bg-canvas p-0.5"
-          aria-label={i18n.t(
-            'ui.performancecontributioncard.performanceMetric',
-          )}
+          label={i18n.t('ui.performancecontributioncard.performanceMetric')}
         >
-          <button
+          <ToggleButton
             type="button"
             onClick={() => setView('contribution')}
-            aria-pressed={view === 'contribution'}
+            active={view === 'contribution'}
             className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'contribution' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
           >
             {i18n.t('ui.performancecontributioncard.contribution.7ffdcf')}
-          </button>
-          <button
+          </ToggleButton>
+          <ToggleButton
             type="button"
             onClick={() => setView('irr')}
-            aria-pressed={view === 'irr'}
+            active={view === 'irr'}
             className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'irr' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
           >
             {i18n.t('ui.performancecontributioncard.irr.a0fb95')}
-          </button>
-        </div>
+          </ToggleButton>
+        </Group>
       </div>
 
       {view === 'irr' && (
@@ -327,25 +326,25 @@ export function PerformanceContributionCard({
                 <div className="min-w-0 whitespace-nowrap text-sm font-medium text-content-muted">
                   {formatPerformanceDateRange(summary, formatDate)}
                 </div>
-                <div
+                <Group
                   className="inline-flex shrink-0 rounded-lg border border-border bg-canvas/40 p-0.5"
-                  aria-label={i18n.t(
+                  label={i18n.t(
                     'ui.performancecontributioncard.contributionHorizon',
                   )}
                 >
-                  <button
+                  <ToggleButton
                     type="button"
                     onClick={() => setHorizon('since-tracking')}
-                    aria-pressed={activeHorizon === 'since-tracking'}
+                    active={activeHorizon === 'since-tracking'}
                     className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'since-tracking' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
                   >
                     {i18n.t('ui.performancecontributioncard.sinceTracking')}
-                  </button>
-                  <button
+                  </ToggleButton>
+                  <ToggleButton
                     type="button"
                     onClick={() => setHorizon('trailing-3y')}
                     disabled={threeYearUnavailable}
-                    aria-pressed={activeHorizon === 'trailing-3y'}
+                    active={activeHorizon === 'trailing-3y'}
                     title={
                       threeYearUnavailable
                         ? i18n.t(
@@ -356,8 +355,8 @@ export function PerformanceContributionCard({
                     className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'trailing-3y' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'} disabled:cursor-not-allowed disabled:text-content-subtle`}
                   >
                     {i18n.t('ui.performancecontributioncard.trailing3Years')}
-                  </button>
-                </div>
+                  </ToggleButton>
+                </Group>
               </div>
             </div>
           </div>

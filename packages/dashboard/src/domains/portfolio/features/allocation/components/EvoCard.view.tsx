@@ -14,6 +14,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { catColor } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { ToggleButton } from '@/shared/ui/Controls.view'
 
 function EvolutionLegendItem({
   activeCategory,
@@ -48,9 +49,9 @@ function EvolutionLegendItem({
   const isActive = activeCategory === category
   const isDimmed = isFiltered && !isActive
   return (
-    <button
+    <ToggleButton
       type="button"
-      aria-pressed={isActive}
+      active={isActive}
       onClick={() => onSelect(category)}
       className="inline-flex cursor-pointer items-center gap-1 text-[11px] transition-opacity"
       style={{ opacity: isDimmed ? 0.35 : 1 }}
@@ -68,7 +69,7 @@ function EvolutionLegendItem({
         }}
       />
       <span style={{ color }}>{category}</span>
-    </button>
+    </ToggleButton>
   )
 }
 

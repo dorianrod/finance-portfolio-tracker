@@ -22,6 +22,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { Decorative } from '@/shared/ui/Controls.view'
 
 export function MonthlySavingsChart({
   data,
@@ -118,18 +119,14 @@ export function MonthlySavingsChart({
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span
+              <Decorative
                 className="h-2.5 w-3 rounded-sm"
                 style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
-                aria-hidden="true"
               />
               <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span
-                className="flex h-2.5 w-3 overflow-hidden rounded-sm"
-                aria-hidden="true"
-              >
+              <Decorative className="flex h-2.5 w-3 overflow-hidden rounded-sm">
                 <i
                   className="h-full w-1/2"
                   style={{
@@ -142,7 +139,7 @@ export function MonthlySavingsChart({
                     backgroundColor: SEMANTIC_COLORS.performanceNegative,
                   }}
                 />
-              </span>
+              </Decorative>
               <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
             </div>
           </div>
@@ -153,18 +150,16 @@ export function MonthlySavingsChart({
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span
+              <Decorative
                 className="h-0.5 w-4"
                 style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
-                aria-hidden="true"
               />
               <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span
+              <Decorative
                 className="h-0.5 w-4"
                 style={{ backgroundColor: SEMANTIC_COLORS.performance }}
-                aria-hidden="true"
               />
               <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
             </div>

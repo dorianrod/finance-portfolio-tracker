@@ -1,6 +1,7 @@
 import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
 import i18n from '@/i18n/i18n'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
+import { Button } from '@/shared/ui/Controls.view'
 
 export function SortHeader({
   label,
@@ -28,10 +29,10 @@ export function SortHeader({
   const sortIndicator = active ? { asc: '↑', desc: '↓' }[dir] : '⇅'
   return (
     <span className="inline-flex max-w-full flex-wrap items-center gap-1">
-      <button
+      <Button
         type="button"
         onClick={() => onSort(sk)}
-        aria-label={i18n.t('ui.sortheader.sortByValue0CurrentlyValue1', {
+        label={i18n.t('ui.sortheader.sortByValue0CurrentlyValue1', {
           value0: label,
           value1: sortState,
         })}
@@ -43,7 +44,7 @@ export function SortHeader({
         >
           {sortIndicator}
         </span>
-      </button>
+      </Button>
       <ColHeader label="" columnName={label} content={tooltip} />
     </span>
   )

@@ -1,5 +1,5 @@
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
-import { SegmentedControlItem } from '@/shared/ui/SegmentedControl.view'
+import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 export function HoldingsViewTab({
   activeView,
@@ -12,15 +12,13 @@ export function HoldingsViewTab({
 }) {
   const active = activeView === view.id
   return (
-    <SegmentedControlItem
-      id={`holdings-${view.id}-tab`}
+    <ViewNavigation.Item
+      value={view.id}
       active={active}
       size="large"
-      aria-current={active ? 'page' : undefined}
-      aria-controls={`holdings-${view.id}-panel`}
       onClick={() => onSelect(view.id)}
     >
       {view.label}
-    </SegmentedControlItem>
+    </ViewNavigation.Item>
   )
 }

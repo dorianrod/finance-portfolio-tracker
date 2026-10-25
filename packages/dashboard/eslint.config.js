@@ -13,6 +13,7 @@ import noComplexComponentCalculation from './eslint-rules/no-complex-component-c
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
+import noDomainAccessibility from './eslint-rules/no-domain-accessibility.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
@@ -64,6 +65,7 @@ export default defineConfig([
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
           'no-component-module-logic': noComponentModuleLogic,
+          'no-domain-accessibility': noDomainAccessibility,
           'no-effects-in-components': noEffectsInComponents,
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-inline-format-fallback': noInlineFormatFallback,
@@ -130,6 +132,7 @@ export default defineConfig([
       'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
       'local/no-component-module-logic': 'warn',
+      'local/no-domain-accessibility': 'error',
       'local/no-effects-in-components': 'warn',
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-inline-format-fallback': 'error',

@@ -6,6 +6,7 @@ import { type FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { Input, Select } from '@/shared/ui/Controls.view'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 
 import {
@@ -57,26 +58,22 @@ export function FundHoldingsExplorer({
           </p>
         </div>
         <div className={DATA_TABLE_STYLES.actions}>
-          <input
+          <Input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={i18n.t(
               'ui.fundholdingsexplorer.searchIssuerSecurityOrFund',
             )}
-            aria-label={i18n.t(
-              'ui.fundholdingsexplorer.searchUnderlyingExposure',
-            )}
+            label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
             className="min-w-0 flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary outline-none focus:border-accent sm:w-72"
           />
-          <select
+          <Select
             value={sort}
             onChange={(event) =>
               setSort(event.target.value as FundExposureSort)
             }
-            aria-label={i18n.t(
-              'ui.fundholdingsexplorer.sortUnderlyingExposure',
-            )}
+            label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
             className="rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary"
           >
             <option value="value">
@@ -85,7 +82,7 @@ export function FundHoldingsExplorer({
             <option value="name">
               {i18n.t('ui.fundholdingsexplorer.name')}
             </option>
-          </select>
+          </Select>
         </div>
       </div>
       <div>

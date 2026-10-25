@@ -13,6 +13,8 @@ import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHol
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { DecorativeSvg } from '@/shared/ui/Controls.view'
+import { Preview } from '@/shared/ui/Preview.view'
 
 export function PositionHeaderCell({
   header,
@@ -36,7 +38,10 @@ export function PositionHeaderRow({ group }: { group: HeaderGroup<TableRow> }) {
   )
 }
 
-export type CellHandlers = React.HTMLAttributes<HTMLTableCellElement> | null
+export type CellHandlers = {
+  onPreview: (anchor: HTMLButtonElement) => void
+  onDismiss: () => void
+} | null
 
 export function PositionBodyCell({
   cell,
@@ -47,15 +52,18 @@ export function PositionBodyCell({
   chartHandlers: CellHandlers
   savingsHandlers: CellHandlers
 }) {
+  const handlers =
+    cell.column.id === 'value' ? (chartHandlers ?? savingsHandlers) : null
+  const content = flexRender(cell.column.columnDef.cell, cell.getContext())
   return (
-    <td
-      className="overflow-hidden px-3 py-2"
-      {...(chartHandlers && cell.column.id === 'value' ? chartHandlers : {})}
-      {...(savingsHandlers && cell.column.id === 'value'
-        ? savingsHandlers
-        : {})}
-    >
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    <td className="overflow-hidden px-3 py-2">
+      {handlers ? (
+        <Preview.Trigger {...handlers} className="cursor-help text-left">
+          {content}
+        </Preview.Trigger>
+      ) : (
+        content
+      )}
     </td>
   )
 }
@@ -93,9 +101,9 @@ export function UnderlyingStatusButton({
   }[category]
 
   return (
-    <button
+    <Preview.Trigger
       type="button"
-      aria-label={
+      label={
         isOpen
           ? i18n.t('ui.positionstable.hideCompositionForAsset', {
               title,
@@ -106,29 +114,22 @@ export function UnderlyingStatusButton({
               assetName,
             })
       }
-      aria-expanded={isOpen}
+      expanded={isOpen}
       title={
         isOpen
           ? i18n.t('ui.positionstable.hideComposition', { title })
           : i18n.t('ui.positionstable.showComposition', { title })
       }
       className={`rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 ${tone} ${isOpen ? 'bg-surface-raised ring-1 ring-current/40' : ''}`}
-      onMouseEnter={(event) => onShow(event.currentTarget)}
-      onMouseLeave={onHide}
-      onFocus={(event) => onShow(event.currentTarget)}
-      onBlur={onHide}
-      onClick={(event) => {
-        event.stopPropagation()
-        onShow(event.currentTarget)
-      }}
+      onPreview={onShow}
+      onDismiss={onHide}
     >
-      <svg
+      <DecorativeSvg
         viewBox="0 0 20 20"
         className="size-5"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
-        aria-hidden="true"
       >
         <rect x="7" y="2.25" width="6" height="4" rx="1" />
         <path
@@ -139,7 +140,7 @@ export function UnderlyingStatusButton({
         <rect x="2.25" y="11.75" width="4.5" height="4" rx="1" />
         <rect x="7.75" y="11.75" width="4.5" height="4" rx="1" />
         <rect x="13.25" y="11.75" width="4.5" height="4" rx="1" />
-      </svg>
-    </button>
+      </DecorativeSvg>
+    </Preview.Trigger>
   )
 }

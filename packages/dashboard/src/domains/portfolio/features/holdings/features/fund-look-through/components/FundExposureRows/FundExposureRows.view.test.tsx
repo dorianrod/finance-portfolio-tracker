@@ -35,7 +35,7 @@ describe('SourcesCell', () => {
       screen.getByRole('tooltip').id,
     )
     expect(screen.getByText('Held through 2 funds')).toBeTruthy()
-    await user.unhover(trigger)
+    await user.hover(screen.getByRole('heading', { name: 'Exposure' }))
     expect(screen.getByRole('tooltip')).toBeTruthy()
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('tooltip')).toBeNull()

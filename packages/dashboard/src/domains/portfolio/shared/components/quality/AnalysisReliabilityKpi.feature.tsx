@@ -1,4 +1,4 @@
-import { useCallback, useId } from 'react'
+import { useCallback } from 'react'
 
 import {
   FilterScopeBadges,
@@ -16,6 +16,8 @@ import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Button, Decorative } from '@/shared/ui/Controls.view'
+import { Tooltip } from '@/shared/ui/Tooltip.view'
 
 import {
   type QualityTooltipRow,
@@ -43,41 +45,36 @@ function CompactDataQualityKpi({
     () => openDataQuality(qualityTheme),
     [openDataQuality, qualityTheme],
   )
-  const tooltipId = useId()
   const styles = RELIABILITY_TONES[tone]
 
   return (
     <div className="data-quality-kpi relative inline-flex items-center rounded-md transition-colors hover:bg-surface/60">
-      <button
+      <Button
         type="button"
         onClick={handleClick}
         className="inline-flex items-center gap-2 rounded-l-md py-1 pl-0 pr-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        aria-label={ariaLabel}
+        label={ariaLabel}
       >
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-content-subtle">
           {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
         </span>
-        <span
-          className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`}
-          aria-hidden="true"
-        />
+        <Decorative className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`} />
         <span
           className={`text-[10px] font-semibold uppercase tracking-wider ${styles.status}`}
         >
           {styles.label}
         </span>
-      </button>
-      <button
-        type="button"
-        className="data-quality-help rounded-r-md p-1 text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        aria-label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
-        aria-describedby={tooltipId}
-      >
-        <InfoIcon />
-        <span
-          id={tooltipId}
-          role="tooltip"
-          className="data-quality-tooltip pointer-events-none invisible absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-border-strong bg-surface p-3 text-left opacity-0 shadow-xl transition-[opacity,visibility] duration-150"
+      </Button>
+      <Tooltip>
+        <Tooltip.Trigger
+          className="data-quality-help rounded-r-md p-1 text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
+        >
+          <InfoIcon />
+        </Tooltip.Trigger>
+        <Tooltip.Content
+          align="start"
+          className="w-[min(22rem,calc(100vw-2rem))] text-left"
         >
           <span className="block text-xs leading-relaxed text-content-muted">
             {tooltip}
@@ -93,8 +90,8 @@ function CompactDataQualityKpi({
               <QualityTooltipMetricRow key={row.label} row={row} />
             ))}
           </span>
-        </span>
-      </button>
+        </Tooltip.Content>
+      </Tooltip>
     </div>
   )
 }

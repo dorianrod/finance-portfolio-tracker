@@ -55,6 +55,8 @@ import {
   SEMANTIC_BADGE_CLASSES,
   SEMANTIC_TEXT_CLASSES,
 } from '@/shared/theme/semanticColors'
+import { Decorative, DecorativeSvg } from '@/shared/ui/Controls.view'
+import { Preview } from '@/shared/ui/Preview.view'
 import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
 
 import { ExpandBtn } from './ExpandBtn.view'
@@ -131,7 +133,7 @@ function PositionBodyRow({
       const positionKey = parent.isin || parent.ticker || name
       if (positionKey)
         chartHandlers = {
-          onMouseEnter: (event) => {
+          onPreview: (anchor) => {
             cancelHide()
             setSavingsChart(null)
             setAllocationHover(null)
@@ -140,10 +142,10 @@ function PositionBodyRow({
               isin: positionKey,
               name,
               operations: getPositionTradeOperations(parent),
-              buttonRect: event.currentTarget.getBoundingClientRect(),
+              buttonRect: anchor.getBoundingClientRect(),
             })
           },
-          onMouseLeave: scheduleHide,
+          onDismiss: scheduleHide,
         }
     }
   }
@@ -153,7 +155,7 @@ function PositionBodyRow({
     const parent = row.getParentRow()?.original
     if (parent?.kind === 'position')
       savingsHandlers = {
-        onMouseEnter: (event) => {
+        onPreview: (anchor) => {
           cancelHide()
           setChart(null)
           setAllocationHover(null)
@@ -161,10 +163,10 @@ function PositionBodyRow({
           setSavingsChart({
             name: parent.name,
             operations: getPositionSavingsOperations(parent),
-            buttonRect: event.currentTarget.getBoundingClientRect(),
+            buttonRect: anchor.getBoundingClientRect(),
           })
         },
-        onMouseLeave: scheduleHide,
+        onDismiss: scheduleHide,
       }
   }
   const td =
@@ -257,6 +259,7 @@ export function PositionsTable({
   const { expanded, setExpanded } = usePositionTableState()
   const {
     allocationHover,
+    dismiss,
     cancelHide,
     chart,
     savingsChart,
@@ -486,30 +489,17 @@ export function PositionsTable({
           return (
             <span className="relative mx-auto grid w-[68px] grid-cols-2 place-items-center gap-1">
               {allocation && (
-                <button
+                <Preview.Trigger
                   type="button"
-                  aria-label={i18n.t(
-                    'ui.positionstable.viewAllocationsForValue0',
-                    {
-                      value0: r.name,
-                    },
-                  )}
+                  label={i18n.t('ui.positionstable.viewAllocationsForValue0', {
+                    value0: r.name,
+                  })}
                   title={i18n.t('ui.positionstable.viewAssetAllocations')}
                   className="shrink-0 rounded p-1.5 text-content-subtle transition-colors hover:bg-surface-hover hover:text-accent focus-visible:bg-surface-hover focus-visible:text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
-                  onMouseEnter={(event) => showAllocation(event.currentTarget)}
-                  onMouseLeave={scheduleHide}
-                  onFocus={(event) => showAllocation(event.currentTarget)}
-                  onBlur={scheduleHide}
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    showAllocation(event.currentTarget)
-                  }}
+                  onPreview={showAllocation}
+                  onDismiss={scheduleHide}
                 >
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="size-5"
-                    aria-hidden="true"
-                  >
+                  <DecorativeSvg viewBox="0 0 20 20" className="size-5">
                     <circle
                       cx="10"
                       cy="10"
@@ -528,12 +518,10 @@ export function PositionsTable({
                       stroke="currentColor"
                       strokeWidth="1.5"
                     />
-                  </svg>
-                </button>
+                  </DecorativeSvg>
+                </Preview.Trigger>
               )}
-              {!allocation && (
-                <span className="block size-8" aria-hidden="true" />
-              )}
+              {!allocation && <Decorative className="block size-8" />}
               {fundStatus && (
                 <UnderlyingStatusControl
                   // eslint-disable-next-line local/no-prop-drilling -- The table checks action availability; the control receives the matching API entity and owns only popover selection.
@@ -544,9 +532,7 @@ export function PositionsTable({
                   onHide={scheduleHide}
                 />
               )}
-              {!fundStatus && (
-                <span className="block size-8" aria-hidden="true" />
-              )}
+              {!fundStatus && <Decorative className="block size-8" />}
               {hasNoBreakdown && (
                 <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-content-subtle">
                   —
@@ -892,115 +878,125 @@ export function PositionsTable({
   })
 
   return (
-    <section className={DATA_TABLE_STYLES.panel}>
-      <div className={DATA_TABLE_STYLES.toolbar}>
-        <div>
-          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>
-            {i18n.t('ui.positionstable.allPortfolioPositions')}
-            <ScopedInfoTooltip
-              text={i18n.t(
-                'ui.positionstable.positionsAreValuedAtPeriodEndExpandedTransactionAnd',
-              )}
-              scope={{ account: 'filterable', period: 'as-of' }}
-            />
-          </h2>
-          <p className={DATA_TABLE_STYLES.description}>
-            {i18n.t(
-              'ui.positionstable.expandEachPositionToReviewItsTransactionsAndIncome',
-            )}
-          </p>
-          <p className="mt-1 text-[10px] text-content-subtle">
-            {i18n.t(
-              'ui.positionstable.transactionAndIncomeAmountsUseTheSelectedPeriod',
-            )}
-          </p>
-        </div>
-        <div className={DATA_TABLE_STYLES.actions}>
-          <button
-            type="button"
-            onClick={() => table.toggleAllRowsExpanded(true)}
-            className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
-          >
-            {i18n.t('ui.positionstable.expandAll')}
-          </button>
-          <button
-            type="button"
-            onClick={() => table.toggleAllRowsExpanded(false)}
-            className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
-          >
-            {i18n.t('ui.positionstable.collapseAll')}
-          </button>
-        </div>
-      </div>
-      <div className="overflow-x-auto rounded-b-xl">
-        <table className="w-full min-w-[1100px] text-sm text-left table-fixed">
-          <colgroup>
-            <col style={{ width: '28px' }} />
-            <col style={{ width: '27%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '8%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-          </colgroup>
-          <thead className={DATA_TABLE_STYLES.columnHeader}>
-            {table.getHeaderGroups().map((group) => (
-              <PositionHeaderRow key={group.id} group={group} />
-            ))}
-          </thead>
-          <tbody>
-            {bodyRows.map((item) => (
-              <PositionBodyRow
-                key={item.row.id}
-                cancelHide={cancelHide}
-                row={item.row}
-                scheduleHide={scheduleHide}
-                separatorType={item.separatorType}
-                setAllocationHover={setAllocationHover}
-                setChart={setChart}
-                setSavingsChart={setSavingsChart}
-                setUnderlyingPopover={setUnderlyingPopover}
-                totals={item.totals}
+    <Preview
+      onKeepOpen={cancelHide}
+      open={Boolean(
+        chart || savingsChart || allocationHover || underlyingPopover,
+      )}
+      onOpenChange={(open) => {
+        if (!open) dismiss()
+      }}
+    >
+      <section className={DATA_TABLE_STYLES.panel}>
+        <div className={DATA_TABLE_STYLES.toolbar}>
+          <div>
+            <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>
+              {i18n.t('ui.positionstable.allPortfolioPositions')}
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.positionstable.positionsAreValuedAtPeriodEndExpandedTransactionAnd',
+                )}
+                scope={{ account: 'filterable', period: 'as-of' }}
               />
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </h2>
+            <p className={DATA_TABLE_STYLES.description}>
+              {i18n.t(
+                'ui.positionstable.expandEachPositionToReviewItsTransactionsAndIncome',
+              )}
+            </p>
+            <p className="mt-1 text-[10px] text-content-subtle">
+              {i18n.t(
+                'ui.positionstable.transactionAndIncomeAmountsUseTheSelectedPeriod',
+              )}
+            </p>
+          </div>
+          <div className={DATA_TABLE_STYLES.actions}>
+            <button
+              type="button"
+              onClick={() => table.toggleAllRowsExpanded(true)}
+              className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
+            >
+              {i18n.t('ui.positionstable.expandAll')}
+            </button>
+            <button
+              type="button"
+              onClick={() => table.toggleAllRowsExpanded(false)}
+              className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
+            >
+              {i18n.t('ui.positionstable.collapseAll')}
+            </button>
+          </div>
+        </div>
+        <div className="overflow-x-auto rounded-b-xl">
+          <table className="w-full min-w-[1100px] text-sm text-left table-fixed">
+            <colgroup>
+              <col style={{ width: '28px' }} />
+              <col style={{ width: '27%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+            </colgroup>
+            <thead className={DATA_TABLE_STYLES.columnHeader}>
+              {table.getHeaderGroups().map((group) => (
+                <PositionHeaderRow key={group.id} group={group} />
+              ))}
+            </thead>
+            <tbody>
+              {bodyRows.map((item) => (
+                <PositionBodyRow
+                  key={item.row.id}
+                  cancelHide={cancelHide}
+                  row={item.row}
+                  scheduleHide={scheduleHide}
+                  separatorType={item.separatorType}
+                  setAllocationHover={setAllocationHover}
+                  setChart={setChart}
+                  setSavingsChart={setSavingsChart}
+                  setUnderlyingPopover={setUnderlyingPopover}
+                  totals={item.totals}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {chart && (
-        <HoverChart
-          target={chart}
-          onMouseEnter={cancelHide}
-          onMouseLeave={scheduleHide}
-        />
-      )}
+        {chart && (
+          <HoverChart
+            target={chart}
+            onMouseEnter={cancelHide}
+            onMouseLeave={scheduleHide}
+          />
+        )}
 
-      {savingsChart && (
-        <HoverSavingsChart
-          target={savingsChart}
-          onMouseEnter={cancelHide}
-          onMouseLeave={scheduleHide}
-        />
-      )}
+        {savingsChart && (
+          <HoverSavingsChart
+            target={savingsChart}
+            onMouseEnter={cancelHide}
+            onMouseLeave={scheduleHide}
+          />
+        )}
 
-      {allocationHover && (
-        <HoverAllocationPopover
-          target={allocationHover}
-          onMouseEnter={cancelHide}
-          onMouseLeave={scheduleHide}
-        />
-      )}
+        {allocationHover && (
+          <HoverAllocationPopover
+            target={allocationHover}
+            onMouseEnter={cancelHide}
+            onMouseLeave={scheduleHide}
+          />
+        )}
 
-      {underlyingPopover && (
-        <FundPositionPopover
-          target={underlyingPopover}
-          onMouseEnter={cancelHide}
-          onMouseLeave={scheduleHide}
-        />
-      )}
-    </section>
+        {underlyingPopover && (
+          <FundPositionPopover
+            target={underlyingPopover}
+            onMouseEnter={cancelHide}
+            onMouseLeave={scheduleHide}
+          />
+        )}
+      </section>
+    </Preview>
   )
 }

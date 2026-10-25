@@ -1,9 +1,7 @@
-import { createPortal } from 'react-dom'
-
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { IsinAllocation } from '@/domains/portfolio/shared/types/isinAllocation.type'
 import i18n from '@/i18n/i18n'
-import { computePopoverPosition } from '@/shared/ui/helpers/presenters/computePopoverPosition'
+import { Preview } from '@/shared/ui/Preview.view'
 
 import { MiniDonut } from './MiniDonut.view'
 
@@ -50,20 +48,12 @@ export function HoverAllocationPopover({
 
   const cols = charts.length >= 2 ? 2 : 1
   const W = cols === 2 ? 490 : 250
-  const H = charts.length > 2 ? 430 : 230
-  const popoverPosition = computePopoverPosition(target.buttonRect, W, H, {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  })
 
-  return createPortal(
-    <div
-      style={{
-        position: 'fixed',
-        ...popoverPosition,
-        zIndex: 9999,
-        pointerEvents: 'auto',
-      }}
+  return (
+    <Preview.Content
+      anchor={target.buttonRect}
+      label={target.name}
+      style={{ width: `min(${W}px, calc(100vw - 20px))` }}
       className="overflow-y-auto bg-surface border border-border-strong rounded-xl p-3 shadow-2xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -78,7 +68,6 @@ export function HoverAllocationPopover({
           <MiniDonut key={c.title} title={c.title} point={c.point} />
         ))}
       </div>
-    </div>,
-    document.body,
+    </Preview.Content>
   )
 }

@@ -1,11 +1,7 @@
-import type { ReactNode } from 'react'
-import { useId } from 'react'
-import { createPortal } from 'react-dom'
+import * as Dialog from '@radix-ui/react-dialog'
+import { type ReactNode, useRef } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-
-// eslint-disable-next-line local/component-role -- This UI service owns focus and scrolling, without business state.
-import { useSidePanelDialog } from './services/useSidePanelDialog'
 
 type SidePanelProps = {
   open: boolean
@@ -30,9 +26,8 @@ export function SidePanel({
   size = 'default',
   bodyClassName = 'overflow-auto',
 }: SidePanelProps) {
-  const titleId = useId()
-  const descriptionId = useId()
-  const { closeButtonRef, panelRef } = useSidePanelDialog(open, onClose)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const previouslyFocused = useRef<HTMLElement | null>(null)
   const { slot: title, content: afterTitle } = partitionSlot(
     children,
     SidePanelTitle,
@@ -45,54 +40,61 @@ export function SidePanel({
     afterDescription,
     SidePanelHeaderActions,
   )
-  if (!open) return null
-
-  return createPortal(
-    <div className="fixed inset-0 z-[9990]">
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-label={closeLabel}
-        onClick={onClose}
-        className="absolute inset-0 cursor-default bg-overlay/45 backdrop-blur-xs"
-      />
-      <aside
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={description.length > 0 ? descriptionId : undefined}
-        className={`absolute inset-y-0 right-0 flex max-w-full flex-col border-l border-border-strong bg-surface shadow-2xl ${WIDTH_BY_SIZE[size]}`}
-      >
-        <div className="flex shrink-0 items-start gap-3 border-b border-border px-4 py-3">
-          <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="text-sm font-semibold text-content">
-              {title}
-            </h2>
-            {description.length > 0 && (
-              <div
-                id={descriptionId}
-                className="mt-0.5 text-xs text-content-subtle"
-              >
-                {description}
-              </div>
-            )}
+  return (
+    <Dialog.Root
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose()
+      }}
+    >
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[9990] bg-overlay/45 backdrop-blur-xs" />
+        <Dialog.Content
+          {...(description.length === 0
+            ? { 'aria-describedby': undefined }
+            : {})}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+            previouslyFocused.current =
+              document.activeElement instanceof HTMLElement
+                ? document.activeElement
+                : null
+            closeButtonRef.current?.focus()
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault()
+            previouslyFocused.current?.focus()
+          }}
+          className={`fixed inset-y-0 right-0 z-[9991] flex max-w-full flex-col border-l border-border-strong bg-surface shadow-2xl ${WIDTH_BY_SIZE[size]}`}
+        >
+          <div className="flex shrink-0 items-start gap-3 border-b border-border px-4 py-3">
+            <div className="min-w-0 flex-1">
+              <Dialog.Title className="text-sm font-semibold text-content">
+                {title}
+              </Dialog.Title>
+              {description.length > 0 && (
+                <Dialog.Description asChild>
+                  <div className="mt-0.5 text-xs text-content-subtle">
+                    {description}
+                  </div>
+                </Dialog.Description>
+              )}
+            </div>
+            {headerActions}
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={onClose}
+              aria-label={closeLabel}
+              className="grid size-8 shrink-0 place-items-center rounded-control text-lg leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
+            >
+              ✕
+            </button>
           </div>
-          {headerActions}
-          <button
-            ref={closeButtonRef}
-            type="button"
-            onClick={onClose}
-            aria-label={closeLabel}
-            className="grid size-8 shrink-0 place-items-center rounded-control text-lg leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
-          >
-            ✕
-          </button>
-        </div>
-        <div className={`min-h-0 flex-1 ${bodyClassName}`}>{content}</div>
-      </aside>
-    </div>,
-    document.body,
+          <div className={`min-h-0 flex-1 ${bodyClassName}`}>{content}</div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 

@@ -1,4 +1,5 @@
 import i18n from '@/i18n/i18n'
+import { DecorativeSvg, ToggleButton } from '@/shared/ui/Controls.view'
 export function PositionsToggle({
   open,
   onClick,
@@ -7,10 +8,10 @@ export function PositionsToggle({
   onClick: () => void
 }) {
   return (
-    <button
+    <ToggleButton
       type="button"
       onClick={onClick}
-      aria-pressed={open}
+      active={open}
       title={
         open
           ? i18n.t('ui.positionstoggle.hidePositions')
@@ -22,8 +23,7 @@ export function PositionsToggle({
           : 'border-border-strong text-content-muted hover:border-border-strong hover:bg-surface-raised hover:text-content-secondary'
       }`}
     >
-      <svg
-        aria-hidden="true"
+      <DecorativeSvg
         width="13"
         height="13"
         viewBox="0 0 16 16"
@@ -33,9 +33,9 @@ export function PositionsToggle({
         <rect x="9" y="1" width="6" height="6" rx="1" opacity=".7" />
         <rect x="1" y="9" width="6" height="6" rx="1" opacity=".7" />
         <rect x="9" y="9" width="6" height="6" rx="1" opacity=".7" />
-      </svg>
+      </DecorativeSvg>
 
       {i18n.t('ui.positionstoggle.positions')}
-    </button>
+    </ToggleButton>
   )
 }

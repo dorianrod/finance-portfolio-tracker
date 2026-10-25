@@ -13,6 +13,8 @@ Routing rules:
 
 | Observable pattern or intent | Section prefix | Rule file |
 | --- | --- | --- |
+| Domain or application JSX supplies aria-* attributes, role, tabIndex, autoFocus or keyboard/focus handlers, directly or through a spread; a component, hook or helper manages DOM focus, keyboard listeners or accessibility associations. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |
+| Application code imports accessibility primitives outside shared UI, or the request asks to detect, prevent or centralize scattered accessibility behavior. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |
 | A React feature or domain component contains a literal color (`#…`, `rgb(…)`, `hsl(…)`, `oklch(…)`, or a concrete CSS color name such as `red`), including in inline styles or SVG attributes. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
 | A React feature or domain component uses an arbitrary or palette-specific Tailwind color such as `text-[#b91c1c]`, `bg-red-500`, or `border-slate-300`. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
 | The request asks to introduce, review, centralize, or name colors used by business UI. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |

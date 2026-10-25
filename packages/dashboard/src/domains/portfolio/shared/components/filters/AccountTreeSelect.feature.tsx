@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import {
   accountsForType,
@@ -7,10 +7,11 @@ import {
   toggleAccountTypeSelection,
 } from '@/domains/portfolio/shared/helpers/filters/accountTreeSelection'
 import i18n from '@/i18n/i18n'
+import { Button, Decorative } from '@/shared/ui/Controls.view'
+import { Popover } from '@/shared/ui/Popover.view'
 
 import { accountLabel, toggle } from './helpers/filters/portfolioFilters'
 import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
-import { useCloseAccountTreeOnOutsideClick } from './services/useCloseAccountTreeOnOutsideClick'
 
 type AccountTreeProps = {
   allAccountTypes: string[]
@@ -226,8 +227,6 @@ export function AccountTreeSelect({
   onChange,
 }: AccountTreeProps) {
   const [open, setOpen] = useState(false)
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const containerRef = useCloseAccountTreeOnOutsideClick(open, setOpen)
 
   function typeAccounts(type: string) {
     return accountsForType(type, allAccounts, accountToType)
@@ -248,20 +247,7 @@ export function AccountTreeSelect({
   }))
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false)
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape' && open) {
-          event.stopPropagation()
-          setOpen(false)
-          triggerRef.current?.focus()
-        }
-      }}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <div
         className={[
           'inline-flex items-center rounded-lg border text-xs transition-colors',
@@ -270,65 +256,64 @@ export function AccountTreeSelect({
             : 'border-border-strong bg-surface-raised text-content-muted hover:border-border-strong hover:text-content-secondary',
         ].join(' ')}
       >
-        <button
-          ref={triggerRef}
+        <Popover.Trigger
           type="button"
-          aria-expanded={open}
-          onClick={() => setOpen((current) => !current)}
           className="flex items-center gap-1.5 py-1 pl-3 pr-1"
         >
           <span>{triggerLabel}</span>
-          <span className="ml-0.5 text-content-subtle" aria-hidden="true">
+          <Decorative className="ml-0.5 text-content-subtle">
             {open ? '▴' : '▾'}
-          </span>
-        </button>
+          </Decorative>
+        </Popover.Trigger>
         {hasSelection && (
-          <button
+          <Button
             type="button"
-            aria-label={i18n.t('ui.accounttreeselect.reset')}
+            label={i18n.t('ui.accounttreeselect.reset')}
             onClick={() => onChange(new Set())}
             className="px-2 py-1 text-accent hover:text-content"
             title={i18n.t('ui.accounttreeselect.reset')}
           >
-            <span aria-hidden="true">×</span>
-          </button>
+            <Decorative>×</Decorative>
+          </Button>
         )}
       </div>
 
-      {open && (
-        <div className="absolute top-full mt-1 left-0 z-50 min-w-48 bg-surface-raised border border-border-strong rounded-lg shadow-xl py-1.5 max-h-72 overflow-y-auto">
-          {/* Select all row */}
-          <div className="border-b border-border-strong pb-1 mb-1">
-            <label className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-hover cursor-pointer">
-              <IndeterminateCheckbox
-                checked={
-                  selected.size === allAccounts.length && allAccounts.length > 0
-                }
-                indeterminate={
-                  selected.size > 0 && selected.size < allAccounts.length
-                }
-                onChange={() => {
-                  if (selected.size === allAccounts.length) onChange(new Set())
-                  else onChange(new Set(allAccounts))
-                }}
-              />
-              <span className="text-xs font-semibold text-content-secondary">
-                {i18n.t('ui.accounttreeselect.selectAll')}
-              </span>
-            </label>
-          </div>
-          {accountGroups.map((group) => (
-            <SelectAccountType
-              key={group.type}
-              accountLabels={accountLabels}
-              accounts={group.accounts}
-              onChange={onChange}
-              selected={selected}
-              type={group.type}
+      <Popover.Content
+        label={triggerLabel}
+        align="start"
+        className="min-w-48 py-1.5 max-h-72"
+      >
+        {/* Select all row */}
+        <div className="border-b border-border-strong pb-1 mb-1">
+          <label className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-hover cursor-pointer">
+            <IndeterminateCheckbox
+              checked={
+                selected.size === allAccounts.length && allAccounts.length > 0
+              }
+              indeterminate={
+                selected.size > 0 && selected.size < allAccounts.length
+              }
+              onChange={() => {
+                if (selected.size === allAccounts.length) onChange(new Set())
+                else onChange(new Set(allAccounts))
+              }}
             />
-          ))}
+            <span className="text-xs font-semibold text-content-secondary">
+              {i18n.t('ui.accounttreeselect.selectAll')}
+            </span>
+          </label>
         </div>
-      )}
-    </div>
+        {accountGroups.map((group) => (
+          <SelectAccountType
+            key={group.type}
+            accountLabels={accountLabels}
+            accounts={group.accounts}
+            onChange={onChange}
+            selected={selected}
+            type={group.type}
+          />
+        ))}
+      </Popover.Content>
+    </Popover>
   )
 }

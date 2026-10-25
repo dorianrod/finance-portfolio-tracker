@@ -9,6 +9,7 @@ import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatte
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { Select } from '@/shared/ui/Controls.view'
 
 const SOURCE_LABELS: Record<string, string> = {
   main: i18n.t('ui.errorstab.ingestPortfolioPy'),
@@ -182,8 +183,8 @@ export function ErrorsTab({ errors }: Props) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <select
-              aria-label={i18n.t('ui.errorstab.filterLevel')}
+            <Select
+              label={i18n.t('ui.errorstab.filterLevel')}
               value={filterLevel}
               onChange={(e) =>
                 setFilterLevel(e.target.value as typeof filterLevel)
@@ -195,9 +196,9 @@ export function ErrorsTab({ errors }: Props) {
               <option value="warning">
                 {i18n.t('ui.errorstab.warningsOnly')}
               </option>
-            </select>
-            <select
-              aria-label={i18n.t('ui.errorstab.filterType')}
+            </Select>
+            <Select
+              label={i18n.t('ui.errorstab.filterType')}
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="rounded border border-border-strong bg-surface-raised px-2 py-1 text-xs text-content-secondary focus:border-border-strong focus:outline-none"
@@ -208,7 +209,7 @@ export function ErrorsTab({ errors }: Props) {
                 .map((type) => (
                   <ErrorTypeOption key={type} type={type} />
                 ))}
-            </select>
+            </Select>
             {hasActiveFilters && (
               <button
                 onClick={() => {

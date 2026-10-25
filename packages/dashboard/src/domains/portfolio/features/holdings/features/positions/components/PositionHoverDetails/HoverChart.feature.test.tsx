@@ -4,6 +4,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { clearCsvCache } from '@/shared/csv/csvData'
+import { Preview } from '@/shared/ui/Preview.view'
 
 import { HoverChart } from './HoverChart.feature'
 import { HoverSavingsChart } from './HoverSavingsChart.feature'
@@ -46,7 +47,13 @@ describe.each([
     })
     render(
       <QueryClientProvider client={client}>
-        <Chart target={target} onMouseEnter={vi.fn()} onMouseLeave={vi.fn()} />
+        <Preview open onOpenChange={vi.fn()}>
+          <Chart
+            target={target}
+            onMouseEnter={vi.fn()}
+            onMouseLeave={vi.fn()}
+          />
+        </Preview>
       </QueryClientProvider>,
     )
     expect(screen.getByRole('status').textContent).toBe('Loading…')
@@ -69,7 +76,13 @@ describe.each([
     })
     render(
       <QueryClientProvider client={client}>
-        <Chart target={target} onMouseEnter={vi.fn()} onMouseLeave={vi.fn()} />
+        <Preview open onOpenChange={vi.fn()}>
+          <Chart
+            target={target}
+            onMouseEnter={vi.fn()}
+            onMouseLeave={vi.fn()}
+          />
+        </Preview>
       </QueryClientProvider>,
     )
     await waitFor(() =>

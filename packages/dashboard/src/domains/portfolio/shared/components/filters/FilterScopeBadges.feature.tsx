@@ -5,6 +5,7 @@ import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboar
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { InlineGroup } from '@/shared/ui/Controls.view'
 
 import { FilterScopeBadge } from './FilterScopeBadges.view'
 import { buildFilterScopeBadges } from './helpers/presenters/buildFilterScopeBadges'
@@ -32,13 +33,13 @@ export function FilterScopeBadges({
     period,
   })
   return (
-    <span
+    <InlineGroup
       className="mt-1.5 flex flex-wrap gap-1.5"
-      aria-label={i18n.t('ui.filterscopebadges.indicatorFilterScope')}
+      label={i18n.t('ui.filterscopebadges.indicatorFilterScope')}
     >
       {badges.map((badge) => (
         <FilterScopeBadge key={badge.label} badge={badge} />
       ))}
-    </span>
+    </InlineGroup>
   )
 }

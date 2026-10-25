@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildDataQualityViewModel'
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
+import { Tabs } from '@/shared/ui/Tabs.view'
 
 import { QualityThemeTab } from './DataQualityDetails.view'
 
@@ -42,16 +43,21 @@ const themes: QualityTheme[] = [
 function QualityTabs() {
   const [active, setActive] = useState<QualityThemeId>('pipeline')
   return (
-    <div role="tablist" aria-orientation="vertical">
-      {themes.map((theme) => (
-        <QualityThemeTab
-          key={theme.id}
-          theme={theme}
-          activeThemeId={active}
-          onSelect={setActive}
-        />
-      ))}
-    </div>
+    <Tabs
+      value={active}
+      onValueChange={(value) => setActive(value as QualityThemeId)}
+      orientation="vertical"
+    >
+      <Tabs.List label="Quality themes">
+        {themes.map((theme) => (
+          <QualityThemeTab
+            key={theme.id}
+            theme={theme}
+            activeThemeId={active}
+          />
+        ))}
+      </Tabs.List>
+    </Tabs>
   )
 }
 

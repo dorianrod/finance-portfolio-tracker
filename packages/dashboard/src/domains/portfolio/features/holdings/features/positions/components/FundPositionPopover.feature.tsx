@@ -1,5 +1,3 @@
-import { createPortal } from 'react-dom'
-
 import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/useFundPositionHoldings'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
@@ -9,7 +7,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { computePopoverPosition } from '@/shared/ui/helpers/presenters/computePopoverPosition'
+import { Preview } from '@/shared/ui/Preview.view'
 
 import { FundPositionHoldingRow } from './FundPositionHoldingRow.feature'
 
@@ -35,22 +33,12 @@ export function FundPositionPopover({
   const { openCompleteHoldings } = useDashboardNavigation()
   const { position, status } = target
   const rows = useFundPositionHoldings(position)
-  const width = Math.min(560, window.innerWidth - 20)
-  const estimatedHeight = Math.min(430, window.innerHeight - 20)
-  const popoverPosition = computePopoverPosition(
-    target.buttonRect,
-    width,
-    estimatedHeight,
-    { width: window.innerWidth, height: window.innerHeight },
-  )
 
-  return createPortal(
-    <div
-      style={{
-        position: 'fixed',
-        ...popoverPosition,
-        zIndex: 9999,
-      }}
+  return (
+    <Preview.Content
+      anchor={target.buttonRect}
+      label={target.position.name}
+      style={{ width: `min(560px, calc(100vw - 20px))` }}
       className="overflow-y-auto rounded-xl border border-border-strong bg-surface p-4 shadow-2xl"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -126,7 +114,6 @@ export function FundPositionPopover({
           <span className="basis-full text-warning">{status.issues}</span>
         )}
       </div>
-    </div>,
-    document.body,
+    </Preview.Content>
   )
 }

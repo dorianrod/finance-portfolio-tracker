@@ -168,13 +168,6 @@
   box-shadow: none;
 }
 
-/* Reveal compact data-quality details from the whole KPI, including for keyboard users. */
-.data-quality-kpi:hover .data-quality-tooltip,
-.data-quality-kpi:focus-within .data-quality-tooltip {
-  visibility: visible;
-  opacity: 1;
-}
-
 /* ── Light theme ─────────────────────────────────────────────────── */
 [data-theme='light'] {
   color-scheme: light;

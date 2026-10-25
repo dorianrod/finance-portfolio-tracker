@@ -8,6 +8,7 @@ import {
   SEMANTIC_COLORS,
   SEMANTIC_TEXT_CLASSES,
 } from '@/shared/theme/semanticColors'
+import { Progress } from '@/shared/ui/Controls.view'
 
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
@@ -68,19 +69,16 @@ export function QualityIndicatorCard({
           {formatMoney(amount, { style: 'full' })}
         </span>
       </div>
-      <div
+      <Progress
         className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-raised"
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={safePercentage}
+        label={label}
+        value={safePercentage}
       >
         <div
           className="h-full rounded-full"
           style={{ width: `${safePercentage}%`, backgroundColor: colors.bar }}
         />
-      </div>
+      </Progress>
       {detail && (
         <div className="mt-2 text-xs text-content-subtle">{detail}</div>
       )}

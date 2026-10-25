@@ -4,6 +4,7 @@ import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/servic
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
+import { Decorative } from '@/shared/ui/Controls.view'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
   geo: i18n.t('ui.filterchipbar.geo'),
@@ -31,13 +32,9 @@ export function FilterChipBar() {
         <span className="font-medium opacity-80">
           {DIM_LABELS[filter.type]}
         </span>
-        <span aria-hidden="true" className="opacity-60">
-          :
-        </span>
+        <Decorative className="opacity-60">:</Decorative>
         <span className="font-semibold">{filter.value}</span>
-        <span aria-hidden="true" className="ml-1 opacity-70">
-          ×
-        </span>
+        <Decorative className="ml-1 opacity-70">×</Decorative>
       </button>
     </div>
   )

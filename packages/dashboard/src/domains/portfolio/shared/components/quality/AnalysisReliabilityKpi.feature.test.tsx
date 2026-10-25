@@ -1,8 +1,10 @@
+// @vitest-environment jsdom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { cleanup, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createStore, Provider } from 'jotai'
 import type { ReactNode } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 
 import {
   CombinedAnalysisReliabilityKpi,
@@ -10,7 +12,7 @@ import {
 } from './AnalysisReliabilityKpi.feature'
 
 function renderWithProviders(node: ReactNode) {
-  return renderToStaticMarkup(
+  return render(
     <Provider store={createStore()}>
       <QueryClientProvider client={new QueryClient()}>
         {node}
@@ -19,9 +21,12 @@ function renderWithProviders(node: ReactNode) {
   )
 }
 
+afterEach(cleanup)
+
 describe('CombinedAnalysisReliabilityKpi', () => {
-  it('shows a compact aggregate status and puts the detail in the info tooltip', () => {
-    const html = renderWithProviders(
+  it('shows a compact aggregate status and reveals its detail through the named tooltip trigger', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
       <CombinedAnalysisReliabilityKpi
         statusMetric={{
           value: 'No anomaly',
@@ -48,46 +53,58 @@ describe('CombinedAnalysisReliabilityKpi', () => {
         scope={{ account: 'filterable', period: 'mixed' }}
       />,
     )
-
-    expect(html).toContain('Data quality')
-    expect(html).toContain('Review')
-    expect(html).toContain('data-quality-kpi')
-    expect(html).toContain(
-      'aria-label="Data quality: Review. No anomaly Portfolio data; 100.0% Diversification; 54.0% Underlying assets. Open Data quality."',
-    )
-    expect(html).toContain('aria-label="Show data quality details"')
-    expect(html).toContain('role="tooltip"')
-    expect(html).toContain('Aggregate quality')
-    expect(html).toContain('No anomaly')
-    expect(html).toContain('Portfolio data')
-    expect(html).toContain('100.0%')
-    expect(html).toContain('Diversification')
-    expect(html).toContain('54.0%')
-    expect(html).toContain('Underlying assets')
-    expect(html).toContain('>i</span>')
+    expect(
+      screen.getByRole('button', {
+        name: 'Data quality: Review. No anomaly Portfolio data; 100.0% Diversification; 54.0% Underlying assets. Open Data quality.',
+      }),
+    ).toBeTruthy()
+    expect(screen.getByText('Review')).toBeTruthy()
+    expect(screen.queryByRole('tooltip')).toBeNull()
+    const trigger = screen.getByRole('button', {
+      name: 'Show data quality details',
+    })
+    await user.click(trigger)
+    const tooltip = screen.getByRole('tooltip')
+    expect(trigger.getAttribute('aria-describedby')).toBe(tooltip.id)
+    expect(within(tooltip).getByText('Aggregate quality')).toBeTruthy()
+    for (const detail of [
+      'No anomaly',
+      'Portfolio data',
+      '100.0%',
+      'Diversification',
+      '54.0%',
+      'Underlying assets',
+    ])
+      expect(tooltip.textContent).toContain(detail)
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('tooltip')).toBeNull()
   })
 })
 
 describe('PipelineReliabilityKpi', () => {
-  it('renders its explanation and anomaly detail in the info tooltip', () => {
-    const html = renderWithProviders(
+  it('reveals the explanation and anomaly detail when its information trigger is focused', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
       <PipelineReliabilityKpi
         errorCount={0}
         warningCount={0}
         scope={{ account: 'filterable', period: 'range' }}
       />,
     )
-
-    expect(html).toContain('Data quality')
-    expect(html).toContain('Reliable')
-    expect(html).toContain(
-      'aria-label="Data quality: Reliable. 0 errors and 0 warnings in Portfolio data. Open Data quality."',
-    )
-    expect(html).toContain('role="tooltip"')
-    expect(html).toContain('Import, position and market-data anomalies')
-    expect(html).toContain('Portfolio data')
-    expect(html).toContain('No anomaly')
-    expect(html).toContain('0 errors · 0 warnings')
-    expect(html).toContain('>i</span>')
+    expect(
+      screen.getByRole('button', {
+        name: 'Data quality: Reliable. 0 errors and 0 warnings in Portfolio data. Open Data quality.',
+      }),
+    ).toBeTruthy()
+    await user.tab()
+    await user.tab()
+    const tooltip = screen.getByRole('tooltip')
+    for (const detail of [
+      'Import, position and market-data anomalies',
+      'Portfolio data',
+      'No anomaly',
+      '0 errors · 0 warnings',
+    ])
+      expect(tooltip.textContent).toContain(detail)
   })
 })

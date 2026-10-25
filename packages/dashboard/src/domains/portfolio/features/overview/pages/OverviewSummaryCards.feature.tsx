@@ -16,6 +16,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { Button, Decorative, DecorativeSvg } from '@/shared/ui/Controls.view'
 
 import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
 
@@ -50,17 +51,16 @@ function CardShell({
 
   return (
     <article className="group relative min-w-0 rounded-2xl border border-border bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface/80">
-      <button
+      <Button
         type="button"
         onClick={() => navigateTo(destination)}
-        aria-label={i18n.t('ui.overviewsummarycards.openValue0Details', {
+        label={i18n.t('ui.overviewsummarycards.openValue0Details', {
           value0: title,
         })}
         className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
       />
-      <span
+      <Decorative
         className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${accent}`}
-        aria-hidden="true"
       />
       <span className="pointer-events-none relative z-10 flex items-start justify-between gap-3">
         <span>
@@ -74,8 +74,7 @@ function CardShell({
             </span>
           </span>
         </span>
-        <svg
-          aria-hidden="true"
+        <DecorativeSvg
           viewBox="0 0 20 20"
           fill="none"
           className="mt-0.5 h-4 w-4 shrink-0 text-content-subtle transition-all group-hover:translate-x-0.5 group-hover:text-content-muted"
@@ -87,7 +86,7 @@ function CardShell({
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-        </svg>
+        </DecorativeSvg>
       </span>
       <span className="pointer-events-none relative z-10 mt-4 block">
         {children}

@@ -1,6 +1,7 @@
-import { type ReactNode, useId, useState } from 'react'
+import type { ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
+import { Tooltip } from '@/shared/ui/Tooltip.view'
 
 export function InfoTooltip({
   text,
@@ -9,46 +10,23 @@ export function InfoTooltip({
   text: string
   children?: ReactNode
 }) {
-  const [visible, setVisible] = useState(false)
-  const tooltipId = useId()
-
   return (
-    <span
-      className="relative ml-1 inline-flex items-center"
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={(event) => {
-        if (!event.currentTarget.contains(document.activeElement))
-          setVisible(false)
-      }}
-    >
-      <button
-        type="button"
-        className="flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"
-        aria-label={i18n.t('ui.infotooltip.moreInformation')}
-        aria-describedby={visible ? tooltipId : undefined}
-        aria-expanded={visible}
-        onClick={() => setVisible(true)}
-        onFocus={() => setVisible(true)}
-        onBlur={() => setVisible(false)}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape' && visible) {
-            event.stopPropagation()
-            setVisible(false)
-          }
-        }}
-      >
-        {i18n.t('ui.infotooltip.i')}
-      </button>
-      {visible && (
-        <span
-          id={tooltipId}
-          role="tooltip"
-          className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-control border border-border-strong bg-surface-raised px-3 py-2 text-left text-xs font-normal normal-case leading-relaxed tracking-normal text-content-secondary shadow-xl"
+    <span className="relative ml-1 inline-flex items-center">
+      <Tooltip>
+        <Tooltip.Trigger
+          label={i18n.t('ui.infotooltip.moreInformation')}
+          className="flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"
+        >
+          {i18n.t('ui.infotooltip.i')}
+        </Tooltip.Trigger>
+        <Tooltip.Content
+          side="top"
+          className="w-72 text-left font-normal normal-case leading-relaxed tracking-normal"
         >
           <span className="block">{text}</span>
           {children}
-        </span>
-      )}
+        </Tooltip.Content>
+      </Tooltip>
     </span>
   )
 }

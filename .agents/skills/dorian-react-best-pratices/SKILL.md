@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules. Use when writing, reviewing, or refactoring React code against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.6.0"
+  version: "0.7.0"
 ---
 
 # Dorian React Best Practices
@@ -43,6 +43,7 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 
 ### Component Logic
 
+- [`architecture-centralize-accessibility`](rules/architecture-centralize-accessibility.md) — Centralize all ARIA wiring, keyboard navigation and focus behavior in shared UI primitives; domains and application code supply semantic data, labels and business actions.
 - [`architecture-extract-component-calculations`](rules/architecture-extract-component-calculations.md) — Extract compound numeric and layout calculations into categorized helpers; use presenters for UI geometry.
 - [`architecture-formatter-fallbacks`](rules/architecture-formatter-fallbacks.md) — Keep missing-value and zero display fallbacks in existing formatters instead of component guards or wrapper formatters.
 

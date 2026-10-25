@@ -22,7 +22,9 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
+import { Decorative } from '@/shared/ui/Controls.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Tabs } from '@/shared/ui/Tabs.view'
 
 import {
   AffectedAssetsTable,
@@ -166,7 +168,14 @@ export function DataQualityTab({
 
   return (
     <div className="data-quality-view mb-6">
-      <div className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]">
+      <Tabs
+        orientation="vertical"
+        value={activeThemeId}
+        onValueChange={(value) =>
+          setSelectedQualityTheme(value as QualityThemeId)
+        }
+        className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]"
+      >
         <div className="md:hidden">
           <label
             htmlFor="quality-theme"
@@ -188,39 +197,28 @@ export function DataQualityTab({
           </select>
         </div>
 
-        <nav
+        <Tabs.List
           className="hidden space-y-1 md:block md:border-r md:border-border md:pr-4"
-          aria-label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
-          role="tablist"
-          aria-orientation="vertical"
+          label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
         >
           {themes.map((theme) => (
             <QualityThemeTab
               key={theme.id}
               activeThemeId={activeThemeId}
-              onSelect={setSelectedQualityTheme}
               theme={theme}
             />
           ))}
-        </nav>
+        </Tabs.List>
 
-        <section
-          id="quality-theme-panel"
-          role="tabpanel"
-          aria-labelledby={`quality-theme-${activeThemeId}`}
-          className="min-w-0"
-        >
+        <Tabs.Content value={activeThemeId} className="min-w-0">
           <div className="mb-5 flex flex-wrap items-start gap-3 border-b border-border pb-4">
             <div className="mr-auto min-w-0">
               <div className="flex items-center gap-2">
-                <span
-                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-canvas ring-1 ring-border"
-                  aria-hidden="true"
-                >
+                <Decorative className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-canvas ring-1 ring-border">
                   <span
                     className={`h-2 w-2 rounded-full ${TONE_STYLES[activeTheme.tone].dot}`}
                   />
-                </span>
+                </Decorative>
                 <h2 className="text-base font-semibold text-content">
                   {activeTheme.label}
                 </h2>
@@ -240,9 +238,8 @@ export function DataQualityTab({
                 />
               ) : (
                 <div className="relative min-w-[8rem] overflow-hidden rounded-md bg-canvas/70 px-4 py-3 text-right">
-                  <span
+                  <Decorative
                     className={`absolute inset-y-2 left-0 w-0.5 rounded-r-full ${TONE_STYLES[activeTheme.tone].accent}`}
-                    aria-hidden="true"
                   />
                   <div className="text-xl font-semibold tabular-nums leading-none tracking-tight text-content">
                     {activeTheme.metric}
@@ -268,8 +265,8 @@ export function DataQualityTab({
           )}
 
           {activeThemeId === 'lookthrough' && lookThroughContent}
-        </section>
-      </div>
+        </Tabs.Content>
+      </Tabs>
 
       <FundDataQualityPanel
         statuses={scopedFundData.statuses}

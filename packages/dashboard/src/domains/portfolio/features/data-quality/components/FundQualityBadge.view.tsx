@@ -8,6 +8,7 @@ import type {
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { NamedSymbol } from '@/shared/ui/Controls.view'
 
 const TIER_CLASSES: Record<FundQualityTier, string> = {
   A: 'border-positive bg-positive-muted/60 text-positive',
@@ -50,7 +51,9 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
         {formatPercentage(status.explainedPct)}
       </span>
       {warning && (
-        <span aria-label={i18n.t('ui.fundqualitybadge.dataWarning')}>!</span>
+        <NamedSymbol label={i18n.t('ui.fundqualitybadge.dataWarning')}>
+          !
+        </NamedSymbol>
       )}
     </span>
   )

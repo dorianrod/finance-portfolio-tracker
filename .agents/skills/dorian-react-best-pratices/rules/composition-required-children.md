@@ -53,7 +53,7 @@ Remove the old content props from the component's type and implementation, then 
 
 ### Exceptions
 
-- Scalar data and configuration remain props, including string labels/descriptions, native `title`/ARIA attributes, numeric values, event handlers and domain models; do not turn every data field into a slot. A string-only label prop must not be widened to ReactNode to smuggle UI through it.
+- Scalar data and configuration remain props, including string labels/descriptions, native `title`, numeric values, business event handlers and domain models; do not turn every data field into a slot. A string-only label prop must not be widened to ReactNode to smuggle UI through it. This exception does not permit ARIA or keyboard/focus wiring in domains or application code: follow [centralized accessibility](architecture-centralize-accessibility.md) and pass semantic props to shared UI instead.
 - External APIs outside the project's control, such as React `Suspense.fallback` or Recharts `shape`, `content`, `tick` and `label`, may retain their required named UI props at the external integration boundary. Pass a named module-level component reference or an element of that component, according to the installed library's contract. An inline render callback remains forbidden, including one that simply delegates to a component. Do not propagate the external API into project-owned wrappers.
 
 ```tsx

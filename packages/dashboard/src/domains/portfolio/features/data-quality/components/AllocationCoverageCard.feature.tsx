@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useState } from 'react'
 
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { accountLabel } from '@/domains/portfolio/shared/components/filters/helpers/filters/portfolioFilters'
@@ -14,6 +14,8 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { DecorativeBlock } from '@/shared/ui/Controls.view'
+import { Disclosure } from '@/shared/ui/Disclosure.view'
 
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
 import { DetailToggle } from './DetailToggle.view'
@@ -106,8 +108,6 @@ export function AllocationCoverageCard({
   const [expandedDetail, setExpandedDetail] = useState<
     'accounts' | 'dimensions' | null
   >(null)
-  const accountDetailsId = useId()
-  const dimensionDetailsId = useId()
   const totalAllocated = coverage.reduce((s, c) => s + c.allocated, 0)
   const totalUnallocated = coverage.reduce((s, c) => s + c.unallocated, 0)
   const totalNotApplicable = coverage.reduce((s, c) => s + c.notApplicable, 0)
@@ -138,7 +138,7 @@ export function AllocationCoverageCard({
         </QualityIndicatorCard>
       </div>
 
-      <div className="relative mx-auto hidden h-10 sm:block" aria-hidden="true">
+      <DecorativeBlock className="relative mx-auto hidden h-10 sm:block">
         <div className="absolute left-1/2 top-0 h-5 w-px -translate-x-1/2 bg-surface-hover" />
         <div className="absolute left-[16.667%] right-[16.667%] top-5 h-px bg-surface-hover" />
         <div className="absolute bottom-0 left-[16.667%] top-5 w-px bg-gradient-to-b from-border-strong to-positive/40" />
@@ -146,11 +146,8 @@ export function AllocationCoverageCard({
           className={`absolute bottom-0 left-1/2 top-5 w-px bg-gradient-to-b from-border-strong ${hasMaterialQualityGap(unmappedPct) ? 'to-warning/40' : 'to-positive/40'}`}
         />
         <div className="absolute bottom-0 left-[83.333%] top-5 w-px bg-gradient-to-b from-border-strong to-border-strong/40" />
-      </div>
-      <div
-        className="mx-auto h-6 w-px bg-surface-hover sm:hidden"
-        aria-hidden="true"
-      />
+      </DecorativeBlock>
+      <DecorativeBlock className="mx-auto h-6 w-px bg-surface-hover sm:hidden" />
 
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-3">
         <QualityIndicatorCard
@@ -166,21 +163,17 @@ export function AllocationCoverageCard({
           <QualityIndicatorCard.TooltipFooter>
             <LatestQualityScope />
           </QualityIndicatorCard.TooltipFooter>
-          <DetailToggle
-            label={i18n.t('ui.allocationcoveragecard.detailsByAccount')}
-            expanded={expandedDetail === 'accounts'}
-            controls={accountDetailsId}
-            onClick={() =>
-              setExpandedDetail((current) =>
-                current === 'accounts' ? null : 'accounts',
-              )
-            }
-          />
-          {expandedDetail === 'accounts' && (
-            <div
-              id={accountDetailsId}
-              className="mt-3 space-y-4 border-t border-border pt-3"
-            >
+          <Disclosure expanded={expandedDetail === 'accounts'}>
+            <DetailToggle
+              label={i18n.t('ui.allocationcoveragecard.detailsByAccount')}
+              expanded={expandedDetail === 'accounts'}
+              onClick={() =>
+                setExpandedDetail((current) =>
+                  current === 'accounts' ? null : 'accounts',
+                )
+              }
+            />
+            <Disclosure.Content className="mt-3 space-y-4 border-t border-border pt-3">
               {coverage.map((item) => (
                 <AccountCoverageRow
                   key={item.account}
@@ -188,8 +181,8 @@ export function AllocationCoverageCard({
                   coverage={item}
                 />
               ))}
-            </div>
-          )}
+            </Disclosure.Content>
+          </Disclosure>
         </QualityIndicatorCard>
         <QualityIndicatorCard
           label={i18n.t('ui.allocationcoveragecard.unmappedPositions')}
@@ -208,29 +201,25 @@ export function AllocationCoverageCard({
           <QualityIndicatorCard.TooltipFooter>
             <LatestQualityScope />
           </QualityIndicatorCard.TooltipFooter>
-          <DetailToggle
-            label={i18n.t('ui.allocationcoveragecard.detailsByDimension')}
-            expanded={expandedDetail === 'dimensions'}
-            controls={dimensionDetailsId}
-            onClick={() =>
-              setExpandedDetail((current) =>
-                current === 'dimensions' ? null : 'dimensions',
-              )
-            }
-          />
-          {expandedDetail === 'dimensions' && (
-            <div
-              id={dimensionDetailsId}
-              className="mt-3 border-t border-border pt-3"
-            >
+          <Disclosure expanded={expandedDetail === 'dimensions'}>
+            <DetailToggle
+              label={i18n.t('ui.allocationcoveragecard.detailsByDimension')}
+              expanded={expandedDetail === 'dimensions'}
+              onClick={() =>
+                setExpandedDetail((current) =>
+                  current === 'dimensions' ? null : 'dimensions',
+                )
+              }
+            />
+            <Disclosure.Content className="mt-3 border-t border-border pt-3">
               <p className="mb-3 text-[11px] leading-4 text-content-subtle">
                 {i18n.t(
                   'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
                 )}
               </p>
               <AllocationDimensionQuality coverage={dimensionCoverage} />
-            </div>
-          )}
+            </Disclosure.Content>
+          </Disclosure>
         </QualityIndicatorCard>
         <QualityIndicatorCard
           label={i18n.t('ui.allocationcoveragecard.notApplicable')}

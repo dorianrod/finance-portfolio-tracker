@@ -4,6 +4,7 @@ import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions
 import { type AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import i18n from '@/i18n/i18n'
 import { SEMANTIC_STATUS_BADGE_CLASSES } from '@/shared/theme/semanticColors'
+import { Navigation, NavigationButton } from '@/shared/ui/Controls.view'
 
 const PRIMARY_TABS: Array<{
   id: Exclude<AnalysisTab, 'quality'>
@@ -28,16 +29,15 @@ export function PrimaryTabButton({
   tab,
 }: PrimaryTabButtonProps) {
   return (
-    <button
+    <NavigationButton
       type="button"
       onClick={() => onNavigate(tab.id)}
-      onMouseEnter={() => preloadDashboardTab(tab.id)}
-      onFocus={() => preloadDashboardTab(tab.id)}
-      aria-current={activeTab === tab.id ? 'page' : undefined}
+      onIntent={() => preloadDashboardTab(tab.id)}
+      active={activeTab === tab.id}
       className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? 'border-accent text-content' : 'border-transparent text-content-subtle hover:text-content-secondary'}`}
     >
       {tab.label}
-    </button>
+    </NavigationButton>
   )
 }
 
@@ -56,9 +56,9 @@ export function DashboardNavigation({
   const { openQualityOverview } = useDashboardQuality()
 
   return (
-    <nav
+    <Navigation
       className="mb-5 flex overflow-x-auto border-b border-border"
-      aria-label={i18n.t('ui.app.portfolioAnalyses')}
+      label={i18n.t('ui.app.portfolioAnalyses')}
     >
       {PRIMARY_TABS.map((tab) => (
         <PrimaryTabButton
@@ -68,12 +68,11 @@ export function DashboardNavigation({
           tab={tab}
         />
       ))}
-      <button
+      <NavigationButton
         type="button"
         onClick={openQualityOverview}
-        onMouseEnter={() => preloadDashboardTab('quality')}
-        onFocus={() => preloadDashboardTab('quality')}
-        aria-current={activeTab === 'quality' ? 'page' : undefined}
+        onIntent={() => preloadDashboardTab('quality')}
+        active={activeTab === 'quality'}
         className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === 'quality' ? 'border-b-accent text-content' : 'border-b-transparent text-content-subtle hover:text-content-secondary'}`}
       >
         {i18n.t('ui.app.dataQuality')}
@@ -84,7 +83,7 @@ export function DashboardNavigation({
             {qualityCount}
           </span>
         )}
-      </button>
-    </nav>
+      </NavigationButton>
+    </Navigation>
   )
 }
