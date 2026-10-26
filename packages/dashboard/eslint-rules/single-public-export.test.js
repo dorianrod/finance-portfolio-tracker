@@ -79,7 +79,7 @@ describe('single-public-export', () => {
     ]) {
       const config = await eslint.calculateConfigForFile(filename)
       expect(config.rules['local/single-public-export']).toEqual([1])
-      expect(config.rules['local/public-api-first']).toEqual([1])
+      expect(config.rules['local/public-api-first']).toEqual([2])
     }
     for (const filename of [
       'src/example.test.ts',

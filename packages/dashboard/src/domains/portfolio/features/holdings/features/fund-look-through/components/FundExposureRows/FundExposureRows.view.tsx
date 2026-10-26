@@ -143,13 +143,6 @@ export function Chevron({ open }: { open: boolean }) {
   return <TreeChevronIcon expanded={open} />
 }
 
-export const GRID =
-  'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
-
-export type VirtualExposureItem = { index: number; size: number; start: number }
-
-export type Source = { fund: string; value: number }
-
 export const IssuerRow = memo(function IssuerRow({
   issuer,
   open,
@@ -263,3 +256,10 @@ export const SourceRow = memo(function SourceRow({
     </Surface>
   )
 })
+
+export const GRID =
+  'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
+
+export type VirtualExposureItem = { index: number; size: number; start: number }
+
+export type Source = { fund: string; value: number }

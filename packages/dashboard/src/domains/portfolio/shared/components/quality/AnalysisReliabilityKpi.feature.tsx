@@ -29,92 +29,6 @@ import {
 } from './helpers/presenters/qualityReliabilityPresentation'
 import { InfoIcon, QualityTooltipMetricRow } from './QualityTooltipDetails.view'
 
-function CompactDataQualityKpi({
-  tone,
-  tooltip,
-  rows,
-  ariaLabel,
-  qualityTheme,
-  scope,
-}: {
-  tone: AnalysisReliabilityTone
-  tooltip: string
-  rows: QualityTooltipRow[]
-  ariaLabel: string
-  qualityTheme: QualityThemeId
-  scope: FilterScopeSpec
-}) {
-  const { openDataQuality } = useDashboardQuality()
-  const handleClick = useCallback(
-    () => openDataQuality(qualityTheme),
-    [openDataQuality, qualityTheme],
-  )
-  const styles = RELIABILITY_TONES[tone]
-
-  return (
-    <Inline as="div" placement="inset">
-      <Surface variant="splitAction">
-        <Inline as="div" align="center">
-          <Button
-            type="button"
-            onClick={handleClick}
-            variant="splitAction"
-            label={ariaLabel}
-          >
-            <Text variant="prominentEyebrow" tone="subtle">
-              {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
-            </Text>
-            <Layout
-              as="span"
-              flow="inline"
-              height="indicator"
-              width="indicator"
-              sizing="fixed"
-            >
-              <ToneSwatch tone={styles.dot} shape="dot" />
-            </Layout>
-            <Text variant="eyebrow" tone={styles.status}>
-              {styles.label}
-            </Text>
-          </Button>
-          <Tooltip>
-            <Tooltip.Trigger
-              variant="help"
-              label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
-            >
-              <InfoIcon />
-            </Tooltip.Trigger>
-            <Tooltip.Content align="start" variant="left">
-              <Text variant="note" tone="muted">
-                <Layout as="span" flow="block">
-                  {tooltip}
-                </Layout>
-              </Text>
-              <Layout as="span" flow="block" spaceBefore="default">
-                <Surface as="span" variant="sectionStart">
-                  <Text variant="eyebrow" tone="subtle">
-                    <Layout as="span" flow="block">
-                      {i18n.t('ui.analysisreliabilitykpi.filterScope')}
-                    </Layout>
-                  </Text>
-                  <FilterScopeBadges {...scope} />
-                </Surface>
-              </Layout>
-              <Layout as="span" flow="block" spaceBefore="default">
-                <Surface as="span" variant="sectionStart">
-                  {rows.map((row) => (
-                    <QualityTooltipMetricRow key={row.label} row={row} />
-                  ))}
-                </Surface>
-              </Layout>
-            </Tooltip.Content>
-          </Tooltip>
-        </Inline>
-      </Surface>
-    </Inline>
-  )
-}
-
 export function AnalysisReliabilityKpi({
   percentage,
   amount,
@@ -287,5 +201,91 @@ export function PipelineReliabilityKpi({
         { value0: styles.label, value1: errorCount, value2: warningCount },
       )}
     />
+  )
+}
+
+function CompactDataQualityKpi({
+  tone,
+  tooltip,
+  rows,
+  ariaLabel,
+  qualityTheme,
+  scope,
+}: {
+  tone: AnalysisReliabilityTone
+  tooltip: string
+  rows: QualityTooltipRow[]
+  ariaLabel: string
+  qualityTheme: QualityThemeId
+  scope: FilterScopeSpec
+}) {
+  const { openDataQuality } = useDashboardQuality()
+  const handleClick = useCallback(
+    () => openDataQuality(qualityTheme),
+    [openDataQuality, qualityTheme],
+  )
+  const styles = RELIABILITY_TONES[tone]
+
+  return (
+    <Inline as="div" placement="inset">
+      <Surface variant="splitAction">
+        <Inline as="div" align="center">
+          <Button
+            type="button"
+            onClick={handleClick}
+            variant="splitAction"
+            label={ariaLabel}
+          >
+            <Text variant="prominentEyebrow" tone="subtle">
+              {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
+            </Text>
+            <Layout
+              as="span"
+              flow="inline"
+              height="indicator"
+              width="indicator"
+              sizing="fixed"
+            >
+              <ToneSwatch tone={styles.dot} shape="dot" />
+            </Layout>
+            <Text variant="eyebrow" tone={styles.status}>
+              {styles.label}
+            </Text>
+          </Button>
+          <Tooltip>
+            <Tooltip.Trigger
+              variant="help"
+              label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
+            >
+              <InfoIcon />
+            </Tooltip.Trigger>
+            <Tooltip.Content align="start" variant="left">
+              <Text variant="note" tone="muted">
+                <Layout as="span" flow="block">
+                  {tooltip}
+                </Layout>
+              </Text>
+              <Layout as="span" flow="block" spaceBefore="default">
+                <Surface as="span" variant="sectionStart">
+                  <Text variant="eyebrow" tone="subtle">
+                    <Layout as="span" flow="block">
+                      {i18n.t('ui.analysisreliabilitykpi.filterScope')}
+                    </Layout>
+                  </Text>
+                  <FilterScopeBadges {...scope} />
+                </Surface>
+              </Layout>
+              <Layout as="span" flow="block" spaceBefore="default">
+                <Surface as="span" variant="sectionStart">
+                  {rows.map((row) => (
+                    <QualityTooltipMetricRow key={row.label} row={row} />
+                  ))}
+                </Surface>
+              </Layout>
+            </Tooltip.Content>
+          </Tooltip>
+        </Inline>
+      </Surface>
+    </Inline>
   )
 }

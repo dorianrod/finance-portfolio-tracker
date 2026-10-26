@@ -41,95 +41,6 @@ import { Text } from '@/shared/ui/Text.view'
 import { PositionRowSurface } from './PositionTableAppearance.view'
 import { PositionBodyCell, PositionHeaderRow } from './PositionTableCells.view'
 
-const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
-
-type Props = {
-  data: PositionRow[]
-  fundStatuses?: FundHoldingStatus[]
-  grouping?: 'flat' | 'account-type'
-}
-
-type PositionGroupTotals =
-  ReturnType<typeof calculatePositionGroupTotals> extends Map<
-    string,
-    infer Totals
-  >
-    ? Totals
-    : never
-
-type PositionBodyRowProps = {
-  cancelHide: () => void
-  row: Row<TableRow>
-  scheduleHide: () => void
-  separatorType?: string
-  setAllocationHover: React.Dispatch<
-    React.SetStateAction<AllocationHoverTarget | null>
-  >
-  setChart: React.Dispatch<React.SetStateAction<ChartTarget | null>>
-  setSavingsChart: React.Dispatch<
-    React.SetStateAction<SavingsChartTarget | null>
-  >
-  setUnderlyingPopover: React.Dispatch<
-    React.SetStateAction<FundPositionPopoverTarget | null>
-  >
-  totals?: PositionGroupTotals
-}
-
-function PositionBodyRow({
-  cancelHide,
-  row,
-  scheduleHide,
-  separatorType,
-  setAllocationHover,
-  setChart,
-  setSavingsChart,
-  setUnderlyingPopover,
-  totals,
-}: PositionBodyRowProps) {
-  const item = row.original
-  const isPosition = item.kind === 'position'
-  const isGroup = item.kind === 'group'
-  let rowKind: 'position' | 'group' | 'detail' = 'detail'
-  if (isPosition) rowKind = 'position'
-  else if (isGroup) rowKind = 'group'
-  let rootRow = row
-  while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
-  const isClosed = isClosedPosition(rootRow.original)
-  const { chartHandlers, savingsHandlers } = usePositionGroupPreviews({
-    row,
-    cancelHide,
-    scheduleHide,
-    setChart,
-    setSavingsChart,
-    setAllocationHover,
-    setUnderlyingPopover,
-  })
-
-  return (
-    <Fragment>
-      {separatorType !== undefined && (
-        <PositionGroupSeparator separatorType={separatorType} totals={totals} />
-      )}
-      <PositionRowSurface
-        kind={rowKind}
-        closed={isClosed}
-        onClick={
-          row.getCanExpand() ? row.getToggleExpandedHandler() : undefined
-        }
-      >
-        {row.getVisibleCells().map((cell) => (
-          <PositionBodyCell
-            key={cell.id}
-            cell={cell}
-            chartHandlers={chartHandlers}
-            savingsHandlers={savingsHandlers}
-          />
-        ))}
-      </PositionRowSurface>
-    </Fragment>
-  )
-}
-
 export function PositionsTable({
   data,
   grouping = 'flat',
@@ -266,6 +177,95 @@ export function PositionsTable({
   )
 }
 
+const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
+
+type Props = {
+  data: PositionRow[]
+  fundStatuses?: FundHoldingStatus[]
+  grouping?: 'flat' | 'account-type'
+}
+
+type PositionGroupTotals =
+  ReturnType<typeof calculatePositionGroupTotals> extends Map<
+    string,
+    infer Totals
+  >
+    ? Totals
+    : never
+
+type PositionBodyRowProps = {
+  cancelHide: () => void
+  row: Row<TableRow>
+  scheduleHide: () => void
+  separatorType?: string
+  setAllocationHover: React.Dispatch<
+    React.SetStateAction<AllocationHoverTarget | null>
+  >
+  setChart: React.Dispatch<React.SetStateAction<ChartTarget | null>>
+  setSavingsChart: React.Dispatch<
+    React.SetStateAction<SavingsChartTarget | null>
+  >
+  setUnderlyingPopover: React.Dispatch<
+    React.SetStateAction<FundPositionPopoverTarget | null>
+  >
+  totals?: PositionGroupTotals
+}
+
+function PositionBodyRow({
+  cancelHide,
+  row,
+  scheduleHide,
+  separatorType,
+  setAllocationHover,
+  setChart,
+  setSavingsChart,
+  setUnderlyingPopover,
+  totals,
+}: PositionBodyRowProps) {
+  const item = row.original
+  const isPosition = item.kind === 'position'
+  const isGroup = item.kind === 'group'
+  let rowKind: 'position' | 'group' | 'detail' = 'detail'
+  if (isPosition) rowKind = 'position'
+  else if (isGroup) rowKind = 'group'
+  let rootRow = row
+  while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
+  const isClosed = isClosedPosition(rootRow.original)
+  const { chartHandlers, savingsHandlers } = usePositionGroupPreviews({
+    row,
+    cancelHide,
+    scheduleHide,
+    setChart,
+    setSavingsChart,
+    setAllocationHover,
+    setUnderlyingPopover,
+  })
+
+  return (
+    <Fragment>
+      {separatorType !== undefined && (
+        <PositionGroupSeparator separatorType={separatorType} totals={totals} />
+      )}
+      <PositionRowSurface
+        kind={rowKind}
+        closed={isClosed}
+        onClick={
+          row.getCanExpand() ? row.getToggleExpandedHandler() : undefined
+        }
+      >
+        {row.getVisibleCells().map((cell) => (
+          <PositionBodyCell
+            key={cell.id}
+            cell={cell}
+            chartHandlers={chartHandlers}
+            savingsHandlers={savingsHandlers}
+          />
+        ))}
+      </PositionRowSurface>
+    </Fragment>
+  )
+}
+
 function PositionGroupSeparator({
   separatorType,
   totals,
@@ -322,6 +322,7 @@ function PositionGroupSeparator({
     </tr>
   )
 }
+
 function PositionTableToolbar({
   table,
 }: {
@@ -377,6 +378,7 @@ function PositionTableToolbar({
     </TablePanel.Toolbar>
   )
 }
+
 function PositionTablePreviews({
   chart,
   savingsChart,

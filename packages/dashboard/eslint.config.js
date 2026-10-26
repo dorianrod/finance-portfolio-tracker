@@ -28,9 +28,17 @@ import requireChildrenComposition from './eslint-rules/require-children-composit
 import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
 import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
+import { eslintProjectFingerprint } from './scripts/eslint-project-fingerprint.mjs'
 
 export default defineConfig([
   globalIgnores(['dist', 'storybook-static']),
+  {
+    settings: {
+      'local/project-fingerprint': eslintProjectFingerprint(
+        import.meta.dirname,
+      ),
+    },
+  },
   {
     files: ['**/*.{js,mjs,cjs}'],
     plugins: {
@@ -184,7 +192,7 @@ export default defineConfig([
       'src/shared/ui/storybook/**',
     ],
     rules: {
-      'local/public-api-first': 'warn',
+      'local/public-api-first': 'error',
       'local/single-public-export': 'warn',
     },
   },

@@ -335,34 +335,6 @@ export function OverviewDriversChart({
   )
 }
 
-function EmptyChart({
-  title,
-  message,
-  scope,
-}: {
-  title: string
-  message: string
-  scope: FilterScopeSpec
-}) {
-  return (
-    <Surface as="section" variant="panel">
-      <Text as="h3" variant="bodyStrong" tone="secondary">
-        <Inline as="span" align="center">
-          {title}
-          <ScopedInfoTooltip text={message} scope={scope} />
-        </Inline>
-      </Text>
-      <Layout height="chart">
-        <Text as="div" variant="body" tone="subtle" align="center">
-          <Inline as="div" align="center" justify="center">
-            {message}
-          </Inline>
-        </Text>
-      </Layout>
-    </Surface>
-  )
-}
-
 export function OverviewConcentrationChart({
   heldConcentration,
   underlyingConcentration,
@@ -479,6 +451,34 @@ export function OverviewConcentrationChart({
           </Text>
         </Stack>
       )}
+    </Surface>
+  )
+}
+
+function EmptyChart({
+  title,
+  message,
+  scope,
+}: {
+  title: string
+  message: string
+  scope: FilterScopeSpec
+}) {
+  return (
+    <Surface as="section" variant="panel">
+      <Text as="h3" variant="bodyStrong" tone="secondary">
+        <Inline as="span" align="center">
+          {title}
+          <ScopedInfoTooltip text={message} scope={scope} />
+        </Inline>
+      </Text>
+      <Layout height="chart">
+        <Text as="div" variant="body" tone="subtle" align="center">
+          <Inline as="div" align="center" justify="center">
+            {message}
+          </Inline>
+        </Text>
+      </Layout>
     </Surface>
   )
 }

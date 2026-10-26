@@ -33,102 +33,6 @@ import {
   IrrList,
 } from './PerformanceRankingLists/PerformanceRankingLists.view'
 
-type Props = {
-  assetIrr: AssetIrrSummary
-  assetIrrStatus: IrrStatus
-  sinceTracking: PerformanceContributionSummary
-  trailingThreeYears: PerformanceContributionSummary
-  sinceTrackingIrr: number | null
-  trailingThreeYearIrr: number | null
-  irrStatus: IrrStatus
-}
-
-type PerformanceView = 'contribution' | 'irr'
-
-function MetricLabel({
-  label,
-  tooltip,
-  scope,
-}: {
-  label: string
-  tooltip: string
-  scope: FilterScopeSpec
-}) {
-  return (
-    <Text as="div" variant="microOverline" tone="subtle">
-      <Inline as="div" align="center">
-        <span>{label}</span>
-        <ScopedInfoTooltip text={tooltip} scope={scope} />
-      </Inline>
-    </Text>
-  )
-}
-
-function ContributionList({
-  title,
-  items,
-  positive,
-  scope,
-}: {
-  title: string
-  items: PerformanceContribution[]
-  positive: boolean
-  scope: FilterScopeSpec
-}) {
-  return (
-    <section>
-      <Inline
-        as="div"
-        spaceAfter="default"
-        align="baseline"
-        justify="between"
-        gap="default"
-      >
-        <Text as="h3" variant="overline" tone="subtle">
-          <Inline as="span" align="center">
-            {title}
-            <ScopedInfoTooltip
-              // eslint-disable-next-line local/no-prop-drilling -- Copy selection is presentation logic owned by this contribution section.
-              text={
-                positive
-                  ? i18n.t(
-                      'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
-                    )
-                  : i18n.t(
-                      'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
-                    )
-              }
-              scope={scope}
-            />
-          </Inline>
-        </Text>
-        <Text variant="micro" tone="subtle">
-          {positive
-            ? i18n.t('ui.performancecontributioncard.shareOfGains')
-            : i18n.t('ui.performancecontributioncard.shareOfLosses')}
-        </Text>
-      </Inline>
-      {items.length === 0 ? (
-        <Surface variant="emptyCaption" as="p" tone="subtle" align="center">
-          {positive
-            ? i18n.t('ui.performancecontributioncard.noPositiveContribution')
-            : i18n.t('ui.performancecontributioncard.noNegativeContribution')}
-        </Surface>
-      ) : (
-        <Stack as="ol" gap="default">
-          {items.map((item) => (
-            <ContributionListItem
-              key={item.key}
-              item={item}
-              positive={positive}
-            />
-          ))}
-        </Stack>
-      )}
-    </section>
-  )
-}
-
 export function AssetIrrView({
   summary,
   status,
@@ -322,6 +226,102 @@ export function PerformanceContributionCard({
   )
 }
 
+type Props = {
+  assetIrr: AssetIrrSummary
+  assetIrrStatus: IrrStatus
+  sinceTracking: PerformanceContributionSummary
+  trailingThreeYears: PerformanceContributionSummary
+  sinceTrackingIrr: number | null
+  trailingThreeYearIrr: number | null
+  irrStatus: IrrStatus
+}
+
+type PerformanceView = 'contribution' | 'irr'
+
+function MetricLabel({
+  label,
+  tooltip,
+  scope,
+}: {
+  label: string
+  tooltip: string
+  scope: FilterScopeSpec
+}) {
+  return (
+    <Text as="div" variant="microOverline" tone="subtle">
+      <Inline as="div" align="center">
+        <span>{label}</span>
+        <ScopedInfoTooltip text={tooltip} scope={scope} />
+      </Inline>
+    </Text>
+  )
+}
+
+function ContributionList({
+  title,
+  items,
+  positive,
+  scope,
+}: {
+  title: string
+  items: PerformanceContribution[]
+  positive: boolean
+  scope: FilterScopeSpec
+}) {
+  return (
+    <section>
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="baseline"
+        justify="between"
+        gap="default"
+      >
+        <Text as="h3" variant="overline" tone="subtle">
+          <Inline as="span" align="center">
+            {title}
+            <ScopedInfoTooltip
+              // eslint-disable-next-line local/no-prop-drilling -- Copy selection is presentation logic owned by this contribution section.
+              text={
+                positive
+                  ? i18n.t(
+                      'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
+                    )
+                  : i18n.t(
+                      'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
+                    )
+              }
+              scope={scope}
+            />
+          </Inline>
+        </Text>
+        <Text variant="micro" tone="subtle">
+          {positive
+            ? i18n.t('ui.performancecontributioncard.shareOfGains')
+            : i18n.t('ui.performancecontributioncard.shareOfLosses')}
+        </Text>
+      </Inline>
+      {items.length === 0 ? (
+        <Surface variant="emptyCaption" as="p" tone="subtle" align="center">
+          {positive
+            ? i18n.t('ui.performancecontributioncard.noPositiveContribution')
+            : i18n.t('ui.performancecontributioncard.noNegativeContribution')}
+        </Surface>
+      ) : (
+        <Stack as="ol" gap="default">
+          {items.map((item) => (
+            <ContributionListItem
+              key={item.key}
+              item={item}
+              positive={positive}
+            />
+          ))}
+        </Stack>
+      )}
+    </section>
+  )
+}
+
 function ContributionSummaryMetrics({
   summary,
   irr,
@@ -445,6 +445,7 @@ function ContributionSummaryMetrics({
     </Layout>
   )
 }
+
 function ContributionRankings({
   summary,
   scopePeriod,
