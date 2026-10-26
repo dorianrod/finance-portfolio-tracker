@@ -3,7 +3,7 @@ import i18n from '@/i18n/i18n'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { EvoCard } from './EvoCard.feature'
+import { EvoCard } from './EvoCard/EvoCard.feature'
 
 export function AllocationTrendView({
   charts,

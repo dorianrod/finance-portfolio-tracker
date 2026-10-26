@@ -1,5 +1,6 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
 import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/normalizeCoveragePercentage'
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import { type FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
@@ -26,10 +27,7 @@ export function AnalysisReliabilityKpi({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const safePercentage =
-    percentage == null || !Number.isFinite(percentage)
-      ? null
-      : Math.max(0, Math.min(100, percentage))
+  const safePercentage = normalizeCoveragePercentage(percentage)
   const styles = RELIABILITY_TONES[tone]
   const percentageLabel = formatPercentage(safePercentage)
 

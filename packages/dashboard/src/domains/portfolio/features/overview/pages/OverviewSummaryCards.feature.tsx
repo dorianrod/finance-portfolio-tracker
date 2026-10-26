@@ -5,7 +5,7 @@ import type {
   OverviewComparison,
   OverviewConcentrationComparison,
 } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
-import { formatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewIrrValue'
+import { useFormatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
@@ -194,8 +194,7 @@ function OverviewPerformanceCard({
 >) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const signedMoney = (value: number | null) =>
-    value == null ? '—' : `${value > 0 ? '+' : ''}${formatMoney(value)}`
+  const formatOverviewIrrValue = useFormatOverviewIrrValue()
   const rollingThreeYearDelta =
     irrStatus === 'ready' && rollingThreeYearTri.delta != null
       ? rollingThreeYearTri.delta
@@ -235,7 +234,11 @@ function OverviewPerformanceCard({
               {comparison.passiveIncome.delta != null && (
                 <Layout as="span" flow="inline">
                   <Text variant="tiny" tone="subtle">
-                    ({signedMoney(comparison.passiveIncome.delta)})
+                    (
+                    {formatMoney(comparison.passiveIncome.delta, {
+                      signed: true,
+                    })}
+                    )
                   </Text>
                 </Layout>
               )}
@@ -273,11 +276,7 @@ function OverviewPerformanceCard({
               numeric
               tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
             >
-              {formatOverviewIrrValue(
-                irrStatus,
-                rollingThreeYearTri.current,
-                formatPercentage,
-              )}
+              {formatOverviewIrrValue(irrStatus, rollingThreeYearTri.current)}
             </Text>
             {rollingThreeYearDelta != null && (
               <MetricDelta
@@ -352,9 +351,7 @@ function OverviewConcentrationCard({
           <span className="block mt-1">
             <Text variant="metricSecondary" tone={'attention'} numeric>
               <Layout as="span" flow="block">
-                {primaryConcentration.current
-                  ? formatPercentage(primaryConcentration.current.topHoldingPct)
-                  : '—'}
+                {formatPercentage(primaryConcentration.current?.topHoldingPct)}
               </Layout>
             </Text>
           </span>
@@ -382,9 +379,7 @@ function OverviewConcentrationCard({
           <span className="block mt-1">
             <Text variant="metricSecondary" tone={'attention'} numeric>
               <Layout as="span" flow="block">
-                {primaryConcentration.current
-                  ? formatPercentage(primaryConcentration.current.topFivePct)
-                  : '—'}
+                {formatPercentage(primaryConcentration.current?.topFivePct)}
               </Layout>
             </Text>
           </span>
@@ -411,14 +406,12 @@ function OverviewConcentrationCard({
               <Text tone="subtle">
                 <Layout as="span" flow="block">
                   {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
-                    largest: heldConcentration.current
-                      ? formatPercentage(
-                          heldConcentration.current.topHoldingPct,
-                        )
-                      : '—',
-                    topFive: heldConcentration.current
-                      ? formatPercentage(heldConcentration.current.topFivePct)
-                      : '—',
+                    largest: formatPercentage(
+                      heldConcentration.current?.topHoldingPct,
+                    ),
+                    topFive: formatPercentage(
+                      heldConcentration.current?.topFivePct,
+                    ),
                   })}
                 </Layout>
               </Text>

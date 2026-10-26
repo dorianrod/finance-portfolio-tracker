@@ -5,7 +5,6 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
 
-// eslint-disable-next-line complexity -- Sign, units and tone are variants of one comparison badge, including percentage-point concentration deltas.
 export function DeltaBadge({
   metric,
   tone = 'performance',
@@ -18,10 +17,7 @@ export function DeltaBadge({
   let color = getOverviewPerformanceTone(metric.delta)
   if (tone === 'contributions') color = 'accent'
   else if (tone === 'concentration') color = getConcentrationTone(metric.delta)
-  let label =
-    metric.delta == null
-      ? '—'
-      : `${metric.delta > 0 ? '+' : ''}${formatMoney(metric.delta)}`
+  let label = formatMoney(metric.delta, { signed: true })
   if (tone === 'concentration') {
     label = formatPercentage(metric.delta, { signed: true, unit: ' pp' })
   }

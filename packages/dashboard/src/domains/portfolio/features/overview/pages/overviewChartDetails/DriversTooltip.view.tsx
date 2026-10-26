@@ -18,6 +18,10 @@ export function DriversTooltip({
   const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
   const row = payload[0].payload
+  const difference =
+    row.current == null || row.previous == null
+      ? null
+      : row.current - row.previous
   return (
     <TooltipBox>
       <ChartText as="div" tone={'tooltipText'} variant="strong">
@@ -50,9 +54,10 @@ export function DriversTooltip({
               <Inline as="div" justify="between" gap="spacious" inset="compact">
                 <span>{i18n.t('ui.overviewcharts.difference')}</span>
                 <ChartText tone={'tooltipLabel'} numeric>
-                  {row.current == null || row.previous == null
-                    ? i18n.t('ui.overviewcharts.unavailable')
-                    : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}
+                  {formatMoney(difference, {
+                    signed: true,
+                    fallback: i18n.t('ui.overviewcharts.unavailable'),
+                  })}
                 </ChartText>
               </Inline>
             </ChartText>

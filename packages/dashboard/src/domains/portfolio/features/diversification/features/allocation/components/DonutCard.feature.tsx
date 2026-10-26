@@ -7,8 +7,7 @@ import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features
 import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { formatGroupedAllocationLabel } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/formatGroupedAllocationLabel'
-import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
+import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/buildAllocationPieData'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'
@@ -29,27 +28,7 @@ export function DonutCard({
   const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
   const { toggleFilter } = useDashboardDiversificationFilters()
   const { togglePositions } = useDashboardDiversificationPositions()
-  const { total, data } = useMemo(() => {
-    const total = point.categories.reduce((s, c) => s + c.value, 0)
-
-    const { main, grouped } = groupAllocationTail(point.categories)
-    const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
-    const data: PieEntry[] = [
-      ...main.map((c) => ({ ...c, total })),
-      ...(grouped.length > 1
-        ? [
-            {
-              name: formatGroupedAllocationLabel(grouped.length),
-              value: groupedTotal,
-              total,
-              subItems: grouped,
-            },
-          ]
-        : []),
-    ]
-
-    return { total, data }
-  }, [point])
+  const { total, data } = useMemo(() => buildAllocationPieData(point), [point])
   const selectCategory = useCallback(
     (entry: PieEntry | undefined) => {
       if (entry && !entry.subItems?.length)

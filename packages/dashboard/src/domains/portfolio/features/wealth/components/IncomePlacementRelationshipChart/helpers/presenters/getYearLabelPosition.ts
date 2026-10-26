@@ -1,6 +1,6 @@
 import type { CartesianViewBox } from 'recharts'
 
-import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/helpers/calculators/calculateYearLabelLayout'
+import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/calculateYearLabelLayout'
 
 export function getYearLabelPosition(
   viewBox: CartesianViewBox,

@@ -4,6 +4,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+import { buildUnrealizedPnlHistory } from '@/domains/portfolio/features/performance/helpers/calculators/buildUnrealizedPnlHistory'
+import type { UnrealizedPnlPoint } from '@/domains/portfolio/features/performance/types/unrealizedPnlPoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
@@ -26,10 +28,7 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import {
-  type UnrealizedPnlPoint,
-  UnrealizedPnlTooltip,
-} from './UnrealizedPnlTooltip.view'
+import { UnrealizedPnlTooltip } from './UnrealizedPnlTooltip.view'
 
 export function UnrealizedPnlChart({
   history,
@@ -39,17 +38,7 @@ export function UnrealizedPnlChart({
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const data: UnrealizedPnlPoint[] = history.map((point, index) => ({
-    ...point,
-    unrealized_gain_pct:
-      point.total_cost_basis > 0
-        ? (point.unrealized_gain / point.total_cost_basis) * 100
-        : null,
-    snapshot_change:
-      index > 0
-        ? point.unrealized_gain - history[index - 1].unrealized_gain
-        : null,
-  }))
+  const data = buildUnrealizedPnlHistory(history)
 
   if (data.length === 0) return null
 

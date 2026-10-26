@@ -8,7 +8,7 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { ConcentrationChart } from './ConcentrationChart.feature'
-import { CumulativeConcentrationChart } from './CumulativeConcentrationChart.feature'
+import { CumulativeConcentrationChart } from './CumulativeConcentrationChart/CumulativeConcentrationChart.feature'
 
 export function CurrentConcentration({
   positions,

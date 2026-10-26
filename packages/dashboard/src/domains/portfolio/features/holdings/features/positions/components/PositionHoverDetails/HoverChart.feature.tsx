@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
 import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
-import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeUnitPriceDomain'
+import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'

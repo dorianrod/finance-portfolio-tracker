@@ -5,13 +5,13 @@ import type {
   AccountCoverage,
   DimensionCoverage,
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
+import { summarizeAllocationCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
 import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 import i18n from '@/i18n/i18n'
-import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
@@ -37,17 +37,16 @@ export function AllocationCoverageCard({
   const [expandedDetail, setExpandedDetail] = useState<
     'accounts' | 'dimensions' | null
   >(null)
-  const totalAllocated = coverage.reduce((s, c) => s + c.allocated, 0)
-  const totalUnallocated = coverage.reduce((s, c) => s + c.unallocated, 0)
-  const totalNotApplicable = coverage.reduce((s, c) => s + c.notApplicable, 0)
-  const total = totalAllocated + totalUnallocated + totalNotApplicable
+  const {
+    allocated: totalAllocated,
+    unallocated: totalUnallocated,
+    notApplicable: totalNotApplicable,
+    total,
+    allocatedPct: mappedPct,
+    unallocatedPct: unmappedPct,
+    notApplicablePct,
+  } = summarizeAllocationCoverage(coverage)
   if (total <= 0) return null
-
-  const [mappedPct, unmappedPct, notApplicablePct] = partitionPercentages([
-    totalAllocated,
-    totalUnallocated,
-    totalNotApplicable,
-  ])
 
   return (
     <div>
@@ -192,12 +191,9 @@ function AccountCoverageRow({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const rowTotal =
-    coverage.allocated + coverage.unallocated + coverage.notApplicable
-  if (rowTotal <= 0) return null
-  const [allocatedPct, unallocatedPct, notApplicablePct] = partitionPercentages(
-    [coverage.allocated, coverage.unallocated, coverage.notApplicable],
-  )
+  const { total, allocatedPct, unallocatedPct, notApplicablePct } =
+    summarizeAllocationCoverage([coverage])
+  if (total <= 0) return null
   const label = accountLabel(coverage.account, accountLabels)
   const summary =
     coverage.allocated + coverage.unallocated > 0

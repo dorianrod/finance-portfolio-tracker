@@ -8,6 +8,8 @@ import { type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+import { buildAccountTypeTooltipData } from './helpers/presenters/buildAccountTypeTooltipData'
+
 export function AccountTypeHistoryTooltip({
   active,
   payload,
@@ -19,11 +21,10 @@ export function AccountTypeHistoryTooltip({
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   if (!active || !payload?.length) return null
-  const row = payload[0]?.payload
-  const total = accountTypes.reduce((sum, accountType) => {
-    const value = row?.[accountType]
-    return sum + (typeof value === 'number' ? value : 0)
-  }, 0)
+  const { total, rows } = buildAccountTypeTooltipData(
+    payload[0]?.payload,
+    accountTypes,
+  )
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -38,14 +39,14 @@ export function AccountTypeHistoryTooltip({
           })}
         </ChartText>
       </Layout>
-      {accountTypes.map((accountType, index) => (
+      {rows.map(({ accountType, index, value, share }) => (
         <AccountTypeTooltipRow
           key={accountType}
           accountType={accountType}
           index={index}
           percentageMode={percentageMode}
-          row={row}
-          total={total}
+          value={value}
+          share={share}
           typeCategories={typeCategories}
         />
       ))}
@@ -66,30 +67,27 @@ function AccountTypeTooltipRow({
   accountType,
   index,
   percentageMode,
-  row,
-  total,
+  value,
+  share,
   typeCategories,
 }: {
   accountType: string
   index: number
   percentageMode: boolean
-  row: Record<string, number | string | Date> | undefined
-  total: number
+  value: number
+  share: number | null
   typeCategories: Record<string, string>
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const rawValue = row?.[accountType]
-  const value = typeof rawValue === 'number' ? rawValue : 0
   if (!value) return null
-  const share = total > 0 ? formatPercentage((value / total) * 100) : '—'
   return (
     <ChartText
       as="div"
       tone={getAccountTypeTone(accountType, index, typeCategories)}
     >
       {accountType}: {formatMoney(value, { style: 'full' })}
-      {percentageMode && ` · ${share}`}
+      {percentageMode && ` · ${formatPercentage(share)}`}
     </ChartText>
   )
 }

@@ -1,10 +1,9 @@
 import { IrrList } from '@/domains/portfolio/features/performance/components/PerformanceRankingLists/performanceRankingLists/IrrList.view'
-import { formatExactPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/formatExactPerformanceDateRange'
+import { useFormatExactPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatExactPerformanceDateRange'
 import { buildAssetIrrRankings } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/buildAssetIrrRankings'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -19,7 +18,7 @@ export function AssetIrrView({
   summary: AssetIrrSummary
   status: IrrStatus
 }) {
-  const formatDate = useFormatDate()
+  const formatExactPerformanceDateRange = useFormatExactPerformanceDateRange()
   if (status === 'loading') {
     return (
       <Layout spaceBefore="spacious">
@@ -74,13 +73,10 @@ export function AssetIrrView({
               </Text>
               <Layout spaceBefore="compact">
                 <Text as="div" variant="label" tone="muted">
-                  {formatExactPerformanceDateRange(
-                    {
-                      startDate: summary.start_date,
-                      endDate: summary.end_date,
-                    },
-                    formatDate,
-                  )}
+                  {formatExactPerformanceDateRange({
+                    startDate: summary.start_date,
+                    endDate: summary.end_date,
+                  })}
                 </Text>
               </Layout>
             </div>

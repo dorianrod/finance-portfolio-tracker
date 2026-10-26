@@ -3,41 +3,24 @@ import { useMemo } from 'react'
 
 import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
 import { AllocationSection } from '@/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature'
-import { excludeNonApplicableAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/excludeNonApplicableAllocationData'
-import { scopeRawAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/scopeRawAllocationData'
 import { ConcentrationSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature'
+import { prepareDiversificationScope } from '@/domains/portfolio/features/diversification/shared/helpers/filters/prepareDiversificationScope'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import i18n from '@/i18n/i18n'
 import { Text } from '@/shared/ui/Text.view'
 
 export function DiversificationCharts(inputs: DiversificationInputs) {
   const view = useAtomValue(dashboardDiversificationViewAtom)
-  const applicablePositions = useMemo(
-    () => inputs.positions.filter(isAssetAnalysisApplicablePosition),
-    [inputs.positions],
-  )
-  const scopedRawData = useMemo(
-    () =>
-      excludeNonApplicableAllocationData(
-        scopeRawAllocationData(inputs.rawData, inputs.accountFilters),
-        inputs.positions,
-      ),
-    [inputs.rawData, inputs.accountFilters, inputs.positions],
-  )
-  const hasCurrentData = [
-    scopedRawData.geo,
-    scopedRawData.secteur,
-    scopedRawData.currency,
-    scopedRawData.classe,
-  ].some((rows) => rows.length > 0)
-  const hasSelectedValue = inputs.positions.some(
-    (position) =>
-      position.status === 'active' && (position.total_value ?? 0) > 0,
-  )
-  const hasApplicableValue = applicablePositions.some(
-    (position) =>
-      position.status === 'active' && (position.total_value ?? 0) > 0,
+  const { positions, rawData, accountFilters } = inputs
+  const {
+    applicablePositions,
+    scopedRawData,
+    hasCurrentData,
+    hasSelectedValue,
+    hasApplicableValue,
+  } = useMemo(
+    () => prepareDiversificationScope({ positions, rawData, accountFilters }),
+    [positions, rawData, accountFilters],
   )
   if (inputs.rawData.loading)
     return (

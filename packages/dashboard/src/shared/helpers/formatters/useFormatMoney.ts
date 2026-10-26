@@ -11,9 +11,10 @@ export function useFormatMoney() {
     ): string => {
       const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
-      if (isStandardEuroFormat(options))
-        return formatStandardEuro(displayValue, options.style ?? 'currency')
-      return formatConfiguredMoney(displayValue, options)
+      const formatted = isStandardEuroFormat(options)
+        ? formatStandardEuro(displayValue, options.style ?? 'currency')
+        : formatConfiguredMoney(displayValue, options)
+      return options.signed && displayValue > 0 ? `+${formatted}` : formatted
     },
     [],
   )
@@ -26,6 +27,7 @@ type MoneyFormatOptions = {
   fallback?: string | number
   maximumFractionDigits?: number
   minimumFractionDigits?: number
+  signed?: boolean
   style?: MoneyStyle
   zeroAsFallback?: boolean
 }

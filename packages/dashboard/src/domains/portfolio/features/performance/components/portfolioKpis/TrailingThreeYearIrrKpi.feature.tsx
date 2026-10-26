@@ -1,10 +1,9 @@
-import { formatIrrKpiValue } from '@/domains/portfolio/features/performance/helpers/formatters/formatIrrKpiValue'
+import { useFormatIrrKpiValue } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatIrrKpiValue'
 import { getIrrKpiNote } from '@/domains/portfolio/features/performance/helpers/presenters/getIrrKpiNote'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
 import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import i18n from '@/i18n/i18n'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 import type { IrrKpiProps } from './portfolioKpis.types'
 
@@ -13,8 +12,8 @@ export function TrailingThreeYearIrrKpi({
   status = 'ready',
   scopeLabel,
 }: IrrKpiProps) {
-  const formatPercentage = useFormatPercentage()
-  const formattedValue = formatIrrKpiValue(value, status, formatPercentage)
+  const formatIrrKpiValue = useFormatIrrKpiValue()
+  const formattedValue = formatIrrKpiValue(value, status)
   const note = getIrrKpiNote(status)
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>

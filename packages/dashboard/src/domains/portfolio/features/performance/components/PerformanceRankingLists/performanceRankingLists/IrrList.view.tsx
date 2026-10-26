@@ -5,6 +5,7 @@ import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { getIrrListScale } from './helpers/presenters/getIrrListScale'
 import { IrrListItem } from './IrrListItem.view'
 
 export function IrrList({
@@ -16,7 +17,7 @@ export function IrrList({
   items: AssetIrrItem[]
   positive: boolean
 }) {
-  const strongestIrr = Math.max(0, ...items.map((item) => Math.abs(item.irr)))
+  const strongestIrr = getIrrListScale(items)
 
   return (
     <section>

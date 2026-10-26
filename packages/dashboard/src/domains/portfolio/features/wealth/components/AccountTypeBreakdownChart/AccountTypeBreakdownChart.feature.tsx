@@ -1,8 +1,8 @@
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
-import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/AccountTypeTooltip.view'
-import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
+import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/resolveAccountTypeLabelPositions'
+import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/AccountTypeTooltip.feature'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
@@ -17,6 +17,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { buildAccountTypePieData } from './helpers/presenters/buildAccountTypePieData'
 import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
 import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
 
@@ -25,12 +26,7 @@ export function AccountTypeBreakdownChart({
 }: {
   data: AccountTypePoint[]
 }) {
-  const donutData: AccountTypePoint[] = data.map((point) => ({
-    ...point,
-    total_cost_basis: Math.max(0, point.total_cost_basis),
-  }))
-  const pieData = donutData.filter((point) => point.total_value > 0)
-  const totalValue = data.reduce((sum, point) => sum + point.total_value, 0)
+  const pieData = buildAccountTypePieData(data)
 
   return (
     <div className="flex-1">
@@ -69,9 +65,7 @@ export function AccountTypeBreakdownChart({
               label={<AccountTypeLabel data={data} />}
               labelLine={false}
             />
-            <Tooltip
-              content={<AccountTypeTooltip portfolioTotal={totalValue} />}
-            />
+            <Tooltip content={<AccountTypeTooltip portfolio={data} />} />
           </PieChart>
         </ResponsiveContainer>
       </Surface>
@@ -95,12 +89,9 @@ function AccountTypeLabel({
   )
     return null
   const point = payload as AccountTypePoint
-  const position = resolveAccountTypeLabelPositions(
-    data.filter((point) => point.total_value > 0),
-    cx,
-    cy,
-    outerRadius,
-  )[index]
+  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
+    index
+  ]
   if (!position) return null
 
   const leaderLine = getAccountTypeLeaderLine(

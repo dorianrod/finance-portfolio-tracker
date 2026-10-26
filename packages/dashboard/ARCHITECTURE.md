@@ -95,3 +95,11 @@ services. Their concrete evidence is recorded in `SHARED_OWNERSHIP_AUDIT.md`; no
 application wrapper is counted as a feature. The follow-up export review moved
 single-owner modules into scope selection, wealth, allocation, holdings children
 and quality assessment, and moved theme synchronization into the application.
+
+The October 26 full Dorian review moved the common diversification scope out of
+the application into `diversification/shared/helpers/filters`. The shell distributes
+its prepared positions and allocation inputs to both child analyses and keeps
+the existing availability gates. Child-specific calculations stay in their child.
+Chart geometry and chart-owned services now live beside their owning components.
+See [DORIAN_REACT_AUDIT.md](DORIAN_REACT_AUDIT.md) for the reviewed data paths and
+validation results.

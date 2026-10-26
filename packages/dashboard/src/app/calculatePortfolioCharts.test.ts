@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
+import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/helpers/presenters/cumulativeConcentrationCrosshair'
 import { buildCumulativeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration'
 import { computeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration'
 import { computeHeldAssetConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration'
-import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/cumulativeConcentrationCrosshair'
 import { buildTriChartData } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/buildTriChartData'
 import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary'
 import { computeTopPerformers } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers'

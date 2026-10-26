@@ -41,6 +41,14 @@ describe('chart percentage scales', () => {
     expect(point[PORTFOLIO_GAIN_SHARE_KEY]).toBe(-25)
   })
 
+  it('keeps portfolio shares unavailable when cost and loss cancel out', () => {
+    const [point] = withPortfolioComposition([
+      { ...historyPoint, total_cost_basis: 100, unrealized_gain: -100 },
+    ])
+    expect(point[PORTFOLIO_COST_SHARE_KEY]).toBeNull()
+    expect(point[PORTFOLIO_GAIN_SHARE_KEY]).toBeNull()
+  })
+
   it('partitions account types into exactly 100%', () => {
     const [point] = withAccountTypeShares(
       [

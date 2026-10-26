@@ -40,6 +40,29 @@ function MoneyProbe() {
 describe('useFormatMoney', () => {
   it.each([
     { value: null, expected: '—' },
+    { value: null, options: { signed: true }, expected: '—' },
+    { value: undefined, options: { signed: true, fallback: '' }, expected: '' },
+    { value: 0, options: { signed: true }, expected: '€0' },
+    { value: -2, options: { signed: true }, expected: '-€2' },
+    { value: 2, options: { signed: true }, expected: '+€2' },
+    {
+      value: 2,
+      options: { signed: true, style: 'decimal' },
+      expected: '+€2.00',
+    },
+    {
+      value: 2000,
+      options: { signed: true, style: 'compact' },
+      expected: '+2k€',
+    },
+    {
+      value: 2000,
+      options: { signed: true, style: 'full' },
+      expected: '+2,000 €',
+    },
+    { value: null, options: { signed: true, fallback: 2 }, expected: '+€2' },
+    { value: null, options: { signed: true, fallback: 0 }, expected: '€0' },
+    { value: 2, options: { signed: true, currency: 'USD' }, expected: '+US$2' },
     { value: undefined, expected: '—' },
     { value: null, options: { fallback: '' }, expected: '' },
     { value: 0, expected: '€0' },

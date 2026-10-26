@@ -77,9 +77,7 @@ export function OverviewDriversChart({
               {i18n.t('ui.overviewcharts.grossValueChange')}
             </Text>
             <Text variant="bodyStrong" tone="secondary" numeric>
-              {currentChange == null
-                ? '—'
-                : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
+              {formatMoney(currentChange, { signed: true })}{' '}
               <Layout as="span" flow="inline">
                 <Text variant="tinyRegular" tone="subtle">
                   {i18n.t('ui.overviewcharts.vsWithValues', {

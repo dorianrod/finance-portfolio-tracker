@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/normalizeCoveragePercentage'
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -33,9 +34,7 @@ export function QualityIndicatorCard({
   const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const safePercentage = Number.isFinite(percentage)
-    ? Math.max(0, Math.min(100, percentage))
-    : 0
+  const safePercentage = normalizeCoveragePercentage(percentage) ?? 0
   const percentageLabel = formatPercentage(safePercentage)
   const colors = TONES[tone]
 

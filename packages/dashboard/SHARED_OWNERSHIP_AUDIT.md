@@ -76,3 +76,15 @@ Anomalies are jointly owned by the two data-quality children: assessment filters
 | [portfolioHistoryResponse.type.ts](src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts)                                                     | History inputs    | The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance.                     |
 | [rawPortfolioHistory.type.ts](src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts)                                                               | History inputs    | The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance.                     |
 | [mapFundHoldingStatus.ts](src/domains/portfolio/shared/helpers/mappers/mapFundHoldingStatus.ts)                                                             | Fund inputs       | Validated fund status inputs feed holdings previews and quality assessment through the shell.                                   |
+
+## Common diversification inputs reviewed in the full audit
+
+Three additional scoped exceptions concern
+`diversification/shared/helpers/filters/prepareDiversificationScope.ts` and its
+`scopeDiversificationData/scopeRawAllocationData.ts` and
+`scopeDiversificationData/excludeNonApplicableAllocationData.ts` dependencies.
+`DiversificationCharts` distributes the applicable positions to concentration and
+the scoped allocation rows to allocation; both analyses share the availability
+gates derived from that scope. These are parent-owned common inputs rather than
+category selection or concentration calculations. Application wrappers are not
+counted as feature consumers. See [DORIAN_REACT_AUDIT.md](DORIAN_REACT_AUDIT.md).

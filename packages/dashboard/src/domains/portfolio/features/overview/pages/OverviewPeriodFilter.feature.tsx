@@ -1,8 +1,7 @@
 import type { OverviewWindows } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
-import { formatOverviewPeriodRange } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewPeriodRange'
+import { useFormatOverviewPeriodRange } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewPeriodRange'
 import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
 import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { Button } from '@/shared/ui/controls/Button.view'
 import { Group } from '@/shared/ui/controls/Group.view'
 import { PeriodFilterIcon } from '@/shared/ui/icons/PeriodFilterIcon.view'
@@ -13,7 +12,7 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
-  const formatDate = useFormatDate()
+  const formatOverviewPeriodRange = useFormatOverviewPeriodRange()
   const { openFilters } = useDashboardFilters()
 
   return (
@@ -38,7 +37,7 @@ export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
                 </Text>
               </Layout>
               <Text variant="captionLabel" tone="secondary" truncate>
-                {formatOverviewPeriodRange(windows.current, formatDate)}
+                {formatOverviewPeriodRange(windows.current)}
               </Text>
               <PeriodFilterIcon />
             </Button>
@@ -52,7 +51,7 @@ export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
                   </Text>
                 </Layout>
                 <Text variant="caption" tone="subtle" truncate>
-                  {formatOverviewPeriodRange(windows.previous, formatDate)}
+                  {formatOverviewPeriodRange(windows.previous)}
                 </Text>
               </Inline>
             </Surface>

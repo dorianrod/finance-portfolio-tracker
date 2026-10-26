@@ -1,7 +1,6 @@
-import { formatConcentrationDelta } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/formatConcentrationDelta'
 import { formatPositionCount } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/formatPositionCount'
+import { useFormatConcentrationDelta } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/useFormatConcentrationDelta'
 import i18n from '@/i18n/i18n'
-import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import type { ChartTone } from '@/shared/theme/chartColors/chartColors.types'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -17,7 +16,7 @@ export function ThresholdRow({
   value: number | null
   delta: number | null
 }) {
-  const formatNumber = useFormatNumber()
+  const formatConcentrationDelta = useFormatConcentrationDelta()
   return (
     <div>
       <ChartText tone={tone}>{label}</ChartText> {formatPositionCount(value)}{' '}
@@ -27,7 +26,7 @@ export function ThresholdRow({
           ? i18n.t(
               'ui.concentrationtrendsection.insufficientIdentifiedCoverage',
             )
-          : formatConcentrationDelta(delta, formatNumber)}
+          : formatConcentrationDelta(delta)}
       </Text>
     </div>
   )

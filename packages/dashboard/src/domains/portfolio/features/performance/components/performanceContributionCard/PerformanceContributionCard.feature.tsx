@@ -6,8 +6,8 @@ import type {
   PerformanceContribution,
   PerformanceContributionSummary,
 } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import { formatPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/formatPerformanceDateRange'
-import { formatPerformanceIrrLabel } from '@/domains/portfolio/features/performance/helpers/formatters/formatPerformanceIrrLabel'
+import { useFormatPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceDateRange'
+import { useFormatPerformanceIrrLabel } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceIrrLabel'
 import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
@@ -17,9 +17,7 @@ import type {
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Group } from '@/shared/ui/controls/Group.view'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Grid } from '@/shared/ui/layout/Grid.view'
@@ -223,9 +221,9 @@ function ContributionSummaryMetrics({
   threeYearUnavailable: boolean
   onHorizonChange: (horizon: ContributionHorizon) => void
 }) {
-  const formatDate = useFormatDate()
+  const formatPerformanceIrrLabel = useFormatPerformanceIrrLabel()
+  const formatPerformanceDateRange = useFormatPerformanceDateRange()
   const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
   return (
     <Layout spaceBefore="spacious">
@@ -246,7 +244,7 @@ function ContributionSummaryMetrics({
             />
             <Layout spaceBefore="compact">
               <Text as="div" variant="statistic" tone={'contrast'} numeric>
-                {formatPerformanceIrrLabel(irr, irrStatus, formatPercentage)}
+                {formatPerformanceIrrLabel(irr, irrStatus)}
               </Text>
             </Layout>
           </div>
@@ -286,7 +284,7 @@ function ContributionSummaryMetrics({
             >
               <Layout>
                 <Text as="div" variant="label" tone="muted" wrap="nowrap">
-                  {formatPerformanceDateRange(summary, formatDate)}
+                  {formatPerformanceDateRange(summary)}
                 </Text>
               </Layout>
               <Layout sizing="fixed">

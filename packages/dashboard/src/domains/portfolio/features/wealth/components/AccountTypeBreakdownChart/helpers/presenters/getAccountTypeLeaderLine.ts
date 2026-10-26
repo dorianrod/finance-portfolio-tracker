@@ -1,4 +1,4 @@
-import type { AccountTypeLabelPosition } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
+import type { AccountTypeLabelPosition } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/resolveAccountTypeLabelPositions'
 
 export function getAccountTypeLeaderLine(
   cx: number,

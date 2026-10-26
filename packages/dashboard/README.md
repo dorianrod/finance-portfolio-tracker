@@ -15,7 +15,7 @@ npm run dev
 
 `npm run lint` caches results and invalidates the entire cache when a lint input
 changes, including imported types and translation catalogs. Use
-`npm run lint -- --no-cache` for a full check or `npm run lint:profile` to inspect
+`npx eslint .` for a full check or `npm run lint:profile` to inspect
 parsing time, expensive rules and slow files. See the
 [ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
 

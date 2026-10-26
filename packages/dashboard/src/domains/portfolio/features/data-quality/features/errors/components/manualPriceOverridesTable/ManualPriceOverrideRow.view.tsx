@@ -1,8 +1,7 @@
-import { formatManualPrice } from '@/domains/portfolio/features/data-quality/features/errors/helpers/formatters/formatManualPrice'
+import { useFormatManualPrice } from '@/domains/portfolio/features/data-quality/features/errors/helpers/formatters/useFormatManualPrice'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Inset } from '@/shared/ui/layout/Inset.view'
 import { LevelBadge } from '@/shared/ui/statusBadge/LevelBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -10,7 +9,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
   const formatDate = useFormatDate()
-  const formatMoney = useFormatMoney()
+  const formatManualPrice = useFormatManualPrice()
   const openEnded = !row.date_to
   return (
     <Surface as="tr" variant="interactiveRow">
@@ -33,7 +32,7 @@ export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
       </Inset>
       <Inset as="td" inset="compact">
         <Text as="div" variant="medium" tone="secondary">
-          {formatManualPrice(row, formatMoney)}
+          {formatManualPrice(row)}
         </Text>
       </Inset>
       <Inset as="td" inset="compact">

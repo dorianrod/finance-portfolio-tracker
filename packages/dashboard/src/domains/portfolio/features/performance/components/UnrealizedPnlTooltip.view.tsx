@@ -1,5 +1,5 @@
+import type { UnrealizedPnlPoint } from '@/domains/portfolio/features/performance/types/unrealizedPnlPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -65,11 +65,6 @@ export function UnrealizedPnlTooltip({
       )}
     </TooltipBox>
   )
-}
-
-export type UnrealizedPnlPoint = PortfolioHistoryPoint & {
-  unrealized_gain_pct: number | null
-  snapshot_change: number | null
 }
 
 export type UnrealizedPnlTooltipProps = {

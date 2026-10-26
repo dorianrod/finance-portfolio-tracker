@@ -7,8 +7,8 @@ import {
 
 import { RelationshipTooltip } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/RelationshipTooltip.view'
 import { YearLabel } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/YearLabel.view'
+import { useIncomePlacementChart } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/services/useIncomePlacementChart'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
-import { useIncomePlacementChart } from '@/domains/portfolio/features/wealth/services/useIncomePlacementChart'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'

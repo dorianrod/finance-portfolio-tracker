@@ -3,6 +3,7 @@ import {
   type QualityTooltipRow,
   RELIABILITY_TONES,
 } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/normalizeCoveragePercentage'
 import type {
   AnalysisReliabilityMetric,
   AnalysisReliabilityTone,
@@ -44,10 +45,7 @@ export function CombinedAnalysisReliabilityKpi({
       : []),
     ...metrics.map((metric) => ({
       label: metric.metricLabel,
-      value:
-        metric.percentage == null || !Number.isFinite(metric.percentage)
-          ? '—'
-          : formatPercentage(Math.max(0, Math.min(100, metric.percentage))),
+      value: formatPercentage(normalizeCoveragePercentage(metric.percentage)),
       secondary: i18n.t('ui.analysisreliabilitykpi.analyzedAmount', {
         amount: formatMoney(metric.amount, { style: 'full' }),
       }),

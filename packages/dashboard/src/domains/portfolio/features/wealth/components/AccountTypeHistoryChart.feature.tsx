@@ -10,6 +10,7 @@ import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/Sc
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -35,6 +36,7 @@ export function AccountTypeHistoryChart({
 }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   const [scale, setScale] = useState<ChartScaleMode>('value')
   const percentageMode = scale === 'percentage'
   const chartData = useMemo(
@@ -92,7 +94,10 @@ export function AccountTypeHistoryChart({
             <ChartYAxis
               tickFormatter={
                 percentageMode
-                  ? (value) => `${Math.round(Number(value))}%`
+                  ? (value) =>
+                      formatPercentage(Math.round(Number(value)), {
+                        decimals: 0,
+                      })
                   : (value) => formatMoney(value, { style: 'compact' })
               }
               domain={percentageMode ? [0, 100] : undefined}

@@ -8,8 +8,7 @@ import {
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
-import { formatGroupedAllocationLabel } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/formatGroupedAllocationLabel'
-import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
+import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/buildAllocationPieData'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -27,22 +26,7 @@ export function MiniDonut({
   title: string
   point: AllocationPoint
 }) {
-  const total = point.categories.reduce((s, c) => s + c.value, 0)
-  const { main, grouped } = groupAllocationTail(point.categories)
-  const groupedTotal = grouped.reduce((s, c) => s + c.value, 0)
-  const data: PieEntry[] = [
-    ...main.map((c) => ({ ...c, total })),
-    ...(grouped.length > 1
-      ? [
-          {
-            name: formatGroupedAllocationLabel(grouped.length),
-            value: groupedTotal,
-            total,
-            subItems: grouped,
-          },
-        ]
-      : []),
-  ]
+  const { total, data } = buildAllocationPieData(point)
   return (
     <div>
       <Layout spaceAfter="compact">

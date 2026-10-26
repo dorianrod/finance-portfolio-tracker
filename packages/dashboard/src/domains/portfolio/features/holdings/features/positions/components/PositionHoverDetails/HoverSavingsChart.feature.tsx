@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 
 import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
-import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'
+import { buildSavingsHistorySeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import i18n from '@/i18n/i18n'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -26,17 +25,7 @@ export function HoverSavingsChart({
   } = usePositionHistoryQuery(target.name)
 
   const chartData = useMemo(
-    () =>
-      history && history.length > 0
-        ? history.map((p, i) => {
-            const prev = history[i - 1]
-            return {
-              month: toCalendarMonth(p.date),
-              balance: Math.round(p.value),
-              delta: prev ? Math.round(p.value - prev.value) : 0,
-            }
-          })
-        : computeMonthlyBalances(target.operations),
+    () => buildSavingsHistorySeries(history, target.operations),
     [history, target.operations],
   )
   const showHistory = !isPending && !error && chartData.length > 0
