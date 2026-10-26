@@ -9,7 +9,6 @@ import { FilterPanel } from '@/domains/portfolio/shared/components/filters/filte
 import { ResetFiltersButton } from '@/domains/portfolio/shared/components/filters/filterBar/ResetFiltersButton.feature'
 import { filterSummaries } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterSummaries'
 import { filterVisibilityForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterVisibilityForTab'
-import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/filterSummariesForTab'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 
@@ -29,10 +28,6 @@ export function DashboardFilters({
   const { demoPresetSelection, demoPresetActive, overviewComparison } =
     dashboard
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView)
-  const visibleFilterSummaries = filterSummariesForTab(
-    activeFilterSummaries,
-    activeTab,
-  )
   const showResetFilters =
     activeFilterSummaries.length > 0 ||
     (activeTab === 'diversification' && allocationFilter !== null)
@@ -42,7 +37,7 @@ export function DashboardFilters({
     activeTab === 'overview' && overviewComparison !== null
   return (
     <>
-      <ActiveFilterSummary items={visibleFilterSummaries}>
+      <ActiveFilterSummary items={activeFilterSummaries}>
         {showOverviewPeriodFilter && (
           <ActiveFilterSummary.Leading>
             <OverviewPeriodFilter windows={overviewComparison.windows} />

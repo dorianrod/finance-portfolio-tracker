@@ -45,7 +45,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 export function PositionsTable({
   data,
-  grouping = 'flat',
+  groupByAccountType = false,
   fundStatuses = EMPTY_FUND_STATUSES,
 }: Props) {
   const { expanded, setExpanded } = usePositionTableState()
@@ -97,11 +97,7 @@ export function PositionsTable({
     const item = row.original
     let separatorType: string | undefined
     let totals: PositionGroupTotals | undefined
-    if (
-      grouping === 'account-type' &&
-      item.kind === 'position' &&
-      row.depth === 0
-    ) {
+    if (groupByAccountType && item.kind === 'position' && row.depth === 0) {
       const currentType = item.account_type ?? ''
       if (currentType !== previousAccountType) {
         previousAccountType = currentType
@@ -184,7 +180,7 @@ const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 type Props = {
   data: PositionRow[]
   fundStatuses?: FundHoldingStatus[]
-  grouping?: 'flat' | 'account-type'
+  groupByAccountType?: boolean
 }
 
 type PositionGroupTotals =

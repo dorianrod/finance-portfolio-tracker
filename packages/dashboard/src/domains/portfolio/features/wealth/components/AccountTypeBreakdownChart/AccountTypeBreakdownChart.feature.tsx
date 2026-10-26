@@ -66,7 +66,7 @@ export function AccountTypeBreakdownChart({
               startAngle={90}
               endAngle={-270}
               shape={AccountTypeSector}
-              label={<AccountTypeLabel data={pieData} />}
+              label={<AccountTypeLabel data={data} />}
               labelLine={false}
             />
             <Tooltip
@@ -94,9 +94,12 @@ function AccountTypeLabel({
   )
     return null
   const point = payload as AccountTypePoint
-  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
-    index
-  ]
+  const position = resolveAccountTypeLabelPositions(
+    data.filter((point) => point.total_value > 0),
+    cx,
+    cy,
+    outerRadius,
+  )[index]
   if (!position) return null
 
   const leaderLine = getAccountTypeLeaderLine(

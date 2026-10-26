@@ -53,7 +53,7 @@ function renderPositions() {
   render(
     <QueryClientProvider client={client}>
       <Provider store={createStore()}>
-        <PositionsTable data={[position]} grouping="account-type" />
+        <PositionsTable data={[position]} groupByAccountType />
       </Provider>
     </QueryClientProvider>,
   )

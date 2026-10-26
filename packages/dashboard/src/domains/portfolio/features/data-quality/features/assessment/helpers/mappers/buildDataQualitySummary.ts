@@ -12,6 +12,8 @@ import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manua
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 
+import { buildAnalysisReliabilityMetrics } from './buildAnalysisReliabilityMetrics'
+
 export function buildDataQualitySummary({
   allocationLoading,
   coverage,
@@ -123,7 +125,20 @@ export function buildDataQualitySummary({
         hasMaterialQualityGap(fundExposurePercentages.unresolved),
     )
 
+  const reliabilityMetrics = buildAnalysisReliabilityMetrics({
+    allocationLoading,
+    classificationReliabilityPct,
+    classificationMappedValue,
+    classificationMetricTone,
+    underlyingReliabilityPct,
+    identifiedFundValue,
+    underlyingMetricTone,
+    portfolioDataStatus,
+    portfolioDataTone,
+  })
+
   return {
+    ...reliabilityMetrics,
     classificationMappedValue,
     classificationMetricTone,
     classificationReliabilityPct,

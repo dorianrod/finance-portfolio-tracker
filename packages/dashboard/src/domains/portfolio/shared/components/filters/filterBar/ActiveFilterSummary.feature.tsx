@@ -1,8 +1,11 @@
+import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 
 import { clearFilterGroup } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/clearFilterGroup'
 import type { FilterSummaryItem } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/portfolioFilters.types'
+import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/filterSummariesForTab'
 import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -19,6 +22,8 @@ export function ActiveFilterSummary({
   items: FilterSummaryItem[]
   children?: ReactNode
 }) {
+  const activeTab = useAtomValue(dashboardActiveTabAtom)
+  const visibleItems = filterSummariesForTab(items, activeTab)
   const { slot: leading, content: afterLeading } = partitionSlot(
     children,
     ActiveFilterLeading,
@@ -28,7 +33,7 @@ export function ActiveFilterSummary({
     ActiveFilterActions,
   )
   if (
-    items.length === 0 &&
+    visibleItems.length === 0 &&
     leading.length === 0 &&
     content.length === 0 &&
     actions.length === 0
@@ -40,7 +45,7 @@ export function ActiveFilterSummary({
       <Group label={i18n.t('ui.filterbar.activeFilters')}>
         <Inline as="div" flow="wrap" align="center" gap="default">
           {leading}
-          {items.map((item) => (
+          {visibleItems.map((item) => (
             <ActiveFilterChip key={item.key} item={item} />
           ))}
           {content}

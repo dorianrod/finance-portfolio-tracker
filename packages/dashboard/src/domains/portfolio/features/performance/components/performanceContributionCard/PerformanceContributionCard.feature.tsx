@@ -8,7 +8,7 @@ import type {
 } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import { formatPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/formatPerformanceDateRange'
 import { formatPerformanceIrrLabel } from '@/domains/portfolio/features/performance/helpers/formatters/formatPerformanceIrrLabel'
-import { resolveContributionHorizon } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/resolveContributionHorizon'
+import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   FilterScopeSpec,
@@ -42,10 +42,8 @@ export function PerformanceContributionCard({
   irrStatus,
 }: Props) {
   const [view, setView] = useState<PerformanceView>('contribution')
-  const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
-  const { activeHorizon, irr, summary, threeYearUnavailable } =
-    resolveContributionHorizon({
-      horizon,
+  const { activeHorizon, irr, summary, threeYearUnavailable, setHorizon } =
+    useContributionHorizon({
       sinceTracking,
       sinceTrackingIrr,
       trailingThreeYears,

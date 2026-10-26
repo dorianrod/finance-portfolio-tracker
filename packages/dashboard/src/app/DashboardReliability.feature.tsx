@@ -17,7 +17,7 @@ export function DashboardReliability({
 }) {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
-  const { pipelineErrorsLoading, scopedFundQuality, qualitySummary } = dashboard
+  const { pipelineErrorsLoading, qualitySummary } = dashboard
   const {
     identifiedFundValue,
     scopedPipelineErrorCount,
@@ -32,9 +32,7 @@ export function DashboardReliability({
     return (
       <Layout spaceBefore="default">
         <AnalysisReliabilityKpi
-          percentage={
-            scopedFundQuality.report ? underlyingReliabilityPct : null
-          }
+          percentage={underlyingReliabilityPct}
           amount={identifiedFundValue}
           metricLabel={i18n.t('ui.app.underlyingAssets')}
           tone={underlyingMetricTone}

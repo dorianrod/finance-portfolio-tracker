@@ -13,49 +13,22 @@ export function DashboardCombinedReliability({
   dashboard: DashboardViewModel
 }) {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
-  const { rawAllocationData, scopedFundQuality, qualitySummary } = dashboard
+  const { qualitySummary } = dashboard
   const {
-    classificationMappedValue,
-    classificationMetricTone,
-    classificationReliabilityPct,
+    reliabilityMetrics,
+    portfolioStatusMetric,
     diversificationQualityTheme,
     diversificationReliabilityTone,
-    identifiedFundValue,
     overviewQualityTheme,
     overviewReliabilityTone,
-    portfolioDataStatus,
-    portfolioDataTone,
-    underlyingMetricTone,
-    underlyingReliabilityPct,
   } = qualitySummary
   return (
     <>
       {activeTab === 'overview' && (
         <Layout spaceBefore="default">
           <CombinedAnalysisReliabilityKpi
-            statusMetric={{
-              value: portfolioDataStatus,
-              metricLabel: i18n.t('ui.app.portfolioData'),
-              tone: portfolioDataTone,
-            }}
-            metrics={[
-              {
-                percentage: rawAllocationData.loading
-                  ? null
-                  : classificationReliabilityPct,
-                amount: classificationMappedValue,
-                metricLabel: i18n.t('ui.app.diversification'),
-                tone: classificationMetricTone,
-              },
-              {
-                percentage: scopedFundQuality.report
-                  ? underlyingReliabilityPct
-                  : null,
-                amount: identifiedFundValue,
-                metricLabel: i18n.t('ui.app.underlyingAssets'),
-                tone: underlyingMetricTone,
-              },
-            ]}
+            statusMetric={portfolioStatusMetric}
+            metrics={reliabilityMetrics}
             tone={overviewReliabilityTone}
             tooltip={i18n.t(
               'ui.app.aggregateReliabilityForPortfolioDataDiversificationMappingAndUnderlying',
@@ -68,24 +41,7 @@ export function DashboardCombinedReliability({
       {activeTab === 'diversification' && (
         <Layout spaceBefore="default">
           <CombinedAnalysisReliabilityKpi
-            metrics={[
-              {
-                percentage: rawAllocationData.loading
-                  ? null
-                  : classificationReliabilityPct,
-                amount: classificationMappedValue,
-                metricLabel: i18n.t('ui.app.diversification'),
-                tone: classificationMetricTone,
-              },
-              {
-                percentage: scopedFundQuality.report
-                  ? underlyingReliabilityPct
-                  : null,
-                amount: identifiedFundValue,
-                metricLabel: i18n.t('ui.app.underlyingAssets'),
-                tone: underlyingMetricTone,
-              },
-            ]}
+            metrics={reliabilityMetrics}
             tone={diversificationReliabilityTone}
             tooltip={i18n.t(
               'ui.app.aggregateReliabilityForDiversificationMappingAndUnderlyingAssetsLook',

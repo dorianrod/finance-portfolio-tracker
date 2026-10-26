@@ -26,7 +26,7 @@ export function DashboardHoldings({
         <PositionsTable
           data={tableData}
           fundStatuses={fundData.statuses}
-          grouping={useGroupedPositionsTable ? 'account-type' : 'flat'}
+          groupByAccountType={useGroupedPositionsTable}
         />
       ) : (
         <FundLookThroughTab
