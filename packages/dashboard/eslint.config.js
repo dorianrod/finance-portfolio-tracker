@@ -22,7 +22,9 @@ import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
+import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
+import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
 export default defineConfig([
@@ -78,7 +80,9 @@ export default defineConfig([
           'no-prop-drilling': noPropDrilling,
           'no-shared-ui-classname': noSharedUiClassname,
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
+          'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
+          'single-public-export': singlePublicExport,
           'state-component-contract': stateComponentContract,
         },
       },
@@ -163,6 +167,19 @@ export default defineConfig([
         'warn',
         { max: 150, skipBlankLines: true, skipComments: true },
       ],
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: [
+      '**/*.{test,spec,stories}.{ts,tsx}',
+      '**/__tests__/**',
+      '**/*.d.ts',
+      'src/shared/ui/storybook/**',
+    ],
+    rules: {
+      'local/public-api-first': 'warn',
+      'local/single-public-export': 'warn',
     },
   },
   {

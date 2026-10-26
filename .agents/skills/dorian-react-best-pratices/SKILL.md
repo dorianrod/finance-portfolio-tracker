@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules, including business domain and feature boundaries. Use when writing, reviewing, or refactoring React code or architecture against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.10.0"
+  version: "0.11.0"
 ---
 
 # Dorian React Best Practices
@@ -31,7 +31,7 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 | 1 | Styling Boundaries | `styling-` |
 | 2 | Component Composition | `composition-` |
 | 3 | Business Architecture and Component Logic | `architecture-` |
-| 4 | API Maintenance | `quality-` |
+| 4 | Code Quality and API Maintenance | `quality-` |
 
 ## Quick Reference
 
@@ -58,7 +58,10 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 - [`architecture-extract-component-calculations`](rules/architecture-extract-component-calculations.md) — Extract compound numeric and layout calculations into categorized helpers; use presenters for UI geometry.
 - [`architecture-formatter-fallbacks`](rules/architecture-formatter-fallbacks.md) — Keep missing-value and zero display fallbacks in existing formatters instead of component guards or wrapper formatters.
 
-### API Maintenance
+### Code Quality and API Maintenance
+
+- [`quality-single-public-export`](rules/quality-single-public-export.md) — Export at most one public value per production file; allow type-only exports and private declarations, and group related extracted files by theme.
+- [`quality-public-api-first`](rules/quality-public-api-first.md) — Place exported functions and components after imports and module directives, before types, constants and private declarations.
 
 - [`quality-no-deprecated-apis`](rules/quality-no-deprecated-apis.md) — Replace deprecated APIs with supported alternatives and enforce annotated deprecations with typed ESLint.
 
