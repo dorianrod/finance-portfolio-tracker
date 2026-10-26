@@ -28,6 +28,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+// eslint-disable-next-line complexity -- This feature composes performance entry components and their shared availability; financial calculations are delegated.
 export function PerformanceTab({
   history,
   passiveIncome,

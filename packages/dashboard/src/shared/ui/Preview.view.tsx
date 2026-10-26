@@ -45,6 +45,7 @@ export function Preview({
 
 const PreviewContext = createContext<PreviewState | null>(null)
 
+// eslint-disable-next-line complexity -- Pointer, keyboard and restored-focus behavior form one accessible preview-trigger protocol.
 function PreviewTrigger({
   onPreview,
   onDismiss,

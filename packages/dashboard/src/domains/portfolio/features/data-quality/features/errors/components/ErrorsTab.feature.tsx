@@ -18,6 +18,7 @@ import { StatusTableRow } from '@/shared/ui/statusBadge/StatusTableRow.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+// eslint-disable-next-line complexity -- Filtering, sorting and availability belong to one anomaly table; row mapping and cells are already separate.
 export function ErrorsTab({ errors }: Props) {
   const formatAssetLabel = useFormatAssetLabel()
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>(

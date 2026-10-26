@@ -4,6 +4,7 @@ import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
 
 import { getPieLabelPosition } from './helpers/presenters/getPieLabelPosition'
 
+// eslint-disable-next-line complexity -- Optional Recharts geometry and minimum-share guards protect one SVG label; positioning is already delegated.
 export function PieLabel({
   cx,
   cy,

@@ -267,6 +267,7 @@ function buildContributionScope(positionsThroughEnd: RawPosition[]) {
   return { metaByAccountAsset, accountTypes }
 }
 
+// eslint-disable-next-line complexity -- Since-tracking and three-year bounds are the two modes of the same contribution-period policy.
 function resolveContributionPeriod(
   positions: RawPosition[],
   snapshotDates: number[],
@@ -309,6 +310,7 @@ type TouchContribution = (
 type ContributionPeriod = NonNullable<
   ReturnType<typeof resolveContributionPeriod>
 >
+// eslint-disable-next-line complexity -- Opening and closing unrealized values feed one per-position contribution update.
 function addPositionContributions(
   positions: RawPosition[],
   period: ContributionPeriod,
@@ -330,6 +332,7 @@ function addPositionContributions(
       endValue - openingValue
   }
 }
+// eslint-disable-next-line complexity -- Realized sales and income operations feed the same scoped contribution ledger with identical identity fallback.
 function addOperationContributions(
   rawOperations: RawOperation[],
   period: ContributionPeriod,
@@ -360,6 +363,7 @@ function addOperationContributions(
   }
 }
 
+// eslint-disable-next-line complexity -- Operation kind, date, asset and account bounds form one contribution eligibility decision.
 function selectContributionOperation(
   operation: RawOperation,
   period: ContributionPeriod,

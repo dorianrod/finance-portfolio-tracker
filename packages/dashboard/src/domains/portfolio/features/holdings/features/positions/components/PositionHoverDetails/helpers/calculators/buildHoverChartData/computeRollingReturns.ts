@@ -4,6 +4,7 @@ import type { RollingReturn } from './buildHoverChartData.types'
 
 // 6-month, 1-year and since-start rolling unit-price performance as of the
 // hovered `label` (a 'Unit price' series keyed by month).
+// eslint-disable-next-line complexity -- Missing or zero reference prices must be guarded consistently for the two rolling periods and since-start return.
 export function computeRollingReturns(
   series: Array<{ date: string; 'Unit price': number }>,
   label: string,

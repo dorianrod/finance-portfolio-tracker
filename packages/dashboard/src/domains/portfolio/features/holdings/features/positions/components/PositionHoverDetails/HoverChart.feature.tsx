@@ -13,6 +13,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
 
+// eslint-disable-next-line complexity -- Loading, error, missing history and unit-price availability belong to one preview; series calculations are delegated.
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const {
     data: history,

@@ -7,6 +7,7 @@ import type { AccountCoverage } from './computeAllocationCoverage.types'
 /** Current (active, positive-value) positions split into allocated vs
  * unallocated amounts, grouped by account.
  */
+// eslint-disable-next-line complexity -- One account accumulator partitions active value into mapped, missing and inapplicable coverage.
 export function computeAllocationCoverageByAccount(
   positions: PositionRow[],
   rawData: RawIsinData,

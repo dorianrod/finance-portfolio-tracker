@@ -9,6 +9,7 @@ import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+// eslint-disable-next-line complexity -- Position identity, grouped labels and dated operations implement the same table name column.
 export function PositionNameCell({ row }: { row: Row<TableRow> }) {
   const { formatDate } = usePositionTableFormatters()
 

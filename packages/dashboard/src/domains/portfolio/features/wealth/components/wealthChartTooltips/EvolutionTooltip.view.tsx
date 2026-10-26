@@ -9,6 +9,7 @@ import { type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+// eslint-disable-next-line complexity -- Monetary and percentage display are variants of the same value-evolution tooltip.
 export function EvolutionTooltip({
   active,
   payload,

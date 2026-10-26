@@ -10,6 +10,7 @@ export function useAllocationsByIsinQuery() {
   return useQuery<Map<string, IsinAllocation>>({
     queryKey: portfolioQueryKeys.data('allocation-by-isin'),
     placeholderData: EMPTY_ISIN_ALLOCATIONS,
+    // eslint-disable-next-line complexity -- The four optional allocation dimensions use one explicit name-precedence and missing-point policy.
     queryFn: async () => {
       const { geo, secteur, currency, classe } = await queryClient.query({
         ...PORTFOLIO_ALLOCATION_QUERY_OPTIONS,

@@ -8,6 +8,7 @@ import { type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+// eslint-disable-next-line complexity -- Optional name, account and amount metadata all describe one Recharts performer point.
 export function TopPerformersTooltip({
   active,
   payload,

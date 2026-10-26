@@ -9,6 +9,7 @@ import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 import { OpSummary } from './OpSummary.view'
 
+// eslint-disable-next-line complexity -- Value, cost basis and unrealized availability describe one hover point and its operation summary.
 export function TooltipPortfolio({
   active,
   payload,

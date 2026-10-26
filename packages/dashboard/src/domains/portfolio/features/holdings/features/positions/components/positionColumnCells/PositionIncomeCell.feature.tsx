@@ -12,6 +12,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Text } from '@/shared/ui/Text.view'
 
+// eslint-disable-next-line complexity -- Position, payment-group and operation variants implement the same income column contract.
 export function PositionIncomeCell({ row }: { row: Row<TableRow> }) {
   const { formatMoney } = usePositionTableFormatters()
 
@@ -69,6 +70,7 @@ export function PositionIncomeCell({ row }: { row: Row<TableRow> }) {
   return null
 }
 
+// eslint-disable-next-line complexity -- Dividend and interest visibility share one passive-income cell; tax calculations already have dedicated helpers.
 function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
   const { formatMoney, formatPercentage } = usePositionTableFormatters()
 

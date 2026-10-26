@@ -4,6 +4,7 @@ import type { HistoricalConcentrationPoint } from './buildConcentrationTrend.typ
 import { concentrationPoint } from './concentrationPoint'
 import { matchesFilters } from './matchesFilters'
 
+// eslint-disable-next-line complexity -- Scoped valid snapshots feed one date-by-asset accumulator and its concentration denominator.
 export function buildHistoricalConcentration(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),

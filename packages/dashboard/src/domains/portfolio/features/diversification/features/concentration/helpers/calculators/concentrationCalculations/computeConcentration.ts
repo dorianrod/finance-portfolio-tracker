@@ -6,6 +6,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { ConcentrationSummary } from './concentrationCalculations.types'
 import { isValuedAnalysisPosition } from './isValuedAnalysisPosition'
 
+// eslint-disable-next-line complexity -- Direct, decomposed, undisclosed and opaque positions share one conservation accumulator and ranking.
 export function computeConcentration(
   positions: PositionRow[],
   fundHoldings: FundHolding[] = [],

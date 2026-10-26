@@ -264,6 +264,7 @@ function PositionBodyRow({
   )
 }
 
+// eslint-disable-next-line complexity -- Optional monetary totals and tones form one account separator row with the table column contract.
 function PositionGroupSeparator({
   separatorType,
   totals,

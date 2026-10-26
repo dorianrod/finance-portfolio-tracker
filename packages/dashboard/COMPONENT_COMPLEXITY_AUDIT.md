@@ -1,5 +1,7 @@
 # Audit de complexité React et TypeScript — 26 octobre 2026
 
+> État historique avant le passage des seuils en `error`. La revue des exceptions et les extractions suivantes sont documentées dans [ESLINT_COMPLEXITY_REVIEW.md](ESLINT_COMPLEXITY_REVIEW.md).
+
 Périmètre : tous les fichiers de production `src/**/*.{ts,tsx}`, avec `complexity` à **8** (variante `modified`) et `max-lines-per-function` à **150** hors lignes blanches et commentaires. Tests, specs, stories et dossiers `__tests__` sont exclus, conformément à la configuration.
 
 Audit initial : **104 diagnostics** dans **60 fichiers** (79 de complexité, 25 de taille). Après corrections : **71 diagnostics** dans **47 fichiers** (64 de complexité, 7 de taille). Le bilan inclut les fonctions extraites, pas seulement les composants parents.

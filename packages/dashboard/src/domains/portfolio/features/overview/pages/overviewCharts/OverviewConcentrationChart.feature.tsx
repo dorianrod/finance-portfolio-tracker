@@ -13,6 +13,8 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { buildOverviewConcentrationRows } from './helpers/presenters/buildOverviewConcentrationRows'
+
 export function OverviewConcentrationChart({
   heldConcentration,
   underlyingConcentration,
@@ -26,25 +28,17 @@ export function OverviewConcentrationChart({
     mode === 'lookThrough' && lookThroughDisabled ? 'held' : mode
   const concentration =
     displayedMode === 'held' ? heldConcentration : underlyingConcentration
-  const current = concentration.current
-  const previousByKey = new Map(
-    concentration.previous?.holdings.map((holding) => [
-      holding.key,
-      holding.weight,
-    ]) ?? [],
-  )
-  const rows =
-    current?.holdings.slice(0, 5).map((holding) => ({
-      ...holding,
-      previousWeight: concentration.previous
-        ? (previousByKey.get(holding.key) ?? 0)
-        : null,
-    })) ?? []
-  const scaleMax = Math.max(
-    1,
-    ...rows.flatMap((row) => [row.weight, row.previousWeight ?? 0]),
-  )
-  const previousAvailable = concentration.previous != null
+  const { rows, scaleMax, previousAvailable } =
+    buildOverviewConcentrationRows(concentration)
+
+  const description =
+    displayedMode === 'lookThrough'
+      ? i18n.t(
+          'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
+        )
+      : i18n.t(
+          'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
+        )
 
   return (
     <Surface as="section" variant="panel">
@@ -57,15 +51,7 @@ export function OverviewConcentrationChart({
                 : i18n.t('ui.overviewcharts.largestHeldPositions')}
               <ScopedInfoTooltip
                 // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
-                text={
-                  displayedMode === 'lookThrough'
-                    ? i18n.t(
-                        'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
-                      )
-                    : i18n.t(
-                        'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
-                      )
-                }
+                text={description}
                 // eslint-disable-next-line local/no-prop-drilling -- This feature owns the effective concentration snapshot scope.
                 scope={{
                   account: 'filterable',
@@ -77,13 +63,7 @@ export function OverviewConcentrationChart({
           </Text>
           <Layout spaceBefore="compact">
             <Text as="p" variant="caption" tone="subtle">
-              {displayedMode === 'lookThrough'
-                ? i18n.t(
-                    'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
-                  )
-                : i18n.t(
-                    'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
-                  )}
+              {description}
             </Text>
           </Layout>
         </div>

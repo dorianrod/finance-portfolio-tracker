@@ -5,6 +5,7 @@ import { TEXT_ALIGNMENTS } from '@/shared/ui/textAppearance/textAlignments'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 
+// eslint-disable-next-line complexity -- Element-specific structure, padding and semantic appearance belong to the same Surface primitive.
 export function Surface<T extends SurfaceTag = 'div'>({
   as,
   variant,

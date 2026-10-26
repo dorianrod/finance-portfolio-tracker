@@ -10,6 +10,7 @@ import {
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+// eslint-disable-next-line complexity -- Optional Recharts metadata and signed balance changes form one savings tooltip.
 export function SavingsTooltip({
   active,
   payload,

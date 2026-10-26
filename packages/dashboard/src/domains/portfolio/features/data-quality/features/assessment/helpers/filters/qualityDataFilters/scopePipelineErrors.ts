@@ -22,6 +22,7 @@ export function scopePipelineErrors(
     filters.accountTypes.size > 0 ||
     filters.operationTypes.size > 0
 
+  // eslint-disable-next-line complexity -- Month, account and identifier precedence define one anomaly-scope predicate, including unattributable pipeline issues.
   return errors.filter((error) => {
     const month = errorMonth(error.date)
     if (month && filters.dateFrom && month < toCalendarMonth(filters.dateFrom))

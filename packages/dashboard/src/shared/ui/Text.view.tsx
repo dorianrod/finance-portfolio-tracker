@@ -6,6 +6,7 @@ import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 import { TEXT_VARIANTS } from '@/shared/ui/textAppearance/textVariants'
 import { TEXT_WRAPPING } from '@/shared/ui/textAppearance/textWrapping'
 
+// eslint-disable-next-line complexity -- Typography, numeric alignment and table-cell truncation implement one Text primitive contract.
 export function Text<T extends TextTag = 'span'>({
   as,
   variant = 'inherit',

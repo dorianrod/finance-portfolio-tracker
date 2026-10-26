@@ -16,6 +16,7 @@ export function computeAllocationCoverageByDimension(
   rawData: RawIsinData,
 ): DimensionCoverage[] {
   return (['geo', 'secteur', 'currency', 'classe'] as const).map(
+    // eslint-disable-next-line complexity -- One dimension accumulator combines the latest breakdown, missing ratio and corresponding issue totals.
     (dimension) => {
       const latestByKey = new Map<
         string,

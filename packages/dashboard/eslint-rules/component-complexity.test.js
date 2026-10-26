@@ -46,7 +46,7 @@ describe('configured component complexity checks', () => {
       return <div />
     }`
     expect(await lint(code)).toMatchObject([
-      { ruleId: 'complexity', severity: 1 },
+      { ruleId: 'complexity', severity: 2 },
     ])
   })
 
@@ -75,7 +75,7 @@ describe('configured component complexity checks', () => {
       return <div>{action}</div>
     }`
     expect(await lint(code)).toMatchObject([
-      { ruleId: 'complexity', severity: 1 },
+      { ruleId: 'complexity', severity: 2 },
     ])
   })
 

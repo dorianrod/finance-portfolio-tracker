@@ -4,6 +4,7 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 // Aggregates raw per-account-per-date rows into one time series per asset
 // (isin/ticker/name), summing value/cost basis across accounts that hold
 // the same asset on the same date.
+// eslint-disable-next-line complexity -- Identity validation and cross-account date aggregation preserve one position-history series and its cost basis.
 export function buildPositionsHistory(
   rows: RawPositionsHistoryRow[],
 ): HistoryMap {

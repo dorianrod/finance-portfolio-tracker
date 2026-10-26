@@ -143,6 +143,7 @@ function positiveValue(position: PositionRow): number {
     : 0
 }
 
+// eslint-disable-next-line complexity -- ISIN, ticker and name are alternative identifiers in one fund-status match predicate.
 function positionMatchesStatus(
   position: PositionRow,
   status: FundHoldingStatus,
@@ -175,6 +176,7 @@ function clampRatio(percentage: number): number {
   return Math.max(0, Math.min(1, percentage / 100))
 }
 
+// eslint-disable-next-line complexity -- One exclusive classification partitions fund, direct and opaque values without distributing its accumulator.
 function classifyFundPositions(
   activePositions: PositionRow[],
   statusByPosition: Map<PositionRow, FundHoldingStatus>,

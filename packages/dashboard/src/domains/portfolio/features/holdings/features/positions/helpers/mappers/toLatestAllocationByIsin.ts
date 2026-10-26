@@ -1,6 +1,7 @@
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
+// eslint-disable-next-line complexity -- Latest-date selection and same-date allocation coalescing implement one canonical per-identifier breakdown.
 export function toLatestByIsin(
   rows: RawIsinRow[],
 ): Map<string, { name: string; point: AllocationPoint }> {

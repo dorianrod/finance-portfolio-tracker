@@ -176,7 +176,7 @@ export default defineConfig([
     ignores: ['**/*.{test,spec,stories}.{ts,tsx}', '**/__tests__/**'],
     rules: {
       // Branching and size are independent signals, including in JSX.
-      complexity: ['warn', { max: 8, variant: 'modified' }],
+      complexity: ['error', { max: 8, variant: 'modified' }],
       'max-lines-per-function': [
         'warn',
         { max: 150, skipBlankLines: true, skipComments: true },

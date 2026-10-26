@@ -2,6 +2,7 @@ import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCate
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
+// eslint-disable-next-line complexity -- Account/category validation feeds one date-by-account-type accumulator and its stable category order.
 export function buildAccountTypeHistory(
   rows: RawPositionRow[],
   accountSet: Set<string> | null,
@@ -23,6 +24,7 @@ export function buildAccountTypeHistory(
     byDate.set(row.snapshot_date.getTime(), dateMap)
   }
 
+  // eslint-disable-next-line complexity -- Known-category priority and alphabetical fallback form one total ordering comparator.
   const accountTypes = [...typeSet].toSorted((a, b) => {
     const ia = CATEGORY_ORDER[typeCategories[a] ?? ''] ?? -1
     const ib = CATEGORY_ORDER[typeCategories[b] ?? ''] ?? -1

@@ -6,6 +6,7 @@ import { ChartText } from '@/shared/ui/ChartText.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
+// eslint-disable-next-line complexity -- Payload fallbacks, cost, gain and portfolio share describe one account-sector tooltip contract.
 export function AccountTypeTooltip({
   active,
   payload,

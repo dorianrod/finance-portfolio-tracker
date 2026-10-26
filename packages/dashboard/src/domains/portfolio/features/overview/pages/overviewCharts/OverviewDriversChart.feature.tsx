@@ -21,6 +21,7 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { EmptyChart } from './EmptyChart.feature'
+import { buildOverviewDriverPresentation } from './helpers/presenters/buildOverviewDriverPresentation'
 
 export function OverviewDriversChart({
   comparison,
@@ -28,27 +29,8 @@ export function OverviewDriversChart({
   comparison: OverviewComparison
 }) {
   const formatMoney = useFormatMoney()
-  const rows: DriverRow[] = [
-    {
-      label: i18n.t('ui.overviewcharts.netContributions'),
-      previous: comparison.contributions.previous,
-      current: comparison.contributions.current,
-      tone: PORTFOLIO_CHART_TONES.netContributions,
-    },
-    {
-      label: i18n.t('ui.overviewcharts.marketPerformance'),
-      previous: comparison.marketPerformance.previous,
-      current: comparison.marketPerformance.current,
-      tone:
-        comparison.marketPerformance.current != null &&
-        comparison.marketPerformance.current < 0
-          ? PORTFOLIO_CHART_TONES.performanceNegative
-          : PORTFOLIO_CHART_TONES.performancePositive,
-    },
-  ]
-  const unavailable =
-    comparison.contributions.current == null &&
-    comparison.marketPerformance.current == null
+  const { rows, unavailable, currentChange, previousChange } =
+    buildOverviewDriverPresentation(comparison)
   if (unavailable)
     return (
       <EmptyChart
@@ -59,17 +41,6 @@ export function OverviewDriversChart({
         scope={{ account: 'filterable', period: 'comparison-range' }}
       />
     )
-  const currentChange =
-    comparison.contributions.current == null ||
-    comparison.marketPerformance.current == null
-      ? null
-      : comparison.contributions.current + comparison.marketPerformance.current
-  const previousChange =
-    comparison.contributions.previous == null ||
-    comparison.marketPerformance.previous == null
-      ? null
-      : comparison.contributions.previous +
-        comparison.marketPerformance.previous
 
   return (
     <Surface as="section" variant="panel">

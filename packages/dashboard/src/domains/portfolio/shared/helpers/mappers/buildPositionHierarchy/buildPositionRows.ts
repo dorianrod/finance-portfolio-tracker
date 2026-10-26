@@ -286,6 +286,7 @@ function buildAssetPositionRow(
   }
 }
 
+// eslint-disable-next-line complexity -- Latest-snapshot and operation fallbacks must resolve one consistent asset identity and active/closed status.
 function resolvePositionIdentity(
   key: string,
   assetOps: RawOperation[],

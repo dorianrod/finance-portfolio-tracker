@@ -5,6 +5,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
 
+// eslint-disable-next-line complexity -- Sign, units and tone are variants of one comparison badge, including percentage-point concentration deltas.
 export function DeltaBadge({
   metric,
   tone = 'performance',

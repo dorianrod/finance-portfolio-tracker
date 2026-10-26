@@ -19,6 +19,7 @@ import { LAYOUT_WIDTHS } from '@/shared/ui/layoutAppearance/layoutWidths'
 
 import type { LayoutProps, LayoutTag } from './layout.types'
 
+// eslint-disable-next-line complexity -- Closed layout tokens map directly to classes in one primitive; splitting each option would add indirection.
 export function Layout<T extends LayoutTag = 'div'>({
   as,
   flow,

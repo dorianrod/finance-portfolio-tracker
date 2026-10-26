@@ -6,6 +6,7 @@ import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPositio
 // When an account filter is active, the portfolio-wide history series is
 // replaced with one rebuilt from raw per-account position snapshots
 // restricted to the selected accounts.
+// eslint-disable-next-line complexity -- Selected-account values and cost basis reconstruct one fallback history series with explicitly unavailable IRR.
 export function applyAccountFilterToHistory(
   allPositionRows: RawPositionRow[],
   enrichedHistory: PortfolioHistoryPoint[],

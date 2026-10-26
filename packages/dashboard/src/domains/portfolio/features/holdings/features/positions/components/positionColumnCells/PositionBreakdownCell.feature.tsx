@@ -10,6 +10,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
+// eslint-disable-next-line complexity -- Allocation and underlying previews share the same exclusive overlay protocol and table metadata.
 export function PositionBreakdownCell({
   row,
   table,
