@@ -69,3 +69,14 @@ The following functions keep a single cohesive responsibility. Their exceptions 
 | [ChartLabel](src/shared/ui/chartLabel/ChartLabel.view.tsx)                                                                                                                            | 13                  | SVG typography, baseline and historical-age appearance belong to the same label primitive.                                                   |
 | [NavigationButton](src/shared/ui/controls/NavigationButton.view.tsx)                                                                                                                  | 9                   | Selected appearance and current-page accessibility state belong to the same navigation button.                                               |
 | [Layout](src/shared/ui/layout/Layout.view.tsx)                                                                                                                                        | 23                  | Closed layout tokens map directly to classes in one primitive; splitting each option would add indirection.                                  |
+
+## Function length
+
+The 150-line limit is also enforced as an error, without changing its exclusions for tests, stories, comments or blank lines. Four reported functions now meet it after extracting independently owned responsibilities:
+
+- `AllocationCoverageCard`: the connector tree moved to `AllocationCoverageConnectors.view.tsx`; account/dimension disclosure state stays in the card.
+- `useConcentrationTrendController`: pure chart-row projection moved to `buildConcentrationChartRows.ts`; playback and selection remain in the controller.
+- `OverviewValueChart`: its independent static legend moved to `OverviewValueLegend.view.tsx`.
+- `useFundHoldingsQuery`: complete status-entity conversion moved to `mapFundHoldingStatus.ts`, keeping query keys, source validation and concurrent retrieval unchanged.
+
+`useDashboardViewModel` remains one reviewed shell facade. Its feature-owned business derivations already live in the domain services; the remaining length comes from composing their results, common source defaults, and the explicit memoized output/dependency contract. Splitting the output list or adding an umbrella hook would add indirection without separating a business responsibility. Its single combined directive covers this length decision and the related query-fallback complexity decision. New functions and callbacks are still checked normally.

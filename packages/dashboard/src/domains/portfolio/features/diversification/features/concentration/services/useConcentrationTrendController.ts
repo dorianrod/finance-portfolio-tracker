@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react'
 
+import { buildConcentrationChartRows } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/buildConcentrationChartRows'
 import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
 import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/shouldAnimateConcentration'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildConcentrationTrend.types'
@@ -27,33 +28,7 @@ export function useConcentrationTrendController(
   const prefersReducedMotion = usePrefersReducedMotion()
   const animationEnabled = shouldAnimateConcentration(prefersReducedMotion)
   const points = mode === 'held' ? heldPoints : lookThroughPoints
-  const chartData = useMemo<ConcentrationChartRow[]>(
-    () =>
-      points.map((point, index) => {
-        const previous = points[index - 1]
-        return {
-          ...point,
-          timestamp: timestamp(point.date),
-          positionsTo25Delta: delta(
-            point.positionsTo25Pct,
-            previous?.positionsTo25Pct,
-          ),
-          positionsTo50Delta: delta(
-            point.positionsTo50Pct,
-            previous?.positionsTo50Pct,
-          ),
-          positionsTo75Delta: delta(
-            point.positionsTo75Pct,
-            previous?.positionsTo75Pct,
-          ),
-          positionsTo90Delta: delta(
-            point.positionsTo90Pct,
-            previous?.positionsTo90Pct,
-          ),
-        }
-      }),
-    [points],
-  )
+  const chartData = useMemo(() => buildConcentrationChartRows(points), [points])
   const exactIndex = points.findIndex(
     (point) => point.date.getTime() === selectedDate?.getTime(),
   )
@@ -137,7 +112,7 @@ export function useConcentrationTrendController(
     [displayedPoint],
   )
   const selectedTimestamp = selectedPoint
-    ? timestamp(selectedPoint.date)
+    ? selectedPoint.date.getTime()
     : undefined
   const dateDomain = useMemo<[number, number]>(
     () =>
@@ -185,24 +160,7 @@ export function useConcentrationTrendController(
   )
 }
 
-export type ConcentrationChartRow = HistoricalConcentrationPoint & {
-  timestamp: number
-  positionsTo25Delta: number | null
-  positionsTo50Delta: number | null
-  positionsTo75Delta: number | null
-  positionsTo90Delta: number | null
-}
-
-function timestamp(date: Date): number {
-  return date.getTime()
-}
-
-function delta(
-  current: number | null,
-  previous: number | null | undefined,
-): number | null {
-  return current == null || previous == null ? null : current - previous
-}
+export type { ConcentrationChartRow } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/buildConcentrationChartRows'
 
 function usePrefersReducedMotion(): boolean {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)

@@ -14,7 +14,6 @@ import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { DecorativeBlock } from '@/shared/ui/controls/DecorativeBlock.view'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
@@ -25,8 +24,8 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
-import { TreeConnector } from '@/shared/ui/TreeConnector.view'
 
+import { AllocationCoverageConnectors } from './AllocationCoverageConnectors.view'
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
 import { DetailToggle } from './DetailToggle.view'
 
@@ -68,38 +67,9 @@ export function AllocationCoverageCard({
         </QualityIndicatorCard>
       </Layout>
 
-      <Layout placement="inset" height="connector">
-        <DecorativeBlock>
-          <Layout flow="block" hiddenUntil="small">
-            <TreeConnector position="stem">
-              <Surface variant="centeredConnector" />
-            </TreeConnector>
-            <TreeConnector position="bridge">
-              <Surface variant="highlighted" />
-            </TreeConnector>
-            <TreeConnector position="left">
-              <Surface variant="positiveConnector" />
-            </TreeConnector>
-            <TreeConnector position="center">
-              <Surface
-                variant={
-                  hasMaterialQualityGap(unmappedPct)
-                    ? 'warningConnector'
-                    : 'positiveConnector'
-                }
-              />
-            </TreeConnector>
-            <TreeConnector position="right">
-              <Surface variant="neutralConnector" />
-            </TreeConnector>
-          </Layout>
-        </DecorativeBlock>
-      </Layout>
-      <Layout height="icon" width="divider" hideFrom="small">
-        <DecorativeBlock variant="highlighted">
-          <Layout></Layout>
-        </DecorativeBlock>
-      </Layout>
+      <AllocationCoverageConnectors
+        hasUnmappedGap={hasMaterialQualityGap(unmappedPct)}
+      />
 
       <Grid columns={3} align="start" gap="default">
         <QualityIndicatorCard

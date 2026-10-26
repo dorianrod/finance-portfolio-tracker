@@ -178,7 +178,7 @@ export default defineConfig([
       // Branching and size are independent signals, including in JSX.
       complexity: ['error', { max: 8, variant: 'modified' }],
       'max-lines-per-function': [
-        'warn',
+        'error',
         { max: 150, skipBlankLines: true, skipComments: true },
       ],
     },

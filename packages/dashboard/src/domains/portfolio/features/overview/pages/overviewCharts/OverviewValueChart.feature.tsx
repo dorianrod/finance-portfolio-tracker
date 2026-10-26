@@ -18,10 +18,10 @@ import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { EmptyChart } from './EmptyChart.feature'
+import { OverviewValueLegend } from './OverviewValueLegend.view'
 
 export function OverviewValueChart({
   comparison,
@@ -87,32 +87,7 @@ export function OverviewValueChart({
               </Text>
             </Layout>
           </div>
-          <Text as="div" variant="micro" tone="subtle">
-            <Inline as="div" align="center" gap="default">
-              <Inline as="span" align="center" gap="compact">
-                <Layout
-                  as="span"
-                  flow="inline"
-                  height="indicator"
-                  width="indicator"
-                >
-                  <ToneSwatch tone="subtle" shape="dot" />
-                </Layout>
-                {i18n.t('ui.overviewcharts.previous')}
-              </Inline>
-              <Inline as="span" align="center" gap="compact">
-                <Layout
-                  as="span"
-                  flow="inline"
-                  height="indicator"
-                  width="indicator"
-                >
-                  <ToneSwatch tone={'highlight'} shape="dot" />
-                </Layout>
-                {i18n.t('ui.overviewcharts.current')}
-              </Inline>
-            </Inline>
-          </Text>
+          <OverviewValueLegend />
         </Inline>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart

@@ -10,9 +10,9 @@ import { RAW_FUND_HOLDING_STATUS_SCHEMA } from '@/domains/portfolio/shared/apis/
 import { RAW_FUND_SNAPSHOT_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundSnapshotSchema'
 import { RAW_FUND_UNRESOLVED_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundUnresolvedSchema'
 import { mapFundHolding } from '@/domains/portfolio/shared/helpers/mappers/mapFundHolding'
+import { mapFundHoldingStatus } from '@/domains/portfolio/shared/helpers/mappers/mapFundHoldingStatus'
 import type {
   FundHoldingsData,
-  FundHoldingStatus,
   FundSnapshot,
   FundUnresolved,
   HistoricalFundHolding,
@@ -76,39 +76,7 @@ export function useFundHoldingsQuery() {
             row.weight > 0,
         )
 
-      const statuses = statusRows.map((row): FundHoldingStatus => ({
-        parentId: row.parent_id || row.parent_isin || row.parent_ticker,
-        parentIsin: row.parent_isin,
-        parentTicker: row.parent_ticker,
-        parentName: row.parent_name,
-        qualityTier: row.quality_tier || 'D',
-        validationStatus: row.validation_status || 'error',
-        sourceName: row.source_name,
-        sourceType: row.source_type,
-        sourceUrl: row.source_url,
-        indexName: row.index_name,
-        replicationMethod: row.replication_method,
-        proxyName: row.proxy_name,
-        proxyIsin: row.proxy_isin,
-        fetchedAt: row.fetched_at,
-        holdingsDate: row.holdings_date,
-        freshnessDays: row.freshness_days,
-        isStale: row.is_stale,
-        holdingCount: row.holding_count,
-        rawWeightSum: row.raw_weight_sum,
-        explainedPct: row.explained_pct,
-        residualPct: row.residual_pct,
-        marketValue: row.market_value,
-        explainedValue: row.explained_value,
-        residualValue: row.residual_value,
-        refreshStreak: row.refresh_streak,
-        issues: row.issues,
-        decompositionState: row.decomposition_state || 'unresolved',
-        snapshotId: row.snapshot_id,
-        sourceOrigin: row.source_origin,
-        manualAttention: row.manual_attention ?? false,
-        checksumSha256: row.checksum_sha256,
-      }))
+      const statuses = statusRows.map(mapFundHoldingStatus)
 
       const snapshots = snapshotRows.map((row): FundSnapshot => ({
         fundId: row.fund_id,

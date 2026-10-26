@@ -36,7 +36,7 @@ const longComponent = `function Workspace() {
 describe('configured component complexity checks', () => {
   it('detects a large JSX component with few hooks and branches', async () => {
     expect(await lint(longComponent)).toMatchObject([
-      { ruleId: 'max-lines-per-function', severity: 1 },
+      { ruleId: 'max-lines-per-function', severity: 2 },
     ])
   })
 
