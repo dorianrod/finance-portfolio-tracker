@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { ReferenceArea,ReferenceLine } from 'recharts'
+import { ReferenceArea, ReferenceLine } from 'recharts'
 
 import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 

@@ -34,6 +34,8 @@ export default {
     },
     schema: [],
     messages: {
+      storybook:
+        'Production code must not import Storybook configuration, stories or fixtures ({{target}}).',
       shared:
         'Shared code must not depend on the application shell or business domains ({{target}}).',
       application:
@@ -103,6 +105,11 @@ export default {
 
       let messageId
       if (
+        target.startsWith('shared/ui/storybook/') &&
+        !source.startsWith('shared/ui/storybook/')
+      ) {
+        messageId = 'storybook'
+      } else if (
         source.startsWith('shared/') &&
         (target.startsWith('app/') || target.startsWith('domains/'))
       ) {

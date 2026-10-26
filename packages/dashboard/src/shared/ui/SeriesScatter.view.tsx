@@ -6,7 +6,7 @@ import {
   type SemanticColorKey,
 } from '@/shared/theme/semanticColors'
 
-import { type ChartAge,chartAgeOpacity } from './chartAgeAppearance'
+import { type ChartAge, chartAgeOpacity } from './chartAgeAppearance'
 import { partitionChartSlot } from './chartSlots'
 
 type Keys = 'data' | 'dataKey' | 'name' | 'xAxisId' | 'yAxisId' | 'children'

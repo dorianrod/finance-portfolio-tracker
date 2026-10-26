@@ -4,6 +4,8 @@
   "version": "1.1.0",
   "type": "module",
   "scripts": {
+    "storybook": "storybook dev --port 6006 --config-dir src/shared/ui/storybook --no-open",
+    "build-storybook": "storybook build --config-dir src/shared/ui/storybook --output-dir storybook-static",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "format": "prettier --write . && eslint . --fix && prettier --write .",
@@ -36,6 +38,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@storybook/addon-docs": "10.6.3",
+    "@storybook/addon-themes": "10.6.3",
+    "@storybook/react-vite": "10.6.3",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
     "@types/node": "^24.12.3",
@@ -49,6 +54,7 @@
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",
     "prettier": "3.9.10",
+    "storybook": "10.6.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.3.5",

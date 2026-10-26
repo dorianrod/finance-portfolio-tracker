@@ -14,7 +14,7 @@ import { Disclosure } from '@/shared/ui/Disclosure.view'
 import { DisclosureChevronIcon } from '@/shared/ui/Icons.view'
 import { ReliabilityBadge } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch,ToneSwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch, ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 type CompactCoverageCardData = {

@@ -18,6 +18,25 @@ Python API used to recalculate portfolio IRR for the selected accounts. The
 API delegates to finance-pipeline's TRI domain code; the browser does not
 implement XIRR itself.
 
+## Storybook
+
+From `packages/dashboard`, run `npm run storybook` and open
+`http://localhost:6006`. Run `npm run build-storybook` to produce an independent
+static catalog in `storybook-static/`.
+
+Configuration, typed stories and deterministic fictional fixtures live in
+`src/shared/ui/storybook/`. The catalog covers every exported shared UI component
+and compound slot, grouped by family. Use Controls to explore props and the theme
+toolbar to switch between dark and light, including dialogs and other portals.
+Interactive examples include selection, inputs, keyboard navigation and panels;
+representative stories also run interaction assertions through `play` functions.
+
+Storybook uses a dedicated Vite configuration, without the dashboard's CSV
+middleware, API proxy or public data directory. Production code cannot import
+catalog files; ESLint enforces this boundary. `npm run typecheck` includes the
+catalog, and `npm test` checks that every public component and slot has a JSX
+example. When adding a shared UI component, add its story here as well.
+
 ## UI design system
 
 Visual styling belongs in `src/shared/ui` primitives. Application and domain

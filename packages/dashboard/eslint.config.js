@@ -24,7 +24,7 @@ import requireChildrenComposition from './eslint-rules/require-children-composit
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'storybook-static']),
   {
     files: ['**/*.{js,mjs,cjs}'],
     plugins: {
@@ -158,6 +158,15 @@ export default defineConfig([
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       'local/no-hardcoded-ui-strings': 'off',
+    },
+  },
+  {
+    files: ['src/shared/ui/storybook/**/*.stories.tsx'],
+    rules: {
+      // CSF modules intentionally export story objects and demo renderers.
+      'local/component-role': 'off',
+      'local/no-hardcoded-ui-strings': 'off',
+      'react-refresh/only-export-components': 'off',
     },
   },
 ])

@@ -22,6 +22,21 @@ async function lint(code, file) {
 
 describe('configured import boundaries', () => {
   it.each([
+    "import { HISTORY } from '@/shared/ui/storybook/fixtures'",
+    "import { HISTORY } from '../../ui/storybook/fixtures'",
+    "export * from '@/shared/ui/storybook/fixtures'",
+    "const examples = import('@/shared/ui/storybook/fixtures')",
+  ])(
+    'rejects production dependencies on Storybook: %s',
+    async (code) => {
+      expect(await lint(code, sharedFile)).toMatchObject([
+        { messageId: 'storybook', severity: 2 },
+      ])
+    },
+    20_000,
+  )
+
+  it.each([
     [
       'alias',
       "import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'",
