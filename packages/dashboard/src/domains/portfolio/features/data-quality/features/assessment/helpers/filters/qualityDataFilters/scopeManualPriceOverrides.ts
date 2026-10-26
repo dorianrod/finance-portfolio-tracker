@@ -1,5 +1,5 @@
+import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function scopeManualPriceOverrides(

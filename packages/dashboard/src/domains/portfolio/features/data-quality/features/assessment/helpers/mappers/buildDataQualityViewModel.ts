@@ -1,13 +1,15 @@
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension'
+import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import type {
   QualityThemeId,
   QualityTone,
-} from '@/domains/portfolio/shared/types/dataQuality.type'
+} from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
+import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
+import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -15,8 +17,6 @@ import type {
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'

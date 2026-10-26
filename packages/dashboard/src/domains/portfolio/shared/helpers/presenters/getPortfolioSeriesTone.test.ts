@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAccountTypeTone'
+import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/helpers/presenters/getAccountTypeTone'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 

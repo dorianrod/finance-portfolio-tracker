@@ -1,5 +1,5 @@
+import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 

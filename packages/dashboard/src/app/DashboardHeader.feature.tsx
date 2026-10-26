@@ -1,8 +1,8 @@
 import { useAtomValue } from 'jotai'
 
-import { useDashboardTheme } from '@/domains/portfolio/shared/services/actions/useDashboardTheme/useDashboardTheme'
-import { useDashboardThemeSync } from '@/domains/portfolio/shared/services/actions/useDashboardTheme/useDashboardThemeSync'
-import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme/dashboardThemeAtom'
+import { useDashboardTheme } from '@/app/services/theme/useDashboardTheme'
+import { useDashboardThemeSync } from '@/app/services/theme/useDashboardThemeSync'
+import { dashboardThemeAtom } from '@/app/stores/theme/dashboardThemeAtom'
 import i18n from '@/i18n/i18n'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Text } from '@/shared/ui/Text.view'

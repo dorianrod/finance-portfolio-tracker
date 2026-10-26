@@ -5,10 +5,10 @@ import type {
   AccountCoverage,
   DimensionCoverage,
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
+import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'

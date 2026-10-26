@@ -1,3 +1,4 @@
+// eslint-disable-next-line local/shared-feature-usage -- Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md.
 import { useQuery } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'

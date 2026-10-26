@@ -4,28 +4,28 @@ The dashboard has one business domain, `portfolio`: positions, cash flows,
 valuation and exposure share account selection, dates and financial entities.
 These concepts do not currently need independent sub-domains.
 
-| Capability         | User outcome                                                    | Parent and reason                                                    | Rules, data and state owner                                                                                   |
-| ------------------ | --------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Overview           | Compare the portfolio with the preceding period                 | Portfolio; synthesizes the other financial measures                  | `features/overview`: comparison windows, metrics and summary presentation                                     |
-| Wealth             | Understand value, contributions and saving capacity             | Portfolio; explains changes in wealth                                | `features/wealth`: wealth drivers, account breakdown and savings models                                       |
-| Performance        | Understand returns and investment income                        | Portfolio; measures investment results                               | `features/performance`: return summaries, income and rankings                                                 |
-| Diversification    | Understand how exposure is spread and concentrated              | Portfolio; combines complementary measures of diversification        | `features/diversification`: common applicability, inputs and current/trend selection                          |
-| Allocation         | Explore exposure by geography, sector, currency and asset class | Diversification; explains the distribution of exposure               | `features/diversification/features/allocation`: breakdown calculations, selection and matching-position state |
-| Concentration      | Identify dominant assets and how dominance changes              | Diversification; measures dependence on the largest exposures        | `features/diversification/features/concentration`: current metrics, historical models and playback state      |
-| Holdings           | Inspect owned positions and underlying fund assets              | Portfolio; explores the assets behind portfolio totals               | `features/holdings`: composition of positions and fund look-through                                           |
-| Positions          | Inspect, sort and preview held positions                        | Holdings; operates at held-position grain                            | `features/holdings/features/positions`: table, sorting, overlays and contracts                                |
-| Fund look-through  | Explore direct and indirect underlying exposure                 | Holdings; operates at underlying-asset grain                         | `features/holdings/features/fund-look-through`: exposure exploration and search state                         |
-| Data quality       | Assess reliability and diagnose missing or invalid data         | Portfolio; explains the trustworthiness of its analyses              | `features/data-quality`: diagnostic models and panels                                                         |
-| Quality assessment | Assess coverage, classification and fund reliability            | Data quality; owns the assessment workflow and its inspection panels | `features/data-quality/features/assessment`: assessment UI, models and state                                  |
-| Pipeline errors    | Inspect pipeline errors and manual price overrides              | Data quality; diagnoses one source of unreliable financial data      | `features/data-quality/features/errors`: error presentation                                                   |
+| Capability         | User outcome                                                        | Parent and reason                                                    | Rules, data and state owner                                                                                   |
+| ------------------ | ------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Scope selection    | Choose the accounts, periods and transaction scope used by analyses | Portfolio; establishes a consistent analysis perimeter               | `features/scope-selection`: filter forms, summaries and account selection                                     |
+| Overview           | Compare the portfolio with the preceding period                     | Portfolio; synthesizes the other financial measures                  | `features/overview`: comparison windows, metrics and summary presentation                                     |
+| Wealth             | Understand value, contributions and saving capacity                 | Portfolio; explains changes in wealth                                | `features/wealth`: wealth drivers, account breakdown and savings models                                       |
+| Performance        | Understand returns and investment income                            | Portfolio; measures investment results                               | `features/performance`: return summaries, income and rankings                                                 |
+| Diversification    | Understand how exposure is spread and concentrated                  | Portfolio; combines complementary measures of diversification        | `features/diversification`: common applicability, inputs and current/trend selection                          |
+| Allocation         | Explore exposure by geography, sector, currency and asset class     | Diversification; explains the distribution of exposure               | `features/diversification/features/allocation`: breakdown calculations, selection and matching-position state |
+| Concentration      | Identify dominant assets and how dominance changes                  | Diversification; measures dependence on the largest exposures        | `features/diversification/features/concentration`: current metrics, historical models and playback state      |
+| Holdings           | Inspect owned positions and underlying fund assets                  | Portfolio; explores the assets behind portfolio totals               | `features/holdings`: composition of positions and fund look-through                                           |
+| Positions          | Inspect, sort and preview held positions                            | Holdings; operates at held-position grain                            | `features/holdings/features/positions`: table, sorting, overlays and contracts                                |
+| Fund look-through  | Explore direct and indirect underlying exposure                     | Holdings; operates at underlying-asset grain                         | `features/holdings/features/fund-look-through`: exposure exploration and search state                         |
+| Data quality       | Assess reliability and diagnose missing or invalid data             | Portfolio; explains the trustworthiness of its analyses              | `features/data-quality`: diagnostic models and panels                                                         |
+| Quality assessment | Assess coverage, classification and fund reliability                | Data quality; owns the assessment workflow and its inspection panels | `features/data-quality/features/assessment`: assessment UI, models and state                                  |
+| Pipeline errors    | Inspect pipeline errors and manual price overrides                  | Data quality; diagnoses one source of unreliable financial data      | `features/data-quality/features/errors`: error presentation                                                   |
 
 Current versus historical views, exposure dimensions, periods and held versus
 underlying modes remain variants within their capability. They do not introduce
 additional feature levels.
 
 `portfolio/shared` owns entities, source queries used across capabilities,
-account/period selection, navigation, common financial calculations and reliability
-contracts consumed throughout the dashboard. A source query can stay shared even
+account/period selection, navigation, common financial calculations consumed throughout the dashboard. Quality assessment owns reliability metrics, UI and navigation to its diagnostics. A source query can stay shared even
 when a feature owns the interpretation of its result. Code used by one capability
 belongs to that capability; shared non-UI code never imports its descendant features.
 
@@ -52,8 +52,9 @@ that unrelated exports from one facade do not manufacture sharing. Tests, storie
 mocks and generated code are excluded. Application wrappers never count as features.
 
 The usage rule reports one-feature ownership, missing production consumers and
-sharing that imports cannot establish. It is enabled as a warning because common
-inputs distributed through application props require manual evidence. It does
+sharing that imports cannot establish. It is enforced as an error. Common
+inputs distributed through application props have individually scoped, reviewed
+exceptions documented in [SHARED_OWNERSHIP_AUDIT.md](SHARED_OWNERSHIP_AUDIT.md). It does
 not claim to infer business capabilities from file counts, automatically move
 files, or duplicate existing layout and import violations. All three checks use
 `business-ownership.js`; graph edges use the same `import-boundary-policy.js` as
@@ -88,9 +89,9 @@ composition also own the diversification and holdings screen controls.
 The reuse audit moved the confirmed single-owner modules into performance and
 position inspection, extracted quality assessment from `data-quality/shared`,
 and relocated screen composition and navigation controls to `app`. Unused shared
-KPI and category wrappers were removed. Remaining `unprovenSharing` diagnostics
-identify source-query, filter and reliability data routed through the shell. They
-are review requests, not proof that those inputs are specific to one feature;
-inspect `DashboardContent`, `useDashboardViewModel` and their feature props before
-choosing an owner. Do not silence them by adding fake imports or weakening the
-business boundaries.
+KPI and category wrappers were removed. The remaining source-query and common-input paths routed through the shell have
+been checked against `DashboardContent`, `useDashboardViewModel` and feature-owned
+services. Their concrete evidence is recorded in `SHARED_OWNERSHIP_AUDIT.md`; no
+application wrapper is counted as a feature. The follow-up export review moved
+single-owner modules into scope selection, wealth, allocation, holdings children
+and quality assessment, and moved theme synchronization into the application.

@@ -1,6 +1,6 @@
 import { preloadDashboardTab } from '@/app/routing/dashboardTabLoaders/preloadDashboardTab'
+import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useQualityNavigation'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
-import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import i18n from '@/i18n/i18n'
 import { CountBadge } from '@/shared/ui/badge/CountBadge.view'
@@ -24,7 +24,7 @@ export function DashboardNavigation({
   qualityCount: number
 }) {
   const { navigateTo } = useDashboardNavigation()
-  const { openQualityOverview } = useDashboardQuality()
+  const { openQualityOverview } = useQualityNavigation()
 
   return (
     <div className="mb-5 overflow-x-auto">

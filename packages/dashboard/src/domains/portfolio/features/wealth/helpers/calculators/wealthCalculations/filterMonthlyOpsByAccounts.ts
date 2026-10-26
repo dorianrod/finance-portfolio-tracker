@@ -1,8 +1,8 @@
-import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet'
 import type {
   MonthlyOperation,
   MonthlyOperationsByMonth,
-} from '@/domains/portfolio/shared/types/monthlyOperation.type'
+} from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet'
 
 export function filterMonthlyOpsByAccounts(
   allOps: MonthlyOperationsByMonth,

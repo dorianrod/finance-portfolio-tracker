@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
-import { AnalysisReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/AnalysisReliabilityKpi.feature'
-import { PipelineReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/PipelineReliabilityKpi.feature'
+import { AnalysisReliabilityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature'
+import { PipelineReliabilityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 import i18n from '@/i18n/i18n'

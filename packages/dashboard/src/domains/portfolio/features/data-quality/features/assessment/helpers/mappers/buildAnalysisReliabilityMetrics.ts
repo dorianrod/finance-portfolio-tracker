@@ -2,7 +2,7 @@ import type {
   AnalysisReliabilityMetric,
   AnalysisReliabilityTone,
   StatusReliabilityMetric,
-} from '@/domains/portfolio/shared/helpers/quality/analysisReliability/analysisReliability.types'
+} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
 import i18n from '@/i18n/i18n'
 
 export function buildAnalysisReliabilityMetrics(

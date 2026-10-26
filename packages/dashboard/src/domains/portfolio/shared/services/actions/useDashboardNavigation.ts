@@ -1,3 +1,4 @@
+// eslint-disable-next-line local/shared-feature-usage -- This common navigation action serves overview links and shell routing to the other portfolio capabilities. See SHARED_OWNERSHIP_AUDIT.md.
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 

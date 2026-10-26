@@ -1,7 +1,7 @@
 import { type ReactNode, useId } from 'react'
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
-import { EvolutionTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/EvolutionTooltip.view'
+import { EvolutionTooltip } from '@/domains/portfolio/features/diversification/features/allocation/components/EvolutionTooltip.view'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'

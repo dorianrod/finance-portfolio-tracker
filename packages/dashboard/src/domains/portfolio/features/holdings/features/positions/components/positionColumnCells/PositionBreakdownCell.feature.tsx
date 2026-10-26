@@ -1,5 +1,5 @@
 import { UnderlyingStatusControl } from '@/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature'
-import { statusForPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/statusForPosition'
+import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { Decorative } from '@/shared/ui/controls/Decorative.view'

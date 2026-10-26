@@ -1,5 +1,5 @@
+import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import type { AssetLabelSource } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 
 import type { PipelineErrorSortColumn } from './buildPipelineErrorsViewModel.types'
 import { PIPELINE_ERROR_TYPE_LABELS } from './pipelineErrorTypeLabels'

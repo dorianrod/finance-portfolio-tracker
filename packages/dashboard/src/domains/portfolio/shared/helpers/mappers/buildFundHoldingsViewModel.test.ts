@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/getFundQualitySourceLabel'
-import { buildIssuerExposures } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/buildIssuerExposures'
+import { buildIssuerExposures } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildIssuerExposures'
 import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

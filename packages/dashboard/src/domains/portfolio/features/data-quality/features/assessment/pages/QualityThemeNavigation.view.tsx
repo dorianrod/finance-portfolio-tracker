@@ -1,7 +1,7 @@
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
 import { QualityThemeOption } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeOption.view'
 import { QualityThemeTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeTab.view'
-import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
+import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import i18n from '@/i18n/i18n'
 import { Select } from '@/shared/ui/controls/Select.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'

@@ -167,7 +167,7 @@ export default defineConfig([
       'local/no-shared-ui-classname': 'error',
       'local/no-shared-ui-internal-layout': 'error',
       'local/require-children-composition': 'error',
-      'local/shared-feature-usage': 'warn',
+      'local/shared-feature-usage': 'error',
       'local/state-component-contract': 'error',
     },
   },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds/hasMaterialQualityGap'
+import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 
 describe('quality gap tolerance', () => {
   it('keeps gaps below one percent healthy', () => {

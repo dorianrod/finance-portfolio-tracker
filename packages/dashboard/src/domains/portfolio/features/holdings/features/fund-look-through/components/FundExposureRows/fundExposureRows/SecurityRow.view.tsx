@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import type { SecurityExposure } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/buildFundHoldingsViewModel.types'
+import type { SecurityExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Grid } from '@/shared/ui/layout/Grid.view'

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 
+import { KpiCard } from '@/domains/portfolio/features/wealth/components/KpiCard.view'
 import type { YearOverYearMetric } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
 import { useFormatMonthRange } from '@/domains/portfolio/features/wealth/helpers/formatters/useFormatMonthRange'
 import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
-import { KpiCard } from '@/domains/portfolio/shared/components/kpis/kpi/KpiCard.view'
 import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

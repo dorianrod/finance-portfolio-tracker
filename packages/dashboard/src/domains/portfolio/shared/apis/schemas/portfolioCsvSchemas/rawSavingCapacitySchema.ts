@@ -1,3 +1,4 @@
+// eslint-disable-next-line local/shared-feature-usage -- The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
 import type { RawSavingCapacityRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacity.types'

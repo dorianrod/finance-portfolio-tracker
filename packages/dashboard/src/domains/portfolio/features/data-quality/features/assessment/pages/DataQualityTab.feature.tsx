@@ -4,8 +4,8 @@ import { ClassificationCoverageState } from '@/domains/portfolio/features/data-q
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel.feature'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDataQualityViewModel'
+import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
-import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { Grid } from '@/shared/ui/layout/Grid.view'
@@ -168,7 +168,7 @@ export function DataQualityTab({
   )
 }
 
-export type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
+export type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 
 function PipelinePanel({ children }: { children: ReactNode }) {
   return children

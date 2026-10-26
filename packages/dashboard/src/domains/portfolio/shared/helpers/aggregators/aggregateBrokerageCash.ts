@@ -1,3 +1,4 @@
+// eslint-disable-next-line local/shared-feature-usage -- Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md.
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 
 // Only brokerage accounts hold real free cash; other categories

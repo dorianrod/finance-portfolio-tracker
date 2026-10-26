@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { aggregateReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability/aggregateReliabilityTone'
-import { percentageReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability/percentageReliabilityTone'
-import { pipelineReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability/pipelineReliabilityTone'
-import { pipelineStatusLabel } from '@/domains/portfolio/shared/helpers/quality/analysisReliability/pipelineStatusLabel'
+import { aggregateReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/aggregateReliabilityTone'
+import { percentageReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/percentageReliabilityTone'
+import { pipelineReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineReliabilityTone'
+import { pipelineStatusLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineStatusLabel'
 
 describe('analysis reliability', () => {
   it('assigns tones independently from the reliability percentage', () => {

@@ -1,4 +1,4 @@
-import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAccountTypeTone'
+import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/helpers/presenters/getAccountTypeTone'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

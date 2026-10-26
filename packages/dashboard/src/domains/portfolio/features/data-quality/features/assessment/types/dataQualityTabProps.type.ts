@@ -1,3 +1,5 @@
+import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
+import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import type {
   FundCoverageReport,
   FundHolding,
@@ -5,8 +7,6 @@ import type {
   FundSnapshot,
   FundUnresolved,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
