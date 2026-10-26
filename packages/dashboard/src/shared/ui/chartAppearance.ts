@@ -1,5 +1,5 @@
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 
 export const CHART_AXIS_TICK = { fill: CHART_THEME.tick, fontSize: 11 }
 
@@ -9,7 +9,7 @@ export const CHART_GRID_PATTERNS = {
 } as const
 
 export const CHART_TEXT_TONES = {
-  ...SEMANTIC_COLORS,
+  ...CHART_COLORS,
   tick: CHART_THEME.tick,
   label: CHART_THEME.label,
   tooltipText: 'var(--tooltip-text)',
@@ -37,12 +37,12 @@ export const REFERENCE_APPEARANCES = {
   zeroDashed: { stroke: CHART_THEME.zeroLine, strokeDasharray: '3 3' },
   crosshair: { stroke: CHART_THEME.label, strokeDasharray: '4 4' },
   selected: {
-    stroke: SEMANTIC_COLORS.portfolioValue,
+    stroke: CHART_COLORS.series6,
     strokeOpacity: 0.55,
     strokeDasharray: '4 4',
   },
   benchmark: {
-    stroke: SEMANTIC_COLORS.neutralSeries,
+    stroke: CHART_COLORS.neutral,
     strokeDasharray: '5 4',
     strokeWidth: 2,
   },

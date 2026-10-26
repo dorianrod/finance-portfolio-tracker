@@ -1,92 +1,57 @@
-// ─── Allocation dimension colors (geo / sector / currency / asset class names) ──
+export const CHART_COLORS = {
+  series1: '#3b82f6',
+  series2: '#8b5cf6',
+  series3: '#10b981',
+  series4: '#f59e0b',
+  series5: '#ef4444',
+  series6: '#06b6d4',
+  series7: '#f97316',
+  series8: '#84cc16',
+  series9: '#ec4899',
+  series10: '#14b8a6',
+  series11: '#a855f7',
+  series12: '#f43f5e',
+  series1Text: '#60a5fa',
+  series1Detail: '#93c5fd',
+  series1Stroke: '#1d4ed8',
+  series2Text: '#c084fc',
+  series5Text: '#f87171',
+  series6Text: '#22d3ee',
+  series7Text: '#fb923c',
+  series7Stroke: '#c2410c',
+  series11Stroke: '#7c3aed',
+  secondary: '#818cf8',
+  secondaryText: '#a5b4fc',
+  positive: '#22c55e',
+  positiveText: '#4ade80',
+  neutral: '#64748b',
+  subtle: '#374151',
+  muted: '#94a3b8',
+  dim: '#6b7280',
+  accentText: '#e879f9',
+  mutedIndicator: 'var(--color-content-muted)',
+} as const
 
-const ALLOCATION_PALETTE = [
-  '#3b82f6',
-  '#8b5cf6',
-  '#10b981',
-  '#f59e0b',
-  '#ef4444',
-  '#06b6d4',
-  '#f97316',
-  '#84cc16',
-  '#ec4899',
-  '#14b8a6',
-  '#a855f7',
-  '#f43f5e',
-]
-const NC_COLOR = '#374151'
-const NOT_CONCERNED_COLOR = '#94a3b8'
-const AUTRE_COLOR = '#6b7280'
+export type ChartTone = keyof typeof CHART_COLORS
 
-const ALLOCATION_CATEGORY_COLORS: Record<string, string> = {
-  actions: '#3b82f6',
-  taux: '#10b981',
-  'cash / monétaire': '#f59e0b',
-  immobilier: '#f97316',
-  'private equity': '#8b5cf6',
-  commodities: '#84cc16',
-  crypto: '#06b6d4',
-  france: '#3b82f6',
-  europe: '#06b6d4',
-  'amérique du nord': '#ef4444',
-  japon: '#f59e0b',
-  chine: '#e879f9',
-  asie: '#8b5cf6',
-  océanie: '#14b8a6',
-  emergent: '#84cc16',
-  eur: '#06b6d4',
-  usd: '#ef4444',
-  tech: '#3b82f6',
-  finance: '#f59e0b',
-  santé: '#10b981',
-  'conso cyclique': '#f97316',
-  'conso défensive': '#84cc16',
-  industrie: '#06b6d4',
-  energie: '#ef4444',
-  service: '#a855f7',
-  telecom: '#ec4899',
-  'services publics': '#f43f5e',
-}
+const SERIES_PALETTE = [
+  'series1',
+  'series2',
+  'series3',
+  'series4',
+  'series5',
+  'series6',
+  'series7',
+  'series8',
+  'series9',
+  'series10',
+  'series11',
+  'series12',
+] as const
 
-function hashColor(name: string): string {
-  let h = 0
-  for (let i = 0; i < name.length; i++)
-    h = (h * 31 + name.charCodeAt(i)) & 0xffffffff
-  return ALLOCATION_PALETTE[Math.abs(h) % ALLOCATION_PALETTE.length]
-}
-
-export function catColor(name: string): string {
-  if (name === 'nc') return NC_COLOR
-  if (name === 'Not concerned') return NOT_CONCERNED_COLOR
-  if (name === 'autre' || name === 'Autre' || name.startsWith('others ('))
-    return AUTRE_COLOR
-  return ALLOCATION_CATEGORY_COLORS[name] ?? hashColor(name)
-}
-
-// ─── Account-type colors (keyed by the fixed account "category") ────────────────
-
-const ACCOUNT_CATEGORY_COLORS: Record<string, string> = {
-  brokerage: '#3b82f6',
-  private_equity: '#8b5cf6',
-  employer_savings: '#10b981',
-  retirement: '#f59e0b',
-  savings: '#06b6d4',
-  checking: '#6b7280',
-}
-const ACCOUNT_TYPE_FALLBACK_COLORS = [
-  '#ec4899',
-  '#14b8a6',
-  '#a855f7',
-  '#f43f5e',
-]
-
-export function typeColor(
-  t: string,
-  i: number,
-  typeCategories: Record<string, string>,
-): string {
-  return (
-    ACCOUNT_CATEGORY_COLORS[typeCategories[t] ?? ''] ??
-    ACCOUNT_TYPE_FALLBACK_COLORS[i % ACCOUNT_TYPE_FALLBACK_COLORS.length]
-  )
+export function getHashedSeriesTone(key: string): ChartTone {
+  let hash = 0
+  for (let i = 0; i < key.length; i++)
+    hash = (hash * 31 + key.charCodeAt(i)) & 0xffffffff
+  return SERIES_PALETTE[Math.abs(hash) % SERIES_PALETTE.length]
 }

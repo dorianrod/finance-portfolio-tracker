@@ -64,7 +64,7 @@ export function Surface<T extends SurfaceTag = 'div'>({
         'contentCard',
         'smallCard',
         'subduedCard',
-        'qualityCard',
+        'indicatorCard',
         'inset',
         'insetContent',
         'canvasOutline',

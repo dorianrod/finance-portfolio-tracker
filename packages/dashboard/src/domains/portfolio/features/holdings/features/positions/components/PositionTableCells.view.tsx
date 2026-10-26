@@ -5,6 +5,7 @@ import {
   type HeaderGroup,
 } from '@tanstack/react-table'
 
+import type { CellHandlers } from '@/domains/portfolio/features/holdings/features/positions/types/positionCellHandlers.type'
 import {
   FUND_QUALITY_LABELS,
   getFundQualityPresentation,
@@ -38,11 +39,6 @@ export function PositionHeaderRow({ group }: { group: HeaderGroup<TableRow> }) {
     </tr>
   )
 }
-
-export type CellHandlers = {
-  onPreview: (anchor: HTMLButtonElement) => void
-  onDismiss: () => void
-} | null
 
 export function PositionBodyCell({
   cell,

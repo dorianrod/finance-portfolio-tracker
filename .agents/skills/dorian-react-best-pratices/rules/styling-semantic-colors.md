@@ -24,6 +24,11 @@ authorize visual styling in a business component. The styling examples below
 belong inside `shared/ui`; domains consume primitives through semantic variants
 and nested children.
 
+Semantic variants describe generic UI roles, not business entities, operations or
+metrics. Follow [agnostic shared UI](architecture-shared-ui-agnostic.md): domains
+choose the role, and primitives apply its visual tokens without interpreting
+business values.
+
 Business components should express visual intent such as `positive`, `negative`, `warning`, or `muted`, without owning the concrete color that represents it. This keeps themes and visual changes centralized and prevents the same business meaning from drifting across the interface.
 
 Hardcoded colors include:
@@ -42,18 +47,24 @@ Hardcoded colors include:
 
 ```tsx
 // shared/ui/StatusBadge.view.tsx
-export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
+export function Badge({
+  tone,
+  children,
+}: {
+  tone: "positive" | "negative";
+  children: React.ReactNode;
+}) {
   return (
     <span
       className={
-        isPositive
-          ? 'bg-emerald-100 text-emerald-700'
-          : 'bg-[#fef2f2] text-[#b91c1c]'
+        tone === "positive"
+          ? "bg-emerald-100 text-emerald-700"
+          : "bg-[#fef2f2] text-[#b91c1c]"
       }
     >
-      {isPositive ? 'Gain' : 'Loss'}
+      {children}
     </span>
-  )
+  );
 }
 ```
 
@@ -61,18 +72,24 @@ export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
 
 ```tsx
 // shared/ui/StatusBadge.view.tsx
-export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
+export function Badge({
+  tone,
+  children,
+}: {
+  tone: "positive" | "negative";
+  children: React.ReactNode;
+}) {
   return (
     <span
       className={
-        isPositive
-          ? 'bg-positive-muted text-positive'
-          : 'bg-negative-muted text-negative'
+        tone === "positive"
+          ? "bg-positive-muted text-positive"
+          : "bg-negative-muted text-negative"
       }
     >
-      {isPositive ? 'Gain' : 'Loss'}
+      {children}
     </span>
-  )
+  );
 }
 ```
 
@@ -80,14 +97,14 @@ The semantic utilities must resolve to centrally defined theme tokens. Business
 components use the primitive instead of applying its color classes themselves:
 
 ```tsx
-import { Badge } from '@/shared/ui/Badge.view'
+import { Badge } from "@/shared/ui/Badge.view";
 
 export function Status({ isPositive }: { isPositive: boolean }) {
   return (
-    <Badge tone={isPositive ? 'positive' : 'negative'}>
-      {isPositive ? 'Gain' : 'Loss'}
+    <Badge tone={isPositive ? "positive" : "negative"}>
+      {isPositive ? "Gain" : "Loss"}
     </Badge>
-  )
+  );
 }
 ```
 
@@ -96,37 +113,36 @@ export function Status({ isPositive }: { isPositive: boolean }) {
 Use this option inside a shared UI wrapper when an API requires a color value
 instead of a Tailwind class. Prefer a semantic CSS custom property; if the API
 cannot resolve CSS variables, keep the concrete fallback value in this dedicated
-theme file as well. Domains supply data and semantic intent to the wrapper.
+theme file as well. Domains supply data and generic UI intent to the wrapper.
 
 ```typescript
 // shared/theme/chart-colors.ts
 export const chartColors = {
-  positivePerformance: 'var(--color-positive)',
-  negativePerformance: 'var(--color-negative)',
-} as const
+  positive: "var(--color-positive)",
+  negative: "var(--color-negative)",
+} as const;
 ```
 
 ```tsx
-// shared/ui/PerformanceBar.view.tsx
-import { Bar } from 'recharts'
+// shared/ui/SeriesBar.view.tsx
+import { Bar } from "recharts";
 
-import { chartColors } from '@/shared/theme/chart-colors'
+import { chartColors } from "@/shared/theme/chart-colors";
 
-export function PerformanceBar({ value }: { value: number }) {
-  return (
-    <Bar
-      dataKey="performance"
-      fill={
-        value >= 0
-          ? chartColors.positivePerformance
-          : chartColors.negativePerformance
-      }
-    />
-  )
+export function SeriesBar({
+  dataKey,
+  tone,
+}: {
+  dataKey: string;
+  tone: keyof typeof chartColors;
+}) {
+  return <Bar dataKey={dataKey} fill={chartColors[tone]} />;
 }
 ```
 
-The exported names describe business or UI meaning, not hue names such as `green500` or `red700`.
+The exported names describe generic UI roles rather than business metrics or hue
+names such as `green500` or `red700`. A domain presenter may map a business metric
+to one of these roles without owning its concrete color.
 
 ### Exceptions
 

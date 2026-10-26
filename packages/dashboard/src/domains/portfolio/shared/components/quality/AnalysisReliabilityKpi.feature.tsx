@@ -53,12 +53,12 @@ function CompactDataQualityKpi({
 
   return (
     <Inline as="div" placement="inset">
-      <Surface variant="qualityAction">
+      <Surface variant="splitAction">
         <Inline as="div" align="center">
           <Button
             type="button"
             onClick={handleClick}
-            variant="qualityAction"
+            variant="splitAction"
             label={ariaLabel}
           >
             <Text variant="prominentEyebrow" tone="subtle">

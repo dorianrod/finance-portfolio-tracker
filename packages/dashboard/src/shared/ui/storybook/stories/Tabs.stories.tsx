@@ -26,14 +26,14 @@ export const Playground: Story = {
           <Inline as="div" gap="default">
             <Tabs.Trigger
               value="overview"
-              variant="quality"
+              variant="stacked"
               selected={value === 'overview'}
             >
               Overview
             </Tabs.Trigger>
             <Tabs.Trigger
               value="details"
-              variant="quality"
+              variant="stacked"
               selected={value === 'details'}
             >
               Details

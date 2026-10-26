@@ -1,4 +1,5 @@
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
 import type {
   FundHolding,
   FundHoldingStatus,
@@ -69,45 +70,9 @@ export function buildIssuerExposures(
   const applicablePositions = positions.filter(
     isAssetAnalysisApplicablePosition,
   )
-  const byParent = new Map<string, FundHolding[]>()
-  for (const holding of holdings) {
-    for (const key of [holding.parentIsin, holding.parentTicker].filter(
-      Boolean,
-    )) {
-      const rows = byParent.get(key) ?? []
-      rows.push(holding)
-      byParent.set(key, rows)
-    }
-  }
+  const byParent = indexFundHoldingsByParent(holdings)
 
-  // Some official files truncate long issuer names while others spell them
-  // out. Merge only strong normalized-prefix matches; market identifiers
-  // (ISIN-like values) remain authoritative and are never fuzzily merged.
-  const issuerNames = new Map<string, string>()
-  for (const holding of holdings)
-    issuerNames.set(holding.issuerId, holding.issuerName)
-  const normalizedIssuerIds = [...issuerNames.keys()].filter(
-    (id) => !/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(id),
-  )
-  const canonicalIssuerById = new Map<string, string>()
-  for (const id of normalizedIssuerIds) {
-    const matches = normalizedIssuerIds.filter(
-      (candidate) =>
-        Math.min(candidate.length, id.length) >= 12 &&
-        (candidate.startsWith(id) || id.startsWith(candidate)),
-    )
-    canonicalIssuerById.set(
-      id,
-      matches.toSorted((a, b) => b.length - a.length)[0] ?? id,
-    )
-  }
-  const canonicalIssuer = (id: string): { id: string; name: string } => {
-    const canonicalId = canonicalIssuerById.get(id) ?? id
-    return {
-      id: canonicalId,
-      name: issuerNames.get(canonicalId) ?? issuerNames.get(id) ?? id,
-    }
-  }
+  const canonicalIssuer = createCanonicalIssuerResolver(holdings)
 
   type MutableSecurity = {
     id: string
@@ -229,4 +194,37 @@ export function buildIssuerExposures(
         .toSorted((a, b) => b.value - a.value),
     }))
     .toSorted((a, b) => b.value - a.value)
+}
+
+function createCanonicalIssuerResolver(holdings: FundHolding[]) {
+  // Some official files truncate long issuer names while others spell them
+  // out. Merge only strong normalized-prefix matches; market identifiers
+  // (ISIN-like values) remain authoritative and are never fuzzily merged.
+  const issuerNames = new Map<string, string>()
+  for (const holding of holdings)
+    issuerNames.set(holding.issuerId, holding.issuerName)
+  const normalizedIssuerIds = [...issuerNames.keys()].filter(
+    (id) => !/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(id),
+  )
+  const canonicalIssuerById = new Map<string, string>()
+  for (const id of normalizedIssuerIds) {
+    const matches = normalizedIssuerIds.filter(
+      (candidate) =>
+        Math.min(candidate.length, id.length) >= 12 &&
+        (candidate.startsWith(id) || id.startsWith(candidate)),
+    )
+    canonicalIssuerById.set(
+      id,
+      matches.toSorted((a, b) => b.length - a.length)[0] ?? id,
+    )
+  }
+  const canonicalIssuer = (id: string): { id: string; name: string } => {
+    const canonicalId = canonicalIssuerById.get(id) ?? id
+    return {
+      id: canonicalId,
+      name: issuerNames.get(canonicalId) ?? issuerNames.get(id) ?? id,
+    }
+  }
+
+  return canonicalIssuer
 }

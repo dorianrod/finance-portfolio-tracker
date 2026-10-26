@@ -12,7 +12,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const InSeries: Story = {
-  args: { geometry: {}, tone: 'portfolioValue', prominence: 'full' },
+  args: { geometry: {}, tone: 'series6', prominence: 'full' },
   render: function Render(args) {
     return (
       <CartesianExample>

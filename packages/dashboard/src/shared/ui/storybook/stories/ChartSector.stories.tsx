@@ -17,7 +17,7 @@ export const Playground: Story = {
     outerRadius: 90,
     startAngle: 10,
     endAngle: 150,
-    category: 'Equity',
+    tone: 'series1',
     selected: false,
     dimmed: false,
     variant: 'standard',

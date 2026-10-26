@@ -36,16 +36,16 @@ function TabsTrigger({
   selected,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
-  variant?: 'quality'
+  variant?: 'stacked'
   selected?: boolean
 }) {
   return (
     <Primitive.Trigger
       {...props}
       className={[
-        variant === 'quality' &&
+        variant === 'stacked' &&
           'flex w-full items-center gap-3 px-3 py-3 rounded-md text-left transition-colors',
-        variant === 'quality' &&
+        variant === 'stacked' &&
           (selected ? 'bg-accent-muted/50' : 'hover:bg-surface'),
       ]
         .filter(Boolean)

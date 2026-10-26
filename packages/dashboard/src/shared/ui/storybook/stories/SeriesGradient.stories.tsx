@@ -16,7 +16,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { id: 'gradient-example', tone: 'portfolioValue', profile: 'soft' },
+  args: { id: 'gradient-example', tone: 'series6', profile: 'soft' },
   render: function Render(args) {
     const id = useId()
     return (

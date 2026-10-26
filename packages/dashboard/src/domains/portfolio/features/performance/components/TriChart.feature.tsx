@@ -2,6 +2,7 @@ import { LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { TriTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { buildTriChartData } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
@@ -64,7 +65,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             type="linear"
             dataKey="tri_rolling_1y_backfill"
             connectNulls
-            tone="totalChange"
+            tone={PORTFOLIO_CHART_TONES.totalChange}
             weight="regular"
             pattern="projection"
             markers="hidden"
@@ -75,7 +76,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             type="monotone"
             dataKey="tri_rolling_1y"
             connectNulls
-            tone="totalChange"
+            tone={PORTFOLIO_CHART_TONES.totalChange}
             weight="regular"
             markers="hidden"
             hover="default"
@@ -85,7 +86,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             type="linear"
             dataKey="tri_rolling_3y_backfill"
             connectNulls
-            tone="returnRate"
+            tone={PORTFOLIO_CHART_TONES.returnRate}
             weight="regular"
             pattern="projection"
             markers="hidden"
@@ -96,7 +97,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             type="monotone"
             dataKey="tri_rolling_3y"
             connectNulls
-            tone="returnRate"
+            tone={PORTFOLIO_CHART_TONES.returnRate}
             weight="regular"
             markers="hidden"
             hover="default"
@@ -110,7 +111,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             <span>
               <Layout as="span" flow="inline" height="divider" width="icon">
                 <SeriesSwatch
-                  tone={'totalChange'}
+                  tone={PORTFOLIO_CHART_TONES.totalChange}
                   as="i"
                   shape="centeredLine"
                 />
@@ -119,7 +120,7 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             </span>
             <span>
               <Layout as="span" flow="inline" height="divider" width="icon">
-                <SeriesSwatch tone={'returnRate'} as="i" shape="centeredLine" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.returnRate} as="i" shape="centeredLine" />
               </Layout>
               {i18n.t('ui.trichart.trailing3YearIrr')}
             </span>

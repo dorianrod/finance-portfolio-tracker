@@ -8,6 +8,7 @@ import {
 } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -59,7 +60,7 @@ export function EvolutionChart({
             />
           </Inline>
         </Text>
-        <ChartScaleToggle value={scale} onChange={setScale} />
+        <ChartScaleToggle valueLabel="€" value={scale} onChange={setScale} />
       </Inline>
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart
@@ -68,11 +69,11 @@ export function EvolutionChart({
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
         >
           <defs>
-            <SeriesGradient id="gradCost" profile="base" tone="costBasis" />
+            <SeriesGradient id="gradCost" profile="base" tone={PORTFOLIO_CHART_TONES.costBasis} />
             <SeriesGradient
               id="gradGain"
               profile="strong"
-              tone="performancePositive"
+              tone={PORTFOLIO_CHART_TONES.performancePositive}
             />
           </defs>
           <ChartGrid />
@@ -103,7 +104,7 @@ export function EvolutionChart({
             }
             name={i18n.t('ui.evolutionchart.costBasis')}
             stackId="a"
-            tone="costBasis"
+            tone={PORTFOLIO_CHART_TONES.costBasis}
             gradientId="gradCost"
             weight="fine"
           />
@@ -114,7 +115,7 @@ export function EvolutionChart({
             }
             name={i18n.t('ui.evolutionchart.unrealizedPL')}
             stackId="a"
-            tone="performancePositive"
+            tone={PORTFOLIO_CHART_TONES.performancePositive}
             gradientId="gradGain"
             weight="fine"
           />

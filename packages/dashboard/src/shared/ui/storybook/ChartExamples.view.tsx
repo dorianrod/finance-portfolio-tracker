@@ -8,12 +8,14 @@ import {
   type ScatterShapeProps,
 } from 'recharts'
 
+import { getHashedSeriesTone } from '@/shared/theme/chartColors'
+
 import { ChartGrid, ChartXAxis, ChartYAxis } from '../ChartAxes.view'
 import { ChartLabel } from '../ChartLabel.view'
+import { ChartMarker } from '../ChartMarker.view'
 import { ChartRectangle } from '../ChartRectangle.view'
 import { ChartSector } from '../ChartSector.view'
 import { ChartSymbol } from '../SeriesScatter.view'
-import { TransactionMarker } from '../TransactionMarker.view'
 import { HISTORY } from './fixtures'
 
 export function CartesianExample({ children }: { children: ReactNode }) {
@@ -46,7 +48,7 @@ export function PieShapeExample({
   return (
     <ChartSector
       geometry={geometry}
-      category={geometry.name ?? 'Equity'}
+      tone={getHashedSeriesTone(geometry.name ?? 'Equity')}
       selected={selectedName === geometry.name}
     />
   )
@@ -68,14 +70,14 @@ export function ScatterShapeExample(
   return (
     <ChartSymbol
       geometry={geometry}
-      tone="returnRate"
+      tone={'series10'}
       age={{ year: 2024, recent: false, oldestYear: 2020, newestYear: 2025 }}
     />
   )
 }
-export function TransactionDotExample({
+export function MarkerDotExample({
   cx,
   cy,
 }: Partial<Omit<DotProps, 'className'>>) {
-  return <TransactionMarker cx={cx} cy={cy} kind="buy" />
+  return <ChartMarker cx={cx} cy={cy} tone="series1" outline="series1Stroke" />
 }

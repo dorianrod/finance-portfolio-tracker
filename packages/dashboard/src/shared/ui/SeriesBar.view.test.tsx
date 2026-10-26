@@ -14,7 +14,7 @@ function SignedRectangle(props: Partial<Omit<BarShapeProps, 'className'>>) {
   return (
     <ChartRectangle
       geometry={props}
-      tone={props.index === 0 ? 'performancePositive' : 'performanceNegative'}
+      tone={props.index === 0 ? 'positive' : 'series5'}
     />
   )
 }
@@ -35,7 +35,7 @@ describe('SeriesBar', () => {
         <ChartYAxis />
         <SeriesBar
           dataKey="value"
-          tone="netContributions"
+          tone={'series1'}
           corners="top"
           motion="none"
           onClick={onClick}

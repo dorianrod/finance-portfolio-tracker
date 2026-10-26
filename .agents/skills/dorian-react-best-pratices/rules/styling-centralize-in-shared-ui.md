@@ -20,6 +20,9 @@ patterns:
 Business code supplies semantic data, actions and variants; shared UI owns how
 they look. Semantic colors and imported class constants do not exempt a caller
 from this boundary: `className="text-positive"` still applies visual styling.
+Keep those primitives [agnostic of business domains](architecture-shared-ui-agnostic.md):
+extract appearance into generic UI roles, while business decisions and adapters
+remain in their owning domain.
 
 ### Applies When
 

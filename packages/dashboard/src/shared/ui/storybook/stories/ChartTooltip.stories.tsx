@@ -28,7 +28,7 @@ function TooltipContent({
       <ChartText as="p" tone="tooltipLabel">
         {label}
       </ChartText>
-      <ChartText tone="portfolioValue">
+      <ChartText tone={'series6'}>
         {String(payload?.[0]?.value ?? '—')}
       </ChartText>
     </TooltipBox>
@@ -46,7 +46,7 @@ export const Active: Story = {
         >
           <TooltipContent />
         </ChartTooltip>
-        <SeriesBar dataKey="value" tone="portfolioValue" motion="none" />
+        <SeriesBar dataKey="value" tone={'series6'} motion="none" />
       </CartesianExample>
     )
   },

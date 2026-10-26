@@ -2,6 +2,7 @@ import { BarChart, Legend, ResponsiveContainer } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PassiveIncomeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -52,7 +53,7 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
             <SeriesBar
               dataKey="dividends"
               stackId="a"
-              tone="passiveIncome"
+              tone={PORTFOLIO_CHART_TONES.passiveIncome}
               corners="flat"
             >
               <ChartLabels
@@ -66,7 +67,7 @@ export function PassiveIncomeChart({ data }: { data: PassiveIncomePoint[] }) {
             <SeriesBar
               dataKey="interest"
               stackId="a"
-              tone="passiveIncomeSecondary"
+              tone={PORTFOLIO_CHART_TONES.passiveIncomeSecondary}
               corners="top"
             />
           </BarChart>

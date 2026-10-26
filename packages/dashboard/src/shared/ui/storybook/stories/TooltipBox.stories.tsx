@@ -19,7 +19,7 @@ export const Theme: Story = {
         <ChartText as="p" tone="tooltipLabel">
           Example value
         </ChartText>
-        <ChartText tone="portfolioValue">12,450 €</ChartText>
+        <ChartText tone={'series6'}>12,450 €</ChartText>
       </TooltipBox>
     )
   },

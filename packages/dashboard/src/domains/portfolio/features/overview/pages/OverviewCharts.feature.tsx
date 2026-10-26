@@ -11,6 +11,7 @@ import type { DriverRow } from '@/domains/portfolio/features/overview/types/over
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type {
   OverviewComparison,
   OverviewConcentrationComparison,
@@ -123,7 +124,7 @@ export function OverviewValueChart({
                   height="indicator"
                   width="indicator"
                 >
-                  <ToneSwatch tone="value" shape="dot" />
+                  <ToneSwatch tone={'highlight'} shape="dot" />
                 </Layout>
                 {i18n.t('ui.overviewcharts.current')}
               </Inline>
@@ -139,12 +140,12 @@ export function OverviewValueChart({
             <ChartReferenceArea
               x1={domain[0]}
               x2={currentStart}
-              period="previous"
+              prominence="muted"
             />
             <ChartReferenceArea
               x1={currentStart}
               x2={domain[1]}
-              period="current"
+              prominence="highlighted"
             />
             <ChartReference x={currentStart} kind="selected" />
             <ChartXAxis
@@ -171,7 +172,7 @@ export function OverviewValueChart({
             <SeriesLine
               type="monotone"
               dataKey="previousValue"
-              tone="neutralSeries"
+              tone={PORTFOLIO_CHART_TONES.neutralSeries}
               weight="regular"
               markers="hidden"
               hover="default"
@@ -180,7 +181,7 @@ export function OverviewValueChart({
             <SeriesLine
               type="monotone"
               dataKey="currentValue"
-              tone="portfolioValue"
+              tone={PORTFOLIO_CHART_TONES.portfolioValue}
               weight="emphasized"
               markers="hidden"
               hover="default"
@@ -204,7 +205,7 @@ export function OverviewDriversChart({
       label: i18n.t('ui.overviewcharts.netContributions'),
       previous: comparison.contributions.previous,
       current: comparison.contributions.current,
-      tone: 'netContributions',
+      tone: PORTFOLIO_CHART_TONES.netContributions,
     },
     {
       label: i18n.t('ui.overviewcharts.marketPerformance'),
@@ -213,8 +214,8 @@ export function OverviewDriversChart({
       tone:
         comparison.marketPerformance.current != null &&
         comparison.marketPerformance.current < 0
-          ? 'performanceNegative'
-          : 'performancePositive',
+          ? PORTFOLIO_CHART_TONES.performanceNegative
+          : PORTFOLIO_CHART_TONES.performancePositive,
     },
   ]
   const unavailable =
@@ -313,7 +314,7 @@ export function OverviewDriversChart({
           <SeriesBar
             dataKey="previous"
             name={i18n.t('ui.overviewcharts.previous')}
-            tone="neutralSeries"
+            tone={PORTFOLIO_CHART_TONES.neutralSeries}
             corners="top"
             prominence="muted"
             motion="none"

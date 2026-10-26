@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -73,7 +74,7 @@ export function AnnualIncomeSavingsChart({
             yAxisId="amount"
             dataKey="netSalary"
             stackId="income"
-            tone="costBasis"
+            tone={PORTFOLIO_CHART_TONES.costBasis}
             corners="bottom"
           >
             <SeriesBar.Shape>
@@ -84,7 +85,7 @@ export function AnnualIncomeSavingsChart({
             yAxisId="amount"
             dataKey="otherIncome"
             stackId="income"
-            tone="passiveIncome"
+            tone={PORTFOLIO_CHART_TONES.passiveIncome}
             corners="top"
           >
             <SeriesBar.Shape>
@@ -94,7 +95,7 @@ export function AnnualIncomeSavingsChart({
           <SeriesBar
             yAxisId="amount"
             dataKey="placedSavings"
-            tone="netContributions"
+            tone={PORTFOLIO_CHART_TONES.netContributions}
             corners="top"
           >
             <SeriesBar.Shape>
@@ -106,7 +107,7 @@ export function AnnualIncomeSavingsChart({
             type="monotone"
             dataKey="placementRate"
             connectNulls={false}
-            tone="returnRate"
+            tone={PORTFOLIO_CHART_TONES.returnRate}
             weight="emphasized"
             markers="normal"
             hover="large"
@@ -118,25 +119,25 @@ export function AnnualIncomeSavingsChart({
           <Inline as="div" flow="wrap" gap="default" inset="default">
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={'costBasis'} as="i" shape="bar" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.costBasis} as="i" shape="bar" />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.netSalary.970d84')}
             </Inline>
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={'passiveIncome'} as="i" shape="bar" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.passiveIncome} as="i" shape="bar" />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}
             </Inline>
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={'netContributions'} as="i" shape="bar" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.netContributions} as="i" shape="bar" />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
             </Inline>
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="divider" width="icon">
-                <SeriesSwatch tone={'returnRate'} as="i" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.returnRate} as="i" />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}
             </Inline>

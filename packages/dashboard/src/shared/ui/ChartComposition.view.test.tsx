@@ -10,6 +10,8 @@ import {
 } from 'recharts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { getHashedSeriesTone } from '@/shared/theme/chartColors'
+
 import { ChartXAxis, ChartYAxis } from './ChartAxes.view'
 import { ChartLabel } from './ChartLabel.view'
 import { ChartLabels } from './ChartLabels.view'
@@ -21,13 +23,19 @@ import { ChartSymbol, SeriesScatter } from './SeriesScatter.view'
 
 afterEach(cleanup)
 function PieShape(props: Partial<Omit<PieSectorShapeProps, 'className'>>) {
-  return <ChartSector geometry={props} category="Equity" selected />
+  return (
+    <ChartSector
+      geometry={props}
+      tone={getHashedSeriesTone('Equity')}
+      selected
+    />
+  )
 }
 function ScatterShape(props: Partial<Omit<ScatterShapeProps, 'className'>>) {
   return (
     <ChartSymbol
       geometry={props}
-      tone="returnRate"
+      tone={'series10'}
       age={{ year: 2024, recent: false, oldestYear: 2020, newestYear: 2025 }}
     />
   )
@@ -59,7 +67,7 @@ describe('shared chart composition', () => {
         <ChartTooltip active defaultIndex={0} highlight="bar">
           <TooltipContent />
         </ChartTooltip>
-        <SeriesBar dataKey="value" tone="portfolioValue" motion="none">
+        <SeriesBar dataKey="value" tone={'series6'} motion="none">
           <ChartLabels dataKey="value" position="inside" />
         </SeriesBar>
       </BarChart>,
@@ -114,7 +122,7 @@ describe('shared chart composition', () => {
       <ScatterChart width={400} height={300}>
         <ChartXAxis dataKey="x" type="number" />
         <ChartYAxis dataKey="y" type="number" />
-        <SeriesScatter data={[{ x: 5, y: 10 }]} tone="returnRate">
+        <SeriesScatter data={[{ x: 5, y: 10 }]} tone={'series10'}>
           <SeriesScatter.Shape>
             <ScatterShape />
           </SeriesScatter.Shape>

@@ -230,9 +230,6 @@ export function PerformanceContributionCard({
   trailingThreeYearIrr,
   irrStatus,
 }: Props) {
-  const formatDate = useFormatDate()
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   const [view, setView] = useState<PerformanceView>('contribution')
   const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
   const { activeHorizon, irr, summary, threeYearUnavailable } =
@@ -243,7 +240,6 @@ export function PerformanceContributionCard({
       trailingThreeYears,
       trailingThreeYearIrr,
     })
-  const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
 
   const description =
     view === 'contribution'
@@ -253,8 +249,6 @@ export function PerformanceContributionCard({
       : i18n.t(
           'ui.performancecontributioncard.annualizedMoneyWeightedReturnByAssetOverTheSelected',
         )
-  let scopePeriod: PeriodScopeMode = activeHorizon
-  if (view === 'irr') scopePeriod = 'range'
   const showUnavailableContribution =
     view === 'contribution' && !summary.available
   const showContributionDetails = view === 'contribution' && summary.available
@@ -313,144 +307,177 @@ export function PerformanceContributionCard({
       )}
       {showContributionDetails && (
         <>
-          <Layout spaceBefore="spacious">
-            <Surface variant="inset">
-              <Grid columns={3} gap="default" inset="default">
-                <div>
-                  <MetricLabel
-                    label={i18n.t('ui.performancecontributioncard.irrContext')}
-                    tooltip={i18n.t(
-                      'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
-                    )}
-                    // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
-                    scope={{
-                      account: 'filterable',
-                      period: scopePeriod,
-                      effectiveDate: summary.endDate,
-                    }}
-                  />
-                  <Layout spaceBefore="compact">
-                    <Text as="div" variant="statistic" tone="return" numeric>
-                      {formatPerformanceIrrLabel(
-                        irr,
-                        irrStatus,
-                        formatPercentage,
-                      )}
-                    </Text>
-                  </Layout>
-                </div>
-                <div>
-                  <MetricLabel
-                    label={i18n.t(
-                      'ui.performancecontributioncard.attributedNetPerformance',
-                    )}
-                    tooltip={i18n.t(
-                      'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
-                    )}
-                    // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
-                    scope={{
-                      account: 'filterable',
-                      period: scopePeriod,
-                      effectiveDate: summary.endDate,
-                    }}
-                  />
-                  <Layout spaceBefore="compact">
-                    <Text as="div" variant="statistic" tone={netTone} numeric>
-                      {formatMoney(summary.netContribution, {
-                        style: 'full',
-                      })}
-                    </Text>
-                  </Layout>
-                </div>
-                <div>
-                  <Text as="div" variant="microOverline" tone="subtle">
-                    {i18n.t('ui.performancecontributioncard.period')}
-                  </Text>
-                  <Inline
-                    as="div"
-                    spaceBefore="default"
-                    align="center"
-                    justify="between"
-                    gap="default"
-                  >
-                    <Layout>
-                      <Text as="div" variant="label" tone="muted" wrap="nowrap">
-                        {formatPerformanceDateRange(summary, formatDate)}
-                      </Text>
-                    </Layout>
-                    <Layout sizing="fixed">
-                      <Group
-                        variant="inset"
-                        label={i18n.t(
-                          'ui.performancecontributioncard.contributionHorizon',
-                        )}
-                      >
-                        <Inline as="div" inset="compact">
-                          <ToggleButton
-                            type="button"
-                            onClick={() => setHorizon('since-tracking')}
-                            active={activeHorizon === 'since-tracking'}
-                            variant="horizonChoice"
-                          >
-                            {i18n.t(
-                              'ui.performancecontributioncard.sinceTracking',
-                            )}
-                          </ToggleButton>
-                          <ToggleButton
-                            type="button"
-                            onClick={() => setHorizon('trailing-3y')}
-                            disabled={threeYearUnavailable}
-                            active={activeHorizon === 'trailing-3y'}
-                            title={
-                              threeYearUnavailable
-                                ? i18n.t(
-                                    'ui.performancecontributioncard.threeYearsOfHistoryAreNotYetAvailable',
-                                  )
-                                : undefined
-                            }
-                            variant="optionalHorizonChoice"
-                          >
-                            {i18n.t(
-                              'ui.performancecontributioncard.trailing3Years',
-                            )}
-                          </ToggleButton>
-                        </Inline>
-                      </Group>
-                    </Layout>
-                  </Inline>
-                </div>
-              </Grid>
-            </Surface>
-          </Layout>
-
-          <Grid columns={2} spaceBefore="spacious" gap="spacious">
-            <ContributionList
-              title={i18n.t('ui.performancecontributioncard.topContributors')}
-              // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              items={summary.contributors}
-              positive
-              // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              scope={{
-                account: 'filterable',
-                period: scopePeriod,
-                effectiveDate: summary.endDate,
-              }}
-            />
-            <ContributionList
-              title={i18n.t('ui.performancecontributioncard.mainDetractors')}
-              // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              items={summary.detractors}
-              positive={false}
-              // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
-              scope={{
-                account: 'filterable',
-                period: scopePeriod,
-                effectiveDate: summary.endDate,
-              }}
-            />
-          </Grid>
+          <ContributionSummaryMetrics
+            summary={summary}
+            irr={irr}
+            irrStatus={irrStatus}
+            activeHorizon={activeHorizon}
+            threeYearUnavailable={threeYearUnavailable}
+            onHorizonChange={setHorizon}
+          />
+          <ContributionRankings summary={summary} scopePeriod={activeHorizon} />
         </>
       )}
     </Surface>
+  )
+}
+
+function ContributionSummaryMetrics({
+  summary,
+  irr,
+  irrStatus,
+  activeHorizon,
+  threeYearUnavailable,
+  onHorizonChange,
+}: {
+  summary: PerformanceContributionSummary
+  irr: number | null
+  irrStatus: IrrStatus
+  activeHorizon: ContributionHorizon
+  threeYearUnavailable: boolean
+  onHorizonChange: (horizon: ContributionHorizon) => void
+}) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
+  return (
+    <Layout spaceBefore="spacious">
+      <Surface variant="inset">
+        <Grid columns={3} gap="default" inset="default">
+          <div>
+            <MetricLabel
+              label={i18n.t('ui.performancecontributioncard.irrContext')}
+              tooltip={i18n.t(
+                'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
+              )}
+              // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
+              scope={{
+                account: 'filterable',
+                period: activeHorizon,
+                effectiveDate: summary.endDate,
+              }}
+            />
+            <Layout spaceBefore="compact">
+              <Text as="div" variant="statistic" tone={'contrast'} numeric>
+                {formatPerformanceIrrLabel(irr, irrStatus, formatPercentage)}
+              </Text>
+            </Layout>
+          </div>
+          <div>
+            <MetricLabel
+              label={i18n.t(
+                'ui.performancecontributioncard.attributedNetPerformance',
+              )}
+              tooltip={i18n.t(
+                'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
+              )}
+              // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
+              scope={{
+                account: 'filterable',
+                period: activeHorizon,
+                effectiveDate: summary.endDate,
+              }}
+            />
+            <Layout spaceBefore="compact">
+              <Text as="div" variant="statistic" tone={netTone} numeric>
+                {formatMoney(summary.netContribution, {
+                  style: 'full',
+                })}
+              </Text>
+            </Layout>
+          </div>
+          <div>
+            <Text as="div" variant="microOverline" tone="subtle">
+              {i18n.t('ui.performancecontributioncard.period')}
+            </Text>
+            <Inline
+              as="div"
+              spaceBefore="default"
+              align="center"
+              justify="between"
+              gap="default"
+            >
+              <Layout>
+                <Text as="div" variant="label" tone="muted" wrap="nowrap">
+                  {formatPerformanceDateRange(summary, formatDate)}
+                </Text>
+              </Layout>
+              <Layout sizing="fixed">
+                <Group
+                  variant="inset"
+                  label={i18n.t(
+                    'ui.performancecontributioncard.contributionHorizon',
+                  )}
+                >
+                  <Inline as="div" inset="compact">
+                    <ToggleButton
+                      type="button"
+                      onClick={() => onHorizonChange('since-tracking')}
+                      active={activeHorizon === 'since-tracking'}
+                      variant="compactChoice"
+                    >
+                      {i18n.t('ui.performancecontributioncard.sinceTracking')}
+                    </ToggleButton>
+                    <ToggleButton
+                      type="button"
+                      onClick={() => onHorizonChange('trailing-3y')}
+                      disabled={threeYearUnavailable}
+                      active={activeHorizon === 'trailing-3y'}
+                      title={
+                        threeYearUnavailable
+                          ? i18n.t(
+                              'ui.performancecontributioncard.threeYearsOfHistoryAreNotYetAvailable',
+                            )
+                          : undefined
+                      }
+                      variant="optionalCompactChoice"
+                    >
+                      {i18n.t('ui.performancecontributioncard.trailing3Years')}
+                    </ToggleButton>
+                  </Inline>
+                </Group>
+              </Layout>
+            </Inline>
+          </div>
+        </Grid>
+      </Surface>
+    </Layout>
+  )
+}
+function ContributionRankings({
+  summary,
+  scopePeriod,
+}: {
+  summary: PerformanceContributionSummary
+  scopePeriod: PeriodScopeMode
+}) {
+  return (
+    <Grid columns={2} spaceBefore="spacious" gap="spacious">
+      <ContributionList
+        title={i18n.t('ui.performancecontributioncard.topContributors')}
+
+        items={summary.contributors}
+        positive
+        // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
+        scope={{
+          account: 'filterable',
+          period: scopePeriod,
+          effectiveDate: summary.endDate,
+        }}
+      />
+      <ContributionList
+        title={i18n.t('ui.performancecontributioncard.mainDetractors')}
+
+        items={summary.detractors}
+        positive={false}
+        // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
+        scope={{
+          account: 'filterable',
+          period: scopePeriod,
+          effectiveDate: summary.endDate,
+        }}
+      />
+    </Grid>
   )
 }

@@ -19,7 +19,7 @@ export function PositionsToggle({
             ? i18n.t('ui.positionstoggle.hidePositions')
             : i18n.t('ui.positionstoggle.viewPositions')
         }
-        variant="positions"
+        variant="outlinedChoice"
       >
         <GridIcon />
 

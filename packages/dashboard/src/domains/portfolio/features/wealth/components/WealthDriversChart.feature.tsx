@@ -1,6 +1,7 @@
 import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -50,12 +51,12 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
             <SeriesGradient
               id="driversSavings"
               profile="light"
-              tone="netContributions"
+              tone={PORTFOLIO_CHART_TONES.netContributions}
             />
             <SeriesGradient
               id="driversPerformance"
               profile="subtle"
-              tone="performance"
+              tone={PORTFOLIO_CHART_TONES.performance}
             />
           </defs>
           <ChartGrid />
@@ -74,21 +75,21 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
           <SeriesArea
             type="monotone"
             dataKey="cumulative_savings"
-            tone="netContributions"
+            tone={PORTFOLIO_CHART_TONES.netContributions}
             gradientId="driversSavings"
             weight="regular"
           />
           <SeriesArea
             type="monotone"
             dataKey="cumulative_performance"
-            tone="performance"
+            tone={PORTFOLIO_CHART_TONES.performance}
             gradientId="driversPerformance"
             weight="regular"
           />
           <SeriesLine
             type="monotone"
             dataKey="cumulative_change"
-            tone="totalChange"
+            tone={PORTFOLIO_CHART_TONES.totalChange}
             weight="emphasized"
             markers="hidden"
           />
@@ -104,7 +105,7 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'netContributions'} as="i" shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.netContributions} as="i" shape="dot" />
               </Layout>
               {i18n.t('ui.wealthdriverschart.netContributions')}
             </span>
@@ -115,7 +116,7 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'performance'} as="i" shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performance} as="i" shape="dot" />
               </Layout>
               {i18n.t('ui.wealthdriverschart.marketPerformance')}
             </span>
@@ -126,7 +127,7 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'totalChange'} as="i" shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.totalChange} as="i" shape="dot" />
               </Layout>
               {i18n.t('ui.wealthdriverschart.totalChange')}
             </span>

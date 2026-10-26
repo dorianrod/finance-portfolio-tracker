@@ -7,6 +7,7 @@ import {
 } from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -128,7 +129,7 @@ function DonutSector({
   return (
     <ChartSector
       geometry={shapeProps}
-      category={entry.name}
+      tone={getAllocationTone(entry.name)}
       dimmed={isFiltered && activeCategory !== entry.name}
       selected={activeCategory === entry.name}
     />

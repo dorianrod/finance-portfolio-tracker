@@ -4,6 +4,8 @@ import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -84,14 +86,14 @@ function AccountTypeSector({
           {...sectorBase}
           innerRadius={0}
           outerRadius={radius}
-          category={point.account_type}
+          tone={getAllocationTone(point.account_type)}
           variant="splitBase"
         />
         <ChartSector
           {...sectorBase}
           innerRadius={splitRadius}
           outerRadius={radius}
-          tone="performanceNegative"
+          tone={PORTFOLIO_CHART_TONES.performanceNegative}
           variant="splitOverlay"
         />
       </g>
@@ -105,7 +107,7 @@ function AccountTypeSector({
           {...sectorBase}
           innerRadius={0}
           outerRadius={splitRadius}
-          category={point.account_type}
+          tone={getAllocationTone(point.account_type)}
           variant="splitBase"
         />
       )}
@@ -114,7 +116,7 @@ function AccountTypeSector({
           {...sectorBase}
           innerRadius={splitRadius}
           outerRadius={radius}
-          tone="performancePositive"
+          tone={PORTFOLIO_CHART_TONES.performancePositive}
           variant="splitOverlay"
         />
       )}

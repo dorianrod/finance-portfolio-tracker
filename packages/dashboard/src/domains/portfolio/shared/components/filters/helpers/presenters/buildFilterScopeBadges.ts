@@ -76,6 +76,26 @@ function periodBadge(
 ): ScopeBadge {
   const active = !!(filters.dateFrom || filters.dateTo)
   const end = friendlyDate(effectiveDate ?? filters.dateTo, formatDate)
+  const range = formatPeriodRange(filters, formatDate)
+  switch (mode) {
+    case 'latest':
+    case 'mixed':
+      return freshnessPeriodBadge(mode, active)
+    case 'comparison-range':
+    case 'range-or-trailing-12m':
+    case 'range':
+    case 'year-range':
+      return rangePeriodBadge(mode, active, range)
+    case 'as-of':
+      return snapshotPeriodBadge(filters, end)
+    default:
+      return fixedHorizonPeriodBadge(mode, filters, end)
+  }
+}
+function formatPeriodRange(
+  filters: DashboardFilters,
+  formatDate: ReturnType<typeof useFormatDate>,
+): string | null {
   let range: string | null = null
   if (filters.dateFrom && filters.dateTo) {
     range = `${friendlyDate(filters.dateFrom, formatDate)} – ${friendlyDate(filters.dateTo, formatDate)}`
@@ -89,6 +109,12 @@ function periodBadge(
     })
   }
 
+  return range
+}
+function freshnessPeriodBadge(
+  mode: 'latest' | 'mixed',
+  active: boolean,
+): ScopeBadge {
   if (mode === 'latest') {
     return {
       label: active
@@ -100,7 +126,7 @@ function periodBadge(
       tone: active ? 'ignored' : 'default',
     }
   }
-  if (mode === 'mixed') {
+  {
     return {
       label: active
         ? i18n.t('ui.buildfilterscopebadgesTs.mixedDateScope')
@@ -111,6 +137,12 @@ function periodBadge(
       tone: active ? 'ignored' : 'default',
     }
   }
+}
+function rangePeriodBadge(
+  mode: 'comparison-range' | 'range-or-trailing-12m' | 'range' | 'year-range',
+  active: boolean,
+  range: string | null,
+): ScopeBadge {
   if (mode === 'comparison-range') {
     return active
       ? {
@@ -161,7 +193,7 @@ function periodBadge(
           tone: 'default',
         }
   }
-  if (mode === 'year-range') {
+  {
     return active
       ? {
           label: i18n.t('ui.buildfilterscopebadgesTs.selectedYears'),
@@ -181,36 +213,44 @@ function periodBadge(
           tone: 'default',
         }
   }
-  if (mode === 'as-of') {
-    if (filters.dateTo)
-      return {
-        label: i18n.t('ui.buildfilterscopebadgesTs.asOfValue0', {
-          value0: end,
-        }),
-        detail: i18n.t(
-          'ui.buildfilterscopebadgesTs.usesTheLatestSnapshotOnOrBeforeTheSelected',
-        ),
-        tone: 'applied',
-      }
-    if (filters.dateFrom)
-      return {
-        label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotStartIgnored'),
-        detail: i18n.t(
-          'ui.buildfilterscopebadgesTs.aPointInTimeValueNeedsAnEndDate',
-        ),
-        tone: 'ignored',
-      }
+}
+function snapshotPeriodBadge(
+  filters: DashboardFilters,
+  end: string | null,
+): ScopeBadge {
+  if (filters.dateTo)
     return {
-      label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotValue0', {
-        value0: end ? ` · ${end}` : '',
+      label: i18n.t('ui.buildfilterscopebadgesTs.asOfValue0', {
+        value0: end,
       }),
       detail: i18n.t(
-        'ui.buildfilterscopebadgesTs.usesTheLatestAvailablePortfolioSnapshot',
+        'ui.buildfilterscopebadgesTs.usesTheLatestSnapshotOnOrBeforeTheSelected',
       ),
-      tone: 'default',
+      tone: 'applied',
     }
+  if (filters.dateFrom)
+    return {
+      label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotStartIgnored'),
+      detail: i18n.t(
+        'ui.buildfilterscopebadgesTs.aPointInTimeValueNeedsAnEndDate',
+      ),
+      tone: 'ignored',
+    }
+  return {
+    label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotValue0', {
+      value0: end ? ` · ${end}` : '',
+    }),
+    detail: i18n.t(
+      'ui.buildfilterscopebadgesTs.usesTheLatestAvailablePortfolioSnapshot',
+    ),
+    tone: 'default',
   }
-
+}
+function fixedHorizonPeriodBadge(
+  mode: 'trailing-12m' | 'trailing-3y' | 'since-tracking',
+  filters: DashboardFilters,
+  end: string | null,
+): ScopeBadge {
   const horizonByMode = {
     'trailing-12m': i18n.t('ui.buildfilterscopebadges.trailing12m'),
     'trailing-3y': i18n.t('ui.buildfilterscopebadges.trailing3y'),

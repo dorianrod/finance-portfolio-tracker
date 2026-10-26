@@ -152,7 +152,7 @@ export function OverviewConcentrationRow({
       <Layout placement="inset" height="indicator">
         <Surface variant="annotatedTrack">
           <Proportion value={row.weight} total={scaleMax}>
-            <ToneSwatch as="div" tone="risk" shape="dot" prominence="strong" />
+            <ToneSwatch as="div" tone={'attention'} shape="dot" prominence="strong" />
           </Proportion>
           {previousAvailable && (
             <PlotMarker value={row.previousWeight ?? 0} total={scaleMax}>

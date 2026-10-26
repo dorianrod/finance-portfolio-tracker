@@ -1,3 +1,4 @@
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -47,7 +48,7 @@ function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
   if (!value) return null
 
   return (
-    <ChartText as="div" category={category}>
+    <ChartText as="div" tone={getAllocationTone(category)}>
       {category}: {formatPercentage(value)}
     </ChartText>
   )

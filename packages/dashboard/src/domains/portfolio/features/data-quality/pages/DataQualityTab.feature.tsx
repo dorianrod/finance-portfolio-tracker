@@ -2,11 +2,8 @@ import { useMemo } from 'react'
 
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/components/ClassificationCoverageState.state'
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/components/FundDataQualityPanel.feature'
-import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/components/LookThroughCoverageSummary.feature'
 import { ErrorsTab } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab.feature'
 import { ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/ManualPriceOverridesTable.view'
-import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
-import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/pages/helpers/presenters/dataQualityToneStyles'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/services/useDataQualityViewModel'
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
@@ -22,21 +19,14 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
-import { Select } from '@/shared/ui/Controls.view'
-import { Grid, Inline, Layout, Stack } from '@/shared/ui/Layout.view'
-import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Grid, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Tabs } from '@/shared/ui/Tabs.view'
-import { Text } from '@/shared/ui/Text.view'
 
-import {
-  AffectedAssetsTable,
-  DetailKpiButton,
-  EmptyQualityState,
-  QualityThemeOption,
-  QualityThemeTab,
-} from './DataQualityDetails.view'
+import { AffectedAssetsPanel } from './AffectedAssetsPanel.feature'
+import { DataQualityHeader } from './DataQualityHeader.view'
+import { LookThroughQualityContent } from './LookThroughQualityContent.feature'
+import { QualityThemeNavigation } from './QualityThemeNavigation.view'
 
 export type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 
@@ -87,21 +77,10 @@ export function DataQualityTab({
   })
   const {
     classificationDetailsOpen,
-    classificationDimension,
-    closeClassificationDetails,
     fundDiagnosticsOpen,
     openAllClassificationDetails,
     openFundDiagnostics,
   } = useDataQualityPanels()
-  const visibleAffectedAssets = useMemo(
-    () =>
-      classificationDimension
-        ? affectedAssets.filter((asset) =>
-            asset.dimensions.includes(classificationDimension),
-          )
-        : affectedAssets,
-    [affectedAssets, classificationDimension],
-  )
   const activeDetailAction = useMemo(() => {
     if (
       activeThemeId === 'lookthrough' &&
@@ -148,31 +127,10 @@ export function DataQualityTab({
     openFundDiagnostics,
     scopedFundData.statuses.length,
   ])
-  let lookThroughContent = (
-    <EmptyQualityState
-      message={
-        scopedFundData.report
-          ? i18n.t(
-              'ui.dataqualitytab.lookThroughIsNotApplicableToSavingsCheckingAnd',
-            )
-          : i18n.t(
-              'ui.dataqualitytab.noLookThroughQualityReportRunThePortfolioPipeline',
-            )
-      }
-    />
-  )
-  if (hasLookThroughScope) {
-    lookThroughContent = (
-      <LookThroughCoverageSummary
-        report={scopedFundData.report}
-        notApplicableValue={scopedFundData.notApplicableValue}
-      />
-    )
-  }
 
   return (
     <div className="mb-6">
-      <Surface variant="qualityPage">
+      <Surface variant="cardGroup">
         <Tabs
           orientation="vertical"
           value={activeThemeId}
@@ -181,145 +139,18 @@ export function DataQualityTab({
           }
         >
           <Grid arrangement="sidebar" align="start" gap="relaxed">
-            <Layout hideFrom="medium">
-              <Layout spaceAfter="default">
-                <Text
-                  htmlFor="quality-theme"
-                  as="label"
-                  variant="captionLabel"
-                  tone="subtle"
-                >
-                  <Layout as="span" flow="block">
-                    {i18n.t('ui.dataqualitytab.qualityTheme')}
-                  </Layout>
-                </Text>
-              </Layout>
-              <Layout as="span" flow="control" width="full">
-                <Select
-                  label={i18n.t('ui.dataqualitytab.qualityTheme')}
-                  id="quality-theme"
-                  value={activeThemeId}
-                  onChange={(event) =>
-                    setSelectedQualityTheme(
-                      event.target.value as QualityThemeId,
-                    )
-                  }
-                  variant="quality"
-                >
-                  {themes.map((theme) => (
-                    <QualityThemeOption key={theme.id} theme={theme} />
-                  ))}
-                </Select>
-              </Layout>
-            </Layout>
-
-            <Tabs.List
-              variant="sidebar"
-              label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
-            >
-              <Stack gap="compact" inset="default">
-                {themes.map((theme) => (
-                  <QualityThemeTab
-                    key={theme.id}
-                    activeThemeId={activeThemeId}
-                    theme={theme}
-                  />
-                ))}
-              </Stack>
-            </Tabs.List>
+            <QualityThemeNavigation
+              themes={themes}
+              activeThemeId={activeThemeId}
+              onThemeChange={setSelectedQualityTheme}
+            />
 
             <Layout>
               <Tabs.Content value={activeThemeId}>
-                <Layout spaceAfter="spacious">
-                  <Surface variant="sectionEnd">
-                    <Inline
-                      as="div"
-                      flow="wrap"
-                      align="start"
-                      gap="default"
-                      inset="default"
-                    >
-                      <Layout placement="leading">
-                        <Inline as="div" align="center" gap="default">
-                          <Layout
-                            as="span"
-                            flow="block"
-                            height="icon"
-                            sizing="fixed"
-                          >
-                            <Surface as="span" variant="statusCanvasFrame">
-                              <Inline as="span" align="center" justify="center">
-                                <Layout
-                                  as="span"
-                                  flow="inline"
-                                  height="indicator"
-                                  width="indicator"
-                                >
-                                  <ToneSwatch
-                                    tone={QUALITY_TONES[activeTheme.tone]}
-                                    shape="dot"
-                                  />
-                                </Layout>
-                              </Inline>
-                            </Surface>
-                          </Layout>
-                          <Text as="h2" variant="heading" tone="default">
-                            {activeTheme.label}
-                          </Text>
-                        </Inline>
-                        <Layout spaceBefore="compact">
-                          <Text as="p" variant="helper" tone="subtle">
-                            {activeTheme.description}
-                          </Text>
-                        </Layout>
-                      </Layout>
-                      <Layout sizing="fixed">
-                        {activeDetailAction ? (
-                          <DetailKpiButton
-                            theme={activeTheme}
-                            actionLabel={activeDetailAction.label}
-                            detailLabel={activeDetailAction.detail}
-                            expanded={activeDetailAction.expanded}
-                            onClick={activeDetailAction.onClick}
-                          />
-                        ) : (
-                          <Layout placement="inset" overflow="clip">
-                            <Surface variant="insetStatistic" align="right">
-                              <Layout
-                                as="span"
-                                flow="inline"
-                                placement="overlay"
-                                width="divider"
-                              >
-                                <ToneSwatch
-                                  tone={QUALITY_TONES[activeTheme.tone]}
-                                  shape="sideAccent"
-                                />
-                              </Layout>
-                              <Text
-                                as="div"
-                                variant="compactMetric"
-                                tone="default"
-                                numeric
-                              >
-                                {activeTheme.metric}
-                              </Text>
-                              <Layout spaceBefore="default">
-                                <Text
-                                  as="div"
-                                  variant="eyebrowLabel"
-                                  tone="subtle"
-                                >
-                                  {activeTheme.metricLabel}
-                                </Text>
-                              </Layout>
-                            </Surface>
-                          </Layout>
-                        )}
-                      </Layout>
-                    </Inline>
-                  </Surface>
-                </Layout>
+                <DataQualityHeader
+                  theme={activeTheme}
+                  action={activeDetailAction}
+                />
 
                 {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
 
@@ -335,7 +166,12 @@ export function DataQualityTab({
                   />
                 )}
 
-                {activeThemeId === 'lookthrough' && lookThroughContent}
+                {activeThemeId === 'lookthrough' && (
+                  <LookThroughQualityContent
+                    report={scopedFundData.report}
+                    notApplicableValue={scopedFundData.notApplicableValue}
+                  />
+                )}
               </Tabs.Content>
             </Layout>
           </Grid>
@@ -348,27 +184,7 @@ export function DataQualityTab({
           unresolved={scopedFundData.unresolved}
         />
 
-        <SidePanel
-          open={classificationDetailsOpen}
-          onClose={closeClassificationDetails}
-          closeLabel={i18n.t('ui.dataqualitytab.closeAffectedAssetsDetails')}
-          size="medium"
-        >
-          <SidePanel.Title>
-            {classificationDimension
-              ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
-                  value0:
-                    DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
-                })
-              : i18n.t('ui.dataqualitytab.affectedAssets')}
-          </SidePanel.Title>
-          <SidePanel.Description>
-            {i18n.t(
-              'ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir',
-            )}
-          </SidePanel.Description>
-          <AffectedAssetsTable assets={visibleAffectedAssets} />
-        </SidePanel>
+        <AffectedAssetsPanel assets={affectedAssets} />
       </Surface>
     </div>
   )

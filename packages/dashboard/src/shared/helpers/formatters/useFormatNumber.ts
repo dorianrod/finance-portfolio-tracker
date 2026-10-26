@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 
+import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
+
 type NumberFormatOptions = {
   fallback?: string | number
   maximumFractionDigits?: number
@@ -44,13 +46,11 @@ export function useFormatNumber() {
       value: number | null | undefined,
       options: NumberFormatOptions = {},
     ): string => {
-      const {
-        fallback = '—',
-        zeroAsFallback = false,
-        ...numberOptions
-      } = options
-      const displayValue =
-        value == null || (zeroAsFallback && value === 0) ? fallback : value
+      const { fallback, zeroAsFallback, ...numberOptions } = options
+      const displayValue = resolveNumericDisplayValue(value, {
+        fallback,
+        zeroAsFallback,
+      })
       if (typeof displayValue === 'string') return displayValue
       const formatter = formatterFor(numberOptions)
       return formatter.format(Number.isFinite(displayValue) ? displayValue : 0)

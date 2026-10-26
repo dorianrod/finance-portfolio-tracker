@@ -10,8 +10,8 @@ import {
   RAW_FUND_SNAPSHOT_SCHEMA,
   RAW_FUND_UNRESOLVED_SCHEMA,
 } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas'
+import { mapFundHolding } from '@/domains/portfolio/shared/helpers/mappers/mapFundHolding'
 import type {
-  FundHolding,
   FundHoldingsData,
   FundHoldingStatus,
   FundSnapshot,
@@ -58,48 +58,14 @@ export function useFundHoldingsQuery() {
         ),
       ])
       const holdings = holdingRows
-        .map((row): FundHolding => ({
-          parentIsin: row.parent_isin || '',
-          parentTicker: row.parent_ticker || '',
-          parentName: row.parent_name || '',
-          holdingId: row.holding_id || '',
-          holdingName: row.holding_name || '',
-          issuerId: row.issuer_id || row.holding_id || '',
-          issuerName: row.issuer_name || row.holding_name || '',
-          weight: row.weight,
-          sourceTier: row.source_tier || '',
-          sourceName: row.source_name || '',
-          holdingsDate: row.holdings_date,
-          holdingKind: row.holding_kind || 'security',
-          lookthroughPath: row.lookthrough_path || '',
-          depth: row.depth,
-          snapshotId: row.snapshot_id || '',
-          sourceOrigin: row.source_origin || 'deterministic',
-          sourceUrl: row.source_url || '',
-        }))
+        .map(mapFundHolding)
         .filter((row) => row.holdingId && row.holdingName && row.weight > 0)
 
       const history = historyRows
         .map((row): HistoricalFundHolding => ({
-          parentIsin: row.parent_isin || '',
-          parentTicker: row.parent_ticker || '',
-          parentName: row.parent_name || '',
-          holdingId: row.holding_id || '',
-          holdingName: row.holding_name || '',
-          issuerId: row.issuer_id || row.holding_id || '',
-          issuerName: row.issuer_name || row.holding_name || '',
-          weight: row.weight,
-          sourceTier: row.source_tier || '',
-          sourceName: row.source_name || '',
-          holdingsDate: row.holdings_date,
-          holdingKind: row.holding_kind || 'security',
-          lookthroughPath: row.lookthrough_path || '',
-          depth: row.depth,
-          snapshotId: row.snapshot_id || '',
-          sourceOrigin: row.source_origin || 'deterministic',
-          sourceUrl: row.source_url || '',
+          ...mapFundHolding(row),
           effectiveDate: row.effective_date,
-          historySnapshotId: row.history_snapshot_id || '',
+          historySnapshotId: row.history_snapshot_id,
           capturedAt: row.captured_at,
         }))
         .filter(
@@ -112,19 +78,19 @@ export function useFundHoldingsQuery() {
         )
 
       const statuses = statusRows.map((row): FundHoldingStatus => ({
-        parentId: row.parent_id || row.parent_isin || row.parent_ticker || '',
-        parentIsin: row.parent_isin || '',
-        parentTicker: row.parent_ticker || '',
-        parentName: row.parent_name || '',
+        parentId: row.parent_id || row.parent_isin || row.parent_ticker,
+        parentIsin: row.parent_isin,
+        parentTicker: row.parent_ticker,
+        parentName: row.parent_name,
         qualityTier: row.quality_tier || 'D',
         validationStatus: row.validation_status || 'error',
-        sourceName: row.source_name || '',
-        sourceType: row.source_type || '',
-        sourceUrl: row.source_url || '',
-        indexName: row.index_name || '',
-        replicationMethod: row.replication_method || '',
-        proxyName: row.proxy_name || '',
-        proxyIsin: row.proxy_isin || '',
+        sourceName: row.source_name,
+        sourceType: row.source_type,
+        sourceUrl: row.source_url,
+        indexName: row.index_name,
+        replicationMethod: row.replication_method,
+        proxyName: row.proxy_name,
+        proxyIsin: row.proxy_isin,
         fetchedAt: row.fetched_at,
         holdingsDate: row.holdings_date,
         freshnessDays: row.freshness_days,
@@ -137,23 +103,23 @@ export function useFundHoldingsQuery() {
         explainedValue: row.explained_value,
         residualValue: row.residual_value,
         refreshStreak: row.refresh_streak,
-        issues: row.issues || '',
+        issues: row.issues,
         decompositionState: row.decomposition_state || 'unresolved',
-        snapshotId: row.snapshot_id || '',
-        sourceOrigin: row.source_origin || '',
+        snapshotId: row.snapshot_id,
+        sourceOrigin: row.source_origin,
         manualAttention: row.manual_attention ?? false,
-        checksumSha256: row.checksum_sha256?.trim() || '',
+        checksumSha256: row.checksum_sha256,
       }))
 
       const snapshots = snapshotRows.map((row): FundSnapshot => ({
-        fundId: row.fund_id || '',
-        fundName: row.fund_name || '',
-        snapshotId: row.snapshot_id || '',
+        fundId: row.fund_id,
+        fundName: row.fund_name,
+        snapshotId: row.snapshot_id,
         snapshotDate: row.snapshot_date,
         asOfDate: row.as_of_date,
         generatedAt: row.generated_at,
-        origin: row.origin || '',
-        status: row.status || '',
+        origin: row.origin,
+        status: row.status,
         isActive: row.is_active,
         isStale: row.is_stale,
         ageDays: row.age_days,
@@ -161,24 +127,24 @@ export function useFundHoldingsQuery() {
         weightSum: row.weight_sum,
         coveragePct: row.coverage_pct,
         complete: row.complete,
-        sourceUrls: (row.source_urls || '')
+        sourceUrls: row.source_urls
           .split('|')
           .map((value) => value.trim())
           .filter(Boolean),
-        evidencePath: row.evidence_path || '',
-        holdingsPath: row.holdings_path || '',
-        checksumSha256: row.checksum_sha256?.trim() || '',
-        notes: row.notes || '',
-        validationErrors: row.validation_errors || '',
+        evidencePath: row.evidence_path,
+        holdingsPath: row.holdings_path,
+        checksumSha256: row.checksum_sha256,
+        notes: row.notes,
+        validationErrors: row.validation_errors,
       }))
 
       const unresolved = unresolvedRows.map((row): FundUnresolved => ({
-        parentId: row.parent_id || '',
-        parentName: row.parent_name || '',
-        unresolvedId: row.unresolved_id || '',
-        unresolvedName: row.unresolved_name || '',
-        reason: row.reason || '',
-        path: row.path || '',
+        parentId: row.parent_id,
+        parentName: row.parent_name,
+        unresolvedId: row.unresolved_id,
+        unresolvedName: row.unresolved_name,
+        reason: row.reason,
+        path: row.path,
         weight: row.weight,
         marketValue: row.market_value,
         queuedForResearch: row.queued_for_research,

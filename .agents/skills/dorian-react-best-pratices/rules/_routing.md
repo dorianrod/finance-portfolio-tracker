@@ -13,6 +13,9 @@ Routing rules:
 
 | Observable pattern or intent | Section prefix | Rule file |
 | --- | --- | --- |
+| A component contains several independent rendered regions, exceeds the function-size or branching threshold, or the request asks why oversized or complex components escape ESLint. | `architecture-` | [`architecture-component-complexity.md`](architecture-component-complexity.md) |
+| A shared/ui component, prop, helper or variant names a business entity, operation, metric or feature; shared UI interprets domain values or resolves them through business-aware dependencies, including shared theme modules. | `architecture-` | [`architecture-shared-ui-agnostic.md`](architecture-shared-ui-agnostic.md) |
+| The request asks to audit or keep shared/ui agnostic of business domains, including its public API and indirect dependencies. | `architecture-` | [`architecture-shared-ui-agnostic.md`](architecture-shared-ui-agnostic.md) |
 | Caller-supplied children inside shared UI contain layout classes or inline styles; extracted children or descendant selectors control internal padding, margins, gaps or layout. | `styling-` | [`styling-external-layout-only.md`](styling-external-layout-only.md) |
 | Domain or application JSX supplies aria-* attributes, role, tabIndex, autoFocus or keyboard/focus handlers, directly or through a spread; a component, hook or helper manages DOM focus, keyboard listeners or accessibility associations. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |
 | Application code imports accessibility primitives outside shared UI, or the request asks to detect, prevent or centralize scattered accessibility behavior. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |

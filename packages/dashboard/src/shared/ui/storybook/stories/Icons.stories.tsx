@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import {
-  AllocationIcon,
   DisclosureChevronIcon,
   GridIcon,
   HierarchyIcon,
   NextIcon,
   PeriodFilterIcon,
+  PieChartIcon,
   TreeChevronIcon,
 } from '../../Icons.view'
 
@@ -33,8 +33,8 @@ export const Gallery: Story = {
           <HierarchyIcon />
         </div>
         <div>
-          AllocationIcon
-          <AllocationIcon />
+          PieChartIcon
+          <PieChartIcon />
         </div>
         <div>
           PeriodFilterIcon

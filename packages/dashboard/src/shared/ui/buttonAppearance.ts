@@ -3,25 +3,25 @@ export const BUTTON_VARIANTS = {
   accentCaptionLink: 'text-xs font-medium text-accent hover:text-accent',
   plainLeft: 'text-left',
 
-  qualityAction:
+  splitAction:
     'rounded-l-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
-  qualitySummary:
+  insetSummary:
     'group overflow-hidden rounded-md bg-canvas/70 text-left text-content transition-colors hover:bg-canvas focus:outline-none focus:ring-2 focus:ring-focus/70',
   period:
     'group text-left transition-colors hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus',
-  allocationPreview:
+  subtlePreview:
     'rounded text-content-subtle transition-colors hover:bg-surface-hover hover:text-accent focus-visible:bg-surface-hover focus-visible:text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus',
   preview: 'cursor-help text-left',
-  positions:
+  outlinedChoice:
     'cursor-pointer rounded-lg border text-xs font-medium transition-colors',
   appliedFilter:
     'cursor-pointer rounded-full border border-accent bg-accent-solid text-xs text-content transition-colors hover:border-accent hover:bg-accent-solid',
   metricChoice: 'rounded-md text-xs transition-colors',
-  horizonChoice: 'rounded-md text-[11px] transition-colors',
-  optionalHorizonChoice:
+  compactChoice: 'rounded-md text-[11px] transition-colors',
+  optionalCompactChoice:
     'rounded-md text-[11px] transition-colors disabled:cursor-not-allowed disabled:text-content-subtle',
-  qualityFilter: 'rounded-lg border text-xs',
-  reliabilityToggle: 'group border-t border-border text-xs font-medium',
+  outlinedFilter: 'rounded-lg border text-xs',
+  separatedToggle: 'group border-t border-border text-xs font-medium',
   legend: 'cursor-pointer text-[11px] transition-opacity',
 
   filterClear:
@@ -30,7 +30,7 @@ export const BUTTON_VARIANTS = {
   tableExpand:
     'rounded-lg border border-border-strong bg-canvas text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content',
   sort: 'flex cursor-pointer items-center transition-colors hover:text-content-secondary',
-  positionSort:
+  wrappedSort:
     'break-words rounded-control text-content-muted transition-colors hover:text-content-secondary',
   rowDisclosure:
     'rounded-control text-content-muted transition-colors hover:bg-surface-raised hover:text-content',
@@ -41,7 +41,7 @@ export const BUTTON_VARIANTS = {
   detailToggle:
     'border-border border-t font-medium hover:text-accent text-accent text-xs transition-colors',
   dimensionDetail: 'hover:text-accent text-[11px] text-accent',
-  fundDetail:
+  outlinedDetail:
     'border border-border-strong hover:border-border-strong rounded text-content-secondary',
 
   plain: '',
@@ -70,7 +70,7 @@ const BUTTON_SELECTION_STATES = {
     inactive:
       'border-border-strong bg-surface-raised text-content-muted hover:bg-surface-hover hover:text-content-secondary',
   },
-  positions: {
+  outlinedChoice: {
     active: 'border-accent bg-accent-solid text-content',
     inactive:
       'border-border-strong text-content-muted hover:border-border-strong hover:bg-surface-raised hover:text-content-secondary',
@@ -79,15 +79,15 @@ const BUTTON_SELECTION_STATES = {
     active: 'bg-surface-hover text-content',
     inactive: 'text-content-subtle hover:text-content-secondary',
   },
-  horizonChoice: {
+  compactChoice: {
     active: 'bg-surface-hover text-content',
     inactive: 'text-content-subtle hover:text-content-secondary',
   },
-  optionalHorizonChoice: {
+  optionalCompactChoice: {
     active: 'bg-surface-hover text-content',
     inactive: 'text-content-subtle hover:text-content-secondary',
   },
-  qualityFilter: {
+  outlinedFilter: {
     active: 'border-accent bg-accent-muted/50 text-accent',
     inactive:
       'border-border-strong text-content-subtle hover:text-content-secondary',

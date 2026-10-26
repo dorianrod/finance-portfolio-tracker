@@ -2,17 +2,17 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { DataCell } from '../../DataTable.view'
 import {
+  CompactBadge,
   LevelBadge,
-  ReliabilityBadge,
-  ScopeBadge,
+  StatusBadge,
   StatusTableRow,
 } from '../../StatusBadge.view'
 
 const meta = {
   title: 'Badges/Status',
-  component: ReliabilityBadge,
+  component: StatusBadge,
   args: { tone: 'positive' },
-} satisfies Meta<typeof ReliabilityBadge>
+} satisfies Meta<typeof StatusBadge>
 export default meta
 type Story = StoryObj<typeof meta>
 
@@ -23,9 +23,9 @@ export const Reliability: Story = {
   render: function Reliability() {
     return (
       <div className="flex gap-3">
-        <ReliabilityBadge tone="positive">Reliable</ReliabilityBadge>
-        <ReliabilityBadge tone="warning">Partial</ReliabilityBadge>
-        <ReliabilityBadge tone="negative">Unavailable</ReliabilityBadge>
+        <StatusBadge tone="positive">Reliable</StatusBadge>
+        <StatusBadge tone="warning">Partial</StatusBadge>
+        <StatusBadge tone="negative">Unavailable</StatusBadge>
       </div>
     )
   },
@@ -34,9 +34,9 @@ export const Scope: Story = {
   render: function Scope() {
     return (
       <div className="flex gap-3">
-        <ScopeBadge tone="applied">Applied</ScopeBadge>
-        <ScopeBadge tone="default">Default</ScopeBadge>
-        <ScopeBadge tone="ignored">Ignored</ScopeBadge>
+        <CompactBadge tone="accent">Applied</CompactBadge>
+        <CompactBadge tone="default">Default</CompactBadge>
+        <CompactBadge tone="warning">Ignored</CompactBadge>
       </div>
     )
   },

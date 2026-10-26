@@ -136,23 +136,8 @@ export function scopeFundQualityData(
     selectedParentKeys.has(item.parentId),
   )
 
-  let fundValue = 0
-  let directIdentifiedValue = 0
-  let opaqueValue = 0
-  const statuslessFundIds = new Set<string>()
-  for (const position of activePositions) {
-    const value = positiveValue(position)
-    const status = statusByPosition.get(position)
-    if (status || isFundPosition(position)) {
-      fundValue += value
-      if (!status)
-        statuslessFundIds.add(position.isin || position.ticker || position.name)
-    } else if (position.isin || position.ticker) {
-      directIdentifiedValue += value
-    } else {
-      opaqueValue += value
-    }
-  }
+  const { fundValue, directIdentifiedValue, opaqueValue, statuslessFundIds } =
+    classifyFundPositions(activePositions, statusByPosition)
 
   const portfolioValue = activePositions.reduce(
     (sum, position) => sum + positiveValue(position),
@@ -177,30 +162,13 @@ export function scopeFundQualityData(
         100
       : 0
 
-  const ranked = [...scopedStatuses]
-    .toSorted((a, b) => b.marketValue - a.marketValue)
-    .slice(0, 7)
-  const coverageGatePass = fundValue === 0 || fundCoveragePct >= 85
-  const topFundsGatePass =
-    ranked.length === 0 ||
-    ranked.every(
-      (status) =>
-        (status.qualityTier === 'A' || status.qualityTier === 'B') &&
-        status.explainedPct >= 98,
-    )
-  const exactProxyGatePass = scopedStatuses
-    .filter((status) => status.qualityTier === 'B')
-    .every((status) => !!status.indexName.trim() && !!status.proxyIsin.trim())
-  const repeatabilityGatePass =
-    ranked.length === 0 || ranked.every((status) => status.refreshStreak >= 2)
-  const qualityGatesPass =
-    coverageGatePass && topFundsGatePass && exactProxyGatePass
-  let feasibilityStatus: FundCoverageReport['feasibilityStatus'] = 'limited'
-  if (qualityGatesPass) {
-    feasibilityStatus = repeatabilityGatePass
-      ? 'passed'
-      : 'pending_repeatability'
-  }
+  const {
+    coverageGatePass,
+    topFundsGatePass,
+    exactProxyGatePass,
+    repeatabilityGatePass,
+    feasibilityStatus,
+  } = evaluateFundQualityGates(scopedStatuses, fundValue, fundCoveragePct)
 
   return {
     holdings: scopedHoldings,
@@ -231,5 +199,69 @@ export function scopeFundQualityData(
           ).length,
         }
       : null,
+  }
+}
+
+function classifyFundPositions(
+  activePositions: PositionRow[],
+  statusByPosition: Map<PositionRow, FundHoldingStatus>,
+) {
+  let fundValue = 0
+  let directIdentifiedValue = 0
+  let opaqueValue = 0
+  const statuslessFundIds = new Set<string>()
+  for (const position of activePositions) {
+    const value = positiveValue(position)
+    const status = statusByPosition.get(position)
+    if (status || isFundPosition(position)) {
+      fundValue += value
+      if (!status)
+        statuslessFundIds.add(position.isin || position.ticker || position.name)
+    } else if (position.isin || position.ticker) {
+      directIdentifiedValue += value
+    } else {
+      opaqueValue += value
+    }
+  }
+
+  return { fundValue, directIdentifiedValue, opaqueValue, statuslessFundIds }
+}
+
+function evaluateFundQualityGates(
+  scopedStatuses: FundHoldingStatus[],
+  fundValue: number,
+  fundCoveragePct: number,
+) {
+  const ranked = [...scopedStatuses]
+    .toSorted((a, b) => b.marketValue - a.marketValue)
+    .slice(0, 7)
+  const coverageGatePass = fundValue === 0 || fundCoveragePct >= 85
+  const topFundsGatePass =
+    ranked.length === 0 ||
+    ranked.every(
+      (status) =>
+        (status.qualityTier === 'A' || status.qualityTier === 'B') &&
+        status.explainedPct >= 98,
+    )
+  const exactProxyGatePass = scopedStatuses
+    .filter((status) => status.qualityTier === 'B')
+    .every((status) => !!status.indexName.trim() && !!status.proxyIsin.trim())
+  const repeatabilityGatePass =
+    ranked.length === 0 || ranked.every((status) => status.refreshStreak >= 2)
+  const qualityGatesPass =
+    coverageGatePass && topFundsGatePass && exactProxyGatePass
+  let feasibilityStatus: FundCoverageReport['feasibilityStatus'] = 'limited'
+  if (qualityGatesPass) {
+    feasibilityStatus = repeatabilityGatePass
+      ? 'passed'
+      : 'pending_repeatability'
+  }
+
+  return {
+    coverageGatePass,
+    topFundsGatePass,
+    exactProxyGatePass,
+    repeatabilityGatePass,
+    feasibilityStatus,
   }
 }

@@ -1,5 +1,6 @@
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartXAxis } from '@/shared/ui/ChartAxes.view'
@@ -25,7 +26,7 @@ export function SavingsHistoryChart({
           <SeriesGradient
             id="gSavings"
             profile="medium"
-            tone="portfolioValue"
+            tone={PORTFOLIO_CHART_TONES.portfolioValue}
           />
         </defs>
         <ChartGrid />
@@ -39,7 +40,7 @@ export function SavingsHistoryChart({
         <SeriesArea
           type="monotone"
           dataKey="balance"
-          tone="portfolioValue"
+          tone={PORTFOLIO_CHART_TONES.portfolioValue}
           gradientId="gSavings"
           weight="regular"
           markers="hidden"

@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { ReferenceArea, ReferenceLine } from 'recharts'
 
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 
 import { REFERENCE_APPEARANCES } from './chartAppearance'
 
@@ -30,20 +30,18 @@ export function ChartReference({
 }
 
 export function ChartReferenceArea({
-  period,
+  prominence,
   ...props
 }: Pick<ComponentProps<typeof ReferenceArea>, 'x1' | 'x2' | 'y1' | 'y2'> & {
-  period: 'previous' | 'current'
+  prominence: 'muted' | 'highlighted'
 }) {
   return (
     <ReferenceArea
       {...props}
       fill={
-        period === 'previous'
-          ? SEMANTIC_COLORS.neutralSeries
-          : SEMANTIC_COLORS.portfolioValue
+        prominence === 'muted' ? CHART_COLORS.neutral : CHART_COLORS.series6
       }
-      fillOpacity={period === 'previous' ? 0.05 : 0.055}
+      fillOpacity={prominence === 'muted' ? 0.05 : 0.055}
     />
   )
 }

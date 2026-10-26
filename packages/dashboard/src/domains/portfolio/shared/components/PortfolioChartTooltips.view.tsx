@@ -1,8 +1,10 @@
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type {
   TopPerformer,
   TrailingSavingCapacityPoint,
   TriChartPoint,
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
@@ -55,7 +57,7 @@ export function EvolutionTooltip({
           })}
         </ChartText>
       </Layout>
-      <ChartText as="div" tone={'costBasisText'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
         {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues', {
           amount: formatMoney(cost, { style: 'full' }),
           value: percentageMode ? ` · ${share(cost)}` : '',
@@ -63,7 +65,7 @@ export function EvolutionTooltip({
       </ChartText>
       <ChartText
         as="div"
-        tone={gain >= 0 ? 'performancePositiveText' : 'performanceNegativeText'}
+        tone={gain >= 0 ? PORTFOLIO_CHART_TONES.performancePositiveText : PORTFOLIO_CHART_TONES.performanceNegativeText}
       >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedProfitLoss', {
           amount: formatMoney(gain, { style: 'full' }),
@@ -99,7 +101,7 @@ function MonthlyOperationRow({
   return (
     <ChartText
       as="div"
-      tone={withdrawal ? 'outflowText' : 'netContributionsDetail'}
+      tone={withdrawal ? PORTFOLIO_CHART_TONES.outflowText : PORTFOLIO_CHART_TONES.netContributionsDetail}
       variant="micro"
     >
       {withdrawal ? '−' : '+'} {formatMoney(amount, { style: 'full' })} —{' '}
@@ -143,7 +145,7 @@ export function MonthlyTooltip({
         </ChartText>
       </Layout>
       <Layout as="div" spaceAfter="compact">
-        <ChartText as="div" tone={'netContributionsText'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.netContributionsText}>
           {i18n.t('ui.portfoliochartsTooltips.netContributionsWithValues', {
             amount: formatMoney(savingsDelta, { style: 'full' }),
           })}
@@ -176,8 +178,8 @@ export function MonthlyTooltip({
           as="div"
           tone={
             perfDelta >= 0
-              ? 'performancePositiveText'
-              : 'performanceNegativeText'
+              ? PORTFOLIO_CHART_TONES.performancePositiveText
+              : PORTFOLIO_CHART_TONES.performanceNegativeText
           }
           separator
         >
@@ -187,7 +189,7 @@ export function MonthlyTooltip({
         </ChartText>
       </Layout>
       <Layout as="div" spaceBefore="compact" inset="compact">
-        <ChartText as="div" tone={'netContributionsText'} separator>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.netContributionsText} separator>
           {i18n.t(
             'ui.portfoliochartsTooltips.trailing12MonthNetContributionsWithValues',
             { amount: formatMoney(rolling12m, { style: 'full' }) },
@@ -199,8 +201,8 @@ export function MonthlyTooltip({
           as="div"
           tone={
             rollingPerf12m >= 0
-              ? 'performancePositiveText'
-              : 'performanceNegativeText'
+              ? PORTFOLIO_CHART_TONES.performancePositiveText
+              : PORTFOLIO_CHART_TONES.performanceNegativeText
           }
         >
           {i18n.t(
@@ -241,7 +243,7 @@ export function TriTooltip({
         </ChartText>
       </Layout>
       {showTri1y && (
-        <ChartText as="div" tone={'totalChange'} variant="strong">
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.totalChange} variant="strong">
           {i18n.t('ui.portfoliochartsTooltips.irr1yWithValues', {
             value: formatPercentage(tri1y, {
               decimals: 2,
@@ -253,7 +255,7 @@ export function TriTooltip({
       )}
       {showTri3y && (
         <Layout as="div" spaceBefore="compact">
-          <ChartText as="div" tone={'returnRate'} variant="strong">
+          <ChartText as="div" tone={PORTFOLIO_CHART_TONES.returnRate} variant="strong">
             {i18n.t('ui.portfoliochartsTooltips.irr3yWithValues', {
               value: formatPercentage(tri3y, {
                 decimals: 2,
@@ -331,12 +333,12 @@ export function AccountTypeTooltip({
           </ChartText>
         </Layout>
       )}
-      <ChartText as="div" tone={'costBasisText'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
         {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues2', {
           amount: formatMoney(cost, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'performancePositiveText'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.performancePositiveText}>
         {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
           amount: formatMoney(gain, { style: 'full' }),
           percentage: formatPercentage(gainPct, { signed: true }),
@@ -378,8 +380,8 @@ export function TopPerformersTooltip({
         as="div"
         tone={
           (entry?.pct ?? 0) >= 0
-            ? 'performancePositiveText'
-            : 'performanceNegativeText'
+            ? PORTFOLIO_CHART_TONES.performancePositiveText
+            : PORTFOLIO_CHART_TONES.performanceNegativeText
         }
         variant="strong"
       >
@@ -419,14 +421,14 @@ export function PassiveIncomeTooltip({
         </ChartText>
       </Layout>
       {div > 0 && (
-        <ChartText as="div" tone={'passiveIncome'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.passiveIncome}>
           {i18n.t('ui.portfoliochartsTooltips.dividendsWithValues', {
             amount: formatMoney(div, { style: 'full' }),
           })}
         </ChartText>
       )}
       {int > 0 && (
-        <ChartText as="div" tone={'passiveIncomeSecondary'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.passiveIncomeSecondary}>
           {i18n.t('ui.portfoliochartsTooltips.interestWithValues', {
             amount: formatMoney(int, { style: 'full' }),
           })}
@@ -469,7 +471,7 @@ function AccountTypeTooltipRow({
   return (
     <ChartText
       as="div"
-      group={{ key: accountType, index, categories: typeCategories }}
+      tone={getAccountTypeTone(accountType, index, typeCategories)}
     >
       {accountType}: {formatMoney(value, { style: 'full' })}
       {percentageMode && ` · ${share}`}

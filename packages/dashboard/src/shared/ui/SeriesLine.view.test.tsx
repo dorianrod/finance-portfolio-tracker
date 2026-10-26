@@ -27,7 +27,7 @@ describe('SeriesLine', () => {
         <ChartYAxis />
         <SeriesLine
           dataKey="value"
-          tone="returnRate"
+          tone={'series10'}
           weight="emphasized"
           motion="none"
         >

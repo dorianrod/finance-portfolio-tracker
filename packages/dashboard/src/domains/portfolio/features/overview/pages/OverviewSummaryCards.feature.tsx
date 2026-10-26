@@ -82,17 +82,239 @@ function CardShell({
   )
 }
 
-export function OverviewSummaryCards({
+export function OverviewSummaryCards(props: SummaryCardsProps) {
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <OverviewValueCard comparison={props.comparison} />
+      <OverviewContributionsCard comparison={props.comparison} />
+      <OverviewPerformanceCard
+        comparison={props.comparison}
+        rollingThreeYearTri={props.rollingThreeYearTri}
+        irrStatus={props.irrStatus}
+      />
+      <OverviewConcentrationCard
+        comparison={props.comparison}
+        heldConcentration={props.heldConcentration}
+        underlyingConcentration={props.underlyingConcentration}
+      />
+    </div>
+  )
+}
+
+function OverviewValueCard({
   comparison,
-  heldConcentration,
-  underlyingConcentration,
+}: Pick<SummaryCardsProps, 'comparison'>) {
+  const formatMoney = useFormatMoney()
+
+  return (
+    <CardShell
+      title={i18n.t('ui.overviewsummarycards.portfolioValue')}
+      description={i18n.t(
+        'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTaxMeasuredAtThe',
+      )}
+      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its period-end summary scope.
+      scope={{
+        account: 'filterable',
+        period: 'as-of',
+        effectiveDate: comparison.windows.current.end,
+      }}
+      eyebrow={i18n.t('ui.overviewsummarycards.atPeriodEnd')}
+      destination="wealth"
+      accent={'highlight'}
+    >
+      <Text variant="metric" tone="default" numeric>
+        <Layout as="span" flow="block">
+          {formatMoney(comparison.value.current)}
+        </Layout>
+      </Text>
+      <span className="mt-3 flex flex-wrap items-center gap-2">
+        <DeltaBadge metric={comparison.value} />
+        <PreviousValue value={comparison.value.previous} />
+      </span>
+      <span className="block mt-3">
+        <Text variant="micro" tone="subtle">
+          <Layout as="span" flow="block">
+            {i18n.t(
+              'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax',
+            )}
+          </Layout>
+        </Text>
+      </span>
+    </CardShell>
+  )
+}
+
+function OverviewContributionsCard({
+  comparison,
+}: Pick<SummaryCardsProps, 'comparison'>) {
+  const formatMoney = useFormatMoney()
+
+  return (
+    <CardShell
+      title={i18n.t('ui.overviewsummarycards.netContributions')}
+      description={i18n.t(
+        'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriodComparedWithThe',
+      )}
+      scope={{ account: 'filterable', period: 'comparison-range' }}
+      eyebrow={i18n.t('ui.overviewsummarycards.cashFlow')}
+      destination="wealth"
+      accent="accent"
+    >
+      <Text variant="metric" tone="accent" numeric>
+        <Layout as="span" flow="block">
+          {formatMoney(comparison.contributions.current)}
+        </Layout>
+      </Text>
+      <span className="mt-3 flex flex-wrap items-center gap-2">
+        <DeltaBadge metric={comparison.contributions} tone="contributions" />
+        <PreviousValue value={comparison.contributions.previous} />
+      </span>
+      <span className="block mt-3">
+        <Text variant="micro" tone="subtle">
+          <Layout as="span" flow="block">
+            {i18n.t(
+              'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
+            )}
+          </Layout>
+        </Text>
+      </span>
+    </CardShell>
+  )
+}
+
+function OverviewPerformanceCard({
+  comparison,
   rollingThreeYearTri,
   irrStatus,
-}: SummaryCardsProps) {
+}: Pick<
+  SummaryCardsProps,
+  'comparison' | 'rollingThreeYearTri' | 'irrStatus'
+>) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const signedMoney = (value: number | null) =>
     value == null ? '—' : `${value > 0 ? '+' : ''}${formatMoney(value)}`
+  const rollingThreeYearDelta =
+    irrStatus === 'ready' && rollingThreeYearTri.delta != null
+      ? rollingThreeYearTri.delta
+      : null
+
+  return (
+    <CardShell
+      title={i18n.t('ui.overviewsummarycards.performanceIncome')}
+      description={i18n.t(
+        'ui.overviewsummarycards.marketPerformanceAndPassiveIncomeGeneratedDuringThePeriod',
+      )}
+      scope={{ account: 'filterable', period: 'comparison-range' }}
+      eyebrow={i18n.t('ui.overviewsummarycards.periodResult')}
+      destination="performance"
+      accent="positive"
+    >
+      <span className="flex items-baseline justify-between gap-2">
+        <Text
+          variant="metric"
+          numeric
+          tone={getOverviewPerformanceTone(
+            comparison.marketPerformance.current,
+          )}
+        >
+          {formatMoney(comparison.marketPerformance.current)}
+        </Text>
+        <DeltaBadge metric={comparison.marketPerformance} />
+      </span>
+      <span className="block mt-3">
+        <Text variant="caption">
+          <Inline as="span" align="center" justify="between" gap="default">
+            <Text tone="subtle">
+              {i18n.t('ui.overviewsummarycards.passiveIncome')}
+            </Text>
+            <Text variant="strong" tone={'decorative'} numeric>
+              {formatMoney(comparison.passiveIncome.current)}
+              {comparison.passiveIncome.delta != null && (
+                <Layout as="span" flow="inline">
+                  <Text variant="tiny" tone="subtle">
+                    ({signedMoney(comparison.passiveIncome.delta)})
+                  </Text>
+                </Layout>
+              )}
+            </Text>
+          </Inline>
+        </Text>
+      </span>
+      <span className="block mt-3">
+        <Surface as="span" variant="microFooter" tone="subtle">
+          <Inline
+            as="span"
+            flow="wrap"
+            align="center"
+            gap="compact"
+            inset="compact"
+          >
+            <Inline as="span" align="center">
+              {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
+              <Surface variant="interactiveOverlay" as="span">
+                <ScopedInfoTooltip
+                  text={i18n.t(
+                    'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
+                  )}
+                  // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope.
+                  scope={{
+                    account: 'filterable',
+                    period: 'trailing-3y',
+                    effectiveDate: comparison.windows.current.end,
+                  }}
+                />
+              </Surface>
+            </Inline>
+            <Text
+              variant="strong"
+              numeric
+              tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
+            >
+              {formatOverviewIrrValue(
+                irrStatus,
+                rollingThreeYearTri.current,
+                formatPercentage,
+              )}
+            </Text>
+            {rollingThreeYearDelta != null && (
+              <MetricDelta
+                variant="inline"
+                tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
+              >
+                {formatPercentage(rollingThreeYearDelta, {
+                  signed: true,
+                  unit: ' pp',
+                })}
+              </MetricDelta>
+            )}
+            <Text tone="subtle">
+              {i18n.t('ui.overviewsummarycards.previous')}{' '}
+              <Text variant="medium" tone="muted" numeric>
+                {irrStatus === 'ready' && rollingThreeYearTri.previous != null
+                  ? formatPercentage(rollingThreeYearTri.previous, {
+                      decimals: 2,
+                      signed: true,
+                    })
+                  : '—'}
+              </Text>
+            </Text>
+          </Inline>
+        </Surface>
+      </span>
+    </CardShell>
+  )
+}
+
+function OverviewConcentrationCard({
+  comparison,
+  heldConcentration,
+  underlyingConcentration,
+}: Pick<
+  SummaryCardsProps,
+  'comparison' | 'heldConcentration' | 'underlyingConcentration'
+>) {
+  const formatPercentage = useFormatPercentage()
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable
     ? underlyingConcentration
@@ -100,293 +322,114 @@ export function OverviewSummaryCards({
   const primaryLabel = underlyingAvailable
     ? i18n.t('ui.overviewsummarycards.underlyingAssets')
     : i18n.t('ui.overviewsummarycards.heldPositionsLimitedView')
-  const rollingThreeYearDelta =
-    irrStatus === 'ready' && rollingThreeYearTri.delta != null
-      ? rollingThreeYearTri.delta
-      : null
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <CardShell
-        title={i18n.t('ui.overviewsummarycards.portfolioValue')}
-        description={i18n.t(
-          'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTaxMeasuredAtThe',
-        )}
-        // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its period-end summary scope.
-        scope={{
-          account: 'filterable',
-          period: 'as-of',
-          effectiveDate: comparison.windows.current.end,
-        }}
-        eyebrow={i18n.t('ui.overviewsummarycards.atPeriodEnd')}
-        destination="wealth"
-        accent="value"
-      >
-        <Text variant="metric" tone="default" numeric>
-          <Layout as="span" flow="block">
-            {formatMoney(comparison.value.current)}
-          </Layout>
-        </Text>
-        <span className="mt-3 flex flex-wrap items-center gap-2">
-          <DeltaBadge metric={comparison.value} />
-          <PreviousValue value={comparison.value.previous} />
-        </span>
-        <span className="block mt-3">
+    <CardShell
+      title={i18n.t('ui.overviewsummarycards.concentration')}
+      description={i18n.t(
+        'ui.overviewsummarycards.shareOfThePortfolioRepresentedByTheLargestAsset',
+      )}
+      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
+      scope={{
+        account: 'filterable',
+        period: 'as-of',
+        effectiveDate: comparison.windows.current.end,
+      }}
+      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
+      eyebrow={primaryLabel}
+      destination="allocation"
+      accent={'attention'}
+    >
+      <span className="grid grid-cols-2 gap-4">
+        <span>
           <Text variant="micro" tone="subtle">
             <Layout as="span" flow="block">
-              {i18n.t(
-                'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax',
-              )}
+              {i18n.t('ui.overviewsummarycards.largestAsset')}
             </Layout>
           </Text>
-        </span>
-      </CardShell>
-
-      <CardShell
-        title={i18n.t('ui.overviewsummarycards.netContributions')}
-        description={i18n.t(
-          'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriodComparedWithThe',
-        )}
-        scope={{ account: 'filterable', period: 'comparison-range' }}
-        eyebrow={i18n.t('ui.overviewsummarycards.cashFlow')}
-        destination="wealth"
-        accent="accent"
-      >
-        <Text variant="metric" tone="accent" numeric>
-          <Layout as="span" flow="block">
-            {formatMoney(comparison.contributions.current)}
-          </Layout>
-        </Text>
-        <span className="mt-3 flex flex-wrap items-center gap-2">
-          <DeltaBadge metric={comparison.contributions} tone="contributions" />
-          <PreviousValue value={comparison.contributions.previous} />
-        </span>
-        <span className="block mt-3">
-          <Text variant="micro" tone="subtle">
-            <Layout as="span" flow="block">
-              {i18n.t(
-                'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
-              )}
-            </Layout>
-          </Text>
-        </span>
-      </CardShell>
-
-      <CardShell
-        title={i18n.t('ui.overviewsummarycards.performanceIncome')}
-        description={i18n.t(
-          'ui.overviewsummarycards.marketPerformanceAndPassiveIncomeGeneratedDuringThePeriod',
-        )}
-        scope={{ account: 'filterable', period: 'comparison-range' }}
-        eyebrow={i18n.t('ui.overviewsummarycards.periodResult')}
-        destination="performance"
-        accent="positive"
-      >
-        <span className="flex items-baseline justify-between gap-2">
-          <Text
-            variant="metric"
-            numeric
-            tone={getOverviewPerformanceTone(
-              comparison.marketPerformance.current,
-            )}
-          >
-            {formatMoney(comparison.marketPerformance.current)}
-          </Text>
-          <DeltaBadge metric={comparison.marketPerformance} />
-        </span>
-        <span className="block mt-3">
-          <Text variant="caption">
-            <Inline as="span" align="center" justify="between" gap="default">
-              <Text tone="subtle">
-                {i18n.t('ui.overviewsummarycards.passiveIncome')}
-              </Text>
-              <Text variant="strong" tone="income" numeric>
-                {formatMoney(comparison.passiveIncome.current)}
-                {comparison.passiveIncome.delta != null && (
-                  <Layout as="span" flow="inline">
-                    <Text variant="tiny" tone="subtle">
-                      ({signedMoney(comparison.passiveIncome.delta)})
-                    </Text>
-                  </Layout>
-                )}
-              </Text>
-            </Inline>
-          </Text>
-        </span>
-        <span className="block mt-3">
-          <Surface as="span" variant="microFooter" tone="subtle">
-            <Inline
-              as="span"
-              flow="wrap"
-              align="center"
-              gap="compact"
-              inset="compact"
+          <span className="block mt-1">
+            <Text variant="metricSecondary" tone={'attention'} numeric>
+              <Layout as="span" flow="block">
+                {primaryConcentration.current
+                  ? formatPercentage(primaryConcentration.current.topHoldingPct)
+                  : '—'}
+              </Layout>
+            </Text>
+          </span>
+          <span className="block mt-1">
+            <Text
+              variant="tinyLabel"
+              numeric
+              tone={getConcentrationTone(primaryConcentration.topHolding.delta)}
             >
-              <Inline as="span" align="center">
-                {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
-                <Surface variant="interactiveOverlay" as="span">
-                  <ScopedInfoTooltip
-                    text={i18n.t(
-                      'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
-                    )}
-                    // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope.
-                    scope={{
-                      account: 'filterable',
-                      period: 'trailing-3y',
-                      effectiveDate: comparison.windows.current.end,
-                    }}
-                  />
-                </Surface>
-              </Inline>
-              <Text
-                variant="strong"
-                numeric
-                tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
-              >
-                {formatOverviewIrrValue(
-                  irrStatus,
-                  rollingThreeYearTri.current,
-                  formatPercentage,
-                )}
-              </Text>
-              {rollingThreeYearDelta != null && (
-                <MetricDelta
-                  variant="inline"
-                  tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
-                >
-                  {formatPercentage(rollingThreeYearDelta, {
-                    signed: true,
-                    unit: ' pp',
-                  })}
-                </MetricDelta>
-              )}
+              <Layout as="span" flow="block">
+                {formatPercentage(primaryConcentration.topHolding.delta, {
+                  signed: true,
+                  unit: ' pp',
+                })}
+              </Layout>
+            </Text>
+          </span>
+        </span>
+        <span>
+          <Text variant="micro" tone="subtle">
+            <Layout as="span" flow="block">
+              {i18n.t('ui.overviewsummarycards.topFive')}
+            </Layout>
+          </Text>
+          <span className="block mt-1">
+            <Text variant="metricSecondary" tone={'attention'} numeric>
+              <Layout as="span" flow="block">
+                {primaryConcentration.current
+                  ? formatPercentage(primaryConcentration.current.topFivePct)
+                  : '—'}
+              </Layout>
+            </Text>
+          </span>
+          <span className="block mt-1">
+            <Text
+              variant="tinyLabel"
+              numeric
+              tone={getConcentrationTone(primaryConcentration.topFive.delta)}
+            >
+              <Layout as="span" flow="block">
+                {formatPercentage(primaryConcentration.topFive.delta, {
+                  signed: true,
+                  unit: ' pp',
+                })}
+              </Layout>
+            </Text>
+          </span>
+        </span>
+      </span>
+      <span className="block mt-3">
+        <Surface as="span" variant="microFooter" tone="subtle">
+          <Stack as="span" gap="compact" inset="compact">
+            {underlyingAvailable ? (
               <Text tone="subtle">
-                {i18n.t('ui.overviewsummarycards.previous')}{' '}
-                <Text variant="medium" tone="muted" numeric>
-                  {irrStatus === 'ready' && rollingThreeYearTri.previous != null
-                    ? formatPercentage(rollingThreeYearTri.previous, {
-                        decimals: 2,
-                        signed: true,
-                      })
-                    : '—'}
-                </Text>
-              </Text>
-            </Inline>
-          </Surface>
-        </span>
-      </CardShell>
-
-      <CardShell
-        title={i18n.t('ui.overviewsummarycards.concentration')}
-        description={i18n.t(
-          'ui.overviewsummarycards.shareOfThePortfolioRepresentedByTheLargestAsset',
-        )}
-        // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
-        scope={{
-          account: 'filterable',
-          period: 'as-of',
-          effectiveDate: comparison.windows.current.end,
-        }}
-        // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
-        eyebrow={primaryLabel}
-        destination="allocation"
-        accent="risk"
-      >
-        <span className="grid grid-cols-2 gap-4">
-          <span>
-            <Text variant="micro" tone="subtle">
-              <Layout as="span" flow="block">
-                {i18n.t('ui.overviewsummarycards.largestAsset')}
-              </Layout>
-            </Text>
-            <span className="block mt-1">
-              <Text variant="metricSecondary" tone="risk" numeric>
                 <Layout as="span" flow="block">
-                  {primaryConcentration.current
-                    ? formatPercentage(
-                        primaryConcentration.current.topHoldingPct,
-                      )
-                    : '—'}
+                  {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
+                    largest: heldConcentration.current
+                      ? formatPercentage(
+                          heldConcentration.current.topHoldingPct,
+                        )
+                      : '—',
+                    topFive: heldConcentration.current
+                      ? formatPercentage(heldConcentration.current.topFivePct)
+                      : '—',
+                  })}
                 </Layout>
               </Text>
-            </span>
-            <span className="block mt-1">
-              <Text
-                variant="tinyLabel"
-                numeric
-                tone={getConcentrationTone(
-                  primaryConcentration.topHolding.delta,
+            ) : (
+              <Layout as="span" flow="block">
+                {i18n.t(
+                  'ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions',
                 )}
-              >
-                <Layout as="span" flow="block">
-                  {formatPercentage(primaryConcentration.topHolding.delta, {
-                    signed: true,
-                    unit: ' pp',
-                  })}
-                </Layout>
-              </Text>
-            </span>
-          </span>
-          <span>
-            <Text variant="micro" tone="subtle">
-              <Layout as="span" flow="block">
-                {i18n.t('ui.overviewsummarycards.topFive')}
               </Layout>
-            </Text>
-            <span className="block mt-1">
-              <Text variant="metricSecondary" tone="risk" numeric>
-                <Layout as="span" flow="block">
-                  {primaryConcentration.current
-                    ? formatPercentage(primaryConcentration.current.topFivePct)
-                    : '—'}
-                </Layout>
-              </Text>
-            </span>
-            <span className="block mt-1">
-              <Text
-                variant="tinyLabel"
-                numeric
-                tone={getConcentrationTone(primaryConcentration.topFive.delta)}
-              >
-                <Layout as="span" flow="block">
-                  {formatPercentage(primaryConcentration.topFive.delta, {
-                    signed: true,
-                    unit: ' pp',
-                  })}
-                </Layout>
-              </Text>
-            </span>
-          </span>
-        </span>
-        <span className="block mt-3">
-          <Surface as="span" variant="microFooter" tone="subtle">
-            <Stack as="span" gap="compact" inset="compact">
-              {underlyingAvailable ? (
-                <Text tone="subtle">
-                  <Layout as="span" flow="block">
-                    {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
-                      largest: heldConcentration.current
-                        ? formatPercentage(
-                            heldConcentration.current.topHoldingPct,
-                          )
-                        : '—',
-                      topFive: heldConcentration.current
-                        ? formatPercentage(heldConcentration.current.topFivePct)
-                        : '—',
-                    })}
-                  </Layout>
-                </Text>
-              ) : (
-                <Layout as="span" flow="block">
-                  {i18n.t(
-                    'ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions',
-                  )}
-                </Layout>
-              )}
-            </Stack>
-          </Surface>
-        </span>
-      </CardShell>
-    </div>
+            )}
+          </Stack>
+        </Surface>
+      </span>
+    </CardShell>
   )
 }

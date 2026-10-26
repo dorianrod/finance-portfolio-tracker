@@ -16,9 +16,9 @@ export const Playground: Story = {
   render: function Render(args) {
     return (
       <CartesianExample>
-        <ChartReferenceArea x1="Jan" x2="Mar" period="previous" />
-        <ChartReferenceArea x1="Mar" x2="May" period="current" />
-        <SeriesLine dataKey="value" tone="portfolioValue" motion="none" />
+        <ChartReferenceArea x1="Jan" x2="Mar" prominence="muted" />
+        <ChartReferenceArea x1="Mar" x2="May" prominence="highlighted" />
+        <SeriesLine dataKey="value" tone={'series6'} motion="none" />
         <ChartReference {...args} />
       </CartesianExample>
     )

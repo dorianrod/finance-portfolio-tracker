@@ -45,7 +45,7 @@ function TooltipTrigger({
         variant === 'columnHelp' &&
           'grid size-5 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary',
         variant === 'help' &&
-          'inline-flex size-6 items-center justify-center data-quality-help rounded-r-md text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+          'inline-flex size-6 items-center justify-center ui-help-trigger rounded-r-md text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
         variant === 'source' &&
           'cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4',
         variant === 'info' &&

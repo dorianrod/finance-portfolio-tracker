@@ -2,6 +2,7 @@ import { BarChart, type BarShapeProps, ResponsiveContainer } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { TopPerformersTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { TopPerformer } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -86,7 +87,7 @@ function PerformerBar(
   return (
     <ChartRectangle
       geometry={shapeProps}
-      tone={entry.pct >= 0 ? 'performancePositive' : 'performanceNegative'}
+      tone={entry.pct >= 0 ? PORTFOLIO_CHART_TONES.performancePositive : PORTFOLIO_CHART_TONES.performanceNegative}
     />
   )
 }

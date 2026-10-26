@@ -1,6 +1,7 @@
 import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type {
   MonthlyOperation,
@@ -324,17 +325,7 @@ export function computeConcentration(
     string,
     { label: string; name: string; value: number }
   >()
-  const holdingsByParent = new Map<string, FundHolding[]>()
-
-  for (const holding of fundHoldings) {
-    for (const key of [holding.parentIsin, holding.parentTicker].filter(
-      Boolean,
-    )) {
-      const current = holdingsByParent.get(key) ?? []
-      current.push(holding)
-      holdingsByParent.set(key, current)
-    }
-  }
+  const holdingsByParent = indexFundHoldingsByParent(fundHoldings)
 
   let selectedValue = 0
   let identifiedValue = 0
@@ -357,9 +348,7 @@ export function computeConcentration(
   }
 
   for (const position of positions) {
-    if (position.status !== 'active' || (position.total_value ?? 0) <= 0)
-      continue
-    if (!isAssetAnalysisApplicablePosition(position)) continue
+    if (!isValuedAnalysisPosition(position)) continue
     const positionValue = position.total_value ?? 0
     selectedValue += positionValue
 
@@ -367,22 +356,13 @@ export function computeConcentration(
       holdingsByParent.get(position.isin) ??
       holdingsByParent.get(position.ticker)
     if (lookThrough?.length) {
-      const disclosedWeight = lookThrough.reduce(
-        (sum, holding) => sum + holding.weight,
-        0,
+      const exposure = addFundConcentration(
+        lookThrough,
+        positionValue,
+        addAsset,
       )
-      const scale = disclosedWeight > 1 ? 1 / disclosedWeight : 1
-      for (const holding of lookThrough) {
-        addAsset(
-          holding.issuerId || holding.holdingId,
-          holding.issuerName || holding.holdingName,
-          holding.issuerName || holding.holdingName,
-          positionValue * holding.weight * scale,
-        )
-      }
-      const explainedWeight = Math.min(1, disclosedWeight)
-      identifiedValue += positionValue * explainedWeight
-      undisclosedValue += positionValue * (1 - explainedWeight)
+      identifiedValue += exposure.identified
+      undisclosedValue += exposure.undisclosed
       continue
     }
 
@@ -440,9 +420,7 @@ export function computeHeldAssetConcentration(
   >()
 
   for (const position of positions) {
-    if (position.status !== 'active' || (position.total_value ?? 0) <= 0)
-      continue
-    if (!isAssetAnalysisApplicablePosition(position)) continue
+    if (!isValuedAnalysisPosition(position)) continue
     // This is deliberately the allocation-file grain: the instrument or
     // product actually held, aggregated across accounts when its market
     // identifier is shared. Account-valued products fall back to their name.
@@ -637,4 +615,34 @@ export function filterMonthlyOpsByAccounts(
       list.filter((o) => rawAccounts?.has(o.account)),
     ]),
   )
+}
+
+function isValuedAnalysisPosition(position: PositionRow): boolean {
+  if (position.status !== 'active' || (position.total_value ?? 0) <= 0)
+    return false
+  return isAssetAnalysisApplicablePosition(position)
+}
+function addFundConcentration(
+  lookThrough: FundHolding[],
+  positionValue: number,
+  addAsset: (key: string, label: string, name: string, value: number) => void,
+) {
+  const disclosedWeight = lookThrough.reduce(
+    (sum, holding) => sum + holding.weight,
+    0,
+  )
+  const scale = disclosedWeight > 1 ? 1 / disclosedWeight : 1
+  for (const holding of lookThrough) {
+    addAsset(
+      holding.issuerId || holding.holdingId,
+      holding.issuerName || holding.holdingName,
+      holding.issuerName || holding.holdingName,
+      positionValue * holding.weight * scale,
+    )
+  }
+  const explainedWeight = Math.min(1, disclosedWeight)
+  return {
+    identified: positionValue * explainedWeight,
+    undisclosed: positionValue * (1 - explainedWeight),
+  }
 }

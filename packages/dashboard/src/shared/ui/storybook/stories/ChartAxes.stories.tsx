@@ -20,7 +20,7 @@ export const Standard: Story = {
         <ChartGrid />
         <ChartXAxis {...args} />
         <ChartYAxis density={args.density} axis={args.axis} />
-        <SeriesLine dataKey="value" tone="portfolioValue" motion="none" />
+        <SeriesLine dataKey="value" tone={'series6'} motion="none" />
       </ComposedChart>
     )
   },
@@ -36,7 +36,7 @@ export const SolidGrid: Story = {
         <ChartGrid pattern="solid" />
         <ChartXAxis dataKey="month" />
         <ChartYAxis />
-        <SeriesLine dataKey="value" tone="portfolioValue" motion="none" />
+        <SeriesLine dataKey="value" tone={'series6'} motion="none" />
       </ComposedChart>
     )
   },

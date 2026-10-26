@@ -1,13 +1,13 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { CategorySwatch, SeriesSwatch, ToneSwatch } from './Swatch.view'
+import { SeriesSwatch, ToneSwatch } from './Swatch.view'
 
 describe('swatches', () => {
   it('owns series appearance while retaining the supplied dimensions', () => {
     const html = renderToStaticMarkup(
       <span className="inline-block h-2 w-3">
-        <SeriesSwatch as="i" tone="netContributions" shape="bar" />
+        <SeriesSwatch as="i" tone={'series1'} shape="bar" />
       </span>,
     )
     expect(html).toContain('<i')
@@ -18,9 +18,9 @@ describe('swatches', () => {
     expect(html).not.toContain('tone=')
   })
 
-  it('resolves category colors in the shared layer', () => {
+  it('renders a supplied palette role without interpreting business data', () => {
     const html = renderToStaticMarkup(
-      <CategorySwatch category="france" shape="dot" />,
+      <SeriesSwatch tone="series1" shape="dot" />,
     )
     expect(html).toContain('background-color:#3b82f6')
     expect(html).toContain('rounded-full')

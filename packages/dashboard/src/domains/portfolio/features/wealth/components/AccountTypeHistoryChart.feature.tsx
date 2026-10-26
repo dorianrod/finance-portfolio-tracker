@@ -8,6 +8,7 @@ import {
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { AccountTypeHistoryTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
+import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -36,7 +37,7 @@ function AccountTypeGradient({
     <SeriesGradient
       id={`grad-${index}`}
       profile="layered"
-      group={{ key: accountType, index, categories: typeCategories }}
+      tone={getAccountTypeTone(accountType, index, typeCategories)}
     />
   )
 }
@@ -58,7 +59,7 @@ function AccountTypeArea({
       dataKey={percentageMode ? accountTypeShareKey(index) : accountType}
       name={accountType}
       stackId="a"
-      group={{ key: accountType, index, categories: typeCategories }}
+      tone={getAccountTypeTone(accountType, index, typeCategories)}
       gradientId={`grad-${index}`}
       weight="fine"
     />
@@ -104,7 +105,7 @@ export function AccountTypeHistoryChart({
               />
             </Inline>
           </Text>
-          <ChartScaleToggle value={scale} onChange={setScale} />
+          <ChartScaleToggle valueLabel="€" value={scale} onChange={setScale} />
         </Inline>
         <ResponsiveContainer width="100%" height={220}>
           <AreaChart

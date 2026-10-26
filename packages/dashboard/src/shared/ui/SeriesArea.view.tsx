@@ -41,8 +41,6 @@ type SeriesAreaProps = Pick<
 
 export function SeriesArea({
   tone,
-  category,
-  group,
   gradientId,
   weight,
   pattern,
@@ -52,7 +50,7 @@ export function SeriesArea({
   ...props
 }: SeriesAreaProps) {
   const { renderer, content } = partitionChartSlot(children, SeriesAreaMarkers)
-  const color = resolveSeriesColor({ tone, category, group })
+  const color = resolveSeriesColor({ tone })
   return (
     <Area
       {...props}

@@ -1,7 +1,6 @@
 import { createElement, type HTMLAttributes } from 'react'
 
-import { catColor } from '@/shared/theme/chartColors'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 
 import { SWATCH_SIZES } from './layoutAppearance'
 import { layoutShare } from './layoutGeometry'
@@ -46,29 +45,16 @@ function SwatchFrame({
 
 export function SeriesSwatch({
   tone,
-  style,
-  ...props
-}: SwatchProps & { tone: keyof typeof SEMANTIC_COLORS }) {
-  return (
-    <SwatchFrame
-      {...props}
-      style={{ ...style, backgroundColor: SEMANTIC_COLORS[tone] }}
-    />
-  )
-}
-
-export function CategorySwatch({
-  category,
   selected = false,
   style,
   ...props
-}: SwatchProps & { category: string; selected?: boolean }) {
+}: SwatchProps & { tone: keyof typeof CHART_COLORS; selected?: boolean }) {
   return (
     <SwatchFrame
       {...props}
       style={{
         ...style,
-        backgroundColor: catColor(category),
+        backgroundColor: CHART_COLORS[tone],
         ...(selected && {
           outline: '2px solid var(--ds-content)',
           outlineOffset: 1,

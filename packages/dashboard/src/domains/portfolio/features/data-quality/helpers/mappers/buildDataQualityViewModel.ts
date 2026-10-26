@@ -123,8 +123,6 @@ export function buildDataQualityViewModel({
     fundReport,
   )
 
-  const errorCount = errors.filter((item) => item.level === 'error').length
-  const warningCount = errors.length - errorCount
   const classificationMappedValue = coverage.reduce(
     (sum, item) => sum + item.allocated,
     0,
@@ -180,6 +178,44 @@ export function buildDataQualityViewModel({
   const hasLookThroughScope =
     !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
+  const themes = [
+    buildPipelineTheme(errors),
+    buildManualPricesTheme(manualPriceOverrides),
+    buildClassificationTheme(
+      classificationGap,
+      rawData.loading,
+      classificationIsNotApplicable,
+      formatPercentage,
+    ),
+    buildLookThroughTheme(
+      Boolean(scopedFundData.report),
+      hasLookThroughScope,
+      unresolvedPct,
+      fundErrorCount,
+      formatPercentage,
+    ),
+  ]
+
+  const recommendedTheme = themes.reduce(
+    (highest, theme) => (theme.priority > highest.priority ? theme : highest),
+    themes[0],
+  )
+
+  return {
+    affectedAssets,
+    classificationApplicableValue,
+    classificationViewState,
+    fundIssueCount,
+    hasLookThroughScope,
+    recommendedTheme,
+    scopedFundData,
+    themes,
+  }
+}
+
+function buildPipelineTheme(errors: PipelineError[]): QualityTheme {
+  const errorCount = errors.filter((item) => item.level === 'error').length
+  const warningCount = errors.length - errorCount
   let pipelineTone: QualityTone = 'healthy'
   let pipelinePriority = 0
   if (errorCount > 0) {
@@ -190,6 +226,44 @@ export function buildDataQualityViewModel({
     pipelinePriority = 700 + warningCount
   }
 
+  return {
+    id: 'pipeline',
+    label: i18n.t('ui.builddataqualityviewmodelTs.portfolioData'),
+    description: i18n.t(
+      'ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe',
+    ),
+    metric: String(errors.length),
+    metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', {
+      count: errors.length,
+    }),
+    tone: pipelineTone,
+    priority: pipelinePriority,
+  }
+}
+function buildManualPricesTheme(
+  manualPriceOverrides: ManualPriceOverride[],
+): QualityTheme {
+  return {
+    id: 'prices',
+    label: i18n.t('ui.builddataqualityviewmodelTs.manualPrices'),
+    description: i18n.t(
+      'ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices',
+    ),
+    metric: String(manualPriceOverrides.length),
+    metricLabel: i18n.t('ui.builddataqualityviewmodel.overrideLabel', {
+      count: manualPriceOverrides.length,
+    }),
+    tone: manualPriceOverrides.length > 0 ? 'warning' : 'healthy',
+    priority:
+      manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
+  }
+}
+function buildClassificationTheme(
+  classificationGap: number,
+  loading: boolean,
+  classificationIsNotApplicable: boolean,
+  formatPercentage: BuildDataQualityViewModelInput['formatPercentage'],
+): QualityTheme {
   let classificationMetric = formatPercentage(classificationGap)
   let classificationMetricLabel = i18n.t(
     'ui.builddataqualityviewmodel.unmapped',
@@ -200,7 +274,7 @@ export function buildDataQualityViewModel({
   let classificationPriority = hasMaterialQualityGap(classificationGap)
     ? 500 + classificationGap
     : 0
-  if (rawData.loading) {
+  if (loading) {
     classificationMetric = '—'
     classificationMetricLabel = i18n.t('ui.builddataqualityviewmodel.loading')
     classificationTone = 'unavailable'
@@ -216,10 +290,29 @@ export function buildDataQualityViewModel({
     classificationPriority = -1
   }
 
-  let lookThroughMetric = scopedFundData.report
+  return {
+    id: 'classification',
+    label: i18n.t('ui.builddataqualityviewmodelTs.diversification'),
+    description: i18n.t(
+      'ui.builddataqualityviewmodelTs.completenessOfAssetClassGeographySectorAndCurrencyData',
+    ),
+    metric: classificationMetric,
+    metricLabel: classificationMetricLabel,
+    tone: classificationTone,
+    priority: classificationPriority,
+  }
+}
+function buildLookThroughTheme(
+  hasReport: boolean,
+  hasLookThroughScope: boolean,
+  unresolvedPct: number,
+  fundErrorCount: number,
+  formatPercentage: BuildDataQualityViewModelInput['formatPercentage'],
+): QualityTheme {
+  let lookThroughMetric = hasReport
     ? i18n.t('ui.builddataqualityviewmodel.notApplicableShort')
     : '—'
-  let lookThroughMetricLabel = scopedFundData.report
+  let lookThroughMetricLabel = hasReport
     ? i18n.t('ui.builddataqualityviewmodel.notApplicable')
     : i18n.t('ui.builddataqualityviewmodel.notAvailable')
   let lookThroughTone: QualityTone = 'unavailable'
@@ -239,71 +332,15 @@ export function buildDataQualityViewModel({
     }
   }
 
-  const themes: QualityTheme[] = [
-    {
-      id: 'pipeline',
-      label: i18n.t('ui.builddataqualityviewmodelTs.portfolioData'),
-      description: i18n.t(
-        'ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe',
-      ),
-      metric: String(errors.length),
-      metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', {
-        count: errors.length,
-      }),
-      tone: pipelineTone,
-      priority: pipelinePriority,
-    },
-    {
-      id: 'prices',
-      label: i18n.t('ui.builddataqualityviewmodelTs.manualPrices'),
-      description: i18n.t(
-        'ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices',
-      ),
-      metric: String(manualPriceOverrides.length),
-      metricLabel: i18n.t('ui.builddataqualityviewmodel.overrideLabel', {
-        count: manualPriceOverrides.length,
-      }),
-      tone: manualPriceOverrides.length > 0 ? 'warning' : 'healthy',
-      priority:
-        manualPriceOverrides.length > 0 ? 400 + manualPriceOverrides.length : 0,
-    },
-    {
-      id: 'classification',
-      label: i18n.t('ui.builddataqualityviewmodelTs.diversification'),
-      description: i18n.t(
-        'ui.builddataqualityviewmodelTs.completenessOfAssetClassGeographySectorAndCurrencyData',
-      ),
-      metric: classificationMetric,
-      metricLabel: classificationMetricLabel,
-      tone: classificationTone,
-      priority: classificationPriority,
-    },
-    {
-      id: 'lookthrough',
-      label: i18n.t('ui.builddataqualityviewmodelTs.underlyingExposure'),
-      description: i18n.t(
-        'ui.builddataqualityviewmodelTs.transparencyAndSourceReliabilityOfUnderlyingFundExposures',
-      ),
-      metric: lookThroughMetric,
-      metricLabel: lookThroughMetricLabel,
-      tone: lookThroughTone,
-      priority: lookThroughPriority,
-    },
-  ]
-
-  const recommendedTheme = themes.reduce(
-    (highest, theme) => (theme.priority > highest.priority ? theme : highest),
-    themes[0],
-  )
-
   return {
-    affectedAssets,
-    classificationApplicableValue,
-    classificationViewState,
-    fundIssueCount,
-    hasLookThroughScope,
-    recommendedTheme,
-    scopedFundData,
-    themes,
+    id: 'lookthrough',
+    label: i18n.t('ui.builddataqualityviewmodelTs.underlyingExposure'),
+    description: i18n.t(
+      'ui.builddataqualityviewmodelTs.transparencyAndSourceReliabilityOfUnderlyingFundExposures',
+    ),
+    metric: lookThroughMetric,
+    metricLabel: lookThroughMetricLabel,
+    tone: lookThroughTone,
+    priority: lookThroughPriority,
   }
 }

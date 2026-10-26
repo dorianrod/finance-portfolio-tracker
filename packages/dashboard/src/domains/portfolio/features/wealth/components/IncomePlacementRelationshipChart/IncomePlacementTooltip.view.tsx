@@ -1,6 +1,7 @@
 import { type LabelProps } from 'recharts'
 
 import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/helpers/calculators/calculateYearLabelLayout'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -48,7 +49,7 @@ export function YearLabel({
       x={x}
       y={y}
       align={placement.textAnchor}
-      tone={isRecent ? 'returnRate' : 'neutralSeries'}
+      tone={isRecent ? PORTFOLIO_CHART_TONES.returnRate : PORTFOLIO_CHART_TONES.neutralSeries}
       age={{ year: point.year, recent: isRecent, oldestYear, newestYear }}
     >
       {value}
@@ -80,18 +81,18 @@ export function RelationshipTooltip({
           { amount: formatMoney(point.totalIncome, { style: 'full' }) },
         )}
       </ChartText>
-      <ChartText as="div" tone={'costBasisText'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
         {i18n.t('ui.incomeplacementrelationshipchart.netSalaryWithValues', {
           amount: formatMoney(point.netSalary, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'passiveIncomeSecondary'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.passiveIncomeSecondary}>
         {i18n.t('ui.incomeplacementrelationshipchart.otherIncomeWithValues', {
           amount: formatMoney(point.otherIncome, { style: 'full' }),
         })}
       </ChartText>
       <Layout as="div" spaceBefore="compact">
-        <ChartText as="div" tone={'netContributionsText'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.netContributionsText}>
           {i18n.t(
             'ui.incomeplacementrelationshipchart.netContributionsWithValues',
             {
@@ -103,7 +104,7 @@ export function RelationshipTooltip({
           )}
         </ChartText>
       </Layout>
-      <ChartText as="div" tone={'returnRate'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.returnRate}>
         {i18n.t('ui.incomeplacementrelationshipchart.placementRateWithValues', {
           percentage: formatPercentage(point.placementRate, { fallback: 0 }),
         })}

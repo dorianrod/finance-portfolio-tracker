@@ -15,7 +15,7 @@ type Story = StoryObj<typeof meta>
 export const Playground: Story = {
   args: {
     dataKey: 'value',
-    tone: 'portfolioValue',
+    tone: 'series6',
     motion: 'none',
     corners: 'top',
     prominence: 'full',
@@ -55,13 +55,13 @@ export const Stacked: Story = {
       <CartesianExample>
         <SeriesBar
           dataKey="value"
-          tone="portfolioValue"
+          tone={'series6'}
           stackId="total"
           motion="none"
         />
         <SeriesBar
           dataKey="contributions"
-          tone="netContributions"
+          tone={'series1'}
           stackId="total"
           motion="none"
         />

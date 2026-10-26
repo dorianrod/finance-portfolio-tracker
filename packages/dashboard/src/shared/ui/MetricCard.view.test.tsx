@@ -13,7 +13,7 @@ describe('MetricCard', () => {
     const onOpen = vi.fn(),
       onInfo = vi.fn()
     render(
-      <MetricCard accent="value" label="Open summary" onOpen={onOpen}>
+      <MetricCard accent={'highlight'} label="Open summary" onOpen={onOpen}>
         <MetricCard.Header>
           Summary
           <MetricCard.Action>

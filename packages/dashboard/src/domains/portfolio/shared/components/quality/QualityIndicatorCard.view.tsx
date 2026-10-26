@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
@@ -14,11 +15,11 @@ import { Text } from '@/shared/ui/Text.view'
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
 const TONES = {
-  neutral: { text: 'accent', bar: 'netContributions' },
-  coverage: { text: 'positive', bar: 'coverage' },
-  warning: { text: 'warning', bar: 'coverageGap' },
-  error: { text: 'negative', bar: 'performanceNegative' },
-  muted: { text: 'muted', bar: 'mutedIndicator' },
+  neutral: { text: 'accent', bar: PORTFOLIO_CHART_TONES.netContributions },
+  coverage: { text: 'positive', bar: PORTFOLIO_CHART_TONES.coverage },
+  warning: { text: 'warning', bar: PORTFOLIO_CHART_TONES.coverageGap },
+  error: { text: 'negative', bar: PORTFOLIO_CHART_TONES.performanceNegative },
+  muted: { text: 'muted', bar: PORTFOLIO_CHART_TONES.mutedIndicator },
 } as const
 
 export function QualityIndicatorCard({
@@ -48,7 +49,7 @@ export function QualityIndicatorCard({
   const colors = TONES[tone]
 
   return (
-    <Surface variant="qualityCard">
+    <Surface variant="indicatorCard">
       <Text as="div" variant="captionLabel" tone="muted">
         <Inline as="div" align="center">
           <span>{label}</span>

@@ -6,7 +6,7 @@ import {
 } from 'react'
 import { Bar, type BarShapeProps } from 'recharts'
 
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 
 import {
   type BarAppearance,
@@ -70,7 +70,7 @@ export function SeriesBar({
     <BarAppearanceContext value={appearance}>
       <Bar
         {...props}
-        fill={tone && SEMANTIC_COLORS[tone]}
+        fill={tone && CHART_COLORS[tone]}
         radius={corners && BAR_CORNERS[corners]}
         fillOpacity={prominence && BAR_PROMINENCE[prominence]}
         shape={renderer}

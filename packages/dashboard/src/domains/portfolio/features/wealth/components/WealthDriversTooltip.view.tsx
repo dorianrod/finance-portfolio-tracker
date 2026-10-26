@@ -1,3 +1,4 @@
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
@@ -33,7 +34,7 @@ export function DriversTooltip({
         <Stack gap="compact">
           <Inline as="div" justify="between" gap="spacious">
             <span>{i18n.t('ui.wealthdriverschart.netContributions')}</span>
-            <ChartText tone={'netContributionsText'} variant="medium">
+            <ChartText tone={PORTFOLIO_CHART_TONES.netContributionsText} variant="medium">
               {formatMoney(row.cumulative_savings, { style: 'full' })}
             </ChartText>
           </Inline>
@@ -42,8 +43,8 @@ export function DriversTooltip({
             <ChartText
               tone={
                 row.cumulative_performance >= 0
-                  ? 'performancePositiveText'
-                  : 'performanceNegativeText'
+                  ? PORTFOLIO_CHART_TONES.performancePositiveText
+                  : PORTFOLIO_CHART_TONES.performanceNegativeText
               }
               variant="medium"
             >

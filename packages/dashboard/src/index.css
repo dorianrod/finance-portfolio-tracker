@@ -36,11 +36,11 @@
   --color-positive-muted: var(--color-emerald-950);
   --color-danger-muted: var(--color-red-950);
   --color-warning-muted: var(--color-amber-950);
-  --color-risk: var(--color-orange-400);
-  --color-income: var(--color-violet-400);
-  --color-value: var(--color-cyan-400);
-  --color-return: var(--color-teal-400);
-  --color-cost: var(--color-indigo-400);
+  --color-attention: var(--color-orange-400);
+  --color-decorative: var(--color-violet-400);
+  --color-highlight: var(--color-cyan-400);
+  --color-contrast: var(--color-teal-400);
+  --color-secondary-series: var(--color-indigo-400);
 
   --radius-control: 0.5rem;
   --radius-card: 0.75rem;
@@ -162,8 +162,8 @@
   background-color: var(--color-bg-850, rgb(24 24 27));
 }
 
-/* Data-quality KPI cards use surface contrast rather than outlines. */
-.data-quality-view .quality-indicator-card {
+/* Grouped indicator cards use surface contrast rather than outlines. */
+.ui-card-group .ui-indicator-card {
   border: 0;
   box-shadow: none;
 }
@@ -229,32 +229,30 @@
   --color-blue-200: oklch(
     48.8% 0.243 264.376
   ); /* blue-700: dark text on white */
-  --color-blue-300: oklch(
-    48.8% 0.243 264.376
-  ); /* blue-700: group labels, deposits */
+  --color-blue-300: oklch(48.8% 0.243 264.376); /* blue-700: emphasized text */
   --color-blue-900: oklch(93.2% 0.032 255.585); /* blue-100: light badge bg */
 
-  /* Purple: dividends */
+  /* Purple: decorative series */
   --color-purple-300: oklch(49.6% 0.265 301.924); /* purple-700: dark text */
   --color-purple-400: oklch(49.6% 0.265 301.924); /* purple-700 */
   --color-purple-900: oklch(
     94.6% 0.033 307.174
   ); /* purple-100: light badge bg */
 
-  /* Orange: SELL operations */
+  /* Orange: attention accents */
   --color-orange-300: oklch(55.3% 0.195 38.402); /* orange-700: dark text */
   --color-orange-400: oklch(55.3% 0.195 38.402); /* orange-700 */
   --color-orange-900: oklch(
     95.4% 0.038 75.164
   ); /* orange-100: light badge bg */
 
-  /* Red: losses & withdrawals */
+  /* Red: negative indicators */
   --color-red-300: oklch(50.5% 0.213 27.518); /* red-700: darker */
   --color-red-400: oklch(57.7% 0.245 27.325); /* red-600: darker */
   --color-red-900: oklch(93.6% 0.032 17.717); /* red-100: light badge bg */
   --color-red-950: oklch(97.1% 0.013 17.38); /* red-50: subtle status bg */
 
-  /* Green: gains (slightly more muted on white) */
+  /* Green: positive indicators (slightly more muted on white) */
   --color-emerald-300: oklch(
     50.8% 0.118 165.612
   ); /* emerald-700: readable text */

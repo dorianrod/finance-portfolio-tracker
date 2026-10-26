@@ -7,6 +7,7 @@ import {
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { MonthlyTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import i18n from '@/i18n/i18n'
@@ -16,13 +17,13 @@ import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
-import { Decorative } from '@/shared/ui/Controls.view'
-import { Grid, Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
+
+import { MonthlySavingsLegend } from './MonthlySavingsLegend.view'
 
 export function MonthlySavingsChart({
   data,
@@ -85,13 +86,13 @@ export function MonthlySavingsChart({
             <SeriesBar
               yAxisId="left"
               dataKey="savings_delta"
-              tone="netContributions"
+              tone={PORTFOLIO_CHART_TONES.netContributions}
               corners="top"
             />
             <SeriesBar
               yAxisId="left"
               dataKey="perf_delta"
-              tone="performancePositive"
+              tone={PORTFOLIO_CHART_TONES.performancePositive}
               corners="top"
             >
               <SeriesBar.Shape>
@@ -102,7 +103,7 @@ export function MonthlySavingsChart({
               yAxisId="right"
               type="monotone"
               dataKey="rolling_12m"
-              tone="netContributions"
+              tone={PORTFOLIO_CHART_TONES.netContributions}
               weight="regular"
               markers="hidden"
               hover="series"
@@ -111,109 +112,14 @@ export function MonthlySavingsChart({
               yAxisId="right"
               type="monotone"
               dataKey="rolling_perf_12m"
-              tone="performance"
+              tone={PORTFOLIO_CHART_TONES.performance}
               weight="regular"
               markers="hidden"
               hover="series"
             />
           </ComposedChart>
         </ResponsiveContainer>
-        <Layout spaceBefore="default">
-          <Surface variant="captionFooter" tone="subtle">
-            <Grid columns={2} gap="relaxed" inset="default">
-              <div>
-                <Layout spaceAfter="default">
-                  <Text as="div" variant="eyebrow" tone="subtle">
-                    {i18n.t('ui.monthlysavingschart.monthlyBars')}
-                  </Text>
-                </Layout>
-                <Stack gap="compact">
-                  <Inline as="div" align="center" gap="default">
-                    <Layout
-                      as="span"
-                      flow="inline"
-                      height="indicator"
-                      width="icon"
-                    >
-                      <SeriesSwatch tone={'netContributions'} shape="bar" />
-                    </Layout>
-                    <span>
-                      {i18n.t('ui.monthlysavingschart.netContributions')}
-                    </span>
-                  </Inline>
-                  <Inline as="div" align="center" gap="default">
-                    <Layout
-                      as="span"
-                      flow="inline"
-                      height="indicator"
-                      width="icon"
-                      overflow="clip"
-                    >
-                      <Decorative variant="swatchFrame">
-                        <Inline as="span">
-                          <Layout
-                            as="span"
-                            flow="inline"
-                            height="full"
-                            width="half"
-                          >
-                            <SeriesSwatch tone={'performancePositive'} as="i" />
-                          </Layout>
-                          <Layout
-                            as="span"
-                            flow="inline"
-                            height="full"
-                            width="half"
-                          >
-                            <SeriesSwatch tone={'performanceNegative'} as="i" />
-                          </Layout>
-                        </Inline>
-                      </Decorative>
-                    </Layout>
-                    <span>
-                      {i18n.t('ui.monthlysavingschart.marketPerformance')}
-                    </span>
-                  </Inline>
-                </Stack>
-              </div>
-              <div>
-                <Layout spaceAfter="default">
-                  <Text as="div" variant="eyebrow" tone="subtle">
-                    {i18n.t('ui.monthlysavingschart.trailing12mLines')}
-                  </Text>
-                </Layout>
-                <Stack gap="compact">
-                  <Inline as="div" align="center" gap="default">
-                    <Layout
-                      as="span"
-                      flow="inline"
-                      height="divider"
-                      width="icon"
-                    >
-                      <SeriesSwatch tone={'netContributions'} />
-                    </Layout>
-                    <span>
-                      {i18n.t('ui.monthlysavingschart.netContributions')}
-                    </span>
-                  </Inline>
-                  <Inline as="div" align="center" gap="default">
-                    <Layout
-                      as="span"
-                      flow="inline"
-                      height="divider"
-                      width="icon"
-                    >
-                      <SeriesSwatch tone={'performance'} />
-                    </Layout>
-                    <span>
-                      {i18n.t('ui.monthlysavingschart.marketPerformance')}
-                    </span>
-                  </Inline>
-                </Stack>
-              </div>
-            </Grid>
-          </Surface>
-        </Layout>
+        <MonthlySavingsLegend />
       </Surface>
     </div>
   )
@@ -231,8 +137,8 @@ function MonthlyPerformanceBar(
       geometry={shapeProps}
       tone={
         (entry.perf_delta ?? 0) >= 0
-          ? 'performancePositive'
-          : 'performanceNegative'
+          ? PORTFOLIO_CHART_TONES.performancePositive
+          : PORTFOLIO_CHART_TONES.performanceNegative
       }
     />
   )

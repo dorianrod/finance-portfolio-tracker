@@ -1,3 +1,4 @@
+import { calculateGainTaxDetails } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculateGainTaxDetails'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -14,14 +15,7 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
   const net = position.unrealized_gain_net
   const taxRate = position.tax_rate
   if (gross == null) return <Text tone="subtle">—</Text>
-  const taxAmount =
-    net != null && taxRate != null && taxRate > 0 && gross > 0
-      ? gross - net
-      : null
-  const taxDetails =
-    taxRate != null && taxAmount != null && taxAmount > 0
-      ? { amount: taxAmount, rate: taxRate }
-      : null
+  const taxDetails = calculateGainTaxDetails(gross, net, taxRate)
   const isTaxFreeGain = taxRate === 0 && gross !== 0
   return (
     <Text variant="compact">
@@ -58,14 +52,7 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
   const net = position.realized_gain_net
   const taxRate = position.tax_rate
   if (!gross) return <Text tone="subtle">—</Text>
-  const taxAmount =
-    net != null && taxRate != null && taxRate > 0 && gross > 0
-      ? gross - net
-      : null
-  const taxDetails =
-    taxRate != null && taxAmount != null && taxAmount > 0
-      ? { amount: taxAmount, rate: taxRate }
-      : null
+  const taxDetails = calculateGainTaxDetails(gross, net, taxRate)
   const isTaxFreeGain = taxRate === 0 && gross > 0
   return (
     <Text variant="compact">

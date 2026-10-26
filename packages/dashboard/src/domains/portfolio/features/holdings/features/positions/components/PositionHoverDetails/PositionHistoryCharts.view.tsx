@@ -1,5 +1,6 @@
 import { AreaChart, LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartYAxis } from '@/shared/ui/ChartAxes.view'
@@ -41,7 +42,7 @@ export function PositionHistoryCharts({
           margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
         >
           <defs>
-            <SeriesGradient id="gVal" profile="soft" tone="portfolioValue" />
+            <SeriesGradient id="gVal" profile="soft" tone={PORTFOLIO_CHART_TONES.portfolioValue} />
           </defs>
           <ChartGrid />
           <ChartXAxis density="compact" axis dataKey="date" />
@@ -56,7 +57,7 @@ export function PositionHistoryCharts({
             type="monotone"
             dataKey="Cost basis"
             name={i18n.t('ui.hoverchart.costBasis')}
-            tone="costBasis"
+            tone={PORTFOLIO_CHART_TONES.costBasis}
             weight="fine"
             pattern="baseline"
             markers="hidden"
@@ -65,7 +66,7 @@ export function PositionHistoryCharts({
             type="monotone"
             dataKey="Value"
             name={i18n.t('ui.hoverchart.value')}
-            tone="portfolioValue"
+            tone={PORTFOLIO_CHART_TONES.portfolioValue}
             gradientId="gVal"
             weight="regular"
             hover="default"
@@ -88,7 +89,7 @@ export function PositionHistoryCharts({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'transactionBuy'} shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.transactionBuy} shape="dot" />
               </Layout>
               {i18n.t('ui.hoverchart.buy')}
             </span>
@@ -99,7 +100,7 @@ export function PositionHistoryCharts({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'transactionSell'} shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.transactionSell} shape="dot" />
               </Layout>
               {i18n.t('ui.hoverchart.sell')}
             </span>
@@ -135,7 +136,7 @@ export function PositionHistoryCharts({
                 type="monotone"
                 dataKey="Unit price"
                 name={i18n.t('ui.hoverchart.unitPrice')}
-                tone="returnRate"
+                tone={PORTFOLIO_CHART_TONES.returnRate}
                 weight="regular"
                 hover="default"
               >

@@ -4,7 +4,7 @@ export const TEXT_VARIANTS = {
   swatchFrame: 'rounded-sm',
   selectableHeader: 'font-medium select-none',
 
-  contributionAnnotation:
+  accentAnnotation:
     'decoration-accent/50 underline decoration-dashed underline-offset-2',
   faint: 'opacity-60',
   subdued: 'opacity-70',
@@ -86,11 +86,11 @@ export const TEXT_TONES = {
   positive: 'text-positive',
   negative: 'text-danger',
   warning: 'text-warning',
-  income: 'text-income',
-  risk: 'text-risk',
-  value: 'text-value',
-  return: 'text-return',
-  cost: 'text-cost',
+  decorative: 'text-decorative',
+  attention: 'text-attention',
+  highlight: 'text-highlight',
+  contrast: 'text-contrast',
+  secondarySeries: 'text-secondary-series',
   onAccent: 'text-on-accent',
 } as const
 

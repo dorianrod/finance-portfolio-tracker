@@ -162,8 +162,8 @@ export const IssuerRow = memo(function IssuerRow({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="issuerRow">
-      <Grid arrangement="exposure">
+    <Surface variant="hoverRow">
+      <Grid arrangement="labelThreeValues">
         <Layout as="span" flow="control">
           <DisclosureButton
             type="button"
@@ -207,7 +207,7 @@ export const SecurityRow = memo(function SecurityRow({
   const [single] = security.funds
   return (
     <Surface variant="detailRow">
-      <Grid arrangement="exposure">
+      <Grid arrangement="labelThreeValues">
         <Layout as="span" flow="inline">
           <Text truncate>
             <Layout as="span" flow="inline" inset="spacious">
@@ -250,7 +250,7 @@ export const SourceRow = memo(function SourceRow({
   const formatMoney = useFormatMoney()
   return (
     <Surface variant="detailRow">
-      <Grid arrangement="exposure">
+      <Grid arrangement="labelThreeValues">
         <span />
         <Text tone="subtle" align="right" numeric>
           {formatMoney(value, { style: 'full' })}

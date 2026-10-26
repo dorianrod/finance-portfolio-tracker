@@ -154,6 +154,18 @@ export default defineConfig([
     },
   },
   {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['**/*.{test,spec,stories}.{ts,tsx}', '**/__tests__/**'],
+    rules: {
+      // Branching and size are independent signals, including in JSX.
+      complexity: ['warn', { max: 8, variant: 'modified' }],
+      'max-lines-per-function': [
+        'warn',
+        { max: 150, skipBlankLines: true, skipComments: true },
+      ],
+    },
+  },
+  {
     files: ['src/shared/helpers/formatters/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-properties': 'off',

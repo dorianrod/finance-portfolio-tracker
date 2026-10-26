@@ -35,7 +35,7 @@ export function QualityThemeTab({
   const styles = QUALITY_TONES[theme.tone]
   return (
     <Layout as="span" flow="control" width="full">
-      <Tabs.Trigger value={theme.id} variant="quality" selected={active}>
+      <Tabs.Trigger value={theme.id} variant="stacked" selected={active}>
         <Layout as="span" flow="block" height="icon" sizing="fixed">
           <Surface as="span" variant="statusFrame">
             <Inline as="span" align="center" justify="center">
@@ -197,7 +197,7 @@ export function DetailKpiButton({
         onClick={onClick}
         expanded={expanded}
         label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
-        variant="qualitySummary"
+        variant="insetSummary"
       >
         <Layout as="span" flow="inline" placement="overlay" width="divider">
           <ToneSwatch tone={QUALITY_TONES[theme.tone]} shape="sideAccent" />

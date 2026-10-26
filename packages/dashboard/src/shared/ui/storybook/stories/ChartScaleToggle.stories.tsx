@@ -27,7 +27,7 @@ function Render(
   )
 }
 export const Value: Story = {
-  args: { value: 'value', onChange: fn() },
+  args: { valueLabel: 'Units', value: 'value', onChange: fn() },
   render: Render,
 }
 export const Percentage: Story = {

@@ -7,7 +7,9 @@ export type ChartScaleMode = 'value' | 'percentage'
 export function ChartScaleToggle({
   value,
   onChange,
+  valueLabel,
 }: {
+  valueLabel: string
   value: ChartScaleMode
   onChange: (value: ChartScaleMode) => void
 }) {
@@ -22,7 +24,7 @@ export function ChartScaleToggle({
           tone="neutral"
           onClick={() => onChange('value')}
         >
-          €
+          {valueLabel}
         </SegmentedControlItem>
         <SegmentedControlItem
           active={value === 'percentage'}

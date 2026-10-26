@@ -8,5 +8,5 @@ When adding the first rule, create only the category needed for it. Use a short,
 | --- | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` | Centralize appearance in shared UI primitives, allow only layout (including padding) elsewhere, and keep concrete colors behind semantic theme tokens. |
 | 2 | Component Composition | `composition-` | Require nested children and compound components for caller-supplied UI structure instead of content props. |
-| 3 | Component Logic | `architecture-` | Keep compound derivations in explicitly owned helpers, display fallbacks in existing formatters, accessibility implementation in shared UI, and components focused on hooks and rendering. |
+| 3 | Component Logic | `architecture-` | Keep shared UI agnostic of business domains, compound derivations in explicitly owned helpers, display fallbacks in existing formatters, accessibility implementation in shared UI, and components focused on hooks and rendering. |
 | 4 | API Maintenance | `quality-` | Keep authored code on supported APIs and prevent deprecated dependency or platform API usage. |

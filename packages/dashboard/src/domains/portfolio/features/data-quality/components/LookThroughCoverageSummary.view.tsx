@@ -3,18 +3,19 @@ import { useState } from 'react'
 
 import type { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/components/helpers/presenters/buildLookThroughSummary'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import type { SemanticColorKey } from '@/shared/theme/semanticColors'
+import type { ChartTone } from '@/shared/theme/chartColors'
 import { DecorativeBlock } from '@/shared/ui/Controls.view'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
 import { DisclosureChevronIcon } from '@/shared/ui/Icons.view'
 import { Inline, Inset, Layout, Stack } from '@/shared/ui/Layout.view'
 import { Proportion } from '@/shared/ui/Proportion.view'
-import { ReliabilityBadge } from '@/shared/ui/StatusBadge.view'
+import { StatusBadge } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch, ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -39,25 +40,30 @@ function CompactCoverageCard({
   return <QualityIndicatorCard {...card}>{children}</QualityIndicatorCard>
 }
 
-export function LookThroughCoverageSummaryView({
-  report,
-  model,
-  variant = 'detailed',
-  children,
-}: {
+type CoverageSummaryProps = {
   report: FundCoverageReport
   model: ReturnType<typeof buildLookThroughSummary>
   variant?: 'compact' | 'detailed'
   children: ReactNode
-}) {
+}
+export function LookThroughCoverageSummaryView({
+  variant = 'detailed',
+  ...props
+}: CoverageSummaryProps) {
+  if (variant === 'compact') return <CompactLookThroughSummary {...props} />
+  return <DetailedLookThroughSummary {...props} />
+}
+
+function CompactLookThroughSummary({
+  model,
+  report,
+  children,
+}: CoverageSummaryProps) {
   const formatMoney = useFormatMoney()
-  const formatDate = useFormatDate()
   const {
     identifiedValue,
     unresolvedValue,
-    selectedPortfolioValue,
     reliableValue,
-    otherSourceValue,
     notApplicableValue,
     identifiedPercentage,
     unresolvedPercentage,
@@ -65,13 +71,6 @@ export function LookThroughCoverageSummaryView({
     hasNotApplicable,
     hasUnresolvedGap,
     reliablePercentage,
-    otherSourcePercentage,
-    directPercentage,
-    decomposedPercentage,
-    undisclosedPercentage,
-    opaquePercentage,
-    undisclosedTone,
-    opaqueTone,
   } = model
   const readiness = {
     passed: i18n.t('ui.lookthroughcoveragesummary.ready'),
@@ -81,78 +80,90 @@ export function LookThroughCoverageSummaryView({
     limited: i18n.t('ui.lookthroughcoveragesummary.limited'),
   }[report.feasibilityStatus]
 
-  if (variant === 'compact') {
-    const cards = [
-      {
-        label: i18n.t('ui.lookthroughcoveragesummary.identifiedExposure'),
-        amount: identifiedValue,
-        percentage: identifiedPercentage,
-        detail: i18n.t('ui.lookthroughcoveragesummary.identifiedDetail', {
-          direct: formatMoney(report.directIdentifiedValue, { style: 'full' }),
-          decomposed: formatMoney(report.decomposedValue, { style: 'full' }),
+  const cards = [
+    {
+      label: i18n.t('ui.lookthroughcoveragesummary.identifiedExposure'),
+      amount: identifiedValue,
+      percentage: identifiedPercentage,
+      detail: i18n.t('ui.lookthroughcoveragesummary.identifiedDetail', {
+        direct: formatMoney(report.directIdentifiedValue, { style: 'full' }),
+        decomposed: formatMoney(report.decomposedValue, { style: 'full' }),
+      }),
+      tooltip: i18n.t(
+        'ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs',
+      ),
+      tone: 'coverage' as const,
+    },
+    {
+      label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
+      amount: reliableValue,
+      percentage: reliablePercentage,
+      detail: i18n.t(
+        'ui.lookthroughcoveragesummary.value0DirectPositionsPlusReliableFundSources',
+        { value0: readiness },
+      ),
+      tooltip: i18n.t(
+        'ui.lookthroughcoveragesummary.qualityFilteredSubsetOfIdentifiedExposureItIsNot',
+      ),
+      tone: 'neutral' as const,
+    },
+    {
+      label: i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure'),
+      amount: unresolvedValue,
+      percentage: unresolvedPercentage,
+      detail: i18n.t('ui.lookthroughcoveragesummary.unresolvedDetail', {
+        remainder: formatMoney(report.undisclosedFundValue, {
+          style: 'full',
         }),
-        tooltip: i18n.t(
-          'ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs',
-        ),
-        tone: 'coverage' as const,
-      },
-      {
-        label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
-        amount: reliableValue,
-        percentage: reliablePercentage,
-        detail: i18n.t(
-          'ui.lookthroughcoveragesummary.value0DirectPositionsPlusReliableFundSources',
-          { value0: readiness },
-        ),
-        tooltip: i18n.t(
-          'ui.lookthroughcoveragesummary.qualityFilteredSubsetOfIdentifiedExposureItIsNot',
-        ),
-        tone: 'neutral' as const,
-      },
-      {
-        label: i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure'),
-        amount: unresolvedValue,
-        percentage: unresolvedPercentage,
-        detail: i18n.t('ui.lookthroughcoveragesummary.unresolvedDetail', {
-          remainder: formatMoney(report.undisclosedFundValue, {
-            style: 'full',
-          }),
-          opaque: formatMoney(report.opaqueValue, { style: 'full' }),
-        }),
-        tooltip: i18n.t(
-          'ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect',
-        ),
-        tone: hasUnresolvedGap ? ('warning' as const) : ('coverage' as const),
-      },
-      ...(hasNotApplicable
-        ? [
-            {
-              label: i18n.t('ui.lookthroughcoveragesummary.notApplicable'),
-              amount: notApplicableValue,
-              percentage: notApplicablePercentage,
-              detail: i18n.t(
-                'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
-              ),
-              tooltip: i18n.t(
-                'ui.lookthroughcoveragesummary.cashAccountBalancesIntentionallyExcludedFromLookThroughAnalysis',
-              ),
-              tone: 'muted' as const,
-            },
-          ]
-        : []),
-    ]
-    return (
-      <div
-        className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}
-      >
-        {cards.map((card) => (
-          <CompactCoverageCard key={card.label} card={card}>
-            {children}
-          </CompactCoverageCard>
-        ))}
-      </div>
-    )
-  }
+        opaque: formatMoney(report.opaqueValue, { style: 'full' }),
+      }),
+      tooltip: i18n.t(
+        'ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect',
+      ),
+      tone: hasUnresolvedGap ? ('warning' as const) : ('coverage' as const),
+    },
+    ...(hasNotApplicable
+      ? [
+          {
+            label: i18n.t('ui.lookthroughcoveragesummary.notApplicable'),
+            amount: notApplicableValue,
+            percentage: notApplicablePercentage,
+            detail: i18n.t(
+              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
+            ),
+            tooltip: i18n.t(
+              'ui.lookthroughcoveragesummary.cashAccountBalancesIntentionallyExcludedFromLookThroughAnalysis',
+            ),
+            tone: 'muted' as const,
+          },
+        ]
+      : []),
+  ]
+  return (
+    <div
+      className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}
+    >
+      {cards.map((card) => (
+        <CompactCoverageCard key={card.label} card={card}>
+          {children}
+        </CompactCoverageCard>
+      ))}
+    </div>
+  )
+}
+
+function DetailedLookThroughSummary({
+  model,
+  report,
+  children,
+}: CoverageSummaryProps) {
+  const formatDate = useFormatDate()
+  const {
+    selectedPortfolioValue,
+    notApplicableValue,
+    notApplicablePercentage,
+    hasNotApplicable,
+  } = model
 
   return (
     <div>
@@ -172,6 +183,44 @@ export function LookThroughCoverageSummaryView({
         </QualityIndicatorCard>
       </div>
 
+      <ExposureTreeConnectors model={model} />
+      <div
+        className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
+      >
+        <IdentifiedExposureBranch report={report} model={model}>
+          {children}
+        </IdentifiedExposureBranch>
+
+        <UnresolvedExposureBranch report={report} model={model}>
+          {children}
+        </UnresolvedExposureBranch>
+        {hasNotApplicable && (
+          <QualityIndicatorCard
+            label={i18n.t('ui.lookthroughcoveragesummary.notApplicable')}
+            tooltip={i18n.t(
+              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded',
+            )}
+            amount={notApplicableValue}
+            percentage={notApplicablePercentage}
+            detail={i18n.t(
+              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
+            )}
+            tone="muted"
+          >
+            {children}
+          </QualityIndicatorCard>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ExposureTreeConnectors({
+  model,
+}: Pick<CoverageSummaryProps, 'model'>) {
+  const { hasNotApplicable, hasUnresolvedGap } = model
+  return (
+    <>
       <div className="relative mx-auto h-10">
         <DecorativeBlock>
           <Layout flow="block" hiddenUntil="small">
@@ -226,122 +275,141 @@ export function LookThroughCoverageSummaryView({
           <Layout></Layout>
         </DecorativeBlock>
       </div>
+    </>
+  )
+}
 
-      <div
-        className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
-      >
-        <div>
-          <QualityIndicatorCard
-            label={i18n.t('ui.lookthroughcoveragesummary.identifiedExposure')}
-            tooltip={i18n.t(
-              'ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs',
-            )}
-            amount={identifiedValue}
-            percentage={identifiedPercentage}
-            detail={i18n.t(
-              'ui.lookthroughcoveragesummary.directPositionsDecomposedFunds',
-            )}
-            tone="coverage"
-          >
-            {children}
-            <SourceReliability
-              status={report.feasibilityStatus}
-              reliableValue={reliableValue}
-              reliablePercentage={reliablePercentage}
-              otherSourceValue={otherSourceValue}
-              otherSourcePercentage={otherSourcePercentage}
-            />
-          </QualityIndicatorCard>
+function IdentifiedExposureBranch({
+  model,
+  report,
+  children,
+}: CoverageSummaryProps) {
+  const {
+    identifiedValue,
+    reliableValue,
+    otherSourceValue,
+    identifiedPercentage,
+    reliablePercentage,
+    otherSourcePercentage,
+    directPercentage,
+    decomposedPercentage,
+  } = model
+  return (
+    <>
+      <div>
+        <QualityIndicatorCard
+          label={i18n.t('ui.lookthroughcoveragesummary.identifiedExposure')}
+          tooltip={i18n.t(
+            'ui.lookthroughcoveragesummary.shareOfTheTotalPortfolioWhoseEconomicExposureIs',
+          )}
+          amount={identifiedValue}
+          percentage={identifiedPercentage}
+          detail={i18n.t(
+            'ui.lookthroughcoveragesummary.directPositionsDecomposedFunds',
+          )}
+          tone="coverage"
+        >
+          {children}
+          <SourceReliability
+            status={report.feasibilityStatus}
+            reliableValue={reliableValue}
+            reliablePercentage={reliablePercentage}
+            otherSourceValue={otherSourceValue}
+            otherSourcePercentage={otherSourcePercentage}
+          />
+        </QualityIndicatorCard>
 
-          <ExposureChildNodes
-            nodes={[
-              {
-                label: i18n.t('ui.lookthroughcoveragesummary.directPositions'),
-                tooltip: i18n.t(
-                  'ui.lookthroughcoveragesummary.identifiedNonFundPositionsHeldDirectlyInThePortfolio',
-                ),
-                amount: report.directIdentifiedValue,
-                percentage: directPercentage,
-                tone: 'coverage',
-              },
-              {
-                label: i18n.t('ui.lookthroughcoveragesummary.decomposedFunds'),
-                tooltip: i18n.t(
-                  'ui.lookthroughcoveragesummary.fundAndEtfValueBrokenDownIntoUnderlyingHoldings',
-                ),
-                amount: report.decomposedValue,
-                percentage: decomposedPercentage,
-                tone: 'neutral',
-              },
-            ]}
-          >
-            {children}
-          </ExposureChildNodes>
-        </div>
-
-        <div>
-          <QualityIndicatorCard
-            label={i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure')}
-            tooltip={i18n.t(
-              'ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect',
-            )}
-            amount={unresolvedValue}
-            percentage={unresolvedPercentage}
-            detail={i18n.t(
-              'ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis',
-            )}
-            tone={hasUnresolvedGap ? 'warning' : 'coverage'}
-          >
-            {children}
-          </QualityIndicatorCard>
-
-          <ExposureChildNodes
-            nodes={[
-              {
-                label: i18n.t(
-                  'ui.lookthroughcoveragesummary.undisclosedFundRemainder',
-                ),
-                tooltip: i18n.t(
-                  'ui.lookthroughcoveragesummary.fundValueNotCoveredByTheAvailableUnderlyingHoldings',
-                ),
-                amount: report.undisclosedFundValue,
-                percentage: undisclosedPercentage,
-                tone: undisclosedTone,
-              },
-              {
-                label: i18n.t(
-                  'ui.lookthroughcoveragesummary.opaquePositionsWithoutId',
-                ),
-                tooltip: i18n.t(
-                  'ui.lookthroughcoveragesummary.directNonFundPositionsWithoutAnIsinOrTicker',
-                ),
-                amount: report.opaqueValue,
-                percentage: opaquePercentage,
-                tone: opaqueTone,
-              },
-            ]}
-          >
-            {children}
-          </ExposureChildNodes>
-        </div>
-        {hasNotApplicable && (
-          <QualityIndicatorCard
-            label={i18n.t('ui.lookthroughcoveragesummary.notApplicable')}
-            tooltip={i18n.t(
-              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded',
-            )}
-            amount={notApplicableValue}
-            percentage={notApplicablePercentage}
-            detail={i18n.t(
-              'ui.lookthroughcoveragesummary.savingsCheckingAndBrokerageCash',
-            )}
-            tone="muted"
-          >
-            {children}
-          </QualityIndicatorCard>
-        )}
+        <ExposureChildNodes
+          nodes={[
+            {
+              label: i18n.t('ui.lookthroughcoveragesummary.directPositions'),
+              tooltip: i18n.t(
+                'ui.lookthroughcoveragesummary.identifiedNonFundPositionsHeldDirectlyInThePortfolio',
+              ),
+              amount: report.directIdentifiedValue,
+              percentage: directPercentage,
+              tone: 'coverage',
+            },
+            {
+              label: i18n.t('ui.lookthroughcoveragesummary.decomposedFunds'),
+              tooltip: i18n.t(
+                'ui.lookthroughcoveragesummary.fundAndEtfValueBrokenDownIntoUnderlyingHoldings',
+              ),
+              amount: report.decomposedValue,
+              percentage: decomposedPercentage,
+              tone: 'neutral',
+            },
+          ]}
+        >
+          {children}
+        </ExposureChildNodes>
       </div>
-    </div>
+    </>
+  )
+}
+
+function UnresolvedExposureBranch({
+  model,
+  report,
+  children,
+}: CoverageSummaryProps) {
+  const {
+    unresolvedValue,
+    unresolvedPercentage,
+    hasUnresolvedGap,
+    undisclosedPercentage,
+    opaquePercentage,
+    undisclosedTone,
+    opaqueTone,
+  } = model
+  return (
+    <>
+      <div>
+        <QualityIndicatorCard
+          label={i18n.t('ui.lookthroughcoveragesummary.unresolvedExposure')}
+          tooltip={i18n.t(
+            'ui.lookthroughcoveragesummary.complementOfIdentifiedExposureUndisclosedFundHoldingsPlusDirect',
+          )}
+          amount={unresolvedValue}
+          percentage={unresolvedPercentage}
+          detail={i18n.t(
+            'ui.lookthroughcoveragesummary.notYetVisibleThroughLookThroughAnalysis',
+          )}
+          tone={hasUnresolvedGap ? 'warning' : 'coverage'}
+        >
+          {children}
+        </QualityIndicatorCard>
+
+        <ExposureChildNodes
+          nodes={[
+            {
+              label: i18n.t(
+                'ui.lookthroughcoveragesummary.undisclosedFundRemainder',
+              ),
+              tooltip: i18n.t(
+                'ui.lookthroughcoveragesummary.fundValueNotCoveredByTheAvailableUnderlyingHoldings',
+              ),
+              amount: report.undisclosedFundValue,
+              percentage: undisclosedPercentage,
+              tone: undisclosedTone,
+            },
+            {
+              label: i18n.t(
+                'ui.lookthroughcoveragesummary.opaquePositionsWithoutId',
+              ),
+              tooltip: i18n.t(
+                'ui.lookthroughcoveragesummary.directNonFundPositionsWithoutAnIsinOrTicker',
+              ),
+              amount: report.opaqueValue,
+              percentage: opaquePercentage,
+              tone: opaqueTone,
+            },
+          ]}
+        >
+          {children}
+        </ExposureChildNodes>
+      </div>
+    </>
   )
 }
 
@@ -387,7 +455,7 @@ function SourceReliability({
       <span className="inline-grid mt-3 w-full">
         <Disclosure.Trigger
           type="button"
-          variant="reliabilityToggle"
+          variant="separatedToggle"
           onClick={() => setIsExpanded((expanded) => !expanded)}
         >
           <Inline as="div" align="center" gap="default">
@@ -398,11 +466,11 @@ function SourceReliability({
               {i18n.t('ui.lookthroughcoveragesummary.sourceReliability')}
             </Text>
             <Layout as="span" flow="inline" sizing="fixed">
-              <ReliabilityBadge tone={indicator.tone}>
+              <StatusBadge tone={indicator.tone}>
                 <Layout as="span" flow="inline" inset="compact">
                   {indicator.label}
                 </Layout>
-              </ReliabilityBadge>
+              </StatusBadge>
             </Layout>
           </Inline>
           <Layout as="span" flow="block" sizing="fixed">
@@ -437,7 +505,7 @@ function SourceReliability({
                     ),
                     amount: reliableValue,
                     percentage: reliablePercentage,
-                    tone: 'coverage',
+                    tone: PORTFOLIO_CHART_TONES.coverage,
                   },
                   {
                     label: i18n.t(
@@ -445,7 +513,7 @@ function SourceReliability({
                     ),
                     amount: otherSourceValue,
                     percentage: otherSourcePercentage,
-                    tone: 'netContributions',
+                    tone: PORTFOLIO_CHART_TONES.netContributions,
                   },
                 ]}
               />
@@ -532,7 +600,7 @@ type BreakdownRow = {
   label: string
   amount: number
   percentage: number
-  tone: SemanticColorKey
+  tone: ChartTone
 }
 
 type BreakdownGroupProps = {

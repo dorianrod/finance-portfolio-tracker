@@ -1,3 +1,4 @@
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -35,12 +36,12 @@ export function IncomeSavingsTooltip({
           {suffix}
         </ChartText>
       </Layout>
-      <ChartText as="div" tone={'costBasisText'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
         {i18n.t('ui.annualincomesavingschart.netSalaryWithValues', {
           amount: formatMoney(point.netSalary, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'passiveIncomeSecondary'}>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.passiveIncomeSecondary}>
         {i18n.t('ui.annualincomesavingschart.otherIncomeWithValues', {
           amount: formatMoney(point.otherIncome, { style: 'full' }),
         })}
@@ -53,7 +54,7 @@ export function IncomeSavingsTooltip({
         </ChartText>
       </Layout>
       <Layout as="div" spaceBefore="compact">
-        <ChartText as="div" tone={'netContributionsText'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.netContributionsText}>
           {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
             value: formatMoney(point.placedSavings, { style: 'full' }),
             savingsSuffix,
@@ -61,7 +62,7 @@ export function IncomeSavingsTooltip({
         </ChartText>
       </Layout>
       <Layout as="div" spaceBefore="compact">
-        <ChartText as="div" tone={'returnRate'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.returnRate}>
           {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
             value: formatPercentage(point.placementRate, {
               fallback: i18n.t('ui.annualincomesavingschart.notComparable'),

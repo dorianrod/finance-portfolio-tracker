@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { ChartTooltip } from '../../ChartTooltip.view'
 import { SeriesLine } from '../../SeriesLine.view'
-import { CartesianExample, TransactionDotExample } from '../ChartExamples.view'
+import { CartesianExample, MarkerDotExample } from '../ChartExamples.view'
 
 const meta = {
   title: 'Charts/Series/Line',
   component: SeriesLine,
-  args: { tone: 'portfolioValue' },
+  args: { tone: 'series6' },
 } satisfies Meta<typeof SeriesLine>
 export default meta
 type Story = StoryObj<typeof meta>
@@ -15,7 +15,7 @@ type Story = StoryObj<typeof meta>
 export const Playground: Story = {
   args: {
     dataKey: 'value',
-    tone: 'portfolioValue',
+    tone: 'series6',
     motion: 'none',
     weight: 'regular',
     markers: 'normal',
@@ -34,14 +34,14 @@ export const Projection: Story = {
   ...Playground,
   args: { ...Playground.args, pattern: 'projection', weight: 'emphasized' },
 }
-export const TransactionMarkers: Story = {
+export const ChartMarkers: Story = {
   ...Playground,
   render: function Render(args) {
     return (
       <CartesianExample>
         <SeriesLine {...args}>
           <SeriesLine.Markers>
-            <TransactionDotExample />
+            <MarkerDotExample />
           </SeriesLine.Markers>
         </SeriesLine>
       </CartesianExample>

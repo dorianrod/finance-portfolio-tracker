@@ -171,17 +171,7 @@ export function computePerformanceContributions(
   const positionsThroughEnd = rawPositions.filter(
     (row) => datePart(row.snapshot_date) <= requestedEnd,
   )
-  const metaByAccountAsset = new Map<string, AssetMeta>()
-  const accountTypes = new Map<string, Set<string>>()
-
-  for (const row of positionsThroughEnd) {
-    const meta = buildMeta(row)
-    if (!meta) continue
-    metaByAccountAsset.set(accountAssetKey(row.account, meta.key), meta)
-    const types = accountTypes.get(row.account) ?? new Set<string>()
-    if (meta.accountType) types.add(meta.accountType)
-    accountTypes.set(row.account, types)
-  }
+  const scope = buildContributionScope(positionsThroughEnd)
 
   const positions = positionsThroughEnd.filter((row) =>
     isPositionInScope(row, filters),
@@ -192,29 +182,14 @@ export function computePerformanceContributions(
   const endDate = snapshotDates.at(-1)
   if (!endDate) return unavailableSummary(horizon)
 
-  const startsByFilterId = new Map<string, number>()
-  let startDate: number | null
-  if (horizon === 'since-tracking') {
-    for (const row of positions) {
-      const filterId = accountFilterId(row)
-      const rowDate = datePart(row.snapshot_date)
-      const current = startsByFilterId.get(filterId)
-      if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
-    }
-    startDate =
-      [...startsByFilterId.values()].toSorted(
-        (left, right) => left - right,
-      )[0] ?? null
-  } else {
-    const firstSnapshot = snapshotDates[0]
-    const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
-    if (endDate - firstSnapshot < THREE_YEAR_DAYS * DAY_MS) {
-      return unavailableSummary(horizon)
-    }
-    startDate = snapshotDates.filter((date) => date <= cutoff).at(-1) ?? null
-  }
-
-  if (!startDate) return unavailableSummary(horizon)
+  const period = resolveContributionPeriod(
+    positions,
+    snapshotDates,
+    endDate,
+    horizon,
+  )
+  if (!period) return unavailableSummary(horizon)
+  const { startDate } = period
 
   const contributions = new Map<string, ContributionAccumulator>()
   const touch = (
@@ -238,49 +213,8 @@ export function computePerformanceContributions(
     return current
   }
 
-  for (const row of positions) {
-    const key = assetKey(row)
-    if (!key) continue
-    const rowDate = datePart(row.snapshot_date)
-    const endValue = rowDate === endDate ? (row.unrealized_gain ?? 0) : 0
-    const isOpeningRow =
-      horizon === 'since-tracking'
-        ? rowDate === startsByFilterId.get(accountFilterId(row))
-        : rowDate === startDate
-    const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
-    if (endValue === 0 && openingValue === 0) continue
-    touch(key, clean(row.name), clean(row.ticker), row.account).amount +=
-      endValue - openingValue
-  }
-
-  for (const operation of rawOperations) {
-    if (!['SELL', 'DIVIDEND', 'INTEREST'].includes(operation.operation_type))
-      continue
-    const operationDate = datePart(operation.date)
-    if (operationDate > endDate) continue
-    const key = assetKey(operation)
-    if (!key) continue
-    const meta = metaByAccountAsset.get(accountAssetKey(operation.account, key))
-    if (!operationIsInScope(operation, meta, filters, accountTypes)) continue
-
-    let lowerBound: number | undefined = startDate
-    if (horizon === 'since-tracking') {
-      lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
-    }
-    if (!lowerBound || operationDate <= lowerBound) continue
-
-    const amount =
-      operation.operation_type === 'SELL'
-        ? operation.realized_gain
-        : operation.total_amount
-    if (amount === 0) continue
-    touch(
-      key,
-      meta?.name || clean(operation.name),
-      meta?.ticker || clean(operation.ticker),
-      operation.account,
-    ).amount += amount
-  }
+  addPositionContributions(positions, period, touch)
+  addOperationContributions(rawOperations, period, scope, filters, touch)
 
   const nonZero = [...contributions.values()].filter(
     (item) => Math.abs(item.amount) >= 0.005,
@@ -315,4 +249,139 @@ export function computePerformanceContributions(
     contributors,
     detractors,
   }
+}
+
+function buildContributionScope(positionsThroughEnd: RawPosition[]) {
+  const metaByAccountAsset = new Map<string, AssetMeta>()
+  const accountTypes = new Map<string, Set<string>>()
+
+  for (const row of positionsThroughEnd) {
+    const meta = buildMeta(row)
+    if (!meta) continue
+    metaByAccountAsset.set(accountAssetKey(row.account, meta.key), meta)
+    const types = accountTypes.get(row.account) ?? new Set<string>()
+    if (meta.accountType) types.add(meta.accountType)
+    accountTypes.set(row.account, types)
+  }
+
+  return { metaByAccountAsset, accountTypes }
+}
+
+function resolveContributionPeriod(
+  positions: RawPosition[],
+  snapshotDates: number[],
+  endDate: number,
+  horizon: ContributionHorizon,
+) {
+  const startsByFilterId = new Map<string, number>()
+  let startDate: number | null
+  if (horizon === 'since-tracking') {
+    for (const row of positions) {
+      const filterId = accountFilterId(row)
+      const rowDate = datePart(row.snapshot_date)
+      const current = startsByFilterId.get(filterId)
+      if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
+    }
+    startDate =
+      [...startsByFilterId.values()].toSorted(
+        (left, right) => left - right,
+      )[0] ?? null
+  } else {
+    const firstSnapshot = snapshotDates[0]
+    const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
+    if (endDate - firstSnapshot < THREE_YEAR_DAYS * DAY_MS) {
+      return null
+    }
+    startDate = snapshotDates.filter((date) => date <= cutoff).at(-1) ?? null
+  }
+
+  if (!startDate) return null
+
+  return { startDate, startsByFilterId, endDate, horizon }
+}
+
+type TouchContribution = (
+  key: string,
+  name: string,
+  ticker: string,
+  account: string,
+) => ContributionAccumulator
+type ContributionPeriod = NonNullable<
+  ReturnType<typeof resolveContributionPeriod>
+>
+function addPositionContributions(
+  positions: RawPosition[],
+  period: ContributionPeriod,
+  touch: TouchContribution,
+) {
+  const { horizon, endDate, startDate, startsByFilterId } = period
+  for (const row of positions) {
+    const key = assetKey(row)
+    if (!key) continue
+    const rowDate = datePart(row.snapshot_date)
+    const endValue = rowDate === endDate ? (row.unrealized_gain ?? 0) : 0
+    const isOpeningRow =
+      horizon === 'since-tracking'
+        ? rowDate === startsByFilterId.get(accountFilterId(row))
+        : rowDate === startDate
+    const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
+    if (endValue === 0 && openingValue === 0) continue
+    touch(key, clean(row.name), clean(row.ticker), row.account).amount +=
+      endValue - openingValue
+  }
+}
+function addOperationContributions(
+  rawOperations: RawOperation[],
+  period: ContributionPeriod,
+  scope: ReturnType<typeof buildContributionScope>,
+  filters: PerformanceContributionFilters,
+  touch: TouchContribution,
+) {
+  for (const operation of rawOperations) {
+    const eligible = selectContributionOperation(
+      operation,
+      period,
+      scope,
+      filters,
+    )
+    if (!eligible) continue
+    const { key, meta } = eligible
+    const amount =
+      operation.operation_type === 'SELL'
+        ? operation.realized_gain
+        : operation.total_amount
+    if (amount === 0) continue
+    touch(
+      key,
+      meta?.name || clean(operation.name),
+      meta?.ticker || clean(operation.ticker),
+      operation.account,
+    ).amount += amount
+  }
+}
+
+function selectContributionOperation(
+  operation: RawOperation,
+  period: ContributionPeriod,
+  scope: ReturnType<typeof buildContributionScope>,
+  filters: PerformanceContributionFilters,
+): { key: string; meta: AssetMeta | undefined } | null {
+  const { horizon, endDate, startDate, startsByFilterId } = period
+  const { metaByAccountAsset, accountTypes } = scope
+  if (!['SELL', 'DIVIDEND', 'INTEREST'].includes(operation.operation_type))
+    return null
+  const operationDate = datePart(operation.date)
+  if (operationDate > endDate) return null
+  const key = assetKey(operation)
+  if (!key) return null
+  const meta = metaByAccountAsset.get(accountAssetKey(operation.account, key))
+  if (!operationIsInScope(operation, meta, filters, accountTypes)) return null
+
+  let lowerBound: number | undefined = startDate
+  if (horizon === 'since-tracking') {
+    lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
+  }
+  if (!lowerBound || operationDate <= lowerBound) return null
+
+  return { key, meta }
 }

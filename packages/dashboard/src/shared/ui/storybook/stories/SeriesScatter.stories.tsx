@@ -10,13 +10,13 @@ import { SCATTER } from '../fixtures'
 const meta = {
   title: 'Charts/Series/Scatter',
   component: SeriesScatter,
-  args: { tone: 'returnRate' },
+  args: { tone: 'series10' },
 } satisfies Meta<typeof SeriesScatter>
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { tone: 'returnRate', name: 'Example observations', data: SCATTER },
+  args: { tone: 'series10', name: 'Example observations', data: SCATTER },
   render: function Render(args) {
     return (
       <ScatterChart width={500} height={300}>
@@ -48,7 +48,7 @@ export const AgeWeightedSymbols: Story = {
 export const Symbol: StoryObj<typeof ChartSymbol> = {
   args: {
     geometry: { cx: 40, cy: 40, size: 200 },
-    tone: 'returnRate',
+    tone: 'series10',
     age: { year: 2025, recent: true, oldestYear: 2020, newestYear: 2025 },
   },
   render: function Render(args) {

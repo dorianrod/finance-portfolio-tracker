@@ -52,8 +52,8 @@ export const LAYOUT_COLUMNS = {
   4: 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-4',
 } as const
 export const LAYOUT_PRESETS = {
-  positions: 'grid-cols-[minmax(0,1fr)_4rem_6rem]',
-  exposure: 'grid-cols-[minmax(0,1fr)_6rem_5rem_5rem]',
+  labelTwoValues: 'grid-cols-[minmax(0,1fr)_4rem_6rem]',
+  labelThreeValues: 'grid-cols-[minmax(0,1fr)_6rem_5rem_5rem]',
   sidebar: 'grid-cols-1 md:grid-cols-[14rem_minmax(0,1fr)]',
   comparison: 'grid-cols-2',
 } as const

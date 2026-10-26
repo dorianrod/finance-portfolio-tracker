@@ -1,10 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Scatter, type ScatterShapeProps, Symbols } from 'recharts'
 
-import {
-  SEMANTIC_COLORS,
-  type SemanticColorKey,
-} from '@/shared/theme/semanticColors'
+import { CHART_COLORS, type ChartTone } from '@/shared/theme/chartColors'
 
 import { type ChartAge, chartAgeOpacity } from './chartAgeAppearance'
 import { partitionChartSlot } from './chartSlots'
@@ -15,13 +12,13 @@ export function SeriesScatter({
   children,
   ...props
 }: Pick<ComponentProps<typeof Scatter>, Keys> & {
-  tone: SemanticColorKey
+  tone: ChartTone
 }) {
   const { renderer, content } = partitionChartSlot<
     Partial<Omit<ScatterShapeProps, 'className'>>
   >(children, SeriesScatterShape)
   return (
-    <Scatter {...props} fill={SEMANTIC_COLORS[tone]} shape={renderer}>
+    <Scatter {...props} fill={CHART_COLORS[tone]} shape={renderer}>
       {content}
     </Scatter>
   )
@@ -37,7 +34,7 @@ export function ChartSymbol({
   age,
 }: {
   geometry: Pick<Partial<ScatterShapeProps>, 'cx' | 'cy' | 'size'>
-  tone: SemanticColorKey
+  tone: ChartTone
   age?: ChartAge
 }) {
   return (
@@ -46,7 +43,7 @@ export function ChartSymbol({
       cy={geometry.cy}
       size={geometry.size}
       type="circle"
-      fill={SEMANTIC_COLORS[tone]}
+      fill={CHART_COLORS[tone]}
       fillOpacity={age && chartAgeOpacity(age)}
     />
   )

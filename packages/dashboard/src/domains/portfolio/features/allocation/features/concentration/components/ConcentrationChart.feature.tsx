@@ -7,6 +7,7 @@ import {
 } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { HoldingConcentration } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -142,7 +143,7 @@ function LeadingHoldingBar(shapeProps: Partial<BarShapeProps>) {
   return (
     <ChartRectangle
       geometry={shapeProps}
-      tone={shapeProps.index === 0 ? 'risk' : 'neutralSeries'}
+      tone={shapeProps.index === 0 ? PORTFOLIO_CHART_TONES.risk : PORTFOLIO_CHART_TONES.neutralSeries}
     />
   )
 }

@@ -51,7 +51,7 @@ function DiagnosticsFilterButton({
     <Button
       type="button"
       onClick={() => onSelect(option)}
-      variant="qualityFilter"
+      variant="outlinedFilter"
       selected={activeFilter === option}
     >
       {label}
@@ -181,7 +181,7 @@ function FundDiagnosticsRow({
   const formatMoney = useFormatMoney()
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
-  const { holdings, snapshots, status, unresolved } = row
+  const { status } = row
   const isOpen = expanded === status.parentId
 
   return (
@@ -211,23 +211,7 @@ function FundDiagnosticsRow({
             </Layout>
           )}
         </Inset>
-        <Inset as="td" inset="default">
-          <Text as="div" wrap="words">
-            <ExternalLink href={status.sourceUrl} variant="source">
-              {status.sourceName ||
-                i18n.t('ui.funddataqualitypanel.unavailable')}
-            </ExternalLink>
-            <Layout spaceBefore="compact">
-              <Text as="div" tone="subtle">
-                {status.proxyName
-                  ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', {
-                      value0: status.proxyName,
-                    })
-                  : fundQualitySourceLabel(status.qualityTier)}
-              </Text>
-            </Layout>
-          </Text>
-        </Inset>
+        <FundDiagnosticSource status={status} />
         <Inset as="td" inset="default">
           <Text as="div" tone="muted">
             {status.holdingsDate
@@ -281,7 +265,7 @@ function FundDiagnosticsRow({
           <Button
             type="button"
             onClick={() => onToggle(status.parentId)}
-            variant="fundDetail"
+            variant="outlinedDetail"
           >
             {isOpen
               ? i18n.t('ui.funddataqualitypanel.close')
@@ -289,80 +273,100 @@ function FundDiagnosticsRow({
           </Button>
         </Inset>
       </Surface>
-      {isOpen && (
-        <Surface as="tr" variant="canvasFooter">
-          <Inset colSpan={8} as="td" inset="default">
-            <Grid columns={3} gap="relaxed">
-              <DetailBlock
-                title={i18n.t('ui.funddataqualitypanel.provenanceValidation')}
-              >
-                <div>
-                  {i18n.t('ui.funddataqualitypanel.state')}{' '}
-                  <Text tone="secondary">{status.decompositionState}</Text>
-                </div>
-                <div>
-                  {i18n.t('ui.funddataqualitypanel.snapshot')}{' '}
-                  <Text variant="code" tone="secondary">
-                    {status.snapshotId ||
-                      i18n.t('ui.funddataqualitypanel.none')}
-                  </Text>
-                </div>
-                <div>
-                  {i18n.t('ui.funddataqualitypanel.checksum')}{' '}
-                  <Text variant="tinyCode" tone="muted" wrap="anywhere">
-                    {status.checksumSha256 ||
-                      i18n.t('ui.funddataqualitypanel.notRecorded')}
-                  </Text>
-                </div>
-                {snapshots.map((snapshot) => (
-                  <SnapshotDetail
-                    key={snapshot.snapshotId}
-                    snapshot={snapshot}
-                  />
-                ))}
-              </DetailBlock>
-              <DetailBlock
-                title={i18n.t(
-                  'ui.funddataqualitypanel.unresolvedResearchQueue',
-                )}
-              >
-                {unresolved.length === 0 ? (
-                  <Text as="div" tone="positive">
-                    {i18n.t('ui.funddataqualitypanel.noUnresolvedBranch')}
-                  </Text>
-                ) : (
-                  unresolved.map((item) => (
-                    <UnresolvedDetail key={item.path} item={item} />
-                  ))
-                )}
-              </DetailBlock>
-              <DetailBlock
-                title={i18n.t(
-                  'ui.funddataqualitypanel.resolvedHoldingsValue0',
-                  {
-                    value0: holdings.length,
-                  },
-                )}
-              >
-                {holdings.slice(0, 20).map((holding) => (
-                  <ResolvedHoldingDetail
-                    key={holding.lookthroughPath}
-                    holding={holding}
-                  />
-                ))}
-                {holdings.length > 20 && (
-                  <Layout spaceBefore="default">
-                    {i18n.t('ui.funddataqualitypanel.additionalHoldings', {
-                      count: holdings.length - 20,
-                    })}
-                  </Layout>
-                )}
-              </DetailBlock>
-            </Grid>
-          </Inset>
-        </Surface>
-      )}
+      {isOpen && <FundDiagnosticDetails row={row} />}
     </Fragment>
+  )
+}
+
+function FundDiagnosticSource({
+  status,
+}: {
+  status: DiagnosticsRow['status']
+}) {
+  return (
+    <Inset as="td" inset="default">
+      <Text as="div" wrap="words">
+        <ExternalLink href={status.sourceUrl} variant="source">
+          {status.sourceName || i18n.t('ui.funddataqualitypanel.unavailable')}
+        </ExternalLink>
+        <Layout spaceBefore="compact">
+          <Text as="div" tone="subtle">
+            {status.proxyName
+              ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', {
+                  value0: status.proxyName,
+                })
+              : fundQualitySourceLabel(status.qualityTier)}
+          </Text>
+        </Layout>
+      </Text>
+    </Inset>
+  )
+}
+function FundDiagnosticDetails({ row }: { row: DiagnosticsRow }) {
+  const { status, snapshots, holdings, unresolved } = row
+  return (
+    <Surface as="tr" variant="canvasFooter">
+      <Inset colSpan={8} as="td" inset="default">
+        <Grid columns={3} gap="relaxed">
+          <DetailBlock
+            title={i18n.t('ui.funddataqualitypanel.provenanceValidation')}
+          >
+            <div>
+              {i18n.t('ui.funddataqualitypanel.state')}{' '}
+              <Text tone="secondary">{status.decompositionState}</Text>
+            </div>
+            <div>
+              {i18n.t('ui.funddataqualitypanel.snapshot')}{' '}
+              <Text variant="code" tone="secondary">
+                {status.snapshotId || i18n.t('ui.funddataqualitypanel.none')}
+              </Text>
+            </div>
+            <div>
+              {i18n.t('ui.funddataqualitypanel.checksum')}{' '}
+              <Text variant="tinyCode" tone="muted" wrap="anywhere">
+                {status.checksumSha256 ||
+                  i18n.t('ui.funddataqualitypanel.notRecorded')}
+              </Text>
+            </div>
+            {snapshots.map((snapshot) => (
+              <SnapshotDetail key={snapshot.snapshotId} snapshot={snapshot} />
+            ))}
+          </DetailBlock>
+          <DetailBlock
+            title={i18n.t('ui.funddataqualitypanel.unresolvedResearchQueue')}
+          >
+            {unresolved.length === 0 ? (
+              <Text as="div" tone="positive">
+                {i18n.t('ui.funddataqualitypanel.noUnresolvedBranch')}
+              </Text>
+            ) : (
+              unresolved.map((item) => (
+                <UnresolvedDetail key={item.path} item={item} />
+              ))
+            )}
+          </DetailBlock>
+          <DetailBlock
+            title={i18n.t('ui.funddataqualitypanel.resolvedHoldingsValue0', {
+              value0: holdings.length,
+            })}
+          >
+            {holdings.slice(0, 20).map((holding) => (
+              <ResolvedHoldingDetail
+                key={holding.lookthroughPath}
+                holding={holding}
+              />
+            ))}
+            {holdings.length > 20 && (
+              <Layout spaceBefore="default">
+                {i18n.t('ui.funddataqualitypanel.additionalHoldings', {
+                  count: holdings.length - 20,
+                })}
+              </Layout>
+            )}
+          </DetailBlock>
+        </Grid>
+      </Inset>
+    </Surface>
   )
 }
 

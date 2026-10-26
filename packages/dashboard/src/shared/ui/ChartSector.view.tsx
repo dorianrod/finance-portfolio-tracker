@@ -27,8 +27,6 @@ type Props = Geometry &
 export function ChartSector({
   geometry,
   tone,
-  category,
-  group,
   selected = false,
   dimmed = false,
   variant = 'standard',
@@ -78,7 +76,7 @@ export function ChartSector({
       forceCornerRadius={forceCornerRadius}
       cornerIsExternal={cornerIsExternal}
       {...props}
-      fill={resolveSeriesColor({ tone, category, group })}
+      fill={resolveSeriesColor({ tone })}
       opacity={dimmed ? 0.25 : 1}
       fillOpacity={alpha}
       {...state}

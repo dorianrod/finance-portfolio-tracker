@@ -39,7 +39,7 @@ export function SortHeader({
             value0: label,
             value1: sortState,
           })}
-          variant="positionSort"
+          variant="wrappedSort"
         >
           {label}
           <Layout as="span" flow="inline">

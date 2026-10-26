@@ -1,4 +1,5 @@
 import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -23,7 +24,7 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
       <Surface variant="strongSectionStart">
         <Stack inset="compact" gap="compact">
           {data.buyAmount != null && (
-            <ChartText as="p" tone={'transactionBuy'}>
+            <ChartText as="p" tone={PORTFOLIO_CHART_TONES.transactionBuy}>
               {i18n.t('ui.hoverchartsTooltips.buyWithValues', {
                 amount: formatMoney(data.buyAmount),
               })}
@@ -31,7 +32,7 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
           )}
           {data.sellAmount != null && (
             <>
-              <ChartText as="p" tone={'transactionSell'}>
+              <ChartText as="p" tone={PORTFOLIO_CHART_TONES.transactionSell}>
                 {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
                   amount: formatMoney(data.sellAmount),
                 })}
@@ -160,7 +161,7 @@ export function SavingsTooltip({
       {delta !== 0 && (
         <ChartText
           as="div"
-          tone={delta >= 0 ? 'netContributionsText' : 'performanceNegativeText'}
+          tone={delta >= 0 ? PORTFOLIO_CHART_TONES.netContributionsText : PORTFOLIO_CHART_TONES.performanceNegativeText}
         >
           {delta >= 0 ? '▲' : '▼'} {formatMoney(Math.abs(delta))}
         </ChartText>

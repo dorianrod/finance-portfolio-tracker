@@ -1,11 +1,12 @@
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import type { MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Inline, Inset, Layout } from '@/shared/ui/Layout.view'
-import { StripedRow } from '@/shared/ui/PositionTable.view'
 import { Proportion } from '@/shared/ui/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { StripedRow } from '@/shared/ui/TableRow.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function FilteredPositionRow({
@@ -58,7 +59,7 @@ export function FilteredPositionRow({
             <Layout height="track" overflow="clip">
               <Surface variant="track">
                 <Proportion value={Math.min(percentage, 100)}>
-                  <CategorySwatch as="div" shape="dot" category={category} />
+                  <SeriesSwatch as="div" shape="dot" tone={getAllocationTone(category)} />
                 </Proportion>
               </Surface>
             </Layout>

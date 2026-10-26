@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
 import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
 import {
@@ -36,7 +37,7 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
       <SidePanel.Title>
         <>
           {i18n.t('ui.filteredpositionstable.positions')}{' '}
-          <ChartText category={filterValue}>{filterValue}</ChartText>
+          <ChartText tone={getAllocationTone(filterValue)}>{filterValue}</ChartText>
         </>
       </SidePanel.Title>
       <SidePanel.Description>
@@ -68,7 +69,7 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
                 as="div"
                 variant="sectionLabel"
                 align="right"
-                category={filterValue}
+                tone={getAllocationTone(filterValue)}
               >
                 {filterValue}
               </ChartText>

@@ -8,7 +8,7 @@ export const FIELD_VARIANTS = {
     'w-full px-3 py-2 rounded-lg border border-border-strong bg-canvas text-sm text-content-secondary outline-none focus:border-accent',
   canvasSelect:
     'w-full px-3 py-2.5 rounded-lg border border-border-strong bg-canvas text-sm text-content-secondary',
-  quality:
+  stacked:
     'w-full px-2.5 py-2 rounded-lg border border-border-strong bg-surface text-sm text-content-secondary focus:border-accent focus:outline-none',
   compact:
     'w-full px-2 py-1 rounded border border-border-strong bg-surface-raised text-xs text-content-secondary focus:border-border-strong focus:outline-none',

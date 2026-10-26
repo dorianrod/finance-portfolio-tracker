@@ -5,6 +5,7 @@ import {
 } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -117,7 +118,7 @@ export function UnrealizedPnlChart({
             type="monotone"
             dataKey="unrealized_gain_pct"
             connectNulls
-            tone="returnRate"
+            tone={PORTFOLIO_CHART_TONES.returnRate}
             weight="regular"
             markers="hidden"
             hover="default"
@@ -135,7 +136,7 @@ export function UnrealizedPnlChart({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'performancePositive'} as="i" shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performancePositive} as="i" shape="dot" />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
             </span>
@@ -146,13 +147,13 @@ export function UnrealizedPnlChart({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={'performanceNegative'} as="i" shape="dot" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performanceNegative} as="i" shape="dot" />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
             </span>
             <span>
               <Layout as="span" flow="inline" height="divider" width="icon">
-                <SeriesSwatch tone={'returnRate'} as="i" shape="centeredLine" />
+                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.returnRate} as="i" shape="centeredLine" />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
             </span>
@@ -173,8 +174,8 @@ function UnrealizedPnlBar(
       geometry={shapeProps}
       tone={
         point.unrealized_gain >= 0
-          ? 'performancePositive'
-          : 'performanceNegative'
+          ? PORTFOLIO_CHART_TONES.performancePositive
+          : PORTFOLIO_CHART_TONES.performanceNegative
       }
     />
   )

@@ -1,3 +1,4 @@
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -34,7 +35,7 @@ export function CumulativeConcentrationTooltip({
         </ChartText>
       </Layout>
       <Layout spaceBefore="compact">
-        <ChartText as="div" tone={'riskSecondary'}>
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.riskSecondary}>
           {formatMoney(point.value, { style: 'full' })} ·{' '}
           {formatPercentage(point.weight)}
         </ChartText>

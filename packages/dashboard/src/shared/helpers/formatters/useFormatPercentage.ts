@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 
+import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
+
 type PercentageFormatOptions = {
   decimals?: number
   fallback?: string | number
@@ -14,18 +16,11 @@ export function useFormatPercentage() {
       value: number | null | undefined,
       options: PercentageFormatOptions = {},
     ): string => {
-      const {
-        decimals = 1,
-        fallback = '—',
-        signed = false,
-        unit = '%',
-        zeroAsFallback = false,
-      } = options
-      const displayValue =
-        value == null || (zeroAsFallback && value === 0) ? fallback : value
+      const { decimals = 1, unit = '%' } = options
+      const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
       const safeValue = Number.isFinite(displayValue) ? displayValue : 0
-      const sign = signed && safeValue >= 0 ? '+' : ''
+      const sign = options.signed && safeValue >= 0 ? '+' : ''
       return `${sign}${safeValue.toFixed(decimals)}${unit}`
     },
     [],

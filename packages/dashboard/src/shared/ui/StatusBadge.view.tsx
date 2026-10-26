@@ -5,17 +5,17 @@ const STATUS_TONES = {
   warning: 'border-warning bg-warning-muted/40 text-warning',
   negative: 'border-danger bg-danger-muted/40 text-danger',
 } as const
-const SCOPE_TONES = {
-  applied: 'border-accent/70 bg-accent-muted/60 text-accent',
+const COMPACT_TONES = {
+  accent: 'border-accent/70 bg-accent-muted/60 text-accent',
   default: 'border-border-strong bg-canvas/45 text-content-subtle',
-  ignored: 'border-warning/60 bg-warning-muted/35 text-warning',
+  warning: 'border-warning/60 bg-warning-muted/35 text-warning',
 } as const
 const LEVEL_TONES = {
   error: 'bg-danger-muted/60 text-danger',
   warning: 'bg-warning-muted/60 text-warning',
   muted: 'bg-surface-raised text-content-muted',
 } as const
-export function ReliabilityBadge({
+export function StatusBadge({
   tone,
   ...props
 }: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
@@ -33,19 +33,19 @@ export function ReliabilityBadge({
     />
   )
 }
-const SCOPE_BASE =
+const COMPACT_BASE =
   'inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold normal-case tracking-normal'
 const LEVEL_BASE = 'inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold'
-export function ScopeBadge({
+export function CompactBadge({
   tone,
   ...props
 }: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
-  tone: keyof typeof SCOPE_TONES
+  tone: keyof typeof COMPACT_TONES
 }) {
   return (
     <span
       {...props}
-      className={[SCOPE_BASE, SCOPE_TONES[tone]].filter(Boolean).join(' ')}
+      className={[COMPACT_BASE, COMPACT_TONES[tone]].filter(Boolean).join(' ')}
     />
   )
 }

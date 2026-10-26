@@ -7,6 +7,7 @@ import {
 } from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import {
   formatGroupedAllocationLabel,
   groupAllocationTail,
@@ -17,7 +18,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { Inline, Layout } from '@/shared/ui/Layout.view'
-import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 function MiniDonutLegendItem({
@@ -36,7 +37,7 @@ function MiniDonutLegendItem({
   return (
     <Text variant="tiny" tone="muted">
       <Inline as="span" align="center" gap="compact">
-        <CategorySwatch category={entry.name} shape="dot" size="default" />
+        <SeriesSwatch tone={getAllocationTone(entry.name)} shape="dot" size="default" />
         {entry.name} {percentage}
       </Inline>
     </Text>
@@ -100,5 +101,5 @@ function MiniDonutSector(
 ) {
   const entry = shapeProps.payload
   if (!entry) return null
-  return <ChartSector geometry={shapeProps} category={entry.name} />
+  return <ChartSector geometry={shapeProps} tone={getAllocationTone(entry.name)} />
 }

@@ -1,5 +1,5 @@
 import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
-import { TransactionMarker } from '@/shared/ui/TransactionMarker.view'
+import { ChartMarker } from '@/shared/ui/ChartMarker.view'
 
 type BuySellDotProps = {
   cx?: number
@@ -9,14 +9,14 @@ type BuySellDotProps = {
 export function BuySellDot({ cx, cy, payload }: BuySellDotProps) {
   if (!payload) return <g />
   if (payload.hasBuy && payload.hasSell)
-    return <TransactionMarker cx={cx} cy={cy} kind="mixed" />
-  if (payload.hasBuy) return <TransactionMarker cx={cx} cy={cy} kind="buy" />
-  if (payload.hasSell) return <TransactionMarker cx={cx} cy={cy} kind="sell" />
+    return <ChartMarker cx={cx} cy={cy} tone="series11" outline="series11Stroke" size="large" />
+  if (payload.hasBuy) return <ChartMarker cx={cx} cy={cy} tone="series1" outline="series1Stroke" />
+  if (payload.hasSell) return <ChartMarker cx={cx} cy={cy} tone="series7" outline="series7Stroke" />
   return <g />
 }
 export function BuySellDotUnit({ cx, cy, payload }: BuySellDotProps) {
   if (!payload) return <g />
-  if (payload.hasBuy) return <TransactionMarker cx={cx} cy={cy} kind="buy" />
-  if (payload.hasSell) return <TransactionMarker cx={cx} cy={cy} kind="sell" />
+  if (payload.hasBuy) return <ChartMarker cx={cx} cy={cy} tone="series1" outline="series1Stroke" />
+  if (payload.hasSell) return <ChartMarker cx={cx} cy={cy} tone="series7" outline="series7Stroke" />
   return <g />
 }

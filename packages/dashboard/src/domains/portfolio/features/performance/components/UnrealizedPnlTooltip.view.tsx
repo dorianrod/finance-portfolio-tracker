@@ -1,3 +1,4 @@
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -30,8 +31,8 @@ export function UnrealizedPnlTooltip({
 
   const valueTone =
     point.unrealized_gain >= 0
-      ? 'performancePositiveText'
-      : 'performanceNegativeText'
+      ? PORTFOLIO_CHART_TONES.performancePositiveText
+      : PORTFOLIO_CHART_TONES.performanceNegativeText
   const date = formatDate(point.date, { style: 'longDayMonthYear' })
 
   return (

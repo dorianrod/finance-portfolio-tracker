@@ -22,13 +22,17 @@ describe('SeriesArea', () => {
         ]}
       >
         <defs>
-          <SeriesGradient id="cost-gradient" tone="costBasis" profile="base" />
+          <SeriesGradient
+            id="cost-gradient"
+            tone={'secondary'}
+            profile="base"
+          />
         </defs>
         <ChartXAxis dataKey="name" />
         <ChartYAxis />
         <SeriesArea
           dataKey="value"
-          tone="costBasis"
+          tone={'secondary'}
           gradientId="cost-gradient"
           weight="fine"
         />
@@ -48,25 +52,18 @@ describe('SeriesArea', () => {
     expect(stops[1].getAttribute('stop-opacity')).toBe('0.2')
   })
 
-  it('resolves category and grouped palettes through shared theme data', () => {
+  it('renders supplied palette roles with the requested gradient profiles', () => {
     const category = renderToStaticMarkup(
       <svg>
         <defs>
-          <SeriesGradient id="category" category="france" profile="dense" />
+          <SeriesGradient id="category" tone="series1" profile="dense" />
         </defs>
       </svg>,
     )
     const grouped = renderToStaticMarkup(
       <svg>
         <defs>
-          <SeriesGradient
-            id="group"
-            group={{
-              key: 'Brokerage',
-              index: 0,
-              categories: { Brokerage: 'brokerage' },
-            }}
-          />
+          <SeriesGradient id="group" tone="series1" />
         </defs>
       </svg>,
     )

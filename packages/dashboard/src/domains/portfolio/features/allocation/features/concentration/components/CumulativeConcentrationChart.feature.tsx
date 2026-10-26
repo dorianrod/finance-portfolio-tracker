@@ -3,6 +3,7 @@ import type { MouseHandlerDataParam } from 'recharts'
 import { LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
@@ -105,7 +106,7 @@ export function CumulativeConcentrationChart({
           <SeriesLine
             type="linear"
             dataKey="cumulativeWeight"
-            tone="risk"
+            tone={PORTFOLIO_CHART_TONES.risk}
             weight="emphasized"
             markers="hidden"
             hover="series"

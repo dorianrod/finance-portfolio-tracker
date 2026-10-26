@@ -1,23 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { getHashedSeriesTone } from '@/shared/theme/chartColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 
-import { CategorySwatch, SeriesSwatch, ToneSwatch } from '../../Swatch.view'
+import { SeriesSwatch, ToneSwatch } from '../../Swatch.view'
 import { SWATCH_SHAPES } from '../../swatchAppearance'
 
 const meta = {
   title: 'Charts/Swatches',
   component: SeriesSwatch,
-  args: { tone: 'portfolioValue' },
+  args: { tone: 'series6' },
   argTypes: {
-    tone: { control: 'select', options: Object.keys(SEMANTIC_COLORS) },
+    tone: { control: 'select', options: Object.keys(CHART_COLORS) },
     shape: { control: 'select', options: Object.keys(SWATCH_SHAPES) },
   },
 } satisfies Meta<typeof SeriesSwatch>
 export default meta
 type Story = StoryObj<typeof meta>
 
-function ToneExample({ tone }: { tone: keyof typeof SEMANTIC_COLORS }) {
+function ToneExample({ tone }: { tone: keyof typeof CHART_COLORS }) {
   return (
     <div className="flex items-center gap-2">
       <span className="inline-block size-3">
@@ -39,7 +40,7 @@ function ShapeExample({ shape }: { shape: keyof typeof SWATCH_SHAPES }) {
 }
 export const Series: Story = {
   args: {
-    tone: 'portfolioValue',
+    tone: 'series6',
     shape: 'dot',
   },
 }
@@ -47,8 +48,8 @@ export const SemanticTones: Story = {
   render: function Tones() {
     return (
       <div className="grid gap-3">
-        {Object.keys(SEMANTIC_COLORS).map((tone) => (
-          <ToneExample key={tone} tone={tone as keyof typeof SEMANTIC_COLORS} />
+        {Object.keys(CHART_COLORS).map((tone) => (
+          <ToneExample key={tone} tone={tone as keyof typeof CHART_COLORS} />
         ))}
       </div>
     )
@@ -73,11 +74,15 @@ export const Categories: Story = {
     return (
       <div className="flex items-center gap-3">
         <span className="inline-block size-3">
-          <CategorySwatch category="Equity" selected shape="dot" />
+          <SeriesSwatch
+            tone={getHashedSeriesTone('Equity')}
+            selected
+            shape="dot"
+          />
         </span>
         Equity
         <span className="inline-block size-3">
-          <CategorySwatch category="Bonds" shape="dot" />
+          <SeriesSwatch tone={getHashedSeriesTone('Bonds')} shape="dot" />
         </span>
         Bonds
       </div>

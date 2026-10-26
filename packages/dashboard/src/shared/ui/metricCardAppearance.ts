@@ -1,6 +1,6 @@
 export const METRIC_CARD_ACCENTS = {
-  value: 'bg-value',
+  highlight: 'bg-highlight',
   accent: 'bg-accent',
   positive: 'bg-positive',
-  risk: 'bg-risk',
+  attention: 'bg-attention',
 } as const

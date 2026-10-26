@@ -1,5 +1,5 @@
 export const SURFACE_VARIANTS = {
-  issuerRow: 'border-b border-border text-sm hover:bg-surface-raised/60',
+  hoverRow: 'border-b border-border text-sm hover:bg-surface-raised/60',
   detailRow: 'border-b border-border bg-canvas/50 text-xs',
   warningConnector: 'bg-gradient-to-b from-border-strong to-warning/40',
 
@@ -17,16 +17,16 @@ export const SURFACE_VARIANTS = {
     'bg-danger-muted/50 border border-danger/50 font-medium rounded-full text-xs',
   warningCount:
     'bg-warning-muted/50 border border-warning/50 font-medium rounded-full text-xs',
-  qualityPage: 'data-quality-view',
+  cardGroup: 'ui-card-group',
   overlay: 'pointer-events-none',
   interactiveOverlay: 'pointer-events-auto',
   tableBottom: 'rounded-b-xl',
   subduedInset: 'bg-canvas/45 rounded-lg',
   responsiveInset: 'border-border border-t sm:border-l sm:border-t-0',
-  qualityAction:
-    'data-quality-kpi hover:bg-surface/60 rounded-md transition-colors',
-  qualityCard:
-    'bg-surface border border-border quality-indicator-card rounded-card shadow-sm',
+  splitAction:
+    'ui-split-action hover:bg-surface/60 rounded-md transition-colors',
+  indicatorCard:
+    'bg-surface border border-border ui-indicator-card rounded-card shadow-sm',
   raisedRow: 'bg-surface-raised/20 border-b border-border/50',
   floatingPanel: 'bg-surface border border-border-strong rounded-xl shadow-2xl',
   compactFixedTable: 'text-xs table-fixed',

@@ -14,7 +14,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { accent: 'value', label: 'Open example balance', onOpen: fn() },
+  args: { accent: 'highlight', label: 'Open example balance', onOpen: fn() },
   render: function Render(args) {
     return (
       <div className="max-w-sm">
@@ -51,7 +51,7 @@ export const Positive: Story = {
 }
 export const Risk: Story = {
   ...Playground,
-  args: { ...Playground.args, accent: 'risk' },
+  args: { ...Playground.args, accent: 'attention' },
 }
 export const Accent: Story = {
   ...Playground,

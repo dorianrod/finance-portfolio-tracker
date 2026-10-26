@@ -5,10 +5,8 @@ export function SeriesGradient({
   id,
   profile = 'soft',
   tone,
-  category,
-  group,
 }: SeriesColor & { id: string; profile?: keyof typeof GRADIENT_PROFILES }) {
-  const color = resolveSeriesColor({ tone, category, group })
+  const color = resolveSeriesColor({ tone })
   const [start, end] = GRADIENT_PROFILES[profile]
   return (
     <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">

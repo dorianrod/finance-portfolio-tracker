@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import i18n from '@/i18n/i18n'
+import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
 
 type MoneyStyle = 'currency' | 'decimal' | 'compact' | 'full'
 
@@ -52,59 +53,62 @@ export function useFormatMoney() {
       value: number | null | undefined,
       options: MoneyFormatOptions = {},
     ): string => {
-      const {
-        currency = 'EUR',
-        fallback = '—',
-        maximumFractionDigits,
-        minimumFractionDigits,
-        style = 'currency',
-        zeroAsFallback = false,
-      } = options
-      const displayValue =
-        value == null || (zeroAsFallback && value === 0) ? fallback : value
+      const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
-
-      if (
-        style === 'compact' &&
-        currency === 'EUR' &&
-        maximumFractionDigits == null &&
-        minimumFractionDigits == null
-      )
-        return formatCompactEuro(displayValue)
-      if (
-        style === 'full' &&
-        currency === 'EUR' &&
-        maximumFractionDigits == null &&
-        minimumFractionDigits == null
-      )
-        return formatFullEuro(displayValue)
-      if (
-        currency === 'EUR' &&
-        maximumFractionDigits == null &&
-        minimumFractionDigits == null
-      ) {
-        return style === 'decimal'
-          ? DECIMAL_EUR_FORMATTER.format(displayValue)
-          : INTEGER_EUR_FORMATTER.format(displayValue)
-      }
-
-      const defaultDigits = style === 'decimal' ? 2 : 0
-      const minimumDigits =
-        minimumFractionDigits ??
-        Math.min(defaultDigits, maximumFractionDigits ?? defaultDigits)
-      const maximumDigits =
-        maximumFractionDigits ?? Math.max(defaultDigits, minimumDigits)
-      const isFullEuro = style === 'full' && currency === 'EUR'
-      const formatter = new Intl.NumberFormat('en-GB', {
-        currency,
-        maximumFractionDigits: maximumDigits,
-        minimumFractionDigits: minimumDigits,
-        style: isFullEuro ? 'decimal' : 'currency',
-      })
-      return isFullEuro
-        ? `${formatter.format(displayValue)} €`
-        : formatter.format(displayValue)
+      if (isStandardEuroFormat(options))
+        return formatStandardEuro(displayValue, options.style ?? 'currency')
+      return formatConfiguredMoney(displayValue, options)
     },
     [],
   )
+}
+
+function isStandardEuroFormat(options: MoneyFormatOptions): boolean {
+  return (
+    (options.currency ?? 'EUR') === 'EUR' &&
+    options.maximumFractionDigits == null &&
+    options.minimumFractionDigits == null
+  )
+}
+function formatStandardEuro(value: number, style: MoneyStyle): string {
+  if (style === 'compact') return formatCompactEuro(value)
+  if (style === 'full') return formatFullEuro(value)
+  return style === 'decimal'
+    ? DECIMAL_EUR_FORMATTER.format(value)
+    : INTEGER_EUR_FORMATTER.format(value)
+}
+function moneyPrecision(
+  style: MoneyStyle,
+  maximumFractionDigits?: number,
+  minimumFractionDigits?: number,
+) {
+  const defaultDigits = style === 'decimal' ? 2 : 0
+  const minimumDigits =
+    minimumFractionDigits ??
+    Math.min(defaultDigits, maximumFractionDigits ?? defaultDigits)
+  const maximumDigits =
+    maximumFractionDigits ?? Math.max(defaultDigits, minimumDigits)
+
+  return { maximumDigits, minimumDigits }
+}
+function formatConfiguredMoney(
+  displayValue: number,
+  options: MoneyFormatOptions,
+): string {
+  const { currency = 'EUR', style = 'currency' } = options
+  const { maximumDigits, minimumDigits } = moneyPrecision(
+    style,
+    options.maximumFractionDigits,
+    options.minimumFractionDigits,
+  )
+  const isFullEuro = style === 'full' && currency === 'EUR'
+  const formatter = new Intl.NumberFormat('en-GB', {
+    currency,
+    maximumFractionDigits: maximumDigits,
+    minimumFractionDigits: minimumDigits,
+    style: isFullEuro ? 'decimal' : 'currency',
+  })
+  return isFullEuro
+    ? `${formatter.format(displayValue)} €`
+    : formatter.format(displayValue)
 }

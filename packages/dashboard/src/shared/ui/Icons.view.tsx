@@ -96,7 +96,7 @@ export function HierarchyIcon() {
   )
 }
 
-export function AllocationIcon() {
+export function PieChartIcon() {
   return (
     <svg
       aria-hidden="true"

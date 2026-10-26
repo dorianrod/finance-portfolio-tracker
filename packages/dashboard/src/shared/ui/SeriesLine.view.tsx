@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Line } from 'recharts'
 
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors'
 
 import {
   getLineHoverMarker,
@@ -30,7 +30,7 @@ type SeriesLineProps = Pick<
   ComponentProps<typeof Line>,
   Extract<keyof ComponentProps<typeof Line>, LineDataKeys>
 > & {
-  tone: keyof typeof SEMANTIC_COLORS
+  tone: keyof typeof CHART_COLORS
   weight?: keyof typeof LINE_WEIGHTS
   pattern?: keyof typeof LINE_PATTERNS
   markers?: keyof typeof LINE_MARKERS
@@ -49,7 +49,7 @@ export function SeriesLine({
   ...props
 }: SeriesLineProps) {
   const { renderer, content } = partitionChartSlot(children, SeriesLineMarkers)
-  const color = SEMANTIC_COLORS[tone]
+  const color = CHART_COLORS[tone]
   return (
     <Line
       {...props}

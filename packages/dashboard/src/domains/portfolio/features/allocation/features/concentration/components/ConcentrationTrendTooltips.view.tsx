@@ -1,13 +1,14 @@
 import { formatConcentrationDelta } from '@/domains/portfolio/features/allocation/features/concentration/helpers/formatters/formatConcentrationDelta'
 import { formatPositionCount } from '@/domains/portfolio/features/allocation/features/concentration/helpers/formatters/formatPositionCount'
 import { type ConcentrationChartRow } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationTrendController'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { HistoricalConcentrationHolding } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import type { SemanticColorKey } from '@/shared/theme/semanticColors'
+import type { ChartTone } from '@/shared/theme/chartColors'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { SeriesSwatch } from '@/shared/ui/Swatch.view'
@@ -31,7 +32,7 @@ export function ThresholdRow({
   delta,
 }: {
   label: string
-  tone: SemanticColorKey
+  tone: ChartTone
   value: number | null
   delta: number | null
 }) {
@@ -76,25 +77,25 @@ export function ConcentrationTrendTooltip({
           <Stack gap="compact">
             <ThresholdRow
               label="25%"
-              tone={'risk'}
+              tone={PORTFOLIO_CHART_TONES.risk}
               value={row.positionsTo25Pct}
               delta={row.positionsTo25Delta}
             />
             <ThresholdRow
               label="50%"
-              tone={'totalChange'}
+              tone={PORTFOLIO_CHART_TONES.totalChange}
               value={row.positionsTo50Pct}
               delta={row.positionsTo50Delta}
             />
             <ThresholdRow
               label="75%"
-              tone={'netContributions'}
+              tone={PORTFOLIO_CHART_TONES.netContributions}
               value={row.positionsTo75Pct}
               delta={row.positionsTo75Delta}
             />
             <ThresholdRow
               label="90%"
-              tone={'portfolioValue'}
+              tone={PORTFOLIO_CHART_TONES.portfolioValue}
               value={row.positionsTo90Pct}
               delta={row.positionsTo90Delta}
             />
@@ -135,10 +136,10 @@ export function ChartLegend() {
         <Inline as="div" flow="wrap" gap="relaxed">
           {(
             [
-              ['25%', 'risk'],
-              ['50%', 'totalChange'],
-              ['75%', 'netContributions'],
-              ['90%', 'portfolioValue'],
+              ['25%', PORTFOLIO_CHART_TONES.risk],
+              ['50%', PORTFOLIO_CHART_TONES.totalChange],
+              ['75%', PORTFOLIO_CHART_TONES.netContributions],
+              ['90%', PORTFOLIO_CHART_TONES.portfolioValue],
             ] as const
           ).map(([label, tone]) => (
             <ChartLegendItem key={label} label={label} tone={tone} />
@@ -153,7 +154,7 @@ export function ChartLegendItem({
   tone,
   label,
 }: {
-  tone: SemanticColorKey
+  tone: ChartTone
   label: string
 }) {
   return (

@@ -14,7 +14,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { children: 'Example chart label', tone: 'portfolioValue' },
+  args: { children: 'Example chart label', tone: 'series6' },
 }
 export const Tones: Story = {
   render: function Tones() {
@@ -30,5 +30,5 @@ export const Tones: Story = {
   },
 }
 export const Category: Story = {
-  args: { category: 'Equity', children: 'Equity category' },
+  args: { tone: 'series1', children: 'Equity category' },
 }

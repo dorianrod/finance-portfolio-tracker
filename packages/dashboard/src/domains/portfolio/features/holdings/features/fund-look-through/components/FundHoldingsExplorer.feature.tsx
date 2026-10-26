@@ -93,7 +93,7 @@ export function FundHoldingsExplorer({
       <div>
         <div>
           <TablePanel.Header as="div">
-            <Grid arrangement="exposure" inset="compact">
+            <Grid arrangement="labelThreeValues" inset="compact">
               <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
               <Text align="right">
                 {i18n.t('ui.fundholdingsexplorer.exposure')}

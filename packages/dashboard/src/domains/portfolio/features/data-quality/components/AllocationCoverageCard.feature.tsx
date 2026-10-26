@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { QualityIndicatorCard } from '@/domains/portfolio/shared/components/quality/QualityIndicatorCard.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import type {
   AccountCoverage,
@@ -85,12 +86,12 @@ function AccountCoverageRow({
         <Surface variant="track" title={detail}>
           <Inline as="div" height="full">
             {coverage.allocated > 0 && (
-              <SeriesSwatch as="div" tone="coverage" share={allocatedPct} />
+              <SeriesSwatch as="div" tone={PORTFOLIO_CHART_TONES.coverage} share={allocatedPct} />
             )}
             {coverage.unallocated > 0 && (
               <SeriesSwatch
                 as="div"
-                tone="coverageGap"
+                tone={PORTFOLIO_CHART_TONES.coverageGap}
                 share={unallocatedPct}
               />
             )}

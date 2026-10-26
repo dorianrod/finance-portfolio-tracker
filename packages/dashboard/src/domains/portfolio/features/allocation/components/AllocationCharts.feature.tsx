@@ -1,12 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
 
-import { ConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationChart.feature'
-import { ConcentrationTrendSection } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationTrendSection.feature'
-import { CumulativeConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/CumulativeConcentrationChart.feature'
-import { useConcentrationDescriptions } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationDescriptions'
 import { useAllocationCharts } from '@/domains/portfolio/features/allocation/services/useAllocationCharts'
-import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import {
   dashboardAllocationFilterAtom,
   dashboardAllocationViewAtom,
@@ -20,11 +15,10 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import i18n from '@/i18n/i18n'
-import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { DonutCard } from './DonutCard.feature'
-import { EvoCard } from './EvoCard.feature'
+import { AllocationCurrentView } from './AllocationCurrentView.feature'
+import { AllocationTrendView } from './AllocationTrendView.feature'
 import { FilteredPositionsTable } from './FilteredPositionsTable.feature'
 
 type AllocationChartsProps = {
@@ -54,30 +48,7 @@ export function AllocationCharts({
     useState<ConcentrationMode>('held')
   const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
   const view = useAtomValue(dashboardAllocationViewAtom)
-  const {
-    baseClasse,
-    baseCurrency,
-    baseGeo,
-    baseSecteur,
-    concentration,
-    cumulativeConcentration,
-    hasApplicableValue,
-    hasEvolution,
-    hasSelectedValue,
-    heldAssetConcentration,
-    heldConcentrationHistory,
-    latestClasse,
-    latestCurrency,
-    latestGeo,
-    latestSecteur,
-    lookThroughConcentration,
-    lookThroughConcentrationHistory,
-    tableRows,
-    trendClasse,
-    trendCurrency,
-    trendGeo,
-    trendSecteur,
-  } = useAllocationCharts({
+  const charts = useAllocationCharts({
     positions,
     rawPositions,
     fundHoldings,
@@ -90,11 +61,18 @@ export function AllocationCharts({
     dateFrom,
     dateTo,
   })
-  const { cumulativeDescription, holdingsDescription } =
-    useConcentrationDescriptions(concentration, concentrationMode)
-  const hasConcentrationData =
-    heldAssetConcentration.allHoldings.length > 0 ||
-    lookThroughConcentration.allHoldings.length > 0
+  const {
+    baseGeo,
+    baseSecteur,
+    baseCurrency,
+    baseClasse,
+    hasSelectedValue,
+    hasApplicableValue,
+    tableRows,
+  } = charts
+  const hasCurrentData = [baseGeo, baseSecteur, baseCurrency, baseClasse].some(
+    (points) => points.length > 0,
+  )
   if (rawData.loading)
     return (
       <Text as="p" variant="body" tone="muted">
@@ -112,13 +90,7 @@ export function AllocationCharts({
     )
   }
 
-  if (
-    view === 'current' &&
-    !baseGeo.length &&
-    !baseSecteur.length &&
-    !baseCurrency.length &&
-    !baseClasse.length
-  ) {
+  if (view === 'current' && !hasCurrentData) {
     return (
       <Text as="p" variant="body" tone="subtle">
         {i18n.t(
@@ -131,161 +103,19 @@ export function AllocationCharts({
   return (
     <div className="flex flex-col gap-4 mb-6">
       {view === 'current' && (
-        <>
-          {hasConcentrationData && (
-            <section>
-              <div className="mb-3 flex items-center justify-between gap-4">
-                <div>
-                  <Text as="h3" variant="label" tone="secondary">
-                    {i18n.t('ui.allocationcharts.assetConcentration')}
-                  </Text>
-                  <div className="mt-0.5">
-                    <Text as="p" variant="caption" tone="subtle">
-                      {i18n.t(
-                        'ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn',
-                      )}
-                    </Text>
-                  </div>
-                </div>
-                <ConcentrationModeToggle
-                  value={concentrationMode}
-                  onChange={setConcentrationMode}
-                />
-              </div>
-              {concentration.allHoldings.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-                  <CumulativeConcentrationChart
-                    data={cumulativeConcentration}
-                    effectiveDate={dateTo}
-                    description={cumulativeDescription}
-                  />
-                  <ConcentrationChart
-                    data={concentration.holdings}
-                    effectiveDate={dateTo}
-                    topTenValue={concentration.topTenValue}
-                    topTenPct={concentration.topTenPct}
-                    description={holdingsDescription}
-                  />
-                </div>
-              ) : (
-                <Surface variant="contentCard" tone="subtle" align="center">
-                  {i18n.t(
-                    'ui.allocationcharts.noIdentifiedLookThroughExposureForTheCurrentSelection',
-                  )}
-                </Surface>
-              )}
-            </section>
-          )}
-          <section>
-            <div className="mb-3">
-              <Text as="h3" variant="label" tone="secondary">
-                {i18n.t('ui.allocationcharts.portfolioBreakdown')}
-              </Text>
-              <div className="mt-0.5">
-                <Text as="p" variant="caption" tone="subtle">
-                  {i18n.t(
-                    'ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector',
-                  )}
-                </Text>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {latestGeo && (
-                <DonutCard
-                  title={i18n.t('ui.allocationcharts.geography')}
-                  point={latestGeo}
-                  dimension="geo"
-                />
-              )}
-              {latestClasse && (
-                <DonutCard
-                  title={i18n.t('ui.allocationcharts.assetClass')}
-                  point={latestClasse}
-                  dimension="classe"
-                />
-              )}
-              {latestSecteur && (
-                <DonutCard
-                  title={i18n.t('ui.allocationcharts.sector')}
-                  point={latestSecteur}
-                  dimension="secteur"
-                />
-              )}
-              {latestCurrency && (
-                <DonutCard
-                  title={i18n.t(
-                    'ui.allocationcharts.currencyEquitiesFixedIncome',
-                  )}
-                  point={latestCurrency}
-                  dimension="currency"
-                />
-              )}
-            </div>
-          </section>
-        </>
+        <AllocationCurrentView
+          charts={charts}
+          concentrationMode={concentrationMode}
+          onModeChange={setConcentrationMode}
+          dateTo={dateTo}
+        />
       )}
-
       {view === 'trend' && (
-        <>
-          <ConcentrationTrendSection
-            heldPoints={heldConcentrationHistory}
-            lookThroughPoints={lookThroughConcentrationHistory}
-            // eslint-disable-next-line local/no-prop-drilling -- Availability is aggregate orchestration state owned by this parent feature.
-            lookThroughAvailable={fundHoldingsHistory.length > 0}
-          />
-          {hasEvolution ? (
-            <section>
-              <div className="mb-3">
-                <Text as="h3" variant="label" tone="secondary">
-                  {i18n.t('ui.allocationcharts.portfolioBreakdownTrends')}
-                </Text>
-                <div className="mt-0.5">
-                  <Text as="p" variant="caption" tone="subtle">
-                    {i18n.t(
-                      'ui.allocationcharts.trackHowTheMixChangedByGeographyAssetClass',
-                    )}
-                  </Text>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {trendGeo.length >= 2 && (
-                  <EvoCard
-                    title={i18n.t('ui.allocationcharts.geography')}
-                    points={trendGeo}
-                    dimension="geo"
-                  />
-                )}
-                {trendClasse.length >= 2 && (
-                  <EvoCard
-                    title={i18n.t('ui.allocationcharts.assetClass')}
-                    points={trendClasse}
-                    dimension="classe"
-                  />
-                )}
-                {trendSecteur.length >= 2 && (
-                  <EvoCard
-                    title={i18n.t('ui.allocationcharts.sector')}
-                    points={trendSecteur}
-                    dimension="secteur"
-                  />
-                )}
-                {trendCurrency.length >= 2 && (
-                  <EvoCard
-                    title={i18n.t('ui.allocationcharts.currency')}
-                    points={trendCurrency}
-                    dimension="currency"
-                  />
-                )}
-              </div>
-            </section>
-          ) : (
-            <Surface variant="contentCard" tone="subtle" align="center">
-              {i18n.t('ui.allocationcharts.notEnoughPortfolioBreakdownHistory')}
-            </Surface>
-          )}
-        </>
+        <AllocationTrendView
+          charts={charts}
+          lookThroughAvailable={fundHoldingsHistory.length > 0}
+        />
       )}
-
       {/* ── Filtered positions panel ─────────────────────────────────────────────── */}
       <FilteredPositionsTable rows={tableRows} />
     </div>

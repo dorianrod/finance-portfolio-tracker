@@ -20,7 +20,7 @@ export const Playground: Story = {
         <SeriesBar
           dataKey="value"
           name="Example balance"
-          tone="portfolioValue"
+          tone={'series6'}
           motion="none"
         >
           <ChartLabels {...args} />

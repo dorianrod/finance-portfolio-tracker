@@ -4,7 +4,7 @@ import { useId } from 'react'
 import { ChartTooltip } from '../../ChartTooltip.view'
 import { SeriesArea } from '../../SeriesArea.view'
 import { SeriesGradient } from '../../SeriesGradient.view'
-import { CartesianExample, TransactionDotExample } from '../ChartExamples.view'
+import { CartesianExample, MarkerDotExample } from '../ChartExamples.view'
 
 const meta = {
   title: 'Charts/Series/Area',
@@ -18,7 +18,7 @@ function Render(args: React.ComponentProps<typeof SeriesArea>) {
   return (
     <CartesianExample>
       <defs>
-        <SeriesGradient id={id} tone="portfolioValue" profile="soft" />
+        <SeriesGradient id={id} tone={'series6'} profile="soft" />
       </defs>
       <ChartTooltip highlight="line" />
       <SeriesArea {...args} gradientId={id} />
@@ -28,7 +28,7 @@ function Render(args: React.ComponentProps<typeof SeriesArea>) {
 export const Playground: Story = {
   args: {
     dataKey: 'value',
-    tone: 'portfolioValue',
+    tone: 'series6',
     weight: 'regular',
     markers: 'normal',
   },
@@ -38,18 +38,18 @@ export const Projection: Story = {
   ...Playground,
   args: { ...Playground.args, pattern: 'projection' },
 }
-export const TransactionMarkers: Story = {
+export const ChartMarkers: Story = {
   ...Playground,
   render: function Render(args) {
     const id = useId()
     return (
       <CartesianExample>
         <defs>
-          <SeriesGradient id={id} tone="portfolioValue" />
+          <SeriesGradient id={id} tone={'series6'} />
         </defs>
         <SeriesArea {...args} gradientId={id}>
           <SeriesArea.Markers>
-            <TransactionDotExample />
+            <MarkerDotExample />
           </SeriesArea.Markers>
         </SeriesArea>
       </CartesianExample>

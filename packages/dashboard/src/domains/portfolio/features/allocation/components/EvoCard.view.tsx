@@ -2,6 +2,7 @@ import { type ReactNode, useId } from 'react'
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
@@ -11,7 +12,7 @@ import { Inline } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 function EvolutionLegendItem({
@@ -31,7 +32,7 @@ function EvolutionLegendItem({
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <CategorySwatch category={category} shape="bar" size="default" />
+          <SeriesSwatch tone={getAllocationTone(category)} shape="bar" size="default" />
           {category}
         </Inline>
       </Text>
@@ -46,13 +47,13 @@ function EvolutionLegendItem({
       variant="legend"
       dimmed={isDimmed}
     >
-      <CategorySwatch
-        category={category}
+      <SeriesSwatch
+        tone={getAllocationTone(category)}
         shape="bar"
         selected={isActive}
         size="default"
       />
-      <ChartText category={category}>{category}</ChartText>
+      <ChartText tone={getAllocationTone(category)}>{category}</ChartText>
     </ToggleButton>
   )
 }
@@ -64,7 +65,7 @@ function EvolutionGradient({
   category: string
   gradientId: string
 }) {
-  return <SeriesGradient id={gradientId} profile="dense" category={category} />
+  return <SeriesGradient id={gradientId} profile="dense" tone={getAllocationTone(category)} />
 }
 
 function EvolutionArea({
@@ -79,7 +80,7 @@ function EvolutionArea({
       type="monotone"
       dataKey={category}
       stackId="a"
-      category={category}
+      tone={getAllocationTone(category)}
       gradientId={`${gradientId}`}
       weight="fine"
     />

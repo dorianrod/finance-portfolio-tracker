@@ -8,12 +8,7 @@ describe('ChartText', () => {
   it('resolves semantic chart tones and owns section separators while preserving layout', () => {
     const html = renderToStaticMarkup(
       <Layout spaceBefore="compact">
-        <ChartText
-          as="p"
-          tone="performancePositiveText"
-          variant="strong"
-          separator
-        >
+        <ChartText as="p" tone={'positiveText'} variant="strong" separator>
           Gain
         </ChartText>
       </Layout>,

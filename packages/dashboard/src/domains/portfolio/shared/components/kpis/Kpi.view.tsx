@@ -18,12 +18,12 @@ export type KpiAccent =
 
 const ACCENT_TONES = {
   neutral: 'subtle',
-  portfolio: 'value',
+  portfolio: 'highlight',
   contributions: 'accent',
   positive: 'positive',
   negative: 'negative',
-  income: 'income',
-  return: 'return',
+  income: 'decorative',
+  return: 'contrast',
 } as const
 
 function KpiRoot({
