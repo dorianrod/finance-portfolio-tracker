@@ -12,32 +12,6 @@ import {
 } from './chartAppearance'
 import { partitionChartSlot } from './chartSlots'
 
-type LineDataKeys =
-  | 'data'
-  | 'dataKey'
-  | 'type'
-  | 'xAxisId'
-  | 'yAxisId'
-  | 'name'
-  | 'unit'
-  | 'connectNulls'
-  | 'hide'
-  | 'legendType'
-  | 'id'
-  | 'style'
-  | 'children'
-type SeriesLineProps = Pick<
-  ComponentProps<typeof Line>,
-  Extract<keyof ComponentProps<typeof Line>, LineDataKeys>
-> & {
-  tone: keyof typeof CHART_COLORS
-  weight?: keyof typeof LINE_WEIGHTS
-  pattern?: keyof typeof LINE_PATTERNS
-  markers?: keyof typeof LINE_MARKERS
-  hover?: keyof typeof LINE_HOVER_MARKERS | 'series'
-  motion?: 'none'
-}
-
 export function SeriesLine({
   tone,
   weight,
@@ -63,6 +37,32 @@ export function SeriesLine({
       {content}
     </Line>
   )
+}
+
+type LineDataKeys =
+  | 'data'
+  | 'dataKey'
+  | 'type'
+  | 'xAxisId'
+  | 'yAxisId'
+  | 'name'
+  | 'unit'
+  | 'connectNulls'
+  | 'hide'
+  | 'legendType'
+  | 'id'
+  | 'style'
+  | 'children'
+type SeriesLineProps = Pick<
+  ComponentProps<typeof Line>,
+  Extract<keyof ComponentProps<typeof Line>, LineDataKeys>
+> & {
+  tone: keyof typeof CHART_COLORS
+  weight?: keyof typeof LINE_WEIGHTS
+  pattern?: keyof typeof LINE_PATTERNS
+  markers?: keyof typeof LINE_MARKERS
+  hover?: keyof typeof LINE_HOVER_MARKERS | 'series'
+  motion?: 'none'
 }
 
 function SeriesLineMarkers({ children }: { children: ReactNode }) {

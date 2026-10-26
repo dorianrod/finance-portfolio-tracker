@@ -1,15 +1,7 @@
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 
-import type { ExposureRow } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
-
-const ROW_HEIGHT = 40
-
-function rowKey(row: ExposureRow): string {
-  if (row.kind === 'issuer') return row.issuer.id
-  if (row.kind === 'security') return `${row.issuer.id}|${row.security.id}`
-  return `${row.issuer.id}|${row.security.id}|${row.fund}`
-}
+import type { ExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 
 export function useVirtualExposureList(rows: ExposureRow[]) {
   const listRef = useRef<HTMLDivElement>(null)
@@ -47,4 +39,12 @@ export function useVirtualExposureList(rows: ExposureRow[]) {
     () => ({ listRef, scrollMargin, virtualizer, virtualRows }),
     [listRef, scrollMargin, virtualizer, virtualRows],
   )
+}
+
+const ROW_HEIGHT = 40
+
+function rowKey(row: ExposureRow): string {
+  if (row.kind === 'issuer') return row.issuer.id
+  if (row.kind === 'security') return `${row.issuer.id}|${row.security.id}`
+  return `${row.issuer.id}|${row.security.id}|${row.fund}`
 }

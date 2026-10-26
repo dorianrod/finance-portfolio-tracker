@@ -1,10 +1,4 @@
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
-
-export type AccountTypeLabelPosition = {
-  x: number
-  y: number
-  isRight: boolean
-}
+import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 
 export function resolveAccountTypeLabelPositions(
   data: AccountTypePoint[],
@@ -59,4 +53,10 @@ export function resolveAccountTypeLabelPositions(
   }
 
   return positions.toSorted((a, b) => a.index - b.index)
+}
+
+export type AccountTypeLabelPosition = {
+  x: number
+  y: number
+  isRight: boolean
 }

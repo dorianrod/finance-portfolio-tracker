@@ -5,8 +5,6 @@ import type { SWATCH_TONES } from './swatchAppearance'
 import { Text } from './Text.view'
 import type { TextTone } from './textAppearance'
 
-type ValueProps = { children: ReactNode; tone?: TextTone; title?: string }
-
 export function Metric({
   tone = 'subtle',
   children,
@@ -23,6 +21,8 @@ export function Metric({
     </div>
   )
 }
+
+type ValueProps = { children: ReactNode; tone?: TextTone; title?: string }
 
 function MetricValue({ children, tone = 'default', title }: ValueProps) {
   return (

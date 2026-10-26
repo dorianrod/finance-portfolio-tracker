@@ -3,6 +3,99 @@ import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/res
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
+export function computePerformanceContributions(
+  rawPositions: RawPosition[],
+  rawOperations: RawOperation[],
+  horizon: ContributionHorizon,
+  asOfDate: Date | undefined,
+  filters: PerformanceContributionFilters,
+): PerformanceContributionSummary {
+  if (!asOfDate) return unavailableSummary(horizon)
+
+  const requestedEnd = datePart(asOfDate)
+  const positionsThroughEnd = rawPositions.filter(
+    (row) => datePart(row.snapshot_date) <= requestedEnd,
+  )
+  const scope = buildContributionScope(positionsThroughEnd)
+
+  const positions = positionsThroughEnd.filter((row) =>
+    isPositionInScope(row, filters),
+  )
+  const snapshotDates = [
+    ...new Set(positions.map((row) => datePart(row.snapshot_date))),
+  ].toSorted((left, right) => left - right)
+  const endDate = snapshotDates.at(-1)
+  if (!endDate) return unavailableSummary(horizon)
+
+  const period = resolveContributionPeriod(
+    positions,
+    snapshotDates,
+    endDate,
+    horizon,
+  )
+  if (!period) return unavailableSummary(horizon)
+  const { startDate } = period
+
+  const contributions = new Map<string, ContributionAccumulator>()
+  const touch = (
+    key: string,
+    name: string,
+    ticker: string,
+    account: string,
+  ): ContributionAccumulator => {
+    const current = contributions.get(key) ?? {
+      key,
+      name: resolveAssetName({ name, ticker }, key),
+      ticker,
+      amount: 0,
+      accounts: new Set<string>(),
+    }
+    if (!current.ticker && ticker) current.ticker = ticker
+    if ((!current.name || current.name === current.key) && name)
+      current.name = name
+    current.accounts.add(account)
+    contributions.set(key, current)
+    return current
+  }
+
+  addPositionContributions(positions, period, touch)
+  addOperationContributions(rawOperations, period, scope, filters, touch)
+
+  const nonZero = [...contributions.values()].filter(
+    (item) => Math.abs(item.amount) >= 0.005,
+  )
+  const positiveTotal = nonZero.reduce(
+    (sum, item) => sum + Math.max(item.amount, 0),
+    0,
+  )
+  const negativeTotal = nonZero.reduce(
+    (sum, item) => sum + Math.max(-item.amount, 0),
+    0,
+  )
+  const contributors = nonZero
+    .filter((item) => item.amount > 0)
+    .toSorted((left, right) => right.amount - left.amount)
+    .slice(0, 5)
+    .map((item) => makeContribution(item, positiveTotal))
+  const detractors = nonZero
+    .filter((item) => item.amount < 0)
+    .toSorted((left, right) => left.amount - right.amount)
+    .slice(0, 5)
+    .map((item) => makeContribution(item, negativeTotal))
+
+  return {
+    horizon,
+    available: true,
+    startDate: new Date(startDate),
+    endDate: new Date(endDate),
+    netContribution: Math.round((positiveTotal - negativeTotal) * 100) / 100,
+    positiveTotal: Math.round(positiveTotal * 100) / 100,
+    negativeTotal: Math.round(negativeTotal * 100) / 100,
+    contributors,
+    detractors,
+  }
+}
+
 export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
 
 export type PerformanceContribution = {
@@ -155,99 +248,6 @@ function makeContribution(
     amount: Math.round(item.amount * 100) / 100,
     share: denominator > 0 ? (Math.abs(item.amount) / denominator) * 100 : 0,
     accounts: [...item.accounts].toSorted(),
-  }
-}
-
-export function computePerformanceContributions(
-  rawPositions: RawPosition[],
-  rawOperations: RawOperation[],
-  horizon: ContributionHorizon,
-  asOfDate: Date | undefined,
-  filters: PerformanceContributionFilters,
-): PerformanceContributionSummary {
-  if (!asOfDate) return unavailableSummary(horizon)
-
-  const requestedEnd = datePart(asOfDate)
-  const positionsThroughEnd = rawPositions.filter(
-    (row) => datePart(row.snapshot_date) <= requestedEnd,
-  )
-  const scope = buildContributionScope(positionsThroughEnd)
-
-  const positions = positionsThroughEnd.filter((row) =>
-    isPositionInScope(row, filters),
-  )
-  const snapshotDates = [
-    ...new Set(positions.map((row) => datePart(row.snapshot_date))),
-  ].toSorted((left, right) => left - right)
-  const endDate = snapshotDates.at(-1)
-  if (!endDate) return unavailableSummary(horizon)
-
-  const period = resolveContributionPeriod(
-    positions,
-    snapshotDates,
-    endDate,
-    horizon,
-  )
-  if (!period) return unavailableSummary(horizon)
-  const { startDate } = period
-
-  const contributions = new Map<string, ContributionAccumulator>()
-  const touch = (
-    key: string,
-    name: string,
-    ticker: string,
-    account: string,
-  ): ContributionAccumulator => {
-    const current = contributions.get(key) ?? {
-      key,
-      name: resolveAssetName({ name, ticker }, key),
-      ticker,
-      amount: 0,
-      accounts: new Set<string>(),
-    }
-    if (!current.ticker && ticker) current.ticker = ticker
-    if ((!current.name || current.name === current.key) && name)
-      current.name = name
-    current.accounts.add(account)
-    contributions.set(key, current)
-    return current
-  }
-
-  addPositionContributions(positions, period, touch)
-  addOperationContributions(rawOperations, period, scope, filters, touch)
-
-  const nonZero = [...contributions.values()].filter(
-    (item) => Math.abs(item.amount) >= 0.005,
-  )
-  const positiveTotal = nonZero.reduce(
-    (sum, item) => sum + Math.max(item.amount, 0),
-    0,
-  )
-  const negativeTotal = nonZero.reduce(
-    (sum, item) => sum + Math.max(-item.amount, 0),
-    0,
-  )
-  const contributors = nonZero
-    .filter((item) => item.amount > 0)
-    .toSorted((left, right) => right.amount - left.amount)
-    .slice(0, 5)
-    .map((item) => makeContribution(item, positiveTotal))
-  const detractors = nonZero
-    .filter((item) => item.amount < 0)
-    .toSorted((left, right) => left.amount - right.amount)
-    .slice(0, 5)
-    .map((item) => makeContribution(item, negativeTotal))
-
-  return {
-    horizon,
-    available: true,
-    startDate: new Date(startDate),
-    endDate: new Date(endDate),
-    netContribution: Math.round((positiveTotal - negativeTotal) * 100) / 100,
-    positiveTotal: Math.round(positiveTotal * 100) / 100,
-    negativeTotal: Math.round(negativeTotal * 100) / 100,
-    contributors,
-    detractors,
   }
 }
 

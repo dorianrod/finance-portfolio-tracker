@@ -6,6 +6,34 @@ import { SWATCH_SIZES } from './layoutAppearance'
 import { layoutShare } from './layoutGeometry'
 import { SWATCH_SHAPES, SWATCH_TONES } from './swatchAppearance'
 
+export function SeriesSwatch({
+  tone,
+  selected = false,
+  style,
+  ...props
+}: SwatchProps & { tone: keyof typeof CHART_COLORS; selected?: boolean }) {
+  return (
+    <SwatchFrame
+      {...props}
+      style={{
+        ...style,
+        backgroundColor: CHART_COLORS[tone],
+        ...(selected && {
+          outline: '2px solid var(--ds-content)',
+          outlineOffset: 1,
+        }),
+      }}
+    />
+  )
+}
+
+export function ToneSwatch({
+  tone,
+  ...props
+}: SwatchProps & { tone: keyof typeof SWATCH_TONES }) {
+  return <SwatchFrame {...props} tone={tone} />
+}
+
 type SwatchProps = Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
   as?: 'span' | 'div' | 'i'
   shape?: keyof typeof SWATCH_SHAPES
@@ -41,32 +69,4 @@ function SwatchFrame({
         .filter(Boolean)
         .join(' ') || undefined,
   })
-}
-
-export function SeriesSwatch({
-  tone,
-  selected = false,
-  style,
-  ...props
-}: SwatchProps & { tone: keyof typeof CHART_COLORS; selected?: boolean }) {
-  return (
-    <SwatchFrame
-      {...props}
-      style={{
-        ...style,
-        backgroundColor: CHART_COLORS[tone],
-        ...(selected && {
-          outline: '2px solid var(--ds-content)',
-          outlineOffset: 1,
-        }),
-      }}
-    />
-  )
-}
-
-export function ToneSwatch({
-  tone,
-  ...props
-}: SwatchProps & { tone: keyof typeof SWATCH_TONES }) {
-  return <SwatchFrame {...props} tone={tone} />
 }

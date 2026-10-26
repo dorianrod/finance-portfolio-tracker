@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
+import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 
 import {
   AssetIrrView,

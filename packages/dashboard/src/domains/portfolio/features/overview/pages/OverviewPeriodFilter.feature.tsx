@@ -1,5 +1,5 @@
+import type { OverviewWindows } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import { formatOverviewPeriodRange } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewPeriodRange'
-import type { OverviewWindows } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -8,10 +8,6 @@ import { PeriodFilterIcon } from '@/shared/ui/Icons.view'
 import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-type OverviewPeriodFilterProps = {
-  windows: OverviewWindows
-}
 
 export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
   const formatDate = useFormatDate()
@@ -62,4 +58,8 @@ export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
       </Group>
     </div>
   )
+}
+
+type OverviewPeriodFilterProps = {
+  windows: OverviewWindows
 }

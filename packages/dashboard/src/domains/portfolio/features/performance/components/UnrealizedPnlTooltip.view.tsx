@@ -8,16 +8,6 @@ import { ChartText } from '@/shared/ui/ChartText.view'
 import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-export type UnrealizedPnlPoint = PortfolioHistoryPoint & {
-  unrealized_gain_pct: number | null
-  snapshot_change: number | null
-}
-
-export type UnrealizedPnlTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: UnrealizedPnlPoint }>
-}
-
 export function UnrealizedPnlTooltip({
   active,
   payload,
@@ -75,4 +65,14 @@ export function UnrealizedPnlTooltip({
       )}
     </TooltipBox>
   )
+}
+
+export type UnrealizedPnlPoint = PortfolioHistoryPoint & {
+  unrealized_gain_pct: number | null
+  snapshot_change: number | null
+}
+
+export type UnrealizedPnlTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: UnrealizedPnlPoint }>
 }

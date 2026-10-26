@@ -3,6 +3,8 @@ import { resolve } from 'node:path'
 import { ESLint } from 'eslint'
 import { describe, expect, it } from 'vitest'
 
+import { businessBoundaryViolation } from './business-ownership.js'
+
 const directory = resolve(import.meta.dirname, '..')
 const eslint = new ESLint({ cwd: directory })
 const sharedFile = 'src/shared/helpers/mappers/toCalendarMonth.ts'
@@ -21,6 +23,70 @@ async function lint(code, file) {
 }
 
 describe('configured import boundaries', () => {
+  it.each([
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'",
+    "export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'",
+    "const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison')",
+    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison').OverviewComparison",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/wealth/../overview/helpers/calculators/buildOverviewComparison'",
+  ])(
+    'rejects sibling feature dependencies: %s',
+    async (code) => {
+      expect(await lint(code, serviceFile)).toMatchObject([
+        { messageId: 'siblingFeature', severity: 2 },
+      ])
+    },
+    20_000,
+  )
+
+  it.each([
+    "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
+    "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'",
+  ])(
+    'does not expose child implementation to parent shared contracts: %s',
+    async (code) => {
+      expect(
+        await lint(
+          code,
+          'src/domains/portfolio/features/diversification/shared/types/diversificationInputs.type.ts',
+        ),
+      ).toMatchObject([{ messageId: 'sharedScope', severity: 2 }])
+    },
+  )
+
+  it('keeps parent shared contracts independent of child renderers', async () => {
+    expect(
+      await lint(
+        "import { ConcentrationSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature'",
+        'src/domains/portfolio/features/diversification/shared/types/diversificationInputs.type.ts',
+      ),
+    ).toMatchObject([{ messageId: 'sharedScope', severity: 2 }])
+  })
+
+  it('rejects dependencies between nested sibling capabilities', async () => {
+    expect(
+      await lint(
+        "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
+        'src/domains/portfolio/features/diversification/features/allocation/services/useAllocationCharts.ts',
+      ),
+    ).toMatchObject([{ messageId: 'siblingFeature', severity: 2 }])
+  })
+
+  it('allows parent composition and ancestor shared contracts', async () => {
+    expect(
+      await lint(
+        "import { CurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration.feature'",
+        'src/app/DashboardDiversification.feature.tsx',
+      ),
+    ).toEqual([])
+    expect(
+      await lint(
+        "import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'",
+        'src/domains/portfolio/features/diversification/features/allocation/services/useAllocationCharts.ts',
+      ),
+    ).toEqual([])
+  })
+
   it.each([
     "import { HISTORY } from '@/shared/ui/storybook/fixtures'",
     "import { HISTORY } from '../../ui/storybook/fixtures'",
@@ -183,4 +249,46 @@ describe('configured import boundaries', () => {
       expect(await lint(code, file)).toEqual([])
     },
   )
+})
+
+describe('business ownership paths', () => {
+  it.each([
+    [
+      'domains/orders/services/load.ts',
+      'domains/contracts/types/contract.ts',
+      'businessDomain',
+    ],
+    [
+      'domains/sales/orders/services/load.ts',
+      'domains/sales/invoices/types/invoice.ts',
+      'siblingFeature',
+    ],
+    [
+      'domains/sales/orders/services/load.ts',
+      'domains/sales/shared/types/account.ts',
+      null,
+    ],
+    [
+      'domains/portfolio/features/holdings/features/positions/services/load.ts',
+      'domains/portfolio/features/holdings/services/private.ts',
+      'ancestorFeature',
+    ],
+    [
+      'domains/portfolio/features/holdings/features/positions/services/load.ts',
+      'domains/portfolio/features/holdings/shared/types/holding.ts',
+      null,
+    ],
+    [
+      'domains/portfolio/features/holdings/shared/components/Holdings.tsx',
+      'domains/portfolio/features/holdings/features/positions/services/load.ts',
+      'sharedScope',
+    ],
+    [
+      'app/services/load.ts',
+      'domains/portfolio/features/holdings/types/holding.ts',
+      null,
+    ],
+  ])('checks %s → %s', (source, target, expected) => {
+    expect(businessBoundaryViolation(source, target)).toBe(expected)
+  })
 })

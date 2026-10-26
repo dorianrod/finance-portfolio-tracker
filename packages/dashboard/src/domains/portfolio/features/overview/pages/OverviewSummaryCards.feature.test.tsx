@@ -2,7 +2,7 @@ import { createStore, Provider } from 'jotai'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { OverviewComparison } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 

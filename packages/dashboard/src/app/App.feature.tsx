@@ -3,8 +3,8 @@ import { Suspense } from 'react'
 
 import { DashboardLoadState } from '@/app/DashboardLoadState.state'
 import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.view'
+import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
-import { HoldingsViewTabs } from '@/domains/portfolio/features/holdings/components/HoldingsViewTabs.feature'
 import {
   filterSummaries,
   filterVisibilityForTab,

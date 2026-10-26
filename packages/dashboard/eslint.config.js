@@ -7,6 +7,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 import componentRole from './eslint-rules/component-role.js'
+import featureFolderLayout from './eslint-rules/feature-folder-layout.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import importBoundaries from './eslint-rules/import-boundaries.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
@@ -24,6 +25,7 @@ import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
+import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
 import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
@@ -65,6 +67,7 @@ export default defineConfig([
       local: {
         rules: {
           'component-role': componentRole,
+          'feature-folder-layout': featureFolderLayout,
           'i18n-consistency': i18nConsistency,
           'import-boundaries': importBoundaries,
           'max-hooks-per-component': maxHooksPerComponent,
@@ -82,6 +85,7 @@ export default defineConfig([
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
+          'shared-feature-usage': sharedFeatureUsage,
           'single-public-export': singlePublicExport,
           'state-component-contract': stateComponentContract,
         },
@@ -138,6 +142,7 @@ export default defineConfig([
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
+      'local/feature-folder-layout': 'error',
       'local/i18n-consistency': 'error',
       'local/import-boundaries': 'error',
       'local/max-hooks-per-component': ['warn', { max: 6 }],
@@ -154,6 +159,7 @@ export default defineConfig([
       'local/no-shared-ui-classname': 'warn',
       'local/no-shared-ui-internal-layout': 'warn',
       'local/require-children-composition': 'error',
+      'local/shared-feature-usage': 'warn',
       'local/state-component-contract': 'error',
     },
   },

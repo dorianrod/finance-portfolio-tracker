@@ -9,16 +9,6 @@ import type { usePositionTableOverlays } from '@/domains/portfolio/features/hold
 import type { CellHandlers } from '@/domains/portfolio/features/holdings/features/positions/types/positionCellHandlers.type'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-type Input = { row: Row<TableRow> } & Pick<
-  ReturnType<typeof usePositionTableOverlays>,
-  | 'cancelHide'
-  | 'scheduleHide'
-  | 'setChart'
-  | 'setSavingsChart'
-  | 'setAllocationHover'
-  | 'setUnderlyingPopover'
->
-
 export function usePositionGroupPreviews({
   row,
   cancelHide,
@@ -86,3 +76,13 @@ export function usePositionGroupPreviews({
     setUnderlyingPopover,
   ])
 }
+
+type Input = { row: Row<TableRow> } & Pick<
+  ReturnType<typeof usePositionTableOverlays>,
+  | 'cancelHide'
+  | 'scheduleHide'
+  | 'setChart'
+  | 'setSavingsChart'
+  | 'setAllocationHover'
+  | 'setUnderlyingPopover'
+>

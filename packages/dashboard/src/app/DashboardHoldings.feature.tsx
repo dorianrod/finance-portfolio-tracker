@@ -7,9 +7,6 @@ import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 import type { DashboardViewModel } from './types/dashboardViewModel.type'
 
-const PositionsTable = lazy(DASHBOARD_TAB_LOADERS.holdings)
-const FundLookThroughTab = lazy(DASHBOARD_TAB_LOADERS.fundLookThrough)
-
 export function DashboardHoldings({
   dashboard,
 }: {
@@ -40,3 +37,6 @@ export function DashboardHoldings({
     </ViewNavigation.Panel>
   )
 }
+
+const PositionsTable = lazy(DASHBOARD_TAB_LOADERS.holdings)
+const FundLookThroughTab = lazy(DASHBOARD_TAB_LOADERS.fundLookThrough)

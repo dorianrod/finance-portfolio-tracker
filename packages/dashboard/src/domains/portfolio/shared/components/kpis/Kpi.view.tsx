@@ -7,6 +7,18 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { InfoTooltip } from './InfoTooltip.view'
 
+export function Kpi({ children }: { children: ReactNode }) {
+  return children
+}
+
+export function KpiCard({ children }: { children: ReactNode }) {
+  return (
+    <Inline as="div" sizing="flexible" inset="compact">
+      {children}
+    </Inline>
+  )
+}
+
 export type KpiAccent =
   | 'neutral'
   | 'portfolio'
@@ -86,10 +98,6 @@ function KpiFooter({ children }: { children: ReactNode }) {
   )
 }
 
-export function Kpi({ children }: { children: ReactNode }) {
-  return children
-}
-
 Kpi.Root = KpiRoot
 Kpi.Label = KpiLabel
 Kpi.TooltipFooter = InfoTooltip.Footer
@@ -99,11 +107,3 @@ Kpi.InlineNote = Metric.InlineNote
 Kpi.Note = Metric.Note
 Kpi.Detail = KpiDetail
 Kpi.Footer = KpiFooter
-
-export function KpiCard({ children }: { children: ReactNode }) {
-  return (
-    <Inline as="div" sizing="flexible" inset="compact">
-      {children}
-    </Inline>
-  )
-}

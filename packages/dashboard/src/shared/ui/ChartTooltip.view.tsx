@@ -12,6 +12,22 @@ import type {
 
 import { CHART_CURSORS } from './chartAppearance'
 
+export function ChartTooltip({ highlight, children, ...props }: Props) {
+  const content = children == null ? undefined : Children.only(children)
+  if (
+    content != null &&
+    !isValidElement<TooltipContentProps<ValueType, NameType>>(content)
+  )
+    throw new Error('ChartTooltip requires one tooltip element.')
+  return (
+    <Tooltip
+      {...props}
+      cursor={highlight && CHART_CURSORS[highlight]}
+      content={content ?? undefined}
+    />
+  )
+}
+
 type DataKeys =
   | 'active'
   | 'defaultIndex'
@@ -31,20 +47,4 @@ type Props = Pick<
 > & {
   highlight?: keyof typeof CHART_CURSORS
   children?: ReactNode
-}
-
-export function ChartTooltip({ highlight, children, ...props }: Props) {
-  const content = children == null ? undefined : Children.only(children)
-  if (
-    content != null &&
-    !isValidElement<TooltipContentProps<ValueType, NameType>>(content)
-  )
-    throw new Error('ChartTooltip requires one tooltip element.')
-  return (
-    <Tooltip
-      {...props}
-      cursor={highlight && CHART_CURSORS[highlight]}
-      content={content ?? undefined}
-    />
-  )
 }

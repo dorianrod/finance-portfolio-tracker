@@ -1,4 +1,4 @@
-import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
+import type { PositionSortKey } from '@/domains/portfolio/features/holdings/features/positions/types/positionSort.type'
 import i18n from '@/i18n/i18n'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
 import { Button } from '@/shared/ui/Controls.view'

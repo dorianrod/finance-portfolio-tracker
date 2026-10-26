@@ -128,12 +128,6 @@ export function TooltipUnit({
   )
 }
 
-type SavingsPoint = {
-  balance: number
-  delta: number
-  month: string
-}
-
 export function SavingsTooltip({
   active,
   payload,
@@ -161,11 +155,21 @@ export function SavingsTooltip({
       {delta !== 0 && (
         <ChartText
           as="div"
-          tone={delta >= 0 ? PORTFOLIO_CHART_TONES.netContributionsText : PORTFOLIO_CHART_TONES.performanceNegativeText}
+          tone={
+            delta >= 0
+              ? PORTFOLIO_CHART_TONES.netContributionsText
+              : PORTFOLIO_CHART_TONES.performanceNegativeText
+          }
         >
           {delta >= 0 ? '▲' : '▼'} {formatMoney(Math.abs(delta))}
         </ChartText>
       )}
     </TooltipBox>
   )
+}
+
+type SavingsPoint = {
+  balance: number
+  delta: number
+  month: string
 }

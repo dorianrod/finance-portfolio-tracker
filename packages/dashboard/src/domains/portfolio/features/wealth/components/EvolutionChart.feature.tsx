@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { EvolutionTooltip } from '@/domains/portfolio/features/wealth/components/WealthChartTooltips.view'
 import {
   PORTFOLIO_COST_SHARE_KEY,
   PORTFOLIO_GAIN_SHARE_KEY,
   withPortfolioComposition,
 } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { EvolutionTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
@@ -69,7 +69,11 @@ export function EvolutionChart({
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
         >
           <defs>
-            <SeriesGradient id="gradCost" profile="base" tone={PORTFOLIO_CHART_TONES.costBasis} />
+            <SeriesGradient
+              id="gradCost"
+              profile="base"
+              tone={PORTFOLIO_CHART_TONES.costBasis}
+            />
             <SeriesGradient
               id="gradGain"
               profile="strong"

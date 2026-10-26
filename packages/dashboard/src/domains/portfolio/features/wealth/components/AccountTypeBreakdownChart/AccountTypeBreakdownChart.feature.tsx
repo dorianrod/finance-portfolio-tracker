@@ -1,12 +1,12 @@
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/components/WealthChartTooltips.view'
 import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
+import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartLabel, ChartLeaderLine } from '@/shared/ui/ChartLabel.view'
@@ -17,6 +17,65 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
 import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
+
+export function AccountTypeBreakdownChart({
+  data,
+}: {
+  data: AccountTypePoint[]
+}) {
+  const donutData: AccountTypePoint[] = data.map((point) => ({
+    ...point,
+    total_cost_basis: Math.max(0, point.total_cost_basis),
+  }))
+  const pieData = donutData.filter((point) => point.total_value > 0)
+  const totalValue = data.reduce((sum, point) => sum + point.total_value, 0)
+
+  return (
+    <div className="flex-1">
+      <Surface variant="chart">
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
+              )}
+              scope={{ account: 'filterable', period: 'as-of' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
+              'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
+            )}
+          </Text>
+        </Layout>
+
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="total_value"
+              nameKey="account_type"
+              innerRadius={0}
+              outerRadius="63%"
+              paddingAngle={0.25}
+              startAngle={90}
+              endAngle={-270}
+              shape={AccountTypeSector}
+              label={<AccountTypeLabel data={pieData} />}
+              labelLine={false}
+            />
+            <Tooltip
+              content={<AccountTypeTooltip portfolioTotal={totalValue} />}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </Surface>
+    </div>
+  )
+}
 
 function AccountTypeLabel({
   data,
@@ -121,64 +180,5 @@ function AccountTypeSector({
         />
       )}
     </g>
-  )
-}
-
-export function AccountTypeBreakdownChart({
-  data,
-}: {
-  data: AccountTypePoint[]
-}) {
-  const donutData: AccountTypePoint[] = data.map((point) => ({
-    ...point,
-    total_cost_basis: Math.max(0, point.total_cost_basis),
-  }))
-  const pieData = donutData.filter((point) => point.total_value > 0)
-  const totalValue = data.reduce((sum, point) => sum + point.total_value, 0)
-
-  return (
-    <div className="flex-1">
-      <Surface variant="chart">
-        <Text as="h2" variant="label" tone="muted">
-          <Inline as="span" align="center">
-            {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
-            <ScopedInfoTooltip
-              text={i18n.t(
-                'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
-              )}
-              scope={{ account: 'filterable', period: 'as-of' }}
-            />
-          </Inline>
-        </Text>
-        <Layout spaceBefore="compact">
-          <Text as="p" variant="caption" tone="subtle">
-            {i18n.t(
-              'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
-            )}
-          </Text>
-        </Layout>
-
-        <ResponsiveContainer width="100%" height={280}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="total_value"
-              nameKey="account_type"
-              innerRadius={0}
-              outerRadius="63%"
-              paddingAngle={0.25}
-              startAngle={90}
-              endAngle={-270}
-              shape={AccountTypeSector}
-              label={<AccountTypeLabel data={pieData} />}
-              labelLine={false}
-            />
-            <Tooltip
-              content={<AccountTypeTooltip portfolioTotal={totalValue} />}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </Surface>
-    </div>
   )
 }

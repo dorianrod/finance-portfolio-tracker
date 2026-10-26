@@ -13,6 +13,67 @@ import { readJsonResponse } from '@/shared/http/readJsonResponse'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
 import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
+export async function requestFilteredPortfolioHistory(
+  accounts: string[],
+  signal: AbortSignal,
+  options: { staticDemo?: boolean; fetchImpl?: typeof fetch } = {},
+): Promise<PortfolioHistoryResponse> {
+  const fetchImpl = options.fetchImpl ?? fetch
+  const normalized = normalizeAccountSelection(accounts)
+  if (options.staticDemo ?? STATIC_DEMO) {
+    const fixture = await readResponse(
+      await fetchImpl(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }),
+    )
+    const fixtureAccounts = normalizeAccountSelection(fixture.accounts)
+    if (!sameAccounts(normalized, fixtureAccounts)) {
+      throw new DemoScopeUnavailableError(
+        i18n.t('ui.usefilteredportfoliohistory.localDashboardOnly'),
+      )
+    }
+    return fixture
+  }
+
+  const body = await FILTERED_HISTORY_REQUEST_SCHEMA.validate(
+    { accounts: normalized },
+    { stripUnknown: true },
+  )
+  return readResponse(
+    await fetchImpl(PORTFOLIO_ENDPOINTS.api.portfolioHistory, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal,
+    }),
+  )
+}
+
+export function useFilteredPortfolioHistoryQuery(
+  selectedAccounts: Set<string>,
+) {
+  const normalizedAccounts = useMemo(
+    () => normalizeAccountSelection(selectedAccounts),
+    [selectedAccounts],
+  )
+  return useQuery<PortfolioHistoryResponse, Error, PortfolioHistoryPoint[]>({
+    queryKey: portfolioQueryKeys.data(
+      'filtered-history',
+      ...normalizedAccounts,
+    ),
+    queryFn: ({ signal }) =>
+      requestFilteredPortfolioHistory(normalizedAccounts, signal),
+    select: toHistory,
+    enabled: selectedAccounts.size > 0,
+  })
+}
+
+export function useDemoFilteredHistoryAccountsQuery() {
+  return useQuery<string[] | null>({
+    queryKey: portfolioQueryKeys.data('demo-filtered-history-accounts'),
+    queryFn: ({ signal }) => requestDemoPresetAccounts(signal),
+    enabled: STATIC_DEMO,
+  })
+}
+
 const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
 
 const FILTERED_HISTORY_REQUEST_SCHEMA = yup.object({
@@ -80,40 +141,6 @@ async function readResponse(
   })
 }
 
-export async function requestFilteredPortfolioHistory(
-  accounts: string[],
-  signal: AbortSignal,
-  options: { staticDemo?: boolean; fetchImpl?: typeof fetch } = {},
-): Promise<PortfolioHistoryResponse> {
-  const fetchImpl = options.fetchImpl ?? fetch
-  const normalized = normalizeAccountSelection(accounts)
-  if (options.staticDemo ?? STATIC_DEMO) {
-    const fixture = await readResponse(
-      await fetchImpl(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }),
-    )
-    const fixtureAccounts = normalizeAccountSelection(fixture.accounts)
-    if (!sameAccounts(normalized, fixtureAccounts)) {
-      throw new DemoScopeUnavailableError(
-        i18n.t('ui.usefilteredportfoliohistory.localDashboardOnly'),
-      )
-    }
-    return fixture
-  }
-
-  const body = await FILTERED_HISTORY_REQUEST_SCHEMA.validate(
-    { accounts: normalized },
-    { stripUnknown: true },
-  )
-  return readResponse(
-    await fetchImpl(PORTFOLIO_ENDPOINTS.api.portfolioHistory, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal,
-    }),
-  )
-}
-
 async function requestDemoPresetAccounts(
   signal: AbortSignal,
 ): Promise<string[] | null> {
@@ -122,31 +149,4 @@ async function requestDemoPresetAccounts(
     await fetch(PORTFOLIO_ENDPOINTS.data.demoFilteredHistory, { signal }),
   )
   return normalizeAccountSelection(fixture.accounts)
-}
-
-export function useFilteredPortfolioHistoryQuery(
-  selectedAccounts: Set<string>,
-) {
-  const normalizedAccounts = useMemo(
-    () => normalizeAccountSelection(selectedAccounts),
-    [selectedAccounts],
-  )
-  return useQuery<PortfolioHistoryResponse, Error, PortfolioHistoryPoint[]>({
-    queryKey: portfolioQueryKeys.data(
-      'filtered-history',
-      ...normalizedAccounts,
-    ),
-    queryFn: ({ signal }) =>
-      requestFilteredPortfolioHistory(normalizedAccounts, signal),
-    select: toHistory,
-    enabled: selectedAccounts.size > 0,
-  })
-}
-
-export function useDemoFilteredHistoryAccountsQuery() {
-  return useQuery<string[] | null>({
-    queryKey: portfolioQueryKeys.data('demo-filtered-history-accounts'),
-    queryFn: ({ signal }) => requestDemoPresetAccounts(signal),
-    enabled: STATIC_DEMO,
-  })
 }

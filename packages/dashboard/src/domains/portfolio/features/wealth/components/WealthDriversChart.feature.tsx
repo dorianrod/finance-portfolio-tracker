@@ -1,8 +1,8 @@
 import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -105,7 +105,11 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.netContributions} as="i" shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.netContributions}
+                  as="i"
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.wealthdriverschart.netContributions')}
             </span>
@@ -116,7 +120,11 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performance} as="i" shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.performance}
+                  as="i"
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.wealthdriverschart.marketPerformance')}
             </span>
@@ -127,7 +135,11 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.totalChange} as="i" shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.totalChange}
+                  as="i"
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.wealthdriverschart.totalChange')}
             </span>

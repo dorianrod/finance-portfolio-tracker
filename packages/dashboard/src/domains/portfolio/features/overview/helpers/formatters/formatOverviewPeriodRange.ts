@@ -1,4 +1,4 @@
-import type { OverviewPeriod } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+import type { OverviewPeriod } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import type { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export function formatOverviewPeriodRange(

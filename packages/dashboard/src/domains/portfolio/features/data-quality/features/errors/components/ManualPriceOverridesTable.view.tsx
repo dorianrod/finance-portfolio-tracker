@@ -8,10 +8,6 @@ import { LevelBadge } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-export type ManualPriceOverridesProps = {
-  manualPriceOverrides: ManualPriceOverride[]
-}
-
 export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -126,4 +122,8 @@ export function ManualPriceOverridesTable({
       </Surface>
     </Layout>
   )
+}
+
+export type ManualPriceOverridesProps = {
+  manualPriceOverrides: ManualPriceOverride[]
 }

@@ -1,16 +1,11 @@
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
-
-type CumulativeConcentrationTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: CumulativeConcentrationPoint }>
-}
 
 export function CumulativeConcentrationTooltip({
   active,
@@ -42,4 +37,9 @@ export function CumulativeConcentrationTooltip({
       </Layout>
     </TooltipBox>
   )
+}
+
+type CumulativeConcentrationTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: CumulativeConcentrationPoint }>
 }

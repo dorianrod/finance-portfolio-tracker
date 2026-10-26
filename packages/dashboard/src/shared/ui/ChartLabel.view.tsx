@@ -5,17 +5,6 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { type ChartAge, chartAgeOpacity } from './chartAgeAppearance'
 import { CHART_TEXT_TONES } from './chartAppearance'
 
-type Props = Pick<
-  SVGProps<SVGTextElement>,
-  'x' | 'y' | 'dx' | 'dy' | 'transform' | 'style'
-> & {
-  as?: 'text' | 'tspan'
-  children: ReactNode
-  tone?: keyof typeof CHART_TEXT_TONES | 'label' | 'tick'
-  variant?: 'standard' | 'compact' | 'pie'
-  align?: 'start' | 'middle' | 'end'
-  age?: ChartAge
-}
 export function ChartLabel({
   as: Tag = 'text',
   tone = 'label',
@@ -46,6 +35,7 @@ export function ChartLabel({
     />
   )
 }
+
 export function ChartLeaderLine(
   props: Pick<SVGProps<SVGPolylineElement>, 'points'>,
 ) {
@@ -57,4 +47,16 @@ export function ChartLeaderLine(
       strokeWidth={0.75}
     />
   )
+}
+
+type Props = Pick<
+  SVGProps<SVGTextElement>,
+  'x' | 'y' | 'dx' | 'dy' | 'transform' | 'style'
+> & {
+  as?: 'text' | 'tspan'
+  children: ReactNode
+  tone?: keyof typeof CHART_TEXT_TONES | 'label' | 'tick'
+  variant?: 'standard' | 'compact' | 'pie'
+  align?: 'start' | 'middle' | 'end'
+  age?: ChartAge
 }

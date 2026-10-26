@@ -1,3 +1,10 @@
+export function getHashedSeriesTone(key: string): ChartTone {
+  let hash = 0
+  for (let i = 0; i < key.length; i++)
+    hash = (hash * 31 + key.charCodeAt(i)) & 0xffffffff
+  return SERIES_PALETTE[Math.abs(hash) % SERIES_PALETTE.length]
+}
+
 export const CHART_COLORS = {
   series1: '#3b82f6',
   series2: '#8b5cf6',
@@ -48,10 +55,3 @@ const SERIES_PALETTE = [
   'series11',
   'series12',
 ] as const
-
-export function getHashedSeriesTone(key: string): ChartTone {
-  let hash = 0
-  for (let i = 0; i < key.length; i++)
-    hash = (hash * 31 + key.charCodeAt(i)) & 0xffffffff
-  return SERIES_PALETTE[Math.abs(hash) % SERIES_PALETTE.length]
-}

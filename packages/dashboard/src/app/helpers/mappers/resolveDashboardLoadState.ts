@@ -1,8 +1,6 @@
 import type { DashboardLoadState } from '@/app/types/dashboardLoadState.type'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 
-type SourceQuery = { error: unknown; isPending: boolean }
-
 export function resolveDashboardLoadState(
   queries: SourceQuery[],
 ): DashboardLoadState {
@@ -12,3 +10,5 @@ export function resolveDashboardLoadState(
   if (queries.some((query) => query.isPending)) return { status: 'loading' }
   return { status: 'ready' }
 }
+
+type SourceQuery = { error: unknown; isPending: boolean }

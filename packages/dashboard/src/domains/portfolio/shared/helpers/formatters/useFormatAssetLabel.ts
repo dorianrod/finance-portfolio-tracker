@@ -1,5 +1,13 @@
 import { useCallback } from 'react'
 
+export function useFormatAssetLabel() {
+  return useCallback(
+    (source: AssetLabelSource, fallback = ''): string =>
+      clean(source.name) || clean(source.ticker) || clean(fallback),
+    [],
+  )
+}
+
 export type AssetLabelSource = {
   name?: string | null
   ticker?: string | null
@@ -7,12 +15,4 @@ export type AssetLabelSource = {
 
 function clean(value: string | null | undefined): string {
   return value?.trim() ?? ''
-}
-
-export function useFormatAssetLabel() {
-  return useCallback(
-    (source: AssetLabelSource, fallback = ''): string =>
-      clean(source.name) || clean(source.ticker) || clean(fallback),
-    [],
-  )
 }

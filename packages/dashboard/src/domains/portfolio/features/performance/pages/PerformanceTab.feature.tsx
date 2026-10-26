@@ -1,14 +1,11 @@
 import { useMemo } from 'react'
 
-import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
-import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/PerformanceContributionCard.feature'
-import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart.feature'
-import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
-import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import {
   UNAVAILABLE_ASSET_IRR_SUMMARY,
   useAssetIrrQuery,
-} from '@/domains/portfolio/shared/apis/queries/useAssetIrrQuery'
+} from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery'
+import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
+import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/PerformanceContributionCard.feature'
 import {
   IrrSinceTrackingKpi,
   NetRealizedKpi,
@@ -16,12 +13,15 @@ import {
   PassiveIncomeKpi,
   TotalNetPerformanceKpi,
   TrailingThreeYearIrrKpi,
-} from '@/domains/portfolio/shared/components/kpis/PortfolioKpis.feature'
+} from '@/domains/portfolio/features/performance/components/PortfolioKpis.feature'
+import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart.feature'
+import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
+import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import type {
   IncomeSummary,
   PerformanceSummary,
-} from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
+} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations'
+import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'

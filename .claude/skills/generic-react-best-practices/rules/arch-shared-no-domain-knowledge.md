@@ -9,9 +9,9 @@ tags: arch, shared, boundaries, ownership, dependencies
 
 **Impact: CRITICAL (keeps shared code reusable at its scope and prevents downward dependencies)**
 
-The meaning of `shared/` is relative to its owner. `src/shared/` has no business-domain knowledge. A scoped folder such as `src/domains/sales/shared/`, `src/domains/sales/orders/shared/` or `features/detail/shared/` may use the stable vocabulary of its enclosing scope, but it never imports from or names a descendant sub-domain, feature or nested feature.
+The meaning of `shared/` is relative to its owner. `src/shared/` has no business-domain knowledge. A scoped folder such as `src/domains/sales/shared/`, `src/domains/sales/orders/shared/` or `features/detail/shared/` may use the stable vocabulary of its enclosing scope, but its reusable contracts and non-UI code never import from or name a descendant sub-domain, feature or nested feature.
 
-Place shared code at the nearest common ancestor of all its consumers. It may depend only on shared code at the same or an ancestor scope; it never depends downward on a descendant. This keeps reuse local, prevents cycles and avoids turning a high-level `shared/` folder into a business catch-all.
+Place shared code at the nearest common ancestor of all its consumers. Reusable shared code may depend only on shared code at the same or an ancestor scope; it never depends downward on a descendant. This keeps reuse local, prevents cycles and avoids turning a high-level `shared/` folder into a business catch-all.
 
 **Incorrect (main-domain shared code knows about a descendant entity):**
 
@@ -33,7 +33,11 @@ export interface InvoiceAccess {
 }
 ```
 
-An entity-level `shared/` may therefore contain entity types and components used by several of its features. A feature-level `shared/` may contain concepts common to its immediate sub-features. If only one feature consumes the code, keep it inside that feature instead of promoting it. Shared ownership does not justify adding another feature nesting level.
+An entity-level `shared/` may contain entity types and components used by several of its features. The same requirement applies to a parent feature's `shared/`: require production consumers from at least two distinct immediate child capabilities. Several files within one feature count as one consumer. Resolve indirect usage through shared helpers, barrels and type-only contracts; tests, stories, mocks and application wrappers do not count as features.
+
+The parent/leaf folder convention is not a sharing exception. A parent's cohesive business behavior belongs to a named child feature if it serves no other feature. Application pages compose features; shared code does not import descendant entry components or private implementation. A reusable business workflow remains a feature even when several callers use it. If all consumers belong to one branch, move the module to that branch's nearest owner instead of using shared code to evade a sibling-import restriction.
+
+Static import graphs cannot always prove use of common inputs passed through application props. Flag missing evidence for review and inspect the actual consumers; do not add fake imports or broad exemptions. Keep genuine common source requests cached and avoid duplicating them merely to satisfy folder counts. A leaf feature owns role folders directly, without a `shared/` wrapper.
 
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 

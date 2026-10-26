@@ -15,37 +15,6 @@ import {
 import { BAR_CORNERS, BAR_PROMINENCE } from './chartAppearance'
 import { partitionChartSlot } from './chartSlots'
 
-type BarDataKeys =
-  | 'data'
-  | 'dataKey'
-  | 'xAxisId'
-  | 'yAxisId'
-  | 'name'
-  | 'unit'
-  | 'hide'
-  | 'legendType'
-  | 'id'
-  | 'style'
-  | 'children'
-  | 'stackId'
-  | 'barSize'
-  | 'maxBarSize'
-  | 'minPointSize'
-  | 'onClick'
-  | 'onMouseEnter'
-  | 'onMouseLeave'
-  | 'animationMatchBy'
-  | 'animationInterpolateFn'
-  | 'zIndex'
-type SeriesBarProps = Pick<
-  ComponentProps<typeof Bar>,
-  Extract<keyof ComponentProps<typeof Bar>, BarDataKeys>
-> &
-  BarAppearance & {
-    motion?: 'none' | 'selection'
-    transitioning?: boolean
-  }
-
 export function SeriesBar({
   tone,
   corners,
@@ -83,6 +52,37 @@ export function SeriesBar({
     </BarAppearanceContext>
   )
 }
+
+type BarDataKeys =
+  | 'data'
+  | 'dataKey'
+  | 'xAxisId'
+  | 'yAxisId'
+  | 'name'
+  | 'unit'
+  | 'hide'
+  | 'legendType'
+  | 'id'
+  | 'style'
+  | 'children'
+  | 'stackId'
+  | 'barSize'
+  | 'maxBarSize'
+  | 'minPointSize'
+  | 'onClick'
+  | 'onMouseEnter'
+  | 'onMouseLeave'
+  | 'animationMatchBy'
+  | 'animationInterpolateFn'
+  | 'zIndex'
+type SeriesBarProps = Pick<
+  ComponentProps<typeof Bar>,
+  Extract<keyof ComponentProps<typeof Bar>, BarDataKeys>
+> &
+  BarAppearance & {
+    motion?: 'none' | 'selection'
+    transitioning?: boolean
+  }
 
 function SeriesBarShape({ children }: { children: ReactNode }) {
   return children

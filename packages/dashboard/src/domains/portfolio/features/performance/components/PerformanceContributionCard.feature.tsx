@@ -12,12 +12,12 @@ import {
   buildAssetIrrRankings,
   resolveContributionHorizon,
 } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel'
+import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   FilterScopeSpec,
   PeriodScopeMode,
 } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'

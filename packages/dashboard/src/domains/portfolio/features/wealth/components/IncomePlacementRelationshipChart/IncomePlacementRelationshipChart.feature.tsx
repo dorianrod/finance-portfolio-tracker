@@ -132,7 +132,10 @@ export function IncomePlacementRelationshipChart({
               kind="benchmark"
             />
           )}
-          <SeriesScatter data={analysis.points} tone={PORTFOLIO_CHART_TONES.returnRate}>
+          <SeriesScatter
+            data={analysis.points}
+            tone={PORTFOLIO_CHART_TONES.returnRate}
+          >
             <SeriesScatter.Shape>
               <IncomePlacementPoint
                 recentYears={recentYears}
@@ -184,7 +187,11 @@ function IncomePlacementPoint({
   return (
     <ChartSymbol
       geometry={shapeProps}
-      tone={isRecent ? PORTFOLIO_CHART_TONES.returnRate : PORTFOLIO_CHART_TONES.neutralSeries}
+      tone={
+        isRecent
+          ? PORTFOLIO_CHART_TONES.returnRate
+          : PORTFOLIO_CHART_TONES.neutralSeries
+      }
       age={{ year: point.year, recent: isRecent, oldestYear, newestYear }}
     />
   )

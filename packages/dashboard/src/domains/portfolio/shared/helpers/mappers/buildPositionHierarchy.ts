@@ -12,18 +12,6 @@ import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import i18n from '@/i18n/i18n'
 
-function assetKey(op: RawOperation): string {
-  return op.isin || op.ticker || op.name
-}
-
-// Same asset held in several accounts (e.g. the same ETF bought in both a
-// PEA and a CTO) gets one row per account, not one merged row: a merged row
-// has no single account/account_type to show, which drops it out of
-// per-account filters and mislabels it as "Other" in type breakdowns.
-function positionKey(asset: string, account: string): string {
-  return `${asset}|${account}`
-}
-
 export function buildAccountLabels(
   accountRows: { account: string; label: string }[],
 ): Record<string, string> {
@@ -80,6 +68,18 @@ export function buildPositionRows(
     if (ta !== tb) return ta - tb
     return (b.total_value ?? 0) - (a.total_value ?? 0)
   })
+}
+
+function assetKey(op: RawOperation): string {
+  return op.isin || op.ticker || op.name
+}
+
+// Same asset held in several accounts (e.g. the same ETF bought in both a
+// PEA and a CTO) gets one row per account, not one merged row: a merged row
+// has no single account/account_type to show, which drops it out of
+// per-account filters and mislabels it as "Other" in type breakdowns.
+function positionKey(asset: string, account: string): string {
+  return `${asset}|${account}`
 }
 
 function buildOperationRows(

@@ -1,6 +1,6 @@
 import type { PerformanceContribution } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { AssetIrrItem } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
-import type { AssetIrrItem } from '@/domains/portfolio/shared/types/assetIrr.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

@@ -1,13 +1,5 @@
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 
-export type RawCashRow = {
-  snapshot_date: Date
-  account: string
-  account_type: string
-  account_category: string
-  cumulative_cash: number
-}
-
 // Only brokerage accounts hold real free cash; other categories
 // (employer savings, insurance wrappers, retirement…) only ever
 // show deposits as positions, never withdrawable cash.
@@ -26,4 +18,12 @@ export function aggregateBrokerageCash(rows: RawCashRow[]): CashHistoryPoint[] {
       total_broker_cash,
     }))
     .toSorted((a, b) => a.date.getTime() - b.date.getTime())
+}
+
+export type RawCashRow = {
+  snapshot_date: Date
+  account: string
+  account_type: string
+  account_category: string
+  cumulative_cash: number
 }

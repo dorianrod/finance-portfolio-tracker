@@ -8,6 +8,17 @@ import { parseCsv } from '@/shared/csv/csvData'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
 import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
+export function useManualPriceOverridesQuery() {
+  return useQuery<ManualPriceOverride[]>({
+    queryKey: portfolioQueryKeys.data('manual-price-overrides'),
+    queryFn: () =>
+      parseCsv(
+        PORTFOLIO_ENDPOINTS.data.manualPriceOverrides,
+        MANUAL_PRICE_OVERRIDE_SCHEMA,
+      ),
+  })
+}
+
 const MANUAL_PRICE_OVERRIDE_SCHEMA: yup.ObjectSchema<ManualPriceOverride> =
   yup.object({
     name: yup.string().defined(),
@@ -26,14 +37,3 @@ const MANUAL_PRICE_OVERRIDE_SCHEMA: yup.ObjectSchema<ManualPriceOverride> =
     date_to: OPTIONAL_CALENDAR_DATE_SCHEMA,
     source_file: yup.string().defined(),
   })
-
-export function useManualPriceOverridesQuery() {
-  return useQuery<ManualPriceOverride[]>({
-    queryKey: portfolioQueryKeys.data('manual-price-overrides'),
-    queryFn: () =>
-      parseCsv(
-        PORTFOLIO_ENDPOINTS.data.manualPriceOverrides,
-        MANUAL_PRICE_OVERRIDE_SCHEMA,
-      ),
-  })
-}

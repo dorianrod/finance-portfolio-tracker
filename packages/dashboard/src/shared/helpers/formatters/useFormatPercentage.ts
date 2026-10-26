@@ -2,14 +2,6 @@ import { useCallback } from 'react'
 
 import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
 
-type PercentageFormatOptions = {
-  decimals?: number
-  fallback?: string | number
-  signed?: boolean
-  unit?: '%' | ' %' | ' pp' | ''
-  zeroAsFallback?: boolean
-}
-
 export function useFormatPercentage() {
   return useCallback(
     (
@@ -25,4 +17,12 @@ export function useFormatPercentage() {
     },
     [],
   )
+}
+
+type PercentageFormatOptions = {
+  decimals?: number
+  fallback?: string | number
+  signed?: boolean
+  unit?: '%' | ' %' | ' pp' | ''
+  zeroAsFallback?: boolean
 }

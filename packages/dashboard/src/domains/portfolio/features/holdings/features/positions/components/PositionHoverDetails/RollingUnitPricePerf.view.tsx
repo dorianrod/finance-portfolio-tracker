@@ -4,15 +4,6 @@ import { Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-function RollingUnitPriceRow({ row }: { row: RollingReturn }) {
-  const formatPercentage = useFormatPercentage()
-  return (
-    <Text as="p" tone={row.pct >= 0 ? 'positive' : 'negative'}>
-      {row.label}: {formatPercentage(row.pct, { signed: true })}
-    </Text>
-  )
-}
-
 export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
   if (rows.length === 0) return null
   return (
@@ -25,5 +16,14 @@ export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
         </Stack>
       </Surface>
     </Layout>
+  )
+}
+
+function RollingUnitPriceRow({ row }: { row: RollingReturn }) {
+  const formatPercentage = useFormatPercentage()
+  return (
+    <Text as="p" tone={row.pct >= 0 ? 'positive' : 'negative'}>
+      {row.label}: {formatPercentage(row.pct, { signed: true })}
+    </Text>
   )
 }

@@ -1,6 +1,18 @@
 import { CHART_COLORS } from '@/shared/theme/chartColors'
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 
+export function getLineHoverMarker(
+  profile: keyof typeof LINE_HOVER_MARKERS | 'series' | undefined,
+  color: string,
+) {
+  if (profile === 'series') return { r: 4, fill: color }
+  return profile && LINE_HOVER_MARKERS[profile]
+}
+
+export function seriesFill(gradientId?: string) {
+  return gradientId ? `url(#${gradientId})` : 'none'
+}
+
 export const CHART_AXIS_TICK = { fill: CHART_THEME.tick, fontSize: 11 }
 
 export const CHART_GRID_PATTERNS = {
@@ -69,19 +81,8 @@ export const LINE_HOVER_MARKERS = {
   large: { r: 5 },
 } as const
 
-export function getLineHoverMarker(
-  profile: keyof typeof LINE_HOVER_MARKERS | 'series' | undefined,
-  color: string,
-) {
-  if (profile === 'series') return { r: 4, fill: color }
-  return profile && LINE_HOVER_MARKERS[profile]
-}
-
 export const CHART_CURSORS = {
   bar: { fill: CHART_THEME.cursor },
   dashed: { strokeDasharray: '3 3' },
   line: { stroke: CHART_THEME.label, strokeOpacity: 0.25 },
 } as const
-export function seriesFill(gradientId?: string) {
-  return gradientId ? `url(#${gradientId})` : 'none'
-}

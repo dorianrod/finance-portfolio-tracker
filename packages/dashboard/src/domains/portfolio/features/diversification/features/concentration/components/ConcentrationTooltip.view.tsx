@@ -1,14 +1,9 @@
-import type { HoldingConcentration } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-export type ConcentrationTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: HoldingConcentration }>
-}
 
 export function ConcentrationTooltip({
   active,
@@ -31,4 +26,9 @@ export function ConcentrationTooltip({
       </Layout>
     </Surface>
   )
+}
+
+export type ConcentrationTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: HoldingConcentration }>
 }

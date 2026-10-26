@@ -38,8 +38,6 @@ import {
   HistoricalHoldingTooltip,
 } from './ConcentrationTrendTooltips.view'
 
-const matchHoldingByKey = matchByDataKey('key')
-
 export function ConcentrationTrendSectionView({
   controller,
   lookThroughAvailable,
@@ -148,6 +146,8 @@ export function ConcentrationTrendSectionView({
     </section>
   )
 }
+
+const matchHoldingByKey = matchByDataKey('key')
 
 function ConcentrationThresholdChart({
   controller,

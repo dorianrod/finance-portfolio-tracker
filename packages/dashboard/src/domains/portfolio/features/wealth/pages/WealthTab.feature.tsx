@@ -6,33 +6,20 @@ import { IncomePlacementRelationshipChart } from '@/domains/portfolio/features/w
 import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart.feature'
 import { WealthComparisonKpi } from '@/domains/portfolio/features/wealth/components/WealthComparisonKpi.view'
 import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.feature'
-import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
 import type {
   TrailingSavingCapacityPoint,
   TrailingYearOverYear,
   WealthDriverPoint,
-} from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
+import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
+import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { Inline } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
-
-type WealthTabProps = {
-  history: PortfolioHistoryPoint[]
-  accountTypeData: AccountTypePoint[]
-  accountTypeHistory: AccountTypeHistoryPoint[]
-  accountTypes: string[]
-  typeCategories: Record<string, string>
-  savings: TrailingSavingCapacityPoint[]
-  monthlyOps: MonthlyOperationsByMonth
-  drivers: WealthDriverPoint[]
-  trailingYearComparison: TrailingYearOverYear
-  annualIncomeSavings: AnnualIncomeSavingsPoint[]
-}
 
 export function WealthTab({
   history,
@@ -99,4 +86,17 @@ export function WealthTab({
       )}
     </div>
   )
+}
+
+type WealthTabProps = {
+  history: PortfolioHistoryPoint[]
+  accountTypeData: AccountTypePoint[]
+  accountTypeHistory: AccountTypeHistoryPoint[]
+  accountTypes: string[]
+  typeCategories: Record<string, string>
+  savings: TrailingSavingCapacityPoint[]
+  monthlyOps: MonthlyOperationsByMonth
+  drivers: WealthDriverPoint[]
+  trailingYearComparison: TrailingYearOverYear
+  annualIncomeSavings: AnnualIncomeSavingsPoint[]
 }

@@ -1,7 +1,7 @@
 import type {
   ComparedMetric,
   OverviewComparison,
-} from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
+} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { Layout } from '@/shared/ui/Layout.view'
@@ -14,12 +14,6 @@ import {
   OverviewValueChart,
 } from './OverviewCharts.feature'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
-
-type OverviewTabProps = {
-  comparison: OverviewComparison | null
-  rollingThreeYearTri: ComparedMetric
-  irrStatus: IrrStatus
-}
 
 export function OverviewTab({
   comparison,
@@ -65,4 +59,10 @@ export function OverviewTab({
       </div>
     </div>
   )
+}
+
+type OverviewTabProps = {
+  comparison: OverviewComparison | null
+  rollingThreeYearTri: ComparedMetric
+  irrStatus: IrrStatus
 }

@@ -10,12 +10,12 @@ import {
 import type { ControlProps } from './controlProps'
 import { SegmentedControlItem } from './SegmentedControl.view'
 
-const NavigationContext = createContext('')
-
 export function ViewNavigation({ children }: { children: ReactNode }) {
   const id = useId()
   return <NavigationContext value={id}>{children}</NavigationContext>
 }
+
+const NavigationContext = createContext('')
 
 function ViewNavigationItem({
   value,

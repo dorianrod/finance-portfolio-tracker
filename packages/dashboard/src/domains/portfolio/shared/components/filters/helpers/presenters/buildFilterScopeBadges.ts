@@ -7,6 +7,24 @@ import type {
 import i18n from '@/i18n/i18n'
 import type { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
+export function buildFilterScopeBadges({
+  account,
+  accountLabels,
+  effectiveDate,
+  filters,
+  formatDate,
+  period,
+}: FilterScopeSpec & {
+  accountLabels: Record<string, string>
+  filters: DashboardFilters
+  formatDate: ReturnType<typeof useFormatDate>
+}): ScopeBadge[] {
+  return [
+    accountBadge(account, filters, accountLabels),
+    periodBadge(period, filters, formatDate, effectiveDate),
+  ]
+}
+
 export type ScopeBadge = {
   label: string
   detail: string
@@ -290,22 +308,4 @@ function fixedHorizonPeriodBadge(
     ),
     tone: 'default',
   }
-}
-
-export function buildFilterScopeBadges({
-  account,
-  accountLabels,
-  effectiveDate,
-  filters,
-  formatDate,
-  period,
-}: FilterScopeSpec & {
-  accountLabels: Record<string, string>
-  filters: DashboardFilters
-  formatDate: ReturnType<typeof useFormatDate>
-}): ScopeBadge[] {
-  return [
-    accountBadge(account, filters, accountLabels),
-    periodBadge(period, filters, formatDate, effectiveDate),
-  ]
 }

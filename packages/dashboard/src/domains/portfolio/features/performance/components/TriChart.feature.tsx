@@ -1,9 +1,9 @@
 import { LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { TriTooltip } from '@/domains/portfolio/features/performance/components/PerformanceChartTooltips.view'
+import { buildTriChartData } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { TriTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import { buildTriChartData } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -120,7 +120,11 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             </span>
             <span>
               <Layout as="span" flow="inline" height="divider" width="icon">
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.returnRate} as="i" shape="centeredLine" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.returnRate}
+                  as="i"
+                  shape="centeredLine"
+                />
               </Layout>
               {i18n.t('ui.trichart.trailing3YearIrr')}
             </span>

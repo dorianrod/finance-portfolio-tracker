@@ -1,6 +1,6 @@
+import type { ComparedMetric } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
-import type { ComparedMetric } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

@@ -8,12 +8,6 @@ import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashbo
 import { DashboardHoldings } from './DashboardHoldings.feature'
 import type { DashboardViewModel } from './types/dashboardViewModel.type'
 
-const OverviewTab = lazy(DASHBOARD_TAB_LOADERS.overview)
-const WealthTab = lazy(DASHBOARD_TAB_LOADERS.wealth)
-const PerformanceTab = lazy(DASHBOARD_TAB_LOADERS.performance)
-const DiversificationCharts = lazy(DASHBOARD_TAB_LOADERS.diversification)
-const DataQualityTab = lazy(DASHBOARD_TAB_LOADERS.quality)
-
 export function DashboardContent({
   dashboard,
 }: {
@@ -118,3 +112,9 @@ export function DashboardContent({
     </>
   )
 }
+
+const OverviewTab = lazy(DASHBOARD_TAB_LOADERS.overview)
+const WealthTab = lazy(DASHBOARD_TAB_LOADERS.wealth)
+const PerformanceTab = lazy(DASHBOARD_TAB_LOADERS.performance)
+const DiversificationCharts = lazy(DASHBOARD_TAB_LOADERS.diversification)
+const DataQualityTab = lazy(DASHBOARD_TAB_LOADERS.quality)

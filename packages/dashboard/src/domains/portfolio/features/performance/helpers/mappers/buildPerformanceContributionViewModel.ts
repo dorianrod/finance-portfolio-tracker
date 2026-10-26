@@ -2,10 +2,7 @@ import type {
   ContributionHorizon,
   PerformanceContributionSummary,
 } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import type { AssetIrrSummary } from '@/domains/portfolio/shared/types/assetIrr.type'
-
-const MINIMUM_DISPLAYED_IRR = 0.005
-const RANKING_SIZE = 5
+import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 
 export function buildAssetIrrRankings(summary: AssetIrrSummary) {
   const measured = summary.assets.filter(
@@ -54,3 +51,6 @@ export function resolveContributionHorizon({
     threeYearUnavailable,
   }
 }
+
+const MINIMUM_DISPLAYED_IRR = 0.005
+const RANKING_SIZE = 5

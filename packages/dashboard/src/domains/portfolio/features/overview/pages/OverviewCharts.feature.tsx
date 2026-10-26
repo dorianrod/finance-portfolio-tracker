@@ -6,16 +6,16 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+import type {
+  OverviewComparison,
+  OverviewConcentrationComparison,
+} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import { toUtcDateTimestamp } from '@/domains/portfolio/features/overview/helpers/formatters/toUtcDateTimestamp'
 import type { DriverRow } from '@/domains/portfolio/features/overview/types/overviewChart.type'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type {
-  OverviewComparison,
-  OverviewConcentrationComparison,
-} from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'

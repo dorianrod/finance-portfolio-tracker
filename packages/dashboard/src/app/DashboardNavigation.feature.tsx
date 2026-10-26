@@ -7,23 +7,6 @@ import { CountBadge } from '@/shared/ui/Badge.view'
 import { Navigation, NavigationButton } from '@/shared/ui/Controls.view'
 import { Inline, Layout } from '@/shared/ui/Layout.view'
 
-const PRIMARY_TABS: Array<{
-  id: Exclude<AnalysisTab, 'quality'>
-  label: string
-}> = [
-  { id: 'overview', label: i18n.t('ui.app.overview') },
-  { id: 'wealth', label: i18n.t('ui.app.wealthCashFlow') },
-  { id: 'performance', label: i18n.t('ui.app.performancePassiveIncome') },
-  { id: 'diversification', label: i18n.t('ui.app.diversification') },
-  { id: 'holdings', label: i18n.t('ui.app.holdings') },
-]
-
-export type PrimaryTabButtonProps = {
-  activeTab: AnalysisTab
-  onNavigate: (tab: AnalysisTab) => void
-  tab: (typeof PRIMARY_TABS)[number]
-}
-
 export function PrimaryTabButton({
   activeTab,
   onNavigate,
@@ -98,4 +81,21 @@ export function DashboardNavigation({
       </Navigation>
     </div>
   )
+}
+
+const PRIMARY_TABS: Array<{
+  id: Exclude<AnalysisTab, 'quality'>
+  label: string
+}> = [
+  { id: 'overview', label: i18n.t('ui.app.overview') },
+  { id: 'wealth', label: i18n.t('ui.app.wealthCashFlow') },
+  { id: 'performance', label: i18n.t('ui.app.performancePassiveIncome') },
+  { id: 'diversification', label: i18n.t('ui.app.diversification') },
+  { id: 'holdings', label: i18n.t('ui.app.holdings') },
+]
+
+export type PrimaryTabButtonProps = {
+  activeTab: AnalysisTab
+  onNavigate: (tab: AnalysisTab) => void
+  tab: (typeof PRIMARY_TABS)[number]
 }

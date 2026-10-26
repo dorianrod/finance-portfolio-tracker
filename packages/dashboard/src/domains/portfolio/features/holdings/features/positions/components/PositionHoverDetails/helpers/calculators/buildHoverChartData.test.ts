@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
+import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
 
 import {
   buildHoverChartSeries,

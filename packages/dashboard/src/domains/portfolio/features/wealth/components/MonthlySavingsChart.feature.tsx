@@ -5,10 +5,10 @@ import {
   Tooltip,
 } from 'recharts'
 
+import { MonthlyTooltip } from '@/domains/portfolio/features/wealth/components/WealthChartTooltips.view'
+import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { MonthlyTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'

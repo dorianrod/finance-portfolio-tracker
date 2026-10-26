@@ -1,14 +1,6 @@
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-export type PositionGroupTotal = {
-  dividends: number
-  realized: number
-  totalRealized: number
-  unrealized: number
-  value: number
-}
-
 export function calculatePositionGroupTotals(
   positions: PositionRow[],
 ): Map<string, PositionGroupTotal> {
@@ -50,4 +42,12 @@ export function calculatePassiveIncomeTax(
   return gross > 0 && net != null && taxRate != null && taxRate > 0
     ? gross - net
     : null
+}
+
+export type PositionGroupTotal = {
+  dividends: number
+  realized: number
+  totalRealized: number
+  unrealized: number
+  value: number
 }

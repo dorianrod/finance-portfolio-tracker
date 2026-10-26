@@ -11,9 +11,6 @@ import type {
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-const EMPTY_FUND_HOLDINGS: FundHolding[] = []
-const EMPTY_HISTORICAL_FUND_HOLDINGS: HistoricalFundHolding[] = []
-
 export function useFundPositionHoldings(position: PositionRow) {
   const filters = useAtomValue(dashboardFiltersAtom)
   const { data: fundData } = useFundHoldingsQuery()
@@ -29,3 +26,6 @@ export function useFundPositionHoldings(position: PositionRow) {
       .slice(0, 8)
   }, [filters.dateTo, fundData, position])
 }
+
+const EMPTY_FUND_HOLDINGS: FundHolding[] = []
+const EMPTY_HISTORICAL_FUND_HOLDINGS: HistoricalFundHolding[] = []

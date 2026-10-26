@@ -3,129 +3,6 @@ import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/acco
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-const NON_INVESTMENT_CATEGORIES = new Set(['savings', 'checking'])
-
-export type HistoricalConcentrationHolding = {
-  key: string
-  label: string
-  name: string
-  value: number
-  weight: number
-}
-export type HistoricalConcentrationPoint = {
-  date: Date
-  positionsTo25Pct: number | null
-  positionsTo50Pct: number | null
-  positionsTo75Pct: number | null
-  positionsTo90Pct: number | null
-  effectiveCount: number
-  holdingCount: number
-  coveragePct: number
-  identifiedValue: number
-  undisclosedValue: number
-  opaqueValue: number
-  selectedValue: number
-  holdings: HistoricalConcentrationHolding[]
-}
-
-export function nextPlaybackIndex(
-  index: number,
-  frameCount: number,
-): {
-  index: number
-  complete: boolean
-} {
-  if (frameCount <= 0 || index >= frameCount - 1)
-    return { index: Math.max(0, index), complete: true }
-  const nextIndex = index + 1
-  return { index: nextIndex, complete: nextIndex >= frameCount - 1 }
-}
-
-export function shouldAnimateConcentration(
-  prefersReducedMotion: boolean,
-): boolean {
-  return !prefersReducedMotion
-}
-
-function isApplicable(row: RawPosition): boolean {
-  const category = row.account_category?.trim().toLowerCase() ?? ''
-  const accountType = row.account_type?.trim().toLowerCase() ?? ''
-  return (
-    !NON_INVESTMENT_CATEGORIES.has(category) &&
-    !accountType.endsWith(CASH_SUFFIX.toLowerCase())
-  )
-}
-
-function assetKey(row: RawPosition): string {
-  return row.isin.trim() || row.ticker.trim() || row.name.trim()
-}
-
-function positionsNeededForShare(
-  holdings: HistoricalConcentrationHolding[],
-  targetPct: number,
-): number | null {
-  let cumulativeWeight = 0
-  for (let index = 0; index < holdings.length; index += 1) {
-    cumulativeWeight += holdings[index].weight
-    if (cumulativeWeight + 1e-9 >= targetPct) return index + 1
-  }
-  return null
-}
-
-function matchesFilters(
-  row: RawPosition,
-  accountFilters: Set<string>,
-  accountTypeFilters: Set<string>,
-): boolean {
-  return (
-    isApplicable(row) &&
-    (accountFilters.size === 0 || accountFilters.has(accountFilterId(row))) &&
-    (accountTypeFilters.size === 0 ||
-      accountTypeFilters.has(row.account_type ?? ''))
-  )
-}
-
-function concentrationPoint(
-  date: Date,
-  assets: Map<string, { label: string; name: string; value: number }>,
-  selectedValue: number,
-  identifiedValue: number,
-  undisclosedValue: number,
-  opaqueValue: number,
-): HistoricalConcentrationPoint {
-  const ranked = [...assets.entries()]
-    .map(([key, asset]) => ({ key, ...asset }))
-    .toSorted(
-      (left, right) =>
-        right.value - left.value || left.key.localeCompare(right.key),
-    )
-  const holdings = ranked.map((holding) => ({
-    ...holding,
-    weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,
-  }))
-  const squaredWeightSum = holdings.reduce(
-    (sum, holding) => sum + Math.pow(holding.weight / 100, 2),
-    0,
-  )
-
-  return {
-    date,
-    positionsTo25Pct: positionsNeededForShare(holdings, 25),
-    positionsTo50Pct: positionsNeededForShare(holdings, 50),
-    positionsTo75Pct: positionsNeededForShare(holdings, 75),
-    positionsTo90Pct: positionsNeededForShare(holdings, 90),
-    effectiveCount: squaredWeightSum > 0 ? 1 / squaredWeightSum : 0,
-    holdingCount: holdings.length,
-    coveragePct:
-      selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
-    identifiedValue,
-    undisclosedValue,
-    opaqueValue,
-    selectedValue,
-    holdings,
-  }
-}
-
 export function buildHistoricalConcentration(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),
@@ -169,65 +46,6 @@ export function buildHistoricalConcentration(
     })
 }
 
-type HistoricalSnapshot = {
-  effectiveDate: Date
-  capturedAt: Date | null
-  holdings: HistoricalFundHolding[]
-}
-
-function historicalSnapshotsByParent(
-  history: HistoricalFundHolding[],
-): Map<string, HistoricalSnapshot[]> {
-  const grouped = new Map<string, HistoricalFundHolding[]>()
-  for (const holding of history) {
-    const current = grouped.get(holding.historySnapshotId) ?? []
-    current.push(holding)
-    grouped.set(holding.historySnapshotId, current)
-  }
-
-  const byParent = new Map<string, HistoricalSnapshot[]>()
-  for (const holdings of grouped.values()) {
-    const first = holdings[0]
-    const snapshot = {
-      effectiveDate: first.effectiveDate,
-      capturedAt: first.capturedAt,
-      holdings,
-    }
-    for (const key of [
-      first.parentIsin,
-      first.parentTicker,
-      first.parentName,
-    ].filter(Boolean)) {
-      const current = byParent.get(key) ?? []
-      current.push(snapshot)
-      byParent.set(key, current)
-    }
-  }
-  for (const [key, snapshots] of byParent) {
-    byParent.set(
-      key,
-      snapshots.toSorted(
-        (left, right) =>
-          left.effectiveDate.getTime() - right.effectiveDate.getTime() ||
-          (left.capturedAt?.getTime() ?? 0) -
-            (right.capturedAt?.getTime() ?? 0),
-      ),
-    )
-  }
-  return byParent
-}
-
-function latestSnapshotAt(
-  snapshots: HistoricalSnapshot[] | undefined,
-  date: Date,
-): HistoricalSnapshot | undefined {
-  if (!snapshots) return undefined
-  for (let index = snapshots.length - 1; index >= 0; index -= 1) {
-    if (snapshots[index].effectiveDate <= date) return snapshots[index]
-  }
-  return undefined
-}
-
 export function selectHistoricalFundHoldingsAtDate(
   history: HistoricalFundHolding[],
   date: Date,
@@ -245,17 +63,6 @@ export function selectHistoricalFundHoldingsAtDate(
     if (snapshot) selected.set(parentKey, snapshot)
   }
   return [...selected.values()].flatMap((snapshot) => snapshot.holdings)
-}
-
-function isFundPosition(row: RawPosition): boolean {
-  return (
-    /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(
-      row.name,
-    ) ||
-    /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers|DWS|SPDR|Vanguard|Invesco|UBS|HSBC)\b/i.test(
-      row.name,
-    )
-  )
 }
 
 export function buildHistoricalLookThroughConcentration(
@@ -370,4 +177,178 @@ export function buildHistoricalLookThroughConcentration(
       ({ hasApplicableHistoricalSnapshot }) => hasApplicableHistoricalSnapshot,
     )
     .map(({ point }) => point)
+}
+
+const NON_INVESTMENT_CATEGORIES = new Set(['savings', 'checking'])
+
+export type HistoricalConcentrationHolding = {
+  key: string
+  label: string
+  name: string
+  value: number
+  weight: number
+}
+export type HistoricalConcentrationPoint = {
+  date: Date
+  positionsTo25Pct: number | null
+  positionsTo50Pct: number | null
+  positionsTo75Pct: number | null
+  positionsTo90Pct: number | null
+  effectiveCount: number
+  holdingCount: number
+  coveragePct: number
+  identifiedValue: number
+  undisclosedValue: number
+  opaqueValue: number
+  selectedValue: number
+  holdings: HistoricalConcentrationHolding[]
+}
+
+function isApplicable(row: RawPosition): boolean {
+  const category = row.account_category?.trim().toLowerCase() ?? ''
+  const accountType = row.account_type?.trim().toLowerCase() ?? ''
+  return (
+    !NON_INVESTMENT_CATEGORIES.has(category) &&
+    !accountType.endsWith(CASH_SUFFIX.toLowerCase())
+  )
+}
+
+function assetKey(row: RawPosition): string {
+  return row.isin.trim() || row.ticker.trim() || row.name.trim()
+}
+
+function positionsNeededForShare(
+  holdings: HistoricalConcentrationHolding[],
+  targetPct: number,
+): number | null {
+  let cumulativeWeight = 0
+  for (let index = 0; index < holdings.length; index += 1) {
+    cumulativeWeight += holdings[index].weight
+    if (cumulativeWeight + 1e-9 >= targetPct) return index + 1
+  }
+  return null
+}
+
+function matchesFilters(
+  row: RawPosition,
+  accountFilters: Set<string>,
+  accountTypeFilters: Set<string>,
+): boolean {
+  return (
+    isApplicable(row) &&
+    (accountFilters.size === 0 || accountFilters.has(accountFilterId(row))) &&
+    (accountTypeFilters.size === 0 ||
+      accountTypeFilters.has(row.account_type ?? ''))
+  )
+}
+
+function concentrationPoint(
+  date: Date,
+  assets: Map<string, { label: string; name: string; value: number }>,
+  selectedValue: number,
+  identifiedValue: number,
+  undisclosedValue: number,
+  opaqueValue: number,
+): HistoricalConcentrationPoint {
+  const ranked = [...assets.entries()]
+    .map(([key, asset]) => ({ key, ...asset }))
+    .toSorted(
+      (left, right) =>
+        right.value - left.value || left.key.localeCompare(right.key),
+    )
+  const holdings = ranked.map((holding) => ({
+    ...holding,
+    weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,
+  }))
+  const squaredWeightSum = holdings.reduce(
+    (sum, holding) => sum + Math.pow(holding.weight / 100, 2),
+    0,
+  )
+
+  return {
+    date,
+    positionsTo25Pct: positionsNeededForShare(holdings, 25),
+    positionsTo50Pct: positionsNeededForShare(holdings, 50),
+    positionsTo75Pct: positionsNeededForShare(holdings, 75),
+    positionsTo90Pct: positionsNeededForShare(holdings, 90),
+    effectiveCount: squaredWeightSum > 0 ? 1 / squaredWeightSum : 0,
+    holdingCount: holdings.length,
+    coveragePct:
+      selectedValue > 0 ? (identifiedValue / selectedValue) * 100 : 0,
+    identifiedValue,
+    undisclosedValue,
+    opaqueValue,
+    selectedValue,
+    holdings,
+  }
+}
+
+type HistoricalSnapshot = {
+  effectiveDate: Date
+  capturedAt: Date | null
+  holdings: HistoricalFundHolding[]
+}
+
+function historicalSnapshotsByParent(
+  history: HistoricalFundHolding[],
+): Map<string, HistoricalSnapshot[]> {
+  const grouped = new Map<string, HistoricalFundHolding[]>()
+  for (const holding of history) {
+    const current = grouped.get(holding.historySnapshotId) ?? []
+    current.push(holding)
+    grouped.set(holding.historySnapshotId, current)
+  }
+
+  const byParent = new Map<string, HistoricalSnapshot[]>()
+  for (const holdings of grouped.values()) {
+    const first = holdings[0]
+    const snapshot = {
+      effectiveDate: first.effectiveDate,
+      capturedAt: first.capturedAt,
+      holdings,
+    }
+    for (const key of [
+      first.parentIsin,
+      first.parentTicker,
+      first.parentName,
+    ].filter(Boolean)) {
+      const current = byParent.get(key) ?? []
+      current.push(snapshot)
+      byParent.set(key, current)
+    }
+  }
+  for (const [key, snapshots] of byParent) {
+    byParent.set(
+      key,
+      snapshots.toSorted(
+        (left, right) =>
+          left.effectiveDate.getTime() - right.effectiveDate.getTime() ||
+          (left.capturedAt?.getTime() ?? 0) -
+            (right.capturedAt?.getTime() ?? 0),
+      ),
+    )
+  }
+  return byParent
+}
+
+function latestSnapshotAt(
+  snapshots: HistoricalSnapshot[] | undefined,
+  date: Date,
+): HistoricalSnapshot | undefined {
+  if (!snapshots) return undefined
+  for (let index = snapshots.length - 1; index >= 0; index -= 1) {
+    if (snapshots[index].effectiveDate <= date) return snapshots[index]
+  }
+  return undefined
+}
+
+function isFundPosition(row: RawPosition): boolean {
+  return (
+    /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(
+      row.name,
+    ) ||
+    /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers|DWS|SPDR|Vanguard|Invesco|UBS|HSBC)\b/i.test(
+      row.name,
+    )
+  )
 }

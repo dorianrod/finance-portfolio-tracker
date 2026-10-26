@@ -1,9 +1,9 @@
 import { BarChart, Legend, ResponsiveContainer } from 'recharts'
 
+import { PassiveIncomeTooltip } from '@/domains/portfolio/features/performance/components/PerformanceChartTooltips.view'
+import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { PassiveIncomeTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { PassiveIncomePoint } from '@/domains/portfolio/shared/types/passiveIncomePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'

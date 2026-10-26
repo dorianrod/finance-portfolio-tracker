@@ -11,12 +11,6 @@ import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { FilterScopeBadge } from './FilterScopeBadges.view'
 import { buildFilterScopeBadges } from './helpers/presenters/buildFilterScopeBadges'
 
-export type {
-  AccountScopeMode,
-  FilterScopeSpec,
-  PeriodScopeMode,
-} from '@/domains/portfolio/shared/types/filterScope.type'
-
 export function FilterScopeBadges({
   account,
   period,
@@ -45,3 +39,9 @@ export function FilterScopeBadges({
     </Layout>
   )
 }
+
+export type {
+  AccountScopeMode,
+  FilterScopeSpec,
+  PeriodScopeMode,
+} from '@/domains/portfolio/shared/types/filterScope.type'

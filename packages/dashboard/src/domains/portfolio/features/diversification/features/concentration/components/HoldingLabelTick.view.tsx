@@ -1,13 +1,5 @@
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inset } from '@/shared/ui/Layout.view'
-type HoldingLabelTickProps = {
-  x?: number
-  y?: number
-  payload?: { value?: string | number }
-}
-
-export const HOLDING_LABEL_WIDTH = 260
-
 export function HoldingLabelTick({
   x = 0,
   y = 0,
@@ -36,3 +28,11 @@ export function HoldingLabelTick({
     </foreignObject>
   )
 }
+
+type HoldingLabelTickProps = {
+  x?: number
+  y?: number
+  payload?: { value?: string | number }
+}
+
+export const HOLDING_LABEL_WIDTH = 260

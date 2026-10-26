@@ -1,5 +1,3 @@
-const PERCENTAGE_DECIMAL_PLACES = 1
-
 export function partitionPercentages(values: number[]): number[] {
   const safeValues = values.map((value) =>
     Number.isFinite(value) ? Math.max(0, value) : 0,
@@ -23,3 +21,5 @@ export function partitionPercentages(values: number[]): number[] {
 
   return roundedUnits.map((value) => value / unitsPerPercent)
 }
+
+const PERCENTAGE_DECIMAL_PLACES = 1

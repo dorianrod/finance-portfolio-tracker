@@ -28,8 +28,9 @@ Answer why a child belongs to its parent in business terms. Sharing a screen, da
 
 ```text
 features/parent-capability/
-├── services/useParentCapability.ts   # implements two distinct responsibilities
-├── components/SecondCapability.tsx   # one remains implicit in the parent
+├── shared/
+│   ├── services/useParentCapability.ts   # implements two distinct responsibilities
+│   └── components/SecondCapability.tsx   # one remains implicit in the parent
 └── features/first-capability/
 ```
 
@@ -37,7 +38,8 @@ features/parent-capability/
 
 ```text
 features/parent-capability/
-├── components/ParentCapability.tsx   # composes the peer capabilities
+├── shared/
+│   └── types/commonInput.type.ts         # used by both peer capabilities
 └── features/
     ├── first-capability/
     └── second-capability/
@@ -45,12 +47,12 @@ features/parent-capability/
 
 These schematic children represent distinct user outcomes within the parent's business scope. A filter, dimension, period or display mode normally remains a parameter or component within its capability. Split it only when it introduces distinct business rules, workflows or ownership, rather than merely different rendering.
 
-If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain.
+If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain. Follow the generic structural invariant: a feature with `features/` puts every parent-owned role folder under `shared/`; a leaf feature keeps role folders directly at its root.
 
 ### Exceptions
 
 - Peer responsibilities may have different file counts, implementation sizes and internal layouts; symmetry alone does not justify extraction.
-- A parent may have its own cohesive behavior alongside a child; extract a sibling only when the remaining behavior represents a distinct capability.
+- A parent may coordinate children through application composition. If the remaining parent behavior is itself a cohesive capability with no shared consumers, give it a named child feature rather than placing its implementation in `shared/`.
 - A technical extraction or a small variant can remain a component, helper or parameter.
 
 ### References

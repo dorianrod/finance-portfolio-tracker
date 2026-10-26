@@ -7,6 +7,7 @@ import {
 import { Fragment } from 'react'
 
 import { FundPositionPopover } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover.feature'
+import { HoverAllocationPopover } from '@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover.view'
 import { POSITION_COLUMNS } from '@/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature'
 import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import { HoverSavingsChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
@@ -17,12 +18,11 @@ import { usePositionGroupPreviews } from '@/domains/portfolio/features/holdings/
 import { usePositionTableData } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableData'
 import { usePositionTableOverlays } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays'
 import { usePositionTableState } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableState'
+import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
-import { HoverAllocationPopover } from '@/domains/portfolio/shared/components/HoverAllocationPopover.view'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { AllocationHoverTarget } from '@/domains/portfolio/shared/types/allocationHoverTarget.type'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type {
   PositionRow,

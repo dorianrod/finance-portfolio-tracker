@@ -13,12 +13,6 @@ import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 import { getYearLabelPosition } from './helpers/presenters/getYearLabelPosition'
 
-const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = {
-  dx: 0,
-  dy: -12,
-  textAnchor: 'middle',
-}
-
 export function YearLabel({
   index,
   value,
@@ -49,7 +43,11 @@ export function YearLabel({
       x={x}
       y={y}
       align={placement.textAnchor}
-      tone={isRecent ? PORTFOLIO_CHART_TONES.returnRate : PORTFOLIO_CHART_TONES.neutralSeries}
+      tone={
+        isRecent
+          ? PORTFOLIO_CHART_TONES.returnRate
+          : PORTFOLIO_CHART_TONES.neutralSeries
+      }
       age={{ year: point.year, recent: isRecent, oldestYear, newestYear }}
     >
       {value}
@@ -124,4 +122,10 @@ export function RelationshipTooltip({
       </Layout>
     </TooltipBox>
   )
+}
+
+const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = {
+  dx: 0,
+  dy: -12,
+  textAnchor: 'middle',
 }

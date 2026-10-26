@@ -1,4 +1,4 @@
-import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
+import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 
 export function getAccountTypeSplitRadius(
   point: Pick<AccountTypePoint, 'unrealized_gain' | 'total_cost_basis'>,

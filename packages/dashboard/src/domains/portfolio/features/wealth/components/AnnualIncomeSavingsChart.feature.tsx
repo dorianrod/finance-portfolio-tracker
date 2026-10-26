@@ -119,19 +119,31 @@ export function AnnualIncomeSavingsChart({
           <Inline as="div" flow="wrap" gap="default" inset="default">
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.costBasis} as="i" shape="bar" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.costBasis}
+                  as="i"
+                  shape="bar"
+                />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.netSalary.970d84')}
             </Inline>
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.passiveIncome} as="i" shape="bar" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.passiveIncome}
+                  as="i"
+                  shape="bar"
+                />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}
             </Inline>
             <Inline as="span" align="center" gap="default">
               <Layout as="span" flow="inline" height="indicator" width="icon">
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.netContributions} as="i" shape="bar" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.netContributions}
+                  as="i"
+                  shape="bar"
+                />
               </Layout>
               {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
             </Inline>

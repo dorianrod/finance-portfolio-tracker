@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
+import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
 import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
-import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePositionHistoryQuery'
 import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
@@ -12,12 +12,6 @@ import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { SavingsHistoryChart } from './SavingsHistoryChart.view'
-
-type SavingsProps = {
-  target: SavingsChartTarget
-  onMouseEnter: () => void
-  onMouseLeave: () => void
-}
 
 export function HoverSavingsChart({
   target,
@@ -97,4 +91,10 @@ export function HoverSavingsChart({
       </Layout>
     </Preview.Content>
   )
+}
+
+type SavingsProps = {
+  target: SavingsChartTarget
+  onMouseEnter: () => void
+  onMouseLeave: () => void
 }

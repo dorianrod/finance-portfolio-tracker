@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { AccountTypeHistoryTooltip } from '@/domains/portfolio/features/wealth/components/WealthChartTooltips.view'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
 import {
   accountTypeShareKey,
   withAccountTypeShares,
 } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { AccountTypeHistoryTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers/aggregators/buildAccountTypeHistory'
 import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -23,48 +23,6 @@ import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-function AccountTypeGradient({
-  accountType,
-  index,
-  typeCategories,
-}: {
-  accountType: string
-  index: number
-  typeCategories: Record<string, string>
-}) {
-  return (
-    <SeriesGradient
-      id={`grad-${index}`}
-      profile="layered"
-      tone={getAccountTypeTone(accountType, index, typeCategories)}
-    />
-  )
-}
-
-function AccountTypeArea({
-  accountType,
-  index,
-  percentageMode,
-  typeCategories,
-}: {
-  accountType: string
-  index: number
-  percentageMode: boolean
-  typeCategories: Record<string, string>
-}) {
-  return (
-    <SeriesArea
-      type="monotone"
-      dataKey={percentageMode ? accountTypeShareKey(index) : accountType}
-      name={accountType}
-      stackId="a"
-      tone={getAccountTypeTone(accountType, index, typeCategories)}
-      gradientId={`grad-${index}`}
-      weight="fine"
-    />
-  )
-}
 
 export function AccountTypeHistoryChart({
   data,
@@ -163,6 +121,48 @@ export function AccountTypeHistoryChart({
         </ResponsiveContainer>
       </Surface>
     </div>
+  )
+}
+
+function AccountTypeGradient({
+  accountType,
+  index,
+  typeCategories,
+}: {
+  accountType: string
+  index: number
+  typeCategories: Record<string, string>
+}) {
+  return (
+    <SeriesGradient
+      id={`grad-${index}`}
+      profile="layered"
+      tone={getAccountTypeTone(accountType, index, typeCategories)}
+    />
+  )
+}
+
+function AccountTypeArea({
+  accountType,
+  index,
+  percentageMode,
+  typeCategories,
+}: {
+  accountType: string
+  index: number
+  percentageMode: boolean
+  typeCategories: Record<string, string>
+}) {
+  return (
+    <SeriesArea
+      type="monotone"
+      dataKey={percentageMode ? accountTypeShareKey(index) : accountType}
+      name={accountType}
+      stackId="a"
+      tone={getAccountTypeTone(accountType, index, typeCategories)}
+      gradientId={`grad-${index}`}
+      weight="fine"
+    />
   )
 }
 

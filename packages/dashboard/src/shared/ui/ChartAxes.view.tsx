@@ -5,6 +5,46 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 
 import { CHART_AXIS_TICK, CHART_GRID_PATTERNS } from './chartAppearance'
 
+export function ChartXAxis({
+  density = 'standard',
+  axis = false,
+  ...props
+}: XAxisConfig & { density?: 'standard' | 'compact'; axis?: boolean }) {
+  return (
+    <XAxis
+      {...props}
+      tick={{ ...CHART_AXIS_TICK, fontSize: density === 'compact' ? 10 : 11 }}
+      tickLine={false}
+      axisLine={axis}
+    />
+  )
+}
+
+export function ChartYAxis({
+  density = 'standard',
+  axis = false,
+  ...props
+}: YAxisConfig & { density?: 'standard' | 'compact'; axis?: boolean }) {
+  return (
+    <YAxis
+      {...props}
+      tick={{ ...CHART_AXIS_TICK, fontSize: density === 'compact' ? 10 : 11 }}
+      tickLine={false}
+      axisLine={axis}
+    />
+  )
+}
+
+export function ChartGrid({ pattern = 'dashed', ...props }: GridProps) {
+  return (
+    <CartesianGrid
+      {...props}
+      stroke={CHART_THEME.grid}
+      strokeDasharray={CHART_GRID_PATTERNS[pattern]}
+    />
+  )
+}
+
 type AxisConfigKeys =
   | 'dataKey'
   | 'type'
@@ -45,36 +85,6 @@ type YAxisConfig = Pick<
   >
 >
 
-export function ChartXAxis({
-  density = 'standard',
-  axis = false,
-  ...props
-}: XAxisConfig & { density?: 'standard' | 'compact'; axis?: boolean }) {
-  return (
-    <XAxis
-      {...props}
-      tick={{ ...CHART_AXIS_TICK, fontSize: density === 'compact' ? 10 : 11 }}
-      tickLine={false}
-      axisLine={axis}
-    />
-  )
-}
-
-export function ChartYAxis({
-  density = 'standard',
-  axis = false,
-  ...props
-}: YAxisConfig & { density?: 'standard' | 'compact'; axis?: boolean }) {
-  return (
-    <YAxis
-      {...props}
-      tick={{ ...CHART_AXIS_TICK, fontSize: density === 'compact' ? 10 : 11 }}
-      tickLine={false}
-      axisLine={axis}
-    />
-  )
-}
-
 type GridConfigKeys =
   | 'horizontalPoints'
   | 'verticalPoints'
@@ -90,14 +100,4 @@ type GridProps = Pick<ComponentProps<typeof CartesianGrid>, GridConfigKeys> & {
   pattern?: keyof typeof CHART_GRID_PATTERNS
   horizontal?: boolean
   vertical?: boolean
-}
-
-export function ChartGrid({ pattern = 'dashed', ...props }: GridProps) {
-  return (
-    <CartesianGrid
-      {...props}
-      stroke={CHART_THEME.grid}
-      strokeDasharray={CHART_GRID_PATTERNS[pattern]}
-    />
-  )
 }

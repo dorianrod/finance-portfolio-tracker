@@ -16,138 +16,6 @@ import { LevelBadge, StatusTableRow } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-const SOURCE_LABELS: Record<string, string> = {
-  main: i18n.t('ui.errorstab.ingestPortfolioPy'),
-  fetch_prices: i18n.t('ui.errorstab.fetchPricesPy'),
-}
-
-const ERROR_COLUMNS: [
-  PipelineErrorSortColumn,
-  string,
-  'w-20' | 'w-40' | 'w-28' | 'w-24' | '',
-][] = [
-  ['level', i18n.t('ui.errorstab.level'), 'w-20'],
-  ['type', i18n.t('ui.errorstab.type'), 'w-40'],
-  ['source', i18n.t('ui.errorstab.source'), 'w-28'],
-  ['date', i18n.t('ui.errorstab.date'), 'w-24'],
-  ['name', i18n.t('ui.errorstab.asset'), 'w-28'],
-  ['isin', 'ISIN', 'w-24'],
-  ['message', i18n.t('ui.errorstab.message'), ''],
-]
-
-type Props = {
-  errors: PipelineError[]
-}
-
-function SortIcon({
-  col,
-  sortCol,
-  dir,
-}: {
-  col: PipelineErrorSortColumn
-  sortCol: PipelineErrorSortColumn
-  dir: 'asc' | 'desc'
-}) {
-  if (col !== sortCol)
-    return (
-      <Layout as="span" flow="inline">
-        <Text tone="subtle">↕</Text>
-      </Layout>
-    )
-  return (
-    <Layout as="span" flow="inline">
-      <Text tone="muted">{dir === 'asc' ? '↑' : '↓'}</Text>
-    </Layout>
-  )
-}
-
-function ErrorTypeOption({ type }: { type: string }) {
-  return (
-    <option value={type}>{PIPELINE_ERROR_TYPE_LABELS[type] ?? type}</option>
-  )
-}
-
-function ErrorColumnHeader({
-  column,
-  direction,
-  onSort,
-  sortColumn,
-}: {
-  column: (typeof ERROR_COLUMNS)[number]
-  direction: 'asc' | 'desc'
-  onSort: (column: PipelineErrorSortColumn) => void
-  sortColumn: PipelineErrorSortColumn
-}) {
-  const [id, label] = column
-  return (
-    <Inset as="th" inset="compact">
-      <Text as="div" variant="selectableHeader" tone="muted" align="left">
-        <Button onClick={() => onSort(id)} variant="sort">
-          {label}
-          <SortIcon col={id} sortCol={sortColumn} dir={direction} />
-        </Button>
-      </Text>
-    </Inset>
-  )
-}
-
-type PipelineErrorRow = ReturnType<
-  typeof buildPipelineErrorsViewModel
->['rows'][number]
-
-function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
-  const formatDate = useFormatDate()
-  const formatAssetLabel = useFormatAssetLabel()
-  return (
-    <StatusTableRow level={error.level === 'error' ? 'error' : 'warning'}>
-      <Inset as="td" inset="compact">
-        <LevelBadge level={error.level === 'error' ? 'error' : 'warning'}>
-          <Layout as="span" flow="inline" align="center" gap="compact">
-            {error.level === 'error'
-              ? i18n.t('ui.errorstab.error.8af296')
-              : i18n.t('ui.errorstab.warning.6270bb')}
-          </Layout>
-        </LevelBadge>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text as="div" tone="secondary">
-          {PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}
-        </Text>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text as="div" variant="code" tone="subtle">
-          {SOURCE_LABELS[error.source] ?? error.source}
-        </Text>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text as="div" variant="code" tone="muted">
-          {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
-        </Text>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text
-          as="div"
-          tone="secondary"
-          truncate
-          title={formatAssetLabel(error)}
-        >
-          {formatAssetLabel(error, '—')}
-        </Text>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text as="div" variant="code" tone="subtle">
-          {error.isin || '—'}
-        </Text>
-      </Inset>
-      <Inset as="td" inset="compact">
-        <Text as="div" variant="relaxed" tone="muted">
-          {error.message}
-        </Text>
-      </Inset>
-    </StatusTableRow>
-  )
-}
-
 export function ErrorsTab({ errors }: Props) {
   const formatAssetLabel = useFormatAssetLabel()
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>(
@@ -296,5 +164,137 @@ export function ErrorsTab({ errors }: Props) {
         </Text>
       )}
     </Stack>
+  )
+}
+
+const SOURCE_LABELS: Record<string, string> = {
+  main: i18n.t('ui.errorstab.ingestPortfolioPy'),
+  fetch_prices: i18n.t('ui.errorstab.fetchPricesPy'),
+}
+
+const ERROR_COLUMNS: [
+  PipelineErrorSortColumn,
+  string,
+  'w-20' | 'w-40' | 'w-28' | 'w-24' | '',
+][] = [
+  ['level', i18n.t('ui.errorstab.level'), 'w-20'],
+  ['type', i18n.t('ui.errorstab.type'), 'w-40'],
+  ['source', i18n.t('ui.errorstab.source'), 'w-28'],
+  ['date', i18n.t('ui.errorstab.date'), 'w-24'],
+  ['name', i18n.t('ui.errorstab.asset'), 'w-28'],
+  ['isin', 'ISIN', 'w-24'],
+  ['message', i18n.t('ui.errorstab.message'), ''],
+]
+
+type Props = {
+  errors: PipelineError[]
+}
+
+function SortIcon({
+  col,
+  sortCol,
+  dir,
+}: {
+  col: PipelineErrorSortColumn
+  sortCol: PipelineErrorSortColumn
+  dir: 'asc' | 'desc'
+}) {
+  if (col !== sortCol)
+    return (
+      <Layout as="span" flow="inline">
+        <Text tone="subtle">↕</Text>
+      </Layout>
+    )
+  return (
+    <Layout as="span" flow="inline">
+      <Text tone="muted">{dir === 'asc' ? '↑' : '↓'}</Text>
+    </Layout>
+  )
+}
+
+function ErrorTypeOption({ type }: { type: string }) {
+  return (
+    <option value={type}>{PIPELINE_ERROR_TYPE_LABELS[type] ?? type}</option>
+  )
+}
+
+function ErrorColumnHeader({
+  column,
+  direction,
+  onSort,
+  sortColumn,
+}: {
+  column: (typeof ERROR_COLUMNS)[number]
+  direction: 'asc' | 'desc'
+  onSort: (column: PipelineErrorSortColumn) => void
+  sortColumn: PipelineErrorSortColumn
+}) {
+  const [id, label] = column
+  return (
+    <Inset as="th" inset="compact">
+      <Text as="div" variant="selectableHeader" tone="muted" align="left">
+        <Button onClick={() => onSort(id)} variant="sort">
+          {label}
+          <SortIcon col={id} sortCol={sortColumn} dir={direction} />
+        </Button>
+      </Text>
+    </Inset>
+  )
+}
+
+type PipelineErrorRow = ReturnType<
+  typeof buildPipelineErrorsViewModel
+>['rows'][number]
+
+function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
+  const formatDate = useFormatDate()
+  const formatAssetLabel = useFormatAssetLabel()
+  return (
+    <StatusTableRow level={error.level === 'error' ? 'error' : 'warning'}>
+      <Inset as="td" inset="compact">
+        <LevelBadge level={error.level === 'error' ? 'error' : 'warning'}>
+          <Layout as="span" flow="inline" align="center" gap="compact">
+            {error.level === 'error'
+              ? i18n.t('ui.errorstab.error.8af296')
+              : i18n.t('ui.errorstab.warning.6270bb')}
+          </Layout>
+        </LevelBadge>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" tone="secondary">
+          {PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="subtle">
+          {SOURCE_LABELS[error.source] ?? error.source}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="muted">
+          {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text
+          as="div"
+          tone="secondary"
+          truncate
+          title={formatAssetLabel(error)}
+        >
+          {formatAssetLabel(error, '—')}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="subtle">
+          {error.isin || '—'}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="relaxed" tone="muted">
+          {error.message}
+        </Text>
+      </Inset>
+    </StatusTableRow>
   )
 }

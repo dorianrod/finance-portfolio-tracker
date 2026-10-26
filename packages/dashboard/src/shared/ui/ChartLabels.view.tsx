@@ -3,8 +3,6 @@ import { LabelList, Legend } from 'recharts'
 
 import { CHART_THEME } from '@/shared/theme/chartTheme'
 
-type LabelKeys =
-  'dataKey' | 'position' | 'offset' | 'formatter' | 'valueAccessor'
 export function ChartLabels({
   density = 'compact',
   ...props
@@ -21,6 +19,7 @@ export function ChartLabels({
     />
   )
 }
+
 export function ChartLegend(
   props: Pick<
     ComponentProps<typeof Legend>,
@@ -34,3 +33,6 @@ export function ChartLegend(
     />
   )
 }
+
+type LabelKeys =
+  'dataKey' | 'position' | 'offset' | 'formatter' | 'valueAccessor'

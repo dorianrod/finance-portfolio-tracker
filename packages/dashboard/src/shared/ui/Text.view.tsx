@@ -8,6 +8,32 @@ import {
   type TextTone,
 } from './textAppearance'
 
+export function Text<T extends TextTag = 'span'>({
+  as,
+  variant = 'inherit',
+  tone,
+  align,
+  wrap,
+  numeric = false,
+  truncate = false,
+  ...props
+}: TextProps<T>) {
+  return createElement(as ?? 'span', {
+    ...props,
+    className: [
+      TEXT_VARIANTS[variant],
+      tone && TEXT_TONES[tone],
+      align && TEXT_ALIGNMENTS[align],
+      wrap && TEXT_WRAPPING[wrap],
+      numeric && 'tabular-nums',
+      truncate && 'truncate',
+      truncate && as !== 'td' && as !== 'th' && 'block',
+    ]
+      .filter(Boolean)
+      .join(' '),
+  })
+}
+
 export type TextTag =
   | 'span'
   | 'p'
@@ -40,30 +66,4 @@ export type TextProps<T extends TextTag> = Omit<
   wrap?: keyof typeof TEXT_WRAPPING
   numeric?: boolean
   truncate?: boolean
-}
-
-export function Text<T extends TextTag = 'span'>({
-  as,
-  variant = 'inherit',
-  tone,
-  align,
-  wrap,
-  numeric = false,
-  truncate = false,
-  ...props
-}: TextProps<T>) {
-  return createElement(as ?? 'span', {
-    ...props,
-    className: [
-      TEXT_VARIANTS[variant],
-      tone && TEXT_TONES[tone],
-      align && TEXT_ALIGNMENTS[align],
-      wrap && TEXT_WRAPPING[wrap],
-      numeric && 'tabular-nums',
-      truncate && 'truncate',
-      truncate && as !== 'td' && as !== 'th' && 'block',
-    ]
-      .filter(Boolean)
-      .join(' '),
-  })
 }

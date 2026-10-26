@@ -3,6 +3,9 @@
 React/Vite dashboard for visualising the CSVs produced by
 [finance-pipeline](../pipeline).
 
+[ARCHITECTURE.md](ARCHITECTURE.md) documents business capabilities, feature
+ownership and the import boundaries enforced by ESLint.
+
 ## Development
 
 ```bash

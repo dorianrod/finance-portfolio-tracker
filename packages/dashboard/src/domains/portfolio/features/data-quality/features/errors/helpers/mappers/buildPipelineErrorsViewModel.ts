@@ -2,17 +2,6 @@ import type { AssetLabelSource } from '@/domains/portfolio/shared/helpers/format
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
 
-export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
-  unresolved_ticker: i18n.t('ui.buildpipelineerrorsviewmodel.unresolvedTicker'),
-  missing_price: i18n.t('ui.buildpipelineerrorsviewmodel.missingPrice'),
-  missing_fx_rate: i18n.t('ui.buildpipelineerrorsviewmodel.missingFxRate'),
-  parsing_error: i18n.t('ui.buildpipelineerrorsviewmodel.parsingError'),
-  missing_data: i18n.t('ui.buildpipelineerrorsviewmodel.missingData'),
-}
-
-export type PipelineErrorSortColumn =
-  'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message'
-
 export function buildPipelineErrorsViewModel({
   errors,
   filterLevel,
@@ -72,3 +61,14 @@ export function buildPipelineErrorsViewModel({
     warningCount: errors.filter((error) => error.level === 'warning').length,
   }
 }
+
+export const PIPELINE_ERROR_TYPE_LABELS: Record<string, string> = {
+  unresolved_ticker: i18n.t('ui.buildpipelineerrorsviewmodel.unresolvedTicker'),
+  missing_price: i18n.t('ui.buildpipelineerrorsviewmodel.missingPrice'),
+  missing_fx_rate: i18n.t('ui.buildpipelineerrorsviewmodel.missingFxRate'),
+  parsing_error: i18n.t('ui.buildpipelineerrorsviewmodel.parsingError'),
+  missing_data: i18n.t('ui.buildpipelineerrorsviewmodel.missingData'),
+}
+
+export type PipelineErrorSortColumn =
+  'level' | 'type' | 'source' | 'date' | 'name' | 'isin' | 'message'

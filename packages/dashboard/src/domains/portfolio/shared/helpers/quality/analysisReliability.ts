@@ -1,24 +1,6 @@
 import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
 import i18n from '@/i18n/i18n'
 
-export type AnalysisReliabilityTone =
-  'healthy' | 'warning' | 'critical' | 'unavailable'
-
-export type AnalysisReliabilityMetric = {
-  percentage: number | null
-  amount: number
-  metricLabel: string
-  tone: AnalysisReliabilityTone
-}
-
-export type StatusReliabilityMetric = {
-  value: string
-  metricLabel: string
-  tone: AnalysisReliabilityTone
-}
-
-const CRITICAL_RELIABILITY_PCT = 80
-
 export function percentageReliabilityTone(
   percentage: number | null,
 ): AnalysisReliabilityTone {
@@ -67,3 +49,21 @@ export function pipelineStatusLabel({
   if (issueCount === 0) return i18n.t('ui.analysisreliability.noAnomaly')
   return i18n.t('ui.analysisreliability.anomalyCount', { count: issueCount })
 }
+
+export type AnalysisReliabilityTone =
+  'healthy' | 'warning' | 'critical' | 'unavailable'
+
+export type AnalysisReliabilityMetric = {
+  percentage: number | null
+  amount: number
+  metricLabel: string
+  tone: AnalysisReliabilityTone
+}
+
+export type StatusReliabilityMetric = {
+  value: string
+  metricLabel: string
+  tone: AnalysisReliabilityTone
+}
+
+const CRITICAL_RELIABILITY_PCT = 80

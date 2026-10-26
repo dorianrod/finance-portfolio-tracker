@@ -9,11 +9,6 @@ import {
 
 import type { ControlProps } from './controlProps'
 
-const TooltipContext = createContext<{
-  open: boolean
-  setOpen: (open: boolean) => void
-} | null>(null)
-
 export function Tooltip({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   const context = useMemo(() => ({ open, setOpen }), [open])
@@ -27,6 +22,11 @@ export function Tooltip({ children }: { children: React.ReactNode }) {
     </Primitive.Provider>
   )
 }
+
+const TooltipContext = createContext<{
+  open: boolean
+  setOpen: (open: boolean) => void
+} | null>(null)
 
 function TooltipTrigger({
   label,

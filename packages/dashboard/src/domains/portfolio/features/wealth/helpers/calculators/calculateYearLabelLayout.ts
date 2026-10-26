@@ -1,58 +1,5 @@
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 
-export type YearLabelTextAnchor = 'start' | 'middle' | 'end'
-
-export type YearLabelPlacement = {
-  dx: number
-  dy: number
-  textAnchor: YearLabelTextAnchor
-}
-
-type LabelBox = {
-  left: number
-  right: number
-  top: number
-  bottom: number
-}
-
-const LABEL_WIDTH = 32
-const LABEL_HEIGHT = 14
-const LABEL_CANDIDATES: YearLabelPlacement[] = [
-  { dx: 0, dy: -12, textAnchor: 'middle' },
-  { dx: 0, dy: 20, textAnchor: 'middle' },
-  { dx: 10, dy: 4, textAnchor: 'start' },
-  { dx: -10, dy: 4, textAnchor: 'end' },
-  { dx: 10, dy: -10, textAnchor: 'start' },
-  { dx: -10, dy: -10, textAnchor: 'end' },
-  { dx: 10, dy: 17, textAnchor: 'start' },
-  { dx: -10, dy: 17, textAnchor: 'end' },
-]
-
-function labelBox(
-  x: number,
-  y: number,
-  placement: YearLabelPlacement,
-): LabelBox {
-  const labelX = x + placement.dx
-  let left = labelX - LABEL_WIDTH
-  if (placement.textAnchor === 'middle') left = labelX - LABEL_WIDTH / 2
-  else if (placement.textAnchor === 'start') left = labelX
-  const baseline = y + placement.dy
-  return {
-    left,
-    right: left + LABEL_WIDTH,
-    top: baseline - LABEL_HEIGHT + 2,
-    bottom: baseline + 2,
-  }
-}
-
-function overlapArea(a: LabelBox, b: LabelBox): number {
-  return (
-    Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
-    Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
-  )
-}
-
 /** Greedily gives the newest years first choice, then moves colliding labels around their point. */
 export function calculateYearLabelLayout(
   points: AnnualIncomeSavingsPoint[],
@@ -123,4 +70,57 @@ export function calculateYearLabelLayout(
   }
 
   return placements
+}
+
+export type YearLabelTextAnchor = 'start' | 'middle' | 'end'
+
+export type YearLabelPlacement = {
+  dx: number
+  dy: number
+  textAnchor: YearLabelTextAnchor
+}
+
+type LabelBox = {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
+const LABEL_WIDTH = 32
+const LABEL_HEIGHT = 14
+const LABEL_CANDIDATES: YearLabelPlacement[] = [
+  { dx: 0, dy: -12, textAnchor: 'middle' },
+  { dx: 0, dy: 20, textAnchor: 'middle' },
+  { dx: 10, dy: 4, textAnchor: 'start' },
+  { dx: -10, dy: 4, textAnchor: 'end' },
+  { dx: 10, dy: -10, textAnchor: 'start' },
+  { dx: -10, dy: -10, textAnchor: 'end' },
+  { dx: 10, dy: 17, textAnchor: 'start' },
+  { dx: -10, dy: 17, textAnchor: 'end' },
+]
+
+function labelBox(
+  x: number,
+  y: number,
+  placement: YearLabelPlacement,
+): LabelBox {
+  const labelX = x + placement.dx
+  let left = labelX - LABEL_WIDTH
+  if (placement.textAnchor === 'middle') left = labelX - LABEL_WIDTH / 2
+  else if (placement.textAnchor === 'start') left = labelX
+  const baseline = y + placement.dy
+  return {
+    left,
+    right: left + LABEL_WIDTH,
+    top: baseline - LABEL_HEIGHT + 2,
+    bottom: baseline + 2,
+  }
+}
+
+function overlapArea(a: LabelBox, b: LabelBox): number {
+  return (
+    Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
+    Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
+  )
 }

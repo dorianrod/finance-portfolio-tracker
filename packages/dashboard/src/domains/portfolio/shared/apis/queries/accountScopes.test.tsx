@@ -4,10 +4,10 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { useAccountTypeHistory } from '@/domains/portfolio/shared/services/useAccountTypeHistory'
+import { usePassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/usePassiveIncomeQuery'
+import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
 import { clearCsvCache } from '@/shared/csv/csvData'
 
-import { usePassiveIncomeQuery } from './usePassiveIncomeQuery'
 import { useSavingCapacityQuery } from './useSavingCapacityQuery'
 
 function queryWrapper() {

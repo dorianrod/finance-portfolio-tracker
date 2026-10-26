@@ -1,18 +1,5 @@
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
-export type RawSavingCapacityRow = {
-  snapshot_date: Date
-  savings_delta: number
-  perf_delta: number
-}
-
-export type RawSavingCapacityByAccountRow = {
-  snapshot_date: Date
-  account: string
-  savings_delta: number
-  perf_delta: number
-}
-
 export function mapSavingCapacity(
   rows: RawSavingCapacityRow[],
 ): SavingCapacityPoint[] {
@@ -47,4 +34,17 @@ export function aggregateSavingCapacityByAccount(
       savings_delta: Math.round(vals.savings_delta * 100) / 100,
       perf_delta: Math.round(vals.perf_delta * 100) / 100,
     }))
+}
+
+export type RawSavingCapacityRow = {
+  snapshot_date: Date
+  savings_delta: number
+  perf_delta: number
+}
+
+export type RawSavingCapacityByAccountRow = {
+  snapshot_date: Date
+  account: string
+  savings_delta: number
+  perf_delta: number
 }

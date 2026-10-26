@@ -309,6 +309,8 @@ See also: `arch-no-prop-drilling`
 
 Business code lives in `src/domains/[mainDomain]/[subDomain]/`, or directly in `src/domains/[mainDomain]/` when no distinct sub-domain is needed (`contracts/`, `projects/`). A domain represents a coherent business scope with its own vocabulary and rules; it need not mirror an API entity. Pick the smallest structure that keeps ownership explicit: a cohesive domain may own role folders directly, while a domain with several capabilities uses `features/` for vertical slices. Either shape may contain `shared/` for code owned jointly by multiple children.
 
+When a feature contains `features/`, place all its own role folders inside `shared/` alongside `features/`. A feature without children owns its role folders directly. This distinction is structural and does not grant shared ownership: `shared/` must actually serve several child features. Give parent-only business behavior its own child feature, compose entry components in the application, and keep leaf role folders directly at their root.
+
 Each feature uses the same fixed role folders, so paths keep both ownership and responsibility explicit (`features/detail/apis/queries` = reads owned by order detail, `features/detail/services/actions` = its UI orchestration). Do not mix the compact and feature-sliced layouts for separate capabilities, invent a generic feature wrapper around the whole domain, or dump files directly at the domain root. Feature nesting stops after one sub-feature level.
 
 Never recreate catch-all root folders (`src/hooks/`, `src/components/`, `src/helpers/`, `src/utils/`, `src/types/`) outside `domains` and `shared`, nor aliases or re-exports that mimic them. Code goes either in its domain or in the matching `src/shared/` folder.
@@ -393,9 +395,9 @@ See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`
 
 **Impact: CRITICAL (keeps shared code reusable at its scope and prevents downward dependencies)**
 
-The meaning of `shared/` is relative to its owner. `src/shared/` has no business-domain knowledge. A scoped folder such as `src/domains/sales/shared/`, `src/domains/sales/orders/shared/` or `features/detail/shared/` may use the stable vocabulary of its enclosing scope, but it never imports from or names a descendant sub-domain, feature or nested feature.
+The meaning of `shared/` is relative to its owner. `src/shared/` has no business-domain knowledge. A scoped folder such as `src/domains/sales/shared/`, `src/domains/sales/orders/shared/` or `features/detail/shared/` may use the stable vocabulary of its enclosing scope, but its reusable contracts and non-UI code never import from or name a descendant sub-domain, feature or nested feature.
 
-Place shared code at the nearest common ancestor of all its consumers. It may depend only on shared code at the same or an ancestor scope; it never depends downward on a descendant. This keeps reuse local, prevents cycles and avoids turning a high-level `shared/` folder into a business catch-all.
+Place shared code at the nearest common ancestor of all its consumers. Reusable shared code may depend only on shared code at the same or an ancestor scope; it never depends downward on a descendant. This keeps reuse local, prevents cycles and avoids turning a high-level `shared/` folder into a business catch-all.
 
 **Incorrect (main-domain shared code knows about a descendant entity):**
 
@@ -417,7 +419,11 @@ export interface InvoiceAccess {
 }
 ```
 
-An entity-level `shared/` may therefore contain entity types and components used by several of its features. A feature-level `shared/` may contain concepts common to its immediate sub-features. If only one feature consumes the code, keep it inside that feature instead of promoting it. Shared ownership does not justify adding another feature nesting level.
+An entity-level `shared/` may contain entity types and components used by several of its features. The same requirement applies to a parent feature's `shared/`: require production consumers from at least two distinct immediate child capabilities. Several files within one feature count as one consumer. Resolve indirect usage through shared helpers, barrels and type-only contracts; tests, stories, mocks and application wrappers do not count as features.
+
+The parent/leaf folder convention is not a sharing exception. A parent's cohesive business behavior belongs to a named child feature if it serves no other feature. Application pages compose features; shared code does not import descendant entry components or private implementation. A reusable business workflow remains a feature even when several callers use it. If all consumers belong to one branch, move the module to that branch's nearest owner instead of using shared code to evade a sibling-import restriction.
+
+Static import graphs cannot always prove use of common inputs passed through application props. Flag missing evidence for review and inspect the actual consumers; do not add fake imports or broad exemptions. Keep genuine common source requests cached and avoid duplicating them merely to satisfy folder counts. A leaf feature owns role folders directly, without a `shared/` wrapper.
 
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 
@@ -430,6 +436,8 @@ See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-transve
 Use `features/` when a domain or entity contains several distinct business capabilities. A small domain that already represents one cohesive capability may own its role folders directly; do not add a feature wrapper merely to satisfy a template. Conversely, once several capabilities coexist, move them into named vertical slices instead of scattering them across domain-level role folders.
 
 Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `dashboard`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
+
+A feature containing `features/` must keep every other role folder under its own `shared/`; only `features/` and `shared/` hold its implementation at that level. Every module in that shared scope must serve multiple distinct child features. Put a cohesive parent-only responsibility in a named child feature, and compose child entry components from the application. A leaf feature without `features/` keeps `components/`, `helpers/`, `services/`, `stores/`, and other role folders directly at its root; do not add an unnecessary `shared/` wrapper. Do not mix these two layouts.
 
 Before reorganizing slices, identify their user outcomes and business owners. Capabilities of equal business scope belong at the same level; nesting requires a meaningful business parent, not just a shared tab, route or dataset. Dimensions, periods and display modes of the same capability normally remain parameters or components within it. Different file counts do not require matching folder structures.
 
@@ -453,24 +461,23 @@ src/domains/sales/orders/
 src/domains/sales/orders/
 ├── features/
 │   └── detail/
-│       ├── components/OrderDetail.feature.tsx
-│       ├── pages/detail/OrderDetailPage.tsx
 │       ├── shared/
 │       │   └── types/detailSection.type.ts
 │       └── features/
-│           └── access-management/
-│               ├── apis/queries/useOrderAccessesQuery.ts
-│               ├── components/OrderAccessPanel.feature.tsx
-│               ├── helpers/mappers/toOrderAccessRows.ts
-│               ├── services/useResendOrderAccess.ts
-│               └── types/orderAccess.type.ts
+│           ├── access-management/
+│           │   ├── apis/queries/useOrderAccessesQuery.ts
+│           │   ├── components/OrderAccessPanel.feature.tsx
+│           │   ├── helpers/mappers/toOrderAccessRows.ts
+│           │   ├── services/useResendOrderAccess.ts
+│           │   └── types/orderAccess.type.ts
+│           └── history/                  # also consumes detailSection.type.ts
 └── shared/
     └── types/orderSummary.type.ts
 ```
 
-A parent feature may compose its sub-features. Sibling features never import each other directly: move code they both need to the nearest common ancestor's `shared/<role>/` folder. A sub-feature may depend on `shared/` folders owned by its ancestors, while shared code never depends on a descendant feature. Apply this direction at both supported feature levels and keep promotion local instead of turning domain-wide shared folders into catch-alls.
+Application pages compose feature entry components. Sibling features never import each other directly: move code they both need to the nearest common ancestor's `shared/<role>/` folder. A sub-feature may depend on `shared/` folders owned by its ancestors, while shared code never depends on a descendant feature. Do not move a feature or parent-only composition into `shared/` to bypass import restrictions. Apply this direction at both supported feature levels and keep promotion local instead of turning domain-wide shared folders into catch-alls.
 
-Extract the complete responsibility: feature-specific calculations, types and state move with the components. A parent may coordinate common inputs and compose child features, while child-specific logic belongs to the child. Code with a single consumer stays with that consumer; inspect actual reuse before promoting code into scoped shared folders.
+Extract the complete responsibility: feature-specific calculations, types and state move with the components. Common inputs may live in shared code used by several children; child-specific logic belongs to its child and application code composes the children. Child-specific code stays inside its child even when only the parent currently calls it. Having children does not automatically establish shared ownership. Inspect actual consumers: several files in one feature count as one feature, and tests or application wrappers do not establish reuse. A business capability remains a feature even if multiple callers use it.
 
 See also: `arch-domain-first-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
 

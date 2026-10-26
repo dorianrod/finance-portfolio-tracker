@@ -8,8 +8,6 @@ import {
 } from './badgeAppearance'
 import { TEXT_TONES, type TextTone } from './textAppearance'
 
-export type BadgeTone = keyof typeof BADGE_TONES
-
 export function Badge({
   tone,
   ...props
@@ -21,19 +19,6 @@ export function Badge({
     />
   )
 }
-
-function BadgeDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
-) {
-  return (
-    <span
-      {...props}
-      className={['font-normal opacity-80'].filter(Boolean).join(' ')}
-    />
-  )
-}
-
-Badge.Detail = BadgeDetail
 
 export function CountBadge({
   tone,
@@ -72,19 +57,6 @@ export function MetricDelta({
   )
 }
 
-function MetricDeltaDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
-) {
-  return (
-    <span
-      {...props}
-      className={['font-medium opacity-75'].filter(Boolean).join(' ')}
-    />
-  )
-}
-
-MetricDelta.Detail = MetricDeltaDetail
-
 export function SelectionCount({
   ...props
 }: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>) {
@@ -99,3 +71,31 @@ export function SelectionCount({
     />
   )
 }
+
+export type BadgeTone = keyof typeof BADGE_TONES
+
+function BadgeDetail(
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+) {
+  return (
+    <span
+      {...props}
+      className={['font-normal opacity-80'].filter(Boolean).join(' ')}
+    />
+  )
+}
+
+Badge.Detail = BadgeDetail
+
+function MetricDeltaDetail(
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+) {
+  return (
+    <span
+      {...props}
+      className={['font-medium opacity-75'].filter(Boolean).join(' ')}
+    />
+  )
+}
+
+MetricDelta.Detail = MetricDeltaDetail

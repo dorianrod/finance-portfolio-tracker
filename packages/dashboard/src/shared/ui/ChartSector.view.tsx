@@ -5,25 +5,6 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 
 import { resolveSeriesColor, type SeriesColor } from './chartSeriesColor'
 
-type Geometry = Pick<
-  ComponentProps<typeof Sector>,
-  | 'cx'
-  | 'cy'
-  | 'innerRadius'
-  | 'outerRadius'
-  | 'startAngle'
-  | 'endAngle'
-  | 'cornerRadius'
-  | 'forceCornerRadius'
-  | 'cornerIsExternal'
->
-type Props = Geometry &
-  SeriesColor & {
-    geometry?: Geometry
-    selected?: boolean
-    dimmed?: boolean
-    variant?: 'standard' | 'splitBase' | 'splitOverlay'
-  }
 export function ChartSector({
   geometry,
   tone,
@@ -83,3 +64,23 @@ export function ChartSector({
     />
   )
 }
+
+type Geometry = Pick<
+  ComponentProps<typeof Sector>,
+  | 'cx'
+  | 'cy'
+  | 'innerRadius'
+  | 'outerRadius'
+  | 'startAngle'
+  | 'endAngle'
+  | 'cornerRadius'
+  | 'forceCornerRadius'
+  | 'cornerIsExternal'
+>
+type Props = Geometry &
+  SeriesColor & {
+    geometry?: Geometry
+    selected?: boolean
+    dimmed?: boolean
+    variant?: 'standard' | 'splitBase' | 'splitOverlay'
+  }

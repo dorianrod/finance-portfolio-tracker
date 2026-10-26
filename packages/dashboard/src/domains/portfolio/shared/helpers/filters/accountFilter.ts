@@ -1,12 +1,5 @@
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
 
-export const CASH_ACCOUNT_FILTER_SUFFIX = '::cash'
-
-export type AccountFilterRow = {
-  account: string
-  account_type?: string
-}
-
 export function accountFilterId(row: AccountFilterRow): string {
   return row.account_type?.endsWith(CASH_SUFFIX)
     ? `${row.account}${CASH_ACCOUNT_FILTER_SUFFIX}`
@@ -22,4 +15,11 @@ export function rawAccountId(accountId: string): string {
 export function rawAccountSet(accountIds?: Set<string>): Set<string> | null {
   if (!accountIds || accountIds.size === 0) return null
   return new Set([...accountIds].map(rawAccountId))
+}
+
+export const CASH_ACCOUNT_FILTER_SUFFIX = '::cash'
+
+export type AccountFilterRow = {
+  account: string
+  account_type?: string
 }

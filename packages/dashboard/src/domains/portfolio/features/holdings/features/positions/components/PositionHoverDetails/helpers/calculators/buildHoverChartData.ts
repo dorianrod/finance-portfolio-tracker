@@ -1,22 +1,7 @@
+import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
 import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
-import type { HistoryPoint } from '@/domains/portfolio/shared/types/historyPoint.type'
 import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
-export type HoverChartDataPoint = {
-  // Calendar-month key used to align monthly price and operation series.
-  date: string
-  Value: number
-  'Cost basis': number
-  'Unit price': number
-  hasBuy: boolean
-  hasSell: boolean
-  buyAmount?: number
-  sellAmount?: number
-  sellGain?: number
-  unrealized: number
-  rollingReturns: RollingReturn[]
-}
 
 // Builds one point per month: the position's value/cost-basis/unit-price
 // snapshot, plus that month's buy/sell activity (for the dot markers and
@@ -76,11 +61,6 @@ export function computeUnitPriceDomain(
   return [Math.max(0, min - padding), max + padding]
 }
 
-export type RollingReturn = {
-  label: string
-  pct: number
-}
-
 // 6-month, 1-year and since-start rolling unit-price performance as of the
 // hovered `label` (a 'Unit price' series keyed by month).
 export function computeRollingReturns(
@@ -126,4 +106,24 @@ export function computeMonthlyBalances(
     balance += delta
     return { month, balance: Math.round(balance), delta: Math.round(delta) }
   })
+}
+
+export type HoverChartDataPoint = {
+  // Calendar-month key used to align monthly price and operation series.
+  date: string
+  Value: number
+  'Cost basis': number
+  'Unit price': number
+  hasBuy: boolean
+  hasSell: boolean
+  buyAmount?: number
+  sellAmount?: number
+  sellGain?: number
+  unrealized: number
+  rollingReturns: RollingReturn[]
+}
+
+export type RollingReturn = {
+  label: string
+  pct: number
 }

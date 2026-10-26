@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { getFundQualityCategory as fundQualityCategory } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityCategory'
-import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/shared/helpers/presenters/getFundQualitySourceLabel'
+import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/getFundQualitySourceLabel'
+import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
@@ -203,10 +203,10 @@ describe('buildIssuerExposures', () => {
 
 describe('fund quality labels', () => {
   it('groups technical tiers into clear user-facing categories', () => {
-    expect(fundQualityCategory('A')).toBe('reliable')
-    expect(fundQualityCategory('B')).toBe('reliable')
-    expect(fundQualityCategory('C')).toBe('partial')
-    expect(fundQualityCategory('D')).toBe('unavailable')
+    expect(getFundQualityPresentation('A').category).toBe('reliable')
+    expect(getFundQualityPresentation('B').category).toBe('reliable')
+    expect(getFundQualityPresentation('C').category).toBe('partial')
+    expect(getFundQualityPresentation('D').category).toBe('unavailable')
   })
 
   it('keeps the source distinction available in details', () => {

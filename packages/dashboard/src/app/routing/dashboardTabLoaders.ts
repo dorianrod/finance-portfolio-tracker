@@ -1,5 +1,9 @@
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 
+export function preloadDashboardTab(tab: AnalysisTab) {
+  void DASHBOARD_TAB_LOADERS[tab]()
+}
+
 export const DASHBOARD_TAB_LOADERS = {
   overview: () =>
     import('@/domains/portfolio/features/overview/pages/OverviewTab.feature').then(
@@ -14,23 +18,19 @@ export const DASHBOARD_TAB_LOADERS = {
       (module) => ({ default: module.PerformanceTab }),
     ),
   diversification: () =>
-    import('@/domains/portfolio/features/diversification/components/DiversificationCharts.feature').then(
-      (module) => ({ default: module.DiversificationCharts }),
-    ),
+    import('@/app/DashboardDiversification.feature').then((module) => ({
+      default: module.DiversificationCharts,
+    })),
   holdings: () =>
     import('@/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature').then(
       (module) => ({ default: module.PositionsTable }),
     ),
   quality: () =>
-    import('@/domains/portfolio/features/data-quality/pages/DataQualityTab.feature').then(
-      (module) => ({ default: module.DataQualityTab }),
-    ),
+    import('@/app/DashboardDataQuality.feature').then((module) => ({
+      default: module.DashboardDataQuality,
+    })),
   fundLookThrough: () =>
     import('@/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature').then(
       (module) => ({ default: module.FundLookThroughTab }),
     ),
-}
-
-export function preloadDashboardTab(tab: AnalysisTab) {
-  void DASHBOARD_TAB_LOADERS[tab]()
 }

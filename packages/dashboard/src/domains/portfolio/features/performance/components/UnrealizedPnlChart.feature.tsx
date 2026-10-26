@@ -136,7 +136,11 @@ export function UnrealizedPnlChart({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performancePositive} as="i" shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.performancePositive}
+                  as="i"
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
             </span>
@@ -147,13 +151,21 @@ export function UnrealizedPnlChart({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.performanceNegative} as="i" shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.performanceNegative}
+                  as="i"
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
             </span>
             <span>
               <Layout as="span" flow="inline" height="divider" width="icon">
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.returnRate} as="i" shape="centeredLine" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.returnRate}
+                  as="i"
+                  shape="centeredLine"
+                />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
             </span>

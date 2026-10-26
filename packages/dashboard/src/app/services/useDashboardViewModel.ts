@@ -1,13 +1,16 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { buildDashboardSourceData } from '@/app/helpers/mappers/buildDashboardSourceData'
 import { resolveDashboardLoadState } from '@/app/helpers/mappers/resolveDashboardLoadState'
-import { useDashboardHistory } from '@/app/services/useDashboardHistory'
-import { useDashboardPerformance } from '@/app/services/useDashboardPerformance'
-import { useDashboardPositions } from '@/app/services/useDashboardPositions'
-import { useDashboardQuality } from '@/app/services/useDashboardQuality'
-import { useDashboardWealth } from '@/app/services/useDashboardWealth'
+import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDashboardQuality'
+import { useSortedPositions } from '@/domains/portfolio/features/holdings/features/positions/services/useSortedPositions'
+import {
+  dashboardPositionSortDirectionAtom,
+  dashboardPositionSortKeyAtom,
+} from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable.atoms'
+import { useOverviewComparison } from '@/domains/portfolio/features/overview/services/useOverviewComparison'
+import { useDashboardPerformance } from '@/domains/portfolio/features/performance/services/useDashboardPerformance'
+import { useDashboardWealth } from '@/domains/portfolio/features/wealth/services/useDashboardWealth'
 import { useAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useAllocationRowsQuery'
 import { useAnnualIncomeSavingsQuery } from '@/domains/portfolio/shared/apis/queries/useAnnualIncomeSavingsQuery'
 import { useBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useBrokerageCashHistoryQuery'
@@ -18,16 +21,16 @@ import { useMonthlyOperationsQuery } from '@/domains/portfolio/shared/apis/queri
 import { usePipelineErrorsQuery } from '@/domains/portfolio/shared/apis/queries/usePipelineErrorsQuery'
 import { usePortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePortfolioHistoryQuery'
 import { usePositionsQuery } from '@/domains/portfolio/shared/apis/queries/usePositionsQuery'
+import { useSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useSavingCapacityQuery'
+import { buildDashboardSourceData } from '@/domains/portfolio/shared/helpers/mappers/buildDashboardSourceData'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import { useDashboardHistory } from '@/domains/portfolio/shared/services/useDashboardHistory'
+import { usePortfolioPositions } from '@/domains/portfolio/shared/services/usePortfolioPositions'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
 import {
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
 } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
-import {
-  dashboardPositionSortDirectionAtom,
-  dashboardPositionSortKeyAtom,
-} from '@/domains/portfolio/shared/stores/dashboardPositionsTable.atoms'
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
@@ -37,36 +40,7 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-const EMPTY_DASHBOARD_DATA: DashboardData = {
-  positions: [],
-  rawPositions: [],
-  rawOperations: [],
-  accountLabels: {},
-}
-
-const EMPTY_RAW_ISIN_DATA: RawIsinRows = {
-  geo: [],
-  secteur: [],
-  currency: [],
-  classe: [],
-}
-
-const EMPTY_ANNUAL_INCOME_SAVINGS: AnnualIncomeSavingsPoint[] = []
-const EMPTY_CASH_HISTORY: CashHistoryPoint[] = []
-const EMPTY_ERRORS: PipelineError[] = []
-const EMPTY_FUND_HOLDINGS: FundHoldingsData = {
-  holdings: [],
-  history: [],
-  statuses: [],
-  report: null,
-  snapshots: [],
-  unresolved: [],
-}
-const EMPTY_MANUAL_PRICE_OVERRIDES: ManualPriceOverride[] = []
-const EMPTY_MONTHLY_OPS: MonthlyOperationsByMonth = new Map()
-const EMPTY_PORTFOLIO_HISTORY: PortfolioHistoryPoint[] = []
-const EMPTY_RAW_POSITIONS: RawPositionRow[] = []
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 export function useDashboardViewModel() {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
@@ -84,6 +58,10 @@ export function useDashboardViewModel() {
   const rawAllocationQuery = useAllocationRowsQuery()
   const fundHoldingsQuery = useFundHoldingsQuery()
   const fundData = fundHoldingsQuery.data ?? EMPTY_FUND_HOLDINGS
+  const savingCapacityQuery = useSavingCapacityQuery(filters.accounts)
+  const savingCapacity = savingCapacityQuery.data ?? EMPTY_SAVING_CAPACITY
+  const savingCapacityLoading = savingCapacityQuery.isPending
+  const savingCapacityError = savingCapacityQuery.error
   const annualIncomeSavingsQuery = useAnnualIncomeSavingsQuery()
   const { positions, rawPositions, rawOperations, accountLabels } =
     dashboardQuery.data ?? EMPTY_DASHBOARD_DATA
@@ -128,18 +106,22 @@ export function useDashboardViewModel() {
     latestAccountPositions,
     periodEndFundHoldings,
     periodPositions,
-    tableData,
     tableFiltered,
-  } = useDashboardPositions({
-    allAccountTypes,
+  } = usePortfolioPositions({
     filters,
     fundData,
     positions,
     rawOperations,
     rawPositions,
-    sortDirection: sortDir,
-    sortKey,
   })
+
+  const tableData = useSortedPositions(
+    tableFiltered,
+    filters.hideClosedPositions,
+    allAccountTypes,
+    sortKey,
+    sortDir,
+  )
 
   const {
     accountHistory,
@@ -160,25 +142,28 @@ export function useDashboardViewModel() {
     accountTypeData,
     displayedAnnualIncomeSavings,
     displayedTypeHistory,
-    savingCapacityLoading,
-    savingCapacityError,
     monthlyOps,
-    overviewComparison,
-    rollingThreeYearTriComparison,
     trailingSavings,
     trailingYearComparison,
     typeHistory,
     wealthDrivers,
   } = useDashboardWealth({
-    accountHistory,
+    savingCapacity,
     allMonthlyOps,
     annualIncomeSavings,
     currentPositions,
     filters,
-    fundHoldingsHistory: fundData.history,
-    rawOperations,
-    rawPositions,
   })
+  const { overviewComparison, rollingThreeYearTriComparison } =
+    useOverviewComparison({
+      accountHistory,
+      filters,
+      fundHoldingsHistory: fundData.history,
+      rawOperations,
+      rawPositions,
+      savingCapacity,
+    })
+
   const {
     passiveIncome,
     performance,
@@ -366,3 +351,34 @@ export function useDashboardViewModel() {
     ],
   )
 }
+
+const EMPTY_DASHBOARD_DATA: DashboardData = {
+  positions: [],
+  rawPositions: [],
+  rawOperations: [],
+  accountLabels: {},
+}
+
+const EMPTY_RAW_ISIN_DATA: RawIsinRows = {
+  geo: [],
+  secteur: [],
+  currency: [],
+  classe: [],
+}
+
+const EMPTY_ANNUAL_INCOME_SAVINGS: AnnualIncomeSavingsPoint[] = []
+const EMPTY_CASH_HISTORY: CashHistoryPoint[] = []
+const EMPTY_SAVING_CAPACITY: SavingCapacityPoint[] = []
+const EMPTY_ERRORS: PipelineError[] = []
+const EMPTY_FUND_HOLDINGS: FundHoldingsData = {
+  holdings: [],
+  history: [],
+  statuses: [],
+  report: null,
+  snapshots: [],
+  unresolved: [],
+}
+const EMPTY_MANUAL_PRICE_OVERRIDES: ManualPriceOverride[] = []
+const EMPTY_MONTHLY_OPS: MonthlyOperationsByMonth = new Map()
+const EMPTY_PORTFOLIO_HISTORY: PortfolioHistoryPoint[] = []
+const EMPTY_RAW_POSITIONS: RawPositionRow[] = []

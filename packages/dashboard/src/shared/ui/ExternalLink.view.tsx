@@ -1,14 +1,5 @@
 import type { AnchorHTMLAttributes } from 'react'
 
-type ExternalLinkProps = Omit<
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'>,
-  'href' | 'target' | 'rel'
-> & {
-  variant?: 'source'
-  truncate?: boolean
-  href: string
-}
-
 export function ExternalLink({
   href,
   children,
@@ -42,4 +33,13 @@ export function ExternalLink({
       {children}
     </a>
   )
+}
+
+type ExternalLinkProps = Omit<
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'>,
+  'href' | 'target' | 'rel'
+> & {
+  variant?: 'source'
+  truncate?: boolean
+  href: string
 }

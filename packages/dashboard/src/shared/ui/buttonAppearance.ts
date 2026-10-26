@@ -1,3 +1,24 @@
+export function getButtonClassName(
+  variant: keyof typeof BUTTON_VARIANTS,
+  selected = false,
+) {
+  const selection =
+    variant in BUTTON_SELECTION_STATES
+      ? BUTTON_SELECTION_STATES[
+          variant as keyof typeof BUTTON_SELECTION_STATES
+        ][selected ? 'active' : 'inactive']
+      : undefined
+  return (
+    [
+      'inline-flex items-center justify-center',
+      BUTTON_VARIANTS[variant],
+      selection,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined
+  )
+}
+
 export const BUTTON_VARIANTS = {
   choice: 'rounded-full border text-xs font-medium transition-colors',
   accentCaptionLink: 'text-xs font-medium text-accent hover:text-accent',
@@ -109,27 +130,6 @@ const BUTTON_SELECTION_STATES = {
     inactive: 'text-content-secondary hover:bg-surface-raised',
   },
 } as const
-
-export function getButtonClassName(
-  variant: keyof typeof BUTTON_VARIANTS,
-  selected = false,
-) {
-  const selection =
-    variant in BUTTON_SELECTION_STATES
-      ? BUTTON_SELECTION_STATES[
-          variant as keyof typeof BUTTON_SELECTION_STATES
-        ][selected ? 'active' : 'inactive']
-      : undefined
-  return (
-    [
-      'inline-flex items-center justify-center',
-      BUTTON_VARIANTS[variant],
-      selection,
-    ]
-      .filter(Boolean)
-      .join(' ') || undefined
-  )
-}
 
 export const NAVIGATION_STATES = {
   tab: {

@@ -20,8 +20,6 @@ import { TEXT_TONES } from './textAppearance'
 import { usePreviewFocus } from './usePreviewFocus'
 import { type PreviewState, usePreviewState } from './usePreviewState'
 
-const PreviewContext = createContext<PreviewState | null>(null)
-
 export function Preview({
   open,
   onOpenChange,
@@ -42,6 +40,8 @@ export function Preview({
     </PreviewContext>
   )
 }
+
+const PreviewContext = createContext<PreviewState | null>(null)
 
 function PreviewTrigger({
   onPreview,

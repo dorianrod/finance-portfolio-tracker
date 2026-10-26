@@ -2,28 +2,10 @@ import { dirname, relative, resolve, sep } from 'node:path'
 
 import ts from 'typescript'
 
+import { importBoundaryViolation } from './import-boundary-policy.js'
+
 const resolutionCaches = new WeakMap()
-const NON_UI_LAYER =
-  /\/(?:apis|constants|helpers|schemas|services|stores|types)\//u
-const COMPONENT_MODULE = /\.(?:feature|state|view)\.[cm]?[jt]sx?$/u
 const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$/u
-
-function componentOwner(path) {
-  const match =
-    /^(.*\/(?:components|pages)\/.*?)\/(?:helpers|services|stores|types)\//u.exec(
-      path,
-    )
-  return match?.[1]
-}
-
-function isWithin(path, directory) {
-  return path === directory || path.startsWith(`${directory}/`)
-}
-
-function sharedOwner(path) {
-  const index = path.lastIndexOf('/shared/')
-  return index === -1 ? null : path.slice(0, index)
-}
 
 export default {
   meta: {
@@ -46,6 +28,12 @@ export default {
         'Non-UI layers must not import renderer modules ({{target}}), including their types; place shared contracts in types/ and reusable logic in helpers/ or services/.',
       componentLogic:
         'Do not import component-owned logic from outside its owner ({{target}}); move reused contracts or helpers to their nearest common scope.',
+      businessDomain:
+        'Business domains must not import other business domains ({{target}}); use a common owner or an explicitly declared transverse domain.',
+      siblingFeature:
+        'Sibling features or sub-domains must not import each other ({{target}}); move common code to their nearest ancestor shared/ folder.',
+      ancestorFeature:
+        'A child feature may depend on ancestor-owned code only through shared/ ({{target}}).',
     },
   },
   create(context) {
@@ -81,10 +69,6 @@ export default {
       resolutionCaches.set(program, cache)
     }
 
-    // UI modules may render children; their helpers/services still obey the boundary.
-    const nonUiSource =
-      NON_UI_LAYER.test(`/${source}`) && !COMPONENT_MODULE.test(source)
-
     function inspect(node) {
       if (!node) return
       const tsNode = services.esTreeNodeToTSNodeMap.get(node)
@@ -103,35 +87,7 @@ export default {
         .join('/')
       if (target.startsWith('../') || target === '..') return
 
-      let messageId
-      if (
-        target.startsWith('shared/ui/storybook/') &&
-        !source.startsWith('shared/ui/storybook/')
-      ) {
-        messageId = 'storybook'
-      } else if (
-        source.startsWith('shared/') &&
-        (target.startsWith('app/') || target.startsWith('domains/'))
-      ) {
-        messageId = 'shared'
-      } else if (source.startsWith('domains/') && target.startsWith('app/')) {
-        messageId = 'application'
-      } else {
-        const owner = sharedOwner(`/${source}`)
-        if (
-          owner &&
-          isWithin(`/${target}`, owner) &&
-          !isWithin(`/${target}`, `${owner}/shared`)
-        ) {
-          messageId = 'sharedScope'
-        } else if (nonUiSource && COMPONENT_MODULE.test(target)) {
-          messageId = 'component'
-        } else if (nonUiSource) {
-          const targetOwner = componentOwner(`/${target}`)
-          if (targetOwner && !isWithin(`/${source}`, targetOwner))
-            messageId = 'componentLogic'
-        }
-      }
+      const messageId = importBoundaryViolation(source, target)
 
       if (messageId) context.report({ node, messageId, data: { target } })
     }

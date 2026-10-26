@@ -42,6 +42,120 @@ import { AccountTree } from './AccountTreeSelect.feature'
 import { Chip } from './Chip.view'
 import { FilterSection } from './FilterSection.view'
 
+export function FilterPanel({
+  onReset,
+  visibility,
+  demoPresetSelection,
+  demoPresetActive = false,
+}: FilterPanelProps & { onReset: () => void }) {
+  const open = useAtomValue(dashboardFiltersOpenAtom)
+  const { closeFilters } = useDashboardFilters()
+
+  return (
+    <SidePanel
+      open={open}
+      onClose={closeFilters}
+      closeLabel={i18n.t('ui.filterbar.closeFilters')}
+    >
+      <SidePanel.Title>{i18n.t('ui.filterbar.filters')}</SidePanel.Title>
+      <SidePanel.Description>
+        {i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
+      </SidePanel.Description>
+      <SidePanel.HeaderActions>
+        <Layout as="span" flow="control" sizing="fixed">
+          <Button type="button" onClick={onReset} variant="quiet">
+            {i18n.t('ui.filterbar.resetAll')}
+          </Button>
+        </Layout>
+      </SidePanel.HeaderActions>
+      {visibility.showPeriod && <PeriodFilterSection />}
+
+      <AccountFilterSection
+        demoPresetSelection={demoPresetSelection}
+        demoPresetActive={demoPresetActive}
+      />
+
+      {visibility.showPositionFilters && <PositionFilterSection />}
+    </SidePanel>
+  )
+}
+
+export function FilterButton({ activeCount }: { activeCount: number }) {
+  const open = useAtomValue(dashboardFiltersOpenAtom)
+  const { openFilters } = useDashboardFilters()
+
+  return (
+    <Layout as="span" flow="control" sizing="fixed">
+      <DialogButton
+        type="button"
+        onClick={openFilters}
+        expanded={open}
+        variant="filter"
+        selected={activeCount > 0}
+      >
+        <FilterIcon />
+        <span>{i18n.t('ui.filterbar.filters')}</span>
+        {activeCount > 0 && (
+          <Layout as="span" flow="inline">
+            <SelectionCount>
+              <Layout as="span" flow="inline" inset="compact">
+                {activeCount}
+              </Layout>
+            </SelectionCount>
+          </Layout>
+        )}
+      </DialogButton>
+    </Layout>
+  )
+}
+
+export function ActiveFilterSummary({
+  items,
+  children,
+}: {
+  items: FilterSummaryItem[]
+  children?: ReactNode
+}) {
+  const { slot: leading, content: afterLeading } = partitionSlot(
+    children,
+    ActiveFilterLeading,
+  )
+  const { slot: actions, content } = partitionSlot(
+    afterLeading,
+    ActiveFilterActions,
+  )
+  if (
+    items.length === 0 &&
+    leading.length === 0 &&
+    content.length === 0 &&
+    actions.length === 0
+  )
+    return null
+
+  return (
+    <div className="mb-4">
+      <Group label={i18n.t('ui.filterbar.activeFilters')}>
+        <Inline as="div" flow="wrap" align="center" gap="default">
+          {leading}
+          {items.map((item) => (
+            <ActiveFilterChip key={item.key} item={item} />
+          ))}
+          {content}
+          {actions}
+        </Inline>
+      </Group>
+    </div>
+  )
+}
+
+export function ResetFiltersButton({ onReset }: { onReset: () => void }) {
+  return (
+    <Button type="button" onClick={onReset} variant="text">
+      {i18n.t('ui.filterbar.resetAll')}
+    </Button>
+  )
+}
+
 type FilterPanelProps = {
   visibility: FilterVisibility
   demoPresetSelection?: Set<string> | null
@@ -119,43 +233,6 @@ function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
         <Decorative>×</Decorative>
       </Button>
     </Layout>
-  )
-}
-
-export function FilterPanel({
-  visibility,
-  demoPresetSelection,
-  demoPresetActive = false,
-}: FilterPanelProps) {
-  const open = useAtomValue(dashboardFiltersOpenAtom)
-  const { closeFilters, resetDashboardFilters } = useDashboardFilters()
-
-  return (
-    <SidePanel
-      open={open}
-      onClose={closeFilters}
-      closeLabel={i18n.t('ui.filterbar.closeFilters')}
-    >
-      <SidePanel.Title>{i18n.t('ui.filterbar.filters')}</SidePanel.Title>
-      <SidePanel.Description>
-        {i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
-      </SidePanel.Description>
-      <SidePanel.HeaderActions>
-        <Layout as="span" flow="control" sizing="fixed">
-          <Button type="button" onClick={resetDashboardFilters} variant="quiet">
-            {i18n.t('ui.filterbar.resetAll')}
-          </Button>
-        </Layout>
-      </SidePanel.HeaderActions>
-      {visibility.showPeriod && <PeriodFilterSection />}
-
-      <AccountFilterSection
-        demoPresetSelection={demoPresetSelection}
-        demoPresetActive={demoPresetActive}
-      />
-
-      {visibility.showPositionFilters && <PositionFilterSection />}
-    </SidePanel>
   )
 }
 
@@ -362,84 +439,6 @@ function PositionFilterSection() {
         </ChoiceRow>
       </Layout>
     </FilterSection>
-  )
-}
-
-export function FilterButton({ activeCount }: { activeCount: number }) {
-  const open = useAtomValue(dashboardFiltersOpenAtom)
-  const { openFilters } = useDashboardFilters()
-
-  return (
-    <Layout as="span" flow="control" sizing="fixed">
-      <DialogButton
-        type="button"
-        onClick={openFilters}
-        expanded={open}
-        variant="filter"
-        selected={activeCount > 0}
-      >
-        <FilterIcon />
-        <span>{i18n.t('ui.filterbar.filters')}</span>
-        {activeCount > 0 && (
-          <Layout as="span" flow="inline">
-            <SelectionCount>
-              <Layout as="span" flow="inline" inset="compact">
-                {activeCount}
-              </Layout>
-            </SelectionCount>
-          </Layout>
-        )}
-      </DialogButton>
-    </Layout>
-  )
-}
-
-export function ActiveFilterSummary({
-  items,
-  children,
-}: {
-  items: FilterSummaryItem[]
-  children?: ReactNode
-}) {
-  const { slot: leading, content: afterLeading } = partitionSlot(
-    children,
-    ActiveFilterLeading,
-  )
-  const { slot: actions, content } = partitionSlot(
-    afterLeading,
-    ActiveFilterActions,
-  )
-  if (
-    items.length === 0 &&
-    leading.length === 0 &&
-    content.length === 0 &&
-    actions.length === 0
-  )
-    return null
-
-  return (
-    <div className="mb-4">
-      <Group label={i18n.t('ui.filterbar.activeFilters')}>
-        <Inline as="div" flow="wrap" align="center" gap="default">
-          {leading}
-          {items.map((item) => (
-            <ActiveFilterChip key={item.key} item={item} />
-          ))}
-          {content}
-          {actions}
-        </Inline>
-      </Group>
-    </div>
-  )
-}
-
-export function ResetFiltersButton() {
-  const { resetDashboardFilters } = useDashboardFilters()
-
-  return (
-    <Button type="button" onClick={resetDashboardFilters} variant="text">
-      {i18n.t('ui.filterbar.resetAll')}
-    </Button>
   )
 }
 

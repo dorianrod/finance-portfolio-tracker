@@ -1,22 +1,20 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
+import { buildFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 import { selectExposurePositions } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions'
-import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
-import { buildFundExposureViewModel } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
-import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/shared/services/actions/useDashboardUnderlyingHoldings'
+import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/actions/useDashboardUnderlyingHoldings'
 import {
   dashboardExpandedUnderlyingIssuersAtom,
-  dashboardUnderlyingQueryAtom,
   dashboardUnderlyingSortAtom,
-} from '@/domains/portfolio/shared/stores/dashboardUnderlyingHoldings.atoms'
+} from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings.atoms'
+import { dashboardUnderlyingQueryAtom } from '@/domains/portfolio/features/holdings/shared/stores/holdingsSearch.atoms'
+import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import type {
   FundHolding,
   FundHoldingStatus,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []
 
 export function useFundExposureViewModel(
   positions: PositionRow[],
@@ -45,3 +43,5 @@ export function useFundExposureViewModel(
     [actions, exposure, query, sort],
   )
 }
+
+const EMPTY_FUND_STATUSES: FundHoldingStatus[] = []

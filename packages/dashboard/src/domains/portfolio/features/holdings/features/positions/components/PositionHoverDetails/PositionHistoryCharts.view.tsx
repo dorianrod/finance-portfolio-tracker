@@ -42,7 +42,11 @@ export function PositionHistoryCharts({
           margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
         >
           <defs>
-            <SeriesGradient id="gVal" profile="soft" tone={PORTFOLIO_CHART_TONES.portfolioValue} />
+            <SeriesGradient
+              id="gVal"
+              profile="soft"
+              tone={PORTFOLIO_CHART_TONES.portfolioValue}
+            />
           </defs>
           <ChartGrid />
           <ChartXAxis density="compact" axis dataKey="date" />
@@ -89,7 +93,10 @@ export function PositionHistoryCharts({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.transactionBuy} shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.transactionBuy}
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.hoverchart.buy')}
             </span>
@@ -100,7 +107,10 @@ export function PositionHistoryCharts({
                 height="indicator"
                 width="indicator"
               >
-                <SeriesSwatch tone={PORTFOLIO_CHART_TONES.transactionSell} shape="dot" />
+                <SeriesSwatch
+                  tone={PORTFOLIO_CHART_TONES.transactionSell}
+                  shape="dot"
+                />
               </Layout>
               {i18n.t('ui.hoverchart.sell')}
             </span>

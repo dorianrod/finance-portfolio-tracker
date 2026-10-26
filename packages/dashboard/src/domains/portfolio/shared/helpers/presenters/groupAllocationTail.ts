@@ -1,7 +1,5 @@
 import i18n from '@/i18n/i18n'
 
-const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])
-
 export function formatGroupedAllocationLabel(count: number): string {
   return i18n.t('ui.groupallocationtail.othersCount', { count })
 }
@@ -36,3 +34,5 @@ export function groupAllocationTail(
     grouped: groupable,
   }
 }
+
+const PINNED_CATEGORIES = new Set(['Not concerned', 'nc'])

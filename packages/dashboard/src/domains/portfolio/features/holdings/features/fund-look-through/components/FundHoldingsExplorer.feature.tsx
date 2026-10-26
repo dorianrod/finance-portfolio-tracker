@@ -1,7 +1,7 @@
+import type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 import { useFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/useFundExposureViewModel'
 import { useVirtualExposureList } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/useVirtualExposureList'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { FundExposureSort } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 import { type FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
@@ -14,8 +14,6 @@ import { Text } from '@/shared/ui/Text.view'
 import { VirtualCanvas } from '@/shared/ui/VirtualRow.view'
 
 import { VirtualExposureRow } from './FundExposureRows/FundExposureRows.view'
-
-export type { FundExposureSort } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 
 export function FundHoldingsExplorer({
   positions,
@@ -149,3 +147,5 @@ export function FundHoldingsExplorer({
     </TablePanel>
   )
 }
+
+export type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'

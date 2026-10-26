@@ -23,18 +23,6 @@ import {
   type TextTone,
 } from './textAppearance'
 
-export type ButtonProps = ControlProps<
-  ButtonHTMLAttributes<HTMLButtonElement>
-> & {
-  label?: string
-  onIntent?: () => void
-  ref?: React.Ref<HTMLButtonElement>
-  variant?: keyof typeof BUTTON_VARIANTS
-  selected?: boolean
-  dimmed?: boolean
-  size?: keyof typeof BUTTON_SIZES
-}
-
 export function Button({
   label,
   onIntent,
@@ -167,9 +155,6 @@ export function Select({
     />
   )
 }
-
-type ContentProps = ControlProps<HTMLAttributes<HTMLDivElement>>
-type InlineProps = ControlProps<HTMLAttributes<HTMLSpanElement>>
 
 export function Group({
   label,
@@ -315,3 +300,18 @@ export function NamedSymbol({
 }: InlineProps & { label: string }) {
   return <span {...props} role="img" aria-label={label} />
 }
+
+export type ButtonProps = ControlProps<
+  ButtonHTMLAttributes<HTMLButtonElement>
+> & {
+  label?: string
+  onIntent?: () => void
+  ref?: React.Ref<HTMLButtonElement>
+  variant?: keyof typeof BUTTON_VARIANTS
+  selected?: boolean
+  dimmed?: boolean
+  size?: keyof typeof BUTTON_SIZES
+}
+
+type ContentProps = ControlProps<HTMLAttributes<HTMLDivElement>>
+type InlineProps = ControlProps<HTMLAttributes<HTMLSpanElement>>

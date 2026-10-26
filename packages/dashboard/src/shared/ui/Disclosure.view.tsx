@@ -11,11 +11,6 @@ import type { ControlProps } from './controlProps'
 import { Button, type ButtonProps } from './Controls.view'
 import { SURFACE_VARIANTS } from './surfaceAppearance'
 
-const DisclosureContext = createContext<{
-  id: string
-  expanded: boolean
-} | null>(null)
-
 export function Disclosure({
   expanded,
   children,
@@ -27,6 +22,11 @@ export function Disclosure({
   const context = useMemo(() => ({ id, expanded }), [id, expanded])
   return <DisclosureContext value={context}>{children}</DisclosureContext>
 }
+
+const DisclosureContext = createContext<{
+  id: string
+  expanded: boolean
+} | null>(null)
 
 function DisclosureTrigger(props: ButtonProps) {
   const context = useContext(DisclosureContext)

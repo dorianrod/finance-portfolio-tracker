@@ -2,13 +2,6 @@ import type { ReactNode } from 'react'
 
 import { TOOLTIP_DENSITIES, TOOLTIP_SIZES } from './layoutAppearance'
 
-type TooltipBoxProps = {
-  children: ReactNode
-  variant?: 'theme' | 'raised'
-  density?: 'compact' | 'default' | 'spacious'
-  size?: keyof typeof TOOLTIP_SIZES
-}
-
 export function TooltipBox({
   children,
   variant = 'theme',
@@ -38,4 +31,11 @@ export function TooltipBox({
       {children}
     </div>
   )
+}
+
+type TooltipBoxProps = {
+  children: ReactNode
+  variant?: 'theme' | 'raised'
+  density?: 'compact' | 'default' | 'spacious'
+  size?: keyof typeof TOOLTIP_SIZES
 }

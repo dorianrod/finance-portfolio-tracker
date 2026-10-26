@@ -9,23 +9,6 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 
 import { partitionChartSlot } from './chartSlots'
 
-type Keys =
-  | 'data'
-  | 'dataKey'
-  | 'nameKey'
-  | 'innerRadius'
-  | 'outerRadius'
-  | 'paddingAngle'
-  | 'startAngle'
-  | 'endAngle'
-  | 'onClick'
-  | 'cx'
-  | 'cy'
-  | 'children'
-type Props = Pick<
-  ComponentProps<typeof Pie>,
-  Extract<keyof ComponentProps<typeof Pie>, Keys>
-> & { interactive?: boolean; labelConnector?: boolean; motion?: 'none' }
 export function SeriesPie({
   children,
   interactive = false,
@@ -56,6 +39,24 @@ export function SeriesPie({
     </Pie>
   )
 }
+
+type Keys =
+  | 'data'
+  | 'dataKey'
+  | 'nameKey'
+  | 'innerRadius'
+  | 'outerRadius'
+  | 'paddingAngle'
+  | 'startAngle'
+  | 'endAngle'
+  | 'onClick'
+  | 'cx'
+  | 'cy'
+  | 'children'
+type Props = Pick<
+  ComponentProps<typeof Pie>,
+  Extract<keyof ComponentProps<typeof Pie>, Keys>
+> & { interactive?: boolean; labelConnector?: boolean; motion?: 'none' }
 function SeriesPieShape({ children }: { children: ReactNode }) {
   return children
 }

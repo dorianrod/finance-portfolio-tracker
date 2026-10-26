@@ -7,29 +7,6 @@ import type {
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 
-/** Source label for value held directly rather than through a fund. */
-export const DIRECT_SOURCE = i18n.t('ui.buildfundholdingsviewmodel.direct')
-
-export type SecurityExposure = {
-  id: string
-  name: string
-  value: number
-  funds: string[]
-  /** Value contributed by each source fund, largest first. */
-  sources: { fund: string; value: number }[]
-}
-
-export type IssuerExposure = {
-  id: string
-  name: string
-  value: number
-  weight: number
-  securities: SecurityExposure[]
-  funds: string[]
-  /** Value contributed by each source fund, largest first. */
-  sources: { fund: string; value: number }[]
-}
-
 export function isFundPosition(position: PositionRow): boolean {
   return (
     /\b(?:ETF|UCITS|FUND)\b/i.test(position.name) ||
@@ -194,6 +171,29 @@ export function buildIssuerExposures(
         .toSorted((a, b) => b.value - a.value),
     }))
     .toSorted((a, b) => b.value - a.value)
+}
+
+/** Source label for value held directly rather than through a fund. */
+export const DIRECT_SOURCE = i18n.t('ui.buildfundholdingsviewmodel.direct')
+
+export type SecurityExposure = {
+  id: string
+  name: string
+  value: number
+  funds: string[]
+  /** Value contributed by each source fund, largest first. */
+  sources: { fund: string; value: number }[]
+}
+
+export type IssuerExposure = {
+  id: string
+  name: string
+  value: number
+  weight: number
+  securities: SecurityExposure[]
+  funds: string[]
+  /** Value contributed by each source fund, largest first. */
+  sources: { fund: string; value: number }[]
 }
 
 function createCanonicalIssuerResolver(holdings: FundHolding[]) {

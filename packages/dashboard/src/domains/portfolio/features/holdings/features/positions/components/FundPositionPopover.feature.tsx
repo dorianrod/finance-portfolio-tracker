@@ -1,6 +1,6 @@
+import { useOpenCompleteHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/actions/useOpenCompleteHoldings'
 import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/useFundPositionHoldings'
 import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
-import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -27,7 +27,7 @@ export function FundPositionPopover({
   const formatMoney = useFormatMoney()
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
-  const { openCompleteHoldings } = useDashboardNavigation()
+  const openCompleteHoldings = useOpenCompleteHoldings()
   const { position, status } = target
   const rows = useFundPositionHoldings(position)
 

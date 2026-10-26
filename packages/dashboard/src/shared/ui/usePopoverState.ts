@@ -1,7 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 
-const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]'
-
 export function usePopoverState(
   open: boolean | undefined,
   defaultOpen: boolean | undefined,
@@ -66,5 +64,7 @@ export function usePopoverState(
     ],
   )
 }
+
+const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]'
 
 export type PopoverState = ReturnType<typeof usePopoverState>

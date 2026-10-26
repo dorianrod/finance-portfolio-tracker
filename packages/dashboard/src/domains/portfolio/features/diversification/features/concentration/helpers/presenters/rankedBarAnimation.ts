@@ -5,14 +5,6 @@ import type {
   CartesianLayout,
 } from 'recharts'
 
-function interpolate(from: number, to: number, progress: number): number {
-  return from + (to - from) * progress
-}
-
-function rectangleFor(item: AnimationItem<BarRectangleItem>): BarRectangleItem {
-  return item.status === 'removed' ? item.prev : item.next
-}
-
 /**
  * Keeps ranked bars at their current width while they enter or leave, so a
  * date change reads as a reordering rather than a fresh chart reveal.
@@ -70,4 +62,12 @@ export const interpolateRankedBars: AnimationInterpolateFn<
       },
     ]
   })
+}
+
+function interpolate(from: number, to: number, progress: number): number {
+  return from + (to - from) * progress
+}
+
+function rectangleFor(item: AnimationItem<BarRectangleItem>): BarRectangleItem {
+  return item.status === 'removed' ? item.prev : item.next
 }

@@ -6,43 +6,12 @@ import {
   useState,
 } from 'react'
 
-import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import {
   nextPlaybackIndex,
   shouldAnimateConcentration,
-} from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+} from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
-
-export type ConcentrationChartRow = HistoricalConcentrationPoint & {
-  timestamp: number
-  positionsTo25Delta: number | null
-  positionsTo50Delta: number | null
-  positionsTo75Delta: number | null
-  positionsTo90Delta: number | null
-}
-
-function timestamp(date: Date): number {
-  return date.getTime()
-}
-
-function delta(
-  current: number | null,
-  previous: number | null | undefined,
-): number | null {
-  return current == null || previous == null ? null : current - previous
-}
-
-function usePrefersReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setPrefersReducedMotion(media.matches)
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-  return prefersReducedMotion
-}
 
 export function useConcentrationTrendController(
   heldPoints: HistoricalConcentrationPoint[],
@@ -216,4 +185,35 @@ export function useConcentrationTrendController(
       togglePlayback,
     ],
   )
+}
+
+export type ConcentrationChartRow = HistoricalConcentrationPoint & {
+  timestamp: number
+  positionsTo25Delta: number | null
+  positionsTo50Delta: number | null
+  positionsTo75Delta: number | null
+  positionsTo90Delta: number | null
+}
+
+function timestamp(date: Date): number {
+  return date.getTime()
+}
+
+function delta(
+  current: number | null,
+  previous: number | null | undefined,
+): number | null {
+  return current == null || previous == null ? null : current - previous
+}
+
+function usePrefersReducedMotion(): boolean {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setPrefersReducedMotion(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+  return prefersReducedMotion
 }

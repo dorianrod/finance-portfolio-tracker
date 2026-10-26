@@ -3,14 +3,6 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import type { ControlProps } from './controlProps'
 import { BUTTON_SIZES } from './layoutAppearance'
 
-type SegmentedControlSize = 'compact' | 'default' | 'large'
-type SegmentedControlTone = 'accent' | 'neutral'
-
-const ACTIVE_CLASSES: Record<SegmentedControlTone, string> = {
-  accent: 'bg-accent-solid text-on-accent shadow-sm',
-  neutral: 'bg-surface-hover text-content shadow-sm',
-}
-
 export function SegmentedControl({
   label,
   children,
@@ -54,4 +46,12 @@ export function SegmentedControlItem({
       {children}
     </button>
   )
+}
+
+type SegmentedControlSize = 'compact' | 'default' | 'large'
+type SegmentedControlTone = 'accent' | 'neutral'
+
+const ACTIVE_CLASSES: Record<SegmentedControlTone, string> = {
+  accent: 'bg-accent-solid text-on-accent shadow-sm',
+  neutral: 'bg-surface-hover text-content shadow-sm',
 }

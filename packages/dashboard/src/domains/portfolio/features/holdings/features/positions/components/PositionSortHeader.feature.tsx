@@ -1,11 +1,11 @@
 import { useAtomValue } from 'jotai'
 
-import { useDashboardPositionSort } from '@/domains/portfolio/shared/services/actions/useDashboardPositionSort'
+import { useDashboardPositionSort } from '@/domains/portfolio/features/holdings/features/positions/services/actions/useDashboardPositionSort'
 import {
   dashboardPositionSortDirectionAtom,
   dashboardPositionSortKeyAtom,
-} from '@/domains/portfolio/shared/stores/dashboardPositionsTable.atoms'
-import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionSort.type'
+} from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable.atoms'
+import type { PositionSortKey } from '@/domains/portfolio/features/holdings/features/positions/types/positionSort.type'
 
 import { SortHeader } from './SortHeader.view'
 

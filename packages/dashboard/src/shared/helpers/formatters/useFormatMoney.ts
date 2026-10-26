@@ -3,6 +3,22 @@ import { useCallback } from 'react'
 import i18n from '@/i18n/i18n'
 import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
 
+export function useFormatMoney() {
+  return useCallback(
+    (
+      value: number | null | undefined,
+      options: MoneyFormatOptions = {},
+    ): string => {
+      const displayValue = resolveNumericDisplayValue(value, options)
+      if (typeof displayValue === 'string') return displayValue
+      if (isStandardEuroFormat(options))
+        return formatStandardEuro(displayValue, options.style ?? 'currency')
+      return formatConfiguredMoney(displayValue, options)
+    },
+    [],
+  )
+}
+
 type MoneyStyle = 'currency' | 'decimal' | 'compact' | 'full'
 
 type MoneyFormatOptions = {
@@ -45,22 +61,6 @@ function formatCompactEuro(value: number): string {
 
 function formatFullEuro(value: number): string {
   return `${FULL_EUR_FORMATTER.format(value)} €`
-}
-
-export function useFormatMoney() {
-  return useCallback(
-    (
-      value: number | null | undefined,
-      options: MoneyFormatOptions = {},
-    ): string => {
-      const displayValue = resolveNumericDisplayValue(value, options)
-      if (typeof displayValue === 'string') return displayValue
-      if (isStandardEuroFormat(options))
-        return formatStandardEuro(displayValue, options.style ?? 'currency')
-      return formatConfiguredMoney(displayValue, options)
-    },
-    [],
-  )
 }
 
 function isStandardEuroFormat(options: MoneyFormatOptions): boolean {

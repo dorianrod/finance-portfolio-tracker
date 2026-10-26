@@ -1,6 +1,8 @@
 import { useAtomValue } from 'jotai'
 
-import { FilterChipBar } from '@/domains/portfolio/features/diversification/components/FilterChipBar.feature'
+import { useResetDashboardFilters } from '@/app/services/useResetDashboardFilters'
+import { FilterChipBar } from '@/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature'
 import {
   ActiveFilterSummary,
@@ -12,7 +14,6 @@ import {
   filterVisibilityForTab,
 } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
-import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import {
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
@@ -27,6 +28,7 @@ export function DashboardFilters({
   dashboard: DashboardViewModel
   activeFilterSummaries: ReturnType<typeof filterSummaries>
 }) {
+  const resetDashboardFilters = useResetDashboardFilters()
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const allocationFilter = useAtomValue(dashboardDiversificationFilterAtom)
@@ -55,12 +57,13 @@ export function DashboardFilters({
         {showAllocationFilter && <FilterChipBar />}
         {showResetFilters && (
           <ActiveFilterSummary.Actions>
-            <ResetFiltersButton />
+            <ResetFiltersButton onReset={resetDashboardFilters} />
           </ActiveFilterSummary.Actions>
         )}
       </ActiveFilterSummary>
 
       <FilterPanel
+        onReset={resetDashboardFilters}
         visibility={filterVisibility}
         demoPresetSelection={demoPresetSelection}
         demoPresetActive={demoPresetActive}

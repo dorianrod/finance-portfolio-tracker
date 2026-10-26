@@ -313,7 +313,7 @@ describe('configured styling boundary', () => {
   it('also checks application components, domain helpers and shared utilities', async () => {
     for (const file of [
       'src/app/App.feature.tsx',
-      'src/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels.ts',
+      'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
       'src/shared/helpers/presenters/getErrorMessage.ts',
     ]) {
       expect(

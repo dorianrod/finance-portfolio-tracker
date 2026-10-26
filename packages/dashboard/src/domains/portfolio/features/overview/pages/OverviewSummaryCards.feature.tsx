@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react'
 
+import type {
+  ComparedMetric,
+  OverviewComparison,
+  OverviewConcentrationComparison,
+} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
 import { formatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewIrrValue'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type {
-  ComparedMetric,
-  OverviewComparison,
-  OverviewConcentrationComparison,
-} from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
@@ -22,6 +22,25 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
+
+export function OverviewSummaryCards(props: SummaryCardsProps) {
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <OverviewValueCard comparison={props.comparison} />
+      <OverviewContributionsCard comparison={props.comparison} />
+      <OverviewPerformanceCard
+        comparison={props.comparison}
+        rollingThreeYearTri={props.rollingThreeYearTri}
+        irrStatus={props.irrStatus}
+      />
+      <OverviewConcentrationCard
+        comparison={props.comparison}
+        heldConcentration={props.heldConcentration}
+        underlyingConcentration={props.underlyingConcentration}
+      />
+    </div>
+  )
+}
 
 export type OverviewDestination = 'wealth' | 'performance' | 'diversification'
 
@@ -79,25 +98,6 @@ function CardShell({
       </MetricCard.Header>
       <MetricCard.Body>{children}</MetricCard.Body>
     </MetricCard>
-  )
-}
-
-export function OverviewSummaryCards(props: SummaryCardsProps) {
-  return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <OverviewValueCard comparison={props.comparison} />
-      <OverviewContributionsCard comparison={props.comparison} />
-      <OverviewPerformanceCard
-        comparison={props.comparison}
-        rollingThreeYearTri={props.rollingThreeYearTri}
-        irrStatus={props.irrStatus}
-      />
-      <OverviewConcentrationCard
-        comparison={props.comparison}
-        heldConcentration={props.heldConcentration}
-        underlyingConcentration={props.underlyingConcentration}
-      />
-    </div>
   )
 }
 

@@ -6,7 +6,6 @@ import { CHART_COLORS, type ChartTone } from '@/shared/theme/chartColors'
 import { type ChartAge, chartAgeOpacity } from './chartAgeAppearance'
 import { partitionChartSlot } from './chartSlots'
 
-type Keys = 'data' | 'dataKey' | 'name' | 'xAxisId' | 'yAxisId' | 'children'
 export function SeriesScatter({
   tone,
   children,
@@ -23,10 +22,6 @@ export function SeriesScatter({
     </Scatter>
   )
 }
-function SeriesScatterShape({ children }: { children: ReactNode }) {
-  return children
-}
-SeriesScatter.Shape = SeriesScatterShape
 
 export function ChartSymbol({
   geometry,
@@ -48,3 +43,9 @@ export function ChartSymbol({
     />
   )
 }
+
+type Keys = 'data' | 'dataKey' | 'name' | 'xAxisId' | 'yAxisId' | 'children'
+function SeriesScatterShape({ children }: { children: ReactNode }) {
+  return children
+}
+SeriesScatter.Shape = SeriesScatterShape

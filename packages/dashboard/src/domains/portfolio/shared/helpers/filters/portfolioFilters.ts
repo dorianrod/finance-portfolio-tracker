@@ -56,28 +56,6 @@ export function buildPortfolioFilterOptions(
   }
 }
 
-export type FilterSummaryKey =
-  'accounts' | 'period' | 'operations' | 'closed-positions'
-
-export type FilterSummaryItem = {
-  key: FilterSummaryKey
-  label: string
-}
-
-export type FilterVisibility = {
-  showPeriod: boolean
-  showPositionFilters: boolean
-}
-
-const OP_LABELS: Record<OperationType, string> = {
-  BUY: i18n.t('ui.portfoliofilters.buy'),
-  SELL: i18n.t('ui.portfoliofilters.sell'),
-  DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
-  INTEREST: i18n.t('ui.portfoliofilters.interest'),
-  DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
-  WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
-}
-
 export function filterVisibilityForTab(
   tab: string,
   holdingsView: 'positions' | 'underlying' = 'positions',
@@ -194,4 +172,26 @@ export function presetDateFrom(months: number, now = new Date()): Date {
           new Date(Date.UTC(year, targetMonth + 1, 0)).getUTCDate(),
         )
   return new Date(Date.UTC(year, targetMonth, day))
+}
+
+export type FilterSummaryKey =
+  'accounts' | 'period' | 'operations' | 'closed-positions'
+
+export type FilterSummaryItem = {
+  key: FilterSummaryKey
+  label: string
+}
+
+export type FilterVisibility = {
+  showPeriod: boolean
+  showPositionFilters: boolean
+}
+
+const OP_LABELS: Record<OperationType, string> = {
+  BUY: i18n.t('ui.portfoliofilters.buy'),
+  SELL: i18n.t('ui.portfoliofilters.sell'),
+  DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
+  INTEREST: i18n.t('ui.portfoliofilters.interest'),
+  DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
+  WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
 }

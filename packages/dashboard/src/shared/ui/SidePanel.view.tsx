@@ -3,21 +3,6 @@ import { type ReactNode, useRef } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 
-type SidePanelProps = {
-  open: boolean
-  children: ReactNode
-  onClose: () => void
-  closeLabel: string
-  size?: 'default' | 'medium' | 'wide'
-  scroll?: 'both' | 'vertical'
-}
-
-const WIDTH_BY_SIZE = {
-  default: 'w-[min(92vw,480px)]',
-  medium: 'w-[min(96vw,760px)]',
-  wide: 'w-[min(100vw,1200px)]',
-} as const
-
 export function SidePanel({
   open,
   children,
@@ -101,6 +86,21 @@ export function SidePanel({
     </Dialog.Root>
   )
 }
+
+type SidePanelProps = {
+  open: boolean
+  children: ReactNode
+  onClose: () => void
+  closeLabel: string
+  size?: 'default' | 'medium' | 'wide'
+  scroll?: 'both' | 'vertical'
+}
+
+const WIDTH_BY_SIZE = {
+  default: 'w-[min(92vw,480px)]',
+  medium: 'w-[min(96vw,760px)]',
+  wide: 'w-[min(100vw,1200px)]',
+} as const
 
 function SidePanelTitle({ children }: { children: ReactNode }) {
   return children

@@ -7,6 +7,13 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import { parseCsv } from '@/shared/csv/csvData'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
 
+export function usePipelineErrorsQuery() {
+  return useQuery<PipelineError[]>({
+    queryKey: portfolioQueryKeys.data('pipeline-errors'),
+    queryFn: () => parseCsv(PORTFOLIO_ENDPOINTS.data.errors, ERROR_ROW_SCHEMA),
+  })
+}
+
 const ERROR_ROW_SCHEMA: yup.ObjectSchema<PipelineError> = yup.object({
   source: yup.string().defined(),
   level: yup
@@ -21,10 +28,3 @@ const ERROR_ROW_SCHEMA: yup.ObjectSchema<PipelineError> = yup.object({
   name: yup.string().defined(),
   message: yup.string().defined(),
 })
-
-export function usePipelineErrorsQuery() {
-  return useQuery<PipelineError[]>({
-    queryKey: portfolioQueryKeys.data('pipeline-errors'),
-    queryFn: () => parseCsv(PORTFOLIO_ENDPOINTS.data.errors, ERROR_ROW_SCHEMA),
-  })
-}

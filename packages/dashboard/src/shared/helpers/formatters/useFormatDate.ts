@@ -1,5 +1,21 @@
 import { useCallback } from 'react'
 
+export function useFormatDate() {
+  return useCallback(
+    (
+      value: Date | number | string,
+      options: DateFormatOptions = {},
+    ): string => {
+      const { style = 'dayMonthYear' } = options
+      const date = value instanceof Date ? value : new Date(value)
+      if (Number.isNaN(date.getTime())) return '—'
+      if (style === 'isoDate') return date.toISOString().slice(0, 10)
+      return UTC_DATE_FORMATTERS[style].format(date)
+    },
+    [],
+  )
+}
+
 type DateStyle =
   | 'isoDate'
   | 'dayMonthYear'
@@ -30,19 +46,3 @@ const UTC_DATE_FORMATTERS = Object.fromEntries(
     new Intl.DateTimeFormat('en-GB', { ...options, timeZone: 'UTC' }),
   ]),
 ) as Record<Exclude<DateStyle, 'isoDate'>, Intl.DateTimeFormat>
-
-export function useFormatDate() {
-  return useCallback(
-    (
-      value: Date | number | string,
-      options: DateFormatOptions = {},
-    ): string => {
-      const { style = 'dayMonthYear' } = options
-      const date = value instanceof Date ? value : new Date(value)
-      if (Number.isNaN(date.getTime())) return '—'
-      if (style === 'isoDate') return date.toISOString().slice(0, 10)
-      return UTC_DATE_FORMATTERS[style].format(date)
-    },
-    [],
-  )
-}

@@ -108,7 +108,7 @@ describe('configured accessibility boundary', () => {
 
   it('also checks domain helpers and shared utilities', async () => {
     for (const file of [
-      'src/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels.ts',
+      'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
       'src/shared/helpers/presenters/getErrorMessage.ts',
     ]) {
       expect(

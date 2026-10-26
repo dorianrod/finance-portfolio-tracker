@@ -2,8 +2,6 @@ import type { ReactNode } from 'react'
 
 import { METRIC_CARD_ACCENTS } from './metricCardAppearance'
 
-export type MetricCardAccent = keyof typeof METRIC_CARD_ACCENTS
-
 export function MetricCard({
   accent,
   label,
@@ -31,6 +29,8 @@ export function MetricCard({
     </article>
   )
 }
+
+export type MetricCardAccent = keyof typeof METRIC_CARD_ACCENTS
 
 function MetricCardHeader({ children }: { children: ReactNode }) {
   return (

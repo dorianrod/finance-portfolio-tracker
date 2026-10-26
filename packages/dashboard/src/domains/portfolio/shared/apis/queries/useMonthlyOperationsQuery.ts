@@ -10,10 +10,6 @@ import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
 import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from './portfolioSourceQueries'
 
-function isMonthlyOperationType(value: string): value is MonthlyOperationType {
-  return value === 'DEPOSIT' || value === 'WITHDRAWAL'
-}
-
 export function useMonthlyOperationsQuery() {
   const queryClient = useQueryClient()
   return useQuery<MonthlyOperationsByMonth>({
@@ -40,4 +36,8 @@ export function useMonthlyOperationsQuery() {
       return map
     },
   })
+}
+
+function isMonthlyOperationType(value: string): value is MonthlyOperationType {
+  return value === 'DEPOSIT' || value === 'WITHDRAWAL'
 }

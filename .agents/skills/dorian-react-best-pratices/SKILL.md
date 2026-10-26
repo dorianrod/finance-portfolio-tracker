@@ -50,7 +50,7 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 
 - [`architecture-business-capability-boundaries`](rules/architecture-business-capability-boundaries.md) — Define domains and features by business scope and user outcome before choosing folders.
 - [`architecture-feature-hierarchy`](rules/architecture-feature-hierarchy.md) — Justify peer and parent-child relationships through business scope; keep dimensions and modes within their capability.
-- [`architecture-feature-ownership`](rules/architecture-feature-ownership.md) — Keep feature-specific UI, business logic, contracts and state with their owner, and parent orchestration focused on common inputs and composition.
+- [`architecture-feature-ownership`](rules/architecture-feature-ownership.md) — Keep feature-specific UI, business logic, contracts and state with their owner, and require actual reuse across distinct features before placing code in `shared/`.
 
 - [`architecture-component-complexity`](rules/architecture-component-complexity.md) — Review complexity above 8 or function size above 150 lines manually; split only when a cohesive responsibility can be extracted.
 - [`architecture-shared-ui-agnostic`](rules/architecture-shared-ui-agnostic.md) — Keep shared UI APIs and dependencies free of business knowledge; domains adapt business meaning to generic UI roles.

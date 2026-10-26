@@ -5,8 +5,6 @@ import type { ControlProps } from './controlProps'
 import { POPOVER_CONTENT_VARIANTS } from './surfaceAppearance'
 import { type PopoverState, usePopoverState } from './usePopoverState'
 
-const PopoverContext = createContext<PopoverState | null>(null)
-
 export function Popover({
   open,
   defaultOpen,
@@ -24,6 +22,8 @@ export function Popover({
     </PopoverContext>
   )
 }
+
+const PopoverContext = createContext<PopoverState | null>(null)
 
 function PopoverTrigger({
   label,

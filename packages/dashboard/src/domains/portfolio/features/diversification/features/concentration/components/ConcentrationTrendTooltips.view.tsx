@@ -15,16 +15,6 @@ import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-export type TrendTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: ConcentrationChartRow }>
-}
-
-export type HoldingTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: HistoricalConcentrationHolding }>
-}
-
 export function ThresholdRow({
   label,
   tone,
@@ -165,4 +155,14 @@ export function ChartLegendItem({
       {label}
     </Inline>
   )
+}
+
+export type TrendTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: ConcentrationChartRow }>
+}
+
+export type HoldingTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: HistoricalConcentrationHolding }>
 }

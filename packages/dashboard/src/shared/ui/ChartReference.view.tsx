@@ -5,23 +5,6 @@ import { CHART_COLORS } from '@/shared/theme/chartColors'
 
 import { REFERENCE_APPEARANCES } from './chartAppearance'
 
-type ReferenceDataKeys =
-  | 'x'
-  | 'y'
-  | 'segment'
-  | 'xAxisId'
-  | 'yAxisId'
-  | 'ifOverflow'
-  | 'position'
-  | 'id'
-  | 'style'
-type ChartReferenceProps = Pick<
-  ComponentProps<typeof ReferenceLine>,
-  Extract<keyof ComponentProps<typeof ReferenceLine>, ReferenceDataKeys>
-> & {
-  kind?: keyof typeof REFERENCE_APPEARANCES
-}
-
 export function ChartReference({
   kind = 'zero',
   ...props
@@ -44,4 +27,21 @@ export function ChartReferenceArea({
       fillOpacity={prominence === 'muted' ? 0.05 : 0.055}
     />
   )
+}
+
+type ReferenceDataKeys =
+  | 'x'
+  | 'y'
+  | 'segment'
+  | 'xAxisId'
+  | 'yAxisId'
+  | 'ifOverflow'
+  | 'position'
+  | 'id'
+  | 'style'
+type ChartReferenceProps = Pick<
+  ComponentProps<typeof ReferenceLine>,
+  Extract<keyof ComponentProps<typeof ReferenceLine>, ReferenceDataKeys>
+> & {
+  kind?: keyof typeof REFERENCE_APPEARANCES
 }
