@@ -152,7 +152,7 @@ export default defineConfig([
       'local/no-component-module-logic': 'error',
       'local/no-domain-accessibility': 'error',
       'local/no-domain-styling': 'error',
-      'local/no-effects-in-components': 'warn',
+      'local/no-effects-in-components': 'error',
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'warn',
