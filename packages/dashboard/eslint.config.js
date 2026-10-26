@@ -165,7 +165,7 @@ export default defineConfig([
       'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'warn',
       'local/no-shared-ui-classname': 'error',
-      'local/no-shared-ui-internal-layout': 'warn',
+      'local/no-shared-ui-internal-layout': 'error',
       'local/require-children-composition': 'error',
       'local/shared-feature-usage': 'warn',
       'local/state-component-contract': 'error',

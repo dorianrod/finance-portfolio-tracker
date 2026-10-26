@@ -155,7 +155,7 @@ describe('caller-owned internal layout', () => {
 })
 
 describe('configured internal layout enforcement', () => {
-  it('enables a warning without an automatic fix', async () => {
+  it('enables an error without an automatic fix', async () => {
     const eslint = new ESLint({ cwd: directory })
     const [result] = await eslint.lintText(
       `import { Button } from '@/shared/ui/Controls.view'; <Button><span className="p-4">Save</span></Button>`,
@@ -165,7 +165,7 @@ describe('configured internal layout enforcement', () => {
       result.messages.filter(
         (m) => m.ruleId === 'local/no-shared-ui-internal-layout',
       ),
-    ).toMatchObject([{ severity: 1, messageId: 'internal' }])
+    ).toMatchObject([{ severity: 2, messageId: 'internal' }])
     expect(noSharedUiInternalLayout.meta).not.toHaveProperty('fixable')
   }, 20_000)
 })

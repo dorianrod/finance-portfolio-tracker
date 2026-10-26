@@ -3,6 +3,7 @@ export const LAYOUT_GAPS = {
   none: 'gap-0',
   compact: 'gap-1',
   default: 'gap-2',
+  comfortable: 'gap-3',
   relaxed: 'gap-4',
   spacious: 'gap-6',
 } as const
@@ -29,6 +30,7 @@ export const LAYOUT_WIDTHS = {
   half: 'w-1/2',
   content: 'w-fit',
   reading: 'max-w-prose',
+  compactReading: 'max-w-sm',
   wide: 'w-96 max-w-full',
   icon: 'w-4',
   indicator: 'w-2',
@@ -42,6 +44,8 @@ export const LAYOUT_HEIGHTS = {
   indicator: 'h-2',
   track: 'h-1.5',
   connector: 'h-10',
+  branchConnector: 'h-8',
+  shortConnector: 'h-6',
   divider: 'h-px',
   marker: 'h-3',
 } as const
@@ -56,6 +60,11 @@ export const LAYOUT_PRESETS = {
   labelThreeValues: 'grid-cols-[minmax(0,1fr)_6rem_5rem_5rem]',
   sidebar: 'grid-cols-1 md:grid-cols-[14rem_minmax(0,1fr)]',
   comparison: 'grid-cols-2',
+  pairSmall: 'grid-cols-1 sm:grid-cols-2',
+  pairLarge: 'grid-cols-1 lg:grid-cols-2',
+  thirdsSmall: 'grid-cols-1 sm:grid-cols-3',
+  thirdsMedium: 'grid-cols-1 md:grid-cols-3',
+  quartersMedium: 'grid-cols-1 md:grid-cols-4',
 } as const
 export const LAYOUT_ALIGNMENTS = {
   start: 'items-start',
@@ -78,6 +87,7 @@ export const LAYOUT_FLOWS = {
   control: 'inline-grid min-w-0',
   column: 'flex flex-col',
   grid: 'grid',
+  inlineGrid: 'inline-grid',
   wrap: 'flex flex-wrap',
 } as const
 export const LAYOUT_SIZING = {
@@ -96,6 +106,8 @@ export const LAYOUT_PLACEMENTS = {
   trailing: 'ml-auto',
   overlay: 'absolute inset-0',
   inset: 'relative',
+  centered: 'mx-auto',
+  centeredRelative: 'relative mx-auto',
 } as const
 export const LAYOUT_RESPONSIVENESS = {
   small: 'hidden sm:block',

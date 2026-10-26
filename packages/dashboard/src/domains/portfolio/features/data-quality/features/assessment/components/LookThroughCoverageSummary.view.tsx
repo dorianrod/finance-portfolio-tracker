@@ -151,15 +151,17 @@ function CompactLookThroughSummary({
       : []),
   ]
   return (
-    <div
-      className={`grid grid-cols-1 gap-3 ${hasNotApplicable ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}
+    <Layout
+      flow="grid"
+      gap="comfortable"
+      arrangement={hasNotApplicable ? 'quartersMedium' : 'thirdsMedium'}
     >
       {cards.map((card) => (
         <CompactCoverageCard key={card.label} card={card}>
           {children}
         </CompactCoverageCard>
       ))}
-    </div>
+    </Layout>
   )
 }
 
@@ -178,7 +180,7 @@ function DetailedLookThroughSummary({
 
   return (
     <div>
-      <div className="mx-auto max-w-sm">
+      <Layout width="compactReading" placement="centered">
         <QualityIndicatorCard
           label={i18n.t('ui.lookthroughcoveragesummary.portfolioScope')}
           tooltip={i18n.t(
@@ -192,11 +194,14 @@ function DetailedLookThroughSummary({
         >
           {children}
         </QualityIndicatorCard>
-      </div>
+      </Layout>
 
       <ExposureTreeConnectors model={model} />
-      <div
-        className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
+      <Layout
+        flow="grid"
+        align="start"
+        gap="comfortable"
+        arrangement={hasNotApplicable ? 'thirdsSmall' : 'pairSmall'}
       >
         <IdentifiedExposureBranch report={report} model={model}>
           {children}
@@ -221,7 +226,7 @@ function DetailedLookThroughSummary({
             {children}
           </QualityIndicatorCard>
         )}
-      </div>
+      </Layout>
     </div>
   )
 }
@@ -232,7 +237,7 @@ function ExposureTreeConnectors({
   const { hasNotApplicable, hasUnresolvedGap } = model
   return (
     <>
-      <div className="relative mx-auto h-10">
+      <Layout placement="centeredRelative" height="connector">
         <DecorativeBlock>
           <Layout flow="block" hiddenUntil="small">
             <TreeConnector position="stem">
@@ -280,12 +285,12 @@ function ExposureTreeConnectors({
             )}
           </Layout>
         </DecorativeBlock>
-      </div>
-      <div className="mx-auto h-6 w-px">
+      </Layout>
+      <Layout placement="centered" height="shortConnector" width="divider">
         <DecorativeBlock variant="highlighted">
           <Layout></Layout>
         </DecorativeBlock>
-      </div>
+      </Layout>
     </>
   )
 }
@@ -463,7 +468,7 @@ function SourceReliability({
 
   return (
     <Disclosure expanded={isExpanded}>
-      <span className="inline-grid mt-3 w-full">
+      <Layout as="span" flow="inlineGrid" spaceBefore="default" width="full">
         <Disclosure.Trigger
           type="button"
           variant="separatedToggle"
@@ -497,8 +502,8 @@ function SourceReliability({
             </Text>
           </Layout>
         </Disclosure.Trigger>
-      </span>
-      <div className="mt-3">
+      </Layout>
+      <Layout spaceBefore="default">
         <Disclosure.Content variant="sectionStart">
           <Inset inset="default">
             <Layout as="span" spaceBefore="default">
@@ -538,7 +543,7 @@ function SourceReliability({
             </Layout>
           </Inset>
         </Disclosure.Content>
-      </div>
+      </Layout>
     </Disclosure>
   )
 }
@@ -552,7 +557,7 @@ function ExposureChildNodes({
 }) {
   return (
     <div>
-      <div className="relative h-8">
+      <Layout placement="inset" height="branchConnector">
         <DecorativeBlock>
           <Layout flow="block" hiddenUntil="large">
             <TreeConnector position="stem">
@@ -569,19 +574,19 @@ function ExposureChildNodes({
             </TreeConnector>
           </Layout>
         </DecorativeBlock>
-      </div>
-      <div className="mx-auto h-4 w-px">
+      </Layout>
+      <Layout placement="centered" height="icon" width="divider">
         <DecorativeBlock variant="highlighted">
           <Layout></Layout>
         </DecorativeBlock>
-      </div>
-      <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
+      </Layout>
+      <Layout flow="grid" arrangement="pairLarge" align="start" gap="default">
         {nodes.map((node) => (
           <ExposureChildNodeCard key={node.label} node={node}>
             {children}
           </ExposureChildNodeCard>
         ))}
-      </div>
+      </Layout>
     </div>
   )
 }
