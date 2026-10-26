@@ -50,11 +50,14 @@ export default {
   },
   create(context) {
     // ESLint keeps rule modules loaded in the editor across catalog edits.
-    const catalog = JSON.parse(readFileSync(catalogUrl, 'utf8'))
+    let catalog
 
     return {
       CallExpression(node) {
         if (!translationCall(node)) return
+        // Most modules do not translate anything. Read once per linted file,
+        // only when needed, while still observing catalog edits in the editor.
+        catalog ??= JSON.parse(readFileSync(catalogUrl, 'utf8'))
         const [keyNode, optionsNode] = node.arguments
         if (keyNode?.type !== 'Literal' || typeof keyNode.value !== 'string') {
           context.report({ node: keyNode ?? node, messageId: 'dynamicKey' })

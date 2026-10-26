@@ -32,10 +32,25 @@ function lint(code) {
 }
 
 beforeEach(() => {
+  vi.mocked(readFileSync).mockClear()
   vi.mocked(readFileSync).mockReturnValue(JSON.stringify(catalog))
 })
 
 describe('i18n-consistency', () => {
+  it('does not read the catalog for modules without translation calls', () => {
+    expect(lint('const value = 1; other.t(value)')).toEqual([])
+    expect(readFileSync).not.toHaveBeenCalled()
+  })
+
+  it('reads the catalog only once for several translations in one file', () => {
+    expect(
+      lint(
+        "i18n.t('greeting', { name: 'Alice' }); i18n.t('items', { count: 2 })",
+      ),
+    ).toEqual([])
+    expect(readFileSync).toHaveBeenCalledTimes(1)
+  })
+
   it.each([
     `i18n.t('ui.accounttreeselect.allAccounts')`,
     `i18n.t('ui.accounttreeselect.reset')`,

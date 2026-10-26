@@ -57,6 +57,9 @@ jobs:
       - name: Lint (eslint)
         run: npm run lint
 
+      - name: Test lint cache and catalog invalidation
+        run: npm test -- scripts/eslint-project-fingerprint.test.mjs eslint-rules/i18n-consistency.test.js
+
       - name: Test code conventions, complexity, accessibility, styling boundaries and shared UI
         run: npm test -- eslint-rules/single-public-export.test.js eslint-rules/public-api-first.test.js eslint-rules/component-complexity.test.js eslint-rules/no-domain-accessibility.test.js eslint-rules/no-domain-styling.test.js src/shared/ui
 
