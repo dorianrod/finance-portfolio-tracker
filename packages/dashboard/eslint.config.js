@@ -147,7 +147,7 @@ export default defineConfig([
       'local/import-boundaries': 'error',
       'local/max-hooks-per-component': ['error', { max: 6 }],
       'local/no-complex-component-calculation': 'error',
-      'local/no-complex-jsx-condition': 'warn',
+      'local/no-complex-jsx-condition': 'error',
       'local/no-complex-jsx-map': 'warn',
       'local/no-component-module-logic': 'warn',
       'local/no-domain-accessibility': 'error',
