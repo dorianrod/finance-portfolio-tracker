@@ -11,10 +11,12 @@ import {
   toggle,
 } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import i18n from '@/i18n/i18n'
+import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { Button, Decorative } from '@/shared/ui/Controls.view'
+import { ChoiceRow, SelectionFrame } from '@/shared/ui/FormElements.view'
 import { Popover } from '@/shared/ui/Popover.view'
-
-import { IndeterminateCheckbox } from './IndeterminateCheckbox.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 type AccountTreeProps = {
   allAccountTypes: string[]
@@ -37,17 +39,18 @@ function TreeAccountRow({
   selected: Set<string>
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 py-1.5 pl-8 pr-3 hover:bg-surface-raised/80">
-      <input
-        type="checkbox"
+    <ChoiceRow
+      variant="nested"
+      className="flex items-center gap-2 py-1.5 pl-8 pr-3"
+    >
+      <Checkbox
         checked={selected.has(account)}
         onChange={() => onChange(toggle(selected, account))}
-        className="h-3.5 w-3.5 cursor-pointer accent-accent"
       />
-      <span className="min-w-0 truncate text-xs text-content-secondary">
+      <Text variant="caption" tone="secondary" truncate className="min-w-0">
         {accountLabel(account, accountLabels)}
-      </span>
-    </label>
+      </Text>
+    </ChoiceRow>
   )
 }
 
@@ -69,23 +72,26 @@ function TreeAccountType({
     accountTypeSelectionState(accounts, selected)
   return (
     <div className="py-1">
-      <label className="flex cursor-pointer items-center gap-2 px-3 py-1.5 hover:bg-surface-raised/80">
-        <IndeterminateCheckbox
+      <ChoiceRow
+        variant="nested"
+        className="flex items-center gap-2 px-3 py-1.5"
+      >
+        <Checkbox
           checked={allSelected}
           indeterminate={partiallySelected}
           onChange={() =>
             onChange(toggleAccountTypeSelection(accounts, selected))
           }
         />
-        <span className="text-xs font-semibold uppercase tracking-wide text-content-muted">
+        <Text variant="captionSectionLabel" tone="muted">
           {type}
-        </span>
+        </Text>
         {selectedCount > 0 && (
-          <span className="ml-auto text-[11px] tabular-nums text-content-subtle">
+          <Text variant="micro" tone="subtle" numeric className="ml-auto">
             {selectedCount}/{accounts.length}
-          </span>
+          </Text>
         )}
-      </label>
+      </ChoiceRow>
       {accounts.map((account) => (
         <TreeAccountRow
           key={account}
@@ -114,17 +120,15 @@ function SelectAccountRow({
   selected: Set<string>
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 py-1 pl-7 pr-3 hover:bg-surface-hover">
-      <input
-        type="checkbox"
+    <ChoiceRow className="flex items-center gap-2 py-1 pl-7 pr-3">
+      <Checkbox
         checked={selected.has(account)}
         onChange={() => onChange(toggle(selected, account))}
-        className="h-3.5 w-3.5 cursor-pointer accent-accent"
       />
-      <span className="text-xs text-content-muted">
+      <Text variant="caption" tone="muted">
         {accountLabel(account, accountLabels)}
-      </span>
-    </label>
+      </Text>
+    </ChoiceRow>
   )
 }
 
@@ -148,18 +152,18 @@ function SelectAccountType({
   )
   return (
     <div>
-      <label className="flex cursor-pointer items-center gap-2 px-3 py-1.5 hover:bg-surface-hover">
-        <IndeterminateCheckbox
+      <ChoiceRow className="flex items-center gap-2 px-3 py-1.5">
+        <Checkbox
           checked={allSelected}
           indeterminate={partiallySelected}
           onChange={() =>
             onChange(toggleAccountTypeSelection(accounts, selected))
           }
         />
-        <span className="text-xs font-semibold text-content-secondary">
+        <Text variant="captionStrong" tone="secondary">
           {type}
-        </span>
-      </label>
+        </Text>
+      </ChoiceRow>
       {accounts.map((account) => (
         <SelectAccountRow
           key={account}
@@ -189,23 +193,25 @@ export function AccountTree({
     type,
   }))
   return (
-    <div className="overflow-hidden rounded-xl border border-border-strong bg-canvas/35">
-      <button
+    <Surface variant="selectionPanel" className="overflow-hidden">
+      <Button
         type="button"
         onClick={() => onChange(new Set())}
-        className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-colors ${selected.size === 0 ? 'bg-accent-muted/35 text-accent' : 'text-content-secondary hover:bg-surface-raised'}`}
+        variant="sectionChoice"
+        selected={selected.size === 0}
+        className="flex w-full items-center justify-between px-3 py-2.5"
       >
-        <span className="font-medium">
+        <Text variant="medium">
           {i18n.t('ui.accounttreeselect.allAccounts')}
-        </span>
+        </Text>
         {selected.size === 0 && (
-          <span className="text-xs font-semibold text-accent">
+          <Text variant="captionStrong" tone="accent">
             {i18n.t('ui.accounttreeselect.selected')}
-          </span>
+          </Text>
         )}
-      </button>
+      </Button>
 
-      <div className="border-t border-border py-1.5">
+      <Surface variant="sectionStart" className="py-1.5">
         {accountGroups.map((group) => (
           <TreeAccountType
             key={group.type}
@@ -216,8 +222,8 @@ export function AccountTree({
             type={group.type}
           />
         ))}
-      </div>
-    </div>
+      </Surface>
+    </Surface>
   )
 }
 
@@ -251,20 +257,16 @@ export function AccountTreeSelect({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div
-        className={[
-          'inline-flex items-center rounded-lg border text-xs transition-colors',
-          hasSelection
-            ? 'border-accent bg-accent-muted/40 text-accent'
-            : 'border-border-strong bg-surface-raised text-content-muted hover:border-border-strong hover:text-content-secondary',
-        ].join(' ')}
+      <SelectionFrame
+        selected={hasSelection}
+        className="inline-flex items-center"
       >
         <Popover.Trigger
           type="button"
           className="flex items-center gap-1.5 py-1 pl-3 pr-1"
         >
           <span>{triggerLabel}</span>
-          <Decorative className="ml-0.5 text-content-subtle">
+          <Decorative tone="subtle" className="ml-0.5">
             {open ? '▴' : '▾'}
           </Decorative>
         </Popover.Trigger>
@@ -273,13 +275,14 @@ export function AccountTreeSelect({
             type="button"
             label={i18n.t('ui.accounttreeselect.reset')}
             onClick={() => onChange(new Set())}
-            className="px-2 py-1 text-accent hover:text-content"
+            variant="accentLink"
+            className="px-2 py-1"
             title={i18n.t('ui.accounttreeselect.reset')}
           >
             <Decorative>×</Decorative>
           </Button>
         )}
-      </div>
+      </SelectionFrame>
 
       <Popover.Content
         label={triggerLabel}
@@ -287,9 +290,9 @@ export function AccountTreeSelect({
         className="min-w-48 py-1.5 max-h-72"
       >
         {/* Select all row */}
-        <div className="border-b border-border-strong pb-1 mb-1">
-          <label className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-hover cursor-pointer">
-            <IndeterminateCheckbox
+        <Surface variant="strongSectionEnd" className="pb-1 mb-1">
+          <ChoiceRow className="flex items-center gap-2 px-3 py-1.5">
+            <Checkbox
               checked={
                 selected.size === allAccounts.length && allAccounts.length > 0
               }
@@ -301,11 +304,11 @@ export function AccountTreeSelect({
                 else onChange(new Set(allAccounts))
               }}
             />
-            <span className="text-xs font-semibold text-content-secondary">
+            <Text variant="captionStrong" tone="secondary">
               {i18n.t('ui.accounttreeselect.selectAll')}
-            </span>
-          </label>
-        </div>
+            </Text>
+          </ChoiceRow>
+        </Surface>
         {accountGroups.map((group) => (
           <SelectAccountType
             key={group.type}

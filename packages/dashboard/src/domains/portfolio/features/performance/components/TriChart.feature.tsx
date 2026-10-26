@@ -1,13 +1,4 @@
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { TriTooltip } from '@/domains/portfolio/shared/components/PortfolioChartTooltips.view'
@@ -16,8 +7,12 @@ import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/por
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 // Fixed-window annualised IRRs, separate from the since-tracking KPI. Solid
 // series start once their full trailing window is available; dotted leading
@@ -29,8 +24,13 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
   if (chartData.length === 0) return null
 
   return (
-    <div className="bg-surface rounded-xl p-4">
-      <h2 className="mb-3 flex items-center text-sm font-medium text-content-muted">
+    <Surface variant="chart" className="p-4">
+      <Text
+        as="h2"
+        variant="label"
+        tone="muted"
+        className="mb-3 flex items-center"
+      >
         {i18n.t('ui.trichart.irrOverTimeTrailingAnnualised')}
         <ScopedInfoTooltip
           text={i18n.t(
@@ -38,98 +38,99 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
           )}
           scope={{ account: 'filterable', period: 'range' }}
         />
-      </h2>
+      </Text>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart
           data={chartData}
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             interval="preserveStartEnd"
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={(value: number) =>
               formatPercentage(value, { decimals: 0 })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
-          <ReferenceLine
-            y={0}
-            stroke={CHART_THEME.zeroLine}
-            strokeDasharray="3 3"
-          />
+          <ChartReference y={0} kind="zeroDashed" />
           <Tooltip content={<TriTooltip />} />
-          <Line
+          <SeriesLine
             type="linear"
             dataKey="tri_rolling_1y_backfill"
-            stroke={SEMANTIC_COLORS.totalChange}
-            strokeWidth={2}
-            strokeDasharray="5 4"
-            dot={false}
-            activeDot={false}
             connectNulls
-            isAnimationActive={false}
+            tone="totalChange"
+            weight="regular"
+            pattern="projection"
+            markers="hidden"
+            hover="hidden"
+            motion="none"
           />
-          <Line
+          <SeriesLine
             type="monotone"
             dataKey="tri_rolling_1y"
-            stroke={SEMANTIC_COLORS.totalChange}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4 }}
             connectNulls
-            isAnimationActive={false}
+            tone="totalChange"
+            weight="regular"
+            markers="hidden"
+            hover="default"
+            motion="none"
           />
-          <Line
+          <SeriesLine
             type="linear"
             dataKey="tri_rolling_3y_backfill"
-            stroke={SEMANTIC_COLORS.returnRate}
-            strokeWidth={2}
-            strokeDasharray="5 4"
-            dot={false}
-            activeDot={false}
             connectNulls
-            isAnimationActive={false}
+            tone="returnRate"
+            weight="regular"
+            pattern="projection"
+            markers="hidden"
+            hover="hidden"
+            motion="none"
           />
-          <Line
+          <SeriesLine
             type="monotone"
             dataKey="tri_rolling_3y"
-            stroke={SEMANTIC_COLORS.returnRate}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4 }}
             connectNulls
-            isAnimationActive={false}
+            tone="returnRate"
+            weight="regular"
+            markers="hidden"
+            hover="default"
+            motion="none"
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
+      <Text
+        as="div"
+        variant="caption"
+        tone="subtle"
+        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
+      >
         <span>
-          <i
-            className="mr-1.5 inline-block h-0.5 w-3 align-middle"
-            style={{ backgroundColor: SEMANTIC_COLORS.totalChange }}
+          <SeriesSwatch
+            tone={'totalChange'}
+            as="i"
+            shape="centeredLine"
+            className="mr-1.5 inline-block h-0.5 w-3"
           />
           {i18n.t('ui.trichart.trailing1YearIrr')}
         </span>
         <span>
-          <i
-            className="mr-1.5 inline-block h-0.5 w-3 align-middle"
-            style={{ backgroundColor: SEMANTIC_COLORS.returnRate }}
+          <SeriesSwatch
+            tone={'returnRate'}
+            as="i"
+            shape="centeredLine"
+            className="mr-1.5 inline-block h-0.5 w-3"
           />
           {i18n.t('ui.trichart.trailing3YearIrr')}
         </span>
-      </div>
-    </div>
+      </Text>
+    </Surface>
   )
 }

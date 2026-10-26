@@ -3,35 +3,47 @@ import type { CSSProperties, ReactNode } from 'react'
 type TooltipBoxProps = {
   children: ReactNode
   className?: string
-  background?: string
-  border?: string
+  variant?: 'theme' | 'raised'
   padding?: string
   minWidth?: number
   maxWidth?: number
 }
 
-// Shared dark tooltip box: a `className` (Tailwind, theme-reactive via CSS
-// custom properties) renders as-is; otherwise falls back to the inline
-// `--tooltip-*` CSS vars used by most recharts tooltips.
 export function TooltipBox({
   children,
   className,
-  background,
-  border,
-  padding = '8px 12px',
+  variant = 'theme',
+  padding,
   minWidth,
   maxWidth,
 }: TooltipBoxProps) {
-  if (className) return <div className={className}>{children}</div>
+  if (variant === 'raised')
+    return (
+      <div
+        className={[
+          'bg-surface-raised border border-border-strong rounded-lg text-xs shadow-xl',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        style={{ padding, minWidth, maxWidth }}
+      >
+        {children}
+      </div>
+    )
 
   const style: CSSProperties = {
-    background: background ?? 'var(--tooltip-bg)',
-    border: `1px solid ${border ?? 'var(--tooltip-border)'}`,
+    background: 'var(--tooltip-bg)',
+    border: '1px solid var(--tooltip-border)',
     borderRadius: 8,
-    padding,
+    padding: padding ?? '8px 12px',
     fontSize: 12,
     minWidth,
     maxWidth,
   }
-  return <div style={style}>{children}</div>
+  return (
+    <div style={style} className={className}>
+      {children}
+    </div>
+  )
 }

@@ -13,7 +13,7 @@ import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHol
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { DecorativeSvg } from '@/shared/ui/Controls.view'
+import { HierarchyIcon } from '@/shared/ui/Icons.view'
 import { Preview } from '@/shared/ui/Preview.view'
 
 export function PositionHeaderCell({
@@ -58,7 +58,7 @@ export function PositionBodyCell({
   return (
     <td className="overflow-hidden px-3 py-2">
       {handlers ? (
-        <Preview.Trigger {...handlers} className="cursor-help text-left">
+        <Preview.Trigger {...handlers} variant="preview">
           {content}
         </Preview.Trigger>
       ) : (
@@ -92,13 +92,10 @@ export function UnderlyingStatusButton({
     percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
   })
   const tone = {
-    reliable:
-      'text-positive hover:bg-positive-muted/60 hover:text-positive focus-visible:ring-positive',
-    partial:
-      'text-warning hover:bg-warning-muted/60 hover:text-warning focus-visible:ring-warning',
-    unavailable:
-      'text-danger hover:bg-danger-muted/60 hover:text-danger focus-visible:ring-danger',
-  }[category]
+    reliable: 'positive',
+    partial: 'warning',
+    unavailable: 'negative',
+  }[category] as 'positive' | 'warning' | 'negative'
 
   return (
     <Preview.Trigger
@@ -120,27 +117,13 @@ export function UnderlyingStatusButton({
           ? i18n.t('ui.positionstable.hideComposition', { title })
           : i18n.t('ui.positionstable.showComposition', { title })
       }
-      className={`rounded-md p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-1 ${tone} ${isOpen ? 'bg-surface-raised ring-1 ring-current/40' : ''}`}
+      tone={tone}
+      selected={isOpen}
+      className="p-1.5"
       onPreview={onShow}
       onDismiss={onHide}
     >
-      <DecorativeSvg
-        viewBox="0 0 20 20"
-        className="size-5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <rect x="7" y="2.25" width="6" height="4" rx="1" />
-        <path
-          d="M10 6.25v3.25M4.5 9.5h11M4.5 9.5v2.25M10 9.5v2.25M15.5 9.5v2.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <rect x="2.25" y="11.75" width="4.5" height="4" rx="1" />
-        <rect x="7.75" y="11.75" width="4.5" height="4" rx="1" />
-        <rect x="13.25" y="11.75" width="4.5" height="4" rx="1" />
-      </DecorativeSvg>
+      <HierarchyIcon />
     </Preview.Trigger>
   )
 }

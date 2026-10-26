@@ -1,20 +1,17 @@
 import { type ReactNode, useId } from 'react'
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { EvolutionTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { catColor } from '@/shared/theme/chartColors'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartText } from '@/shared/ui/ChartText.view'
 import { ToggleButton } from '@/shared/ui/Controls.view'
+import { SeriesArea } from '@/shared/ui/SeriesArea.view'
+import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 function EvolutionLegendItem({
   activeCategory,
@@ -29,22 +26,25 @@ function EvolutionLegendItem({
   isFiltered: boolean
   onSelect: (category: string) => void
 }) {
-  const color = catColor(category)
   if (category === groupedCategory)
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] text-content-subtle">
-        <span
+      <Text
+        variant="micro"
+        tone="subtle"
+        className="inline-flex items-center gap-1"
+      >
+        <CategorySwatch
+          category={category}
+          shape="bar"
           style={{
             width: 8,
             height: 8,
-            borderRadius: 2,
-            background: color,
             display: 'inline-block',
             flexShrink: 0,
           }}
         />
         {category}
-      </span>
+      </Text>
     )
   const isActive = activeCategory === category
   const isDimmed = isFiltered && !isActive
@@ -53,22 +53,17 @@ function EvolutionLegendItem({
       type="button"
       active={isActive}
       onClick={() => onSelect(category)}
-      className="inline-flex cursor-pointer items-center gap-1 text-[11px] transition-opacity"
-      style={{ opacity: isDimmed ? 0.35 : 1 }}
+      variant="legend"
+      dimmed={isDimmed}
+      className="inline-flex items-center gap-1"
     >
-      <span
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: 2,
-          background: color,
-          display: 'inline-block',
-          flexShrink: 0,
-          outline: isActive ? '2px solid var(--ds-content)' : 'none',
-          outlineOffset: 1,
-        }}
+      <CategorySwatch
+        category={category}
+        shape="bar"
+        selected={isActive}
+        style={{ width: 8, height: 8, display: 'inline-block', flexShrink: 0 }}
       />
-      <span style={{ color }}>{category}</span>
+      <ChartText category={category}>{category}</ChartText>
     </ToggleButton>
   )
 }
@@ -80,12 +75,7 @@ function EvolutionGradient({
   category: string
   gradientId: string
 }) {
-  return (
-    <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-      <stop offset="5%" stopColor={catColor(category)} stopOpacity={0.8} />
-      <stop offset="95%" stopColor={catColor(category)} stopOpacity={0.4} />
-    </linearGradient>
-  )
+  return <SeriesGradient id={gradientId} profile="dense" category={category} />
 }
 
 function EvolutionArea({
@@ -96,13 +86,13 @@ function EvolutionArea({
   gradientId: string
 }) {
   return (
-    <Area
+    <SeriesArea
       type="monotone"
       dataKey={category}
       stackId="a"
-      stroke={catColor(category)}
-      fill={`url(#${gradientId})`}
-      strokeWidth={1.5}
+      category={category}
+      gradientId={`${gradientId}`}
+      weight="fine"
     />
   )
 }
@@ -143,12 +133,17 @@ export function EvoCardView({
     gradientId: `${id}-allocation-${index}`,
   }))
   return (
-    <div className="bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-2 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-content-muted">
+        <Text
+          as="h2"
+          variant="label"
+          tone="muted"
+          className="flex items-center"
+        >
           {title}
           {tooltip}
-        </h2>
+        </Text>
         {positionsControl}
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
@@ -177,8 +172,8 @@ export function EvoCardView({
               />
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             type="number"
             scale="time"
@@ -187,16 +182,11 @@ export function EvoCardView({
             tickFormatter={(timestamp) =>
               formatDate(timestamp, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={(v) => `${v}%`}
             domain={[0, 100]}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={36}
           />
           <Tooltip content={<EvolutionTooltip categories={categories} />} />
@@ -209,7 +199,7 @@ export function EvoCardView({
           ))}
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </Surface>
   )
 }
 

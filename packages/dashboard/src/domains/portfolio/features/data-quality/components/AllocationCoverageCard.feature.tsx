@@ -13,9 +13,11 @@ import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
 import { DecorativeBlock } from '@/shared/ui/Controls.view'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch, ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
 import { DetailToggle } from './DetailToggle.view'
@@ -62,40 +64,40 @@ function AccountCoverageRow({
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-3">
-        <span className="truncate text-xs text-content-muted" title={label}>
+        <Text variant="caption" tone="muted" truncate title={label}>
           {label}
-        </span>
-        <span className="shrink-0 text-[11px] tabular-nums text-content-subtle">
+        </Text>
+        <Text variant="micro" tone="subtle" numeric className="shrink-0">
           {summary}
-        </span>
+        </Text>
       </div>
-      <div
-        className="flex h-1.5 overflow-hidden rounded-full bg-surface-raised"
+      <Surface
+        variant="track"
+        className="flex h-1.5 overflow-hidden"
         title={detail}
       >
         {coverage.allocated > 0 && (
-          <div
-            style={{
-              width: `${allocatedPct}%`,
-              backgroundColor: SEMANTIC_COLORS.coverage,
-            }}
+          <SeriesSwatch
+            as="div"
+            tone="coverage"
+            style={{ width: `${allocatedPct}%` }}
           />
         )}
         {coverage.unallocated > 0 && (
-          <div
-            style={{
-              width: `${unallocatedPct}%`,
-              backgroundColor: SEMANTIC_COLORS.coverageGap,
-            }}
+          <SeriesSwatch
+            as="div"
+            tone="coverageGap"
+            style={{ width: `${unallocatedPct}%` }}
           />
         )}
         {coverage.notApplicable > 0 && (
-          <div
-            className="bg-content-subtle"
+          <ToneSwatch
+            as="div"
+            tone="subtle"
             style={{ width: `${notApplicablePct}%` }}
           />
         )}
-      </div>
+      </Surface>
     </div>
   )
 }
@@ -139,15 +141,35 @@ export function AllocationCoverageCard({
       </div>
 
       <DecorativeBlock className="relative mx-auto hidden h-10 sm:block">
-        <div className="absolute left-1/2 top-0 h-5 w-px -translate-x-1/2 bg-surface-hover" />
-        <div className="absolute left-[16.667%] right-[16.667%] top-5 h-px bg-surface-hover" />
-        <div className="absolute bottom-0 left-[16.667%] top-5 w-px bg-gradient-to-b from-border-strong to-positive/40" />
-        <div
-          className={`absolute bottom-0 left-1/2 top-5 w-px bg-gradient-to-b from-border-strong ${hasMaterialQualityGap(unmappedPct) ? 'to-warning/40' : 'to-positive/40'}`}
+        <Surface
+          variant="centeredConnector"
+          className="absolute left-1/2 top-0 h-5 w-px"
         />
-        <div className="absolute bottom-0 left-[83.333%] top-5 w-px bg-gradient-to-b from-border-strong to-border-strong/40" />
+        <Surface
+          variant="highlighted"
+          className="absolute left-[16.667%] right-[16.667%] top-5 h-px"
+        />
+        <Surface
+          variant="positiveConnector"
+          className="absolute bottom-0 left-[16.667%] top-5 w-px"
+        />
+        <Surface
+          variant={
+            hasMaterialQualityGap(unmappedPct)
+              ? 'warningConnector'
+              : 'positiveConnector'
+          }
+          className="absolute bottom-0 left-1/2 top-5 w-px"
+        />
+        <Surface
+          variant="neutralConnector"
+          className="absolute bottom-0 left-[83.333%] top-5 w-px"
+        />
       </DecorativeBlock>
-      <DecorativeBlock className="mx-auto h-6 w-px bg-surface-hover sm:hidden" />
+      <DecorativeBlock
+        variant="highlighted"
+        className="mx-auto h-6 w-px sm:hidden"
+      />
 
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-3">
         <QualityIndicatorCard
@@ -173,7 +195,10 @@ export function AllocationCoverageCard({
                 )
               }
             />
-            <Disclosure.Content className="mt-3 space-y-4 border-t border-border pt-3">
+            <Disclosure.Content
+              variant="sectionStart"
+              className="mt-3 space-y-4 pt-3"
+            >
               {coverage.map((item) => (
                 <AccountCoverageRow
                   key={item.account}
@@ -211,12 +236,12 @@ export function AllocationCoverageCard({
                 )
               }
             />
-            <Disclosure.Content className="mt-3 border-t border-border pt-3">
-              <p className="mb-3 text-[11px] leading-4 text-content-subtle">
+            <Disclosure.Content variant="sectionStart" className="mt-3 pt-3">
+              <Text as="p" variant="microHelper" tone="subtle" className="mb-3">
                 {i18n.t(
                   'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
                 )}
-              </p>
+              </Text>
               <AllocationDimensionQuality coverage={dimensionCoverage} />
             </Disclosure.Content>
           </Disclosure>

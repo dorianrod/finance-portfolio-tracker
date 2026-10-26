@@ -1,4 +1,5 @@
 import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
+import { ChartText } from '@/shared/ui/ChartText.view'
 type DriversTooltipProps = {
   active?: boolean
   payload?: Array<{ payload: WealthDriverPoint }>
@@ -8,7 +9,8 @@ type DriversTooltipProps = {
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function DriversTooltip({
   active,
@@ -20,41 +22,40 @@ export function DriversTooltip({
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload as WealthDriverPoint
   return (
-    <div className="rounded-lg border border-border-strong bg-surface px-3 py-2 text-xs shadow-xl">
-      <div className="mb-2 font-semibold text-content">
+    <Surface variant="tooltip" className="px-3 py-2">
+      <Text as="div" variant="strong" tone="default" className="mb-2">
         {label == null ? '' : formatDate(label, { style: 'shortMonthYear' })}
-      </div>
-      <div className="space-y-1 text-content-secondary">
+      </Text>
+      <Text as="div" tone="secondary" className="space-y-1">
         <div className="flex justify-between gap-6">
           <span>{i18n.t('ui.wealthdriverschart.netContributions')}</span>
-          <span
-            className="font-medium"
-            style={{ color: SEMANTIC_COLORS.netContributionsText }}
-          >
+          <ChartText tone={'netContributionsText'} variant="medium">
             {formatMoney(row.cumulative_savings, { style: 'full' })}
-          </span>
+          </ChartText>
         </div>
         <div className="flex justify-between gap-6">
           <span>{i18n.t('ui.wealthdriverschart.marketPerformance')}</span>
-          <span
-            className="font-medium"
-            style={{
-              color:
-                row.cumulative_performance >= 0
-                  ? SEMANTIC_COLORS.performancePositiveText
-                  : SEMANTIC_COLORS.performanceNegativeText,
-            }}
+          <ChartText
+            tone={
+              row.cumulative_performance >= 0
+                ? 'performancePositiveText'
+                : 'performanceNegativeText'
+            }
+            variant="medium"
           >
             {formatMoney(row.cumulative_performance, { style: 'full' })}
-          </span>
+          </ChartText>
         </div>
-        <div className="flex justify-between gap-6 border-t border-border-strong pt-1">
+        <Surface
+          variant="strongSectionStart"
+          className="flex justify-between gap-6 pt-1"
+        >
           <span>{i18n.t('ui.wealthdriverschart.totalChange')}</span>
-          <span className="font-semibold text-content">
+          <Text variant="strong" tone="default">
             {formatMoney(row.cumulative_change, { style: 'full' })}
-          </span>
-        </div>
-      </div>
-    </div>
+          </Text>
+        </Surface>
+      </Text>
+    </Surface>
   )
 }

@@ -20,17 +20,41 @@ implement XIRR itself.
 
 ## UI design system
 
-Tailwind CSS v4 tokens live in `src/index.css`. New UI should use the semantic
-utilities (`bg-canvas`, `bg-surface`, `text-content`, `text-content-muted`,
-`border-border`, `text-accent`, and the shared radius tokens) instead of raw
-palette classes. This keeps light and dark themes independent from Tailwind's
-color scale.
+Visual styling belongs in `src/shared/ui` primitives. Application and domain
+code may use layout classes/styles only: display, flex/grid, container alignment,
+order, margins, **padding**, gap, dimensions, aspect ratio, overflow, positioning
+and z-index. Colors, backgrounds, borders, typography, radii, shadows, opacity,
+animations and interaction styling belong to the design system. Reuse or extend
+a primitive and pass semantic variants such as `tone` instead of applying visual
+classes, including imported constants, from a domain.
 
-Reusable interaction patterns live in `src/shared/ui`. Use
-`SegmentedControl` for mutually exclusive view switches so focus, disabled,
-active, and theme states remain consistent. The remaining raw `gray-*` theme
-overrides are a compatibility layer for feature views that have not yet moved
-to semantic tokens; avoid adding new dependencies on them.
+Tailwind CSS v4 tokens in `src/index.css` and constants in `src/shared/theme`
+remain authorized design-system infrastructure. Shared UI should consume semantic
+utilities (`bg-canvas`, `bg-surface`, `text-content`, `text-content-muted`,
+`border-border`, `text-accent`) instead of raw palette classes. Semantic classes
+still count as visual styles and must be applied inside shared UI.
+
+`local/no-domain-styling` reports warnings for non-layout classes, inline style
+properties, native/SVG styling, Recharts appearance props and local stylesheets
+outside the design system. It follows resolvable constants, conditional values,
+templates, assembled arrays, JSX spreads and React element factory props. A
+separate `unverifiableStyle` warning requests review when static analysis cannot
+determine a value; it does not claim that value is a proven visual violation.
+Tests and generated files are exempt. The check does not parse CSS contents or
+analyze imperative DOM mutations, and it has no autofix. Warnings reference
+[`styling-centralize-in-shared-ui`](../../.agents/skills/dorian-react-best-pratices/rules/styling-centralize-in-shared-ui.md)
+to guide subsequent component migrations.
+
+Reusable interaction patterns live in `src/shared/ui`. Typography, surfaces,
+controls, KPI values, chart series, SVG marks and tooltip appearance are exposed
+through semantic variants. Compose custom chart renderers through nested
+`SeriesBar.Shape`, `SeriesLine.Markers`, `SeriesPie.Labels` and related slots.
+Domain code supplies the data, geometry, labels and business actions.
+
+The styling migration has no remaining `local/no-domain-styling` warnings; see
+[the audit](STYLING_AUDIT.md) for its scope and validation. Existing global theme
+compatibility overrides remain infrastructure; new code should use the shared
+primitives and semantic tokens.
 
 ## Run locally via pipx
 

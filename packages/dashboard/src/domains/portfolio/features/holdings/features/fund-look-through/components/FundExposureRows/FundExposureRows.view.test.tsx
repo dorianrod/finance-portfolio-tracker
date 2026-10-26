@@ -21,12 +21,7 @@ describe('SourcesCell', () => {
     render(
       <SidePanel open closeLabel="Close details" onClose={onClose}>
         <SidePanel.Title>Exposure</SidePanel.Title>
-        <SourcesCell
-          sources={SOURCES}
-          total={100}
-          empty="Direct"
-          className=""
-        />
+        <SourcesCell sources={SOURCES} total={100} empty="Direct" compact />
       </SidePanel>,
     )
     const trigger = screen.getByRole('button', { name: '2 funds' })
@@ -52,12 +47,7 @@ describe('SourcesCell', () => {
     'renders $expected without a nonfunctional trigger',
     ({ sources, expected }) => {
       render(
-        <SourcesCell
-          sources={sources}
-          total={100}
-          empty="Direct"
-          className=""
-        />,
+        <SourcesCell sources={sources} total={100} empty="Direct" compact />,
       )
       expect(screen.getByText(expected)).toBeTruthy()
       expect(screen.queryByRole('button')).toBeNull()

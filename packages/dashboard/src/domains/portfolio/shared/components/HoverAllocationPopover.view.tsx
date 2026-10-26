@@ -2,6 +2,7 @@ import type { AllocationHoverTarget } from '@/domains/portfolio/shared/types/all
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
 import { Preview } from '@/shared/ui/Preview.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { MiniDonut } from './MiniDonut.view'
 
@@ -47,13 +48,20 @@ export function HoverAllocationPopover({
       anchor={target.buttonRect}
       label={target.name}
       style={{ width: `min(${W}px, calc(100vw - 20px))` }}
-      className="overflow-y-auto bg-surface border border-border-strong rounded-xl p-3 shadow-2xl"
+      variant="floatingPanel"
+      className="overflow-y-auto p-3"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <p className="text-sm font-semibold text-content mb-3 truncate">
+      <Text
+        as="p"
+        variant="bodyStrong"
+        tone="default"
+        truncate
+        className="mb-3"
+      >
         {target.name}
-      </p>
+      </Text>
       <div
         className={`grid gap-3 ${cols === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}
       >

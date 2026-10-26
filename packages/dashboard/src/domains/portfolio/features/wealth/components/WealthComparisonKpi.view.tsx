@@ -6,11 +6,11 @@ import {
   KpiCard,
 } from '@/domains/portfolio/shared/components/kpis/Kpi.view'
 import type { YearOverYearMetric } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import { getPerformanceColor } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceColor'
+import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { Text } from '@/shared/ui/Text.view'
 
 export function WealthComparisonKpi({
   label,
@@ -29,13 +29,9 @@ export function WealthComparisonKpi({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const valueColor =
-    tone === 'blue'
-      ? SEMANTIC_TEXT_CLASSES.netContributions
-      : getPerformanceColor(metric.current)
+    tone === 'blue' ? 'accent' : getPerformanceTone(metric.current)
   const changeColor =
-    metric.changePct == null
-      ? 'text-content-subtle'
-      : getPerformanceColor(metric.changePct)
+    metric.changePct == null ? 'subtle' : getPerformanceTone(metric.changePct)
   const currentLabel = formatMonthRange(currentMonths)
   const value = formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
@@ -54,10 +50,10 @@ export function WealthComparisonKpi({
           {label}
         </Kpi.Label>
         <Kpi.ValueRow>
-          <Kpi.Value color={valueColor} title={value}>
+          <Kpi.Value tone={valueColor} title={value}>
             {value}
           </Kpi.Value>
-          <Kpi.InlineNote color={changeColor}>
+          <Kpi.InlineNote tone={changeColor}>
             {formatPercentage(metric.changePct, { signed: true })}
           </Kpi.InlineNote>
         </Kpi.ValueRow>
@@ -66,9 +62,9 @@ export function WealthComparisonKpi({
         </Kpi.Detail>
         <Kpi.Footer>
           {i18n.t('ui.wealthtab.previous12m')}{' '}
-          <span className="font-medium text-content-secondary">
+          <Text variant="medium" tone="secondary">
             {formatMoney(metric.previous)}
-          </span>
+          </Text>
         </Kpi.Footer>
       </Kpi.Root>
     </KpiCard>

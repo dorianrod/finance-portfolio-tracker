@@ -2,7 +2,7 @@ import type { CumulativeConcentrationPoint } from '@/domains/portfolio/shared/he
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartText } from '@/shared/ui/ChartText.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 type CumulativeConcentrationTooltipProps = {
@@ -21,19 +21,19 @@ export function CumulativeConcentrationTooltip({
 
   return (
     <TooltipBox minWidth={220}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
         {i18n.t('ui.cumulativeconcentrationtooltip.topAssets', {
           count: point.rank,
           percentage: formatPercentage(point.cumulativeWeight),
         })}
-      </div>
-      <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} className="mt-1">
         #{point.rank} {point.name}
-      </div>
-      <div className="mt-0.5" style={{ color: SEMANTIC_COLORS.riskSecondary }}>
+      </ChartText>
+      <ChartText as="div" tone={'riskSecondary'} className="mt-0.5">
         {formatMoney(point.value, { style: 'full' })} ·{' '}
         {formatPercentage(point.weight)}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }

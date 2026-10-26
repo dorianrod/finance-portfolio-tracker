@@ -6,7 +6,7 @@ import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-qu
 import { ErrorsTab } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab.feature'
 import { ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/ManualPriceOverridesTable.view'
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/helpers/formatters/dataQualityDimensionLabels'
-import { TONE_STYLES } from '@/domains/portfolio/features/data-quality/pages/helpers/presenters/dataQualityToneStyles'
+import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/pages/helpers/presenters/dataQualityToneStyles'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/services/useDataQualityViewModel'
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
@@ -22,9 +22,12 @@ import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineErr
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
-import { Decorative } from '@/shared/ui/Controls.view'
+import { Select } from '@/shared/ui/Controls.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Tabs } from '@/shared/ui/Tabs.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   AffectedAssetsTable,
@@ -167,7 +170,7 @@ export function DataQualityTab({
   }
 
   return (
-    <div className="data-quality-view mb-6">
+    <Surface variant="qualityPage" className="mb-6">
       <Tabs
         orientation="vertical"
         value={activeThemeId}
@@ -177,28 +180,34 @@ export function DataQualityTab({
         className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]"
       >
         <div className="md:hidden">
-          <label
+          <Text
             htmlFor="quality-theme"
-            className="mb-1.5 block text-xs font-medium text-content-subtle"
+            as="label"
+            variant="captionLabel"
+            tone="subtle"
+            className="mb-1.5 block"
           >
             {i18n.t('ui.dataqualitytab.qualityTheme')}
-          </label>
-          <select
+          </Text>
+          <Select
+            label={i18n.t('ui.dataqualitytab.qualityTheme')}
             id="quality-theme"
             value={activeThemeId}
             onChange={(event) =>
               setSelectedQualityTheme(event.target.value as QualityThemeId)
             }
-            className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm text-content-secondary focus:border-accent focus:outline-none"
+            variant="quality"
+            className="w-full px-3 py-2.5"
           >
             {themes.map((theme) => (
               <QualityThemeOption key={theme.id} theme={theme} />
             ))}
-          </select>
+          </Select>
         </div>
 
         <Tabs.List
-          className="hidden space-y-1 md:block md:border-r md:border-border md:pr-4"
+          variant="sidebar"
+          className="hidden space-y-1 md:block md:pr-4"
           label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
         >
           {themes.map((theme) => (
@@ -211,21 +220,35 @@ export function DataQualityTab({
         </Tabs.List>
 
         <Tabs.Content value={activeThemeId} className="min-w-0">
-          <div className="mb-5 flex flex-wrap items-start gap-3 border-b border-border pb-4">
+          <Surface
+            variant="sectionEnd"
+            className="mb-5 flex flex-wrap items-start gap-3 pb-4"
+          >
             <div className="mr-auto min-w-0">
               <div className="flex items-center gap-2">
-                <Decorative className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-canvas ring-1 ring-border">
-                  <span
-                    className={`h-2 w-2 rounded-full ${TONE_STYLES[activeTheme.tone].dot}`}
+                <Surface
+                  as="span"
+                  variant="statusCanvasFrame"
+                  className="flex h-5 w-5 shrink-0 items-center justify-center"
+                >
+                  <ToneSwatch
+                    tone={QUALITY_TONES[activeTheme.tone]}
+                    shape="dot"
+                    className="h-2 w-2"
                   />
-                </Decorative>
-                <h2 className="text-base font-semibold text-content">
+                </Surface>
+                <Text as="h2" variant="heading" tone="default">
                   {activeTheme.label}
-                </h2>
+                </Text>
               </div>
-              <p className="mt-1 max-w-2xl text-xs leading-5 text-content-subtle">
+              <Text
+                as="p"
+                variant="helper"
+                tone="subtle"
+                className="mt-1 max-w-2xl"
+              >
                 {activeTheme.description}
-              </p>
+              </Text>
             </div>
             <div className="shrink-0">
               {activeDetailAction ? (
@@ -237,20 +260,31 @@ export function DataQualityTab({
                   onClick={activeDetailAction.onClick}
                 />
               ) : (
-                <div className="relative min-w-[8rem] overflow-hidden rounded-md bg-canvas/70 px-4 py-3 text-right">
-                  <Decorative
-                    className={`absolute inset-y-2 left-0 w-0.5 rounded-r-full ${TONE_STYLES[activeTheme.tone].accent}`}
+                <Surface
+                  variant="insetStatistic"
+                  align="right"
+                  className="relative min-w-[8rem] overflow-hidden px-4 py-3"
+                >
+                  <ToneSwatch
+                    tone={QUALITY_TONES[activeTheme.tone]}
+                    shape="sideAccent"
+                    className="absolute inset-y-2 left-0 w-0.5"
                   />
-                  <div className="text-xl font-semibold tabular-nums leading-none tracking-tight text-content">
+                  <Text as="div" variant="compactMetric" tone="default" numeric>
                     {activeTheme.metric}
-                  </div>
-                  <div className="mt-1.5 text-[10px] font-medium uppercase tracking-wider text-content-subtle">
+                  </Text>
+                  <Text
+                    as="div"
+                    variant="eyebrowLabel"
+                    tone="subtle"
+                    className="mt-1.5"
+                  >
                     {activeTheme.metricLabel}
-                  </div>
-                </div>
+                  </Text>
+                </Surface>
               )}
             </div>
-          </div>
+          </Surface>
 
           {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
 
@@ -295,6 +329,6 @@ export function DataQualityTab({
         </SidePanel.Description>
         <AffectedAssetsTable assets={visibleAffectedAssets} />
       </SidePanel>
-    </div>
+    </Surface>
   )
 }

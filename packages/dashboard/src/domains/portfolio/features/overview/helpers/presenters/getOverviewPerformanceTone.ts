@@ -1,8 +1,6 @@
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import type { TextTone } from '@/shared/ui/textAppearance'
 
-export function getOverviewPerformanceTone(value: number | null): string {
-  if (value == null) return 'text-content-subtle'
-  return value >= 0
-    ? SEMANTIC_TEXT_CLASSES.performancePositive
-    : SEMANTIC_TEXT_CLASSES.performanceNegative
+export function getOverviewPerformanceTone(value: number | null): TextTone {
+  if (value == null) return 'subtle'
+  return value >= 0 ? 'positive' : 'negative'
 }

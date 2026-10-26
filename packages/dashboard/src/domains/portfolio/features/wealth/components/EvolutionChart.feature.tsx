@@ -1,14 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
 import {
   PORTFOLIO_COST_SHARE_KEY,
@@ -21,12 +12,16 @@ import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/por
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import {
   type ChartScaleMode,
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { SeriesArea } from '@/shared/ui/SeriesArea.view'
+import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function EvolutionChart({
   history,
@@ -44,9 +39,14 @@ export function EvolutionChart({
   const chartData = useMemo(() => withPortfolioComposition(history), [history])
 
   return (
-    <div className="bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-content-muted">
+        <Text
+          as="h2"
+          variant="label"
+          tone="muted"
+          className="flex items-center"
+        >
           {title}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -54,7 +54,7 @@ export function EvolutionChart({
             )}
             scope={{ account: 'filterable', period: 'range' }}
           />
-        </h2>
+        </Text>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={height}>
@@ -64,92 +64,70 @@ export function EvolutionChart({
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="gradCost" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={SEMANTIC_COLORS.costBasis}
-                stopOpacity={0.6}
-              />
-              <stop
-                offset="95%"
-                stopColor={SEMANTIC_COLORS.costBasis}
-                stopOpacity={0.2}
-              />
-            </linearGradient>
-            <linearGradient id="gradGain" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={SEMANTIC_COLORS.performancePositive}
-                stopOpacity={0.7}
-              />
-              <stop
-                offset="95%"
-                stopColor={SEMANTIC_COLORS.performancePositive}
-                stopOpacity={0.2}
-              />
-            </linearGradient>
+            <SeriesGradient id="gradCost" profile="base" tone="costBasis" />
+            <SeriesGradient
+              id="gradGain"
+              profile="strong"
+              tone="performancePositive"
+            />
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             interval="preserveStartEnd"
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={
               percentageMode
                 ? (value) => `${Math.round(Number(value))}%`
                 : (value) => formatMoney(value, { style: 'compact' })
             }
             domain={percentageMode ? ['auto', 'auto'] : undefined}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={percentageMode ? 48 : 52}
           />
           <Tooltip
             content={<EvolutionTooltip percentageMode={percentageMode} />}
           />
           <Legend formatter={EvolutionLegendLabel} />
-          <Area
+          <SeriesArea
             type="monotone"
             dataKey={
               percentageMode ? PORTFOLIO_COST_SHARE_KEY : 'total_cost_basis'
             }
             name={i18n.t('ui.evolutionchart.costBasis')}
             stackId="a"
-            stroke={SEMANTIC_COLORS.costBasis}
-            fill="url(#gradCost)"
-            strokeWidth={1.5}
+            tone="costBasis"
+            gradientId="gradCost"
+            weight="fine"
           />
-          <Area
+          <SeriesArea
             type="monotone"
             dataKey={
               percentageMode ? PORTFOLIO_GAIN_SHARE_KEY : 'unrealized_gain'
             }
             name={i18n.t('ui.evolutionchart.unrealizedPL')}
             stackId="a"
-            stroke={SEMANTIC_COLORS.performancePositive}
-            fill="url(#gradGain)"
-            strokeWidth={1.5}
+            tone="performancePositive"
+            gradientId="gradGain"
+            weight="fine"
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </Surface>
   )
 }
 
 function EvolutionLegendLabel(value: string) {
   return (
-    <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>
+    <ChartText tone={'tick'} variant="caption">
       {value === 'Cost basis'
         ? i18n.t('ui.evolutionchart.costBasis')
         : i18n.t('ui.evolutionchart.unrealizedPL')}
-    </span>
+    </ChartText>
   )
 }

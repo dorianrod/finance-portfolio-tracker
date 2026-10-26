@@ -3,12 +3,11 @@ import type {
   IncomeSummary,
   PerformanceSummary,
 } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
-import { getPerformanceColor } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceColor'
+import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 
 import { formatIrrKpiValue } from './helpers/formatters/formatIrrKpiValue'
 import { getIrrKpiNote } from './helpers/presenters/getIrrKpiNote'
@@ -69,13 +68,13 @@ export function TotalNetPerformanceKpi({
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value
-          color={getPerformanceColor(performance.totalPerformanceNet)}
+          tone={getPerformanceTone(performance.totalPerformanceNet)}
           title={value}
         >
           {value}
         </Kpi.Value>
         <Kpi.InlineNote
-          color={getPerformanceColor(performance.totalPerformanceNet)}
+          tone={getPerformanceTone(performance.totalPerformanceNet)}
         >
           {formatPercentage(performance.totalPerformancePct, { signed: true })}
         </Kpi.InlineNote>
@@ -111,10 +110,7 @@ export function NetContributionsKpi({
         {i18n.t('ui.portfoliokpis.netContributions')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value
-          color={SEMANTIC_TEXT_CLASSES.netContributions}
-          title={formattedValue}
-        >
+        <Kpi.Value tone={'accent'} title={formattedValue}>
           {formattedValue}
         </Kpi.Value>
       </Kpi.ValueRow>
@@ -140,14 +136,14 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
         {i18n.t('ui.portfoliokpis.passiveIncomeTrailing12m')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value color={SEMANTIC_TEXT_CLASSES.passiveIncome} title={value}>
+        <Kpi.Value tone={'income'} title={value}>
           {value}
         </Kpi.Value>
         <Kpi.InlineNote
-          color={
+          tone={
             income.changePct == null
-              ? 'text-content-subtle'
-              : getPerformanceColor(income.changePct)
+              ? 'subtle'
+              : getPerformanceTone(income.changePct)
           }
         >
           {formatPercentage(income.changePct, { signed: true })}
@@ -186,7 +182,7 @@ export function IrrSinceTrackingKpi({
           : i18n.t('ui.portfoliokpis.irrSinceTracking')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>
+        <Kpi.Value tone={getPerformanceTone(value)} title={formattedValue}>
           {formattedValue}
         </Kpi.Value>
       </Kpi.ValueRow>
@@ -216,7 +212,7 @@ export function NetUnrealizedKpi({
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value
-          color={getPerformanceColor(performance.unrealizedNet)}
+          tone={getPerformanceTone(performance.unrealizedNet)}
           title={value}
         >
           {value}
@@ -252,7 +248,7 @@ export function NetRealizedKpi({
       </Kpi.Label>
       <Kpi.ValueRow>
         <Kpi.Value
-          color={getPerformanceColor(performance.realizedNet)}
+          tone={getPerformanceTone(performance.realizedNet)}
           title={value}
         >
           {value}
@@ -290,7 +286,7 @@ export function TrailingThreeYearIrrKpi({
           : i18n.t('ui.portfoliokpis.irrTrailing3y')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value color={getPerformanceColor(value)} title={formattedValue}>
+        <Kpi.Value tone={getPerformanceTone(value)} title={formattedValue}>
           {formattedValue}
         </Kpi.Value>
       </Kpi.ValueRow>

@@ -9,8 +9,11 @@ import {
 import type { MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { catColor } from '@/shared/theme/chartColors'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { Button } from '@/shared/ui/Controls.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { FilteredPositionRow } from './FilteredPositionRow.view'
 
@@ -22,7 +25,6 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
   const filterValue = filter?.value ?? ''
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
-  const filterColor = catColor(filterValue)
 
   return (
     <SidePanel
@@ -33,7 +35,7 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
       <SidePanel.Title>
         <>
           {i18n.t('ui.filteredpositionstable.positions')}{' '}
-          <span style={{ color: catColor(filterValue) }}>{filterValue}</span>
+          <ChartText category={filterValue}>{filterValue}</ChartText>
         </>
       </SidePanel.Title>
       <SidePanel.Description>
@@ -43,42 +45,58 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
         })}
       </SidePanel.Description>
       <SidePanel.HeaderActions>
-        <button
+        <Button
           type="button"
           onClick={clearFilter}
-          className="cursor-pointer rounded-lg border border-border-strong px-2.5 py-1.5 text-xs font-medium text-content-muted transition-colors hover:border-border-strong hover:bg-surface-raised hover:text-content-secondary"
+          variant="filterClear"
+          className="px-2.5 py-1.5"
         >
           {i18n.t('ui.filteredpositionstable.clearFilter')}
-        </button>
+        </Button>
       </SidePanel.HeaderActions>
-      <table className="w-full text-sm">
-        <thead className="sticky top-0 z-10 bg-surface">
-          <tr className="border-b border-border">
-            <th className="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-content-subtle">
+      <Surface variant="bodyTable" as="table" className="w-full">
+        <Surface as="thead" variant="plain" className="sticky top-0 z-10">
+          <Surface as="tr" variant="sectionEnd">
+            <Text
+              as="th"
+              variant="sectionLabel"
+              tone="subtle"
+              align="left"
+              className="px-4 py-2.5"
+            >
               {i18n.t('ui.filteredpositionstable.name')}
-            </th>
-            <th className="px-4 py-2.5 text-right text-xs font-medium uppercase tracking-wide text-content-subtle">
+            </Text>
+            <Text
+              as="th"
+              variant="sectionLabel"
+              tone="subtle"
+              align="right"
+              className="px-4 py-2.5"
+            >
               {i18n.t('ui.filteredpositionstable.total')}
-            </th>
-            <th
-              className="px-4 py-2.5 text-right text-xs font-medium uppercase tracking-wide"
-              style={{ color: catColor(filterValue) }}
+            </Text>
+            <ChartText
+              as="th"
+              variant="sectionLabel"
+              align="right"
+              category={filterValue}
+              className="px-4 py-2.5"
             >
               {filterValue}
-            </th>
-          </tr>
-        </thead>
+            </ChartText>
+          </Surface>
+        </Surface>
         <tbody>
           {rows.map((row, index) => (
             <FilteredPositionRow
               key={row.isin}
-              color={filterColor}
+              category={filterValue}
               index={index}
               row={row}
             />
           ))}
         </tbody>
-      </table>
+      </Surface>
     </SidePanel>
   )
 }

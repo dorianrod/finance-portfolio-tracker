@@ -16,7 +16,8 @@ export function ExpandBtn({ row }: { row: Row<TableRow> }) {
           : i18n.t('ui.expandbtn.expandRow')
       }
       expanded={row.getIsExpanded()}
-      className="grid size-6 place-items-center rounded-control text-content-muted transition-colors hover:bg-surface-raised hover:text-content"
+      variant="rowDisclosure"
+      className="grid size-6 place-items-center"
     >
       {row.getIsExpanded() ? '▾' : '▸'}
     </DisclosureButton>

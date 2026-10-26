@@ -33,6 +33,40 @@ function lint(code, filename) {
 }
 
 describe('component-role', () => {
+  it.each([
+    './services/useIndeterminateInput',
+    '@/shared/ui/services/useIndeterminateInput',
+  ])('allows shared UI to own its behavior service %s', (source) => {
+    expect(
+      lint(
+        `import { useIndeterminateInput } from '${source}'; export function Checkbox() { return <input ref={useIndeterminateInput(false)} /> }`,
+        'src/shared/ui/Checkbox.view.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it.each([
+    './services/useSelection',
+    '@/domains/orders/services/useOrders',
+    'jotai',
+  ])('keeps business services forbidden in views: %s', (source) => {
+    expect(
+      lint(
+        `import { dependency } from '${source}'; export function Card() { return <div /> }`,
+        'src/domains/orders/Card.view.tsx',
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['viewImportsBusiness'])
+  })
+
+  it('does not permit a shared UI view to import a business service', () => {
+    expect(
+      lint(
+        "import { dependency } from '@/domains/orders/services/useOrders'; export function Card() { return <div /> }",
+        'src/shared/ui/Card.view.tsx',
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['viewImportsBusiness'])
+  })
+
   it('requires a role suffix on production component modules', () => {
     const messages = lint(
       'export function Card() { return <div /> }',

@@ -1,5 +1,6 @@
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { ChartLabel } from '@/shared/ui/ChartLabel.view'
 
 import { getPieLabelPosition } from './helpers/presenters/getPieLabelPosition'
 
@@ -27,14 +28,14 @@ export function PieLabel({
   if (percent < 0.025) return null
   const { x, y, anchor } = getPieLabelPosition(cx, cy, midAngle, outerRadius)
   return (
-    <text fontSize={10} textAnchor={anchor} dominantBaseline="central">
-      <tspan x={x} y={y - 6} fill="var(--chart-label)">
+    <ChartLabel variant="pie" align={anchor}>
+      <ChartLabel as="tspan" variant="pie" x={x} y={y - 6} tone="label">
         {name}
-      </tspan>
-      <tspan x={x} y={y + 6} fill="var(--chart-tick)">
+      </ChartLabel>
+      <ChartLabel as="tspan" variant="pie" x={x} y={y + 6} tone="tick">
         {formatMoney(value, { style: 'compact' })} ·{' '}
         {formatPercentage(percent * 100)}
-      </tspan>
-    </text>
+      </ChartLabel>
+    </ChartLabel>
   )
 }

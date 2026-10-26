@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 
 import type { DashboardLoadState as DashboardLoadStateModel } from '@/app/types/dashboardLoadState.type'
 import i18n from '@/i18n/i18n'
-import { StatusMessage } from '@/shared/ui/Controls.view'
+import { Button, StatusMessage } from '@/shared/ui/Controls.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function DashboardLoadState({
   state,
@@ -16,27 +17,22 @@ export function DashboardLoadState({
   switch (state.status) {
     case 'loading':
       return (
-        <StatusMessage className="text-content-muted">
-          {i18n.t('ui.app.loading')}
-        </StatusMessage>
+        <StatusMessage tone="muted">{i18n.t('ui.app.loading')}</StatusMessage>
       )
     case 'error':
       return (
-        <StatusMessage
-          as="div"
-          urgent
-          className="rounded-card border border-danger/40 bg-surface p-6"
-        >
-          <p className="text-danger">
+        <StatusMessage as="div" urgent variant="errorPanel" className="p-6">
+          <Text as="p" tone="negative">
             {i18n.t('ui.app.errorWithValues', { message: state.message })}
-          </p>
-          <button
+          </Text>
+          <Button
             type="button"
-            className="mt-4 rounded-control border border-border-strong px-3 py-2 text-content"
+            variant="outlined"
+            className="mt-4 px-3 py-2"
             onClick={onRetry}
           >
             {i18n.t('ui.dashboardpanelerrorboundary.reloadDashboard')}
-          </button>
+          </Button>
         </StatusMessage>
       )
     case 'ready':

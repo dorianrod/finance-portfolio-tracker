@@ -1,15 +1,8 @@
 import {
-  Bar,
   type BarShapeProps,
-  CartesianGrid,
   ComposedChart,
-  Line,
-  Rectangle,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
@@ -19,10 +12,16 @@ import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { Decorative } from '@/shared/ui/Controls.view'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function MonthlySavingsChart({
   data,
@@ -34,8 +33,13 @@ export function MonthlySavingsChart({
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   return (
-    <div className="flex-1 bg-surface rounded-xl p-4">
-      <h2 className="mb-3 flex items-center text-sm font-medium text-content-muted">
+    <Surface variant="chart" className="flex-1 p-4">
+      <Text
+        as="h2"
+        variant="label"
+        tone="muted"
+        className="mb-3 flex items-center"
+      >
         {i18n.t('ui.monthlysavingschart.monthlyWealthDrivers')}
         <ScopedInfoTooltip
           text={i18n.t(
@@ -43,101 +47,103 @@ export function MonthlySavingsChart({
           )}
           scope={{ account: 'filterable', period: 'range-or-trailing-12m' }}
         />
-      </h2>
+      </Text>
       <ResponsiveContainer width="100%" height={220}>
         <ComposedChart
           data={data}
           margin={{ top: 4, right: 52, left: 0, bottom: 0 }}
           barGap={2}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
           />
-          <YAxis
+          <ChartYAxis
             yAxisId="left"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
-          <YAxis
+          <ChartYAxis
             yAxisId="right"
             orientation="right"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
           <Tooltip content={<MonthlyTooltip ops={ops} />} />
-          <ReferenceLine yAxisId="left" y={0} stroke={CHART_THEME.zeroLine} />
-          <Bar
+          <ChartReference yAxisId="left" y={0} kind="zero" />
+          <SeriesBar
             yAxisId="left"
             dataKey="savings_delta"
-            fill={SEMANTIC_COLORS.netContributions}
-            radius={[3, 3, 0, 0]}
+            tone="netContributions"
+            corners="top"
           />
-          <Bar
+          <SeriesBar
             yAxisId="left"
             dataKey="perf_delta"
-            fill={SEMANTIC_COLORS.performancePositive}
-            radius={[3, 3, 0, 0]}
-            shape={MonthlyPerformanceBar}
-          />
-          <Line
+            tone="performancePositive"
+            corners="top"
+          >
+            <SeriesBar.Shape>
+              <MonthlyPerformanceBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
+          <SeriesLine
             yAxisId="right"
             type="monotone"
             dataKey="rolling_12m"
-            stroke={SEMANTIC_COLORS.netContributions}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4, fill: SEMANTIC_COLORS.netContributions }}
+            tone="netContributions"
+            weight="regular"
+            markers="hidden"
+            hover="series"
           />
-          <Line
+          <SeriesLine
             yAxisId="right"
             type="monotone"
             dataKey="rolling_perf_12m"
-            stroke={SEMANTIC_COLORS.performance}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4, fill: SEMANTIC_COLORS.performance }}
+            tone="performance"
+            weight="regular"
+            markers="hidden"
+            hover="series"
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="mt-3 grid grid-cols-2 gap-5 border-t border-border pt-3 text-xs text-content-subtle">
+      <Surface
+        variant="captionFooter"
+        tone="subtle"
+        className="mt-3 grid grid-cols-2 gap-5 pt-3"
+      >
         <div>
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-content-subtle">
+          <Text as="div" variant="eyebrow" tone="subtle" className="mb-2">
             {i18n.t('ui.monthlysavingschart.monthlyBars')}
-          </div>
+          </Text>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Decorative
-                className="h-2.5 w-3 rounded-sm"
-                style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
+              <SeriesSwatch
+                tone={'netContributions'}
+                shape="bar"
+                className="h-2.5 w-3"
               />
               <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Decorative className="flex h-2.5 w-3 overflow-hidden rounded-sm">
-                <i
+              <Decorative
+                variant="swatchFrame"
+                className="flex h-2.5 w-3 overflow-hidden"
+              >
+                <SeriesSwatch
+                  tone={'performancePositive'}
+                  as="i"
                   className="h-full w-1/2"
-                  style={{
-                    backgroundColor: SEMANTIC_COLORS.performancePositive,
-                  }}
                 />
-                <i
+                <SeriesSwatch
+                  tone={'performanceNegative'}
+                  as="i"
                   className="h-full w-1/2"
-                  style={{
-                    backgroundColor: SEMANTIC_COLORS.performanceNegative,
-                  }}
                 />
               </Decorative>
               <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
@@ -145,43 +151,39 @@ export function MonthlySavingsChart({
           </div>
         </div>
         <div>
-          <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-content-subtle">
+          <Text as="div" variant="eyebrow" tone="subtle" className="mb-2">
             {i18n.t('ui.monthlysavingschart.trailing12mLines')}
-          </div>
+          </Text>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Decorative
-                className="h-0.5 w-4"
-                style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
-              />
+              <SeriesSwatch tone={'netContributions'} className="h-0.5 w-4" />
               <span>{i18n.t('ui.monthlysavingschart.netContributions')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Decorative
-                className="h-0.5 w-4"
-                style={{ backgroundColor: SEMANTIC_COLORS.performance }}
-              />
+              <SeriesSwatch tone={'performance'} className="h-0.5 w-4" />
               <span>{i18n.t('ui.monthlysavingschart.marketPerformance')}</span>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Surface>
+    </Surface>
   )
 }
 
 function MonthlyPerformanceBar(
-  shapeProps: ChartShapeProps<BarShapeProps, TrailingSavingCapacityPoint>,
+  shapeProps: Partial<
+    ChartShapeProps<BarShapeProps, TrailingSavingCapacityPoint>
+  >,
 ) {
   const entry = shapeProps.payload
   if (!entry) return null
   return (
-    <Rectangle
-      {...shapeProps}
-      fill={
+    <ChartRectangle
+      geometry={shapeProps}
+      tone={
         (entry.perf_delta ?? 0) >= 0
-          ? SEMANTIC_COLORS.performancePositive
-          : SEMANTIC_COLORS.performanceNegative
+          ? 'performancePositive'
+          : 'performanceNegative'
       }
     />
   )

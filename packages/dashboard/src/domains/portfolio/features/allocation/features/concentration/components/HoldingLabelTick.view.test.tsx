@@ -13,7 +13,7 @@ describe('HoldingLabelTick', () => {
     )
 
     expect(html).toContain('width="250"')
-    expect(html).toContain('class="truncate')
+    expect(html).toMatch(/class="[^"]*\btruncate\b/)
     expect(html).toContain(`title="${name}"`)
     expect(html).toContain(`>${name}</div>`)
   })

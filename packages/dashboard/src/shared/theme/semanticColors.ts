@@ -32,6 +32,8 @@ export const SEMANTIC_COLORS = {
   transactionMixedStroke: '#7c3aed',
 } as const
 
+export type SemanticColorKey = keyof typeof SEMANTIC_COLORS
+
 export const SEMANTIC_TEXT_CLASSES = {
   netContributions: 'text-accent',
   netContributionsDetail: 'text-accent',

@@ -10,8 +10,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { typeColor } from '@/shared/theme/chartColors'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartText } from '@/shared/ui/ChartText.view'
 import {
   type NumericTooltipProps,
   tooltipValue,
@@ -43,39 +42,34 @@ export function EvolutionTooltip({
     total === 0 ? '—' : formatPercentage((value / total) * 100)
   return (
     <TooltipBox>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
+      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </div>
-      <div
-        style={{
-          color: 'var(--tooltip-label)',
-          fontWeight: 600,
-          marginBottom: 4,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipLabel'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
           amount: formatMoney(total, { style: 'full' }),
         })}
-      </div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
+      </ChartText>
+      <ChartText as="div" tone={'costBasisText'}>
         {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues', {
           amount: formatMoney(cost, { style: 'full' }),
           value: percentageMode ? ` · ${share(cost)}` : '',
         })}
-      </div>
-      <div
-        style={{
-          color:
-            gain >= 0
-              ? SEMANTIC_COLORS.performancePositiveText
-              : SEMANTIC_COLORS.performanceNegativeText,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={gain >= 0 ? 'performancePositiveText' : 'performanceNegativeText'}
       >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedProfitLoss', {
           amount: formatMoney(gain, { style: 'full' }),
           share: percentageMode ? ` · ${share(gain)}` : '',
         })}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -103,17 +97,14 @@ function MonthlyOperationRow({
     ? Math.abs(operation.total_amount)
     : operation.total_amount
   return (
-    <div
-      style={{
-        color: withdrawal
-          ? SEMANTIC_COLORS.outflowText
-          : SEMANTIC_COLORS.netContributionsDetail,
-        fontSize: 11,
-      }}
+    <ChartText
+      as="div"
+      tone={withdrawal ? 'outflowText' : 'netContributionsDetail'}
+      variant="micro"
     >
       {withdrawal ? '−' : '+'} {formatMoney(amount, { style: 'full' })} —{' '}
       {operation.account}
-    </div>
+    </ChartText>
   )
 }
 
@@ -146,22 +137,23 @@ export function MonthlyTooltip({
   )
   return (
     <TooltipBox padding="10px 14px" maxWidth={280}>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          marginBottom: 8,
-          fontWeight: 600,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 8 }}
       >
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </div>
-      <div
-        style={{ color: SEMANTIC_COLORS.netContributionsText, marginBottom: 4 }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'netContributionsText'}
+        style={{ marginBottom: 4 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.netContributionsWithValues', {
           amount: formatMoney(savingsDelta, { style: 'full' }),
         })}
-      </div>
+      </ChartText>
       {deposits.length > 0 && (
         <div style={{ paddingLeft: 8, marginBottom: 4 }}>
           {deposits.map((operation) => (
@@ -184,48 +176,43 @@ export function MonthlyTooltip({
           ))}
         </div>
       )}
-      <div
-        style={{
-          borderTop: '1px solid var(--tooltip-border)',
-          marginTop: 6,
-          paddingTop: 6,
-          color:
-            perfDelta >= 0
-              ? SEMANTIC_COLORS.performancePositiveText
-              : SEMANTIC_COLORS.performanceNegativeText,
-        }}
+      <ChartText
+        as="div"
+        tone={
+          perfDelta >= 0 ? 'performancePositiveText' : 'performanceNegativeText'
+        }
+        separator
+        style={{ marginTop: 6, paddingTop: 6 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.marketPerformanceWithValues', {
           amount: formatMoney(perfDelta, { style: 'full' }),
         })}
-      </div>
-      <div
-        style={{
-          borderTop: '1px solid var(--tooltip-border)',
-          marginTop: 6,
-          paddingTop: 6,
-          color: SEMANTIC_COLORS.netContributionsText,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'netContributionsText'}
+        separator
+        style={{ marginTop: 6, paddingTop: 6 }}
       >
         {i18n.t(
           'ui.portfoliochartsTooltips.trailing12MonthNetContributionsWithValues',
           { amount: formatMoney(rolling12m, { style: 'full' }) },
         )}
-      </div>
-      <div
-        style={{
-          marginTop: 4,
-          color:
-            rollingPerf12m >= 0
-              ? SEMANTIC_COLORS.performancePositiveText
-              : SEMANTIC_COLORS.performanceNegativeText,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={
+          rollingPerf12m >= 0
+            ? 'performancePositiveText'
+            : 'performanceNegativeText'
+        }
+        style={{ marginTop: 4 }}
       >
         {i18n.t(
           'ui.portfoliochartsTooltips.trailing12MonthPerformanceWithValues',
           { amount: formatMoney(rollingPerf12m, { style: 'full' }) },
         )}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -252,11 +239,11 @@ export function TriTooltip({
   const showTri3y = tri3y !== null || tri3yBackfill !== null
   return (
     <TooltipBox>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
+      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </div>
+      </ChartText>
       {showTri1y && (
-        <div style={{ color: SEMANTIC_COLORS.totalChange, fontWeight: 600 }}>
+        <ChartText as="div" tone={'totalChange'} variant="strong">
           {i18n.t('ui.portfoliochartsTooltips.irr1yWithValues', {
             value: formatPercentage(tri1y, {
               decimals: 2,
@@ -264,15 +251,14 @@ export function TriTooltip({
               fallback: i18n.t('ui.portfoliochartsTooltips.notYetAvailable'),
             }),
           })}
-        </div>
+        </ChartText>
       )}
       {showTri3y && (
-        <div
-          style={{
-            color: SEMANTIC_COLORS.returnRate,
-            fontWeight: 600,
-            marginTop: showTri1y ? 4 : 0,
-          }}
+        <ChartText
+          as="div"
+          tone={'returnRate'}
+          variant="strong"
+          style={{ marginTop: showTri1y ? 4 : 0 }}
         >
           {i18n.t('ui.portfoliochartsTooltips.irr3yWithValues', {
             value: formatPercentage(tri3y, {
@@ -281,7 +267,7 @@ export function TriTooltip({
               fallback: i18n.t('ui.portfoliochartsTooltips.notYetAvailable'),
             }),
           })}
-        </div>
+        </ChartText>
       )}
     </TooltipBox>
   )
@@ -329,44 +315,42 @@ export function AccountTypeTooltip({
   const gainPct = cost > 0 ? (gain / cost) * 100 : 0
   return (
     <TooltipBox>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          marginBottom: 6,
-          fontWeight: 600,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 6 }}
       >
         {point?.account_type ?? label}
-      </div>
-      <div
-        style={{
-          color: 'var(--tooltip-label)',
-          fontWeight: 600,
-          marginBottom: 4,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipLabel'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
           amount: formatMoney(total, { style: 'full' }),
         })}
-      </div>
+      </ChartText>
       {portfolioTotal != null && (
-        <div style={{ color: 'var(--tooltip-dim)', marginBottom: 6 }}>
+        <ChartText as="div" tone={'tooltipDim'} style={{ marginBottom: 6 }}>
           {i18n.t('ui.portfoliochartsTooltips.portfolioShareWithValues', {
             percentage: formatPercentage(portfolioShare),
           })}
-        </div>
+        </ChartText>
       )}
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
+      <ChartText as="div" tone={'costBasisText'}>
         {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues2', {
           amount: formatMoney(cost, { style: 'full' }),
         })}
-      </div>
-      <div style={{ color: SEMANTIC_COLORS.performancePositiveText }}>
+      </ChartText>
+      <ChartText as="div" tone={'performancePositiveText'}>
         {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
           amount: formatMoney(gain, { style: 'full' }),
           percentage: formatPercentage(gainPct, { signed: true }),
         })}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -382,33 +366,35 @@ export function TopPerformersTooltip({
   const entry = payload[0]?.payload
   return (
     <TooltipBox>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          marginBottom: 4,
-          fontWeight: 600,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {entry?.name ?? label}
-      </div>
-      <div
-        style={{ color: 'var(--tooltip-dim)', marginBottom: 6, fontSize: 11 }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipDim'}
+        variant="micro"
+        style={{ marginBottom: 6 }}
       >
         {entry?.account_type}
-      </div>
-      <div style={{ color: 'var(--tooltip-label)', marginBottom: 4 }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} style={{ marginBottom: 4 }}>
         {i18n.t('ui.portfoliochartsTooltips.valueWithValues', {
           amount: formatMoney(entry?.value, { style: 'full', fallback: 0 }),
         })}
-      </div>
-      <div
-        style={{
-          color:
-            (entry?.pct ?? 0) >= 0
-              ? SEMANTIC_COLORS.performancePositiveText
-              : SEMANTIC_COLORS.performanceNegativeText,
-          fontWeight: 600,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={
+          (entry?.pct ?? 0) >= 0
+            ? 'performancePositiveText'
+            : 'performanceNegativeText'
+        }
+        variant="strong"
       >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
           amount: formatMoney(entry?.gain, { style: 'full', fallback: 0 }),
@@ -417,7 +403,7 @@ export function TopPerformersTooltip({
             fallback: 0,
           }),
         })}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -433,39 +419,37 @@ export function PassiveIncomeTooltip({
   const int = tooltipValue(payload, 'interest')
   return (
     <TooltipBox>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          marginBottom: 6,
-          fontWeight: 600,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 6 }}
       >
         {label}
-      </div>
-      <div
-        style={{
-          color: 'var(--tooltip-label)',
-          fontWeight: 600,
-          marginBottom: 4,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipLabel'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
           amount: formatMoney(div + int, { style: 'full' }),
         })}
-      </div>
+      </ChartText>
       {div > 0 && (
-        <div style={{ color: SEMANTIC_COLORS.passiveIncome }}>
+        <ChartText as="div" tone={'passiveIncome'}>
           {i18n.t('ui.portfoliochartsTooltips.dividendsWithValues', {
             amount: formatMoney(div, { style: 'full' }),
           })}
-        </div>
+        </ChartText>
       )}
       {int > 0 && (
-        <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>
+        <ChartText as="div" tone={'passiveIncomeSecondary'}>
           {i18n.t('ui.portfoliochartsTooltips.interestWithValues', {
             amount: formatMoney(int, { style: 'full' }),
           })}
-        </div>
+        </ChartText>
       )}
     </TooltipBox>
   )
@@ -502,10 +486,13 @@ function AccountTypeTooltipRow({
   if (!value) return null
   const share = total > 0 ? formatPercentage((value / total) * 100) : '—'
   return (
-    <div style={{ color: typeColor(accountType, index, typeCategories) }}>
+    <ChartText
+      as="div"
+      group={{ key: accountType, index, categories: typeCategories }}
+    >
       {accountType}: {formatMoney(value, { style: 'full' })}
       {percentageMode && ` · ${share}`}
-    </div>
+    </ChartText>
   )
 }
 
@@ -527,20 +514,19 @@ export function AccountTypeHistoryTooltip({
   }, 0)
   return (
     <TooltipBox>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
+      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </div>
-      <div
-        style={{
-          color: 'var(--tooltip-label)',
-          fontWeight: 600,
-          marginBottom: 4,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipLabel'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
           amount: formatMoney(total, { style: 'full' }),
         })}
-      </div>
+      </ChartText>
       {accountTypes.map((accountType, index) => (
         <AccountTypeTooltipRow
           key={accountType}

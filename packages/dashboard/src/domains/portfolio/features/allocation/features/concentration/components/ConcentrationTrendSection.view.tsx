@@ -1,15 +1,9 @@
 import type { ReactNode } from 'react'
 import {
-  Bar,
   BarChart,
   type BarShapeProps,
-  CartesianGrid,
-  LabelList,
-  Line,
   LineChart,
   matchByDataKey,
-  Rectangle,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -25,9 +19,16 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartLabels } from '@/shared/ui/ChartLabels.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
 import { Button, Input, ToggleButton } from '@/shared/ui/Controls.view'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   ChartLegend,
@@ -91,10 +92,12 @@ export function ConcentrationTrendSectionView({
       <section>
         <div className="mb-3 flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-sm font-medium text-content-secondary">
+            <Text as="h3" variant="label" tone="secondary">
               {heading}
-            </h3>
-            <p className="mt-0.5 text-xs text-content-subtle">{description}</p>
+            </Text>
+            <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
+              {description}
+            </Text>
           </div>
           <ConcentrationModeToggle
             value={mode}
@@ -103,17 +106,22 @@ export function ConcentrationTrendSectionView({
           />
         </div>
         {!lookThroughAvailable && (
-          <p className="mb-3 text-xs text-warning">
+          <Text as="p" variant="caption" tone="warning" className="mb-3">
             {i18n.t(
               'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
             )}
-          </p>
+          </Text>
         )}
-        <div className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-content-subtle">
+        <Surface
+          variant="contentCard"
+          tone="subtle"
+          align="center"
+          className="p-8"
+        >
           {i18n.t(
             'ui.concentrationtrendsection.notEnoughConcentrationHistoryForTheCurrentSelection',
           )}
-        </div>
+        </Surface>
       </section>
     )
   }
@@ -122,16 +130,18 @@ export function ConcentrationTrendSectionView({
     <section>
       <div className="mb-3 flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-sm font-medium text-content-secondary">
+          <Text as="h3" variant="label" tone="secondary">
             {heading}
-          </h3>
-          <p className="mt-0.5 text-xs text-content-subtle">{description}</p>
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
+            {description}
+          </Text>
           {!lookThroughAvailable && (
-            <p className="mt-1 text-xs text-warning">
+            <Text as="p" variant="caption" tone="warning" className="mt-1">
               {i18n.t(
                 'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
               )}
-            </p>
+            </Text>
           )}
         </div>
         <ConcentrationModeToggle
@@ -142,18 +152,23 @@ export function ConcentrationTrendSectionView({
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <div className="rounded-xl bg-surface p-4">
-          <h2 className="mb-1 flex items-center text-sm font-medium text-content-muted">
+        <Surface variant="chart" className="p-4">
+          <Text
+            as="h2"
+            variant="label"
+            tone="muted"
+            className="mb-1 flex items-center"
+          >
             {i18n.t(
               'ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare',
             )}
             {thresholdTooltip}
-          </h2>
-          <p className="mb-3 text-xs text-content-subtle">
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mb-3">
             {i18n.t(
               'ui.concentrationtrendsection.unavailableThresholdsAppearAsGapsWhenIdentifiedExposureCannot',
             )}
-          </p>
+          </Text>
           <ChartLegend />
           <ResponsiveContainer width="100%" height={250}>
             <LineChart
@@ -165,8 +180,8 @@ export function ConcentrationTrendSectionView({
               }}
               onMouseLeave={() => setHoveredPointIndex(null)}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-              <XAxis
+              <ChartGrid />
+              <ChartXAxis
                 dataKey="timestamp"
                 type="number"
                 scale="time"
@@ -174,126 +189,127 @@ export function ConcentrationTrendSectionView({
                 tickFormatter={(value) =>
                   formatDate(value, { style: 'shortMonthShortYear' })
                 }
-                tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
               />
-              <YAxis
+              <ChartYAxis
                 domain={[0, 'auto']}
                 allowDecimals={false}
-                tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
+
                 width={32}
               />
               {selectedTimestamp != null && (
-                <ReferenceLine
-                  x={selectedTimestamp}
-                  stroke={CHART_THEME.label}
-                  strokeDasharray="4 4"
-                />
+                <ChartReference x={selectedTimestamp} kind="crosshair" />
               )}
               <Tooltip content={<ConcentrationTrendTooltip />} />
-              <Line
+              <SeriesLine
                 type="stepAfter"
                 dataKey="positionsTo25Pct"
-                stroke={SEMANTIC_COLORS.risk}
-                strokeWidth={2.5}
-                dot={{ r: 2, strokeWidth: 1 }}
                 connectNulls={false}
-                isAnimationActive={false}
+                tone="risk"
+                weight="emphasized"
+                markers="tiny"
+                motion="none"
               />
-              <Line
+              <SeriesLine
                 type="stepAfter"
                 dataKey="positionsTo50Pct"
-                stroke={SEMANTIC_COLORS.totalChange}
-                strokeWidth={2}
-                dot={{ r: 2, strokeWidth: 1 }}
                 connectNulls={false}
-                isAnimationActive={false}
+                tone="totalChange"
+                weight="regular"
+                markers="tiny"
+                motion="none"
               />
-              <Line
+              <SeriesLine
                 type="stepAfter"
                 dataKey="positionsTo75Pct"
-                stroke={SEMANTIC_COLORS.netContributions}
-                strokeWidth={2}
-                dot={{ r: 2, strokeWidth: 1 }}
                 connectNulls={false}
-                isAnimationActive={false}
+                tone="netContributions"
+                weight="regular"
+                markers="tiny"
+                motion="none"
               />
-              <Line
+              <SeriesLine
                 type="stepAfter"
                 dataKey="positionsTo90Pct"
-                stroke={SEMANTIC_COLORS.portfolioValue}
-                strokeWidth={2}
-                dot={{ r: 2, strokeWidth: 1 }}
                 connectNulls={false}
-                isAnimationActive={false}
+                tone="portfolioValue"
+                weight="regular"
+                markers="tiny"
+                motion="none"
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </Surface>
 
         {displayedPoint && (
-          <div className="rounded-xl bg-surface p-4">
+          <Surface variant="chart" className="p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h2 className="flex items-center text-sm font-medium text-content-secondary">
+                <Text
+                  as="h2"
+                  variant="label"
+                  tone="secondary"
+                  className="flex items-center"
+                >
                   {i18n.t(
                     'ui.concentrationtrendsection.largestHoldingsOverTime',
                   )}
                   {holdingsTooltip}
-                </h2>
-                <p className="mt-0.5 text-xs text-content-subtle">
+                </Text>
+                <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
                   {i18n.t(
                     'ui.concentrationtrendsection.hoverToPreviewTheSliderAndPlaybackUseEvery',
                   )}
-                </p>
+                </Text>
               </div>
-              <div className="text-left sm:text-right">
-                <div className="text-lg font-semibold tabular-nums text-content-secondary">
+              <Text variant="responsiveEnd" as="div" align="left">
+                <Text as="div" variant="statistic" tone="secondary" numeric>
                   {formatDate(displayedPoint.date, {
                     style: 'shortMonthShortYear',
                   })}
-                </div>
-                <div className="text-[11px] text-content-subtle">
+                </Text>
+                <Text as="div" variant="micro" tone="subtle">
                   {i18n.t('ui.concentrationtrendsection.snapshotWithValues', {
                     date: formatDate(displayedPoint.date, { style: 'isoDate' }),
                   })}
-                </div>
-              </div>
+                </Text>
+              </Text>
             </div>
 
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-content-subtle">
+            <Text
+              as="div"
+              variant="micro"
+              tone="subtle"
+              className="mt-3 flex flex-wrap gap-x-4 gap-y-1"
+            >
               <span>
                 {i18n.t('ui.concentrationtrendsection.coverage.80e135')}{' '}
-                <strong className="font-semibold text-content-secondary">
+                <Text as="strong" variant="strong" tone="secondary">
                   {formatPercentage(displayedPoint.coveragePct)}
-                </strong>
+                </Text>
               </span>
               <span>
                 {i18n.t('ui.concentrationtrendsection.identified')}{' '}
-                <strong className="font-semibold text-content-secondary">
+                <Text as="strong" variant="strong" tone="secondary">
                   {formatMoney(displayedPoint.identifiedValue, {
                     style: 'full',
                   })}
-                </strong>
+                </Text>
               </span>
               <span>
                 {i18n.t('ui.concentrationtrendsection.undisclosedFunds')}{' '}
-                <strong className="font-semibold text-content-secondary">
+                <Text as="strong" variant="strong" tone="secondary">
                   {formatMoney(displayedPoint.undisclosedValue, {
                     style: 'full',
                   })}
-                </strong>
+                </Text>
               </span>
               <span>
                 {i18n.t('ui.concentrationtrendsection.opaque')}{' '}
-                <strong className="font-semibold text-content-secondary">
+                <Text as="strong" variant="strong" tone="secondary">
                   {formatMoney(displayedPoint.opaqueValue, { style: 'full' })}
-                </strong>
+                </Text>
               </span>
-            </div>
+            </Text>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <ToggleButton
@@ -309,7 +325,8 @@ export function ConcentrationTrendSectionView({
                 }
                 active={isPlaying}
                 onClick={togglePlayback}
-                className="rounded-md bg-accent-solid px-3 py-1.5 text-xs font-medium text-on-accent"
+                variant="primaryCompact"
+                className="px-3 py-1.5"
               >
                 {isPlaying
                   ? i18n.t('ui.concentrationtrendsection.pause')
@@ -322,7 +339,8 @@ export function ConcentrationTrendSectionView({
                 )}
                 disabled={selectedIndex === 0}
                 onClick={() => selectPoint(selectedIndex - 1)}
-                className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                variant="outlinedCompact"
+                className="px-2.5 py-1.5"
               >
                 {i18n.t('ui.concentrationtrendsection.previous')}
               </Button>
@@ -333,11 +351,17 @@ export function ConcentrationTrendSectionView({
                 )}
                 disabled={selectedIndex >= points.length - 1}
                 onClick={() => selectPoint(selectedIndex + 1)}
-                className="rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-content-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                variant="outlinedCompact"
+                className="px-2.5 py-1.5"
               >
                 {i18n.t('ui.concentrationtrendsection.next')}
               </Button>
-              <label className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 text-[11px] text-content-subtle sm:ml-2">
+              <Text
+                as="label"
+                variant="micro"
+                tone="subtle"
+                className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 sm:ml-2"
+              >
                 <span>
                   {formatDate(points[0].date, { style: 'shortMonthShortYear' })}
                 </span>
@@ -351,14 +375,15 @@ export function ConcentrationTrendSectionView({
                   step={1}
                   value={selectedIndex}
                   onChange={(event) => selectPoint(Number(event.target.value))}
-                  className="min-w-0 flex-1 accent-accent"
+                  variant="timeline"
+                  className="min-w-0 flex-1 "
                 />
                 <span>
                   {formatDate(points.at(-1)!.date, {
                     style: 'shortMonthShortYear',
                   })}
                 </span>
-              </label>
+              </Text>
             </div>
 
             <div className="mt-3 overflow-x-auto">
@@ -372,11 +397,7 @@ export function ConcentrationTrendSectionView({
                     data={displayedHoldings}
                     margin={{ top: 4, right: 52, left: 8, bottom: 0 }}
                   >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke={CHART_THEME.grid}
-                      horizontal={false}
-                    />
+                    <ChartGrid horizontal={false} />
                     <XAxis type="number" domain={[0, 'dataMax']} hide />
                     <YAxis
                       dataKey="label"
@@ -386,34 +407,34 @@ export function ConcentrationTrendSectionView({
                       axisLine={false}
                       width={260}
                     />
-                    <Tooltip
-                      content={<HistoricalHoldingTooltip />}
-                      cursor={{ fill: CHART_THEME.cursor }}
-                    />
-                    <Bar
+                    <ChartTooltip highlight="bar">
+                      <HistoricalHoldingTooltip />
+                    </ChartTooltip>
+                    <SeriesBar
                       dataKey="weight"
-                      radius={[0, 4, 4, 0]}
-                      isAnimationActive={animationEnabled}
-                      animationDuration={450}
-                      animationEasing="ease-in-out"
                       animationMatchBy={matchHoldingByKey}
                       animationInterpolateFn={interpolateRankedBars}
-                      shape={LeadingHoldingBar}
+                      corners="wideRight"
+                      motion="selection"
+                      transitioning={animationEnabled}
                     >
-                      <LabelList
+                      <SeriesBar.Shape>
+                        <LeadingHoldingBar />
+                      </SeriesBar.Shape>
+                      <ChartLabels
                         dataKey="weight"
                         position="right"
                         formatter={(value: unknown) =>
                           formatPercentage(Number(value))
                         }
-                        style={{ fill: 'var(--chart-label)', fontSize: 11 }}
+                        density="standard"
                       />
-                    </Bar>
+                    </SeriesBar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
-          </div>
+          </Surface>
         )}
       </div>
     </section>
@@ -442,15 +463,11 @@ function ConcentrationTrendSectionViewHoldingsTooltip({
 ConcentrationTrendSectionView.HoldingsTooltip =
   ConcentrationTrendSectionViewHoldingsTooltip
 
-function LeadingHoldingBar(shapeProps: BarShapeProps) {
+function LeadingHoldingBar(shapeProps: Partial<BarShapeProps>) {
   return (
-    <Rectangle
-      {...shapeProps}
-      fill={
-        shapeProps.index === 0
-          ? SEMANTIC_COLORS.risk
-          : SEMANTIC_COLORS.neutralSeries
-      }
+    <ChartRectangle
+      geometry={shapeProps}
+      tone={shapeProps.index === 0 ? 'risk' : 'neutralSeries'}
     />
   )
 }

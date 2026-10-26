@@ -4,30 +4,20 @@ import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTool
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import {
-  SEMANTIC_COLORS,
-  SEMANTIC_TEXT_CLASSES,
-} from '@/shared/theme/semanticColors'
 import { Progress } from '@/shared/ui/Controls.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
-const TONES: Record<QualityTone, { text: string; bar: string }> = {
-  neutral: { text: 'text-accent', bar: SEMANTIC_COLORS.netContributions },
-  coverage: {
-    text: SEMANTIC_TEXT_CLASSES.coverage,
-    bar: SEMANTIC_COLORS.coverage,
-  },
-  warning: {
-    text: SEMANTIC_TEXT_CLASSES.warning,
-    bar: SEMANTIC_COLORS.coverageGap,
-  },
-  error: {
-    text: SEMANTIC_TEXT_CLASSES.error,
-    bar: SEMANTIC_COLORS.performanceNegative,
-  },
-  muted: { text: 'text-content-muted', bar: SEMANTIC_COLORS.mutedIndicator },
-}
+const TONES = {
+  neutral: { text: 'accent', bar: 'netContributions' },
+  coverage: { text: 'positive', bar: 'coverage' },
+  warning: { text: 'warning', bar: 'coverageGap' },
+  error: { text: 'negative', bar: 'performanceNegative' },
+  muted: { text: 'muted', bar: 'mutedIndicator' },
+} as const
 
 export function QualityIndicatorCard({
   label,
@@ -56,34 +46,45 @@ export function QualityIndicatorCard({
   const colors = TONES[tone]
 
   return (
-    <div className="quality-indicator-card rounded-card border border-border bg-surface p-4 shadow-sm">
-      <div className="flex items-center text-xs font-medium text-content-muted">
+    <Surface variant="qualityCard" className="p-4">
+      <Text
+        as="div"
+        variant="captionLabel"
+        tone="muted"
+        className="flex items-center"
+      >
         <span>{label}</span>
         <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
-      </div>
+      </Text>
       <div className="mt-2 flex items-baseline justify-between gap-3">
-        <span className={`text-xl font-semibold tabular-nums ${colors.text}`}>
+        <Text variant="metricSecondary" tone={colors.text} numeric>
           {percentageLabel}
-        </span>
-        <span className="text-xs tabular-nums text-content-subtle">
+        </Text>
+        <Text variant="caption" tone="subtle" numeric>
           {formatMoney(amount, { style: 'full' })}
-        </span>
+        </Text>
       </div>
       <Progress
-        className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-raised"
+        variant="track"
+        className="mt-3 h-1.5 overflow-hidden"
         label={label}
         value={safePercentage}
       >
-        <div
-          className="h-full rounded-full"
-          style={{ width: `${safePercentage}%`, backgroundColor: colors.bar }}
+        <SeriesSwatch
+          as="div"
+          shape="dot"
+          tone={colors.bar}
+          className="h-full"
+          style={{ width: `${safePercentage}%` }}
         />
       </Progress>
       {detail && (
-        <div className="mt-2 text-xs text-content-subtle">{detail}</div>
+        <Text as="div" variant="caption" tone="subtle" className="mt-2">
+          {detail}
+        </Text>
       )}
       {content}
-    </div>
+    </Surface>
   )
 }
 

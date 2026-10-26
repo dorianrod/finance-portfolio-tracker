@@ -1,18 +1,9 @@
 import { useState } from 'react'
 import {
-  Bar,
   BarChart,
   type BarShapeProps,
-  CartesianGrid,
-  Line,
   LineChart,
-  Rectangle,
-  ReferenceArea,
-  ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts'
 
 import { toUtcDateTimestamp } from '@/domains/portfolio/features/overview/helpers/formatters/toUtcDateTimestamp'
@@ -28,9 +19,18 @@ import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concent
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartXAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartGrid, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
+import { ChartReferenceArea } from '@/shared/ui/ChartReference.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   DriversTooltip,
@@ -69,10 +69,15 @@ export function OverviewValueChart({
   const currentStart = toUtcDateTimestamp(comparison.windows.current.start)
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-4 xl:col-span-2">
+    <Surface as="section" variant="panel" className="p-4 xl:col-span-2">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="flex items-center text-sm font-semibold text-content-secondary">
+          <Text
+            as="h3"
+            variant="bodyStrong"
+            tone="secondary"
+            className="flex items-center"
+          >
             {i18n.t('ui.overviewcharts.portfolioValue')}
             <ScopedInfoTooltip
               text={i18n.t(
@@ -80,53 +85,48 @@ export function OverviewValueChart({
               )}
               scope={{ account: 'filterable', period: 'comparison-range' }}
             />
-          </h3>
-          <p className="mt-0.5 text-xs text-content-subtle">
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
             {i18n.t(
               'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
             )}
-          </p>
+          </Text>
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-content-subtle">
+        <Text
+          as="div"
+          variant="micro"
+          tone="subtle"
+          className="flex items-center gap-3"
+        >
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-content-subtle" />
+            <ToneSwatch tone="subtle" shape="dot" className="h-2 w-2" />
             {i18n.t('ui.overviewcharts.previous')}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-value" />
+            <ToneSwatch tone="value" shape="dot" className="h-2 w-2" />
             {i18n.t('ui.overviewcharts.current')}
           </span>
-        </div>
+        </Text>
       </div>
       <ResponsiveContainer width="100%" height={250}>
         <LineChart
           data={chartData}
           margin={{ top: 6, right: 10, left: 0, bottom: 0 }}
         >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={CHART_THEME.grid}
-            vertical={false}
-          />
-          <ReferenceArea
+          <ChartGrid vertical={false} />
+          <ChartReferenceArea
             x1={domain[0]}
             x2={currentStart}
-            fill={SEMANTIC_COLORS.neutralSeries}
-            fillOpacity={0.05}
+            period="previous"
           />
-          <ReferenceArea
+          <ChartReferenceArea
             x1={currentStart}
             x2={domain[1]}
-            fill={SEMANTIC_COLORS.portfolioValue}
-            fillOpacity={0.055}
+            period="current"
           />
-          <ReferenceLine
-            x={currentStart}
-            stroke={SEMANTIC_COLORS.portfolioValue}
-            strokeOpacity={0.55}
-            strokeDasharray="4 4"
-          />
-          <XAxis
+          <ChartReference x={currentStart} kind="selected" />
+          <ChartXAxis
+            density="compact"
             dataKey="timestamp"
             type="number"
             scale="time"
@@ -134,44 +134,38 @@ export function OverviewValueChart({
             tickFormatter={(value) =>
               formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-            tickLine={false}
-            axisLine={false}
             minTickGap={44}
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
             domain={['auto', 'auto']}
           />
-          <Tooltip
-            content={<ValueTooltip />}
-            cursor={{ stroke: CHART_THEME.label, strokeOpacity: 0.25 }}
-          />
-          <Line
+          <ChartTooltip highlight="line">
+            <ValueTooltip />
+          </ChartTooltip>
+          <SeriesLine
             type="monotone"
             dataKey="previousValue"
-            stroke={SEMANTIC_COLORS.neutralSeries}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4 }}
-            isAnimationActive={false}
+            tone="neutralSeries"
+            weight="regular"
+            markers="hidden"
+            hover="default"
+            motion="none"
           />
-          <Line
+          <SeriesLine
             type="monotone"
             dataKey="currentValue"
-            stroke={SEMANTIC_COLORS.portfolioValue}
-            strokeWidth={2.5}
-            dot={false}
-            activeDot={{ r: 4 }}
-            isAnimationActive={false}
+            tone="portfolioValue"
+            weight="emphasized"
+            markers="hidden"
+            hover="default"
+            motion="none"
           />
         </LineChart>
       </ResponsiveContainer>
-    </section>
+    </Surface>
   )
 }
 
@@ -186,17 +180,17 @@ export function OverviewDriversChart({
       label: i18n.t('ui.overviewcharts.netContributions'),
       previous: comparison.contributions.previous,
       current: comparison.contributions.current,
-      color: SEMANTIC_COLORS.netContributions,
+      tone: 'netContributions',
     },
     {
       label: i18n.t('ui.overviewcharts.marketPerformance'),
       previous: comparison.marketPerformance.previous,
       current: comparison.marketPerformance.current,
-      color:
+      tone:
         comparison.marketPerformance.current != null &&
         comparison.marketPerformance.current < 0
-          ? SEMANTIC_COLORS.performanceNegative
-          : SEMANTIC_COLORS.performancePositive,
+          ? 'performanceNegative'
+          : 'performancePositive',
     },
   ]
   const unavailable =
@@ -225,9 +219,14 @@ export function OverviewDriversChart({
         comparison.marketPerformance.previous
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-4">
+    <Surface as="section" variant="panel" className="p-4">
       <div className="mb-2">
-        <h3 className="flex items-center text-sm font-semibold text-content-secondary">
+        <Text
+          as="h3"
+          variant="bodyStrong"
+          tone="secondary"
+          className="flex items-center"
+        >
           {i18n.t('ui.overviewcharts.changeDrivers')}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -235,77 +234,71 @@ export function OverviewDriversChart({
             )}
             scope={{ account: 'filterable', period: 'comparison-range' }}
           />
-        </h3>
-        <p className="mt-0.5 text-xs text-content-subtle">
+        </Text>
+        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
           {i18n.t(
             'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
           )}
-        </p>
+        </Text>
       </div>
-      <div className="mb-2 flex items-baseline justify-between gap-3 rounded-lg bg-canvas/45 px-3 py-2">
-        <span className="text-[11px] text-content-subtle">
+      <Surface
+        variant="subduedInset"
+        className="mb-2 flex items-baseline justify-between gap-3 px-3 py-2"
+      >
+        <Text variant="micro" tone="subtle">
           {i18n.t('ui.overviewcharts.grossValueChange')}
-        </span>
-        <span className="text-sm font-semibold tabular-nums text-content-secondary">
+        </Text>
+        <Text variant="bodyStrong" tone="secondary" numeric>
           {currentChange == null
             ? '—'
             : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
-          <span className="ml-1 text-[10px] font-normal text-content-subtle">
+          <Text variant="tinyRegular" tone="subtle" className="ml-1">
             {i18n.t('ui.overviewcharts.vsWithValues', {
               value: formatMoney(previousChange, {
                 fallback: i18n.t('ui.overviewcharts.unavailable'),
               }),
             })}
-          </span>
-        </span>
-      </div>
+          </Text>
+        </Text>
+      </Surface>
       <ResponsiveContainer width="100%" height={190}>
         <BarChart
           data={rows}
           margin={{ top: 8, right: 4, left: 0, bottom: 0 }}
           barGap={3}
         >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={CHART_THEME.grid}
-            vertical={false}
-          />
-          <XAxis
-            dataKey="label"
-            tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
+          <ChartGrid vertical={false} />
+          <ChartXAxis density="compact" dataKey="label" />
+          <ChartYAxis
+            density="compact"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-            tickLine={false}
-            axisLine={false}
             width={48}
           />
-          <ReferenceLine y={0} stroke={CHART_THEME.zeroLine} />
-          <Tooltip
-            content={<DriversTooltip />}
-            cursor={{ fill: CHART_THEME.cursor }}
-          />
-          <Bar
+          <ChartReference y={0} kind="zero" />
+          <ChartTooltip highlight="bar">
+            <DriversTooltip />
+          </ChartTooltip>
+          <SeriesBar
             dataKey="previous"
             name={i18n.t('ui.overviewcharts.previous')}
-            fill={SEMANTIC_COLORS.neutralSeries}
-            fillOpacity={0.45}
-            radius={[3, 3, 0, 0]}
-            isAnimationActive={false}
+            tone="neutralSeries"
+            corners="top"
+            prominence="muted"
+            motion="none"
           />
-          <Bar
+          <SeriesBar
             dataKey="current"
             name={i18n.t('ui.overviewcharts.current')}
-            radius={[3, 3, 0, 0]}
-            isAnimationActive={false}
-            shape={CurrentDriverBar}
-          />
+            corners="top"
+            motion="none"
+          >
+            <SeriesBar.Shape>
+              <CurrentDriverBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
         </BarChart>
       </ResponsiveContainer>
-    </section>
+    </Surface>
   )
 }
 
@@ -319,15 +312,26 @@ function EmptyChart({
   scope: FilterScopeSpec
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface p-4">
-      <h3 className="flex items-center text-sm font-semibold text-content-secondary">
+    <Surface as="section" variant="panel" className="p-4">
+      <Text
+        as="h3"
+        variant="bodyStrong"
+        tone="secondary"
+        className="flex items-center"
+      >
         {title}
         <ScopedInfoTooltip text={message} scope={scope} />
-      </h3>
-      <div className="flex h-52 items-center justify-center text-center text-sm text-content-subtle">
+      </Text>
+      <Text
+        as="div"
+        variant="body"
+        tone="subtle"
+        align="center"
+        className="flex h-52 items-center justify-center"
+      >
         {message}
-      </div>
-    </section>
+      </Text>
+    </Surface>
   )
 }
 
@@ -365,10 +369,15 @@ export function OverviewConcentrationChart({
   const previousAvailable = concentration.previous != null
 
   return (
-    <section className="rounded-2xl border border-border bg-surface p-4">
+    <Surface as="section" variant="panel" className="p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="flex items-center text-sm font-semibold text-content-secondary">
+          <Text
+            as="h3"
+            variant="bodyStrong"
+            tone="secondary"
+            className="flex items-center"
+          >
             {displayedMode === 'lookThrough'
               ? i18n.t('ui.overviewcharts.largestUnderlyingAssets')
               : i18n.t('ui.overviewcharts.largestHeldPositions')}
@@ -390,8 +399,8 @@ export function OverviewConcentrationChart({
                 effectiveDate: concentration.current?.date,
               }}
             />
-          </h3>
-          <p className="mt-0.5 text-xs text-content-subtle">
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
             {displayedMode === 'lookThrough'
               ? i18n.t(
                   'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
@@ -399,7 +408,7 @@ export function OverviewConcentrationChart({
               : i18n.t(
                   'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
                 )}
-          </p>
+          </Text>
         </div>
         <ConcentrationModeToggle
           value={displayedMode}
@@ -408,11 +417,17 @@ export function OverviewConcentrationChart({
         />
       </div>
       {rows.length === 0 ? (
-        <div className="flex h-48 items-center justify-center text-center text-sm text-content-subtle">
+        <Text
+          as="div"
+          variant="body"
+          tone="subtle"
+          align="center"
+          className="flex h-48 items-center justify-center"
+        >
           {i18n.t(
             'ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod',
           )}
-        </div>
+        </Text>
       ) : (
         <div className="mt-5 space-y-4">
           {rows.map((row) => (
@@ -423,20 +438,25 @@ export function OverviewConcentrationChart({
               scaleMax={scaleMax}
             />
           ))}
-          <div className="flex items-center justify-end gap-1.5 pt-1 text-[10px] text-content-subtle">
-            <span className="h-3 w-0.5 bg-content-secondary" />{' '}
+          <Text
+            as="div"
+            variant="tiny"
+            tone="subtle"
+            className="flex items-center justify-end gap-1.5 pt-1"
+          >
+            <ToneSwatch tone="secondary" className="h-3 w-0.5" />{' '}
             {i18n.t('ui.overviewcharts.previousPeriodEnd')}
-          </div>
+          </Text>
         </div>
       )}
-    </section>
+    </Surface>
   )
 }
 
 function CurrentDriverBar(
-  shapeProps: ChartShapeProps<BarShapeProps, DriverRow>,
+  shapeProps: Partial<ChartShapeProps<BarShapeProps, DriverRow>>,
 ) {
   const row = shapeProps.payload
   if (!row) return null
-  return <Rectangle {...shapeProps} fill={row.color} />
+  return <ChartRectangle geometry={shapeProps} tone={row.tone} />
 }

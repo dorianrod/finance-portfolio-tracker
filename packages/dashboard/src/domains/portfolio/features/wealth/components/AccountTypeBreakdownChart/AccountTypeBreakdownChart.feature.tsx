@@ -1,5 +1,5 @@
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
-import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/helpers/calculators/resolveAccountTypeLabelPositions'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
@@ -7,8 +7,10 @@ import { AccountTypeTooltip } from '@/domains/portfolio/shared/components/Portfo
 import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountTypePoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { catColor } from '@/shared/theme/chartColors'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartLabel, ChartLeaderLine } from '@/shared/ui/ChartLabel.view'
+import { ChartSector } from '@/shared/ui/ChartSector.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
 import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
@@ -43,23 +45,15 @@ function AccountTypeLabel({
 
   return (
     <g>
-      <polyline
-        points={leaderLine}
-        fill="none"
-        stroke="var(--chart-zero)"
-        strokeWidth={0.75}
-      />
-      <text
+      <ChartLeaderLine points={leaderLine} />
+      <ChartLabel
         x={position.x}
         y={position.y}
-        fill="var(--chart-label)"
-        fontSize={11}
-        textAnchor={position.isRight ? 'start' : 'end'}
-        dominantBaseline="central"
+        align={position.isRight ? 'start' : 'end'}
       >
         {point.account_type} ·{' '}
         {formatPercentage((percent ?? 0) * 100, { decimals: 0 })}
-      </text>
+      </ChartLabel>
     </g>
   )
 }
@@ -75,33 +69,29 @@ function AccountTypeSector({
   const point = payload as AccountTypePoint
   const radius = outerRadius ?? 0
   const splitRadius = getAccountTypeSplitRadius(point, radius)
-  const accountColor = catColor(point.account_type)
   const sectorBase = {
     cx,
     cy,
     startAngle,
     endAngle,
-    stroke: 'var(--ds-surface)',
-    strokeWidth: 0.5,
-    strokeOpacity: 0.7,
   }
 
   if (point.unrealized_gain < 0) {
     return (
       <g>
-        <Sector
+        <ChartSector
           {...sectorBase}
           innerRadius={0}
           outerRadius={radius}
-          fill={accountColor}
-          fillOpacity={0.48}
+          category={point.account_type}
+          variant="splitBase"
         />
-        <Sector
+        <ChartSector
           {...sectorBase}
           innerRadius={splitRadius}
           outerRadius={radius}
-          fill={SEMANTIC_COLORS.performanceNegative}
-          fillOpacity={0.68}
+          tone="performanceNegative"
+          variant="splitOverlay"
         />
       </g>
     )
@@ -110,21 +100,21 @@ function AccountTypeSector({
   return (
     <g>
       {splitRadius > 0 && (
-        <Sector
+        <ChartSector
           {...sectorBase}
           innerRadius={0}
           outerRadius={splitRadius}
-          fill={accountColor}
-          fillOpacity={0.48}
+          category={point.account_type}
+          variant="splitBase"
         />
       )}
       {point.unrealized_gain > 0 && (
-        <Sector
+        <ChartSector
           {...sectorBase}
           innerRadius={splitRadius}
           outerRadius={radius}
-          fill={SEMANTIC_COLORS.performancePositive}
-          fillOpacity={0.68}
+          tone="performancePositive"
+          variant="splitOverlay"
         />
       )}
     </g>
@@ -144,8 +134,8 @@ export function AccountTypeBreakdownChart({
   const totalValue = data.reduce((sum, point) => sum + point.total_value, 0)
 
   return (
-    <div className="flex-1 bg-surface rounded-xl p-4">
-      <h2 className="flex items-center text-sm font-medium text-content-muted">
+    <Surface variant="chart" className="flex-1 p-4">
+      <Text as="h2" variant="label" tone="muted" className="flex items-center">
         {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
         <ScopedInfoTooltip
           text={i18n.t(
@@ -153,12 +143,12 @@ export function AccountTypeBreakdownChart({
           )}
           scope={{ account: 'filterable', period: 'as-of' }}
         />
-      </h2>
-      <p className="mt-1 text-xs text-content-subtle">
+      </Text>
+      <Text as="p" variant="caption" tone="subtle" className="mt-1">
         {i18n.t(
           'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
         )}
-      </p>
+      </Text>
 
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
@@ -180,6 +170,6 @@ export function AccountTypeBreakdownChart({
           />
         </PieChart>
       </ResponsiveContainer>
-    </div>
+    </Surface>
   )
 }

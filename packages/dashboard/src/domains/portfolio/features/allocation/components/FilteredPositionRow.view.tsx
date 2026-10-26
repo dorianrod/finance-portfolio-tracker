@@ -1,13 +1,17 @@
 import type { MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationChart.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { StripedRow } from '@/shared/ui/PositionTable.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function FilteredPositionRow({
-  color,
+  category,
   index,
   row,
 }: {
-  color: string
+  category: string
   index: number
   row: MatchingIsinRow
 }) {
@@ -16,37 +20,58 @@ export function FilteredPositionRow({
   const percentage =
     row.totalValue > 0 ? (row.filteredValue / row.totalValue) * 100 : 0
   return (
-    <tr
-      className={`border-b border-border/50 ${index % 2 === 0 ? '' : 'bg-surface-raised/20'}`}
-    >
+    <StripedRow shaded={index % 2 !== 0}>
       <td className="px-4 py-2.5">
-        <div className="max-w-[180px] truncate text-xs font-medium leading-tight text-content-secondary">
+        <Text
+          as="div"
+          variant="compactCaptionLabel"
+          tone="secondary"
+          truncate
+          className="max-w-[180px]"
+        >
           {row.name}
-        </div>
-        <div className="text-[11px] text-content-subtle">{row.isin}</div>
+        </Text>
+        <Text as="div" variant="micro" tone="subtle">
+          {row.isin}
+        </Text>
       </td>
-      <td className="px-4 py-2.5 text-right text-xs tabular-nums text-content-muted">
+      <Text
+        as="td"
+        variant="caption"
+        tone="muted"
+        align="right"
+        numeric
+        className="px-4 py-2.5"
+      >
         {formatMoney(row.totalValue, { style: 'full' })}
-      </td>
-      <td className="px-4 py-2.5 text-right">
-        <div className="text-xs font-medium tabular-nums text-content-secondary">
+      </Text>
+      <Text as="td" align="right" className="px-4 py-2.5">
+        <Text as="div" variant="captionLabel" tone="secondary" numeric>
           {formatMoney(row.filteredValue, { style: 'full' })}
-        </div>
+        </Text>
         <div className="mt-0.5 flex items-center justify-end gap-1.5">
-          <div className="h-1 w-12 overflow-hidden rounded-full bg-surface-raised">
-            <div
-              className="h-full rounded-full"
+          <Surface variant="track" className="h-1 w-12 overflow-hidden">
+            <CategorySwatch
+              as="div"
+              shape="dot"
+              category={category}
+              className="h-full"
               style={{
                 width: `${Math.min(percentage, 100)}%`,
-                background: color,
               }}
             />
-          </div>
-          <span className="w-8 text-right text-[11px] tabular-nums text-content-subtle">
+          </Surface>
+          <Text
+            variant="micro"
+            tone="subtle"
+            align="right"
+            numeric
+            className="w-8"
+          >
             {formatPercentage(percentage, { decimals: 0 })}
-          </span>
+          </Text>
         </div>
-      </td>
-    </tr>
+      </Text>
+    </StripedRow>
   )
 }

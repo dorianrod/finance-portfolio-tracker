@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { Decorative } from '@/shared/ui/Controls.view'
+import { Metric } from '@/shared/ui/Metric.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { InfoTooltip } from './InfoTooltip.view'
 
@@ -14,15 +15,15 @@ export type KpiAccent =
   | 'income'
   | 'return'
 
-const ACCENT_CLASSES: Record<KpiAccent, string> = {
-  neutral: 'bg-content-subtle',
-  portfolio: 'bg-value',
-  contributions: 'bg-accent',
-  positive: 'bg-positive',
-  negative: 'bg-danger',
-  income: 'bg-income',
-  return: 'bg-return',
-}
+const ACCENT_TONES = {
+  neutral: 'subtle',
+  portfolio: 'value',
+  contributions: 'accent',
+  positive: 'positive',
+  negative: 'negative',
+  income: 'income',
+  return: 'return',
+} as const
 
 function KpiRoot({
   accent = 'neutral',
@@ -31,14 +32,7 @@ function KpiRoot({
   accent?: KpiAccent
   children: ReactNode
 }) {
-  return (
-    <div className="relative min-w-0 flex-1 basis-40 py-1 pl-4">
-      <Decorative
-        className={`absolute bottom-1 left-0 top-1 w-[3px] rounded-full ${ACCENT_CLASSES[accent]}`}
-      />
-      <div className="flex min-w-0 flex-col gap-0.5">{children}</div>
-    </div>
-  )
+  return <Metric tone={ACCENT_TONES[accent]}>{children}</Metric>
 }
 
 function KpiLabel({
@@ -50,10 +44,10 @@ function KpiLabel({
 }) {
   const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
   return (
-    <span className="flex items-center text-[11px] font-semibold uppercase tracking-[0.09em] text-content-subtle">
+    <Text variant="metricLabel" tone="subtle" className="flex items-center">
       {content}
       <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
-    </span>
+    </Text>
   )
 }
 
@@ -65,60 +59,6 @@ function KpiValueRow({ children }: { children: ReactNode }) {
   )
 }
 
-function KpiValue({
-  children,
-  color,
-  title,
-}: {
-  children: ReactNode
-  color?: string
-  title?: string
-}) {
-  return (
-    <span
-      className={`truncate text-2xl font-semibold tracking-tight tabular-nums ${color ?? 'text-content'}`}
-      title={title}
-    >
-      {children}
-    </span>
-  )
-}
-
-function KpiInlineNote({
-  children,
-  color,
-}: {
-  children: ReactNode
-  color?: string
-}) {
-  return (
-    <span
-      className={`shrink-0 text-xs font-semibold tabular-nums ${color ?? 'text-content-muted'}`}
-    >
-      {children}
-    </span>
-  )
-}
-
-function KpiNote({
-  children,
-  color,
-  title,
-}: {
-  children: ReactNode
-  color?: string
-  title?: string
-}) {
-  return (
-    <span
-      className={`truncate text-xs ${color ?? 'text-content-muted'}`}
-      title={title}
-    >
-      {children}
-    </span>
-  )
-}
-
 function KpiDetail({
   children,
   title,
@@ -127,14 +67,18 @@ function KpiDetail({
   title?: string
 }) {
   return (
-    <span className="truncate text-xs text-content-subtle" title={title}>
+    <Text variant="caption" tone="subtle" truncate title={title}>
       {children}
-    </span>
+    </Text>
   )
 }
 
 function KpiFooter({ children }: { children: ReactNode }) {
-  return <div className="mt-1 text-xs text-content-subtle">{children}</div>
+  return (
+    <Text as="div" variant="caption" tone="subtle" className="mt-1">
+      {children}
+    </Text>
+  )
 }
 
 export function Kpi({ children }: { children: ReactNode }) {
@@ -145,9 +89,9 @@ Kpi.Root = KpiRoot
 Kpi.Label = KpiLabel
 Kpi.TooltipFooter = InfoTooltip.Footer
 Kpi.ValueRow = KpiValueRow
-Kpi.Value = KpiValue
-Kpi.InlineNote = KpiInlineNote
-Kpi.Note = KpiNote
+Kpi.Value = Metric.Value
+Kpi.InlineNote = Metric.InlineNote
+Kpi.Note = Metric.Note
 Kpi.Detail = KpiDetail
 Kpi.Footer = KpiFooter
 

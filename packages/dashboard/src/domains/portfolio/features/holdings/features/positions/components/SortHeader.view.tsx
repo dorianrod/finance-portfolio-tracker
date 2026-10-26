@@ -2,6 +2,7 @@ import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionS
 import i18n from '@/i18n/i18n'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
 import { Button } from '@/shared/ui/Controls.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function SortHeader({
   label,
@@ -36,14 +37,17 @@ export function SortHeader({
           value0: label,
           value1: sortState,
         })}
-        className="min-w-0 max-w-full break-words rounded-control p-1 text-content-muted transition-colors hover:text-content-secondary"
+        variant="positionSort"
+        className="min-w-0 max-w-full p-1"
       >
         {label}
-        <span
-          className={`ml-0.5 text-[9px] ${active ? 'text-content-secondary' : 'text-content-subtle'}`}
+        <Text
+          variant="fine"
+          tone={active ? 'secondary' : 'subtle'}
+          className="ml-0.5"
         >
           {sortIndicator}
-        </span>
+        </Text>
       </Button>
       <ColHeader label="" columnName={label} content={tooltip} />
     </span>

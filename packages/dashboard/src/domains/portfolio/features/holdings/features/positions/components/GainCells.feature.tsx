@@ -2,6 +2,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Text } from '@/shared/ui/Text.view'
 
 import { GainCell } from './GainCell.view'
 
@@ -11,7 +12,7 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
   const gross = position.unrealized_gain
   const net = position.unrealized_gain_net
   const taxRate = position.tax_rate
-  if (gross == null) return <span className="text-content-subtle">—</span>
+  if (gross == null) return <Text tone="subtle">—</Text>
   const taxAmount =
     net != null && taxRate != null && taxRate > 0 && gross > 0
       ? gross - net
@@ -22,24 +23,24 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
       : null
   const isTaxFreeGain = taxRate === 0 && gross !== 0
   return (
-    <span className="flex flex-col leading-tight">
+    <Text variant="compact" className="flex flex-col">
       <GainCell value={gross} pct={position.unrealized_gain_pct} />
       {taxDetails && (
-        <span className="mt-0.5 text-[10px] text-content-subtle">
+        <Text variant="tiny" tone="subtle" className="mt-0.5">
           {i18n.t('ui.gaincells.taxWithValues', {
             amount: formatMoney(-taxDetails.amount),
             percentage: formatPercentage(taxDetails.rate * 100, {
               decimals: 0,
             }),
           })}
-        </span>
+        </Text>
       )}
       {isTaxFreeGain && (
-        <span className="mt-0.5 text-[10px] text-content-subtle">
+        <Text variant="tiny" tone="subtle" className="mt-0.5">
           {i18n.t('ui.gaincells.net0Tax')}
-        </span>
+        </Text>
       )}
-    </span>
+    </Text>
   )
 }
 
@@ -49,7 +50,7 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
   const gross = position.realized_gain
   const net = position.realized_gain_net
   const taxRate = position.tax_rate
-  if (!gross) return <span className="text-content-subtle">—</span>
+  if (!gross) return <Text tone="subtle">—</Text>
   const taxAmount =
     net != null && taxRate != null && taxRate > 0 && gross > 0
       ? gross - net
@@ -60,23 +61,23 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
       : null
   const isTaxFreeGain = taxRate === 0 && gross > 0
   return (
-    <span className="flex flex-col leading-tight">
+    <Text variant="compact" className="flex flex-col">
       <GainCell value={gross} />
       {taxDetails && (
-        <span className="mt-0.5 text-[10px] text-content-subtle">
+        <Text variant="tiny" tone="subtle" className="mt-0.5">
           {i18n.t('ui.gaincells.taxWithValues', {
             amount: formatMoney(-taxDetails.amount),
             percentage: formatPercentage(taxDetails.rate * 100, {
               decimals: 0,
             }),
           })}
-        </span>
+        </Text>
       )}
       {isTaxFreeGain && (
-        <span className="mt-0.5 text-[10px] text-content-subtle">
+        <Text variant="tiny" tone="subtle" className="mt-0.5">
           {i18n.t('ui.gaincells.net0Tax')}
-        </span>
+        </Text>
       )}
-    </span>
+    </Text>
   )
 }

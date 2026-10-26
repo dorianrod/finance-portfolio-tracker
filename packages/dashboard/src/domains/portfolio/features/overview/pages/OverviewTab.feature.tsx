@@ -4,6 +4,8 @@ import type {
 } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   OverviewConcentrationChart,
@@ -25,16 +27,16 @@ export function OverviewTab({
 }: OverviewTabProps) {
   if (!comparison) {
     return (
-      <div className="mb-6 rounded-2xl border border-border bg-surface p-8 text-center">
-        <h3 className="text-sm font-semibold text-content-secondary">
+      <Surface variant="panel" align="center" className="mb-6 p-8">
+        <Text as="h3" variant="bodyStrong" tone="secondary">
           {i18n.t('ui.overviewtab.overviewUnavailable')}
-        </h3>
-        <p className="mt-2 text-sm text-content-subtle">
+        </Text>
+        <Text as="p" variant="body" tone="subtle" className="mt-2">
           {i18n.t(
             'ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory',
           )}
-        </p>
-      </div>
+        </Text>
+      </Surface>
     )
   }
 

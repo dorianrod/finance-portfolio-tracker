@@ -9,6 +9,7 @@ import {
 
 import type { ControlProps } from './controlProps'
 import { Button, type ButtonProps } from './Controls.view'
+import { SURFACE_VARIANTS } from './surfaceAppearance'
 
 const DisclosureContext = createContext<{
   id: string
@@ -39,12 +40,25 @@ function DisclosureTrigger(props: ButtonProps) {
   )
 }
 
-function DisclosureContent(
-  props: ControlProps<HTMLAttributes<HTMLDivElement>>,
-) {
+function DisclosureContent({
+  variant,
+  className,
+  ...props
+}: ControlProps<HTMLAttributes<HTMLDivElement>> & {
+  variant?: keyof typeof SURFACE_VARIANTS
+}) {
   const context = useContext(DisclosureContext)
   if (!context) throw new Error('Disclosure.Content requires Disclosure.')
-  return <div {...props} id={context.id} hidden={!context.expanded} />
+  return (
+    <div
+      {...props}
+      className={[variant && SURFACE_VARIANTS[variant], className]
+        .filter(Boolean)
+        .join(' ')}
+      id={context.id}
+      hidden={!context.expanded}
+    />
+  )
 }
 
 Disclosure.Trigger = DisclosureTrigger

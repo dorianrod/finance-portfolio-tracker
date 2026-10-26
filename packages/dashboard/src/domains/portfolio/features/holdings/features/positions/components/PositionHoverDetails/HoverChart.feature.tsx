@@ -10,6 +10,7 @@ import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 import { StatusMessage } from '@/shared/ui/Controls.view'
 import { Preview } from '@/shared/ui/Preview.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
 
@@ -46,28 +47,49 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
       anchor={target.buttonRect}
       label={target.name}
       style={{ width: `min(600px, calc(100vw - 20px))` }}
-      className="z-[9999] overflow-y-auto bg-surface border border-border-strong rounded-xl shadow-2xl p-4"
+      variant="floatingPanel"
+      className="z-[9999] overflow-y-auto  p-4"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div className="mb-3">
-        <p className="text-content text-sm font-semibold">{target.name}</p>
-        <p className="text-content-subtle text-xs font-mono">{target.isin}</p>
+        <Text as="p" variant="bodyStrong" tone="default">
+          {target.name}
+        </Text>
+        <Text as="p" variant="captionCode" tone="subtle">
+          {target.isin}
+        </Text>
       </div>
 
       {isPending && (
-        <StatusMessage className="text-content-muted text-xs py-4 text-center">
+        <StatusMessage
+          variant="caption"
+          tone="muted"
+          align="center"
+          className="py-4"
+        >
           {i18n.t('ui.hoverchart.loading')}
         </StatusMessage>
       )}
 
       {error && (
-        <StatusMessage urgent className="py-4 text-center text-xs text-danger">
+        <StatusMessage
+          urgent
+          variant="caption"
+          tone="negative"
+          align="center"
+          className="py-4"
+        >
           {getErrorMessage(error)}
         </StatusMessage>
       )}
       {showEmptyHistory && (
-        <StatusMessage className="py-4 text-center text-xs text-content-muted">
+        <StatusMessage
+          variant="caption"
+          tone="muted"
+          align="center"
+          className="py-4"
+        >
           {i18n.t('ui.hoverchart.noHistory')}
         </StatusMessage>
       )}

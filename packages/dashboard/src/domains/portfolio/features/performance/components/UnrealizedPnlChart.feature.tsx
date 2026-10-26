@@ -1,15 +1,7 @@
 import {
-  Bar,
   type BarShapeProps,
-  CartesianGrid,
   ComposedChart,
-  Line,
-  Rectangle,
-  ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
@@ -18,9 +10,16 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   type UnrealizedPnlPoint,
@@ -50,9 +49,14 @@ export function UnrealizedPnlChart({
   if (data.length === 0) return null
 
   return (
-    <div className="rounded-xl bg-surface p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-content-secondary">
+        <Text
+          as="h2"
+          variant="label"
+          tone="secondary"
+          className="flex items-center"
+        >
           {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandlOverTime')}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -60,117 +64,120 @@ export function UnrealizedPnlChart({
             )}
             scope={{ account: 'filterable', period: 'range' }}
           />
-        </h2>
-        <p className="mt-0.5 text-xs text-content-subtle">
+        </Text>
+        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
           {i18n.t(
             'ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal',
           )}
-        </p>
+        </Text>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart
           data={data}
           margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
         >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={CHART_THEME.grid}
-            vertical={false}
-          />
-          <XAxis
+          <ChartGrid vertical={false} />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             interval="preserveStartEnd"
           />
-          <YAxis
+          <ChartYAxis
             yAxisId="amount"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
-          <YAxis
+          <ChartYAxis
             yAxisId="pct"
             orientation="right"
             tickFormatter={(value: number) =>
               formatPercentage(value, { decimals: 0 })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={42}
           />
-          <ReferenceLine yAxisId="amount" y={0} stroke={CHART_THEME.zeroLine} />
-          <Tooltip
-            content={<UnrealizedPnlTooltip />}
-            cursor={{ fill: CHART_THEME.cursor }}
-          />
-          <Bar
+          <ChartReference yAxisId="amount" y={0} kind="zero" />
+          <ChartTooltip highlight="bar">
+            <UnrealizedPnlTooltip />
+          </ChartTooltip>
+          <SeriesBar
             yAxisId="amount"
             dataKey="unrealized_gain"
             maxBarSize={24}
-            radius={3}
-            isAnimationActive={false}
-            shape={UnrealizedPnlBar}
-          />
-          <Line
+            corners="rounded"
+            motion="none"
+          >
+            <SeriesBar.Shape>
+              <UnrealizedPnlBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
+          <SeriesLine
             yAxisId="pct"
             type="monotone"
             dataKey="unrealized_gain_pct"
-            stroke={SEMANTIC_COLORS.returnRate}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 4 }}
             connectNulls
-            isAnimationActive={false}
+            tone="returnRate"
+            weight="regular"
+            markers="hidden"
+            hover="default"
+            motion="none"
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
+      <Text
+        as="div"
+        variant="caption"
+        tone="subtle"
+        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
+      >
         <span>
-          <i
-            className="mr-1.5 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.performancePositive }}
+          <SeriesSwatch
+            tone={'performancePositive'}
+            as="i"
+            shape="dot"
+            className="mr-1.5 inline-block h-2 w-2"
           />
           {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
         </span>
         <span>
-          <i
-            className="mr-1.5 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.performanceNegative }}
+          <SeriesSwatch
+            tone={'performanceNegative'}
+            as="i"
+            shape="dot"
+            className="mr-1.5 inline-block h-2 w-2"
           />
           {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
         </span>
         <span>
-          <i
-            className="mr-1.5 inline-block h-0.5 w-3 align-middle"
-            style={{ backgroundColor: SEMANTIC_COLORS.returnRate }}
+          <SeriesSwatch
+            tone={'returnRate'}
+            as="i"
+            shape="centeredLine"
+            className="mr-1.5 inline-block h-0.5 w-3"
           />
           {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
         </span>
-      </div>
-    </div>
+      </Text>
+    </Surface>
   )
 }
 
 function UnrealizedPnlBar(
-  shapeProps: ChartShapeProps<BarShapeProps, UnrealizedPnlPoint>,
+  shapeProps: Partial<ChartShapeProps<BarShapeProps, UnrealizedPnlPoint>>,
 ) {
   const point = shapeProps.payload
   if (!point) return null
   return (
-    <Rectangle
-      {...shapeProps}
-      fill={
+    <ChartRectangle
+      geometry={shapeProps}
+      tone={
         point.unrealized_gain >= 0
-          ? SEMANTIC_COLORS.performancePositive
-          : SEMANTIC_COLORS.performanceNegative
+          ? 'performancePositive'
+          : 'performanceNegative'
       }
     />
   )

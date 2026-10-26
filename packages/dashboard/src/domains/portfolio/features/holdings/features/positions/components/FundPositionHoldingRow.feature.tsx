@@ -2,6 +2,8 @@ import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function FundPositionHoldingRow({
   holding,
@@ -14,19 +16,19 @@ export function FundPositionHoldingRow({
   const formatPercentage = useFormatPercentage()
   const positionValue = position.total_value ?? 0
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 border-b border-border/70 py-1.5 text-xs">
-      <span
-        className="truncate text-content-secondary"
-        title={holding.holdingName}
-      >
+    <Surface
+      variant="mutedRowSeparator"
+      className="grid grid-cols-[minmax(0,1fr)_4rem_6rem] items-baseline gap-3 py-1.5"
+    >
+      <Text tone="secondary" truncate title={holding.holdingName}>
         {holding.holdingName}
-      </span>
-      <span className="text-right tabular-nums text-content-subtle">
+      </Text>
+      <Text tone="subtle" align="right" numeric>
         {formatPercentage(holding.weight * 100, { decimals: 2 })}
-      </span>
-      <span className="text-right tabular-nums text-content-muted">
+      </Text>
+      <Text tone="muted" align="right" numeric>
         {formatMoney(positionValue * holding.weight, { style: 'full' })}
-      </span>
-    </div>
+      </Text>
+    </Surface>
   )
 }

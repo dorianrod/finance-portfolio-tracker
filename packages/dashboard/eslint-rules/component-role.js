@@ -80,6 +80,19 @@ export default {
       const source = sourceNode?.value
       if (typeof source !== 'string') return
 
+      const normalizedFilename = filename.replaceAll('\\', '/')
+      const isSharedUi = /(?:^|\/)src\/shared\/ui\//u.test(normalizedFilename)
+      const resolvedSource = source.startsWith('@/')
+        ? path.posix.normalize(source.slice(2))
+        : path
+            .resolve(path.dirname(normalizedFilename), source)
+            .replaceAll('\\', '/')
+      const isOwnedUiService =
+        isSharedUi &&
+        (source.startsWith('@/')
+          ? resolvedSource.startsWith('shared/ui/services/')
+          : /\/src\/shared\/ui\/services\//u.test(resolvedSource))
+
       if (source.includes('.feature')) {
         context.report({
           node: sourceNode,
@@ -98,7 +111,7 @@ export default {
         return
       }
 
-      if (isBusinessSource(source)) {
+      if (isBusinessSource(source) && !isOwnedUiService) {
         context.report({
           node: sourceNode,
           messageId: 'viewImportsBusiness',

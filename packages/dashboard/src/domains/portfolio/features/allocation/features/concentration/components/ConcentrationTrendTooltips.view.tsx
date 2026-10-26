@@ -7,7 +7,10 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import type { SemanticColorKey } from '@/shared/theme/semanticColors'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 export type TrendTooltipProps = {
@@ -22,27 +25,27 @@ export type HoldingTooltipProps = {
 
 export function ThresholdRow({
   label,
-  color,
+  tone,
   value,
   delta,
 }: {
   label: string
-  color: string
+  tone: SemanticColorKey
   value: number | null
   delta: number | null
 }) {
   const formatNumber = useFormatNumber()
   return (
     <div>
-      <span style={{ color }}>{label}</span> {formatPositionCount(value)}{' '}
-      <span className="text-content-subtle">
+      <ChartText tone={tone}>{label}</ChartText> {formatPositionCount(value)}{' '}
+      <Text tone="subtle">
         ·{' '}
         {value == null
           ? i18n.t(
               'ui.concentrationtrendsection.insufficientIdentifiedCoverage',
             )
           : formatConcentrationDelta(delta, formatNumber)}
-      </span>
+      </Text>
     </div>
   )
 }
@@ -57,40 +60,45 @@ export function ConcentrationTrendTooltip({
   const row = payload[0].payload
   return (
     <TooltipBox minWidth={250}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
         {formatDate(row.date, { style: 'shortMonthShortYear' })}
-      </div>
-      <div className="mt-1 text-xs" style={{ color: 'var(--tooltip-dim)' }}>
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipDim'}
+        variant="caption"
+        className="mt-1"
+      >
         {i18n.t('ui.concentrationtrendsection.coverageWithValues', {
           percentage: formatPercentage(row.coveragePct),
         })}
-      </div>
-      <div className="mt-2 space-y-1" style={{ color: 'var(--tooltip-label)' }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} className="mt-2 space-y-1">
         <ThresholdRow
           label="25%"
-          color={SEMANTIC_COLORS.risk}
+          tone={'risk'}
           value={row.positionsTo25Pct}
           delta={row.positionsTo25Delta}
         />
         <ThresholdRow
           label="50%"
-          color={SEMANTIC_COLORS.totalChange}
+          tone={'totalChange'}
           value={row.positionsTo50Pct}
           delta={row.positionsTo50Delta}
         />
         <ThresholdRow
           label="75%"
-          color={SEMANTIC_COLORS.netContributions}
+          tone={'netContributions'}
           value={row.positionsTo75Pct}
           delta={row.positionsTo75Delta}
         />
         <ThresholdRow
           label="90%"
-          color={SEMANTIC_COLORS.portfolioValue}
+          tone={'portfolioValue'}
           value={row.positionsTo90Pct}
           delta={row.positionsTo90Delta}
         />
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -105,42 +113,49 @@ export function HistoricalHoldingTooltip({
   const holding = payload[0].payload
   return (
     <TooltipBox minWidth={200}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
         {holding.name}
-      </div>
-      <div className="mt-1" style={{ color: 'var(--tooltip-label)' }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} className="mt-1">
         {formatMoney(holding.value, { style: 'full' })} ·{' '}
         {formatPercentage(holding.weight)}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
 
 export function ChartLegend() {
   return (
-    <div className="mb-3 flex flex-wrap gap-4 text-[11px] text-content-subtle">
-      {[
-        ['25%', SEMANTIC_COLORS.risk],
-        ['50%', SEMANTIC_COLORS.totalChange],
-        ['75%', SEMANTIC_COLORS.netContributions],
-        ['90%', SEMANTIC_COLORS.portfolioValue],
-      ].map(([label, color]) => (
-        <ChartLegendItem key={label} label={label} color={color} />
+    <Text
+      as="div"
+      variant="micro"
+      tone="subtle"
+      className="mb-3 flex flex-wrap gap-4"
+    >
+      {(
+        [
+          ['25%', 'risk'],
+          ['50%', 'totalChange'],
+          ['75%', 'netContributions'],
+          ['90%', 'portfolioValue'],
+        ] as const
+      ).map(([label, tone]) => (
+        <ChartLegendItem key={label} label={label} tone={tone} />
       ))}
-    </div>
+    </Text>
   )
 }
 
 export function ChartLegendItem({
-  color,
+  tone,
   label,
 }: {
-  color: string
+  tone: SemanticColorKey
   label: string
 }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="h-0.5 w-3 rounded" style={{ background: color }} />
+      <SeriesSwatch shape="softDot" tone={tone} className="h-0.5 w-3" />
       {label}
     </span>
   )

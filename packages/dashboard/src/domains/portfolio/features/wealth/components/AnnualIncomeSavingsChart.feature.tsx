@@ -1,24 +1,22 @@
 import {
-  Bar,
   type BarShapeProps,
-  CartesianGrid,
   ComposedChart,
-  Line,
-  Rectangle,
   ResponsiveContainer,
   Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts'
 
-import { getIncomeYearOpacity } from '@/domains/portfolio/features/wealth/helpers/presenters/getIncomeYearOpacity'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { IncomeSavingsTooltip } from './IncomeSavingsTooltip.view'
 
@@ -29,10 +27,15 @@ export function AnnualIncomeSavingsChart({
 }) {
   const formatMoney = useFormatMoney()
   return (
-    <div className="bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3 flex items-start gap-3">
         <div>
-          <h2 className="flex items-center text-sm font-medium text-content-secondary">
+          <Text
+            as="h2"
+            variant="label"
+            tone="secondary"
+            className="flex items-center"
+          >
             {i18n.t('ui.annualincomesavingschart.incomeVsNetContributions')}
             <ScopedInfoTooltip
               text={i18n.t(
@@ -40,10 +43,10 @@ export function AnnualIncomeSavingsChart({
               )}
               scope={{ account: 'global', period: 'year-range' }}
             />
-          </h2>
-          <p className="mt-1 text-xs text-content-subtle">
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-1">
             {i18n.t('ui.annualincomesavingschart.annualAllAccounts')}
-          </p>
+          </Text>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={285}>
@@ -52,117 +55,129 @@ export function AnnualIncomeSavingsChart({
           margin={{ top: 8, right: 48, left: 0, bottom: 0 }}
           barGap={3}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
-            dataKey="year"
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis
+          <ChartGrid />
+          <ChartXAxis dataKey="year" />
+          <ChartYAxis
             yAxisId="amount"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
-          <YAxis
+          <ChartYAxis
             yAxisId="rate"
             orientation="right"
             tickFormatter={(value) => `${value}%`}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={48}
           />
           <Tooltip content={<IncomeSavingsTooltip />} />
-          <Bar
+          <SeriesBar
             yAxisId="amount"
             dataKey="netSalary"
             stackId="income"
-            fill={SEMANTIC_COLORS.costBasis}
-            radius={[0, 0, 3, 3]}
-            shape={IncomeBar}
-          />
-          <Bar
+            tone="costBasis"
+            corners="bottom"
+          >
+            <SeriesBar.Shape>
+              <IncomeBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
+          <SeriesBar
             yAxisId="amount"
             dataKey="otherIncome"
             stackId="income"
-            fill={SEMANTIC_COLORS.passiveIncome}
-            radius={[3, 3, 0, 0]}
-            shape={IncomeBar}
-          />
-          <Bar
+            tone="passiveIncome"
+            corners="top"
+          >
+            <SeriesBar.Shape>
+              <IncomeBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
+          <SeriesBar
             yAxisId="amount"
             dataKey="placedSavings"
-            fill={SEMANTIC_COLORS.netContributions}
-            radius={[3, 3, 0, 0]}
-            shape={SavingsBar}
-          />
-          <Line
+            tone="netContributions"
+            corners="top"
+          >
+            <SeriesBar.Shape>
+              <SavingsBar />
+            </SeriesBar.Shape>
+          </SeriesBar>
+          <SeriesLine
             yAxisId="rate"
             type="monotone"
             dataKey="placementRate"
-            stroke={SEMANTIC_COLORS.returnRate}
-            strokeWidth={2.5}
             connectNulls={false}
-            dot={{ r: 3 }}
-            activeDot={{ r: 5 }}
+            tone="returnRate"
+            weight="emphasized"
+            markers="normal"
+            hover="large"
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-3 text-xs text-content-subtle">
+      <Surface
+        variant="captionFooter"
+        tone="subtle"
+        className="mt-3 flex flex-wrap gap-x-5 gap-y-2 pt-3"
+      >
         <span className="flex items-center gap-2">
-          <i
-            className="h-2.5 w-3 rounded-sm"
-            style={{ backgroundColor: SEMANTIC_COLORS.costBasis }}
+          <SeriesSwatch
+            tone={'costBasis'}
+            as="i"
+            shape="bar"
+            className="h-2.5 w-3"
           />
           {i18n.t('ui.annualincomesavingschart.netSalary.970d84')}
         </span>
         <span className="flex items-center gap-2">
-          <i
-            className="h-2.5 w-3 rounded-sm"
-            style={{ backgroundColor: SEMANTIC_COLORS.passiveIncome }}
+          <SeriesSwatch
+            tone={'passiveIncome'}
+            as="i"
+            shape="bar"
+            className="h-2.5 w-3"
           />
           {i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}
         </span>
         <span className="flex items-center gap-2">
-          <i
-            className="h-2.5 w-3 rounded-sm"
-            style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
+          <SeriesSwatch
+            tone={'netContributions'}
+            as="i"
+            shape="bar"
+            className="h-2.5 w-3"
           />
           {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
         </span>
         <span className="flex items-center gap-2">
-          <i
-            className="h-0.5 w-4"
-            style={{ backgroundColor: SEMANTIC_COLORS.returnRate }}
-          />
+          <SeriesSwatch tone={'returnRate'} as="i" className="h-0.5 w-4" />
           {i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}
         </span>
-      </div>
-    </div>
+      </Surface>
+    </Surface>
   )
 }
 
 function IncomeBar(
-  shapeProps: ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>,
-) {
-  const point = shapeProps.payload
-  if (!point) return null
-  return <Rectangle {...shapeProps} fillOpacity={getIncomeYearOpacity(point)} />
-}
-
-function SavingsBar(
-  shapeProps: ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>,
+  shapeProps: Partial<ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>>,
 ) {
   const point = shapeProps.payload
   if (!point) return null
   return (
-    <Rectangle
-      {...shapeProps}
-      fillOpacity={point.savingsStatus === 'complete' ? 0.9 : 0.4}
+    <ChartRectangle
+      geometry={shapeProps}
+      prominence={point.incomeStatus === 'forecast' ? 'muted' : 'full'}
+    />
+  )
+}
+
+function SavingsBar(
+  shapeProps: Partial<ChartShapeProps<BarShapeProps, AnnualIncomeSavingsPoint>>,
+) {
+  const point = shapeProps.payload
+  if (!point) return null
+  return (
+    <ChartRectangle
+      geometry={shapeProps}
+      prominence={point.savingsStatus === 'complete' ? 'strong' : 'subtle'}
     />
   )
 }

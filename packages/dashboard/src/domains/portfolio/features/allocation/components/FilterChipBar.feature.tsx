@@ -4,7 +4,9 @@ import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/servic
 import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
+import { Button } from '@/shared/ui/Controls.view'
 import { Decorative } from '@/shared/ui/Controls.view'
+import { Text } from '@/shared/ui/Text.view'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
   geo: i18n.t('ui.filterchipbar.geo'),
@@ -20,22 +22,23 @@ export function FilterChipBar() {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="w-24 shrink-0 text-xs uppercase tracking-wider text-content-subtle">
+      <Text variant="captionOverline" tone="subtle" className="w-24 shrink-0">
         {i18n.t('ui.filterchipbar.allocation')}
-      </span>
-      <button
+      </Text>
+      <Button
         type="button"
         onClick={clearFilter}
         title={i18n.t('ui.filterchipbar.clearAllocationFilter')}
-        className="inline-flex max-w-full cursor-pointer items-center gap-1 rounded-full border border-accent bg-accent-solid px-3 py-1 text-xs text-content transition-colors hover:border-accent hover:bg-accent-solid"
+        variant="appliedFilter"
+        className="inline-flex max-w-full items-center gap-1 px-3 py-1"
       >
-        <span className="font-medium opacity-80">
-          {DIM_LABELS[filter.type]}
-        </span>
-        <Decorative className="opacity-60">:</Decorative>
-        <span className="font-semibold">{filter.value}</span>
-        <Decorative className="ml-1 opacity-70">×</Decorative>
-      </button>
+        <Text variant="secondaryMedium">{DIM_LABELS[filter.type]}</Text>
+        <Decorative variant="faint">:</Decorative>
+        <Text variant="strong">{filter.value}</Text>
+        <Decorative variant="subdued" className="ml-1">
+          ×
+        </Decorative>
+      </Button>
     </div>
   )
 }

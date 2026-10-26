@@ -8,13 +8,14 @@ import type {
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Badge, type BadgeTone } from '@/shared/ui/Badge.view'
 import { NamedSymbol } from '@/shared/ui/Controls.view'
 
-const TIER_CLASSES: Record<FundQualityTier, string> = {
-  A: 'border-positive bg-positive-muted/60 text-positive',
-  B: 'border-accent bg-accent-muted/60 text-accent',
-  C: 'border-warning bg-warning-muted/60 text-warning',
-  D: 'border-danger bg-danger-muted/60 text-danger',
+const TIER_TONES: Record<FundQualityTier, BadgeTone> = {
+  A: 'positive',
+  B: 'accent',
+  C: 'warning',
+  D: 'negative',
 }
 
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
@@ -42,19 +43,14 @@ export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
     .filter(Boolean)
     .join(' · ')
   return (
-    <span
-      title={title}
-      className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${TIER_CLASSES[status.qualityTier]}`}
-    >
+    <Badge title={title} tone={TIER_TONES[status.qualityTier]}>
       {FUND_QUALITY_LABELS[category]}
-      <span className="font-normal opacity-80">
-        {formatPercentage(status.explainedPct)}
-      </span>
+      <Badge.Detail>{formatPercentage(status.explainedPct)}</Badge.Detail>
       {warning && (
         <NamedSymbol label={i18n.t('ui.fundqualitybadge.dataWarning')}>
           !
         </NamedSymbol>
       )}
-    </span>
+    </Badge>
   )
 }

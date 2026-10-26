@@ -1,9 +1,10 @@
 import { calculatePortfolioKpis } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioKpis'
-import { getPerformanceColor } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceColor'
+import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Surface } from '@/shared/ui/Surface.view'
 
 import { Kpi } from './Kpi.view'
 
@@ -31,7 +32,10 @@ export function KpiBar({ rows, globalTri }: Props) {
   } = calculatePortfolioKpis(rows)
 
   return (
-    <div className="mb-4 flex flex-wrap items-start gap-6 border-b border-border pb-4">
+    <Surface
+      variant="sectionEnd"
+      className="mb-4 flex flex-wrap items-start gap-6 pb-4"
+    >
       <Kpi.Root accent="portfolio">
         <Kpi.Label
           tooltip={i18n.t(
@@ -49,7 +53,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           })}
         </Kpi.Detail>
       </Kpi.Root>
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       <Kpi.Root accent={totalUnrealizedNet >= 0 ? 'positive' : 'negative'}>
         <Kpi.Label
           tooltip={i18n.t(
@@ -61,7 +65,7 @@ export function KpiBar({ rows, globalTri }: Props) {
         <Kpi.ValueRow>
           <Kpi.Value>{formatMoney(totalUnrealizedNet)}</Kpi.Value>
         </Kpi.ValueRow>
-        <Kpi.Note color={getPerformanceColor(totalUnrealizedNet)}>
+        <Kpi.Note tone={getPerformanceTone(totalUnrealizedNet)}>
           {formatPercentage(unrealizedPctNet, { signed: true })}
         </Kpi.Note>
         <Kpi.Detail>
@@ -71,7 +75,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           })}
         </Kpi.Detail>
       </Kpi.Root>
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       <Kpi.Root accent={totalRealized >= 0 ? 'positive' : 'negative'}>
         <Kpi.Label
           tooltip={i18n.t(
@@ -84,7 +88,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           <Kpi.Value>{formatMoney(totalRealized)}</Kpi.Value>
         </Kpi.ValueRow>
       </Kpi.Root>
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       <Kpi.Root accent="income">
         <Kpi.Label
           tooltip={i18n.t(
@@ -97,7 +101,7 @@ export function KpiBar({ rows, globalTri }: Props) {
           <Kpi.Value>{formatMoney(totalDividends)}</Kpi.Value>
         </Kpi.ValueRow>
       </Kpi.Root>
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       {totalInterest > 0 ? (
         <>
           <Kpi.Root accent="income">
@@ -112,7 +116,7 @@ export function KpiBar({ rows, globalTri }: Props) {
               <Kpi.Value>{formatMoney(totalInterest)}</Kpi.Value>
             </Kpi.ValueRow>
           </Kpi.Root>
-          <div className="w-px bg-surface-hover" />
+          <Surface variant="highlighted" className="w-px" />
         </>
       ) : null}
       <Kpi.Root accent={totalReturn >= 0 ? 'positive' : 'negative'}>
@@ -127,10 +131,10 @@ export function KpiBar({ rows, globalTri }: Props) {
           <Kpi.Value>{formatMoney(totalReturn)}</Kpi.Value>
         </Kpi.ValueRow>
       </Kpi.Root>
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       {globalTri == null ? null : (
         <>
-          <div className="w-px bg-surface-hover" />
+          <Surface variant="highlighted" className="w-px" />
           <Kpi.Root accent={globalTri >= 0 ? 'positive' : 'negative'}>
             <Kpi.Label
               tooltip={i18n.t(
@@ -140,14 +144,14 @@ export function KpiBar({ rows, globalTri }: Props) {
               {i18n.t('ui.kpibar.irrSinceTracking')}
             </Kpi.Label>
             <Kpi.ValueRow>
-              <Kpi.Value color={getPerformanceColor(globalTri)}>
+              <Kpi.Value tone={getPerformanceTone(globalTri)}>
                 {formatPercentage(globalTri, { decimals: 2, signed: true })}
               </Kpi.Value>
             </Kpi.ValueRow>
           </Kpi.Root>
         </>
       )}
-      <div className="w-px bg-surface-hover" />
+      <Surface variant="highlighted" className="w-px" />
       <Kpi.Root>
         <Kpi.Label
           tooltip={i18n.t(
@@ -163,6 +167,6 @@ export function KpiBar({ rows, globalTri }: Props) {
           {i18n.t('ui.kpibar.closedWithValues', { closedCount })}
         </Kpi.Note>
       </Kpi.Root>
-    </div>
+    </Surface>
   )
 }

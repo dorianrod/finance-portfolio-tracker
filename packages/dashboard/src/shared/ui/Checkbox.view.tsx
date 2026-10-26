@@ -1,17 +1,21 @@
-// eslint-disable-next-line local/component-role -- This UI service only synchronizes the native checkbox's indeterminate property.
+import type { ChangeEventHandler } from 'react'
+
+import { CHECKBOX_SIZES } from './fieldAppearance'
 import { useIndeterminateInput } from './services/useIndeterminateInput'
 
 // Needs a ref to set the DOM-only `indeterminate` property.
-export function IndeterminateCheckbox({
+export function Checkbox({
   checked,
   indeterminate,
   onChange,
   className,
+  size = 'small',
 }: {
   checked: boolean
   indeterminate?: boolean
-  onChange: () => void
+  onChange: ChangeEventHandler<HTMLInputElement>
   className?: string
+  size?: 'small' | 'standard'
 }) {
   const ref = useIndeterminateInput(indeterminate)
   return (
@@ -20,7 +24,13 @@ export function IndeterminateCheckbox({
       type="checkbox"
       checked={checked}
       onChange={onChange}
-      className={className ?? 'w-3.5 h-3.5 accent-accent cursor-pointer'}
+      className={[
+        'accent-accent cursor-pointer',
+        CHECKBOX_SIZES[size],
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
     />
   )
 }

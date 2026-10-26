@@ -4,7 +4,8 @@ import type { ComparedMetric } from '@/domains/portfolio/shared/helpers/calculat
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { MetricDelta } from '@/shared/ui/Badge.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function DeltaBadge({
   metric,
@@ -16,7 +17,7 @@ export function DeltaBadge({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   let color = getOverviewPerformanceTone(metric.delta)
-  if (tone === 'contributions') color = SEMANTIC_TEXT_CLASSES.netContributions
+  if (tone === 'contributions') color = 'accent'
   else if (tone === 'concentration') color = getConcentrationTone(metric.delta)
   let label =
     metric.delta == null
@@ -28,16 +29,14 @@ export function DeltaBadge({
   const deltaPercentage =
     tone !== 'concentration' && metric.deltaPct != null ? metric.deltaPct : null
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full bg-canvas/55 px-2 py-1 text-[11px] font-semibold tabular-nums ${color}`}
-    >
+    <MetricDelta tone={color}>
       {label}
       {deltaPercentage != null && (
-        <span className="font-medium opacity-75">
+        <MetricDelta.Detail>
           · {formatPercentage(deltaPercentage, { signed: true })}
-        </span>
+        </MetricDelta.Detail>
       )}
-    </span>
+    </MetricDelta>
   )
 }
 
@@ -50,13 +49,13 @@ export function PreviousValue({
 }) {
   const formatMoney = useFormatMoney()
   return (
-    <span className="text-[11px] text-content-subtle">
+    <Text variant="micro" tone="subtle">
       {i18n.t('ui.overviewsummarycards.previous')}{' '}
-      <span className="font-medium tabular-nums text-content-muted">
+      <Text variant="medium" tone="muted" numeric>
         {value == null
           ? i18n.t('ui.overviewsummarycards.unavailable')
           : `${formatMoney(value)}${suffix}`}
-      </span>
-    </span>
+      </Text>
+    </Text>
   )
 }

@@ -20,6 +20,8 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { DonutCard } from './DonutCard.feature'
 import { EvoCard } from './EvoCard.feature'
@@ -95,18 +97,18 @@ export function AllocationCharts({
     lookThroughConcentration.allHoldings.length > 0
   if (rawData.loading)
     return (
-      <p className="text-content-muted text-sm">
+      <Text as="p" variant="body" tone="muted">
         {i18n.t('ui.allocationcharts.loadingBreakdowns')}
-      </p>
+      </Text>
     )
 
   if (hasSelectedValue && !hasApplicableValue) {
     return (
-      <p className="text-sm text-content-subtle">
+      <Text as="p" variant="body" tone="subtle">
         {i18n.t(
           'ui.allocationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage',
         )}
-      </p>
+      </Text>
     )
   }
 
@@ -118,11 +120,11 @@ export function AllocationCharts({
     !baseClasse.length
   ) {
     return (
-      <p className="text-content-subtle text-sm">
+      <Text as="p" variant="body" tone="subtle">
         {i18n.t(
           'ui.allocationcharts.noAllocationDataAvailableRunThePipelineToGenerate',
         )}
-      </p>
+      </Text>
     )
   }
 
@@ -134,14 +136,19 @@ export function AllocationCharts({
             <section>
               <div className="mb-3 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-content-secondary">
+                  <Text as="h3" variant="label" tone="secondary">
                     {i18n.t('ui.allocationcharts.assetConcentration')}
-                  </h3>
-                  <p className="mt-0.5 text-xs text-content-subtle">
+                  </Text>
+                  <Text
+                    as="p"
+                    variant="caption"
+                    tone="subtle"
+                    className="mt-0.5"
+                  >
                     {i18n.t(
                       'ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn',
                     )}
-                  </p>
+                  </Text>
                 </div>
                 <ConcentrationModeToggle
                   value={concentrationMode}
@@ -164,24 +171,29 @@ export function AllocationCharts({
                   />
                 </div>
               ) : (
-                <div className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-content-subtle">
+                <Surface
+                  variant="contentCard"
+                  tone="subtle"
+                  align="center"
+                  className="p-8"
+                >
                   {i18n.t(
                     'ui.allocationcharts.noIdentifiedLookThroughExposureForTheCurrentSelection',
                   )}
-                </div>
+                </Surface>
               )}
             </section>
           )}
           <section>
             <div className="mb-3">
-              <h3 className="text-sm font-medium text-content-secondary">
+              <Text as="h3" variant="label" tone="secondary">
                 {i18n.t('ui.allocationcharts.portfolioBreakdown')}
-              </h3>
-              <p className="mt-0.5 text-xs text-content-subtle">
+              </Text>
+              <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
                 {i18n.t(
                   'ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector',
                 )}
-              </p>
+              </Text>
             </div>
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
               {latestGeo && (
@@ -230,14 +242,14 @@ export function AllocationCharts({
           {hasEvolution ? (
             <section>
               <div className="mb-3">
-                <h3 className="text-sm font-medium text-content-secondary">
+                <Text as="h3" variant="label" tone="secondary">
                   {i18n.t('ui.allocationcharts.portfolioBreakdownTrends')}
-                </h3>
-                <p className="mt-0.5 text-xs text-content-subtle">
+                </Text>
+                <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
                   {i18n.t(
                     'ui.allocationcharts.trackHowTheMixChangedByGeographyAssetClass',
                   )}
-                </p>
+                </Text>
               </div>
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
                 {trendGeo.length >= 2 && (
@@ -271,9 +283,14 @@ export function AllocationCharts({
               </div>
             </section>
           ) : (
-            <div className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-content-subtle">
+            <Surface
+              variant="contentCard"
+              tone="subtle"
+              align="center"
+              className="p-8"
+            >
               {i18n.t('ui.allocationcharts.notEnoughPortfolioBreakdownHistory')}
-            </div>
+            </Surface>
           )}
         </>
       )}

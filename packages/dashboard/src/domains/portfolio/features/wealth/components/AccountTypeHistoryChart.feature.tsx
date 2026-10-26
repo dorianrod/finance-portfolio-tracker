@@ -1,14 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
 import {
   accountTypeShareKey,
@@ -20,12 +11,16 @@ import type { AccountTypeHistoryPoint } from '@/domains/portfolio/shared/helpers
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { typeColor } from '@/shared/theme/chartColors'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import {
   type ChartScaleMode,
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { SeriesArea } from '@/shared/ui/SeriesArea.view'
+import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 function AccountTypeGradient({
   accountType,
@@ -36,12 +31,12 @@ function AccountTypeGradient({
   index: number
   typeCategories: Record<string, string>
 }) {
-  const color = typeColor(accountType, index, typeCategories)
   return (
-    <linearGradient id={`grad-${index}`} x1="0" y1="0" x2="0" y2="1">
-      <stop offset="5%" stopColor={color} stopOpacity={0.7} />
-      <stop offset="95%" stopColor={color} stopOpacity={0.15} />
-    </linearGradient>
+    <SeriesGradient
+      id={`grad-${index}`}
+      profile="layered"
+      group={{ key: accountType, index, categories: typeCategories }}
+    />
   )
 }
 
@@ -57,14 +52,14 @@ function AccountTypeArea({
   typeCategories: Record<string, string>
 }) {
   return (
-    <Area
+    <SeriesArea
       type="monotone"
       dataKey={percentageMode ? accountTypeShareKey(index) : accountType}
       name={accountType}
       stackId="a"
-      stroke={typeColor(accountType, index, typeCategories)}
-      fill={`url(#grad-${index})`}
-      strokeWidth={1.5}
+      group={{ key: accountType, index, categories: typeCategories }}
+      gradientId={`grad-${index}`}
+      weight="fine"
     />
   )
 }
@@ -88,9 +83,14 @@ export function AccountTypeHistoryChart({
   )
 
   return (
-    <div className="flex-1 bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="flex-1 p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-content-muted">
+        <Text
+          as="h2"
+          variant="label"
+          tone="muted"
+          className="flex items-center"
+        >
           {i18n.t('ui.accounttypehistorychart.accountTypeOverTime')}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -98,7 +98,7 @@ export function AccountTypeHistoryChart({
             )}
             scope={{ account: 'filterable', period: 'range' }}
           />
-        </h2>
+        </Text>
         <ChartScaleToggle value={scale} onChange={setScale} />
       </div>
       <ResponsiveContainer width="100%" height={220}>
@@ -117,27 +117,23 @@ export function AccountTypeHistoryChart({
               />
             ))}
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             interval="preserveStartEnd"
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={
               percentageMode
                 ? (value) => `${Math.round(Number(value))}%`
                 : (value) => formatMoney(value, { style: 'compact' })
             }
             domain={percentageMode ? [0, 100] : undefined}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={percentageMode ? 48 : 52}
           />
           <Tooltip
@@ -161,12 +157,14 @@ export function AccountTypeHistoryChart({
           ))}
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </Surface>
   )
 }
 
 function AccountTypeLegendLabel(value: string) {
   return (
-    <span style={{ color: 'var(--chart-tick)', fontSize: 12 }}>{value}</span>
+    <ChartText tone={'tick'} variant="caption">
+      {value}
+    </ChartText>
   )
 }

@@ -19,14 +19,23 @@ import i18n from '@/i18n/i18n'
 import { toDateInputValue } from '@/shared/helpers/mappers/toDateInputValue'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { DATE_FILTER_SCHEMA } from '@/shared/schemas/calendarDate.schema'
+import { SelectionCount } from '@/shared/ui/Badge.view'
+import { Checkbox } from '@/shared/ui/Checkbox.view'
 import {
+  Button,
   Decorative,
-  DecorativeSvg,
   DialogButton,
   Group,
   Input,
 } from '@/shared/ui/Controls.view'
+import {
+  ChoiceRow,
+  FieldSeparator,
+  FilterIcon,
+} from '@/shared/ui/FormElements.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { AccountTree } from './AccountTreeSelect.feature'
 import { Chip } from './Chip.view'
@@ -53,10 +62,6 @@ const DATE_PRESETS = [
   { label: i18n.t('ui.filterbar.6Months'), months: 6 },
   { label: i18n.t('ui.filterbar.1Year'), months: 12 },
 ] as const
-
-const dateInputClass =
-  'min-w-0 flex-1 bg-surface-raised border border-border-strong text-content-secondary text-xs rounded-lg px-2.5 py-2 ' +
-  'focus:outline-none focus:border-accent'
 
 function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {
   const filters = useAtomValue(dashboardFiltersAtom)
@@ -100,17 +105,18 @@ function OperationTypeChip({ operation }: { operation: OperationType }) {
 function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
   const { setFilters } = useDashboardFilters()
   return (
-    <button
+    <Button
       type="button"
       onClick={() =>
         setFilters((current) => clearFilterGroup(current, item.key))
       }
       title={i18n.t('ui.filterbar.clearValue0Filter', { value0: item.key })}
-      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-accent bg-accent-muted/35 px-3 py-1 text-xs text-accent transition-colors hover:bg-accent-muted/55"
+      variant="filterTag"
+      className="inline-flex max-w-full items-center gap-1.5 px-3 py-1"
     >
-      <span className="truncate">{item.label}</span>
-      <Decorative className="text-accent">×</Decorative>
-    </button>
+      <Text truncate>{item.label}</Text>
+      <Decorative>×</Decorative>
+    </Button>
   )
 }
 
@@ -143,13 +149,14 @@ export function FilterPanel({
         {i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
       </SidePanel.Description>
       <SidePanel.HeaderActions>
-        <button
+        <Button
           type="button"
           onClick={resetDashboardFilters}
-          className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
+          variant="quiet"
+          className="shrink-0 px-2 py-1"
         >
           {i18n.t('ui.filterbar.resetAll')}
-        </button>
+        </Button>
       </SidePanel.HeaderActions>
       {visibility.showPeriod && (
         <FilterSection
@@ -174,9 +181,10 @@ export function FilterPanel({
                   dateFrom: DATE_FILTER_SCHEMA.validateSync(event.target.value),
                 })
               }
-              className={dateInputClass}
+              variant="filter"
+              className="min-w-0 flex-1 px-2.5 py-2"
             />
-            <Decorative className="text-xs text-content-subtle">→</Decorative>
+            <FieldSeparator />
             <Input
               type="date"
               label={i18n.t('ui.filterbar.periodEnd')}
@@ -187,11 +195,12 @@ export function FilterPanel({
                   dateTo: DATE_FILTER_SCHEMA.validateSync(event.target.value),
                 })
               }
-              className={dateInputClass}
+              variant="filter"
+              className="min-w-0 flex-1 px-2.5 py-2"
             />
           </div>
           {hasPeriodFilter && (
-            <button
+            <Button
               type="button"
               onClick={() =>
                 setFilters({
@@ -200,10 +209,11 @@ export function FilterPanel({
                   dateTo: undefined,
                 })
               }
-              className="mt-2 text-xs font-medium text-content-subtle transition-colors hover:text-content-secondary"
+              variant="text"
+              className="mt-2"
             >
               {i18n.t('ui.filterbar.clearPeriod')}
-            </button>
+            </Button>
           )}
         </FilterSection>
       )}
@@ -226,16 +236,19 @@ export function FilterPanel({
             }
           />
           {demoPresetSelection && (
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-surface-raised/60 px-3 py-2.5">
+            <Surface
+              variant="raisedInset"
+              className="mt-3 flex items-center justify-between gap-3 px-3 py-2.5"
+            >
               <div>
-                <div className="text-xs font-medium text-content-secondary">
+                <Text as="div" variant="captionLabel" tone="secondary">
                   {i18n.t('ui.filterbar.staticDemo')}
-                </div>
-                <div className="mt-0.5 text-[11px] text-content-subtle">
+                </Text>
+                <Text as="div" variant="micro" tone="subtle" className="mt-0.5">
                   {i18n.t('ui.filterbar.useThePrecomputedFilteredReturnSample')}
-                </div>
+                </Text>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   setFilters({
@@ -244,11 +257,13 @@ export function FilterPanel({
                     accountTypes: new Set(),
                   })
                 }
-                className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${demoPresetActive ? 'border-accent bg-accent-muted/40 text-accent' : 'border-border-strong text-content-muted hover:border-border-strong hover:text-content-secondary'}`}
+                variant="preset"
+                selected={demoPresetActive}
+                className="shrink-0 px-2.5 py-1"
               >
                 {i18n.t('ui.filterbar.excludePrivateEquity')}
-              </button>
-            </div>
+              </Button>
+            </Surface>
           )}
         </FilterSection>
       )}
@@ -260,9 +275,9 @@ export function FilterPanel({
             'ui.filterbar.refineTheTransactionsAndHoldingsShownInTheTable',
           )}
         >
-          <div className="text-xs font-medium text-content-muted">
+          <Text as="div" variant="captionLabel" tone="muted">
             {i18n.t('ui.filterbar.operationType')}
-          </div>
+          </Text>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Chip
               label={i18n.t('ui.filterbar.all')}
@@ -275,17 +290,20 @@ export function FilterPanel({
               <OperationTypeChip key={operation} operation={operation} />
             ))}
           </div>
-          <label className="mt-4 flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-border-strong bg-canvas/35 px-3 py-2.5">
+          <ChoiceRow
+            variant="card"
+            className="mt-4 flex items-center justify-between gap-3 px-3 py-2.5"
+          >
             <span>
-              <span className="block text-xs font-medium text-content-secondary">
+              <Text variant="captionLabel" tone="secondary" className="block">
                 {i18n.t('ui.filterbar.hideClosedPositions')}
-              </span>
-              <span className="mt-0.5 block text-[11px] text-content-subtle">
+              </Text>
+              <Text variant="micro" tone="subtle" className="mt-0.5 block">
                 {i18n.t('ui.filterbar.keepTheTableFocusedOnCurrentHoldings')}
-              </span>
+              </Text>
             </span>
-            <input
-              type="checkbox"
+            <Checkbox
+              size="standard"
               checked={filters.hideClosedPositions}
               onChange={(event) =>
                 setFilters({
@@ -293,9 +311,9 @@ export function FilterPanel({
                   hideClosedPositions: event.target.checked,
                 })
               }
-              className="h-4 w-4 shrink-0 accent-accent"
+              className="shrink-0"
             />
-          </label>
+          </ChoiceRow>
         </FilterSection>
       )}
     </SidePanel>
@@ -311,21 +329,16 @@ export function FilterButton({ activeCount }: { activeCount: number }) {
       type="button"
       onClick={openFilters}
       expanded={open}
-      className={`inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${activeCount > 0 ? 'border-accent bg-accent-muted/30 text-accent hover:bg-accent-muted/45' : 'border-border-strong bg-surface text-content-muted hover:border-border-strong hover:text-content-secondary'}`}
+      variant="filter"
+      selected={activeCount > 0}
+      className="inline-flex shrink-0 items-center gap-2 px-3 py-2"
     >
-      <DecorativeSvg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-        <path
-          d="M3 5h14M5.5 10h9M8 15h4"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-      </DecorativeSvg>
+      <FilterIcon className="h-4 w-4" />
       <span>{i18n.t('ui.filterbar.filters')}</span>
       {activeCount > 0 && (
-        <span className="min-w-5 rounded-full bg-accent-solid px-1.5 py-0.5 text-center text-[10px] font-bold leading-4 text-content">
+        <SelectionCount className="min-w-5 px-1.5 py-0.5">
           {activeCount}
-        </span>
+        </SelectionCount>
       )}
     </DialogButton>
   )
@@ -373,13 +386,14 @@ export function ResetFiltersButton() {
   const { resetDashboardFilters } = useDashboardFilters()
 
   return (
-    <button
+    <Button
       type="button"
       onClick={resetDashboardFilters}
-      className="px-1 py-1 text-xs font-medium text-content-subtle transition-colors hover:text-content-secondary"
+      variant="text"
+      className="px-1 py-1"
     >
       {i18n.t('ui.filterbar.resetAll')}
-    </button>
+    </Button>
   )
 }
 

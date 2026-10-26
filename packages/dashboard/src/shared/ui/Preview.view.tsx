@@ -10,8 +10,12 @@ import {
   useRef,
 } from 'react'
 
+import { getButtonClassName } from './buttonAppearance'
 import type { ControlProps } from './controlProps'
 import type { ButtonProps } from './Controls.view'
+import { SURFACE_VARIANTS } from './surfaceAppearance'
+import type { TextTone } from './textAppearance'
+import { TEXT_TONES } from './textAppearance'
 import { usePreviewFocus } from './usePreviewFocus'
 import { type PreviewState, usePreviewState } from './usePreviewState'
 
@@ -44,11 +48,16 @@ function PreviewTrigger({
   expanded,
   label,
   type = 'button',
+  variant = 'plain',
+  selected = false,
+  tone,
+  className,
   ...props
 }: ButtonProps & {
   onPreview: (anchor: HTMLButtonElement) => void
   onDismiss: () => void
   expanded?: boolean
+  tone?: TextTone
 }) {
   const context = useContext(PreviewContext)
   const triggerId = useId()
@@ -61,6 +70,16 @@ function PreviewTrigger({
     <button
       {...props}
       type={type}
+      className={[
+        getButtonClassName(variant, className, selected),
+        tone && TEXT_TONES[tone],
+        tone &&
+          'rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1',
+        tone && PREVIEW_TONES[tone],
+        selected && tone && 'bg-surface-raised ring-1 ring-current/40',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       id={props.id ?? triggerId}
       aria-label={label}
       aria-haspopup="dialog"
@@ -109,8 +128,11 @@ function PreviewContent({
   label,
   children,
   style,
+  variant,
+  className,
   ...props
 }: ControlProps<HTMLAttributes<HTMLDivElement>> & {
+  variant?: keyof typeof SURFACE_VARIANTS
   anchor: DOMRect
   label: string
   style?: CSSProperties
@@ -130,6 +152,9 @@ function PreviewContent({
         <Primitive.Content
           {...props}
           ref={contentRef}
+          className={[variant && SURFACE_VARIANTS[variant], className]
+            .filter(Boolean)
+            .join(' ')}
           id={context.id}
           aria-label={label}
           sideOffset={6}
@@ -166,3 +191,12 @@ function PreviewContent({
 
 Preview.Trigger = PreviewTrigger
 Preview.Content = PreviewContent
+
+const PREVIEW_TONES: Partial<Record<TextTone, string>> = {
+  positive:
+    'hover:bg-positive-muted/60 hover:text-positive focus-visible:ring-positive',
+  warning:
+    'hover:bg-warning-muted/60 hover:text-warning focus-visible:ring-warning',
+  negative:
+    'hover:bg-danger-muted/60 hover:text-danger focus-visible:ring-danger',
+}

@@ -1,20 +1,16 @@
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { AreaChart, LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartXAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartGrid } from '@/shared/ui/ChartAxes.view'
+import { ChartLegend } from '@/shared/ui/ChartLabels.view'
+import { SeriesArea } from '@/shared/ui/SeriesArea.view'
+import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { BuySellDot, BuySellDotUnit } from './BuySellDots.view'
 import type { HoverChartDataPoint } from './helpers/calculators/buildHoverChartData'
@@ -33,105 +29,91 @@ export function PositionHistoryCharts({
   return (
     <>
       {/* Chart 1: position value */}
-      <p className="text-content-muted text-xs mb-1">
+      <Text as="p" variant="caption" tone="muted" className="mb-1">
         {i18n.t('ui.hoverchart.positionValue')}
-      </p>
+      </Text>
       <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           data={chartData}
           margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="gVal" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={SEMANTIC_COLORS.portfolioValue}
-                stopOpacity={0.25}
-              />
-              <stop
-                offset="95%"
-                stopColor={SEMANTIC_COLORS.portfolioValue}
-                stopOpacity={0}
-              />
-            </linearGradient>
+            <SeriesGradient id="gVal" profile="soft" tone="portfolioValue" />
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
-            dataKey="date"
-            tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-            tickLine={false}
-            axisLine={false}
+          <ChartGrid />
+          <ChartXAxis density="compact" axis dataKey="date" />
+          <ChartYAxis
+            density="compact"
             tickFormatter={(value) => formatMoney(value)}
             width={64}
           />
           <Tooltip content={<TooltipPortfolio />} />
-          <Legend wrapperStyle={{ fontSize: 11, color: CHART_THEME.tick }} />
-          <Area
+          <ChartLegend />
+          <SeriesArea
             type="monotone"
             dataKey="Cost basis"
             name={i18n.t('ui.hoverchart.costBasis')}
-            stroke={SEMANTIC_COLORS.costBasis}
-            strokeWidth={1.5}
-            fill="none"
-            strokeDasharray="4 2"
-            dot={false}
+            tone="costBasis"
+            weight="fine"
+            pattern="baseline"
+            markers="hidden"
           />
-          <Area
+          <SeriesArea
             type="monotone"
             dataKey="Value"
             name={i18n.t('ui.hoverchart.value')}
-            stroke={SEMANTIC_COLORS.portfolioValue}
-            strokeWidth={2}
-            fill="url(#gVal)"
-            dot={<BuySellDot />}
-            activeDot={{ r: 4 }}
-          />
+            tone="portfolioValue"
+            gradientId="gVal"
+            weight="regular"
+            hover="default"
+          >
+            <SeriesArea.Markers>
+              <BuySellDot />
+            </SeriesArea.Markers>
+          </SeriesArea>
         </AreaChart>
       </ResponsiveContainer>
 
       {/* legend markers */}
-      <div className="flex gap-4 text-xs text-content-subtle mt-1 mb-3 ml-2">
+      <Text
+        as="div"
+        variant="caption"
+        tone="subtle"
+        className="flex gap-4 mt-1 mb-3 ml-2"
+      >
         <span>
-          <span
-            className="mr-1 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.transactionBuy }}
+          <SeriesSwatch
+            tone={'transactionBuy'}
+            shape="dot"
+            className="mr-1 inline-block h-2 w-2"
           />
           {i18n.t('ui.hoverchart.buy')}
         </span>
         <span>
-          <span
-            className="mr-1 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.transactionSell }}
+          <SeriesSwatch
+            tone={'transactionSell'}
+            shape="dot"
+            className="mr-1 inline-block h-2 w-2"
           />
           {i18n.t('ui.hoverchart.sell')}
         </span>
-      </div>
+      </Text>
 
       {/* Chart 2: unit price — only when real market data is available */}
       {showUnitPrice && (
         <>
-          <p className="text-content-muted text-xs mb-1">
+          <Text as="p" variant="caption" tone="muted" className="mb-1">
             {i18n.t('ui.hoverchart.unitPrice')}
-          </p>
+          </Text>
           <ResponsiveContainer width="100%" height={160}>
             <LineChart
               data={chartData}
               margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-              <XAxis
-                dataKey="date"
-                tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: CHART_THEME.tick, fontSize: 10 }}
-                tickLine={false}
-                axisLine={false}
+              <ChartGrid />
+              <ChartXAxis density="compact" axis dataKey="date" />
+              <ChartYAxis
+                density="compact"
                 tickFormatter={(value) =>
                   formatMoney(value, { style: 'decimal' })
                 }
@@ -139,15 +121,18 @@ export function PositionHistoryCharts({
                 domain={unitPriceDomain}
               />
               <Tooltip content={<TooltipUnit />} />
-              <Line
+              <SeriesLine
                 type="monotone"
                 dataKey="Unit price"
                 name={i18n.t('ui.hoverchart.unitPrice')}
-                stroke={SEMANTIC_COLORS.returnRate}
-                strokeWidth={2}
-                dot={<BuySellDotUnit />}
-                activeDot={{ r: 4 }}
-              />
+                tone="returnRate"
+                weight="regular"
+                hover="default"
+              >
+                <SeriesLine.Markers>
+                  <BuySellDotUnit />
+                </SeriesLine.Markers>
+              </SeriesLine>
             </LineChart>
           </ResponsiveContainer>
         </>

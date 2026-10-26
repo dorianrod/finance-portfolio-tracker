@@ -6,7 +6,21 @@ import type {
   SVGProps,
 } from 'react'
 
+import {
+  BUTTON_VARIANTS,
+  getButtonClassName,
+  NAVIGATION_STATES,
+} from './buttonAppearance'
 import type { ControlProps } from './controlProps'
+import { FIELD_VARIANTS } from './fieldAppearance'
+import { STATUS_VARIANTS } from './statusAppearance'
+import { SURFACE_VARIANTS } from './surfaceAppearance'
+import {
+  TEXT_ALIGNMENTS,
+  TEXT_TONES,
+  TEXT_VARIANTS,
+  type TextTone,
+} from './textAppearance'
 
 export type ButtonProps = ControlProps<
   ButtonHTMLAttributes<HTMLButtonElement>
@@ -14,12 +28,19 @@ export type ButtonProps = ControlProps<
   label?: string
   onIntent?: () => void
   ref?: React.Ref<HTMLButtonElement>
+  variant?: keyof typeof BUTTON_VARIANTS
+  selected?: boolean
+  dimmed?: boolean
 }
 
 export function Button({
   label,
   onIntent,
   type = 'button',
+  variant = 'plain',
+  selected = false,
+  dimmed = false,
+  className,
   ...props
 }: ButtonProps) {
   const nativeProps = props as ButtonHTMLAttributes<HTMLButtonElement>
@@ -27,6 +48,12 @@ export function Button({
     <button
       {...props}
       type={type}
+      className={[
+        getButtonClassName(variant, className, selected),
+        dimmed && 'opacity-[0.35]',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-label={label ?? nativeProps['aria-label']}
       onFocus={(event) => {
         nativeProps.onFocus?.(event)
@@ -44,7 +71,7 @@ export function ToggleButton({
   active,
   ...props
 }: ButtonProps & { active: boolean }) {
-  return <Button {...props} aria-pressed={active} />
+  return <Button {...props} selected={active} aria-pressed={active} />
 }
 
 export function DisclosureButton({
@@ -65,12 +92,24 @@ export function NavigationButton({
   active,
   onIntent,
   label,
+  variant = 'plain',
+  selected = false,
+  className,
   ...props
 }: ButtonProps & { active: boolean }) {
+  const stateClass =
+    variant === 'tab' || variant === 'separatedTab'
+      ? NAVIGATION_STATES[variant][active ? 'active' : 'inactive']
+      : undefined
   return (
     <button
       {...props}
       type="button"
+      className={
+        [getButtonClassName(variant, className, selected), stateClass]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
       aria-label={label}
       aria-current={active ? 'page' : undefined}
       onFocus={onIntent}
@@ -81,23 +120,65 @@ export function NavigationButton({
 
 export function Input({
   label,
+  variant = 'plain',
+  className,
   ...props
-}: ControlProps<InputHTMLAttributes<HTMLInputElement>> & { label: string }) {
-  return <input {...props} aria-label={label} />
+}: ControlProps<InputHTMLAttributes<HTMLInputElement>> & {
+  label: string
+  variant?: keyof typeof FIELD_VARIANTS
+}) {
+  return (
+    <input
+      {...props}
+      aria-label={label}
+      className={
+        [FIELD_VARIANTS[variant], className].filter(Boolean).join(' ') ||
+        undefined
+      }
+    />
+  )
 }
 
 export function Select({
   label,
+  variant = 'plain',
+  className,
   ...props
-}: ControlProps<SelectHTMLAttributes<HTMLSelectElement>> & { label: string }) {
-  return <select {...props} aria-label={label} />
+}: ControlProps<SelectHTMLAttributes<HTMLSelectElement>> & {
+  label: string
+  variant?: keyof typeof FIELD_VARIANTS
+}) {
+  return (
+    <select
+      {...props}
+      aria-label={label}
+      className={
+        [FIELD_VARIANTS[variant], className].filter(Boolean).join(' ') ||
+        undefined
+      }
+    />
+  )
 }
 
 type ContentProps = ControlProps<HTMLAttributes<HTMLDivElement>>
 type InlineProps = ControlProps<HTMLAttributes<HTMLSpanElement>>
 
-export function Group({ label, ...props }: ContentProps & { label: string }) {
-  return <div {...props} role="group" aria-label={label} />
+export function Group({
+  label,
+  variant,
+  className,
+  ...props
+}: ContentProps & { label: string; variant?: keyof typeof SURFACE_VARIANTS }) {
+  return (
+    <div
+      {...props}
+      className={[variant && SURFACE_VARIANTS[variant], className]
+        .filter(Boolean)
+        .join(' ')}
+      role="group"
+      aria-label={label}
+    />
+  )
 }
 
 export function InlineGroup({
@@ -109,9 +190,21 @@ export function InlineGroup({
 
 export function Navigation({
   label,
+  variant = 'plain',
+  className,
   ...props
-}: ContentProps & { label: string }) {
-  return <nav {...props} aria-label={label} />
+}: ContentProps & { label: string; variant?: 'plain' | 'tabs' }) {
+  return (
+    <nav
+      {...props}
+      aria-label={label}
+      className={
+        [variant === 'tabs' && 'border-b border-border', className]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
+    />
+  )
 }
 
 export function Region({ label, ...props }: ContentProps & { label: string }) {
@@ -121,19 +214,52 @@ export function Region({ label, ...props }: ContentProps & { label: string }) {
 export function StatusMessage({
   urgent = false,
   as: Tag = 'p',
+  variant = 'plain',
+  tone,
+  align,
+  className,
   ...props
-}: ContentProps & { urgent?: boolean; as?: 'p' | 'div' }) {
-  return <Tag {...props} role={urgent ? 'alert' : 'status'} />
+}: ContentProps & {
+  urgent?: boolean
+  as?: 'p' | 'div'
+  variant?: keyof typeof STATUS_VARIANTS
+  tone?: TextTone
+  align?: keyof typeof TEXT_ALIGNMENTS
+}) {
+  return (
+    <Tag
+      {...props}
+      role={urgent ? 'alert' : 'status'}
+      className={
+        [
+          STATUS_VARIANTS[variant],
+          tone && TEXT_TONES[tone],
+          align && TEXT_ALIGNMENTS[align],
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
+    />
+  )
 }
 
 export function Progress({
   label,
   value,
+  variant,
+  className,
   ...props
-}: ContentProps & { label: string; value: number }) {
+}: ContentProps & { label: string; value: number; variant?: 'track' }) {
   return (
     <div
       {...props}
+      className={[
+        variant === 'track' && 'rounded-full bg-surface-raised',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       role="progressbar"
       aria-label={label}
       aria-valuemin={0}
@@ -143,12 +269,39 @@ export function Progress({
   )
 }
 
-export function Decorative(props: InlineProps) {
-  return <span {...props} aria-hidden="true" />
+export function Decorative({
+  tone,
+  variant,
+  className,
+  ...props
+}: InlineProps & { tone?: TextTone; variant?: keyof typeof TEXT_VARIANTS }) {
+  return (
+    <span
+      {...props}
+      aria-hidden="true"
+      className={
+        [tone && TEXT_TONES[tone], variant && TEXT_VARIANTS[variant], className]
+          .filter(Boolean)
+          .join(' ') || undefined
+      }
+    />
+  )
 }
 
-export function DecorativeBlock(props: ContentProps) {
-  return <div {...props} aria-hidden="true" />
+export function DecorativeBlock({
+  variant,
+  className,
+  ...props
+}: ContentProps & { variant?: keyof typeof SURFACE_VARIANTS }) {
+  return (
+    <div
+      {...props}
+      className={[variant && SURFACE_VARIANTS[variant], className]
+        .filter(Boolean)
+        .join(' ')}
+      aria-hidden="true"
+    />
+  )
 }
 
 export function DecorativeSvg(props: ControlProps<SVGProps<SVGSVGElement>>) {

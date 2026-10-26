@@ -1,7 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
-import { StatusMessage } from '@/shared/ui/Controls.view'
+import { Button, StatusMessage } from '@/shared/ui/Controls.view'
+import { Text } from '@/shared/ui/Text.view'
 
 type DashboardPanelErrorBoundaryProps = {
   children: ReactNode
@@ -35,23 +36,26 @@ export class DashboardPanelErrorBoundary extends Component<
       <StatusMessage
         as="div"
         urgent
-        className="mb-6 rounded-card border border-danger/40 bg-surface p-8 text-center"
+        variant="errorPanel"
+        align="center"
+        className="mb-6 p-8"
       >
-        <p className="text-sm font-medium text-danger">
+        <Text as="p" variant="label" tone="negative">
           {i18n.t('ui.dashboardpanelerrorboundary.unableToLoadThisAnalysis')}
-        </p>
-        <p className="mt-2 text-sm text-content-subtle">
+        </Text>
+        <Text as="p" variant="body" tone="subtle" className="mt-2">
           {i18n.t(
             'ui.dashboardpanelerrorboundary.reloadTheDashboardToTryDownloadingThePanelAgain',
           )}
-        </p>
-        <button
+        </Text>
+        <Button
           type="button"
-          className="mt-4 rounded-control border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-content hover:bg-surface"
+          variant="raised"
+          className="mt-4 px-3 py-2"
           onClick={this.props.onRetry}
         >
           {i18n.t('ui.dashboardpanelerrorboundary.reloadDashboard')}
-        </button>
+        </Button>
       </StatusMessage>
     )
   }

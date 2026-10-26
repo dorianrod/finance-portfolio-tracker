@@ -1,6 +1,6 @@
 ---
-title: Keep Colors Semantic in Business Components
-summary: Never hardcode colors in business components; use semantic Tailwind classes or semantic color constants defined in a dedicated file.
+title: Keep Colors Semantic Behind Shared UI
+summary: Use semantic color tokens inside shared UI primitives and expose semantic variants to business components.
 impact: HIGH
 tags:
   - react
@@ -10,13 +10,19 @@ tags:
   - maintainability
 patterns:
   - A feature or domain component contains a literal CSS color in a class, inline style, or SVG attribute.
-  - A feature or domain component uses a palette-specific Tailwind utility instead of a semantic utility.
+  - A shared UI primitive uses a palette-specific Tailwind utility instead of a semantic token.
   - A third-party UI or chart API requires a concrete color value from a business component.
 ---
 
-## Keep Colors Semantic in Business Components
+## Keep Colors Semantic Behind Shared UI
 
-**Rule:** Never hardcode colors in business components; use semantic Tailwind classes or semantic color constants defined in a dedicated file.
+**Rule:** Use semantic color tokens inside shared UI primitives and expose semantic variants to business components.
+
+The [shared UI boundary](styling-centralize-in-shared-ui.md) applies first:
+replacing a raw color with `text-positive` or an imported color constant does not
+authorize visual styling in a business component. The styling examples below
+belong inside `shared/ui`; domains consume primitives through semantic variants
+and nested children.
 
 Business components should express visual intent such as `positive`, `negative`, `warning`, or `muted`, without owning the concrete color that represents it. This keeps themes and visual changes centralized and prevents the same business meaning from drifting across the interface.
 
@@ -28,13 +34,14 @@ Hardcoded colors include:
 
 ### Applies When
 
-- A React component belongs to a feature or domain layer.
+- A React component chooses a color, including inside shared UI primitives.
 - A class, inline style, SVG attribute, or component prop selects a concrete color.
 - A charting, canvas, mapping, or other third-party API requires a color value rather than a CSS class.
 
 ### Incorrect
 
 ```tsx
+// shared/ui/StatusBadge.view.tsx
 export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
   return (
     <span
@@ -53,6 +60,7 @@ export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
 ### Correct: Semantic Tailwind Classes
 
 ```tsx
+// shared/ui/StatusBadge.view.tsx
 export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
   return (
     <span
@@ -68,11 +76,27 @@ export function PerformanceBadge({ isPositive }: { isPositive: boolean }) {
 }
 ```
 
-The semantic utilities must resolve to centrally defined theme tokens rather than colors declared by the business component.
+The semantic utilities must resolve to centrally defined theme tokens. Business
+components use the primitive instead of applying its color classes themselves:
+
+```tsx
+import { Badge } from '@/shared/ui/Badge.view'
+
+export function Status({ isPositive }: { isPositive: boolean }) {
+  return (
+    <Badge tone={isPositive ? 'positive' : 'negative'}>
+      {isPositive ? 'Gain' : 'Loss'}
+    </Badge>
+  )
+}
+```
 
 ### Correct: Centralized Semantic Constants
 
-Use this option when an API requires a color value instead of a Tailwind class. Prefer a semantic CSS custom property; if the API cannot resolve CSS variables, keep the concrete fallback value in this dedicated file as well.
+Use this option inside a shared UI wrapper when an API requires a color value
+instead of a Tailwind class. Prefer a semantic CSS custom property; if the API
+cannot resolve CSS variables, keep the concrete fallback value in this dedicated
+theme file as well. Domains supply data and semantic intent to the wrapper.
 
 ```typescript
 // shared/theme/chart-colors.ts
@@ -83,6 +107,9 @@ export const chartColors = {
 ```
 
 ```tsx
+// shared/ui/PerformanceBar.view.tsx
+import { Bar } from 'recharts'
+
 import { chartColors } from '@/shared/theme/chart-colors'
 
 export function PerformanceBar({ value }: { value: number }) {
@@ -103,7 +130,7 @@ The exported names describe business or UI meaning, not hue names such as `green
 
 ### Exceptions
 
-- Theme, token, and design-system files may define the concrete values behind semantic names.
+- `src/index.css`, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.
 - Static brand assets may keep mandated brand colors in their dedicated asset or token definition.
-- User-provided or data-driven colors are not hardcoded, but their validation and fallback colors must remain centralized.
-- Structural CSS keywords such as `currentColor`, `transparent`, and `inherit` are allowed when they do not encode a business color.
+- User-provided or data-driven colors are not hardcoded, but their application, validation and fallback colors must remain in shared UI.
+- Structural CSS keywords such as `currentColor`, `transparent`, and `inherit` may be used inside shared UI; they do not exempt domains from the shared UI boundary.

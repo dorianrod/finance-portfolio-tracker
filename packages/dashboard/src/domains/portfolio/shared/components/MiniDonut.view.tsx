@@ -3,7 +3,6 @@ import {
   PieChart,
   type PieSectorShapeProps,
   ResponsiveContainer,
-  Sector,
   Tooltip,
 } from 'recharts'
 
@@ -15,8 +14,10 @@ import {
 import type { PieEntry } from '@/domains/portfolio/shared/types/allocationChart.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { catColor } from '@/shared/theme/chartColors'
+import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { CategorySwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 function MiniDonutLegendItem({
   entry,
@@ -32,19 +33,18 @@ function MiniDonutLegendItem({
   )
 
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-content-muted">
-      <span
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: catColor(entry.name),
-          display: 'inline-block',
-          flexShrink: 0,
-        }}
+    <Text
+      variant="tiny"
+      tone="muted"
+      className="inline-flex items-center gap-1"
+    >
+      <CategorySwatch
+        category={entry.name}
+        shape="dot"
+        style={{ width: 6, height: 6, display: 'inline-block', flexShrink: 0 }}
       />
       {entry.name} {percentage}
-    </span>
+    </Text>
   )
 }
 
@@ -73,9 +73,9 @@ export function MiniDonut({
   ]
   return (
     <div>
-      <p className="text-[11px] font-semibold text-content-muted mb-1 uppercase tracking-wide">
+      <Text as="p" variant="microSectionLabel" tone="muted" className="mb-1">
         {title}
-      </p>
+      </Text>
       <ResponsiveContainer width="100%" height={110}>
         <PieChart>
           <Pie
@@ -103,5 +103,5 @@ function MiniDonutSector(
 ) {
   const entry = shapeProps.payload
   if (!entry) return null
-  return <Sector {...shapeProps} fill={catColor(entry.name)} />
+  return <ChartSector geometry={shapeProps} category={entry.name} />
 }

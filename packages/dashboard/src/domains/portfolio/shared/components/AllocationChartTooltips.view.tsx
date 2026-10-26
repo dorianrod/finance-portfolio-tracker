@@ -3,7 +3,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { catColor } from '@/shared/theme/chartColors'
+import { ChartText } from '@/shared/ui/ChartText.view'
 import {
   type NumericTooltipProps,
   tooltipValue,
@@ -24,10 +24,10 @@ function PieTooltipSubItem({
   )
 
   return (
-    <div style={{ color: 'var(--tooltip-dim)', marginTop: 2 }}>
+    <ChartText as="div" tone={'tooltipDim'} style={{ marginTop: 2 }}>
       {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} ·{' '}
       {percentage}
-    </div>
+    </ChartText>
   )
 }
 
@@ -44,9 +44,9 @@ function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
   if (!value) return null
 
   return (
-    <div style={{ color: catColor(category) }}>
+    <ChartText as="div" category={category}>
       {category}: {formatPercentage(value)}
-    </div>
+    </ChartText>
   )
 }
 
@@ -61,28 +61,26 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   )
   return (
     <TooltipBox minWidth={160}>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          marginBottom: 4,
-          fontWeight: 600,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 4 }}
       >
         {item.name}
-      </div>
-      <div style={{ color: 'var(--tooltip-label)', fontWeight: 700 }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} variant="bold">
         {formatMoney(item.value, { style: 'full' })}
-      </div>
-      <div
-        style={{
-          color: 'var(--tooltip-dim)',
-          marginBottom: item.subItems?.length ? 6 : 0,
-        }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipDim'}
+        style={{ marginBottom: item.subItems?.length ? 6 : 0 }}
       >
         {i18n.t('ui.allocationchartsTooltips.ofTotalAllocatedWithValues', {
           percentage,
         })}
-      </div>
+      </ChartText>
       {item.subItems?.map((subItem) => (
         <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />
       ))}
@@ -106,9 +104,9 @@ export function EvolutionTooltip({
   if (!active || !payload?.length) return null
   return (
     <TooltipBox maxWidth={220}>
-      <div style={{ color: 'var(--tooltip-text)', marginBottom: 6 }}>
+      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
         {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </div>
+      </ChartText>
       {categories.toReversed().map((category) => (
         <EvolutionTooltipRow
           key={category}

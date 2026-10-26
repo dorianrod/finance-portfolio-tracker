@@ -77,9 +77,7 @@ describe('OverviewSummaryCards', () => {
     expect(html).toContain('Open Concentration details')
     expect(html).toContain('IRR · trailing 3y')
     expect(html).toContain('+2.2 pp')
-    expect(html).toContain(
-      'Previous <span class="font-medium tabular-nums text-content-muted">+6.20%</span>',
-    )
+    expect(html).toMatch(/Previous <span[^>]*>\+6\.20%<\/span>/u)
     expect(html).toContain('-2.0 pp')
     expect(html).toContain('Underlying assets')
     expect(html).toContain('Held positions · largest 24.0% · top five 62.0%')
@@ -110,9 +108,7 @@ describe('OverviewSummaryCards', () => {
       </Provider>,
     )
 
-    expect(html).toContain(
-      'Previous <span class="font-medium tabular-nums text-content-muted">Unavailable</span>',
-    )
+    expect(html).toMatch(/Previous <span[^>]*>Unavailable<\/span>/u)
     expect(html).toContain(
       'Underlying detail unavailable · showing held positions',
     )

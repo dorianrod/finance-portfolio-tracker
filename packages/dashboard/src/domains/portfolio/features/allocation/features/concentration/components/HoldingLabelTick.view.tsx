@@ -1,3 +1,4 @@
+import { ChartText } from '@/shared/ui/ChartText.view'
 type HoldingLabelTickProps = {
   x?: number
   y?: number
@@ -21,13 +22,17 @@ export function HoldingLabelTick({
       height={20}
       style={{ overflow: 'visible' }}
     >
-      <div
-        className="truncate pr-2 text-right text-[11px] leading-5"
-        style={{ color: 'var(--chart-tick)' }}
+      <ChartText
+        as="div"
+        tone="tick"
+        variant="tickLabel"
+        align="right"
+        truncate
+        className="pr-2"
         title={label}
       >
         {label}
-      </div>
+      </ChartText>
     </foreignObject>
   )
 }

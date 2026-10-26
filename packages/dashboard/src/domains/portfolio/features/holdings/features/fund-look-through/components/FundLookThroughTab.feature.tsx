@@ -3,6 +3,8 @@ import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/Sc
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { FundHoldingsExplorer } from './FundHoldingsExplorer.feature'
 
@@ -16,8 +18,13 @@ export function FundLookThroughTab({
   const applicablePositions = selectExposurePositions(positions)
 
   let content = (
-    <section className="rounded-xl border border-border bg-surface p-5">
-      <h2 className="flex items-center font-semibold text-content-secondary">
+    <Surface as="section" variant="card" className="p-5">
+      <Text
+        as="h2"
+        variant="strong"
+        tone="secondary"
+        className="flex items-center"
+      >
         {i18n.t('ui.fundlookthroughtab.noIdentifiedUnderlyingExposureYet')}
         <ScopedInfoTooltip
           text={i18n.t(
@@ -25,18 +32,23 @@ export function FundLookThroughTab({
           )}
           scope={{ account: 'filterable', period: 'as-of' }}
         />
-      </h2>
-      <p className="mt-1 text-sm text-content-subtle">
+      </Text>
+      <Text as="p" variant="body" tone="subtle" className="mt-1">
         {i18n.t(
           'ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact',
         )}
-      </p>
-    </section>
+      </Text>
+    </Surface>
   )
   if (applicablePositions.length === 0) {
     content = (
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="flex items-center font-semibold text-content-secondary">
+      <Surface as="section" variant="card" className="p-5">
+        <Text
+          as="h2"
+          variant="strong"
+          tone="secondary"
+          className="flex items-center"
+        >
           {i18n.t('ui.fundlookthroughtab.underlyingExposureNotApplicable')}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -44,13 +56,13 @@ export function FundLookThroughTab({
             )}
             scope={{ account: 'filterable', period: 'as-of' }}
           />
-        </h2>
-        <p className="mt-1 text-sm text-content-subtle">
+        </Text>
+        <Text as="p" variant="body" tone="subtle" className="mt-1">
           {i18n.t(
             'ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking',
           )}
-        </p>
-      </section>
+        </Text>
+      </Surface>
     )
   } else if (holdings.length > 0) {
     content = <FundHoldingsExplorer positions={positions} holdings={holdings} />

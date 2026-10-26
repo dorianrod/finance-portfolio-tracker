@@ -7,7 +7,9 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Input, Select } from '@/shared/ui/Controls.view'
-import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
+import { Surface } from '@/shared/ui/Surface.view'
+import { TablePanel } from '@/shared/ui/TablePanel.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   GRID,
@@ -39,10 +41,10 @@ export function FundHoldingsExplorer({
     useVirtualExposureList(rows)
 
   return (
-    <section className={DATA_TABLE_STYLES.panel}>
-      <div className={DATA_TABLE_STYLES.toolbar}>
+    <TablePanel>
+      <TablePanel.Toolbar>
         <div>
-          <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>
+          <TablePanel.Title className="flex items-center">
             {i18n.t('ui.fundholdingsexplorer.allIdentifiedEconomicExposure')}
             <ScopedInfoTooltip
               text={i18n.t(
@@ -50,14 +52,14 @@ export function FundHoldingsExplorer({
               )}
               scope={{ account: 'filterable', period: 'as-of' }}
             />
-          </h2>
-          <p className={DATA_TABLE_STYLES.description}>
+          </TablePanel.Title>
+          <TablePanel.Description>
             {i18n.t(
               'ui.fundholdingsexplorer.groupedByIssuerWithSecurityAndSourceFundDetail',
             )}
-          </p>
+          </TablePanel.Description>
         </div>
-        <div className={DATA_TABLE_STYLES.actions}>
+        <TablePanel.Actions>
           <Input
             type="search"
             value={query}
@@ -66,7 +68,8 @@ export function FundHoldingsExplorer({
               'ui.fundholdingsexplorer.searchIssuerSecurityOrFund',
             )}
             label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
-            className="min-w-0 flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary outline-none focus:border-accent sm:w-72"
+            variant="canvasSearch"
+            className="min-w-0 flex-1 px-3 py-2 sm:w-72"
           />
           <Select
             value={sort}
@@ -74,7 +77,8 @@ export function FundHoldingsExplorer({
               setSort(event.target.value as FundExposureSort)
             }
             label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
-            className="rounded-lg border border-border-strong bg-canvas px-3 py-2 text-sm text-content-secondary"
+            variant="canvasSelect"
+            className="px-3 py-2"
           >
             <option value="value">
               {i18n.t('ui.fundholdingsexplorer.largestFirst')}
@@ -83,20 +87,20 @@ export function FundHoldingsExplorer({
               {i18n.t('ui.fundholdingsexplorer.name')}
             </option>
           </Select>
-        </div>
-      </div>
+        </TablePanel.Actions>
+      </TablePanel.Toolbar>
       <div>
         <div>
-          <div className={`${GRID} ${DATA_TABLE_STYLES.columnHeader} py-2`}>
+          <TablePanel.Header as="div" className={`${GRID} py-2`}>
             <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
-            <span className="text-right">
+            <Text align="right">
               {i18n.t('ui.fundholdingsexplorer.exposure')}
-            </span>
-            <span className="text-right">
+            </Text>
+            <Text align="right">
               {i18n.t('ui.fundholdingsexplorer.portfolio')}
-            </span>
+            </Text>
             <span>{i18n.t('ui.fundholdingsexplorer.sources')}</span>
-          </div>
+          </TablePanel.Header>
           <div
             ref={listRef}
             className="relative"
@@ -114,12 +118,22 @@ export function FundHoldingsExplorer({
           </div>
         </div>
         {displayed.length === 0 && (
-          <p className="p-8 text-center text-sm text-content-subtle">
+          <Text
+            as="p"
+            variant="body"
+            tone="subtle"
+            align="center"
+            className="p-8"
+          >
             {i18n.t('ui.fundholdingsexplorer.noExposureMatchesThisSearch')}
-          </p>
+          </Text>
         )}
       </div>
-      <div className="sticky bottom-0 z-10 rounded-b-xl border-t border-border bg-surface px-4 py-2 text-xs text-content-muted">
+      <Surface
+        variant="floatingFooter"
+        tone="muted"
+        className="sticky bottom-0 z-10 px-4 py-2"
+      >
         {i18n.t('ui.fundholdingsexplorer.issuerCount', {
           count: displayed.length,
           formattedCount: formatNumber(displayed.length),
@@ -130,15 +144,15 @@ export function FundHoldingsExplorer({
           formattedCount: formatNumber(securityCount),
         })}
         {displayed.length !== totalIssuerCount && (
-          <span className="text-content-subtle">
+          <Text tone="subtle">
             {' '}
             {i18n.t('ui.fundholdingsexplorer.filteredFromIssuers', {
               count: totalIssuerCount,
               formattedCount: formatNumber(totalIssuerCount),
             })}
-          </span>
+          </Text>
         )}
-      </div>
-    </section>
+      </Surface>
+    </TablePanel>
   )
 }

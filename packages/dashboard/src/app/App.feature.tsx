@@ -37,6 +37,8 @@ import {
 } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 import { DashboardHeader } from './DashboardHeader.feature'
@@ -200,7 +202,11 @@ export default function App() {
 
   return (
     <ViewNavigation>
-      <div className="min-h-screen bg-canvas p-4 text-content sm:p-6">
+      <Surface
+        variant="canvas"
+        tone="default"
+        className="min-h-screen p-4 sm:p-6"
+      >
         <div className="mx-auto max-w-screen-2xl">
           <DashboardHeader />
 
@@ -217,11 +223,14 @@ export default function App() {
 
             {activeTab === 'holdings' && <HoldingsViewTabs />}
 
-            <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-5">
+            <Surface
+              variant="sectionEnd"
+              className="mb-6 flex items-start justify-between gap-4 pb-5"
+            >
               <div className="min-w-0">
-                <h2 className="text-lg font-semibold text-content">
+                <Text as="h2" variant="statistic" tone="default">
                   {copy.title}
-                </h2>
+                </Text>
                 {showPipelineReliability && (
                   <div className="mt-2">
                     <PipelineReliabilityKpi
@@ -316,15 +325,15 @@ export default function App() {
                     />
                   </div>
                 )}
-                <p className="mt-2 text-sm text-content-subtle">
+                <Text as="p" variant="body" tone="subtle" className="mt-2">
                   {copy.description}
-                </p>
+                </Text>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {activeTab === 'allocation' && <AllocationViewToggle />}
                 <FilterButton activeCount={activeFilterSummaries.length} />
               </div>
-            </div>
+            </Surface>
 
             <ActiveFilterSummary items={visibleFilterSummaries}>
               {showOverviewPeriodFilter && (
@@ -436,7 +445,7 @@ export default function App() {
             </DashboardPanelErrorBoundary>
           </DashboardLoadState>
         </div>
-      </div>
+      </Surface>
     </ViewNavigation>
   )
 }

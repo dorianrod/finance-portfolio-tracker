@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules. Use when writing, reviewing, or refactoring React code against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.7.0"
+  version: "0.8.0"
 ---
 
 # Dorian React Best Practices
@@ -35,7 +35,8 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 
 ### Styling Boundaries
 
-- [`styling-semantic-colors`](rules/styling-semantic-colors.md) — Keep raw and palette-specific colors out of business components.
+- [`styling-centralize-in-shared-ui`](rules/styling-centralize-in-shared-ui.md) — Centralize visual styling in shared UI primitives; allow only layout, including padding, elsewhere.
+- [`styling-semantic-colors`](rules/styling-semantic-colors.md) — Use semantic tokens inside shared UI and semantic variants in business components.
 
 ### Component Composition
 

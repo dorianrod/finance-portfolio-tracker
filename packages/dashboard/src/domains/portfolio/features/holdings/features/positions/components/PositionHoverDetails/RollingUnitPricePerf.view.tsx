@@ -1,29 +1,24 @@
 import type { RollingReturn } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 function RollingUnitPriceRow({ row }: { row: RollingReturn }) {
   const formatPercentage = useFormatPercentage()
   return (
-    <p
-      className={
-        row.pct >= 0
-          ? SEMANTIC_TEXT_CLASSES.performancePositive
-          : SEMANTIC_TEXT_CLASSES.performanceNegative
-      }
-    >
+    <Text as="p" tone={row.pct >= 0 ? 'positive' : 'negative'}>
       {row.label}: {formatPercentage(row.pct, { signed: true })}
-    </p>
+    </Text>
   )
 }
 
 export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
   if (rows.length === 0) return null
   return (
-    <div className="mt-2 pt-2 border-t border-border-strong space-y-0.5">
+    <Surface variant="strongSectionStart" className="mt-2 pt-2 space-y-0.5">
       {rows.map((row) => (
         <RollingUnitPriceRow key={row.label} row={row} />
       ))}
-    </div>
+    </Surface>
   )
 }

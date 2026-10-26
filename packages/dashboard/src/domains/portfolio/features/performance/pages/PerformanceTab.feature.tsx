@@ -27,6 +27,8 @@ import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function PerformanceTab({
   history,
@@ -101,21 +103,21 @@ export function PerformanceTab({
   return (
     <div className="mb-6 space-y-4">
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <section className="border-b border-border pb-4">
-          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-content-muted">
+        <Surface as="section" variant="sectionEnd" className="pb-4">
+          <Text as="h2" variant="overline" tone="muted" className="mb-4">
             {i18n.t('ui.performancetab.performance')}
-          </h2>
+          </Text>
           <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <TotalNetPerformanceKpi performance={performance} />
             <NetUnrealizedKpi performance={performance} />
             <NetRealizedKpi performance={performance} />
           </div>
-        </section>
+        </Surface>
 
-        <section className="border-b border-border pb-4">
-          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-content-muted">
+        <Surface as="section" variant="sectionEnd" className="pb-4">
+          <Text as="h2" variant="overline" tone="muted" className="mb-4">
             {i18n.t('ui.performancetab.returnsAndPassiveIncome')}
-          </h2>
+          </Text>
           <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
             <PassiveIncomeKpi income={income} />
             <IrrSinceTrackingKpi
@@ -130,7 +132,7 @@ export function PerformanceTab({
               scopeLabel={irrScopeLabel}
             />
           </div>
-        </section>
+        </Surface>
       </div>
       {hasChartData && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">

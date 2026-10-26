@@ -7,6 +7,7 @@ import {
 import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme.atoms'
 import i18n from '@/i18n/i18n'
 import { ToggleButton } from '@/shared/ui/Controls.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export function DashboardHeader() {
   const theme = useAtomValue(dashboardThemeAtom)
@@ -16,9 +17,9 @@ export function DashboardHeader() {
   return (
     <header className="mb-5 flex items-start gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-content">
+        <Text as="h1" variant="title" tone="default">
           {i18n.t('ui.app.portfolio')}
-        </h1>
+        </Text>
       </div>
       <ToggleButton
         type="button"
@@ -29,7 +30,8 @@ export function DashboardHeader() {
             ? i18n.t('ui.app.switchToLightMode')
             : i18n.t('ui.app.switchToDarkMode')
         }
-        className="ml-auto rounded-control border border-border-strong bg-surface px-3 py-2 text-xs font-medium text-content-muted transition-colors hover:bg-surface-raised hover:text-content-secondary"
+        variant="secondary"
+        className="ml-auto px-3 py-2"
       >
         {theme === 'dark'
           ? i18n.t('ui.app.lightMode')

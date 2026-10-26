@@ -1,20 +1,17 @@
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { SeriesArea } from '@/shared/ui/SeriesArea.view'
+import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
+import { SeriesLine } from '@/shared/ui/SeriesLine.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { DriversTooltip } from './WealthDriversTooltip.view'
 
@@ -22,9 +19,14 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   return (
-    <div className="rounded-xl bg-surface p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-content-secondary">
+        <Text
+          as="h2"
+          variant="label"
+          tone="secondary"
+          className="flex items-center"
+        >
           {i18n.t('ui.wealthdriverschart.cumulativeWealthDrivers')}
           <ScopedInfoTooltip
             text={i18n.t(
@@ -32,12 +34,12 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
             )}
             scope={{ account: 'filterable', period: 'range' }}
           />
-        </h2>
-        <p className="mt-0.5 text-xs text-content-subtle">
+        </Text>
+        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
           {i18n.t(
             'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
           )}
-        </p>
+        </Text>
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart
@@ -45,96 +47,89 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="driversSavings" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={SEMANTIC_COLORS.netContributions}
-                stopOpacity={0.35}
-              />
-              <stop
-                offset="95%"
-                stopColor={SEMANTIC_COLORS.netContributions}
-                stopOpacity={0.04}
-              />
-            </linearGradient>
-            <linearGradient id="driversPerformance" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor={SEMANTIC_COLORS.performance}
-                stopOpacity={0.3}
-              />
-              <stop
-                offset="95%"
-                stopColor={SEMANTIC_COLORS.performance}
-                stopOpacity={0.03}
-              />
-            </linearGradient>
+            <SeriesGradient
+              id="driversSavings"
+              profile="light"
+              tone="netContributions"
+            />
+            <SeriesGradient
+              id="driversPerformance"
+              profile="subtle"
+              tone="performance"
+            />
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             dataKey="date"
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             interval="preserveStartEnd"
           />
-          <YAxis
+          <ChartYAxis
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: 'var(--chart-tick)', fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={52}
           />
           <Tooltip content={<DriversTooltip />} />
-          <Area
+          <SeriesArea
             type="monotone"
             dataKey="cumulative_savings"
-            stroke={SEMANTIC_COLORS.netContributions}
-            fill="url(#driversSavings)"
-            strokeWidth={2}
+            tone="netContributions"
+            gradientId="driversSavings"
+            weight="regular"
           />
-          <Area
+          <SeriesArea
             type="monotone"
             dataKey="cumulative_performance"
-            stroke={SEMANTIC_COLORS.performance}
-            fill="url(#driversPerformance)"
-            strokeWidth={2}
+            tone="performance"
+            gradientId="driversPerformance"
+            weight="regular"
           />
-          <Line
+          <SeriesLine
             type="monotone"
             dataKey="cumulative_change"
-            stroke={SEMANTIC_COLORS.totalChange}
-            strokeWidth={2.5}
-            dot={false}
+            tone="totalChange"
+            weight="emphasized"
+            markers="hidden"
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
+      <Text
+        as="div"
+        variant="caption"
+        tone="subtle"
+        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
+      >
         <span>
-          <i
-            className="mr-1.5 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.netContributions }}
+          <SeriesSwatch
+            tone={'netContributions'}
+            as="i"
+            shape="dot"
+            className="mr-1.5 inline-block h-2 w-2"
           />
           {i18n.t('ui.wealthdriverschart.netContributions')}
         </span>
         <span>
-          <i
-            className="mr-1.5 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.performance }}
+          <SeriesSwatch
+            tone={'performance'}
+            as="i"
+            shape="dot"
+            className="mr-1.5 inline-block h-2 w-2"
           />
           {i18n.t('ui.wealthdriverschart.marketPerformance')}
         </span>
         <span>
-          <i
-            className="mr-1.5 inline-block h-2 w-2 rounded-full"
-            style={{ backgroundColor: SEMANTIC_COLORS.totalChange }}
+          <SeriesSwatch
+            tone={'totalChange'}
+            as="i"
+            shape="dot"
+            className="mr-1.5 inline-block h-2 w-2"
           />
           {i18n.t('ui.wealthdriverschart.totalChange')}
         </span>
-      </div>
-    </div>
+      </Text>
+    </Surface>
   )
 }

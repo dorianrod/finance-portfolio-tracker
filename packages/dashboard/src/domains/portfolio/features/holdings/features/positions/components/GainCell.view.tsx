@@ -1,6 +1,7 @@
-import { gainClass } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainClass'
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Text } from '@/shared/ui/Text.view'
 
 export function GainCell({
   value,
@@ -11,15 +12,15 @@ export function GainCell({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (value == null) return <span className="text-content-subtle">—</span>
+  if (value == null) return <Text tone="subtle">—</Text>
   return (
-    <span className={gainClass(value)}>
+    <Text tone={getGainTone(value)}>
       {formatMoney(value)}
       {pct != null && (
-        <span className="ml-1 text-xs opacity-80">
+        <Text variant="secondaryCaption" className="ml-1">
           {formatPercentage(pct, { decimals: 2, signed: true })}
-        </span>
+        </Text>
       )}
-    </span>
+    </Text>
   )
 }

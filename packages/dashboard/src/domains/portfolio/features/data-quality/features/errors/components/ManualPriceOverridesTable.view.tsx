@@ -3,6 +3,9 @@ import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manua
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { LevelBadge } from '@/shared/ui/StatusBadge.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 export type ManualPriceOverridesProps = {
   manualPriceOverrides: ManualPriceOverride[]
@@ -13,33 +16,33 @@ export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
   const formatMoney = useFormatMoney()
   const openEnded = !row.date_to
   return (
-    <tr className="border-b border-border/50 hover:bg-surface/40">
+    <Surface as="tr" variant="interactiveRow">
       <td className="px-3 py-2">
-        <span
-          className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold ${openEnded ? 'bg-warning-muted/60 text-warning' : 'bg-surface-raised text-content-muted'}`}
-        >
+        <LevelBadge level={openEnded ? 'warning' : 'muted'}>
           {openEnded
             ? i18n.t('ui.errorstab.openEnded')
             : i18n.t('ui.errorstab.bounded')}
-        </span>
+        </LevelBadge>
       </td>
-      <td className="px-3 py-2 text-content-secondary">{row.name || '—'}</td>
-      <td className="px-3 py-2 font-mono text-content-subtle">
+      <Text as="td" tone="secondary" className="px-3 py-2">
+        {row.name || '—'}
+      </Text>
+      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
         {row.isin || row.ticker || '—'}
-      </td>
-      <td className="px-3 py-2 font-medium text-content-secondary">
+      </Text>
+      <Text as="td" variant="medium" tone="secondary" className="px-3 py-2">
         {formatManualPrice(row, formatMoney)}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-muted">
+      </Text>
+      <Text as="td" variant="code" tone="muted" className="px-3 py-2">
         {row.date_from ? formatDate(row.date_from, { style: 'isoDate' }) : '—'}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-muted">
+      </Text>
+      <Text as="td" variant="code" tone="muted" className="px-3 py-2">
         {row.date_to ? formatDate(row.date_to, { style: 'isoDate' }) : '—'}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-subtle">
+      </Text>
+      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
         {row.source_file}
-      </td>
-    </tr>
+      </Text>
+    </Surface>
   )
 }
 
@@ -47,39 +50,45 @@ export function ManualPriceOverridesTable({
   manualPriceOverrides,
 }: ManualPriceOverridesProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full text-xs">
+    <Surface variant="outlined" className="overflow-x-auto">
+      <Surface variant="compactTable" as="table" className="w-full">
         <thead>
-          <tr className="border-b border-border bg-surface/60 text-left text-content-muted">
-            <th className="px-3 py-2 font-medium w-24">
+          <Surface as="tr" variant="tableHeader" tone="muted" align="left">
+            <Text as="th" variant="medium" className="px-3 py-2 w-24">
               {i18n.t('ui.errorstab.status')}
-            </th>
-            <th className="px-3 py-2 font-medium">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2">
               {i18n.t('ui.errorstab.asset')}
-            </th>
-            <th className="px-3 py-2 font-medium w-28">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2 w-28">
               {i18n.t('ui.errorstab.isinTicker')}
-            </th>
-            <th className="px-3 py-2 font-medium w-24">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2 w-24">
               {i18n.t('ui.errorstab.forcedPrice')}
-            </th>
-            <th className="px-3 py-2 font-medium w-24">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2 w-24">
               {i18n.t('ui.errorstab.from')}
-            </th>
-            <th className="px-3 py-2 font-medium w-24">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2 w-24">
               {i18n.t('ui.errorstab.until')}
-            </th>
-            <th className="px-3 py-2 font-medium w-36">
+            </Text>
+            <Text as="th" variant="medium" className="px-3 py-2 w-36">
               {i18n.t('ui.errorstab.source')}
-            </th>
-          </tr>
+            </Text>
+          </Surface>
         </thead>
         <tbody>
           {manualPriceOverrides.length === 0 ? (
             <tr>
-              <td colSpan={7} className="text-center py-8 text-content-subtle">
+              <Text
+                colSpan={7}
+                as="td"
+                tone="subtle"
+                align="center"
+                className="py-8"
+              >
                 {i18n.t('ui.errorstab.noManualPriceOverrides')}
-              </td>
+              </Text>
             </tr>
           ) : (
             manualPriceOverrides.map((row) => (
@@ -87,7 +96,7 @@ export function ManualPriceOverridesTable({
             ))
           )}
         </tbody>
-      </table>
-    </div>
+      </Surface>
+    </Surface>
   )
 }

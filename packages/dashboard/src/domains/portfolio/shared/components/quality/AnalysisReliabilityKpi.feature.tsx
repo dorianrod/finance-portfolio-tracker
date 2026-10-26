@@ -16,7 +16,10 @@ import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { Button, Decorative } from '@/shared/ui/Controls.view'
+import { Button } from '@/shared/ui/Controls.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 import { Tooltip } from '@/shared/ui/Tooltip.view'
 
 import {
@@ -48,51 +51,63 @@ function CompactDataQualityKpi({
   const styles = RELIABILITY_TONES[tone]
 
   return (
-    <div className="data-quality-kpi relative inline-flex items-center rounded-md transition-colors hover:bg-surface/60">
+    <Surface
+      variant="qualityAction"
+      className="relative inline-flex items-center"
+    >
       <Button
         type="button"
         onClick={handleClick}
-        className="inline-flex items-center gap-2 rounded-l-md py-1 pl-0 pr-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        variant="qualityAction"
+        className="inline-flex items-center gap-2 py-1 pl-0 pr-1"
         label={ariaLabel}
       >
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-content-subtle">
+        <Text variant="prominentEyebrow" tone="subtle">
           {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
-        </span>
-        <Decorative className={`h-2 w-2 shrink-0 rounded-full ${styles.dot}`} />
-        <span
-          className={`text-[10px] font-semibold uppercase tracking-wider ${styles.status}`}
-        >
+        </Text>
+        <ToneSwatch
+          tone={styles.dot}
+          shape="dot"
+          className="h-2 w-2 shrink-0"
+        />
+        <Text variant="eyebrow" tone={styles.status}>
           {styles.label}
-        </span>
+        </Text>
       </Button>
       <Tooltip>
         <Tooltip.Trigger
-          className="data-quality-help rounded-r-md p-1 text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          variant="help"
+          className="p-1"
           label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
         >
           <InfoIcon />
         </Tooltip.Trigger>
         <Tooltip.Content
           align="start"
-          className="w-[min(22rem,calc(100vw-2rem))] text-left"
+          variant="left"
+          className="w-[min(22rem,calc(100vw-2rem))]"
         >
-          <span className="block text-xs leading-relaxed text-content-muted">
+          <Text variant="note" tone="muted" className="block">
             {tooltip}
-          </span>
-          <span className="mt-2.5 block border-t border-border pt-2">
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-content-subtle">
+          </Text>
+          <Surface
+            as="span"
+            variant="sectionStart"
+            className="mt-2.5 block pt-2"
+          >
+            <Text variant="eyebrow" tone="subtle" className="block">
               {i18n.t('ui.analysisreliabilitykpi.filterScope')}
-            </span>
+            </Text>
             <FilterScopeBadges {...scope} />
-          </span>
-          <span className="mt-3 block border-t border-border pt-1">
+          </Surface>
+          <Surface as="span" variant="sectionStart" className="mt-3 block pt-1">
             {rows.map((row) => (
               <QualityTooltipMetricRow key={row.label} row={row} />
             ))}
-          </span>
+          </Surface>
         </Tooltip.Content>
       </Tooltip>
-    </div>
+    </Surface>
   )
 }
 

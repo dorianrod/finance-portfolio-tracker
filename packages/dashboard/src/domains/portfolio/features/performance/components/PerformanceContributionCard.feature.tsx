@@ -23,8 +23,9 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
 import { Group, ToggleButton } from '@/shared/ui/Controls.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   ContributionListItem,
@@ -53,10 +54,15 @@ function MetricLabel({
   scope: FilterScopeSpec
 }) {
   return (
-    <div className="flex items-center text-[11px] uppercase tracking-wider text-content-subtle">
+    <Text
+      as="div"
+      variant="microOverline"
+      tone="subtle"
+      className="flex items-center"
+    >
       <span>{label}</span>
       <ScopedInfoTooltip text={tooltip} scope={scope} />
-    </div>
+    </Text>
   )
 }
 
@@ -74,7 +80,12 @@ function ContributionList({
   return (
     <section>
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h3 className="flex items-center text-xs font-semibold uppercase tracking-wider text-content-subtle">
+        <Text
+          as="h3"
+          variant="overline"
+          tone="subtle"
+          className="flex items-center"
+        >
           {title}
           <ScopedInfoTooltip
             // eslint-disable-next-line local/no-prop-drilling -- Copy selection is presentation logic owned by this contribution section.
@@ -89,19 +100,25 @@ function ContributionList({
             }
             scope={scope}
           />
-        </h3>
-        <span className="text-[11px] text-content-subtle">
+        </Text>
+        <Text variant="micro" tone="subtle">
           {positive
             ? i18n.t('ui.performancecontributioncard.shareOfGains')
             : i18n.t('ui.performancecontributioncard.shareOfLosses')}
-        </span>
+        </Text>
       </div>
       {items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-content-subtle">
+        <Surface
+          variant="emptyCaption"
+          as="p"
+          tone="subtle"
+          align="center"
+          className="px-3 py-6"
+        >
           {positive
             ? i18n.t('ui.performancecontributioncard.noPositiveContribution')
             : i18n.t('ui.performancecontributioncard.noNegativeContribution')}
-        </p>
+        </Surface>
       ) : (
         <ol className="space-y-3">
           {items.map((item) => (
@@ -127,18 +144,28 @@ export function AssetIrrView({
   const formatDate = useFormatDate()
   if (status === 'loading') {
     return (
-      <div className="mt-5 rounded-lg border border-dashed border-border py-10 text-center text-sm text-content-subtle">
+      <Surface
+        variant="empty"
+        tone="subtle"
+        align="center"
+        className="mt-5 py-10"
+      >
         {i18n.t('ui.performancecontributioncard.calculatingAssetIrr')}
-      </div>
+      </Surface>
     )
   }
   if (status === 'error' || !summary.available) {
     return (
-      <div className="mt-5 rounded-lg border border-dashed border-border py-10 text-center text-sm text-content-subtle">
+      <Surface
+        variant="empty"
+        tone="subtle"
+        align="center"
+        className="mt-5 py-10"
+      >
         {i18n.t(
           'ui.performancecontributioncard.assetIrrIsNotAvailableForThisSelection',
         )}
-      </div>
+      </Surface>
     )
   }
 
@@ -147,7 +174,10 @@ export function AssetIrrView({
 
   return (
     <>
-      <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-border bg-canvas/40 p-3 sm:grid-cols-2">
+      <Surface
+        variant="inset"
+        className="mt-4 grid grid-cols-1 gap-3 p-3 sm:grid-cols-2"
+      >
         <div>
           <MetricLabel
             label={i18n.t('ui.performancecontributioncard.assetsMeasured')}
@@ -161,22 +191,28 @@ export function AssetIrrView({
               effectiveDate: summary.end_date,
             }}
           />
-          <div className="mt-1 text-lg font-semibold tabular-nums text-content-secondary">
+          <Text
+            as="div"
+            variant="statistic"
+            tone="secondary"
+            numeric
+            className="mt-1"
+          >
             {measuredCount}
-          </div>
+          </Text>
         </div>
         <div>
-          <div className="text-[11px] uppercase tracking-wider text-content-subtle">
+          <Text as="div" variant="microOverline" tone="subtle">
             {i18n.t('ui.performancecontributioncard.period')}
-          </div>
-          <div className="mt-1 text-sm font-medium text-content-muted">
+          </Text>
+          <Text as="div" variant="label" tone="muted" className="mt-1">
             {formatExactPerformanceDateRange(
               { startDate: summary.start_date, endDate: summary.end_date },
               formatDate,
             )}
-          </div>
+          </Text>
         </div>
-      </div>
+      </Surface>
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <IrrList
           title={i18n.t('ui.performancecontributioncard.topIrrs')}
@@ -216,10 +252,7 @@ export function PerformanceContributionCard({
       trailingThreeYears,
       trailingThreeYearIrr,
     })
-  const netTone =
-    summary.netContribution >= 0
-      ? SEMANTIC_TEXT_CLASSES.performancePositive
-      : SEMANTIC_TEXT_CLASSES.performanceNegative
+  const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
 
   const description =
     view === 'contribution'
@@ -236,23 +269,27 @@ export function PerformanceContributionCard({
   const showContributionDetails = view === 'contribution' && summary.available
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <Surface as="section" variant="card" className="p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-sm font-medium text-content-muted">
+          <Text as="h2" variant="label" tone="muted">
             {i18n.t('ui.performancecontributioncard.performanceByAsset')}
-          </h2>
-          <p className="mt-1 text-xs text-content-subtle">{description}</p>
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-1">
+            {description}
+          </Text>
         </div>
         <Group
-          className="inline-flex self-start rounded-lg border border-border-strong bg-canvas p-0.5"
+          variant="canvasOutline"
+          className="inline-flex self-start p-0.5"
           label={i18n.t('ui.performancecontributioncard.performanceMetric')}
         >
           <ToggleButton
             type="button"
             onClick={() => setView('contribution')}
             active={view === 'contribution'}
-            className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'contribution' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
+            variant="metricChoice"
+            className="px-2.5 py-1"
           >
             {i18n.t('ui.performancecontributioncard.contribution.7ffdcf')}
           </ToggleButton>
@@ -260,7 +297,8 @@ export function PerformanceContributionCard({
             type="button"
             onClick={() => setView('irr')}
             active={view === 'irr'}
-            className={`rounded-md px-2.5 py-1 text-xs transition-colors ${view === 'irr' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
+            variant="metricChoice"
+            className="px-2.5 py-1"
           >
             {i18n.t('ui.performancecontributioncard.irr.a0fb95')}
           </ToggleButton>
@@ -271,15 +309,23 @@ export function PerformanceContributionCard({
         <AssetIrrView summary={assetIrr} status={assetIrrStatus} />
       )}
       {showUnavailableContribution && (
-        <div className="mt-5 rounded-lg border border-dashed border-border py-10 text-center text-sm text-content-subtle">
+        <Surface
+          variant="empty"
+          tone="subtle"
+          align="center"
+          className="mt-5 py-10"
+        >
           {i18n.t(
             'ui.performancecontributioncard.contributionHistoryIsNotAvailableForThisSelection',
           )}
-        </div>
+        </Surface>
       )}
       {showContributionDetails && (
         <>
-          <div className="mt-4 grid grid-cols-1 gap-3 rounded-lg border border-border bg-canvas/40 p-3 sm:grid-cols-3">
+          <Surface
+            variant="inset"
+            className="mt-4 grid grid-cols-1 gap-3 p-3 sm:grid-cols-3"
+          >
             <div>
               <MetricLabel
                 label={i18n.t('ui.performancecontributioncard.irrContext')}
@@ -293,9 +339,15 @@ export function PerformanceContributionCard({
                   effectiveDate: summary.endDate,
                 }}
               />
-              <div className="mt-1 text-lg font-semibold tabular-nums text-return">
+              <Text
+                as="div"
+                variant="statistic"
+                tone="return"
+                numeric
+                className="mt-1"
+              >
                 {formatPerformanceIrrLabel(irr, irrStatus, formatPercentage)}
-              </div>
+              </Text>
             </div>
             <div>
               <MetricLabel
@@ -312,22 +364,33 @@ export function PerformanceContributionCard({
                   effectiveDate: summary.endDate,
                 }}
               />
-              <div
-                className={`mt-1 text-lg font-semibold tabular-nums ${netTone}`}
+              <Text
+                as="div"
+                variant="statistic"
+                tone={netTone}
+                numeric
+                className="mt-1"
               >
                 {formatMoney(summary.netContribution, { style: 'full' })}
-              </div>
+              </Text>
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-content-subtle">
+              <Text as="div" variant="microOverline" tone="subtle">
                 {i18n.t('ui.performancecontributioncard.period')}
-              </div>
+              </Text>
               <div className="mt-2 flex items-center justify-between gap-3">
-                <div className="min-w-0 whitespace-nowrap text-sm font-medium text-content-muted">
+                <Text
+                  as="div"
+                  variant="label"
+                  tone="muted"
+                  wrap="nowrap"
+                  className="min-w-0"
+                >
                   {formatPerformanceDateRange(summary, formatDate)}
-                </div>
+                </Text>
                 <Group
-                  className="inline-flex shrink-0 rounded-lg border border-border bg-canvas/40 p-0.5"
+                  variant="inset"
+                  className="inline-flex shrink-0 p-0.5"
                   label={i18n.t(
                     'ui.performancecontributioncard.contributionHorizon',
                   )}
@@ -336,7 +399,8 @@ export function PerformanceContributionCard({
                     type="button"
                     onClick={() => setHorizon('since-tracking')}
                     active={activeHorizon === 'since-tracking'}
-                    className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'since-tracking' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'}`}
+                    variant="horizonChoice"
+                    className="px-2.5 py-1"
                   >
                     {i18n.t('ui.performancecontributioncard.sinceTracking')}
                   </ToggleButton>
@@ -352,14 +416,15 @@ export function PerformanceContributionCard({
                           )
                         : undefined
                     }
-                    className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${activeHorizon === 'trailing-3y' ? 'bg-surface-hover text-content' : 'text-content-subtle hover:text-content-secondary'} disabled:cursor-not-allowed disabled:text-content-subtle`}
+                    variant="optionalHorizonChoice"
+                    className="px-2.5 py-1"
                   >
                     {i18n.t('ui.performancecontributioncard.trailing3Years')}
                   </ToggleButton>
                 </Group>
               </div>
             </div>
-          </div>
+          </Surface>
 
           <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <ContributionList
@@ -389,6 +454,6 @@ export function PerformanceContributionCard({
           </div>
         </>
       )}
-    </section>
+    </Surface>
   )
 }

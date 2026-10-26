@@ -1,5 +1,7 @@
 import i18n from '@/i18n/i18n'
 import { Decorative } from '@/shared/ui/Controls.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import {
   type QualityTooltipRow,
@@ -8,7 +10,10 @@ import {
 
 export function InfoIcon() {
   return (
-    <Decorative className="flex h-4 w-4 items-center justify-center rounded-full border border-border-strong text-[10px] font-bold leading-none">
+    <Decorative
+      variant="infoSymbol"
+      className="flex h-4 w-4 items-center justify-center"
+    >
       {i18n.t('ui.analysisreliabilitykpi.i')}
     </Decorative>
   )
@@ -19,23 +24,30 @@ export function QualityTooltipMetricRow({ row }: { row: QualityTooltipRow }) {
   return (
     <span className="flex items-center justify-between gap-4 py-1.5">
       <span className="flex min-w-0 items-center gap-2">
-        <Decorative
-          className={`h-1.5 w-1.5 shrink-0 rounded-full ${rowStyles.dot}`}
+        <ToneSwatch
+          tone={rowStyles.dot}
+          shape="dot"
+          className="h-1.5 w-1.5 shrink-0"
         />
-        <span className="text-[11px] text-content-secondary">{row.label}</span>
+        <Text variant="micro" tone="secondary">
+          {row.label}
+        </Text>
       </span>
-      <span className="shrink-0 text-right">
-        <span
-          className={`block text-xs font-semibold tabular-nums ${rowStyles.value}`}
+      <Text align="right" className="shrink-0">
+        <Text
+          variant="captionStrong"
+          tone={rowStyles.value}
+          numeric
+          className="block"
         >
           {row.value}
-        </span>
+        </Text>
         {row.secondary && (
-          <span className="mt-0.5 block text-[10px] tabular-nums text-content-subtle">
+          <Text variant="tiny" tone="subtle" numeric className="mt-0.5 block">
             {row.secondary}
-          </span>
+          </Text>
         )}
-      </span>
+      </Text>
     </span>
   )
 }

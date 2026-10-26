@@ -17,8 +17,11 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Button } from '@/shared/ui/Controls.view'
 import { ExternalLink } from '@/shared/ui/ExternalLink.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { FundQualityBadge } from './FundQualityBadge.view'
 
@@ -44,22 +47,21 @@ function DiagnosticsFilterButton({
   if (option === 'issues') label = i18n.t('ui.funddataqualitypanel.issues')
   else if (option === 'all') label = i18n.t('ui.funddataqualitypanel.all')
   return (
-    <button
+    <Button
       type="button"
       onClick={() => onSelect(option)}
-      className={`rounded-lg border px-2.5 py-1 text-xs ${activeFilter === option ? 'border-accent bg-accent-muted/50 text-accent' : 'border-border-strong text-content-subtle hover:text-content-secondary'}`}
+      variant="qualityFilter"
+      selected={activeFilter === option}
+      className="px-2.5 py-1"
     >
       {label}
-    </button>
+    </Button>
   )
 }
 
 function SnapshotSourceLink({ url }: { url: string }) {
   return (
-    <ExternalLink
-      href={url}
-      className="mr-2 block truncate text-accent hover:underline"
-    >
+    <ExternalLink href={url} variant="source" truncate className="mr-2 block">
       {url}
     </ExternalLink>
   )
@@ -69,7 +71,7 @@ function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   return (
-    <div className="mt-2 border-t border-border pt-2">
+    <Surface variant="sectionStart" className="mt-2 pt-2">
       <div>
         {snapshot.snapshotId} · {snapshot.status}
         {snapshot.isActive ? i18n.t('ui.funddataqualitypanel.active') : ''}
@@ -87,22 +89,32 @@ function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
         })}
       </div>
       {snapshot.notes && (
-        <div className="mt-1 text-content-muted">{snapshot.notes}</div>
+        <Text as="div" tone="muted" className="mt-1">
+          {snapshot.notes}
+        </Text>
       )}
       {snapshot.validationErrors && (
-        <div className="mt-1 text-danger">{snapshot.validationErrors}</div>
+        <Text as="div" tone="negative" className="mt-1">
+          {snapshot.validationErrors}
+        </Text>
       )}
       {snapshot.sourceUrls.map((url) => (
         <SnapshotSourceLink key={url} url={url} />
       ))}
       {snapshot.evidencePath && (
-        <div className="mt-1 break-all font-mono text-[10px] text-content-subtle">
+        <Text
+          as="div"
+          variant="tinyCode"
+          tone="subtle"
+          wrap="anywhere"
+          className="mt-1"
+        >
           {i18n.t('ui.funddataqualitypanel.evidenceWithValues', {
             evidencePath: snapshot.evidencePath,
           })}
-        </div>
+        </Text>
       )}
-    </div>
+    </Surface>
   )
 }
 
@@ -110,32 +122,40 @@ function UnresolvedDetail({ item }: { item: FundUnresolved }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <div className="mb-2 border-b border-border pb-2">
-      <div className="text-content-secondary">{item.unresolvedName}</div>
+    <Surface variant="sectionEnd" className="mb-2 pb-2">
+      <Text as="div" tone="secondary">
+        {item.unresolvedName}
+      </Text>
       <div>
         {formatPercentage(item.weight * 100)} ·{' '}
         {formatMoney(item.marketValue, { style: 'full' })}
       </div>
-      <div className="text-warning">{item.reason}</div>
-      <div className="break-all font-mono text-[10px]">{item.path}</div>
-    </div>
+      <Text as="div" tone="warning">
+        {item.reason}
+      </Text>
+      <Text as="div" variant="tinyCode" wrap="anywhere">
+        {item.path}
+      </Text>
+    </Surface>
   )
 }
 
 function ResolvedHoldingDetail({ holding }: { holding: FundHolding }) {
   const formatPercentage = useFormatPercentage()
   return (
-    <div className="flex gap-2 border-b border-border py-1">
-      <span
-        className="min-w-0 flex-1 truncate text-content-secondary"
+    <Surface variant="sectionEnd" className="flex gap-2 py-1">
+      <Text
+        tone="secondary"
+        truncate
+        className="min-w-0 flex-1"
         title={holding.lookthroughPath}
       >
         {holding.holdingName}
-      </span>
-      <span className="tabular-nums text-content-subtle">
+      </Text>
+      <Text tone="subtle" numeric>
         {formatPercentage(holding.weight * 100)}
-      </span>
-    </div>
+      </Text>
+    </Surface>
   )
 }
 
@@ -159,45 +179,52 @@ function FundDiagnosticsRow({
 
   return (
     <Fragment>
-      <tr className="border-t border-border align-top">
-        <td className="break-words px-4 py-3">
-          <div className="font-medium text-content-secondary">
+      <Surface as="tr" variant="topAlignedSection">
+        <Text as="td" wrap="words" className="px-4 py-3">
+          <Text as="div" variant="medium" tone="secondary">
             {status.parentName}
-          </div>
-          <div className="mt-1 break-all font-mono text-[10px] text-content-subtle">
+          </Text>
+          <Text
+            as="div"
+            variant="tinyCode"
+            tone="subtle"
+            wrap="anywhere"
+            className="mt-1"
+          >
             {status.parentIsin || status.parentTicker}
-          </div>
-        </td>
+          </Text>
+        </Text>
         <td className="px-4 py-3">
           <FundQualityBadge status={status} />
           {status.manualAttention && (
-            <div className="mt-2 w-fit rounded border border-warning/70 bg-warning-muted/40 px-2 py-1 text-[10px] font-semibold text-warning">
+            <Surface
+              variant="warningLabel"
+              tone="warning"
+              className="mt-2 w-fit px-2 py-1"
+            >
               {status.sourceOrigin.startsWith('manual')
                 ? i18n.t('ui.funddataqualitypanel.snapshotManuel')
                 : i18n.t('ui.funddataqualitypanel.rechercheAgent')}
-            </div>
+            </Surface>
           )}
         </td>
-        <td className="break-words px-4 py-3">
-          <ExternalLink
-            href={status.sourceUrl}
-            className="text-accent hover:underline"
-          >
+        <Text as="td" wrap="words" className="px-4 py-3">
+          <ExternalLink href={status.sourceUrl} variant="source">
             {status.sourceName || i18n.t('ui.funddataqualitypanel.unavailable')}
           </ExternalLink>
-          <div className="mt-1 text-content-subtle">
+          <Text as="div" tone="subtle" className="mt-1">
             {status.proxyName
               ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', {
                   value0: status.proxyName,
                 })
               : fundQualitySourceLabel(status.qualityTier)}
-          </div>
-        </td>
-        <td className="px-4 py-3 text-content-muted">
+          </Text>
+        </Text>
+        <Text as="td" tone="muted" className="px-4 py-3">
           {status.holdingsDate
             ? formatDate(status.holdingsDate, { style: 'isoDate' })
             : i18n.t('ui.funddataqualitypanel.unknown')}
-          <div className="mt-1 text-content-subtle">
+          <Text as="div" tone="subtle" className="mt-1">
             {i18n.t('ui.funddataqualitypanel.refreshMetrics', {
               rows: i18n.t('ui.funddataqualitypanel.rowCount', {
                 count: status.holdingCount,
@@ -207,39 +234,55 @@ function FundDiagnosticsRow({
                 count: status.refreshStreak,
               }),
             })}
-          </div>
-        </td>
-        <td className="px-4 py-3 text-right tabular-nums text-content-secondary">
+          </Text>
+        </Text>
+        <Text
+          as="td"
+          tone="secondary"
+          align="right"
+          numeric
+          className="px-4 py-3"
+        >
           {formatPercentage(status.explainedPct)}
-          <div className="mt-1 text-content-subtle">
+          <Text as="div" tone="subtle" className="mt-1">
             {formatMoney(status.explainedValue, { style: 'full' })}
-          </div>
-        </td>
-        <td className="px-4 py-3 text-right tabular-nums text-content-secondary">
+          </Text>
+        </Text>
+        <Text
+          as="td"
+          tone="secondary"
+          align="right"
+          numeric
+          className="px-4 py-3"
+        >
           {formatPercentage(status.residualPct)}
-          <div className="mt-1 text-content-subtle">
+          <Text as="div" tone="subtle" className="mt-1">
             {formatMoney(status.residualValue, { style: 'full' })}
-          </div>
-        </td>
-        <td
-          className={`break-words px-4 py-3 ${status.issues ? 'text-warning' : 'text-positive'}`}
+          </Text>
+        </Text>
+        <Text
+          as="td"
+          wrap="words"
+          tone={status.issues ? 'warning' : 'positive'}
+          className="px-4 py-3"
         >
           {status.issues || i18n.t('ui.funddataqualitypanel.noDetectedIssue')}
-        </td>
+        </Text>
         <td className="px-4 py-3">
-          <button
+          <Button
             type="button"
             onClick={() => onToggle(status.parentId)}
-            className="rounded border border-border-strong px-2 py-1 text-content-secondary hover:border-border-strong"
+            variant="fundDetail"
+            className="px-2 py-1"
           >
             {isOpen
               ? i18n.t('ui.funddataqualitypanel.close')
               : i18n.t('ui.funddataqualitypanel.details')}
-          </button>
+          </Button>
         </td>
-      </tr>
+      </Surface>
       {isOpen && (
-        <tr className="border-t border-border bg-canvas/50">
+        <Surface as="tr" variant="canvasFooter">
           <td colSpan={8} className="p-4">
             <div className="grid gap-4 lg:grid-cols-3">
               <DetailBlock
@@ -247,23 +290,21 @@ function FundDiagnosticsRow({
               >
                 <div>
                   {i18n.t('ui.funddataqualitypanel.state')}{' '}
-                  <span className="text-content-secondary">
-                    {status.decompositionState}
-                  </span>
+                  <Text tone="secondary">{status.decompositionState}</Text>
                 </div>
                 <div>
                   {i18n.t('ui.funddataqualitypanel.snapshot')}{' '}
-                  <span className="font-mono text-content-secondary">
+                  <Text variant="code" tone="secondary">
                     {status.snapshotId ||
                       i18n.t('ui.funddataqualitypanel.none')}
-                  </span>
+                  </Text>
                 </div>
                 <div>
                   {i18n.t('ui.funddataqualitypanel.checksum')}{' '}
-                  <span className="break-all font-mono text-[10px] text-content-muted">
+                  <Text variant="tinyCode" tone="muted" wrap="anywhere">
                     {status.checksumSha256 ||
                       i18n.t('ui.funddataqualitypanel.notRecorded')}
-                  </span>
+                  </Text>
                 </div>
                 {snapshots.map((snapshot) => (
                   <SnapshotDetail
@@ -278,9 +319,9 @@ function FundDiagnosticsRow({
                 )}
               >
                 {unresolved.length === 0 ? (
-                  <div className="text-positive">
+                  <Text as="div" tone="positive">
                     {i18n.t('ui.funddataqualitypanel.noUnresolvedBranch')}
-                  </div>
+                  </Text>
                 ) : (
                   unresolved.map((item) => (
                     <UnresolvedDetail key={item.path} item={item} />
@@ -311,7 +352,7 @@ function FundDiagnosticsRow({
               </DetailBlock>
             </div>
           </td>
-        </tr>
+        </Surface>
       )}
     </Fragment>
   )
@@ -351,10 +392,13 @@ export function FundDataQualityPanelView({
           'ui.funddataqualitypanel.sortedByUnexplainedMonetaryImpactManualAndAgentSnapshots',
         )}
       </SidePanel.Description>
-      <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
-        <span className="mr-1 text-xs font-medium text-content-subtle">
+      <Surface
+        variant="sectionEnd"
+        className="flex flex-wrap items-center gap-2 px-4 py-3"
+      >
+        <Text variant="captionLabel" tone="subtle" className="mr-1">
           {i18n.t('ui.funddataqualitypanel.show')}
-        </span>
+        </Text>
         {FILTER_OPTIONS.map((option) => (
           <DiagnosticsFilterButton
             key={option}
@@ -363,9 +407,14 @@ export function FundDataQualityPanelView({
             option={option}
           />
         ))}
-      </div>
+      </Surface>
       <div>
-        <table className="w-full table-fixed text-left text-xs">
+        <Surface
+          variant="compactTable"
+          as="table"
+          align="left"
+          className="w-full table-fixed"
+        >
           <colgroup>
             <col className="w-[16%]" />
             <col className="w-[10%]" />
@@ -376,7 +425,12 @@ export function FundDataQualityPanelView({
             <col className="w-[21%]" />
             <col className="w-[7%]" />
           </colgroup>
-          <thead className="sticky top-0 z-10 bg-surface-raised uppercase tracking-wider text-content-subtle">
+          <Surface
+            as="thead"
+            variant="sectionHeading"
+            tone="subtle"
+            className="sticky top-0 z-10"
+          >
             <tr>
               <th className="px-4 py-2">
                 {i18n.t('ui.funddataqualitypanel.fund')}
@@ -390,18 +444,18 @@ export function FundDataQualityPanelView({
               <th className="px-4 py-2">
                 {i18n.t('ui.funddataqualitypanel.holdingsDate')}
               </th>
-              <th className="px-4 py-2 text-right">
+              <Text as="th" align="right" className="px-4 py-2">
                 {i18n.t('ui.funddataqualitypanel.explained')}
-              </th>
-              <th className="px-4 py-2 text-right">
+              </Text>
+              <Text as="th" align="right" className="px-4 py-2">
                 {i18n.t('ui.funddataqualitypanel.residual')}
-              </th>
+              </Text>
               <th className="px-4 py-2">
                 {i18n.t('ui.funddataqualitypanel.diagnostic')}
               </th>
               <th className="px-4 py-2" />
             </tr>
-          </thead>
+          </Surface>
           <tbody>
             {rows.map((row) => (
               <FundDiagnosticsRow
@@ -412,11 +466,17 @@ export function FundDataQualityPanelView({
               />
             ))}
           </tbody>
-        </table>
+        </Surface>
         {rows.length === 0 && (
-          <p className="p-6 text-center text-sm text-content-subtle">
+          <Text
+            as="p"
+            variant="body"
+            tone="subtle"
+            align="center"
+            className="p-6"
+          >
             {i18n.t('ui.funddataqualitypanel.noFundMatchesThisFilter')}
-          </p>
+          </Text>
         )}
       </div>
     </SidePanel>
@@ -431,9 +491,11 @@ function DetailBlock({
   children: ReactNode
 }) {
   return (
-    <section className="rounded-lg border border-border bg-surface p-3 text-xs text-content-subtle">
-      <h3 className="mb-2 font-semibold text-content-secondary">{title}</h3>
+    <Surface as="section" variant="smallCard" tone="subtle" className="p-3">
+      <Text as="h3" variant="strong" tone="secondary" className="mb-2">
+        {title}
+      </Text>
       {children}
-    </section>
+    </Surface>
   )
 }

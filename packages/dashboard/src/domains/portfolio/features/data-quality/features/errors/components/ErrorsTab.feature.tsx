@@ -9,14 +9,22 @@ import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatte
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { Button } from '@/shared/ui/Controls.view'
 import { Select } from '@/shared/ui/Controls.view'
+import { LevelBadge, StatusTableRow } from '@/shared/ui/StatusBadge.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 const SOURCE_LABELS: Record<string, string> = {
   main: i18n.t('ui.errorstab.ingestPortfolioPy'),
   fetch_prices: i18n.t('ui.errorstab.fetchPricesPy'),
 }
 
-const ERROR_COLUMNS: [PipelineErrorSortColumn, string, string][] = [
+const ERROR_COLUMNS: [
+  PipelineErrorSortColumn,
+  string,
+  'w-20' | 'w-40' | 'w-28' | 'w-24' | '',
+][] = [
   ['level', i18n.t('ui.errorstab.level'), 'w-20'],
   ['type', i18n.t('ui.errorstab.type'), 'w-40'],
   ['source', i18n.t('ui.errorstab.source'), 'w-28'],
@@ -40,9 +48,15 @@ function SortIcon({
   dir: 'asc' | 'desc'
 }) {
   if (col !== sortCol)
-    return <span className="ml-1 text-content-subtle">↕</span>
+    return (
+      <Text tone="subtle" className="ml-1">
+        ↕
+      </Text>
+    )
   return (
-    <span className="ml-1 text-content-muted">{dir === 'asc' ? '↑' : '↓'}</span>
+    <Text tone="muted" className="ml-1">
+      {dir === 'asc' ? '↑' : '↓'}
+    </Text>
   )
 }
 
@@ -65,17 +79,22 @@ function ErrorColumnHeader({
 }) {
   const [id, label, width] = column
   return (
-    <th
-      className={`px-3 py-2 text-left font-medium text-content-muted ${width} select-none`}
+    <Text
+      as="th"
+      variant="selectableHeader"
+      tone="muted"
+      align="left"
+      className={`px-3 py-2 ${width}`}
     >
-      <button
+      <Button
         onClick={() => onSort(id)}
-        className="flex cursor-pointer items-center transition-colors hover:text-content-secondary"
+        variant="sort"
+        className="flex items-center"
       >
         {label}
         <SortIcon col={id} sortCol={sortColumn} dir={direction} />
-      </button>
-    </th>
+      </Button>
+    </Text>
   )
 }
 
@@ -87,40 +106,42 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
   const formatDate = useFormatDate()
   const formatAssetLabel = useFormatAssetLabel()
   return (
-    <tr
-      className={`border-b border-border/50 ${error.level === 'error' ? 'bg-danger-muted/20 hover:bg-danger-muted/30' : 'bg-warning-muted/10 hover:bg-warning-muted/20'}`}
-    >
+    <StatusTableRow level={error.level === 'error' ? 'error' : 'warning'}>
       <td className="px-3 py-2">
-        <span
-          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold ${error.level === 'error' ? 'bg-danger-muted/60 text-danger' : 'bg-warning-muted/60 text-warning'}`}
+        <LevelBadge
+          level={error.level === 'error' ? 'error' : 'warning'}
+          className="items-center gap-1"
         >
           {error.level === 'error'
             ? i18n.t('ui.errorstab.error.8af296')
             : i18n.t('ui.errorstab.warning.6270bb')}
-        </span>
+        </LevelBadge>
       </td>
-      <td className="px-3 py-2 text-content-secondary">
+      <Text as="td" tone="secondary" className="px-3 py-2">
         {PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-subtle">
+      </Text>
+      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
         {SOURCE_LABELS[error.source] ?? error.source}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-muted">
+      </Text>
+      <Text as="td" variant="code" tone="muted" className="px-3 py-2">
         {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
-      </td>
-      <td
-        className="max-w-[7rem] truncate px-3 py-2 text-content-secondary"
+      </Text>
+      <Text
+        as="td"
+        tone="secondary"
+        truncate
+        className="max-w-[7rem] px-3 py-2"
         title={formatAssetLabel(error)}
       >
         {formatAssetLabel(error, '—')}
-      </td>
-      <td className="px-3 py-2 font-mono text-content-subtle">
+      </Text>
+      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
         {error.isin || '—'}
-      </td>
-      <td className="px-3 py-2 leading-relaxed text-content-muted">
+      </Text>
+      <Text as="td" variant="relaxed" tone="muted" className="px-3 py-2">
         {error.message}
-      </td>
-    </tr>
+      </Text>
+    </StatusTableRow>
   )
 }
 
@@ -165,20 +186,30 @@ export function ErrorsTab({ errors }: Props) {
       {errors.length > 0 && (
         <>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-content-muted">
+            <Text variant="body" tone="muted">
               {i18n.t('ui.errorstab.detectedAnomalies', {
                 count: errors.length,
               })}
-            </span>
+            </Text>
             {errorCount > 0 && (
-              <span className="rounded-full border border-danger/50 bg-danger-muted/50 px-2.5 py-0.5 text-xs font-medium text-danger">
+              <Surface
+                variant="errorCount"
+                as="span"
+                tone="negative"
+                className="px-2.5 py-0.5"
+              >
                 {i18n.t('ui.errorstab.errorCount', { count: errorCount })}
-              </span>
+              </Surface>
             )}
             {warningCount > 0 && (
-              <span className="rounded-full border border-warning/50 bg-warning-muted/50 px-2.5 py-0.5 text-xs font-medium text-warning">
+              <Surface
+                variant="warningCount"
+                as="span"
+                tone="warning"
+                className="px-2.5 py-0.5"
+              >
                 {i18n.t('ui.errorstab.warningCount', { count: warningCount })}
-              </span>
+              </Surface>
             )}
           </div>
 
@@ -189,7 +220,8 @@ export function ErrorsTab({ errors }: Props) {
               onChange={(e) =>
                 setFilterLevel(e.target.value as typeof filterLevel)
               }
-              className="rounded border border-border-strong bg-surface-raised px-2 py-1 text-xs text-content-secondary focus:border-border-strong focus:outline-none"
+              variant="compact"
+              className="px-2 py-1"
             >
               <option value="all">{i18n.t('ui.errorstab.allLevels')}</option>
               <option value="error">{i18n.t('ui.errorstab.errorsOnly')}</option>
@@ -201,7 +233,8 @@ export function ErrorsTab({ errors }: Props) {
               label={i18n.t('ui.errorstab.filterType')}
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="rounded border border-border-strong bg-surface-raised px-2 py-1 text-xs text-content-secondary focus:border-border-strong focus:outline-none"
+              variant="compact"
+              className="px-2 py-1"
             >
               <option value="all">{i18n.t('ui.errorstab.allTypes')}</option>
               {types
@@ -211,25 +244,26 @@ export function ErrorsTab({ errors }: Props) {
                 ))}
             </Select>
             {hasActiveFilters && (
-              <button
+              <Button
                 onClick={() => {
                   setFilterLevel('all')
                   setFilterType('all')
                 }}
-                className="px-2 py-1 text-xs text-content-subtle hover:text-content-secondary"
+                variant="reset"
+                className="px-2 py-1"
               >
                 {i18n.t('ui.errorstab.reset')}
-              </button>
+              </Button>
             )}
           </div>
         </>
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-xs">
+      <Surface variant="outlined" className="overflow-x-auto">
+        <Surface variant="compactTable" as="table" className="w-full">
           <thead>
-            <tr className="border-b border-border bg-surface/60">
+            <Surface as="tr" variant="tableHeader">
               {ERROR_COLUMNS.map((column) => (
                 <ErrorColumnHeader
                   key={column[0]}
@@ -239,19 +273,22 @@ export function ErrorsTab({ errors }: Props) {
                   sortColumn={sortCol}
                 />
               ))}
-            </tr>
+            </Surface>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td
+                <Text
                   colSpan={7}
-                  className="text-center py-8 text-content-subtle"
+                  as="td"
+                  tone="subtle"
+                  align="center"
+                  className="py-8"
                 >
                   {errors.length === 0
                     ? i18n.t('ui.errorstab.noPipelineAnomaliesDetected')
                     : i18n.t('ui.errorstab.noAnomaliesForThisFilter')}
-                </td>
+                </Text>
               </tr>
             ) : (
               filtered.map((error) => (
@@ -259,16 +296,16 @@ export function ErrorsTab({ errors }: Props) {
               ))
             )}
           </tbody>
-        </table>
-      </div>
+        </Surface>
+      </Surface>
 
       {filtered.length < errors.length && (
-        <p className="text-xs text-content-subtle text-right">
+        <Text as="p" variant="caption" tone="subtle" align="right">
           {i18n.t('ui.errorstab.showingAnomalies', {
             shown: filtered.length,
             total: errors.length,
           })}
-        </p>
+        </Text>
       )}
     </div>
   )

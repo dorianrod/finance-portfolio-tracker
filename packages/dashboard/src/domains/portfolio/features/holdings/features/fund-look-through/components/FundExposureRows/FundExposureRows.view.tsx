@@ -9,8 +9,12 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { DecorativeSvg, DisclosureButton } from '@/shared/ui/Controls.view'
+import { DisclosureButton } from '@/shared/ui/Controls.view'
+import { TreeChevronIcon } from '@/shared/ui/Icons.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 import { Tooltip } from '@/shared/ui/Tooltip.view'
+import { VirtualRow } from '@/shared/ui/VirtualRow.view'
 
 export const GRID =
   'grid grid-cols-[minmax(0,1fr)_140px_90px_minmax(0,220px)] items-center gap-x-4 px-4'
@@ -29,19 +33,13 @@ export function VirtualExposureRow({
   scrollMargin: number
 }) {
   return (
-    <div
-      className="absolute left-0 top-0 w-full"
-      style={{
-        height: item.size,
-        transform: `translateY(${item.start - scrollMargin}px)`,
-      }}
-    >
+    <VirtualRow height={item.size} offset={item.start - scrollMargin}>
       {row.kind === 'issuer' && (
         <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />
       )}
       {row.kind === 'security' && <SecurityRow security={row.security} />}
       {row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}
-    </div>
+    </VirtualRow>
   )
 }
 
@@ -51,30 +49,35 @@ export function SourcesCell({
   sources,
   total,
   empty,
-  className,
+  compact = false,
 }: {
   sources: Source[]
   total: number
   empty: string
-  className: string
+  compact?: boolean
 }) {
   const formatNumber = useFormatNumber()
   if (sources.length <= 1) {
     return (
-      <span className={`truncate ${className}`} title={sources[0]?.fund}>
+      <Text
+        tone="subtle"
+        variant={compact ? 'caption' : 'inherit'}
+        truncate
+        title={sources[0]?.fund}
+      >
         {sources[0]?.fund ?? empty}
-      </span>
+      </Text>
     )
   }
   return (
     <Tooltip>
-      <Tooltip.Trigger
-        className={`w-fit cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4 ${className}`}
-      >
-        {i18n.t('ui.fundholdingsexplorer.fundCount', {
-          count: sources.length,
-          formattedCount: formatNumber(sources.length),
-        })}
+      <Tooltip.Trigger variant="source" className="w-fit">
+        <Text tone="subtle" variant={compact ? 'caption' : 'inherit'}>
+          {i18n.t('ui.fundholdingsexplorer.fundCount', {
+            count: sources.length,
+            formattedCount: formatNumber(sources.length),
+          })}
+        </Text>
       </Tooltip.Trigger>
       <Tooltip.Content className="w-96">
         <SourcesTooltip sources={sources} total={total} />
@@ -94,17 +97,17 @@ export function SourceTooltipRow({
   const formatPercentage = useFormatPercentage()
   return (
     <li className="flex items-baseline gap-3">
-      <span className="min-w-0 flex-1 truncate text-content-secondary">
+      <Text tone="secondary" truncate className="min-w-0 flex-1">
         {source.fund}
-      </span>
-      <span className="tabular-nums text-content-muted">
+      </Text>
+      <Text tone="muted" numeric>
         {formatMoney(source.value, { style: 'full' })}
-      </span>
-      <span className="w-12 text-right tabular-nums text-content-subtle">
+      </Text>
+      <Text tone="subtle" align="right" numeric className="w-12">
         {formatPercentage(total > 0 ? (source.value / total) * 100 : 0, {
           decimals: 0,
         })}
-      </span>
+      </Text>
     </li>
   )
 }
@@ -119,12 +122,12 @@ export function SourcesTooltip({
   const formatNumber = useFormatNumber()
   return (
     <div>
-      <div className="mb-2 text-[10px] uppercase tracking-wider text-content-subtle">
+      <Text as="div" variant="tinyOverline" tone="subtle" className="mb-2">
         {i18n.t('ui.fundholdingsexplorer.heldThroughFunds', {
           count: sources.length,
           formattedCount: formatNumber(sources.length),
         })}
-      </div>
+      </Text>
       <ul className="max-h-64 space-y-1 overflow-hidden">
         {sources.map((source) => (
           <SourceTooltipRow key={source.fund} source={source} total={total} />
@@ -135,21 +138,7 @@ export function SourcesTooltip({
 }
 
 export function Chevron({ open }: { open: boolean }) {
-  return (
-    <DecorativeSvg
-      viewBox="0 0 20 20"
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="shrink-0 text-content-subtle"
-    >
-      <path d={open ? 'M5 8l5 5 5-5' : 'M8 5l5 5-5 5'} />
-    </DecorativeSvg>
-  )
+  return <TreeChevronIcon expanded={open} />
 }
 
 export const IssuerRow = memo(function IssuerRow({
@@ -164,35 +153,36 @@ export const IssuerRow = memo(function IssuerRow({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <div
-      className={`${GRID} h-full border-b border-border text-sm hover:bg-surface-raised/60`}
-    >
+    <Surface variant="issuerRow" className={`${GRID} h-full`}>
       <DisclosureButton
         type="button"
         onClick={() => onToggle(issuer.id)}
         expanded={open}
-        className="flex min-w-0 items-center gap-2 text-left"
+        variant="plainLeft"
+        className="flex min-w-0 items-center gap-2"
       >
         <Chevron open={open} />
-        <span className="truncate font-medium text-content">{issuer.name}</span>
-        <span className="font-mono text-[10px] text-content-subtle">
+        <Text variant="medium" tone="default" truncate>
+          {issuer.name}
+        </Text>
+        <Text variant="tinyCode" tone="subtle">
           {issuer.id}
-        </span>
+        </Text>
       </DisclosureButton>
-      <span className="text-right font-medium tabular-nums text-content-secondary">
+      <Text variant="medium" tone="secondary" align="right" numeric>
         {formatMoney(issuer.value, { style: 'full' })}
-      </span>
-      <span className="text-right tabular-nums text-content-muted">
+      </Text>
+      <Text tone="muted" align="right" numeric>
         {formatPercentage(issuer.weight, { decimals: 2 })}
-      </span>
+      </Text>
 
       <SourcesCell
         sources={issuer.sources}
         total={issuer.value}
         empty={i18n.t('ui.fundholdingsexplorer.direct')}
-        className="text-xs text-content-subtle"
+        compact
       />
-    </div>
+    </Surface>
   )
 })
 
@@ -204,32 +194,29 @@ export const SecurityRow = memo(function SecurityRow({
   const formatMoney = useFormatMoney()
   const [single] = security.funds
   return (
-    <div
-      className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}
-    >
-      <span className="min-w-0 truncate pl-6">
-        <span className="text-content-secondary">{security.name}</span>
-        <span className="ml-2 font-mono text-[10px] text-content-subtle">
+    <Surface variant="detailRow" className={`${GRID} h-full`}>
+      <Text truncate className="min-w-0 pl-6">
+        <Text tone="secondary">{security.name}</Text>
+        <Text variant="tinyCode" tone="subtle" className="ml-2">
           {security.id}
-        </span>
-      </span>
-      <span className="text-right tabular-nums text-content-muted">
+        </Text>
+      </Text>
+      <Text tone="muted" align="right" numeric>
         {formatMoney(security.value, { style: 'full' })}
-      </span>
+      </Text>
       <span />
       {security.funds.length <= 1 ? (
-        <span className="truncate text-content-subtle" title={single}>
+        <Text tone="subtle" truncate title={single}>
           {single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}
-        </span>
+        </Text>
       ) : (
         <SourcesCell
           sources={security.sources}
           total={security.value}
           empty={i18n.t('ui.fundholdingsexplorer.directHolding')}
-          className="text-content-subtle"
         />
       )}
-    </div>
+    </Surface>
   )
 })
 
@@ -242,17 +229,15 @@ export const SourceRow = memo(function SourceRow({
 }) {
   const formatMoney = useFormatMoney()
   return (
-    <div
-      className={`${GRID} h-full border-b border-border bg-canvas/50 text-xs`}
-    >
+    <Surface variant="detailRow" className={`${GRID} h-full`}>
       <span />
-      <span className="text-right tabular-nums text-content-subtle">
+      <Text tone="subtle" align="right" numeric>
         {formatMoney(value, { style: 'full' })}
-      </span>
+      </Text>
       <span />
-      <span className="truncate text-content-subtle" title={fund}>
+      <Text tone="subtle" truncate title={fund}>
         {fund}
-      </span>
-    </div>
+      </Text>
+    </Surface>
   )
 })

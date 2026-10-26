@@ -6,7 +6,10 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Button } from '@/shared/ui/Controls.view'
 import { Preview } from '@/shared/ui/Preview.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { FundPositionHoldingRow } from './FundPositionHoldingRow.feature'
 
@@ -32,29 +35,41 @@ export function FundPositionPopover({
       anchor={target.buttonRect}
       label={target.position.name}
       style={{ width: `min(560px, calc(100vw - 20px))` }}
-      className="overflow-y-auto rounded-xl border border-border-strong bg-surface p-4 shadow-2xl"
+      variant="floatingPanel"
+      className="overflow-y-auto  p-4 "
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div className="mb-3 flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-content">
+          <Text as="p" variant="bodyStrong" tone="default" truncate>
             {position.name}
-          </p>
-          <p className="mt-0.5 truncate font-mono text-[10px] text-content-subtle">
+          </Text>
+          <Text
+            as="p"
+            variant="tinyCode"
+            tone="subtle"
+            truncate
+            className="mt-0.5"
+          >
             {position.isin || position.ticker}
-          </p>
+          </Text>
         </div>
-        <button
+        <Button
           type="button"
           onClick={() => openCompleteHoldings(position.name)}
-          className="shrink-0 text-xs font-medium text-accent hover:text-accent"
+          variant="accentCaptionLink"
+          className="shrink-0"
         >
           {i18n.t('ui.fundpositionpopover.openAll')}
-        </button>
+        </Button>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-x-3 gap-y-1 border-b border-border pb-3 text-xs text-content-subtle">
+      <Surface
+        variant="rowSeparator"
+        tone="subtle"
+        className="mb-3 flex flex-wrap gap-x-3 gap-y-1 pb-3"
+      >
         <span>
           {status.sourceName}
           {status.proxyName
@@ -72,7 +87,7 @@ export function FundPositionPopover({
               : i18n.t('ui.fundpositionpopover.unknown'),
           })}
         </span>
-      </div>
+      </Surface>
 
       {rows.length > 0 ? (
         <div>
@@ -85,12 +100,23 @@ export function FundPositionPopover({
           ))}
         </div>
       ) : (
-        <p className="py-5 text-center text-xs text-content-subtle">
+        <Text
+          as="p"
+          variant="caption"
+          tone="subtle"
+          align="center"
+          className="py-5"
+        >
           {i18n.t('ui.fundpositionpopover.noUnderlyingHoldingsAvailable')}
-        </p>
+        </Text>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-content-subtle">
+      <Text
+        as="div"
+        variant="caption"
+        tone="subtle"
+        className="mt-3 flex flex-wrap gap-x-5 gap-y-1"
+      >
         <span>
           {i18n.t('ui.fundpositionpopover.explainedWithValues', {
             percentage: formatPercentage(status.explainedPct),
@@ -104,9 +130,11 @@ export function FundPositionPopover({
           })}
         </span>
         {status.issues && (
-          <span className="basis-full text-warning">{status.issues}</span>
+          <Text tone="warning" className="basis-full">
+            {status.issues}
+          </Text>
         )}
-      </div>
+      </Text>
     </Preview.Content>
   )
 }

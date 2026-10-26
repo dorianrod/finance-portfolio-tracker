@@ -1,6 +1,7 @@
 import { AllocationCoverageCard } from '@/domains/portfolio/features/data-quality/components/AllocationCoverageCard.feature'
 import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/helpers/mappers/buildClassificationViewState'
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
 
 type ClassificationCoverageStateProps = {
   state: ClassificationViewState
@@ -47,8 +48,13 @@ export function ClassificationCoverageState({
 
 function EmptyClassificationState({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-border bg-canvas/30 px-4 py-8 text-center text-sm text-content-subtle">
+    <Surface
+      variant="insetContent"
+      tone="subtle"
+      align="center"
+      className="px-4 py-8"
+    >
       {message}
-    </div>
+    </Surface>
   )
 }

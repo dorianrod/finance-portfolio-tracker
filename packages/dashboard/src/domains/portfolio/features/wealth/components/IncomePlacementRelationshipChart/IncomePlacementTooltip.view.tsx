@@ -5,10 +5,10 @@ import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helper
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartLabel } from '@/shared/ui/ChartLabel.view'
+import { ChartText } from '@/shared/ui/ChartText.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-import { getRelationshipYearOpacity } from './helpers/presenters/getRelationshipYearOpacity'
 import { getYearLabelPosition } from './helpers/presenters/getYearLabelPosition'
 
 const DEFAULT_YEAR_LABEL_PLACEMENT: YearLabelPlacement = {
@@ -41,28 +41,17 @@ export function YearLabel({
 
   const { x, y } = getYearLabelPosition(viewBox, placement)
   const isRecent = recentYears.has(point.year)
-  const opacity = getRelationshipYearOpacity(
-    point.year,
-    isRecent,
-    oldestYear,
-    newestYear,
-  )
 
   return (
-    <text
+    <ChartLabel
       x={x}
       y={y}
-      textAnchor={placement.textAnchor}
-      fill={
-        isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries
-      }
-      fillOpacity={opacity}
-      fontSize={11}
-      fontWeight={isRecent ? 600 : 400}
-      pointerEvents="none"
+      align={placement.textAnchor}
+      tone={isRecent ? 'returnRate' : 'neutralSeries'}
+      age={{ year: point.year, recent: isRecent, oldestYear, newestYear }}
     >
       {value}
-    </text>
+    </ChartLabel>
   )
 }
 
@@ -79,33 +68,34 @@ export function RelationshipTooltip({
   if (!active || !point) return null
   return (
     <TooltipBox minWidth={220}>
-      <div
-        style={{
-          color: 'var(--tooltip-text)',
-          fontWeight: 600,
-          marginBottom: 7,
-        }}
+      <ChartText
+        as="div"
+        tone={'tooltipText'}
+        variant="strong"
+        style={{ marginBottom: 7 }}
       >
         {point.year}
-      </div>
-      <div style={{ color: 'var(--tooltip-label)' }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'}>
         {i18n.t(
           'ui.incomeplacementrelationshipchart.totalNetIncomeWithValues',
           { amount: formatMoney(point.totalIncome, { style: 'full' }) },
         )}
-      </div>
-      <div style={{ color: SEMANTIC_COLORS.costBasisText }}>
+      </ChartText>
+      <ChartText as="div" tone={'costBasisText'}>
         {i18n.t('ui.incomeplacementrelationshipchart.netSalaryWithValues', {
           amount: formatMoney(point.netSalary, { style: 'full' }),
         })}
-      </div>
-      <div style={{ color: SEMANTIC_COLORS.passiveIncomeSecondary }}>
+      </ChartText>
+      <ChartText as="div" tone={'passiveIncomeSecondary'}>
         {i18n.t('ui.incomeplacementrelationshipchart.otherIncomeWithValues', {
           amount: formatMoney(point.otherIncome, { style: 'full' }),
         })}
-      </div>
-      <div
-        style={{ color: SEMANTIC_COLORS.netContributionsText, marginTop: 6 }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'netContributionsText'}
+        style={{ marginTop: 6 }}
       >
         {i18n.t(
           'ui.incomeplacementrelationshipchart.netContributionsWithValues',
@@ -116,13 +106,13 @@ export function RelationshipTooltip({
             }),
           },
         )}
-      </div>
-      <div style={{ color: SEMANTIC_COLORS.returnRate }}>
+      </ChartText>
+      <ChartText as="div" tone={'returnRate'}>
         {i18n.t('ui.incomeplacementrelationshipchart.placementRateWithValues', {
           percentage: formatPercentage(point.placementRate, { fallback: 0 }),
         })}
-      </div>
-      <div style={{ color: 'var(--tooltip-dim)', marginTop: 6 }}>
+      </ChartText>
+      <ChartText as="div" tone={'tooltipDim'} style={{ marginTop: 6 }}>
         {i18n.t(
           'ui.incomeplacementrelationshipchart.unplacedIncomeProxyWithValues',
           {
@@ -132,7 +122,7 @@ export function RelationshipTooltip({
             }),
           },
         )}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }

@@ -1,10 +1,8 @@
 import type { ReactNode } from 'react'
 import {
-  Pie,
   PieChart,
   type PieSectorShapeProps,
   ResponsiveContainer,
-  Sector,
   Tooltip,
 } from 'recharts'
 
@@ -14,9 +12,11 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { catColor } from '@/shared/theme/chartColors'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
+import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { SeriesPie } from '@/shared/ui/SeriesPie.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { PieLabel } from './PieLabel/PieLabel.view'
 
@@ -51,49 +51,59 @@ export function DonutCardView({
   const formatMoney = useFormatMoney()
   const dateLabel = formatDate(date, { style: 'longMonthYear' })
   return (
-    <div className="bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-1 flex items-start justify-between gap-3">
-        <h2 className="flex items-center text-sm font-medium text-content-muted">
+        <Text
+          as="h2"
+          variant="label"
+          tone="muted"
+          className="flex items-center"
+        >
           {title}
           {tooltip}
-        </h2>
+        </Text>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="text-xs text-content-subtle">{dateLabel}</span>
+          <Text variant="caption" tone="subtle">
+            {dateLabel}
+          </Text>
           {positionsControl}
         </div>
       </div>
-      <div className="text-xs text-content-subtle mb-1">
+      <Text as="div" variant="caption" tone="subtle" className="mb-1">
         {i18n.t('ui.donutcard.allocatedWithValues', {
           amount: formatMoney(total, { style: 'full' }),
         })}
-      </div>
-      <div className="text-xs text-content-subtle mb-2">
+      </Text>
+      <Text as="div" variant="caption" tone="subtle" className="mb-2">
         {i18n.t('ui.donutcard.clickASegmentToFilter')}
-      </div>
+      </Text>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
-          <Pie
+          <SeriesPie
             data={data}
             dataKey="value"
             nameKey="name"
             innerRadius="32%"
             outerRadius="50%"
             paddingAngle={1}
-            label={PieLabel}
-            labelLine={{ stroke: CHART_THEME.zeroLine, strokeWidth: 1 }}
+            labelConnector
             onClick={(_entry, index) => onSelect(data[index])}
-            style={{ cursor: 'pointer' }}
-            shape={
+            interactive
+          >
+            <SeriesPie.Labels>
+              <PieLabel />
+            </SeriesPie.Labels>
+            <SeriesPie.Shape>
               <DonutSector
                 activeCategory={activeCategory}
                 isFiltered={isFiltered}
               />
-            }
-          />
+            </SeriesPie.Shape>
+          </SeriesPie>
           <Tooltip content={<PieTooltip />} />
         </PieChart>
       </ResponsiveContainer>
-    </div>
+    </Surface>
   )
 }
 
@@ -108,12 +118,11 @@ function DonutSector({
   const entry = shapeProps.payload
   if (!entry) return null
   return (
-    <Sector
-      {...shapeProps}
-      fill={catColor(entry.name)}
-      opacity={isFiltered && activeCategory !== entry.name ? 0.25 : 1}
-      stroke={activeCategory === entry.name ? CHART_THEME.label : 'none'}
-      strokeWidth={activeCategory === entry.name ? 2 : 0}
+    <ChartSector
+      geometry={shapeProps}
+      category={entry.name}
+      dimmed={isFiltered && activeCategory !== entry.name}
+      selected={activeCategory === entry.name}
     />
   )
 }

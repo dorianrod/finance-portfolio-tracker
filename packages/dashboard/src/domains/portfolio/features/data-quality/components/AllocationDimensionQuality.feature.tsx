@@ -4,6 +4,10 @@ import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/qualit
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Button } from '@/shared/ui/Controls.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
 
 const LABELS: Record<DimensionCoverage['dimension'], string> = {
   geo: i18n.t('ui.allocationdimensionquality.geography'),
@@ -24,16 +28,22 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-3">
-        <span className="truncate text-xs text-content-muted">{label}</span>
-        <span
-          className={`shrink-0 text-[11px] tabular-nums ${materialGap ? 'text-warning' : 'text-positive'}`}
+        <Text variant="caption" tone="muted" truncate>
+          {label}
+        </Text>
+        <Text
+          variant="micro"
+          numeric
+          tone={materialGap ? 'warning' : 'positive'}
+          className="shrink-0"
         >
           {formatMoney(item.unallocated, { style: 'full' })} ·{' '}
           {formatPercentage(missingPct)}
-        </span>
+        </Text>
       </div>
-      <div
-        className="h-1.5 overflow-hidden rounded-full bg-surface-raised"
+      <Surface
+        variant="track"
+        className="h-1.5 overflow-hidden"
         title={i18n.t(
           'ui.allocationdimensionquality.value0NotClassifiedForValue1',
           {
@@ -42,20 +52,24 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
           },
         )}
       >
-        <div
-          className={`h-full rounded-full ${materialGap ? 'bg-warning' : 'bg-positive'}`}
+        <ToneSwatch
+          as="div"
+          shape="dot"
+          tone={materialGap ? 'warning' : 'positive'}
+          className="h-full"
           style={{ width: `${Math.min(100, missingPct)}%` }}
         />
-      </div>
-      <button
+      </Surface>
+      <Button
         type="button"
         onClick={() => openClassificationDetails(item.dimension)}
-        className="mt-1.5 text-[11px] text-accent hover:text-accent"
+        variant="dimensionDetail"
+        className="mt-1.5"
       >
         {i18n.t('ui.allocationdimensionquality.responsibleAssetCount', {
           count: item.issues.length,
         })}
-      </button>
+      </Button>
     </div>
   )
 }

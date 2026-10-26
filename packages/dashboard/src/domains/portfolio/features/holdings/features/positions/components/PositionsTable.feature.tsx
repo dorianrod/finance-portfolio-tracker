@@ -25,7 +25,7 @@ import {
   getPositionSavingsOperations,
   getPositionTradeOperations,
 } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations'
-import { gainClass } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainClass'
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
 import { usePositionTableData } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableData'
 import { usePositionTableOverlays } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays'
 import { usePositionTableState } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableState'
@@ -43,13 +43,18 @@ import type {
 } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { Decorative } from '@/shared/ui/Controls.view'
+import { Button } from '@/shared/ui/Controls.view'
+import { DataCell } from '@/shared/ui/DataTable.view'
+import { AllocationIcon } from '@/shared/ui/Icons.view'
 import {
-  SEMANTIC_BADGE_CLASSES,
-  SEMANTIC_TEXT_CLASSES,
-} from '@/shared/theme/semanticColors'
-import { Decorative, DecorativeSvg } from '@/shared/ui/Controls.view'
+  PositionRowSurface,
+  TransactionBadge,
+} from '@/shared/ui/PositionTable.view'
 import { Preview } from '@/shared/ui/Preview.view'
-import { DATA_TABLE_STYLES } from '@/shared/ui/tableStyles'
+import { Surface } from '@/shared/ui/Surface.view'
+import { TablePanel } from '@/shared/ui/TablePanel.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { ExpandBtn } from './ExpandBtn.view'
 import { GainCell } from './GainCell.view'
@@ -113,6 +118,9 @@ function PositionBodyRow({
   const item = row.original
   const isPosition = item.kind === 'position'
   const isGroup = item.kind === 'group'
+  let rowKind: 'position' | 'group' | 'detail' = 'detail'
+  if (isPosition) rowKind = 'position'
+  else if (isGroup) rowKind = 'group'
   let rootRow = row
   while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
   const isClosed = isClosedPosition(rootRow.original)
@@ -161,69 +169,61 @@ function PositionBodyRow({
         onDismiss: scheduleHide,
       }
   }
-  const td =
-    'px-3 py-1.5 text-xs bg-surface-raised border-t-2 border-border-strong border-b border-border-strong'
-
   return (
     <Fragment>
       {separatorType !== undefined && (
         <tr>
-          <td className={td} />
-          <td
-            className={`${td} font-semibold uppercase tracking-widest text-content-muted`}
-          >
+          <DataCell variant="group" className="px-3 py-1.5" />
+          <DataCell variant="groupLabel" className="px-3 py-1.5">
             {separatorType || i18n.t('ui.positionstable.other')}
-          </td>
-          <td className={`${td} font-medium text-content-secondary`}>
+          </DataCell>
+          <DataCell variant="groupValue" className="px-3 py-1.5">
             {totals && totals.value > 0 ? formatMoney(totals.value) : ''}
-          </td>
-          <td className={td} />
-          <td className={`${td} ${totals ? gainClass(totals.unrealized) : ''}`}>
+          </DataCell>
+          <DataCell variant="group" className="px-3 py-1.5" />
+          <DataCell
+            variant="group"
+            className="px-3 py-1.5"
+            tone={totals ? getGainTone(totals.unrealized) : undefined}
+          >
             {formatMoney(totals?.unrealized, {
               fallback: '',
               zeroAsFallback: true,
             })}
-          </td>
-          <td className={`${td} ${totals ? gainClass(totals.realized) : ''}`}>
+          </DataCell>
+          <DataCell
+            variant="group"
+            className="px-3 py-1.5"
+            tone={totals ? getGainTone(totals.realized) : undefined}
+          >
             {formatMoney(totals?.realized, {
               fallback: '',
               zeroAsFallback: true,
             })}
-          </td>
-          <td
-            className={`${td} ${totals ? gainClass(totals.totalRealized) : ''}`}
+          </DataCell>
+          <DataCell
+            variant="group"
+            className="px-3 py-1.5"
+            tone={totals ? getGainTone(totals.totalRealized) : undefined}
           >
             {formatMoney(totals?.totalRealized, {
               fallback: '',
               zeroAsFallback: true,
             })}
-          </td>
-          <td className={`${td} ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}>
+          </DataCell>
+          <DataCell variant="group" className="px-3 py-1.5" tone="income">
             {formatMoney(totals?.dividends, {
               fallback: '',
               zeroAsFallback: true,
             })}
-          </td>
-          <td className={td} />
-          <td className={td} />
+          </DataCell>
+          <DataCell variant="group" className="px-3 py-1.5" />
+          <DataCell variant="group" className="px-3 py-1.5" />
         </tr>
       )}
-      <tr
-        className={[
-          'border-b transition-colors',
-          isClosed
-            ? 'border-border opacity-40 hover:opacity-70'
-            : 'border-border',
-          isPosition && !isClosed
-            ? 'cursor-pointer bg-surface hover:bg-surface-raised'
-            : '',
-          isPosition && isClosed ? 'cursor-pointer bg-canvas' : '',
-          isGroup && !isClosed
-            ? 'bg-surface-raised cursor-pointer hover:bg-surface-raised'
-            : '',
-          isGroup && isClosed ? 'cursor-pointer bg-canvas' : '',
-          !isPosition && !isGroup ? 'bg-canvas' : '',
-        ].join(' ')}
+      <PositionRowSurface
+        kind={rowKind}
+        closed={isClosed}
         onClick={
           row.getCanExpand() ? row.getToggleExpandedHandler() : undefined
         }
@@ -236,7 +236,7 @@ function PositionBodyRow({
             savingsHandlers={savingsHandlers}
           />
         ))}
-      </tr>
+      </PositionRowSurface>
     </Fragment>
   )
 }
@@ -290,27 +290,36 @@ export function PositionsTable({
             return (
               <span className="flex flex-col gap-0.5">
                 <span className="flex items-center gap-2">
-                  <span className="font-medium text-content">{r.name}</span>
+                  <Text variant="medium" tone="default">
+                    {r.name}
+                  </Text>
                   {r.status === 'closed' && (
-                    <span className="text-xs bg-surface-hover text-content-muted px-1.5 py-0.5 rounded">
+                    <Surface
+                      as="span"
+                      variant="highlightedChip"
+                      tone="muted"
+                      className="px-1.5 py-0.5"
+                    >
                       {i18n.t('ui.positionstable.closed')}
-                    </span>
+                    </Surface>
                   )}
                 </span>
                 {hasIdentifier && (
                   <span className="flex items-center gap-1.5">
                     {r.isin && (
-                      <span className="text-xs text-content-subtle font-mono">
+                      <Text variant="captionCode" tone="subtle">
                         {r.isin}
-                      </span>
+                      </Text>
                     )}
                     {showIdentifierSeparator && (
-                      <span className="text-content-subtle text-xs">·</span>
+                      <Text variant="caption" tone="subtle">
+                        ·
+                      </Text>
                     )}
                     {r.ticker && (
-                      <span className="text-xs text-content-muted font-mono">
+                      <Text variant="captionCode" tone="muted">
                         {r.ticker}
-                      </span>
+                      </Text>
                     )}
                   </span>
                 )}
@@ -319,29 +328,27 @@ export function PositionsTable({
           }
           if (r.kind === 'group') {
             return (
-              <span className="text-sm font-semibold text-content-secondary">
+              <Text variant="bodyStrong" tone="secondary">
                 {r.label}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'operation') {
-            let operationClass: string = SEMANTIC_BADGE_CLASSES.transactionOther
-            if (r.operation_type === 'BUY')
-              operationClass = SEMANTIC_BADGE_CLASSES.transactionBuy
-            else if (r.operation_type === 'SELL')
-              operationClass = SEMANTIC_BADGE_CLASSES.transactionSell
+            let operationKind: 'buy' | 'sell' | 'other' = 'other'
+            if (r.operation_type === 'BUY') operationKind = 'buy'
+            else if (r.operation_type === 'SELL') operationKind = 'sell'
             return (
-              <span className="flex items-center gap-2 text-sm">
-                <span
-                  className={`font-mono text-xs px-1.5 py-0.5 rounded ${operationClass}`}
-                >
+              <Text variant="body" className="flex items-center gap-2">
+                <TransactionBadge kind={operationKind}>
                   {r.operation_type}
-                </span>
-                <span className="text-content-muted">
+                </TransactionBadge>
+                <Text tone="muted">
                   {formatDate(r.date, { style: 'isoDate' })}
-                </span>
-                <span className="text-content-subtle text-xs">{r.account}</span>
-              </span>
+                </Text>
+                <Text variant="caption" tone="subtle">
+                  {r.account}
+                </Text>
+              </Text>
             )
           }
           return null
@@ -363,73 +370,77 @@ export function PositionsTable({
           if (r.kind === 'position') {
             const showQuantity = shouldShowPositionQuantity(r)
             return (
-              <span className="flex flex-col leading-tight">
+              <Text variant="compact" className="flex flex-col">
                 <span className="flex items-center gap-1">
                   {r.total_value == null ? (
-                    <span className="text-content-subtle">—</span>
+                    <Text tone="subtle">—</Text>
                   ) : (
-                    <span className="text-content font-medium">
+                    <Text variant="medium" tone="default">
                       {formatMoney(r.total_value)}
-                    </span>
+                    </Text>
                   )}
                 </span>
                 {showQuantity && (
-                  <span className="text-[10px] text-content-subtle mt-0.5">
+                  <Text variant="tiny" tone="subtle" className="mt-0.5">
                     {formatNumber(r.quantity!, { maximumFractionDigits: 0 })}
                     {r.last_price != null && (
                       <> · {formatMoney(r.last_price, { style: 'decimal' })}</>
                     )}
-                  </span>
+                  </Text>
                 )}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'group' && r.total_invested != null) {
             return (
-              <span className="text-xs text-content-muted flex flex-col gap-0.5">
-                <span className="underline decoration-dashed decoration-border-strong underline-offset-2">
+              <Text
+                variant="caption"
+                tone="muted"
+                className="flex flex-col gap-0.5"
+              >
+                <Text variant="annotation">
                   {i18n.t('ui.positionstable.investedWithValues', {
                     amount: formatMoney(r.total_invested),
                   })}
-                </span>
+                </Text>
                 {r.avg_buy_price != null && (
-                  <span className="text-content-subtle">
+                  <Text tone="subtle">
                     {i18n.t('ui.positionstable.avgPriceWithValues', {
                       amount: formatMoney(r.avg_buy_price, {
                         style: 'decimal',
                       }),
                     })}
-                    <span className="ml-1 opacity-40 text-[9px]">▲</span>
-                  </span>
+                    <Text variant="quietFine" className="ml-1">
+                      ▲
+                    </Text>
+                  </Text>
                 )}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'group' && r.groupType === 'cash') {
             return (
-              <span className="text-xs flex flex-col gap-0.5">
-                <span
-                  className={`${SEMANTIC_TEXT_CLASSES.netContributionsDetail} ${SEMANTIC_TEXT_CLASSES.netContributionsDecoration} underline decoration-dashed underline-offset-2`}
-                >
+              <Text variant="caption" className="flex flex-col gap-0.5">
+                <Text variant="contributionAnnotation" tone="accent">
                   {i18n.t('ui.positionstable.depositedWithValues', {
                     amount: formatMoney(r.deposit_total, { fallback: 0 }),
                   })}
-                </span>
+                </Text>
                 {(r.withdrawal_total ?? 0) > 0 && (
-                  <span className={SEMANTIC_TEXT_CLASSES.outflowDetail}>
+                  <Text tone="negative">
                     {i18n.t('ui.positionstable.withdrawnWithValues', {
                       amount: formatMoney(r.withdrawal_total, { fallback: 0 }),
                     })}
-                  </span>
+                  </Text>
                 )}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'operation') {
             return (
-              <span className="text-sm text-content-secondary">
+              <Text variant="body" tone="secondary">
                 {formatMoney(Math.abs(r.total_amount), { style: 'decimal' })}
-              </span>
+              </Text>
             )
           }
           return null
@@ -487,30 +498,12 @@ export function PositionsTable({
                     value0: r.name,
                   })}
                   title={i18n.t('ui.positionstable.viewAssetAllocations')}
-                  className="shrink-0 rounded p-1.5 text-content-subtle transition-colors hover:bg-surface-hover hover:text-accent focus-visible:bg-surface-hover focus-visible:text-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus"
+                  variant="allocationPreview"
+                  className="shrink-0 p-1.5"
                   onPreview={showAllocation}
                   onDismiss={scheduleHide}
                 >
-                  <DecorativeSvg viewBox="0 0 20 20" className="size-5">
-                    <circle
-                      cx="10"
-                      cy="10"
-                      r="7.75"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M10 2.25A7.75 7.75 0 0 1 17.75 10H10Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M10 10 4.52 15.48"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                  </DecorativeSvg>
+                  <AllocationIcon />
                 </Preview.Trigger>
               )}
               {!allocation && <Decorative className="block size-8" />}
@@ -526,9 +519,14 @@ export function PositionsTable({
               )}
               {!fundStatus && <Decorative className="block size-8" />}
               {hasNoBreakdown && (
-                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-content-subtle">
+                <Surface
+                  variant="overlay"
+                  as="span"
+                  tone="subtle"
+                  className="absolute inset-0 flex items-center justify-center"
+                >
                   —
-                </span>
+                </Surface>
               )}
             </span>
           )
@@ -553,10 +551,10 @@ export function PositionsTable({
           if (r.kind === 'operation' && r.operation_type === 'BUY') {
             if (r.quantity == null) return null
             return (
-              <span className="text-xs text-content-muted">
+              <Text variant="caption" tone="muted">
                 {formatNumber(r.quantity, { maximumFractionDigits: 2 })} ×{' '}
                 {formatMoney(r.price_per_unit, { style: 'decimal' })}
-              </span>
+              </Text>
             )
           }
           return null
@@ -580,14 +578,14 @@ export function PositionsTable({
           }
           if (r.kind === 'group' && r.groupType === 'trades') {
             return (
-              <span className="text-xs space-x-2">
-                <span className="text-content-muted">
+              <Text variant="caption" className="space-x-2">
+                <Text tone="muted">
                   {i18n.t('ui.positionstable.soldWithValues', {
                     amount: formatMoney(r.total_sold, { fallback: 0 }),
                   })}
-                </span>
+                </Text>
                 <GainCell value={r.realized_pnl ?? null} />
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'operation' && r.realized_gain != null) {
@@ -611,7 +609,7 @@ export function PositionsTable({
           const r = row.original
           if (r.kind === 'position') {
             return r.total_realized_return === 0 ? (
-              <span className="text-content-subtle">—</span>
+              <Text tone="subtle">—</Text>
             ) : (
               <GainCell value={r.total_realized_return} />
             )
@@ -635,8 +633,7 @@ export function PositionsTable({
           if (r.kind === 'position') {
             const hasDivs = r.total_dividends > 0
             const hasInt = r.total_interest > 0
-            if (!hasDivs && !hasInt)
-              return <span className="text-content-subtle">—</span>
+            if (!hasDivs && !hasInt) return <Text tone="subtle">—</Text>
             const divTax = calculatePassiveIncomeTax(
               r.total_dividends,
               r.total_dividends_net,
@@ -652,96 +649,90 @@ export function PositionsTable({
             const displayedInterestTax =
               intTax != null && intTax > 0 ? intTax : null
             return (
-              <span className="flex flex-col leading-tight text-xs">
+              <Text variant="compactCaption" className="flex flex-col">
                 <span className="space-x-2">
                   {hasDivs && (
-                    <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
-                      {formatMoney(r.total_dividends)}
-                    </span>
+                    <Text tone="income">{formatMoney(r.total_dividends)}</Text>
                   )}
                   {hasInt && (
-                    <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
+                    <Text tone="income">
                       {i18n.t('ui.positionstable.intWithValues', {
                         amount: formatMoney(r.total_interest),
                       })}
-                    </span>
+                    </Text>
                   )}
                 </span>
                 {displayedDividendTax != null && (
-                  <span className="text-[10px] text-content-subtle mt-0.5">
+                  <Text variant="tiny" tone="subtle" className="mt-0.5">
                     {i18n.t('ui.positionstable.taxOnDivWithValues', {
                       amount: formatMoney(-displayedDividendTax),
                       percentage: formatPercentage(r.tax_rate! * 100, {
                         decimals: 0,
                       }),
                     })}
-                  </span>
+                  </Text>
                 )}
                 {displayedInterestTax != null && (
-                  <span className="text-[10px] text-content-subtle mt-0.5">
+                  <Text variant="tiny" tone="subtle" className="mt-0.5">
                     {i18n.t('ui.positionstable.taxOnIntWithValues', {
                       amount: formatMoney(-displayedInterestTax),
                       percentage: formatPercentage(r.tax_rate! * 100, {
                         decimals: 0,
                       }),
                     })}
-                  </span>
+                  </Text>
                 )}
                 {isTaxFreePassiveIncome(r) && (
-                  <span className="text-[10px] text-content-subtle mt-0.5">
+                  <Text variant="tiny" tone="subtle" className="mt-0.5">
                     {i18n.t('ui.positionstable.net0Tax')}
-                  </span>
+                  </Text>
                 )}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'group' && r.groupType === 'dividends') {
             return (
-              <span className="text-xs space-x-2">
-                <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
+              <Text variant="caption" className="space-x-2">
+                <Text tone="income">
                   {formatMoney(r.total_dividends, { fallback: 0 })}
-                </span>
-                <span className="text-content-muted">
+                </Text>
+                <Text tone="muted">
                   {i18n.t('ui.positionstable.dividendPayments', {
                     count: r.dividend_count ?? 0,
                     annualAmount: formatMoney(r.annualized_dividends, {
                       fallback: 0,
                     }),
                   })}
-                </span>
-              </span>
+                </Text>
+              </Text>
             )
           }
           if (r.kind === 'group' && r.groupType === 'interest') {
             return (
-              <span className="text-xs space-x-2">
-                <span className={SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}>
+              <Text variant="caption" className="space-x-2">
+                <Text tone="income">
                   {formatMoney(r.total_interest, { fallback: 0 })}
-                </span>
-                <span className="text-content-muted">
+                </Text>
+                <Text tone="muted">
                   {i18n.t('ui.positionstable.interestPayments', {
                     count: r.interest_count ?? 0,
                   })}
-                </span>
-              </span>
+                </Text>
+              </Text>
             )
           }
           if (r.kind === 'operation' && r.operation_type === 'DIVIDEND') {
             return (
-              <span
-                className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}
-              >
+              <Text variant="body" tone="income">
                 {formatMoney(r.total_amount, { style: 'decimal' })}
-              </span>
+              </Text>
             )
           }
           if (r.kind === 'operation' && r.operation_type === 'INTEREST') {
             return (
-              <span
-                className={`text-sm ${SEMANTIC_TEXT_CLASSES.passiveIncomeDetail}`}
-              >
+              <Text variant="body" tone="income">
                 {formatMoney(r.total_amount, { style: 'decimal' })}
-              </span>
+              </Text>
             )
           }
           return null
@@ -762,12 +753,12 @@ export function PositionsTable({
           const r = row.original
           if (r.kind !== 'position' || r.total_return_pct == null) return null
           return (
-            <span className={gainClass(r.total_return_pct)}>
+            <Text tone={getGainTone(r.total_return_pct)}>
               {formatPercentage(r.total_return_pct, {
                 decimals: 2,
                 signed: true,
               })}
-            </span>
+            </Text>
           )
         },
       }),
@@ -790,17 +781,17 @@ export function PositionsTable({
           )
             return null
           return (
-            <span className="flex flex-col leading-tight">
+            <Text variant="compact" className="flex flex-col">
               {r.xirr != null && (
-                <span className={gainClass(r.xirr)}>
+                <Text tone={getGainTone(r.xirr)}>
                   {formatPercentage(r.xirr, { decimals: 2, signed: true })}
-                  <span className="ml-0.5 text-xs opacity-60">
+                  <Text variant="subduedCaption" className="ml-0.5">
                     {i18n.t('ui.positionstable.yr.22ed45')}
-                  </span>
-                </span>
+                  </Text>
+                </Text>
               )}
               {r.xirr != null && (
-                <span className="mt-0.5 text-[10px] text-content-subtle">
+                <Text variant="tiny" tone="subtle" className="mt-0.5">
                   {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
                   {r.xirr_rolling_3y == null
                     ? '—'
@@ -810,9 +801,9 @@ export function PositionsTable({
                           signed: true,
                         }),
                       })}
-                </span>
+                </Text>
               )}
-            </span>
+            </Text>
           )
         },
       }),
@@ -879,10 +870,10 @@ export function PositionsTable({
         if (!open) dismiss()
       }}
     >
-      <section className={DATA_TABLE_STYLES.panel}>
-        <div className={DATA_TABLE_STYLES.toolbar}>
+      <TablePanel>
+        <TablePanel.Toolbar>
           <div>
-            <h2 className={`${DATA_TABLE_STYLES.title} flex items-center`}>
+            <TablePanel.Title className="flex items-center">
               {i18n.t('ui.positionstable.allPortfolioPositions')}
               <ScopedInfoTooltip
                 text={i18n.t(
@@ -890,37 +881,44 @@ export function PositionsTable({
                 )}
                 scope={{ account: 'filterable', period: 'as-of' }}
               />
-            </h2>
-            <p className={DATA_TABLE_STYLES.description}>
+            </TablePanel.Title>
+            <TablePanel.Description>
               {i18n.t(
                 'ui.positionstable.expandEachPositionToReviewItsTransactionsAndIncome',
               )}
-            </p>
-            <p className="mt-1 text-[10px] text-content-subtle">
+            </TablePanel.Description>
+            <Text as="p" variant="tiny" tone="subtle" className="mt-1">
               {i18n.t(
                 'ui.positionstable.transactionAndIncomeAmountsUseTheSelectedPeriod',
               )}
-            </p>
+            </Text>
           </div>
-          <div className={DATA_TABLE_STYLES.actions}>
-            <button
+          <TablePanel.Actions>
+            <Button
               type="button"
               onClick={() => table.toggleAllRowsExpanded(true)}
-              className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
+              variant="tableExpand"
+              className="flex-1 px-3 py-2 sm:flex-none"
             >
               {i18n.t('ui.positionstable.expandAll')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => table.toggleAllRowsExpanded(false)}
-              className="flex-1 rounded-lg border border-border-strong bg-canvas px-3 py-2 text-xs text-content-secondary transition-colors hover:border-border-strong hover:text-content sm:flex-none"
+              variant="tableExpand"
+              className="flex-1 px-3 py-2 sm:flex-none"
             >
               {i18n.t('ui.positionstable.collapseAll')}
-            </button>
-          </div>
-        </div>
-        <div className="overflow-x-auto rounded-b-xl">
-          <table className="w-full min-w-[1100px] text-sm text-left table-fixed">
+            </Button>
+          </TablePanel.Actions>
+        </TablePanel.Toolbar>
+        <Surface variant="tableBottom" className="overflow-x-auto">
+          <Surface
+            variant="bodyTable"
+            as="table"
+            align="left"
+            className="w-full min-w-[1100px] table-fixed"
+          >
             <colgroup>
               <col style={{ width: '28px' }} />
               <col style={{ width: '27%' }} />
@@ -933,11 +931,11 @@ export function PositionsTable({
               <col style={{ width: '9%' }} />
               <col style={{ width: '9%' }} />
             </colgroup>
-            <thead className={DATA_TABLE_STYLES.columnHeader}>
+            <TablePanel.Header>
               {table.getHeaderGroups().map((group) => (
                 <PositionHeaderRow key={group.id} group={group} />
               ))}
-            </thead>
+            </TablePanel.Header>
             <tbody>
               {bodyRows.map((item) => (
                 <PositionBodyRow
@@ -954,8 +952,8 @@ export function PositionsTable({
                 />
               ))}
             </tbody>
-          </table>
-        </div>
+          </Surface>
+        </Surface>
 
         {chart && (
           <HoverChart
@@ -988,7 +986,7 @@ export function PositionsTable({
             onMouseLeave={scheduleHide}
           />
         )}
-      </section>
+      </TablePanel>
     </Preview>
   )
 }

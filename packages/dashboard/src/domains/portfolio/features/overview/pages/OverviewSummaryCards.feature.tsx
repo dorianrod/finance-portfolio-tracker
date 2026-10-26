@@ -15,8 +15,10 @@ import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { SEMANTIC_TEXT_CLASSES } from '@/shared/theme/semanticColors'
-import { Button, Decorative, DecorativeSvg } from '@/shared/ui/Controls.view'
+import { MetricDelta } from '@/shared/ui/Badge.view'
+import { MetricCard, type MetricCardAccent } from '@/shared/ui/MetricCard.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
 
@@ -44,54 +46,36 @@ function CardShell({
   scope: FilterScopeSpec
   eyebrow: string
   destination: OverviewDestination
-  accent: string
+  accent: MetricCardAccent
   children: ReactNode
 }) {
   const { navigateTo } = useDashboardNavigation()
 
   return (
-    <article className="group relative min-w-0 rounded-2xl border border-border bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface/80">
-      <Button
-        type="button"
-        onClick={() => navigateTo(destination)}
-        label={i18n.t('ui.overviewsummarycards.openValue0Details', {
-          value0: title,
-        })}
-        className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-      />
-      <Decorative
-        className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${accent}`}
-      />
-      <span className="pointer-events-none relative z-10 flex items-start justify-between gap-3">
-        <span>
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-content-subtle">
-            {eyebrow}
-          </span>
-          <span className="mt-1 flex items-center text-sm font-semibold text-content-secondary">
-            {title}
-            <span className="pointer-events-auto">
-              <ScopedInfoTooltip text={description} scope={scope} />
-            </span>
-          </span>
-        </span>
-        <DecorativeSvg
-          viewBox="0 0 20 20"
-          fill="none"
-          className="mt-0.5 h-4 w-4 shrink-0 text-content-subtle transition-all group-hover:translate-x-0.5 group-hover:text-content-muted"
+    <MetricCard
+      accent={accent}
+      onOpen={() => navigateTo(destination)}
+      label={i18n.t('ui.overviewsummarycards.openValue0Details', {
+        value0: title,
+      })}
+    >
+      <MetricCard.Header>
+        <Text variant="prominentEyebrow" tone="subtle" className="block">
+          {eyebrow}
+        </Text>
+        <Text
+          variant="bodyStrong"
+          tone="secondary"
+          className="mt-1 flex items-center"
         >
-          <path
-            d="M4 10h11m-4-4 4 4-4 4"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </DecorativeSvg>
-      </span>
-      <span className="pointer-events-none relative z-10 mt-4 block">
-        {children}
-      </span>
-    </article>
+          {title}
+          <MetricCard.Action>
+            <ScopedInfoTooltip text={description} scope={scope} />
+          </MetricCard.Action>
+        </Text>
+      </MetricCard.Header>
+      <MetricCard.Body>{children}</MetricCard.Body>
+    </MetricCard>
   )
 }
 
@@ -133,18 +117,18 @@ export function OverviewSummaryCards({
         }}
         eyebrow={i18n.t('ui.overviewsummarycards.atPeriodEnd')}
         destination="wealth"
-        accent="bg-value"
+        accent="value"
       >
-        <span className="block text-2xl font-semibold tracking-tight tabular-nums text-content">
+        <Text variant="metric" tone="default" numeric className="block">
           {formatMoney(comparison.value.current)}
-        </span>
+        </Text>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.value} />
           <PreviousValue value={comparison.value.previous} />
         </span>
-        <span className="mt-3 block text-[11px] text-content-subtle">
+        <Text variant="micro" tone="subtle" className="mt-3 block">
           {i18n.t('ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax')}
-        </span>
+        </Text>
       </CardShell>
 
       <CardShell
@@ -155,22 +139,20 @@ export function OverviewSummaryCards({
         scope={{ account: 'filterable', period: 'comparison-range' }}
         eyebrow={i18n.t('ui.overviewsummarycards.cashFlow')}
         destination="wealth"
-        accent="bg-accent"
+        accent="accent"
       >
-        <span
-          className={`block text-2xl font-semibold tracking-tight tabular-nums ${SEMANTIC_TEXT_CLASSES.netContributions}`}
-        >
+        <Text variant="metric" tone="accent" numeric className="block">
           {formatMoney(comparison.contributions.current)}
-        </span>
+        </Text>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.contributions} tone="contributions" />
           <PreviousValue value={comparison.contributions.previous} />
         </span>
-        <span className="mt-3 block text-[11px] text-content-subtle">
+        <Text variant="micro" tone="subtle" className="mt-3 block">
           {i18n.t(
             'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
           )}
-        </span>
+        </Text>
       </CardShell>
 
       <CardShell
@@ -181,35 +163,45 @@ export function OverviewSummaryCards({
         scope={{ account: 'filterable', period: 'comparison-range' }}
         eyebrow={i18n.t('ui.overviewsummarycards.periodResult')}
         destination="performance"
-        accent="bg-positive"
+        accent="positive"
       >
         <span className="flex items-baseline justify-between gap-2">
-          <span
-            className={`text-2xl font-semibold tracking-tight tabular-nums ${getOverviewPerformanceTone(comparison.marketPerformance.current)}`}
+          <Text
+            variant="metric"
+            numeric
+            tone={getOverviewPerformanceTone(
+              comparison.marketPerformance.current,
+            )}
           >
             {formatMoney(comparison.marketPerformance.current)}
-          </span>
+          </Text>
           <DeltaBadge metric={comparison.marketPerformance} />
         </span>
-        <span className="mt-3 flex items-center justify-between gap-3 text-xs">
-          <span className="text-content-subtle">
+        <Text
+          variant="caption"
+          className="mt-3 flex items-center justify-between gap-3"
+        >
+          <Text tone="subtle">
             {i18n.t('ui.overviewsummarycards.passiveIncome')}
-          </span>
-          <span
-            className={`font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.passiveIncome}`}
-          >
+          </Text>
+          <Text variant="strong" tone="income" numeric>
             {formatMoney(comparison.passiveIncome.current)}
             {comparison.passiveIncome.delta != null && (
-              <span className="ml-1.5 text-[10px] text-content-subtle">
+              <Text variant="tiny" tone="subtle" className="ml-1.5">
                 ({signedMoney(comparison.passiveIncome.delta)})
-              </span>
+              </Text>
             )}
-          </span>
-        </span>
-        <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border pt-2 text-[11px] text-content-subtle">
+          </Text>
+        </Text>
+        <Surface
+          as="span"
+          variant="microFooter"
+          tone="subtle"
+          className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 pt-2"
+        >
           <span className="inline-flex items-center">
             {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
-            <span className="pointer-events-auto">
+            <Surface variant="interactiveOverlay" as="span">
               <ScopedInfoTooltip
                 text={i18n.t(
                   'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
@@ -221,39 +213,42 @@ export function OverviewSummaryCards({
                   effectiveDate: comparison.windows.current.end,
                 }}
               />
-            </span>
+            </Surface>
           </span>
-          <span
-            className={`font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearTri.current)}`}
+          <Text
+            variant="strong"
+            numeric
+            tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
           >
             {formatOverviewIrrValue(
               irrStatus,
               rollingThreeYearTri.current,
               formatPercentage,
             )}
-          </span>
+          </Text>
           {rollingThreeYearDelta != null && (
-            <span
-              className={`inline-flex rounded-full bg-canvas/55 px-1.5 py-0.5 font-semibold tabular-nums ${getOverviewPerformanceTone(rollingThreeYearDelta)}`}
+            <MetricDelta
+              variant="inline"
+              tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
             >
               {formatPercentage(rollingThreeYearDelta, {
                 signed: true,
                 unit: ' pp',
               })}
-            </span>
+            </MetricDelta>
           )}
-          <span className="text-content-subtle">
+          <Text tone="subtle">
             {i18n.t('ui.overviewsummarycards.previous')}{' '}
-            <span className="font-medium tabular-nums text-content-muted">
+            <Text variant="medium" tone="muted" numeric>
               {irrStatus === 'ready' && rollingThreeYearTri.previous != null
                 ? formatPercentage(rollingThreeYearTri.previous, {
                     decimals: 2,
                     signed: true,
                   })
                 : '—'}
-            </span>
-          </span>
-        </span>
+            </Text>
+          </Text>
+        </Surface>
       </CardShell>
 
       <CardShell
@@ -270,53 +265,70 @@ export function OverviewSummaryCards({
         // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
         eyebrow={primaryLabel}
         destination="allocation"
-        accent="bg-risk"
+        accent="risk"
       >
         <span className="grid grid-cols-2 gap-4">
           <span>
-            <span className="block text-[11px] text-content-subtle">
+            <Text variant="micro" tone="subtle" className="block">
               {i18n.t('ui.overviewsummarycards.largestAsset')}
-            </span>
-            <span
-              className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.risk}`}
+            </Text>
+            <Text
+              variant="metricSecondary"
+              tone="risk"
+              numeric
+              className="mt-1 block"
             >
               {primaryConcentration.current
                 ? formatPercentage(primaryConcentration.current.topHoldingPct)
                 : '—'}
-            </span>
-            <span
-              className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topHolding.delta)}`}
+            </Text>
+            <Text
+              variant="tinyLabel"
+              numeric
+              tone={getConcentrationTone(primaryConcentration.topHolding.delta)}
+              className="mt-1 block"
             >
               {formatPercentage(primaryConcentration.topHolding.delta, {
                 signed: true,
                 unit: ' pp',
               })}
-            </span>
+            </Text>
           </span>
           <span>
-            <span className="block text-[11px] text-content-subtle">
+            <Text variant="micro" tone="subtle" className="block">
               {i18n.t('ui.overviewsummarycards.topFive')}
-            </span>
-            <span
-              className={`mt-1 block text-xl font-semibold tabular-nums ${SEMANTIC_TEXT_CLASSES.riskSecondary}`}
+            </Text>
+            <Text
+              variant="metricSecondary"
+              tone="risk"
+              numeric
+              className="mt-1 block"
             >
               {primaryConcentration.current
                 ? formatPercentage(primaryConcentration.current.topFivePct)
                 : '—'}
-            </span>
-            <span
-              className={`mt-1 block text-[10px] font-medium tabular-nums ${getConcentrationTone(primaryConcentration.topFive.delta)}`}
+            </Text>
+            <Text
+              variant="tinyLabel"
+              numeric
+              tone={getConcentrationTone(primaryConcentration.topFive.delta)}
+              className="mt-1 block"
             >
               {formatPercentage(primaryConcentration.topFive.delta, {
                 signed: true,
                 unit: ' pp',
               })}
-            </span>
+            </Text>
           </span>
         </span>
-        <span className="mt-3 block space-y-1 border-t border-border pt-2 text-[11px] text-content-subtle">
+        <Surface
+          as="span"
+          variant="microFooter"
+          tone="subtle"
+          className="mt-3 block space-y-1 pt-2"
+        >
           {underlyingAvailable ? (
-            <span className="block text-content-subtle">
+            <Text tone="subtle" className="block">
               {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
                 largest: heldConcentration.current
                   ? formatPercentage(heldConcentration.current.topHoldingPct)
@@ -325,7 +337,7 @@ export function OverviewSummaryCards({
                   ? formatPercentage(heldConcentration.current.topFivePct)
                   : '—',
               })}
-            </span>
+            </Text>
           ) : (
             <span className="block">
               {i18n.t(
@@ -333,7 +345,7 @@ export function OverviewSummaryCards({
               )}
             </span>
           )}
-        </span>
+        </Surface>
       </CardShell>
     </div>
   )

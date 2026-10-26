@@ -1,9 +1,15 @@
 import i18n from '@/i18n/i18n'
+import { Surface } from '@/shared/ui/Surface.view'
 
 export function DashboardPanelFallback() {
   return (
-    <div className="mb-6 rounded-card border border-border bg-surface/50 p-8 text-center text-sm text-content-subtle">
+    <Surface
+      variant="subduedCard"
+      tone="subtle"
+      align="center"
+      className="mb-6 p-8"
+    >
       {i18n.t('ui.app.loadingAnalysis')}
-    </div>
+    </Surface>
   )
 }

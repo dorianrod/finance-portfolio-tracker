@@ -1,12 +1,7 @@
 import {
-  Bar,
   BarChart,
   type BarShapeProps,
-  CartesianGrid,
-  LabelList,
-  Rectangle,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
@@ -16,8 +11,13 @@ import type { HoldingConcentration } from '@/domains/portfolio/shared/helpers/ca
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid } from '@/shared/ui/ChartAxes.view'
+import { ChartLabels } from '@/shared/ui/ChartLabels.view'
+import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
+import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { SeriesBar } from '@/shared/ui/SeriesBar.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
 import { ConcentrationTooltip } from './ConcentrationTooltip.view'
 import { HOLDING_LABEL_WIDTH, HoldingLabelTick } from './HoldingLabelTick.view'
@@ -43,10 +43,15 @@ export function ConcentrationChart({
       ? { percentage: topTenPct, value: topTenValue }
       : null
   return (
-    <div className="rounded-xl bg-surface p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h2 className="flex items-center text-sm font-medium text-content-secondary">
+          <Text
+            as="h2"
+            variant="label"
+            tone="secondary"
+            className="flex items-center"
+          >
             {i18n.t('ui.concentrationchart.largestHoldings')}
             <ScopedInfoTooltip
               // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
@@ -59,23 +64,29 @@ export function ConcentrationChart({
               // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
               scope={{ account: 'filterable', period: 'as-of', effectiveDate }}
             />
-          </h2>
-          <p className="mt-0.5 text-xs text-content-subtle">
+          </Text>
+          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
             {description ??
               i18n.t('ui.concentrationchart.aggregatedAcrossAccounts')}
-          </p>
+          </Text>
         </div>
         <div className="flex shrink-0 items-center gap-3">
           {topTenSummary && (
-            <div className="text-right">
-              <div className="text-[10px] uppercase tracking-wider text-content-subtle">
+            <Text as="div" align="right">
+              <Text as="div" variant="tinyOverline" tone="subtle">
                 {i18n.t('ui.concentrationchart.top10Total')}
-              </div>
-              <div className="mt-0.5 text-xs font-semibold tabular-nums text-content-secondary">
+              </Text>
+              <Text
+                as="div"
+                variant="captionStrong"
+                tone="secondary"
+                numeric
+                className="mt-0.5"
+              >
                 {formatMoney(topTenSummary.value, { style: 'full' })} ·{' '}
                 {formatPercentage(topTenSummary.percentage)}
-              </div>
-            </div>
+              </Text>
+            </Text>
           )}
         </div>
       </div>
@@ -87,11 +98,7 @@ export function ConcentrationChart({
               data={data}
               margin={{ top: 0, right: 50, left: 8, bottom: 0 }}
             >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="var(--chart-grid)"
-                horizontal={false}
-              />
+              <ChartGrid horizontal={false} />
               <XAxis type="number" domain={[0, 'dataMax']} hide />
               <YAxis
                 dataKey="label"
@@ -101,41 +108,35 @@ export function ConcentrationChart({
                 axisLine={false}
                 width={HOLDING_LABEL_WIDTH}
               />
-              <Tooltip
-                content={<ConcentrationTooltip />}
-                cursor={{ fill: CHART_THEME.cursor }}
-              />
-              <Bar
-                dataKey="weight"
-                radius={[0, 4, 4, 0]}
-                shape={LeadingHoldingBar}
-              >
-                <LabelList
+              <ChartTooltip highlight="bar">
+                <ConcentrationTooltip />
+              </ChartTooltip>
+              <SeriesBar dataKey="weight" corners="wideRight">
+                <SeriesBar.Shape>
+                  <LeadingHoldingBar />
+                </SeriesBar.Shape>
+                <ChartLabels
                   dataKey="weight"
                   position="right"
                   formatter={(value: unknown) =>
                     formatPercentage(Number(value))
                   }
-                  style={{ fill: 'var(--chart-label)', fontSize: 11 }}
+                  density="standard"
                 />
-              </Bar>
+              </SeriesBar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
+    </Surface>
   )
 }
 
-function LeadingHoldingBar(shapeProps: BarShapeProps) {
+function LeadingHoldingBar(shapeProps: Partial<BarShapeProps>) {
   return (
-    <Rectangle
-      {...shapeProps}
-      fill={
-        shapeProps.index === 0
-          ? SEMANTIC_COLORS.risk
-          : SEMANTIC_COLORS.neutralSeries
-      }
+    <ChartRectangle
+      geometry={shapeProps}
+      tone={shapeProps.index === 0 ? 'risk' : 'neutralSeries'}
     />
   )
 }

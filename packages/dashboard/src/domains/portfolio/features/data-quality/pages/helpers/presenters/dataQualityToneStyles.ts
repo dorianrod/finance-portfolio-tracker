@@ -1,21 +1,9 @@
 import type { QualityTone } from '@/domains/portfolio/shared/types/dataQuality.type'
+import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance'
 
-export const TONE_STYLES: Record<QualityTone, { dot: string; accent: string }> =
-  {
-    healthy: {
-      dot: 'bg-positive',
-      accent: 'bg-positive',
-    },
-    warning: {
-      dot: 'bg-warning',
-      accent: 'bg-warning',
-    },
-    critical: {
-      dot: 'bg-danger',
-      accent: 'bg-danger',
-    },
-    unavailable: {
-      dot: 'bg-content-subtle',
-      accent: 'bg-content-subtle',
-    },
-  }
+export const QUALITY_TONES: Record<QualityTone, keyof typeof SWATCH_TONES> = {
+  healthy: 'positive',
+  warning: 'warning',
+  critical: 'negative',
+  unavailable: 'subtle',
+}

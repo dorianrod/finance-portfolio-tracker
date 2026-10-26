@@ -6,6 +6,11 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { Text } from '@/shared/ui/Text.view'
+import type { TextTone } from '@/shared/ui/textAppearance'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 export function ValueTooltip({
@@ -27,24 +32,23 @@ export function ValueTooltip({
   const point = payload[0].payload
   return (
     <TooltipBox minWidth={190}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
         {formatDate(point.timestamp, {
           style: 'dayMonthYear',
           timeZone: 'UTC',
         })}
-      </div>
-      <div
-        className="mt-1 tabular-nums"
-        style={{ color: 'var(--tooltip-label)' }}
-      >
+      </ChartText>
+      <ChartText as="div" tone={'tooltipLabel'} numeric className="mt-1">
         {formatMoney(point.value)}
-      </div>
-      <div
-        className="mt-1 text-xs capitalize"
-        style={{ color: 'var(--tooltip-dim)' }}
+      </ChartText>
+      <ChartText
+        as="div"
+        tone={'tooltipDim'}
+        variant="capitalizedCaption"
+        className="mt-1"
       >
         {i18n.t('ui.overviewcharts.periodWithValues', { window: point.window })}
-      </div>
+      </ChartText>
     </TooltipBox>
   )
 }
@@ -61,56 +65,48 @@ export function DriversTooltip({
   const row = payload[0].payload
   return (
     <TooltipBox minWidth={205}>
-      <div className="font-semibold" style={{ color: 'var(--tooltip-text)' }}>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
         {row.label}
-      </div>
-      <div className="mt-2 space-y-1 text-xs">
-        <div
+      </ChartText>
+      <Text as="div" variant="caption" className="mt-2 space-y-1">
+        <ChartText
+          as="div"
+          tone={'tooltipDim'}
           className="flex justify-between gap-6"
-          style={{ color: 'var(--tooltip-dim)' }}
         >
           <span>{i18n.t('ui.overviewcharts.current')}</span>
-          <span
-            className="tabular-nums"
-            style={{ color: 'var(--tooltip-label)' }}
-          >
+          <ChartText tone={'tooltipLabel'} numeric>
             {formatMoney(row.current, {
               fallback: i18n.t('ui.overviewcharts.unavailable'),
             })}
-          </span>
-        </div>
-        <div
+          </ChartText>
+        </ChartText>
+        <ChartText
+          as="div"
+          tone={'tooltipDim'}
           className="flex justify-between gap-6"
-          style={{ color: 'var(--tooltip-dim)' }}
         >
           <span>{i18n.t('ui.overviewcharts.previous')}</span>
-          <span
-            className="tabular-nums"
-            style={{ color: 'var(--tooltip-label)' }}
-          >
+          <ChartText tone={'tooltipLabel'} numeric>
             {formatMoney(row.previous, {
               fallback: i18n.t('ui.overviewcharts.unavailable'),
             })}
-          </span>
-        </div>
-        <div
-          className="flex justify-between gap-6 border-t pt-1"
-          style={{
-            color: 'var(--tooltip-dim)',
-            borderColor: 'var(--tooltip-border)',
-          }}
+          </ChartText>
+        </ChartText>
+        <ChartText
+          as="div"
+          separator
+          tone="tooltipDim"
+          className="flex justify-between gap-6 pt-1"
         >
           <span>{i18n.t('ui.overviewcharts.difference')}</span>
-          <span
-            className="tabular-nums"
-            style={{ color: 'var(--tooltip-label)' }}
-          >
+          <ChartText tone={'tooltipLabel'} numeric>
             {row.current == null || row.previous == null
               ? i18n.t('ui.overviewcharts.unavailable')
               : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}
-          </span>
-        </div>
-      </div>
+          </ChartText>
+        </ChartText>
+      </Text>
     </TooltipBox>
   )
 }
@@ -127,42 +123,59 @@ export function OverviewConcentrationRow({
   const formatPercentage = useFormatPercentage()
   const delta =
     row.previousWeight == null ? null : row.weight - row.previousWeight
-  let deltaTone = 'text-content-subtle'
-  if (delta != null && delta > 0) deltaTone = 'text-danger'
-  else if (delta != null && delta < 0) deltaTone = 'text-positive'
+  let deltaTone: TextTone = 'subtle'
+  if (delta != null && delta > 0) deltaTone = 'negative'
+  else if (delta != null && delta < 0) deltaTone = 'positive'
   return (
     <div>
-      <div className="mb-1.5 flex items-center gap-3 text-xs">
-        <span
-          className="min-w-0 flex-1 truncate font-medium text-content-secondary"
+      <Text
+        as="div"
+        variant="caption"
+        className="mb-1.5 flex items-center gap-3"
+      >
+        <Text
+          variant="medium"
+          tone="secondary"
+          truncate
+          className="min-w-0 flex-1"
           title={row.name}
         >
           {row.label}
-        </span>
-        <span className="shrink-0 tabular-nums text-content-secondary">
+        </Text>
+        <Text tone="secondary" numeric className="shrink-0">
           {formatPercentage(row.weight)}
-        </span>
-        <span
-          className={`w-14 shrink-0 text-right text-[10px] font-medium tabular-nums ${deltaTone}`}
+        </Text>
+        <Text
+          variant="tinyLabel"
+          tone={deltaTone}
+          align="right"
+          numeric
+          className="w-14 shrink-0"
         >
           {formatPercentage(delta, { signed: true, unit: ' pp' })}
-        </span>
-      </div>
-      <div className="relative h-2.5 rounded-full bg-surface-raised">
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-risk/80"
+        </Text>
+      </Text>
+      <Surface variant="track" className="relative h-2.5">
+        <ToneSwatch
+          as="div"
+          tone="risk"
+          shape="dot"
+          prominence="strong"
+          className="absolute inset-y-0 left-0"
           style={{ width: `${(row.weight / scaleMax) * 100}%` }}
         />
         {previousAvailable && (
-          <span
-            className="absolute -top-1 h-4 w-0.5 rounded-full bg-content-secondary shadow-[0_0_0_1px_var(--color-gray-900)]"
+          <ToneSwatch
+            tone="secondary"
+            shape="marker"
+            className="absolute -top-1 h-4 w-0.5"
             style={{ left: `${((row.previousWeight ?? 0) / scaleMax) * 100}%` }}
             title={i18n.t('ui.overviewcharts.previousValue0', {
               value0: formatPercentage(row.previousWeight, { fallback: 0 }),
             })}
           />
         )}
-      </div>
+      </Surface>
     </div>
   )
 }

@@ -1,76 +1,22 @@
 import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { TransactionMarker } from '@/shared/ui/TransactionMarker.view'
 
 type BuySellDotProps = {
   cx?: number
   cy?: number
   payload?: HoverChartDataPoint
 }
-
 export function BuySellDot({ cx, cy, payload }: BuySellDotProps) {
   if (!payload) return <g />
-  if (payload.hasBuy && payload.hasSell) {
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={6}
-        fill={SEMANTIC_COLORS.transactionMixed}
-        stroke={SEMANTIC_COLORS.transactionMixedStroke}
-        strokeWidth={2}
-      />
-    )
-  }
-  if (payload.hasBuy) {
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill={SEMANTIC_COLORS.transactionBuy}
-        stroke={SEMANTIC_COLORS.transactionBuyStroke}
-        strokeWidth={2}
-      />
-    )
-  }
-  if (payload.hasSell) {
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill={SEMANTIC_COLORS.transactionSell}
-        stroke={SEMANTIC_COLORS.transactionSellStroke}
-        strokeWidth={2}
-      />
-    )
-  }
+  if (payload.hasBuy && payload.hasSell)
+    return <TransactionMarker cx={cx} cy={cy} kind="mixed" />
+  if (payload.hasBuy) return <TransactionMarker cx={cx} cy={cy} kind="buy" />
+  if (payload.hasSell) return <TransactionMarker cx={cx} cy={cy} kind="sell" />
   return <g />
 }
-
 export function BuySellDotUnit({ cx, cy, payload }: BuySellDotProps) {
   if (!payload) return <g />
-  if (payload.hasBuy)
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill={SEMANTIC_COLORS.transactionBuy}
-        stroke={SEMANTIC_COLORS.transactionBuyStroke}
-        strokeWidth={2}
-      />
-    )
-  if (payload.hasSell)
-    return (
-      <circle
-        cx={cx}
-        cy={cy}
-        r={5}
-        fill={SEMANTIC_COLORS.transactionSell}
-        stroke={SEMANTIC_COLORS.transactionSellStroke}
-        strokeWidth={2}
-      />
-    )
+  if (payload.hasBuy) return <TransactionMarker cx={cx} cy={cy} kind="buy" />
+  if (payload.hasSell) return <TransactionMarker cx={cx} cy={cy} kind="sell" />
   return <g />
 }

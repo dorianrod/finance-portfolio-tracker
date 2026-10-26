@@ -1,15 +1,8 @@
 import {
-  CartesianGrid,
   LabelList,
-  ReferenceLine,
   ResponsiveContainer,
-  Scatter,
   ScatterChart,
   type ScatterShapeProps,
-  Symbols,
-  Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts'
 
 import { useIncomePlacementChart } from '@/domains/portfolio/features/wealth/services/useIncomePlacementChart'
@@ -19,11 +12,14 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { SEMANTIC_COLORS } from '@/shared/theme/semanticColors'
+import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { ChartSymbol, SeriesScatter } from '@/shared/ui/SeriesScatter.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
 
-import { getRelationshipYearOpacity } from './helpers/presenters/getRelationshipYearOpacity'
 import { RelationshipTooltip, YearLabel } from './IncomePlacementTooltip.view'
 
 export function IncomePlacementRelationshipChart({
@@ -46,9 +42,14 @@ export function IncomePlacementRelationshipChart({
   const trendLine =
     trendStart && trendEnd ? { end: trendEnd, start: trendStart } : null
   return (
-    <div className="bg-surface rounded-xl p-4">
+    <Surface variant="chart" className="p-4">
       <div className="mb-3">
-        <h2 className="flex items-center text-sm font-medium text-content-secondary">
+        <Text
+          as="h2"
+          variant="label"
+          tone="secondary"
+          className="flex items-center"
+        >
           {i18n.t(
             'ui.incomeplacementrelationshipchart.incomeLevelVsPlacementRate',
           )}
@@ -58,68 +59,66 @@ export function IncomePlacementRelationshipChart({
             )}
             scope={{ account: 'global', period: 'year-range' }}
           />
-        </h2>
-        <p className="mt-1 text-xs text-content-subtle">
+        </Text>
+        <Text as="p" variant="caption" tone="subtle" className="mt-1">
           {i18n.t(
             'ui.incomeplacementrelationshipchart.comparableActualYearsOnlyAllAccountsLatest3Years',
           )}
-        </p>
+        </Text>
       </div>
-      <div className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-xs">
-        <span className="text-content-subtle">
+      <Text
+        as="div"
+        variant="caption"
+        className="mb-2 flex flex-wrap gap-x-5 gap-y-1"
+      >
+        <Text tone="subtle">
           {i18n.t('ui.incomeplacementrelationshipchart.correlation')}{' '}
-          <strong className="font-semibold text-content-secondary">
+          <Text as="strong" variant="strong" tone="secondary">
             {formatNumber(analysis.correlation, {
               maximumFractionDigits: 2,
               minimumFractionDigits: 2,
               signDisplay: 'always',
             })}
-          </strong>
-        </span>
-        <span className="text-content-subtle">
+          </Text>
+        </Text>
+        <Text tone="subtle">
           {i18n.t('ui.incomeplacementrelationshipchart.trendPer10kIncome')}{' '}
-          <strong className="font-semibold text-content-secondary">
+          <Text as="strong" variant="strong" tone="secondary">
             {formatPercentage(analysis.slopePerTenThousand, {
               signed: true,
               unit: ' pp',
             })}
-          </strong>
-        </span>
-      </div>
+          </Text>
+        </Text>
+      </Text>
       <ResponsiveContainer
         width="100%"
         height={285}
         onResize={(width) => setChartWidth(width)}
       >
         <ScatterChart margin={{ top: 18, right: 24, left: 4, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_THEME.grid} />
-          <XAxis
+          <ChartGrid />
+          <ChartXAxis
             type="number"
             dataKey="totalIncome"
             name={i18n.t('ui.incomeplacementrelationshipchart.netIncome')}
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
           />
-          <YAxis
+          <ChartYAxis
             type="number"
             dataKey="placementRate"
             name={i18n.t(
               'ui.incomeplacementrelationshipchart.placementRate.5df16e',
             )}
             tickFormatter={(value) => `${value}%`}
-            tick={{ fill: CHART_THEME.tick, fontSize: 11 }}
-            tickLine={false}
-            axisLine={false}
+
             width={48}
           />
-          <Tooltip
-            cursor={{ strokeDasharray: '3 3' }}
-            content={<RelationshipTooltip />}
-          />
+          <ChartTooltip highlight="dashed">
+            <RelationshipTooltip />
+          </ChartTooltip>
           {trendLine && (
-            <ReferenceLine
+            <ChartReference
               segment={[
                 {
                   x: trendLine.start.totalIncome,
@@ -130,22 +129,17 @@ export function IncomePlacementRelationshipChart({
                   y: trendLine.end.placementRate,
                 },
               ]}
-              stroke={SEMANTIC_COLORS.neutralSeries}
-              strokeDasharray="5 4"
-              strokeWidth={2}
+              kind="benchmark"
             />
           )}
-          <Scatter
-            data={analysis.points}
-            fill={SEMANTIC_COLORS.returnRate}
-            shape={
+          <SeriesScatter data={analysis.points} tone="returnRate">
+            <SeriesScatter.Shape>
               <IncomePlacementPoint
                 recentYears={recentYears}
                 oldestYear={oldestYear}
                 newestYear={newestYear}
               />
-            }
-          >
+            </SeriesScatter.Shape>
             <LabelList
               dataKey="year"
               content={
@@ -158,15 +152,15 @@ export function IncomePlacementRelationshipChart({
                 />
               }
             />
-          </Scatter>
+          </SeriesScatter>
         </ScatterChart>
       </ResponsiveContainer>
-      <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-content-subtle">
+      <Text variant="noteFooter" as="p" tone="subtle" className="mt-3 pt-3">
         {i18n.t(
           'ui.incomeplacementrelationshipchart.theUnplacedAmountIsIncomeMinusObservedNetContributions',
         )}
-      </p>
-    </div>
+      </Text>
+    </Surface>
   )
 }
 
@@ -184,18 +178,10 @@ function IncomePlacementPoint({
   if (!point) return null
   const isRecent = recentYears.has(point.year)
   return (
-    <Symbols
-      {...shapeProps}
-      type="circle"
-      fill={
-        isRecent ? SEMANTIC_COLORS.returnRate : SEMANTIC_COLORS.neutralSeries
-      }
-      fillOpacity={getRelationshipYearOpacity(
-        point.year,
-        isRecent,
-        oldestYear,
-        newestYear,
-      )}
+    <ChartSymbol
+      geometry={shapeProps}
+      tone={isRecent ? 'returnRate' : 'neutralSeries'}
+      age={{ year: point.year, recent: isRecent, oldestYear, newestYear }}
     />
   )
 }

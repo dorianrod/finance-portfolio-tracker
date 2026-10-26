@@ -3,7 +3,7 @@ import { useDashboardNavigation } from '@/domains/portfolio/shared/services/acti
 import { useDashboardQuality } from '@/domains/portfolio/shared/services/actions/useDashboardQuality'
 import { type AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import i18n from '@/i18n/i18n'
-import { SEMANTIC_STATUS_BADGE_CLASSES } from '@/shared/theme/semanticColors'
+import { CountBadge } from '@/shared/ui/Badge.view'
 import { Navigation, NavigationButton } from '@/shared/ui/Controls.view'
 
 const PRIMARY_TABS: Array<{
@@ -34,7 +34,8 @@ export function PrimaryTabButton({
       onClick={() => onNavigate(tab.id)}
       onIntent={() => preloadDashboardTab(tab.id)}
       active={activeTab === tab.id}
-      className={`shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === tab.id ? 'border-accent text-content' : 'border-transparent text-content-subtle hover:text-content-secondary'}`}
+      variant="tab"
+      className="shrink-0 px-3 py-2.5"
     >
       {tab.label}
     </NavigationButton>
@@ -57,7 +58,8 @@ export function DashboardNavigation({
 
   return (
     <Navigation
-      className="mb-5 flex overflow-x-auto border-b border-border"
+      variant="tabs"
+      className="mb-5 flex overflow-x-auto"
       label={i18n.t('ui.app.portfolioAnalyses')}
     >
       {PRIMARY_TABS.map((tab) => (
@@ -73,15 +75,21 @@ export function DashboardNavigation({
         onClick={openQualityOverview}
         onIntent={() => preloadDashboardTab('quality')}
         active={activeTab === 'quality'}
-        className={`ml-auto flex shrink-0 items-center gap-2 border-b-2 border-l border-l-border px-3 py-2.5 text-sm font-medium transition-colors ${activeTab === 'quality' ? 'border-b-accent text-content' : 'border-b-transparent text-content-subtle hover:text-content-secondary'}`}
+        variant="separatedTab"
+        className="ml-auto flex shrink-0 items-center gap-2 px-3 py-2.5"
       >
         {i18n.t('ui.app.dataQuality')}
         {qualityCount > 0 && (
-          <span
-            className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${hasPipelineError || hasFundValidationError ? SEMANTIC_STATUS_BADGE_CLASSES.critical : SEMANTIC_STATUS_BADGE_CLASSES.warning}`}
+          <CountBadge
+            tone={
+              hasPipelineError || hasFundValidationError
+                ? 'negative'
+                : 'warning'
+            }
+            className="px-1.5 py-0.5"
           >
             {qualityCount}
-          </span>
+          </CountBadge>
         )}
       </NavigationButton>
     </Navigation>

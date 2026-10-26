@@ -1,5 +1,7 @@
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
 import i18n from '@/i18n/i18n'
+import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance'
+import type { TextTone } from '@/shared/ui/textAppearance'
 
 export type QualityTooltipRow = {
   label: string
@@ -11,34 +13,34 @@ export type QualityTooltipRow = {
 export const RELIABILITY_TONES: Record<
   AnalysisReliabilityTone,
   {
-    dot: string
-    status: string
-    value: string
+    dot: keyof typeof SWATCH_TONES
+    status: TextTone
+    value: TextTone
     label: string
   }
 > = {
   healthy: {
-    dot: 'bg-positive',
-    status: 'text-positive',
-    value: 'text-positive',
+    dot: 'positive',
+    status: 'positive',
+    value: 'positive',
     label: i18n.t('ui.analysisreliabilitykpi.reliable'),
   },
   warning: {
-    dot: 'bg-warning',
-    status: 'text-warning',
-    value: 'text-warning',
+    dot: 'warning',
+    status: 'warning',
+    value: 'warning',
     label: i18n.t('ui.analysisreliabilitykpi.partial'),
   },
   critical: {
-    dot: 'bg-danger',
-    status: 'text-danger',
-    value: 'text-danger',
+    dot: 'negative',
+    status: 'negative',
+    value: 'negative',
     label: i18n.t('ui.analysisreliabilitykpi.review'),
   },
   unavailable: {
-    dot: 'bg-content-subtle',
-    status: 'text-content-muted',
-    value: 'text-content-muted',
+    dot: 'subtle',
+    status: 'muted',
+    value: 'muted',
     label: i18n.t('ui.analysisreliabilitykpi.unavailable'),
   },
 }

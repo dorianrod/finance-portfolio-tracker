@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
 
+import { Surface } from '@/shared/ui/Surface.view'
+import { Text } from '@/shared/ui/Text.view'
+
 export function FilterSection({
   title,
   description,
@@ -10,14 +13,16 @@ export function FilterSection({
   children: ReactNode
 }) {
   return (
-    <section className="border-b border-border px-4 py-5 last:border-b-0">
-      <h3 className="text-sm font-semibold text-content-secondary">{title}</h3>
+    <Surface as="section" variant="formSection" className="px-4 py-5">
+      <Text as="h3" variant="bodyStrong" tone="secondary">
+        {title}
+      </Text>
       {description && (
-        <p className="mt-1 text-xs leading-5 text-content-subtle">
+        <Text as="p" variant="helper" tone="subtle" className="mt-1">
           {description}
-        </p>
+        </Text>
       )}
       <div className="mt-3">{children}</div>
-    </section>
+    </Surface>
   )
 }

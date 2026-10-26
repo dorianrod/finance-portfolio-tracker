@@ -11,15 +11,50 @@ export function Tabs(
 
 function TabsList({
   label,
+  variant,
+  className,
   ...props
-}: ControlProps<ComponentProps<typeof Primitive.List>> & { label: string }) {
-  return <Primitive.List {...props} aria-label={label} loop />
+}: ControlProps<ComponentProps<typeof Primitive.List>> & {
+  label: string
+  variant?: 'sidebar'
+}) {
+  return (
+    <Primitive.List
+      {...props}
+      className={[
+        variant === 'sidebar' && 'md:border-r md:border-border',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      aria-label={label}
+      loop
+    />
+  )
 }
 
-function TabsTrigger(
-  props: ControlProps<ComponentProps<typeof Primitive.Trigger>>,
-) {
-  return <Primitive.Trigger {...props} />
+function TabsTrigger({
+  variant,
+  selected,
+  className,
+  ...props
+}: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
+  variant?: 'quality'
+  selected?: boolean
+}) {
+  return (
+    <Primitive.Trigger
+      {...props}
+      className={[
+        variant === 'quality' && 'rounded-md text-left transition-colors',
+        variant === 'quality' &&
+          (selected ? 'bg-accent-muted/50' : 'hover:bg-surface'),
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    />
+  )
 }
 
 function TabsContent(
