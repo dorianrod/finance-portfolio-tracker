@@ -312,7 +312,7 @@ describe('shared UI callers', () => {
 describe('real ESLint configuration', () => {
   const eslint = new ESLint({ cwd: directory })
 
-  it('enables the rule as a warning with no automatic fix', async () => {
+  it('enables the rule as an error with no automatic fix', async () => {
     const [result] = await eslint.lintText(
       `
       import { Text } from '@/shared/ui/Text.view'
@@ -324,7 +324,7 @@ describe('real ESLint configuration', () => {
       result.messages.filter(
         ({ ruleId }) => ruleId === 'local/no-shared-ui-classname',
       ),
-    ).toMatchObject([{ severity: 1, messageId: 'suppliedClassName' }])
+    ).toMatchObject([{ severity: 2, messageId: 'suppliedClassName' }])
     expect(result.fatalErrorCount).toBe(0)
     expect(noSharedUiClassname.meta).not.toHaveProperty('fixable')
   }, 20_000)
