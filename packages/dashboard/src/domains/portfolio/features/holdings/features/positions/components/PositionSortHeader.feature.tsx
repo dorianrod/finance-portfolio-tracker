@@ -1,10 +1,8 @@
 import { useAtomValue } from 'jotai'
 
 import { useDashboardPositionSort } from '@/domains/portfolio/features/holdings/features/positions/services/actions/useDashboardPositionSort'
-import {
-  dashboardPositionSortDirectionAtom,
-  dashboardPositionSortKeyAtom,
-} from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable.atoms'
+import { dashboardPositionSortDirectionAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortDirectionAtom'
+import { dashboardPositionSortKeyAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortKeyAtom'
 import type { PositionSortKey } from '@/domains/portfolio/features/holdings/features/positions/types/positionSort.type'
 
 import { SortHeader } from './SortHeader.view'

@@ -2,29 +2,28 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor } from 'storybook/test'
 
-import { Layout, Stack } from '@/shared/ui/Layout.view'
+import { BUTTON_VARIANTS } from '@/shared/ui/buttonAppearance/buttonVariants'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Decorative } from '@/shared/ui/controls/Decorative.view'
+import { DecorativeBlock } from '@/shared/ui/controls/DecorativeBlock.view'
+import { DecorativeSvg } from '@/shared/ui/controls/DecorativeSvg.view'
+import { DialogButton } from '@/shared/ui/controls/DialogButton.view'
+import { DisclosureButton } from '@/shared/ui/controls/DisclosureButton.view'
+import { Group } from '@/shared/ui/controls/Group.view'
+import { InlineGroup } from '@/shared/ui/controls/InlineGroup.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { NamedSymbol } from '@/shared/ui/controls/NamedSymbol.view'
+import { Navigation } from '@/shared/ui/controls/Navigation.view'
+import { NavigationButton } from '@/shared/ui/controls/NavigationButton.view'
+import { Progress } from '@/shared/ui/controls/Progress.view'
+import { Region } from '@/shared/ui/controls/Region.view'
+import { Select } from '@/shared/ui/controls/Select.view'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
+import { FIELD_VARIANTS } from '@/shared/ui/fieldAppearance/fieldVariants'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
 
-import { BUTTON_VARIANTS } from '../../buttonAppearance'
-import {
-  Button,
-  Decorative,
-  DecorativeBlock,
-  DecorativeSvg,
-  DialogButton,
-  DisclosureButton,
-  Group,
-  InlineGroup,
-  Input,
-  NamedSymbol,
-  Navigation,
-  NavigationButton,
-  Progress,
-  Region,
-  Select,
-  StatusMessage,
-  ToggleButton,
-} from '../../Controls.view'
-import { FIELD_VARIANTS } from '../../fieldAppearance'
 import { Surface } from '../../Surface.view'
 
 const meta = {

@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react'
 
 import { calculateYearLabelLayout } from '@/domains/portfolio/features/wealth/helpers/calculators/calculateYearLabelLayout'
-import {
-  analyseIncomePlacement,
-  type AnnualIncomeSavingsPoint,
-} from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import { analyseIncomePlacement } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/analyseIncomePlacement'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 
 export function useIncomePlacementChart(data: AnnualIncomeSavingsPoint[]) {
   const analysis = useMemo(() => analyseIncomePlacement(data), [data])

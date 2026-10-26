@@ -1,19 +1,14 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
+import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioOperationsQueryOptions'
+import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioPositionsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { ACCOUNT_ROW_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
-import {
-  buildAccountLabels,
-  buildPositionRows,
-} from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy'
+import { ACCOUNT_ROW_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/accountRowSchema'
+import { buildAccountLabels } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildAccountLabels'
+import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
-import { parseCsv } from '@/shared/csv/csvData'
-
-import {
-  PORTFOLIO_OPERATIONS_QUERY_OPTIONS,
-  PORTFOLIO_POSITIONS_QUERY_OPTIONS,
-} from './portfolioSourceQueries'
+import { parseCsv } from '@/shared/csv/csvData/parseCsv'
 
 export function useDashboardDataQuery() {
   const queryClient = useQueryClient()

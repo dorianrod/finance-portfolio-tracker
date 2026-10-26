@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useId } from 'react'
 
-import { GRADIENT_PROFILES } from '../../chartAppearance'
+import { GRADIENT_PROFILES } from '@/shared/ui/chartAppearance/gradientProfiles'
+
 import { SeriesGradient } from '../../SeriesGradient.view'
 
 const meta = {

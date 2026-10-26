@@ -5,11 +5,9 @@ import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
-import {
-  dashboardDiversificationFilterAtom,
-  dashboardDiversificationPositionsOpenAtom,
-} from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 
 import { useResetDashboardFilters } from './useResetDashboardFilters'
 

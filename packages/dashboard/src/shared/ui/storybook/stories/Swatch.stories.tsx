@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { getHashedSeriesTone } from '@/shared/theme/chartColors'
-import { CHART_COLORS } from '@/shared/theme/chartColors'
-
-import { SeriesSwatch, ToneSwatch } from '../../Swatch.view'
-import { SWATCH_SHAPES } from '../../swatchAppearance'
+import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import { getHashedSeriesTone } from '@/shared/theme/chartColors/getHashedSeriesTone'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
+import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
+import { SWATCH_SHAPES } from '@/shared/ui/swatchAppearance/swatchShapes'
 
 const meta = {
   title: 'Charts/Swatches',

@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
-import { Inline, Inset } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
 
 import { Tabs } from '../../Tabs.view'
 

@@ -1,10 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import {
-  IrrSinceTrackingKpi,
-  TrailingThreeYearIrrKpi,
-} from './PortfolioKpis.feature'
+import { IrrSinceTrackingKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature'
+import { TrailingThreeYearIrrKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature'
 
 describe('filtered IRR KPIs', () => {
   it('labels a successfully calculated account scope', () => {

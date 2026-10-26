@@ -1,8 +1,9 @@
 import type { PositionSortKey } from '@/domains/portfolio/features/holdings/features/positions/types/positionSort.type'
 import i18n from '@/i18n/i18n'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
-import { Button } from '@/shared/ui/Controls.view'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function SortHeader({

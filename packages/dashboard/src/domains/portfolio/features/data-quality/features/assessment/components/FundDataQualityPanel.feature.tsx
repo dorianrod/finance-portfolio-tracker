@@ -6,7 +6,7 @@ import {
   type FundDiagnosticsFilter,
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildFundDiagnosticsRows'
 import { useDataQualityFundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useDataQualityFundDiagnostics'
-import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels.atoms'
+import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels/dataQualityFundDiagnosticsOpenAtom'
 import type {
   FundHolding,
   FundHoldingStatus,

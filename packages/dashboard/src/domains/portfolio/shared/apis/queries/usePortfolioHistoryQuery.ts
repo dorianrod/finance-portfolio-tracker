@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { RAW_PORTFOLIO_HISTORY_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas'
+import { RAW_PORTFOLIO_HISTORY_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawPortfolioHistorySchema'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
-import { parseCsv } from '@/shared/csv/csvData'
+import { parseCsv } from '@/shared/csv/csvData/parseCsv'
 
 export function usePortfolioHistoryQuery() {
   return useQuery<PortfolioHistoryPoint[]>({

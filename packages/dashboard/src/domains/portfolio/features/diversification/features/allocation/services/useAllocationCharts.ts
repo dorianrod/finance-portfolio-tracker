@@ -1,11 +1,9 @@
 import { useCallback, useMemo } from 'react'
 
-import {
-  aggregateAllocationPoints,
-  aggregateFilteredPoints,
-  computeMatchingIsins,
-  computeTableRows,
-} from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations'
+import { aggregateAllocationPoints } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/aggregateAllocationPoints'
+import { aggregateFilteredPoints } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/aggregateFilteredPoints'
+import { computeMatchingIsins } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeMatchingIsins'
+import { computeTableRows } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeTableRows'
 import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'

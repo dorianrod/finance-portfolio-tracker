@@ -1,4 +1,5 @@
-import { CHART_TEXT_TONES } from './chartAppearance'
+import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
+
 import { Text, type TextProps, type TextTag } from './Text.view'
 
 export function ChartText<T extends TextTag = 'span'>({

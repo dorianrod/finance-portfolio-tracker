@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 import { Preview } from '@/shared/ui/Preview.view'
 
 import { HoverChart } from './HoverChart.feature'

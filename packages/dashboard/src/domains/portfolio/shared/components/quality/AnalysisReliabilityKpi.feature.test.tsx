@@ -6,10 +6,8 @@ import { createStore, Provider } from 'jotai'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import {
-  CombinedAnalysisReliabilityKpi,
-  PipelineReliabilityKpi,
-} from './AnalysisReliabilityKpi.feature'
+import { CombinedAnalysisReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature'
+import { PipelineReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/PipelineReliabilityKpi.feature'
 
 function renderWithProviders(node: ReactNode) {
   return render(

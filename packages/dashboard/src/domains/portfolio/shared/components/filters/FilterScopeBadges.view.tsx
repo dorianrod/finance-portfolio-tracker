@@ -1,4 +1,4 @@
-import { CompactBadge } from '@/shared/ui/StatusBadge.view'
+import { CompactBadge } from '@/shared/ui/statusBadge/CompactBadge.view'
 
 import { type ScopeBadge as ScopeBadgeData } from './helpers/presenters/buildFilterScopeBadges'
 

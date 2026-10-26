@@ -4,10 +4,8 @@ import { useMemo } from 'react'
 import { resolveDashboardLoadState } from '@/app/helpers/mappers/resolveDashboardLoadState'
 import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDashboardQuality'
 import { useSortedPositions } from '@/domains/portfolio/features/holdings/features/positions/services/useSortedPositions'
-import {
-  dashboardPositionSortDirectionAtom,
-  dashboardPositionSortKeyAtom,
-} from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable.atoms'
+import { dashboardPositionSortDirectionAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortDirectionAtom'
+import { dashboardPositionSortKeyAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortKeyAtom'
 import { useOverviewComparison } from '@/domains/portfolio/features/overview/services/useOverviewComparison'
 import { useDashboardPerformance } from '@/domains/portfolio/features/performance/services/useDashboardPerformance'
 import { useDashboardWealth } from '@/domains/portfolio/features/wealth/services/useDashboardWealth'
@@ -23,14 +21,12 @@ import { usePortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/querie
 import { usePositionsQuery } from '@/domains/portfolio/shared/apis/queries/usePositionsQuery'
 import { useSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useSavingCapacityQuery'
 import { buildDashboardSourceData } from '@/domains/portfolio/shared/helpers/mappers/buildDashboardSourceData'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import { useDashboardHistory } from '@/domains/portfolio/shared/services/useDashboardHistory'
 import { usePortfolioPositions } from '@/domains/portfolio/shared/services/usePortfolioPositions'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
-import {
-  dashboardActiveTabAtom,
-  dashboardHoldingsViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'

@@ -2,14 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import {
-  RAW_FUND_COVERAGE_REPORT_SCHEMA,
-  RAW_FUND_HOLDING_HISTORY_SCHEMA,
-  RAW_FUND_HOLDING_SCHEMA,
-  RAW_FUND_HOLDING_STATUS_SCHEMA,
-  RAW_FUND_SNAPSHOT_SCHEMA,
-  RAW_FUND_UNRESOLVED_SCHEMA,
-} from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas'
+import { RAW_FUND_COVERAGE_REPORT_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundCoverageReportSchema'
+import { RAW_FUND_HOLDING_HISTORY_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingHistorySchema'
+import { RAW_FUND_HOLDING_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingSchema'
+import { RAW_FUND_HOLDING_STATUS_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema'
+import { RAW_FUND_SNAPSHOT_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundSnapshotSchema'
+import { RAW_FUND_UNRESOLVED_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundUnresolvedSchema'
 import { mapFundHolding } from '@/domains/portfolio/shared/helpers/mappers/mapFundHolding'
 import type {
   FundHoldingsData,
@@ -18,7 +16,7 @@ import type {
   FundUnresolved,
   HistoricalFundHolding,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
-import { parseOptionalCsv } from '@/shared/csv/csvData'
+import { parseOptionalCsv } from '@/shared/csv/csvData/parseOptionalCsv'
 
 export function useFundHoldingsQuery() {
   return useQuery<FundHoldingsData>({

@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ComposedChart } from 'recharts'
 
-import { ChartGrid, ChartXAxis, ChartYAxis } from '../../ChartAxes.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+
 import { SeriesLine } from '../../SeriesLine.view'
 import { HISTORY } from '../fixtures'
 

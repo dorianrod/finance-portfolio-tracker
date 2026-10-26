@@ -1,19 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  scopeManualPriceOverrides,
-  scopePipelineErrors,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters'
-import {
-  getSortValue,
-  sortPositionsForTable,
-} from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable'
+import { scopeManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopeManualPriceOverrides'
+import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopePipelineErrors'
+import { getSortValue } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/getSortValue'
+import { sortPositionsForTable } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/sortPositionsForTable'
 import { buildAccountTypeBreakdown } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeBreakdown'
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import {
-  applyAccountFilterToHistory,
-  applyPositionFilters,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
+import { applyAccountFilterToHistory } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyAccountFilterToHistory'
+import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyPositionFilters'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'

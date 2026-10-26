@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { ChartLabel, ChartLeaderLine } from '../../ChartLabel.view'
+import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
+import { ChartLeaderLine } from '@/shared/ui/chartLabel/ChartLeaderLine.view'
 
 const meta = {
   title: 'Charts/SVG labels',

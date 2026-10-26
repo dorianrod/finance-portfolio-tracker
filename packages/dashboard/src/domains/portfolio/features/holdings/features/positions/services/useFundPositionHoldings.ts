@@ -2,9 +2,9 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { holdingsForPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate'
+import { holdingsForPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/holdingsForPosition'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import type {
   FundHolding,
   HistoricalFundHolding,

@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { SeriesSwatch, ToneSwatch } from './Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
+import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 
 describe('swatches', () => {
   it('owns series appearance while retaining the supplied dimensions', () => {

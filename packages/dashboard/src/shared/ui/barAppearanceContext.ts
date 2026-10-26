@@ -1,8 +1,8 @@
 import { createContext } from 'react'
 
-import type { CHART_COLORS } from '@/shared/theme/chartColors'
-
-import type { BAR_CORNERS, BAR_PROMINENCE } from './chartAppearance'
+import type { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import type { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
+import type { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
 
 export type BarAppearance = {
   tone?: keyof typeof CHART_COLORS

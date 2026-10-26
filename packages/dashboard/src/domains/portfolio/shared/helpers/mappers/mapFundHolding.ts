@@ -1,6 +1,6 @@
 import type { InferType } from 'yup'
 
-import type { RAW_FUND_HOLDING_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas'
+import type { RAW_FUND_HOLDING_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingSchema'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
 export function mapFundHolding(

@@ -158,7 +158,7 @@ describe('configured internal layout enforcement', () => {
   it('enables an error without an automatic fix', async () => {
     const eslint = new ESLint({ cwd: directory })
     const [result] = await eslint.lintText(
-      `import { Button } from '@/shared/ui/Controls.view'; <Button><span className="p-4">Save</span></Button>`,
+      `import { Button } from '@/shared/ui/controls/Button.view'; <Button><span className="p-4">Save</span></Button>`,
       { filePath: resolve(directory, mainFile) },
     )
     expect(

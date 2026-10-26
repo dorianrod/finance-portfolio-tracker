@@ -1,10 +1,8 @@
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
-import { Layout } from '@/shared/ui/Layout.view'
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@/shared/ui/SegmentedControl.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 
 export function ConcentrationModeToggle({
   value,

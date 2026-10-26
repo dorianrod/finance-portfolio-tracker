@@ -1,10 +1,8 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import {
-  dashboardExpandedUnderlyingIssuersAtom,
-  dashboardUnderlyingSortAtom,
-} from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings.atoms'
+import { dashboardExpandedUnderlyingIssuersAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardExpandedUnderlyingIssuersAtom'
+import { dashboardUnderlyingSortAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardUnderlyingSortAtom'
 import { dashboardUnderlyingQueryAtom } from '@/domains/portfolio/features/holdings/shared/stores/holdingsSearch.atoms'
 
 export function useDashboardUnderlyingHoldings() {

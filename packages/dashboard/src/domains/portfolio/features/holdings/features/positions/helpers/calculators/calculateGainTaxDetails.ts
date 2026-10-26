@@ -1,4 +1,4 @@
-import { calculatePassiveIncomeTax } from './calculatePositionTableValues'
+import { calculatePassiveIncomeTax } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePassiveIncomeTax'
 
 export function calculateGainTaxDetails(
   gross: number,

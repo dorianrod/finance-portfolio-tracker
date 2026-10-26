@@ -7,8 +7,9 @@ import {
   useId,
 } from 'react'
 
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
+
 import type { ControlProps } from './controlProps'
-import { SegmentedControlItem } from './SegmentedControl.view'
 
 export function ViewNavigation({ children }: { children: ReactNode }) {
   const id = useId()

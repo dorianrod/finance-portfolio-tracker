@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
-import { Inset } from '@/shared/ui/Layout.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
 
 import { Disclosure } from '../../Disclosure.view'
 

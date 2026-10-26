@@ -1,0 +1,49 @@
+import { type Row } from '@tanstack/react-table'
+
+import { formatIrrPeriodLabel } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/formatIrrPeriodLabel'
+import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
+import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import i18n from '@/i18n/i18n'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
+import { Text } from '@/shared/ui/Text.view'
+
+export function PositionIrrCell({ row }: { row: Row<TableRow> }) {
+  const { formatPercentage } = usePositionTableFormatters()
+
+  const r = row.original
+  if (r.kind !== 'position' || (r.xirr == null && r.xirr_rolling_3y == null))
+    return null
+  return (
+    <Text variant="compact">
+      <Stack as="span">
+        {r.xirr != null && (
+          <Text tone={getGainTone(r.xirr)}>
+            {formatPercentage(r.xirr, { decimals: 2, signed: true })}
+            <Layout as="span" flow="inline">
+              <Text variant="subduedCaption">
+                {i18n.t('ui.positionstable.yr.22ed45')}
+              </Text>
+            </Layout>
+          </Text>
+        )}
+        {r.xirr != null && (
+          <Layout as="span" flow="inline" spaceBefore="compact">
+            <Text variant="tiny" tone="subtle">
+              {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
+              {r.xirr_rolling_3y == null
+                ? '—'
+                : i18n.t('ui.positionstable.value0Yr', {
+                    value0: formatPercentage(r.xirr_rolling_3y, {
+                      decimals: 2,
+                      signed: true,
+                    }),
+                  })}
+            </Text>
+          </Layout>
+        )}
+      </Stack>
+    </Text>
+  )
+}

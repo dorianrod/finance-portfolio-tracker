@@ -4,8 +4,8 @@ import * as yup from 'yup'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import type { ManualPriceOverride } from '@/domains/portfolio/shared/types/manualPriceOverride.type'
-import { parseCsv } from '@/shared/csv/csvData'
-import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate.schema'
+import { parseCsv } from '@/shared/csv/csvData/parseCsv'
+import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 export function useManualPriceOverridesQuery() {

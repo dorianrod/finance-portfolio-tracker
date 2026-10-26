@@ -1,7 +1,9 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
-import { SURFACE_VARIANTS } from './surfaceAppearance'
-import { TEXT_ALIGNMENTS, TEXT_TONES, type TextTone } from './textAppearance'
+import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
+import { TEXT_ALIGNMENTS } from '@/shared/ui/textAppearance/textAlignments'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
+import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 
 export function Surface<T extends SurfaceTag = 'div'>({
   as,

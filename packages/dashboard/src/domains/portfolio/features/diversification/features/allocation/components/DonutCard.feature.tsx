@@ -3,16 +3,12 @@ import { useCallback, useMemo } from 'react'
 
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
 import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
-import {
-  dashboardDiversificationFilterAtom,
-  dashboardDiversificationPositionsOpenAtom,
-} from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import {
-  formatGroupedAllocationLabel,
-  groupAllocationTail,
-} from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
+import { formatGroupedAllocationLabel } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/formatGroupedAllocationLabel'
+import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'

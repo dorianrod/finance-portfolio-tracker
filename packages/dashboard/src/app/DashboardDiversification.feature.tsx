@@ -3,10 +3,8 @@ import { useMemo } from 'react'
 
 import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
 import { AllocationSection } from '@/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature'
-import {
-  excludeNonApplicableAllocationData,
-  scopeRawAllocationData,
-} from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData'
+import { excludeNonApplicableAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/excludeNonApplicableAllocationData'
+import { scopeRawAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/scopeRawAllocationData'
 import { ConcentrationSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'

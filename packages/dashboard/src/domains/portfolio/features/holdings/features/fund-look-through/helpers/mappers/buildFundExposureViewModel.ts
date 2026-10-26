@@ -1,8 +1,8 @@
-import {
-  buildIssuerExposures,
-  type IssuerExposure,
-  type SecurityExposure,
-} from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel'
+import type {
+  IssuerExposure,
+  SecurityExposure,
+} from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/buildFundHoldingsViewModel.types'
+import { buildIssuerExposures } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/buildIssuerExposures'
 import type {
   FundHolding,
   FundHoldingStatus,

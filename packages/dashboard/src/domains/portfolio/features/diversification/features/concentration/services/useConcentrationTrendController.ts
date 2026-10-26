@@ -6,11 +6,9 @@ import {
   useState,
 } from 'react'
 
-import {
-  nextPlaybackIndex,
-  shouldAnimateConcentration,
-} from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback'
-import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
+import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/shouldAnimateConcentration'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildConcentrationTrend.types'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 
 export function useConcentrationTrendController(

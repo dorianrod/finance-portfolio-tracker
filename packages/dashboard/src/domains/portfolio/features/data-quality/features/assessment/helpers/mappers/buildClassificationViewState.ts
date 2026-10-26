@@ -1,7 +1,7 @@
 import type {
   AccountCoverage,
   DimensionCoverage,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage'
+} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
 
 export function buildClassificationViewState({
   loading,

@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioOperationsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import type {
   MonthlyOperation,
@@ -7,8 +8,6 @@ import type {
   MonthlyOperationType,
 } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
-import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from './portfolioSourceQueries'
 
 export function useMonthlyOperationsQuery() {
   const queryClient = useQueryClient()

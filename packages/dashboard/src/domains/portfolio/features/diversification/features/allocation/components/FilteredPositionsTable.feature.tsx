@@ -2,17 +2,15 @@ import { useAtomValue } from 'jotai'
 
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
 import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
-import {
-  dashboardDiversificationFilterAtom,
-  dashboardDiversificationPositionsOpenAtom,
-} from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import { Button } from '@/shared/ui/Controls.view'
-import { Inset } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'

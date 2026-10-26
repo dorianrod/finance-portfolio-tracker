@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { buildPositionsHistory } from '@/domains/portfolio/features/holdings/features/positions/helpers/aggregators/buildPositionsHistory'
-import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries'
+import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioPositionsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 
 export function usePositionHistoryQuery(isin: string | null) {

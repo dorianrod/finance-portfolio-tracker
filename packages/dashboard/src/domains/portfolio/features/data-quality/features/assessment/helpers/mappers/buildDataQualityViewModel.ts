@@ -1,13 +1,9 @@
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
-import {
-  computeAllocationCoverageByAccount,
-  computeAllocationCoverageByDimension,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage'
-import {
-  computeFundExposurePercentages,
-  scopeFundQualityData,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData'
-import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds'
+import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
+import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension'
+import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
+import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
+import { hasMaterialQualityGap } from '@/domains/portfolio/shared/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import type {
   QualityThemeId,
   QualityTone,

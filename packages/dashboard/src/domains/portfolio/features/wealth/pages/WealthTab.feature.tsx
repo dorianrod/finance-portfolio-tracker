@@ -11,14 +11,14 @@ import type {
   TrailingSavingCapacityPoint,
   TrailingYearOverYear,
   WealthDriverPoint,
-} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
+} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
-import { Inline } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
 export function WealthTab({

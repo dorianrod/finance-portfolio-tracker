@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
 
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
-import {
-  buildHistoricalConcentration,
-  buildHistoricalLookThroughConcentration,
-} from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
+import { buildHistoricalConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration'
+import { buildHistoricalLookThroughConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
 
 export function useHistoricalConcentration({

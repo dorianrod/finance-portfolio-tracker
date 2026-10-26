@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 
-import { Inline, Inset, Layout } from '@/shared/ui/Layout.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
+import { FieldSeparator } from '@/shared/ui/formElements/FieldSeparator.view'
+import { FilterIcon } from '@/shared/ui/formElements/FilterIcon.view'
+import { SelectionFrame } from '@/shared/ui/formElements/SelectionFrame.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import { Checkbox } from '../../Checkbox.view'
-import { Input } from '../../Controls.view'
-import {
-  ChoiceRow,
-  FieldSeparator,
-  FilterIcon,
-  SelectionFrame,
-} from '../../FormElements.view'
 
 const meta = {
   title: 'Controls/Form composition',

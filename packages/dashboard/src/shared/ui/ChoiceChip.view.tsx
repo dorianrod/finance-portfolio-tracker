@@ -1,4 +1,5 @@
-import { type ButtonProps, ToggleButton } from './Controls.view'
+import type { ButtonProps } from '@/shared/ui/controls/controls.types'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 
 export function ChoiceChip({
   active,

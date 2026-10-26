@@ -2,8 +2,8 @@ import type { Row } from '@tanstack/react-table'
 
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
-import { DisclosureButton } from '@/shared/ui/Controls.view'
-import { Layout } from '@/shared/ui/Layout.view'
+import { DisclosureButton } from '@/shared/ui/controls/DisclosureButton.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 export function ExpandBtn({ row }: { row: Row<TableRow> }) {
   if (!row.getCanExpand())

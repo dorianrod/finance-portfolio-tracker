@@ -4,7 +4,9 @@ import userEvent from '@testing-library/user-event'
 import { BarChart, type BarShapeProps } from 'recharts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { ChartXAxis, ChartYAxis } from './ChartAxes.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+
 import { ChartRectangle } from './ChartRectangle.view'
 import { SeriesBar } from './SeriesBar.view'
 

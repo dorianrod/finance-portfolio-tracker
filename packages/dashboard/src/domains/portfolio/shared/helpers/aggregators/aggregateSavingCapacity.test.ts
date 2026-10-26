@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  aggregateSavingCapacityByAccount,
-  mapSavingCapacity,
-} from './aggregateSavingCapacity'
+import { aggregateSavingCapacityByAccount } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacityByAccount'
+import { mapSavingCapacity } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/mapSavingCapacity'
 
 describe('mapSavingCapacity', () => {
   it('parses the portfolio-wide saving capacity rows', () => {

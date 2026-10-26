@@ -1,7 +1,9 @@
-import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
+import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
 type DriversTooltipProps = {
   active?: boolean
   payload?: Array<{ payload: WealthDriverPoint }>

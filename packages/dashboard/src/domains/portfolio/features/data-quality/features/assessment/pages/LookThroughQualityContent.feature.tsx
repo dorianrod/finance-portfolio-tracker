@@ -1,8 +1,7 @@
 import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature'
+import { EmptyQualityState } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/EmptyQualityState.view'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
-
-import { EmptyQualityState } from './DataQualityDetails.view'
 
 export function LookThroughQualityContent({
   report,

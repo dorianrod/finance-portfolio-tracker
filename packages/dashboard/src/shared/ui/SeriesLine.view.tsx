@@ -1,15 +1,13 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Line } from 'recharts'
 
-import { CHART_COLORS } from '@/shared/theme/chartColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import { getLineHoverMarker } from '@/shared/ui/chartAppearance/getLineHoverMarker'
+import { LINE_HOVER_MARKERS } from '@/shared/ui/chartAppearance/lineHoverMarkers'
+import { LINE_MARKERS } from '@/shared/ui/chartAppearance/lineMarkers'
+import { LINE_PATTERNS } from '@/shared/ui/chartAppearance/linePatterns'
+import { LINE_WEIGHTS } from '@/shared/ui/chartAppearance/lineWeights'
 
-import {
-  getLineHoverMarker,
-  LINE_HOVER_MARKERS,
-  LINE_MARKERS,
-  LINE_PATTERNS,
-  LINE_WEIGHTS,
-} from './chartAppearance'
 import { partitionChartSlot } from './chartSlots'
 
 export function SeriesLine({

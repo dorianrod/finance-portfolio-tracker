@@ -1,15 +1,11 @@
 import { useAtomValue } from 'jotai'
 
-import {
-  AnalysisReliabilityKpi,
-  PipelineReliabilityKpi,
-} from '@/domains/portfolio/shared/components/quality/AnalysisReliabilityKpi.feature'
-import {
-  dashboardActiveTabAtom,
-  dashboardHoldingsViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { AnalysisReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/AnalysisReliabilityKpi.feature'
+import { PipelineReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/PipelineReliabilityKpi.feature'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 import i18n from '@/i18n/i18n'
-import { Layout } from '@/shared/ui/Layout.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import { DashboardCombinedReliability } from './DashboardCombinedReliability.feature'
 import type { DashboardViewModel } from './types/dashboardViewModel.type'

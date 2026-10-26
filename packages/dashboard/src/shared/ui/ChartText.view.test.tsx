@@ -1,8 +1,9 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { Layout } from '@/shared/ui/layout/Layout.view'
+
 import { ChartText } from './ChartText.view'
-import { Layout } from './Layout.view'
 
 describe('ChartText', () => {
   it('resolves semantic chart tones and owns section separators while preserving layout', () => {

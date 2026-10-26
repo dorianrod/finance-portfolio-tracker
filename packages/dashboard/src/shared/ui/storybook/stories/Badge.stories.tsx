@@ -1,13 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Layout } from '@/shared/ui/Layout.view'
-
-import {
-  Badge,
-  CountBadge,
-  MetricDelta,
-  SelectionCount,
-} from '../../Badge.view'
+import { Badge } from '@/shared/ui/badge/Badge.view'
+import { CountBadge } from '@/shared/ui/badge/CountBadge.view'
+import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
+import { SelectionCount } from '@/shared/ui/badge/SelectionCount.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 const meta = {
   title: 'Badges/Badge',

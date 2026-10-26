@@ -10,15 +10,14 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  Button,
-  DecorativeSvg,
-  Group,
-  Input,
-  Progress,
-  StatusMessage,
-  ToggleButton,
-} from './Controls.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { DecorativeSvg } from '@/shared/ui/controls/DecorativeSvg.view'
+import { Group } from '@/shared/ui/controls/Group.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { Progress } from '@/shared/ui/controls/Progress.view'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
+
 import { Disclosure } from './Disclosure.view'
 import { Popover } from './Popover.view'
 import { Preview } from './Preview.view'

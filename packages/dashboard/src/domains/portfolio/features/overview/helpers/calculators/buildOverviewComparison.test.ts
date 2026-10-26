@@ -1,15 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
+import { buildGrossValueHistory } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildGrossValueHistory'
+import { buildOverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'
+import { compareRollingThreeYearIrr } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr'
+import { resolveOverviewWindows } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-import {
-  buildGrossValueHistory,
-  buildOverviewComparison,
-  compareRollingThreeYearIrr,
-  resolveOverviewWindows,
-} from './buildOverviewComparison'
 
 function position(overrides: Partial<RawPosition> = {}): RawPosition {
   return {

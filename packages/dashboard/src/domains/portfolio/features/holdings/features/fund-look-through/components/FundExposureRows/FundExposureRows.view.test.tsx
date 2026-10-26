@@ -3,9 +3,8 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { SourcesCell } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/SourcesCell.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-
-import { SourcesCell } from './FundExposureRows.view'
 
 const SOURCES = [
   { fund: 'First fund', value: 60 },

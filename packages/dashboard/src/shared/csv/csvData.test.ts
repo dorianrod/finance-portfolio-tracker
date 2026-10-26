@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as yup from 'yup'
 
-import { clearCsvCache, parseCsv, parseOptionalCsv } from './csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
+import { parseCsv } from '@/shared/csv/csvData/parseCsv'
+import { parseOptionalCsv } from '@/shared/csv/csvData/parseOptionalCsv'
 
 const CSV_ROW_SCHEMA = yup.object({ id: yup.string().required() })
 const csvResponse = (text = 'id\nposition-1\n') =>

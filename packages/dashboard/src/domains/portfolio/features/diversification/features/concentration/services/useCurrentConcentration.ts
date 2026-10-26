@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
 
-import {
-  buildCumulativeConcentration,
-  computeConcentration,
-  computeHeldAssetConcentration,
-} from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
+import { buildCumulativeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration'
+import { computeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration'
+import { computeHeldAssetConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

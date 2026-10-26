@@ -1,25 +1,25 @@
 import { useMemo, useState } from 'react'
 import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
-import { EvolutionTooltip } from '@/domains/portfolio/features/wealth/components/WealthChartTooltips.view'
-import {
-  PORTFOLIO_COST_SHARE_KEY,
-  PORTFOLIO_GAIN_SHARE_KEY,
-  withPortfolioComposition,
-} from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData'
+import { EvolutionTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/EvolutionTooltip.view'
+import { PORTFOLIO_COST_SHARE_KEY } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/portfolioCostShareKey'
+import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/portfolioGainShareKey'
+import { withPortfolioComposition } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/withPortfolioComposition'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
 import {
   type ChartScaleMode,
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import { Inline } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'

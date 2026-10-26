@@ -1,7 +1,8 @@
 import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
-import { Grid, Layout } from '@/shared/ui/Layout.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 

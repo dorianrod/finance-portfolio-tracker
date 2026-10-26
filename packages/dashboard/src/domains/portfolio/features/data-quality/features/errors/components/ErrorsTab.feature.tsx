@@ -1,18 +1,20 @@
 import { useMemo, useState } from 'react'
 
-import {
-  buildPipelineErrorsViewModel,
-  PIPELINE_ERROR_TYPE_LABELS,
-  type PipelineErrorSortColumn,
-} from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel'
+import { buildPipelineErrorsViewModel } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel'
+import type { PipelineErrorSortColumn } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel.types'
+import { PIPELINE_ERROR_TYPE_LABELS } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/pipelineErrorTypeLabels'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import type { PipelineError } from '@/domains/portfolio/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { Button } from '@/shared/ui/Controls.view'
-import { Select } from '@/shared/ui/Controls.view'
-import { Inline, Inset, Layout, Stack } from '@/shared/ui/Layout.view'
-import { LevelBadge, StatusTableRow } from '@/shared/ui/StatusBadge.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Select } from '@/shared/ui/controls/Select.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
+import { LevelBadge } from '@/shared/ui/statusBadge/LevelBadge.view'
+import { StatusTableRow } from '@/shared/ui/statusBadge/StatusTableRow.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 

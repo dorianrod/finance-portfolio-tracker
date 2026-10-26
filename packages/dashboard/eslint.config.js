@@ -193,7 +193,7 @@ export default defineConfig([
     ],
     rules: {
       'local/public-api-first': 'error',
-      'local/single-public-export': 'warn',
+      'local/single-public-export': 'error',
     },
   },
   {

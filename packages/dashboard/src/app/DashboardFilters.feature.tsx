@@ -2,22 +2,16 @@ import { useAtomValue } from 'jotai'
 
 import { useResetDashboardFilters } from '@/app/services/useResetDashboardFilters'
 import { FilterChipBar } from '@/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature'
-import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature'
-import {
-  ActiveFilterSummary,
-  FilterPanel,
-  ResetFiltersButton,
-} from '@/domains/portfolio/shared/components/filters/FilterBar.feature'
-import {
-  filterSummaries,
-  filterVisibilityForTab,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
-import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
-import {
-  dashboardActiveTabAtom,
-  dashboardHoldingsViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { ActiveFilterSummary } from '@/domains/portfolio/shared/components/filters/filterBar/ActiveFilterSummary.feature'
+import { FilterPanel } from '@/domains/portfolio/shared/components/filters/filterBar/FilterPanel.feature'
+import { ResetFiltersButton } from '@/domains/portfolio/shared/components/filters/filterBar/ResetFiltersButton.feature'
+import { filterSummaries } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterSummaries'
+import { filterVisibilityForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterVisibilityForTab'
+import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/filterSummariesForTab'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 
 import type { DashboardViewModel } from './types/dashboardViewModel.type'
 

@@ -4,10 +4,8 @@ import { useMemo } from 'react'
 import { buildFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 import { selectExposurePositions } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions'
 import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/actions/useDashboardUnderlyingHoldings'
-import {
-  dashboardExpandedUnderlyingIssuersAtom,
-  dashboardUnderlyingSortAtom,
-} from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings.atoms'
+import { dashboardExpandedUnderlyingIssuersAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardExpandedUnderlyingIssuersAtom'
+import { dashboardUnderlyingSortAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardUnderlyingSortAtom'
 import { dashboardUnderlyingQueryAtom } from '@/domains/portfolio/features/holdings/shared/stores/holdingsSearch.atoms'
 import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
 import type {

@@ -1,7 +1,7 @@
 import i18n from '@/i18n/i18n'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
-import { DisclosureChevronIcon } from '@/shared/ui/Icons.view'
-import { Layout } from '@/shared/ui/Layout.view'
+import { DisclosureChevronIcon } from '@/shared/ui/icons/DisclosureChevronIcon.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 export function DetailToggle({
   label,

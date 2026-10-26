@@ -1,14 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import { accountTypeShareKey } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/accountTypeShareKey'
+import { PORTFOLIO_COST_SHARE_KEY } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/portfolioCostShareKey'
+import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/portfolioGainShareKey'
+import { withAccountTypeShares } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/withAccountTypeShares'
+import { withPortfolioComposition } from '@/domains/portfolio/features/wealth/helpers/mappers/buildChartScaleData/withPortfolioComposition'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
-
-import {
-  accountTypeShareKey,
-  PORTFOLIO_COST_SHARE_KEY,
-  PORTFOLIO_GAIN_SHARE_KEY,
-  withAccountTypeShares,
-  withPortfolioComposition,
-} from './buildChartScaleData'
 
 const historyPoint: PortfolioHistoryPoint = {
   date: new Date('2026-01-31'),

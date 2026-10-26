@@ -1,4 +1,4 @@
-import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories'
+import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories/cashSuffix'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function isAssetAnalysisApplicablePosition(

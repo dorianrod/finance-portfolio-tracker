@@ -5,11 +5,12 @@ import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/port
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { Progress } from '@/shared/ui/Controls.view'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
-import { Proportion } from '@/shared/ui/Proportion.view'
+import { Progress } from '@/shared/ui/controls/Progress.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Proportion } from '@/shared/ui/proportion/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function QualityIndicatorCard({

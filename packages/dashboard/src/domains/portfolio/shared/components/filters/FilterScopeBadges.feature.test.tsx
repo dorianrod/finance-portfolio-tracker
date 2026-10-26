@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
 import { FilterScopeBadges } from './FilterScopeBadges.feature'

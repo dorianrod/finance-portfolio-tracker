@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { TREE_CONNECTOR_POSITIONS } from './layoutAppearance'
+import { TREE_CONNECTOR_POSITIONS } from '@/shared/ui/layoutAppearance/treeConnectorPositions'
 
 export function TreeConnector({
   position,

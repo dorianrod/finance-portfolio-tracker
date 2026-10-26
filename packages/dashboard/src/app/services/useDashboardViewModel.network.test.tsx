@@ -5,7 +5,7 @@ import { createStore, Provider } from 'jotai'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useDashboardViewModel } from './useDashboardViewModel'
 

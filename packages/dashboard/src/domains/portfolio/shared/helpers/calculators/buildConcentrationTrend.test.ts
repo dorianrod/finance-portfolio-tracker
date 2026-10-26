@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { buildHistoricalConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration'
+import { buildHistoricalLookThroughConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-import {
-  buildHistoricalConcentration,
-  buildHistoricalLookThroughConcentration,
-} from './buildConcentrationTrend'
 
 function row(overrides: Partial<RawPosition> = {}): RawPosition {
   return {

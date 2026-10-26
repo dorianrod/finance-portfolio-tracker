@@ -1,8 +1,9 @@
 import * as Primitive from '@radix-ui/react-popover'
 import { type ComponentProps, createContext, useContext } from 'react'
 
+import { POPOVER_CONTENT_VARIANTS } from '@/shared/ui/surfaceAppearance/popoverContentVariants'
+
 import type { ControlProps } from './controlProps'
-import { POPOVER_CONTENT_VARIANTS } from './surfaceAppearance'
 import { type PopoverState, usePopoverState } from './usePopoverState'
 
 export function Popover({

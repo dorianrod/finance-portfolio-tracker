@@ -1,17 +1,15 @@
 import { createColumnHelper } from '@tanstack/react-table'
 
-import {
-  PositionBreakdownCell,
-  PositionExpanderCell,
-  PositionIncomeCell,
-  PositionIrrCell,
-  PositionNameCell,
-  PositionRealizedCell,
-  PositionReturnCell,
-  PositionTotalRealizedCell,
-  PositionUnrealizedCell,
-  PositionValueCell,
-} from '@/domains/portfolio/features/holdings/features/positions/components/PositionColumnCells.feature'
+import { PositionBreakdownCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature'
+import { PositionExpanderCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionExpanderCell.feature'
+import { PositionIncomeCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature'
+import { PositionIrrCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIrrCell.feature'
+import { PositionNameCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionNameCell.feature'
+import { PositionRealizedCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionRealizedCell.feature'
+import { PositionReturnCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionReturnCell.feature'
+import { PositionTotalRealizedCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionTotalRealizedCell.feature'
+import { PositionUnrealizedCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionUnrealizedCell.feature'
+import { PositionValueCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature'
 import { PositionSortHeader } from '@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'

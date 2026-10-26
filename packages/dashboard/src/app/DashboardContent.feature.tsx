@@ -1,9 +1,9 @@
 import { useAtomValue } from 'jotai'
 import { lazy } from 'react'
 
-import { DASHBOARD_TAB_LOADERS } from '@/app/routing/dashboardTabLoaders'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters.atoms'
-import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { DASHBOARD_TAB_LOADERS } from '@/app/routing/dashboardTabLoaders/dashboardTabLoaders'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 
 import { DashboardHoldings } from './DashboardHoldings.feature'
 import type { DashboardViewModel } from './types/dashboardViewModel.type'

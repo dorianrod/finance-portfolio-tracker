@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Inline } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
 
 import { Metric } from '../../Metric.view'
 import { Text } from '../../Text.view'

@@ -6,7 +6,7 @@ import { createStore, Provider } from 'jotai'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { PositionsTable } from './PositionsTable.feature'
 

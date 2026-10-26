@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import { Layout } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { DataCell } from '@/shared/ui/dataTable/DataCell.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import { ColHeader } from '../../ColHeader.view'
-import { Button } from '../../Controls.view'
-import { DataCell } from '../../DataTable.view'
 import { TablePanel } from '../../TablePanel.view'
 
 const meta = {

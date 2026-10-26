@@ -2,14 +2,13 @@ import { useAtomValue } from 'jotai'
 
 import { DiversificationViewToggle } from '@/app/DiversificationViewToggle.feature'
 import { type HoldingsView } from '@/app/HoldingsViewTabs.feature'
-import { FilterButton } from '@/domains/portfolio/shared/components/filters/FilterBar.feature'
-import {
-  type AnalysisTab,
-  dashboardActiveTabAtom,
-  dashboardHoldingsViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { FilterButton } from '@/domains/portfolio/shared/components/filters/filterBar/FilterButton.feature'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
+import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import i18n from '@/i18n/i18n'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 

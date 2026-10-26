@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
+
 import { Surface } from '../../Surface.view'
-import { SURFACE_VARIANTS } from '../../surfaceAppearance'
 
 const meta = {
   title: 'Surfaces/Surface',

@@ -1,18 +1,14 @@
 import { useMemo } from 'react'
 
 import { buildAccountTypeBreakdown } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeBreakdown'
-import {
-  buildCumulativeWealthDrivers,
-  computeTrailing12mSavings,
-  computeTrailing12mYearOverYear,
-  filterMonthlyOpsByAccounts,
-} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
+import { buildCumulativeWealthDrivers } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/buildCumulativeWealthDrivers'
+import { computeTrailing12mSavings } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings'
+import { computeTrailing12mYearOverYear } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear'
+import { filterMonthlyOpsByAccounts } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/filterMonthlyOpsByAccounts'
 import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
-import {
-  type AnnualIncomeSavingsPoint,
-  filterAnnualIncomeSavingsByPeriod,
-} from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import { filterAnnualIncomeSavingsByPeriod } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/filterAnnualIncomeSavingsByPeriod'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

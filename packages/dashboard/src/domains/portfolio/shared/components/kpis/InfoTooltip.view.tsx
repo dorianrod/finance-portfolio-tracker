@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 import { Tooltip } from '@/shared/ui/Tooltip.view'

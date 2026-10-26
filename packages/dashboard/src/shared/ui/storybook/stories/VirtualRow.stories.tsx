@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Layout } from '@/shared/ui/Layout.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { VirtualRow } from '@/shared/ui/virtualRow/VirtualRow.view'
 
 import { Surface } from '../../Surface.view'
-import { VirtualRow } from '../../VirtualRow.view'
 
 const meta = {
   title: 'Tables/VirtualRow',

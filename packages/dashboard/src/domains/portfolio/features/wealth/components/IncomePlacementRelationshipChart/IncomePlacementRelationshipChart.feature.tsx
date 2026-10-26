@@ -5,24 +5,28 @@ import {
   type ScatterShapeProps,
 } from 'recharts'
 
+import { RelationshipTooltip } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/RelationshipTooltip.view'
+import { YearLabel } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/YearLabel.view'
 import { useIncomePlacementChart } from '@/domains/portfolio/features/wealth/services/useIncomePlacementChart'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
-import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
-import { ChartSymbol, SeriesScatter } from '@/shared/ui/SeriesScatter.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { ChartSymbol } from '@/shared/ui/seriesScatter/ChartSymbol.view'
+import { SeriesScatter } from '@/shared/ui/seriesScatter/SeriesScatter.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import { RelationshipTooltip, YearLabel } from './IncomePlacementTooltip.view'
 
 export function IncomePlacementRelationshipChart({
   data,

@@ -8,14 +8,16 @@ import {
   type ScatterShapeProps,
 } from 'recharts'
 
-import { getHashedSeriesTone } from '@/shared/theme/chartColors'
+import { getHashedSeriesTone } from '@/shared/theme/chartColors/getHashedSeriesTone'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
+import { ChartSymbol } from '@/shared/ui/seriesScatter/ChartSymbol.view'
 
-import { ChartGrid, ChartXAxis, ChartYAxis } from '../ChartAxes.view'
-import { ChartLabel } from '../ChartLabel.view'
 import { ChartMarker } from '../ChartMarker.view'
 import { ChartRectangle } from '../ChartRectangle.view'
 import { ChartSector } from '../ChartSector.view'
-import { ChartSymbol } from '../SeriesScatter.view'
 import { HISTORY } from './fixtures'
 
 export function CartesianExample({ children }: { children: ReactNode }) {

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/getFundQualitySourceLabel'
-import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
+import { buildIssuerExposures } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/buildIssuerExposures'
+import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-import { buildIssuerExposures } from './buildFundHoldingsViewModel'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {

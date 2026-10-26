@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  DemoScopeUnavailableError,
-  requestFilteredPortfolioHistory,
-} from './useFilteredPortfolioHistoryQuery'
+import { DemoScopeUnavailableError } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/demoScopeUnavailableError'
+import { requestFilteredPortfolioHistory } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/requestFilteredPortfolioHistory'
 
 const payload = {
   accounts: ['a', 'b'],

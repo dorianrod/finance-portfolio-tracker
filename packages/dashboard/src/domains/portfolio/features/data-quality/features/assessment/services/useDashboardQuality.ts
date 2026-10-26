@@ -1,13 +1,11 @@
 import { useMemo } from 'react'
 
-import {
-  scopeManualPriceOverrides,
-  scopePipelineErrors,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters'
+import { scopeManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopeManualPriceOverrides'
+import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopePipelineErrors'
 import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary'
-import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage'
-import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData'
-import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
+import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
+import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'

@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  analyseIncomePlacement,
-  type AnnualIncomeSavingsPoint,
-  filterAnnualIncomeSavingsByPeriod,
-  mapAnnualIncomeSavings,
-} from './mapAnnualIncomeSavings'
+import { analyseIncomePlacement } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/analyseIncomePlacement'
+import { filterAnnualIncomeSavingsByPeriod } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/filterAnnualIncomeSavingsByPeriod'
+import { mapAnnualIncomeSavings } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/shared/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 
 function point(
   overrides: Partial<AnnualIncomeSavingsPoint>,

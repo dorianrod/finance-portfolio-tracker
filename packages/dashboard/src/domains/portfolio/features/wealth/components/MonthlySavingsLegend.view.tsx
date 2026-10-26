@@ -1,9 +1,12 @@
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
-import { Decorative } from '@/shared/ui/Controls.view'
-import { Grid, Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Decorative } from '@/shared/ui/controls/Decorative.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function MonthlySavingsLegend() {

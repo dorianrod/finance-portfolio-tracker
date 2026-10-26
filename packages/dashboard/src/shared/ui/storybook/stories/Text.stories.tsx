@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
+import { TEXT_VARIANTS } from '@/shared/ui/textAppearance/textVariants'
+
 import { Text } from '../../Text.view'
-import { TEXT_TONES, TEXT_VARIANTS } from '../../textAppearance'
 
 const meta = {
   title: 'Typography/Text',

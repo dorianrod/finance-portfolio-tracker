@@ -1,8 +1,10 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
-import { Button, StatusMessage } from '@/shared/ui/Controls.view'
-import { Inset, Layout } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 type DashboardPanelErrorBoundaryProps = {

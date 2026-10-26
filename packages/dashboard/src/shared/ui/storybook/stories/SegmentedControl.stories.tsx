@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '../../SegmentedControl.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 
 const meta = {
   title: 'Navigation/SegmentedControl',

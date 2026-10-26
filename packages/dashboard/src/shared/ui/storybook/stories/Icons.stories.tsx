@@ -1,14 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import {
-  DisclosureChevronIcon,
-  GridIcon,
-  HierarchyIcon,
-  NextIcon,
-  PeriodFilterIcon,
-  PieChartIcon,
-  TreeChevronIcon,
-} from '../../Icons.view'
+import { DisclosureChevronIcon } from '@/shared/ui/icons/DisclosureChevronIcon.view'
+import { GridIcon } from '@/shared/ui/icons/GridIcon.view'
+import { HierarchyIcon } from '@/shared/ui/icons/HierarchyIcon.view'
+import { NextIcon } from '@/shared/ui/icons/NextIcon.view'
+import { PeriodFilterIcon } from '@/shared/ui/icons/PeriodFilterIcon.view'
+import { PieChartIcon } from '@/shared/ui/icons/PieChartIcon.view'
+import { TreeChevronIcon } from '@/shared/ui/icons/TreeChevronIcon.view'
 
 const meta = { title: 'Icons/Gallery', component: GridIcon } satisfies Meta<
   typeof GridIcon

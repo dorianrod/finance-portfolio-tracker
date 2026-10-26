@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { useAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useAllocationRowsQuery'
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useAllocationsByIsinQuery } from './useAllocationsByIsinQuery'
 

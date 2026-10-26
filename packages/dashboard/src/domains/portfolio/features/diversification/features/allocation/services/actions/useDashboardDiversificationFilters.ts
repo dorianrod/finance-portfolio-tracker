@@ -1,10 +1,8 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import {
-  dashboardDiversificationFilterAtom,
-  dashboardDiversificationPositionsOpenAtom,
-} from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 
 export function useDashboardDiversificationFilters() {

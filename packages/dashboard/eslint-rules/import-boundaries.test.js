@@ -9,7 +9,7 @@ const directory = resolve(import.meta.dirname, '..')
 const eslint = new ESLint({ cwd: directory })
 const sharedFile = 'src/shared/helpers/mappers/toCalendarMonth.ts'
 const domainFile =
-  'src/domains/portfolio/shared/helpers/filters/accountFilter.ts'
+  'src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts'
 const serviceFile =
   'src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts'
 
@@ -24,11 +24,11 @@ async function lint(code, file) {
 
 describe('configured import boundaries', () => {
   it.each([
-    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'",
-    "export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'",
-    "const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison')",
-    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison').OverviewComparison",
-    "import type { OverviewComparison } from '@/domains/portfolio/features/wealth/../overview/helpers/calculators/buildOverviewComparison'",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
+    "export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
+    "const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison')",
+    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison').OverviewComparison",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
   ])(
     'rejects sibling feature dependencies: %s',
     async (code) => {
@@ -41,7 +41,7 @@ describe('configured import boundaries', () => {
 
   it.each([
     "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
-    "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'",
+    "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'",
   ])(
     'does not expose child implementation to parent shared contracts: %s',
     async (code) => {
@@ -151,7 +151,7 @@ describe('configured import boundaries', () => {
 
   it.each([
     "import { queryClient } from '@/app/queryClient'",
-    "import { queryClient } from '../../../../../app/queryClient'",
+    "import { queryClient } from '../../../../../../app/queryClient'",
     "export { queryClient } from '@/app/queryClient'",
     "const client = import('@/app/queryClient')",
   ])('rejects domain-to-application dependencies: %s', async (code) => {
@@ -177,7 +177,7 @@ describe('configured import boundaries', () => {
     "export * from '../components/PositionHoverDetails/HoverChart.feature'",
     "const chart = import('../components/PositionHoverDetails/HoverChart.feature')",
     "type Chart = typeof import('../components/PositionHoverDetails/HoverChart.feature').HoverChart",
-    "import type { ButtonProps } from '@/shared/ui/Controls.view'",
+    "import type { Button } from '@/shared/ui/controls/Button.view'",
   ])('rejects renderer dependencies in services: %s', async (code) => {
     expect(await lint(code, serviceFile)).toMatchObject([
       { messageId: 'component', severity: 2 },
@@ -185,7 +185,7 @@ describe('configured import boundaries', () => {
   })
 
   it.each([
-    'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations.ts',
+    'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts',
     'src/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
     'src/domains/portfolio/shared/apis/queries/usePositionsQuery.ts',
@@ -194,7 +194,7 @@ describe('configured import boundaries', () => {
   ])('checks the non-UI layer %s', async (file) => {
     expect(
       await lint(
-        "import type { ButtonProps } from '@/shared/ui/Controls.view'",
+        "import type { Button } from '@/shared/ui/controls/Button.view'",
         file,
       ),
     ).toMatchObject([{ messageId: 'component', severity: 2 }])
@@ -203,7 +203,7 @@ describe('configured import boundaries', () => {
   it('does not let a component helper become a feature-level dependency', async () => {
     expect(
       await lint(
-        "import { computeMonthlyBalances } from '../components/PositionHoverDetails/helpers/calculators/buildHoverChartData'",
+        "import { computeMonthlyBalances } from '../components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'",
         serviceFile,
       ),
     ).toMatchObject([{ messageId: 'componentLogic', severity: 2 }])
@@ -224,7 +224,7 @@ describe('configured import boundaries', () => {
       "import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'",
     ],
     [
-      'src/app/routing/dashboardTabLoaders.ts',
+      'src/app/routing/dashboardTabLoaders/preloadDashboardTab.ts',
       "const panel = import('@/domains/portfolio/features/overview/pages/OverviewTab.feature')",
     ],
     [
@@ -236,8 +236,8 @@ describe('configured import boundaries', () => {
       "import { getAccountTypeSplitRadius } from './getAccountTypeSplitRadius'",
     ],
     [
-      'src/shared/ui/Controls.view.tsx',
-      "import { Tooltip } from './Tooltip.view'",
+      'src/shared/ui/controls/Button.view.tsx',
+      "import { Tooltip } from '@/shared/ui/Tooltip.view'",
     ],
     [
       'src/shared/helpers/calculators/partitionPercentages.test.ts',

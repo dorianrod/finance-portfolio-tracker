@@ -1,13 +1,10 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { AssetIrrView } from '@/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature'
+import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature'
 import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
-
-import {
-  AssetIrrView,
-  PerformanceContributionCard,
-} from './PerformanceContributionCard.feature'
 
 function summary(
   overrides: Partial<PerformanceContributionSummary> = {},

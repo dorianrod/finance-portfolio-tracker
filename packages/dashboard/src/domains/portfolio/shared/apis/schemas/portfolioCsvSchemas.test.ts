@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  RAW_OPERATION_SCHEMA,
-  RAW_PORTFOLIO_HISTORY_SCHEMA,
-  RAW_POSITION_SCHEMA,
-} from './portfolioCsvSchemas'
+import { RAW_OPERATION_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawOperationSchema'
+import { RAW_PORTFOLIO_HISTORY_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawPortfolioHistorySchema'
+import { RAW_POSITION_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawPositionSchema'
 
 const operationRow = {
   date: '2026-01-31',

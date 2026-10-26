@@ -1,4 +1,5 @@
-import { GRADIENT_PROFILES } from './chartAppearance'
+import { GRADIENT_PROFILES } from '@/shared/ui/chartAppearance/gradientProfiles'
+
 import { resolveSeriesColor, type SeriesColor } from './chartSeriesColor'
 
 export function SeriesGradient({

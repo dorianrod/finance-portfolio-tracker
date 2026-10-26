@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
-import { TOOLTIP_DENSITIES, TOOLTIP_SIZES } from './layoutAppearance'
+import { TOOLTIP_DENSITIES } from '@/shared/ui/layoutAppearance/tooltipDensities'
+import { TOOLTIP_SIZES } from '@/shared/ui/layoutAppearance/tooltipSizes'
 
 export function TooltipBox({
   children,

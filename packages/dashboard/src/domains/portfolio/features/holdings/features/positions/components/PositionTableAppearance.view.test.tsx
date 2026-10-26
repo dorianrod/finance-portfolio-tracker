@@ -1,10 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import {
-  PositionRowSurface,
-  TransactionBadge,
-} from './PositionTableAppearance.view'
+import { PositionRowSurface } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableAppearance/PositionRowSurface.view'
+import { TransactionBadge } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableAppearance/TransactionBadge.view'
 
 describe('position table appearance', () => {
   it.each([

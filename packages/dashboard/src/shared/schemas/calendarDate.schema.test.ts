@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  CALENDAR_DATE_SCHEMA,
-  DATE_FILTER_SCHEMA,
-  DATE_REQUEST_SCHEMA,
-  OPTIONAL_CALENDAR_DATE_SCHEMA,
-} from './calendarDate.schema'
+import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
+import { DATE_FILTER_SCHEMA } from '@/shared/schemas/calendarDate/dateFilterSchema'
+import { DATE_REQUEST_SCHEMA } from '@/shared/schemas/calendarDate/dateRequestSchema'
+import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 
 describe('calendar dates at data boundaries', () => {
   it.each(['2024-02-29', '2026-10-24'])(

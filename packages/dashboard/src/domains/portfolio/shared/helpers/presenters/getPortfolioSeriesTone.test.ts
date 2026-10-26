@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { CHART_COLORS } from '@/shared/theme/chartColors'
-
-import { getAccountTypeTone, getAllocationTone } from './getPortfolioSeriesTone'
+import { getAccountTypeTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAccountTypeTone'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
+import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 
 describe('getAllocationTone', () => {
   it('assigns fixed colors to nc, Not concerned, and autre/others categories', () => {

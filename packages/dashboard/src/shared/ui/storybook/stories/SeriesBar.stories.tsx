@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { ChartLabels } from '../../ChartLabels.view'
+import { ChartLabels } from '@/shared/ui/chartLabels/ChartLabels.view'
+
 import { ChartTooltip } from '../../ChartTooltip.view'
 import { SeriesBar } from '../../SeriesBar.view'
 import { BarShapeExample, CartesianExample } from '../ChartExamples.view'

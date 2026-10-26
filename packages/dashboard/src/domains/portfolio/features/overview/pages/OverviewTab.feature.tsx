@@ -1,18 +1,16 @@
 import type {
   ComparedMetric,
   OverviewComparison,
-} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
+} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
+import { OverviewConcentrationChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature'
+import { OverviewDriversChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature'
+import { OverviewValueChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { Layout } from '@/shared/ui/Layout.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import {
-  OverviewConcentrationChart,
-  OverviewDriversChart,
-  OverviewValueChart,
-} from './OverviewCharts.feature'
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
 export function OverviewTab({

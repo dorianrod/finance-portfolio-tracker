@@ -2,10 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor } from 'storybook/test'
 
-import { Inline } from '@/shared/ui/Layout.view'
+import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
 
 import { Checkbox } from '../../Checkbox.view'
-import { ChoiceRow } from '../../FormElements.view'
 
 const meta = { title: 'Controls/Checkbox', component: Checkbox } satisfies Meta<
   typeof Checkbox

@@ -6,19 +6,18 @@ import {
   Tooltip,
 } from 'recharts'
 
-import { PieTooltip } from '@/domains/portfolio/shared/components/AllocationChartTooltips.view'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
-import {
-  formatGroupedAllocationLabel,
-  groupAllocationTail,
-} from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
+import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
+import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
+import { formatGroupedAllocationLabel } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/formatGroupedAllocationLabel'
+import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
-import { SeriesSwatch } from '@/shared/ui/Swatch.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function MiniDonut({

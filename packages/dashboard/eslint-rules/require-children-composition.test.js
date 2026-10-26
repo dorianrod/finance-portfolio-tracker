@@ -175,10 +175,9 @@ describe('configured children composition enforcement', () => {
   })
 
   it('resolves local import aliases as project-owned components', async () => {
-    const messages = await lint(`
-      import { Kpi } from '@/domains/portfolio/shared/components/kpis/Kpi.view'
-      <Kpi header={<strong />} />
-    `)
+    const messages = await lint(
+      `\n      import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'\n      <Kpi header={<strong />} />\n    `,
+    )
     expect(messages.map(({ messageId }) => messageId)).toEqual([
       'composeChildren',
     ])

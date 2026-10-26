@@ -1,15 +1,14 @@
-import {
-  FUND_QUALITY_LABELS,
-  getFundQualityPresentation,
-} from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
+import { FUND_QUALITY_LABELS } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/fundQualityLabels'
+import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation'
 import type {
   FundHoldingStatus,
   FundQualityTier,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { Badge, type BadgeTone } from '@/shared/ui/Badge.view'
-import { NamedSymbol } from '@/shared/ui/Controls.view'
+import type { BadgeTone } from '@/shared/ui/badge/badge.types'
+import { Badge } from '@/shared/ui/badge/Badge.view'
+import { NamedSymbol } from '@/shared/ui/controls/NamedSymbol.view'
 
 export function FundQualityBadge({ status }: { status: FundHoldingStatus }) {
   const formatPercentage = useFormatPercentage()

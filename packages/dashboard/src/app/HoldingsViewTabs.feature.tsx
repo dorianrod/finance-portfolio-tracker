@@ -1,10 +1,10 @@
 import { useAtomValue } from 'jotai'
 
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
-import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 import i18n from '@/i18n/i18n'
-import { SegmentedControl } from '@/shared/ui/SegmentedControl.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
 
 import { HoldingsViewTab } from './HoldingsViewTab.view'
 

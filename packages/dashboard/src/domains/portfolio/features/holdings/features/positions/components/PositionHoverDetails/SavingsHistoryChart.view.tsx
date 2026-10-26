@@ -1,14 +1,13 @@
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import { SavingsTooltip } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/SavingsTooltip.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { ChartYAxis } from '@/shared/ui/ChartAxes.view'
-import { ChartXAxis } from '@/shared/ui/ChartAxes.view'
-import { ChartGrid } from '@/shared/ui/ChartAxes.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
-
-import { SavingsTooltip } from './hoverCharts.tooltips.view'
 
 export function SavingsHistoryChart({
   chartData,

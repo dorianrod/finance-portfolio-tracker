@@ -4,10 +4,10 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { QualityIndicatorCard } from '@/domains/portfolio/features/data-quality/features/assessment/components/QualityIndicatorCard.view'
+import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 
 import { InfoTooltip } from './InfoTooltip.view'
-import { Kpi } from './Kpi.view'
 
 afterEach(cleanup)
 

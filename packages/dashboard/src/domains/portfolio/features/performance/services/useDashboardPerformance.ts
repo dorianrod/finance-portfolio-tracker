@@ -1,10 +1,8 @@
 import { useMemo } from 'react'
 
 import { usePassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/usePassiveIncomeQuery'
-import {
-  computePerformanceSummary,
-  computeTrailing12mIncome,
-} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations'
+import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary'
+import { computeTrailing12mIncome } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

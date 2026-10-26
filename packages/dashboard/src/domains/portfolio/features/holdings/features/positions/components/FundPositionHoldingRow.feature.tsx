@@ -2,7 +2,7 @@ import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { Grid } from '@/shared/ui/Layout.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 

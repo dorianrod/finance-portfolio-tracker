@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor, within } from 'storybook/test'
 
-import { Grid } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
 
-import { Button } from '../../Controls.view'
 import { Preview } from '../../Preview.view'
 
 const meta = {

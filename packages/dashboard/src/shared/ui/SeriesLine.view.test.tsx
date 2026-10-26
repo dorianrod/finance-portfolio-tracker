@@ -3,7 +3,9 @@ import { cleanup, render, waitFor } from '@testing-library/react'
 import { LineChart } from 'recharts'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { ChartXAxis, ChartYAxis } from './ChartAxes.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+
 import { SeriesLine } from './SeriesLine.view'
 
 afterEach(cleanup)

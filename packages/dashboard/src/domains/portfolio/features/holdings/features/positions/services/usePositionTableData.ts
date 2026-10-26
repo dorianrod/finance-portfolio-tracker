@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useAllocationsByIsinQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/useAllocationsByIsinQuery'
-import { calculatePositionGroupTotals } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues'
+import { calculatePositionGroupTotals } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePositionGroupTotals'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 

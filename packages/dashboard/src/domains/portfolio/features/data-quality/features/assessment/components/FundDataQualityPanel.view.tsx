@@ -6,7 +6,7 @@ import type {
   FundDiagnosticsFilter,
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildFundDiagnosticsRows'
 import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/getFundQualitySourceLabel'
-import { FUND_QUALITY_LABELS } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation'
+import { FUND_QUALITY_LABELS } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/fundQualityLabels'
 import type {
   FundHolding,
   FundSnapshot,
@@ -17,9 +17,12 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { Button } from '@/shared/ui/Controls.view'
+import { Button } from '@/shared/ui/controls/Button.view'
 import { ExternalLink } from '@/shared/ui/ExternalLink.view'
-import { Grid, Inline, Inset, Layout } from '@/shared/ui/Layout.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'

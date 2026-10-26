@@ -6,13 +6,14 @@ import {
 } from 'react'
 import { Bar, type BarShapeProps } from 'recharts'
 
-import { CHART_COLORS } from '@/shared/theme/chartColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
+import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
 
 import {
   type BarAppearance,
   BarAppearanceContext,
 } from './barAppearanceContext'
-import { BAR_CORNERS, BAR_PROMINENCE } from './chartAppearance'
 import { partitionChartSlot } from './chartSlots'
 
 export function SeriesBar({

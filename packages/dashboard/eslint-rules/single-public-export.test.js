@@ -71,14 +71,14 @@ describe('single-public-export', () => {
     expect(messages[0].fix).toBeUndefined()
   })
 
-  it('enables both rules as warnings only for production modules', async () => {
+  it('enables both rules as errors only for production modules', async () => {
     const eslint = new ESLint()
     for (const filename of [
       'src/shared/ui/Example.view.tsx',
       'src/shared/helpers/example.ts',
     ]) {
       const config = await eslint.calculateConfigForFile(filename)
-      expect(config.rules['local/single-public-export']).toEqual([1])
+      expect(config.rules['local/single-public-export']).toEqual([2])
       expect(config.rules['local/public-api-first']).toEqual([2])
     }
     for (const filename of [

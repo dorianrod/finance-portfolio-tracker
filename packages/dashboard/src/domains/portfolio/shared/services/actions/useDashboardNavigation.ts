@@ -1,11 +1,9 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import {
-  type AnalysisTab,
-  dashboardActiveTabAtom,
-  dashboardHoldingsViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
+import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 
 export function useDashboardNavigation() {
   const setActiveTab = useSetAtom(dashboardActiveTabAtom)

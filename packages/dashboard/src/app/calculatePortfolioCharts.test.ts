@@ -1,25 +1,19 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  buildCumulativeConcentration,
-  computeConcentration,
-  computeHeldAssetConcentration,
-  cumulativeConcentrationCrosshair,
-} from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
-import {
-  buildTriChartData,
-  computePerformanceSummary,
-  computeTopPerformers,
-  computeTrailing12mIncome,
-} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations'
-import {
-  buildCumulativeWealthDrivers,
-  computePeriodDrivers,
-  computeTrailing12mSavings,
-  computeTrailing12mYearOverYear,
-  filterMonthlyOpsByAccounts,
-} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations'
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { buildCumulativeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration'
+import { computeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration'
+import { computeHeldAssetConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration'
+import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/cumulativeConcentrationCrosshair'
+import { buildTriChartData } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/buildTriChartData'
+import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary'
+import { computeTopPerformers } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers'
+import { computeTrailing12mIncome } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome'
+import { buildCumulativeWealthDrivers } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/buildCumulativeWealthDrivers'
+import { computePeriodDrivers } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computePeriodDrivers'
+import { computeTrailing12mSavings } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings'
+import { computeTrailing12mYearOverYear } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear'
+import { filterMonthlyOpsByAccounts } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/filterMonthlyOpsByAccounts'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'

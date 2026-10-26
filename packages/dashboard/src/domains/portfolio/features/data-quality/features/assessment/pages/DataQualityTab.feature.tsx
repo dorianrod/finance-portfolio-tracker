@@ -8,7 +8,8 @@ import type { DataQualityTabProps } from '@/domains/portfolio/features/data-qual
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { Grid, Layout } from '@/shared/ui/Layout.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Tabs } from '@/shared/ui/Tabs.view'
 

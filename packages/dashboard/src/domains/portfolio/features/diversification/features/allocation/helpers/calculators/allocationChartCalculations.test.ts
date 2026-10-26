@@ -1,19 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  aggregateAllocationPoints,
-  aggregateFilteredPoints,
-  allocationTrendDomain,
-  buildAllocationTrend,
-  computeMatchingIsins,
-  computeTableRows,
-} from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations'
-import {
-  excludeNonApplicableAllocationData,
-  scopeRawAllocationData,
-} from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData'
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
-import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
+import { aggregateAllocationPoints } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/aggregateAllocationPoints'
+import { aggregateFilteredPoints } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/aggregateFilteredPoints'
+import { allocationTrendDomain } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/allocationTrendDomain'
+import { buildAllocationTrend } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/buildAllocationTrend'
+import { computeMatchingIsins } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeMatchingIsins'
+import { computeTableRows } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeTableRows'
+import { excludeNonApplicableAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/excludeNonApplicableAllocationData'
+import { scopeRawAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/filters/scopeDiversificationData/scopeRawAllocationData'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
+import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'

@@ -1,12 +1,12 @@
 import { useAtomValue } from 'jotai'
 
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
-import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
-import { Button } from '@/shared/ui/Controls.view'
-import { Decorative } from '@/shared/ui/Controls.view'
-import { Layout } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Decorative } from '@/shared/ui/controls/Decorative.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function FilterChipBar() {

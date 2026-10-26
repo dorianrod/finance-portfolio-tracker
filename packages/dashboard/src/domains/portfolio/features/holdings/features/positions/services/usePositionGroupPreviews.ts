@@ -1,10 +1,8 @@
 import type { Row } from '@tanstack/react-table'
 import { useMemo } from 'react'
 
-import {
-  getPositionSavingsOperations,
-  getPositionTradeOperations,
-} from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations'
+import { getPositionSavingsOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionSavingsOperations'
+import { getPositionTradeOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations'
 import type { usePositionTableOverlays } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays'
 import type { CellHandlers } from '@/domains/portfolio/features/holdings/features/positions/types/positionCellHandlers.type'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'

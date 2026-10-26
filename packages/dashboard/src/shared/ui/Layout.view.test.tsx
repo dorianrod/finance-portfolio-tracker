@@ -3,8 +3,10 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { Button } from './Controls.view'
-import { Inset, Stack } from './Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
+
 import { Text } from './Text.view'
 
 afterEach(cleanup)

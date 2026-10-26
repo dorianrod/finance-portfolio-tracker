@@ -1,16 +1,12 @@
 import { useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import {
-  allocationTrendDomain,
-  buildAllocationTrend,
-} from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations'
+import { allocationTrendDomain } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/allocationTrendDomain'
+import { buildAllocationTrend } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/buildAllocationTrend'
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
 import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
-import {
-  dashboardDiversificationFilterAtom,
-  dashboardDiversificationPositionsOpenAtom,
-} from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'

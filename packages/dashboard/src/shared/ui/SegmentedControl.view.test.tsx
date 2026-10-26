@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { SegmentedControl, SegmentedControlItem } from './SegmentedControl.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 
 describe('SegmentedControl', () => {
   it('exposes one labelled group and pressed state for each option', () => {

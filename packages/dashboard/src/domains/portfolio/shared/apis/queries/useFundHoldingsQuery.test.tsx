@@ -4,7 +4,7 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useFundHoldingsQuery } from './useFundHoldingsQuery'
 

@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
-import { ToggleButton } from '@/shared/ui/Controls.view'
-import { GridIcon } from '@/shared/ui/Icons.view'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
+import { GridIcon } from '@/shared/ui/icons/GridIcon.view'
 export function PositionsToggle({
   open,
   onClick,

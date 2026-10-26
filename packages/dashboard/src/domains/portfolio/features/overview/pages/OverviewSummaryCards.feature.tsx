@@ -4,10 +4,12 @@ import type {
   ComparedMetric,
   OverviewComparison,
   OverviewConcentrationComparison,
-} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
+} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
 import { formatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/formatOverviewIrrValue'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
+import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
+import { PreviousValue } from '@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
@@ -15,13 +17,13 @@ import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { MetricDelta } from '@/shared/ui/Badge.view'
-import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
 import { MetricCard, type MetricCardAccent } from '@/shared/ui/MetricCard.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
 
 export function OverviewSummaryCards(props: SummaryCardsProps) {
   return (

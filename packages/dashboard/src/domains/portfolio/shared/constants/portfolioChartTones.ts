@@ -1,4 +1,4 @@
-import type { ChartTone } from '@/shared/theme/chartColors'
+import type { ChartTone } from '@/shared/theme/chartColors/chartColors.types'
 
 export const PORTFOLIO_CHART_TONES = {
   netContributions: 'series1',

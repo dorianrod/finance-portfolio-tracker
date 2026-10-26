@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type {
   AccountCoverage,
   DimensionCoverage,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage'
+} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
 
 import { buildClassificationViewState } from './buildClassificationViewState'
 

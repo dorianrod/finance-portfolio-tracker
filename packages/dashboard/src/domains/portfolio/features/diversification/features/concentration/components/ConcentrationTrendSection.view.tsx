@@ -10,7 +10,10 @@ import {
   YAxis,
 } from 'recharts'
 
-import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/HoldingLabelTick.view'
+import { ChartLegend } from '@/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ChartLegend.view'
+import { ConcentrationTrendTooltip } from '@/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ConcentrationTrendTooltip.view'
+import { HistoricalHoldingTooltip } from '@/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/HistoricalHoldingTooltip.view'
+import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/HoldingLabelTick.view'
 import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/rankedBarAnimation'
 import type { useConcentrationTrendController } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationTrendController'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
@@ -20,23 +23,23 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
-import { ChartLabels } from '@/shared/ui/ChartLabels.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartLabels } from '@/shared/ui/chartLabels/ChartLabels.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
-import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
-import { Button, Input, ToggleButton } from '@/shared/ui/Controls.view'
-import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import {
-  ChartLegend,
-  ConcentrationTrendTooltip,
-  HistoricalHoldingTooltip,
-} from './ConcentrationTrendTooltips.view'
 
 export function ConcentrationTrendSectionView({
   controller,

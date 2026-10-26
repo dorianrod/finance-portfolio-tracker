@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 
-import { Inset } from '@/shared/ui/Layout.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
 
-import { SegmentedControl } from '../../SegmentedControl.view'
 import { ViewNavigation } from '../../ViewNavigation.view'
 
 const meta = {

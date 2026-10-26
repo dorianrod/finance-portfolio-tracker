@@ -1,6 +1,7 @@
 import type { ChangeEventHandler } from 'react'
 
-import { CHECKBOX_SIZES } from './fieldAppearance'
+import { CHECKBOX_SIZES } from '@/shared/ui/fieldAppearance/checkboxSizes'
+
 import { useIndeterminateInput } from './services/useIndeterminateInput'
 
 // Needs a ref to set the DOM-only `indeterminate` property.

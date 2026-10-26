@@ -1,12 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { DataCell } from '../../DataTable.view'
-import {
-  CompactBadge,
-  LevelBadge,
-  StatusBadge,
-  StatusTableRow,
-} from '../../StatusBadge.view'
+import { DataCell } from '@/shared/ui/dataTable/DataCell.view'
+import { CompactBadge } from '@/shared/ui/statusBadge/CompactBadge.view'
+import { LevelBadge } from '@/shared/ui/statusBadge/LevelBadge.view'
+import { StatusBadge } from '@/shared/ui/statusBadge/StatusBadge.view'
+import { StatusTableRow } from '@/shared/ui/statusBadge/StatusTableRow.view'
 
 const meta = {
   title: 'Badges/Status',

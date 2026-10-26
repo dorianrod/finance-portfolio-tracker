@@ -1,0 +1,1 @@
+export const QUALITY_GAP_TOLERANCE_PCT = 1

@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 
 import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
-import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
-import { StatusMessage } from '@/shared/ui/Controls.view'
-import { Layout } from '@/shared/ui/Layout.view'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 

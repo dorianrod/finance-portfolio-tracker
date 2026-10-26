@@ -4,7 +4,9 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { AreaChart } from 'recharts'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { ChartXAxis, ChartYAxis } from './ChartAxes.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+
 import { SeriesArea } from './SeriesArea.view'
 import { SeriesGradient } from './SeriesGradient.view'
 

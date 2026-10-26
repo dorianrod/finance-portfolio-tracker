@@ -3,7 +3,8 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { Button } from './Controls.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+
 import { MetricCard } from './MetricCard.view'
 
 afterEach(cleanup)

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import type { ConcentrationSummary } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
+import type { ConcentrationSummary } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

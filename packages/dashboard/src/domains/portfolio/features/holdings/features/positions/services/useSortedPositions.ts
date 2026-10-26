@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { sortPositionsForTable } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable'
+import { sortPositionsForTable } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/sortPositionsForTable'
 import type { PositionSortKey } from '@/domains/portfolio/features/holdings/features/positions/types/positionSort.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 

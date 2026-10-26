@@ -1,7 +1,7 @@
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/shared/helpers/quality/analysisReliability/analysisReliability.types'
 import i18n from '@/i18n/i18n'
-import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance'
-import type { TextTone } from '@/shared/ui/textAppearance'
+import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 
 export type QualityTooltipRow = {
   label: string

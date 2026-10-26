@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { ChartReference, ChartReferenceArea } from '../../ChartReference.view'
+import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
+import { ChartReferenceArea } from '@/shared/ui/chartReference/ChartReferenceArea.view'
+
 import { SeriesLine } from '../../SeriesLine.view'
 import { CartesianExample } from '../ChartExamples.view'
 

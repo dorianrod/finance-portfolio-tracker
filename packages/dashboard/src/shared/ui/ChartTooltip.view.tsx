@@ -10,7 +10,7 @@ import type {
   ValueType,
 } from 'recharts/types/component/DefaultTooltipContent'
 
-import { CHART_CURSORS } from './chartAppearance'
+import { CHART_CURSORS } from '@/shared/ui/chartAppearance/chartCursors'
 
 export function ChartTooltip({ highlight, children, ...props }: Props) {
   const content = children == null ? undefined : Children.only(children)

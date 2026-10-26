@@ -1,14 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartData.types'
+import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
+import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'
+import { computeRollingReturns } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns'
+import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeUnitPriceDomain'
 import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
-
-import {
-  buildHoverChartSeries,
-  computeMonthlyBalances,
-  computeRollingReturns,
-  computeUnitPriceDomain,
-  type HoverChartDataPoint,
-} from './buildHoverChartData'
 
 describe('computeMonthlyBalances', () => {
   it('accumulates a running balance per month from dated deltas', () => {

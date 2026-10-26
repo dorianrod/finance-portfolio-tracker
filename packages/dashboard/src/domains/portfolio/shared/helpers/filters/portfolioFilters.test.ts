@@ -1,17 +1,14 @@
 const formatDate = (date: Date) => date.toISOString().slice(0, 10)
 import { describe, expect, it } from 'vitest'
 
+import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
+import { clearFilterGroup } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/clearFilterGroup'
+import { filterSummaries } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterSummaries'
+import { filterVisibilityForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/filterVisibilityForTab'
+import { presetDateFrom } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/presetDateFrom'
+import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/resetFilters'
+import { toggle } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/toggle'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-
-import {
-  accountLabel,
-  clearFilterGroup,
-  filterSummaries,
-  filterVisibilityForTab,
-  presetDateFrom,
-  resetFilters,
-  toggle,
-} from './portfolioFilters'
 
 function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
   return {

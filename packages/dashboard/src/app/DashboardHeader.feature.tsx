@@ -1,12 +1,10 @@
 import { useAtomValue } from 'jotai'
 
-import {
-  useDashboardTheme,
-  useDashboardThemeSync,
-} from '@/domains/portfolio/shared/services/actions/useDashboardTheme'
-import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme.atoms'
+import { useDashboardTheme } from '@/domains/portfolio/shared/services/actions/useDashboardTheme/useDashboardTheme'
+import { useDashboardThemeSync } from '@/domains/portfolio/shared/services/actions/useDashboardTheme/useDashboardThemeSync'
+import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme/dashboardThemeAtom'
 import i18n from '@/i18n/i18n'
-import { ToggleButton } from '@/shared/ui/Controls.view'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function DashboardHeader() {

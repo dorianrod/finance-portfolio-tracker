@@ -1,15 +1,11 @@
 import { useMemo } from 'react'
 
-import {
-  useDemoFilteredHistoryAccountsQuery,
-  useFilteredPortfolioHistoryQuery,
-} from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery'
+import { useDemoFilteredHistoryAccountsQuery } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/useDemoFilteredHistoryAccountsQuery'
+import { useFilteredPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/useFilteredPortfolioHistoryQuery'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
-import { applyAccountFilterToHistory } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
-import {
-  buildDemoPresetSelection,
-  isDemoPresetActive,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
+import { applyAccountFilterToHistory } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyAccountFilterToHistory'
+import { buildDemoPresetSelection } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/buildDemoPresetSelection'
+import { isDemoPresetActive } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/isDemoPresetActive'
 import { resolveFilteredHistoryState } from '@/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState'
 import { normalizeAccountSelection } from '@/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'

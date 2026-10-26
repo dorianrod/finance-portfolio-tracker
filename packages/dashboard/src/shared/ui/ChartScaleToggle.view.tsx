@@ -1,6 +1,6 @@
 import i18n from '@/i18n/i18n'
-
-import { SegmentedControl, SegmentedControlItem } from './SegmentedControl.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 
 export function ChartScaleToggle({
   value,

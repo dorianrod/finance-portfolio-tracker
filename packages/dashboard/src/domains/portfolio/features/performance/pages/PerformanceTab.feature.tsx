@@ -1,33 +1,30 @@
 import { useMemo } from 'react'
 
-import {
-  UNAVAILABLE_ASSET_IRR_SUMMARY,
-  useAssetIrrQuery,
-} from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery'
+import { UNAVAILABLE_ASSET_IRR_SUMMARY } from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery/unavailableAssetIrrSummary'
+import { useAssetIrrQuery } from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery/useAssetIrrQuery'
 import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
-import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/PerformanceContributionCard.feature'
-import {
-  IrrSinceTrackingKpi,
-  NetRealizedKpi,
-  NetUnrealizedKpi,
-  PassiveIncomeKpi,
-  TotalNetPerformanceKpi,
-  TrailingThreeYearIrrKpi,
-} from '@/domains/portfolio/features/performance/components/PortfolioKpis.feature'
+import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature'
+import { IrrSinceTrackingKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature'
+import { NetRealizedKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature'
+import { NetUnrealizedKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/NetUnrealizedKpi.feature'
+import { PassiveIncomeKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature'
+import { TotalNetPerformanceKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TotalNetPerformanceKpi.feature'
+import { TrailingThreeYearIrrKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature'
 import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart.feature'
 import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
 import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import type {
   IncomeSummary,
   PerformanceSummary,
-} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations'
+} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/performanceCalculations.types'
 import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 

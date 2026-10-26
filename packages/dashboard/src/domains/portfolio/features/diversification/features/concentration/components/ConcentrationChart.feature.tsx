@@ -6,23 +6,25 @@ import {
   YAxis,
 } from 'recharts'
 
-import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations'
+import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/HoldingLabelTick.view'
+import { HOLDING_LABEL_WIDTH } from '@/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/holdingLabelWidth'
+import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { ChartGrid } from '@/shared/ui/ChartAxes.view'
-import { ChartLabels } from '@/shared/ui/ChartLabels.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartLabels } from '@/shared/ui/chartLabels/ChartLabels.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { ConcentrationTooltip } from './ConcentrationTooltip.view'
-import { HOLDING_LABEL_WIDTH, HoldingLabelTick } from './HoldingLabelTick.view'
 
 export function ConcentrationChart({
   data,

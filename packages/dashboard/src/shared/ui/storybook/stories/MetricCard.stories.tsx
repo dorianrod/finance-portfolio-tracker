@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
 
-import { Button } from '../../Controls.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+
 import { MetricCard } from '../../MetricCard.view'
 import { Text } from '../../Text.view'
 

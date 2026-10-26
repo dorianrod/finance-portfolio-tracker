@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { buildAccountTypeHistory } from './buildAccountTypeHistory'

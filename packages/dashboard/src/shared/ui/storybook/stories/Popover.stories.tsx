@@ -2,9 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor, within } from 'storybook/test'
 
-import { Grid } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
 
-import { Button, Input } from '../../Controls.view'
 import { Popover } from '../../Popover.view'
 
 const meta = { title: 'Panels/Popover', component: Popover } satisfies Meta<

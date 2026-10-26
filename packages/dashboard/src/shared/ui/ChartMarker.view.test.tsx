@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { ChartTone } from '@/shared/theme/chartColors'
+import type { ChartTone } from '@/shared/theme/chartColors/chartColors.types'
 
 import { ChartMarker } from './ChartMarker.view'
 

@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ScatterChart } from 'recharts'
 
-import { ChartXAxis, ChartYAxis } from '../../ChartAxes.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartSymbol } from '@/shared/ui/seriesScatter/ChartSymbol.view'
+import { SeriesScatter } from '@/shared/ui/seriesScatter/SeriesScatter.view'
+
 import { ChartTooltip } from '../../ChartTooltip.view'
-import { ChartSymbol, SeriesScatter } from '../../SeriesScatter.view'
 import { ScatterShapeExample } from '../ChartExamples.view'
 import { SCATTER } from '../fixtures'
 

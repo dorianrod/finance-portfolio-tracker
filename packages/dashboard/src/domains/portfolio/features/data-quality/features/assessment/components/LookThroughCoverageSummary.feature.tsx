@@ -1,11 +1,8 @@
 import { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary'
+import { LookThroughCoverageSummaryView } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummaryView.view'
+import { UnavailableLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/UnavailableLookThroughSummary.view'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
-
-import {
-  LookThroughCoverageSummaryView,
-  UnavailableLookThroughSummary,
-} from './LookThroughCoverageSummary.view'
 
 export function LookThroughCoverageSummary({
   report,

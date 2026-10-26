@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 
-import { ToneSwatch } from './Swatch.view'
-import type { SWATCH_TONES } from './swatchAppearance'
+import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
+import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
+
 import { Text } from './Text.view'
-import type { TextTone } from './textAppearance'
 
 export function Metric({
   tone = 'subtle',

@@ -7,9 +7,11 @@ import {
   useMemo,
 } from 'react'
 
+import { Button } from '@/shared/ui/controls/Button.view'
+import type { ButtonProps } from '@/shared/ui/controls/controls.types'
+import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
+
 import type { ControlProps } from './controlProps'
-import { Button, type ButtonProps } from './Controls.view'
-import { SURFACE_VARIANTS } from './surfaceAppearance'
 
 export function Disclosure({
   expanded,

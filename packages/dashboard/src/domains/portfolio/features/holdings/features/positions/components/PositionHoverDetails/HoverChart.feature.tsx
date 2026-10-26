@@ -1,15 +1,13 @@
 import { useMemo } from 'react'
 
 import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
-import {
-  buildHoverChartSeries,
-  computeUnitPriceDomain,
-} from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
+import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
+import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeUnitPriceDomain'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
-import { StatusMessage } from '@/shared/ui/Controls.view'
-import { Layout } from '@/shared/ui/Layout.view'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 

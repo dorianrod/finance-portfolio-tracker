@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
+import { buildAccountLabels } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildAccountLabels'
+import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-import { buildAccountLabels, buildPositionRows } from './buildPositionHierarchy'
 
 function op(overrides: Partial<RawOperation>): RawOperation {
   return {

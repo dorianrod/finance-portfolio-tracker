@@ -4,11 +4,9 @@ import { createStore, Provider, useAtomValue } from 'jotai'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  dashboardThemeAtom,
-  DEFAULT_DASHBOARD_THEME,
-  THEME_STORAGE_KEY,
-} from './dashboardTheme.atoms'
+import { dashboardThemeAtom } from '@/domains/portfolio/shared/stores/dashboardTheme/dashboardThemeAtom'
+import { DEFAULT_DASHBOARD_THEME } from '@/domains/portfolio/shared/stores/dashboardTheme/defaultDashboardTheme'
+import { THEME_STORAGE_KEY } from '@/domains/portfolio/shared/stores/dashboardTheme/themeStorageKey'
 
 function mountTheme() {
   const store = createStore()

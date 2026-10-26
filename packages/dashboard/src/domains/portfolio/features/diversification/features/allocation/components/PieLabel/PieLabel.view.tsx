@@ -1,6 +1,6 @@
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { ChartLabel } from '@/shared/ui/ChartLabel.view'
+import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
 
 import { getPieLabelPosition } from './helpers/presenters/getPieLabelPosition'
 

@@ -5,10 +5,9 @@ import { useState } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { QualityThemeTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeTab.view'
 import type { QualityThemeId } from '@/domains/portfolio/shared/types/dataQuality.type'
 import { Tabs } from '@/shared/ui/Tabs.view'
-
-import { QualityThemeTab } from './DataQualityDetails.view'
 
 const themes: QualityTheme[] = [
   {

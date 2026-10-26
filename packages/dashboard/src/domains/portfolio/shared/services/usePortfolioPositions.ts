@@ -1,12 +1,10 @@
 import { useMemo } from 'react'
 
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
-import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters'
-import {
-  withoutOperationAndPeriodFilters,
-  withoutOperationFilters,
-} from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
-import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate'
+import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyPositionFilters'
+import { withoutOperationAndPeriodFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationAndPeriodFilters'
+import { withoutOperationFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationFilters'
+import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

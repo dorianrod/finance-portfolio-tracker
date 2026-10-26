@@ -3,15 +3,12 @@ import { useMemo } from 'react'
 
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
 import type { AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { AffectedAssetsTable } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/AffectedAssetsTable.view'
 import { useDataQualityClassificationDetails } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useDataQualityClassificationDetails'
-import {
-  dataQualityClassificationDetailsOpenAtom,
-  dataQualityClassificationDimensionAtom,
-} from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels.atoms'
+import { dataQualityClassificationDetailsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels/dataQualityClassificationDetailsOpenAtom'
+import { dataQualityClassificationDimensionAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels/dataQualityClassificationDimensionAtom'
 import i18n from '@/i18n/i18n'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
-
-import { AffectedAssetsTable } from './DataQualityDetails.view'
 export function AffectedAssetsPanel({ assets }: { assets: AffectedAsset[] }) {
   const classificationDetailsOpen = useAtomValue(
     dataQualityClassificationDetailsOpenAtom,

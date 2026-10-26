@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
+import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
+import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
-
-import {
-  computeAllocationCoverageByAccount,
-  computeAllocationCoverageByDimension,
-} from './computeAllocationCoverage'
 
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {

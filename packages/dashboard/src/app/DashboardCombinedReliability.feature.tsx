@@ -1,9 +1,9 @@
 import { useAtomValue } from 'jotai'
 
-import { CombinedAnalysisReliabilityKpi } from '@/domains/portfolio/shared/components/quality/AnalysisReliabilityKpi.feature'
-import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
+import { CombinedAnalysisReliabilityKpi } from '@/domains/portfolio/shared/components/quality/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import i18n from '@/i18n/i18n'
-import { Layout } from '@/shared/ui/Layout.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import type { DashboardViewModel } from './types/dashboardViewModel.type'
 

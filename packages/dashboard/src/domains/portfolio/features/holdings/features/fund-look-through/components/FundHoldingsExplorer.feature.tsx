@@ -1,3 +1,4 @@
+import { VirtualExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/VirtualExposureRow.view'
 import type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 import { useFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/useFundExposureViewModel'
 import { useVirtualExposureList } from '@/domains/portfolio/features/holdings/features/fund-look-through/services/useVirtualExposureList'
@@ -6,14 +7,15 @@ import { type FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
-import { Input, Select } from '@/shared/ui/Controls.view'
-import { Grid, Inline, Layout } from '@/shared/ui/Layout.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { Select } from '@/shared/ui/controls/Select.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { TablePanel } from '@/shared/ui/TablePanel.view'
 import { Text } from '@/shared/ui/Text.view'
-import { VirtualCanvas } from '@/shared/ui/VirtualRow.view'
-
-import { VirtualExposureRow } from './FundExposureRows/FundExposureRows.view'
+import { VirtualCanvas } from '@/shared/ui/virtualRow/VirtualCanvas.view'
 
 export function FundHoldingsExplorer({
   positions,

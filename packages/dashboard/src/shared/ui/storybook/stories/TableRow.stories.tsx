@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { DataCell } from '../../DataTable.view'
-import { InlineBadge, StripedRow, TableRowSurface } from '../../TableRow.view'
+import { DataCell } from '@/shared/ui/dataTable/DataCell.view'
+import { InlineBadge } from '@/shared/ui/tableRow/InlineBadge.view'
+import { StripedRow } from '@/shared/ui/tableRow/StripedRow.view'
+import { TableRowSurface } from '@/shared/ui/tableRow/TableRowSurface.view'
 
 const meta = {
   title: 'Tables/Table rows',

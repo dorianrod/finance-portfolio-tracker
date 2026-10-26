@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { usePositionsQuery } from '@/domains/portfolio/shared/apis/queries/usePositionsQuery'
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { usePositionHistoryQuery } from './usePositionHistoryQuery'
 

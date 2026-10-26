@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 
-import {
-  buildOverviewComparison,
-  compareRollingThreeYearIrr,
-} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison'
+import { buildOverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'
+import { compareRollingThreeYearIrr } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'

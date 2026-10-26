@@ -3,10 +3,8 @@ import { useAtomValue } from 'jotai'
 import { useDashboardDiversificationView } from '@/app/services/useDashboardDiversificationView'
 import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
 import i18n from '@/i18n/i18n'
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@/shared/ui/SegmentedControl.view'
+import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
+import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 
 export function DiversificationViewToggle() {
   const value = useAtomValue(dashboardDiversificationViewAtom)

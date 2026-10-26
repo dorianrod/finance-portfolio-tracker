@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { CHART_TEXT_TONES } from '../../chartAppearance'
+import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
+
 import { ChartText } from '../../ChartText.view'
 
 const meta = {

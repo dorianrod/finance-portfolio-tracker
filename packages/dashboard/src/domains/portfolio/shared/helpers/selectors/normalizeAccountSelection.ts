@@ -1,4 +1,4 @@
-import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter'
+import { rawAccountId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountId'
 
 export function normalizeAccountSelection(
   accounts: Iterable<string>,

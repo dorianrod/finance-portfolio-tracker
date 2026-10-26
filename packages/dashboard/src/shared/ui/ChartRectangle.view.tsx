@@ -1,10 +1,11 @@
 import { useContext } from 'react'
 import { type BarShapeProps, Rectangle } from 'recharts'
 
-import { CHART_COLORS } from '@/shared/theme/chartColors'
+import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
+import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
 
 import { BarAppearanceContext } from './barAppearanceContext'
-import { BAR_CORNERS, BAR_PROMINENCE } from './chartAppearance'
 
 export function ChartRectangle({
   geometry,

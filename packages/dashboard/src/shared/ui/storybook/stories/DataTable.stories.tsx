@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { DataCell } from '../../DataTable.view'
+import { DataCell } from '@/shared/ui/dataTable/DataCell.view'
+
 import { DATA_CELL_VARIANTS } from '../../dataTableAppearance'
 
 const meta = { title: 'Tables/DataCell', component: DataCell } satisfies Meta<

@@ -10,16 +10,18 @@ import {
 } from 'recharts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { getHashedSeriesTone } from '@/shared/theme/chartColors'
+import { getHashedSeriesTone } from '@/shared/theme/chartColors/getHashedSeriesTone'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
+import { ChartLabels } from '@/shared/ui/chartLabels/ChartLabels.view'
+import { ChartSymbol } from '@/shared/ui/seriesScatter/ChartSymbol.view'
+import { SeriesScatter } from '@/shared/ui/seriesScatter/SeriesScatter.view'
 
-import { ChartXAxis, ChartYAxis } from './ChartAxes.view'
-import { ChartLabel } from './ChartLabel.view'
-import { ChartLabels } from './ChartLabels.view'
 import { ChartSector } from './ChartSector.view'
 import { ChartTooltip } from './ChartTooltip.view'
 import { SeriesBar } from './SeriesBar.view'
 import { SeriesPie } from './SeriesPie.view'
-import { ChartSymbol, SeriesScatter } from './SeriesScatter.view'
 
 afterEach(cleanup)
 function PieShape(props: Partial<Omit<PieSectorShapeProps, 'className'>>) {

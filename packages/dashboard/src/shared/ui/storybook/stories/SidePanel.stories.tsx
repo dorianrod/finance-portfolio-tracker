@@ -2,9 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor, within } from 'storybook/test'
 
-import { Grid } from '@/shared/ui/Layout.view'
+import { Button } from '@/shared/ui/controls/Button.view'
+import { DialogButton } from '@/shared/ui/controls/DialogButton.view'
+import { Input } from '@/shared/ui/controls/Input.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
 
-import { Button, DialogButton, Input } from '../../Controls.view'
 import { SidePanel } from '../../SidePanel.view'
 
 const meta = {

@@ -1,11 +1,11 @@
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { DetailKpiButton } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/DetailKpiButton.view'
 import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles'
-import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { ToneSwatch } from '@/shared/ui/Swatch.view'
+import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import { DetailKpiButton } from './DataQualityDetails.view'
 
 export function DataQualityHeader({
   theme,

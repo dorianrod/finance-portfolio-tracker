@@ -10,13 +10,15 @@ import {
   useRef,
 } from 'react'
 
-import { getButtonClassName } from './buttonAppearance'
+import { getButtonClassName } from '@/shared/ui/buttonAppearance/getButtonClassName'
+import type { ButtonProps } from '@/shared/ui/controls/controls.types'
+import { BUTTON_SIZES } from '@/shared/ui/layoutAppearance/buttonSizes'
+import { PREVIEW_SIZES } from '@/shared/ui/layoutAppearance/previewSizes'
+import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
+import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
+
 import type { ControlProps } from './controlProps'
-import type { ButtonProps } from './Controls.view'
-import { BUTTON_SIZES, PREVIEW_SIZES } from './layoutAppearance'
-import { SURFACE_VARIANTS } from './surfaceAppearance'
-import type { TextTone } from './textAppearance'
-import { TEXT_TONES } from './textAppearance'
 import { usePreviewFocus } from './usePreviewFocus'
 import { type PreviewState, usePreviewState } from './usePreviewState'
 

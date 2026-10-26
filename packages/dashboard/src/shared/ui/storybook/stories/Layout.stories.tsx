@@ -1,13 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { TableColumn } from '../../DataTable.view'
-import { Grid, Inline, Inset, Layout, Stack } from '../../Layout.view'
-import { PlotMarker, Proportion, TreeIndent } from '../../Proportion.view'
+import { TableColumn } from '@/shared/ui/dataTable/TableColumn.view'
+import { Grid } from '@/shared/ui/layout/Grid.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Inset } from '@/shared/ui/layout/Inset.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Stack } from '@/shared/ui/layout/Stack.view'
+import { PlotMarker } from '@/shared/ui/proportion/PlotMarker.view'
+import { Proportion } from '@/shared/ui/proportion/Proportion.view'
+import { TreeIndent } from '@/shared/ui/proportion/TreeIndent.view'
+import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
+import { VirtualCanvas } from '@/shared/ui/virtualRow/VirtualCanvas.view'
+
 import { Surface } from '../../Surface.view'
-import { ToneSwatch } from '../../Swatch.view'
 import { Text } from '../../Text.view'
 import { TreeConnector } from '../../TreeConnector.view'
-import { VirtualCanvas } from '../../VirtualRow.view'
 
 const meta = {
   title: 'Surfaces/Standard layout',

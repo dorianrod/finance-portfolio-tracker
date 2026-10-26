@@ -1,12 +1,10 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
-import {
-  TEXT_ALIGNMENTS,
-  TEXT_TONES,
-  TEXT_VARIANTS,
-  TEXT_WRAPPING,
-  type TextTone,
-} from './textAppearance'
+import { TEXT_ALIGNMENTS } from '@/shared/ui/textAppearance/textAlignments'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
+import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
+import { TEXT_VARIANTS } from '@/shared/ui/textAppearance/textVariants'
+import { TEXT_WRAPPING } from '@/shared/ui/textAppearance/textWrapping'
 
 export function Text<T extends TextTag = 'span'>({
   as,

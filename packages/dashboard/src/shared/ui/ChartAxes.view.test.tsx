@@ -3,8 +3,10 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { Bar, BarChart } from 'recharts'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { ChartGrid, ChartXAxis, ChartYAxis } from './ChartAxes.view'
-import { ChartReference } from './ChartReference.view'
+import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
+import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
+import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 
 afterEach(cleanup)
 

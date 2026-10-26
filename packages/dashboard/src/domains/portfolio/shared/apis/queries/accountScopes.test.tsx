@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { usePassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/usePassiveIncomeQuery'
 import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
-import { clearCsvCache } from '@/shared/csv/csvData'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useSavingCapacityQuery } from './useSavingCapacityQuery'
 
