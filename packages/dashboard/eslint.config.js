@@ -147,6 +147,7 @@ export default defineConfig([
       radix: 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-deprecated': 'error',
+      'react-hooks/exhaustive-deps': 'error',
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
