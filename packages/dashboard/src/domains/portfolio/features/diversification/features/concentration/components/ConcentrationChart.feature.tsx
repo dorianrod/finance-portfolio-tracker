@@ -143,7 +143,11 @@ function LeadingHoldingBar(shapeProps: Partial<BarShapeProps>) {
   return (
     <ChartRectangle
       geometry={shapeProps}
-      tone={shapeProps.index === 0 ? PORTFOLIO_CHART_TONES.risk : PORTFOLIO_CHART_TONES.neutralSeries}
+      tone={
+        shapeProps.index === 0
+          ? PORTFOLIO_CHART_TONES.risk
+          : PORTFOLIO_CHART_TONES.neutralSeries
+      }
     />
   )
 }

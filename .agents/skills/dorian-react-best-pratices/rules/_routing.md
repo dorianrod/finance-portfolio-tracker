@@ -13,6 +13,10 @@ Routing rules:
 
 | Observable pattern or intent | Section prefix | Rule file |
 | --- | --- | --- |
+| The request reviews domain and feature architecture or asks where a business capability belongs; a boundary is justified only by a route, tab, endpoint, component or technical data shape. | `architecture-` | [`architecture-business-capability-boundaries.md`](architecture-business-capability-boundaries.md) |
+| The request reviews domain and feature architecture, chooses between sibling features and sub-features, reviews an inconsistent feature hierarchy, or proposes separate features for dimensions, periods or modes of one capability. | `architecture-` | [`architecture-feature-hierarchy.md`](architecture-feature-hierarchy.md) |
+| One responsibility has a sub-feature while a comparable responsibility remains implicit in the parent. | `architecture-` | [`architecture-feature-hierarchy.md`](architecture-feature-hierarchy.md) |
+| The request reviews domain and feature architecture, extracts a vertical feature or audits complete ownership; an extracted feature's specific calculations, state or types remain in a parent hook or ancestor shared folder; a parent hook combines several children's business logic. | `architecture-` | [`architecture-feature-ownership.md`](architecture-feature-ownership.md) |
 | A component contains several independent rendered regions, exceeds the function-size or branching threshold, or the request asks why oversized or complex components escape ESLint. | `architecture-` | [`architecture-component-complexity.md`](architecture-component-complexity.md) |
 | A shared/ui component, prop, helper or variant names a business entity, operation, metric or feature; shared UI interprets domain values or resolves them through business-aware dependencies, including shared theme modules. | `architecture-` | [`architecture-shared-ui-agnostic.md`](architecture-shared-ui-agnostic.md) |
 | The request asks to audit or keep shared/ui agnostic of business domains, including its public API and indirect dependencies. | `architecture-` | [`architecture-shared-ui-agnostic.md`](architecture-shared-ui-agnostic.md) |

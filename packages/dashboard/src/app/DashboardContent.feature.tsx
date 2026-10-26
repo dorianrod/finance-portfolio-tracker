@@ -11,7 +11,7 @@ import type { DashboardViewModel } from './types/dashboardViewModel.type'
 const OverviewTab = lazy(DASHBOARD_TAB_LOADERS.overview)
 const WealthTab = lazy(DASHBOARD_TAB_LOADERS.wealth)
 const PerformanceTab = lazy(DASHBOARD_TAB_LOADERS.performance)
-const AllocationCharts = lazy(DASHBOARD_TAB_LOADERS.allocation)
+const DiversificationCharts = lazy(DASHBOARD_TAB_LOADERS.diversification)
 const DataQualityTab = lazy(DASHBOARD_TAB_LOADERS.quality)
 
 export function DashboardContent({
@@ -88,8 +88,8 @@ export function DashboardContent({
           irrScopeLabel={irrScopeLabel}
         />
       )}
-      {activeTab === 'allocation' && (
-        <AllocationCharts
+      {activeTab === 'diversification' && (
+        <DiversificationCharts
           positions={currentPositions}
           rawPositions={rawPositions}
           fundHoldings={periodEndFundHoldings}

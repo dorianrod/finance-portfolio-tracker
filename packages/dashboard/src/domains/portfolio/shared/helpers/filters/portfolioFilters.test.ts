@@ -69,7 +69,7 @@ describe('filterVisibilityForTab', () => {
     (tab) => expect(filterVisibilityForTab(tab).showPeriod).toBe(true),
   )
 
-  it.each(['allocation', 'underlying', 'quality'])(
+  it.each(['diversification', 'underlying', 'quality'])(
     'shows the period filter on %s',
     (tab) => {
       expect(filterVisibilityForTab(tab).showPeriod).toBe(true)

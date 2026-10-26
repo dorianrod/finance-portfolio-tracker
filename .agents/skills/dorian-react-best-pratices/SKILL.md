@@ -1,9 +1,9 @@
 ---
 name: dorian-react-best-pratices
-description: Apply and maintain Dorian's project-specific React and Next.js rules. Use when writing, reviewing, or refactoring React code against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
+description: Apply and maintain Dorian's project-specific React and Next.js rules, including business domain and feature boundaries. Use when writing, reviewing, or refactoring React code or architecture against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.9.0"
+  version: "0.10.0"
 ---
 
 # Dorian React Best Practices
@@ -20,6 +20,8 @@ Use the rules in this skill as the only source of Dorian-specific React guidance
 
 Files beginning with `_` are maintenance files, not active rules.
 
+For domain and feature architecture reviews, apply this catalog's business boundary, hierarchy and ownership rules alongside the generic React skill's folder and import conventions. The Dorian rules refine the business decisions; the generic rules define their technical layout. Derive the business vocabulary and capability map from the application being reviewed; examples illustrate decisions rather than prescribe a business model. Keep application-specific naming and target structures in that application's architecture documentation.
+
 ## Active Rule Categories
 
 Category prefixes and their priority order belong in [rules/_sections.md](rules/_sections.md).
@@ -28,7 +30,7 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 | --- | --- | --- |
 | 1 | Styling Boundaries | `styling-` |
 | 2 | Component Composition | `composition-` |
-| 3 | Component Logic | `architecture-` |
+| 3 | Business Architecture and Component Logic | `architecture-` |
 | 4 | API Maintenance | `quality-` |
 
 ## Quick Reference
@@ -44,7 +46,11 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 
 - [`composition-required-children`](rules/composition-required-children.md) — Compose UI through nested children; forbid component/element/render-function props in project APIs and extract renderers required by external APIs.
 
-### Component Logic
+### Business Architecture and Component Logic
+
+- [`architecture-business-capability-boundaries`](rules/architecture-business-capability-boundaries.md) — Define domains and features by business scope and user outcome before choosing folders.
+- [`architecture-feature-hierarchy`](rules/architecture-feature-hierarchy.md) — Justify peer and parent-child relationships through business scope; keep dimensions and modes within their capability.
+- [`architecture-feature-ownership`](rules/architecture-feature-ownership.md) — Keep feature-specific UI, business logic, contracts and state with their owner, and parent orchestration focused on common inputs and composition.
 
 - [`architecture-component-complexity`](rules/architecture-component-complexity.md) — Review complexity above 8 or function size above 150 lines manually; split only when a cohesive responsibility can be extracted.
 - [`architecture-shared-ui-agnostic`](rules/architecture-shared-ui-agnostic.md) — Keep shared UI APIs and dependencies free of business knowledge; domains adapt business meaning to generic UI roles.

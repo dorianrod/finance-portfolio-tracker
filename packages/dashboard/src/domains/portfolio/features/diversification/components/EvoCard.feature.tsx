@@ -4,14 +4,14 @@ import { useCallback, useMemo } from 'react'
 import {
   allocationTrendDomain,
   buildAllocationTrend,
-} from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
+} from '@/domains/portfolio/features/diversification/helpers/calculators/allocationChartCalculations'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
-import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
+import { useDashboardDiversificationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationFilters'
+import { useDashboardDiversificationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationPositions'
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationPositionsOpenAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationPositionsOpenAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
@@ -28,10 +28,10 @@ export function EvoCard({
   points: AllocationPoint[]
   dimension: AllocationDimension
 }) {
-  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
-  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
-  const { toggleFilter } = useDashboardAllocationFilters()
-  const { togglePositions } = useDashboardAllocationPositions()
+  const activeFilter = useAtomValue(dashboardDiversificationFilterAtom)
+  const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
+  const { toggleFilter } = useDashboardDiversificationFilters()
+  const { togglePositions } = useDashboardDiversificationPositions()
   const model = useMemo(
     () => ({
       ...buildAllocationTrend(points),

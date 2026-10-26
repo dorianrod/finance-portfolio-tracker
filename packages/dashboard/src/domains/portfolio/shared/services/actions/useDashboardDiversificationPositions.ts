@@ -1,10 +1,10 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { dashboardAllocationPositionsOpenAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 
-export function useDashboardAllocationPositions() {
-  const setPositionsOpen = useSetAtom(dashboardAllocationPositionsOpenAtom)
+export function useDashboardDiversificationPositions() {
+  const setPositionsOpen = useSetAtom(dashboardDiversificationPositionsOpenAtom)
 
   const togglePositions = useCallback(
     () => setPositionsOpen((open) => !open),

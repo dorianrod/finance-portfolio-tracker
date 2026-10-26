@@ -32,7 +32,11 @@ function EvolutionLegendItem({
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <SeriesSwatch tone={getAllocationTone(category)} shape="bar" size="default" />
+          <SeriesSwatch
+            tone={getAllocationTone(category)}
+            shape="bar"
+            size="default"
+          />
           {category}
         </Inline>
       </Text>
@@ -65,7 +69,13 @@ function EvolutionGradient({
   category: string
   gradientId: string
 }) {
-  return <SeriesGradient id={gradientId} profile="dense" tone={getAllocationTone(category)} />
+  return (
+    <SeriesGradient
+      id={gradientId}
+      profile="dense"
+      tone={getAllocationTone(category)}
+    />
+  )
 }
 
 function EvolutionArea({

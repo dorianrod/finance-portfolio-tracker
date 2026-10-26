@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.4.1**
+**Version 1.4.2**
 
 Frontend Engineering
 
@@ -37,7 +37,7 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.12 [Keep Visual Logic at the Component or Page Boundary](#112-keep-visual-logic-at-the-component-or-page-boundary)
    - 1.13 [No index.ts in stores/, One File per Concern](#113-no-indexts-in-stores-one-file-per-concern)
    - 1.14 [Separate Helpers from Services by Effects and Orchestration](#114-separate-helpers-from-services-by-effects-and-orchestration)
-   - 1.15 [Create a Sub-Domain Only for a Distinct Business Entity](#115-create-a-sub-domain-only-for-a-distinct-business-entity)
+   - 1.15 [Create a Sub-Domain Only for a Distinct Business Concept](#115-create-a-sub-domain-only-for-a-distinct-business-concept)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -307,7 +307,7 @@ See also: `arch-no-prop-drilling`
 
 **Impact: CRITICAL (every file's role is obvious from its path)**
 
-Business code lives in `src/domains/[mainDomain]/[subDomain]/`, or directly in `src/domains/[mainDomain]/` when the main domain holds a single entity (`contracts/`, `projects/`). Pick the smallest structure that keeps ownership explicit: a cohesive domain may own role folders directly, while a domain with several capabilities uses `features/` for vertical slices. Either shape may contain `shared/` for code owned jointly by multiple children.
+Business code lives in `src/domains/[mainDomain]/[subDomain]/`, or directly in `src/domains/[mainDomain]/` when no distinct sub-domain is needed (`contracts/`, `projects/`). A domain represents a coherent business scope with its own vocabulary and rules; it need not mirror an API entity. Pick the smallest structure that keeps ownership explicit: a cohesive domain may own role folders directly, while a domain with several capabilities uses `features/` for vertical slices. Either shape may contain `shared/` for code owned jointly by multiple children.
 
 Each feature uses the same fixed role folders, so paths keep both ownership and responsibility explicit (`features/detail/apis/queries` = reads owned by order detail, `features/detail/services/actions` = its UI orchestration). Do not mix the compact and feature-sliced layouts for separate capabilities, invent a generic feature wrapper around the whole domain, or dump files directly at the domain root. Feature nesting stops after one sub-feature level.
 
@@ -431,6 +431,8 @@ Use `features/` when a domain or entity contains several distinct business capab
 
 Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `dashboard`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
 
+Before reorganizing slices, identify their user outcomes and business owners. Capabilities of equal business scope belong at the same level; nesting requires a meaningful business parent, not just a shared tab, route or dataset. Dimensions, periods and display modes of the same capability normally remain parameters or components within it. Different file counts do not require matching folder structures.
+
 Allow at most two feature levels below a domain: `features/<feature>/` and, when a genuinely distinct responsibility needs it, `features/<feature>/features/<subfeature>/`. Do not nest a third feature level. Promote an overgrown sub-feature to the domain's first level or introduce a real sub-domain when it has an independent business lifecycle. A sub-feature must express a responsibility, not merely isolate one file or technical category.
 
 **Incorrect (technical buckets and a redundant screen wrapper obscure ownership):**
@@ -467,6 +469,8 @@ src/domains/sales/orders/
 ```
 
 A parent feature may compose its sub-features. Sibling features never import each other directly: move code they both need to the nearest common ancestor's `shared/<role>/` folder. A sub-feature may depend on `shared/` folders owned by its ancestors, while shared code never depends on a descendant feature. Apply this direction at both supported feature levels and keep promotion local instead of turning domain-wide shared folders into catch-alls.
+
+Extract the complete responsibility: feature-specific calculations, types and state move with the components. A parent may coordinate common inputs and compose child features, while child-specific logic belongs to the child. Code with a single consumer stays with that consumer; inspect actual reuse before promoting code into scoped shared folders.
 
 See also: `arch-domain-first-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
 
@@ -951,11 +955,11 @@ src/domains/sales/orders/shared/
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
 
-### 1.15 Create a Sub-Domain Only for a Distinct Business Entity
+### 1.15 Create a Sub-Domain Only for a Distinct Business Concept
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
-Sibling sub-domains cannot import each other, so splitting one entity's capabilities across sub-domains forces duplication or boundary violations. Create a sub-domain only for an entity with its own lifecycle, endpoints, permissions and several pages; model a capability of an existing entity as a feature or one sub-feature level under that entity instead.
+Sibling sub-domains cannot import each other, so splitting one entity's capabilities across sub-domains forces duplication or boundary violations. Create a sub-domain only for a distinct business entity or concept with its own vocabulary, rules and meaningful ownership; model a capability of an existing concept as a feature or one sub-feature level under that concept instead. Independent lifecycle, endpoints, permissions and several pages are supporting evidence, not mandatory conditions; meaningful business boundaries do not require CRUD or dedicated endpoints.
 
 **Incorrect (a feature of the order split into its own sub-domain):**
 
@@ -979,7 +983,7 @@ src/domains/sales/orders/
         └── services/useResendOrderAccess.ts
 ```
 
-Create a new sub-domain when the concept has its own API resource (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views. If two sub-domains need the same code, move it to the main domain's `shared/` folder instead of merging them. A main domain that holds a single entity stays single-level (`src/domains/contracts/`) until a second entity appears; it may use direct role folders while it remains one cohesive capability.
+Separate API resources (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views can confirm distinct ownership, but none establishes a sub-domain by itself. If two sub-domains need the same code, move genuinely common code to the main domain's `shared/` folder instead of merging them. A main domain with no distinct child concept stays single-level (`src/domains/contracts/`); it may use direct role folders while it remains one cohesive capability.
 
 See also: `arch-domain-first-layout`, `arch-feature-slice-layout`
 

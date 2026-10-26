@@ -1,7 +1,7 @@
-import { ConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/ConcentrationChart.feature'
-import { CumulativeConcentrationChart } from '@/domains/portfolio/features/allocation/features/concentration/components/CumulativeConcentrationChart.feature'
-import { useConcentrationDescriptions } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationDescriptions'
-import { useAllocationCharts } from '@/domains/portfolio/features/allocation/services/useAllocationCharts'
+import { ConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationChart.feature'
+import { CumulativeConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart.feature'
+import { useConcentrationDescriptions } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationDescriptions'
+import { useDiversificationCharts } from '@/domains/portfolio/features/diversification/services/useDiversificationCharts'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
@@ -10,8 +10,8 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { DonutCard } from './DonutCard.feature'
 
-type Charts = ReturnType<typeof useAllocationCharts>
-export function AllocationCurrentView({
+type Charts = ReturnType<typeof useDiversificationCharts>
+export function DiversificationCurrentView({
   charts,
   concentrationMode,
   onModeChange,
@@ -44,12 +44,12 @@ export function AllocationCurrentView({
           <div className="mb-3 flex items-center justify-between gap-4">
             <div>
               <Text as="h3" variant="label" tone="secondary">
-                {i18n.t('ui.allocationcharts.assetConcentration')}
+                {i18n.t('ui.diversificationcharts.assetConcentration')}
               </Text>
               <div className="mt-0.5">
                 <Text as="p" variant="caption" tone="subtle">
                   {i18n.t(
-                    'ui.allocationcharts.seeHowMuchOfThePortfolioIsConcentratedIn',
+                    'ui.diversificationcharts.seeHowMuchOfThePortfolioIsConcentratedIn',
                   )}
                 </Text>
               </div>
@@ -77,7 +77,7 @@ export function AllocationCurrentView({
           ) : (
             <Surface variant="contentCard" tone="subtle" align="center">
               {i18n.t(
-                'ui.allocationcharts.noIdentifiedLookThroughExposureForTheCurrentSelection',
+                'ui.diversificationcharts.noIdentifiedLookThroughExposureForTheCurrentSelection',
               )}
             </Surface>
           )}
@@ -86,12 +86,12 @@ export function AllocationCurrentView({
       <section>
         <div className="mb-3">
           <Text as="h3" variant="label" tone="secondary">
-            {i18n.t('ui.allocationcharts.portfolioBreakdown')}
+            {i18n.t('ui.diversificationcharts.portfolioBreakdown')}
           </Text>
           <div className="mt-0.5">
             <Text as="p" variant="caption" tone="subtle">
               {i18n.t(
-                'ui.allocationcharts.exploreTheCurrentMixByGeographyAssetClassSector',
+                'ui.diversificationcharts.exploreTheCurrentMixByGeographyAssetClassSector',
               )}
             </Text>
           </div>
@@ -99,28 +99,30 @@ export function AllocationCurrentView({
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {latestGeo && (
             <DonutCard
-              title={i18n.t('ui.allocationcharts.geography')}
+              title={i18n.t('ui.diversificationcharts.geography')}
               point={latestGeo}
               dimension="geo"
             />
           )}
           {latestClasse && (
             <DonutCard
-              title={i18n.t('ui.allocationcharts.assetClass')}
+              title={i18n.t('ui.diversificationcharts.assetClass')}
               point={latestClasse}
               dimension="classe"
             />
           )}
           {latestSecteur && (
             <DonutCard
-              title={i18n.t('ui.allocationcharts.sector')}
+              title={i18n.t('ui.diversificationcharts.sector')}
               point={latestSecteur}
               dimension="secteur"
             />
           )}
           {latestCurrency && (
             <DonutCard
-              title={i18n.t('ui.allocationcharts.currencyEquitiesFixedIncome')}
+              title={i18n.t(
+                'ui.diversificationcharts.currencyEquitiesFixedIncome',
+              )}
               point={latestCurrency}
               dimension="currency"
             />

@@ -2,14 +2,14 @@ import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationPositionsOpenAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationPositionsOpenAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type { AllocationFilter } from '@/domains/portfolio/shared/types/allocationChart.type'
 
-export function useDashboardAllocationFilters() {
-  const setAllocationFilter = useSetAtom(dashboardAllocationFilterAtom)
-  const setPositionsOpen = useSetAtom(dashboardAllocationPositionsOpenAtom)
+export function useDashboardDiversificationFilters() {
+  const setAllocationFilter = useSetAtom(dashboardDiversificationFilterAtom)
+  const setPositionsOpen = useSetAtom(dashboardDiversificationPositionsOpenAtom)
 
   const toggleFilter = useCallback(
     (filter: AllocationFilter) => {

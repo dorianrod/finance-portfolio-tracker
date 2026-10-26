@@ -3,9 +3,9 @@ import { useCallback, useMemo } from 'react'
 
 import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationPositionsOpenAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationPositionsOpenAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import {
   dashboardFiltersAtom,
   dashboardFiltersOpenAtom,
@@ -14,9 +14,9 @@ import {
 export function useDashboardFilters() {
   const setFilters = useSetAtom(dashboardFiltersAtom)
   const setFiltersOpen = useSetAtom(dashboardFiltersOpenAtom)
-  const setAllocationFilter = useSetAtom(dashboardAllocationFilterAtom)
+  const setAllocationFilter = useSetAtom(dashboardDiversificationFilterAtom)
   const setAllocationPositionsOpen = useSetAtom(
-    dashboardAllocationPositionsOpenAtom,
+    dashboardDiversificationPositionsOpenAtom,
   )
 
   const openFilters = useCallback(() => setFiltersOpen(true), [setFiltersOpen])

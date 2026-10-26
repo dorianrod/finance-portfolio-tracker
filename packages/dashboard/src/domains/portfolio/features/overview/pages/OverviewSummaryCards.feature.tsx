@@ -23,7 +23,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { DeltaBadge, PreviousValue } from './OverviewMetrics.view'
 
-export type OverviewDestination = 'wealth' | 'performance' | 'allocation'
+export type OverviewDestination = 'wealth' | 'performance' | 'diversification'
 
 type SummaryCardsProps = {
   comparison: OverviewComparison
@@ -337,7 +337,7 @@ function OverviewConcentrationCard({
       }}
       // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
       eyebrow={primaryLabel}
-      destination="allocation"
+      destination="diversification"
       accent={'attention'}
     >
       <span className="grid grid-cols-2 gap-4">

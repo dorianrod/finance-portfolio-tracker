@@ -11,7 +11,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # Generic React Best Practices
@@ -68,7 +68,7 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-no-visual-logic-below-page` - Keep Visual Logic at the Component or Page Boundary
 - `arch-stores-no-index` - No index.ts in stores/, One File per Concern
 - `arch-helpers-vs-services` - Separate Helpers from Services by Effects and Orchestration
-- `arch-subdomain-decision` - Create a Sub-Domain Only for a Distinct Business Entity
+- `arch-subdomain-decision` - Create a Sub-Domain Only for a Distinct Business Concept
 
 ### 2. API Hooks & Server State (CRITICAL)
 

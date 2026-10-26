@@ -7,7 +7,7 @@ import {
   computeTableRows,
   excludeNonApplicableAllocationData,
   scopeRawAllocationData,
-} from '@/domains/portfolio/features/allocation/helpers/calculators/allocationChartCalculations'
+} from '@/domains/portfolio/features/diversification/helpers/calculators/allocationChartCalculations'
 import {
   buildHistoricalConcentration,
   buildHistoricalLookThroughConcentration,
@@ -29,7 +29,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-type UseAllocationChartsInput = {
+type UseDiversificationChartsInput = {
   positions: PositionRow[]
   rawPositions: RawPosition[]
   fundHoldings: FundHolding[]
@@ -50,7 +50,7 @@ function latestAsOf<T extends { date: Date }>(
   return points.filter((point) => !dateTo || point.date <= dateTo).at(-1)
 }
 
-export function useAllocationCharts({
+export function useDiversificationCharts({
   positions,
   rawPositions,
   fundHoldings,
@@ -62,7 +62,7 @@ export function useAllocationCharts({
   rawData,
   dateFrom,
   dateTo,
-}: UseAllocationChartsInput) {
+}: UseDiversificationChartsInput) {
   const applicablePositions = useMemo(
     () => positions.filter(isAssetAnalysisApplicablePosition),
     [positions],

@@ -65,7 +65,7 @@ export function DashboardCombinedReliability({
           />
         </Layout>
       )}
-      {activeTab === 'allocation' && (
+      {activeTab === 'diversification' && (
         <Layout spaceBefore="default">
           <CombinedAnalysisReliabilityKpi
             metrics={[

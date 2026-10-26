@@ -29,7 +29,7 @@ export function DashboardReliability({
     underlyingMetricTone,
     underlyingReliabilityPct,
   } = qualitySummary
-  if (activeTab === 'overview' || activeTab === 'allocation') {
+  if (activeTab === 'overview' || activeTab === 'diversification') {
     return <DashboardCombinedReliability dashboard={dashboard} />
   }
   if (activeTab === 'holdings' && holdingsView === 'underlying') {

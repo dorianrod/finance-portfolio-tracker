@@ -59,7 +59,11 @@ export function FilteredPositionRow({
             <Layout height="track" overflow="clip">
               <Surface variant="track">
                 <Proportion value={Math.min(percentage, 100)}>
-                  <SeriesSwatch as="div" shape="dot" tone={getAllocationTone(category)} />
+                  <SeriesSwatch
+                    as="div"
+                    shape="dot"
+                    tone={getAllocationTone(category)}
+                  />
                 </Proportion>
               </Surface>
             </Layout>

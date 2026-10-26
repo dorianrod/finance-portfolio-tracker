@@ -1,4 +1,4 @@
-import { useConcentrationTrendController } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationTrendController'
+import { useConcentrationTrendController } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationTrendController'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend'
 import i18n from '@/i18n/i18n'

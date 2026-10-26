@@ -10,9 +10,9 @@ import {
   YAxis,
 } from 'recharts'
 
-import { HoldingLabelTick } from '@/domains/portfolio/features/allocation/features/concentration/components/HoldingLabelTick.view'
-import { interpolateRankedBars } from '@/domains/portfolio/features/allocation/features/concentration/helpers/presenters/rankedBarAnimation'
-import type { useConcentrationTrendController } from '@/domains/portfolio/features/allocation/features/concentration/services/useConcentrationTrendController'
+import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/HoldingLabelTick.view'
+import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/rankedBarAnimation'
+import type { useConcentrationTrendController } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationTrendController'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'

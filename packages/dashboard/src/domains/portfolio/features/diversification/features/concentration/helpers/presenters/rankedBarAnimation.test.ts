@@ -1,7 +1,7 @@
 import type { AnimationItem, BarRectangleItem } from 'recharts'
 import { describe, expect, it } from 'vitest'
 
-import { interpolateRankedBars } from '@/domains/portfolio/features/allocation/features/concentration/helpers/presenters/rankedBarAnimation'
+import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/rankedBarAnimation'
 
 function rectangle(key: string, y: number, width: number): BarRectangleItem {
   return {

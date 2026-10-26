@@ -1,11 +1,11 @@
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
 
-import { useAllocationCharts } from '@/domains/portfolio/features/allocation/services/useAllocationCharts'
+import { useDiversificationCharts } from '@/domains/portfolio/features/diversification/services/useDiversificationCharts'
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationViewAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationViewAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import type {
   FundHolding,
@@ -17,11 +17,11 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 import i18n from '@/i18n/i18n'
 import { Text } from '@/shared/ui/Text.view'
 
-import { AllocationCurrentView } from './AllocationCurrentView.feature'
-import { AllocationTrendView } from './AllocationTrendView.feature'
+import { DiversificationCurrentView } from './DiversificationCurrentView.feature'
+import { DiversificationTrendView } from './DiversificationTrendView.feature'
 import { FilteredPositionsTable } from './FilteredPositionsTable.feature'
 
-type AllocationChartsProps = {
+type DiversificationChartsProps = {
   positions: PositionRow[]
   rawPositions: RawPosition[]
   fundHoldings: FundHolding[]
@@ -33,7 +33,7 @@ type AllocationChartsProps = {
   dateTo?: Date
 }
 
-export function AllocationCharts({
+export function DiversificationCharts({
   positions,
   rawPositions,
   fundHoldings,
@@ -43,12 +43,12 @@ export function AllocationCharts({
   rawData,
   dateFrom,
   dateTo,
-}: AllocationChartsProps) {
+}: DiversificationChartsProps) {
   const [concentrationMode, setConcentrationMode] =
     useState<ConcentrationMode>('held')
-  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
-  const view = useAtomValue(dashboardAllocationViewAtom)
-  const charts = useAllocationCharts({
+  const activeFilter = useAtomValue(dashboardDiversificationFilterAtom)
+  const view = useAtomValue(dashboardDiversificationViewAtom)
+  const charts = useDiversificationCharts({
     positions,
     rawPositions,
     fundHoldings,
@@ -76,7 +76,7 @@ export function AllocationCharts({
   if (rawData.loading)
     return (
       <Text as="p" variant="body" tone="muted">
-        {i18n.t('ui.allocationcharts.loadingBreakdowns')}
+        {i18n.t('ui.diversificationcharts.loadingBreakdowns')}
       </Text>
     )
 
@@ -84,7 +84,7 @@ export function AllocationCharts({
     return (
       <Text as="p" variant="body" tone="subtle">
         {i18n.t(
-          'ui.allocationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage',
+          'ui.diversificationcharts.diversificationIsNotApplicableToSavingsCheckingAndBrokerage',
         )}
       </Text>
     )
@@ -94,7 +94,7 @@ export function AllocationCharts({
     return (
       <Text as="p" variant="body" tone="subtle">
         {i18n.t(
-          'ui.allocationcharts.noAllocationDataAvailableRunThePipelineToGenerate',
+          'ui.diversificationcharts.noAllocationDataAvailableRunThePipelineToGenerate',
         )}
       </Text>
     )
@@ -103,7 +103,7 @@ export function AllocationCharts({
   return (
     <div className="flex flex-col gap-4 mb-6">
       {view === 'current' && (
-        <AllocationCurrentView
+        <DiversificationCurrentView
           charts={charts}
           concentrationMode={concentrationMode}
           onModeChange={setConcentrationMode}
@@ -111,7 +111,7 @@ export function AllocationCharts({
         />
       )}
       {view === 'trend' && (
-        <AllocationTrendView
+        <DiversificationTrendView
           charts={charts}
           lookThroughAvailable={fundHoldingsHistory.length > 0}
         />

@@ -1,12 +1,12 @@
 import { useAtomValue } from 'jotai'
 
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone'
-import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
-import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
+import { useDashboardDiversificationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationFilters'
+import { useDashboardDiversificationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationPositions'
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationPositionsOpenAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationPositionsOpenAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type { MatchingIsinRow } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -21,10 +21,10 @@ import { FilteredPositionRow } from './FilteredPositionRow.view'
 
 export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const formatMoney = useFormatMoney()
-  const filter = useAtomValue(dashboardAllocationFilterAtom)
-  const { clearFilter } = useDashboardAllocationFilters()
-  const { closePositions } = useDashboardAllocationPositions()
-  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
+  const filter = useAtomValue(dashboardDiversificationFilterAtom)
+  const { clearFilter } = useDashboardDiversificationFilters()
+  const { closePositions } = useDashboardDiversificationPositions()
+  const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
   const filterValue = filter?.value ?? ''
   const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
 
@@ -37,7 +37,9 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
       <SidePanel.Title>
         <>
           {i18n.t('ui.filteredpositionstable.positions')}{' '}
-          <ChartText tone={getAllocationTone(filterValue)}>{filterValue}</ChartText>
+          <ChartText tone={getAllocationTone(filterValue)}>
+            {filterValue}
+          </ChartText>
         </>
       </SidePanel.Title>
       <SidePanel.Description>

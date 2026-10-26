@@ -13,9 +13,9 @@ export const DASHBOARD_TAB_LOADERS = {
     import('@/domains/portfolio/features/performance/pages/PerformanceTab.feature').then(
       (module) => ({ default: module.PerformanceTab }),
     ),
-  allocation: () =>
-    import('@/domains/portfolio/features/allocation/components/AllocationCharts.feature').then(
-      (module) => ({ default: module.AllocationCharts }),
+  diversification: () =>
+    import('@/domains/portfolio/features/diversification/components/DiversificationCharts.feature').then(
+      (module) => ({ default: module.DiversificationCharts }),
     ),
   holdings: () =>
     import('@/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature').then(

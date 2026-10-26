@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 
-import { AllocationViewToggle } from '@/domains/portfolio/features/allocation/components/AllocationViewToggle.feature'
+import { DiversificationViewToggle } from '@/domains/portfolio/features/diversification/components/DiversificationViewToggle.feature'
 import { type HoldingsView } from '@/domains/portfolio/features/holdings/components/HoldingsViewTabs.feature'
 import { FilterButton } from '@/domains/portfolio/shared/components/filters/FilterBar.feature'
 import {
@@ -35,7 +35,7 @@ const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
       'ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome',
     ),
   },
-  allocation: {
+  diversification: {
     title: i18n.t('ui.app.diversification'),
     description: i18n.t(
       'ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs',
@@ -106,7 +106,7 @@ export function DashboardSectionHeader({
             </Layout>
           </Layout>
           <Inline as="div" sizing="fixed" align="center" gap="default">
-            {activeTab === 'allocation' && <AllocationViewToggle />}
+            {activeTab === 'diversification' && <DiversificationViewToggle />}
             <FilterButton activeCount={activeFilterCount} />
           </Inline>
         </Inline>

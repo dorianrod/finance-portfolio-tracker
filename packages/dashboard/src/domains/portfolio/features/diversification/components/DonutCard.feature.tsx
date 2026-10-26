@@ -6,12 +6,12 @@ import {
   formatGroupedAllocationLabel,
   groupAllocationTail,
 } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail'
-import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
-import { useDashboardAllocationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationPositions'
+import { useDashboardDiversificationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationFilters'
+import { useDashboardDiversificationPositions } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationPositions'
 import {
-  dashboardAllocationFilterAtom,
-  dashboardAllocationPositionsOpenAtom,
-} from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+  dashboardDiversificationFilterAtom,
+  dashboardDiversificationPositionsOpenAtom,
+} from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type {
   AllocationDimension,
   PieEntry,
@@ -31,10 +31,10 @@ export function DonutCard({
   point: AllocationPoint
   dimension: AllocationDimension
 }) {
-  const activeFilter = useAtomValue(dashboardAllocationFilterAtom)
-  const positionsOpen = useAtomValue(dashboardAllocationPositionsOpenAtom)
-  const { toggleFilter } = useDashboardAllocationFilters()
-  const { togglePositions } = useDashboardAllocationPositions()
+  const activeFilter = useAtomValue(dashboardDiversificationFilterAtom)
+  const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
+  const { toggleFilter } = useDashboardDiversificationFilters()
+  const { togglePositions } = useDashboardDiversificationPositions()
   const { total, data } = useMemo(() => {
     const total = point.categories.reduce((s, c) => s + c.value, 0)
 

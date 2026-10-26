@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 
-import { FilterChipBar } from '@/domains/portfolio/features/allocation/components/FilterChipBar.feature'
+import { FilterChipBar } from '@/domains/portfolio/features/diversification/components/FilterChipBar.feature'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature'
 import {
   ActiveFilterSummary,
@@ -12,7 +12,7 @@ import {
   filterVisibilityForTab,
 } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters'
 import { filterSummariesForTab } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes'
-import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import {
   dashboardActiveTabAtom,
   dashboardHoldingsViewAtom,
@@ -29,7 +29,7 @@ export function DashboardFilters({
 }) {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
-  const allocationFilter = useAtomValue(dashboardAllocationFilterAtom)
+  const allocationFilter = useAtomValue(dashboardDiversificationFilterAtom)
   const { demoPresetSelection, demoPresetActive, overviewComparison } =
     dashboard
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView)
@@ -39,9 +39,9 @@ export function DashboardFilters({
   )
   const showResetFilters =
     activeFilterSummaries.length > 0 ||
-    (activeTab === 'allocation' && allocationFilter !== null)
+    (activeTab === 'diversification' && allocationFilter !== null)
   const showAllocationFilter =
-    activeTab === 'allocation' && allocationFilter !== null
+    activeTab === 'diversification' && allocationFilter !== null
   const showOverviewPeriodFilter =
     activeTab === 'overview' && overviewComparison !== null
   return (

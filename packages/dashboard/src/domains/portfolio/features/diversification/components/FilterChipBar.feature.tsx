@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
-import { useDashboardAllocationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardAllocationFilters'
-import { dashboardAllocationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardAllocation.atoms'
+import { useDashboardDiversificationFilters } from '@/domains/portfolio/shared/services/actions/useDashboardDiversificationFilters'
+import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/shared/stores/dashboardDiversification.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/shared/types/allocationChart.type'
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/Controls.view'
@@ -17,8 +17,8 @@ const DIM_LABELS: Record<AllocationDimension, string> = {
 }
 
 export function FilterChipBar() {
-  const filter = useAtomValue(dashboardAllocationFilterAtom)
-  const { clearFilter } = useDashboardAllocationFilters()
+  const filter = useAtomValue(dashboardDiversificationFilterAtom)
+  const { clearFilter } = useDashboardDiversificationFilters()
   if (!filter) return null
 
   return (
