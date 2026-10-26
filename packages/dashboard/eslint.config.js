@@ -145,7 +145,7 @@ export default defineConfig([
       'local/feature-folder-layout': 'error',
       'local/i18n-consistency': 'error',
       'local/import-boundaries': 'error',
-      'local/max-hooks-per-component': ['warn', { max: 6 }],
+      'local/max-hooks-per-component': ['error', { max: 6 }],
       'local/no-complex-component-calculation': 'error',
       'local/no-complex-jsx-condition': 'warn',
       'local/no-complex-jsx-map': 'warn',
