@@ -151,7 +151,7 @@ export default defineConfig([
       'local/no-complex-jsx-map': 'error',
       'local/no-component-module-logic': 'error',
       'local/no-domain-accessibility': 'error',
-      'local/no-domain-styling': 'warn',
+      'local/no-domain-styling': 'error',
       'local/no-effects-in-components': 'warn',
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-inline-format-fallback': 'error',

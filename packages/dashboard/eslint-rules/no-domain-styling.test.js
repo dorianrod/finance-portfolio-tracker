@@ -192,7 +192,7 @@ describe('configured styling boundary', () => {
     const messages = await lint(code)
     expect(messages).toHaveLength(1)
     expect(messages[0].messageId).toBe('nonLayoutClass')
-    expect(messages[0].severity).toBe(1)
+    expect(messages[0].severity).toBe(2)
     expect(messages[0].message).toContain('[styling-centralize-in-shared-ui]')
     expect(messages[0]).not.toHaveProperty('fix')
   })
