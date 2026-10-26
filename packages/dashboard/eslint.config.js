@@ -149,7 +149,7 @@ export default defineConfig([
       'local/no-complex-component-calculation': 'error',
       'local/no-complex-jsx-condition': 'error',
       'local/no-complex-jsx-map': 'error',
-      'local/no-component-module-logic': 'warn',
+      'local/no-component-module-logic': 'error',
       'local/no-domain-accessibility': 'error',
       'local/no-domain-styling': 'warn',
       'local/no-effects-in-components': 'warn',
