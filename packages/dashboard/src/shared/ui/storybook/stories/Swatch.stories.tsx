@@ -20,7 +20,9 @@ type Story = StoryObj<typeof meta>
 function ToneExample({ tone }: { tone: keyof typeof SEMANTIC_COLORS }) {
   return (
     <div className="flex items-center gap-2">
-      <SeriesSwatch tone={tone} shape="dot" className="size-3" />
+      <span className="inline-block size-3">
+        <SeriesSwatch tone={tone} shape="dot" />
+      </span>
       {tone}
     </div>
   )
@@ -28,7 +30,9 @@ function ToneExample({ tone }: { tone: keyof typeof SEMANTIC_COLORS }) {
 function ShapeExample({ shape }: { shape: keyof typeof SWATCH_SHAPES }) {
   return (
     <div className="flex items-center gap-2">
-      <ToneSwatch tone="accent" shape={shape} className="h-3 w-6" />
+      <span className="inline-block h-3 w-6">
+        <ToneSwatch tone="accent" shape={shape} />
+      </span>
       {shape}
     </div>
   )
@@ -37,7 +41,6 @@ export const Series: Story = {
   args: {
     tone: 'portfolioValue',
     shape: 'dot',
-    className: 'inline-block h-3 w-3',
   },
 }
 export const SemanticTones: Story = {
@@ -69,14 +72,13 @@ export const Categories: Story = {
   render: function Categories() {
     return (
       <div className="flex items-center gap-3">
-        <CategorySwatch
-          category="Equity"
-          selected
-          shape="dot"
-          className="size-3"
-        />
+        <span className="inline-block size-3">
+          <CategorySwatch category="Equity" selected shape="dot" />
+        </span>
         Equity
-        <CategorySwatch category="Bonds" shape="dot" className="size-3" />
+        <span className="inline-block size-3">
+          <CategorySwatch category="Bonds" shape="dot" />
+        </span>
         Bonds
       </div>
     )

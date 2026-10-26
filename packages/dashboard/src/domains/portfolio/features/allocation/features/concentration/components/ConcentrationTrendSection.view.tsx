@@ -25,6 +25,7 @@ import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
 import { Button, Input, ToggleButton } from '@/shared/ui/Controls.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -95,9 +96,11 @@ export function ConcentrationTrendSectionView({
             <Text as="h3" variant="label" tone="secondary">
               {heading}
             </Text>
-            <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-              {description}
-            </Text>
+            <div className="mt-0.5">
+              <Text as="p" variant="caption" tone="subtle">
+                {description}
+              </Text>
+            </div>
           </div>
           <ConcentrationModeToggle
             value={mode}
@@ -106,18 +109,15 @@ export function ConcentrationTrendSectionView({
           />
         </div>
         {!lookThroughAvailable && (
-          <Text as="p" variant="caption" tone="warning" className="mb-3">
-            {i18n.t(
-              'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
-            )}
-          </Text>
+          <div className="mb-3">
+            <Text as="p" variant="caption" tone="warning">
+              {i18n.t(
+                'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
+              )}
+            </Text>
+          </div>
         )}
-        <Surface
-          variant="contentCard"
-          tone="subtle"
-          align="center"
-          className="p-8"
-        >
+        <Surface variant="contentCard" tone="subtle" align="center">
           {i18n.t(
             'ui.concentrationtrendsection.notEnoughConcentrationHistoryForTheCurrentSelection',
           )}
@@ -133,15 +133,19 @@ export function ConcentrationTrendSectionView({
           <Text as="h3" variant="label" tone="secondary">
             {heading}
           </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-            {description}
-          </Text>
-          {!lookThroughAvailable && (
-            <Text as="p" variant="caption" tone="warning" className="mt-1">
-              {i18n.t(
-                'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
-              )}
+          <div className="mt-0.5">
+            <Text as="p" variant="caption" tone="subtle">
+              {description}
             </Text>
+          </div>
+          {!lookThroughAvailable && (
+            <div className="mt-1">
+              <Text as="p" variant="caption" tone="warning">
+                {i18n.t(
+                  'ui.concentrationtrendsection.lookThroughHistoryIsUnavailableUntilFundHoldingsHistory',
+                )}
+              </Text>
+            </div>
           )}
         </div>
         <ConcentrationModeToggle
@@ -152,23 +156,24 @@ export function ConcentrationTrendSectionView({
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Surface variant="chart" className="p-4">
-          <Text
-            as="h2"
-            variant="label"
-            tone="muted"
-            className="mb-1 flex items-center"
-          >
-            {i18n.t(
-              'ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare',
-            )}
-            {thresholdTooltip}
-          </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mb-3">
-            {i18n.t(
-              'ui.concentrationtrendsection.unavailableThresholdsAppearAsGapsWhenIdentifiedExposureCannot',
-            )}
-          </Text>
+        <Surface variant="chart">
+          <Layout spaceAfter="compact">
+            <Text as="h2" variant="label" tone="muted">
+              <Inline as="span" align="center">
+                {i18n.t(
+                  'ui.concentrationtrendsection.minimumPositionsToReachPortfolioShare',
+                )}
+                {thresholdTooltip}
+              </Inline>
+            </Text>
+          </Layout>
+          <Layout spaceAfter="default">
+            <Text as="p" variant="caption" tone="subtle">
+              {i18n.t(
+                'ui.concentrationtrendsection.unavailableThresholdsAppearAsGapsWhenIdentifiedExposureCannot',
+              )}
+            </Text>
+          </Layout>
           <ChartLegend />
           <ResponsiveContainer width="100%" height={250}>
             <LineChart
@@ -193,7 +198,6 @@ export function ConcentrationTrendSectionView({
               <ChartYAxis
                 domain={[0, 'auto']}
                 allowDecimals={false}
-
                 width={32}
               />
               {selectedTimestamp != null && (
@@ -241,25 +245,24 @@ export function ConcentrationTrendSectionView({
         </Surface>
 
         {displayedPoint && (
-          <Surface variant="chart" className="p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <Surface variant="chart">
+            <Stack gap="default" align="start" justify="between">
               <div>
-                <Text
-                  as="h2"
-                  variant="label"
-                  tone="secondary"
-                  className="flex items-center"
-                >
-                  {i18n.t(
-                    'ui.concentrationtrendsection.largestHoldingsOverTime',
-                  )}
-                  {holdingsTooltip}
+                <Text as="h2" variant="label" tone="secondary">
+                  <Inline as="span" align="center">
+                    {i18n.t(
+                      'ui.concentrationtrendsection.largestHoldingsOverTime',
+                    )}
+                    {holdingsTooltip}
+                  </Inline>
                 </Text>
-                <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-                  {i18n.t(
-                    'ui.concentrationtrendsection.hoverToPreviewTheSliderAndPlaybackUseEvery',
-                  )}
-                </Text>
+                <Layout spaceBefore="compact">
+                  <Text as="p" variant="caption" tone="subtle">
+                    {i18n.t(
+                      'ui.concentrationtrendsection.hoverToPreviewTheSliderAndPlaybackUseEvery',
+                    )}
+                  </Text>
+                </Layout>
               </div>
               <Text variant="responsiveEnd" as="div" align="left">
                 <Text as="div" variant="statistic" tone="secondary" numeric>
@@ -269,49 +272,58 @@ export function ConcentrationTrendSectionView({
                 </Text>
                 <Text as="div" variant="micro" tone="subtle">
                   {i18n.t('ui.concentrationtrendsection.snapshotWithValues', {
-                    date: formatDate(displayedPoint.date, { style: 'isoDate' }),
+                    date: formatDate(displayedPoint.date, {
+                      style: 'isoDate',
+                    }),
                   })}
                 </Text>
               </Text>
-            </div>
+            </Stack>
 
-            <Text
+            <Layout spaceBefore="default">
+              <Text as="div" variant="micro" tone="subtle">
+                <Inline as="div" flow="wrap" gap="compact">
+                  <span>
+                    {i18n.t('ui.concentrationtrendsection.coverage.80e135')}{' '}
+                    <Text as="strong" variant="strong" tone="secondary">
+                      {formatPercentage(displayedPoint.coveragePct)}
+                    </Text>
+                  </span>
+                  <span>
+                    {i18n.t('ui.concentrationtrendsection.identified')}{' '}
+                    <Text as="strong" variant="strong" tone="secondary">
+                      {formatMoney(displayedPoint.identifiedValue, {
+                        style: 'full',
+                      })}
+                    </Text>
+                  </span>
+                  <span>
+                    {i18n.t('ui.concentrationtrendsection.undisclosedFunds')}{' '}
+                    <Text as="strong" variant="strong" tone="secondary">
+                      {formatMoney(displayedPoint.undisclosedValue, {
+                        style: 'full',
+                      })}
+                    </Text>
+                  </span>
+                  <span>
+                    {i18n.t('ui.concentrationtrendsection.opaque')}{' '}
+                    <Text as="strong" variant="strong" tone="secondary">
+                      {formatMoney(displayedPoint.opaqueValue, {
+                        style: 'full',
+                      })}
+                    </Text>
+                  </span>
+                </Inline>
+              </Text>
+            </Layout>
+
+            <Inline
               as="div"
-              variant="micro"
-              tone="subtle"
-              className="mt-3 flex flex-wrap gap-x-4 gap-y-1"
+              flow="wrap"
+              spaceBefore="spacious"
+              align="center"
+              gap="default"
             >
-              <span>
-                {i18n.t('ui.concentrationtrendsection.coverage.80e135')}{' '}
-                <Text as="strong" variant="strong" tone="secondary">
-                  {formatPercentage(displayedPoint.coveragePct)}
-                </Text>
-              </span>
-              <span>
-                {i18n.t('ui.concentrationtrendsection.identified')}{' '}
-                <Text as="strong" variant="strong" tone="secondary">
-                  {formatMoney(displayedPoint.identifiedValue, {
-                    style: 'full',
-                  })}
-                </Text>
-              </span>
-              <span>
-                {i18n.t('ui.concentrationtrendsection.undisclosedFunds')}{' '}
-                <Text as="strong" variant="strong" tone="secondary">
-                  {formatMoney(displayedPoint.undisclosedValue, {
-                    style: 'full',
-                  })}
-                </Text>
-              </span>
-              <span>
-                {i18n.t('ui.concentrationtrendsection.opaque')}{' '}
-                <Text as="strong" variant="strong" tone="secondary">
-                  {formatMoney(displayedPoint.opaqueValue, { style: 'full' })}
-                </Text>
-              </span>
-            </Text>
-
-            <div className="mt-4 flex flex-wrap items-center gap-2">
               <ToggleButton
                 type="button"
                 label={
@@ -326,7 +338,6 @@ export function ConcentrationTrendSectionView({
                 active={isPlaying}
                 onClick={togglePlayback}
                 variant="primaryCompact"
-                className="px-3 py-1.5"
               >
                 {isPlaying
                   ? i18n.t('ui.concentrationtrendsection.pause')
@@ -340,7 +351,6 @@ export function ConcentrationTrendSectionView({
                 disabled={selectedIndex === 0}
                 onClick={() => selectPoint(selectedIndex - 1)}
                 variant="outlinedCompact"
-                className="px-2.5 py-1.5"
               >
                 {i18n.t('ui.concentrationtrendsection.previous')}
               </Button>
@@ -352,42 +362,45 @@ export function ConcentrationTrendSectionView({
                 disabled={selectedIndex >= points.length - 1}
                 onClick={() => selectPoint(selectedIndex + 1)}
                 variant="outlinedCompact"
-                className="px-2.5 py-1.5"
               >
                 {i18n.t('ui.concentrationtrendsection.next')}
               </Button>
-              <Text
-                as="label"
-                variant="micro"
-                tone="subtle"
-                className="ml-0 flex min-w-[220px] flex-1 items-center gap-3 sm:ml-2"
-              >
-                <span>
-                  {formatDate(points[0].date, { style: 'shortMonthShortYear' })}
-                </span>
-                <Input
-                  label={i18n.t(
-                    'ui.concentrationtrendsection.concentrationMonth',
-                  )}
-                  type="range"
-                  min={0}
-                  max={points.length - 1}
-                  step={1}
-                  value={selectedIndex}
-                  onChange={(event) => selectPoint(Number(event.target.value))}
-                  variant="timeline"
-                  className="min-w-0 flex-1 "
-                />
-                <span>
-                  {formatDate(points.at(-1)!.date, {
-                    style: 'shortMonthShortYear',
-                  })}
-                </span>
-              </Text>
-            </div>
+              <Layout sizing="flexible">
+                <Text as="label" variant="micro" tone="subtle">
+                  <Inline as="span" align="center" gap="default">
+                    <span>
+                      {formatDate(points[0].date, {
+                        style: 'shortMonthShortYear',
+                      })}
+                    </span>
+                    <Layout as="span" flow="control" sizing="flexible">
+                      <Input
+                        label={i18n.t(
+                          'ui.concentrationtrendsection.concentrationMonth',
+                        )}
+                        type="range"
+                        min={0}
+                        max={points.length - 1}
+                        step={1}
+                        value={selectedIndex}
+                        onChange={(event) =>
+                          selectPoint(Number(event.target.value))
+                        }
+                        variant="timeline"
+                      />
+                    </Layout>
+                    <span>
+                      {formatDate(points.at(-1)!.date, {
+                        style: 'shortMonthShortYear',
+                      })}
+                    </span>
+                  </Inline>
+                </Text>
+              </Layout>
+            </Inline>
 
-            <div className="mt-3 overflow-x-auto">
-              <div className="min-w-[520px]">
+            <Layout spaceBefore="default" overflow="auto">
+              <Layout>
                 <ResponsiveContainer
                   width="100%"
                   height={Math.max(280, displayedHoldings.length * 30)}
@@ -432,8 +445,8 @@ export function ConcentrationTrendSectionView({
                     </SeriesBar>
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-            </div>
+              </Layout>
+            </Layout>
           </Surface>
         )}
       </div>

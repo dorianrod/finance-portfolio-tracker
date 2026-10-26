@@ -1,15 +1,10 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 import type { ControlProps } from './controlProps'
+import { BUTTON_SIZES } from './layoutAppearance'
 
 type SegmentedControlSize = 'compact' | 'default' | 'large'
 type SegmentedControlTone = 'accent' | 'neutral'
-
-const SIZE_CLASSES: Record<SegmentedControlSize, string> = {
-  compact: 'px-2 py-1 text-[11px]',
-  default: 'px-3 py-1.5 text-xs',
-  large: 'px-3 py-2 text-sm',
-}
 
 const ACTIVE_CLASSES: Record<SegmentedControlTone, string> = {
   accent: 'bg-accent-solid text-on-accent shadow-sm',
@@ -20,18 +15,16 @@ export function SegmentedControl({
   label,
   children,
   density = 'default',
-  className = '',
 }: {
   label: string
   children: ReactNode
   density?: 'compact' | 'default'
-  className?: string
 }) {
   return (
     <div
       role="group"
       aria-label={label}
-      className={`inline-flex max-w-full rounded-control border border-border bg-surface ${density === 'compact' ? 'p-0.5' : 'p-1'} ${className}`}
+      className={`inline-flex max-w-full rounded-control border border-border bg-surface ${density === 'compact' ? 'p-0.5' : 'p-1'} `}
     >
       {children}
     </div>
@@ -43,7 +36,7 @@ export function SegmentedControlItem({
   children,
   size = 'default',
   tone = 'accent',
-  className = '',
+
   type = 'button',
   ...props
 }: ControlProps<ButtonHTMLAttributes<HTMLButtonElement>> & {
@@ -55,7 +48,7 @@ export function SegmentedControlItem({
     <button
       type={type}
       aria-pressed={active}
-      className={`shrink-0 rounded-control font-medium transition-colors disabled:pointer-events-none disabled:opacity-40 ${SIZE_CLASSES[size]} ${active ? ACTIVE_CLASSES[tone] : 'text-content-subtle hover:bg-surface-raised hover:text-content-secondary'} ${className}`}
+      className={`shrink-0 rounded-control font-medium transition-colors disabled:pointer-events-none disabled:opacity-40 ${BUTTON_SIZES[size]} ${active ? ACTIVE_CLASSES[tone] : 'text-content-subtle hover:bg-surface-raised hover:text-content-secondary'} `}
       {...props}
     >
       {children}

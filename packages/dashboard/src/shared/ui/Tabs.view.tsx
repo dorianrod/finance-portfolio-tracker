@@ -12,7 +12,6 @@ export function Tabs(
 function TabsList({
   label,
   variant,
-  className,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.List>> & {
   label: string
@@ -22,8 +21,7 @@ function TabsList({
     <Primitive.List
       {...props}
       className={[
-        variant === 'sidebar' && 'md:border-r md:border-border',
-        className,
+        variant === 'sidebar' && 'hidden md:block md:border-r md:border-border',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -36,7 +34,6 @@ function TabsList({
 function TabsTrigger({
   variant,
   selected,
-  className,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
   variant?: 'quality'
@@ -46,10 +43,10 @@ function TabsTrigger({
     <Primitive.Trigger
       {...props}
       className={[
-        variant === 'quality' && 'rounded-md text-left transition-colors',
+        variant === 'quality' &&
+          'flex w-full items-center gap-3 px-3 py-3 rounded-md text-left transition-colors',
         variant === 'quality' &&
           (selected ? 'bg-accent-muted/50' : 'hover:bg-surface'),
-        className,
       ]
         .filter(Boolean)
         .join(' ')}

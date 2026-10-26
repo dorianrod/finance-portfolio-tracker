@@ -48,12 +48,7 @@ export function ClassificationCoverageState({
 
 function EmptyClassificationState({ message }: { message: string }) {
   return (
-    <Surface
-      variant="insetContent"
-      tone="subtle"
-      align="center"
-      className="px-4 py-8"
-    >
+    <Surface variant="insetContent" tone="subtle" align="center">
       {message}
     </Surface>
   )

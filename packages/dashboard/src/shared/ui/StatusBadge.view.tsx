@@ -17,16 +17,16 @@ const LEVEL_TONES = {
 } as const
 export function ReliabilityBadge({
   tone,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'span'> & { tone: keyof typeof STATUS_TONES }) {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+  tone: keyof typeof STATUS_TONES
+}) {
   return (
     <span
       {...props}
       className={[
         'rounded-full border text-[10px] font-semibold',
         STATUS_TONES[tone],
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -38,37 +38,36 @@ const SCOPE_BASE =
 const LEVEL_BASE = 'inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold'
 export function ScopeBadge({
   tone,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'span'> & { tone: keyof typeof SCOPE_TONES }) {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+  tone: keyof typeof SCOPE_TONES
+}) {
   return (
     <span
       {...props}
-      className={[SCOPE_BASE, SCOPE_TONES[tone], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={[SCOPE_BASE, SCOPE_TONES[tone]].filter(Boolean).join(' ')}
     />
   )
 }
 export function LevelBadge({
   level,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'span'> & { level: keyof typeof LEVEL_TONES }) {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+  level: keyof typeof LEVEL_TONES
+}) {
   return (
     <span
       {...props}
-      className={[LEVEL_BASE, LEVEL_TONES[level], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={[LEVEL_BASE, LEVEL_TONES[level]].filter(Boolean).join(' ')}
     />
   )
 }
 export function StatusTableRow({
   level,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'tr'> & { level: 'error' | 'warning' }) {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & {
+  level: 'error' | 'warning'
+}) {
   return (
     <tr
       {...props}
@@ -77,7 +76,6 @@ export function StatusTableRow({
         level === 'error'
           ? 'bg-danger-muted/20 hover:bg-danger-muted/30'
           : 'bg-warning-muted/10 hover:bg-warning-muted/20',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}

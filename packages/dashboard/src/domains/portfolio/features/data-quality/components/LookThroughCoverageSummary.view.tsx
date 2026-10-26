@@ -12,10 +12,13 @@ import type { SemanticColorKey } from '@/shared/theme/semanticColors'
 import { DecorativeBlock } from '@/shared/ui/Controls.view'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
 import { DisclosureChevronIcon } from '@/shared/ui/Icons.view'
+import { Inline, Inset, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Proportion } from '@/shared/ui/Proportion.view'
 import { ReliabilityBadge } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch, ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
+import { TreeConnector } from '@/shared/ui/TreeConnector.view'
 
 type CompactCoverageCardData = {
   label: string
@@ -169,55 +172,60 @@ export function LookThroughCoverageSummaryView({
         </QualityIndicatorCard>
       </div>
 
-      <DecorativeBlock className="relative mx-auto hidden h-10 sm:block">
-        <Surface
-          variant="centeredConnector"
-          className="absolute left-1/2 top-0 h-5 w-px"
-        />
-        {hasNotApplicable ? (
-          <>
-            <Surface
-              variant="highlighted"
-              className="absolute left-[16.667%] right-[16.667%] top-5 h-px"
-            />
-            <Surface
-              variant="positiveConnector"
-              className="absolute bottom-0 left-[16.667%] top-5 w-px"
-            />
-            <Surface
-              variant={
-                hasUnresolvedGap ? 'warningConnector' : 'positiveConnector'
-              }
-              className="absolute bottom-0 left-1/2 top-5 w-px"
-            />
-            <Surface
-              variant="neutralConnector"
-              className="absolute bottom-0 left-[83.333%] top-5 w-px"
-            />
-          </>
-        ) : (
-          <>
-            <Surface
-              variant="highlighted"
-              className="absolute left-1/4 right-1/4 top-5 h-px"
-            />
-            <Surface
-              variant="positiveConnector"
-              className="absolute bottom-0 left-1/4 top-5 w-px"
-            />
-            <Surface
-              variant={
-                hasUnresolvedGap ? 'warningConnector' : 'positiveConnector'
-              }
-              className="absolute bottom-0 left-3/4 top-5 w-px"
-            />
-          </>
-        )}
-      </DecorativeBlock>
-      <DecorativeBlock
-        variant="highlighted"
-        className="mx-auto h-6 w-px sm:hidden"
-      />
+      <div className="relative mx-auto h-10">
+        <DecorativeBlock>
+          <Layout flow="block" hiddenUntil="small">
+            <TreeConnector position="stem">
+              <Surface variant="centeredConnector" />
+            </TreeConnector>
+            {hasNotApplicable ? (
+              <>
+                <TreeConnector position="bridge">
+                  <Surface variant="highlighted" />
+                </TreeConnector>
+                <TreeConnector position="left">
+                  <Surface variant="positiveConnector" />
+                </TreeConnector>
+                <TreeConnector position="center">
+                  <Surface
+                    variant={
+                      hasUnresolvedGap
+                        ? 'warningConnector'
+                        : 'positiveConnector'
+                    }
+                  />
+                </TreeConnector>
+                <TreeConnector position="right">
+                  <Surface variant="neutralConnector" />
+                </TreeConnector>
+              </>
+            ) : (
+              <>
+                <TreeConnector position="pairBridge">
+                  <Surface variant="highlighted" />
+                </TreeConnector>
+                <TreeConnector position="pairLeft">
+                  <Surface variant="positiveConnector" />
+                </TreeConnector>
+                <TreeConnector position="pairRight">
+                  <Surface
+                    variant={
+                      hasUnresolvedGap
+                        ? 'warningConnector'
+                        : 'positiveConnector'
+                    }
+                  />
+                </TreeConnector>
+              </>
+            )}
+          </Layout>
+        </DecorativeBlock>
+      </div>
+      <div className="mx-auto h-6 w-px">
+        <DecorativeBlock variant="highlighted">
+          <Layout></Layout>
+        </DecorativeBlock>
+      </div>
 
       <div
         className={`grid grid-cols-1 items-start gap-3 ${hasNotApplicable ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}
@@ -376,71 +384,82 @@ function SourceReliability({
 
   return (
     <Disclosure expanded={isExpanded}>
-      <Disclosure.Trigger
-        type="button"
-        variant="reliabilityToggle"
-        className="mt-3 flex w-full items-center justify-between gap-3 pt-3"
-        onClick={() => setIsExpanded((expanded) => !expanded)}
-      >
-        <div className="flex min-w-0 items-center gap-2">
-          <ToneSwatch
-            shape="dot"
-            tone={indicator.tone}
-            className="h-2.5 w-2.5 shrink-0"
-          />
-          <Text variant="captionLabel" tone="muted" truncate>
-            {i18n.t('ui.lookthroughcoveragesummary.sourceReliability')}
-          </Text>
-          <ReliabilityBadge
-            tone={indicator.tone}
-            className="shrink-0 px-2 py-0.5"
-          >
-            {indicator.label}
-          </ReliabilityBadge>
-        </div>
-        <Text
-          variant="interactiveAccent"
-          tone="accent"
-          className="flex shrink-0 items-center gap-1.5"
+      <span className="inline-grid mt-3 w-full">
+        <Disclosure.Trigger
+          type="button"
+          variant="reliabilityToggle"
+          onClick={() => setIsExpanded((expanded) => !expanded)}
         >
-          <span>
-            {isExpanded
-              ? i18n.t('ui.lookthroughcoveragesummary.hideDetails')
-              : i18n.t('ui.lookthroughcoveragesummary.details')}
-          </span>
-          <DisclosureChevronIcon expanded={isExpanded} />
-        </Text>
-      </Disclosure.Trigger>
-      <Disclosure.Content variant="sectionStart" className="mt-3 pt-3">
-        <BreakdownGroupContent
-          className="mt-3"
-          title={i18n.t(
-            'ui.lookthroughcoveragesummary.sourceReliabilityDetails',
-          )}
-          note={i18n.t(
-            'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
-          )}
-          rows={[
-            {
-              label: i18n.t('ui.lookthroughcoveragesummary.reliableSubset'),
-              amount: reliableValue,
-              percentage: reliablePercentage,
-              tone: 'coverage',
-            },
-            {
-              label: i18n.t('ui.lookthroughcoveragesummary.otherSourceTiers'),
-              amount: otherSourceValue,
-              percentage: otherSourcePercentage,
-              tone: 'netContributions',
-            },
-          ]}
-        />
-        <Text as="p" variant="tinyHelper" tone="subtle" className="mt-3">
-          {i18n.t(
-            'ui.lookthroughcoveragesummary.reliableIsAQualityFilteredSubsetDirectPositionsPlus',
-          )}
-        </Text>
-      </Disclosure.Content>
+          <Inline as="div" align="center" gap="default">
+            <Layout as="span" flow="inline" height="indicator" sizing="fixed">
+              <ToneSwatch shape="dot" tone={indicator.tone} />
+            </Layout>
+            <Text variant="captionLabel" tone="muted" truncate>
+              {i18n.t('ui.lookthroughcoveragesummary.sourceReliability')}
+            </Text>
+            <Layout as="span" flow="inline" sizing="fixed">
+              <ReliabilityBadge tone={indicator.tone}>
+                <Layout as="span" flow="inline" inset="compact">
+                  {indicator.label}
+                </Layout>
+              </ReliabilityBadge>
+            </Layout>
+          </Inline>
+          <Layout as="span" flow="block" sizing="fixed">
+            <Text variant="interactiveAccent" tone="accent">
+              <Inline as="span" align="center" gap="compact">
+                <span>
+                  {isExpanded
+                    ? i18n.t('ui.lookthroughcoveragesummary.hideDetails')
+                    : i18n.t('ui.lookthroughcoveragesummary.details')}
+                </span>
+                <DisclosureChevronIcon expanded={isExpanded} />
+              </Inline>
+            </Text>
+          </Layout>
+        </Disclosure.Trigger>
+      </span>
+      <div className="mt-3">
+        <Disclosure.Content variant="sectionStart">
+          <Inset inset="default">
+            <Layout as="span" spaceBefore="default">
+              <BreakdownGroupContent
+                title={i18n.t(
+                  'ui.lookthroughcoveragesummary.sourceReliabilityDetails',
+                )}
+                note={i18n.t(
+                  'ui.lookthroughcoveragesummary.anotherViewOfTheSameIdentifiedExposure',
+                )}
+                rows={[
+                  {
+                    label: i18n.t(
+                      'ui.lookthroughcoveragesummary.reliableSubset',
+                    ),
+                    amount: reliableValue,
+                    percentage: reliablePercentage,
+                    tone: 'coverage',
+                  },
+                  {
+                    label: i18n.t(
+                      'ui.lookthroughcoveragesummary.otherSourceTiers',
+                    ),
+                    amount: otherSourceValue,
+                    percentage: otherSourcePercentage,
+                    tone: 'netContributions',
+                  },
+                ]}
+              />
+            </Layout>
+            <Layout spaceBefore="default">
+              <Text as="p" variant="tinyHelper" tone="subtle">
+                {i18n.t(
+                  'ui.lookthroughcoveragesummary.reliableIsAQualityFilteredSubsetDirectPositionsPlus',
+                )}
+              </Text>
+            </Layout>
+          </Inset>
+        </Disclosure.Content>
+      </div>
     </Disclosure>
   )
 }
@@ -454,28 +473,29 @@ function ExposureChildNodes({
 }) {
   return (
     <div>
-      <DecorativeBlock className="relative hidden h-8 lg:block">
-        <Surface
-          variant="centeredConnector"
-          className="absolute left-1/2 top-0 h-4 w-px"
-        />
-        <Surface
-          variant="highlighted"
-          className="absolute left-1/4 right-1/4 top-4 h-px"
-        />
-        <Surface
-          variant="highlighted"
-          className="absolute bottom-0 left-1/4 top-4 w-px"
-        />
-        <Surface
-          variant="highlighted"
-          className="absolute bottom-0 left-3/4 top-4 w-px"
-        />
-      </DecorativeBlock>
-      <DecorativeBlock
-        variant="highlighted"
-        className="mx-auto h-4 w-px lg:hidden"
-      />
+      <div className="relative h-8">
+        <DecorativeBlock>
+          <Layout flow="block" hiddenUntil="large">
+            <TreeConnector position="stem">
+              <Surface variant="centeredConnector" />
+            </TreeConnector>
+            <TreeConnector position="pairBridge">
+              <Surface variant="highlighted" />
+            </TreeConnector>
+            <TreeConnector position="pairLeft">
+              <Surface variant="highlighted" />
+            </TreeConnector>
+            <TreeConnector position="pairRight">
+              <Surface variant="highlighted" />
+            </TreeConnector>
+          </Layout>
+        </DecorativeBlock>
+      </div>
+      <div className="mx-auto h-4 w-px">
+        <DecorativeBlock variant="highlighted">
+          <Layout></Layout>
+        </DecorativeBlock>
+      </div>
       <div className="grid grid-cols-1 items-start gap-2 lg:grid-cols-2">
         {nodes.map((node) => (
           <ExposureChildNodeCard key={node.label} node={node}>
@@ -527,30 +547,28 @@ function BreakdownRowView({ row }: { row: BreakdownRow }) {
   const formatPercentage = useFormatPercentage()
   return (
     <div>
-      <Text
-        as="div"
-        variant="micro"
-        className="mb-1 flex items-baseline justify-between gap-3"
-      >
-        <Text tone="subtle" truncate>
-          {row.label}
+      <Layout spaceAfter="compact">
+        <Text as="div" variant="micro">
+          <Inline as="div" align="baseline" justify="between" gap="default">
+            <Text tone="subtle" truncate>
+              {row.label}
+            </Text>
+            <Layout as="span" flow="inline" sizing="fixed">
+              <Text tone="subtle" numeric>
+                {formatMoney(row.amount, { style: 'full' })} ·{' '}
+                {formatPercentage(row.percentage)}
+              </Text>
+            </Layout>
+          </Inline>
         </Text>
-        <Text tone="subtle" numeric className="shrink-0">
-          {formatMoney(row.amount, { style: 'full' })} ·{' '}
-          {formatPercentage(row.percentage)}
-        </Text>
-      </Text>
-      <Surface variant="track" className="h-1.5 overflow-hidden">
-        <SeriesSwatch
-          as="div"
-          shape="dot"
-          tone={row.tone}
-          className="h-full"
-          style={{
-            width: `${Math.min(100, Math.max(0, row.percentage))}%`,
-          }}
-        />
-      </Surface>
+      </Layout>
+      <Layout height="track" overflow="clip">
+        <Surface variant="track">
+          <Proportion value={Math.min(100, Math.max(0, row.percentage))}>
+            <SeriesSwatch as="div" shape="dot" tone={row.tone} />
+          </Proportion>
+        </Surface>
+      </Layout>
     </div>
   )
 }
@@ -560,42 +578,46 @@ function BreakdownGroupContent({
   note,
   badge,
   rows,
-  className,
-}: BreakdownGroupProps & { className: 'mt-3' }) {
+}: BreakdownGroupProps) {
   return (
-    <div className={className}>
-      <div className="mb-3 flex items-start justify-between gap-3">
+    <Layout>
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="start"
+        justify="between"
+        gap="default"
+      >
         <div>
           <Text as="div" variant="microStrong" tone="muted">
             {title}
           </Text>
-          <Text as="div" variant="tiny" tone="subtle" className="mt-0.5">
-            {note}
-          </Text>
+          <Layout spaceBefore="compact">
+            <Text as="div" variant="tiny" tone="subtle">
+              {note}
+            </Text>
+          </Layout>
         </div>
         {badge && (
-          <Surface
-            variant="quietCount"
-            as="span"
-            tone="muted"
-            className="shrink-0 px-2 py-0.5"
-          >
-            {badge}
-          </Surface>
+          <Layout as="span" flow="inline" sizing="fixed">
+            <Surface variant="quietCount" as="span" tone="muted">
+              {badge}
+            </Surface>
+          </Layout>
         )}
-      </div>
-      <div className="space-y-3">
+      </Inline>
+      <Stack gap="default">
         {rows.map((row) => (
           <BreakdownRowView key={row.label} row={row} />
         ))}
-      </div>
-    </div>
+      </Stack>
+    </Layout>
   )
 }
 
 export function UnavailableLookThroughSummary() {
   return (
-    <Surface variant="contentCard" tone="subtle" className="p-4">
+    <Surface variant="contentCard" tone="subtle">
       {i18n.t(
         'ui.lookthroughcoveragesummary.noLookThroughQualityReportRunThePortfolioPipeline',
       )}

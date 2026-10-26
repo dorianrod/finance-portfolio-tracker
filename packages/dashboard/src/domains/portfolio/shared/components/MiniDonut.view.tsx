@@ -16,6 +16,7 @@ import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocatio
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { CategorySwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -33,17 +34,11 @@ function MiniDonutLegendItem({
   )
 
   return (
-    <Text
-      variant="tiny"
-      tone="muted"
-      className="inline-flex items-center gap-1"
-    >
-      <CategorySwatch
-        category={entry.name}
-        shape="dot"
-        style={{ width: 6, height: 6, display: 'inline-block', flexShrink: 0 }}
-      />
-      {entry.name} {percentage}
+    <Text variant="tiny" tone="muted">
+      <Inline as="span" align="center" gap="compact">
+        <CategorySwatch category={entry.name} shape="dot" size="default" />
+        {entry.name} {percentage}
+      </Inline>
     </Text>
   )
 }
@@ -73,9 +68,11 @@ export function MiniDonut({
   ]
   return (
     <div>
-      <Text as="p" variant="microSectionLabel" tone="muted" className="mb-1">
-        {title}
-      </Text>
+      <Layout spaceAfter="compact">
+        <Text as="p" variant="microSectionLabel" tone="muted">
+          {title}
+        </Text>
+      </Layout>
       <ResponsiveContainer width="100%" height={110}>
         <PieChart>
           <Pie
@@ -89,11 +86,11 @@ export function MiniDonut({
           <Tooltip content={<PieTooltip />} />
         </PieChart>
       </ResponsiveContainer>
-      <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1">
+      <Inline as="div" flow="wrap" gap="compact" spaceBefore="compact">
         {data.map((entry) => (
           <MiniDonutLegendItem key={entry.name} entry={entry} total={total} />
         ))}
-      </div>
+      </Inline>
     </div>
   )
 }

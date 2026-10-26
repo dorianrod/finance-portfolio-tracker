@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { Inline } from '@/shared/ui/Layout.view'
+
 import { Metric } from '../../Metric.view'
 import { Text } from '../../Text.view'
 
@@ -18,10 +20,10 @@ export const Playground: Story = {
       <div className="w-64">
         <Metric {...args}>
           <Text variant="caption">Example balance</Text>
-          <div className="flex items-center gap-2">
+          <Inline as="div" align="center" gap="default">
             <Metric.Value>12,450 €</Metric.Value>
             <Metric.InlineNote tone="positive">+8%</Metric.InlineNote>
-          </div>
+          </Inline>
           <Metric.Note>At the end of the period</Metric.Note>
         </Metric>
       </div>

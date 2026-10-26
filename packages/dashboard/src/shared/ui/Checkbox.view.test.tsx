@@ -8,17 +8,14 @@ import { Checkbox } from './Checkbox.view'
 afterEach(cleanup)
 
 describe('Checkbox', () => {
-  it('synchronizes native indeterminate state, preserves selection actions and keeps appearance with layout overrides', async () => {
+  it('synchronizes native indeterminate state, preserves selection actions and keeps appearance with layout on the parent', async () => {
     const onChange = vi.fn()
     const { rerender } = render(
       <label>
         Accounts
-        <Checkbox
-          checked={false}
-          indeterminate
-          onChange={onChange}
-          className="ml-2"
-        />
+        <span className="inline-grid ml-2">
+          <Checkbox checked={false} indeterminate onChange={onChange} />
+        </span>
       </label>,
     )
     const input = screen.getByRole('checkbox', {
@@ -26,13 +23,16 @@ describe('Checkbox', () => {
     }) as HTMLInputElement
     expect(input.indeterminate).toBe(true)
     expect(input.className).toContain('accent-accent')
-    expect(input.className).toContain('ml-2')
+    expect(input.className).not.toContain('ml-2')
+    expect(input.parentElement?.className).toContain('ml-2')
     await userEvent.setup().click(input)
     expect(onChange).toHaveBeenCalledOnce()
     rerender(
       <label>
         Accounts
-        <Checkbox checked indeterminate={false} onChange={onChange} />
+        <span className="inline-grid ml-2">
+          <Checkbox checked indeterminate={false} onChange={onChange} />
+        </span>
       </label>,
     )
     expect(input.indeterminate).toBe(false)

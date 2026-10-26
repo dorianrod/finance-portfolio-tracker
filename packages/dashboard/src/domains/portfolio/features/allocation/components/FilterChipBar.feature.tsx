@@ -6,6 +6,7 @@ import type { AllocationDimension } from '@/domains/portfolio/shared/types/alloc
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/Controls.view'
 import { Decorative } from '@/shared/ui/Controls.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
@@ -22,23 +23,26 @@ export function FilterChipBar() {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Text variant="captionOverline" tone="subtle" className="w-24 shrink-0">
-        {i18n.t('ui.filterchipbar.allocation')}
-      </Text>
-      <Button
-        type="button"
-        onClick={clearFilter}
-        title={i18n.t('ui.filterchipbar.clearAllocationFilter')}
-        variant="appliedFilter"
-        className="inline-flex max-w-full items-center gap-1 px-3 py-1"
-      >
-        <Text variant="secondaryMedium">{DIM_LABELS[filter.type]}</Text>
-        <Decorative variant="faint">:</Decorative>
-        <Text variant="strong">{filter.value}</Text>
-        <Decorative variant="subdued" className="ml-1">
-          ×
-        </Decorative>
-      </Button>
+      <span className="inline-grid w-24 shrink-0">
+        <Text variant="captionOverline" tone="subtle">
+          {i18n.t('ui.filterchipbar.allocation')}
+        </Text>
+      </span>
+      <span className="inline-grid max-w-full">
+        <Button
+          type="button"
+          onClick={clearFilter}
+          title={i18n.t('ui.filterchipbar.clearAllocationFilter')}
+          variant="appliedFilter"
+        >
+          <Text variant="secondaryMedium">{DIM_LABELS[filter.type]}</Text>
+          <Decorative variant="faint">:</Decorative>
+          <Text variant="strong">{filter.value}</Text>
+          <Layout as="span" flow="inline">
+            <Decorative variant="subdued">×</Decorative>
+          </Layout>
+        </Button>
+      </span>
     </div>
   )
 }

@@ -20,10 +20,10 @@ import { SeriesPie } from './SeriesPie.view'
 import { ChartSymbol, SeriesScatter } from './SeriesScatter.view'
 
 afterEach(cleanup)
-function PieShape(props: Partial<PieSectorShapeProps>) {
+function PieShape(props: Partial<Omit<PieSectorShapeProps, 'className'>>) {
   return <ChartSector geometry={props} category="Equity" selected />
 }
-function ScatterShape(props: Partial<ScatterShapeProps>) {
+function ScatterShape(props: Partial<Omit<ScatterShapeProps, 'className'>>) {
   return (
     <ChartSymbol
       geometry={props}

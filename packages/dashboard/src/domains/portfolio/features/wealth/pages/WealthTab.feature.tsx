@@ -18,6 +18,7 @@ import type { AccountTypePoint } from '@/domains/portfolio/shared/types/accountT
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/shared/types/monthlyOperation.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
+import { Inline } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
 type WealthTabProps = {
@@ -47,26 +48,31 @@ export function WealthTab({
 }: WealthTabProps) {
   return (
     <div className="mb-6 space-y-4">
-      <Surface
-        variant="sectionEnd"
-        className="flex flex-wrap items-start gap-x-10 gap-y-4 pb-4"
-      >
-        <WealthComparisonKpi
-          label={i18n.t('ui.wealthtab.netContributionsTrailing12m')}
-          metric={trailingYearComparison.savings}
-          currentMonths={trailingYearComparison.currentMonths}
-          tone="blue"
+      <Surface variant="sectionEnd">
+        <Inline
+          as="div"
+          flow="wrap"
+          align="start"
+          gap="relaxed"
+          inset="default"
         >
-          <FilterScopeBadges account="filterable" period="trailing-12m" />
-        </WealthComparisonKpi>
-        <WealthComparisonKpi
-          label={i18n.t('ui.wealthtab.marketPerformanceTrailing12m')}
-          metric={trailingYearComparison.performance}
-          currentMonths={trailingYearComparison.currentMonths}
-          tone="performance"
-        >
-          <FilterScopeBadges account="filterable" period="trailing-12m" />
-        </WealthComparisonKpi>
+          <WealthComparisonKpi
+            label={i18n.t('ui.wealthtab.netContributionsTrailing12m')}
+            metric={trailingYearComparison.savings}
+            currentMonths={trailingYearComparison.currentMonths}
+            tone="blue"
+          >
+            <FilterScopeBadges account="filterable" period="trailing-12m" />
+          </WealthComparisonKpi>
+          <WealthComparisonKpi
+            label={i18n.t('ui.wealthtab.marketPerformanceTrailing12m')}
+            metric={trailingYearComparison.performance}
+            currentMonths={trailingYearComparison.currentMonths}
+            tone="performance"
+          >
+            <FilterScopeBadges account="filterable" period="trailing-12m" />
+          </WealthComparisonKpi>
+        </Inline>
       </Surface>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {history.length > 0 && <EvolutionChart history={history} />}

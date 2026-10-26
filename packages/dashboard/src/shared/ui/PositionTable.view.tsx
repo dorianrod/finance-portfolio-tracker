@@ -5,9 +5,8 @@ import { SEMANTIC_BADGE_CLASSES } from '@/shared/theme/semanticColors'
 export function PositionRowSurface({
   kind,
   closed,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'tr'> & {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & {
   kind: 'position' | 'group' | 'detail'
   closed: boolean
 }) {
@@ -27,7 +26,6 @@ export function PositionRowSurface({
           closed &&
           'cursor-pointer bg-canvas',
         kind === 'detail' && 'bg-canvas',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -36,9 +34,10 @@ export function PositionRowSurface({
 }
 export function TransactionBadge({
   kind,
-  className,
   ...props
-}: HTMLAttributes<HTMLSpanElement> & { kind: 'buy' | 'sell' | 'other' }) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
+  kind: 'buy' | 'sell' | 'other'
+}) {
   const tone = {
     buy: SEMANTIC_BADGE_CLASSES.transactionBuy,
     sell: SEMANTIC_BADGE_CLASSES.transactionSell,
@@ -47,7 +46,7 @@ export function TransactionBadge({
   return (
     <span
       {...props}
-      className={['font-mono text-xs px-1.5 py-0.5 rounded', tone, className]
+      className={['font-mono text-xs px-1.5 py-0.5 rounded', tone]
         .filter(Boolean)
         .join(' ')}
     />
@@ -55,17 +54,12 @@ export function TransactionBadge({
 }
 export function StripedRow({
   shaded,
-  className,
   ...props
-}: ComponentPropsWithoutRef<'tr'> & { shaded: boolean }) {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & { shaded: boolean }) {
   return (
     <tr
       {...props}
-      className={[
-        'border-b border-border/50',
-        shaded && 'bg-surface-raised/20',
-        className,
-      ]
+      className={['border-b border-border/50', shaded && 'bg-surface-raised/20']
         .filter(Boolean)
         .join(' ')}
     />

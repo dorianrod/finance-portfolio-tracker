@@ -3,6 +3,7 @@ import type { AriaAttributes } from 'react'
 /** Behavior and ARIA wiring belong to UI primitives, never their callers. */
 export type ControlProps<Props> = Omit<
   Props,
+  | 'className'
   | keyof AriaAttributes
   | 'role'
   | 'tabIndex'

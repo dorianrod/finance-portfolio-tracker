@@ -12,26 +12,23 @@ export type BadgeTone = keyof typeof BADGE_TONES
 
 export function Badge({
   tone,
-  className,
   ...props
-}: HTMLAttributes<HTMLSpanElement> & { tone: BadgeTone }) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & { tone: BadgeTone }) {
   return (
     <span
       {...props}
-      className={[BADGE_BASE, BADGE_TONES[tone], className]
-        .filter(Boolean)
-        .join(' ')}
+      className={[BADGE_BASE, BADGE_TONES[tone]].filter(Boolean).join(' ')}
     />
   )
 }
 
-function BadgeDetail(props: HTMLAttributes<HTMLSpanElement>) {
+function BadgeDetail(
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+) {
   return (
     <span
       {...props}
-      className={['font-normal opacity-80', props.className]
-        .filter(Boolean)
-        .join(' ')}
+      className={['font-normal opacity-80'].filter(Boolean).join(' ')}
     />
   )
 }
@@ -40,16 +37,16 @@ Badge.Detail = BadgeDetail
 
 export function CountBadge({
   tone,
-  className,
   ...props
-}: HTMLAttributes<HTMLSpanElement> & { tone: keyof typeof COUNT_BADGE_TONES }) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
+  tone: keyof typeof COUNT_BADGE_TONES
+}) {
   return (
     <span
       {...props}
       className={[
         'rounded-full text-[10px] font-semibold',
         COUNT_BADGE_TONES[tone],
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -60,29 +57,28 @@ export function CountBadge({
 export function MetricDelta({
   tone,
   variant = 'summary',
-  className,
   ...props
-}: HTMLAttributes<HTMLSpanElement> & {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
   tone: TextTone
   variant?: keyof typeof DELTA_VARIANTS
 }) {
   return (
     <span
       {...props}
-      className={[DELTA_VARIANTS[variant], TEXT_TONES[tone], className]
+      className={[DELTA_VARIANTS[variant], TEXT_TONES[tone]]
         .filter(Boolean)
         .join(' ')}
     />
   )
 }
 
-function MetricDeltaDetail(props: HTMLAttributes<HTMLSpanElement>) {
+function MetricDeltaDetail(
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+) {
   return (
     <span
       {...props}
-      className={['font-medium opacity-75', props.className]
-        .filter(Boolean)
-        .join(' ')}
+      className={['font-medium opacity-75'].filter(Boolean).join(' ')}
     />
   )
 }
@@ -90,15 +86,13 @@ function MetricDeltaDetail(props: HTMLAttributes<HTMLSpanElement>) {
 MetricDelta.Detail = MetricDeltaDetail
 
 export function SelectionCount({
-  className,
   ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>) {
   return (
     <span
       {...props}
       className={[
         'rounded-full bg-accent-solid text-center text-[10px] font-bold leading-4 text-content',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}

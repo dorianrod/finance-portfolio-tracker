@@ -3,6 +3,7 @@ import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/Sc
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -18,50 +19,48 @@ export function FundLookThroughTab({
   const applicablePositions = selectExposurePositions(positions)
 
   let content = (
-    <Surface as="section" variant="card" className="p-5">
-      <Text
-        as="h2"
-        variant="strong"
-        tone="secondary"
-        className="flex items-center"
-      >
-        {i18n.t('ui.fundlookthroughtab.noIdentifiedUnderlyingExposureYet')}
-        <ScopedInfoTooltip
-          text={i18n.t(
+    <Surface as="section" variant="card">
+      <Text as="h2" variant="strong" tone="secondary">
+        <Inline as="span" align="center">
+          {i18n.t('ui.fundlookthroughtab.noIdentifiedUnderlyingExposureYet')}
+          <ScopedInfoTooltip
+            text={i18n.t(
+              'ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact',
+            )}
+            scope={{ account: 'filterable', period: 'as-of' }}
+          />
+        </Inline>
+      </Text>
+      <Layout spaceBefore="compact">
+        <Text as="p" variant="body" tone="subtle">
+          {i18n.t(
             'ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact',
           )}
-          scope={{ account: 'filterable', period: 'as-of' }}
-        />
-      </Text>
-      <Text as="p" variant="body" tone="subtle" className="mt-1">
-        {i18n.t(
-          'ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact',
-        )}
-      </Text>
+        </Text>
+      </Layout>
     </Surface>
   )
   if (applicablePositions.length === 0) {
     content = (
-      <Surface as="section" variant="card" className="p-5">
-        <Text
-          as="h2"
-          variant="strong"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t('ui.fundlookthroughtab.underlyingExposureNotApplicable')}
-          <ScopedInfoTooltip
-            text={i18n.t(
+      <Surface as="section" variant="card">
+        <Text as="h2" variant="strong" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t('ui.fundlookthroughtab.underlyingExposureNotApplicable')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking',
+              )}
+              scope={{ account: 'filterable', period: 'as-of' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="body" tone="subtle">
+            {i18n.t(
               'ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking',
             )}
-            scope={{ account: 'filterable', period: 'as-of' }}
-          />
-        </Text>
-        <Text as="p" variant="body" tone="subtle" className="mt-1">
-          {i18n.t(
-            'ui.fundlookthroughtab.lookThroughAnalysisIsNotApplicableToSavingsChecking',
-          )}
-        </Text>
+          </Text>
+        </Layout>
       </Surface>
     )
   } else if (holdings.length > 0) {

@@ -9,7 +9,7 @@ type SidePanelProps = {
   onClose: () => void
   closeLabel: string
   size?: 'default' | 'medium' | 'wide'
-  bodyClassName?: string
+  scroll?: 'both' | 'vertical'
 }
 
 const WIDTH_BY_SIZE = {
@@ -24,7 +24,7 @@ export function SidePanel({
   onClose,
   closeLabel,
   size = 'default',
-  bodyClassName = 'overflow-auto',
+  scroll = 'both',
 }: SidePanelProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
@@ -91,7 +91,11 @@ export function SidePanel({
               ✕
             </button>
           </div>
-          <div className={`min-h-0 flex-1 ${bodyClassName}`}>{content}</div>
+          <div
+            className={`min-h-0 flex-1 ${scroll === 'vertical' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-auto'}`}
+          >
+            {content}
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

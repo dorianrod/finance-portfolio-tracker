@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor } from 'storybook/test'
 
+import { Inline } from '@/shared/ui/Layout.view'
+
 import { Checkbox } from '../../Checkbox.view'
 import { ChoiceRow } from '../../FormElements.view'
 
@@ -11,19 +13,23 @@ const meta = { title: 'Controls/Checkbox', component: Checkbox } satisfies Meta<
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof Checkbox>) {
+function Render(
+  args: Omit<React.ComponentProps<typeof Checkbox>, 'className'>,
+) {
   const [{ checked }, updateArgs] = useArgs<typeof args>()
   return (
-    <ChoiceRow className="inline-flex items-center gap-2 p-2">
-      <Checkbox
-        {...args}
-        checked={checked}
-        onChange={(event) => {
-          args.onChange(event)
-          updateArgs({ checked: event.target.checked, indeterminate: false })
-        }}
-      />
-      Include example
+    <ChoiceRow>
+      <Inline as="span" align="center" gap="default" inset="compact">
+        <Checkbox
+          {...args}
+          checked={checked}
+          onChange={(event) => {
+            args.onChange(event)
+            updateArgs({ checked: event.target.checked, indeterminate: false })
+          }}
+        />
+        Include example
+      </Inline>
     </ChoiceRow>
   )
 }

@@ -1,5 +1,6 @@
 import i18n from '@/i18n/i18n'
 import { Decorative } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -10,44 +11,52 @@ import {
 
 export function InfoIcon() {
   return (
-    <Decorative
-      variant="infoSymbol"
-      className="flex h-4 w-4 items-center justify-center"
-    >
-      {i18n.t('ui.analysisreliabilitykpi.i')}
-    </Decorative>
+    <Layout as="span" flow="inline" height="icon" width="icon">
+      <Decorative variant="infoSymbol">
+        <Inline as="span" align="center" justify="center">
+          {i18n.t('ui.analysisreliabilitykpi.i')}
+        </Inline>
+      </Decorative>
+    </Layout>
   )
 }
 
 export function QualityTooltipMetricRow({ row }: { row: QualityTooltipRow }) {
   const rowStyles = RELIABILITY_TONES[row.tone]
   return (
-    <span className="flex items-center justify-between gap-4 py-1.5">
-      <span className="flex min-w-0 items-center gap-2">
-        <ToneSwatch
-          tone={rowStyles.dot}
-          shape="dot"
-          className="h-1.5 w-1.5 shrink-0"
-        />
+    <Inline
+      as="span"
+      align="center"
+      justify="between"
+      gap="relaxed"
+      inset="compact"
+    >
+      <Inline as="span" align="center" gap="default">
+        <Layout as="span" flow="inline" height="track" sizing="fixed">
+          <ToneSwatch tone={rowStyles.dot} shape="dot" />
+        </Layout>
         <Text variant="micro" tone="secondary">
           {row.label}
         </Text>
-      </span>
-      <Text align="right" className="shrink-0">
-        <Text
-          variant="captionStrong"
-          tone={rowStyles.value}
-          numeric
-          className="block"
-        >
-          {row.value}
-        </Text>
-        {row.secondary && (
-          <Text variant="tiny" tone="subtle" numeric className="mt-0.5 block">
-            {row.secondary}
+      </Inline>
+      <Layout as="span" flow="inline" sizing="fixed">
+        <Text align="right">
+          <Text variant="captionStrong" tone={rowStyles.value} numeric>
+            <Layout as="span" flow="block">
+              {row.value}
+            </Layout>
           </Text>
-        )}
-      </Text>
-    </span>
+          {row.secondary && (
+            <Layout as="span" flow="block" spaceBefore="compact">
+              <Text variant="tiny" tone="subtle" numeric>
+                <Layout as="span" flow="block">
+                  {row.secondary}
+                </Layout>
+              </Text>
+            </Layout>
+          )}
+        </Text>
+      </Layout>
+    </Inline>
   )
 }

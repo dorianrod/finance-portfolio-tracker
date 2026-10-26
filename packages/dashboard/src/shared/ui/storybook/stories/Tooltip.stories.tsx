@@ -54,11 +54,7 @@ export const Help: Story = {
   render: function Render() {
     return (
       <Tooltip>
-        <Tooltip.Trigger
-          variant="help"
-          label="Help with this example"
-          className="p-2"
-        >
+        <Tooltip.Trigger variant="help" label="Help with this example">
           ?
         </Tooltip.Trigger>
         <Tooltip.Content>Helpful explanation</Tooltip.Content>

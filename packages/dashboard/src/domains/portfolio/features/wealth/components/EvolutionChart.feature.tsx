@@ -18,6 +18,7 @@ import {
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inline } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -39,24 +40,27 @@ export function EvolutionChart({
   const chartData = useMemo(() => withPortfolioComposition(history), [history])
 
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="muted"
-          className="flex items-center"
-        >
-          {title}
-          <ScopedInfoTooltip
-            text={i18n.t(
-              'ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis',
-            )}
-            scope={{ account: 'filterable', period: 'range' }}
-          />
+    <Surface variant="chart">
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="start"
+        justify="between"
+        gap="default"
+      >
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {title}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </Inline>
         </Text>
         <ChartScaleToggle value={scale} onChange={setScale} />
-      </div>
+      </Inline>
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart
           key={scale}
@@ -77,7 +81,6 @@ export function EvolutionChart({
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-
             interval="preserveStartEnd"
           />
           <ChartYAxis
@@ -87,7 +90,6 @@ export function EvolutionChart({
                 : (value) => formatMoney(value, { style: 'compact' })
             }
             domain={percentageMode ? ['auto', 'auto'] : undefined}
-
             width={percentageMode ? 48 : 52}
           />
           <Tooltip

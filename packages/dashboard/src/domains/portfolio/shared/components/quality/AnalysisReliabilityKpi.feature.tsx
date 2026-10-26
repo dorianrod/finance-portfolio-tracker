@@ -17,6 +17,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Button } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -51,63 +52,66 @@ function CompactDataQualityKpi({
   const styles = RELIABILITY_TONES[tone]
 
   return (
-    <Surface
-      variant="qualityAction"
-      className="relative inline-flex items-center"
-    >
-      <Button
-        type="button"
-        onClick={handleClick}
-        variant="qualityAction"
-        className="inline-flex items-center gap-2 py-1 pl-0 pr-1"
-        label={ariaLabel}
-      >
-        <Text variant="prominentEyebrow" tone="subtle">
-          {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
-        </Text>
-        <ToneSwatch
-          tone={styles.dot}
-          shape="dot"
-          className="h-2 w-2 shrink-0"
-        />
-        <Text variant="eyebrow" tone={styles.status}>
-          {styles.label}
-        </Text>
-      </Button>
-      <Tooltip>
-        <Tooltip.Trigger
-          variant="help"
-          className="p-1"
-          label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
-        >
-          <InfoIcon />
-        </Tooltip.Trigger>
-        <Tooltip.Content
-          align="start"
-          variant="left"
-          className="w-[min(22rem,calc(100vw-2rem))]"
-        >
-          <Text variant="note" tone="muted" className="block">
-            {tooltip}
-          </Text>
-          <Surface
-            as="span"
-            variant="sectionStart"
-            className="mt-2.5 block pt-2"
+    <Inline as="div" placement="inset">
+      <Surface variant="qualityAction">
+        <Inline as="div" align="center">
+          <Button
+            type="button"
+            onClick={handleClick}
+            variant="qualityAction"
+            label={ariaLabel}
           >
-            <Text variant="eyebrow" tone="subtle" className="block">
-              {i18n.t('ui.analysisreliabilitykpi.filterScope')}
+            <Text variant="prominentEyebrow" tone="subtle">
+              {i18n.t('ui.analysisreliabilitykpi.dataQuality')}
             </Text>
-            <FilterScopeBadges {...scope} />
-          </Surface>
-          <Surface as="span" variant="sectionStart" className="mt-3 block pt-1">
-            {rows.map((row) => (
-              <QualityTooltipMetricRow key={row.label} row={row} />
-            ))}
-          </Surface>
-        </Tooltip.Content>
-      </Tooltip>
-    </Surface>
+            <Layout
+              as="span"
+              flow="inline"
+              height="indicator"
+              width="indicator"
+              sizing="fixed"
+            >
+              <ToneSwatch tone={styles.dot} shape="dot" />
+            </Layout>
+            <Text variant="eyebrow" tone={styles.status}>
+              {styles.label}
+            </Text>
+          </Button>
+          <Tooltip>
+            <Tooltip.Trigger
+              variant="help"
+              label={i18n.t('ui.analysisreliabilitykpi.showDataQualityDetails')}
+            >
+              <InfoIcon />
+            </Tooltip.Trigger>
+            <Tooltip.Content align="start" variant="left">
+              <Text variant="note" tone="muted">
+                <Layout as="span" flow="block">
+                  {tooltip}
+                </Layout>
+              </Text>
+              <Layout as="span" flow="block" spaceBefore="default">
+                <Surface as="span" variant="sectionStart">
+                  <Text variant="eyebrow" tone="subtle">
+                    <Layout as="span" flow="block">
+                      {i18n.t('ui.analysisreliabilitykpi.filterScope')}
+                    </Layout>
+                  </Text>
+                  <FilterScopeBadges {...scope} />
+                </Surface>
+              </Layout>
+              <Layout as="span" flow="block" spaceBefore="default">
+                <Surface as="span" variant="sectionStart">
+                  {rows.map((row) => (
+                    <QualityTooltipMetricRow key={row.label} row={row} />
+                  ))}
+                </Surface>
+              </Layout>
+            </Tooltip.Content>
+          </Tooltip>
+        </Inline>
+      </Surface>
+    </Inline>
   )
 }
 

@@ -42,7 +42,6 @@ function DisclosureTrigger(props: ButtonProps) {
 
 function DisclosureContent({
   variant,
-  className,
   ...props
 }: ControlProps<HTMLAttributes<HTMLDivElement>> & {
   variant?: keyof typeof SURFACE_VARIANTS
@@ -52,7 +51,7 @@ function DisclosureContent({
   return (
     <div
       {...props}
-      className={[variant && SURFACE_VARIANTS[variant], className]
+      className={[variant && SURFACE_VARIANTS[variant]]
         .filter(Boolean)
         .join(' ')}
       id={context.id}

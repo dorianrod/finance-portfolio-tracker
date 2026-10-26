@@ -10,6 +10,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { DialogButton } from '@/shared/ui/Controls.view'
 import { NextIcon } from '@/shared/ui/Icons.view'
+import { Inline, Inset, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Tabs } from '@/shared/ui/Tabs.view'
@@ -33,74 +34,82 @@ export function QualityThemeTab({
   const active = theme.id === activeThemeId
   const styles = QUALITY_TONES[theme.tone]
   return (
-    <Tabs.Trigger
-      value={theme.id}
-      variant="quality"
-      selected={active}
-      className="flex w-full items-center gap-3 px-3 py-3"
-    >
-      <Surface
-        as="span"
-        variant="statusFrame"
-        className="flex h-5 w-5 shrink-0 items-center justify-center"
-      >
-        <ToneSwatch tone={styles} shape="dot" className="h-2 w-2" />
-      </Surface>
-      <span className="min-w-0 flex-1">
-        <Text
-          variant="label"
-          tone={active ? 'default' : 'secondary'}
-          className="block"
-        >
-          {theme.label}
-        </Text>
-        <Text variant="micro" tone="subtle" truncate className="mt-0.5 block">
-          {theme.metricLabel}
-        </Text>
-      </span>
-      <Text variant="bodyStrong" tone="default" numeric className="shrink-0">
-        {theme.metric}
-      </Text>
-    </Tabs.Trigger>
+    <Layout as="span" flow="control" width="full">
+      <Tabs.Trigger value={theme.id} variant="quality" selected={active}>
+        <Layout as="span" flow="block" height="icon" sizing="fixed">
+          <Surface as="span" variant="statusFrame">
+            <Inline as="span" align="center" justify="center">
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <ToneSwatch tone={styles} shape="dot" />
+              </Layout>
+            </Inline>
+          </Surface>
+        </Layout>
+        <Layout as="span" sizing="flexible">
+          <Text variant="label" tone={active ? 'default' : 'secondary'}>
+            <Layout as="span" flow="block">
+              {theme.label}
+            </Layout>
+          </Text>
+          <Layout as="span" flow="block" spaceBefore="compact">
+            <Text variant="micro" tone="subtle" truncate>
+              <Layout as="span" flow="block">
+                {theme.metricLabel}
+              </Layout>
+            </Text>
+          </Layout>
+        </Layout>
+        <Layout as="span" flow="inline" sizing="fixed">
+          <Text variant="bodyStrong" tone="default" numeric>
+            {theme.metric}
+          </Text>
+        </Layout>
+      </Tabs.Trigger>
+    </Layout>
   )
 }
 
 export function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
   if (assets.length === 0) {
     return (
-      <Text as="p" variant="body" tone="subtle" align="center" className="p-6">
-        {i18n.t('ui.dataqualitytab.noAffectedAssetForThisScope')}
+      <Text as="p" variant="body" tone="subtle" align="center">
+        <Layout as="span" flow="block" inset="spacious">
+          {i18n.t('ui.dataqualitytab.noAffectedAssetForThisScope')}
+        </Layout>
       </Text>
     )
   }
 
   return (
-    <div className="overflow-x-auto">
-      <Surface
-        variant="compactTable"
-        as="table"
-        align="left"
-        className="w-full"
-      >
-        <Surface
-          as="thead"
-          variant="plain"
-          tone="subtle"
-          className="sticky top-0 z-10"
-        >
+    <Layout overflow="auto">
+      <Surface variant="compactTable" as="table" align="left">
+        <Surface as="thead" variant="plain" tone="subtle">
           <Surface as="tr" variant="sectionEnd">
-            <Text as="th" variant="medium" className="px-4 py-3">
-              {i18n.t('ui.dataqualitytab.asset')}
-            </Text>
-            <Text as="th" variant="medium" className="px-4 py-3">
-              {i18n.t('ui.dataqualitytab.affectedDimensions')}
-            </Text>
-            <Text as="th" variant="medium" align="right" className="px-4 py-3">
-              {i18n.t('ui.dataqualitytab.largestGap')}
-            </Text>
-            <Text as="th" variant="medium" align="right" className="px-4 py-3">
-              {i18n.t('ui.dataqualitytab.positionValue')}
-            </Text>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="medium">
+                {i18n.t('ui.dataqualitytab.asset')}
+              </Text>
+            </Inset>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="medium">
+                {i18n.t('ui.dataqualitytab.affectedDimensions')}
+              </Text>
+            </Inset>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="medium" align="right">
+                {i18n.t('ui.dataqualitytab.largestGap')}
+              </Text>
+            </Inset>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="medium" align="right">
+                {i18n.t('ui.dataqualitytab.positionValue')}
+              </Text>
+            </Inset>
           </Surface>
         </Surface>
         <tbody>
@@ -109,7 +118,7 @@ export function AffectedAssetsTable({ assets }: { assets: AffectedAsset[] }) {
           ))}
         </tbody>
       </Surface>
-    </div>
+    </Layout>
   )
 }
 
@@ -119,12 +128,7 @@ export function AffectedDimensionBadge({
   dimension: AffectedAsset['dimensions'][number]
 }) {
   return (
-    <Surface
-      as="span"
-      variant="quietChip"
-      tone="muted"
-      className="px-1.5 py-0.5"
-    >
+    <Surface as="span" variant="quietChip" tone="muted">
       {DATA_QUALITY_DIMENSION_LABELS[dimension]}
     </Surface>
   )
@@ -135,45 +139,40 @@ export function AffectedAssetRow({ asset }: { asset: AffectedAsset }) {
   const formatPercentage = useFormatPercentage()
   return (
     <Surface as="tr" variant="topAlignedRow">
-      <td className="px-4 py-3">
+      <Inset as="td" inset="default">
         <Text as="div" variant="medium" tone="secondary">
           {asset.name}
         </Text>
-        <Text
-          as="div"
-          variant="tinyCode"
-          tone="subtle"
-          wrap="anywhere"
-          className="mt-1"
-        >
-          {asset.id}
-        </Text>
-      </td>
-      <td className="px-4 py-3">
-        <div className="flex flex-wrap gap-1.5">
+        <Layout spaceBefore="compact">
+          <Text as="div" variant="tinyCode" tone="subtle" wrap="anywhere">
+            {asset.id}
+          </Text>
+        </Layout>
+      </Inset>
+      <Inset as="td" inset="default">
+        <Inline as="div" flow="wrap" gap="compact">
           {asset.dimensions.map((dimension) => (
             <AffectedDimensionBadge key={dimension} dimension={dimension} />
           ))}
-        </div>
-      </td>
-      <Text as="td" align="right" numeric className="px-4 py-3">
-        <Text as="div" variant="medium" tone="warning">
-          {formatMoney(asset.largestGapValue, { style: 'full' })}
+        </Inline>
+      </Inset>
+      <Inset as="td" inset="default">
+        <Text as="div" align="right" numeric>
+          <Text as="div" variant="medium" tone="warning">
+            {formatMoney(asset.largestGapValue, { style: 'full' })}
+          </Text>
+          <Layout spaceBefore="compact">
+            <Text as="div" variant="tiny" tone="subtle">
+              {formatPercentage(asset.largestGapPct)}
+            </Text>
+          </Layout>
         </Text>
-        <Text as="div" variant="tiny" tone="subtle" className="mt-1">
-          {formatPercentage(asset.largestGapPct)}
+      </Inset>
+      <Inset as="td" inset="default">
+        <Text as="div" variant="medium" tone="secondary" align="right" numeric>
+          {formatMoney(asset.value, { style: 'full' })}
         </Text>
-      </Text>
-      <Text
-        as="td"
-        variant="medium"
-        tone="secondary"
-        align="right"
-        numeric
-        className="px-4 py-3"
-      >
-        {formatMoney(asset.value, { style: 'full' })}
-      </Text>
+      </Inset>
     </Surface>
   )
 }
@@ -192,61 +191,66 @@ export function DetailKpiButton({
   onClick: () => void
 }) {
   return (
-    <DialogButton
-      type="button"
-      onClick={onClick}
-      expanded={expanded}
-      label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
-      variant="qualitySummary"
-      className="relative flex min-w-[19rem] items-center gap-4 px-5 py-4"
-    >
-      <ToneSwatch
-        tone={QUALITY_TONES[theme.tone]}
-        shape="sideAccent"
-        className="absolute inset-y-2 left-0 w-0.5"
-      />
-      <span>
-        <Text variant="prominentMetric" numeric className="block">
-          {theme.metric}
-        </Text>
-        <Text variant="eyebrowLabel" tone="subtle" className="mt-1.5 block">
-          {theme.metricLabel}
-        </Text>
-      </span>
-      <Surface
-        as="span"
-        variant="sectionInset"
-        className="ml-auto flex items-center gap-3 pl-4"
+    <Layout as="span" flow="control" placement="inset">
+      <DialogButton
+        type="button"
+        onClick={onClick}
+        expanded={expanded}
+        label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
+        variant="qualitySummary"
       >
+        <Layout as="span" flow="inline" placement="overlay" width="divider">
+          <ToneSwatch tone={QUALITY_TONES[theme.tone]} shape="sideAccent" />
+        </Layout>
         <span>
-          <Text variant="captionStrong" tone="accent" className="block">
-            {actionLabel}
+          <Text variant="prominentMetric" numeric>
+            <Layout as="span" flow="block">
+              {theme.metric}
+            </Layout>
           </Text>
-          <Text variant="tiny" tone="subtle" className="mt-0.5 block">
-            {detailLabel}
-          </Text>
+          <Layout as="span" flow="block" spaceBefore="default">
+            <Text variant="eyebrowLabel" tone="subtle">
+              <Layout as="span" flow="block">
+                {theme.metricLabel}
+              </Layout>
+            </Text>
+          </Layout>
         </span>
-        <Surface
-          as="span"
-          variant="accentFill"
-          tone="accent"
-          className="flex h-7 w-7 items-center justify-center"
-        >
-          <NextIcon />
-        </Surface>
-      </Surface>
-    </DialogButton>
+        <Layout as="span" flow="block" placement="trailing">
+          <Surface as="span" variant="sectionInset">
+            <Inline as="span" align="center" gap="default" inset="default">
+              <span>
+                <Text variant="captionStrong" tone="accent">
+                  <Layout as="span" flow="block">
+                    {actionLabel}
+                  </Layout>
+                </Text>
+                <Layout as="span" flow="block" spaceBefore="compact">
+                  <Text variant="tiny" tone="subtle">
+                    <Layout as="span" flow="block">
+                      {detailLabel}
+                    </Layout>
+                  </Text>
+                </Layout>
+              </span>
+              <Layout as="span" flow="block" height="icon">
+                <Surface as="span" variant="accentFill" tone="accent">
+                  <Inline as="span" align="center" justify="center">
+                    <NextIcon />
+                  </Inline>
+                </Surface>
+              </Layout>
+            </Inline>
+          </Surface>
+        </Layout>
+      </DialogButton>
+    </Layout>
   )
 }
 
 export function EmptyQualityState({ message }: { message: string }) {
   return (
-    <Surface
-      variant="insetContent"
-      tone="subtle"
-      align="center"
-      className="px-4 py-8"
-    >
+    <Surface variant="insetContent" tone="subtle" align="center">
       {message}
     </Surface>
   )

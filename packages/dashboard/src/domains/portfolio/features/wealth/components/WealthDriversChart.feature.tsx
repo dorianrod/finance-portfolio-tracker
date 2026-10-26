@@ -6,6 +6,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
@@ -19,28 +20,27 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t('ui.wealthdriverschart.cumulativeWealthDrivers')}
-          <ScopedInfoTooltip
-            text={i18n.t(
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t('ui.wealthdriverschart.cumulativeWealthDrivers')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
               'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
             )}
-            scope={{ account: 'filterable', period: 'range' }}
-          />
-        </Text>
-        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-          {i18n.t(
-            'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
-          )}
-        </Text>
-      </div>
+          </Text>
+        </Layout>
+      </Layout>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart
           data={data}
@@ -64,12 +64,10 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-
             interval="preserveStartEnd"
           />
           <ChartYAxis
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-
             width={52}
           />
           <Tooltip content={<DriversTooltip />} />
@@ -96,40 +94,45 @@ export function WealthDriversChart({ data }: { data: WealthDriverPoint[] }) {
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <Text
-        as="div"
-        variant="caption"
-        tone="subtle"
-        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
-      >
-        <span>
-          <SeriesSwatch
-            tone={'netContributions'}
-            as="i"
-            shape="dot"
-            className="mr-1.5 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.wealthdriverschart.netContributions')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'performance'}
-            as="i"
-            shape="dot"
-            className="mr-1.5 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.wealthdriverschart.marketPerformance')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'totalChange'}
-            as="i"
-            shape="dot"
-            className="mr-1.5 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.wealthdriverschart.totalChange')}
-        </span>
-      </Text>
+      <Layout spaceBefore="default">
+        <Text as="div" variant="caption" tone="subtle">
+          <Inline as="div" flow="wrap" gap="compact">
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'netContributions'} as="i" shape="dot" />
+              </Layout>
+              {i18n.t('ui.wealthdriverschart.netContributions')}
+            </span>
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'performance'} as="i" shape="dot" />
+              </Layout>
+              {i18n.t('ui.wealthdriverschart.marketPerformance')}
+            </span>
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'totalChange'} as="i" shape="dot" />
+              </Layout>
+              {i18n.t('ui.wealthdriverschart.totalChange')}
+            </span>
+          </Inline>
+        </Text>
+      </Layout>
     </Surface>
   )
 }

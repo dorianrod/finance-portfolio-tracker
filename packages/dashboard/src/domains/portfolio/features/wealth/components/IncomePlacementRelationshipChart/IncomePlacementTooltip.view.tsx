@@ -7,6 +7,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartLabel } from '@/shared/ui/ChartLabel.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 import { getYearLabelPosition } from './helpers/presenters/getYearLabelPosition'
@@ -67,15 +68,12 @@ export function RelationshipTooltip({
   const point = payload?.[0]?.payload
   if (!active || !point) return null
   return (
-    <TooltipBox minWidth={220}>
-      <ChartText
-        as="div"
-        tone={'tooltipText'}
-        variant="strong"
-        style={{ marginBottom: 7 }}
-      >
-        {point.year}
-      </ChartText>
+    <TooltipBox>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'} variant="strong">
+          {point.year}
+        </ChartText>
+      </Layout>
       <ChartText as="div" tone={'tooltipLabel'}>
         {i18n.t(
           'ui.incomeplacementrelationshipchart.totalNetIncomeWithValues',
@@ -92,37 +90,37 @@ export function RelationshipTooltip({
           amount: formatMoney(point.otherIncome, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText
-        as="div"
-        tone={'netContributionsText'}
-        style={{ marginTop: 6 }}
-      >
-        {i18n.t(
-          'ui.incomeplacementrelationshipchart.netContributionsWithValues',
-          {
-            amount: formatMoney(point.placedSavings, {
-              style: 'full',
-              fallback: 0,
-            }),
-          },
-        )}
-      </ChartText>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'netContributionsText'}>
+          {i18n.t(
+            'ui.incomeplacementrelationshipchart.netContributionsWithValues',
+            {
+              amount: formatMoney(point.placedSavings, {
+                style: 'full',
+                fallback: 0,
+              }),
+            },
+          )}
+        </ChartText>
+      </Layout>
       <ChartText as="div" tone={'returnRate'}>
         {i18n.t('ui.incomeplacementrelationshipchart.placementRateWithValues', {
           percentage: formatPercentage(point.placementRate, { fallback: 0 }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'tooltipDim'} style={{ marginTop: 6 }}>
-        {i18n.t(
-          'ui.incomeplacementrelationshipchart.unplacedIncomeProxyWithValues',
-          {
-            amount: formatMoney(point.unplacedIncomeProxy, {
-              style: 'full',
-              fallback: 0,
-            }),
-          },
-        )}
-      </ChartText>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipDim'}>
+          {i18n.t(
+            'ui.incomeplacementrelationshipchart.unplacedIncomeProxyWithValues',
+            {
+              amount: formatMoney(point.unplacedIncomeProxy, {
+                style: 'full',
+                fallback: 0,
+              }),
+            },
+          )}
+        </ChartText>
+      </Layout>
     </TooltipBox>
   )
 }

@@ -24,7 +24,6 @@ type AreaDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'className'
   | 'style'
   | 'children'
   | 'stackId'

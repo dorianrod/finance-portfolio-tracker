@@ -12,25 +12,26 @@ export function ChartScaleToggle({
   onChange: (value: ChartScaleMode) => void
 }) {
   return (
-    <SegmentedControl
-      label={i18n.t('ui.chartscaletoggle.chartScale')}
-      density="compact"
-      className="shrink-0"
-    >
-      <SegmentedControlItem
-        active={value === 'value'}
-        tone="neutral"
-        onClick={() => onChange('value')}
+    <div className="shrink-0">
+      <SegmentedControl
+        label={i18n.t('ui.chartscaletoggle.chartScale')}
+        density="compact"
       >
-        €
-      </SegmentedControlItem>
-      <SegmentedControlItem
-        active={value === 'percentage'}
-        tone="neutral"
-        onClick={() => onChange('percentage')}
-      >
-        100%
-      </SegmentedControlItem>
-    </SegmentedControl>
+        <SegmentedControlItem
+          active={value === 'value'}
+          tone="neutral"
+          onClick={() => onChange('value')}
+        >
+          €
+        </SegmentedControlItem>
+        <SegmentedControlItem
+          active={value === 'percentage'}
+          tone="neutral"
+          onClick={() => onChange('percentage')}
+        >
+          100%
+        </SegmentedControlItem>
+      </SegmentedControl>
+    </div>
   )
 }

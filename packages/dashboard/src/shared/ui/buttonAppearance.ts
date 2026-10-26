@@ -1,4 +1,5 @@
 export const BUTTON_VARIANTS = {
+  choice: 'rounded-full border text-xs font-medium transition-colors',
   accentCaptionLink: 'text-xs font-medium text-accent hover:text-accent',
   plainLeft: 'text-left',
 
@@ -64,6 +65,11 @@ export const BUTTON_VARIANTS = {
 } as const
 
 const BUTTON_SELECTION_STATES = {
+  choice: {
+    active: 'border-accent-solid bg-accent-solid text-on-accent',
+    inactive:
+      'border-border-strong bg-surface-raised text-content-muted hover:bg-surface-hover hover:text-content-secondary',
+  },
   positions: {
     active: 'border-accent bg-accent-solid text-content',
     inactive:
@@ -106,7 +112,6 @@ const BUTTON_SELECTION_STATES = {
 
 export function getButtonClassName(
   variant: keyof typeof BUTTON_VARIANTS,
-  className: string | undefined,
   selected = false,
 ) {
   const selection =
@@ -116,7 +121,11 @@ export function getButtonClassName(
         ][selected ? 'active' : 'inactive']
       : undefined
   return (
-    [BUTTON_VARIANTS[variant], selection, className]
+    [
+      'inline-flex items-center justify-center',
+      BUTTON_VARIANTS[variant],
+      selection,
+    ]
       .filter(Boolean)
       .join(' ') || undefined
   )
@@ -133,12 +142,4 @@ export const NAVIGATION_STATES = {
     inactive:
       'border-b-transparent text-content-subtle hover:text-content-secondary',
   },
-} as const
-
-export const CHOICE_CHIP_BASE =
-  'rounded-full border text-xs font-medium transition-colors'
-export const CHOICE_CHIP_STATES = {
-  active: 'border-accent-solid bg-accent-solid text-on-accent',
-  inactive:
-    'border-border-strong bg-surface-raised text-content-muted hover:bg-surface-hover hover:text-content-secondary',
 } as const

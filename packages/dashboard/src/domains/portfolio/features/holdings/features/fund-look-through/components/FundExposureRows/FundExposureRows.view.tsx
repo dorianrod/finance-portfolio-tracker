@@ -11,6 +11,7 @@ import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { DisclosureButton } from '@/shared/ui/Controls.view'
 import { TreeChevronIcon } from '@/shared/ui/Icons.view'
+import { Grid, Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 import { Tooltip } from '@/shared/ui/Tooltip.view'
@@ -71,15 +72,17 @@ export function SourcesCell({
   }
   return (
     <Tooltip>
-      <Tooltip.Trigger variant="source" className="w-fit">
-        <Text tone="subtle" variant={compact ? 'caption' : 'inherit'}>
-          {i18n.t('ui.fundholdingsexplorer.fundCount', {
-            count: sources.length,
-            formattedCount: formatNumber(sources.length),
-          })}
-        </Text>
-      </Tooltip.Trigger>
-      <Tooltip.Content className="w-96">
+      <Layout as="span" flow="inline" width="content">
+        <Tooltip.Trigger variant="source">
+          <Text tone="subtle" variant={compact ? 'caption' : 'inherit'}>
+            {i18n.t('ui.fundholdingsexplorer.fundCount', {
+              count: sources.length,
+              formattedCount: formatNumber(sources.length),
+            })}
+          </Text>
+        </Tooltip.Trigger>
+      </Layout>
+      <Tooltip.Content>
         <SourcesTooltip sources={sources} total={total} />
       </Tooltip.Content>
     </Tooltip>
@@ -96,19 +99,23 @@ export function SourceTooltipRow({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <li className="flex items-baseline gap-3">
-      <Text tone="secondary" truncate className="min-w-0 flex-1">
-        {source.fund}
-      </Text>
+    <Inline as="li" align="baseline" gap="default">
+      <Layout as="span" flow="inline" sizing="flexible">
+        <Text tone="secondary" truncate>
+          {source.fund}
+        </Text>
+      </Layout>
       <Text tone="muted" numeric>
         {formatMoney(source.value, { style: 'full' })}
       </Text>
-      <Text tone="subtle" align="right" numeric className="w-12">
-        {formatPercentage(total > 0 ? (source.value / total) * 100 : 0, {
-          decimals: 0,
-        })}
-      </Text>
-    </li>
+      <Layout as="span" flow="inline">
+        <Text tone="subtle" align="right" numeric>
+          {formatPercentage(total > 0 ? (source.value / total) * 100 : 0, {
+            decimals: 0,
+          })}
+        </Text>
+      </Layout>
+    </Inline>
   )
 }
 
@@ -122,17 +129,19 @@ export function SourcesTooltip({
   const formatNumber = useFormatNumber()
   return (
     <div>
-      <Text as="div" variant="tinyOverline" tone="subtle" className="mb-2">
-        {i18n.t('ui.fundholdingsexplorer.heldThroughFunds', {
-          count: sources.length,
-          formattedCount: formatNumber(sources.length),
-        })}
-      </Text>
-      <ul className="max-h-64 space-y-1 overflow-hidden">
+      <Layout spaceAfter="default">
+        <Text as="div" variant="tinyOverline" tone="subtle">
+          {i18n.t('ui.fundholdingsexplorer.heldThroughFunds', {
+            count: sources.length,
+            formattedCount: formatNumber(sources.length),
+          })}
+        </Text>
+      </Layout>
+      <Stack as="ul" gap="compact" overflow="clip">
         {sources.map((source) => (
           <SourceTooltipRow key={source.fund} source={source} total={total} />
         ))}
-      </ul>
+      </Stack>
     </div>
   )
 }
@@ -153,35 +162,38 @@ export const IssuerRow = memo(function IssuerRow({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="issuerRow" className={`${GRID} h-full`}>
-      <DisclosureButton
-        type="button"
-        onClick={() => onToggle(issuer.id)}
-        expanded={open}
-        variant="plainLeft"
-        className="flex min-w-0 items-center gap-2"
-      >
-        <Chevron open={open} />
-        <Text variant="medium" tone="default" truncate>
-          {issuer.name}
+    <Surface variant="issuerRow">
+      <Grid arrangement="exposure">
+        <Layout as="span" flow="control">
+          <DisclosureButton
+            type="button"
+            onClick={() => onToggle(issuer.id)}
+            expanded={open}
+            variant="plainLeft"
+          >
+            <Chevron open={open} />
+            <Text variant="medium" tone="default" truncate>
+              {issuer.name}
+            </Text>
+            <Text variant="tinyCode" tone="subtle">
+              {issuer.id}
+            </Text>
+          </DisclosureButton>
+        </Layout>
+        <Text variant="medium" tone="secondary" align="right" numeric>
+          {formatMoney(issuer.value, { style: 'full' })}
         </Text>
-        <Text variant="tinyCode" tone="subtle">
-          {issuer.id}
+        <Text tone="muted" align="right" numeric>
+          {formatPercentage(issuer.weight, { decimals: 2 })}
         </Text>
-      </DisclosureButton>
-      <Text variant="medium" tone="secondary" align="right" numeric>
-        {formatMoney(issuer.value, { style: 'full' })}
-      </Text>
-      <Text tone="muted" align="right" numeric>
-        {formatPercentage(issuer.weight, { decimals: 2 })}
-      </Text>
 
-      <SourcesCell
-        sources={issuer.sources}
-        total={issuer.value}
-        empty={i18n.t('ui.fundholdingsexplorer.direct')}
-        compact
-      />
+        <SourcesCell
+          sources={issuer.sources}
+          total={issuer.value}
+          empty={i18n.t('ui.fundholdingsexplorer.direct')}
+          compact
+        />
+      </Grid>
     </Surface>
   )
 })
@@ -194,28 +206,36 @@ export const SecurityRow = memo(function SecurityRow({
   const formatMoney = useFormatMoney()
   const [single] = security.funds
   return (
-    <Surface variant="detailRow" className={`${GRID} h-full`}>
-      <Text truncate className="min-w-0 pl-6">
-        <Text tone="secondary">{security.name}</Text>
-        <Text variant="tinyCode" tone="subtle" className="ml-2">
-          {security.id}
+    <Surface variant="detailRow">
+      <Grid arrangement="exposure">
+        <Layout as="span" flow="inline">
+          <Text truncate>
+            <Layout as="span" flow="inline" inset="spacious">
+              <Text tone="secondary">{security.name}</Text>
+              <Layout as="span" flow="inline">
+                <Text variant="tinyCode" tone="subtle">
+                  {security.id}
+                </Text>
+              </Layout>
+            </Layout>
+          </Text>
+        </Layout>
+        <Text tone="muted" align="right" numeric>
+          {formatMoney(security.value, { style: 'full' })}
         </Text>
-      </Text>
-      <Text tone="muted" align="right" numeric>
-        {formatMoney(security.value, { style: 'full' })}
-      </Text>
-      <span />
-      {security.funds.length <= 1 ? (
-        <Text tone="subtle" truncate title={single}>
-          {single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}
-        </Text>
-      ) : (
-        <SourcesCell
-          sources={security.sources}
-          total={security.value}
-          empty={i18n.t('ui.fundholdingsexplorer.directHolding')}
-        />
-      )}
+        <span />
+        {security.funds.length <= 1 ? (
+          <Text tone="subtle" truncate title={single}>
+            {single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}
+          </Text>
+        ) : (
+          <SourcesCell
+            sources={security.sources}
+            total={security.value}
+            empty={i18n.t('ui.fundholdingsexplorer.directHolding')}
+          />
+        )}
+      </Grid>
     </Surface>
   )
 })
@@ -229,15 +249,17 @@ export const SourceRow = memo(function SourceRow({
 }) {
   const formatMoney = useFormatMoney()
   return (
-    <Surface variant="detailRow" className={`${GRID} h-full`}>
-      <span />
-      <Text tone="subtle" align="right" numeric>
-        {formatMoney(value, { style: 'full' })}
-      </Text>
-      <span />
-      <Text tone="subtle" truncate title={fund}>
-        {fund}
-      </Text>
+    <Surface variant="detailRow">
+      <Grid arrangement="exposure">
+        <span />
+        <Text tone="subtle" align="right" numeric>
+          {formatMoney(value, { style: 'full' })}
+        </Text>
+        <span />
+        <Text tone="subtle" truncate title={fund}>
+          {fund}
+        </Text>
+      </Grid>
     </Surface>
   )
 })

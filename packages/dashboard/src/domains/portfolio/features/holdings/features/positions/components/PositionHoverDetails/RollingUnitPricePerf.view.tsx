@@ -1,5 +1,6 @@
 import type { RollingReturn } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -15,10 +16,14 @@ function RollingUnitPriceRow({ row }: { row: RollingReturn }) {
 export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
   if (rows.length === 0) return null
   return (
-    <Surface variant="strongSectionStart" className="mt-2 pt-2 space-y-0.5">
-      {rows.map((row) => (
-        <RollingUnitPriceRow key={row.label} row={row} />
-      ))}
-    </Surface>
+    <Layout spaceBefore="default">
+      <Surface variant="strongSectionStart">
+        <Stack inset="compact" gap="compact">
+          {rows.map((row) => (
+            <RollingUnitPriceRow key={row.label} row={row} />
+          ))}
+        </Stack>
+      </Surface>
+    </Layout>
   )
 }

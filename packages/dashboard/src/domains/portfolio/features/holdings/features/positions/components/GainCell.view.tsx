@@ -1,6 +1,7 @@
 import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Layout } from '@/shared/ui/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function GainCell({
@@ -17,9 +18,11 @@ export function GainCell({
     <Text tone={getGainTone(value)}>
       {formatMoney(value)}
       {pct != null && (
-        <Text variant="secondaryCaption" className="ml-1">
-          {formatPercentage(pct, { decimals: 2, signed: true })}
-        </Text>
+        <Layout as="span" flow="inline">
+          <Text variant="secondaryCaption">
+            {formatPercentage(pct, { decimals: 2, signed: true })}
+          </Text>
+        </Layout>
       )}
     </Text>
   )

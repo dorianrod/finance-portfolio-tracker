@@ -8,13 +8,13 @@ export function Checkbox({
   checked,
   indeterminate,
   onChange,
-  className,
+
   size = 'small',
 }: {
   checked: boolean
   indeterminate?: boolean
   onChange: ChangeEventHandler<HTMLInputElement>
-  className?: string
+
   size?: 'small' | 'standard'
 }) {
   const ref = useIndeterminateInput(indeterminate)
@@ -24,11 +24,7 @@ export function Checkbox({
       type="checkbox"
       checked={checked}
       onChange={onChange}
-      className={[
-        'accent-accent cursor-pointer',
-        CHECKBOX_SIZES[size],
-        className,
-      ]
+      className={['accent-accent cursor-pointer', CHECKBOX_SIZES[size]]
         .filter(Boolean)
         .join(' ')}
     />

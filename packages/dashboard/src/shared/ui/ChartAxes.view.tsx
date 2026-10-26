@@ -27,7 +27,6 @@ type AxisConfigKeys =
   | 'includeHidden'
   | 'name'
   | 'unit'
-  | 'className'
   | 'style'
   | 'children'
 
@@ -86,7 +85,6 @@ type GridConfigKeys =
   | 'width'
   | 'height'
   | 'syncWithTicks'
-  | 'className'
   | 'style'
 type GridProps = Pick<ComponentProps<typeof CartesianGrid>, GridConfigKeys> & {
   pattern?: keyof typeof CHART_GRID_PATTERNS

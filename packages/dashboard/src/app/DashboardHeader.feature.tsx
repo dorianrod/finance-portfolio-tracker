@@ -21,22 +21,23 @@ export function DashboardHeader() {
           {i18n.t('ui.app.portfolio')}
         </Text>
       </div>
-      <ToggleButton
-        type="button"
-        onClick={toggleTheme}
-        active={theme === 'dark'}
-        label={
-          theme === 'dark'
-            ? i18n.t('ui.app.switchToLightMode')
-            : i18n.t('ui.app.switchToDarkMode')
-        }
-        variant="secondary"
-        className="ml-auto px-3 py-2"
-      >
-        {theme === 'dark'
-          ? i18n.t('ui.app.lightMode')
-          : i18n.t('ui.app.darkMode')}
-      </ToggleButton>
+      <span className="inline-grid ml-auto">
+        <ToggleButton
+          type="button"
+          onClick={toggleTheme}
+          active={theme === 'dark'}
+          label={
+            theme === 'dark'
+              ? i18n.t('ui.app.switchToLightMode')
+              : i18n.t('ui.app.switchToDarkMode')
+          }
+          variant="secondary"
+        >
+          {theme === 'dark'
+            ? i18n.t('ui.app.lightMode')
+            : i18n.t('ui.app.darkMode')}
+        </ToggleButton>
+      </span>
     </header>
   )
 }

@@ -6,6 +6,7 @@ import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterSco
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { InlineGroup } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 
 import { FilterScopeBadge } from './FilterScopeBadges.view'
 import { buildFilterScopeBadges } from './helpers/presenters/buildFilterScopeBadges'
@@ -33,13 +34,14 @@ export function FilterScopeBadges({
     period,
   })
   return (
-    <InlineGroup
-      className="mt-1.5 flex flex-wrap gap-1.5"
-      label={i18n.t('ui.filterscopebadges.indicatorFilterScope')}
-    >
-      {badges.map((badge) => (
-        <FilterScopeBadge key={badge.label} badge={badge} />
-      ))}
-    </InlineGroup>
+    <Layout as="span" flow="inline" spaceBefore="default">
+      <InlineGroup label={i18n.t('ui.filterscopebadges.indicatorFilterScope')}>
+        <Inline as="span" flow="wrap" gap="compact">
+          {badges.map((badge) => (
+            <FilterScopeBadge key={badge.label} badge={badge} />
+          ))}
+        </Inline>
+      </InlineGroup>
+    </Layout>
   )
 }

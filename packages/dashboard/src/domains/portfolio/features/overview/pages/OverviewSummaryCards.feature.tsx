@@ -16,6 +16,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { MetricDelta } from '@/shared/ui/Badge.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { MetricCard, type MetricCardAccent } from '@/shared/ui/MetricCard.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -60,19 +61,21 @@ function CardShell({
       })}
     >
       <MetricCard.Header>
-        <Text variant="prominentEyebrow" tone="subtle" className="block">
-          {eyebrow}
+        <Text variant="prominentEyebrow" tone="subtle">
+          <Layout as="span" flow="block">
+            {eyebrow}
+          </Layout>
         </Text>
-        <Text
-          variant="bodyStrong"
-          tone="secondary"
-          className="mt-1 flex items-center"
-        >
-          {title}
-          <MetricCard.Action>
-            <ScopedInfoTooltip text={description} scope={scope} />
-          </MetricCard.Action>
-        </Text>
+        <Layout as="span" flow="block" spaceBefore="compact">
+          <Text variant="bodyStrong" tone="secondary">
+            <Inline as="span" align="center">
+              {title}
+              <MetricCard.Action>
+                <ScopedInfoTooltip text={description} scope={scope} />
+              </MetricCard.Action>
+            </Inline>
+          </Text>
+        </Layout>
       </MetricCard.Header>
       <MetricCard.Body>{children}</MetricCard.Body>
     </MetricCard>
@@ -119,16 +122,24 @@ export function OverviewSummaryCards({
         destination="wealth"
         accent="value"
       >
-        <Text variant="metric" tone="default" numeric className="block">
-          {formatMoney(comparison.value.current)}
+        <Text variant="metric" tone="default" numeric>
+          <Layout as="span" flow="block">
+            {formatMoney(comparison.value.current)}
+          </Layout>
         </Text>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.value} />
           <PreviousValue value={comparison.value.previous} />
         </span>
-        <Text variant="micro" tone="subtle" className="mt-3 block">
-          {i18n.t('ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax')}
-        </Text>
+        <span className="block mt-3">
+          <Text variant="micro" tone="subtle">
+            <Layout as="span" flow="block">
+              {i18n.t(
+                'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax',
+              )}
+            </Layout>
+          </Text>
+        </span>
       </CardShell>
 
       <CardShell
@@ -141,18 +152,24 @@ export function OverviewSummaryCards({
         destination="wealth"
         accent="accent"
       >
-        <Text variant="metric" tone="accent" numeric className="block">
-          {formatMoney(comparison.contributions.current)}
+        <Text variant="metric" tone="accent" numeric>
+          <Layout as="span" flow="block">
+            {formatMoney(comparison.contributions.current)}
+          </Layout>
         </Text>
         <span className="mt-3 flex flex-wrap items-center gap-2">
           <DeltaBadge metric={comparison.contributions} tone="contributions" />
           <PreviousValue value={comparison.contributions.previous} />
         </span>
-        <Text variant="micro" tone="subtle" className="mt-3 block">
-          {i18n.t(
-            'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
-          )}
-        </Text>
+        <span className="block mt-3">
+          <Text variant="micro" tone="subtle">
+            <Layout as="span" flow="block">
+              {i18n.t(
+                'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
+              )}
+            </Layout>
+          </Text>
+        </span>
       </CardShell>
 
       <CardShell
@@ -177,78 +194,86 @@ export function OverviewSummaryCards({
           </Text>
           <DeltaBadge metric={comparison.marketPerformance} />
         </span>
-        <Text
-          variant="caption"
-          className="mt-3 flex items-center justify-between gap-3"
-        >
-          <Text tone="subtle">
-            {i18n.t('ui.overviewsummarycards.passiveIncome')}
-          </Text>
-          <Text variant="strong" tone="income" numeric>
-            {formatMoney(comparison.passiveIncome.current)}
-            {comparison.passiveIncome.delta != null && (
-              <Text variant="tiny" tone="subtle" className="ml-1.5">
-                ({signedMoney(comparison.passiveIncome.delta)})
+        <span className="block mt-3">
+          <Text variant="caption">
+            <Inline as="span" align="center" justify="between" gap="default">
+              <Text tone="subtle">
+                {i18n.t('ui.overviewsummarycards.passiveIncome')}
               </Text>
-            )}
-          </Text>
-        </Text>
-        <Surface
-          as="span"
-          variant="microFooter"
-          tone="subtle"
-          className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 pt-2"
-        >
-          <span className="inline-flex items-center">
-            {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
-            <Surface variant="interactiveOverlay" as="span">
-              <ScopedInfoTooltip
-                text={i18n.t(
-                  'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
+              <Text variant="strong" tone="income" numeric>
+                {formatMoney(comparison.passiveIncome.current)}
+                {comparison.passiveIncome.delta != null && (
+                  <Layout as="span" flow="inline">
+                    <Text variant="tiny" tone="subtle">
+                      ({signedMoney(comparison.passiveIncome.delta)})
+                    </Text>
+                  </Layout>
                 )}
-                // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope.
-                scope={{
-                  account: 'filterable',
-                  period: 'trailing-3y',
-                  effectiveDate: comparison.windows.current.end,
-                }}
-              />
-            </Surface>
-          </span>
-          <Text
-            variant="strong"
-            numeric
-            tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
-          >
-            {formatOverviewIrrValue(
-              irrStatus,
-              rollingThreeYearTri.current,
-              formatPercentage,
-            )}
+              </Text>
+            </Inline>
           </Text>
-          {rollingThreeYearDelta != null && (
-            <MetricDelta
-              variant="inline"
-              tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
+        </span>
+        <span className="block mt-3">
+          <Surface as="span" variant="microFooter" tone="subtle">
+            <Inline
+              as="span"
+              flow="wrap"
+              align="center"
+              gap="compact"
+              inset="compact"
             >
-              {formatPercentage(rollingThreeYearDelta, {
-                signed: true,
-                unit: ' pp',
-              })}
-            </MetricDelta>
-          )}
-          <Text tone="subtle">
-            {i18n.t('ui.overviewsummarycards.previous')}{' '}
-            <Text variant="medium" tone="muted" numeric>
-              {irrStatus === 'ready' && rollingThreeYearTri.previous != null
-                ? formatPercentage(rollingThreeYearTri.previous, {
-                    decimals: 2,
+              <Inline as="span" align="center">
+                {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
+                <Surface variant="interactiveOverlay" as="span">
+                  <ScopedInfoTooltip
+                    text={i18n.t(
+                      'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
+                    )}
+                    // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope.
+                    scope={{
+                      account: 'filterable',
+                      period: 'trailing-3y',
+                      effectiveDate: comparison.windows.current.end,
+                    }}
+                  />
+                </Surface>
+              </Inline>
+              <Text
+                variant="strong"
+                numeric
+                tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
+              >
+                {formatOverviewIrrValue(
+                  irrStatus,
+                  rollingThreeYearTri.current,
+                  formatPercentage,
+                )}
+              </Text>
+              {rollingThreeYearDelta != null && (
+                <MetricDelta
+                  variant="inline"
+                  tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
+                >
+                  {formatPercentage(rollingThreeYearDelta, {
                     signed: true,
-                  })
-                : '—'}
-            </Text>
-          </Text>
-        </Surface>
+                    unit: ' pp',
+                  })}
+                </MetricDelta>
+              )}
+              <Text tone="subtle">
+                {i18n.t('ui.overviewsummarycards.previous')}{' '}
+                <Text variant="medium" tone="muted" numeric>
+                  {irrStatus === 'ready' && rollingThreeYearTri.previous != null
+                    ? formatPercentage(rollingThreeYearTri.previous, {
+                        decimals: 2,
+                        signed: true,
+                      })
+                    : '—'}
+                </Text>
+              </Text>
+            </Inline>
+          </Surface>
+        </span>
       </CardShell>
 
       <CardShell
@@ -269,83 +294,98 @@ export function OverviewSummaryCards({
       >
         <span className="grid grid-cols-2 gap-4">
           <span>
-            <Text variant="micro" tone="subtle" className="block">
-              {i18n.t('ui.overviewsummarycards.largestAsset')}
+            <Text variant="micro" tone="subtle">
+              <Layout as="span" flow="block">
+                {i18n.t('ui.overviewsummarycards.largestAsset')}
+              </Layout>
             </Text>
-            <Text
-              variant="metricSecondary"
-              tone="risk"
-              numeric
-              className="mt-1 block"
-            >
-              {primaryConcentration.current
-                ? formatPercentage(primaryConcentration.current.topHoldingPct)
-                : '—'}
-            </Text>
-            <Text
-              variant="tinyLabel"
-              numeric
-              tone={getConcentrationTone(primaryConcentration.topHolding.delta)}
-              className="mt-1 block"
-            >
-              {formatPercentage(primaryConcentration.topHolding.delta, {
-                signed: true,
-                unit: ' pp',
-              })}
-            </Text>
+            <span className="block mt-1">
+              <Text variant="metricSecondary" tone="risk" numeric>
+                <Layout as="span" flow="block">
+                  {primaryConcentration.current
+                    ? formatPercentage(
+                        primaryConcentration.current.topHoldingPct,
+                      )
+                    : '—'}
+                </Layout>
+              </Text>
+            </span>
+            <span className="block mt-1">
+              <Text
+                variant="tinyLabel"
+                numeric
+                tone={getConcentrationTone(
+                  primaryConcentration.topHolding.delta,
+                )}
+              >
+                <Layout as="span" flow="block">
+                  {formatPercentage(primaryConcentration.topHolding.delta, {
+                    signed: true,
+                    unit: ' pp',
+                  })}
+                </Layout>
+              </Text>
+            </span>
           </span>
           <span>
-            <Text variant="micro" tone="subtle" className="block">
-              {i18n.t('ui.overviewsummarycards.topFive')}
+            <Text variant="micro" tone="subtle">
+              <Layout as="span" flow="block">
+                {i18n.t('ui.overviewsummarycards.topFive')}
+              </Layout>
             </Text>
-            <Text
-              variant="metricSecondary"
-              tone="risk"
-              numeric
-              className="mt-1 block"
-            >
-              {primaryConcentration.current
-                ? formatPercentage(primaryConcentration.current.topFivePct)
-                : '—'}
-            </Text>
-            <Text
-              variant="tinyLabel"
-              numeric
-              tone={getConcentrationTone(primaryConcentration.topFive.delta)}
-              className="mt-1 block"
-            >
-              {formatPercentage(primaryConcentration.topFive.delta, {
-                signed: true,
-                unit: ' pp',
-              })}
-            </Text>
+            <span className="block mt-1">
+              <Text variant="metricSecondary" tone="risk" numeric>
+                <Layout as="span" flow="block">
+                  {primaryConcentration.current
+                    ? formatPercentage(primaryConcentration.current.topFivePct)
+                    : '—'}
+                </Layout>
+              </Text>
+            </span>
+            <span className="block mt-1">
+              <Text
+                variant="tinyLabel"
+                numeric
+                tone={getConcentrationTone(primaryConcentration.topFive.delta)}
+              >
+                <Layout as="span" flow="block">
+                  {formatPercentage(primaryConcentration.topFive.delta, {
+                    signed: true,
+                    unit: ' pp',
+                  })}
+                </Layout>
+              </Text>
+            </span>
           </span>
         </span>
-        <Surface
-          as="span"
-          variant="microFooter"
-          tone="subtle"
-          className="mt-3 block space-y-1 pt-2"
-        >
-          {underlyingAvailable ? (
-            <Text tone="subtle" className="block">
-              {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
-                largest: heldConcentration.current
-                  ? formatPercentage(heldConcentration.current.topHoldingPct)
-                  : '—',
-                topFive: heldConcentration.current
-                  ? formatPercentage(heldConcentration.current.topFivePct)
-                  : '—',
-              })}
-            </Text>
-          ) : (
-            <span className="block">
-              {i18n.t(
-                'ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions',
+        <span className="block mt-3">
+          <Surface as="span" variant="microFooter" tone="subtle">
+            <Stack as="span" gap="compact" inset="compact">
+              {underlyingAvailable ? (
+                <Text tone="subtle">
+                  <Layout as="span" flow="block">
+                    {i18n.t('ui.overviewsummarycards.heldPositionsSummary', {
+                      largest: heldConcentration.current
+                        ? formatPercentage(
+                            heldConcentration.current.topHoldingPct,
+                          )
+                        : '—',
+                      topFive: heldConcentration.current
+                        ? formatPercentage(heldConcentration.current.topFivePct)
+                        : '—',
+                    })}
+                  </Layout>
+                </Text>
+              ) : (
+                <Layout as="span" flow="block">
+                  {i18n.t(
+                    'ui.overviewsummarycards.underlyingDetailUnavailableShowingHeldPositions',
+                  )}
+                </Layout>
               )}
-            </span>
-          )}
-        </Surface>
+            </Stack>
+          </Surface>
+        </span>
       </CardShell>
     </div>
   )

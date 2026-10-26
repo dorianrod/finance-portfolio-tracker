@@ -9,7 +9,7 @@ tags: ui, tailwind, design-system, typography, layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
-Visual styling (text size, color, weight, background, border, radius, shadow, padding) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. Utility classes are tolerated only for minimal layout (`flex`, `gap`, `grow`), and a layout primitive of the design system is preferable even there. Hand-styled markup drifts from the design tokens and breaks on every theme change.
+Visual styling (text size, color, weight, background, border, radius, shadow, padding) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. Utility classes are tolerated only for minimal layout (`flex`, `gap`, `grow`) on external parent containers, and a layout primitive of the design system is preferable even there. Do not inject layout classes or styles through children or extracted child components. Internal spacing and structure come from shared UI sizes, variants and structure primitives. Never pass `className` to a shared UI component, including for layout: follow `ui-no-classname-on-shared-ui`. Hand-styled markup drifts from the design tokens and breaks on every theme change.
 
 **Incorrect (styled div/span with Tailwind):**
 

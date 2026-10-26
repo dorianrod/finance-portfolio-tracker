@@ -13,6 +13,7 @@ import {
 import { getButtonClassName } from './buttonAppearance'
 import type { ControlProps } from './controlProps'
 import type { ButtonProps } from './Controls.view'
+import { BUTTON_SIZES, PREVIEW_SIZES } from './layoutAppearance'
 import { SURFACE_VARIANTS } from './surfaceAppearance'
 import type { TextTone } from './textAppearance'
 import { TEXT_TONES } from './textAppearance'
@@ -50,8 +51,8 @@ function PreviewTrigger({
   type = 'button',
   variant = 'plain',
   selected = false,
+  size = 'compact',
   tone,
-  className,
   ...props
 }: ButtonProps & {
   onPreview: (anchor: HTMLButtonElement) => void
@@ -71,7 +72,9 @@ function PreviewTrigger({
       {...props}
       type={type}
       className={[
-        getButtonClassName(variant, className, selected),
+        getButtonClassName(variant, selected),
+        BUTTON_SIZES[size],
+        'gap-2',
         tone && TEXT_TONES[tone],
         tone &&
           'rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1',
@@ -125,14 +128,15 @@ function PreviewTrigger({
 
 function PreviewContent({
   anchor,
+  size = 'default',
   label,
   children,
   style,
   variant,
-  className,
   ...props
 }: ControlProps<HTMLAttributes<HTMLDivElement>> & {
   variant?: keyof typeof SURFACE_VARIANTS
+  size?: keyof typeof PREVIEW_SIZES
   anchor: DOMRect
   label: string
   style?: CSSProperties
@@ -152,7 +156,11 @@ function PreviewContent({
         <Primitive.Content
           {...props}
           ref={contentRef}
-          className={[variant && SURFACE_VARIANTS[variant], className]
+          className={[
+            'z-[9999] overflow-y-auto p-4',
+            PREVIEW_SIZES[size],
+            variant && SURFACE_VARIANTS[variant],
+          ]
             .filter(Boolean)
             .join(' ')}
           id={context.id}

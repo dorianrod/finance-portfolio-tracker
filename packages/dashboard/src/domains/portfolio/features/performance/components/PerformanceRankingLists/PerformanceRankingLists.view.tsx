@@ -4,11 +4,13 @@ import type { AssetIrrItem } from '@/domains/portfolio/shared/types/assetIrr.typ
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { Proportion } from '@/shared/ui/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { getIrrBarWidth } from './helpers/presenters/getIrrBarWidth'
+import { getIrrBarShare } from './helpers/presenters/getIrrBarShare'
 
 export function ContributionListItem({
   item,
@@ -22,49 +24,47 @@ export function ContributionListItem({
   const tone = positive ? 'positive' : 'negative'
   return (
     <li>
-      <Text
-        as="div"
-        variant="body"
-        className="flex items-start justify-between gap-4"
-      >
-        <div className="min-w-0">
-          <Text
-            as="div"
-            variant="medium"
-            tone="secondary"
-            truncate
-            title={item.name}
-          >
-            {item.label}
-          </Text>
-          <Text
-            as="div"
-            variant="micro"
-            tone="subtle"
-            truncate
-            title={item.accounts.join(', ')}
-          >
-            {item.accounts.join(', ')}
-          </Text>
-        </div>
-        <Text as="div" align="right" numeric className="shrink-0">
-          <Text as="div" variant="strong" tone={tone}>
-            {formatMoney(item.amount, { style: 'full' })}
-          </Text>
-          <Text as="div" variant="micro" tone="subtle">
-            {formatPercentage(item.share)}
-          </Text>
-        </Text>
+      <Text as="div" variant="body">
+        <Inline as="div" align="start" justify="between" gap="relaxed">
+          <Layout>
+            <Text
+              as="div"
+              variant="medium"
+              tone="secondary"
+              truncate
+              title={item.name}
+            >
+              {item.label}
+            </Text>
+            <Text
+              as="div"
+              variant="micro"
+              tone="subtle"
+              truncate
+              title={item.accounts.join(', ')}
+            >
+              {item.accounts.join(', ')}
+            </Text>
+          </Layout>
+          <Layout sizing="fixed">
+            <Text as="div" align="right" numeric>
+              <Text as="div" variant="strong" tone={tone}>
+                {formatMoney(item.amount, { style: 'full' })}
+              </Text>
+              <Text as="div" variant="micro" tone="subtle">
+                {formatPercentage(item.share)}
+              </Text>
+            </Text>
+          </Layout>
+        </Inline>
       </Text>
-      <Surface variant="track" className="mt-1.5 h-1 overflow-hidden">
-        <ToneSwatch
-          as="div"
-          shape="dot"
-          tone={tone}
-          className="h-full"
-          style={{ width: `${Math.min(item.share, 100)}%` }}
-        />
-      </Surface>
+      <Layout spaceBefore="default" height="track" overflow="clip">
+        <Surface variant="track">
+          <Proportion value={Math.min(item.share, 100)}>
+            <ToneSwatch as="div" shape="dot" tone={tone} />
+          </Proportion>
+        </Surface>
+      </Layout>
     </li>
   )
 }
@@ -84,53 +84,49 @@ export function IrrListItem({
   const tone = positive ? 'positive' : 'negative'
   return (
     <li>
-      <Text
-        as="div"
-        variant="body"
-        className="flex items-start justify-between gap-4"
-      >
-        <div className="min-w-0">
-          <Text
-            as="div"
-            variant="medium"
-            tone="secondary"
-            truncate
-            title={item.name}
-          >
-            {formatAssetLabel(item, item.label)}
-          </Text>
-          <Text
-            as="div"
-            variant="micro"
-            tone="subtle"
-            truncate
-            title={item.accounts.join(', ')}
-          >
-            {item.account_types.join(', ') || item.accounts.join(', ')}
-          </Text>
-        </div>
-        <Text as="div" align="right" numeric className="shrink-0">
-          <Text as="div" variant="strong" tone={tone}>
-            {formatPercentage(item.irr, { decimals: 2, signed: true })}
-          </Text>
-          <Text as="div" variant="micro" tone="subtle">
-            {i18n.t('ui.performancecontributioncard.valueWithValues', {
-              amount: formatMoney(item.value, { style: 'full' }),
-            })}
-          </Text>
-        </Text>
+      <Text as="div" variant="body">
+        <Inline as="div" align="start" justify="between" gap="relaxed">
+          <Layout>
+            <Text
+              as="div"
+              variant="medium"
+              tone="secondary"
+              truncate
+              title={item.name}
+            >
+              {formatAssetLabel(item, item.label)}
+            </Text>
+            <Text
+              as="div"
+              variant="micro"
+              tone="subtle"
+              truncate
+              title={item.accounts.join(', ')}
+            >
+              {item.account_types.join(', ') || item.accounts.join(', ')}
+            </Text>
+          </Layout>
+          <Layout sizing="fixed">
+            <Text as="div" align="right" numeric>
+              <Text as="div" variant="strong" tone={tone}>
+                {formatPercentage(item.irr, { decimals: 2, signed: true })}
+              </Text>
+              <Text as="div" variant="micro" tone="subtle">
+                {i18n.t('ui.performancecontributioncard.valueWithValues', {
+                  amount: formatMoney(item.value, { style: 'full' }),
+                })}
+              </Text>
+            </Text>
+          </Layout>
+        </Inline>
       </Text>
-      <Surface variant="track" className="mt-1.5 h-1 overflow-hidden">
-        <ToneSwatch
-          as="div"
-          shape="dot"
-          tone={tone}
-          className="h-full"
-          style={{
-            width: getIrrBarWidth(item.irr, strongestIrr),
-          }}
-        />
-      </Surface>
+      <Layout spaceBefore="default" height="track" overflow="clip">
+        <Surface variant="track">
+          <Proportion value={getIrrBarShare(item.irr, strongestIrr)}>
+            <ToneSwatch as="div" shape="dot" tone={tone} />
+          </Proportion>
+        </Surface>
+      </Layout>
     </li>
   )
 }
@@ -148,28 +144,28 @@ export function IrrList({
 
   return (
     <section>
-      <div className="mb-3 flex items-baseline justify-between gap-3">
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="baseline"
+        justify="between"
+        gap="default"
+      >
         <Text as="h3" variant="overline" tone="subtle">
           {title}
         </Text>
         <Text variant="micro" tone="subtle">
           {i18n.t('ui.performancecontributioncard.annualizedIrr')}
         </Text>
-      </div>
+      </Inline>
       {items.length === 0 ? (
-        <Surface
-          variant="emptyCaption"
-          as="p"
-          tone="subtle"
-          align="center"
-          className="px-3 py-6"
-        >
+        <Surface variant="emptyCaption" as="p" tone="subtle" align="center">
           {positive
             ? i18n.t('ui.performancecontributioncard.noPositiveIrr')
             : i18n.t('ui.performancecontributioncard.noNegativeIrr')}
         </Surface>
       ) : (
-        <ol className="space-y-3">
+        <Stack as="ol" gap="default">
           {items.map((item) => (
             <IrrListItem
               key={item.key}
@@ -178,7 +174,7 @@ export function IrrList({
               strongestIrr={strongestIrr}
             />
           ))}
-        </ol>
+        </Stack>
       )}
     </section>
   )

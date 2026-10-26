@@ -17,6 +17,7 @@ import {
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inline } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -83,81 +84,84 @@ export function AccountTypeHistoryChart({
   )
 
   return (
-    <Surface variant="chart" className="flex-1 p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="muted"
-          className="flex items-center"
+    <div className="flex-1">
+      <Surface variant="chart">
+        <Inline
+          as="div"
+          spaceAfter="default"
+          align="start"
+          justify="between"
+          gap="default"
         >
-          {i18n.t('ui.accounttypehistorychart.accountTypeOverTime')}
-          <ScopedInfoTooltip
-            text={i18n.t(
-              'ui.accounttypehistorychart.evolutionOfPortfolioValueByAccountTypeShownAs',
-            )}
-            scope={{ account: 'filterable', period: 'range' }}
-          />
-        </Text>
-        <ChartScaleToggle value={scale} onChange={setScale} />
-      </div>
-      <ResponsiveContainer width="100%" height={220}>
-        <AreaChart
-          key={scale}
-          data={chartData}
-          margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
-        >
-          <defs>
+          <Text as="h2" variant="label" tone="muted">
+            <Inline as="span" align="center">
+              {i18n.t('ui.accounttypehistorychart.accountTypeOverTime')}
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.accounttypehistorychart.evolutionOfPortfolioValueByAccountTypeShownAs',
+                )}
+                scope={{ account: 'filterable', period: 'range' }}
+              />
+            </Inline>
+          </Text>
+          <ChartScaleToggle value={scale} onChange={setScale} />
+        </Inline>
+        <ResponsiveContainer width="100%" height={220}>
+          <AreaChart
+            key={scale}
+            data={chartData}
+            margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
+          >
+            <defs>
+              {accountTypes.map((accountType, index) => (
+                <AccountTypeGradient
+                  key={accountType}
+                  accountType={accountType}
+                  index={index}
+                  typeCategories={typeCategories}
+                />
+              ))}
+            </defs>
+            <ChartGrid />
+            <ChartXAxis
+              dataKey="date"
+              tickFormatter={(value) =>
+                formatDate(value, { style: 'shortMonthShortYear' })
+              }
+              interval="preserveStartEnd"
+            />
+            <ChartYAxis
+              tickFormatter={
+                percentageMode
+                  ? (value) => `${Math.round(Number(value))}%`
+                  : (value) => formatMoney(value, { style: 'compact' })
+              }
+              domain={percentageMode ? [0, 100] : undefined}
+              width={percentageMode ? 48 : 52}
+            />
+            <Tooltip
+              content={
+                <AccountTypeHistoryTooltip
+                  accountTypes={accountTypes}
+                  typeCategories={typeCategories}
+                  percentageMode={percentageMode}
+                />
+              }
+            />
+            <Legend formatter={AccountTypeLegendLabel} />
             {accountTypes.map((accountType, index) => (
-              <AccountTypeGradient
+              <AccountTypeArea
                 key={accountType}
                 accountType={accountType}
                 index={index}
+                percentageMode={percentageMode}
                 typeCategories={typeCategories}
               />
             ))}
-          </defs>
-          <ChartGrid />
-          <ChartXAxis
-            dataKey="date"
-            tickFormatter={(value) =>
-              formatDate(value, { style: 'shortMonthShortYear' })
-            }
-
-            interval="preserveStartEnd"
-          />
-          <ChartYAxis
-            tickFormatter={
-              percentageMode
-                ? (value) => `${Math.round(Number(value))}%`
-                : (value) => formatMoney(value, { style: 'compact' })
-            }
-            domain={percentageMode ? [0, 100] : undefined}
-
-            width={percentageMode ? 48 : 52}
-          />
-          <Tooltip
-            content={
-              <AccountTypeHistoryTooltip
-                accountTypes={accountTypes}
-                typeCategories={typeCategories}
-                percentageMode={percentageMode}
-              />
-            }
-          />
-          <Legend formatter={AccountTypeLegendLabel} />
-          {accountTypes.map((accountType, index) => (
-            <AccountTypeArea
-              key={accountType}
-              accountType={accountType}
-              index={index}
-              percentageMode={percentageMode}
-              typeCategories={typeCategories}
-            />
-          ))}
-        </AreaChart>
-      </ResponsiveContainer>
-    </Surface>
+          </AreaChart>
+        </ResponsiveContainer>
+      </Surface>
+    </div>
   )
 }
 

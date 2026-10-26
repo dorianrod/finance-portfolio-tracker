@@ -14,7 +14,7 @@ const meta = {
 } satisfies Meta<typeof SegmentedControl>
 export default meta
 
-type Args = React.ComponentProps<typeof SegmentedControl> & {
+type Args = Omit<React.ComponentProps<typeof SegmentedControl>, 'className'> & {
   selected: string
   tone: 'accent' | 'neutral'
   size: 'compact' | 'default' | 'large'

@@ -7,6 +7,7 @@ import {
   type NumericTooltipProps,
   tooltipValue,
 } from '@/shared/ui/chartTooltip'
+import { Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
@@ -18,31 +19,38 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
   if (!data) return null
   if (!data.buyAmount && !data.sellAmount) return null
   return (
-    <Surface variant="strongSectionStart" className="mt-2 pt-2 space-y-1">
-      {data.buyAmount != null && (
-        <ChartText as="p" tone={'transactionBuy'}>
-          {i18n.t('ui.hoverchartsTooltips.buyWithValues', {
-            amount: formatMoney(data.buyAmount),
-          })}
-        </ChartText>
-      )}
-      {data.sellAmount != null && (
-        <>
-          <ChartText as="p" tone={'transactionSell'}>
-            {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
-              amount: formatMoney(data.sellAmount),
-            })}
-          </ChartText>
-          {data.sellGain != null && (
-            <Text as="p" tone={data.sellGain >= 0 ? 'positive' : 'negative'}>
-              {i18n.t('ui.hoverchartsTooltips.profitLoss', {
-                amount: formatMoney(data.sellGain),
+    <Layout spaceBefore="default">
+      <Surface variant="strongSectionStart">
+        <Stack inset="compact" gap="compact">
+          {data.buyAmount != null && (
+            <ChartText as="p" tone={'transactionBuy'}>
+              {i18n.t('ui.hoverchartsTooltips.buyWithValues', {
+                amount: formatMoney(data.buyAmount),
               })}
-            </Text>
+            </ChartText>
           )}
-        </>
-      )}
-    </Surface>
+          {data.sellAmount != null && (
+            <>
+              <ChartText as="p" tone={'transactionSell'}>
+                {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
+                  amount: formatMoney(data.sellAmount),
+                })}
+              </ChartText>
+              {data.sellGain != null && (
+                <Text
+                  as="p"
+                  tone={data.sellGain >= 0 ? 'positive' : 'negative'}
+                >
+                  {i18n.t('ui.hoverchartsTooltips.profitLoss', {
+                    amount: formatMoney(data.sellGain),
+                  })}
+                </Text>
+              )}
+            </>
+          )}
+        </Stack>
+      </Surface>
+    </Layout>
   )
 }
 
@@ -58,10 +66,12 @@ export function TooltipPortfolio({
   const data = payload[0]?.payload
   const unrealized = valueEntry && costEntry && data ? data.unrealized : null
   return (
-    <TooltipBox variant="raised" className="p-3">
-      <Text as="p" tone="muted" className="mb-2">
-        {label}
-      </Text>
+    <TooltipBox variant="raised">
+      <Layout spaceAfter="default">
+        <Text as="p" tone="muted">
+          {label}
+        </Text>
+      </Layout>
       {valueEntry && (
         <ChartText as="p" series={valueEntry}>
           {valueEntry.name}: {formatMoney(valueEntry.value, { fallback: 0 })}
@@ -73,16 +83,17 @@ export function TooltipPortfolio({
         </ChartText>
       )}
       {unrealized != null && (
-        <Text
-          as="p"
-          variant="strong"
-          tone={unrealized >= 0 ? 'positive' : 'negative'}
-          className="mt-1"
-        >
-          {i18n.t('ui.hoverchartsTooltips.unrealizedWithValues', {
-            amount: formatMoney(unrealized),
-          })}
-        </Text>
+        <Layout spaceBefore="compact">
+          <Text
+            as="p"
+            variant="strong"
+            tone={unrealized >= 0 ? 'positive' : 'negative'}
+          >
+            {i18n.t('ui.hoverchartsTooltips.unrealizedWithValues', {
+              amount: formatMoney(unrealized),
+            })}
+          </Text>
+        </Layout>
       )}
       <OpSummary data={data} />
     </TooltipBox>
@@ -99,10 +110,12 @@ export function TooltipUnit({
   const p = payload[0]
   const data = p?.payload
   return (
-    <TooltipBox variant="raised" className="p-3">
-      <Text as="p" tone="muted" className="mb-1">
-        {label}
-      </Text>
+    <TooltipBox variant="raised">
+      <Layout spaceAfter="compact">
+        <Text as="p" tone="muted">
+          {label}
+        </Text>
+      </Layout>
       <ChartText as="p" series={p}>
         {i18n.t('ui.hoverchartsTooltips.unitPriceWithValues', {
           amount: formatMoney(p.value, { style: 'decimal', fallback: 0 }),
@@ -132,19 +145,18 @@ export function SavingsTooltip({
   const monthStr: string = payload[0]?.payload?.month ?? ''
   return (
     <TooltipBox>
-      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
-        {formatDate(`${monthStr}-02`, { style: 'longMonthYear' })}
-      </ChartText>
-      <ChartText
-        as="div"
-        tone={'tooltipLabel'}
-        variant="strong"
-        style={{ marginBottom: 4 }}
-      >
-        {i18n.t('ui.hoverchartsTooltips.balanceWithValues', {
-          amount: formatMoney(balance),
-        })}
-      </ChartText>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'}>
+          {formatDate(`${monthStr}-02`, { style: 'longMonthYear' })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipLabel'} variant="strong">
+          {i18n.t('ui.hoverchartsTooltips.balanceWithValues', {
+            amount: formatMoney(balance),
+          })}
+        </ChartText>
+      </Layout>
       {delta !== 0 && (
         <ChartText
           as="div"

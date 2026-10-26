@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
+import { Inset } from '@/shared/ui/Layout.view'
+
 import { Disclosure } from '../../Disclosure.view'
 
 const meta = {
@@ -11,20 +13,23 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof Disclosure>) {
+function Render(
+  args: Omit<React.ComponentProps<typeof Disclosure>, 'className'>,
+) {
   const [{ expanded }, updateArgs] = useArgs<typeof args>()
   return (
     <Disclosure {...args} expanded={expanded}>
       <Disclosure.Trigger
         variant="secondary"
-        className="p-2"
         onClick={() => updateArgs({ expanded: !expanded })}
       >
         Show details
       </Disclosure.Trigger>
-      <Disclosure.Content variant="inset" className="mt-3 p-4">
-        Disclosure content
-      </Disclosure.Content>
+      <div className="mt-3">
+        <Disclosure.Content variant="inset">
+          <Inset inset="default">Disclosure content</Inset>
+        </Disclosure.Content>
+      </div>
     </Disclosure>
   )
 }

@@ -1,5 +1,6 @@
 import type { WealthDriverPoint } from '@/domains/portfolio/shared/helpers/calculators/calculatePortfolioCharts'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 type DriversTooltipProps = {
   active?: boolean
   payload?: Array<{ payload: WealthDriverPoint }>
@@ -22,39 +23,42 @@ export function DriversTooltip({
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload as WealthDriverPoint
   return (
-    <Surface variant="tooltip" className="px-3 py-2">
-      <Text as="div" variant="strong" tone="default" className="mb-2">
-        {label == null ? '' : formatDate(label, { style: 'shortMonthYear' })}
-      </Text>
-      <Text as="div" tone="secondary" className="space-y-1">
-        <div className="flex justify-between gap-6">
-          <span>{i18n.t('ui.wealthdriverschart.netContributions')}</span>
-          <ChartText tone={'netContributionsText'} variant="medium">
-            {formatMoney(row.cumulative_savings, { style: 'full' })}
-          </ChartText>
-        </div>
-        <div className="flex justify-between gap-6">
-          <span>{i18n.t('ui.wealthdriverschart.marketPerformance')}</span>
-          <ChartText
-            tone={
-              row.cumulative_performance >= 0
-                ? 'performancePositiveText'
-                : 'performanceNegativeText'
-            }
-            variant="medium"
-          >
-            {formatMoney(row.cumulative_performance, { style: 'full' })}
-          </ChartText>
-        </div>
-        <Surface
-          variant="strongSectionStart"
-          className="flex justify-between gap-6 pt-1"
-        >
-          <span>{i18n.t('ui.wealthdriverschart.totalChange')}</span>
-          <Text variant="strong" tone="default">
-            {formatMoney(row.cumulative_change, { style: 'full' })}
-          </Text>
-        </Surface>
+    <Surface variant="tooltip">
+      <Layout spaceAfter="default">
+        <Text as="div" variant="strong" tone="default">
+          {label == null ? '' : formatDate(label, { style: 'shortMonthYear' })}
+        </Text>
+      </Layout>
+      <Text as="div" tone="secondary">
+        <Stack gap="compact">
+          <Inline as="div" justify="between" gap="spacious">
+            <span>{i18n.t('ui.wealthdriverschart.netContributions')}</span>
+            <ChartText tone={'netContributionsText'} variant="medium">
+              {formatMoney(row.cumulative_savings, { style: 'full' })}
+            </ChartText>
+          </Inline>
+          <Inline as="div" justify="between" gap="spacious">
+            <span>{i18n.t('ui.wealthdriverschart.marketPerformance')}</span>
+            <ChartText
+              tone={
+                row.cumulative_performance >= 0
+                  ? 'performancePositiveText'
+                  : 'performanceNegativeText'
+              }
+              variant="medium"
+            >
+              {formatMoney(row.cumulative_performance, { style: 'full' })}
+            </ChartText>
+          </Inline>
+          <Surface variant="strongSectionStart">
+            <Inline as="div" justify="between" gap="spacious" inset="compact">
+              <span>{i18n.t('ui.wealthdriverschart.totalChange')}</span>
+              <Text variant="strong" tone="default">
+                {formatMoney(row.cumulative_change, { style: 'full' })}
+              </Text>
+            </Inline>
+          </Surface>
+        </Stack>
       </Text>
     </Surface>
   )

@@ -20,18 +20,17 @@ export function HoldingsViewTabs() {
   const { setHoldingsView } = useDashboardNavigation()
 
   return (
-    <SegmentedControl
-      label={i18n.t('ui.holdingsviewtabs.holdingsViews')}
-      className="mb-5 w-full overflow-x-auto sm:w-fit"
-    >
-      {HOLDINGS_VIEWS.map((view) => (
-        <HoldingsViewTab
-          key={view.id}
-          activeView={value}
-          onSelect={setHoldingsView}
-          view={view}
-        />
-      ))}
-    </SegmentedControl>
+    <div className="mb-5 w-full overflow-x-auto sm:w-fit">
+      <SegmentedControl label={i18n.t('ui.holdingsviewtabs.holdingsViews')}>
+        {HOLDINGS_VIEWS.map((view) => (
+          <HoldingsViewTab
+            key={view.id}
+            activeView={value}
+            onSelect={setHoldingsView}
+            view={view}
+          />
+        ))}
+      </SegmentedControl>
+    </div>
   )
 }

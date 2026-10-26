@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 
+import { Inset } from '@/shared/ui/Layout.view'
+
 import { SegmentedControl } from '../../SegmentedControl.view'
 import { ViewNavigation } from '../../ViewNavigation.view'
 
@@ -10,7 +12,9 @@ const meta = {
 } satisfies Meta<typeof ViewNavigation>
 export default meta
 
-type Args = React.ComponentProps<typeof ViewNavigation> & { selected: string }
+type Args = Omit<React.ComponentProps<typeof ViewNavigation>, 'className'> & {
+  selected: string
+}
 export const Playground: StoryObj<Args> = {
   args: { selected: 'grid', children: null },
   render: function Render() {
@@ -33,19 +37,11 @@ export const Playground: StoryObj<Args> = {
             List
           </ViewNavigation.Item>
         </SegmentedControl>
-        <ViewNavigation.Panel
-          value="grid"
-          hidden={selected !== 'grid'}
-          className="p-4"
-        >
-          Grid presentation
+        <ViewNavigation.Panel value="grid" hidden={selected !== 'grid'}>
+          <Inset inset="default">Grid presentation</Inset>
         </ViewNavigation.Panel>
-        <ViewNavigation.Panel
-          value="list"
-          hidden={selected !== 'list'}
-          className="p-4"
-        >
-          List presentation
+        <ViewNavigation.Panel value="list" hidden={selected !== 'list'}>
+          <Inset inset="default">List presentation</Inset>
         </ViewNavigation.Panel>
       </ViewNavigation>
     )

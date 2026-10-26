@@ -5,6 +5,8 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { Progress } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
+import { Proportion } from '@/shared/ui/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -46,42 +48,40 @@ export function QualityIndicatorCard({
   const colors = TONES[tone]
 
   return (
-    <Surface variant="qualityCard" className="p-4">
-      <Text
-        as="div"
-        variant="captionLabel"
-        tone="muted"
-        className="flex items-center"
-      >
-        <span>{label}</span>
-        <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
+    <Surface variant="qualityCard">
+      <Text as="div" variant="captionLabel" tone="muted">
+        <Inline as="div" align="center">
+          <span>{label}</span>
+          <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
+        </Inline>
       </Text>
-      <div className="mt-2 flex items-baseline justify-between gap-3">
+      <Inline
+        as="div"
+        spaceBefore="default"
+        align="baseline"
+        justify="between"
+        gap="default"
+      >
         <Text variant="metricSecondary" tone={colors.text} numeric>
           {percentageLabel}
         </Text>
         <Text variant="caption" tone="subtle" numeric>
           {formatMoney(amount, { style: 'full' })}
         </Text>
-      </div>
-      <Progress
-        variant="track"
-        className="mt-3 h-1.5 overflow-hidden"
-        label={label}
-        value={safePercentage}
-      >
-        <SeriesSwatch
-          as="div"
-          shape="dot"
-          tone={colors.bar}
-          className="h-full"
-          style={{ width: `${safePercentage}%` }}
-        />
-      </Progress>
+      </Inline>
+      <Layout spaceBefore="default" height="track" overflow="clip">
+        <Progress variant="track" label={label} value={safePercentage}>
+          <Proportion value={safePercentage}>
+            <SeriesSwatch as="div" shape="dot" tone={colors.bar} />
+          </Proportion>
+        </Progress>
+      </Layout>
       {detail && (
-        <Text as="div" variant="caption" tone="subtle" className="mt-2">
-          {detail}
-        </Text>
+        <Layout spaceBefore="default">
+          <Text as="div" variant="caption" tone="subtle">
+            {detail}
+          </Text>
+        </Layout>
       )}
       {content}
     </Surface>

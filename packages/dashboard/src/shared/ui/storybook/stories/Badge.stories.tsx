@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { Layout } from '@/shared/ui/Layout.view'
+
 import {
   Badge,
   CountBadge,
@@ -36,13 +38,21 @@ export const Counts: Story = {
   render: function Counts() {
     return (
       <div className="flex items-center gap-3">
-        <CountBadge tone="negative" className="px-2 py-1">
-          3
+        <CountBadge tone="negative">
+          <Layout as="span" flow="inline" inset="compact">
+            3
+          </Layout>
         </CountBadge>
-        <CountBadge tone="warning" className="px-2 py-1">
-          12
+        <CountBadge tone="warning">
+          <Layout as="span" flow="inline" inset="compact">
+            12
+          </Layout>
         </CountBadge>
-        <SelectionCount className="px-2">5</SelectionCount>
+        <SelectionCount>
+          <Layout as="span" flow="inline" inset="compact">
+            5
+          </Layout>
+        </SelectionCount>
       </div>
     )
   },

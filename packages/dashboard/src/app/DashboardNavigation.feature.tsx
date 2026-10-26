@@ -5,6 +5,7 @@ import { type AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNav
 import i18n from '@/i18n/i18n'
 import { CountBadge } from '@/shared/ui/Badge.view'
 import { Navigation, NavigationButton } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 
 const PRIMARY_TABS: Array<{
   id: Exclude<AnalysisTab, 'quality'>
@@ -29,16 +30,17 @@ export function PrimaryTabButton({
   tab,
 }: PrimaryTabButtonProps) {
   return (
-    <NavigationButton
-      type="button"
-      onClick={() => onNavigate(tab.id)}
-      onIntent={() => preloadDashboardTab(tab.id)}
-      active={activeTab === tab.id}
-      variant="tab"
-      className="shrink-0 px-3 py-2.5"
-    >
-      {tab.label}
-    </NavigationButton>
+    <Layout as="span" flow="control" sizing="fixed">
+      <NavigationButton
+        type="button"
+        onClick={() => onNavigate(tab.id)}
+        onIntent={() => preloadDashboardTab(tab.id)}
+        active={activeTab === tab.id}
+        variant="tab"
+      >
+        {tab.label}
+      </NavigationButton>
+    </Layout>
   )
 }
 
@@ -57,41 +59,43 @@ export function DashboardNavigation({
   const { openQualityOverview } = useDashboardQuality()
 
   return (
-    <Navigation
-      variant="tabs"
-      className="mb-5 flex overflow-x-auto"
-      label={i18n.t('ui.app.portfolioAnalyses')}
-    >
-      {PRIMARY_TABS.map((tab) => (
-        <PrimaryTabButton
-          key={tab.id}
-          activeTab={activeTab}
-          onNavigate={navigateTo}
-          tab={tab}
-        />
-      ))}
-      <NavigationButton
-        type="button"
-        onClick={openQualityOverview}
-        onIntent={() => preloadDashboardTab('quality')}
-        active={activeTab === 'quality'}
-        variant="separatedTab"
-        className="ml-auto flex shrink-0 items-center gap-2 px-3 py-2.5"
-      >
-        {i18n.t('ui.app.dataQuality')}
-        {qualityCount > 0 && (
-          <CountBadge
-            tone={
-              hasPipelineError || hasFundValidationError
-                ? 'negative'
-                : 'warning'
-            }
-            className="px-1.5 py-0.5"
-          >
-            {qualityCount}
-          </CountBadge>
-        )}
-      </NavigationButton>
-    </Navigation>
+    <div className="mb-5 overflow-x-auto">
+      <Navigation variant="tabs" label={i18n.t('ui.app.portfolioAnalyses')}>
+        <Inline as="div">
+          {PRIMARY_TABS.map((tab) => (
+            <PrimaryTabButton
+              key={tab.id}
+              activeTab={activeTab}
+              onNavigate={navigateTo}
+              tab={tab}
+            />
+          ))}
+          <Layout as="span" flow="control" placement="trailing" sizing="fixed">
+            <NavigationButton
+              type="button"
+              onClick={openQualityOverview}
+              onIntent={() => preloadDashboardTab('quality')}
+              active={activeTab === 'quality'}
+              variant="separatedTab"
+            >
+              {i18n.t('ui.app.dataQuality')}
+              {qualityCount > 0 && (
+                <CountBadge
+                  tone={
+                    hasPipelineError || hasFundValidationError
+                      ? 'negative'
+                      : 'warning'
+                  }
+                >
+                  <Layout as="span" flow="inline" inset="compact">
+                    {qualityCount}
+                  </Layout>
+                </CountBadge>
+              )}
+            </NavigationButton>
+          </Layout>
+        </Inline>
+      </Navigation>
+    </div>
   )
 }

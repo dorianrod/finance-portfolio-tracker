@@ -27,6 +27,5 @@ export const Truncated: Story = {
     ...Source.args,
     children: 'A long source report title that exceeds its container',
     truncate: true,
-    className: 'block w-40',
   },
 }

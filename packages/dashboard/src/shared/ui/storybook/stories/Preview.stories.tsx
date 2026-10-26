@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor, within } from 'storybook/test'
 
+import { Grid } from '@/shared/ui/Layout.view'
+
 import { Button } from '../../Controls.view'
 import { Preview } from '../../Preview.view'
 
@@ -17,14 +19,13 @@ type Story = StoryObj<typeof meta>
 function PreviewExample({
   open,
   onOpenChange,
-}: React.ComponentProps<typeof Preview>) {
+}: Omit<React.ComponentProps<typeof Preview>, 'className'>) {
   const [anchor, setAnchor] = useState<DOMRect | null>(null)
   const setOpen = onOpenChange
   return (
     <Preview open={open} onOpenChange={setOpen}>
       <Preview.Trigger
         variant="secondary"
-        className="p-3"
         onPreview={(element) => {
           setAnchor(element.getBoundingClientRect())
           setOpen(true)
@@ -38,18 +39,13 @@ function PreviewExample({
           anchor={anchor}
           label="Example preview"
           variant="tooltip"
-          className="p-4"
         >
-          <div className="grid gap-3">
+          <Grid columns={1} gap="default">
             <span>Preview content</span>
-            <Button
-              variant="secondary"
-              className="p-2"
-              onClick={() => setOpen(false)}
-            >
+            <Button variant="secondary" onClick={() => setOpen(false)}>
               Close preview
             </Button>
-          </div>
+          </Grid>
         </Preview.Content>
       )}
     </Preview>

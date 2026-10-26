@@ -5,15 +5,13 @@ import { withThemeByDataAttribute } from '@storybook/addon-themes'
 import type { Preview } from '@storybook/react-vite'
 import { createElement } from 'react'
 
-import { Surface } from '../Surface.view'
-
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
     (Story) =>
       createElement(
-        Surface,
-        { variant: 'canvas', tone: 'default', className: 'p-4' },
+        'div',
+        { className: 'min-h-screen p-4' },
         createElement(Story),
       ),
     withThemeByDataAttribute({

@@ -11,6 +11,7 @@ import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -24,21 +25,20 @@ export function TopPerformersChart({
 }) {
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="chart" className="p-4">
-      <Text
-        as="h2"
-        variant="label"
-        tone="muted"
-        className="mb-3 flex items-center"
-      >
-        {i18n.t('ui.topperformerschart.performanceByAsset')}
-        <ScopedInfoTooltip
-          text={i18n.t(
-            'ui.topperformerschart.grossUnrealizedPerformanceByCurrentlyHeldAsset',
-          )}
-          scope={{ account: 'filterable', period: 'as-of' }}
-        />
-      </Text>
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {i18n.t('ui.topperformerschart.performanceByAsset')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.topperformerschart.grossUnrealizedPerformanceByCurrentlyHeldAsset',
+              )}
+              scope={{ account: 'filterable', period: 'as-of' }}
+            />
+          </Inline>
+        </Text>
+      </Layout>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart
           layout="vertical"
@@ -52,12 +52,7 @@ export function TopPerformersChart({
               formatPercentage(value, { decimals: 0, signed: true })
             }
           />
-          <ChartYAxis
-            type="category"
-            dataKey="label"
-
-            width={170}
-          />
+          <ChartYAxis type="category" dataKey="label" width={170} />
           <ChartTooltip highlight="bar">
             <TopPerformersTooltip />
           </ChartTooltip>
@@ -70,7 +65,10 @@ export function TopPerformersChart({
               dataKey="pct"
               position="right"
               formatter={(value: unknown) =>
-                formatPercentage(value as number, { decimals: 0, signed: true })
+                formatPercentage(value as number, {
+                  decimals: 0,
+                  signed: true,
+                })
               }
             />
           </SeriesBar>

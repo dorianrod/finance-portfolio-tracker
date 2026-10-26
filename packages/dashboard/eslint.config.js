@@ -20,6 +20,8 @@ import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
+import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
+import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
 
@@ -74,6 +76,8 @@ export default defineConfig([
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
           'no-inline-format-fallback': noInlineFormatFallback,
           'no-prop-drilling': noPropDrilling,
+          'no-shared-ui-classname': noSharedUiClassname,
+          'no-shared-ui-internal-layout': noSharedUiInternalLayout,
           'require-children-composition': requireChildrenComposition,
           'state-component-contract': stateComponentContract,
         },
@@ -143,6 +147,8 @@ export default defineConfig([
       'local/no-hardcoded-ui-strings': 'error',
       'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'warn',
+      'local/no-shared-ui-classname': 'warn',
+      'local/no-shared-ui-internal-layout': 'warn',
       'local/require-children-composition': 'error',
       'local/state-component-contract': 'error',
     },

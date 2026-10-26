@@ -31,13 +31,18 @@ export function CartesianExample({ children }: { children: ReactNode }) {
     </ComposedChart>
   )
 }
-export function BarShapeExample(geometry: Partial<BarShapeProps>) {
+export function BarShapeExample(
+  geometry: Partial<Omit<BarShapeProps, 'className'>>,
+) {
   return <ChartRectangle geometry={geometry} />
 }
 export function PieShapeExample({
   selectedName,
   ...geometry
-}: Partial<PieSectorShapeProps> & { selectedName?: string; name?: string }) {
+}: Partial<Omit<PieSectorShapeProps, 'className'>> & {
+  selectedName?: string
+  name?: string
+}) {
   return (
     <ChartSector
       geometry={geometry}
@@ -46,14 +51,20 @@ export function PieShapeExample({
     />
   )
 }
-export function PieLabelExample({ x, y, name }: Partial<PieLabelRenderProps>) {
+export function PieLabelExample({
+  x,
+  y,
+  name,
+}: Partial<Omit<PieLabelRenderProps, 'className'>>) {
   return (
     <ChartLabel x={x} y={y} variant="pie">
       {name}
     </ChartLabel>
   )
 }
-export function ScatterShapeExample(geometry: Partial<ScatterShapeProps>) {
+export function ScatterShapeExample(
+  geometry: Partial<Omit<ScatterShapeProps, 'className'>>,
+) {
   return (
     <ChartSymbol
       geometry={geometry}
@@ -62,6 +73,9 @@ export function ScatterShapeExample(geometry: Partial<ScatterShapeProps>) {
     />
   )
 }
-export function TransactionDotExample({ cx, cy }: Partial<DotProps>) {
+export function TransactionDotExample({
+  cx,
+  cy,
+}: Partial<Omit<DotProps, 'className'>>) {
   return <TransactionMarker cx={cx} cy={cy} kind="buy" />
 }

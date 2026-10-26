@@ -9,6 +9,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartLabel, ChartLeaderLine } from '@/shared/ui/ChartLabel.view'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -134,42 +135,48 @@ export function AccountTypeBreakdownChart({
   const totalValue = data.reduce((sum, point) => sum + point.total_value, 0)
 
   return (
-    <Surface variant="chart" className="flex-1 p-4">
-      <Text as="h2" variant="label" tone="muted" className="flex items-center">
-        {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
-        <ScopedInfoTooltip
-          text={i18n.t(
-            'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
-          )}
-          scope={{ account: 'filterable', period: 'as-of' }}
-        />
-      </Text>
-      <Text as="p" variant="caption" tone="subtle" className="mt-1">
-        {i18n.t(
-          'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
-        )}
-      </Text>
+    <div className="flex-1">
+      <Surface variant="chart">
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
+              )}
+              scope={{ account: 'filterable', period: 'as-of' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
+              'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeRadialSplitCost',
+            )}
+          </Text>
+        </Layout>
 
-      <ResponsiveContainer width="100%" height={280}>
-        <PieChart>
-          <Pie
-            data={pieData}
-            dataKey="total_value"
-            nameKey="account_type"
-            innerRadius={0}
-            outerRadius="63%"
-            paddingAngle={0.25}
-            startAngle={90}
-            endAngle={-270}
-            shape={AccountTypeSector}
-            label={<AccountTypeLabel data={pieData} />}
-            labelLine={false}
-          />
-          <Tooltip
-            content={<AccountTypeTooltip portfolioTotal={totalValue} />}
-          />
-        </PieChart>
-      </ResponsiveContainer>
-    </Surface>
+        <ResponsiveContainer width="100%" height={280}>
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="total_value"
+              nameKey="account_type"
+              innerRadius={0}
+              outerRadius="63%"
+              paddingAngle={0.25}
+              startAngle={90}
+              endAngle={-270}
+              shape={AccountTypeSector}
+              label={<AccountTypeLabel data={pieData} />}
+              labelLine={false}
+            />
+            <Tooltip
+              content={<AccountTypeTooltip portfolioTotal={totalValue} />}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </Surface>
+    </div>
   )
 }

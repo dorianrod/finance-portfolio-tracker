@@ -7,14 +7,13 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Input, Select } from '@/shared/ui/Controls.view'
+import { Grid, Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { TablePanel } from '@/shared/ui/TablePanel.view'
 import { Text } from '@/shared/ui/Text.view'
+import { VirtualCanvas } from '@/shared/ui/VirtualRow.view'
 
-import {
-  GRID,
-  VirtualExposureRow,
-} from './FundExposureRows/FundExposureRows.view'
+import { VirtualExposureRow } from './FundExposureRows/FundExposureRows.view'
 
 export type { FundExposureSort } from '@/domains/portfolio/shared/helpers/mappers/buildFundExposureViewModel'
 
@@ -44,14 +43,16 @@ export function FundHoldingsExplorer({
     <TablePanel>
       <TablePanel.Toolbar>
         <div>
-          <TablePanel.Title className="flex items-center">
-            {i18n.t('ui.fundholdingsexplorer.allIdentifiedEconomicExposure')}
-            <ScopedInfoTooltip
-              text={i18n.t(
-                'ui.fundholdingsexplorer.underlyingHoldingsGroupedByIssuerWithSecurityAndSource',
-              )}
-              scope={{ account: 'filterable', period: 'as-of' }}
-            />
+          <TablePanel.Title>
+            <Inline as="span" align="center">
+              {i18n.t('ui.fundholdingsexplorer.allIdentifiedEconomicExposure')}
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.fundholdingsexplorer.underlyingHoldingsGroupedByIssuerWithSecurityAndSource',
+                )}
+                scope={{ account: 'filterable', period: 'as-of' }}
+              />
+            </Inline>
           </TablePanel.Title>
           <TablePanel.Description>
             {i18n.t(
@@ -60,17 +61,18 @@ export function FundHoldingsExplorer({
           </TablePanel.Description>
         </div>
         <TablePanel.Actions>
-          <Input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={i18n.t(
-              'ui.fundholdingsexplorer.searchIssuerSecurityOrFund',
-            )}
-            label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
-            variant="canvasSearch"
-            className="min-w-0 flex-1 px-3 py-2 sm:w-72"
-          />
+          <Layout as="span" flow="control" sizing="flexible">
+            <Input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={i18n.t(
+                'ui.fundholdingsexplorer.searchIssuerSecurityOrFund',
+              )}
+              label={i18n.t('ui.fundholdingsexplorer.searchUnderlyingExposure')}
+              variant="canvasSearch"
+            />
+          </Layout>
           <Select
             value={sort}
             onChange={(event) =>
@@ -78,7 +80,6 @@ export function FundHoldingsExplorer({
             }
             label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
             variant="canvasSelect"
-            className="px-3 py-2"
           >
             <option value="value">
               {i18n.t('ui.fundholdingsexplorer.largestFirst')}
@@ -91,21 +92,19 @@ export function FundHoldingsExplorer({
       </TablePanel.Toolbar>
       <div>
         <div>
-          <TablePanel.Header as="div" className={`${GRID} py-2`}>
-            <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
-            <Text align="right">
-              {i18n.t('ui.fundholdingsexplorer.exposure')}
-            </Text>
-            <Text align="right">
-              {i18n.t('ui.fundholdingsexplorer.portfolio')}
-            </Text>
-            <span>{i18n.t('ui.fundholdingsexplorer.sources')}</span>
+          <TablePanel.Header as="div">
+            <Grid arrangement="exposure" inset="compact">
+              <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
+              <Text align="right">
+                {i18n.t('ui.fundholdingsexplorer.exposure')}
+              </Text>
+              <Text align="right">
+                {i18n.t('ui.fundholdingsexplorer.portfolio')}
+              </Text>
+              <span>{i18n.t('ui.fundholdingsexplorer.sources')}</span>
+            </Grid>
           </TablePanel.Header>
-          <div
-            ref={listRef}
-            className="relative"
-            style={{ height: virtualizer.getTotalSize() }}
-          >
+          <VirtualCanvas ref={listRef} height={virtualizer.getTotalSize()}>
             {virtualRows.map((virtualRow) => (
               <VirtualExposureRow
                 key={virtualRow.key}
@@ -115,44 +114,38 @@ export function FundHoldingsExplorer({
                 scrollMargin={scrollMargin}
               />
             ))}
-          </div>
+          </VirtualCanvas>
         </div>
         {displayed.length === 0 && (
-          <Text
-            as="p"
-            variant="body"
-            tone="subtle"
-            align="center"
-            className="p-8"
-          >
-            {i18n.t('ui.fundholdingsexplorer.noExposureMatchesThisSearch')}
+          <Text as="p" variant="body" tone="subtle" align="center">
+            <Layout as="span" flow="block" inset="spacious">
+              {i18n.t('ui.fundholdingsexplorer.noExposureMatchesThisSearch')}
+            </Layout>
           </Text>
         )}
       </div>
-      <Surface
-        variant="floatingFooter"
-        tone="muted"
-        className="sticky bottom-0 z-10 px-4 py-2"
-      >
-        {i18n.t('ui.fundholdingsexplorer.issuerCount', {
-          count: displayed.length,
-          formattedCount: formatNumber(displayed.length),
-        })}
-        {' · '}
-        {i18n.t('ui.fundholdingsexplorer.securityCount', {
-          count: securityCount,
-          formattedCount: formatNumber(securityCount),
-        })}
-        {displayed.length !== totalIssuerCount && (
-          <Text tone="subtle">
-            {' '}
-            {i18n.t('ui.fundholdingsexplorer.filteredFromIssuers', {
-              count: totalIssuerCount,
-              formattedCount: formatNumber(totalIssuerCount),
-            })}
-          </Text>
-        )}
-      </Surface>
+      <Layout>
+        <Surface variant="floatingFooter" tone="muted">
+          {i18n.t('ui.fundholdingsexplorer.issuerCount', {
+            count: displayed.length,
+            formattedCount: formatNumber(displayed.length),
+          })}
+          {' · '}
+          {i18n.t('ui.fundholdingsexplorer.securityCount', {
+            count: securityCount,
+            formattedCount: formatNumber(securityCount),
+          })}
+          {displayed.length !== totalIssuerCount && (
+            <Text tone="subtle">
+              {' '}
+              {i18n.t('ui.fundholdingsexplorer.filteredFromIssuers', {
+                count: totalIssuerCount,
+                formattedCount: formatNumber(totalIssuerCount),
+              })}
+            </Text>
+          )}
+        </Surface>
+      </Layout>
     </TablePanel>
   )
 }

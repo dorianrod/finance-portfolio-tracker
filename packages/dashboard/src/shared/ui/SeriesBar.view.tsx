@@ -25,7 +25,6 @@ type BarDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'className'
   | 'style'
   | 'children'
   | 'stackId'
@@ -57,7 +56,8 @@ export function SeriesBar({
   ...props
 }: SeriesBarProps) {
   const { renderer, content } = partitionChartSlot<
-    Partial<BarShapeProps> & SVGProps<SVGPathElement>
+    Partial<Omit<BarShapeProps, 'className'>> &
+      Omit<SVGProps<SVGPathElement>, 'className'>
   >(children, SeriesBarShape)
   const appearance = useMemo(
     () => ({ tone, corners, prominence }),

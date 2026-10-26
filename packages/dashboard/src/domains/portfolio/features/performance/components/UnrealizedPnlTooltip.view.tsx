@@ -4,6 +4,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 export type UnrealizedPnlPoint = PortfolioHistoryPoint & {
@@ -35,43 +36,41 @@ export function UnrealizedPnlTooltip({
 
   return (
     <TooltipBox>
-      <ChartText
-        as="div"
-        tone={'tooltipText'}
-        variant="strong"
-        style={{ marginBottom: 6 }}
-      >
-        {date}
-      </ChartText>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'} variant="strong">
+          {date}
+        </ChartText>
+      </Layout>
       <ChartText as="div" tone={valueTone} variant="strong">
         {i18n.t('ui.unrealizedpnlchart.grossUnrealizedAmount', {
           amount: formatMoney(point.unrealized_gain, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'tooltipLabel'} style={{ marginTop: 4 }}>
-        {i18n.t('ui.unrealizedpnlchart.capitalReturn', {
-          percentage: formatPercentage(point.unrealized_gain_pct, {
-            signed: true,
-          }),
-        })}
-      </ChartText>
-      <ChartText as="div" tone={'label'} style={{ marginTop: 4 }}>
-        {i18n.t('ui.unrealizedpnlchart.costBasisWithValues', {
-          amount: formatMoney(point.total_cost_basis, { style: 'full' }),
-        })}
-      </ChartText>
-      {point.snapshot_change != null && (
-        <ChartText
-          as="div"
-          tone={'label'}
-          separator
-          style={{ marginTop: 6, paddingTop: 6 }}
-        >
-          {i18n.t(
-            'ui.unrealizedpnlchart.changeSincePreviousSnapshotWithValues',
-            { amount: formatMoney(point.snapshot_change, { style: 'full' }) },
-          )}
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          {i18n.t('ui.unrealizedpnlchart.capitalReturn', {
+            percentage: formatPercentage(point.unrealized_gain_pct, {
+              signed: true,
+            }),
+          })}
         </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'label'}>
+          {i18n.t('ui.unrealizedpnlchart.costBasisWithValues', {
+            amount: formatMoney(point.total_cost_basis, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
+      {point.snapshot_change != null && (
+        <Layout as="div" spaceBefore="compact" inset="compact">
+          <ChartText as="div" tone={'label'} separator>
+            {i18n.t(
+              'ui.unrealizedpnlchart.changeSincePreviousSnapshotWithValues',
+              { amount: formatMoney(point.snapshot_change, { style: 'full' }) },
+            )}
+          </ChartText>
+        </Layout>
       )}
     </TooltipBox>
   )

@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
+import { Inline, Inset } from '@/shared/ui/Layout.view'
+
 import { Tabs } from '../../Tabs.view'
 
 const meta = { title: 'Navigation/Tabs', component: Tabs } satisfies Meta<
@@ -20,32 +22,32 @@ export const Playground: Story = {
         value={value}
         onValueChange={(value) => updateArgs({ value })}
       >
-        <Tabs.List label="Example views" className="flex gap-2">
-          <Tabs.Trigger
-            value="overview"
-            variant="quality"
-            selected={value === 'overview'}
-            className="p-2"
-          >
-            Overview
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="details"
-            variant="quality"
-            selected={value === 'details'}
-            className="p-2"
-          >
-            Details
-          </Tabs.Trigger>
-          <Tabs.Trigger value="unavailable" disabled className="p-2">
-            Unavailable
-          </Tabs.Trigger>
+        <Tabs.List label="Example views">
+          <Inline as="div" gap="default">
+            <Tabs.Trigger
+              value="overview"
+              variant="quality"
+              selected={value === 'overview'}
+            >
+              Overview
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="details"
+              variant="quality"
+              selected={value === 'details'}
+            >
+              Details
+            </Tabs.Trigger>
+            <Tabs.Trigger value="unavailable" disabled>
+              Unavailable
+            </Tabs.Trigger>
+          </Inline>
         </Tabs.List>
-        <Tabs.Content value="overview" className="p-4">
-          Overview content
+        <Tabs.Content value="overview">
+          <Inset inset="default">Overview content</Inset>
         </Tabs.Content>
-        <Tabs.Content value="details" className="p-4">
-          Detailed content
+        <Tabs.Content value="details">
+          <Inset inset="default">Detailed content</Inset>
         </Tabs.Content>
       </Tabs>
     )

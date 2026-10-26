@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
+import { Layout } from '@/shared/ui/Layout.view'
+
 import { ColHeader } from '../../ColHeader.view'
 import { Button } from '../../Controls.view'
 import { DataCell } from '../../DataTable.view'
@@ -27,14 +29,13 @@ function TableExample() {
         <TablePanel.Actions>
           <Button
             variant="secondary"
-            className="p-2"
             onClick={() => setExpanded((value) => !value)}
           >
             {expanded ? 'Show fewer' : 'Show all'}
           </Button>
         </TablePanel.Actions>
       </TablePanel.Toolbar>
-      <table className="w-full">
+      <Layout as="table" width="full">
         <TablePanel.Header>
           <tr>
             <th>
@@ -46,16 +47,20 @@ function TableExample() {
         <tbody>
           <tr>
             <DataCell>Example fund</DataCell>
-            <DataCell className="text-right tabular-nums">12,450 €</DataCell>
+            <DataCell align="right" numeric>
+              12,450 €
+            </DataCell>
           </tr>
           {expanded && (
             <tr>
               <DataCell>Example reserve</DataCell>
-              <DataCell className="text-right tabular-nums">2,000 €</DataCell>
+              <DataCell align="right" numeric>
+                2,000 €
+              </DataCell>
             </tr>
           )}
         </tbody>
-      </table>
+      </Layout>
     </TablePanel>
   )
 }

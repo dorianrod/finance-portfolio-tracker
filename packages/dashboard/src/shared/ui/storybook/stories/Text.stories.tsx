@@ -51,6 +51,5 @@ export const Truncated: Story = {
   args: {
     children: 'A long descriptive label that exceeds the available space',
     truncate: true,
-    className: 'block w-48',
   },
 }

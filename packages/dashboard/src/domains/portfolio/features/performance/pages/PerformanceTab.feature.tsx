@@ -27,6 +27,7 @@ import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -103,22 +104,26 @@ export function PerformanceTab({
   return (
     <div className="mb-6 space-y-4">
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Surface as="section" variant="sectionEnd" className="pb-4">
-          <Text as="h2" variant="overline" tone="muted" className="mb-4">
-            {i18n.t('ui.performancetab.performance')}
-          </Text>
-          <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
+        <Surface as="section" variant="sectionEnd">
+          <Layout spaceAfter="spacious">
+            <Text as="h2" variant="overline" tone="muted">
+              {i18n.t('ui.performancetab.performance')}
+            </Text>
+          </Layout>
+          <Inline as="div" flow="wrap" align="start" gap="relaxed">
             <TotalNetPerformanceKpi performance={performance} />
             <NetUnrealizedKpi performance={performance} />
             <NetRealizedKpi performance={performance} />
-          </div>
+          </Inline>
         </Surface>
 
-        <Surface as="section" variant="sectionEnd" className="pb-4">
-          <Text as="h2" variant="overline" tone="muted" className="mb-4">
-            {i18n.t('ui.performancetab.returnsAndPassiveIncome')}
-          </Text>
-          <div className="flex flex-wrap items-start gap-x-5 gap-y-5">
+        <Surface as="section" variant="sectionEnd">
+          <Layout spaceAfter="spacious">
+            <Text as="h2" variant="overline" tone="muted">
+              {i18n.t('ui.performancetab.returnsAndPassiveIncome')}
+            </Text>
+          </Layout>
+          <Inline as="div" flow="wrap" align="start" gap="relaxed">
             <PassiveIncomeKpi income={income} />
             <IrrSinceTrackingKpi
               value={globalTri}
@@ -131,7 +136,7 @@ export function PerformanceTab({
               status={irrStatus}
               scopeLabel={irrScopeLabel}
             />
-          </div>
+          </Inline>
         </Surface>
       </div>
       {hasChartData && (

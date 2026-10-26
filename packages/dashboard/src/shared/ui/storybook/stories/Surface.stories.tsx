@@ -15,20 +15,25 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { variant: 'card', children: 'Surface content', className: 'p-4' },
+  args: { variant: 'card', children: 'Surface content' },
 }
+function SurfaceVariant({
+  variant,
+}: {
+  variant: keyof typeof SURFACE_VARIANTS
+}) {
+  return <Surface variant={variant}>{variant}</Surface>
+}
+
 export const Variants: Story = {
   render: function Variants() {
     return (
       <div className="grid gap-4 sm:grid-cols-3">
         {Object.keys(SURFACE_VARIANTS).map((variant) => (
-          <Surface
+          <SurfaceVariant
             key={variant}
             variant={variant as keyof typeof SURFACE_VARIANTS}
-            className="p-4"
-          >
-            {variant}
-          </Surface>
+          />
         ))}
       </div>
     )

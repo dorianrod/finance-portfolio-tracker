@@ -13,7 +13,9 @@ const meta = {
 } satisfies Meta<typeof SeriesPie>
 export default meta
 
-type Args = React.ComponentProps<typeof SeriesPie> & { selectedName: string }
+type Args = Omit<React.ComponentProps<typeof SeriesPie>, 'className'> & {
+  selectedName: string
+}
 export const Playground: StoryObj<Args> = {
   args: {
     data: ALLOCATION,

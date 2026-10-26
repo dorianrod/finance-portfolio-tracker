@@ -1,25 +1,25 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { Inline } from './Layout.view'
 import { Text } from './Text.view'
 
 describe('Text', () => {
-  it('renders semantic typography and tone with caller layout and nested children', () => {
+  it('renders semantic typography and tone with parent layout and nested children', () => {
     const html = renderToStaticMarkup(
-      <Text
-        as="h2"
-        variant="sectionHeading"
-        tone="subtle"
-        className="mb-3 flex gap-2"
-      >
-        Summary<strong>details</strong>
-      </Text>,
+      <div className="mb-3">
+        <Text as="h2" variant="sectionHeading" tone="subtle">
+          <Inline as="span" gap="default">
+            Summary<strong>details</strong>
+          </Inline>
+        </Text>
+      </div>,
     )
     expect(html).toContain('<h2')
-    expect(html).toContain(
-      'text-lg font-semibold text-content-subtle mb-3 flex gap-2',
-    )
-    expect(html).toContain('Summary<strong>details</strong></h2>')
+    expect(html).toContain('text-lg font-semibold text-content-subtle')
+    expect(html).toContain('<div class="mb-3">')
+    expect(html).toContain('<span class="inline-flex gap-2 items-center">')
+    expect(html).toContain('Summary<strong>details</strong></span></h2>')
   })
 
   it('preserves native table attributes and numeric display semantics', () => {

@@ -1,4 +1,5 @@
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inset } from '@/shared/ui/Layout.view'
 type HoldingLabelTickProps = {
   x?: number
   y?: number
@@ -28,10 +29,9 @@ export function HoldingLabelTick({
         variant="tickLabel"
         align="right"
         truncate
-        className="pr-2"
         title={label}
       >
-        {label}
+        <Inset inset="compact">{label}</Inset>
       </ChartText>
     </foreignObject>
   )

@@ -1,6 +1,7 @@
 import type { AllocationHoverTarget } from '@/domains/portfolio/shared/types/allocationHoverTarget.type'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
+import { Grid, Layout } from '@/shared/ui/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -41,34 +42,29 @@ export function HoverAllocationPopover({
   if (!charts.length) return null
 
   const cols = charts.length >= 2 ? 2 : 1
-  const W = cols === 2 ? 490 : 250
 
   return (
     <Preview.Content
       anchor={target.buttonRect}
       label={target.name}
-      style={{ width: `min(${W}px, calc(100vw - 20px))` }}
+
       variant="floatingPanel"
-      className="overflow-y-auto p-3"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      size="wide"
     >
-      <Text
-        as="p"
-        variant="bodyStrong"
-        tone="default"
-        truncate
-        className="mb-3"
-      >
-        {target.name}
-      </Text>
-      <div
-        className={`grid gap-3 ${cols === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}
-      >
-        {charts.map((c) => (
-          <MiniDonut key={c.title} title={c.title} point={c.point} />
-        ))}
-      </div>
+      <Layout overflow="scroll" inset="default">
+        <Layout spaceAfter="default">
+          <Text as="p" variant="bodyStrong" tone="default" truncate>
+            {target.name}
+          </Text>
+        </Layout>
+        <Grid columns={cols} gap="default">
+          {charts.map((c) => (
+            <MiniDonut key={c.title} title={c.title} point={c.point} />
+          ))}
+        </Grid>
+      </Layout>
     </Preview.Content>
   )
 }

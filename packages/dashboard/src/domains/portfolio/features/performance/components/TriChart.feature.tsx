@@ -9,6 +9,7 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch } from '@/shared/ui/Swatch.view'
@@ -24,21 +25,20 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
   if (chartData.length === 0) return null
 
   return (
-    <Surface variant="chart" className="p-4">
-      <Text
-        as="h2"
-        variant="label"
-        tone="muted"
-        className="mb-3 flex items-center"
-      >
-        {i18n.t('ui.trichart.irrOverTimeTrailingAnnualised')}
-        <ScopedInfoTooltip
-          text={i18n.t(
-            'ui.trichart.annualizedMoneyWeightedReturnCalculatedOverRollingFixedWindows',
-          )}
-          scope={{ account: 'filterable', period: 'range' }}
-        />
-      </Text>
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {i18n.t('ui.trichart.irrOverTimeTrailingAnnualised')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.trichart.annualizedMoneyWeightedReturnCalculatedOverRollingFixedWindows',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </Inline>
+        </Text>
+      </Layout>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart
           data={chartData}
@@ -50,14 +50,12 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-
             interval="preserveStartEnd"
           />
           <ChartYAxis
             tickFormatter={(value: number) =>
               formatPercentage(value, { decimals: 0 })
             }
-
             width={52}
           />
           <ChartReference y={0} kind="zeroDashed" />
@@ -106,31 +104,28 @@ export function TriChart({ history }: { history: PortfolioHistoryPoint[] }) {
           />
         </LineChart>
       </ResponsiveContainer>
-      <Text
-        as="div"
-        variant="caption"
-        tone="subtle"
-        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
-      >
-        <span>
-          <SeriesSwatch
-            tone={'totalChange'}
-            as="i"
-            shape="centeredLine"
-            className="mr-1.5 inline-block h-0.5 w-3"
-          />
-          {i18n.t('ui.trichart.trailing1YearIrr')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'returnRate'}
-            as="i"
-            shape="centeredLine"
-            className="mr-1.5 inline-block h-0.5 w-3"
-          />
-          {i18n.t('ui.trichart.trailing3YearIrr')}
-        </span>
-      </Text>
+      <Layout spaceBefore="default">
+        <Text as="div" variant="caption" tone="subtle">
+          <Inline as="div" flow="wrap" gap="compact">
+            <span>
+              <Layout as="span" flow="inline" height="divider" width="icon">
+                <SeriesSwatch
+                  tone={'totalChange'}
+                  as="i"
+                  shape="centeredLine"
+                />
+              </Layout>
+              {i18n.t('ui.trichart.trailing1YearIrr')}
+            </span>
+            <span>
+              <Layout as="span" flow="inline" height="divider" width="icon">
+                <SeriesSwatch tone={'returnRate'} as="i" shape="centeredLine" />
+              </Layout>
+              {i18n.t('ui.trichart.trailing3YearIrr')}
+            </span>
+          </Inline>
+        </Text>
+      </Layout>
     </Surface>
   )
 }

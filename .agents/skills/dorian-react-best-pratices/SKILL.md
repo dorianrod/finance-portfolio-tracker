@@ -35,7 +35,9 @@ Category prefixes and their priority order belong in [rules/_sections.md](rules/
 
 ### Styling Boundaries
 
-- [`styling-centralize-in-shared-ui`](rules/styling-centralize-in-shared-ui.md) — Centralize visual styling in shared UI primitives; allow only layout, including padding, elsewhere.
+- [`styling-external-layout-only`](rules/styling-external-layout-only.md) — Keep caller layout outside visual shared UI boundaries; shared UI owns internal spacing and structure.
+
+- [`styling-centralize-in-shared-ui`](rules/styling-centralize-in-shared-ui.md) — Centralize visual styling in shared UI primitives; allow only external layout, including padding, elsewhere.
 - [`styling-semantic-colors`](rules/styling-semantic-colors.md) — Use semantic tokens inside shared UI and semantic variants in business components.
 
 ### Component Composition

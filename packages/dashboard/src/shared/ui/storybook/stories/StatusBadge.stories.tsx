@@ -17,7 +17,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {
-  args: { tone: 'positive', children: 'Reliable', className: 'px-2 py-1' },
+  args: { tone: 'positive', children: 'Reliable' },
 }
 export const Reliability: Story = {
   render: function Reliability() {

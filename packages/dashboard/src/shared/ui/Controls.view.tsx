@@ -13,6 +13,7 @@ import {
 } from './buttonAppearance'
 import type { ControlProps } from './controlProps'
 import { FIELD_VARIANTS } from './fieldAppearance'
+import { BUTTON_SIZES } from './layoutAppearance'
 import { STATUS_VARIANTS } from './statusAppearance'
 import { SURFACE_VARIANTS } from './surfaceAppearance'
 import {
@@ -31,6 +32,7 @@ export type ButtonProps = ControlProps<
   variant?: keyof typeof BUTTON_VARIANTS
   selected?: boolean
   dimmed?: boolean
+  size?: keyof typeof BUTTON_SIZES
 }
 
 export function Button({
@@ -40,16 +42,21 @@ export function Button({
   variant = 'plain',
   selected = false,
   dimmed = false,
-  className,
+  size = 'default',
   ...props
 }: ButtonProps) {
-  const nativeProps = props as ButtonHTMLAttributes<HTMLButtonElement>
+  const nativeProps = props as Omit<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    'className'
+  >
   return (
     <button
       {...props}
       type={type}
       className={[
-        getButtonClassName(variant, className, selected),
+        getButtonClassName(variant, selected),
+        BUTTON_SIZES[size],
+        'gap-2',
         dimmed && 'opacity-[0.35]',
       ]
         .filter(Boolean)
@@ -94,7 +101,7 @@ export function NavigationButton({
   label,
   variant = 'plain',
   selected = false,
-  className,
+  size = 'default',
   ...props
 }: ButtonProps & { active: boolean }) {
   const stateClass =
@@ -106,7 +113,12 @@ export function NavigationButton({
       {...props}
       type="button"
       className={
-        [getButtonClassName(variant, className, selected), stateClass]
+        [
+          getButtonClassName(variant, selected),
+          BUTTON_SIZES[size],
+          'gap-2',
+          stateClass,
+        ]
           .filter(Boolean)
           .join(' ') || undefined
       }
@@ -121,7 +133,6 @@ export function NavigationButton({
 export function Input({
   label,
   variant = 'plain',
-  className,
   ...props
 }: ControlProps<InputHTMLAttributes<HTMLInputElement>> & {
   label: string
@@ -132,8 +143,7 @@ export function Input({
       {...props}
       aria-label={label}
       className={
-        [FIELD_VARIANTS[variant], className].filter(Boolean).join(' ') ||
-        undefined
+        [FIELD_VARIANTS[variant]].filter(Boolean).join(' ') || undefined
       }
     />
   )
@@ -142,7 +152,6 @@ export function Input({
 export function Select({
   label,
   variant = 'plain',
-  className,
   ...props
 }: ControlProps<SelectHTMLAttributes<HTMLSelectElement>> & {
   label: string
@@ -153,8 +162,7 @@ export function Select({
       {...props}
       aria-label={label}
       className={
-        [FIELD_VARIANTS[variant], className].filter(Boolean).join(' ') ||
-        undefined
+        [FIELD_VARIANTS[variant]].filter(Boolean).join(' ') || undefined
       }
     />
   )
@@ -166,13 +174,12 @@ type InlineProps = ControlProps<HTMLAttributes<HTMLSpanElement>>
 export function Group({
   label,
   variant,
-  className,
   ...props
 }: ContentProps & { label: string; variant?: keyof typeof SURFACE_VARIANTS }) {
   return (
     <div
       {...props}
-      className={[variant && SURFACE_VARIANTS[variant], className]
+      className={['size-full', variant && SURFACE_VARIANTS[variant]]
         .filter(Boolean)
         .join(' ')}
       role="group"
@@ -191,7 +198,6 @@ export function InlineGroup({
 export function Navigation({
   label,
   variant = 'plain',
-  className,
   ...props
 }: ContentProps & { label: string; variant?: 'plain' | 'tabs' }) {
   return (
@@ -199,7 +205,7 @@ export function Navigation({
       {...props}
       aria-label={label}
       className={
-        [variant === 'tabs' && 'border-b border-border', className]
+        [variant === 'tabs' && 'border-b border-border']
           .filter(Boolean)
           .join(' ') || undefined
       }
@@ -217,7 +223,6 @@ export function StatusMessage({
   variant = 'plain',
   tone,
   align,
-  className,
   ...props
 }: ContentProps & {
   urgent?: boolean
@@ -235,7 +240,6 @@ export function StatusMessage({
           STATUS_VARIANTS[variant],
           tone && TEXT_TONES[tone],
           align && TEXT_ALIGNMENTS[align],
-          className,
         ]
           .filter(Boolean)
           .join(' ') || undefined
@@ -248,15 +252,14 @@ export function Progress({
   label,
   value,
   variant,
-  className,
   ...props
 }: ContentProps & { label: string; value: number; variant?: 'track' }) {
   return (
     <div
       {...props}
       className={[
+        'size-full',
         variant === 'track' && 'rounded-full bg-surface-raised',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -272,7 +275,6 @@ export function Progress({
 export function Decorative({
   tone,
   variant,
-  className,
   ...props
 }: InlineProps & { tone?: TextTone; variant?: keyof typeof TEXT_VARIANTS }) {
   return (
@@ -280,7 +282,7 @@ export function Decorative({
       {...props}
       aria-hidden="true"
       className={
-        [tone && TEXT_TONES[tone], variant && TEXT_VARIANTS[variant], className]
+        [tone && TEXT_TONES[tone], variant && TEXT_VARIANTS[variant]]
           .filter(Boolean)
           .join(' ') || undefined
       }
@@ -290,13 +292,12 @@ export function Decorative({
 
 export function DecorativeBlock({
   variant,
-  className,
   ...props
 }: ContentProps & { variant?: keyof typeof SURFACE_VARIANTS }) {
   return (
     <div
       {...props}
-      className={[variant && SURFACE_VARIANTS[variant], className]
+      className={['size-full', variant && SURFACE_VARIANTS[variant]]
         .filter(Boolean)
         .join(' ')}
       aria-hidden="true"

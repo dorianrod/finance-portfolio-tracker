@@ -6,12 +6,9 @@ import { CategorySwatch, SeriesSwatch, ToneSwatch } from './Swatch.view'
 describe('swatches', () => {
   it('owns series appearance while retaining the supplied dimensions', () => {
     const html = renderToStaticMarkup(
-      <SeriesSwatch
-        as="i"
-        tone="netContributions"
-        shape="bar"
-        className="h-2 w-3"
-      />,
+      <span className="inline-block h-2 w-3">
+        <SeriesSwatch as="i" tone="netContributions" shape="bar" />
+      </span>,
     )
     expect(html).toContain('<i')
     expect(html).toContain('background-color:#3b82f6')

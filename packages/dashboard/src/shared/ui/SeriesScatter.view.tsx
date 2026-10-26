@@ -14,11 +14,12 @@ export function SeriesScatter({
   tone,
   children,
   ...props
-}: Pick<ComponentProps<typeof Scatter>, Keys> & { tone: SemanticColorKey }) {
-  const { renderer, content } = partitionChartSlot<Partial<ScatterShapeProps>>(
-    children,
-    SeriesScatterShape,
-  )
+}: Pick<ComponentProps<typeof Scatter>, Keys> & {
+  tone: SemanticColorKey
+}) {
+  const { renderer, content } = partitionChartSlot<
+    Partial<Omit<ScatterShapeProps, 'className'>>
+  >(children, SeriesScatterShape)
   return (
     <Scatter {...props} fill={SEMANTIC_COLORS[tone]} shape={renderer}>
       {content}

@@ -23,6 +23,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
 import { Select } from '@/shared/ui/Controls.view'
+import { Grid, Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
@@ -170,165 +171,205 @@ export function DataQualityTab({
   }
 
   return (
-    <Surface variant="qualityPage" className="mb-6">
-      <Tabs
-        orientation="vertical"
-        value={activeThemeId}
-        onValueChange={(value) =>
-          setSelectedQualityTheme(value as QualityThemeId)
-        }
-        className="grid items-start gap-5 md:grid-cols-[14rem_minmax(0,1fr)]"
-      >
-        <div className="md:hidden">
-          <Text
-            htmlFor="quality-theme"
-            as="label"
-            variant="captionLabel"
-            tone="subtle"
-            className="mb-1.5 block"
-          >
-            {i18n.t('ui.dataqualitytab.qualityTheme')}
-          </Text>
-          <Select
-            label={i18n.t('ui.dataqualitytab.qualityTheme')}
-            id="quality-theme"
-            value={activeThemeId}
-            onChange={(event) =>
-              setSelectedQualityTheme(event.target.value as QualityThemeId)
-            }
-            variant="quality"
-            className="w-full px-3 py-2.5"
-          >
-            {themes.map((theme) => (
-              <QualityThemeOption key={theme.id} theme={theme} />
-            ))}
-          </Select>
-        </div>
-
-        <Tabs.List
-          variant="sidebar"
-          className="hidden space-y-1 md:block md:pr-4"
-          label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
+    <div className="mb-6">
+      <Surface variant="qualityPage">
+        <Tabs
+          orientation="vertical"
+          value={activeThemeId}
+          onValueChange={(value) =>
+            setSelectedQualityTheme(value as QualityThemeId)
+          }
         >
-          {themes.map((theme) => (
-            <QualityThemeTab
-              key={theme.id}
-              activeThemeId={activeThemeId}
-              theme={theme}
-            />
-          ))}
-        </Tabs.List>
-
-        <Tabs.Content value={activeThemeId} className="min-w-0">
-          <Surface
-            variant="sectionEnd"
-            className="mb-5 flex flex-wrap items-start gap-3 pb-4"
-          >
-            <div className="mr-auto min-w-0">
-              <div className="flex items-center gap-2">
-                <Surface
-                  as="span"
-                  variant="statusCanvasFrame"
-                  className="flex h-5 w-5 shrink-0 items-center justify-center"
+          <Grid arrangement="sidebar" align="start" gap="relaxed">
+            <Layout hideFrom="medium">
+              <Layout spaceAfter="default">
+                <Text
+                  htmlFor="quality-theme"
+                  as="label"
+                  variant="captionLabel"
+                  tone="subtle"
                 >
-                  <ToneSwatch
-                    tone={QUALITY_TONES[activeTheme.tone]}
-                    shape="dot"
-                    className="h-2 w-2"
-                  />
-                </Surface>
-                <Text as="h2" variant="heading" tone="default">
-                  {activeTheme.label}
+                  <Layout as="span" flow="block">
+                    {i18n.t('ui.dataqualitytab.qualityTheme')}
+                  </Layout>
                 </Text>
-              </div>
-              <Text
-                as="p"
-                variant="helper"
-                tone="subtle"
-                className="mt-1 max-w-2xl"
-              >
-                {activeTheme.description}
-              </Text>
-            </div>
-            <div className="shrink-0">
-              {activeDetailAction ? (
-                <DetailKpiButton
-                  theme={activeTheme}
-                  actionLabel={activeDetailAction.label}
-                  detailLabel={activeDetailAction.detail}
-                  expanded={activeDetailAction.expanded}
-                  onClick={activeDetailAction.onClick}
-                />
-              ) : (
-                <Surface
-                  variant="insetStatistic"
-                  align="right"
-                  className="relative min-w-[8rem] overflow-hidden px-4 py-3"
+              </Layout>
+              <Layout as="span" flow="control" width="full">
+                <Select
+                  label={i18n.t('ui.dataqualitytab.qualityTheme')}
+                  id="quality-theme"
+                  value={activeThemeId}
+                  onChange={(event) =>
+                    setSelectedQualityTheme(
+                      event.target.value as QualityThemeId,
+                    )
+                  }
+                  variant="quality"
                 >
-                  <ToneSwatch
-                    tone={QUALITY_TONES[activeTheme.tone]}
-                    shape="sideAccent"
-                    className="absolute inset-y-2 left-0 w-0.5"
+                  {themes.map((theme) => (
+                    <QualityThemeOption key={theme.id} theme={theme} />
+                  ))}
+                </Select>
+              </Layout>
+            </Layout>
+
+            <Tabs.List
+              variant="sidebar"
+              label={i18n.t('ui.dataqualitytab.dataQualityThemes')}
+            >
+              <Stack gap="compact" inset="default">
+                {themes.map((theme) => (
+                  <QualityThemeTab
+                    key={theme.id}
+                    activeThemeId={activeThemeId}
+                    theme={theme}
                   />
-                  <Text as="div" variant="compactMetric" tone="default" numeric>
-                    {activeTheme.metric}
-                  </Text>
-                  <Text
-                    as="div"
-                    variant="eyebrowLabel"
-                    tone="subtle"
-                    className="mt-1.5"
-                  >
-                    {activeTheme.metricLabel}
-                  </Text>
-                </Surface>
-              )}
-            </div>
-          </Surface>
+                ))}
+              </Stack>
+            </Tabs.List>
 
-          {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
+            <Layout>
+              <Tabs.Content value={activeThemeId}>
+                <Layout spaceAfter="spacious">
+                  <Surface variant="sectionEnd">
+                    <Inline
+                      as="div"
+                      flow="wrap"
+                      align="start"
+                      gap="default"
+                      inset="default"
+                    >
+                      <Layout placement="leading">
+                        <Inline as="div" align="center" gap="default">
+                          <Layout
+                            as="span"
+                            flow="block"
+                            height="icon"
+                            sizing="fixed"
+                          >
+                            <Surface as="span" variant="statusCanvasFrame">
+                              <Inline as="span" align="center" justify="center">
+                                <Layout
+                                  as="span"
+                                  flow="inline"
+                                  height="indicator"
+                                  width="indicator"
+                                >
+                                  <ToneSwatch
+                                    tone={QUALITY_TONES[activeTheme.tone]}
+                                    shape="dot"
+                                  />
+                                </Layout>
+                              </Inline>
+                            </Surface>
+                          </Layout>
+                          <Text as="h2" variant="heading" tone="default">
+                            {activeTheme.label}
+                          </Text>
+                        </Inline>
+                        <Layout spaceBefore="compact">
+                          <Text as="p" variant="helper" tone="subtle">
+                            {activeTheme.description}
+                          </Text>
+                        </Layout>
+                      </Layout>
+                      <Layout sizing="fixed">
+                        {activeDetailAction ? (
+                          <DetailKpiButton
+                            theme={activeTheme}
+                            actionLabel={activeDetailAction.label}
+                            detailLabel={activeDetailAction.detail}
+                            expanded={activeDetailAction.expanded}
+                            onClick={activeDetailAction.onClick}
+                          />
+                        ) : (
+                          <Layout placement="inset" overflow="clip">
+                            <Surface variant="insetStatistic" align="right">
+                              <Layout
+                                as="span"
+                                flow="inline"
+                                placement="overlay"
+                                width="divider"
+                              >
+                                <ToneSwatch
+                                  tone={QUALITY_TONES[activeTheme.tone]}
+                                  shape="sideAccent"
+                                />
+                              </Layout>
+                              <Text
+                                as="div"
+                                variant="compactMetric"
+                                tone="default"
+                                numeric
+                              >
+                                {activeTheme.metric}
+                              </Text>
+                              <Layout spaceBefore="default">
+                                <Text
+                                  as="div"
+                                  variant="eyebrowLabel"
+                                  tone="subtle"
+                                >
+                                  {activeTheme.metricLabel}
+                                </Text>
+                              </Layout>
+                            </Surface>
+                          </Layout>
+                        )}
+                      </Layout>
+                    </Inline>
+                  </Surface>
+                </Layout>
 
-          {activeThemeId === 'prices' && (
-            <ManualPriceOverridesTable
-              manualPriceOverrides={manualPriceOverrides}
-            />
-          )}
+                {activeThemeId === 'pipeline' && <ErrorsTab errors={errors} />}
 
-          {activeThemeId === 'classification' && (
-            <ClassificationCoverageState state={classificationViewState} />
-          )}
+                {activeThemeId === 'prices' && (
+                  <ManualPriceOverridesTable
+                    manualPriceOverrides={manualPriceOverrides}
+                  />
+                )}
 
-          {activeThemeId === 'lookthrough' && lookThroughContent}
-        </Tabs.Content>
-      </Tabs>
+                {activeThemeId === 'classification' && (
+                  <ClassificationCoverageState
+                    state={classificationViewState}
+                  />
+                )}
 
-      <FundDataQualityPanel
-        statuses={scopedFundData.statuses}
-        holdings={scopedFundData.holdings}
-        snapshots={scopedFundData.snapshots}
-        unresolved={scopedFundData.unresolved}
-      />
+                {activeThemeId === 'lookthrough' && lookThroughContent}
+              </Tabs.Content>
+            </Layout>
+          </Grid>
+        </Tabs>
 
-      <SidePanel
-        open={classificationDetailsOpen}
-        onClose={closeClassificationDetails}
-        closeLabel={i18n.t('ui.dataqualitytab.closeAffectedAssetsDetails')}
-        size="medium"
-      >
-        <SidePanel.Title>
-          {classificationDimension
-            ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
-                value0: DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
-              })
-            : i18n.t('ui.dataqualitytab.affectedAssets')}
-        </SidePanel.Title>
-        <SidePanel.Description>
-          {i18n.t(
-            'ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir',
-          )}
-        </SidePanel.Description>
-        <AffectedAssetsTable assets={visibleAffectedAssets} />
-      </SidePanel>
-    </Surface>
+        <FundDataQualityPanel
+          statuses={scopedFundData.statuses}
+          holdings={scopedFundData.holdings}
+          snapshots={scopedFundData.snapshots}
+          unresolved={scopedFundData.unresolved}
+        />
+
+        <SidePanel
+          open={classificationDetailsOpen}
+          onClose={closeClassificationDetails}
+          closeLabel={i18n.t('ui.dataqualitytab.closeAffectedAssetsDetails')}
+          size="medium"
+        >
+          <SidePanel.Title>
+            {classificationDimension
+              ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
+                  value0:
+                    DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
+                })
+              : i18n.t('ui.dataqualitytab.affectedAssets')}
+          </SidePanel.Title>
+          <SidePanel.Description>
+            {i18n.t(
+              'ui.dataqualitytab.positionsContributingToUndocumentedDiversificationDataSortedByTheir',
+            )}
+          </SidePanel.Description>
+          <AffectedAssetsTable assets={visibleAffectedAssets} />
+        </SidePanel>
+      </Surface>
+    </div>
   )
 }

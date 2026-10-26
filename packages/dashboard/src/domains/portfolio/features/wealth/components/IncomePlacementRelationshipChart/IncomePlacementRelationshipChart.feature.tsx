@@ -16,6 +16,7 @@ import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { ChartSymbol, SeriesScatter } from '@/shared/ui/SeriesScatter.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -42,55 +43,54 @@ export function IncomePlacementRelationshipChart({
   const trendLine =
     trendStart && trendEnd ? { end: trendEnd, start: trendStart } : null
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t(
-            'ui.incomeplacementrelationshipchart.incomeLevelVsPlacementRate',
-          )}
-          <ScopedInfoTooltip
-            text={i18n.t(
-              'ui.incomeplacementrelationshipchart.relationshipBetweenAnnualDeclaredIncomeAndTheSharePlaced',
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t(
+              'ui.incomeplacementrelationshipchart.incomeLevelVsPlacementRate',
             )}
-            scope={{ account: 'global', period: 'year-range' }}
-          />
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.incomeplacementrelationshipchart.relationshipBetweenAnnualDeclaredIncomeAndTheSharePlaced',
+              )}
+              scope={{ account: 'global', period: 'year-range' }}
+            />
+          </Inline>
         </Text>
-        <Text as="p" variant="caption" tone="subtle" className="mt-1">
-          {i18n.t(
-            'ui.incomeplacementrelationshipchart.comparableActualYearsOnlyAllAccountsLatest3Years',
-          )}
-        </Text>
-      </div>
-      <Text
-        as="div"
-        variant="caption"
-        className="mb-2 flex flex-wrap gap-x-5 gap-y-1"
-      >
-        <Text tone="subtle">
-          {i18n.t('ui.incomeplacementrelationshipchart.correlation')}{' '}
-          <Text as="strong" variant="strong" tone="secondary">
-            {formatNumber(analysis.correlation, {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2,
-              signDisplay: 'always',
-            })}
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
+              'ui.incomeplacementrelationshipchart.comparableActualYearsOnlyAllAccountsLatest3Years',
+            )}
           </Text>
+        </Layout>
+      </Layout>
+      <Layout spaceAfter="default">
+        <Text as="div" variant="caption">
+          <Inline as="div" flow="wrap" gap="compact">
+            <Text tone="subtle">
+              {i18n.t('ui.incomeplacementrelationshipchart.correlation')}{' '}
+              <Text as="strong" variant="strong" tone="secondary">
+                {formatNumber(analysis.correlation, {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+                  signDisplay: 'always',
+                })}
+              </Text>
+            </Text>
+            <Text tone="subtle">
+              {i18n.t('ui.incomeplacementrelationshipchart.trendPer10kIncome')}{' '}
+              <Text as="strong" variant="strong" tone="secondary">
+                {formatPercentage(analysis.slopePerTenThousand, {
+                  signed: true,
+                  unit: ' pp',
+                })}
+              </Text>
+            </Text>
+          </Inline>
         </Text>
-        <Text tone="subtle">
-          {i18n.t('ui.incomeplacementrelationshipchart.trendPer10kIncome')}{' '}
-          <Text as="strong" variant="strong" tone="secondary">
-            {formatPercentage(analysis.slopePerTenThousand, {
-              signed: true,
-              unit: ' pp',
-            })}
-          </Text>
-        </Text>
-      </Text>
+      </Layout>
       <ResponsiveContainer
         width="100%"
         height={285}
@@ -111,7 +111,6 @@ export function IncomePlacementRelationshipChart({
               'ui.incomeplacementrelationshipchart.placementRate.5df16e',
             )}
             tickFormatter={(value) => `${value}%`}
-
             width={48}
           />
           <ChartTooltip highlight="dashed">
@@ -155,11 +154,15 @@ export function IncomePlacementRelationshipChart({
           </SeriesScatter>
         </ScatterChart>
       </ResponsiveContainer>
-      <Text variant="noteFooter" as="p" tone="subtle" className="mt-3 pt-3">
-        {i18n.t(
-          'ui.incomeplacementrelationshipchart.theUnplacedAmountIsIncomeMinusObservedNetContributions',
-        )}
-      </Text>
+      <Layout spaceBefore="default">
+        <Text variant="noteFooter" as="p" tone="subtle">
+          <Layout as="span" flow="block" inset="default">
+            {i18n.t(
+              'ui.incomeplacementrelationshipchart.theUnplacedAmountIsIncomeMinusObservedNetContributions',
+            )}
+          </Layout>
+        </Text>
+      </Layout>
     </Surface>
   )
 }

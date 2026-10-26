@@ -8,10 +8,9 @@ import {
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 
-export function partitionChartSlot<TProps = SVGProps<SVGElement>>(
-  children: ReactNode,
-  slotType: ComponentType<{ children: ReactNode }>,
-) {
+export function partitionChartSlot<
+  TProps = Omit<SVGProps<SVGElement>, 'className'>,
+>(children: ReactNode, slotType: ComponentType<{ children: ReactNode }>) {
   const { slot, content } = partitionSlot(children, slotType)
   if (!slot.length) return { content, renderer: undefined }
   if (slot.length !== 1)

@@ -9,6 +9,7 @@ import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import type { SemanticColorKey } from '@/shared/theme/semanticColors'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { SeriesSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
@@ -59,46 +60,47 @@ export function ConcentrationTrendTooltip({
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
-    <TooltipBox minWidth={250}>
+    <TooltipBox>
       <ChartText as="div" tone={'tooltipText'} variant="strong">
         {formatDate(row.date, { style: 'shortMonthShortYear' })}
       </ChartText>
-      <ChartText
-        as="div"
-        tone={'tooltipDim'}
-        variant="caption"
-        className="mt-1"
-      >
-        {i18n.t('ui.concentrationtrendsection.coverageWithValues', {
-          percentage: formatPercentage(row.coveragePct),
-        })}
-      </ChartText>
-      <ChartText as="div" tone={'tooltipLabel'} className="mt-2 space-y-1">
-        <ThresholdRow
-          label="25%"
-          tone={'risk'}
-          value={row.positionsTo25Pct}
-          delta={row.positionsTo25Delta}
-        />
-        <ThresholdRow
-          label="50%"
-          tone={'totalChange'}
-          value={row.positionsTo50Pct}
-          delta={row.positionsTo50Delta}
-        />
-        <ThresholdRow
-          label="75%"
-          tone={'netContributions'}
-          value={row.positionsTo75Pct}
-          delta={row.positionsTo75Delta}
-        />
-        <ThresholdRow
-          label="90%"
-          tone={'portfolioValue'}
-          value={row.positionsTo90Pct}
-          delta={row.positionsTo90Delta}
-        />
-      </ChartText>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipDim'} variant="caption">
+          {i18n.t('ui.concentrationtrendsection.coverageWithValues', {
+            percentage: formatPercentage(row.coveragePct),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout spaceBefore="default">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          <Stack gap="compact">
+            <ThresholdRow
+              label="25%"
+              tone={'risk'}
+              value={row.positionsTo25Pct}
+              delta={row.positionsTo25Delta}
+            />
+            <ThresholdRow
+              label="50%"
+              tone={'totalChange'}
+              value={row.positionsTo50Pct}
+              delta={row.positionsTo50Delta}
+            />
+            <ThresholdRow
+              label="75%"
+              tone={'netContributions'}
+              value={row.positionsTo75Pct}
+              delta={row.positionsTo75Delta}
+            />
+            <ThresholdRow
+              label="90%"
+              tone={'portfolioValue'}
+              value={row.positionsTo90Pct}
+              delta={row.positionsTo90Delta}
+            />
+          </Stack>
+        </ChartText>
+      </Layout>
     </TooltipBox>
   )
 }
@@ -112,37 +114,38 @@ export function HistoricalHoldingTooltip({
   if (!active || !payload?.length) return null
   const holding = payload[0].payload
   return (
-    <TooltipBox minWidth={200}>
+    <TooltipBox>
       <ChartText as="div" tone={'tooltipText'} variant="strong">
         {holding.name}
       </ChartText>
-      <ChartText as="div" tone={'tooltipLabel'} className="mt-1">
-        {formatMoney(holding.value, { style: 'full' })} ·{' '}
-        {formatPercentage(holding.weight)}
-      </ChartText>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          {formatMoney(holding.value, { style: 'full' })} ·{' '}
+          {formatPercentage(holding.weight)}
+        </ChartText>
+      </Layout>
     </TooltipBox>
   )
 }
 
 export function ChartLegend() {
   return (
-    <Text
-      as="div"
-      variant="micro"
-      tone="subtle"
-      className="mb-3 flex flex-wrap gap-4"
-    >
-      {(
-        [
-          ['25%', 'risk'],
-          ['50%', 'totalChange'],
-          ['75%', 'netContributions'],
-          ['90%', 'portfolioValue'],
-        ] as const
-      ).map(([label, tone]) => (
-        <ChartLegendItem key={label} label={label} tone={tone} />
-      ))}
-    </Text>
+    <Layout spaceAfter="default">
+      <Text as="div" variant="micro" tone="subtle">
+        <Inline as="div" flow="wrap" gap="relaxed">
+          {(
+            [
+              ['25%', 'risk'],
+              ['50%', 'totalChange'],
+              ['75%', 'netContributions'],
+              ['90%', 'portfolioValue'],
+            ] as const
+          ).map(([label, tone]) => (
+            <ChartLegendItem key={label} label={label} tone={tone} />
+          ))}
+        </Inline>
+      </Text>
+    </Layout>
   )
 }
 
@@ -154,9 +157,11 @@ export function ChartLegendItem({
   label: string
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <SeriesSwatch shape="softDot" tone={tone} className="h-0.5 w-3" />
+    <Inline as="span" align="center" gap="compact">
+      <Layout as="span" flow="inline" height="divider" width="icon">
+        <SeriesSwatch shape="softDot" tone={tone} />
+      </Layout>
       {label}
-    </span>
+    </Inline>
   )
 }

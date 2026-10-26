@@ -7,7 +7,7 @@ import { CHART_TEXT_TONES } from './chartAppearance'
 
 type Props = Pick<
   SVGProps<SVGTextElement>,
-  'x' | 'y' | 'dx' | 'dy' | 'transform' | 'className' | 'style'
+  'x' | 'y' | 'dx' | 'dy' | 'transform' | 'style'
 > & {
   as?: 'text' | 'tspan'
   children: ReactNode

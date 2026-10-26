@@ -14,6 +14,7 @@ import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { HierarchyIcon } from '@/shared/ui/Icons.view'
+import { Inset, Layout } from '@/shared/ui/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 
 export function PositionHeaderCell({
@@ -22,9 +23,9 @@ export function PositionHeaderCell({
   header: Header<TableRow, unknown>
 }) {
   return (
-    <th className="px-3 py-2">
+    <Inset as="th" inset="compact">
       {flexRender(header.column.columnDef.header, header.getContext())}
-    </th>
+    </Inset>
   )
 }
 
@@ -56,7 +57,7 @@ export function PositionBodyCell({
     cell.column.id === 'value' ? (chartHandlers ?? savingsHandlers) : null
   const content = flexRender(cell.column.columnDef.cell, cell.getContext())
   return (
-    <td className="overflow-hidden px-3 py-2">
+    <Layout as="td" overflow="clip" inset="compact">
       {handlers ? (
         <Preview.Trigger {...handlers} variant="preview">
           {content}
@@ -64,7 +65,7 @@ export function PositionBodyCell({
       ) : (
         content
       )}
-    </td>
+    </Layout>
   )
 }
 
@@ -119,7 +120,6 @@ export function UnderlyingStatusButton({
       }
       tone={tone}
       selected={isOpen}
-      className="p-1.5"
       onPreview={onShow}
       onDismiss={onHide}
     >

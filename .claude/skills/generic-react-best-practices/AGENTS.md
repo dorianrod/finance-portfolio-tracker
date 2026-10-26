@@ -80,13 +80,14 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 6.6 [Declare Yup Schemas at Module Level With Explicit Names](#66-declare-yup-schemas-at-module-level-with-explicit-names)
 7. [UI Composition & Accessibility](#7-ui-composition--accessibility) — **HIGH**
    - 7.1 [Delegate Mapped JSX to a Component](#71-delegate-mapped-jsx-to-a-component)
-   - 7.2 [Keep Compound Component Slots as Direct, Renderable Children](#72-keep-compound-component-slots-as-direct-renderable-children)
-   - 7.3 [Keep Dialog Mounted and Drive It with a Boolean open](#73-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
-   - 7.4 [Name Compound Render Conditions by Intent](#74-name-compound-render-conditions-by-intent)
-   - 7.5 [Never Nest a form Inside a form](#75-never-nest-a-form-inside-a-form)
-   - 7.6 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#76-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
-   - 7.7 [Style with Design System Components, Utility Classes Only for Layout](#77-style-with-design-system-components-utility-classes-only-for-layout)
-   - 7.8 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#78-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.2 [Keep className Out of Shared UI Component APIs](#72-keep-classname-out-of-shared-ui-component-apis)
+   - 7.3 [Keep Compound Component Slots as Direct, Renderable Children](#73-keep-compound-component-slots-as-direct-renderable-children)
+   - 7.4 [Keep Dialog Mounted and Drive It with a Boolean open](#74-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
+   - 7.5 [Name Compound Render Conditions by Intent](#75-name-compound-render-conditions-by-intent)
+   - 7.6 [Never Nest a form Inside a form](#76-never-nest-a-form-inside-a-form)
+   - 7.7 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#77-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
+   - 7.8 [Style with Design System Components, Utility Classes Only for Layout](#78-style-with-design-system-components-utility-classes-only-for-layout)
+   - 7.9 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#79-give-icon-only-buttons-and-custom-controls-an-accessible-name)
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
@@ -2561,7 +2562,51 @@ The item component must be declared at module scope, never inside its parent com
 
 See also: `vercel-react-best-practices` → `rerender-no-inline-components`
 
-### 7.2 Keep Compound Component Slots as Direct, Renderable Children
+### 7.2 Keep className Out of Shared UI Component APIs
+
+**Impact: HIGH (prevents caller style overrides and keeps layout with the parent)**
+
+Components and compound slots in `shared/ui` must neither expose nor accept a `className` prop. This includes inherited props from `HTMLAttributes`, `ComponentProps`, `ComponentPropsWithoutRef` and similar React types. Omit `className` when composing these types; forwarding or merging caller classes still exposes an override channel. Passing classes through spreads or React element factories follows the same rule.
+
+The parent owns the surrounding layout, including margins, widths and flex placement. Put layout classes on a parent container, even when a class would only add spacing. Appearance and internal layout belong to the shared component and its semantic variants. Do not rename the override prop to bypass this boundary.
+
+**Incorrect (the shared component exposes classes and its caller controls spacing):**
+
+```tsx
+import type { ComponentPropsWithoutRef } from 'react'
+
+function Button({ className, ...props }: ComponentPropsWithoutRef<'button'>) {
+  return <button {...props} className={`rounded px-3 py-2 ${className}`} />
+}
+
+<Button className="mt-2">{t('sales.orders.save')}</Button>
+```
+
+**Correct (internal classes define the component; the parent handles layout):**
+
+```tsx
+import type { ComponentPropsWithoutRef } from 'react'
+
+type ButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'className'>
+
+function Button(props: ButtonProps) {
+  return <button {...props} className="rounded px-3 py-2" />
+}
+
+<div className="mt-2">
+  <Button>{t('sales.orders.save')}</Button>
+</div>
+```
+
+- Internal classes on native elements or third-party primitives remain necessary to implement the design system. Calls from one shared UI component to another still cannot supply `className`.
+- Caller-authored children must not inject layout classes or styles, including padding, margins, gap, flex/grid or dimensions. `<Button><span className="px-3 py-2">Save</span></Button>` still bypasses spacing standards. Use the button's closed size variants and supply its content directly.
+- This boundary also applies to surfaces, cards, dialogs and slots, extracted child components, JSX variables, fragments, spreads and React factories. Compose complex content with shared UI structure primitives and closed spacing tokens.
+- Do not expose equivalent escape hatches such as free-form padding, body classes or inline layout styles. Ancestor selectors must not restyle UI descendants.
+- Shared UI implementations own their native classes. Context-only providers without a visual box do not create an internal layout boundary.
+- Preserve compound slot discovery: never insert a layout wrapper between a compound component and its direct slots. External layout wraps the whole component; content slots compose standardized shared UI. Follow `ui-compound-slots-direct-children`.
+- Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
+
+### 7.3 Keep Compound Component Slots as Direct, Renderable Children
 
 **Impact: HIGH (prevents silently dropped slots and empty overflow menus)**
 
@@ -2618,7 +2663,7 @@ const canRestore = canRestoreProject(project) // boolean business rule
 - Gate optional actions in the caller with a boolean predicate: a wrapper that renders `null` still occupies a visible slot and can leave an overflow menu empty, and the container cannot know what its children will render.
 - Put `Suspense` outside the compound component, or inside a content slot (`Card.Body`), never between the compound and its slots.
 
-### 7.3 Keep Dialog Mounted and Drive It with a Boolean open
+### 7.4 Keep Dialog Mounted and Drive It with a Boolean open
 
 **Impact: HIGH (keeps close transitions and focus handling working)**
 
@@ -2655,7 +2700,7 @@ return (
 
 While the exit transition plays, the target may already be `null`: keep the last displayed values (or render stable text) so the content does not flash empty during the close animation.
 
-### 7.4 Name Compound Render Conditions by Intent
+### 7.5 Name Compound Render Conditions by Intent
 
 **Impact: HIGH (display decisions become readable and reviewable at the JSX boundary)**
 
@@ -2683,7 +2728,7 @@ Do not store the boolean in state or wrap a cheap condition in `useMemo`. Prefer
 
 See also: `helpers-business-rules-pure`; `vercel-react-best-practices` → `rendering-conditional-render`, `rerender-simple-expression-in-memo`
 
-### 7.5 Never Nest a form Inside a form
+### 7.6 Never Nest a form Inside a form
 
 **Impact: HIGH (prevents native submit that reloads the SPA and loses data)**
 
@@ -2711,7 +2756,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 
 With a form library, use its "render as div" option or `useForm().handleSubmit` from a button `onClick`. The trade-off is losing native Enter-to-submit on the outer form. Check in the browser console with `document.querySelectorAll('form form').length === 0`.
 
-### 7.6 Wrap the Whole Dialog in a Form Keyed on the Open Target
+### 7.7 Wrap the Whole Dialog in a Form Keyed on the Open Target
 
 **Impact: HIGH (submit button inside the form, fresh values on each open)**
 
@@ -2759,11 +2804,11 @@ function SubmitButton() {
 
 Do not let a generic "confirm" action close the dialog by itself: it would close even when validation fails. Close it from the submit handler on success.
 
-### 7.7 Style with Design System Components, Utility Classes Only for Layout
+### 7.8 Style with Design System Components, Utility Classes Only for Layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
-Visual styling (text size, color, weight, background, border, radius, shadow, padding) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. Utility classes are tolerated only for minimal layout (`flex`, `gap`, `grow`), and a layout primitive of the design system is preferable even there. Hand-styled markup drifts from the design tokens and breaks on every theme change.
+Visual styling (text size, color, weight, background, border, radius, shadow, padding) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. Utility classes are tolerated only for minimal layout (`flex`, `gap`, `grow`) on external parent containers, and a layout primitive of the design system is preferable even there. Do not inject layout classes or styles through children or extracted child components. Internal spacing and structure come from shared UI sizes, variants and structure primitives. Never pass `className` to a shared UI component, including for layout: follow `ui-no-classname-on-shared-ui`. Hand-styled markup drifts from the design tokens and breaks on every theme change.
 
 **Incorrect (styled div/span with Tailwind):**
 
@@ -2789,7 +2834,7 @@ Visual styling (text size, color, weight, background, border, radius, shadow, pa
 
 If no design-system component fits, add or extend one in the shared UI layer instead of styling locally. Detection hint: search feature code for `className=` values containing `bg-`, `text-`, `border-`, `rounded-` or `shadow-`.
 
-### 7.8 Give Icon-Only Buttons and Custom Controls an Accessible Name
+### 7.9 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
 **Impact: MEDIUM (usable with assistive tech, queryable by role in tests)**
 

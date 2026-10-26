@@ -7,6 +7,8 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
+import { PlotMarker, Proportion } from '@/shared/ui/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -31,24 +33,25 @@ export function ValueTooltip({
   if (!active || !payload?.length) return null
   const point = payload[0].payload
   return (
-    <TooltipBox minWidth={190}>
+    <TooltipBox>
       <ChartText as="div" tone={'tooltipText'} variant="strong">
         {formatDate(point.timestamp, {
           style: 'dayMonthYear',
           timeZone: 'UTC',
         })}
       </ChartText>
-      <ChartText as="div" tone={'tooltipLabel'} numeric className="mt-1">
-        {formatMoney(point.value)}
-      </ChartText>
-      <ChartText
-        as="div"
-        tone={'tooltipDim'}
-        variant="capitalizedCaption"
-        className="mt-1"
-      >
-        {i18n.t('ui.overviewcharts.periodWithValues', { window: point.window })}
-      </ChartText>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'} numeric>
+          {formatMoney(point.value)}
+        </ChartText>
+      </Layout>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipDim'} variant="capitalizedCaption">
+          {i18n.t('ui.overviewcharts.periodWithValues', {
+            window: point.window,
+          })}
+        </ChartText>
+      </Layout>
     </TooltipBox>
   )
 }
@@ -64,49 +67,46 @@ export function DriversTooltip({
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   return (
-    <TooltipBox minWidth={205}>
+    <TooltipBox>
       <ChartText as="div" tone={'tooltipText'} variant="strong">
         {row.label}
       </ChartText>
-      <Text as="div" variant="caption" className="mt-2 space-y-1">
-        <ChartText
-          as="div"
-          tone={'tooltipDim'}
-          className="flex justify-between gap-6"
-        >
-          <span>{i18n.t('ui.overviewcharts.current')}</span>
-          <ChartText tone={'tooltipLabel'} numeric>
-            {formatMoney(row.current, {
-              fallback: i18n.t('ui.overviewcharts.unavailable'),
-            })}
-          </ChartText>
-        </ChartText>
-        <ChartText
-          as="div"
-          tone={'tooltipDim'}
-          className="flex justify-between gap-6"
-        >
-          <span>{i18n.t('ui.overviewcharts.previous')}</span>
-          <ChartText tone={'tooltipLabel'} numeric>
-            {formatMoney(row.previous, {
-              fallback: i18n.t('ui.overviewcharts.unavailable'),
-            })}
-          </ChartText>
-        </ChartText>
-        <ChartText
-          as="div"
-          separator
-          tone="tooltipDim"
-          className="flex justify-between gap-6 pt-1"
-        >
-          <span>{i18n.t('ui.overviewcharts.difference')}</span>
-          <ChartText tone={'tooltipLabel'} numeric>
-            {row.current == null || row.previous == null
-              ? i18n.t('ui.overviewcharts.unavailable')
-              : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}
-          </ChartText>
-        </ChartText>
-      </Text>
+      <Layout spaceBefore="default">
+        <Text as="div" variant="caption">
+          <Stack gap="compact">
+            <ChartText as="div" tone={'tooltipDim'}>
+              <Inline as="div" justify="between" gap="spacious">
+                <span>{i18n.t('ui.overviewcharts.current')}</span>
+                <ChartText tone={'tooltipLabel'} numeric>
+                  {formatMoney(row.current, {
+                    fallback: i18n.t('ui.overviewcharts.unavailable'),
+                  })}
+                </ChartText>
+              </Inline>
+            </ChartText>
+            <ChartText as="div" tone={'tooltipDim'}>
+              <Inline as="div" justify="between" gap="spacious">
+                <span>{i18n.t('ui.overviewcharts.previous')}</span>
+                <ChartText tone={'tooltipLabel'} numeric>
+                  {formatMoney(row.previous, {
+                    fallback: i18n.t('ui.overviewcharts.unavailable'),
+                  })}
+                </ChartText>
+              </Inline>
+            </ChartText>
+            <ChartText as="div" separator tone="tooltipDim">
+              <Inline as="div" justify="between" gap="spacious" inset="compact">
+                <span>{i18n.t('ui.overviewcharts.difference')}</span>
+                <ChartText tone={'tooltipLabel'} numeric>
+                  {row.current == null || row.previous == null
+                    ? i18n.t('ui.overviewcharts.unavailable')
+                    : `${row.current - row.previous > 0 ? '+' : ''}${formatMoney(row.current - row.previous)}`}
+                </ChartText>
+              </Inline>
+            </ChartText>
+          </Stack>
+        </Text>
+      </Layout>
     </TooltipBox>
   )
 }
@@ -128,54 +128,45 @@ export function OverviewConcentrationRow({
   else if (delta != null && delta < 0) deltaTone = 'positive'
   return (
     <div>
-      <Text
-        as="div"
-        variant="caption"
-        className="mb-1.5 flex items-center gap-3"
-      >
-        <Text
-          variant="medium"
-          tone="secondary"
-          truncate
-          className="min-w-0 flex-1"
-          title={row.name}
-        >
-          {row.label}
+      <Layout spaceAfter="default">
+        <Text as="div" variant="caption">
+          <Inline as="div" align="center" gap="default">
+            <Layout as="span" flow="inline" sizing="flexible">
+              <Text variant="medium" tone="secondary" truncate title={row.name}>
+                {row.label}
+              </Text>
+            </Layout>
+            <Layout as="span" flow="inline" sizing="fixed">
+              <Text tone="secondary" numeric>
+                {formatPercentage(row.weight)}
+              </Text>
+            </Layout>
+            <Layout as="span" flow="inline" sizing="fixed">
+              <Text variant="tinyLabel" tone={deltaTone} align="right" numeric>
+                {formatPercentage(delta, { signed: true, unit: ' pp' })}
+              </Text>
+            </Layout>
+          </Inline>
         </Text>
-        <Text tone="secondary" numeric className="shrink-0">
-          {formatPercentage(row.weight)}
-        </Text>
-        <Text
-          variant="tinyLabel"
-          tone={deltaTone}
-          align="right"
-          numeric
-          className="w-14 shrink-0"
-        >
-          {formatPercentage(delta, { signed: true, unit: ' pp' })}
-        </Text>
-      </Text>
-      <Surface variant="track" className="relative h-2.5">
-        <ToneSwatch
-          as="div"
-          tone="risk"
-          shape="dot"
-          prominence="strong"
-          className="absolute inset-y-0 left-0"
-          style={{ width: `${(row.weight / scaleMax) * 100}%` }}
-        />
-        {previousAvailable && (
-          <ToneSwatch
-            tone="secondary"
-            shape="marker"
-            className="absolute -top-1 h-4 w-0.5"
-            style={{ left: `${((row.previousWeight ?? 0) / scaleMax) * 100}%` }}
-            title={i18n.t('ui.overviewcharts.previousValue0', {
-              value0: formatPercentage(row.previousWeight, { fallback: 0 }),
-            })}
-          />
-        )}
-      </Surface>
+      </Layout>
+      <Layout placement="inset" height="indicator">
+        <Surface variant="annotatedTrack">
+          <Proportion value={row.weight} total={scaleMax}>
+            <ToneSwatch as="div" tone="risk" shape="dot" prominence="strong" />
+          </Proportion>
+          {previousAvailable && (
+            <PlotMarker value={row.previousWeight ?? 0} total={scaleMax}>
+              <ToneSwatch
+                tone="secondary"
+                shape="marker"
+                title={i18n.t('ui.overviewcharts.previousValue0', {
+                  value0: formatPercentage(row.previousWeight, { fallback: 0 }),
+                })}
+              ></ToneSwatch>
+            </PlotMarker>
+          )}
+        </Surface>
+      </Layout>
     </div>
   )
 }

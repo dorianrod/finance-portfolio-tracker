@@ -11,6 +11,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { Button } from '@/shared/ui/Controls.view'
 import { Select } from '@/shared/ui/Controls.view'
+import { Inline, Inset, Layout, Stack } from '@/shared/ui/Layout.view'
 import { LevelBadge, StatusTableRow } from '@/shared/ui/StatusBadge.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -49,14 +50,14 @@ function SortIcon({
 }) {
   if (col !== sortCol)
     return (
-      <Text tone="subtle" className="ml-1">
-        ↕
-      </Text>
+      <Layout as="span" flow="inline">
+        <Text tone="subtle">↕</Text>
+      </Layout>
     )
   return (
-    <Text tone="muted" className="ml-1">
-      {dir === 'asc' ? '↑' : '↓'}
-    </Text>
+    <Layout as="span" flow="inline">
+      <Text tone="muted">{dir === 'asc' ? '↑' : '↓'}</Text>
+    </Layout>
   )
 }
 
@@ -77,24 +78,16 @@ function ErrorColumnHeader({
   onSort: (column: PipelineErrorSortColumn) => void
   sortColumn: PipelineErrorSortColumn
 }) {
-  const [id, label, width] = column
+  const [id, label] = column
   return (
-    <Text
-      as="th"
-      variant="selectableHeader"
-      tone="muted"
-      align="left"
-      className={`px-3 py-2 ${width}`}
-    >
-      <Button
-        onClick={() => onSort(id)}
-        variant="sort"
-        className="flex items-center"
-      >
-        {label}
-        <SortIcon col={id} sortCol={sortColumn} dir={direction} />
-      </Button>
-    </Text>
+    <Inset as="th" inset="compact">
+      <Text as="div" variant="selectableHeader" tone="muted" align="left">
+        <Button onClick={() => onSort(id)} variant="sort">
+          {label}
+          <SortIcon col={id} sortCol={sortColumn} dir={direction} />
+        </Button>
+      </Text>
+    </Inset>
   )
 }
 
@@ -107,40 +100,50 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
   const formatAssetLabel = useFormatAssetLabel()
   return (
     <StatusTableRow level={error.level === 'error' ? 'error' : 'warning'}>
-      <td className="px-3 py-2">
-        <LevelBadge
-          level={error.level === 'error' ? 'error' : 'warning'}
-          className="items-center gap-1"
-        >
-          {error.level === 'error'
-            ? i18n.t('ui.errorstab.error.8af296')
-            : i18n.t('ui.errorstab.warning.6270bb')}
+      <Inset as="td" inset="compact">
+        <LevelBadge level={error.level === 'error' ? 'error' : 'warning'}>
+          <Layout as="span" flow="inline" align="center" gap="compact">
+            {error.level === 'error'
+              ? i18n.t('ui.errorstab.error.8af296')
+              : i18n.t('ui.errorstab.warning.6270bb')}
+          </Layout>
         </LevelBadge>
-      </td>
-      <Text as="td" tone="secondary" className="px-3 py-2">
-        {PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}
-      </Text>
-      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
-        {SOURCE_LABELS[error.source] ?? error.source}
-      </Text>
-      <Text as="td" variant="code" tone="muted" className="px-3 py-2">
-        {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
-      </Text>
-      <Text
-        as="td"
-        tone="secondary"
-        truncate
-        className="max-w-[7rem] px-3 py-2"
-        title={formatAssetLabel(error)}
-      >
-        {formatAssetLabel(error, '—')}
-      </Text>
-      <Text as="td" variant="code" tone="subtle" className="px-3 py-2">
-        {error.isin || '—'}
-      </Text>
-      <Text as="td" variant="relaxed" tone="muted" className="px-3 py-2">
-        {error.message}
-      </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" tone="secondary">
+          {PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="subtle">
+          {SOURCE_LABELS[error.source] ?? error.source}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="muted">
+          {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text
+          as="div"
+          tone="secondary"
+          truncate
+          title={formatAssetLabel(error)}
+        >
+          {formatAssetLabel(error, '—')}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="code" tone="subtle">
+          {error.isin || '—'}
+        </Text>
+      </Inset>
+      <Inset as="td" inset="compact">
+        <Text as="div" variant="relaxed" tone="muted">
+          {error.message}
+        </Text>
+      </Inset>
     </StatusTableRow>
   )
 }
@@ -182,38 +185,28 @@ export function ErrorsTab({ errors }: Props) {
   const hasActiveFilters = filterLevel !== 'all' || filterType !== 'all'
 
   return (
-    <div className="space-y-4">
+    <Stack gap="relaxed">
       {errors.length > 0 && (
         <>
-          <div className="flex flex-wrap items-center gap-3">
+          <Inline as="div" flow="wrap" align="center" gap="default">
             <Text variant="body" tone="muted">
               {i18n.t('ui.errorstab.detectedAnomalies', {
                 count: errors.length,
               })}
             </Text>
             {errorCount > 0 && (
-              <Surface
-                variant="errorCount"
-                as="span"
-                tone="negative"
-                className="px-2.5 py-0.5"
-              >
+              <Surface variant="errorCount" as="span" tone="negative">
                 {i18n.t('ui.errorstab.errorCount', { count: errorCount })}
               </Surface>
             )}
             {warningCount > 0 && (
-              <Surface
-                variant="warningCount"
-                as="span"
-                tone="warning"
-                className="px-2.5 py-0.5"
-              >
+              <Surface variant="warningCount" as="span" tone="warning">
                 {i18n.t('ui.errorstab.warningCount', { count: warningCount })}
               </Surface>
             )}
-          </div>
+          </Inline>
 
-          <div className="flex flex-wrap gap-2">
+          <Inline as="div" flow="wrap" gap="default">
             <Select
               label={i18n.t('ui.errorstab.filterLevel')}
               value={filterLevel}
@@ -221,7 +214,6 @@ export function ErrorsTab({ errors }: Props) {
                 setFilterLevel(e.target.value as typeof filterLevel)
               }
               variant="compact"
-              className="px-2 py-1"
             >
               <option value="all">{i18n.t('ui.errorstab.allLevels')}</option>
               <option value="error">{i18n.t('ui.errorstab.errorsOnly')}</option>
@@ -234,7 +226,6 @@ export function ErrorsTab({ errors }: Props) {
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               variant="compact"
-              className="px-2 py-1"
             >
               <option value="all">{i18n.t('ui.errorstab.allTypes')}</option>
               {types
@@ -250,54 +241,51 @@ export function ErrorsTab({ errors }: Props) {
                   setFilterType('all')
                 }}
                 variant="reset"
-                className="px-2 py-1"
               >
                 {i18n.t('ui.errorstab.reset')}
               </Button>
             )}
-          </div>
+          </Inline>
         </>
       )}
 
       {/* Table */}
-      <Surface variant="outlined" className="overflow-x-auto">
-        <Surface variant="compactTable" as="table" className="w-full">
-          <thead>
-            <Surface as="tr" variant="tableHeader">
-              {ERROR_COLUMNS.map((column) => (
-                <ErrorColumnHeader
-                  key={column[0]}
-                  column={column}
-                  direction={sortDir}
-                  onSort={handleSort}
-                  sortColumn={sortCol}
-                />
-              ))}
-            </Surface>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <Text
-                  colSpan={7}
-                  as="td"
-                  tone="subtle"
-                  align="center"
-                  className="py-8"
-                >
-                  {errors.length === 0
-                    ? i18n.t('ui.errorstab.noPipelineAnomaliesDetected')
-                    : i18n.t('ui.errorstab.noAnomaliesForThisFilter')}
-                </Text>
-              </tr>
-            ) : (
-              filtered.map((error) => (
-                <PipelineErrorTableRow key={error.id} error={error} />
-              ))
-            )}
-          </tbody>
+      <Layout overflow="auto">
+        <Surface variant="outlined">
+          <Surface variant="compactTable" as="table">
+            <thead>
+              <Surface as="tr" variant="tableHeader">
+                {ERROR_COLUMNS.map((column) => (
+                  <ErrorColumnHeader
+                    key={column[0]}
+                    column={column}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    sortColumn={sortCol}
+                  />
+                ))}
+              </Surface>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <Inset colSpan={7} as="td" inset="spacious">
+                    <Text as="div" tone="subtle" align="center">
+                      {errors.length === 0
+                        ? i18n.t('ui.errorstab.noPipelineAnomaliesDetected')
+                        : i18n.t('ui.errorstab.noAnomaliesForThisFilter')}
+                    </Text>
+                  </Inset>
+                </tr>
+              ) : (
+                filtered.map((error) => (
+                  <PipelineErrorTableRow key={error.id} error={error} />
+                ))
+              )}
+            </tbody>
+          </Surface>
         </Surface>
-      </Surface>
+      </Layout>
 
       {filtered.length < errors.length && (
         <Text as="p" variant="caption" tone="subtle" align="right">
@@ -307,6 +295,6 @@ export function ErrorsTab({ errors }: Props) {
           })}
         </Text>
       )}
-    </div>
+    </Stack>
   )
 }

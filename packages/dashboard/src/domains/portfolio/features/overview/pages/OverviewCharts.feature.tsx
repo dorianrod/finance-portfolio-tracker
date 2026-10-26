@@ -26,6 +26,7 @@ import { ChartReferenceArea } from '@/shared/ui/ChartReference.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -69,103 +70,126 @@ export function OverviewValueChart({
   const currentStart = toUtcDateTimestamp(comparison.windows.current.start)
 
   return (
-    <Surface as="section" variant="panel" className="p-4 xl:col-span-2">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <Text
-            as="h3"
-            variant="bodyStrong"
-            tone="secondary"
-            className="flex items-center"
-          >
-            {i18n.t('ui.overviewcharts.portfolioValue')}
-            <ScopedInfoTooltip
-              text={i18n.t(
-                'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
-              )}
-              scope={{ account: 'filterable', period: 'comparison-range' }}
-            />
-          </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-            {i18n.t(
-              'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
-            )}
-          </Text>
-        </div>
-        <Text
+    <div className="xl:col-span-2">
+      <Surface as="section" variant="panel">
+        <Inline
           as="div"
-          variant="micro"
-          tone="subtle"
-          className="flex items-center gap-3"
+          flow="wrap"
+          spaceAfter="spacious"
+          align="start"
+          justify="between"
+          gap="default"
         >
-          <span className="inline-flex items-center gap-1.5">
-            <ToneSwatch tone="subtle" shape="dot" className="h-2 w-2" />
-            {i18n.t('ui.overviewcharts.previous')}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <ToneSwatch tone="value" shape="dot" className="h-2 w-2" />
-            {i18n.t('ui.overviewcharts.current')}
-          </span>
-        </Text>
-      </div>
-      <ResponsiveContainer width="100%" height={250}>
-        <LineChart
-          data={chartData}
-          margin={{ top: 6, right: 10, left: 0, bottom: 0 }}
-        >
-          <ChartGrid vertical={false} />
-          <ChartReferenceArea
-            x1={domain[0]}
-            x2={currentStart}
-            period="previous"
-          />
-          <ChartReferenceArea
-            x1={currentStart}
-            x2={domain[1]}
-            period="current"
-          />
-          <ChartReference x={currentStart} kind="selected" />
-          <ChartXAxis
-            density="compact"
-            dataKey="timestamp"
-            type="number"
-            scale="time"
-            domain={domain}
-            tickFormatter={(value) =>
-              formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })
-            }
-            minTickGap={44}
-          />
-          <ChartYAxis
-            tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-
-            width={52}
-            domain={['auto', 'auto']}
-          />
-          <ChartTooltip highlight="line">
-            <ValueTooltip />
-          </ChartTooltip>
-          <SeriesLine
-            type="monotone"
-            dataKey="previousValue"
-            tone="neutralSeries"
-            weight="regular"
-            markers="hidden"
-            hover="default"
-            motion="none"
-          />
-          <SeriesLine
-            type="monotone"
-            dataKey="currentValue"
-            tone="portfolioValue"
-            weight="emphasized"
-            markers="hidden"
-            hover="default"
-            motion="none"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </Surface>
+          <div>
+            <Text as="h3" variant="bodyStrong" tone="secondary">
+              <Inline as="span" align="center">
+                {i18n.t('ui.overviewcharts.portfolioValue')}
+                <ScopedInfoTooltip
+                  text={i18n.t(
+                    'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
+                  )}
+                  scope={{
+                    account: 'filterable',
+                    period: 'comparison-range',
+                  }}
+                />
+              </Inline>
+            </Text>
+            <Layout spaceBefore="compact">
+              <Text as="p" variant="caption" tone="subtle">
+                {i18n.t(
+                  'ui.overviewcharts.grossMarketValueAcrossThePreviousAndCurrentPeriods',
+                )}
+              </Text>
+            </Layout>
+          </div>
+          <Text as="div" variant="micro" tone="subtle">
+            <Inline as="div" align="center" gap="default">
+              <Inline as="span" align="center" gap="compact">
+                <Layout
+                  as="span"
+                  flow="inline"
+                  height="indicator"
+                  width="indicator"
+                >
+                  <ToneSwatch tone="subtle" shape="dot" />
+                </Layout>
+                {i18n.t('ui.overviewcharts.previous')}
+              </Inline>
+              <Inline as="span" align="center" gap="compact">
+                <Layout
+                  as="span"
+                  flow="inline"
+                  height="indicator"
+                  width="indicator"
+                >
+                  <ToneSwatch tone="value" shape="dot" />
+                </Layout>
+                {i18n.t('ui.overviewcharts.current')}
+              </Inline>
+            </Inline>
+          </Text>
+        </Inline>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 6, right: 10, left: 0, bottom: 0 }}
+          >
+            <ChartGrid vertical={false} />
+            <ChartReferenceArea
+              x1={domain[0]}
+              x2={currentStart}
+              period="previous"
+            />
+            <ChartReferenceArea
+              x1={currentStart}
+              x2={domain[1]}
+              period="current"
+            />
+            <ChartReference x={currentStart} kind="selected" />
+            <ChartXAxis
+              density="compact"
+              dataKey="timestamp"
+              type="number"
+              scale="time"
+              domain={domain}
+              tickFormatter={(value) =>
+                formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })
+              }
+              minTickGap={44}
+            />
+            <ChartYAxis
+              tickFormatter={(value) =>
+                formatMoney(value, { style: 'compact' })
+              }
+              width={52}
+              domain={['auto', 'auto']}
+            />
+            <ChartTooltip highlight="line">
+              <ValueTooltip />
+            </ChartTooltip>
+            <SeriesLine
+              type="monotone"
+              dataKey="previousValue"
+              tone="neutralSeries"
+              weight="regular"
+              markers="hidden"
+              hover="default"
+              motion="none"
+            />
+            <SeriesLine
+              type="monotone"
+              dataKey="currentValue"
+              tone="portfolioValue"
+              weight="emphasized"
+              markers="hidden"
+              hover="default"
+              motion="none"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Surface>
+    </div>
   )
 }
 
@@ -219,48 +243,56 @@ export function OverviewDriversChart({
         comparison.marketPerformance.previous
 
   return (
-    <Surface as="section" variant="panel" className="p-4">
-      <div className="mb-2">
-        <Text
-          as="h3"
-          variant="bodyStrong"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t('ui.overviewcharts.changeDrivers')}
-          <ScopedInfoTooltip
-            text={i18n.t(
+    <Surface as="section" variant="panel">
+      <Layout spaceAfter="default">
+        <Text as="h3" variant="bodyStrong" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t('ui.overviewcharts.changeDrivers')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
+              )}
+              scope={{ account: 'filterable', period: 'comparison-range' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
               'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
             )}
-            scope={{ account: 'filterable', period: 'comparison-range' }}
-          />
-        </Text>
-        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-          {i18n.t(
-            'ui.overviewcharts.grossMovementFromContributionsAndMarketPerformance',
-          )}
-        </Text>
-      </div>
-      <Surface
-        variant="subduedInset"
-        className="mb-2 flex items-baseline justify-between gap-3 px-3 py-2"
-      >
-        <Text variant="micro" tone="subtle">
-          {i18n.t('ui.overviewcharts.grossValueChange')}
-        </Text>
-        <Text variant="bodyStrong" tone="secondary" numeric>
-          {currentChange == null
-            ? '—'
-            : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
-          <Text variant="tinyRegular" tone="subtle" className="ml-1">
-            {i18n.t('ui.overviewcharts.vsWithValues', {
-              value: formatMoney(previousChange, {
-                fallback: i18n.t('ui.overviewcharts.unavailable'),
-              }),
-            })}
           </Text>
-        </Text>
-      </Surface>
+        </Layout>
+      </Layout>
+      <Layout spaceAfter="default">
+        <Surface variant="subduedInset">
+          <Inline
+            as="div"
+            align="baseline"
+            justify="between"
+            gap="default"
+            inset="compact"
+          >
+            <Text variant="micro" tone="subtle">
+              {i18n.t('ui.overviewcharts.grossValueChange')}
+            </Text>
+            <Text variant="bodyStrong" tone="secondary" numeric>
+              {currentChange == null
+                ? '—'
+                : `${currentChange > 0 ? '+' : ''}${formatMoney(currentChange)}`}{' '}
+              <Layout as="span" flow="inline">
+                <Text variant="tinyRegular" tone="subtle">
+                  {i18n.t('ui.overviewcharts.vsWithValues', {
+                    value: formatMoney(previousChange, {
+                      fallback: i18n.t('ui.overviewcharts.unavailable'),
+                    }),
+                  })}
+                </Text>
+              </Layout>
+            </Text>
+          </Inline>
+        </Surface>
+      </Layout>
       <ResponsiveContainer width="100%" height={190}>
         <BarChart
           data={rows}
@@ -312,25 +344,20 @@ function EmptyChart({
   scope: FilterScopeSpec
 }) {
   return (
-    <Surface as="section" variant="panel" className="p-4">
-      <Text
-        as="h3"
-        variant="bodyStrong"
-        tone="secondary"
-        className="flex items-center"
-      >
-        {title}
-        <ScopedInfoTooltip text={message} scope={scope} />
+    <Surface as="section" variant="panel">
+      <Text as="h3" variant="bodyStrong" tone="secondary">
+        <Inline as="span" align="center">
+          {title}
+          <ScopedInfoTooltip text={message} scope={scope} />
+        </Inline>
       </Text>
-      <Text
-        as="div"
-        variant="body"
-        tone="subtle"
-        align="center"
-        className="flex h-52 items-center justify-center"
-      >
-        {message}
-      </Text>
+      <Layout height="chart">
+        <Text as="div" variant="body" tone="subtle" align="center">
+          <Inline as="div" align="center" justify="center">
+            {message}
+          </Inline>
+        </Text>
+      </Layout>
     </Surface>
   )
 }
@@ -369,67 +396,64 @@ export function OverviewConcentrationChart({
   const previousAvailable = concentration.previous != null
 
   return (
-    <Surface as="section" variant="panel" className="p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <Surface as="section" variant="panel">
+      <Stack gap="default" align="start" justify="between">
         <div>
-          <Text
-            as="h3"
-            variant="bodyStrong"
-            tone="secondary"
-            className="flex items-center"
-          >
-            {displayedMode === 'lookThrough'
-              ? i18n.t('ui.overviewcharts.largestUnderlyingAssets')
-              : i18n.t('ui.overviewcharts.largestHeldPositions')}
-            <ScopedInfoTooltip
-              // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
-              text={
-                displayedMode === 'lookThrough'
-                  ? i18n.t(
-                      'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
-                    )
-                  : i18n.t(
-                      'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
-                    )
-              }
-              // eslint-disable-next-line local/no-prop-drilling -- This feature owns the effective concentration snapshot scope.
-              scope={{
-                account: 'filterable',
-                period: 'as-of',
-                effectiveDate: concentration.current?.date,
-              }}
-            />
+          <Text as="h3" variant="bodyStrong" tone="secondary">
+            <Inline as="span" align="center">
+              {displayedMode === 'lookThrough'
+                ? i18n.t('ui.overviewcharts.largestUnderlyingAssets')
+                : i18n.t('ui.overviewcharts.largestHeldPositions')}
+              <ScopedInfoTooltip
+                // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
+                text={
+                  displayedMode === 'lookThrough'
+                    ? i18n.t(
+                        'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
+                      )
+                    : i18n.t(
+                        'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
+                      )
+                }
+                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the effective concentration snapshot scope.
+                scope={{
+                  account: 'filterable',
+                  period: 'as-of',
+                  effectiveDate: concentration.current?.date,
+                }}
+              />
+            </Inline>
           </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-            {displayedMode === 'lookThrough'
-              ? i18n.t(
-                  'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
-                )
-              : i18n.t(
-                  'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
-                )}
-          </Text>
+          <Layout spaceBefore="compact">
+            <Text as="p" variant="caption" tone="subtle">
+              {displayedMode === 'lookThrough'
+                ? i18n.t(
+                    'ui.overviewcharts.directAndFundLookThroughExposureAvoidingWrapperLevel',
+                  )
+                : i18n.t(
+                    'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
+                  )}
+            </Text>
+          </Layout>
         </div>
         <ConcentrationModeToggle
           value={displayedMode}
           onChange={setMode}
           lookThroughDisabled={lookThroughDisabled}
         />
-      </div>
+      </Stack>
       {rows.length === 0 ? (
-        <Text
-          as="div"
-          variant="body"
-          tone="subtle"
-          align="center"
-          className="flex h-48 items-center justify-center"
-        >
-          {i18n.t(
-            'ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod',
-          )}
-        </Text>
+        <Layout height="chart">
+          <Text as="div" variant="body" tone="subtle" align="center">
+            <Inline as="div" align="center" justify="center">
+              {i18n.t(
+                'ui.overviewcharts.historicalConcentrationIsUnavailableForThisPeriod',
+              )}
+            </Inline>
+          </Text>
+        </Layout>
       ) : (
-        <div className="mt-5 space-y-4">
+        <Stack spaceBefore="spacious" gap="relaxed">
           {rows.map((row) => (
             <OverviewConcentrationRow
               key={row.key}
@@ -438,16 +462,21 @@ export function OverviewConcentrationChart({
               scaleMax={scaleMax}
             />
           ))}
-          <Text
-            as="div"
-            variant="tiny"
-            tone="subtle"
-            className="flex items-center justify-end gap-1.5 pt-1"
-          >
-            <ToneSwatch tone="secondary" className="h-3 w-0.5" />{' '}
-            {i18n.t('ui.overviewcharts.previousPeriodEnd')}
+          <Text as="div" variant="tiny" tone="subtle">
+            <Inline
+              as="div"
+              align="center"
+              justify="end"
+              gap="compact"
+              inset="compact"
+            >
+              <Layout as="span" flow="inline" height="marker" width="divider">
+                <ToneSwatch tone="secondary" />
+              </Layout>{' '}
+              {i18n.t('ui.overviewcharts.previousPeriodEnd')}
+            </Inline>
           </Text>
-        </div>
+        </Stack>
       )}
     </Surface>
   )

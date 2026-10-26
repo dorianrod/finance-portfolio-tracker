@@ -14,6 +14,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesPie } from '@/shared/ui/SeriesPie.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -51,32 +52,39 @@ export function DonutCardView({
   const formatMoney = useFormatMoney()
   const dateLabel = formatDate(date, { style: 'longMonthYear' })
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-1 flex items-start justify-between gap-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="muted"
-          className="flex items-center"
-        >
-          {title}
-          {tooltip}
+    <Surface variant="chart">
+      <Inline
+        as="div"
+        spaceAfter="compact"
+        align="start"
+        justify="between"
+        gap="default"
+      >
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {title}
+            {tooltip}
+          </Inline>
         </Text>
-        <div className="flex shrink-0 items-center gap-2">
+        <Inline as="div" sizing="fixed" align="center" gap="default">
           <Text variant="caption" tone="subtle">
             {dateLabel}
           </Text>
           {positionsControl}
-        </div>
-      </div>
-      <Text as="div" variant="caption" tone="subtle" className="mb-1">
-        {i18n.t('ui.donutcard.allocatedWithValues', {
-          amount: formatMoney(total, { style: 'full' }),
-        })}
-      </Text>
-      <Text as="div" variant="caption" tone="subtle" className="mb-2">
-        {i18n.t('ui.donutcard.clickASegmentToFilter')}
-      </Text>
+        </Inline>
+      </Inline>
+      <Layout spaceAfter="compact">
+        <Text as="div" variant="caption" tone="subtle">
+          {i18n.t('ui.donutcard.allocatedWithValues', {
+            amount: formatMoney(total, { style: 'full' }),
+          })}
+        </Text>
+      </Layout>
+      <Layout spaceAfter="default">
+        <Text as="div" variant="caption" tone="subtle">
+          {i18n.t('ui.donutcard.clickASegmentToFilter')}
+        </Text>
+      </Layout>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <SeriesPie

@@ -9,6 +9,7 @@ import { usePositionHistoryQuery } from '@/domains/portfolio/shared/apis/queries
 import i18n from '@/i18n/i18n'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 import { StatusMessage } from '@/shared/ui/Controls.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -46,61 +47,58 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
     <Preview.Content
       anchor={target.buttonRect}
       label={target.name}
-      style={{ width: `min(600px, calc(100vw - 20px))` }}
+
       variant="floatingPanel"
-      className="z-[9999] overflow-y-auto  p-4"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      size="wide"
     >
-      <div className="mb-3">
-        <Text as="p" variant="bodyStrong" tone="default">
-          {target.name}
-        </Text>
-        <Text as="p" variant="captionCode" tone="subtle">
-          {target.isin}
-        </Text>
-      </div>
+      <Layout overflow="scroll" inset="default">
+        <Layout spaceAfter="default">
+          <Text as="p" variant="bodyStrong" tone="default">
+            {target.name}
+          </Text>
+          <Text as="p" variant="captionCode" tone="subtle">
+            {target.isin}
+          </Text>
+        </Layout>
 
-      {isPending && (
-        <StatusMessage
-          variant="caption"
-          tone="muted"
-          align="center"
-          className="py-4"
-        >
-          {i18n.t('ui.hoverchart.loading')}
-        </StatusMessage>
-      )}
+        {isPending && (
+          <StatusMessage variant="caption" tone="muted" align="center">
+            <Layout as="span" flow="block" inset="default">
+              {i18n.t('ui.hoverchart.loading')}
+            </Layout>
+          </StatusMessage>
+        )}
 
-      {error && (
-        <StatusMessage
-          urgent
-          variant="caption"
-          tone="negative"
-          align="center"
-          className="py-4"
-        >
-          {getErrorMessage(error)}
-        </StatusMessage>
-      )}
-      {showEmptyHistory && (
-        <StatusMessage
-          variant="caption"
-          tone="muted"
-          align="center"
-          className="py-4"
-        >
-          {i18n.t('ui.hoverchart.noHistory')}
-        </StatusMessage>
-      )}
+        {error && (
+          <StatusMessage
+            urgent
+            variant="caption"
+            tone="negative"
+            align="center"
+          >
+            <Layout as="span" flow="block" inset="default">
+              {getErrorMessage(error)}
+            </Layout>
+          </StatusMessage>
+        )}
+        {showEmptyHistory && (
+          <StatusMessage variant="caption" tone="muted" align="center">
+            <Layout as="span" flow="block" inset="default">
+              {i18n.t('ui.hoverchart.noHistory')}
+            </Layout>
+          </StatusMessage>
+        )}
 
-      {displayedChartData && (
-        <PositionHistoryCharts
-          chartData={displayedChartData}
-          unitPriceDomain={unitPriceDomain}
-          showUnitPrice={showUnitPrice}
-        />
-      )}
+        {displayedChartData && (
+          <PositionHistoryCharts
+            chartData={displayedChartData}
+            unitPriceDomain={unitPriceDomain}
+            showUnitPrice={showUnitPrice}
+          />
+        )}
+      </Layout>
     </Preview.Content>
   )
 }

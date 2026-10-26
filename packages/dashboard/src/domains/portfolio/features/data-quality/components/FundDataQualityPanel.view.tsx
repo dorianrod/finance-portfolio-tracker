@@ -19,6 +19,7 @@ import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Button } from '@/shared/ui/Controls.view'
 import { ExternalLink } from '@/shared/ui/ExternalLink.view'
+import { Grid, Inline, Inset, Layout } from '@/shared/ui/Layout.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -52,7 +53,6 @@ function DiagnosticsFilterButton({
       onClick={() => onSelect(option)}
       variant="qualityFilter"
       selected={activeFilter === option}
-      className="px-2.5 py-1"
     >
       {label}
     </Button>
@@ -61,9 +61,13 @@ function DiagnosticsFilterButton({
 
 function SnapshotSourceLink({ url }: { url: string }) {
   return (
-    <ExternalLink href={url} variant="source" truncate className="mr-2 block">
-      {url}
-    </ExternalLink>
+    <Layout as="span" flow="inline">
+      <ExternalLink href={url} variant="source" truncate>
+        <Layout as="span" flow="block">
+          {url}
+        </Layout>
+      </ExternalLink>
+    </Layout>
   )
 }
 
@@ -71,50 +75,52 @@ function SnapshotDetail({ snapshot }: { snapshot: FundSnapshot }) {
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="sectionStart" className="mt-2 pt-2">
-      <div>
-        {snapshot.snapshotId} · {snapshot.status}
-        {snapshot.isActive ? i18n.t('ui.funddataqualitypanel.active') : ''}
-      </div>
-      <div>
-        {i18n.t('ui.funddataqualitypanel.snapshotMetrics', {
-          coverage: formatPercentage(snapshot.coveragePct),
-          rows: i18n.t('ui.funddataqualitypanel.rowCount', {
-            count: snapshot.holdingCount,
-            formattedCount: formatNumber(snapshot.holdingCount),
-          }),
-          age: i18n.t('ui.funddataqualitypanel.ageDays', {
-            count: snapshot.ageDays,
-          }),
-        })}
-      </div>
-      {snapshot.notes && (
-        <Text as="div" tone="muted" className="mt-1">
-          {snapshot.notes}
-        </Text>
-      )}
-      {snapshot.validationErrors && (
-        <Text as="div" tone="negative" className="mt-1">
-          {snapshot.validationErrors}
-        </Text>
-      )}
-      {snapshot.sourceUrls.map((url) => (
-        <SnapshotSourceLink key={url} url={url} />
-      ))}
-      {snapshot.evidencePath && (
-        <Text
-          as="div"
-          variant="tinyCode"
-          tone="subtle"
-          wrap="anywhere"
-          className="mt-1"
-        >
-          {i18n.t('ui.funddataqualitypanel.evidenceWithValues', {
-            evidencePath: snapshot.evidencePath,
+    <Layout spaceBefore="default">
+      <Surface variant="sectionStart">
+        <div>
+          {snapshot.snapshotId} · {snapshot.status}
+          {snapshot.isActive ? i18n.t('ui.funddataqualitypanel.active') : ''}
+        </div>
+        <div>
+          {i18n.t('ui.funddataqualitypanel.snapshotMetrics', {
+            coverage: formatPercentage(snapshot.coveragePct),
+            rows: i18n.t('ui.funddataqualitypanel.rowCount', {
+              count: snapshot.holdingCount,
+              formattedCount: formatNumber(snapshot.holdingCount),
+            }),
+            age: i18n.t('ui.funddataqualitypanel.ageDays', {
+              count: snapshot.ageDays,
+            }),
           })}
-        </Text>
-      )}
-    </Surface>
+        </div>
+        {snapshot.notes && (
+          <Layout spaceBefore="compact">
+            <Text as="div" tone="muted">
+              {snapshot.notes}
+            </Text>
+          </Layout>
+        )}
+        {snapshot.validationErrors && (
+          <Layout spaceBefore="compact">
+            <Text as="div" tone="negative">
+              {snapshot.validationErrors}
+            </Text>
+          </Layout>
+        )}
+        {snapshot.sourceUrls.map((url) => (
+          <SnapshotSourceLink key={url} url={url} />
+        ))}
+        {snapshot.evidencePath && (
+          <Layout spaceBefore="compact">
+            <Text as="div" variant="tinyCode" tone="subtle" wrap="anywhere">
+              {i18n.t('ui.funddataqualitypanel.evidenceWithValues', {
+                evidencePath: snapshot.evidencePath,
+              })}
+            </Text>
+          </Layout>
+        )}
+      </Surface>
+    </Layout>
   )
 }
 
@@ -122,39 +128,40 @@ function UnresolvedDetail({ item }: { item: FundUnresolved }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="sectionEnd" className="mb-2 pb-2">
-      <Text as="div" tone="secondary">
-        {item.unresolvedName}
-      </Text>
-      <div>
-        {formatPercentage(item.weight * 100)} ·{' '}
-        {formatMoney(item.marketValue, { style: 'full' })}
-      </div>
-      <Text as="div" tone="warning">
-        {item.reason}
-      </Text>
-      <Text as="div" variant="tinyCode" wrap="anywhere">
-        {item.path}
-      </Text>
-    </Surface>
+    <Layout spaceAfter="default">
+      <Surface variant="sectionEnd">
+        <Text as="div" tone="secondary">
+          {item.unresolvedName}
+        </Text>
+        <div>
+          {formatPercentage(item.weight * 100)} ·{' '}
+          {formatMoney(item.marketValue, { style: 'full' })}
+        </div>
+        <Text as="div" tone="warning">
+          {item.reason}
+        </Text>
+        <Text as="div" variant="tinyCode" wrap="anywhere">
+          {item.path}
+        </Text>
+      </Surface>
+    </Layout>
   )
 }
 
 function ResolvedHoldingDetail({ holding }: { holding: FundHolding }) {
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="sectionEnd" className="flex gap-2 py-1">
-      <Text
-        tone="secondary"
-        truncate
-        className="min-w-0 flex-1"
-        title={holding.lookthroughPath}
-      >
-        {holding.holdingName}
-      </Text>
-      <Text tone="subtle" numeric>
-        {formatPercentage(holding.weight * 100)}
-      </Text>
+    <Surface variant="sectionEnd">
+      <Inline as="div" gap="default" inset="compact">
+        <Layout as="span" flow="inline" sizing="flexible">
+          <Text tone="secondary" truncate title={holding.lookthroughPath}>
+            {holding.holdingName}
+          </Text>
+        </Layout>
+        <Text tone="subtle" numeric>
+          {formatPercentage(holding.weight * 100)}
+        </Text>
+      </Inline>
     </Surface>
   )
 }
@@ -180,111 +187,112 @@ function FundDiagnosticsRow({
   return (
     <Fragment>
       <Surface as="tr" variant="topAlignedSection">
-        <Text as="td" wrap="words" className="px-4 py-3">
-          <Text as="div" variant="medium" tone="secondary">
-            {status.parentName}
+        <Inset as="td" inset="default">
+          <Text as="div" wrap="words">
+            <Text as="div" variant="medium" tone="secondary">
+              {status.parentName}
+            </Text>
+            <Layout spaceBefore="compact">
+              <Text as="div" variant="tinyCode" tone="subtle" wrap="anywhere">
+                {status.parentIsin || status.parentTicker}
+              </Text>
+            </Layout>
           </Text>
-          <Text
-            as="div"
-            variant="tinyCode"
-            tone="subtle"
-            wrap="anywhere"
-            className="mt-1"
-          >
-            {status.parentIsin || status.parentTicker}
-          </Text>
-        </Text>
-        <td className="px-4 py-3">
+        </Inset>
+        <Inset as="td" inset="default">
           <FundQualityBadge status={status} />
           {status.manualAttention && (
-            <Surface
-              variant="warningLabel"
-              tone="warning"
-              className="mt-2 w-fit px-2 py-1"
-            >
-              {status.sourceOrigin.startsWith('manual')
-                ? i18n.t('ui.funddataqualitypanel.snapshotManuel')
-                : i18n.t('ui.funddataqualitypanel.rechercheAgent')}
-            </Surface>
+            <Layout spaceBefore="default" width="content">
+              <Surface variant="warningLabel" tone="warning">
+                {status.sourceOrigin.startsWith('manual')
+                  ? i18n.t('ui.funddataqualitypanel.snapshotManuel')
+                  : i18n.t('ui.funddataqualitypanel.rechercheAgent')}
+              </Surface>
+            </Layout>
           )}
-        </td>
-        <Text as="td" wrap="words" className="px-4 py-3">
-          <ExternalLink href={status.sourceUrl} variant="source">
-            {status.sourceName || i18n.t('ui.funddataqualitypanel.unavailable')}
-          </ExternalLink>
-          <Text as="div" tone="subtle" className="mt-1">
-            {status.proxyName
-              ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', {
-                  value0: status.proxyName,
-                })
-              : fundQualitySourceLabel(status.qualityTier)}
+        </Inset>
+        <Inset as="td" inset="default">
+          <Text as="div" wrap="words">
+            <ExternalLink href={status.sourceUrl} variant="source">
+              {status.sourceName ||
+                i18n.t('ui.funddataqualitypanel.unavailable')}
+            </ExternalLink>
+            <Layout spaceBefore="compact">
+              <Text as="div" tone="subtle">
+                {status.proxyName
+                  ? i18n.t('ui.funddataqualitypanel.proxyExactValue0', {
+                      value0: status.proxyName,
+                    })
+                  : fundQualitySourceLabel(status.qualityTier)}
+              </Text>
+            </Layout>
           </Text>
-        </Text>
-        <Text as="td" tone="muted" className="px-4 py-3">
-          {status.holdingsDate
-            ? formatDate(status.holdingsDate, { style: 'isoDate' })
-            : i18n.t('ui.funddataqualitypanel.unknown')}
-          <Text as="div" tone="subtle" className="mt-1">
-            {i18n.t('ui.funddataqualitypanel.refreshMetrics', {
-              rows: i18n.t('ui.funddataqualitypanel.rowCount', {
-                count: status.holdingCount,
-                formattedCount: formatNumber(status.holdingCount),
-              }),
-              refreshes: i18n.t('ui.funddataqualitypanel.refreshCount', {
-                count: status.refreshStreak,
-              }),
-            })}
+        </Inset>
+        <Inset as="td" inset="default">
+          <Text as="div" tone="muted">
+            {status.holdingsDate
+              ? formatDate(status.holdingsDate, { style: 'isoDate' })
+              : i18n.t('ui.funddataqualitypanel.unknown')}
+            <Layout spaceBefore="compact">
+              <Text as="div" tone="subtle">
+                {i18n.t('ui.funddataqualitypanel.refreshMetrics', {
+                  rows: i18n.t('ui.funddataqualitypanel.rowCount', {
+                    count: status.holdingCount,
+                    formattedCount: formatNumber(status.holdingCount),
+                  }),
+                  refreshes: i18n.t('ui.funddataqualitypanel.refreshCount', {
+                    count: status.refreshStreak,
+                  }),
+                })}
+              </Text>
+            </Layout>
           </Text>
-        </Text>
-        <Text
-          as="td"
-          tone="secondary"
-          align="right"
-          numeric
-          className="px-4 py-3"
-        >
-          {formatPercentage(status.explainedPct)}
-          <Text as="div" tone="subtle" className="mt-1">
-            {formatMoney(status.explainedValue, { style: 'full' })}
+        </Inset>
+        <Inset as="td" inset="default">
+          <Text as="div" tone="secondary" align="right" numeric>
+            {formatPercentage(status.explainedPct)}
+            <Layout spaceBefore="compact">
+              <Text as="div" tone="subtle">
+                {formatMoney(status.explainedValue, { style: 'full' })}
+              </Text>
+            </Layout>
           </Text>
-        </Text>
-        <Text
-          as="td"
-          tone="secondary"
-          align="right"
-          numeric
-          className="px-4 py-3"
-        >
-          {formatPercentage(status.residualPct)}
-          <Text as="div" tone="subtle" className="mt-1">
-            {formatMoney(status.residualValue, { style: 'full' })}
+        </Inset>
+        <Inset as="td" inset="default">
+          <Text as="div" tone="secondary" align="right" numeric>
+            {formatPercentage(status.residualPct)}
+            <Layout spaceBefore="compact">
+              <Text as="div" tone="subtle">
+                {formatMoney(status.residualValue, { style: 'full' })}
+              </Text>
+            </Layout>
           </Text>
-        </Text>
-        <Text
-          as="td"
-          wrap="words"
-          tone={status.issues ? 'warning' : 'positive'}
-          className="px-4 py-3"
-        >
-          {status.issues || i18n.t('ui.funddataqualitypanel.noDetectedIssue')}
-        </Text>
-        <td className="px-4 py-3">
+        </Inset>
+        <Inset as="td" inset="default">
+          <Text
+            as="div"
+            wrap="words"
+            tone={status.issues ? 'warning' : 'positive'}
+          >
+            {status.issues || i18n.t('ui.funddataqualitypanel.noDetectedIssue')}
+          </Text>
+        </Inset>
+        <Inset as="td" inset="default">
           <Button
             type="button"
             onClick={() => onToggle(status.parentId)}
             variant="fundDetail"
-            className="px-2 py-1"
           >
             {isOpen
               ? i18n.t('ui.funddataqualitypanel.close')
               : i18n.t('ui.funddataqualitypanel.details')}
           </Button>
-        </td>
+        </Inset>
       </Surface>
       {isOpen && (
         <Surface as="tr" variant="canvasFooter">
-          <td colSpan={8} className="p-4">
-            <div className="grid gap-4 lg:grid-cols-3">
+          <Inset colSpan={8} as="td" inset="default">
+            <Grid columns={3} gap="relaxed">
               <DetailBlock
                 title={i18n.t('ui.funddataqualitypanel.provenanceValidation')}
               >
@@ -343,15 +351,15 @@ function FundDiagnosticsRow({
                   />
                 ))}
                 {holdings.length > 20 && (
-                  <div className="mt-2">
+                  <Layout spaceBefore="default">
                     {i18n.t('ui.funddataqualitypanel.additionalHoldings', {
                       count: holdings.length - 20,
                     })}
-                  </div>
+                  </Layout>
                 )}
               </DetailBlock>
-            </div>
-          </td>
+            </Grid>
+          </Inset>
         </Surface>
       )}
     </Fragment>
@@ -382,7 +390,7 @@ export function FundDataQualityPanelView({
       onClose={onClose}
       closeLabel={i18n.t('ui.funddataqualitypanel.closeFundDataDiagnostics')}
       size="wide"
-      bodyClassName="overflow-y-auto overflow-x-hidden"
+      scroll="vertical"
     >
       <SidePanel.Title>
         {i18n.t('ui.funddataqualitypanel.fundDataDiagnostics')}
@@ -392,68 +400,69 @@ export function FundDataQualityPanelView({
           'ui.funddataqualitypanel.sortedByUnexplainedMonetaryImpactManualAndAgentSnapshots',
         )}
       </SidePanel.Description>
-      <Surface
-        variant="sectionEnd"
-        className="flex flex-wrap items-center gap-2 px-4 py-3"
-      >
-        <Text variant="captionLabel" tone="subtle" className="mr-1">
-          {i18n.t('ui.funddataqualitypanel.show')}
-        </Text>
-        {FILTER_OPTIONS.map((option) => (
-          <DiagnosticsFilterButton
-            key={option}
-            activeFilter={filter}
-            onSelect={onSelect}
-            option={option}
-          />
-        ))}
+      <Surface variant="sectionEnd">
+        <Inline
+          as="div"
+          flow="wrap"
+          align="center"
+          gap="default"
+          inset="default"
+        >
+          <Layout as="span" flow="inline">
+            <Text variant="captionLabel" tone="subtle">
+              {i18n.t('ui.funddataqualitypanel.show')}
+            </Text>
+          </Layout>
+          {FILTER_OPTIONS.map((option) => (
+            <DiagnosticsFilterButton
+              key={option}
+              activeFilter={filter}
+              onSelect={onSelect}
+              option={option}
+            />
+          ))}
+        </Inline>
       </Surface>
       <div>
-        <Surface
-          variant="compactTable"
-          as="table"
-          align="left"
-          className="w-full table-fixed"
-        >
+        <Surface variant="compactFixedTable" as="table" align="left">
           <colgroup>
-            <col className="w-[16%]" />
-            <col className="w-[10%]" />
-            <col className="w-[15%]" />
-            <col className="w-[13%]" />
-            <col className="w-[9%]" />
-            <col className="w-[9%]" />
-            <col className="w-[21%]" />
-            <col className="w-[7%]" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
+            <Layout as="col" />
           </colgroup>
-          <Surface
-            as="thead"
-            variant="sectionHeading"
-            tone="subtle"
-            className="sticky top-0 z-10"
-          >
+          <Surface as="thead" variant="sectionHeading" tone="subtle">
             <tr>
-              <th className="px-4 py-2">
+              <Inset as="th" inset="compact">
                 {i18n.t('ui.funddataqualitypanel.fund')}
-              </th>
-              <th className="px-4 py-2">
+              </Inset>
+              <Inset as="th" inset="compact">
                 {i18n.t('ui.funddataqualitypanel.quality')}
-              </th>
-              <th className="px-4 py-2">
+              </Inset>
+              <Inset as="th" inset="compact">
                 {i18n.t('ui.funddataqualitypanel.sourceProxy')}
-              </th>
-              <th className="px-4 py-2">
+              </Inset>
+              <Inset as="th" inset="compact">
                 {i18n.t('ui.funddataqualitypanel.holdingsDate')}
-              </th>
-              <Text as="th" align="right" className="px-4 py-2">
-                {i18n.t('ui.funddataqualitypanel.explained')}
-              </Text>
-              <Text as="th" align="right" className="px-4 py-2">
-                {i18n.t('ui.funddataqualitypanel.residual')}
-              </Text>
-              <th className="px-4 py-2">
+              </Inset>
+              <Inset as="th" inset="compact">
+                <Text as="div" align="right">
+                  {i18n.t('ui.funddataqualitypanel.explained')}
+                </Text>
+              </Inset>
+              <Inset as="th" inset="compact">
+                <Text as="div" align="right">
+                  {i18n.t('ui.funddataqualitypanel.residual')}
+                </Text>
+              </Inset>
+              <Inset as="th" inset="compact">
                 {i18n.t('ui.funddataqualitypanel.diagnostic')}
-              </th>
-              <th className="px-4 py-2" />
+              </Inset>
+              <Inset as="th" inset="compact" />
             </tr>
           </Surface>
           <tbody>
@@ -468,14 +477,10 @@ export function FundDataQualityPanelView({
           </tbody>
         </Surface>
         {rows.length === 0 && (
-          <Text
-            as="p"
-            variant="body"
-            tone="subtle"
-            align="center"
-            className="p-6"
-          >
-            {i18n.t('ui.funddataqualitypanel.noFundMatchesThisFilter')}
+          <Text as="p" variant="body" tone="subtle" align="center">
+            <Layout as="span" flow="block" inset="spacious">
+              {i18n.t('ui.funddataqualitypanel.noFundMatchesThisFilter')}
+            </Layout>
           </Text>
         )}
       </div>
@@ -491,10 +496,12 @@ function DetailBlock({
   children: ReactNode
 }) {
   return (
-    <Surface as="section" variant="smallCard" tone="subtle" className="p-3">
-      <Text as="h3" variant="strong" tone="secondary" className="mb-2">
-        {title}
-      </Text>
+    <Surface as="section" variant="smallCard" tone="subtle">
+      <Layout spaceAfter="default">
+        <Text as="h3" variant="strong" tone="secondary">
+          {title}
+        </Text>
+      </Layout>
       {children}
     </Surface>
   )

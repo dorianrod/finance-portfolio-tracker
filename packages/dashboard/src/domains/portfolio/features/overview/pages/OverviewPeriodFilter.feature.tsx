@@ -5,6 +5,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { Button, Group } from '@/shared/ui/Controls.view'
 import { PeriodFilterIcon } from '@/shared/ui/Icons.view'
+import { Inline, Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -17,37 +18,48 @@ export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
   const { openFilters } = useDashboardFilters()
 
   return (
-    <Group
-      variant="card"
-      className="flex w-full min-w-0 flex-col overflow-hidden sm:w-auto sm:flex-row"
-      label={i18n.t('ui.overviewperiodfilter.comparisonPeriods')}
-    >
-      <Button
-        type="button"
-        onClick={openFilters}
-        label={i18n.t('ui.overviewperiodfilter.editCurrentComparisonPeriod')}
-        variant="period"
-        className="flex min-w-0 items-center gap-2.5 px-3 py-2"
+    <div className="w-full min-w-0 overflow-hidden sm:w-auto">
+      <Group
+        variant="card"
+        label={i18n.t('ui.overviewperiodfilter.comparisonPeriods')}
       >
-        <Text variant="compactEyebrow" tone="accent" className="shrink-0">
-          {i18n.t('ui.overviewperiodfilter.current')}
-        </Text>
-        <Text variant="captionLabel" tone="secondary" truncate>
-          {formatOverviewPeriodRange(windows.current, formatDate)}
-        </Text>
-        <PeriodFilterIcon />
-      </Button>
-      <Surface
-        variant="responsiveInset"
-        className="flex min-w-0 items-center gap-2.5 px-3 py-2"
-      >
-        <Text variant="compactEyebrow" tone="subtle" className="shrink-0">
-          {i18n.t('ui.overviewperiodfilter.previous')}
-        </Text>
-        <Text variant="caption" tone="subtle" truncate>
-          {formatOverviewPeriodRange(windows.previous, formatDate)}
-        </Text>
-      </Surface>
-    </Group>
+        <Stack flow="responsiveRow" gap="none">
+          <Layout as="span" flow="control">
+            <Button
+              type="button"
+              onClick={openFilters}
+              label={i18n.t(
+                'ui.overviewperiodfilter.editCurrentComparisonPeriod',
+              )}
+              variant="period"
+            >
+              <Layout as="span" flow="inline" sizing="fixed">
+                <Text variant="compactEyebrow" tone="accent">
+                  {i18n.t('ui.overviewperiodfilter.current')}
+                </Text>
+              </Layout>
+              <Text variant="captionLabel" tone="secondary" truncate>
+                {formatOverviewPeriodRange(windows.current, formatDate)}
+              </Text>
+              <PeriodFilterIcon />
+            </Button>
+          </Layout>
+          <Layout>
+            <Surface variant="responsiveInset">
+              <Inline as="div" align="center" gap="default" inset="compact">
+                <Layout as="span" flow="inline" sizing="fixed">
+                  <Text variant="compactEyebrow" tone="subtle">
+                    {i18n.t('ui.overviewperiodfilter.previous')}
+                  </Text>
+                </Layout>
+                <Text variant="caption" tone="subtle" truncate>
+                  {formatOverviewPeriodRange(windows.previous, formatDate)}
+                </Text>
+              </Inline>
+            </Surface>
+          </Layout>
+        </Stack>
+      </Group>
+    </div>
   )
 }

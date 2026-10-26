@@ -12,6 +12,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -27,28 +28,27 @@ export function AnnualIncomeSavingsChart({
 }) {
   const formatMoney = useFormatMoney()
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3 flex items-start gap-3">
+    <Surface variant="chart">
+      <Inline as="div" spaceAfter="default" align="start" gap="default">
         <div>
-          <Text
-            as="h2"
-            variant="label"
-            tone="secondary"
-            className="flex items-center"
-          >
-            {i18n.t('ui.annualincomesavingschart.incomeVsNetContributions')}
-            <ScopedInfoTooltip
-              text={i18n.t(
-                'ui.annualincomesavingschart.annualDeclaredIncomeComparedWithDepositsMinusWithdrawalsAcross',
-              )}
-              scope={{ account: 'global', period: 'year-range' }}
-            />
+          <Text as="h2" variant="label" tone="secondary">
+            <Inline as="span" align="center">
+              {i18n.t('ui.annualincomesavingschart.incomeVsNetContributions')}
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.annualincomesavingschart.annualDeclaredIncomeComparedWithDepositsMinusWithdrawalsAcross',
+                )}
+                scope={{ account: 'global', period: 'year-range' }}
+              />
+            </Inline>
           </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mt-1">
-            {i18n.t('ui.annualincomesavingschart.annualAllAccounts')}
-          </Text>
+          <Layout spaceBefore="compact">
+            <Text as="p" variant="caption" tone="subtle">
+              {i18n.t('ui.annualincomesavingschart.annualAllAccounts')}
+            </Text>
+          </Layout>
         </div>
-      </div>
+      </Inline>
       <ResponsiveContainer width="100%" height={285}>
         <ComposedChart
           data={data}
@@ -60,14 +60,12 @@ export function AnnualIncomeSavingsChart({
           <ChartYAxis
             yAxisId="amount"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-
             width={52}
           />
           <ChartYAxis
             yAxisId="rate"
             orientation="right"
             tickFormatter={(value) => `${value}%`}
-
             width={48}
           />
           <Tooltip content={<IncomeSavingsTooltip />} />
@@ -115,43 +113,36 @@ export function AnnualIncomeSavingsChart({
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <Surface
-        variant="captionFooter"
-        tone="subtle"
-        className="mt-3 flex flex-wrap gap-x-5 gap-y-2 pt-3"
-      >
-        <span className="flex items-center gap-2">
-          <SeriesSwatch
-            tone={'costBasis'}
-            as="i"
-            shape="bar"
-            className="h-2.5 w-3"
-          />
-          {i18n.t('ui.annualincomesavingschart.netSalary.970d84')}
-        </span>
-        <span className="flex items-center gap-2">
-          <SeriesSwatch
-            tone={'passiveIncome'}
-            as="i"
-            shape="bar"
-            className="h-2.5 w-3"
-          />
-          {i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}
-        </span>
-        <span className="flex items-center gap-2">
-          <SeriesSwatch
-            tone={'netContributions'}
-            as="i"
-            shape="bar"
-            className="h-2.5 w-3"
-          />
-          {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
-        </span>
-        <span className="flex items-center gap-2">
-          <SeriesSwatch tone={'returnRate'} as="i" className="h-0.5 w-4" />
-          {i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}
-        </span>
-      </Surface>
+      <Layout spaceBefore="default">
+        <Surface variant="captionFooter" tone="subtle">
+          <Inline as="div" flow="wrap" gap="default" inset="default">
+            <Inline as="span" align="center" gap="default">
+              <Layout as="span" flow="inline" height="indicator" width="icon">
+                <SeriesSwatch tone={'costBasis'} as="i" shape="bar" />
+              </Layout>
+              {i18n.t('ui.annualincomesavingschart.netSalary.970d84')}
+            </Inline>
+            <Inline as="span" align="center" gap="default">
+              <Layout as="span" flow="inline" height="indicator" width="icon">
+                <SeriesSwatch tone={'passiveIncome'} as="i" shape="bar" />
+              </Layout>
+              {i18n.t('ui.annualincomesavingschart.otherIncome.9eb09b')}
+            </Inline>
+            <Inline as="span" align="center" gap="default">
+              <Layout as="span" flow="inline" height="indicator" width="icon">
+                <SeriesSwatch tone={'netContributions'} as="i" shape="bar" />
+              </Layout>
+              {i18n.t('ui.annualincomesavingschart.netContributions.643e29')}
+            </Inline>
+            <Inline as="span" align="center" gap="default">
+              <Layout as="span" flow="inline" height="divider" width="icon">
+                <SeriesSwatch tone={'returnRate'} as="i" />
+              </Layout>
+              {i18n.t('ui.annualincomesavingschart.placementRate.5df16e')}
+            </Inline>
+          </Inline>
+        </Surface>
+      </Layout>
     </Surface>
   )
 }

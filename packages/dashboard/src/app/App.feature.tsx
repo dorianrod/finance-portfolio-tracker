@@ -37,6 +37,7 @@ import {
 } from '@/domains/portfolio/shared/stores/dashboardNavigation.atoms'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
@@ -202,250 +203,272 @@ export default function App() {
 
   return (
     <ViewNavigation>
-      <Surface
-        variant="canvas"
-        tone="default"
-        className="min-h-screen p-4 sm:p-6"
-      >
-        <div className="mx-auto max-w-screen-2xl">
-          <DashboardHeader />
+      <div className="min-h-screen">
+        <div className="p-4 sm:p-6">
+          <div className="mx-auto max-w-screen-2xl">
+            <DashboardHeader />
 
-          <DashboardLoadState
-            state={loadState}
-            onRetry={() => window.location.reload()}
-          >
-            <DashboardNavigation
-              activeTab={activeTab}
-              hasFundValidationError={hasFundValidationError}
-              hasPipelineError={hasPipelineError}
-              qualityCount={qualityCount}
-            />
-
-            {activeTab === 'holdings' && <HoldingsViewTabs />}
-
-            <Surface
-              variant="sectionEnd"
-              className="mb-6 flex items-start justify-between gap-4 pb-5"
-            >
-              <div className="min-w-0">
-                <Text as="h2" variant="statistic" tone="default">
-                  {copy.title}
-                </Text>
-                {showPipelineReliability && (
-                  <div className="mt-2">
-                    <PipelineReliabilityKpi
-                      errorCount={scopedPipelineErrorCount}
-                      warningCount={scopedPipelineWarningCount}
-                      loading={pipelineErrorsLoading}
-                      scope={{ account: 'filterable', period: 'range' }}
-                    />
-                  </div>
-                )}
-                {activeTab === 'overview' && (
-                  <div className="mt-2">
-                    <CombinedAnalysisReliabilityKpi
-                      statusMetric={{
-                        value: portfolioDataStatus,
-                        metricLabel: i18n.t('ui.app.portfolioData'),
-                        tone: portfolioDataTone,
-                      }}
-                      metrics={[
-                        {
-                          percentage: rawAllocationData.loading
-                            ? null
-                            : classificationReliabilityPct,
-                          amount: classificationMappedValue,
-                          metricLabel: i18n.t('ui.app.diversification'),
-                          tone: classificationMetricTone,
-                        },
-                        {
-                          percentage: scopedFundQuality.report
-                            ? underlyingReliabilityPct
-                            : null,
-                          amount: identifiedFundValue,
-                          metricLabel: i18n.t('ui.app.underlyingAssets'),
-                          tone: underlyingMetricTone,
-                        },
-                      ]}
-                      tone={overviewReliabilityTone}
-                      tooltip={i18n.t(
-                        'ui.app.aggregateReliabilityForPortfolioDataDiversificationMappingAndUnderlying',
-                      )}
-                      qualityTheme={overviewQualityTheme}
-                      scope={{ account: 'filterable', period: 'mixed' }}
-                    />
-                  </div>
-                )}
-                {activeTab === 'allocation' && (
-                  <div className="mt-2">
-                    <CombinedAnalysisReliabilityKpi
-                      metrics={[
-                        {
-                          percentage: rawAllocationData.loading
-                            ? null
-                            : classificationReliabilityPct,
-                          amount: classificationMappedValue,
-                          metricLabel: i18n.t('ui.app.diversification'),
-                          tone: classificationMetricTone,
-                        },
-                        {
-                          percentage: scopedFundQuality.report
-                            ? underlyingReliabilityPct
-                            : null,
-                          amount: identifiedFundValue,
-                          metricLabel: i18n.t('ui.app.underlyingAssets'),
-                          tone: underlyingMetricTone,
-                        },
-                      ]}
-                      tone={diversificationReliabilityTone}
-                      tooltip={i18n.t(
-                        'ui.app.aggregateReliabilityForDiversificationMappingAndUnderlyingAssetsLook',
-                      )}
-                      qualityTheme={diversificationQualityTheme}
-                      scope={{ account: 'filterable', period: 'latest' }}
-                    />
-                  </div>
-                )}
-                {showUnderlyingReliability && (
-                  <div className="mt-2">
-                    <AnalysisReliabilityKpi
-                      percentage={
-                        scopedFundQuality.report
-                          ? underlyingReliabilityPct
-                          : null
-                      }
-                      amount={identifiedFundValue}
-                      metricLabel={i18n.t('ui.app.underlyingAssets')}
-                      tone={underlyingMetricTone}
-                      tooltip={i18n.t(
-                        'ui.app.reliabilityOfTheLookThroughDataUsedByThe',
-                      )}
-                      qualityTheme="lookthrough"
-                      scope={{ account: 'filterable', period: 'latest' }}
-                    />
-                  </div>
-                )}
-                <Text as="p" variant="body" tone="subtle" className="mt-2">
-                  {copy.description}
-                </Text>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                {activeTab === 'allocation' && <AllocationViewToggle />}
-                <FilterButton activeCount={activeFilterSummaries.length} />
-              </div>
-            </Surface>
-
-            <ActiveFilterSummary items={visibleFilterSummaries}>
-              {showOverviewPeriodFilter && (
-                <ActiveFilterSummary.Leading>
-                  <OverviewPeriodFilter windows={overviewComparison.windows} />
-                </ActiveFilterSummary.Leading>
-              )}
-              {showAllocationFilter && <FilterChipBar />}
-              {showResetFilters && (
-                <ActiveFilterSummary.Actions>
-                  <ResetFiltersButton />
-                </ActiveFilterSummary.Actions>
-              )}
-            </ActiveFilterSummary>
-
-            <FilterPanel
-              visibility={filterVisibility}
-              demoPresetSelection={demoPresetSelection}
-              demoPresetActive={demoPresetActive}
-            />
-
-            <DashboardPanelErrorBoundary
-              key={activeTab}
+            <DashboardLoadState
+              state={loadState}
               onRetry={() => window.location.reload()}
             >
-              <Suspense fallback={<DashboardPanelFallback />}>
-                {activeTab === 'overview' && (
-                  <OverviewTab
-                    comparison={overviewComparison}
-                    rollingThreeYearTri={rollingThreeYearTriComparison}
-                    irrStatus={irrStatus}
-                  />
-                )}
-                {activeTab === 'wealth' && (
-                  <WealthTab
-                    history={displayedHistory}
-                    accountTypeData={accountTypeData}
-                    accountTypeHistory={displayedTypeHistory}
-                    accountTypes={typeHistory.accountTypes}
-                    typeCategories={typeHistory.typeCategories}
-                    savings={trailingSavings}
-                    monthlyOps={monthlyOps}
-                    drivers={wealthDrivers}
-                    trailingYearComparison={trailingYearComparison}
-                    annualIncomeSavings={displayedAnnualIncomeSavings}
-                  />
-                )}
-                {activeTab === 'performance' && (
-                  <PerformanceTab
-                    history={displayedHistory}
-                    passiveIncome={passiveIncome}
-                    rawPositions={rawPositions}
-                    rawOperations={rawOperations}
-                    accountFilters={filters.accounts}
-                    accountTypeFilters={filters.accountTypes}
-                    dateFrom={filters.dateFrom}
-                    performance={performance}
-                    income={trailingIncome}
-                    globalTri={globalTri}
-                    irrStatus={irrStatus}
-                    irrScopeLabel={irrScopeLabel}
-                  />
-                )}
-                {activeTab === 'allocation' && (
-                  <AllocationCharts
-                    positions={currentPositions}
-                    rawPositions={rawPositions}
-                    fundHoldings={periodEndFundHoldings}
-                    fundHoldingsHistory={fundData.history}
-                    accountFilters={filters.accounts}
-                    accountTypeFilters={filters.accountTypes}
-                    rawData={rawAllocationData}
-                    dateFrom={filters.dateFrom}
-                    dateTo={filters.dateTo}
-                  />
-                )}
-                {activeTab === 'holdings' && (
-                  <ViewNavigation.Panel value={holdingsView}>
-                    {holdingsView === 'positions' ? (
-                      <PositionsTable
-                        data={tableData}
-                        fundStatuses={fundData.statuses}
-                        grouping={
-                          useGroupedPositionsTable ? 'account-type' : 'flat'
-                        }
+              <DashboardNavigation
+                activeTab={activeTab}
+                hasFundValidationError={hasFundValidationError}
+                hasPipelineError={hasPipelineError}
+                qualityCount={qualityCount}
+              />
+
+              {activeTab === 'holdings' && <HoldingsViewTabs />}
+
+              <div className="mb-6">
+                <Surface variant="sectionEnd">
+                  <Inline
+                    as="div"
+                    align="start"
+                    justify="between"
+                    gap="relaxed"
+                    inset="spacious"
+                  >
+                    <Layout>
+                      <Text as="h2" variant="statistic" tone="default">
+                        {copy.title}
+                      </Text>
+                      {showPipelineReliability && (
+                        <Layout spaceBefore="default">
+                          <PipelineReliabilityKpi
+                            errorCount={scopedPipelineErrorCount}
+                            warningCount={scopedPipelineWarningCount}
+                            loading={pipelineErrorsLoading}
+                            scope={{ account: 'filterable', period: 'range' }}
+                          />
+                        </Layout>
+                      )}
+                      {activeTab === 'overview' && (
+                        <Layout spaceBefore="default">
+                          <CombinedAnalysisReliabilityKpi
+                            statusMetric={{
+                              value: portfolioDataStatus,
+                              metricLabel: i18n.t('ui.app.portfolioData'),
+                              tone: portfolioDataTone,
+                            }}
+                            metrics={[
+                              {
+                                percentage: rawAllocationData.loading
+                                  ? null
+                                  : classificationReliabilityPct,
+                                amount: classificationMappedValue,
+                                metricLabel: i18n.t('ui.app.diversification'),
+                                tone: classificationMetricTone,
+                              },
+                              {
+                                percentage: scopedFundQuality.report
+                                  ? underlyingReliabilityPct
+                                  : null,
+                                amount: identifiedFundValue,
+                                metricLabel: i18n.t('ui.app.underlyingAssets'),
+                                tone: underlyingMetricTone,
+                              },
+                            ]}
+                            tone={overviewReliabilityTone}
+                            tooltip={i18n.t(
+                              'ui.app.aggregateReliabilityForPortfolioDataDiversificationMappingAndUnderlying',
+                            )}
+                            qualityTheme={overviewQualityTheme}
+                            scope={{ account: 'filterable', period: 'mixed' }}
+                          />
+                        </Layout>
+                      )}
+                      {activeTab === 'allocation' && (
+                        <Layout spaceBefore="default">
+                          <CombinedAnalysisReliabilityKpi
+                            metrics={[
+                              {
+                                percentage: rawAllocationData.loading
+                                  ? null
+                                  : classificationReliabilityPct,
+                                amount: classificationMappedValue,
+                                metricLabel: i18n.t('ui.app.diversification'),
+                                tone: classificationMetricTone,
+                              },
+                              {
+                                percentage: scopedFundQuality.report
+                                  ? underlyingReliabilityPct
+                                  : null,
+                                amount: identifiedFundValue,
+                                metricLabel: i18n.t('ui.app.underlyingAssets'),
+                                tone: underlyingMetricTone,
+                              },
+                            ]}
+                            tone={diversificationReliabilityTone}
+                            tooltip={i18n.t(
+                              'ui.app.aggregateReliabilityForDiversificationMappingAndUnderlyingAssetsLook',
+                            )}
+                            qualityTheme={diversificationQualityTheme}
+                            scope={{
+                              account: 'filterable',
+                              period: 'latest',
+                            }}
+                          />
+                        </Layout>
+                      )}
+                      {showUnderlyingReliability && (
+                        <Layout spaceBefore="default">
+                          <AnalysisReliabilityKpi
+                            percentage={
+                              scopedFundQuality.report
+                                ? underlyingReliabilityPct
+                                : null
+                            }
+                            amount={identifiedFundValue}
+                            metricLabel={i18n.t('ui.app.underlyingAssets')}
+                            tone={underlyingMetricTone}
+                            tooltip={i18n.t(
+                              'ui.app.reliabilityOfTheLookThroughDataUsedByThe',
+                            )}
+                            qualityTheme="lookthrough"
+                            scope={{
+                              account: 'filterable',
+                              period: 'latest',
+                            }}
+                          />
+                        </Layout>
+                      )}
+                      <Layout spaceBefore="default">
+                        <Text as="p" variant="body" tone="subtle">
+                          {copy.description}
+                        </Text>
+                      </Layout>
+                    </Layout>
+                    <Inline
+                      as="div"
+                      sizing="fixed"
+                      align="center"
+                      gap="default"
+                    >
+                      {activeTab === 'allocation' && <AllocationViewToggle />}
+                      <FilterButton
+                        activeCount={activeFilterSummaries.length}
                       />
-                    ) : (
-                      <FundLookThroughTab
-                        positions={currentPositions}
-                        holdings={periodEndFundHoldings}
-                      />
-                    )}
-                  </ViewNavigation.Panel>
+                    </Inline>
+                  </Inline>
+                </Surface>
+              </div>
+
+              <ActiveFilterSummary items={visibleFilterSummaries}>
+                {showOverviewPeriodFilter && (
+                  <ActiveFilterSummary.Leading>
+                    <OverviewPeriodFilter
+                      windows={overviewComparison.windows}
+                    />
+                  </ActiveFilterSummary.Leading>
                 )}
-                {activeTab === 'quality' && (
-                  <DataQualityTab
-                    positions={latestAccountPositions}
-                    errors={scopedPipelineErrors}
-                    manualPriceOverrides={scopedManualPriceOverrides}
-                    fundStatuses={fundData.statuses}
-                    fundReport={fundData.report}
-                    fundHoldings={fundData.holdings}
-                    fundSnapshots={fundData.snapshots}
-                    fundUnresolved={fundData.unresolved}
-                    rawData={rawAllocationData}
-                  />
+                {showAllocationFilter && <FilterChipBar />}
+                {showResetFilters && (
+                  <ActiveFilterSummary.Actions>
+                    <ResetFiltersButton />
+                  </ActiveFilterSummary.Actions>
                 )}
-              </Suspense>
-            </DashboardPanelErrorBoundary>
-          </DashboardLoadState>
+              </ActiveFilterSummary>
+
+              <FilterPanel
+                visibility={filterVisibility}
+                demoPresetSelection={demoPresetSelection}
+                demoPresetActive={demoPresetActive}
+              />
+
+              <DashboardPanelErrorBoundary
+                key={activeTab}
+                onRetry={() => window.location.reload()}
+              >
+                <Suspense fallback={<DashboardPanelFallback />}>
+                  {activeTab === 'overview' && (
+                    <OverviewTab
+                      comparison={overviewComparison}
+                      rollingThreeYearTri={rollingThreeYearTriComparison}
+                      irrStatus={irrStatus}
+                    />
+                  )}
+                  {activeTab === 'wealth' && (
+                    <WealthTab
+                      history={displayedHistory}
+                      accountTypeData={accountTypeData}
+                      accountTypeHistory={displayedTypeHistory}
+                      accountTypes={typeHistory.accountTypes}
+                      typeCategories={typeHistory.typeCategories}
+                      savings={trailingSavings}
+                      monthlyOps={monthlyOps}
+                      drivers={wealthDrivers}
+                      trailingYearComparison={trailingYearComparison}
+                      annualIncomeSavings={displayedAnnualIncomeSavings}
+                    />
+                  )}
+                  {activeTab === 'performance' && (
+                    <PerformanceTab
+                      history={displayedHistory}
+                      passiveIncome={passiveIncome}
+                      rawPositions={rawPositions}
+                      rawOperations={rawOperations}
+                      accountFilters={filters.accounts}
+                      accountTypeFilters={filters.accountTypes}
+                      dateFrom={filters.dateFrom}
+                      performance={performance}
+                      income={trailingIncome}
+                      globalTri={globalTri}
+                      irrStatus={irrStatus}
+                      irrScopeLabel={irrScopeLabel}
+                    />
+                  )}
+                  {activeTab === 'allocation' && (
+                    <AllocationCharts
+                      positions={currentPositions}
+                      rawPositions={rawPositions}
+                      fundHoldings={periodEndFundHoldings}
+                      fundHoldingsHistory={fundData.history}
+                      accountFilters={filters.accounts}
+                      accountTypeFilters={filters.accountTypes}
+                      rawData={rawAllocationData}
+                      dateFrom={filters.dateFrom}
+                      dateTo={filters.dateTo}
+                    />
+                  )}
+                  {activeTab === 'holdings' && (
+                    <ViewNavigation.Panel value={holdingsView}>
+                      {holdingsView === 'positions' ? (
+                        <PositionsTable
+                          data={tableData}
+                          fundStatuses={fundData.statuses}
+                          grouping={
+                            useGroupedPositionsTable ? 'account-type' : 'flat'
+                          }
+                        />
+                      ) : (
+                        <FundLookThroughTab
+                          positions={currentPositions}
+                          holdings={periodEndFundHoldings}
+                        />
+                      )}
+                    </ViewNavigation.Panel>
+                  )}
+                  {activeTab === 'quality' && (
+                    <DataQualityTab
+                      positions={latestAccountPositions}
+                      errors={scopedPipelineErrors}
+                      manualPriceOverrides={scopedManualPriceOverrides}
+                      fundStatuses={fundData.statuses}
+                      fundReport={fundData.report}
+                      fundHoldings={fundData.holdings}
+                      fundSnapshots={fundData.snapshots}
+                      fundUnresolved={fundData.unresolved}
+                      rawData={rawAllocationData}
+                    />
+                  )}
+                </Suspense>
+              </DashboardPanelErrorBoundary>
+            </DashboardLoadState>
+          </div>
         </div>
-      </Surface>
+      </div>
     </ViewNavigation>
   )
 }

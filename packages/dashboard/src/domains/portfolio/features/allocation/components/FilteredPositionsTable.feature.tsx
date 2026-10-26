@@ -11,6 +11,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Button } from '@/shared/ui/Controls.view'
+import { Inset } from '@/shared/ui/Layout.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -45,45 +46,33 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
         })}
       </SidePanel.Description>
       <SidePanel.HeaderActions>
-        <Button
-          type="button"
-          onClick={clearFilter}
-          variant="filterClear"
-          className="px-2.5 py-1.5"
-        >
+        <Button type="button" onClick={clearFilter} variant="filterClear">
           {i18n.t('ui.filteredpositionstable.clearFilter')}
         </Button>
       </SidePanel.HeaderActions>
-      <Surface variant="bodyTable" as="table" className="w-full">
-        <Surface as="thead" variant="plain" className="sticky top-0 z-10">
+      <Surface variant="bodyTable" as="table">
+        <Surface as="thead" variant="plain">
           <Surface as="tr" variant="sectionEnd">
-            <Text
-              as="th"
-              variant="sectionLabel"
-              tone="subtle"
-              align="left"
-              className="px-4 py-2.5"
-            >
-              {i18n.t('ui.filteredpositionstable.name')}
-            </Text>
-            <Text
-              as="th"
-              variant="sectionLabel"
-              tone="subtle"
-              align="right"
-              className="px-4 py-2.5"
-            >
-              {i18n.t('ui.filteredpositionstable.total')}
-            </Text>
-            <ChartText
-              as="th"
-              variant="sectionLabel"
-              align="right"
-              category={filterValue}
-              className="px-4 py-2.5"
-            >
-              {filterValue}
-            </ChartText>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="sectionLabel" tone="subtle" align="left">
+                {i18n.t('ui.filteredpositionstable.name')}
+              </Text>
+            </Inset>
+            <Inset as="th" inset="default">
+              <Text as="div" variant="sectionLabel" tone="subtle" align="right">
+                {i18n.t('ui.filteredpositionstable.total')}
+              </Text>
+            </Inset>
+            <Inset as="th" inset="default">
+              <ChartText
+                as="div"
+                variant="sectionLabel"
+                align="right"
+                category={filterValue}
+              >
+                {filterValue}
+              </ChartText>
+            </Inset>
           </Surface>
         </Surface>
         <tbody>

@@ -6,6 +6,7 @@ import { ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartXAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartGrid } from '@/shared/ui/ChartAxes.view'
 import { ChartLegend } from '@/shared/ui/ChartLabels.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
@@ -29,9 +30,11 @@ export function PositionHistoryCharts({
   return (
     <>
       {/* Chart 1: position value */}
-      <Text as="p" variant="caption" tone="muted" className="mb-1">
-        {i18n.t('ui.hoverchart.positionValue')}
-      </Text>
+      <Layout spaceAfter="compact">
+        <Text as="p" variant="caption" tone="muted">
+          {i18n.t('ui.hoverchart.positionValue')}
+        </Text>
+      </Layout>
       <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           data={chartData}
@@ -75,36 +78,43 @@ export function PositionHistoryCharts({
       </ResponsiveContainer>
 
       {/* legend markers */}
-      <Text
-        as="div"
-        variant="caption"
-        tone="subtle"
-        className="flex gap-4 mt-1 mb-3 ml-2"
-      >
-        <span>
-          <SeriesSwatch
-            tone={'transactionBuy'}
-            shape="dot"
-            className="mr-1 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.hoverchart.buy')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'transactionSell'}
-            shape="dot"
-            className="mr-1 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.hoverchart.sell')}
-        </span>
-      </Text>
+      <Layout spaceBefore="compact" spaceAfter="default">
+        <Text as="div" variant="caption" tone="subtle">
+          <Inline as="div" gap="relaxed">
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'transactionBuy'} shape="dot" />
+              </Layout>
+              {i18n.t('ui.hoverchart.buy')}
+            </span>
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'transactionSell'} shape="dot" />
+              </Layout>
+              {i18n.t('ui.hoverchart.sell')}
+            </span>
+          </Inline>
+        </Text>
+      </Layout>
 
       {/* Chart 2: unit price — only when real market data is available */}
       {showUnitPrice && (
         <>
-          <Text as="p" variant="caption" tone="muted" className="mb-1">
-            {i18n.t('ui.hoverchart.unitPrice')}
-          </Text>
+          <Layout spaceAfter="compact">
+            <Text as="p" variant="caption" tone="muted">
+              {i18n.t('ui.hoverchart.unitPrice')}
+            </Text>
+          </Layout>
           <ResponsiveContainer width="100%" height={160}>
             <LineChart
               data={chartData}

@@ -7,6 +7,7 @@ import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { ToggleButton } from '@/shared/ui/Controls.view'
+import { Inline } from '@/shared/ui/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -28,22 +29,11 @@ function EvolutionLegendItem({
 }) {
   if (category === groupedCategory)
     return (
-      <Text
-        variant="micro"
-        tone="subtle"
-        className="inline-flex items-center gap-1"
-      >
-        <CategorySwatch
-          category={category}
-          shape="bar"
-          style={{
-            width: 8,
-            height: 8,
-            display: 'inline-block',
-            flexShrink: 0,
-          }}
-        />
-        {category}
+      <Text variant="micro" tone="subtle">
+        <Inline as="span" align="center" gap="compact">
+          <CategorySwatch category={category} shape="bar" size="default" />
+          {category}
+        </Inline>
       </Text>
     )
   const isActive = activeCategory === category
@@ -55,13 +45,12 @@ function EvolutionLegendItem({
       onClick={() => onSelect(category)}
       variant="legend"
       dimmed={isDimmed}
-      className="inline-flex items-center gap-1"
     >
       <CategorySwatch
         category={category}
         shape="bar"
         selected={isActive}
-        style={{ width: 8, height: 8, display: 'inline-block', flexShrink: 0 }}
+        size="default"
       />
       <ChartText category={category}>{category}</ChartText>
     </ToggleButton>
@@ -133,20 +122,23 @@ export function EvoCardView({
     gradientId: `${id}-allocation-${index}`,
   }))
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-2 flex items-start justify-between gap-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="muted"
-          className="flex items-center"
-        >
-          {title}
-          {tooltip}
+    <Surface variant="chart">
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="start"
+        justify="between"
+        gap="default"
+      >
+        <Text as="h2" variant="label" tone="muted">
+          <Inline as="span" align="center">
+            {title}
+            {tooltip}
+          </Inline>
         </Text>
         {positionsControl}
-      </div>
-      <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
+      </Inline>
+      <Inline as="div" flow="wrap" gap="compact" spaceAfter="default">
         {categories.map((category) => (
           <EvolutionLegendItem
             key={category}
@@ -157,7 +149,7 @@ export function EvoCardView({
             onSelect={onSelect}
           />
         ))}
-      </div>
+      </Inline>
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart
           data={chartData}
@@ -186,7 +178,6 @@ export function EvoCardView({
           <ChartYAxis
             tickFormatter={(v) => `${v}%`}
             domain={[0, 100]}
-
             width={36}
           />
           <Tooltip content={<EvolutionTooltip categories={categories} />} />

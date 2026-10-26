@@ -3,6 +3,7 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 export function IncomeSavingsTooltip({
@@ -27,16 +28,13 @@ export function IncomeSavingsTooltip({
         })
       : ''
   return (
-    <TooltipBox minWidth={235}>
-      <ChartText
-        as="div"
-        tone={'tooltipText'}
-        variant="strong"
-        style={{ marginBottom: 7 }}
-      >
-        {point.year}
-        {suffix}
-      </ChartText>
+    <TooltipBox>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'} variant="strong">
+          {point.year}
+          {suffix}
+        </ChartText>
+      </Layout>
       <ChartText as="div" tone={'costBasisText'}>
         {i18n.t('ui.annualincomesavingschart.netSalaryWithValues', {
           amount: formatMoney(point.netSalary, { style: 'full' }),
@@ -47,38 +45,37 @@ export function IncomeSavingsTooltip({
           amount: formatMoney(point.otherIncome, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={'tooltipLabel'} style={{ marginTop: 4 }}>
-        {i18n.t('ui.annualincomesavingschart.totalNetIncomeWithValues', {
-          amount: formatMoney(point.totalIncome, { style: 'full' }),
-        })}
-      </ChartText>
-      <ChartText
-        as="div"
-        tone={'netContributionsText'}
-        style={{ marginTop: 7 }}
-      >
-        {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
-          value: formatMoney(point.placedSavings, { style: 'full' }),
-          savingsSuffix,
-        })}
-      </ChartText>
-      <ChartText as="div" tone={'returnRate'} style={{ marginTop: 4 }}>
-        {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
-          value: formatPercentage(point.placementRate, {
-            fallback: i18n.t('ui.annualincomesavingschart.notComparable'),
-          }),
-        })}
-      </ChartText>
-      <ChartText
-        as="div"
-        tone={'tooltipDim'}
-        separator
-        style={{ marginTop: 7, paddingTop: 7 }}
-      >
-        {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxyWithValues', {
-          value: formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
-        })}
-      </ChartText>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          {i18n.t('ui.annualincomesavingschart.totalNetIncomeWithValues', {
+            amount: formatMoney(point.totalIncome, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'netContributionsText'}>
+          {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
+            value: formatMoney(point.placedSavings, { style: 'full' }),
+            savingsSuffix,
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'returnRate'}>
+          {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
+            value: formatPercentage(point.placementRate, {
+              fallback: i18n.t('ui.annualincomesavingschart.notComparable'),
+            }),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact" inset="compact">
+        <ChartText as="div" tone={'tooltipDim'} separator>
+          {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxyWithValues', {
+            value: formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
     </TooltipBox>
   )
 }

@@ -9,21 +9,22 @@ export function PositionsToggle({
   onClick: () => void
 }) {
   return (
-    <ToggleButton
-      type="button"
-      onClick={onClick}
-      active={open}
-      title={
-        open
-          ? i18n.t('ui.positionstoggle.hidePositions')
-          : i18n.t('ui.positionstoggle.viewPositions')
-      }
-      variant="positions"
-      className="flex shrink-0 items-center gap-1.5 px-2.5 py-1"
-    >
-      <GridIcon />
+    <span className="inline-grid shrink-0">
+      <ToggleButton
+        type="button"
+        onClick={onClick}
+        active={open}
+        title={
+          open
+            ? i18n.t('ui.positionstoggle.hidePositions')
+            : i18n.t('ui.positionstoggle.viewPositions')
+        }
+        variant="positions"
+      >
+        <GridIcon />
 
-      {i18n.t('ui.positionstoggle.positions')}
-    </ToggleButton>
+        {i18n.t('ui.positionstoggle.positions')}
+      </ToggleButton>
+    </span>
   )
 }

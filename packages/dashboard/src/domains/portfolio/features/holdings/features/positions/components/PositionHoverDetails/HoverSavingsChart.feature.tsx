@@ -7,6 +7,7 @@ import i18n from '@/i18n/i18n'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 import { StatusMessage } from '@/shared/ui/Controls.view'
+import { Layout } from '@/shared/ui/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -50,53 +51,50 @@ export function HoverSavingsChart({
     <Preview.Content
       anchor={target.buttonRect}
       label={target.name}
-      style={{ width: `min(480px, calc(100vw - 20px))` }}
+
       variant="floatingPanel"
-      className="z-[9999] overflow-y-auto  p-4"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      size="wide"
     >
-      <div className="mb-3">
-        <Text as="p" variant="bodyStrong" tone="default">
-          {target.name}
-        </Text>
-        <Text as="p" variant="caption" tone="subtle">
-          {i18n.t('ui.hoversavingschart.balanceOverTime')}
-        </Text>
-      </div>
+      <Layout overflow="scroll" inset="default">
+        <Layout spaceAfter="default">
+          <Text as="p" variant="bodyStrong" tone="default">
+            {target.name}
+          </Text>
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t('ui.hoversavingschart.balanceOverTime')}
+          </Text>
+        </Layout>
 
-      {isPending && (
-        <StatusMessage
-          variant="caption"
-          tone="muted"
-          align="center"
-          className="py-4"
-        >
-          {i18n.t('ui.hoverchart.loading')}
-        </StatusMessage>
-      )}
-      {error && (
-        <StatusMessage
-          urgent
-          variant="caption"
-          tone="negative"
-          align="center"
-          className="py-4"
-        >
-          {getErrorMessage(error)}
-        </StatusMessage>
-      )}
-      {showEmptyHistory && (
-        <StatusMessage
-          variant="caption"
-          tone="muted"
-          align="center"
-          className="py-4"
-        >
-          {i18n.t('ui.hoverchart.noHistory')}
-        </StatusMessage>
-      )}
-      {showHistory && <SavingsHistoryChart chartData={chartData} />}
+        {isPending && (
+          <StatusMessage variant="caption" tone="muted" align="center">
+            <Layout as="span" flow="block" inset="default">
+              {i18n.t('ui.hoverchart.loading')}
+            </Layout>
+          </StatusMessage>
+        )}
+        {error && (
+          <StatusMessage
+            urgent
+            variant="caption"
+            tone="negative"
+            align="center"
+          >
+            <Layout as="span" flow="block" inset="default">
+              {getErrorMessage(error)}
+            </Layout>
+          </StatusMessage>
+        )}
+        {showEmptyHistory && (
+          <StatusMessage variant="caption" tone="muted" align="center">
+            <Layout as="span" flow="block" inset="default">
+              {i18n.t('ui.hoverchart.noHistory')}
+            </Layout>
+          </StatusMessage>
+        )}
+        {showHistory && <SavingsHistoryChart chartData={chartData} />}
+      </Layout>
     </Preview.Content>
   )
 }

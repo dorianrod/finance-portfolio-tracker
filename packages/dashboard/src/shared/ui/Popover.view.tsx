@@ -2,6 +2,7 @@ import * as Primitive from '@radix-ui/react-popover'
 import { type ComponentProps, createContext, useContext } from 'react'
 
 import type { ControlProps } from './controlProps'
+import { POPOVER_CONTENT_VARIANTS } from './surfaceAppearance'
 import { type PopoverState, usePopoverState } from './usePopoverState'
 
 const PopoverContext = createContext<PopoverState | null>(null)
@@ -34,6 +35,7 @@ function PopoverTrigger({
   return (
     <Primitive.Trigger
       {...props}
+      className="inline-flex items-center gap-2 px-3 py-1.5"
       ref={context?.registerTrigger}
       aria-label={label}
     />
@@ -42,9 +44,12 @@ function PopoverTrigger({
 
 function PopoverContent({
   label,
-  className = '',
+  variant = 'default',
   ...props
-}: ControlProps<ComponentProps<typeof Primitive.Content>> & { label: string }) {
+}: ControlProps<ComponentProps<typeof Primitive.Content>> & {
+  label: string
+  variant?: 'default' | 'menu'
+}) {
   const context = useContext(PopoverContext)
   return (
     <Primitive.Portal>
@@ -72,7 +77,7 @@ function PopoverContent({
             context?.exitWithTab(event.currentTarget, event.shiftKey)
           }
         }}
-        className={`z-[10000] max-h-[var(--radix-popover-content-available-height)] overflow-auto rounded-lg border border-border-strong bg-surface-raised p-3 shadow-xl ${className}`}
+        className={`z-[10000] max-h-[var(--radix-popover-content-available-height)] overflow-auto rounded-lg border border-border-strong bg-surface-raised shadow-xl ${POPOVER_CONTENT_VARIANTS[variant]}`}
       />
     </Primitive.Portal>
   )

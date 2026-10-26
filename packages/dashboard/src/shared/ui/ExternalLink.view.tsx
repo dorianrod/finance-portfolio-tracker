@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes } from 'react'
 
 type ExternalLinkProps = Omit<
-  AnchorHTMLAttributes<HTMLAnchorElement>,
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'>,
   'href' | 'target' | 'rel'
 > & {
   variant?: 'source'
@@ -12,7 +12,7 @@ type ExternalLinkProps = Omit<
 export function ExternalLink({
   href,
   children,
-  className,
+
   variant,
   truncate = false,
   ...props
@@ -20,7 +20,6 @@ export function ExternalLink({
   const classes = [
     variant === 'source' && 'text-accent hover:underline',
     truncate && 'truncate',
-    className,
   ]
     .filter(Boolean)
     .join(' ')

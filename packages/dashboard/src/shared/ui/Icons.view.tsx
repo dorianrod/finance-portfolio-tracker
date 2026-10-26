@@ -1,8 +1,8 @@
-import { DecorativeSvg } from './Controls.view'
-
 export function GridIcon() {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       width="13"
       height="13"
       viewBox="0 0 16 16"
@@ -12,13 +12,15 @@ export function GridIcon() {
       <rect x="9" y="1" width="6" height="6" rx="1" opacity=".7" />
       <rect x="1" y="9" width="6" height="6" rx="1" opacity=".7" />
       <rect x="9" y="9" width="6" height="6" rx="1" opacity=".7" />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function DisclosureChevronIcon({ expanded }: { expanded: boolean }) {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       className={`h-3.5 w-3.5 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
       viewBox="0 0 20 20"
       fill="currentColor"
@@ -28,13 +30,15 @@ export function DisclosureChevronIcon({ expanded }: { expanded: boolean }) {
         d="M5.22 7.22a.75.75 0 0 1 1.06 0L10 10.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.28a.75.75 0 0 1 0-1.06Z"
         clipRule="evenodd"
       />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function NextIcon() {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
       viewBox="0 0 20 20"
       fill="currentColor"
@@ -44,13 +48,15 @@ export function NextIcon() {
         d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 0 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
         clipRule="evenodd"
       />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function TreeChevronIcon({ expanded }: { expanded: boolean }) {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       viewBox="0 0 20 20"
       width="16"
       height="16"
@@ -62,13 +68,15 @@ export function TreeChevronIcon({ expanded }: { expanded: boolean }) {
       className="shrink-0 text-content-subtle"
     >
       <path d={expanded ? 'M5 8l5 5 5-5' : 'M8 5l5 5-5 5'} />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function HierarchyIcon() {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       viewBox="0 0 20 20"
       className="size-5"
       fill="none"
@@ -84,13 +92,18 @@ export function HierarchyIcon() {
       <rect x="2.25" y="11.75" width="4.5" height="4" rx="1" />
       <rect x="7.75" y="11.75" width="4.5" height="4" rx="1" />
       <rect x="13.25" y="11.75" width="4.5" height="4" rx="1" />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function AllocationIcon() {
   return (
-    <DecorativeSvg viewBox="0 0 20 20" className="size-5">
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 20 20"
+      className="size-5"
+    >
       <circle
         cx="10"
         cy="10"
@@ -106,13 +119,15 @@ export function AllocationIcon() {
         stroke="currentColor"
         strokeWidth="1.5"
       />
-    </DecorativeSvg>
+    </svg>
   )
 }
 
 export function PeriodFilterIcon() {
   return (
-    <DecorativeSvg
+    <svg
+      aria-hidden="true"
+      focusable="false"
       viewBox="0 0 20 20"
       fill="none"
       className="h-3.5 w-3.5 shrink-0 text-content-subtle transition-colors group-hover:text-content-muted"
@@ -123,6 +138,6 @@ export function PeriodFilterIcon() {
         strokeWidth="1.5"
         strokeLinecap="round"
       />
-    </DecorativeSvg>
+    </svg>
   )
 }

@@ -10,7 +10,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof ChoiceChip>) {
+function Render(
+  args: Omit<React.ComponentProps<typeof ChoiceChip>, 'className'>,
+) {
   const [{ active }, updateArgs] = useArgs<typeof args>()
   return (
     <ChoiceChip

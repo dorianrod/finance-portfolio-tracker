@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { Layout } from '@/shared/ui/Layout.view'
+
 import { Surface } from '../../Surface.view'
 import { VirtualRow } from '../../VirtualRow.view'
 
@@ -20,9 +22,9 @@ export const Positioned: Story = {
     return (
       <div className="relative h-64">
         <VirtualRow {...args}>
-          <Surface variant="card" className="h-full p-3">
-            {args.children}
-          </Surface>
+          <Layout height="full">
+            <Surface variant="card">{args.children}</Surface>
+          </Layout>
         </VirtualRow>
       </div>
     )

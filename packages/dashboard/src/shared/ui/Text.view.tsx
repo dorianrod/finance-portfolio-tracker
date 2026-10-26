@@ -29,7 +29,10 @@ export type TextTag =
   | 'dd'
   | 'li'
 
-export type TextProps<T extends TextTag> = ComponentPropsWithoutRef<T> & {
+export type TextProps<T extends TextTag> = Omit<
+  ComponentPropsWithoutRef<T>,
+  'className'
+> & {
   as?: T
   variant?: keyof typeof TEXT_VARIANTS
   tone?: TextTone
@@ -47,7 +50,6 @@ export function Text<T extends TextTag = 'span'>({
   wrap,
   numeric = false,
   truncate = false,
-  className,
   ...props
 }: TextProps<T>) {
   return createElement(as ?? 'span', {
@@ -59,7 +61,7 @@ export function Text<T extends TextTag = 'span'>({
       wrap && TEXT_WRAPPING[wrap],
       numeric && 'tabular-nums',
       truncate && 'truncate',
-      className,
+      truncate && as !== 'td' && as !== 'th' && 'block',
     ]
       .filter(Boolean)
       .join(' '),

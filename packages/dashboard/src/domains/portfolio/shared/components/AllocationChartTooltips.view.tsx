@@ -8,6 +8,7 @@ import {
   type NumericTooltipProps,
   tooltipValue,
 } from '@/shared/ui/chartTooltip'
+import { Layout } from '@/shared/ui/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 function PieTooltipSubItem({
@@ -24,10 +25,12 @@ function PieTooltipSubItem({
   )
 
   return (
-    <ChartText as="div" tone={'tooltipDim'} style={{ marginTop: 2 }}>
-      {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} ·{' '}
-      {percentage}
-    </ChartText>
+    <Layout as="div" spaceBefore="compact">
+      <ChartText as="div" tone={'tooltipDim'}>
+        {subItem.name} — {formatMoney(subItem.value, { style: 'compact' })} ·{' '}
+        {percentage}
+      </ChartText>
+    </Layout>
   )
 }
 
@@ -60,27 +63,22 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
     item.total > 0 ? (item.value / item.total) * 100 : 0,
   )
   return (
-    <TooltipBox minWidth={160}>
-      <ChartText
-        as="div"
-        tone={'tooltipText'}
-        variant="strong"
-        style={{ marginBottom: 4 }}
-      >
-        {item.name}
-      </ChartText>
+    <TooltipBox>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'} variant="strong">
+          {item.name}
+        </ChartText>
+      </Layout>
       <ChartText as="div" tone={'tooltipLabel'} variant="bold">
         {formatMoney(item.value, { style: 'full' })}
       </ChartText>
-      <ChartText
-        as="div"
-        tone={'tooltipDim'}
-        style={{ marginBottom: item.subItems?.length ? 6 : 0 }}
-      >
-        {i18n.t('ui.allocationchartsTooltips.ofTotalAllocatedWithValues', {
-          percentage,
-        })}
-      </ChartText>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipDim'}>
+          {i18n.t('ui.allocationchartsTooltips.ofTotalAllocatedWithValues', {
+            percentage,
+          })}
+        </ChartText>
+      </Layout>
       {item.subItems?.map((subItem) => (
         <PieTooltipSubItem key={subItem.name} item={item} subItem={subItem} />
       ))}
@@ -103,10 +101,12 @@ export function EvolutionTooltip({
   const formatDate = useFormatDate()
   if (!active || !payload?.length) return null
   return (
-    <TooltipBox maxWidth={220}>
-      <ChartText as="div" tone={'tooltipText'} style={{ marginBottom: 6 }}>
-        {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
-      </ChartText>
+    <TooltipBox>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'}>
+          {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
+        </ChartText>
+      </Layout>
       {categories.toReversed().map((category) => (
         <EvolutionTooltipRow
           key={category}

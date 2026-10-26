@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 
-import { Button, Decorative, DecorativeSvg } from './Controls.view'
 import { METRIC_CARD_ACCENTS } from './metricCardAppearance'
 
 export type MetricCardAccent = keyof typeof METRIC_CARD_ACCENTS
@@ -18,12 +17,14 @@ export function MetricCard({
 }) {
   return (
     <article className="group relative min-w-0 rounded-2xl border border-border bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface/80">
-      <Button
+      <button
+        type="button"
         onClick={onOpen}
-        label={label}
+        aria-label={label}
         className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
       />
-      <Decorative
+      <span
+        aria-hidden="true"
         className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${METRIC_CARD_ACCENTS[accent]}`}
       />
       {children}
@@ -35,7 +36,9 @@ function MetricCardHeader({ children }: { children: ReactNode }) {
   return (
     <span className="pointer-events-none relative z-10 flex items-start justify-between gap-3">
       <span>{children}</span>
-      <DecorativeSvg
+      <svg
+        aria-hidden="true"
+        focusable="false"
         viewBox="0 0 20 20"
         fill="none"
         className="mt-0.5 h-4 w-4 shrink-0 text-content-subtle transition-all group-hover:translate-x-0.5 group-hover:text-content-muted"
@@ -47,7 +50,7 @@ function MetricCardHeader({ children }: { children: ReactNode }) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-      </DecorativeSvg>
+      </svg>
     </span>
   )
 }

@@ -13,12 +13,12 @@ export function ColHeader({ label, columnName = label, content }: Props) {
           label={i18n.t('ui.colheader.moreInformationAbout', {
             column: columnName || i18n.t('ui.colheader.thisColumn'),
           })}
-          className="grid size-5 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary"
+          variant="columnHelp"
         >
           ⓘ
         </Tooltip.Trigger>
-        <Tooltip.Content className="w-72 leading-relaxed">
-          {content}
+        <Tooltip.Content variant="info">
+          <div className="w-72">{content}</div>
         </Tooltip.Content>
       </Tooltip>
     </span>

@@ -11,7 +11,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof ChartScaleToggle>) {
+function Render(
+  args: Omit<React.ComponentProps<typeof ChartScaleToggle>, 'className'>,
+) {
   const [{ value }, updateArgs] = useArgs<typeof args>()
   return (
     <ChartScaleToggle

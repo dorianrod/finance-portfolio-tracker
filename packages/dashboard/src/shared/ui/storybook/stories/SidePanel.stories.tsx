@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, fn, waitFor, within } from 'storybook/test'
 
+import { Grid } from '@/shared/ui/Layout.view'
+
 import { Button, DialogButton, Input } from '../../Controls.view'
 import { SidePanel } from '../../SidePanel.view'
 
@@ -14,14 +16,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof SidePanel>) {
+function Render(
+  args: Omit<React.ComponentProps<typeof SidePanel>, 'className'>,
+) {
   const [{ open }, updateArgs] = useArgs<typeof args>()
   return (
     <>
       <DialogButton
         expanded={open}
         variant="secondary"
-        className="p-3"
         onClick={() => updateArgs({ open: true })}
       >
         Open panel
@@ -43,21 +46,15 @@ function Render(args: React.ComponentProps<typeof SidePanel>) {
             Done
           </Button>
         </SidePanel.HeaderActions>
-        <div className="grid gap-4 p-4">
-          <Input
-            label="Example name"
-            variant="filter"
-            defaultValue="Sample"
-            className="p-2"
-          />
+        <Grid columns={1} gap="relaxed" inset="default">
+          <Input label="Example name" variant="filter" defaultValue="Sample" />
           <Button
             variant="secondary"
-            className="p-2"
             onClick={() => updateArgs({ open: false })}
           >
             Close panel
           </Button>
-        </div>
+        </Grid>
       </SidePanel>
     </>
   )

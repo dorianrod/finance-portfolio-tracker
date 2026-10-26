@@ -37,8 +37,7 @@ from this boundary: `className="text-positive"` still applies visual styling.
 - Dimensions, aspect ratio and overflow.
 - Position, offsets and z-index.
 
-Padding is explicitly allowed in this project, including `p-*`, `px-*` and
-logical CSS padding properties. Responsive variants and arbitrary values are
+Padding is allowed only on external layout containers in this project, including `p-*`, `px-*` and logical CSS padding properties. Caller-authored layout must not be injected inside visual shared UI boundaries or their slots; follow [external layout only](styling-external-layout-only.md). Responsive variants and arbitrary values are
 allowed only when the underlying utility/property belongs to layout.
 
 Colors, backgrounds, borders, radii, shadows, opacity, typography, text
@@ -105,8 +104,8 @@ requires a composition decision. Do not suppress warnings to complete a migratio
 - Tests and generated files are exempt from the ESLint rule.
 - The lint check covers React/SVG/Recharts styling sinks and local stylesheet
   imports; it does not parse CSS contents or analyze imperative DOM mutations.
-- Semantic primitive props such as `tone` and `variant`, and dynamic values of
-  known layout properties such as `style={{ width: measuredWidth }}`, are allowed.
+- Semantic primitive props such as `tone`, `variant` and closed size tokens are allowed.
+- Dynamic CSS layout such as `style={{ width: measuredWidth }}` belongs only on external containers. Chart geometry remains data supplied to the owning shared UI primitive.
 
 ### References
 

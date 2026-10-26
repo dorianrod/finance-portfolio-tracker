@@ -2,6 +2,7 @@ import type { PositionSortKey } from '@/domains/portfolio/shared/types/positionS
 import i18n from '@/i18n/i18n'
 import { ColHeader } from '@/shared/ui/ColHeader.view'
 import { Button } from '@/shared/ui/Controls.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function SortHeader({
@@ -29,27 +30,26 @@ export function SortHeader({
   }
   const sortIndicator = active ? { asc: '↑', desc: '↓' }[dir] : '⇅'
   return (
-    <span className="inline-flex max-w-full flex-wrap items-center gap-1">
-      <Button
-        type="button"
-        onClick={() => onSort(sk)}
-        label={i18n.t('ui.sortheader.sortByValue0CurrentlyValue1', {
-          value0: label,
-          value1: sortState,
-        })}
-        variant="positionSort"
-        className="min-w-0 max-w-full p-1"
-      >
-        {label}
-        <Text
-          variant="fine"
-          tone={active ? 'secondary' : 'subtle'}
-          className="ml-0.5"
+    <Inline as="span" flow="wrap" align="center" gap="compact">
+      <Layout as="span" flow="control">
+        <Button
+          type="button"
+          onClick={() => onSort(sk)}
+          label={i18n.t('ui.sortheader.sortByValue0CurrentlyValue1', {
+            value0: label,
+            value1: sortState,
+          })}
+          variant="positionSort"
         >
-          {sortIndicator}
-        </Text>
-      </Button>
+          {label}
+          <Layout as="span" flow="inline">
+            <Text variant="fine" tone={active ? 'secondary' : 'subtle'}>
+              {sortIndicator}
+            </Text>
+          </Layout>
+        </Button>
+      </Layout>
       <ColHeader label="" columnName={label} content={tooltip} />
-    </span>
+    </Inline>
   )
 }

@@ -16,15 +16,18 @@ describe('ChoiceChip', () => {
     async ({ active, appearance }) => {
       const onClick = vi.fn()
       render(
-        <ChoiceChip active={active} onClick={onClick} className="ml-2">
-          Account
-        </ChoiceChip>,
+        <span className="inline-grid ml-2">
+          <ChoiceChip active={active} onClick={onClick}>
+            Account
+          </ChoiceChip>
+        </span>,
       )
       const button = screen.getByRole('button', { name: 'Account' })
       expect(button.getAttribute('aria-pressed')).toBe(String(active))
       expect(button.getAttribute('type')).toBe('button')
       expect(button.className).toContain(appearance)
-      expect(button.className).toContain('ml-2')
+      expect(button.className).not.toContain('ml-2')
+      expect(button.parentElement?.className).toContain('ml-2')
       expect(button.hasAttribute('active')).toBe(false)
       await userEvent.setup().click(button)
       expect(onClick).toHaveBeenCalledOnce()

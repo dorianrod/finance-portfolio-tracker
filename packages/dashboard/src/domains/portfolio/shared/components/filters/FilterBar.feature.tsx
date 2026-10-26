@@ -33,6 +33,7 @@ import {
   FieldSeparator,
   FilterIcon,
 } from '@/shared/ui/FormElements.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -105,18 +106,19 @@ function OperationTypeChip({ operation }: { operation: OperationType }) {
 function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
   const { setFilters } = useDashboardFilters()
   return (
-    <Button
-      type="button"
-      onClick={() =>
-        setFilters((current) => clearFilterGroup(current, item.key))
-      }
-      title={i18n.t('ui.filterbar.clearValue0Filter', { value0: item.key })}
-      variant="filterTag"
-      className="inline-flex max-w-full items-center gap-1.5 px-3 py-1"
-    >
-      <Text truncate>{item.label}</Text>
-      <Decorative>×</Decorative>
-    </Button>
+    <Layout as="span" flow="control">
+      <Button
+        type="button"
+        onClick={() =>
+          setFilters((current) => clearFilterGroup(current, item.key))
+        }
+        title={i18n.t('ui.filterbar.clearValue0Filter', { value0: item.key })}
+        variant="filterTag"
+      >
+        <Text truncate>{item.label}</Text>
+        <Decorative>×</Decorative>
+      </Button>
+    </Layout>
   )
 }
 
@@ -149,14 +151,11 @@ export function FilterPanel({
         {i18n.t('ui.filterbar.changesUpdateTheDashboardImmediately')}
       </SidePanel.Description>
       <SidePanel.HeaderActions>
-        <Button
-          type="button"
-          onClick={resetDashboardFilters}
-          variant="quiet"
-          className="shrink-0 px-2 py-1"
-        >
-          {i18n.t('ui.filterbar.resetAll')}
-        </Button>
+        <Layout as="span" flow="control" sizing="fixed">
+          <Button type="button" onClick={resetDashboardFilters} variant="quiet">
+            {i18n.t('ui.filterbar.resetAll')}
+          </Button>
+        </Layout>
       </SidePanel.HeaderActions>
       {visibility.showPeriod && (
         <FilterSection
@@ -165,55 +164,60 @@ export function FilterPanel({
             'ui.filterbar.limitTimeBasedChartsAndCalculationsToASpecific',
           )}
         >
-          <div className="flex flex-wrap gap-1.5">
+          <Inline as="div" flow="wrap" gap="compact">
             {DATE_PRESETS.map((preset) => (
               <DatePresetChip key={preset.label} preset={preset} />
             ))}
-          </div>
-          <div className="mt-3 flex items-center gap-2">
-            <Input
-              type="date"
-              label={i18n.t('ui.filterbar.periodStart')}
-              value={toDateInputValue(filters.dateFrom)}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  dateFrom: DATE_FILTER_SCHEMA.validateSync(event.target.value),
-                })
-              }
-              variant="filter"
-              className="min-w-0 flex-1 px-2.5 py-2"
-            />
+          </Inline>
+          <Inline as="div" spaceBefore="default" align="center" gap="default">
+            <Layout as="span" flow="control" sizing="flexible">
+              <Input
+                type="date"
+                label={i18n.t('ui.filterbar.periodStart')}
+                value={toDateInputValue(filters.dateFrom)}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    dateFrom: DATE_FILTER_SCHEMA.validateSync(
+                      event.target.value,
+                    ),
+                  })
+                }
+                variant="filter"
+              />
+            </Layout>
             <FieldSeparator />
-            <Input
-              type="date"
-              label={i18n.t('ui.filterbar.periodEnd')}
-              value={toDateInputValue(filters.dateTo)}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  dateTo: DATE_FILTER_SCHEMA.validateSync(event.target.value),
-                })
-              }
-              variant="filter"
-              className="min-w-0 flex-1 px-2.5 py-2"
-            />
-          </div>
+            <Layout as="span" flow="control" sizing="flexible">
+              <Input
+                type="date"
+                label={i18n.t('ui.filterbar.periodEnd')}
+                value={toDateInputValue(filters.dateTo)}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    dateTo: DATE_FILTER_SCHEMA.validateSync(event.target.value),
+                  })
+                }
+                variant="filter"
+              />
+            </Layout>
+          </Inline>
           {hasPeriodFilter && (
-            <Button
-              type="button"
-              onClick={() =>
-                setFilters({
-                  ...filters,
-                  dateFrom: undefined,
-                  dateTo: undefined,
-                })
-              }
-              variant="text"
-              className="mt-2"
-            >
-              {i18n.t('ui.filterbar.clearPeriod')}
-            </Button>
+            <Layout as="span" flow="control" spaceBefore="default">
+              <Button
+                type="button"
+                onClick={() =>
+                  setFilters({
+                    ...filters,
+                    dateFrom: undefined,
+                    dateTo: undefined,
+                  })
+                }
+                variant="text"
+              >
+                {i18n.t('ui.filterbar.clearPeriod')}
+              </Button>
+            </Layout>
           )}
         </FilterSection>
       )}
@@ -236,34 +240,46 @@ export function FilterPanel({
             }
           />
           {demoPresetSelection && (
-            <Surface
-              variant="raisedInset"
-              className="mt-3 flex items-center justify-between gap-3 px-3 py-2.5"
-            >
-              <div>
-                <Text as="div" variant="captionLabel" tone="secondary">
-                  {i18n.t('ui.filterbar.staticDemo')}
-                </Text>
-                <Text as="div" variant="micro" tone="subtle" className="mt-0.5">
-                  {i18n.t('ui.filterbar.useThePrecomputedFilteredReturnSample')}
-                </Text>
-              </div>
-              <Button
-                type="button"
-                onClick={() =>
-                  setFilters({
-                    ...filters,
-                    accounts: demoPresetSelection,
-                    accountTypes: new Set(),
-                  })
-                }
-                variant="preset"
-                selected={demoPresetActive}
-                className="shrink-0 px-2.5 py-1"
-              >
-                {i18n.t('ui.filterbar.excludePrivateEquity')}
-              </Button>
-            </Surface>
+            <Layout spaceBefore="default">
+              <Surface variant="raisedInset">
+                <Inline
+                  as="div"
+                  align="center"
+                  justify="between"
+                  gap="default"
+                  inset="default"
+                >
+                  <div>
+                    <Text as="div" variant="captionLabel" tone="secondary">
+                      {i18n.t('ui.filterbar.staticDemo')}
+                    </Text>
+                    <Layout spaceBefore="compact">
+                      <Text as="div" variant="micro" tone="subtle">
+                        {i18n.t(
+                          'ui.filterbar.useThePrecomputedFilteredReturnSample',
+                        )}
+                      </Text>
+                    </Layout>
+                  </div>
+                  <Layout as="span" flow="control" sizing="fixed">
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        setFilters({
+                          ...filters,
+                          accounts: demoPresetSelection,
+                          accountTypes: new Set(),
+                        })
+                      }
+                      variant="preset"
+                      selected={demoPresetActive}
+                    >
+                      {i18n.t('ui.filterbar.excludePrivateEquity')}
+                    </Button>
+                  </Layout>
+                </Inline>
+              </Surface>
+            </Layout>
           )}
         </FilterSection>
       )}
@@ -278,7 +294,7 @@ export function FilterPanel({
           <Text as="div" variant="captionLabel" tone="muted">
             {i18n.t('ui.filterbar.operationType')}
           </Text>
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <Inline as="div" flow="wrap" spaceBefore="default" gap="compact">
             <Chip
               label={i18n.t('ui.filterbar.all')}
               active={filters.operationTypes.size === 0}
@@ -289,31 +305,47 @@ export function FilterPanel({
             {allOperationTypes.map((operation) => (
               <OperationTypeChip key={operation} operation={operation} />
             ))}
-          </div>
-          <ChoiceRow
-            variant="card"
-            className="mt-4 flex items-center justify-between gap-3 px-3 py-2.5"
-          >
-            <span>
-              <Text variant="captionLabel" tone="secondary" className="block">
-                {i18n.t('ui.filterbar.hideClosedPositions')}
-              </Text>
-              <Text variant="micro" tone="subtle" className="mt-0.5 block">
-                {i18n.t('ui.filterbar.keepTheTableFocusedOnCurrentHoldings')}
-              </Text>
-            </span>
-            <Checkbox
-              size="standard"
-              checked={filters.hideClosedPositions}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  hideClosedPositions: event.target.checked,
-                })
-              }
-              className="shrink-0"
-            />
-          </ChoiceRow>
+          </Inline>
+          <Layout spaceBefore="spacious">
+            <ChoiceRow variant="card">
+              <Inline
+                as="span"
+                align="center"
+                justify="between"
+                gap="default"
+                inset="default"
+              >
+                <span>
+                  <Text variant="captionLabel" tone="secondary">
+                    <Layout as="span" flow="block">
+                      {i18n.t('ui.filterbar.hideClosedPositions')}
+                    </Layout>
+                  </Text>
+                  <Layout as="span" flow="block" spaceBefore="compact">
+                    <Text variant="micro" tone="subtle">
+                      <Layout as="span" flow="block">
+                        {i18n.t(
+                          'ui.filterbar.keepTheTableFocusedOnCurrentHoldings',
+                        )}
+                      </Layout>
+                    </Text>
+                  </Layout>
+                </span>
+                <Layout as="span" flow="inline" sizing="fixed">
+                  <Checkbox
+                    size="standard"
+                    checked={filters.hideClosedPositions}
+                    onChange={(event) =>
+                      setFilters({
+                        ...filters,
+                        hideClosedPositions: event.target.checked,
+                      })
+                    }
+                  />
+                </Layout>
+              </Inline>
+            </ChoiceRow>
+          </Layout>
         </FilterSection>
       )}
     </SidePanel>
@@ -325,22 +357,27 @@ export function FilterButton({ activeCount }: { activeCount: number }) {
   const { openFilters } = useDashboardFilters()
 
   return (
-    <DialogButton
-      type="button"
-      onClick={openFilters}
-      expanded={open}
-      variant="filter"
-      selected={activeCount > 0}
-      className="inline-flex shrink-0 items-center gap-2 px-3 py-2"
-    >
-      <FilterIcon className="h-4 w-4" />
-      <span>{i18n.t('ui.filterbar.filters')}</span>
-      {activeCount > 0 && (
-        <SelectionCount className="min-w-5 px-1.5 py-0.5">
-          {activeCount}
-        </SelectionCount>
-      )}
-    </DialogButton>
+    <Layout as="span" flow="control" sizing="fixed">
+      <DialogButton
+        type="button"
+        onClick={openFilters}
+        expanded={open}
+        variant="filter"
+        selected={activeCount > 0}
+      >
+        <FilterIcon />
+        <span>{i18n.t('ui.filterbar.filters')}</span>
+        {activeCount > 0 && (
+          <Layout as="span" flow="inline">
+            <SelectionCount>
+              <Layout as="span" flow="inline" inset="compact">
+                {activeCount}
+              </Layout>
+            </SelectionCount>
+          </Layout>
+        )}
+      </DialogButton>
+    </Layout>
   )
 }
 
@@ -368,17 +405,18 @@ export function ActiveFilterSummary({
     return null
 
   return (
-    <Group
-      className="mb-4 flex flex-wrap items-center gap-2"
-      label={i18n.t('ui.filterbar.activeFilters')}
-    >
-      {leading}
-      {items.map((item) => (
-        <ActiveFilterChip key={item.key} item={item} />
-      ))}
-      {content}
-      {actions}
-    </Group>
+    <div className="mb-4">
+      <Group label={i18n.t('ui.filterbar.activeFilters')}>
+        <Inline as="div" flow="wrap" align="center" gap="default">
+          {leading}
+          {items.map((item) => (
+            <ActiveFilterChip key={item.key} item={item} />
+          ))}
+          {content}
+          {actions}
+        </Inline>
+      </Group>
+    </div>
   )
 }
 
@@ -386,12 +424,7 @@ export function ResetFiltersButton() {
   const { resetDashboardFilters } = useDashboardFilters()
 
   return (
-    <Button
-      type="button"
-      onClick={resetDashboardFilters}
-      variant="text"
-      className="px-1 py-1"
-    >
+    <Button type="button" onClick={resetDashboardFilters} variant="text">
       {i18n.t('ui.filterbar.resetAll')}
     </Button>
   )

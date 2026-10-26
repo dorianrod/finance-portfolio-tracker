@@ -34,10 +34,10 @@ export function SeriesPie({
   ...props
 }: Props) {
   const { renderer: shape, content } = partitionChartSlot<
-    Partial<PieSectorShapeProps>
+    Partial<Omit<PieSectorShapeProps, 'className'>>
   >(children, SeriesPieShape)
   const { renderer: label, content: rest } = partitionChartSlot<
-    Partial<PieLabelRenderProps>
+    Partial<Omit<PieLabelRenderProps, 'className'>>
   >(content, SeriesPieLabels)
   return (
     <Pie

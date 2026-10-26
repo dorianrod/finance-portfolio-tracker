@@ -24,7 +24,6 @@ type LineDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'className'
   | 'style'
   | 'children'
 type SeriesLineProps = Pick<

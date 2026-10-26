@@ -15,9 +15,11 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { DecorativeBlock } from '@/shared/ui/Controls.view'
 import { Disclosure } from '@/shared/ui/Disclosure.view'
+import { Grid, Inline, Inset, Layout, Stack } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch, ToneSwatch } from '@/shared/ui/Swatch.view'
 import { Text } from '@/shared/ui/Text.view'
+import { TreeConnector } from '@/shared/ui/TreeConnector.view'
 
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
 import { DetailToggle } from './DetailToggle.view'
@@ -63,41 +65,41 @@ function AccountCoverageRow({
   })
   return (
     <div>
-      <div className="mb-1.5 flex items-baseline justify-between gap-3">
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="baseline"
+        justify="between"
+        gap="default"
+      >
         <Text variant="caption" tone="muted" truncate title={label}>
           {label}
         </Text>
-        <Text variant="micro" tone="subtle" numeric className="shrink-0">
-          {summary}
-        </Text>
-      </div>
-      <Surface
-        variant="track"
-        className="flex h-1.5 overflow-hidden"
-        title={detail}
-      >
-        {coverage.allocated > 0 && (
-          <SeriesSwatch
-            as="div"
-            tone="coverage"
-            style={{ width: `${allocatedPct}%` }}
-          />
-        )}
-        {coverage.unallocated > 0 && (
-          <SeriesSwatch
-            as="div"
-            tone="coverageGap"
-            style={{ width: `${unallocatedPct}%` }}
-          />
-        )}
-        {coverage.notApplicable > 0 && (
-          <ToneSwatch
-            as="div"
-            tone="subtle"
-            style={{ width: `${notApplicablePct}%` }}
-          />
-        )}
-      </Surface>
+        <Layout as="span" flow="inline" sizing="fixed">
+          <Text variant="micro" tone="subtle" numeric>
+            {summary}
+          </Text>
+        </Layout>
+      </Inline>
+      <Layout height="track" overflow="clip">
+        <Surface variant="track" title={detail}>
+          <Inline as="div" height="full">
+            {coverage.allocated > 0 && (
+              <SeriesSwatch as="div" tone="coverage" share={allocatedPct} />
+            )}
+            {coverage.unallocated > 0 && (
+              <SeriesSwatch
+                as="div"
+                tone="coverageGap"
+                share={unallocatedPct}
+              />
+            )}
+            {coverage.notApplicable > 0 && (
+              <ToneSwatch as="div" tone="subtle" share={notApplicablePct} />
+            )}
+          </Inline>
+        </Surface>
+      </Layout>
     </div>
   )
 }
@@ -124,7 +126,7 @@ export function AllocationCoverageCard({
 
   return (
     <div>
-      <div className="mx-auto max-w-sm">
+      <Layout>
         <QualityIndicatorCard
           label={i18n.t('ui.allocationcoveragecard.portfolioScope')}
           tooltip={i18n.t(
@@ -138,40 +140,42 @@ export function AllocationCoverageCard({
             <LatestQualityScope />
           </QualityIndicatorCard.TooltipFooter>
         </QualityIndicatorCard>
-      </div>
+      </Layout>
 
-      <DecorativeBlock className="relative mx-auto hidden h-10 sm:block">
-        <Surface
-          variant="centeredConnector"
-          className="absolute left-1/2 top-0 h-5 w-px"
-        />
-        <Surface
-          variant="highlighted"
-          className="absolute left-[16.667%] right-[16.667%] top-5 h-px"
-        />
-        <Surface
-          variant="positiveConnector"
-          className="absolute bottom-0 left-[16.667%] top-5 w-px"
-        />
-        <Surface
-          variant={
-            hasMaterialQualityGap(unmappedPct)
-              ? 'warningConnector'
-              : 'positiveConnector'
-          }
-          className="absolute bottom-0 left-1/2 top-5 w-px"
-        />
-        <Surface
-          variant="neutralConnector"
-          className="absolute bottom-0 left-[83.333%] top-5 w-px"
-        />
-      </DecorativeBlock>
-      <DecorativeBlock
-        variant="highlighted"
-        className="mx-auto h-6 w-px sm:hidden"
-      />
+      <Layout placement="inset" height="connector">
+        <DecorativeBlock>
+          <Layout flow="block" hiddenUntil="small">
+            <TreeConnector position="stem">
+              <Surface variant="centeredConnector" />
+            </TreeConnector>
+            <TreeConnector position="bridge">
+              <Surface variant="highlighted" />
+            </TreeConnector>
+            <TreeConnector position="left">
+              <Surface variant="positiveConnector" />
+            </TreeConnector>
+            <TreeConnector position="center">
+              <Surface
+                variant={
+                  hasMaterialQualityGap(unmappedPct)
+                    ? 'warningConnector'
+                    : 'positiveConnector'
+                }
+              />
+            </TreeConnector>
+            <TreeConnector position="right">
+              <Surface variant="neutralConnector" />
+            </TreeConnector>
+          </Layout>
+        </DecorativeBlock>
+      </Layout>
+      <Layout height="icon" width="divider" hideFrom="small">
+        <DecorativeBlock variant="highlighted">
+          <Layout></Layout>
+        </DecorativeBlock>
+      </Layout>
 
-      <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-3">
+      <Grid columns={3} align="start" gap="default">
         <QualityIndicatorCard
           label={i18n.t('ui.allocationcoveragecard.mappedPositions')}
           tooltip={i18n.t(
@@ -195,18 +199,19 @@ export function AllocationCoverageCard({
                 )
               }
             />
-            <Disclosure.Content
-              variant="sectionStart"
-              className="mt-3 space-y-4 pt-3"
-            >
-              {coverage.map((item) => (
-                <AccountCoverageRow
-                  key={item.account}
-                  accountLabels={accountLabels}
-                  coverage={item}
-                />
-              ))}
-            </Disclosure.Content>
+            <Layout spaceBefore="default">
+              <Disclosure.Content variant="sectionStart">
+                <Stack gap="relaxed" inset="default">
+                  {coverage.map((item) => (
+                    <AccountCoverageRow
+                      key={item.account}
+                      accountLabels={accountLabels}
+                      coverage={item}
+                    />
+                  ))}
+                </Stack>
+              </Disclosure.Content>
+            </Layout>
           </Disclosure>
         </QualityIndicatorCard>
         <QualityIndicatorCard
@@ -236,14 +241,20 @@ export function AllocationCoverageCard({
                 )
               }
             />
-            <Disclosure.Content variant="sectionStart" className="mt-3 pt-3">
-              <Text as="p" variant="microHelper" tone="subtle" className="mb-3">
-                {i18n.t(
-                  'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
-                )}
-              </Text>
-              <AllocationDimensionQuality coverage={dimensionCoverage} />
-            </Disclosure.Content>
+            <Layout spaceBefore="default">
+              <Disclosure.Content variant="sectionStart">
+                <Inset inset="default">
+                  <Layout spaceAfter="default">
+                    <Text as="p" variant="microHelper" tone="subtle">
+                      {i18n.t(
+                        'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
+                      )}
+                    </Text>
+                  </Layout>
+                  <AllocationDimensionQuality coverage={dimensionCoverage} />
+                </Inset>
+              </Disclosure.Content>
+            </Layout>
           </Disclosure>
         </QualityIndicatorCard>
         <QualityIndicatorCard
@@ -262,7 +273,7 @@ export function AllocationCoverageCard({
             <LatestQualityScope />
           </QualityIndicatorCard.TooltipFooter>
         </QualityIndicatorCard>
-      </div>
+      </Grid>
     </div>
   )
 }

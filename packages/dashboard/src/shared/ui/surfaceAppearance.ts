@@ -29,9 +29,10 @@ export const SURFACE_VARIANTS = {
     'bg-surface border border-border quality-indicator-card rounded-card shadow-sm',
   raisedRow: 'bg-surface-raised/20 border-b border-border/50',
   floatingPanel: 'bg-surface border border-border-strong rounded-xl shadow-2xl',
+  compactFixedTable: 'text-xs table-fixed',
   compactTable: 'text-xs',
   bodyTable: 'text-sm',
-  bodyFixedTable: 'text-sm table-fixed',
+  bodyFixedTable: 'min-w-[1100px] text-sm table-fixed',
   canvasOutline: 'bg-canvas border border-border-strong rounded-lg',
 
   canvas: 'bg-canvas',
@@ -51,7 +52,8 @@ export const SURFACE_VARIANTS = {
   compactEmpty: 'border border-border border-dashed rounded-lg text-xs',
   tooltip:
     'bg-surface border border-border-strong rounded-lg shadow-xl text-xs',
-  track: 'bg-surface-raised rounded-full',
+  track: 'bg-surface-raised rounded-full overflow-hidden',
+  annotatedTrack: 'bg-surface-raised rounded-full',
   sectionStart: 'border-t border-border',
   strongSectionStart: 'border-t border-border-strong',
   sectionEnd: 'border-b border-border',
@@ -75,4 +77,9 @@ export const SURFACE_VARIANTS = {
   raisedInset: 'rounded-lg bg-surface-raised/60',
   selectionPanel: 'rounded-xl border border-border-strong bg-canvas/35',
   strongSectionEnd: 'border-b border-border-strong',
+} as const
+
+export const POPOVER_CONTENT_VARIANTS = {
+  default: 'p-3',
+  menu: 'min-w-48 max-h-72 py-1.5',
 } as const

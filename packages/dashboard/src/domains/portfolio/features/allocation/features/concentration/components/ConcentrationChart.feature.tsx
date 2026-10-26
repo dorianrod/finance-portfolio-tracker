@@ -15,6 +15,7 @@ import { ChartGrid } from '@/shared/ui/ChartAxes.view'
 import { ChartLabels } from '@/shared/ui/ChartLabels.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -43,55 +44,60 @@ export function ConcentrationChart({
       ? { percentage: topTenPct, value: topTenValue }
       : null
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
+    <Surface variant="chart">
+      <Inline
+        as="div"
+        spaceAfter="default"
+        align="start"
+        justify="between"
+        gap="default"
+      >
         <div>
-          <Text
-            as="h2"
-            variant="label"
-            tone="secondary"
-            className="flex items-center"
-          >
-            {i18n.t('ui.concentrationchart.largestHoldings')}
-            <ScopedInfoTooltip
-              // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
-              text={
-                description ??
-                i18n.t(
-                  'ui.concentrationchart.largestPortfolioExposuresAggregatedAcrossAccounts',
-                )
-              }
-              // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
-              scope={{ account: 'filterable', period: 'as-of', effectiveDate }}
-            />
+          <Text as="h2" variant="label" tone="secondary">
+            <Inline as="span" align="center">
+              {i18n.t('ui.concentrationchart.largestHoldings')}
+              <ScopedInfoTooltip
+                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+                text={
+                  description ??
+                  i18n.t(
+                    'ui.concentrationchart.largestPortfolioExposuresAggregatedAcrossAccounts',
+                  )
+                }
+                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+                scope={{
+                  account: 'filterable',
+                  period: 'as-of',
+                  effectiveDate,
+                }}
+              />
+            </Inline>
           </Text>
-          <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-            {description ??
-              i18n.t('ui.concentrationchart.aggregatedAcrossAccounts')}
-          </Text>
+          <Layout spaceBefore="compact">
+            <Text as="p" variant="caption" tone="subtle">
+              {description ??
+                i18n.t('ui.concentrationchart.aggregatedAcrossAccounts')}
+            </Text>
+          </Layout>
         </div>
-        <div className="flex shrink-0 items-center gap-3">
+        <Inline as="div" sizing="fixed" align="center" gap="default">
           {topTenSummary && (
             <Text as="div" align="right">
               <Text as="div" variant="tinyOverline" tone="subtle">
                 {i18n.t('ui.concentrationchart.top10Total')}
               </Text>
-              <Text
-                as="div"
-                variant="captionStrong"
-                tone="secondary"
-                numeric
-                className="mt-0.5"
-              >
-                {formatMoney(topTenSummary.value, { style: 'full' })} ·{' '}
-                {formatPercentage(topTenSummary.percentage)}
-              </Text>
+              <Layout spaceBefore="compact">
+                <Text as="div" variant="captionStrong" tone="secondary" numeric>
+                  {formatMoney(topTenSummary.value, { style: 'full' })} ·{' '}
+                  {formatPercentage(topTenSummary.percentage)}
+                </Text>
+              </Layout>
             </Text>
           )}
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <div className="min-w-[620px]">
+        </Inline>
+      </Inline>
+      <Layout overflow="auto">
+        <Layout>
           <ResponsiveContainer width="100%" height={height}>
             <BarChart
               layout="vertical"
@@ -126,8 +132,8 @@ export function ConcentrationChart({
               </SeriesBar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
-      </div>
+        </Layout>
+      </Layout>
     </Surface>
   )
 }

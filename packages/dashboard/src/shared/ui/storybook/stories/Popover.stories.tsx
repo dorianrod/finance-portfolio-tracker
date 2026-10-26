@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor, within } from 'storybook/test'
 
+import { Grid } from '@/shared/ui/Layout.view'
+
 import { Button, Input } from '../../Controls.view'
 import { Popover } from '../../Popover.view'
 
@@ -11,7 +13,7 @@ const meta = { title: 'Panels/Popover', component: Popover } satisfies Meta<
 export default meta
 type Story = StoryObj<typeof meta>
 
-function Render(args: React.ComponentProps<typeof Popover>) {
+function Render(args: Omit<React.ComponentProps<typeof Popover>, 'className'>) {
   const [{ open }, updateArgs] = useArgs<typeof args>()
   return (
     <Popover
@@ -20,21 +22,18 @@ function Render(args: React.ComponentProps<typeof Popover>) {
       onOpenChange={(open) => updateArgs({ open })}
     >
       <Popover.Trigger asChild>
-        <Button variant="secondary" className="p-3">
-          Open filters
-        </Button>
+        <Button variant="secondary">Open filters</Button>
       </Popover.Trigger>
       <Popover.Content label="Example filters">
-        <div className="grid gap-3">
-          <Input label="Filter name" variant="filter" className="p-2" />
+        <Grid columns={1} gap="default">
+          <Input label="Filter name" variant="filter" />
           <Button
             variant="primaryCompact"
-            className="p-2"
             onClick={() => updateArgs({ open: false })}
           >
             Apply filters
           </Button>
-        </div>
+        </Grid>
       </Popover.Content>
     </Popover>
   )

@@ -15,6 +15,7 @@ import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -49,28 +50,27 @@ export function UnrealizedPnlChart({
   if (data.length === 0) return null
 
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandlOverTime')}
-          <ScopedInfoTooltip
-            text={i18n.t(
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t('ui.unrealizedpnlchart.grossUnrealizedPandlOverTime')}
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {i18n.t(
               'ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal',
             )}
-            scope={{ account: 'filterable', period: 'range' }}
-          />
-        </Text>
-        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-          {i18n.t(
-            'ui.unrealizedpnlchart.amountBeforeEstimatedTaxAndPercentageOfTheTotal',
-          )}
-        </Text>
-      </div>
+          </Text>
+        </Layout>
+      </Layout>
       <ResponsiveContainer width="100%" height={240}>
         <ComposedChart
           data={data}
@@ -82,13 +82,11 @@ export function UnrealizedPnlChart({
             tickFormatter={(value) =>
               formatDate(value, { style: 'shortMonthShortYear' })
             }
-
             interval="preserveStartEnd"
           />
           <ChartYAxis
             yAxisId="amount"
             tickFormatter={(value) => formatMoney(value, { style: 'compact' })}
-
             width={52}
           />
           <ChartYAxis
@@ -97,7 +95,6 @@ export function UnrealizedPnlChart({
             tickFormatter={(value: number) =>
               formatPercentage(value, { decimals: 0 })
             }
-
             width={42}
           />
           <ChartReference yAxisId="amount" y={0} kind="zero" />
@@ -128,40 +125,40 @@ export function UnrealizedPnlChart({
           />
         </ComposedChart>
       </ResponsiveContainer>
-      <Text
-        as="div"
-        variant="caption"
-        tone="subtle"
-        className="mt-2 flex flex-wrap gap-x-5 gap-y-1"
-      >
-        <span>
-          <SeriesSwatch
-            tone={'performancePositive'}
-            as="i"
-            shape="dot"
-            className="mr-1.5 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'performanceNegative'}
-            as="i"
-            shape="dot"
-            className="mr-1.5 inline-block h-2 w-2"
-          />
-          {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
-        </span>
-        <span>
-          <SeriesSwatch
-            tone={'returnRate'}
-            as="i"
-            shape="centeredLine"
-            className="mr-1.5 inline-block h-0.5 w-3"
-          />
-          {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
-        </span>
-      </Text>
+      <Layout spaceBefore="default">
+        <Text as="div" variant="caption" tone="subtle">
+          <Inline as="div" flow="wrap" gap="compact">
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'performancePositive'} as="i" shape="dot" />
+              </Layout>
+              {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
+            </span>
+            <span>
+              <Layout
+                as="span"
+                flow="inline"
+                height="indicator"
+                width="indicator"
+              >
+                <SeriesSwatch tone={'performanceNegative'} as="i" shape="dot" />
+              </Layout>
+              {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
+            </span>
+            <span>
+              <Layout as="span" flow="inline" height="divider" width="icon">
+                <SeriesSwatch tone={'returnRate'} as="i" shape="centeredLine" />
+              </Layout>
+              {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
+            </span>
+          </Inline>
+        </Text>
+      </Layout>
     </Surface>
   )
 }

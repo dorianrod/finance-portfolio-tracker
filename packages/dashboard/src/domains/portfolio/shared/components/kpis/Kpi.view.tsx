@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { Metric } from '@/shared/ui/Metric.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -44,18 +45,20 @@ function KpiLabel({
 }) {
   const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
   return (
-    <Text variant="metricLabel" tone="subtle" className="flex items-center">
-      {content}
-      <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
+    <Text variant="metricLabel" tone="subtle">
+      <Inline as="span" align="center">
+        {content}
+        <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
+      </Inline>
     </Text>
   )
 }
 
 function KpiValueRow({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+    <Inline as="div" flow="wrap" align="baseline" gap="compact">
       {children}
-    </div>
+    </Inline>
   )
 }
 
@@ -75,9 +78,11 @@ function KpiDetail({
 
 function KpiFooter({ children }: { children: ReactNode }) {
   return (
-    <Text as="div" variant="caption" tone="subtle" className="mt-1">
-      {children}
-    </Text>
+    <Layout spaceBefore="compact">
+      <Text as="div" variant="caption" tone="subtle">
+        {children}
+      </Text>
+    </Layout>
   )
 }
 
@@ -96,5 +101,9 @@ Kpi.Detail = KpiDetail
 Kpi.Footer = KpiFooter
 
 export function KpiCard({ children }: { children: ReactNode }) {
-  return <div className="flex min-w-0 flex-1 basis-56 py-2">{children}</div>
+  return (
+    <Inline as="div" sizing="flexible" inset="compact">
+      {children}
+    </Inline>
+  )
 }

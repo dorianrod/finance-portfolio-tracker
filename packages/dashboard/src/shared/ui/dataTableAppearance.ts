@@ -1,5 +1,5 @@
 const GROUP_CELL =
-  'text-xs bg-surface-raised border-t-2 border-border-strong border-b border-border-strong'
+  'px-3 py-1.5 text-xs bg-surface-raised border-t-2 border-border-strong border-b border-border-strong'
 
 export const DATA_CELL_VARIANTS = {
   body: '',

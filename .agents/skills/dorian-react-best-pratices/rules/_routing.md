@@ -13,10 +13,11 @@ Routing rules:
 
 | Observable pattern or intent | Section prefix | Rule file |
 | --- | --- | --- |
+| Caller-supplied children inside shared UI contain layout classes or inline styles; extracted children or descendant selectors control internal padding, margins, gaps or layout. | `styling-` | [`styling-external-layout-only.md`](styling-external-layout-only.md) |
 | Domain or application JSX supplies aria-* attributes, role, tabIndex, autoFocus or keyboard/focus handlers, directly or through a spread; a component, hook or helper manages DOM focus, keyboard listeners or accessibility associations. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |
 | Application code imports accessibility primitives outside shared UI, or the request asks to detect, prevent or centralize scattered accessibility behavior. | `architecture-` | [`architecture-centralize-accessibility.md`](architecture-centralize-accessibility.md) |
 | Code outside shared/ui applies non-layout classes or style properties through JSX, spreads, constants, templates or React element factories; native/SVG or Recharts props choose appearance, or a local stylesheet is imported outside the design system. | `styling-` | [`styling-centralize-in-shared-ui.md`](styling-centralize-in-shared-ui.md) |
-| The request asks to detect, prevent or centralize visual styling outside shared/ui, or distinguish allowed layout (including padding) from appearance. | `styling-` | [`styling-centralize-in-shared-ui.md`](styling-centralize-in-shared-ui.md) |
+| The request asks to detect, prevent or centralize visual styling outside shared/ui, or distinguish allowed external layout (including padding) from appearance. | `styling-` | [`styling-centralize-in-shared-ui.md`](styling-centralize-in-shared-ui.md) |
 | A React feature or domain component contains a literal color (`#…`, `rgb(…)`, `hsl(…)`, `oklch(…)`, or a concrete CSS color name such as `red`), including in inline styles or SVG attributes. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
 | A React feature or domain component uses an arbitrary or palette-specific Tailwind color such as `text-[#b91c1c]`, `bg-red-500`, or `border-slate-300`. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |
 | A shared UI primitive selects a literal or palette-specific color instead of a semantic theme token. | `styling-` | [`styling-semantic-colors.md`](styling-semantic-colors.md) |

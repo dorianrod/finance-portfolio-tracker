@@ -31,11 +31,10 @@ export function Tooltip({ children }: { children: React.ReactNode }) {
 function TooltipTrigger({
   label,
   variant,
-  className,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
   label?: string
-  variant?: 'info' | 'help' | 'source'
+  variant?: 'info' | 'help' | 'source' | 'columnHelp'
 }) {
   const context = useContext(TooltipContext)
   return (
@@ -43,13 +42,14 @@ function TooltipTrigger({
       {...props}
       type="button"
       className={[
+        variant === 'columnHelp' &&
+          'grid size-5 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary',
         variant === 'help' &&
-          'data-quality-help rounded-r-md text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+          'inline-flex size-6 items-center justify-center data-quality-help rounded-r-md text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
         variant === 'source' &&
           'cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4',
         variant === 'info' &&
           'flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary',
-        className,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -67,7 +67,6 @@ function TooltipTrigger({
 }
 
 function TooltipContent({
-  className = '',
   variant,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Content>> & {
@@ -79,7 +78,7 @@ function TooltipContent({
         {...props}
         sideOffset={6}
         collisionPadding={8}
-        className={`z-[10000] max-w-[calc(100vw-1rem)] rounded-control border border-border-strong bg-surface-raised p-3 text-xs text-content-secondary shadow-xl ${variant === 'left' ? 'text-left' : ''} ${variant === 'info' ? 'text-left font-normal normal-case leading-relaxed tracking-normal' : ''} ${className}`}
+        className={`z-[10000] max-w-[calc(100vw-1rem)] rounded-control border border-border-strong bg-surface-raised p-3 text-xs text-content-secondary shadow-xl ${variant === 'left' ? 'text-left' : ''} ${variant === 'info' ? 'text-left font-normal normal-case leading-relaxed tracking-normal' : ''} `}
         onEscapeKeyDown={(event) => event.stopPropagation()}
       />
     </Primitive.Portal>

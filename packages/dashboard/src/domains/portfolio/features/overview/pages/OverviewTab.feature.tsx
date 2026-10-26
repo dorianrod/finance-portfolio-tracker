@@ -4,6 +4,7 @@ import type {
 } from '@/domains/portfolio/shared/helpers/calculators/buildOverviewComparison'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+import { Layout } from '@/shared/ui/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -27,16 +28,20 @@ export function OverviewTab({
 }: OverviewTabProps) {
   if (!comparison) {
     return (
-      <Surface variant="panel" align="center" className="mb-6 p-8">
-        <Text as="h3" variant="bodyStrong" tone="secondary">
-          {i18n.t('ui.overviewtab.overviewUnavailable')}
-        </Text>
-        <Text as="p" variant="body" tone="subtle" className="mt-2">
-          {i18n.t(
-            'ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory',
-          )}
-        </Text>
-      </Surface>
+      <div className="mb-6">
+        <Surface variant="panel" align="center">
+          <Text as="h3" variant="bodyStrong" tone="secondary">
+            {i18n.t('ui.overviewtab.overviewUnavailable')}
+          </Text>
+          <Layout spaceBefore="default">
+            <Text as="p" variant="body" tone="subtle">
+              {i18n.t(
+                'ui.overviewtab.chooseAValidPeriodWithAvailablePortfolioHistory',
+              )}
+            </Text>
+          </Layout>
+        </Surface>
+      </div>
     )
   }
 

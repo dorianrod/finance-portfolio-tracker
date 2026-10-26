@@ -16,12 +16,9 @@ export function Metric({
 }) {
   return (
     <div className="relative min-w-0 flex-1 basis-40 py-1 pl-4">
-      <ToneSwatch
-        as="div"
-        tone={tone}
-        shape="dot"
-        className="absolute bottom-1 left-0 top-1 w-[3px]"
-      />
+      <div className="absolute bottom-1 left-0 top-1 w-[3px]">
+        <ToneSwatch as="div" tone={tone} shape="dot" />
+      </div>
       <div className="flex min-w-0 flex-col gap-0.5">{children}</div>
     </div>
   )
@@ -36,9 +33,11 @@ function MetricValue({ children, tone = 'default', title }: ValueProps) {
 }
 function MetricInlineNote({ children, tone = 'muted' }: ValueProps) {
   return (
-    <Text variant="captionStrong" tone={tone} numeric className="shrink-0">
-      {children}
-    </Text>
+    <span className="shrink-0">
+      <Text variant="captionStrong" tone={tone} numeric>
+        {children}
+      </Text>
+    </span>
   )
 }
 function MetricNote({ children, tone = 'muted', title }: ValueProps) {

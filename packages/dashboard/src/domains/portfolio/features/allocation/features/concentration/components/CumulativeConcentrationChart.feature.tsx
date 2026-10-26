@@ -8,6 +8,7 @@ import { cumulativeConcentrationCrosshair } from '@/domains/portfolio/shared/hel
 import i18n from '@/i18n/i18n'
 import { ChartGrid, ChartXAxis, ChartYAxis } from '@/shared/ui/ChartAxes.view'
 import { ChartReference } from '@/shared/ui/ChartReference.view'
+import { Inline, Layout } from '@/shared/ui/Layout.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
@@ -38,34 +39,37 @@ export function CumulativeConcentrationChart({
   }
 
   return (
-    <Surface variant="chart" className="p-4">
-      <div className="mb-3">
-        <Text
-          as="h2"
-          variant="label"
-          tone="secondary"
-          className="flex items-center"
-        >
-          {i18n.t('ui.cumulativeconcentrationchart.cumulativeConcentration')}
-          <ScopedInfoTooltip
-            // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
-            text={
-              description ??
+    <Surface variant="chart">
+      <Layout spaceAfter="default">
+        <Text as="h2" variant="label" tone="secondary">
+          <Inline as="span" align="center">
+            {i18n.t('ui.cumulativeconcentrationchart.cumulativeConcentration')}
+            <ScopedInfoTooltip
+              // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+              text={
+                description ??
+                i18n.t(
+                  'ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest',
+                )
+              }
+              // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+              scope={{
+                account: 'filterable',
+                period: 'as-of',
+                effectiveDate,
+              }}
+            />
+          </Inline>
+        </Text>
+        <Layout spaceBefore="compact">
+          <Text as="p" variant="caption" tone="subtle">
+            {description ??
               i18n.t(
                 'ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest',
-              )
-            }
-            // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
-            scope={{ account: 'filterable', period: 'as-of', effectiveDate }}
-          />
-        </Text>
-        <Text as="p" variant="caption" tone="subtle" className="mt-0.5">
-          {description ??
-            i18n.t(
-              'ui.cumulativeconcentrationchart.shareOfTheApplicablePortfolioHeldInTheLargest',
-            )}
-        </Text>
-      </div>
+              )}
+          </Text>
+        </Layout>
+      </Layout>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
           data={data}
@@ -86,7 +90,6 @@ export function CumulativeConcentrationChart({
             domain={[0, 100]}
             ticks={[0, 25, 50, 75, 100]}
             tickFormatter={(value: number) => `${value}%`}
-
             width={42}
           />
           {crosshair && (
@@ -110,15 +113,11 @@ export function CumulativeConcentrationChart({
           />
         </LineChart>
       </ResponsiveContainer>
-      <Text
-        as="div"
-        variant="micro"
-        tone="subtle"
-        align="center"
-        className="mt-1"
-      >
-        {i18n.t('ui.cumulativeconcentrationchart.numberOfAssets')}
-      </Text>
+      <Layout spaceBefore="compact">
+        <Text as="div" variant="micro" tone="subtle" align="center">
+          {i18n.t('ui.cumulativeconcentrationchart.numberOfAssets')}
+        </Text>
+      </Layout>
     </Surface>
   )
 }

@@ -12,7 +12,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Theme: Story = {
-  args: { variant: 'theme', minWidth: 180, maxWidth: 320 },
+  args: { variant: 'theme', size: 'default' },
   render: function Render(args) {
     return (
       <TooltipBox {...args}>
@@ -26,5 +26,5 @@ export const Theme: Story = {
 }
 export const Raised: Story = {
   ...Theme,
-  args: { ...Theme.args, variant: 'raised', padding: '12px' },
+  args: { ...Theme.args, variant: 'raised', density: 'default' },
 }
