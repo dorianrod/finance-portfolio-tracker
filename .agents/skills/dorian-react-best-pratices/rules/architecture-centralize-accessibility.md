@@ -28,7 +28,7 @@ The design system owns accessibility implementation, including simple attributes
 ### Incorrect
 
 ```tsx
-<button aria-label={t('details')} aria-pressed={active} onClick={toggle}>
+<button aria-label={t("details")} aria-pressed={active} onClick={toggle}>
   <DetailsIcon />
 </button>
 ```
@@ -36,7 +36,7 @@ The design system owns accessibility implementation, including simple attributes
 ### Correct
 
 ```tsx
-<ToggleButton label={t('details')} active={active} onClick={toggle}>
+<ToggleButton label={t("details")} active={active} onClick={toggle}>
   <DetailsIcon />
 </ToggleButton>
 ```
@@ -49,7 +49,7 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 
 ### Enforcement
 
-The dashboard enables typed `local/no-domain-accessibility` at error level for authored `src` code outside `src/shared/ui`. It checks JSX attributes, explicitly supplied properties in resolvable spreads, direct Radix imports/re-exports/dynamic imports, and resolved DOM focus, keyboard-listener and ARIA APIs. Tests and generated files are exempt.
+The dashboard enables typed `local/no-domain-accessibility` at error level for authored `src` code. Outside `src/shared/ui`, it checks JSX attributes, explicitly supplied properties in resolvable spreads, direct Radix imports/re-exports/dynamic imports, and resolved DOM focus, keyboard-listener and ARIA APIs. Within shared UI, it checks exported component contracts and compound slots for raw wiring props, including inherited HTML attributes, and rejects bare Radix value re-exports, namespace exports and resolved import aliases. Type-only re-exports and internal primitive wiring remain valid. Tests, generated files and isolated Storybook support are exempt.
 
 The check examines resolved declarations, avoiding false positives from optional attributes inherited from external HTML/SVG types such as Recharts shape props. It does not prove runtime accessibility or reconstruct arbitrary dynamic property names, opaque objects or transitive helper behavior. Test reusable primitives by role and label, and verify keyboard navigation, relationships, dismissal and focus restoration.
 

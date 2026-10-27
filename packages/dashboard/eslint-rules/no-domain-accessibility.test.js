@@ -118,4 +118,64 @@ describe('configured accessibility boundary', () => {
       ).toEqual(['wiring'])
     }
   })
+
+  it.each([
+    `export {Root as Popover} from '@radix-ui/react-popover'`,
+    `import {Root} from '@radix-ui/react-popover'; export {Root as Popover}`,
+    `export * from '@radix-ui/react-popover'`,
+    `export * as Popover from '@radix-ui/react-popover'`,
+  ])(
+    'rejects bare primitive re-exports through shared UI: %s',
+    async (code) => {
+      expect(
+        (await lint(code, 'src/shared/ui/Popover.view.tsx')).map(
+          ({ messageId }) => messageId,
+        ),
+      ).toEqual(['rawPrimitive'])
+    },
+  )
+
+  it.each([
+    `import {Root} from '@radix-ui/react-popover'; export const Popover = Root`,
+    `import {Root} from '@radix-ui/react-popover'; export default Root`,
+  ])('rejects unadapted primitive aliases: %s', async (code) => {
+    expect(
+      (await lint(code, 'src/shared/ui/Popover.view.tsx')).some(
+        ({ messageId }) => messageId === 'rawPrimitive',
+      ),
+    ).toBe(true)
+  })
+
+  it.each([
+    `import type {AriaRole} from 'react'; export function Popover({role}: {role?: AriaRole}) {return <div role={role} />}`,
+    `import type {HTMLAttributes} from 'react'; export function Popover(props: Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style'>) {return <div {...props} />}`,
+    `import type {AriaRole} from 'react'; const Panel = ({role}: {role?: AriaRole}) => <div role={role} />; export {Panel as Popover}`,
+    `import {memo} from 'react'; export const Popover = memo((props: {onKeyDown?: () => void}) => <div {...props} />)`,
+    `import {Component} from 'react'; export class Popover extends Component<{tabIndex: number}> {render() {return <div tabIndex={this.props.tabIndex} />}}`,
+    `export function Popover() {return null}; Popover.Content = ({role}: {role: 'dialog'}) => <div role={role} />`,
+  ])(
+    'rejects exposed wiring in public primitive contracts: %s',
+    async (code) => {
+      expect(
+        (await lint(code, 'src/shared/ui/Popover.view.tsx')).map(
+          ({ messageId }) => messageId,
+        ),
+      ).toEqual(['publicWiring'])
+    },
+  )
+
+  it.each([
+    `export function Popover({label, expanded}: {label: string; expanded: boolean}) {return <div role="dialog" aria-label={label} aria-expanded={expanded} />}`,
+    `import {Root} from '@radix-ui/react-popover'; export function Popover({open}: {open: boolean}) {return <Root open={open} />}`,
+    `export type {PopoverProps} from '@radix-ui/react-popover'`,
+    `export {type PopoverProps} from '@radix-ui/react-popover'`,
+    `export type * as Popover from '@radix-ui/react-popover'`,
+    `import type {ControlProps} from './controlProps'; import type {HTMLAttributes} from 'react'; export function Popover(props: ControlProps<HTMLAttributes<HTMLDivElement>>) {return <div {...props} role="dialog" />}`,
+    `function Internal({role}: {role: 'dialog'}) {return <div role={role} />}; export function Popover() {return <Internal role="dialog" />}`,
+  ])(
+    'preserves semantic APIs, internal wiring and type contracts: %s',
+    async (code) => {
+      expect(await lint(code, 'src/shared/ui/Popover.view.tsx')).toEqual([])
+    },
+  )
 })

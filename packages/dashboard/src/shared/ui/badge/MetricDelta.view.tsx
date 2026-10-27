@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'react'
 
 import { DELTA_VARIANTS } from '@/shared/ui/badgeAppearance/deltaVariants'
+import type { ControlProps } from '@/shared/ui/controlProps'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 
@@ -8,7 +9,7 @@ export function MetricDelta({
   tone,
   variant = 'summary',
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
+}: ControlProps<HTMLAttributes<HTMLSpanElement>> & {
   tone: TextTone
   variant?: keyof typeof DELTA_VARIANTS
 }) {
@@ -23,7 +24,7 @@ export function MetricDelta({
 }
 
 function MetricDeltaDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'>,
+  props: ControlProps<HTMLAttributes<HTMLSpanElement>>,
 ) {
   return (
     <span

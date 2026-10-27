@@ -1,5 +1,7 @@
 import ts from 'typescript'
 
+import { inspectComponentContracts } from './component-contracts.js'
+
 const BEHAVIOR_PROPS = new Set([
   'role',
   'tabIndex',
@@ -47,13 +49,17 @@ export default {
         'Move "{{name}}" into a shared/ui primitive; pass semantic data, labels and business actions instead. [architecture-centralize-accessibility]',
       library:
         'Wrap "{{name}}" in shared/ui instead of importing accessibility primitives here. [architecture-centralize-accessibility]',
+      publicWiring:
+        'Keep {{names}} internal to this shared/ui API; expose semantic data, labels and business actions. [architecture-centralize-accessibility]',
+      rawPrimitive:
+        'Adapt this accessibility primitive in shared/ui instead of re-exporting its raw API. [architecture-centralize-accessibility]',
     },
   },
   create(context) {
     const filename = context.filename.replaceAll('\\', '/')
     if (
       !filename.includes('/src/') ||
-      filename.includes('/src/shared/ui/') ||
+      filename.includes('/src/shared/ui/storybook/') ||
       /\/(?:__tests__|generated|__generated__)\//u.test(filename) ||
       /\.(?:test|spec|generated|gen)\.[cm]?[jt]sx?$/u.test(filename)
     )
@@ -62,6 +68,111 @@ export default {
     if (!services.program || !services.esTreeNodeToTSNodeMap)
       throw new Error('no-domain-accessibility requires typed linting.')
     const checker = services.program.getTypeChecker()
+
+    if (filename.includes('/src/shared/ui/')) {
+      function primitiveAlias(symbol, seen = new Set()) {
+        if (!symbol || seen.has(symbol)) return false
+        seen.add(symbol)
+        if (symbol.flags & ts.SymbolFlags.Alias)
+          return primitiveAlias(checker.getAliasedSymbol(symbol), seen)
+        if (!(symbol.flags & (ts.SymbolFlags.Value | ts.SymbolFlags.Namespace)))
+          return false
+        return (
+          symbol.declarations?.some((declaration) => {
+            if (
+              /[/\\]node_modules[/\\](?:@radix-ui[/\\]|radix-ui[/\\])/u.test(
+                declaration.getSourceFile().fileName,
+              )
+            )
+              return true
+            const value =
+              declaration.initializer ??
+              (ts.isExportAssignment(declaration)
+                ? declaration.expression
+                : undefined)
+            return (
+              value && primitiveAlias(checker.getSymbolAtLocation(value), seen)
+            )
+          }) ?? false
+        )
+      }
+      return {
+        Program(node) {
+          const source = services.esTreeNodeToTSNodeMap.get(node)
+          const reported = new Set()
+          for (const statement of source.statements) {
+            if (
+              ts.isExportDeclaration(statement) &&
+              !statement.isTypeOnly &&
+              statement.exportClause &&
+              ts.isNamespaceExport(statement.exportClause) &&
+              statement.moduleSpecifier &&
+              ts.isStringLiteral(statement.moduleSpecifier) &&
+              isPrimitiveLibrary(statement.moduleSpecifier.text)
+            ) {
+              const location = services.tsNodeToESTreeNodeMap.get(statement)
+              reported.add(location)
+              context.report({ node: location, messageId: 'rawPrimitive' })
+            }
+          }
+          for (const exported of source.symbol
+            ? checker.getExportsOfModule(source.symbol)
+            : []) {
+            // Explicit type-only re-exports do not expose a runtime primitive.
+            if (
+              exported.declarations?.every(
+                (declaration) =>
+                  ts.isExportSpecifier(declaration) &&
+                  (declaration.isTypeOnly ||
+                    declaration.parent.parent.isTypeOnly),
+              )
+            )
+              continue
+            if (!primitiveAlias(exported)) continue
+            const declaration =
+              exported.declarations?.find(
+                (entry) => entry.getSourceFile() === source,
+              ) ??
+              source.statements.find(
+                (statement) =>
+                  ts.isExportDeclaration(statement) &&
+                  statement.moduleSpecifier &&
+                  ts.isStringLiteral(statement.moduleSpecifier) &&
+                  isPrimitiveLibrary(statement.moduleSpecifier.text),
+              ) ??
+              source
+            const location = services.tsNodeToESTreeNodeMap.get(declaration)
+            if (location && !reported.has(location)) {
+              reported.add(location)
+              context.report({ node: location, messageId: 'rawPrimitive' })
+            }
+          }
+          const contracts = new Map()
+          inspectComponentContracts(
+            source,
+            checker,
+            (property, location) => {
+              if (!isWiring(property.name)) return
+              if (!contracts.has(location)) contracts.set(location, new Set())
+              contracts.get(location).add(property.name)
+            },
+            true,
+          )
+          for (const [location, names] of contracts)
+            context.report({
+              node: services.tsNodeToESTreeNodeMap.get(location),
+              messageId: 'publicWiring',
+              data: {
+                names:
+                  [...names].sort().slice(0, 5).join(', ') +
+                  (names.size > 5
+                    ? ` and ${names.size - 5} other wiring props`
+                    : ''),
+              },
+            })
+        },
+      }
+    }
 
     function report(node, name, messageId = 'wiring') {
       context.report({ node, messageId, data: { name } })

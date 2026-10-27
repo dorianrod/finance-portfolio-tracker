@@ -49,6 +49,10 @@ These schematic children represent distinct user outcomes within the parent's bu
 
 If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain. Follow the generic structural invariant: a feature with `features/` puts every parent-owned role folder under `shared/`; a leaf feature keeps role folders directly at its root.
 
+### Enforcement
+
+The dashboard enables `local/feature-folder-layout` at error level with `maxFeatureDepth: 2`. It counts feature scopes below each domain, using the same parser as import boundaries and ownership. Exactly two levels are allowed. Files with deeper scopes fail even without imports; a folder named `features` inside a role folder does not create another business scope. Parent/leaf layout is checked independently. ESLint does not decide whether the chosen business parent is appropriate and provides no automatic folder move.
+
 ### Exceptions
 
 - Peer responsibilities may have different file counts, implementation sizes and internal layouts; symmetry alone does not justify extraction.

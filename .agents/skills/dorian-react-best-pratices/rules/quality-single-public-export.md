@@ -28,25 +28,33 @@ Give each public component, function, hook or constant a named file. When splitt
 
 ```tsx
 // actions/Actions.view.tsx
-export function SaveAction() { return <button>Save</button> }
-export function CancelAction() { return <button>Cancel</button> }
+export function SaveAction() {
+  return <button>Save</button>;
+}
+export function CancelAction() {
+  return <button>Cancel</button>;
+}
 ```
 
 ### Correct
 
 ```tsx
 // actions/SaveAction.view.tsx
-export function SaveAction() { return <button>Save</button> }
+export function SaveAction() {
+  return <button>Save</button>;
+}
 
 // actions/CancelAction.view.tsx
-export function CancelAction() { return <button>Cancel</button> }
+export function CancelAction() {
+  return <button>Cancel</button>;
+}
 ```
 
 The same split applies to helpers: put `sumAmounts.ts` and `averageAmount.ts` in an `amounts/` directory under the appropriate helper category when they previously shared a public module. Keep private support functions in the public helper's file when they serve only that helper.
 
 ### Enforcement
 
-In this dashboard, enable `local/single-public-export` as a warning for production `.ts` and `.tsx` files under `src`, including shared UI. Splitting files and choosing a meaningful themed directory require review and have no ESLint autofix. The warning introduces the convention without requiring an immediate migration of existing files.
+In this dashboard, enable `local/single-public-export` at error level for production `.ts` and `.tsx` files under `src`, including shared UI. Splitting files and choosing a meaningful themed directory require review and have no ESLint autofix.
 
 This Dorian rule overrides the generic `arch-component-module-boundaries` allowance for multiple exported components with the same role. Its other ownership and component-module restrictions still apply.
 

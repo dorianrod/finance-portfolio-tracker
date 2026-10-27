@@ -1,5 +1,7 @@
 import type { AnchorHTMLAttributes } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 export function ExternalLink({
   href,
   children,
@@ -36,7 +38,7 @@ export function ExternalLink({
 }
 
 type ExternalLinkProps = Omit<
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className' | 'style'>,
+  ControlProps<AnchorHTMLAttributes<HTMLAnchorElement>>,
   'href' | 'target' | 'rel'
 > & {
   variant?: 'source'

@@ -3,7 +3,7 @@ name: dorian-react-best-pratices
 description: Apply and maintain Dorian's project-specific React and Next.js rules, including business domain and feature boundaries. Use when writing, reviewing, or refactoring React code or architecture against this catalog, or when turning a supplied code pattern into a new Dorian React rule. Do not substitute unrelated conventions.
 metadata:
   author: dorian
-  version: "0.11.0"
+  version: "0.12.0"
 ---
 
 # Dorian React Best Practices
@@ -26,12 +26,12 @@ For domain and feature architecture reviews, apply this catalog's business bound
 
 Category prefixes and their priority order belong in [rules/_sections.md](rules/_sections.md).
 
-| Priority | Category | Prefix |
-| --- | --- | --- |
-| 1 | Styling Boundaries | `styling-` |
-| 2 | Component Composition | `composition-` |
-| 3 | Business Architecture and Component Logic | `architecture-` |
-| 4 | Code Quality and API Maintenance | `quality-` |
+| Priority | Category                                  | Prefix          |
+| -------- | ----------------------------------------- | --------------- |
+| 1        | Styling Boundaries                        | `styling-`      |
+| 2        | Component Composition                     | `composition-`  |
+| 3        | Business Architecture and Component Logic | `architecture-` |
+| 4        | Code Quality and API Maintenance          | `quality-`      |
 
 ## Quick Reference
 

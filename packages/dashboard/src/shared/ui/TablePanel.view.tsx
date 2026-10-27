@@ -1,9 +1,11 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 import { DATA_TABLE_STYLES } from './tableStyles'
 
 export function TablePanel(
-  props: Omit<ComponentPropsWithoutRef<'section'>, 'className' | 'style'>,
+  props: ControlProps<ComponentPropsWithoutRef<'section'>>,
 ) {
   return (
     <section
@@ -12,9 +14,7 @@ export function TablePanel(
     />
   )
 }
-function TableToolbar(
-  props: Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'style'>,
-) {
+function TableToolbar(props: ControlProps<ComponentPropsWithoutRef<'div'>>) {
   return (
     <div
       {...props}
@@ -22,9 +22,7 @@ function TableToolbar(
     />
   )
 }
-function TableTitle(
-  props: Omit<ComponentPropsWithoutRef<'h2'>, 'className' | 'style'>,
-) {
+function TableTitle(props: ControlProps<ComponentPropsWithoutRef<'h2'>>) {
   return (
     <h2
       {...props}
@@ -32,9 +30,7 @@ function TableTitle(
     />
   )
 }
-function TableDescription(
-  props: Omit<ComponentPropsWithoutRef<'p'>, 'className' | 'style'>,
-) {
+function TableDescription(props: ControlProps<ComponentPropsWithoutRef<'p'>>) {
   return (
     <p
       {...props}
@@ -42,9 +38,7 @@ function TableDescription(
     />
   )
 }
-function TableActions(
-  props: Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'style'>,
-) {
+function TableActions(props: ControlProps<ComponentPropsWithoutRef<'div'>>) {
   return (
     <div
       {...props}
@@ -55,7 +49,7 @@ function TableActions(
 function TableHeader({
   as = 'thead',
   ...props
-}: Omit<ComponentPropsWithoutRef<'thead'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'thead'>> & {
   as?: 'thead' | 'div'
 }) {
   return createElement(as, {

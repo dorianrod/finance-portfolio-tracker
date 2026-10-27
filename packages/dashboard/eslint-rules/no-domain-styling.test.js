@@ -19,6 +19,68 @@ async function lint(code, file = 'src/main.tsx') {
   )
 }
 
+describe('imperative DOM styling boundary', () => {
+  it.each([
+    `document.body.style.opacity = '0.5'`,
+    `const style = document.body.style; style['fontSize'] = '12px'`,
+    `const property = 'border-radius'; document.body.style.setProperty(property, '4px')`,
+    `document.body.style.removeProperty('opacity')`,
+    `document.body.style.cssText = 'width: 20px; opacity: .5'`,
+    `document.body.setAttribute('style', 'padding: 2px; font-weight: bold')`,
+    `document.body.className = 'flex font-bold'`,
+    `document.body.classList.add('font-bold')`,
+    `const list = document.body.classList; list.toggle('opacity-50', true)`,
+    `document.body.setAttribute('class', 'flex shadow-sm')`,
+    `document.querySelector('svg')?.setAttribute('stroke-width', '2')`,
+  ])(
+    'rejects visual DOM writes: %s',
+    async (code) => {
+      const messages = await lint(code)
+      expect(messages).toHaveLength(1)
+      expect(['nonLayoutStyle', 'nonLayoutClass']).toContain(
+        messages[0].messageId,
+      )
+    },
+    20_000,
+  )
+
+  it.each([
+    `declare const property: string; document.body.style.setProperty(property, '1')`,
+    `declare const css: string; document.body.style.cssText = css`,
+    `declare const property: string; document.body.style[property] = '1'`,
+  ])('reports opaque styling explicitly: %s', async (code) => {
+    expect((await lint(code)).map(({ messageId }) => messageId)).toEqual([
+      'unverifiableStyle',
+    ])
+  })
+
+  it.each([
+    `document.body.style.width = '20px'`,
+    `document.body.style.setProperty('padding-inline', '2px')`,
+    `document.body.style.cssText = 'display: flex; width: calc(100% - 2px)'`,
+    `document.body.classList.toggle('hidden', true)`,
+    `document.body.setAttribute('class', 'flex gap-2')`,
+    `const model = {style: {opacity: '1'}}; model.style.opacity = '0.5'`,
+    `const model = {setProperty(name: string, value: string) {}}; model.setProperty('opacity', '0.5')`,
+    `const link = document.createElement('a'); link.relList.add('noreferrer')`,
+    `document.body.setAttribute('data-tone', 'positive')`,
+  ])(
+    'preserves layout, unrelated data and non-class DOM tokens: %s',
+    async (code) => {
+      expect(await lint(code)).toEqual([])
+    },
+  )
+
+  it('permits visual DOM integration inside shared UI', async () => {
+    expect(
+      await lint(
+        `document.body.style.opacity = '0.5'`,
+        'src/shared/ui/Popover.view.tsx',
+      ),
+    ).toEqual([])
+  })
+})
+
 describe('layout classification', () => {
   it.each([
     'flex',

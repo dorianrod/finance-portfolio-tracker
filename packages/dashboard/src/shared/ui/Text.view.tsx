@@ -1,5 +1,6 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
 import {
   getTextClassName,
   type TextAppearance,
@@ -50,9 +51,8 @@ export type TextTag =
   | 'dd'
   | 'li'
 
-export type TextProps<T extends TextTag> = Omit<
-  ComponentPropsWithoutRef<T>,
-  'className' | 'style'
+export type TextProps<T extends TextTag> = ControlProps<
+  ComponentPropsWithoutRef<T>
 > &
   TextAppearance & {
     as?: T

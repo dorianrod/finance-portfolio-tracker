@@ -1,9 +1,11 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 export function StatusTableRow({
   level,
   ...props
-}: Omit<ComponentPropsWithoutRef<'tr'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'tr'>> & {
   level: 'error' | 'warning'
 }) {
   return (

@@ -867,8 +867,153 @@ export default {
       }
     }
 
+    function staticText(node) {
+      if (!node) return undefined
+      const type = checker.getTypeAtLocation(mapped(node))
+      return type.isStringLiteral() ? type.value : undefined
+    }
+
+    function memberName(node) {
+      return node.computed ? staticText(node.property) : node.property.name
+    }
+
+    function domMember(node) {
+      const name = memberName(node)
+      return (
+        name &&
+        checker
+          .getPropertyOfType(
+            checker.getNonNullableType(
+              checker.getTypeAtLocation(mapped(node.object)),
+            ),
+            name,
+          )
+          ?.declarations?.some((declaration) =>
+            /[/\\]lib\.dom\.d\.ts$/u.test(declaration.getSourceFile().fileName),
+          )
+      )
+    }
+
+    function domType(node, name) {
+      const type = checker.getTypeAtLocation(mapped(node))
+      return (type.isUnion() ? type.types : [type]).some(
+        (part) =>
+          part.getSymbol()?.name === name &&
+          part
+            .getSymbol()
+            .declarations?.some((declaration) =>
+              /[/\\]lib\.dom\.d\.ts$/u.test(
+                declaration.getSourceFile().fileName,
+              ),
+            ),
+      )
+    }
+
+    function classListTarget(input, seen = new Set()) {
+      const node = unwrap(input)
+      if (!node || seen.has(node)) return false
+      seen.add(node)
+      if (
+        ts.isPropertyAccessExpression(node) &&
+        node.name.text === 'classList' &&
+        symbolAt(node)?.declarations?.some((declaration) =>
+          /[/\\]lib\.dom\.d\.ts$/u.test(declaration.getSourceFile().fileName),
+        )
+      )
+        return true
+      return classListTarget(initializer(node), seen)
+    }
+
+    function reportImperative(node, name, unknown = false) {
+      context.report({
+        node,
+        messageId: unknown ? 'unverifiableStyle' : 'nonLayoutStyle',
+        data: { names: JSON.stringify(name) },
+      })
+    }
+
+    function inspectStyleText(node, value) {
+      const text = staticText(value)
+      const declarations = text === undefined ? null : splitOutside(text, /;/u)
+      if (!declarations) {
+        reportImperative(node, 'CSS declaration text', true)
+        return
+      }
+      const visual = new Set()
+      for (const declaration of declarations.filter((entry) => entry.trim())) {
+        const parts = splitOutside(declaration, /:/u)
+        const name = parts?.[0].trim()
+        if (!name || parts.length < 2 || !/^[\w-]+$/u.test(name)) {
+          reportImperative(node, 'CSS declaration text', true)
+          return
+        }
+        if (!isLayoutProperty(name)) visual.add(name)
+      }
+      if (visual.size) reportImperative(node, [...visual].sort().join(', '))
+    }
+
+    function inspectStyleWrite(node, target, value) {
+      if (target.type !== 'MemberExpression') return
+      const name = memberName(target)
+      if (domType(target.object, 'CSSStyleDeclaration')) {
+        if (name === 'cssText') inspectStyleText(node, value)
+        else if (!name || !isLayoutProperty(name))
+          reportImperative(node, name ?? 'dynamic style property', !name)
+      } else if (domMember(target)) {
+        if (name === 'style') inspectStyleText(node, value)
+        else if (name === 'className' && value)
+          analyze(node, mapped(value), 'classes', 'className', false)
+      }
+    }
+
+    function inspectDomCall(node) {
+      const target = node.callee
+      if (target.type !== 'MemberExpression' || !domMember(target)) return
+      const name = memberName(target)
+      if (
+        ['setProperty', 'removeProperty'].includes(name) &&
+        domType(target.object, 'CSSStyleDeclaration')
+      ) {
+        const property = staticText(node.arguments[0])
+        if (!property || !isLayoutProperty(property))
+          reportImperative(
+            node,
+            property ?? 'dynamic style property',
+            !property,
+          )
+      } else if (name === 'setAttribute') {
+        const attribute = staticText(node.arguments[0])?.toLowerCase()
+        if (attribute === 'style') inspectStyleText(node, node.arguments[1])
+        else if (attribute === 'class' && node.arguments[1])
+          analyze(node, mapped(node.arguments[1]), 'classes', 'class', false)
+        else if (
+          VISUAL_PROPS.has(
+            attribute?.replace(/-([a-z])/gu, (_, letter) =>
+              letter.toUpperCase(),
+            ),
+          )
+        )
+          reportImperative(node, attribute)
+      } else if (
+        ['add', 'remove', 'toggle', 'replace'].includes(name) &&
+        classListTarget(mapped(target.object))
+      ) {
+        for (const argument of node.arguments) {
+          const type = checker.getTypeAtLocation(mapped(argument))
+          if (!(type.flags & ts.TypeFlags.BooleanLike))
+            analyze(argument, mapped(argument), 'classes', 'classList', false)
+        }
+      }
+    }
+
     return {
       ...imports,
+      AssignmentExpression(node) {
+        inspectStyleWrite(node, node.left, node.right)
+      },
+      UpdateExpression(node) {
+        inspectStyleWrite(node, node.argument)
+      },
       JSXOpeningElement(node) {
         const visual = classify(mapped(node.name), true)
         for (const attribute of node.attributes) {
@@ -900,6 +1045,7 @@ export default {
         }
       },
       CallExpression(node) {
+        inspectDomCall(node)
         const call = mapped(node)
         if (!isReactFactory(call.expression) || !call.arguments[1]) return
         analyze(

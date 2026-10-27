@@ -192,8 +192,85 @@ describe('configured children composition enforcement', () => {
       }
     `)
     expect(messages.map(({ messageId }) => messageId)).toEqual([
+      'contentProp',
+      'contentProp',
       'composeChildren',
       'composeChildren',
     ])
+  })
+
+  it.each([
+    `import type { ReactNode } from 'react'; export function Panel({header}: {header?: ReactNode}) {return <div>{header}</div>}`,
+    `import type { ReactElement } from 'react'; type Props = {header: ReactElement}; const Panel = ({header}: Props) => <div>{header}</div>; export {Panel}`,
+    `import {memo, type ComponentType} from 'react'; export const Panel = memo(({Header}: {Header: ComponentType}) => <Header />)`,
+    `import {forwardRef, type ReactNode} from 'react'; export const Panel = forwardRef<HTMLDivElement, {header: ReactNode}>((props, ref) => <div ref={ref}>{props.header}</div>)`,
+    `import type {ReactNode} from 'react'; export default function({header}: {header: ReactNode}) {return <div>{header}</div>}`,
+    `import {Component, type ReactNode} from 'react'; export class Panel extends Component<{header: ReactNode}> {render() {return this.props.header}}`,
+    `import type {ReactNode} from 'react'; export function Panel<T extends ReactNode>({header}: {header: T}) {return <div>{header}</div>}`,
+    `import type {ReactNode} from 'react'; export function Panel(props: {header: string} | {header: ReactNode; expanded: true}) {return <div>{props.header}</div>}`,
+    `import type {ReactNode} from 'react'; export function Panel() {return null}; Panel.Header = ({content}: {content: ReactNode}) => <div>{content}</div>`,
+  ])('rejects a UI-valued API without any caller: %s', async (code) => {
+    expect((await lint(code)).map(({ messageId }) => messageId)).toEqual([
+      'contentProp',
+    ])
+  })
+
+  it.each([
+    `import type {ReactNode} from 'react'; export function Panel({children, label, onSave, format}: {children: ReactNode; label: string; onSave: () => void; format: (value: number) => string}) {return <div>{children}</div>}`,
+    `import {Bar, type BarShapeProps} from 'recharts'; function Shape(props: BarShapeProps) {return <rect />}; <Bar shape={Shape} />`,
+    `export function readData({content}: {content: string}) {return content}`,
+  ])(
+    'preserves children, scalar contracts and injected renderer props: %s',
+    async (code) => {
+      expect(await lint(code)).toEqual([])
+    },
+  )
+
+  it.each([
+    `import {createElement} from 'react'; function Panel(props) {return <div />}; createElement(Panel, {header: <span />})`,
+    `import {createElement as element} from 'react'; function Panel(props) {return <div />}; const props = {header: <span />}; element(Panel, props)`,
+    `import * as React from 'react'; function Panel(props) {return <div />}; React.cloneElement(<Panel />, {header: <span />})`,
+    `import {createElement} from 'react'; function Panel(props) {return <div />}; const element = createElement; element(Panel, {header: <span />})`,
+  ])('checks UI-valued props in React factories: %s', async (code) => {
+    expect((await lint(code)).map(({ messageId }) => messageId)).toEqual([
+      'composeChildren',
+    ])
+  })
+
+  it('checks explicit factory children while preserving positional composition', async () => {
+    expect(
+      (
+        await lint(
+          `import {createElement} from 'react'; createElement('div', {children: 'text'})`,
+        )
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['nestedChildren'])
+    expect(
+      await lint(
+        `import {createElement} from 'react'; createElement('div', null, createElement('span'))`,
+      ),
+    ).toEqual([])
+  })
+
+  it('keeps external factory contracts and renderer extraction', async () => {
+    const imports = `import {createElement, cloneElement} from 'react'; import {Bar} from 'recharts'; function Shape() {return <rect />};`
+    expect(await lint(`${imports} createElement(Bar, {shape: Shape})`)).toEqual(
+      [],
+    )
+    expect(
+      (
+        await lint(`${imports} cloneElement(<Bar />, {shape: () => <rect />})`)
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['extractRenderer'])
+    expect(
+      await lint(
+        `function createElement(type, props) {return props}; createElement('div', {children: 'data'})`,
+      ),
+    ).toEqual([])
+    expect(
+      await lint(
+        `import {createElement} from 'react'; let element = createElement; element = (type, props) => props; element('div', {children: 'data'})`,
+      ),
+    ).toEqual([])
   })
 })

@@ -11,6 +11,7 @@ import featureFolderLayout from './eslint-rules/feature-folder-layout.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import importBoundaries from './eslint-rules/import-boundaries.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
+import noBrowserInPureHelpers from './eslint-rules/no-browser-in-pure-helpers.js'
 import noComplexComponentCalculation from './eslint-rules/no-complex-component-calculation.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
@@ -29,6 +30,7 @@ import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layou
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
+import reviewSharedFeatureSharing from './eslint-rules/review-shared-feature-sharing.js'
 import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
 import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
@@ -83,6 +85,7 @@ export default defineConfig([
           'i18n-consistency': i18nConsistency,
           'import-boundaries': importBoundaries,
           'max-hooks-per-component': maxHooksPerComponent,
+          'no-browser-in-pure-helpers': noBrowserInPureHelpers,
           'no-complex-component-calculation': noComplexComponentCalculation,
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
@@ -101,6 +104,7 @@ export default defineConfig([
           'no-ui-string-concat': noUiStringConcat,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
+          'review-shared-feature-sharing': reviewSharedFeatureSharing,
           'shared-feature-usage': sharedFeatureUsage,
           'single-public-export': singlePublicExport,
           'state-component-contract': stateComponentContract,
@@ -161,10 +165,11 @@ export default defineConfig([
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
       'local/component-role': 'error',
-      'local/feature-folder-layout': 'error',
+      'local/feature-folder-layout': ['error', { maxFeatureDepth: 2 }],
       'local/i18n-consistency': 'error',
       'local/import-boundaries': 'error',
       'local/max-hooks-per-component': ['error', { max: 6 }],
+      'local/no-browser-in-pure-helpers': 'error',
       'local/no-complex-component-calculation': 'error',
       'local/no-complex-jsx-condition': 'error',
       'local/no-complex-jsx-map': 'error',
@@ -183,6 +188,7 @@ export default defineConfig([
       'local/no-ui-string-concat': 'error',
       'local/require-children-composition': 'error',
       'local/shared-feature-usage': 'error',
+      'local/review-shared-feature-sharing': 'warn',
       'local/state-component-contract': 'error',
     },
   },

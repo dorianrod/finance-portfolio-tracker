@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import featureFolderLayout from './feature-folder-layout.js'
 import importBoundaries from './import-boundaries.js'
+import reviewSharedFeatureSharing from './review-shared-feature-sharing.js'
 import sharedFeatureUsage from './shared-feature-usage.js'
 
 const directories = []
@@ -61,13 +62,15 @@ function lint(file, code, additionalFiles = {}) {
             'feature-folder-layout': featureFolderLayout,
             'import-boundaries': importBoundaries,
             'shared-feature-usage': sharedFeatureUsage,
+            'review-shared-feature-sharing': reviewSharedFeatureSharing,
           },
         },
       },
       rules: {
         'local/feature-folder-layout': 'error',
         'local/import-boundaries': 'error',
-        'local/shared-feature-usage': 'warn',
+        'local/shared-feature-usage': 'error',
+        'local/review-shared-feature-sharing': 'warn',
       },
     },
     { filename: join(directory, file) },
@@ -164,7 +167,7 @@ describe('actual shared feature consumers', () => {
       {
         ruleId: 'local/shared-feature-usage',
         messageId: 'singleFeature',
-        severity: 1,
+        severity: 2,
       },
     ])
   })
@@ -246,7 +249,11 @@ describe('actual shared feature consumers', () => {
         'src/app/Second.ts': useShared,
       }),
     ).toMatchObject([
-      { ruleId: 'local/shared-feature-usage', messageId: 'unprovenSharing' },
+      {
+        ruleId: 'local/review-shared-feature-sharing',
+        messageId: 'unprovenSharing',
+        severity: 1,
+      },
     ])
   })
 

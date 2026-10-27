@@ -1,9 +1,11 @@
 import type { HTMLAttributes } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 export function InlineBadge({
   tone,
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
+}: ControlProps<HTMLAttributes<HTMLSpanElement>> & {
   tone: 'accent' | 'attention' | 'decorative'
 }) {
   const appearance = {

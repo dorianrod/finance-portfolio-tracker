@@ -2,7 +2,7 @@
 // "category" column / src/ports/account_groups.py on the pipeline side).
 // Display order used for sorting and as a fallback when assigning colors
 // to literal account "type" values that don't have a dedicated color.
-// eslint-disable-next-line local/shared-feature-usage -- The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 export const CATEGORY_ORDER: Record<string, number> = {
   brokerage: 0,
   private_equity: 1,

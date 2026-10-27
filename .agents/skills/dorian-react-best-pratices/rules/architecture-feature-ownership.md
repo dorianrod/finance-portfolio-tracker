@@ -62,9 +62,9 @@ A reusable business capability remains a feature even when several callers need 
 
 If the parent contains a cohesive responsibility with no shared consumers, model it as a named child capability. Keep screen composition and navigation in the application. Do not move feature logic into the application merely to silence shared-use diagnostics.
 
-The dashboard's `local/shared-feature-usage` checks resolved production import graphs. It reports one-feature ownership, missing production consumers and sharing that cannot be established through feature imports. `local/feature-folder-layout` owns layout diagnostics and `local/import-boundaries` owns forbidden dependencies; the usage rule does not duplicate those violations. The rules share the same business-scope parser.
+The dashboard's `local/shared-feature-usage` checks resolved production import graphs at error level. It reports exclusive one-feature ownership and missing production consumers. A separate `local/review-shared-feature-sharing` warning reports sharing that cannot be established because consumers also exist outside the owning feature tree. An indeterminate graph requests review rather than proving an invalid owner. `local/feature-folder-layout` owns layout diagnostics and `local/import-boundaries` owns forbidden dependencies; the usage rules do not duplicate those violations. The rules share the same business-scope parser and cached analysis.
 
-When common inputs are distributed through application props, static imports may not prove all consumers. Treat the resulting diagnostic as a review request, inspect the actual feature inputs and record the evidence. Do not count application files as features, add fake imports or apply a blanket exception to all parent-owned code. No automatic folder move can decide whether a business capability is shared.
+When common inputs are distributed through application props, static imports may not prove all consumers. Inspect the actual feature inputs and record the evidence. A reviewed line-scoped suppression names `local/review-shared-feature-sharing` and retains its concrete rationale. It does not disable the proven ownership errors. Do not count application files as features, add fake imports or apply a blanket exception to all parent-owned code. No automatic folder move can decide whether a business capability is shared.
 
 ### Exceptions
 

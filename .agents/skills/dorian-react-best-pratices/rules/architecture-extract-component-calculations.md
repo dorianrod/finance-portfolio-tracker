@@ -67,6 +67,8 @@ Enable `local/no-complex-component-calculation` at error level. It reports more 
 
 Independent small expressions outside those explicit output groups remain independent. The rule does not trace reassigned variables, imported helper implementations or arbitrary interprocedural data flow. `local/no-component-data-pipeline` complements it by reporting inline reductions and compound collection predicates in application/domain components. Existing module-boundary and JSX-condition checks cover different patterns and do not replace these checks.
 
+`local/no-browser-in-pure-helpers` is an error for authored production files in `helpers/presenters/` and `helpers/calculators/`, including component-owned helpers. It resolves browser globals, DOM measurements, known DOM mutation methods and DOM property writes. Pass viewport dimensions and measurements as inputs; apply the returned geometry at the UI boundary. Locally shadowed names, type-only references and reads of supplied `DOMRect` values remain valid. Tests, declaration files and generated files are excluded. This bounded check does not prove purity or follow arbitrary helper implementations and detached DOM methods.
+
 ### Exceptions
 
 - Hook calls, imported helper calls, destructuring and direct property reads remain in the component.

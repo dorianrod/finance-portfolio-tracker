@@ -1,5 +1,6 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
 import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
 import { TEXT_ALIGNMENTS } from '@/shared/ui/textAppearance/textAlignments'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
@@ -88,9 +89,8 @@ type SurfaceTag =
   | 'tr'
   | 'td'
 
-type SurfaceProps<T extends SurfaceTag> = Omit<
-  ComponentPropsWithoutRef<T>,
-  'className' | 'style'
+type SurfaceProps<T extends SurfaceTag> = ControlProps<
+  ComponentPropsWithoutRef<T>
 > & {
   as?: T
   variant: keyof typeof SURFACE_VARIANTS

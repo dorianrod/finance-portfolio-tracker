@@ -42,4 +42,4 @@ The caller arranges siblings and positions the component in the page. The shared
 
 ### Enforcement
 
-`local/no-shared-ui-internal-layout` warns on injected classes and inline layout styles, including statically resolvable extracted components. `local/no-shared-ui-classname` continues to protect the public API. Neither rule supplies an autofix or permits suppressions to complete a migration. Tests and Storybook usages follow the same composition rules.
+`local/no-shared-ui-internal-layout` reports errors on injected classes and inline layout styles, including statically resolvable extracted components. `local/no-shared-ui-classname` continues to protect the public API. Neither rule supplies an autofix or permits suppressions to complete a migration. Tests and Storybook usages follow the same composition rules.

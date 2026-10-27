@@ -6,6 +6,7 @@ import {
 } from 'react'
 import { Tooltip, type TooltipContentProps } from 'recharts'
 import type {
+  Formatter,
   NameType,
   ValueType,
 } from 'recharts/types/component/DefaultTooltipContent'
@@ -38,13 +39,19 @@ type DataKeys =
   | 'allowEscapeViewBox'
   | 'filterNull'
   | 'includeHidden'
-  | 'formatter'
-  | 'labelFormatter'
   | 'itemSorter'
 type Props = Pick<
   ComponentProps<typeof Tooltip>,
   Extract<keyof ComponentProps<typeof Tooltip>, DataKeys>
 > & {
+  formatter?: (
+    ...args: Parameters<Formatter<ValueType, NameType>>
+  ) => string | number
+  labelFormatter?: (
+    ...args: Parameters<
+      NonNullable<ComponentProps<typeof Tooltip>['labelFormatter']>
+    >
+  ) => string | number
   highlight?: keyof typeof CHART_CURSORS
   children?: ReactNode
 }

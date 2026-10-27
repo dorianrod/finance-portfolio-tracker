@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/shared-feature-usage -- Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
 import type { HistoricalSnapshot } from './buildConcentrationTrend.types'

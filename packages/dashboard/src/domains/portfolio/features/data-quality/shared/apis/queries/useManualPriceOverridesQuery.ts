@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/shared-feature-usage -- The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md.
 import { useQuery } from '@tanstack/react-query'
 import * as yup from 'yup'
 

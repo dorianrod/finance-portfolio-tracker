@@ -52,27 +52,33 @@ decoration, transitions, animations and interaction styling belong in shared UI.
 export function StatusSummary({ isPositive }: { isPositive: boolean }) {
   return (
     <div className="flex items-center gap-2 p-4">
-      <span className={isPositive ? 'text-positive font-semibold' : 'text-danger font-semibold'}>
-        {isPositive ? 'Gain' : 'Loss'}
+      <span
+        className={
+          isPositive
+            ? "text-positive font-semibold"
+            : "text-danger font-semibold"
+        }
+      >
+        {isPositive ? "Gain" : "Loss"}
       </span>
     </div>
-  )
+  );
 }
 ```
 
 ### Correct
 
 ```tsx
-import { Badge } from '@/shared/ui/Badge.view'
+import { Badge } from "@/shared/ui/Badge.view";
 
 export function StatusSummary({ isPositive }: { isPositive: boolean }) {
   return (
     <div className="flex items-center gap-2 p-4">
-      <Badge tone={isPositive ? 'positive' : 'negative'}>
-        {isPositive ? 'Gain' : 'Loss'}
+      <Badge tone={isPositive ? "positive" : "negative"}>
+        {isPositive ? "Gain" : "Loss"}
       </Badge>
     </div>
-  )
+  );
 }
 ```
 
@@ -85,7 +91,7 @@ Do not merely export a string of visual classes and apply it from the domain.
 
 ### ESLint Diagnostics
 
-`local/no-domain-styling` runs as a warning during the migration:
+`local/no-domain-styling` runs at error level:
 
 - `nonLayoutClass` and `nonLayoutStyle` identify concrete non-layout choices;
   move them into a primitive without changing the business behavior.
@@ -95,7 +101,7 @@ Do not merely export a string of visual classes and apply it from the domain.
 
 Diagnostics aggregate the classes/properties for an individual usage and include
 this rule's identifier. There is no autofix: selecting or designing a primitive
-requires a composition decision. Do not suppress warnings to complete a migration.
+requires a composition decision. Do not suppress diagnostics to complete a migration.
 
 ### Exceptions and Limits
 
@@ -105,8 +111,12 @@ requires a composition decision. Do not suppress warnings to complete a migratio
 - Shared UI primitives may own visual styles and consume semantic tokens; the
   [semantic color rule](styling-semantic-colors.md) still applies there.
 - Tests and generated files are exempt from the ESLint rule.
-- The lint check covers React/SVG/Recharts styling sinks and local stylesheet
-  imports; it does not parse CSS contents or analyze imperative DOM mutations.
+- The lint check covers React/SVG/Recharts styling sinks, local stylesheet imports,
+  resolved DOM style writes, `setProperty`/`removeProperty`, class assignments,
+  class-list operations and static `class`/`style` attributes. Static declaration
+  text is classified by CSS property; opaque text or property names produce
+  `unverifiableStyle`. It does not parse stylesheet contents or reconstruct
+  arbitrary DOM aliases, dynamic attribute names or all mutation APIs.
 - Semantic primitive props such as `tone`, `variant` and closed size tokens are allowed.
 - Dynamic CSS layout such as `style={{ width: measuredWidth }}` belongs only on external containers. Chart geometry remains data supplied to the owning shared UI primitive.
 

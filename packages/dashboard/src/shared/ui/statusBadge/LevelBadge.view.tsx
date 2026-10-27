@@ -1,9 +1,11 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 export function LevelBadge({
   level,
   ...props
-}: Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'span'>> & {
   level: keyof typeof LEVEL_TONES
 }) {
   return (

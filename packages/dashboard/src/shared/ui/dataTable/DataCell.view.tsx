@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
 import { DATA_CELL_VARIANTS } from '@/shared/ui/dataTableAppearance'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
@@ -10,7 +11,7 @@ export function DataCell({
   align,
   numeric = false,
   ...props
-}: Omit<ComponentPropsWithoutRef<'td'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'td'>> & {
   variant?: keyof typeof DATA_CELL_VARIANTS
   tone?: TextTone
   align?: 'left' | 'right'

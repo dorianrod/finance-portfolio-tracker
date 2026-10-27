@@ -11,6 +11,7 @@ patterns:
   - JSX, component references, JSX-valued variables or render callbacks are passed through named props or spread objects.
   - An external component receives an inline UI renderer such as shape, content, tick or label.
   - JSX uses an explicit children attribute instead of nested content.
+- A local component declares UI-valued named props, even without callers, or receives them through React element factories.
   - A request asks to enforce or audit mandatory component composition.
 ---
 
@@ -43,9 +44,15 @@ Composition is mandatory for APIs owned by this project, including shared UI, fe
 
 ```tsx
 <Panel>
-  <Panel.Title><Title /></Panel.Title>
-  <Panel.Header><Toolbar /></Panel.Header>
-  <Panel.Body><Content /></Panel.Body>
+  <Panel.Title>
+    <Title />
+  </Panel.Title>
+  <Panel.Header>
+    <Toolbar />
+  </Panel.Header>
+  <Panel.Body>
+    <Content />
+  </Panel.Body>
 </Panel>
 ```
 
@@ -70,7 +77,9 @@ Move captured parent values into the extracted component's data/configuration pr
 
 ### Enforcement
 
-`local/require-children-composition` is an ESLint error in the dashboard. Typed linting detects UI-valued named props, component references, render functions, variables and spread properties. It resolves dependency declarations to distinguish external components from local imports and wrappers; it does not rely on prop names or a blanket chart-library exemption. External inline render functions and render-local component references are rejected. Data, event handlers and scalar formatters remain valid.
+`local/require-children-composition` is an ESLint error in the dashboard. Typed linting checks declared component contracts as well as JSX, `createElement` and `cloneElement` calls, including resolved factory aliases. Named UI props are rejected before a caller exists, including typed functions, classes, `memo`, `forwardRef` and exported compound slots. `children` remains the composition API; factory calls supply it positionally instead of in the props object.
+
+It resolves dependency declarations to distinguish external components from local imports and wrappers; it does not rely on prop names or a blanket chart-library exemption. External inline render functions and render-local component references are rejected. Private dependency renderers may receive inherited external contracts; their locally declared UI props and the inherited props of public project APIs remain checked. Data, event handlers and scalar formatters remain valid. Arbitrary runtime factories and reassigned element aliases are not reconstructed. There is no autofix for changing a component API.
 
 ### References
 

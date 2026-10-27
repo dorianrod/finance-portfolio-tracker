@@ -2,13 +2,14 @@ import type { HTMLAttributes } from 'react'
 
 import { BADGE_BASE } from '@/shared/ui/badgeAppearance/badgeBase'
 import { BADGE_TONES } from '@/shared/ui/badgeAppearance/badgeTones'
+import type { ControlProps } from '@/shared/ui/controlProps'
 
 import type { BadgeTone } from './badge.types'
 
 export function Badge({
   tone,
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
+}: ControlProps<HTMLAttributes<HTMLSpanElement>> & {
   tone: BadgeTone
 }) {
   return (
@@ -19,9 +20,7 @@ export function Badge({
   )
 }
 
-function BadgeDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'>,
-) {
+function BadgeDetail(props: ControlProps<HTMLAttributes<HTMLSpanElement>>) {
   return (
     <span
       {...props}

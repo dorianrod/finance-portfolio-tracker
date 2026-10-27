@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
 import {
   getTableRowClassName,
   type TableRowVariant,
@@ -9,7 +10,7 @@ export function TableRowSurface({
   variant,
   dimmed = false,
   ...props
-}: Omit<ComponentPropsWithoutRef<'tr'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'tr'>> & {
   variant: TableRowVariant
   dimmed?: boolean
 }) {

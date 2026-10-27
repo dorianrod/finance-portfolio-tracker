@@ -14,7 +14,7 @@ afterEach(() => {
     rmSync(directory, { recursive: true, force: true })
 })
 
-function lint(file, nestedParents = []) {
+function lint(file, nestedParents = [], options = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'feature-folder-layout-'))
   directories.push(directory)
   for (const parent of nestedParents)
@@ -29,7 +29,7 @@ function lint(file, nestedParents = []) {
       plugins: {
         local: { rules: { 'feature-folder-layout': featureFolderLayout } },
       },
-      rules: { 'local/feature-folder-layout': 'error' },
+      rules: { 'local/feature-folder-layout': ['error', options] },
     },
     { filename: join(directory, file) },
   )
@@ -100,5 +100,38 @@ describe('parent and leaf feature folder layout', () => {
         ['analysis'],
       ),
     ).toHaveLength(1)
+  })
+
+  it('rejects a third feature level without relying on imports or directory contents', () => {
+    expect(
+      lint(
+        'src/domains/portfolio/features/a/features/b/features/c/helpers/value.ts',
+      ),
+    ).toMatchObject([
+      {
+        messageId: 'featureDepth',
+        severity: 2,
+        message: expect.stringContaining('maximum of 2'),
+      },
+    ])
+  })
+
+  it('allows exactly two levels and ignores features inside role folders', () => {
+    expect(
+      lint('src/domains/portfolio/features/a/features/b/helpers/value.ts'),
+    ).toEqual([])
+    expect(
+      lint(
+        'src/domains/portfolio/features/a/helpers/features/b/features/c/value.ts',
+      ),
+    ).toEqual([])
+  })
+
+  it('supports an explicit maximum', () => {
+    const file = 'src/domains/portfolio/features/a/features/b/helpers/value.ts'
+    expect(lint(file, [], { maxFeatureDepth: 1 })).toMatchObject([
+      { messageId: 'featureDepth' },
+    ])
+    expect(lint(file, [], { maxFeatureDepth: 3 })).toEqual([])
   })
 })

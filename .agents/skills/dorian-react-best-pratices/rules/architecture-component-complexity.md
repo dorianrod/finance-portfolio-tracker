@@ -35,7 +35,7 @@ Do not apply an automatic fix or bulk extraction solely to lower the metric. Pre
 
 ```tsx
 function OrdersWorkspace() {
-  const { orders, selection } = useOrdersWorkspace()
+  const { orders, selection } = useOrdersWorkspace();
   return (
     <Stack>
       <Surface>
@@ -44,7 +44,7 @@ function OrdersWorkspace() {
       </Surface>
       <OrdersTable orders={orders} />
     </Stack>
-  )
+  );
 }
 ```
 
@@ -52,13 +52,13 @@ function OrdersWorkspace() {
 
 ```tsx
 function OrdersWorkspace() {
-  const { orders, selection } = useOrdersWorkspace()
+  const { orders, selection } = useOrdersWorkspace();
   return (
     <Stack>
       <OrderSelectionSummary selection={selection} />
       <OrdersTable orders={orders} />
     </Stack>
-  )
+  );
 }
 ```
 
@@ -66,12 +66,12 @@ The examples abbreviate an independently owned summary region. Small cohesive JS
 
 ### Enforcement
 
-The dashboard enables these built-in ESLint rules at warning level for production `src/**/*.{ts,tsx}`, including components, hooks and helpers:
+The dashboard enables these built-in ESLint rules at error level for production `src/**/*.{ts,tsx}`, including components, hooks and helpers:
 
 - `complexity`: maximum **8**, variant **modified** (one decision for an entire `switch`). A score of 8 is allowed; 9 or higher requires manual review. It measures branches per function; callbacks have their own complexity.
 - `max-lines-per-function`: maximum **150**, excluding blank lines and comment-only lines. It includes JSX and nested callback bodies in the containing function's span.
 
-Both are necessary: low cyclomatic complexity does not imply a small component. Hook-count, JSX-condition, mapped-JSX and calculation checks remain complementary. Warnings appear in normal lint output; the current `npm run lint` does not fail CI on warnings, and `--quiet` hides them.
+Both are necessary: low cyclomatic complexity does not imply a small component. Hook-count, JSX-condition, mapped-JSX and calculation checks remain complementary. An exceedance fails lint until a cohesive extraction or a justified line-scoped keep decision resolves it. The threshold does not determine that decision.
 
 ### Exceptions
 

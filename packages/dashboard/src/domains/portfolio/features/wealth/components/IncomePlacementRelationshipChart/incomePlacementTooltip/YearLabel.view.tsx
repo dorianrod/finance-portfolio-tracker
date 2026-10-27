@@ -15,7 +15,7 @@ export function YearLabel({
   recentYears,
   oldestYear,
   newestYear,
-}: LabelProps & {
+}: Pick<LabelProps, 'index' | 'value' | 'viewBox'> & {
   placements: YearLabelPlacement[]
   chartPoints: AnnualIncomeSavingsPoint[]
   recentYears: Set<number>

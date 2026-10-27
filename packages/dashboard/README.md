@@ -89,15 +89,20 @@ outside the design system. It follows resolvable constants, conditional values,
 templates, assembled arrays, JSX spreads and React element factory props. A
 separate `unverifiableStyle` diagnostic requests review when static analysis cannot
 determine a value; it does not claim that value is a proven visual violation.
-Tests and generated files are exempt. The check does not parse CSS contents or
-analyze arbitrary imperative DOM mutations, and it has no autofix. Diagnostics reference
+It also checks resolved DOM style writes, class-list changes and static style
+attribute text. Opaque styling receives an explicit diagnostic. Tests and generated
+files are exempt. The check does not parse stylesheet contents or reconstruct all
+dynamic DOM mutations, and it has no autofix. Diagnostics reference
 [`styling-centralize-in-shared-ui`](../../.agents/skills/dorian-react-best-pratices/rules/styling-centralize-in-shared-ui.md)
 to guide subsequent component migrations.
 
 Shared UI public props exclude both `className` and `style`, including inherited
 native React and chart-library props. `local/no-shared-ui-classname` checks both
 properties on component APIs and callers, including spreads and React element
-factories. Callers position primitives through external containers and use their
+factories. `local/no-domain-accessibility` also rejects raw accessibility props in
+public primitive and compound-slot contracts, including inherited HTML props,
+and bare Radix value re-exports. Use `ControlProps<NativeProps>` and semantic labels,
+states and actions. Callers position primitives through external containers and use their
 semantic sizing and appearance options. Internal chart text and swatches apply
 their styles within the owning primitive.
 
@@ -111,6 +116,18 @@ controls, KPI values, chart series, SVG marks and tooltip appearance are exposed
 through semantic variants. Compose custom chart renderers through nested
 `SeriesBar.Shape`, `SeriesLine.Markers`, `SeriesPie.Labels` and related slots.
 Domain code supplies the data, geometry, labels and business actions.
+
+`local/require-children-composition` checks declared component APIs, JSX and React
+element factories, including public compound slots. Numeric and label formatters
+return scalar values; caller-supplied UI uses children. Feature trees have at most
+two feature levels below a domain. Pure presenters and calculators receive browser
+measurements as inputs: `local/no-browser-in-pure-helpers` rejects browser context,
+DOM measurements and effects in those folders.
+
+`local/shared-feature-usage` reports exclusive ownership and unused shared code as
+errors. `local/review-shared-feature-sharing` separately requests review when static
+imports cannot prove sharing through application props. Reviewed line-scoped
+exceptions retain their capability evidence in [the ownership audit](SHARED_OWNERSHIP_AUDIT.md).
 
 The styling migration has no remaining `local/no-domain-styling` diagnostics; see
 [the audit](STYLING_AUDIT.md) for its scope and validation. Existing global theme

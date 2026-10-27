@@ -1,5 +1,6 @@
 import { type ComponentPropsWithRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
 import { LAYOUT_AFTER } from '@/shared/ui/layoutAppearance/layoutAfter'
 import { LAYOUT_ALIGNMENTS } from '@/shared/ui/layoutAppearance/layoutAlignments'
 import { LAYOUT_BEFORE } from '@/shared/ui/layoutAppearance/layoutBefore'
@@ -41,8 +42,8 @@ export type LayoutTag =
   | 'p'
 
 export type LayoutProps<T extends LayoutTag> = Omit<
-  ComponentPropsWithRef<T>,
-  'className' | 'style' | 'align' | 'width' | 'height' | 'wrap'
+  ControlProps<ComponentPropsWithRef<T>>,
+  'align' | 'width' | 'height' | 'wrap'
 > & {
   as?: T
   flow?: keyof typeof LAYOUT_FLOWS

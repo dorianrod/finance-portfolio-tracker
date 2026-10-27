@@ -10,12 +10,20 @@ export default {
       description:
         'Keep parent-feature role folders under shared/ and leaf-feature role folders at their root',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: { maxFeatureDepth: { type: 'integer', minimum: 1 } },
+        additionalProperties: false,
+      },
+    ],
     messages: {
       parentFolder:
         'Feature "{{feature}}" contains features/: move its "{{folder}}/" folder under shared/. Leaf features may keep role folders at their root. [arch-feature-slice-layout]',
       leafFolder:
         'Feature "{{feature}}" has no features/ folder: keep "{{folder}}/" directly inside the feature instead of shared/. [arch-feature-slice-layout]',
+      featureDepth:
+        'Feature "{{feature}}" exceeds the maximum of {{max}} feature levels below a domain. Review its business owner. [architecture-feature-hierarchy]',
     },
   },
   create(context) {
@@ -25,7 +33,15 @@ export default {
     const sourceRoot = filename.slice(0, marker + '/src/'.length)
     const source = filename.slice(sourceRoot.length)
     const violations = []
-    for (const feature of featureScopes(source)) {
+    const scopes = featureScopes(source)
+    const max = context.options[0]?.maxFeatureDepth ?? 2
+    if (scopes.length > max)
+      violations.push({
+        messageId: 'featureDepth',
+        feature: scopes.at(-1),
+        max,
+      })
+    for (const feature of scopes) {
       const [folder, role] = source.slice(feature.length + 1).split('/')
       if (folder === 'features') continue
       const children = statSync(resolve(sourceRoot, feature, 'features'), {

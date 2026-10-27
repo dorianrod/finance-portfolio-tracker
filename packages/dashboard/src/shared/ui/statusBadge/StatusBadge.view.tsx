@@ -1,9 +1,11 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
+import type { ControlProps } from '@/shared/ui/controlProps'
+
 export function StatusBadge({
   tone,
   ...props
-}: Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'> & {
+}: ControlProps<ComponentPropsWithoutRef<'span'>> & {
   tone: keyof typeof STATUS_TONES
 }) {
   return (
