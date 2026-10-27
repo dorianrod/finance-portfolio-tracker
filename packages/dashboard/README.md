@@ -16,8 +16,8 @@ npm run dev
 `npm run lint` caches results and invalidates the entire cache when a lint input
 changes, including imported types and translation catalogs. Use
 `npx eslint .` for a full check or `npm run lint:profile` to inspect
-parsing time, expensive rules and slow files. See the
-[ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
+parsing time, expensive rules and slow files. The
+[profiler](scripts/profile-eslint.mjs) reports the measurements for the current tree.
 
 `npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `162`.
 Every reviewed suppression produces one tracking warning, even when it names
@@ -68,9 +68,9 @@ previously applied. Rule violations run at error level; reviewed exceptions and
 uncertain feature sharing produce warnings. CI runs the complete test suite,
 including every custom rule.
 
-The [historical ESLint audit](ESLINT_HISTORY_AUDIT.md) measures these checks against
-the four audit commits and documents the remaining manual and behavioral checks.
-Reproduce it from this directory with a checkout containing those commits:
+The [historical ESLint audit script](scripts/audit-eslint-history.mjs) measures
+these checks against the four audit commits. Run it from this directory with a
+checkout containing those commits:
 
 ```bash
 npm run audit:eslint-history -- --output /tmp/finance-eslint-history.json
@@ -207,7 +207,7 @@ same Python environment.
 read-only copy of this dashboard on every push to `main`, backed
 **only** by `finance-init`'s synthetic example portfolio (generated fresh
 in the runner, never the real `data/`). Data fetches go through
-`src/csvData.ts`'s `dataUrl()` helper so they keep resolving correctly
+[endpoint registry](src/domains/portfolio/shared/apis/endpoints.ts) so they keep resolving correctly
 under the `/<repo>/` base path GitHub Pages project sites are served
 from.
 

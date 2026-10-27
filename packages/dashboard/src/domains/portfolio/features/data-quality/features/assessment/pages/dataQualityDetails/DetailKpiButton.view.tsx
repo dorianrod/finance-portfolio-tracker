@@ -1,5 +1,6 @@
 import { type QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles'
+import i18n from '@/i18n/i18n'
 import { DialogButton } from '@/shared/ui/controls/DialogButton.view'
 import { NextIcon } from '@/shared/ui/icons/NextIcon.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
@@ -27,7 +28,12 @@ export function DetailKpiButton({
         type="button"
         onClick={onClick}
         expanded={expanded}
-        label={`${actionLabel}: ${theme.metric} ${theme.metricLabel}, ${detailLabel}`}
+        label={i18n.t('ui.dataqualitydetails.openMetricDetails', {
+          action: actionLabel,
+          metric: theme.metric,
+          metricLabel: theme.metricLabel,
+          detail: detailLabel,
+        })}
         variant="insetSummary"
       >
         <Layout as="span" flow="inline" placement="overlay" width="divider">

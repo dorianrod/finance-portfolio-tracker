@@ -17,7 +17,7 @@ export function useConcentrationTrendController(
   lookThroughPoints: HistoricalConcentrationPoint[],
   lookThroughAvailable: boolean,
 ) {
-  const [mode, setMode] = useState<ConcentrationMode>('held')
+  const [preferredMode, setMode] = useState<ConcentrationMode>('held')
   const [selectedDate, setSelectedDate] = useState(
     () => heldPoints.at(-1)?.date ?? null,
   )
@@ -27,6 +27,10 @@ export function useConcentrationTrendController(
   )
   const prefersReducedMotion = usePrefersReducedMotion()
   const animationEnabled = shouldAnimateConcentration(prefersReducedMotion)
+  const mode =
+    preferredMode === 'lookThrough' && !lookThroughAvailable
+      ? 'held'
+      : preferredMode
   const points = mode === 'held' ? heldPoints : lookThroughPoints
   const chartData = useMemo(() => buildConcentrationChartRows(points), [points])
   const exactIndex = points.findIndex(
@@ -78,7 +82,7 @@ export function useConcentrationTrendController(
 
   const selectPoint = useCallback(
     (index: number) => {
-      if (points.length === 0 || !Number.isFinite(index)) return
+      if (points.length === 0 || !Number.isInteger(index)) return
       setIsPlaying(false)
       setHoveredPointIndex(null)
       const safeIndex = Math.max(0, Math.min(index, points.length - 1))
@@ -103,7 +107,7 @@ export function useConcentrationTrendController(
     [points],
   )
 
-  const selectedPoint = points[selectedIndex] ?? points.at(-1)
+  const selectedPoint = points[selectedIndex]
   const hoveredPoint =
     hoveredPointIndex == null ? undefined : points[hoveredPointIndex]
   const displayedPoint = hoveredPoint ?? selectedPoint

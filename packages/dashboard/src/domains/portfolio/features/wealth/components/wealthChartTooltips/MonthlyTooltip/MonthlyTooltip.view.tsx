@@ -145,8 +145,11 @@ function MonthlyOperationRow({
       }
       variant="micro"
     >
-      {withdrawal ? '−' : '+'} {formatMoney(amount, { style: 'full' })} —{' '}
-      {operation.account}
+      {i18n.t('ui.portfoliochartsTooltips.accountOperation', {
+        direction: withdrawal ? '−' : '+',
+        amount: formatMoney(amount, { style: 'full' }),
+        account: operation.account,
+      })}
     </ChartText>
   )
 }

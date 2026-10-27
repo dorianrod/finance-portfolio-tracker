@@ -31,12 +31,18 @@ export function TooltipPortfolio({
       </Layout>
       {valueEntry && (
         <ChartText as="p" series={valueEntry}>
-          {valueEntry.name}: {formatMoney(valueEntry.value, { fallback: 0 })}
+          {i18n.t('ui.hoverchartsTooltips.seriesValue', {
+            label: valueEntry.name,
+            amount: formatMoney(valueEntry.value, { fallback: 0 }),
+          })}
         </ChartText>
       )}
       {costEntry && (
         <ChartText as="p" series={costEntry}>
-          {costEntry.name}: {formatMoney(costEntry.value, { fallback: 0 })}
+          {i18n.t('ui.hoverchartsTooltips.seriesValue', {
+            label: costEntry.name,
+            amount: formatMoney(costEntry.value, { fallback: 0 }),
+          })}
         </ChartText>
       )}
       {unrealized != null && (

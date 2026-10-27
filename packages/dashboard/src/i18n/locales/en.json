@@ -792,5 +792,10 @@
   "ui.formatters.dateRange": "{{from}} – {{to}}",
   "ui.formatpositioncount.position_one": "{{value}} position",
   "ui.formatpositioncount.position_other": "{{value}} positions",
-  "ui.formatters.detail": " · {{value}}"
+  "ui.formatters.detail": " · {{value}}",
+  "ui.analysisreliabilitykpi.metricSummary": "{{value}} {{label}}",
+  "ui.analysisreliabilitykpi.metricSeparator": "; ",
+  "ui.dataqualitydetails.openMetricDetails": "{{action}}: {{metric}} {{metricLabel}}, {{detail}}",
+  "ui.hoverchartsTooltips.seriesValue": "{{label}}: {{amount}}",
+  "ui.portfoliochartsTooltips.accountOperation": "{{direction}} {{amount}} — {{account}}"
 }

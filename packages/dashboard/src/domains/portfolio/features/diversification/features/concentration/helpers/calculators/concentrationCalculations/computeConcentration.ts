@@ -1,3 +1,4 @@
+import { isFundPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/isFundPosition'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
@@ -26,15 +27,6 @@ export function computeConcentration(
     const current = byAsset.get(key) ?? { label, name, value: 0 }
     current.value += value
     byAsset.set(key, current)
-  }
-
-  function isFundPosition(position: PositionRow): boolean {
-    return (
-      /\b(?:ETF|UCITS|FUND)\b/i.test(position.name) ||
-      /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers)\b/i.test(
-        position.name,
-      )
-    )
   }
 
   for (const position of positions) {

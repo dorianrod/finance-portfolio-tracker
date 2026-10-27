@@ -53,8 +53,13 @@ export function CombinedAnalysisReliabilityKpi({
     })),
   ]
   const metricSummary = rows
-    .map((row) => `${row.value} ${row.label}`)
-    .join('; ')
+    .map((row) =>
+      i18n.t('ui.analysisreliabilitykpi.metricSummary', {
+        value: row.value,
+        label: row.label,
+      }),
+    )
+    .join(i18n.t('ui.analysisreliabilitykpi.metricSeparator'))
 
   return (
     <CompactDataQualityKpi
