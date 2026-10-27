@@ -6,9 +6,12 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
+import apiHookContract from './eslint-rules/api-hook-contract.js'
 import componentRole from './eslint-rules/component-role.js'
+import entityTypeFiles from './eslint-rules/entity-type-files.js'
 import eslintSuppressionProcessor from './eslint-rules/eslint-suppression-processor.js'
 import featureFolderLayout from './eslint-rules/feature-folder-layout.js'
+import formatterContract from './eslint-rules/formatter-contract.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import importBoundaries from './eslint-rules/import-boundaries.js'
 import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
@@ -25,11 +28,17 @@ import noHardcodedColors from './eslint-rules/no-hardcoded-colors.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noHelperContextParams from './eslint-rules/no-helper-context-params.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
+import noLossyBooleanTransform from './eslint-rules/no-lossy-boolean-transform.js'
+import noNumberStringRoundtrip from './eslint-rules/no-number-string-roundtrip.js'
+import noOverwrittenUiProps from './eslint-rules/no-overwritten-ui-props.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import noReactContext from './eslint-rules/no-react-context.js'
+import noReturnedLocalState from './eslint-rules/no-returned-local-state.js'
 import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
+import noSortForExtremum from './eslint-rules/no-sort-for-extremum.js'
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
+import preferFunctionalStateUpdate from './eslint-rules/prefer-functional-state-update.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import requireReviewedEslintSuppression from './eslint-rules/require-reviewed-eslint-suppression.js'
@@ -58,8 +67,11 @@ export default defineConfig([
     plugins: {
       local: {
         rules: {
+          'api-hook-contract': apiHookContract,
           'component-role': componentRole,
+          'entity-type-files': entityTypeFiles,
           'feature-folder-layout': featureFolderLayout,
+          'formatter-contract': formatterContract,
           'i18n-consistency': i18nConsistency,
           'import-boundaries': importBoundaries,
           'max-hooks-per-component': maxHooksPerComponent,
@@ -76,11 +88,17 @@ export default defineConfig([
           'no-hardcoded-colors': noHardcodedColors,
           'no-helper-context-params': noHelperContextParams,
           'no-inline-format-fallback': noInlineFormatFallback,
+          'no-lossy-boolean-transform': noLossyBooleanTransform,
+          'no-number-string-roundtrip': noNumberStringRoundtrip,
+          'no-overwritten-ui-props': noOverwrittenUiProps,
           'no-prop-drilling': noPropDrilling,
           'no-react-context': noReactContext,
+          'no-returned-local-state': noReturnedLocalState,
           'no-shared-ui-classname': noSharedUiClassname,
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
+          'no-sort-for-extremum': noSortForExtremum,
           'no-ui-string-concat': noUiStringConcat,
+          'prefer-functional-state-update': preferFunctionalStateUpdate,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
           'require-reviewed-eslint-suppression':
@@ -175,6 +193,15 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'error',
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
+      'local/api-hook-contract': 'error',
+      'local/entity-type-files': 'error',
+      'local/formatter-contract': 'error',
+      'local/no-lossy-boolean-transform': 'error',
+      'local/no-number-string-roundtrip': 'error',
+      'local/no-returned-local-state': 'error',
+      'local/no-overwritten-ui-props': 'error',
+      'local/no-sort-for-extremum': 'error',
+      'local/prefer-functional-state-update': 'error',
       'local/component-role': 'error',
       'local/feature-folder-layout': ['error', { maxFeatureDepth: 2 }],
       'local/i18n-consistency': 'error',

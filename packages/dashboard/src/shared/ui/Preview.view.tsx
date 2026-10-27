@@ -94,8 +94,12 @@ function PreviewTrigger({
         expanded ??
         (context.open && context.trigger?.id === (props.id ?? triggerId))
       }
-      onMouseEnter={(event) => show(event.currentTarget, false)}
-      onMouseLeave={() => {
+      onMouseEnter={(event) => {
+        props.onMouseEnter?.(event)
+        show(event.currentTarget, false)
+      }}
+      onMouseLeave={(event) => {
+        props.onMouseLeave?.(event)
         if (
           document.activeElement !== context.trigger &&
           !document.getElementById(context.id)?.contains(document.activeElement)

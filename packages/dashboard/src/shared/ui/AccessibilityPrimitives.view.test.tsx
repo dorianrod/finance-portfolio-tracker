@@ -14,6 +14,7 @@ import { Button } from '@/shared/ui/controls/Button.view'
 import { DecorativeSvg } from '@/shared/ui/controls/DecorativeSvg.view'
 import { Group } from '@/shared/ui/controls/Group.view'
 import { Input } from '@/shared/ui/controls/Input.view'
+import { NavigationButton } from '@/shared/ui/controls/NavigationButton.view'
 import { Progress } from '@/shared/ui/controls/Progress.view'
 import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
@@ -64,6 +65,53 @@ function PreviewExample() {
 }
 
 describe('shared accessibility primitives', () => {
+  it('preserves navigation pointer callbacks and preloading intent', async () => {
+    const user = userEvent.setup()
+    const onMouseEnter = vi.fn()
+    const onIntent = vi.fn()
+    render(
+      <NavigationButton
+        active={false}
+        onMouseEnter={onMouseEnter}
+        onIntent={onIntent}
+      >
+        Analysis
+      </NavigationButton>,
+    )
+    await user.hover(screen.getByRole('button', { name: 'Analysis' }))
+    expect(onMouseEnter).toHaveBeenCalledOnce()
+    expect(onIntent).toHaveBeenCalledOnce()
+    await user.tab()
+    expect(onIntent).toHaveBeenCalledTimes(2)
+  })
+
+  it('preserves preview pointer callbacks alongside activation and dismissal', async () => {
+    const user = userEvent.setup()
+    const onMouseEnter = vi.fn()
+    const onMouseLeave = vi.fn()
+    const onPreview = vi.fn()
+    const onDismiss = vi.fn()
+    render(
+      <Preview open={false} onOpenChange={vi.fn()}>
+        <Preview.Trigger
+          onPreview={onPreview}
+          onDismiss={onDismiss}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
+          Asset
+        </Preview.Trigger>
+      </Preview>,
+    )
+    const trigger = screen.getByRole('button', { name: 'Asset' })
+    await user.hover(trigger)
+    expect(onMouseEnter).toHaveBeenCalledOnce()
+    expect(onPreview).toHaveBeenCalledWith(trigger)
+    await user.unhover(trigger)
+    expect(onMouseLeave).toHaveBeenCalledOnce()
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
   it('forwards a popover trigger ref while preserving keyboard dismissal', async () => {
     const user = userEvent.setup()
     const ref = createRef<HTMLButtonElement>()

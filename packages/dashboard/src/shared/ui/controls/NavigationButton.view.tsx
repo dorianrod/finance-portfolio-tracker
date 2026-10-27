@@ -35,7 +35,10 @@ export function NavigationButton({
       aria-label={label}
       aria-current={active ? 'page' : undefined}
       onFocus={onIntent}
-      onMouseEnter={onIntent}
+      onMouseEnter={(event) => {
+        props.onMouseEnter?.(event)
+        onIntent?.()
+      }}
     />
   )
 }

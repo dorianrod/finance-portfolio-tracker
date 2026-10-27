@@ -81,6 +81,13 @@ current selection's return. Navigation and filters stay mounted through loading
 and errors. Filter actions update the latest Jotai value rather than a captured
 render snapshot.
 
+ESLint also enforces API hook placement/naming and explicit
+query transition policies, functional state updates, formatter input/fallback
+contracts, independent entity files, safe boolean transforms, shared hook state
+ownership, caller callback/ref preservation, extremum selection and redundant
+numeric coercions. These checks run at error level in the regular lint command
+and CI, and their regression tests run with `npm test`.
+
 Fund compositions, composition history and statuses remain common portfolio
 sources. Coverage reports, snapshot manifests and unresolved-source diagnostics
 are owned by `features/data-quality/features/assessment`, with their own validated
@@ -118,15 +125,6 @@ fallback for missing and invalid dates. Loading, permissions and structural
 conditions remain outside the formatter. The rule reports errors without an
 autofix; see the [formatter enforcement reference](../../.agents/skills/generic-react-best-practices/references/project-enforcement.md)
 for its detection boundaries.
-
-The [historical ESLint audit script](scripts/audit-eslint-history.mjs) measures
-these checks against the four audit commits. Run it from this directory with a
-checkout containing those commits:
-
-```bash
-npm run audit:eslint-history -- --output /tmp/finance-eslint-history.json
-node scripts/summarize-eslint-history.mjs /tmp/finance-eslint-history.json /tmp/finance-eslint-coverage.json
-```
 
 Reads CSVs live from `../../data/output` (override with `FINANCE_DATA_DIR`,
 same convention as finance-pipeline).

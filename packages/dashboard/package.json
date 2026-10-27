@@ -15,8 +15,7 @@
     "audit:i18n": "eslint src --quiet && node scripts/check-i18n-catalog.mjs",
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
-    "test": "vitest run",
-    "audit:eslint-history": "node scripts/audit-eslint-history.mjs"
+    "test": "vitest run"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.3.1",
