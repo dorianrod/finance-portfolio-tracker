@@ -35,7 +35,7 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. The
 [profiler](scripts/profile-eslint.mjs) reports the measurements for the current tree.
 
-`npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `161`.
+`npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `155`.
 Every reviewed suppression produces one tracking warning, even when it names
 several rules. Use a line-scoped directive with named rules and this metadata:
 
@@ -58,14 +58,36 @@ exception, and nothing automatically updates the ceiling.
 The 2026-10-27 audit reviewed all 162 existing directives against the affected code,
 rules and consumers, and confirmed that each still suppressed a diagnostic.
 Centralizing date fallbacks subsequently removed one obsolete complexity directive.
+Separating assessment-only fund diagnostics from common holdings sources and
+centralizing CSV boolean validation removed six more ownership exceptions.
 The current ceiling accounts for 56 cohesive-function complexity exceptions (one also covers
-function length), 69 shared-input ownership exceptions, 35 controlled-component or
+function length), 63 shared-input ownership exceptions, 35 controlled-component or
 presentation-adapter exceptions and one TanStack Table v8 dependency constraint.
 It leaves no spare capacity. Each directive records its technical reason and actual
 review date. The table exception follows React's
 [incompatible-library guidance](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library):
 the stable table instance uses interior mutability, so its row model is read on
 every render without memoizing that API; React Compiler is not enabled.
+
+The [React audit](REACT_AUDIT.md) records the corrections and validation from the
+2026-10-27 follow-up. The [shared ownership evidence](SHARED_OWNERSHIP_AUDIT.md)
+identifies the common-source consumers behind the remaining ownership exceptions.
+
+Endpoint query hooks follow `useGet<Entity>[Aspect]Query`. Filter-dependent queries
+retain their previous result with `keepPreviousData`; the shell announces when
+previous-scope results remain visible. Account IRR and asset IRR treat placeholder
+results as loading, so an earlier selection's return is never presented as the
+current selection's return. Navigation and filters stay mounted through loading
+and errors. Filter actions update the latest Jotai value rather than a captured
+render snapshot.
+
+Fund compositions, composition history and statuses remain common portfolio
+sources. Coverage reports, snapshot manifests and unresolved-source diagnostics
+are owned by `features/data-quality/features/assessment`, with their own validated
+query and types. The application combines these results; shared portfolio code
+does not depend on assessment contracts. CSV boolean schemas accept recognized
+boolean representations and reject malformed values instead of treating them as
+`false`.
 
 Future reviews follow
 [`generic-react-best-practices`](../../.agents/skills/generic-react-best-practices/SKILL.md), its

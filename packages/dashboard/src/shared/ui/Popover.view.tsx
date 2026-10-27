@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { ScopeProvider } from 'jotai-scope'
 import { type ComponentProps } from 'react'
 
+import { useComposedRefs } from '@/shared/ui/services/useComposedRefs'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
 import { popoverInputAtom } from '@/shared/ui/stores/popoverInputAtom'
 import { POPOVER_CONTENT_VARIANTS } from '@/shared/ui/surfaceAppearance/popoverContentVariants'
@@ -31,16 +32,18 @@ export function Popover({
 
 function PopoverTrigger({
   label,
+  ref,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
   label?: string
 }) {
   const context = useAtomValue(popoverInputAtom)
+  const triggerRef = useComposedRefs(context?.registerTrigger, ref)
   return (
     <Primitive.Trigger
       {...props}
       className="inline-flex items-center gap-2 px-3 py-1.5"
-      ref={context?.registerTrigger}
+      ref={triggerRef}
       aria-label={label}
     />
   )

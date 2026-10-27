@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
+import { useGetPositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery'
 import { hasUnitPriceHistory } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/businessRules/hasUnitPriceHistory'
 import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
@@ -19,7 +19,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
     data: history,
     isPending,
     error,
-  } = usePositionHistoryQuery(target.isin)
+  } = useGetPositionHistoryQuery(target.isin)
 
   const showUnitPrice = hasUnitPriceHistory(history)
 

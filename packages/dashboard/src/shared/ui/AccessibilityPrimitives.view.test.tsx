@@ -7,7 +7,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useState } from 'react'
+import { createRef, useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -64,6 +64,26 @@ function PreviewExample() {
 }
 
 describe('shared accessibility primitives', () => {
+  it('forwards a popover trigger ref while preserving keyboard dismissal', async () => {
+    const user = userEvent.setup()
+    const ref = createRef<HTMLButtonElement>()
+    const { unmount } = render(
+      <Popover>
+        <Popover.Trigger ref={ref}>Accounts</Popover.Trigger>
+        <Popover.Content label="Choose accounts">
+          <button>Select all</button>
+        </Popover.Content>
+      </Popover>,
+    )
+    expect(ref.current).toBe(screen.getByRole('button', { name: 'Accounts' }))
+    await user.click(screen.getByRole('button', { name: 'Accounts' }))
+    await user.tab({ shift: true })
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    await waitFor(() => expect(document.activeElement).toBe(ref.current))
+    unmount()
+    expect(ref.current).toBeNull()
+  })
+
   it.each([
     { shift: false, start: 'Last option', destination: 'Next control' },
     { shift: true, start: 'First option', destination: 'Accounts' },

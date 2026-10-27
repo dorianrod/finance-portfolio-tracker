@@ -6,12 +6,10 @@ import type {
   FundDiagnosticsFilter,
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildFundDiagnosticsRows'
 import { getFundQualitySourceLabel as fundQualitySourceLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/getFundQualitySourceLabel'
+import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
+import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
 import { FUND_QUALITY_LABELS } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/fundQualityLabels'
-import type {
-  FundHolding,
-  FundSnapshot,
-  FundUnresolved,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

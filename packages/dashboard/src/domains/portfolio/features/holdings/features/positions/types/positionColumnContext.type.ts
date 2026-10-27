@@ -2,7 +2,7 @@ import type { RowData } from '@tanstack/react-table'
 
 import type { usePositionTableData } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableData'
 import type { usePositionTableOverlays } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 export type PositionColumnContext = {
   allocationData: ReturnType<typeof usePositionTableData>['allocationData']

@@ -5,8 +5,8 @@ export function filterAnnualIncomeSavingsByPeriod(
   dateFrom?: Date,
   dateTo?: Date,
 ): AnnualIncomeSavingsPoint[] {
-  const fromYear = dateFrom ? Number(String(dateFrom.getUTCFullYear())) : null
-  const toYear = dateTo ? Number(String(dateTo.getUTCFullYear())) : null
+  const fromYear = dateFrom?.getUTCFullYear()
+  const toYear = dateTo?.getUTCFullYear()
   return points.filter(
     (point) =>
       (fromYear == null || point.year >= fromYear) &&

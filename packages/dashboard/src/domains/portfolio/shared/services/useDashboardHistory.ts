@@ -1,8 +1,8 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import { useMemo } from 'react'
 
-import { useDemoFilteredHistoryAccountsQuery } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/useDemoFilteredHistoryAccountsQuery'
-import { useFilteredPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useFilteredPortfolioHistoryQuery/useFilteredPortfolioHistoryQuery'
+import { useGetDemoFilteredHistoryAccountsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetDemoFilteredHistoryAccountsQuery'
+import { useGetFilteredPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetFilteredPortfolioHistoryQuery'
 import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
 import { applyAccountFilterToHistory } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyAccountFilterToHistory'
 import { buildDemoPresetSelection } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/buildDemoPresetSelection'
@@ -31,10 +31,11 @@ export function useDashboardHistory({
       ),
     [allPositionRows, enrichedHistory, filters.accounts],
   )
-  const filteredHistoryQuery = useFilteredPortfolioHistoryQuery(
+  const filteredHistoryQuery = useGetFilteredPortfolioHistoryQuery(
     filters.accounts,
   )
-  const demoFilteredHistoryAccountsQuery = useDemoFilteredHistoryAccountsQuery()
+  const demoFilteredHistoryAccountsQuery =
+    useGetDemoFilteredHistoryAccountsQuery()
   const filteredAccountKey = useMemo(
     () => normalizeAccountSelection(filters.accounts).join('\u0000'),
     [filters.accounts],
@@ -45,7 +46,8 @@ export function useDashboardHistory({
         fallbackAccountHistory,
         filters.accounts.size > 0,
         filteredAccountKey,
-        filteredHistoryQuery.data || filteredHistoryQuery.error
+        !filteredHistoryQuery.isPlaceholderData &&
+          (filteredHistoryQuery.data || filteredHistoryQuery.error)
           ? {
               key: filteredAccountKey,
               history: filteredHistoryQuery.data ?? null,
@@ -61,6 +63,7 @@ export function useDashboardHistory({
       filteredAccountKey,
       filteredHistoryQuery.data,
       filteredHistoryQuery.error,
+      filteredHistoryQuery.isPlaceholderData,
     ],
   )
   const displayedHistory = useMemo(

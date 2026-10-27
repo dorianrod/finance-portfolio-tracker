@@ -122,11 +122,14 @@ function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {
   const { setFilters } = useDashboardFilters()
   const dateFrom = presetDateFrom(preset.months)
   function applyPreset() {
-    setFilters(
-      filters.dateFrom?.getTime() === dateFrom.getTime() && !filters.dateTo
-        ? { ...filters, dateFrom: undefined, dateTo: undefined }
-        : { ...filters, dateFrom, dateTo: undefined },
-    )
+    setFilters((current) => ({
+      ...current,
+      dateFrom:
+        current.dateFrom?.getTime() === dateFrom.getTime() && !current.dateTo
+          ? undefined
+          : dateFrom,
+      dateTo: undefined,
+    }))
   }
   return (
     <Chip
@@ -147,10 +150,10 @@ function OperationTypeChip({ operation }: { operation: OperationType }) {
       label={OP_LABELS[operation]}
       active={filters.operationTypes.has(operation)}
       onClick={() =>
-        setFilters({
-          ...filters,
-          operationTypes: toggle(filters.operationTypes, operation),
-        })
+        setFilters((current) => ({
+          ...current,
+          operationTypes: toggle(current.operationTypes, operation),
+        }))
       }
     />
   )
@@ -179,10 +182,10 @@ function PeriodFilterSection() {
             label={i18n.t('ui.filterbar.periodStart')}
             value={toDateInputValue(filters.dateFrom)}
             onChange={(event) =>
-              setFilters({
-                ...filters,
+              setFilters((current) => ({
+                ...current,
                 dateFrom: DATE_FILTER_SCHEMA.validateSync(event.target.value),
-              })
+              }))
             }
             variant="filter"
           />
@@ -194,10 +197,10 @@ function PeriodFilterSection() {
             label={i18n.t('ui.filterbar.periodEnd')}
             value={toDateInputValue(filters.dateTo)}
             onChange={(event) =>
-              setFilters({
-                ...filters,
+              setFilters((current) => ({
+                ...current,
                 dateTo: DATE_FILTER_SCHEMA.validateSync(event.target.value),
-              })
+              }))
             }
             variant="filter"
           />
@@ -208,11 +211,11 @@ function PeriodFilterSection() {
           <Button
             type="button"
             onClick={() =>
-              setFilters({
-                ...filters,
+              setFilters((current) => ({
+                ...current,
                 dateFrom: undefined,
                 dateTo: undefined,
-              })
+              }))
             }
             variant="text"
           >
@@ -247,7 +250,11 @@ function AccountFilterSection({
         accountLabels={accountFilterLabels}
         selected={filters.accounts}
         onChange={(accounts) =>
-          setFilters({ ...filters, accounts, accountTypes: new Set() })
+          setFilters((current) => ({
+            ...current,
+            accounts,
+            accountTypes: new Set(),
+          }))
         }
       />
       {demoPresetSelection && (
@@ -276,11 +283,11 @@ function AccountFilterSection({
                 <Button
                   type="button"
                   onClick={() =>
-                    setFilters({
-                      ...filters,
+                    setFilters((current) => ({
+                      ...current,
                       accounts: demoPresetSelection,
                       accountTypes: new Set(),
-                    })
+                    }))
                   }
                   variant="preset"
                   selected={demoPresetActive}
@@ -314,7 +321,9 @@ function PositionFilterSection() {
         <Chip
           label={i18n.t('ui.filterbar.all')}
           active={filters.operationTypes.size === 0}
-          onClick={() => setFilters({ ...filters, operationTypes: new Set() })}
+          onClick={() =>
+            setFilters((current) => ({ ...current, operationTypes: new Set() }))
+          }
         />
         {allOperationTypes.map((operation) => (
           <OperationTypeChip key={operation} operation={operation} />
@@ -350,10 +359,10 @@ function PositionFilterSection() {
                 size="standard"
                 checked={filters.hideClosedPositions}
                 onChange={(event) =>
-                  setFilters({
-                    ...filters,
+                  setFilters((current) => ({
+                    ...current,
                     hideClosedPositions: event.target.checked,
-                  })
+                  }))
                 }
               />
             </Layout>

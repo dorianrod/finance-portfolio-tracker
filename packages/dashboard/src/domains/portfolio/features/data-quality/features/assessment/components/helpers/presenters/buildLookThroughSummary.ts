@@ -1,6 +1,6 @@
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
-import type { FundCoverageReport } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 
 export function buildLookThroughSummary(
   report: FundCoverageReport,

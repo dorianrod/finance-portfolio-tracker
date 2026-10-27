@@ -11,6 +11,8 @@ import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
+import i18n from '@/i18n/i18n'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 import { DashboardContent } from './DashboardContent.feature'
@@ -39,27 +41,33 @@ export default function App() {
           <div className="mx-auto max-w-screen-2xl">
             <DashboardHeader />
 
+            <DashboardNavigation
+              activeTab={activeTab}
+              hasFundValidationError={hasFundValidationError}
+              hasPipelineError={hasPipelineError}
+              qualityCount={qualityCount}
+            />
+
+            {activeTab === 'holdings' && <HoldingsViewTabs />}
+
+            <DashboardSectionHeader
+              dashboard={dashboard}
+              activeFilterCount={activeFilterSummaries.length}
+            />
+            <DashboardFilters
+              dashboard={dashboard}
+              activeFilterSummaries={activeFilterSummaries}
+            />
+
             <DashboardLoadState
               state={loadState}
               onRetry={() => window.location.reload()}
             >
-              <DashboardNavigation
-                activeTab={activeTab}
-                hasFundValidationError={hasFundValidationError}
-                hasPipelineError={hasPipelineError}
-                qualityCount={qualityCount}
-              />
-
-              {activeTab === 'holdings' && <HoldingsViewTabs />}
-
-              <DashboardSectionHeader
-                dashboard={dashboard}
-                activeFilterCount={activeFilterSummaries.length}
-              />
-              <DashboardFilters
-                dashboard={dashboard}
-                activeFilterSummaries={activeFilterSummaries}
-              />
+              {dashboard.updating && (
+                <StatusMessage tone="muted">
+                  {i18n.t('ui.app.updatingSelection')}
+                </StatusMessage>
+              )}
 
               <DashboardPanelErrorBoundary
                 key={activeTab}

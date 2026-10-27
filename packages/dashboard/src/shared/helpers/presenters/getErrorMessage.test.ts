@@ -30,6 +30,32 @@ describe('getErrorMessage', () => {
     ).toBe(getErrorMessage(new Error('ui.errors.invalidData')))
   })
 
+  it.each([
+    'Failed to fetch',
+    'fetch failed',
+    'NetworkError when attempting to fetch resource.',
+    'Load failed',
+  ])('translates the browser network failure %s', (message) => {
+    expect(getErrorMessage(new TypeError(message))).toBe(
+      'Unable to reach the server. Check your connection and try again.',
+    )
+  })
+
+  it('preserves unrelated TypeErrors and translates timeout errors', () => {
+    expect(getErrorMessage(new TypeError('Invalid calculation'))).toBe(
+      'Invalid calculation',
+    )
+    expect(
+      getErrorMessage(new DOMException('Request expired', 'TimeoutError')),
+    ).toBe('The request timed out. Try again.')
+  })
+
+  it('normalizes malformed JSON and CSV without exposing parser internals', () => {
+    expect(getErrorMessage(new SyntaxError('Unexpected token <'))).toBe(
+      getErrorMessage(new ValidationError('Invalid response')),
+    )
+  })
+
   it('preserves HTTP-specific fallback messages', () => {
     expect(getErrorMessage(new HttpError(503))).toContain('503')
     expect(getErrorMessage(null)).toBe(

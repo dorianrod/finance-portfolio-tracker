@@ -5,12 +5,13 @@ import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/f
 import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
+import type { FundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
-import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
@@ -112,7 +113,7 @@ export function useDashboardQuality({
 type DashboardQualityInput = {
   activeTab: AnalysisTab
   filters: DashboardFilters
-  fundData: FundHoldingsData
+  fundData: FundHoldingsData & FundDiagnostics
   holdingsView: HoldingsView
   latestAccountPositions: PositionRow[]
   manualPriceOverrides: ManualPriceOverride[]

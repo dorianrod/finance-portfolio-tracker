@@ -4,12 +4,12 @@ import {
   type AccountTypeHistory,
   buildAccountTypeHistory,
 } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
-import { usePositionsQuery } from '@/domains/portfolio/shared/apis/queries/usePositionsQuery'
+import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
 
 export function useAccountTypeHistory(
   accounts?: Set<string>,
 ): AccountTypeHistory {
-  const { data: rows = EMPTY_POSITIONS } = usePositionsQuery()
+  const { data: rows = EMPTY_POSITIONS } = useGetPositionsQuery()
   return useMemo(
     () =>
       buildAccountTypeHistory(

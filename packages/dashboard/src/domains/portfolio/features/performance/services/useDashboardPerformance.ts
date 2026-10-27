@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { usePassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/usePassiveIncomeQuery'
+import { useGetPassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery'
 import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary'
 import { computeTrailing12mIncome } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
@@ -13,7 +13,7 @@ export function useDashboardPerformance({
   filters,
   periodPositions,
 }: DashboardPerformanceInput) {
-  const passiveIncomeQuery = usePassiveIncomeQuery(
+  const passiveIncomeQuery = useGetPassiveIncomeQuery(
     filters.accounts,
     filters.dateFrom,
     filters.dateTo,
@@ -42,10 +42,12 @@ export function useDashboardPerformance({
   )
 
   const passiveIncomeLoading = passiveIncomeQuery.isPending
+  const passiveIncomeUpdating = passiveIncomeQuery.isPlaceholderData
   const passiveIncomeError = passiveIncomeQuery.error
   return useMemo(
     () => ({
       passiveIncomeLoading,
+      passiveIncomeUpdating,
       passiveIncomeError,
       passiveIncome,
       performance,
@@ -53,6 +55,7 @@ export function useDashboardPerformance({
     }),
     [
       passiveIncomeLoading,
+      passiveIncomeUpdating,
       passiveIncomeError,
       passiveIncome,
       performance,
@@ -62,7 +65,7 @@ export function useDashboardPerformance({
 }
 
 const EMPTY_PASSIVE_INCOME: NonNullable<
-  ReturnType<typeof usePassiveIncomeQuery>['data']
+  ReturnType<typeof useGetPassiveIncomeQuery>['data']
 > = []
 
 type DashboardPerformanceInput = {

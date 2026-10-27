@@ -1,44 +1,75 @@
+// @vitest-environment jsdom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { describe, expect, it } from 'vitest'
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react'
+import type { PropsWithChildren } from 'react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/resetFilters'
+import { makePortfolioHistoryResponse } from '@/domains/portfolio/shared/mocks/portfolioHistoryResponse.mock'
 
 import { useDashboardHistory } from './useDashboardHistory'
 
-const FILTERS: DashboardFilters = {
-  accountTypes: new Set(),
-  accounts: new Set(),
-  operationTypes: new Set(),
-  hideClosedPositions: false,
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
+
+function queryWrapper() {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  })
+  return function Wrapper({ children }: PropsWithChildren) {
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  }
 }
 
-function Probe() {
-  const model = useDashboardHistory({
-    allAccounts: [],
-    allPositionRows: [],
-    enrichedHistory: [],
-    filters: FILTERS,
-  })
-  return (
-    <output
-      data-history={model.displayedHistory.length}
-      data-status={model.irrStatus}
-    />
+describe('filtered dashboard history', () => {
+  it.each([
+    { status: 200, expectedStatus: 'ready', expectedIrr: 24 },
+    { status: 503, expectedStatus: 'error', expectedIrr: null },
+  ])(
+    'does not relabel the previous account IRR while the next request resolves with HTTP $status',
+    async ({ status, expectedStatus, expectedIrr }) => {
+      let completeRequest!: (response: Response) => void
+      const pendingResponse = new Promise<Response>((resolve) => {
+        completeRequest = resolve
+      })
+      const first = makePortfolioHistoryResponse({ accounts: ['first'] })
+      const second = makePortfolioHistoryResponse({
+        accounts: ['second'],
+        history: first.history.map((point) => ({ ...point, tri: 24 })),
+      })
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn<typeof fetch>()
+          .mockResolvedValueOnce(Response.json(first))
+          .mockReturnValueOnce(pendingResponse),
+      )
+      const { result, rerender } = renderHook(
+        ({ accounts }) =>
+          useDashboardHistory({
+            allAccounts: ['first', 'second'],
+            allPositionRows: [],
+            enrichedHistory: [],
+            filters: { ...resetFilters(), accounts },
+          }),
+        {
+          initialProps: { accounts: new Set(['first']) },
+          wrapper: queryWrapper(),
+        },
+      )
+
+      await waitFor(() => expect(result.current.globalTri).toBe(12))
+      rerender({ accounts: new Set(['second']) })
+      expect(result.current.irrStatus).toBe('loading')
+      expect(result.current.globalTri).toBeNull()
+
+      await act(async () => {
+        completeRequest(Response.json(second, { status }))
+      })
+      await waitFor(() => expect(result.current.irrStatus).toBe(expectedStatus))
+      expect(result.current.globalTri).toBe(expectedIrr)
+    },
   )
-}
-
-describe('useDashboardHistory', () => {
-  it('uses the unfiltered fallback without exposing a loading IRR state', () => {
-    const client = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    })
-    const html = renderToStaticMarkup(
-      <QueryClientProvider client={client}>
-        <Probe />
-      </QueryClientProvider>,
-    )
-    expect(html).toContain('data-history="0"')
-    expect(html).toContain('data-status="ready"')
-  })
 })

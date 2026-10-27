@@ -4,6 +4,7 @@ import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/features/wea
 import { nullableNumber } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/nullableNumber'
 import { requiredNumber } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/requiredNumber'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
+import { CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/csvBoolean.schema'
 
 export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeSavingsRow> =
   yup.object({
@@ -24,12 +25,5 @@ export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeS
       .required(),
     placement_rate: nullableNumber(),
     unplaced_income_proxy: nullableNumber(),
-    comparable: yup
-      .boolean()
-      .transform(
-        (_value, originalValue) =>
-          originalValue === true ||
-          String(originalValue).trim().toLowerCase() === 'true',
-      )
-      .defined(),
+    comparable: CSV_BOOLEAN_SCHEMA,
   })

@@ -2,9 +2,11 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { resolveDashboardLoadState } from '@/app/helpers/mappers/resolveDashboardLoadState'
+import { useGetFundDiagnosticsQuery } from '@/domains/portfolio/features/data-quality/features/assessment/apis/queries/useGetFundDiagnosticsQuery'
 import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDashboardQuality'
-import { useManualPriceOverridesQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useManualPriceOverridesQuery'
-import { usePipelineErrorsQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/usePipelineErrorsQuery'
+import type { FundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type'
+import { useGetManualPriceOverridesQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery'
+import { useGetPipelineErrorsQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { useSortedPositions } from '@/domains/portfolio/features/holdings/features/positions/services/useSortedPositions'
@@ -12,18 +14,18 @@ import { dashboardPositionSortDirectionAtom } from '@/domains/portfolio/features
 import { dashboardPositionSortKeyAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortKeyAtom'
 import { useOverviewComparison } from '@/domains/portfolio/features/overview/services/useOverviewComparison'
 import { useDashboardPerformance } from '@/domains/portfolio/features/performance/services/useDashboardPerformance'
-import { useAnnualIncomeSavingsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useAnnualIncomeSavingsQuery'
-import { useMonthlyOperationsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useMonthlyOperationsQuery'
+import { useGetAnnualIncomeSavingsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery'
+import { useGetMonthlyOperationsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import { useDashboardWealth } from '@/domains/portfolio/features/wealth/services/useDashboardWealth'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
-import { useAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useAllocationRowsQuery'
-import { useBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useBrokerageCashHistoryQuery'
-import { useDashboardDataQuery } from '@/domains/portfolio/shared/apis/queries/useDashboardDataQuery'
-import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
-import { usePortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/usePortfolioHistoryQuery'
-import { usePositionsQuery } from '@/domains/portfolio/shared/apis/queries/usePositionsQuery'
-import { useSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useSavingCapacityQuery'
+import { useGetAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery'
+import { useGetBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery'
+import { useGetDashboardDataQuery } from '@/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery'
+import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
+import { useGetPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery'
+import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
+import { useGetSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery'
 import { buildDashboardSourceData } from '@/domains/portfolio/shared/helpers/mappers/buildDashboardSourceData'
 import { useDashboardHistory } from '@/domains/portfolio/shared/services/useDashboardHistory'
 import { usePortfolioPositions } from '@/domains/portfolio/shared/services/usePortfolioPositions'
@@ -32,7 +34,7 @@ import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashbo
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
-import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -45,21 +47,28 @@ export function useDashboardViewModel() {
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
-  const dashboardQuery = useDashboardDataQuery()
-  const historyQuery = usePortfolioHistoryQuery()
-  const cashHistoryQuery = useBrokerageCashHistoryQuery()
-  const allPositionsQuery = usePositionsQuery()
-  const pipelineErrorsQuery = usePipelineErrorsQuery()
-  const manualPriceOverridesQuery = useManualPriceOverridesQuery()
-  const monthlyOpsQuery = useMonthlyOperationsQuery()
-  const rawAllocationQuery = useAllocationRowsQuery()
-  const fundHoldingsQuery = useFundHoldingsQuery()
-  const fundData = fundHoldingsQuery.data ?? EMPTY_FUND_HOLDINGS
-  const savingCapacityQuery = useSavingCapacityQuery(filters.accounts)
+  const dashboardQuery = useGetDashboardDataQuery()
+  const historyQuery = useGetPortfolioHistoryQuery()
+  const cashHistoryQuery = useGetBrokerageCashHistoryQuery()
+  const allPositionsQuery = useGetPositionsQuery()
+  const pipelineErrorsQuery = useGetPipelineErrorsQuery()
+  const manualPriceOverridesQuery = useGetManualPriceOverridesQuery()
+  const monthlyOpsQuery = useGetMonthlyOperationsQuery()
+  const rawAllocationQuery = useGetAllocationRowsQuery()
+  const fundHoldingsQuery = useGetFundHoldingsQuery()
+  const fundDiagnosticsQuery = useGetFundDiagnosticsQuery()
+  const fundData = useMemo(
+    () => ({
+      ...(fundHoldingsQuery.data ?? EMPTY_FUND_HOLDINGS),
+      ...(fundDiagnosticsQuery.data ?? EMPTY_FUND_DIAGNOSTICS),
+    }),
+    [fundHoldingsQuery.data, fundDiagnosticsQuery.data],
+  )
+  const savingCapacityQuery = useGetSavingCapacityQuery(filters.accounts)
   const savingCapacity = savingCapacityQuery.data ?? EMPTY_SAVING_CAPACITY
   const savingCapacityLoading = savingCapacityQuery.isPending
   const savingCapacityError = savingCapacityQuery.error
-  const annualIncomeSavingsQuery = useAnnualIncomeSavingsQuery()
+  const annualIncomeSavingsQuery = useGetAnnualIncomeSavingsQuery()
   const { positions, rawPositions, rawOperations, accountLabels } =
     dashboardQuery.data ?? EMPTY_DASHBOARD_DATA
   const history = historyQuery.data ?? EMPTY_PORTFOLIO_HISTORY
@@ -167,6 +176,7 @@ export function useDashboardViewModel() {
     trailingIncome,
     passiveIncomeLoading,
     passiveIncomeError,
+    passiveIncomeUpdating,
   } = useDashboardPerformance({
     currentPositions,
     displayedHistory,
@@ -222,6 +232,10 @@ export function useDashboardViewModel() {
           isPending: fundHoldingsQuery.isPending,
         },
         {
+          error: fundDiagnosticsQuery.error,
+          isPending: fundDiagnosticsQuery.isPending,
+        },
+        {
           error: annualIncomeSavingsQuery.error,
           isPending: annualIncomeSavingsQuery.isPending,
         },
@@ -247,6 +261,8 @@ export function useDashboardViewModel() {
       rawAllocationQuery.isPending,
       fundHoldingsQuery.error,
       fundHoldingsQuery.isPending,
+      fundDiagnosticsQuery.error,
+      fundDiagnosticsQuery.isPending,
       annualIncomeSavingsQuery.error,
       annualIncomeSavingsQuery.isPending,
       savingCapacityLoading,
@@ -257,6 +273,8 @@ export function useDashboardViewModel() {
   )
   const error = loadState.status === 'error' ? loadState.message : null
   const loading = loadState.status === 'loading'
+  const updating =
+    savingCapacityQuery.isPlaceholderData || passiveIncomeUpdating
 
   return useMemo(
     () => ({
@@ -280,6 +298,7 @@ export function useDashboardViewModel() {
       irrStatus,
       latestAccountPositions,
       loading,
+      updating,
       monthlyOps,
       overviewComparison,
       passiveIncome,
@@ -325,6 +344,7 @@ export function useDashboardViewModel() {
       irrStatus,
       latestAccountPositions,
       loading,
+      updating,
       monthlyOps,
       overviewComparison,
       passiveIncome,
@@ -371,6 +391,8 @@ const EMPTY_FUND_HOLDINGS: FundHoldingsData = {
   holdings: [],
   history: [],
   statuses: [],
+}
+const EMPTY_FUND_DIAGNOSTICS: FundDiagnostics = {
   report: null,
   snapshots: [],
   unresolved: [],

@@ -12,6 +12,7 @@ type PortfolioResource =
   | 'filtered-history'
   | 'demo-filtered-history-accounts'
   | 'fund-holdings'
+  | 'fund-diagnostics'
   | 'manual-price-overrides'
   | 'monthly-operations'
   | 'passive-income'

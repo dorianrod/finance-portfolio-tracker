@@ -12,7 +12,7 @@ export function loadCsv(url: string): Promise<unknown[]> {
     .then(async (response) => {
       if (!response.ok) throw new HttpError(response.status)
       if (response.headers.get('content-type')?.includes('text/html')) {
-        throw new Error('Expected CSV data, received HTML')
+        throw new SyntaxError('Expected CSV data, received HTML')
       }
       const result = Papa.parse<unknown>(await response.text(), {
         header: true,
@@ -21,7 +21,7 @@ export function loadCsv(url: string): Promise<unknown[]> {
       const parseError = result.errors.find(
         (error) => error.code !== 'UndetectableDelimiter',
       )
-      if (parseError) throw new Error(parseError.message)
+      if (parseError) throw new SyntaxError(parseError.message)
       return result.data
     })
     .finally(() => {

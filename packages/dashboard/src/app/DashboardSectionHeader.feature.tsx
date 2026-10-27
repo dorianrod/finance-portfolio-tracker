@@ -40,7 +40,9 @@ export function DashboardSectionHeader({
             <Text as="h2" variant="statistic" tone="default">
               {copy.title}
             </Text>
-            <DashboardReliability dashboard={dashboard} />
+            {dashboard.loadState.status === 'ready' && (
+              <DashboardReliability dashboard={dashboard} />
+            )}
             <Layout spaceBefore="default">
               <Text as="p" variant="body" tone="subtle">
                 {copy.description}

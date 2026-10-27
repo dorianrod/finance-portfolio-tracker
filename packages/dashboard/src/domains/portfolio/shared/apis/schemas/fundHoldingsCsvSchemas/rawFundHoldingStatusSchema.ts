@@ -1,28 +1,18 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
+import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type {
   FundHoldingStatus,
-  FundQualityTier,
   FundValidationStatus,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+} from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
+import { CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/csvBoolean.schema'
+import { OPTIONAL_CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/optionalCsvBoolean.schema'
 
 import { optionalText } from './optionalText'
-import { requiredBoolean } from './requiredBoolean'
 import { requiredNumber } from './requiredNumber'
 import { requiredText } from './requiredText'
-
-const optionalBoolean = () =>
-  yup
-    .boolean()
-    .transform((_value, originalValue) =>
-      originalValue === '' || originalValue == null
-        ? undefined
-        : originalValue === true ||
-          String(originalValue).trim().toLowerCase() === 'true',
-    )
-    .optional()
 
 export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
   parent_id: requiredText(),
@@ -47,7 +37,7 @@ export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
   fetched_at: OPTIONAL_CALENDAR_DATE_SCHEMA,
   holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
   freshness_days: requiredNumber(),
-  is_stale: requiredBoolean(),
+  is_stale: CSV_BOOLEAN_SCHEMA,
   holding_count: requiredNumber(),
   raw_weight_sum: requiredNumber(),
   explained_pct: requiredNumber(),
@@ -63,6 +53,6 @@ export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
     .optional(),
   snapshot_id: optionalText(),
   source_origin: optionalText(),
-  manual_attention: optionalBoolean(),
+  manual_attention: OPTIONAL_CSV_BOOLEAN_SCHEMA,
   checksum_sha256: optionalText(),
 })

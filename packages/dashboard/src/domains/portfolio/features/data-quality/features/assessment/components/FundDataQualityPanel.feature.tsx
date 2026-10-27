@@ -7,12 +7,10 @@ import {
 } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildFundDiagnosticsRows'
 import { useDataQualityFundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useDataQualityFundDiagnostics'
 import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dataQualityPanels/dataQualityFundDiagnosticsOpenAtom'
-import type {
-  FundHolding,
-  FundHoldingStatus,
-  FundSnapshot,
-  FundUnresolved,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
+import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 import { FundDataQualityPanelView } from './FundDataQualityPanel.view'
 

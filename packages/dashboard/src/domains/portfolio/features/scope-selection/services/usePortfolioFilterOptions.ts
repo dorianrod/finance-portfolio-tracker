@@ -1,22 +1,17 @@
-import { skipToken, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import { useCachedDashboardDataQuery } from '@/domains/portfolio/shared/apis/queries/useCachedDashboardDataQuery'
 import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/buildPortfolioFilterOptions'
-import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 
 export function usePortfolioFilterOptions() {
-  const dashboardQuery = useQuery<DashboardData>({
-    queryKey: portfolioQueryKeys.data('dashboard'),
-    queryFn: skipToken,
-  })
+  const { data: dashboard } = useCachedDashboardDataQuery()
 
   return useMemo(
     () =>
       buildPortfolioFilterOptions(
-        dashboardQuery.data?.positions ?? [],
-        dashboardQuery.data?.accountLabels ?? {},
+        dashboard?.positions ?? [],
+        dashboard?.accountLabels ?? {},
       ),
-    [dashboardQuery.data?.accountLabels, dashboardQuery.data?.positions],
+    [dashboard?.accountLabels, dashboard?.positions],
   )
 }

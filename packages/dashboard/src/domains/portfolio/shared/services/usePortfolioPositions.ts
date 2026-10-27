@@ -7,7 +7,7 @@ import { withoutOperationAndPeriodFilters } from '@/domains/portfolio/shared/hel
 import { withoutOperationFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationFilters'
 import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'

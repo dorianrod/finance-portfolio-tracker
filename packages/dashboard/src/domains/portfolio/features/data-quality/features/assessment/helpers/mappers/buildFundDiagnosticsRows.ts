@@ -1,12 +1,10 @@
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
+import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
+import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
 import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation'
 import type { FundQualityCategory } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation.types'
-import type {
-  FundHolding,
-  FundHoldingStatus,
-  FundSnapshot,
-  FundUnresolved,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 export function buildFundDiagnosticsRows({
   filter,

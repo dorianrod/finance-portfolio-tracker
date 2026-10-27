@@ -31,7 +31,7 @@ import type { ChartTarget } from '@/domains/portfolio/features/holdings/features
 import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type {
   PositionRow,
   TableRow,

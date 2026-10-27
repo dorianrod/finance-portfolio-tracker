@@ -50,10 +50,13 @@ function TooltipTrigger({
         .join(' ')}
       aria-label={label}
       onClick={(event) => {
+        props.onClick?.(event)
+        if (event.defaultPrevented) return
         event.preventDefault()
         context?.setOpen(true)
       }}
       onMouseLeave={(event) => {
+        props.onMouseLeave?.(event)
         if (document.activeElement === event.currentTarget)
           event.preventDefault()
       }}

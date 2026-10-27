@@ -7,18 +7,16 @@ import { useDashboardUnderlyingHoldings } from '@/domains/portfolio/features/hol
 import { dashboardExpandedUnderlyingIssuersAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardExpandedUnderlyingIssuersAtom'
 import { dashboardUnderlyingSortAtom } from '@/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardUnderlyingSortAtom'
 import { dashboardUnderlyingQueryAtom } from '@/domains/portfolio/features/holdings/shared/stores/holdingsSearch.atoms'
-import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
-import type {
-  FundHolding,
-  FundHoldingStatus,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function useFundExposureViewModel(
   positions: PositionRow[],
   holdings: FundHolding[],
 ) {
-  const { data: fundData } = useFundHoldingsQuery()
+  const { data: fundData } = useGetFundHoldingsQuery()
   const statuses = fundData?.statuses ?? EMPTY_FUND_STATUSES
   const expanded = useAtomValue(dashboardExpandedUnderlyingIssuersAtom)
   const query = useAtomValue(dashboardUnderlyingQueryAtom)

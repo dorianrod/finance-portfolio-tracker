@@ -21,6 +21,9 @@ describe('dashboard data availability', () => {
     'errors.csv',
     'positions_geo_by_isin.csv',
     'fund_holdings.csv',
+    'fund_holdings_coverage.csv',
+    'fund_snapshot_manifest.csv',
+    'fund_unresolved.csv',
   ])(
     'surfaces a failed %s instead of displaying empty data as valid',
     async (filename) => {

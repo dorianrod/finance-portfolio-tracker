@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
+import { useGetPositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery'
 import { buildSavingsHistorySeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import i18n from '@/i18n/i18n'
@@ -22,7 +22,7 @@ export function HoverSavingsChart({
     data: history,
     isPending,
     error,
-  } = usePositionHistoryQuery(target.name)
+  } = useGetPositionHistoryQuery(target.name)
 
   const chartData = useMemo(
     () => buildSavingsHistorySeries(history, target.operations),

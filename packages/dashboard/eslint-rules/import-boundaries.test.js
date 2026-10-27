@@ -188,7 +188,7 @@ describe('configured import boundaries', () => {
     'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts',
     'src/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
-    'src/domains/portfolio/shared/apis/queries/usePositionsQuery.ts',
+    'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',
     'src/app/helpers/mappers/resolveDashboardLoadState.ts',
   ])('checks the non-UI layer %s', async (file) => {

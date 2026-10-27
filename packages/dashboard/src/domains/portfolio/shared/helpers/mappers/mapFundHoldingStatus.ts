@@ -2,7 +2,7 @@
 import type { InferType } from 'yup'
 
 import type { RAW_FUND_HOLDING_STATUS_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 export function mapFundHoldingStatus(
   row: InferType<typeof RAW_FUND_HOLDING_STATUS_SCHEMA>,

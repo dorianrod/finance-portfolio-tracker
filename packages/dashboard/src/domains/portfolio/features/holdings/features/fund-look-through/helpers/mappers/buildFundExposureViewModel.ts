@@ -3,10 +3,8 @@ import type {
   SecurityExposure,
 } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
 import { buildIssuerExposures } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildIssuerExposures'
-import type {
-  FundHolding,
-  FundHoldingStatus,
-} from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Exact fund selection, free-text search and expansion build one exposure-explorer result from the same issuer set.

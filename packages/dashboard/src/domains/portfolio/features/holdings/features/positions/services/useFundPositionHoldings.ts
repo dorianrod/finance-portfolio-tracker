@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { holdingsForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/holdingsForPosition'
-import { useFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useFundHoldingsQuery'
+import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import type {
@@ -13,7 +13,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 
 export function useFundPositionHoldings(position: PositionRow) {
   const filters = useAtomValue(dashboardFiltersAtom)
-  const { data: fundData } = useFundHoldingsQuery()
+  const { data: fundData } = useGetFundHoldingsQuery()
   return useMemo(() => {
     const holdings = filters.dateTo
       ? selectHistoricalFundHoldingsAtDate(

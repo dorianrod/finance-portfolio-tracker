@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import { UNAVAILABLE_ASSET_IRR_SUMMARY } from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery/unavailableAssetIrrSummary'
-import { useAssetIrrQuery } from '@/domains/portfolio/features/performance/apis/queries/useAssetIrrQuery/useAssetIrrQuery'
+import { UNAVAILABLE_ASSET_IRR_SUMMARY } from '@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/unavailableAssetIrrSummary'
+import { useGetAssetIrrQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/useGetAssetIrrQuery'
 import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
 import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature'
 import { IrrSinceTrackingKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature'
@@ -87,14 +87,14 @@ export function PerformanceTab({
       ),
     [rawPositions, rawOperations, asOfDate, contributionFilters],
   )
-  const assetIrrQuery = useAssetIrrQuery(
+  const assetIrrQuery = useGetAssetIrrQuery(
     accountFilters,
     accountTypeFilters,
     dateFrom,
     asOfDate,
   )
   let assetIrrStatus: IrrStatus = 'ready'
-  if (assetIrrQuery.isPending && assetIrrQuery.fetchStatus === 'fetching')
+  if (assetIrrQuery.isLoading || assetIrrQuery.isPlaceholderData)
     assetIrrStatus = 'loading'
   else if (assetIrrQuery.isError) assetIrrStatus = 'error'
   const hasChartData = history.length > 0 || passiveIncome.length > 0

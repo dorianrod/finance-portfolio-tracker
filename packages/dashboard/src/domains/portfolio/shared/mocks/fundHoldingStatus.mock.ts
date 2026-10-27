@@ -1,4 +1,4 @@
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 export function makeFundHoldingStatus(
   overrides: Partial<FundHoldingStatus> = {},
