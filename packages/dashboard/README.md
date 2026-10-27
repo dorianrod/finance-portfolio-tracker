@@ -19,6 +19,33 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. See the
 [ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
 
+`npm run lint` also enforces a versioned `--max-warnings` ceiling, initially `0`.
+Every reviewed suppression produces one tracking warning, even when it names
+several rules. Use a line-scoped directive with named rules and this metadata:
+
+```typescript
+// eslint-disable-next-line rule-name -- reviewed: YYYY-MM-DD; concrete technical reason
+```
+
+Read the affected code and applicable rule before accepting an exception; the
+checks validate the metadata, not the technical reason. Accept only demonstrated
+false positives, dependency constraints or exceptions allowed by the rule, rather
+than postponing a correction. Record the actual last review date. Increase the
+ceiling by one for each newly accepted exception and explain the change; lower it
+when an exception is removed. Reviewing the same exception again updates its date
+without increasing the ceiling. Native ESLint warnings also count toward the
+global ceiling. Unused suppressions and missing or invalid review metadata are
+errors; blanket and file/block disables are forbidden. These policy diagnostics
+remain visible even under a blanket disable. No autofix dates or approves an
+exception, and nothing automatically updates the ceiling.
+
+The existing undated suppressions have deliberately not been audited or approved;
+lint reports them as errors until a separate audit using
+[`generic-react-best-practices`](../../.agents/skills/generic-react-best-practices/SKILL.md)
+reviews them. See its
+[exception review rule](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md)
+and [warning budget rule](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-warning-budget.md).
+
 `npm test` limits concurrency to four workers because the typed ESLint suites
 each load a TypeScript project. This bounds memory use and avoids startup
 timeouts caused by running too many of those projects simultaneously.
@@ -28,8 +55,9 @@ guards, rejects context dependencies passed to helpers, checks numeric condition
 public class ordering, collection pipelines, translated text assembly and DOM
 colors. Module-level translated labels are deferred until access; chart axes use
 the existing percentage formatter with `decimals: 'auto'` when no rounding was
-previously applied. All checks run at error level, and CI runs the complete test
-suite, including every custom rule.
+previously applied. Rule violations run at error level; reviewed exceptions and
+uncertain feature sharing produce warnings. CI runs the complete test suite,
+including every custom rule.
 
 The [historical ESLint audit](ESLINT_HISTORY_AUDIT.md) measures these checks against
 the four audit commits and documents the remaining manual and behavioral checks.

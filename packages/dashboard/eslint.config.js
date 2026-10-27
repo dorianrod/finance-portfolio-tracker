@@ -7,6 +7,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 import componentRole from './eslint-rules/component-role.js'
+import eslintSuppressionProcessor from './eslint-rules/eslint-suppression-processor.js'
 import featureFolderLayout from './eslint-rules/feature-folder-layout.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
 import importBoundaries from './eslint-rules/import-boundaries.js'
@@ -30,7 +31,9 @@ import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layou
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
+import requireReviewedEslintSuppression from './eslint-rules/require-reviewed-eslint-suppression.js'
 import reviewSharedFeatureSharing from './eslint-rules/review-shared-feature-sharing.js'
+import reviewedEslintSuppression from './eslint-rules/reviewed-eslint-suppression.js'
 import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
 import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
@@ -46,37 +49,11 @@ export default defineConfig([
     },
   },
   {
-    files: ['**/*.{js,mjs,cjs}'],
-    plugins: {
-      'simple-import-sort': simpleImportSort,
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
     },
-    rules: {
-      'simple-import-sort/exports': 'error',
-      'simple-import-sort/imports': 'error',
-    },
-  },
-  {
-    files: ['eslint-rules/**/*.js'],
-    extends: [js.configs.recommended],
-    languageOptions: {
-      globals: globals.node,
-    },
-  },
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
+    processor: eslintSuppressionProcessor,
     plugins: {
       local: {
         rules: {
@@ -104,6 +81,9 @@ export default defineConfig([
           'no-ui-string-concat': noUiStringConcat,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
+          'require-reviewed-eslint-suppression':
+            requireReviewedEslintSuppression,
+          'reviewed-eslint-suppression': reviewedEslintSuppression,
           'review-shared-feature-sharing': reviewSharedFeatureSharing,
           'shared-feature-usage': sharedFeatureUsage,
           'single-public-export': singlePublicExport,
@@ -111,6 +91,35 @@ export default defineConfig([
         },
       },
       'simple-import-sort': simpleImportSort,
+    },
+    rules: {
+      'local/require-reviewed-eslint-suppression': 'error',
+      'local/reviewed-eslint-suppression': 'warn',
+      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': 'error',
+    },
+  },
+  {
+    files: ['eslint-rules/**/*.js'],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       'default-case-last': 'error',
