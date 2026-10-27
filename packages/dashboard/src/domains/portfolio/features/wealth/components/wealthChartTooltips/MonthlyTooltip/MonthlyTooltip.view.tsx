@@ -26,7 +26,8 @@ export function MonthlyTooltip({
 }: MonthlyTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const savingsDelta = tooltipValue(payload, 'savings_delta')
   const perfDelta = tooltipValue(payload, 'perf_delta')
   const rolling12m = tooltipValue(payload, 'rolling_12m')

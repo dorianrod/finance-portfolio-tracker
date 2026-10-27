@@ -23,7 +23,8 @@ export function DriversTooltip({
 }: DriversTooltipProps) {
   const formatMoney = useFormatMoney()
   const formatDate = useFormatDate()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const row = payload[0]?.payload as WealthDriverPoint
   return (
     <Surface variant="tooltip">

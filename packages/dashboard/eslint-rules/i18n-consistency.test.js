@@ -22,13 +22,17 @@ vi.mock('node:fs', async (importOriginal) => ({
 
 const linter = new Linter({ configType: 'flat' })
 
-function lint(code) {
-  return linter.verify(code, {
-    plugins: {
-      local: { rules: { 'i18n-consistency': i18nConsistency } },
+function lint(code, filename = 'module.test.js') {
+  return linter.verify(
+    code,
+    {
+      plugins: {
+        local: { rules: { 'i18n-consistency': i18nConsistency } },
+      },
+      rules: { 'local/i18n-consistency': 'error' },
     },
-    rules: { 'local/i18n-consistency': 'error' },
-  })
+    { filename },
+  )
 }
 
 beforeEach(() => {
@@ -37,6 +41,23 @@ beforeEach(() => {
 })
 
 describe('i18n-consistency', () => {
+  it.each([
+    `const LABELS = { BUY: i18n.t('ui.accounttreeselect.reset') }`,
+    `import text from '@/i18n/i18n'; const LABELS = { BUY: text.t('ui.accounttreeselect.reset') }`,
+    `const LABEL = (() => i18n.t('ui.accounttreeselect.reset'))()`,
+  ])('rejects translations frozen during module initialization: %s', (code) => {
+    expect(lint(code, 'module.js').map((message) => message.messageId)).toEqual(
+      ['eagerTranslation'],
+    )
+  })
+  it('allows deferred translated labels', () => {
+    expect(
+      lint(
+        `export function labels() { return { BUY: i18n.t('ui.accounttreeselect.reset') } }`,
+        'module.js',
+      ),
+    ).toEqual([])
+  })
   it('does not read the catalog for modules without translation calls', () => {
     expect(lint('const value = 1; other.t(value)')).toEqual([])
     expect(readFileSync).not.toHaveBeenCalled()

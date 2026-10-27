@@ -12,7 +12,8 @@ export function HistoricalHoldingTooltip({
 }: HoldingTooltipProps) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const holding = payload[0].payload
   return (
     <TooltipBox>

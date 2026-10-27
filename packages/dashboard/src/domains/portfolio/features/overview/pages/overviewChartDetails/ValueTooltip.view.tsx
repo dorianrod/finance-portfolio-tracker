@@ -20,7 +20,8 @@ export function ValueTooltip({
 }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const point = payload[0].payload
   return (
     <TooltipBox>

@@ -19,7 +19,7 @@ export function buildHistoricalLookThroughConcentration(
   const byDate = new Map<number, RawPosition[]>()
   for (const row of rows) {
     if (
-      !row.snapshot_date ||
+      row.snapshot_date == null ||
       !matchesFilters(row, accountFilters, accountTypeFilters)
     )
       continue

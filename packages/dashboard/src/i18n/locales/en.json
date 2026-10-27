@@ -788,5 +788,9 @@
   "ui.allocationdimensionquality.responsibleAssetCount_one": "{{count}} responsible asset · View details",
   "ui.allocationdimensionquality.responsibleAssetCount_other": "{{count}} responsible assets · View details",
   "ui.funddataqualitypanel.additionalHoldings_one": "+ {{count}} more row",
-  "ui.funddataqualitypanel.additionalHoldings_other": "+ {{count}} more rows"
+  "ui.funddataqualitypanel.additionalHoldings_other": "+ {{count}} more rows",
+  "ui.formatters.dateRange": "{{from}} – {{to}}",
+  "ui.formatpositioncount.position_one": "{{value}} position",
+  "ui.formatpositioncount.position_other": "{{value}} positions",
+  "ui.formatters.detail": " · {{value}}"
 }

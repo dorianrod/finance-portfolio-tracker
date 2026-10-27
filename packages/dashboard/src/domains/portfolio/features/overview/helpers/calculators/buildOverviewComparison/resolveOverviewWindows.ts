@@ -14,7 +14,7 @@ export function resolveOverviewWindows(
   )
   const earliest = dates[0]
   const latest = dates.at(-1)
-  if (!earliest || !latest) return null
+  if (earliest == null || latest == null) return null
 
   const currentEnd = dateTo ? minDate(dateTo, latest) : latest
   const defaultedToTrailingYear = !dateFrom && !dateTo

@@ -17,7 +17,7 @@ export function buildHistoricalConcentration(
 
   for (const row of rows) {
     if (
-      !row.snapshot_date ||
+      row.snapshot_date == null ||
       !matchesFilters(row, accountFilters, accountTypeFilters)
     )
       continue

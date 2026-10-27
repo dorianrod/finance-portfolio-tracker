@@ -16,7 +16,8 @@ export function DriversTooltip({
   payload?: Array<{ dataKey: string; value: number | null; payload: DriverRow }>
 }) {
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const row = payload[0].payload
   const difference =
     row.current == null || row.previous == null

@@ -31,6 +31,16 @@ export function HoldingsViewTabs() {
 export type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 
 const HOLDINGS_VIEWS: Array<{ id: HoldingsView; label: string }> = [
-  { id: 'positions', label: i18n.t('ui.holdingsviewtabs.positions') },
-  { id: 'underlying', label: i18n.t('ui.holdingsviewtabs.underlyingExposure') },
+  {
+    id: 'positions',
+    get label() {
+      return i18n.t('ui.holdingsviewtabs.positions')
+    },
+  },
+  {
+    id: 'underlying',
+    get label() {
+      return i18n.t('ui.holdingsviewtabs.underlyingExposure')
+    },
+  },
 ]

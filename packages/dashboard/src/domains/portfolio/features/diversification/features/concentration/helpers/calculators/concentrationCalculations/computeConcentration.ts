@@ -45,7 +45,7 @@ export function computeConcentration(
     const lookThrough =
       holdingsByParent.get(position.isin) ??
       holdingsByParent.get(position.ticker)
-    if (lookThrough?.length) {
+    if (lookThrough != null && lookThrough.length > 0) {
       const exposure = addFundConcentration(
         lookThrough,
         positionValue,

@@ -23,7 +23,7 @@ export const POSITION_COLUMNS = [
   }),
   col.display({
     id: 'name',
-    header: i18n.t('ui.positionstable.asset'),
+    header: () => i18n.t('ui.positionstable.asset'),
     cell: PositionNameCell,
   }),
   col.display({

@@ -14,15 +14,19 @@ import maxHooksPerComponent from './eslint-rules/max-hooks-per-component.js'
 import noComplexComponentCalculation from './eslint-rules/no-complex-component-calculation.js'
 import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
+import noComponentDataPipeline from './eslint-rules/no-component-data-pipeline.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
 import noDomainAccessibility from './eslint-rules/no-domain-accessibility.js'
 import noDomainStyling from './eslint-rules/no-domain-styling.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
+import noHardcodedColors from './eslint-rules/no-hardcoded-colors.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
+import noHelperContextParams from './eslint-rules/no-helper-context-params.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
+import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
@@ -83,14 +87,18 @@ export default defineConfig([
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
           'no-component-module-logic': noComponentModuleLogic,
+          'no-component-data-pipeline': noComponentDataPipeline,
           'no-domain-accessibility': noDomainAccessibility,
           'no-domain-styling': noDomainStyling,
           'no-effects-in-components': noEffectsInComponents,
           'no-hardcoded-ui-strings': noHardcodedUiStrings,
+          'no-hardcoded-colors': noHardcodedColors,
+          'no-helper-context-params': noHelperContextParams,
           'no-inline-format-fallback': noInlineFormatFallback,
           'no-prop-drilling': noPropDrilling,
           'no-shared-ui-classname': noSharedUiClassname,
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
+          'no-ui-string-concat': noUiStringConcat,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
           'shared-feature-usage': sharedFeatureUsage,
@@ -161,14 +169,18 @@ export default defineConfig([
       'local/no-complex-jsx-condition': 'error',
       'local/no-complex-jsx-map': 'error',
       'local/no-component-module-logic': 'error',
+      'local/no-component-data-pipeline': 'error',
       'local/no-domain-accessibility': 'error',
       'local/no-domain-styling': 'error',
       'local/no-effects-in-components': 'error',
       'local/no-hardcoded-ui-strings': 'error',
+      'local/no-hardcoded-colors': 'error',
+      'local/no-helper-context-params': 'error',
       'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'error',
       'local/no-shared-ui-classname': 'error',
       'local/no-shared-ui-internal-layout': 'error',
+      'local/no-ui-string-concat': 'error',
       'local/require-children-composition': 'error',
       'local/shared-feature-usage': 'error',
       'local/state-component-contract': 'error',
@@ -178,6 +190,18 @@ export default defineConfig([
     files: ['src/**/*.{ts,tsx}'],
     ignores: ['**/*.{test,spec,stories}.{ts,tsx}', '**/__tests__/**'],
     rules: {
+      '@typescript-eslint/strict-boolean-expressions': [
+        'error',
+        {
+          allowNumber: false,
+          allowNullableNumber: false,
+          allowString: true,
+          allowNullableString: true,
+          allowNullableBoolean: true,
+          allowNullableObject: true,
+          allowAny: true,
+        },
+      ],
       // Branching and size are independent signals, including in JSX.
       complexity: ['error', { max: 8, variant: 'modified' }],
       'max-lines-per-function': [

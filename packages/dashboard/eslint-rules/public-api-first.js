@@ -25,6 +25,8 @@ function unwrap(node) {
 
 function isCallable(node) {
   node = unwrap(node)
+  if (node?.type === 'ClassDeclaration' || node?.type === 'ClassExpression')
+    return true
   if (FUNCTION_TYPES.has(node?.type)) return true
   if (node?.type !== 'CallExpression') return false
   const callee = node.callee

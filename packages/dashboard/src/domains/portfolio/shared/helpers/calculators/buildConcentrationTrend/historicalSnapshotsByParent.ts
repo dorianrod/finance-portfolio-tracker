@@ -33,12 +33,14 @@ export function historicalSnapshotsByParent(
   for (const [key, snapshots] of byParent) {
     byParent.set(
       key,
-      snapshots.toSorted(
-        (left, right) =>
-          left.effectiveDate.getTime() - right.effectiveDate.getTime() ||
-          (left.capturedAt?.getTime() ?? 0) -
-            (right.capturedAt?.getTime() ?? 0),
-      ),
+      snapshots.toSorted((left, right) => {
+        const difference =
+          left.effectiveDate.getTime() - right.effectiveDate.getTime()
+        return difference === 0
+          ? (left.capturedAt?.getTime() ?? 0) -
+              (right.capturedAt?.getTime() ?? 0)
+          : difference
+      }),
     )
   }
   return byParent

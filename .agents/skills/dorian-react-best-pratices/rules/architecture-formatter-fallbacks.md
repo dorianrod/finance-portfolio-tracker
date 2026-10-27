@@ -27,32 +27,32 @@ A guard that only chooses a placeholder is part of formatting. Extend the existi
 ### Incorrect
 
 ```tsx
-const formatNumber = useFormatNumber()
-return <span>{value == null ? '—' : formatNumber(value)}</span>
+const formatNumber = useFormatNumber();
+return <span>{value == null ? "—" : formatNumber(value)}</span>;
 ```
 
 ### Correct
 
 ```tsx
-const formatNumber = useFormatNumber()
-return <span>{formatNumber(value)}</span>
+const formatNumber = useFormatNumber();
+return <span>{formatNumber(value)}</span>;
 ```
 
 In this dashboard, `useFormatNumber`, `useFormatMoney` and `useFormatPercentage` accept `number | null | undefined`:
 
 ```typescript
-formatNumber(value) // null or undefined → '—'; zero stays formatted
-formatMoney(value, { fallback: 0 }) // missing amount → formatted zero
-formatPercentage(value, { fallback: '', zeroAsFallback: true })
+formatNumber(value); // null or undefined → '—'; zero stays formatted
+formatMoney(value, { fallback: 0 }); // missing amount → formatted zero
+formatPercentage(value, { fallback: "", zeroAsFallback: true });
 ```
 
 `fallback` defaults to `'—'`. A string is returned as display text; a numeric fallback goes through the same precision, sign, currency and unit options as a regular value. `zeroAsFallback` defaults to `false`; enable it explicitly when zero needs the same placeholder as a missing value. Preserve each caller's current display policy when migrating it.
 
 ### Enforcement
 
-Enable `local/no-inline-format-fallback` at error level. It checks production TSX files for simple guards on the same stable value passed to a numeric formatter, plus direct `??` and `||` input defaults with a string or numeric literal. It resolves bindings from imported numeric formatter hooks under `helpers/formatters/`, including import/local aliases and numeric functions destructured from formatter bundle hooks such as `usePositionTableFormatters`.
+Enable `local/no-inline-format-fallback` at error level. It checks production TS and TSX, including domain formatter wrappers, for guards on the same stable value passed to a numeric formatter, plus direct `??` and `||` input defaults with a string or numeric literal. It follows immutable boolean aliases and guards nested in `&&`/`||` conditions. A query-state condition can remain while the numeric formatter owns the missing-value placeholder. Imported numeric hooks are resolved through import/local aliases, relative paths and numeric functions destructured from formatter bundles.
 
-The check is deliberately bounded: it does not trace guards stored in booleans, compound business conditions, arbitrary providers, helper parameters or fallback expressions nested inside calculations. Review those cases against the rule. Formatter implementations and test files are excluded. There is no automatic fix: preserve the guard's meaning and the difference between an absent value and zero.
+The check is deliberately bounded: it does not follow reassigned aliases, arbitrary providers, helper parameters, structural JSX branches with several children or fallback expressions nested inside calculations. Shared numeric formatter implementations and tests are excluded. There is no automatic fix: preserve the guard's business conditions and the difference between an absent value and zero. `local/no-helper-context-params` separately prevents passing formatter/context dependencies through helper APIs.
 
 ### Exceptions
 

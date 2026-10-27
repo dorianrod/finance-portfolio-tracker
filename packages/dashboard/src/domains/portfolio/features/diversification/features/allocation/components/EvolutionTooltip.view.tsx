@@ -16,7 +16,8 @@ export function EvolutionTooltip({
   categories,
 }: EvolutionTooltipProps) {
   const formatDate = useFormatDate()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -45,7 +46,7 @@ type EvolutionTooltipRowProps = {
 function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
   const formatPercentage = useFormatPercentage()
   const value = tooltipValue(payload, category)
-  if (!value) return null
+  if (value === 0) return null
 
   return (
     <ChartText as="div" tone={getAllocationTone(category)}>

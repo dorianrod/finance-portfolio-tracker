@@ -14,7 +14,7 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
   const gross = position.realized_gain
   const net = position.realized_gain_net
   const taxRate = position.tax_rate
-  if (!gross) return <GainCell value={gross} zeroAsFallback />
+  if (gross === 0) return <GainCell value={gross} zeroAsFallback />
   const taxDetails = calculateGainTaxDetails(gross, net, taxRate)
   const isTaxFreeGain = taxRate === 0 && gross > 0
   return (

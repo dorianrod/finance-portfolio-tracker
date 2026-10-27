@@ -13,7 +13,7 @@ export const interpolateRankedBars: AnimationInterpolateFn<
   BarRectangleItem,
   CartesianLayout
 > = (items, progress) => {
-  if (!items?.length) return []
+  if (items == null || items.length === 0) return []
 
   const rectangles = items.map(rectangleFor)
   const rowStep = Math.max(

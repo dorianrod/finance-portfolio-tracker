@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 
+import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export function useFormatPerformanceDateRange() {
@@ -8,7 +9,10 @@ export function useFormatPerformanceDateRange() {
     (summary: { startDate: Date | null; endDate: Date | null }): string => {
       if (!summary.startDate || !summary.endDate) return ''
       const options = { style: 'shortMonthYear', timeZone: 'UTC' } as const
-      return `${formatDate(summary.startDate, options)} – ${formatDate(summary.endDate, options)}`
+      return i18n.t('ui.formatters.dateRange', {
+        from: formatDate(summary.startDate, options),
+        to: formatDate(summary.endDate, options),
+      })
     },
     [formatDate],
   )

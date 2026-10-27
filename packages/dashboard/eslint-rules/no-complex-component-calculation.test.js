@@ -32,6 +32,49 @@ function lint(code, filename = 'Panel.view.tsx', options = {}) {
 
 describe('no-complex-component-calculation', () => {
   it.each([
+    'const total = row.allocated + row.unallocated; const percentage = total > 0 ? row.unallocated / total * 100 : 0; return <span>{percentage}</span>',
+    'const percentage = total > 0 ? value / total * 100 : 0; return <Meter value={Math.min(percentage, 100)} />',
+    'const percentage = value / total * 100; const alias = percentage; return <Meter value={Math.min(alias, 100)} />',
+    'return rows.map((row, index) => ({ share: row.gain / row.cost * 100, change: row.value - rows[index - 1].value }))',
+    'return <foreignObject x={x - WIDTH} y={y - 10} width={WIDTH - 10} height={20} />',
+  ])(
+    'follows a complete local derivation across variables, map fields or geometry props: %s',
+    (body) => {
+      expect(
+        lint(`function Panel({row, rows, value, x, y}) { ${body} }`).map(
+          (message) => message.messageId,
+        ),
+      ).toEqual(['extractCalculation'])
+    },
+  )
+
+  it('keeps independent small calculations independent', () => {
+    expect(
+      lint(
+        'function Panel() { const first = a + b; const second = c + d; return <span>{first} {second}</span> }',
+      ),
+    ).toEqual([])
+  })
+
+  it.each([
+    'const dimensions = { width: size + 8, height: size + 8, left: x + 8 }; return <div>{dimensions.width / 2}</div>',
+    'const name = a + b * c; return rows.map(row => ({ name: row.label, change: row.end - row.start }))',
+    'const coordinate = a + b * c; return <rect x={coordinate} y={coordinate} />',
+  ])(
+    'does not count unrelated properties, object keys or a shared geometry initializer twice: %s',
+    (body) => {
+      expect(lint(`function Panel() { ${body} }`)).toEqual([])
+    },
+  )
+
+  it('does not trace reassigned variables as immutable calculations', () => {
+    expect(
+      lint(
+        'function Panel() { let percentage = value / total * 100; percentage = input; return <Meter value={Math.min(percentage, 100)} /> }',
+      ),
+    ).toEqual([])
+  })
+  it.each([
     'Panel.view.tsx',
     'Panel.feature.tsx',
     'Panel.state.tsx',

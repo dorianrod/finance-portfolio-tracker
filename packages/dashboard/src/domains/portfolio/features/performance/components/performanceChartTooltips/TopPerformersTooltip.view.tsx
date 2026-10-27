@@ -16,7 +16,8 @@ export function TopPerformersTooltip({
 }: NumericTooltipProps<TopPerformer>) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const entry = payload[0]?.payload
   return (
     <TooltipBox>

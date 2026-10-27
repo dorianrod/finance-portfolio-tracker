@@ -28,10 +28,13 @@ export function PieLabel({
     cx == null ||
     cy == null ||
     midAngle == null ||
-    !outerRadius ||
+    outerRadius == null ||
+    outerRadius === 0 ||
     !name ||
-    !value ||
-    !percent
+    value == null ||
+    value === 0 ||
+    percent == null ||
+    percent === 0
   )
     return null
   if (percent < 0.025) return null

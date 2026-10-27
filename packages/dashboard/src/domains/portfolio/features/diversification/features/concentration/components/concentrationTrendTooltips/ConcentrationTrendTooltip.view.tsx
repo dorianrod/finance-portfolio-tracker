@@ -16,7 +16,8 @@ export function ConcentrationTrendTooltip({
 }: TrendTooltipProps) {
   const formatDate = useFormatDate()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const row = payload[0].payload
   return (
     <TooltipBox>

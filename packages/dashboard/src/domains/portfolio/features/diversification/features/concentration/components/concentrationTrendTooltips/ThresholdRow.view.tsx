@@ -1,5 +1,5 @@
-import { formatPositionCount } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/formatPositionCount'
 import { useFormatConcentrationDelta } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/useFormatConcentrationDelta'
+import { useFormatPositionCount } from '@/domains/portfolio/features/diversification/features/concentration/helpers/formatters/useFormatPositionCount'
 import i18n from '@/i18n/i18n'
 import type { ChartTone } from '@/shared/theme/chartColors/chartColors.types'
 import { ChartText } from '@/shared/ui/ChartText.view'
@@ -17,6 +17,7 @@ export function ThresholdRow({
   delta: number | null
 }) {
   const formatConcentrationDelta = useFormatConcentrationDelta()
+  const formatPositionCount = useFormatPositionCount()
   return (
     <div>
       <ChartText tone={tone}>{label}</ChartText> {formatPositionCount(value)}{' '}

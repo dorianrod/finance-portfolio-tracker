@@ -26,7 +26,7 @@ export function YearLabel({
     return null
   const placement = placements[index] ?? DEFAULT_YEAR_LABEL_PLACEMENT
   const point = chartPoints[index]
-  if (!point) return null
+  if (point == null) return null
 
   const { x, y } = getYearLabelPosition(viewBox, placement)
   const isRecent = recentYears.has(point.year)

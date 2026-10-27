@@ -1,12 +1,12 @@
 import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
-import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import i18n from '@/i18n/i18n'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { MiniDonut } from './MiniDonut.view'
+import { MiniDonut } from '../MiniDonut.view'
+import { selectRenderableAllocationCharts } from './helpers/selectors/selectRenderableAllocationCharts'
 
 export function HoverAllocationPopover({
   target,
@@ -18,7 +18,7 @@ export function HoverAllocationPopover({
   onMouseLeave: () => void
 }) {
   const { allocation } = target
-  const charts = [
+  const charts = selectRenderableAllocationCharts([
     {
       title: i18n.t('ui.hoverallocationpopover.geography'),
       point: allocation.geo,
@@ -35,12 +35,9 @@ export function HoverAllocationPopover({
       title: i18n.t('ui.hoverallocationpopover.currency'),
       point: allocation.currency,
     },
-  ].filter(
-    (c): c is { title: string; point: AllocationPoint } =>
-      c.point != null && c.point.categories.length > 0,
-  )
+  ])
 
-  if (!charts.length) return null
+  if (charts.length === 0) return null
 
   const cols = charts.length >= 2 ? 2 : 1
 

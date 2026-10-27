@@ -17,9 +17,9 @@ export function applyAccountFilterToHistory(
   const byDate = new Map<number, { tv: number; cb: number; ug: number }>()
   for (const p of allPositionRows) {
     if (!accounts.has(accountFilterId(p))) continue
-    const tv = p.total_value || 0
-    const cb = (p.quantity || 0) * (p.avg_buy_price || 0)
-    const ug = p.unrealized_gain || 0
+    const tv = p.total_value ?? 0
+    const cb = (p.quantity ?? 0) * (p.avg_buy_price ?? 0)
+    const ug = p.unrealized_gain ?? 0
     const cur = byDate.get(p.snapshot_date.getTime()) ?? { tv: 0, cb: 0, ug: 0 }
     byDate.set(p.snapshot_date.getTime(), {
       tv: cur.tv + tv,

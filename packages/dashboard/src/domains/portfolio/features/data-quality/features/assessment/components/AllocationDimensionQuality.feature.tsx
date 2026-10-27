@@ -29,10 +29,18 @@ export function AllocationDimensionQuality({
 }
 
 const LABELS: Record<DimensionCoverage['dimension'], string> = {
-  geo: i18n.t('ui.allocationdimensionquality.geography'),
-  secteur: i18n.t('ui.allocationdimensionquality.sector'),
-  currency: i18n.t('ui.allocationdimensionquality.currency'),
-  classe: i18n.t('ui.allocationdimensionquality.assetClass'),
+  get geo() {
+    return i18n.t('ui.allocationdimensionquality.geography')
+  },
+  get secteur() {
+    return i18n.t('ui.allocationdimensionquality.sector')
+  },
+  get currency() {
+    return i18n.t('ui.allocationdimensionquality.currency')
+  },
+  get classe() {
+    return i18n.t('ui.allocationdimensionquality.assetClass')
+  },
 }
 
 function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {

@@ -10,6 +10,7 @@ import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/Sc
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -31,6 +32,7 @@ export function AnnualIncomeSavingsChart({
   data: AnnualIncomeSavingsPoint[]
 }) {
   const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
   return (
     <Surface variant="chart">
       <Inline as="div" spaceAfter="default" align="start" gap="default">
@@ -69,7 +71,9 @@ export function AnnualIncomeSavingsChart({
           <ChartYAxis
             yAxisId="rate"
             orientation="right"
-            tickFormatter={(value) => `${value}%`}
+            tickFormatter={(value) =>
+              formatPercentage(Number(value), { decimals: 'auto' })
+            }
             width={48}
           />
           <Tooltip content={<IncomeSavingsTooltip />} />

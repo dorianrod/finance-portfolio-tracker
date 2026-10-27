@@ -8,6 +8,7 @@ import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -27,6 +28,7 @@ export function CumulativeConcentrationChart({
   description?: string
   effectiveDate?: Date | null
 }) {
+  const formatPercentage = useFormatPercentage()
   const [activePoint, setActivePoint] =
     useState<CumulativeConcentrationPoint | null>(null)
   const crosshair = cumulativeConcentrationCrosshair(activePoint)
@@ -92,7 +94,9 @@ export function CumulativeConcentrationChart({
           <ChartYAxis
             domain={[0, 100]}
             ticks={[0, 25, 50, 75, 100]}
-            tickFormatter={(value: number) => `${value}%`}
+            tickFormatter={(value: number) =>
+              formatPercentage(Number(value), { decimals: 'auto' })
+            }
             width={42}
           />
           {crosshair && (

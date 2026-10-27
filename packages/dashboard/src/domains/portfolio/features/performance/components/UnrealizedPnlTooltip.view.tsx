@@ -15,9 +15,10 @@ export function UnrealizedPnlTooltip({
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const point = payload[0]?.payload
-  if (!point) return null
+  if (point == null) return null
 
   const valueTone =
     point.unrealized_gain >= 0

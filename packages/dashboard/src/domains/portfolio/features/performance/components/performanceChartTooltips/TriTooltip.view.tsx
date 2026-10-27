@@ -16,7 +16,8 @@ export function TriTooltip({
 }: NumericTooltipProps<TriChartPoint, Date | string | number>) {
   const formatDate = useFormatDate()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const tri1y =
     payload.find((point) => point.dataKey === 'tri_rolling_1y')?.value ?? null
   const tri1yBackfill =

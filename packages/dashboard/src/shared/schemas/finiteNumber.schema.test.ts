@@ -1,8 +1,24 @@
 import { describe, expect, it } from 'vitest'
 
+import i18n from '@/i18n/i18n'
+
 import { FINITE_NUMBER_SCHEMA } from './finiteNumber.schema'
 
 describe('FINITE_NUMBER_SCHEMA', () => {
+  it('resolves the translated validation message when validation runs', async () => {
+    i18n.addResourceBundle('regression', 'translation', {
+      'ui.errors.invalidData': 'Updated numeric validation',
+    })
+    try {
+      await i18n.changeLanguage('regression')
+      await expect(FINITE_NUMBER_SCHEMA.validate(Infinity)).rejects.toThrow(
+        'Updated numeric validation',
+      )
+    } finally {
+      await i18n.changeLanguage('en')
+      i18n.removeResourceBundle('regression', 'translation')
+    }
+  })
   it.each([0, -12.5, '123.45'])(
     'parses the finite amount %s',
     async (value) => {

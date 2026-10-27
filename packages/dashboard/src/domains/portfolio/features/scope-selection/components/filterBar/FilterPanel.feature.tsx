@@ -70,19 +70,51 @@ type FilterPanelProps = {
 }
 
 const OP_LABELS: Record<OperationType, string> = {
-  BUY: i18n.t('ui.filterbar.buy'),
-  SELL: i18n.t('ui.filterbar.sell'),
-  DIVIDEND: i18n.t('ui.filterbar.dividend'),
-  INTEREST: i18n.t('ui.filterbar.interest'),
-  DEPOSIT: i18n.t('ui.filterbar.deposit'),
-  WITHDRAWAL: i18n.t('ui.filterbar.withdrawal'),
+  get BUY() {
+    return i18n.t('ui.filterbar.buy')
+  },
+  get SELL() {
+    return i18n.t('ui.filterbar.sell')
+  },
+  get DIVIDEND() {
+    return i18n.t('ui.filterbar.dividend')
+  },
+  get INTEREST() {
+    return i18n.t('ui.filterbar.interest')
+  },
+  get DEPOSIT() {
+    return i18n.t('ui.filterbar.deposit')
+  },
+  get WITHDRAWAL() {
+    return i18n.t('ui.filterbar.withdrawal')
+  },
 }
 
 const DATE_PRESETS = [
-  { label: i18n.t('ui.filterbar.thisMonth'), months: 0 },
-  { label: i18n.t('ui.filterbar.3Months'), months: 3 },
-  { label: i18n.t('ui.filterbar.6Months'), months: 6 },
-  { label: i18n.t('ui.filterbar.1Year'), months: 12 },
+  {
+    get label() {
+      return i18n.t('ui.filterbar.thisMonth')
+    },
+    months: 0,
+  },
+  {
+    get label() {
+      return i18n.t('ui.filterbar.3Months')
+    },
+    months: 3,
+  },
+  {
+    get label() {
+      return i18n.t('ui.filterbar.6Months')
+    },
+    months: 6,
+  },
+  {
+    get label() {
+      return i18n.t('ui.filterbar.1Year')
+    },
+    months: 12,
+  },
 ] as const
 
 function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {

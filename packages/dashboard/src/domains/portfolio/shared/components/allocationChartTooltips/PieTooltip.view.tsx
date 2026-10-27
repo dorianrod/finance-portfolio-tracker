@@ -10,7 +10,8 @@ import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const item = payload[0]?.payload
   if (!item) return null
   const percentage = formatPercentage(

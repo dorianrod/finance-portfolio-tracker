@@ -59,40 +59,62 @@ export function DashboardSectionHeader({
 
 const TAB_COPY: Record<AnalysisTab, { title: string; description: string }> = {
   overview: {
-    title: i18n.t('ui.app.portfolioOverview'),
-    description: i18n.t(
-      'ui.app.currentPositionRecentChangeDriversAndTheMainSignals',
-    ),
+    get title() {
+      return i18n.t('ui.app.portfolioOverview')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.currentPositionRecentChangeDriversAndTheMainSignals',
+      )
+    },
   },
   wealth: {
-    title: i18n.t('ui.app.wealthCashFlow'),
-    description: i18n.t(
-      'ui.app.howContributionsAndMarketPerformanceBuiltThePortfolioOver',
-    ),
+    get title() {
+      return i18n.t('ui.app.wealthCashFlow')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.howContributionsAndMarketPerformanceBuiltThePortfolioOver',
+      )
+    },
   },
   performance: {
-    title: i18n.t('ui.app.performancePassiveIncome'),
-    description: i18n.t(
-      'ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome',
-    ),
+    get title() {
+      return i18n.t('ui.app.performancePassiveIncome')
+    },
+    get description() {
+      return i18n.t('ui.app.returnsRealizedOutcomesAndRecurringPassiveIncome')
+    },
   },
   diversification: {
-    title: i18n.t('ui.app.diversification'),
-    description: i18n.t(
-      'ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs',
-    ),
+    get title() {
+      return i18n.t('ui.app.diversification')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.currentExposuresConcentrationAndHowThePortfolioMixIs',
+      )
+    },
   },
   holdings: {
-    title: i18n.t('ui.app.holdings'),
-    description: i18n.t(
-      'ui.app.inspectHeldPositionsAndTheirUnderlyingEconomicExposure',
-    ),
+    get title() {
+      return i18n.t('ui.app.holdings')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.inspectHeldPositionsAndTheirUnderlyingEconomicExposure',
+      )
+    },
   },
   quality: {
-    title: i18n.t('ui.app.dataQuality'),
-    description: i18n.t(
-      'ui.app.aFocusedReviewOfPipelinePricingClassificationAndLook',
-    ),
+    get title() {
+      return i18n.t('ui.app.dataQuality')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.aFocusedReviewOfPipelinePricingClassificationAndLook',
+      )
+    },
   },
 }
 
@@ -101,15 +123,23 @@ const HOLDINGS_COPY: Record<
   { title: string; description: string }
 > = {
   positions: {
-    title: i18n.t('ui.app.positions'),
-    description: i18n.t(
-      'ui.app.inspectEveryHoldingTransactionAndPositionLevelResult',
-    ),
+    get title() {
+      return i18n.t('ui.app.positions')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.inspectEveryHoldingTransactionAndPositionLevelResult',
+      )
+    },
   },
   underlying: {
-    title: i18n.t('ui.app.underlyingExposure'),
-    description: i18n.t(
-      'ui.app.reviewIdentifiedEconomicExposureThroughEtfsAndFundsGrouped',
-    ),
+    get title() {
+      return i18n.t('ui.app.underlyingExposure')
+    },
+    get description() {
+      return i18n.t(
+        'ui.app.reviewIdentifiedEconomicExposureThroughEtfsAndFundsGrouped',
+      )
+    },
   },
 }

@@ -262,7 +262,7 @@ function HistoricalHoldingsChart({
   children: ReactNode
 }) {
   const { displayedPoint } = controller
-  if (!displayedPoint) return null
+  if (displayedPoint == null) return null
   return (
     <Surface variant="chart">
       <HistoricalHoldingsSummary controller={controller}>
@@ -285,7 +285,7 @@ function HistoricalHoldingsSummary({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const { displayedPoint } = controller
-  if (!displayedPoint) return null
+  if (displayedPoint == null) return null
   return (
     <>
       <Stack gap="default" align="start" justify="between">

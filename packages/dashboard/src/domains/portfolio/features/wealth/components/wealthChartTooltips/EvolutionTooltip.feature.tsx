@@ -20,7 +20,8 @@ export function EvolutionTooltip({
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const row = payload[0]?.payload
   const { cost, gain, total, costShare, gainShare } =
     computePortfolioComposition(row)
@@ -41,7 +42,11 @@ export function EvolutionTooltip({
       <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
         {i18n.t('ui.portfoliochartsTooltips.costBasisWithValues', {
           amount: formatMoney(cost, { style: 'full' }),
-          value: percentageMode ? ` · ${formatPercentage(costShare)}` : '',
+          value: percentageMode
+            ? i18n.t('ui.formatters.detail', {
+                value: formatPercentage(costShare),
+              })
+            : '',
         })}
       </ChartText>
       <ChartText
@@ -54,7 +59,11 @@ export function EvolutionTooltip({
       >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedProfitLoss', {
           amount: formatMoney(gain, { style: 'full' }),
-          share: percentageMode ? ` · ${formatPercentage(gainShare)}` : '',
+          share: percentageMode
+            ? i18n.t('ui.formatters.detail', {
+                value: formatPercentage(gainShare),
+              })
+            : '',
         })}
       </ChartText>
     </TooltipBox>

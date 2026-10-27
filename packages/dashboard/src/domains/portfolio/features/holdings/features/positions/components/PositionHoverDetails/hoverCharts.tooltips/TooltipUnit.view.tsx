@@ -16,7 +16,8 @@ export function TooltipUnit({
   label,
 }: NumericTooltipProps<HoverChartDataPoint>) {
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const p = payload[0]
   const data = p?.payload
   return (

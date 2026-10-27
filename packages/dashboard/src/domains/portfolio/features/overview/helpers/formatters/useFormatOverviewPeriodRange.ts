@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import type { OverviewPeriod } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
+import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export function useFormatOverviewPeriodRange() {
@@ -8,7 +9,10 @@ export function useFormatOverviewPeriodRange() {
   return useCallback(
     (period: OverviewPeriod): string => {
       const options = { style: 'dayMonthYear', timeZone: 'UTC' } as const
-      return `${formatDate(period.start, options)} – ${formatDate(period.end, options)}`
+      return i18n.t('ui.formatters.dateRange', {
+        from: formatDate(period.start, options),
+        to: formatDate(period.end, options),
+      })
     },
     [formatDate],
   )

@@ -23,24 +23,32 @@ export const RELIABILITY_TONES: Record<
     dot: 'positive',
     status: 'positive',
     value: 'positive',
-    label: i18n.t('ui.analysisreliabilitykpi.reliable'),
+    get label() {
+      return i18n.t('ui.analysisreliabilitykpi.reliable')
+    },
   },
   warning: {
     dot: 'warning',
     status: 'warning',
     value: 'warning',
-    label: i18n.t('ui.analysisreliabilitykpi.partial'),
+    get label() {
+      return i18n.t('ui.analysisreliabilitykpi.partial')
+    },
   },
   critical: {
     dot: 'negative',
     status: 'negative',
     value: 'negative',
-    label: i18n.t('ui.analysisreliabilitykpi.review'),
+    get label() {
+      return i18n.t('ui.analysisreliabilitykpi.review')
+    },
   },
   unavailable: {
     dot: 'subtle',
     status: 'muted',
     value: 'muted',
-    label: i18n.t('ui.analysisreliabilitykpi.unavailable'),
+    get label() {
+      return i18n.t('ui.analysisreliabilitykpi.unavailable')
+    },
   },
 }

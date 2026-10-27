@@ -134,7 +134,7 @@ export function ErrorsTab({ errors }: Props) {
               <Surface as="tr" variant="tableHeader">
                 {ERROR_COLUMNS.map((column) => (
                   <ErrorColumnHeader
-                    key={column[0]}
+                    key={column.id}
                     column={column}
                     direction={sortDir}
                     onSort={handleSort}
@@ -177,22 +177,62 @@ export function ErrorsTab({ errors }: Props) {
 }
 
 const SOURCE_LABELS: Record<string, string> = {
-  main: i18n.t('ui.errorstab.ingestPortfolioPy'),
-  fetch_prices: i18n.t('ui.errorstab.fetchPricesPy'),
+  get main() {
+    return i18n.t('ui.errorstab.ingestPortfolioPy')
+  },
+  get fetch_prices() {
+    return i18n.t('ui.errorstab.fetchPricesPy')
+  },
 }
 
-const ERROR_COLUMNS: [
-  PipelineErrorSortColumn,
-  string,
-  'w-20' | 'w-40' | 'w-28' | 'w-24' | '',
-][] = [
-  ['level', i18n.t('ui.errorstab.level'), 'w-20'],
-  ['type', i18n.t('ui.errorstab.type'), 'w-40'],
-  ['source', i18n.t('ui.errorstab.source'), 'w-28'],
-  ['date', i18n.t('ui.errorstab.date'), 'w-24'],
-  ['name', i18n.t('ui.errorstab.asset'), 'w-28'],
-  ['isin', 'ISIN', 'w-24'],
-  ['message', i18n.t('ui.errorstab.message'), ''],
+const ERROR_COLUMNS: Array<{
+  id: PipelineErrorSortColumn
+  label: string
+  width: 'w-20' | 'w-40' | 'w-28' | 'w-24' | ''
+}> = [
+  {
+    id: 'level',
+    get label() {
+      return i18n.t('ui.errorstab.level')
+    },
+    width: 'w-20',
+  },
+  {
+    id: 'type',
+    get label() {
+      return i18n.t('ui.errorstab.type')
+    },
+    width: 'w-40',
+  },
+  {
+    id: 'source',
+    get label() {
+      return i18n.t('ui.errorstab.source')
+    },
+    width: 'w-28',
+  },
+  {
+    id: 'date',
+    get label() {
+      return i18n.t('ui.errorstab.date')
+    },
+    width: 'w-24',
+  },
+  {
+    id: 'name',
+    get label() {
+      return i18n.t('ui.errorstab.asset')
+    },
+    width: 'w-28',
+  },
+  { id: 'isin', label: 'ISIN', width: 'w-24' },
+  {
+    id: 'message',
+    get label() {
+      return i18n.t('ui.errorstab.message')
+    },
+    width: '',
+  },
 ]
 
 type Props = {
@@ -238,7 +278,7 @@ function ErrorColumnHeader({
   onSort: (column: PipelineErrorSortColumn) => void
   sortColumn: PipelineErrorSortColumn
 }) {
-  const [id, label] = column
+  const { id, label } = column
   return (
     <Inset as="th" inset="compact">
       <Text as="div" variant="selectableHeader" tone="muted" align="left">

@@ -1,3 +1,6 @@
+import { isProductionSource, stableInitializer } from './ast-bindings.js'
+import { createContextResolver } from './context-provenance.js'
+
 const NUMERIC_HOOKS = new Set([
   'useFormatMoney',
   'useFormatNumber',
@@ -59,13 +62,16 @@ export default {
   },
   create(context) {
     if (
-      !context.filename.endsWith('.tsx') ||
-      /\.(?:test|spec)\.tsx$/u.test(context.filename) ||
-      /(?:^|\/)helpers\/formatters\//u.test(context.filename)
+      !isProductionSource(context.filename) ||
+      /(?:^|\/)shared\/helpers\/formatters\//u.test(context.filename)
     )
       return {}
 
     const sourceCode = context.sourceCode
+    const { hook: importedHook } = createContextResolver(
+      sourceCode,
+      context.filename,
+    )
 
     function findVariable(identifier) {
       if (identifier?.type !== 'Identifier') return null
@@ -76,17 +82,6 @@ export default {
         scope = scope.upper
       }
       return null
-    }
-
-    function importedHook(node) {
-      const definition = findVariable(unwrap(node))?.defs[0]
-      if (
-        definition?.type !== 'ImportBinding' ||
-        definition.node.type !== 'ImportSpecifier' ||
-        !/\/helpers\/formatters\//u.test(definition.parent.source.value)
-      )
-        return null
-      return definition.node.imported.name
     }
 
     function isFormatter(node, seen = new Set()) {
@@ -163,11 +158,32 @@ export default {
       )
     }
 
-    function guardsValue(test, value) {
+    function guardsValue(test, value, seen = new Set()) {
       const condition = unwrap(test)
+      if (!condition || seen.has(condition)) return false
+      seen.add(condition)
+      if (condition.type === 'Identifier' && !sameValue(condition, value)) {
+        return guardsValue(
+          stableInitializer(sourceCode, condition),
+          value,
+          seen,
+        )
+      }
+      if (
+        condition.type === 'LogicalExpression' &&
+        ['&&', '||'].includes(condition.operator)
+      ) {
+        return (
+          guardsValue(condition.left, value, seen) ||
+          guardsValue(condition.right, value, seen)
+        )
+      }
       if (sameValue(condition, value)) return true
       if (condition?.type === 'UnaryExpression' && condition.operator === '!')
-        return sameValue(condition.argument, value)
+        return (
+          sameValue(condition.argument, value) ||
+          guardsValue(condition.argument, value, seen)
+        )
       return (
         condition?.type === 'BinaryExpression' &&
         ['==', '===', '!=', '!=='].includes(condition.operator) &&

@@ -12,9 +12,9 @@ export function buildAccountTypeHistory(
   const typeCategories: Record<string, string> = {}
 
   for (const row of rows) {
-    if (!row.account_type || !row.total_value) continue
+    if (!row.account_type || (row.total_value ?? 0) === 0) continue
     if (accountSet && !accountSet.has(accountFilterId(row))) continue
-    const tv = row.total_value || 0
+    const tv = row.total_value ?? 0
     typeSet.add(row.account_type)
     if (row.account_category)
       typeCategories[row.account_type] = row.account_category

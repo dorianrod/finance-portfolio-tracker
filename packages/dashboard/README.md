@@ -19,6 +19,23 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. See the
 [ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
 
+The lint also follows dependent component calculations and boolean formatter
+guards, rejects context dependencies passed to helpers, checks numeric conditions,
+public class ordering, collection pipelines, translated text assembly and DOM
+colors. Module-level translated labels are deferred until access; chart axes use
+the existing percentage formatter with `decimals: 'auto'` when no rounding was
+previously applied. All checks run at error level, and CI runs the complete test
+suite, including every custom rule.
+
+The [historical ESLint audit](ESLINT_HISTORY_AUDIT.md) measures these checks against
+the four audit commits and documents the remaining manual and behavioral checks.
+Reproduce it from this directory with a checkout containing those commits:
+
+```bash
+npm run audit:eslint-history -- --output /tmp/finance-eslint-history.json
+node scripts/summarize-eslint-history.mjs /tmp/finance-eslint-history.json /tmp/finance-eslint-coverage.json
+```
+
 Reads CSVs live from `../../data/output` (override with `FINANCE_DATA_DIR`,
 same convention as finance-pipeline).
 
@@ -62,14 +79,14 @@ utilities (`bg-canvas`, `bg-surface`, `text-content`, `text-content-muted`,
 `border-border`, `text-accent`) instead of raw palette classes. Semantic classes
 still count as visual styles and must be applied inside shared UI.
 
-`local/no-domain-styling` reports warnings for non-layout classes, inline style
+`local/no-domain-styling` reports errors for non-layout classes, inline style
 properties, native/SVG styling, Recharts appearance props and local stylesheets
 outside the design system. It follows resolvable constants, conditional values,
 templates, assembled arrays, JSX spreads and React element factory props. A
-separate `unverifiableStyle` warning requests review when static analysis cannot
+separate `unverifiableStyle` diagnostic requests review when static analysis cannot
 determine a value; it does not claim that value is a proven visual violation.
 Tests and generated files are exempt. The check does not parse CSS contents or
-analyze imperative DOM mutations, and it has no autofix. Warnings reference
+analyze arbitrary imperative DOM mutations, and it has no autofix. Diagnostics reference
 [`styling-centralize-in-shared-ui`](../../.agents/skills/dorian-react-best-pratices/rules/styling-centralize-in-shared-ui.md)
 to guide subsequent component migrations.
 
@@ -86,7 +103,7 @@ through semantic variants. Compose custom chart renderers through nested
 `SeriesBar.Shape`, `SeriesLine.Markers`, `SeriesPie.Labels` and related slots.
 Domain code supplies the data, geometry, labels and business actions.
 
-The styling migration has no remaining `local/no-domain-styling` warnings; see
+The styling migration has no remaining `local/no-domain-styling` diagnostics; see
 [the audit](STYLING_AUDIT.md) for its scope and validation. Existing global theme
 compatibility overrides remain infrastructure; new code should use the shared
 primitives and semantic tokens.

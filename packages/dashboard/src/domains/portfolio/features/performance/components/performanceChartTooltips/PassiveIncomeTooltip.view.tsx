@@ -16,7 +16,8 @@ export function PassiveIncomeTooltip({
   label,
 }: NumericTooltipProps<PassiveIncomePoint>) {
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const div = tooltipValue(payload, 'dividends')
   const int = tooltipValue(payload, 'interest')
   return (

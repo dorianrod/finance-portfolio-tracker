@@ -14,7 +14,6 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
 
-// eslint-disable-next-line complexity -- Loading, error, missing history and unit-price availability belong to one preview; series calculations are delegated.
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const {
     data: history,
@@ -33,7 +32,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
     [chartData],
   )
   const showEmptyHistory = !isPending && !error && chartData.length === 0
-  const displayedChartData = chartData?.length ? chartData : null
+  const displayedChartData = chartData.length > 0 ? chartData : null
 
   return (
     <Preview.Content

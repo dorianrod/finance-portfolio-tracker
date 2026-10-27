@@ -31,7 +31,7 @@ export function DonutCard({
   const { total, data } = useMemo(() => buildAllocationPieData(point), [point])
   const selectCategory = useCallback(
     (entry: PieEntry | undefined) => {
-      if (entry && !entry.subItems?.length)
+      if (entry && (entry.subItems?.length ?? 0) === 0)
         toggleFilter({ type: dimension, value: entry.name })
     },
     [dimension, toggleFilter],

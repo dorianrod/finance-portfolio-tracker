@@ -41,8 +41,16 @@ export function FilterChipBar() {
 }
 
 const DIM_LABELS: Record<AllocationDimension, string> = {
-  geo: i18n.t('ui.filterchipbar.geo'),
-  secteur: i18n.t('ui.filterchipbar.sector'),
-  currency: i18n.t('ui.filterchipbar.currency'),
-  classe: i18n.t('ui.filterchipbar.class'),
+  get geo() {
+    return i18n.t('ui.filterchipbar.geo')
+  },
+  get secteur() {
+    return i18n.t('ui.filterchipbar.sector')
+  },
+  get currency() {
+    return i18n.t('ui.filterchipbar.currency')
+  },
+  get classe() {
+    return i18n.t('ui.filterchipbar.class')
+  },
 }

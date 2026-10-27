@@ -57,7 +57,7 @@ export function Layout<T extends LayoutTag = 'div'>({
         sizing && LAYOUT_SIZING[sizing],
         width && LAYOUT_WIDTHS[width],
         height && LAYOUT_HEIGHTS[height],
-        columns && LAYOUT_COLUMNS[columns],
+        columns != null && LAYOUT_COLUMNS[columns],
         arrangement && LAYOUT_PRESETS[arrangement],
         overflow && LAYOUT_OVERFLOW[overflow],
         placement && LAYOUT_PLACEMENTS[placement],

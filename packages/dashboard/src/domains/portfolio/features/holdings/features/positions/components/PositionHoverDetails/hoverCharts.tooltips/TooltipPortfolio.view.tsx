@@ -16,7 +16,8 @@ export function TooltipPortfolio({
   label,
 }: NumericTooltipProps<HoverChartDataPoint>) {
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const valueEntry = payload.find((item) => item.dataKey === 'Value')
   const costEntry = payload.find((item) => item.dataKey === 'Cost basis')
   const data = payload[0]?.payload

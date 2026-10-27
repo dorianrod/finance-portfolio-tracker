@@ -30,11 +30,12 @@ export function buildFundDiagnosticsRows({
           (status.validationStatus !== 'ok' ||
             hasMaterialQualityGap(status.residualPct))),
     )
-    .toSorted(
-      (left, right) =>
-        right.residualValue - left.residualValue ||
-        right.marketValue - left.marketValue,
-    )
+    .toSorted((left, right) => {
+      const residualDifference = right.residualValue - left.residualValue
+      return residualDifference === 0
+        ? right.marketValue - left.marketValue
+        : residualDifference
+    })
     .map((status) => ({
       holdings: holdings.filter(
         (item) =>

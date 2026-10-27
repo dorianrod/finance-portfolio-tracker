@@ -17,7 +17,7 @@ export function useFormatPercentage() {
 }
 
 type PercentageFormatOptions = {
-  decimals?: number
+  decimals?: number | 'auto'
   fallback?: string | number
   signed?: boolean
   suffix?: string
@@ -31,5 +31,7 @@ function formatPercentageValue(
 ): string {
   const safeValue = Number.isFinite(value) ? value : 0
   const sign = signed && safeValue >= 0 ? '+' : ''
-  return `${sign}${safeValue.toFixed(decimals)}${unit}${suffix}`
+  const formatted =
+    decimals === 'auto' ? String(safeValue) : safeValue.toFixed(decimals)
+  return `${sign}${formatted}${unit}${suffix}`
 }

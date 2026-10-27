@@ -17,7 +17,8 @@ export function SavingsTooltip({
 }: NumericTooltipProps<SavingsPoint>) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const balance = tooltipValue(payload, 'balance')
   const delta: number = payload[0]?.payload?.delta ?? 0
   const monthStr: string = payload[0]?.payload?.month ?? ''

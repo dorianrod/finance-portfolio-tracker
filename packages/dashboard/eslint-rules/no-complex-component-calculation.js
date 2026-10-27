@@ -1,3 +1,4 @@
+import { childrenOf, stableInitializer } from './ast-bindings.js'
 import {
   getFunctionComponentName,
   getStaticPropertyName,
@@ -20,19 +21,46 @@ function isCalculation(node) {
   )
 }
 
-function countOperations(node, sourceCode) {
-  if (!node || isFunctionNode(node)) return 0
-
-  let count = isCalculation(node) ? 1 : 0
-  for (const key of sourceCode.visitorKeys[node.type] ?? []) {
-    const child = node[key]
-    if (Array.isArray(child)) {
-      for (const entry of child) count += countOperations(entry, sourceCode)
-    } else {
-      count += countOperations(child, sourceCode)
-    }
+function countOperations(node, sourceCode, seen = new Set()) {
+  if (!node || isFunctionNode(node) || seen.has(node)) return 0
+  seen.add(node)
+  if (node.type === 'Identifier') {
+    const value = stableInitializer(sourceCode, node)
+    return value && isInsideComponent(value)
+      ? countOperations(value, sourceCode, seen)
+      : 0
   }
-  return count
+  let children = childrenOf(sourceCode, node)
+  if (node.type === 'MemberExpression') {
+    const object = stableInitializer(sourceCode, node.object)
+    if (object?.type === 'ObjectExpression') {
+      const key =
+        node.computed && node.property.type !== 'Literal'
+          ? null
+          : getStaticPropertyName(node.property)
+      const property =
+        key == null
+          ? null
+          : object.properties.find(
+              (property) =>
+                property.type === 'Property' &&
+                !property.computed &&
+                getStaticPropertyName(property.key) === key,
+            )
+      children = [
+        property?.value,
+        ...(node.computed ? [node.property] : []),
+      ].filter(Boolean)
+    } else children = [node.object, ...(node.computed ? [node.property] : [])]
+  } else if (node.type === 'Property')
+    children = [node.value, ...(node.computed ? [node.key] : [])]
+  return (
+    (isCalculation(node) ? 1 : 0) +
+    children.reduce(
+      (sum, child) => sum + countOperations(child, sourceCode, seen),
+      0,
+    )
+  )
 }
 
 function isInsideComponent(node) {
@@ -79,6 +107,7 @@ export default {
     if (isTestFile(context.filename)) return {}
 
     const maxOperations = context.options[0]?.maxOperations ?? 2
+    const candidates = new Set()
 
     function inspect(node) {
       if (
@@ -89,9 +118,68 @@ export default {
       )
         return
 
-      context.report({ node, messageId: 'extractCalculation' })
+      candidates.add(node)
     }
 
-    return { BinaryExpression: inspect, CallExpression: inspect }
+    return {
+      BinaryExpression: inspect,
+      CallExpression(node) {
+        inspect(node)
+        if (
+          !isInsideComponent(node) ||
+          node.callee.type !== 'MemberExpression' ||
+          !['map', 'flatMap'].includes(
+            getStaticPropertyName(node.callee.property),
+          )
+        )
+          return
+        const callback = node.arguments[0]
+        if (!isFunctionNode(callback)) return
+        const result =
+          callback.body.type === 'BlockStatement'
+            ? callback.body.body.find(
+                (statement) => statement.type === 'ReturnStatement',
+              )?.argument
+            : callback.body
+        if (
+          result?.type === 'ObjectExpression' &&
+          countOperations(result, context.sourceCode) > maxOperations
+        )
+          candidates.add(node)
+      },
+      JSXOpeningElement(node) {
+        if (!isInsideComponent(node)) return
+        const geometry = node.attributes.filter(
+          (attribute) =>
+            attribute.type === 'JSXAttribute' &&
+            ['x', 'y', 'cx', 'cy', 'width', 'height', 'r', 'rx', 'ry'].includes(
+              attribute.name.name,
+            ),
+        )
+        const seen = new Set()
+        const operations = geometry.map((attribute) =>
+          countOperations(attribute.value, context.sourceCode, seen),
+        )
+        if (
+          operations.filter((count) => count > 0).length > 1 &&
+          operations.reduce((sum, count) => sum + count, 0) > maxOperations
+        )
+          candidates.add(node)
+      },
+      'Program:exit'() {
+        for (const node of candidates) {
+          if (
+            [...candidates].some(
+              (parent) =>
+                parent !== node &&
+                parent.range[0] <= node.range[0] &&
+                parent.range[1] >= node.range[1],
+            )
+          )
+            continue
+          context.report({ node, messageId: 'extractCalculation' })
+        }
+      },
+    }
   },
 }

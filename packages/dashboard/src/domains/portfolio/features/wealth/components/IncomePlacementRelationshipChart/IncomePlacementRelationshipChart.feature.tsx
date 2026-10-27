@@ -46,7 +46,9 @@ export function IncomePlacementRelationshipChart({
   } = useIncomePlacementChart(data)
   const [trendStart, trendEnd] = analysis.trendLine
   const trendLine =
-    trendStart && trendEnd ? { end: trendEnd, start: trendStart } : null
+    trendStart != null && trendEnd != null
+      ? { end: trendEnd, start: trendStart }
+      : null
   return (
     <Surface variant="chart">
       <Layout spaceAfter="default">
@@ -115,7 +117,9 @@ export function IncomePlacementRelationshipChart({
             name={i18n.t(
               'ui.incomeplacementrelationshipchart.placementRate.5df16e',
             )}
-            tickFormatter={(value) => `${value}%`}
+            tickFormatter={(value) =>
+              formatPercentage(Number(value), { decimals: 'auto' })
+            }
             width={48}
           />
           <ChartTooltip highlight="dashed">
@@ -186,7 +190,7 @@ function IncomePlacementPoint({
   newestYear: number
 }) {
   const point = shapeProps.payload
-  if (!point) return null
+  if (point == null) return null
   const isRecent = recentYears.has(point.year)
   return (
     <ChartSymbol

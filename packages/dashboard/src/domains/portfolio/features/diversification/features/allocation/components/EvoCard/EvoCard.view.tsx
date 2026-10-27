@@ -4,6 +4,7 @@ import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { EvolutionTooltip } from '@/domains/portfolio/features/diversification/features/allocation/components/EvolutionTooltip.view'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
@@ -47,6 +48,7 @@ export function EvoCardView({
     EvoCardViewPositionsControl,
   )
   const formatDate = useFormatDate()
+  const formatPercentage = useFormatPercentage()
   const id = useId()
   const series = categories.map((category, index) => ({
     category,
@@ -107,7 +109,9 @@ export function EvoCardView({
             }
           />
           <ChartYAxis
-            tickFormatter={(v) => `${v}%`}
+            tickFormatter={(v) =>
+              formatPercentage(Number(v), { decimals: 'auto' })
+            }
             domain={[0, 100]}
             width={36}
           />

@@ -7,7 +7,7 @@ tags:
   - ordering
   - formatting
 patterns:
-  - An exported function, hook or component follows module-level types, constants, private helpers or private components.
+  - An exported function, hook, class or component follows module-level types, constants, private helpers or private components.
   - The request asks to automatically move exported functions or components to the top of a file.
 ---
 
@@ -19,17 +19,17 @@ Expose the module's callable API before its implementation details. Keep directi
 
 ### Applies When
 
-- A function declaration, function expression, arrow function or React component wrapped in `memo` or `forwardRef` is exported.
+- A function declaration, function expression, arrow function, class declaration/expression or React component wrapped in `memo` or `forwardRef` is exported.
 - A locally declared callable is exposed through an export list or a default identifier export: order the declaration itself, not just the export statement.
 
 ### Incorrect
 
 ```typescript
-type Amount = { value: number }
-const SCALE = 100
+type Amount = { value: number };
+const SCALE = 100;
 
 export function toMinorUnits(amount: Amount) {
-  return amount.value * SCALE
+  return amount.value * SCALE;
 }
 ```
 
@@ -37,18 +37,20 @@ export function toMinorUnits(amount: Amount) {
 
 ```typescript
 export function toMinorUnits(amount: Amount) {
-  return amount.value * SCALE
+  return amount.value * SCALE;
 }
 
-type Amount = { value: number }
-const SCALE = 100
+type Amount = { value: number };
+const SCALE = 100;
 ```
 
 ### Enforcement
 
-In this dashboard, enable `local/public-api-first` as a warning for the same production files as `local/single-public-export`. The existing `npm run format` command runs `eslint --fix`, which moves declarations with their attached documentation and preserves overload groups. No Prettier plugin is required.
+In this dashboard, enable `local/public-api-first` at error level for the same production files as `local/single-public-export`. The existing `npm run format` command runs `eslint --fix`, which moves declarations with their attached documentation and preserves overload groups. No Prettier plugin is required.
 
 Automatically move hoisted function declarations, or function-valued initializations across declarations that are erased or hoisted. Preserve the relative order of the remaining code. If a move could change initialization order, cross an ESLint suppression or break an overload group, report the issue without an autofix. Refactor dependencies manually when needed; do not introduce a temporal dead zone to satisfy ordering.
+
+Classes follow the same reporting policy, including named/default exports and export lists. A class is not hoisted: automatically move it only across erased or hoisted declarations. Its base class and static initialization must retain their runtime dependencies.
 
 ### Exceptions
 

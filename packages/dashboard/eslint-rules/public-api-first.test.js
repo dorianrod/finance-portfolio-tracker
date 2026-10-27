@@ -44,6 +44,9 @@ describe('public-api-first', () => {
   )
 
   it.each([
+    `type Props = {}; export class Boundary extends Component { render() { return null } }`,
+    `interface Props {}; class Boundary {}; export { Boundary }`,
+    `type Props = {}; const Boundary = class {}; export default Boundary`,
     `type Props = {}; const value = 1; function helper() { return value }; export function main() { return helper() }`,
     `interface Props {}; export default function Main() { return <div /> }`,
     `function helper() {}; export const main = () => helper()`,
@@ -106,6 +109,8 @@ export function main(value: string | number) { return value }
   })
 
   it.each([
+    `const Base = initialize(); export class Boundary extends Base {}`,
+    `const initial = initialize(); export default class Boundary { static value = initial }`,
     `const seed = 1; export const main = () => seed`,
     `const Base = () => <div />; export const Main = memo(Base)`,
     `record('first'); export const Main = memo(() => <div />)`,

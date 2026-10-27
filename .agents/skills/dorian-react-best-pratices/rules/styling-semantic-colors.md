@@ -144,6 +144,10 @@ The exported names describe generic UI roles rather than business metrics or hue
 names such as `green500` or `red700`. A domain presenter may map a business metric
 to one of these roles without owning its concrete color.
 
+### Enforcement
+
+Enable `local/no-hardcoded-colors` at error level. It checks literal appearance values and palette utilities in shared UI as well as application/domain code, and follows immutable local aliases and conditional values. Imperative style assignments, `setProperty`, SVG `setAttribute` and browser `theme-color` metadata follow the same token boundary. Dedicated `shared/theme` and asset files may define concrete values. This bounded check does not parse arbitrary CSS or infer all dynamic DOM targets.
+
 ### Exceptions
 
 - `src/index.css`, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.

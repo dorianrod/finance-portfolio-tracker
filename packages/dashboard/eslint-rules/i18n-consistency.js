@@ -1,17 +1,10 @@
 import { readFileSync } from 'node:fs'
 
-const catalogUrl = new URL('../src/i18n/locales/en.json', import.meta.url)
+import { isProductionSource } from './ast-bindings.js'
+import { isFunctionNode } from './react-component-utils.js'
+import { createTranslationResolver } from './translation-bindings.js'
 
-function translationCall(node) {
-  return (
-    node.callee.type === 'MemberExpression' &&
-    !node.callee.computed &&
-    node.callee.object.type === 'Identifier' &&
-    node.callee.object.name === 'i18n' &&
-    node.callee.property.type === 'Identifier' &&
-    node.callee.property.name === 't'
-  )
-}
+const catalogUrl = new URL('../src/i18n/locales/en.json', import.meta.url)
 
 function optionNames(node) {
   if (node?.type !== 'ObjectExpression') return new Set()
@@ -37,6 +30,8 @@ export default {
         'Require literal, existing i18n keys with matching interpolation options.',
     },
     messages: {
+      eagerTranslation:
+        'Resolve translated display text when the helper or component is called, not while the module is initialized.',
       defaultValue:
         'Do not use a default translation value; add the key to the catalog.',
       dynamicKey:
@@ -51,10 +46,31 @@ export default {
   create(context) {
     // ESLint keeps rule modules loaded in the editor across catalog edits.
     let catalog
+    const translationCall = createTranslationResolver(context.sourceCode)
+
+    function evaluatedAtModuleScope(node) {
+      for (let parent = node.parent; parent; parent = parent.parent) {
+        if (
+          isFunctionNode(parent) &&
+          !(
+            parent.parent.type === 'CallExpression' &&
+            parent.parent.callee === parent
+          )
+        )
+          return false
+        if (parent.type === 'PropertyDefinition' && !parent.static) return false
+      }
+      return true
+    }
 
     return {
       CallExpression(node) {
         if (!translationCall(node)) return
+        if (
+          isProductionSource(context.filename) &&
+          evaluatedAtModuleScope(node)
+        )
+          context.report({ node, messageId: 'eagerTranslation' })
         // Most modules do not translate anything. Read once per linted file,
         // only when needed, while still observing catalog edits in the editor.
         catalog ??= JSON.parse(readFileSync(catalogUrl, 'utf8'))

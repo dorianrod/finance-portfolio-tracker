@@ -32,7 +32,38 @@ function lint(body, filename = 'Summary.view.tsx', prelude = imports) {
 }
 
 describe('no-inline-format-fallback', () => {
+  it('resolves formatter namespaces and relative imports', () => {
+    expect(
+      lint(
+        "function useLabel() { const format = numeric.useFormatNumber(); return value => value == null ? '—' : format(value) }",
+        'src/domains/orders/helpers/formatters/useLabel.ts',
+        "import * as numeric from '../../../../shared/helpers/formatters/useFormatNumber'",
+      ).map((message) => message.messageId),
+    ).toEqual(['formatterFallback'])
+  })
   it.each([
+    "const available = value != null; const label = available ? formatNumber(value) : '—'",
+    "const available = status === 'ready' && value != null; const label = available ? formatNumber(value) : '—'",
+    "const missing = value == null; if (missing) return '—'; return formatNumber(value)",
+  ])('follows immutable boolean aliases: %s', (body) => {
+    expect(
+      lint(
+        `function Value() { const formatNumber = useFormatNumber(); ${body} }`,
+      ).map((message) => message.messageId),
+    ).toEqual(['formatterFallback'])
+  })
+
+  it('also checks formatter wrappers written in TS', () => {
+    expect(
+      lint(
+        "function useLabel() { const formatNumber = useFormatNumber(); return value => value == null ? '—' : formatNumber(value) }",
+        'src/domains/orders/helpers/formatters/useLabel.ts',
+      ).map((message) => message.messageId),
+    ).toEqual(['formatterFallback'])
+  })
+  it.each([
+    `status === 'ready' && value != null ? formatNumber(value) : '—'`,
+    `status !== 'ready' || value == null ? '—' : formatNumber(value)`,
     `value == null ? '—' : formatNumber(value, { maximumFractionDigits: 2 })`,
     `value !== null ? formatNumber(value) : '—'`,
     `undefined === value ? '—' : formatNumber(value!)`,
@@ -140,7 +171,6 @@ describe('no-inline-format-fallback', () => {
     `other == null ? <Text>—</Text> : <Text>{formatNumber(value)}</Text>`,
     `value == null ? null : formatNumber(value)`,
     `value == null ? undefined : formatNumber(value)`,
-    `status === 'ready' && value != null ? formatNumber(value) : '—'`,
     `value < 0 ? '—' : formatNumber(value)`,
     `readValue() == null ? '—' : formatNumber(readValue())`,
     `formatNumber((value ?? 0) * 100)`,
@@ -167,8 +197,8 @@ describe('no-inline-format-fallback', () => {
   it.each([
     'Summary.test.tsx',
     'Summary.spec.tsx',
-    'helpers/formatters/useSummary.tsx',
-    'helpers/formatters/useSummary.ts',
+    'src/shared/helpers/formatters/useSummary.tsx',
+    'src/shared/helpers/formatters/useSummary.ts',
   ])('ignores %s', (filename) => {
     const code = `const formatNumber = useFormatNumber(); const label = value == null ? '—' : formatNumber(value)`
     expect(lint(code, filename)).toEqual([])

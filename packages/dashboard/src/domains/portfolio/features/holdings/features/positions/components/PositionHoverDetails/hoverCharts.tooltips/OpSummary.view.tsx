@@ -11,7 +11,7 @@ import { Text } from '@/shared/ui/Text.view'
 export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
   const formatMoney = useFormatMoney()
   if (!data) return null
-  if (!data.buyAmount && !data.sellAmount) return null
+  if ((data.buyAmount ?? 0) === 0 && (data.sellAmount ?? 0) === 0) return null
   return (
     <Layout spaceBefore="default">
       <Surface variant="strongSectionStart">
@@ -23,27 +23,30 @@ export function OpSummary({ data }: { data?: HoverChartDataPoint }) {
               })}
             </ChartText>
           )}
-          {data.sellAmount != null && (
-            <>
-              <ChartText as="p" tone={PORTFOLIO_CHART_TONES.transactionSell}>
-                {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
-                  amount: formatMoney(data.sellAmount),
-                })}
-              </ChartText>
-              {data.sellGain != null && (
-                <Text
-                  as="p"
-                  tone={data.sellGain >= 0 ? 'positive' : 'negative'}
-                >
-                  {i18n.t('ui.hoverchartsTooltips.profitLoss', {
-                    amount: formatMoney(data.sellGain),
-                  })}
-                </Text>
-              )}
-            </>
-          )}
+          <SellSummary data={data} />
         </Stack>
       </Surface>
     </Layout>
+  )
+}
+
+function SellSummary({ data }: { data: HoverChartDataPoint }) {
+  const formatMoney = useFormatMoney()
+  if (data.sellAmount == null) return null
+  return (
+    <>
+      <ChartText as="p" tone={PORTFOLIO_CHART_TONES.transactionSell}>
+        {i18n.t('ui.hoverchartsTooltips.sellWithValues', {
+          amount: formatMoney(data.sellAmount),
+        })}
+      </ChartText>
+      {data.sellGain != null && (
+        <Text as="p" tone={data.sellGain >= 0 ? 'positive' : 'negative'}>
+          {i18n.t('ui.hoverchartsTooltips.profitLoss', {
+            amount: formatMoney(data.sellGain),
+          })}
+        </Text>
+      )}
+    </>
   )
 }

@@ -7,7 +7,7 @@ import {
 import { Fragment } from 'react'
 
 import { FundPositionPopover } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover.feature'
-import { HoverAllocationPopover } from '@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover.view'
+import { HoverAllocationPopover } from '@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.view'
 import { POSITION_COLUMNS } from '@/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature'
 import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import { HoverSavingsChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'

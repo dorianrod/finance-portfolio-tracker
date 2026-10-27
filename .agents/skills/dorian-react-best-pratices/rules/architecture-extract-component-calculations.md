@@ -33,8 +33,8 @@ Pass browser measurements, such as viewport dimensions and an anchor rectangle, 
 
 ```tsx
 export function FloatingPanel({ anchor }: Props) {
-  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - 320 - 8))
-  return <div style={{ left }} />
+  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - 320 - 8));
+  return <div style={{ left }} />;
 }
 ```
 
@@ -42,27 +42,30 @@ export function FloatingPanel({ anchor }: Props) {
 
 ```typescript
 // FloatingPanel/helpers/presenters/getFloatingPanelStyle.ts
-export function getFloatingPanelStyle(anchorLeft: number, viewportWidth: number) {
-  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
-  return { left }
+export function getFloatingPanelStyle(
+  anchorLeft: number,
+  viewportWidth: number,
+) {
+  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8));
+  return { left };
 }
 ```
 
 ```tsx
 // FloatingPanel/FloatingPanel.view.tsx
-import { getFloatingPanelStyle } from './helpers/presenters/getFloatingPanelStyle'
+import { getFloatingPanelStyle } from "./helpers/presenters/getFloatingPanelStyle";
 
 export function FloatingPanel({ anchor }: Props) {
-  const style = getFloatingPanelStyle(anchor.left, window.innerWidth)
-  return <div style={style} />
+  const style = getFloatingPanelStyle(anchor.left, window.innerWidth);
+  return <div style={style} />;
 }
 ```
 
 ### Enforcement
 
-Enable `local/no-complex-component-calculation` at error level. It reports an expression combining more than two arithmetic operations (`+`, `-`, `*`, `/`, `%`, `**`) or deterministic `Math` calls inside a component, including callbacks and JSX. Each operation or Math call counts once; the `maxOperations` option can tighten the default limit of two.
+Enable `local/no-complex-component-calculation` at error level. It reports more than two arithmetic operations (`+`, `-`, `*`, `/`, `%`, `**`) or deterministic `Math` calls in one derivation inside a component, including callbacks and JSX. It follows immutable local variable initializers and aliases, counting each operation once. It also checks the returned fields of an inline `map`/`flatMap` object together, and groups computed geometry properties (`x`, `y`, `cx`, `cy`, `width`, `height`, `r`, `rx`, `ry`) of one JSX element. The `maxOperations` option retains a default of two.
 
-The rule checks expressions independently. It does not trace calculations split across local variables or judge the semantic complexity of imported helpers. Review these cases against the rule above; a clean lint run does not make a multi-step algorithm appropriate inside a component. Existing module-boundary and JSX-condition checks cover different patterns and do not replace this check.
+Independent small expressions outside those explicit output groups remain independent. The rule does not trace reassigned variables, imported helper implementations or arbitrary interprocedural data flow. `local/no-component-data-pipeline` complements it by reporting inline reductions and compound collection predicates in application/domain components. Existing module-boundary and JSX-condition checks cover different patterns and do not replace these checks.
 
 ### Exceptions
 

@@ -11,10 +11,10 @@ export function concentrationPoint(
 ): HistoricalConcentrationPoint {
   const ranked = [...assets.entries()]
     .map(([key, asset]) => ({ key, ...asset }))
-    .toSorted(
-      (left, right) =>
-        right.value - left.value || left.key.localeCompare(right.key),
-    )
+    .toSorted((left, right) => {
+      const difference = right.value - left.value
+      return difference === 0 ? left.key.localeCompare(right.key) : difference
+    })
   const holdings = ranked.map((holding) => ({
     ...holding,
     weight: selectedValue > 0 ? (holding.value / selectedValue) * 100 : 0,

@@ -1,5 +1,4 @@
 import type { IssuerExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
-import { DIRECT_SOURCE } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/directSource'
 import { isFundPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/isFundPosition'
 import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
 import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
@@ -8,6 +7,7 @@ import type {
   FundHoldingStatus,
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import i18n from '@/i18n/i18n'
 
 // eslint-disable-next-line complexity -- Canonical issuers and source funds share one accumulation pass; splitting would distribute the same mutable ledger.
 export function buildIssuerExposures(
@@ -90,7 +90,7 @@ export function buildIssuerExposures(
     if (positionValue <= 0) continue
     const fundRows =
       byParent.get(position.isin) ?? byParent.get(position.ticker)
-    if (fundRows?.length) {
+    if (fundRows != null && fundRows.length > 0) {
       const totalWeight = fundRows.reduce((sum, row) => sum + row.weight, 0)
       const scale = totalWeight > 1 ? 1 / totalWeight : 1
       for (const holding of fundRows) {
@@ -114,7 +114,7 @@ export function buildIssuerExposures(
         directId,
         position.name,
         positionValue,
-        DIRECT_SOURCE,
+        i18n.t('ui.buildfundholdingsviewmodel.direct'),
       )
     }
   }

@@ -92,7 +92,7 @@ function AccountTypeLabel({
   const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
     index
   ]
-  if (!position) return null
+  if (position == null) return null
 
   const leaderLine = getAccountTypeLeaderLine(
     cx,

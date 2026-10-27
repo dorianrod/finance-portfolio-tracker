@@ -7,7 +7,7 @@ import type { DiversificationView } from '@/domains/portfolio/features/diversifi
 
 import { AllocationCurrentView } from './AllocationCurrentView.feature'
 import { AllocationTrendView } from './AllocationTrendView.feature'
-import { FilteredPositionsTable } from './FilteredPositionsTable.feature'
+import { FilteredPositionsTable } from './FilteredPositionsTable/FilteredPositionsTable.feature'
 
 export function AllocationSection({
   rawData,

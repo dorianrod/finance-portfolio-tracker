@@ -11,7 +11,7 @@ export function buildGrossValueHistory(
   const byDate = new Map<number, number>()
   for (const row of rows) {
     if (
-      !row.snapshot_date ||
+      row.snapshot_date == null ||
       !matchesPositionScope(row, accountFilters, accountTypeFilters)
     )
       continue

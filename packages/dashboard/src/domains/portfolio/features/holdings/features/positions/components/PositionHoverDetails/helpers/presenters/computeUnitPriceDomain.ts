@@ -7,6 +7,7 @@ export function computeUnitPriceDomain(
   if (unitPrices.length === 0) return undefined
   const min = Math.min(...unitPrices)
   const max = Math.max(...unitPrices)
-  const padding = (max - min) * 0.15 || max * 0.05
+  const rangePadding = (max - min) * 0.15
+  const padding = rangePadding > 0 ? rangePadding : max * 0.05
   return [Math.max(0, min - padding), max + padding]
 }

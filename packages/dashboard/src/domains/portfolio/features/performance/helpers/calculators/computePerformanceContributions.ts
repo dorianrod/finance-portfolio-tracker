@@ -25,7 +25,7 @@ export function computePerformanceContributions(
     ...new Set(positions.map((row) => datePart(row.snapshot_date))),
   ].toSorted((left, right) => left - right)
   const endDate = snapshotDates.at(-1)
-  if (!endDate) return unavailableSummary(horizon)
+  if (endDate == null) return unavailableSummary(horizon)
 
   const period = resolveContributionPeriod(
     positions,
@@ -281,7 +281,8 @@ function resolveContributionPeriod(
       const filterId = accountFilterId(row)
       const rowDate = datePart(row.snapshot_date)
       const current = startsByFilterId.get(filterId)
-      if (!current || rowDate < current) startsByFilterId.set(filterId, rowDate)
+      if (current == null || rowDate < current)
+        startsByFilterId.set(filterId, rowDate)
     }
     startDate =
       [...startsByFilterId.values()].toSorted(
@@ -296,7 +297,7 @@ function resolveContributionPeriod(
     startDate = snapshotDates.filter((date) => date <= cutoff).at(-1) ?? null
   }
 
-  if (!startDate) return null
+  if (startDate == null) return null
 
   return { startDate, startsByFilterId, endDate, horizon }
 }
@@ -385,7 +386,7 @@ function selectContributionOperation(
   if (horizon === 'since-tracking') {
     lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
   }
-  if (!lowerBound || operationDate <= lowerBound) return null
+  if (lowerBound == null || operationDate <= lowerBound) return null
 
   return { key, meta }
 }

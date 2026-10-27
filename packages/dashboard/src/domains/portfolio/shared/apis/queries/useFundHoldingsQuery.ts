@@ -58,7 +58,10 @@ export function useFundHoldingsQuery() {
       ])
       const holdings = holdingRows
         .map(mapFundHolding)
-        .filter((row) => row.holdingId && row.holdingName && row.weight > 0)
+        .filter(
+          (row) =>
+            row.holdingId !== '' && row.holdingName !== '' && row.weight > 0,
+        )
 
       const history = historyRows
         .map((row): HistoricalFundHolding => ({
@@ -69,10 +72,10 @@ export function useFundHoldingsQuery() {
         }))
         .filter(
           (row) =>
-            row.effectiveDate &&
-            row.historySnapshotId &&
-            row.holdingId &&
-            row.holdingName &&
+            row.effectiveDate != null &&
+            row.historySnapshotId !== '' &&
+            row.holdingId !== '' &&
+            row.holdingName !== '' &&
             row.weight > 0,
         )
 
@@ -119,28 +122,29 @@ export function useFundHoldingsQuery() {
       }))
 
       const rawReport = reportRows[0]
-      const report = rawReport
-        ? {
-            asOfDate: rawReport.as_of_date,
-            portfolioValue: rawReport.portfolio_value,
-            fundValue: rawReport.fund_value,
-            directIdentifiedValue: rawReport.direct_identified_value,
-            opaqueValue: rawReport.opaque_value,
-            decomposedValue: rawReport.decomposed_value,
-            highConfidenceExplainedValue:
-              rawReport.high_confidence_explained_value,
-            undisclosedFundValue: rawReport.undisclosed_fund_value,
-            fundCoveragePct: rawReport.fund_coverage_pct,
-            portfolioCoveragePct: rawReport.portfolio_coverage_pct,
-            coverageGatePass: rawReport.coverage_gate_pass,
-            topFundsGatePass: rawReport.top_funds_gate_pass,
-            exactProxyGatePass: rawReport.exact_proxy_gate_pass,
-            repeatabilityGatePass: rawReport.repeatability_gate_pass,
-            feasibilityStatus: rawReport.feasibility_status,
-            fundCount: rawReport.fund_count,
-            issueCount: rawReport.issue_count,
-          }
-        : null
+      const report =
+        rawReport == null
+          ? null
+          : {
+              asOfDate: rawReport.as_of_date,
+              portfolioValue: rawReport.portfolio_value,
+              fundValue: rawReport.fund_value,
+              directIdentifiedValue: rawReport.direct_identified_value,
+              opaqueValue: rawReport.opaque_value,
+              decomposedValue: rawReport.decomposed_value,
+              highConfidenceExplainedValue:
+                rawReport.high_confidence_explained_value,
+              undisclosedFundValue: rawReport.undisclosed_fund_value,
+              fundCoveragePct: rawReport.fund_coverage_pct,
+              portfolioCoveragePct: rawReport.portfolio_coverage_pct,
+              coverageGatePass: rawReport.coverage_gate_pass,
+              topFundsGatePass: rawReport.top_funds_gate_pass,
+              exactProxyGatePass: rawReport.exact_proxy_gate_pass,
+              repeatabilityGatePass: rawReport.repeatability_gate_pass,
+              feasibilityStatus: rawReport.feasibility_status,
+              fundCount: rawReport.fund_count,
+              issueCount: rawReport.issue_count,
+            }
 
       return { holdings, history, statuses, report, snapshots, unresolved }
     },

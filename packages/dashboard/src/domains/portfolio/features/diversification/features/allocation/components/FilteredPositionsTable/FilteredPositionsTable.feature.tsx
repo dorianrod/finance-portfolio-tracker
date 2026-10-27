@@ -15,7 +15,8 @@ import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { FilteredPositionRow } from './FilteredPositionRow/FilteredPositionRow.view'
+import { FilteredPositionRow } from '../FilteredPositionRow/FilteredPositionRow.view'
+import { sumFilteredPositionValues } from './helpers/calculators/sumFilteredPositionValues'
 
 export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const formatMoney = useFormatMoney()
@@ -24,7 +25,7 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const { closePositions } = useDashboardDiversificationPositions()
   const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
   const filterValue = filter?.value ?? ''
-  const totalFiltered = rows.reduce((s, r) => s + r.filteredValue, 0)
+  const totalFiltered = sumFilteredPositionValues(rows)
 
   return (
     <SidePanel

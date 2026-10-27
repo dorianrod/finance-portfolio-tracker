@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 
+import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export function useFormatMonthRange() {
@@ -10,7 +11,10 @@ export function useFormatMonthRange() {
       const formatMonth = (month: string) =>
         formatDate(`${month}-01T00:00:00Z`, { style: 'shortMonthYear' })
       if (months.length === 1) return formatMonth(months[0])
-      return `${formatMonth(months[0])} – ${formatMonth(months[months.length - 1])}`
+      return i18n.t('ui.formatters.dateRange', {
+        from: formatMonth(months[0]),
+        to: formatMonth(months[months.length - 1]),
+      })
     },
     [formatDate],
   )

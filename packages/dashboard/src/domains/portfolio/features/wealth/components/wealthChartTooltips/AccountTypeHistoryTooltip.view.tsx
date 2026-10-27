@@ -20,7 +20,8 @@ export function AccountTypeHistoryTooltip({
 }: AccountTypeHistoryTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
-  if (!active || !payload?.length) return null
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
   const { total, rows } = buildAccountTypeTooltipData(
     payload[0]?.payload,
     accountTypes,
@@ -80,14 +81,15 @@ function AccountTypeTooltipRow({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!value) return null
+  if (value === 0) return null
   return (
     <ChartText
       as="div"
       tone={getAccountTypeTone(accountType, index, typeCategories)}
     >
       {accountType}: {formatMoney(value, { style: 'full' })}
-      {percentageMode && ` · ${formatPercentage(share)}`}
+      {percentageMode &&
+        i18n.t('ui.formatters.detail', { value: formatPercentage(share) })}
     </ChartText>
   )
 }

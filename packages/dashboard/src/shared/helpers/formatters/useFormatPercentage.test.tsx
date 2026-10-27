@@ -34,6 +34,9 @@ describe('useFormatPercentage', () => {
     { value: undefined, expected: '—' },
     { value: null, options: { fallback: '' }, expected: '' },
     { value: 0, expected: '0.0%' },
+    { value: 0, options: { decimals: 'auto' }, expected: '0%' },
+    { value: 2.5, options: { decimals: 'auto' }, expected: '2.5%' },
+    { value: 0.125, options: { decimals: 'auto' }, expected: '0.125%' },
     { value: 0, options: { zeroAsFallback: true }, expected: '—' },
     {
       value: -0,

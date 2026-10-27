@@ -17,7 +17,9 @@ export function computeAccountTypeTooltipMetrics(
     gain,
     total,
     portfolioShare:
-      portfolioTotal && portfolioTotal > 0 ? (total / portfolioTotal) * 100 : 0,
+      portfolioTotal != null && portfolioTotal > 0
+        ? (total / portfolioTotal) * 100
+        : 0,
     gainPct: cost > 0 ? (gain / cost) * 100 : 0,
   }
 }

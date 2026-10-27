@@ -10,7 +10,10 @@ export function useFormatExactPerformanceDateRange() {
     (summary: { startDate: Date | null; endDate: Date | null }): string => {
       if (!summary.startDate || !summary.endDate)
         return i18n.t('ui.formatexactperformancedaterangeTs.notAvailable')
-      return `${formatPerformanceAsOfDate(summary.startDate)} – ${formatPerformanceAsOfDate(summary.endDate)}`
+      return i18n.t('ui.formatters.dateRange', {
+        from: formatPerformanceAsOfDate(summary.startDate),
+        to: formatPerformanceAsOfDate(summary.endDate),
+      })
     },
     [formatPerformanceAsOfDate],
   )
