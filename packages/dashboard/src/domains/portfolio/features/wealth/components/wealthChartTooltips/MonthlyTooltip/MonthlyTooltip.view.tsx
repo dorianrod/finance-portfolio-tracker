@@ -43,7 +43,7 @@ export function MonthlyTooltip({
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
         <ChartText as="div" tone={'tooltipText'} variant="strong">
-          {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
+          {formatDate(label, { style: 'longMonthYear', fallback: '' })}
         </ChartText>
       </Layout>
       <Layout as="div" spaceAfter="compact">

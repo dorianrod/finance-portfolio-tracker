@@ -2518,7 +2518,7 @@ See also: `types-closed-values-not-string`
 
 **Impact: HIGH (removes defensive parsing and truthy-string bugs downstream)**
 
-All conversion of raw API values (string → number/boolean/Date, `null` → default, `'YES'` → `true`, empty string → `null`) happens once in the hook's response schema. Downstream code receives strict entity types and never re-coerces with `Number(...)`, `=== 'true'`, `new Date(...)` or `?? ''`. If a consumer needs a fallback, the schema or the entity type is wrong.
+All conversion of raw API values (string → number/boolean/Date, `null` → default, `'YES'` → `true`, empty string → `null`) happens once in the hook's response schema. Downstream code receives strict entity types and never re-coerces with `Number(...)`, `=== 'true'`, `new Date(...)` or `?? ''`. If a consumer needs to repair an unexpected missing value, the schema or the entity type is wrong. A formatter's display fallback for a legitimately nullable value is a separate presentation rule (see `helpers-formatter-hooks`); it leaves the domain value unchanged.
 
 Textual booleans are the classic trap: when the domain meaning is yes/no, the entity field is `boolean`, never `string` nor `'YES' | 'NO'`. A non-empty string such as `'NO'` is truthy, so any `if (value)` on it is a silent bug.
 
@@ -3737,13 +3737,25 @@ export const OrderAccessRow: FC<Props> = ({ access, order }) => {
 ```tsx
 // domains/sales/shared/helpers/formatters/useFormatContact.ts
 export function useFormatContact() {
-  return useCallback((contact: Contact) => `${contact.firstName} ${contact.lastName}`.trim(), [])
+  return useCallback(
+    (contact: Contact | null | undefined, { fallback = '—' }: { fallback?: string } = {}) => {
+      if (contact == null) return fallback
+      return `${contact.firstName} ${contact.lastName}`.trim()
+    },
+    [],
+  )
 }
 
 // domains/sales/shared/helpers/formatters/useFormatGlobalStatus.ts
 export function useFormatGlobalStatus() {
   const { t } = useTranslation()
-  return useCallback((status: GlobalStatus) => t(`sales.globalStatus.${status}`), [t])
+  return useCallback(
+    (status: GlobalStatus | null | undefined, { fallback = '—' }: { fallback?: string } = {}) => {
+      if (status == null) return fallback
+      return t(`sales.globalStatus.${status}`)
+    },
+    [t],
+  )
 }
 
 // component
@@ -3758,23 +3770,53 @@ const formatMoney = useFormatMoney()
 
 Where to look first: the app-wide formatters in `src/shared/helpers/formatters/` (money, dates, addresses), then the domain's and its main domain's `shared/helpers/formatters/`. A formatter used by several sub-domains lives once in `[domain]/shared/helpers/formatters/`, one hook per file named after it. A formatter hook returns a `useCallback`-wrapped function taking the entity (see `arch-helpers-vs-services` for its shape). Lint the raw locale calls (`toLocaleDateString`, `toLocaleTimeString`) with `no-restricted-properties` so that dates also go through the shared formatters.
 
-### Missing Values and Zero
+### Missing Values in Every Formatter
 
-Numeric formatters own display fallbacks. Pass nullable values directly instead of guarding with `value == null ? '—' : formatNumber(value)`, checking numeric truthiness, or defaulting a formatter input with `??` or `||`. Extend the existing formatter's options rather than creating a wrapper solely for null or zero.
+Every value-to-text formatter owns display fallbacks: dates, numbers, money, percentages, entity names and status labels. Its value parameter accepts the normal input type plus `null | undefined`, its return type stays `string`, and its options expose a configurable `fallback`. Use the application's default placeholder when no fallback is supplied; allow an empty string when the caller needs blank text.
+
+Pass nullable values directly instead of guarding with `value == null ? '' : formatDate(value)`, checking truthiness, or defaulting a formatter input with `??` or `||`. Extend the existing formatter's options rather than creating a wrapper solely for a missing-value placeholder. Resolve absence inside the formatter before property access, lookups or date conversion; never turn a missing date into the Unix epoch or today's date.
 
 **Incorrect (the component owns a display fallback):**
 
 ```tsx
 <span>{value == null ? '—' : formatNumber(value)}</span>
+<span>{publishedOn == null ? '' : formatDate(publishedOn)}</span>
+<span>{contact == null ? '—' : formatContact(contact)}</span>
 ```
 
 **Correct (the existing formatter owns the policy):**
 
 ```tsx
 <span>{formatNumber(value)}</span>
+<span>{formatDate(publishedOn, { fallback: '' })}</span>
+<span>{formatContact(contact)}</span>
 ```
 
-Numeric formatters should accept `number | null | undefined`. A string fallback is display text; a numeric fallback uses the same precision, sign, currency and unit options as a regular value. Keep zero distinct from absence by default and opt into a zero placeholder explicitly. Preserve each caller's policy when migrating.
+**Correct (the date formatter handles absence before formatting):**
+
+```typescript
+export function useFormatDate() {
+  const { i18n } = useTranslation()
+  const dateFormatter = useMemo(
+    () => new Intl.DateTimeFormat(i18n.language),
+    [i18n.language],
+  )
+
+  return useCallback(
+    (value: Date | null | undefined, { fallback = '—' }: { fallback?: string } = {}): string => {
+      if (value == null) return fallback
+      return dateFormatter.format(value)
+    },
+    [dateFormatter],
+  )
+}
+```
+
+A display fallback does not change the entity's nullability or replace API parsing and validation (see `types-explicit-nullability` and `yup-last-coercion-barrier`). Preserve each caller's placeholder and existing format options when migrating; replace the empty-string date guard with `{ fallback: '' }` rather than changing its output to the default placeholder.
+
+### Numeric Fallbacks and Zero
+
+Numeric formatters accept `number | null | undefined`. A string fallback is display text; a numeric fallback uses the same precision, sign, currency and unit options as a regular value. Keep zero distinct from absence by default and opt into a zero placeholder explicitly. Do not add numeric fallback or zero-handling options to non-numeric formatters.
 
 Conditions that select structure, loading or error states, permissions or comparability remain component/business logic. A calculation's numeric default belongs to that calculation. A domain formatter may add independent business meaning; a missing-value placeholder alone does not justify one.
 

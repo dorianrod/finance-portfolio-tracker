@@ -169,6 +169,8 @@ For this repository's lint implementation, formatter options and static-analysis
 - `helpers-no-context-params` - Never Pass t, navigate or Stores to a Helper
 - `helpers-categories` - Sort Every Helper Into One of a Fixed Set of Categories
 
+Every formatter, including dates and entity labels, accepts `null` and `undefined` and owns a configurable display fallback. Pass values directly to it instead of adding missing-value guards in consumers (see `helpers-formatter-hooks`).
+
 ### 10. Internationalization (MEDIUM-HIGH)
 
 - `i18n-interpolation` - Inject Dynamic Values Through t() Options, Never Concatenation

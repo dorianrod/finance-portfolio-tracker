@@ -42,6 +42,8 @@ The dashboard enables `local/feature-folder-layout` at error level with `maxFeat
 
 Catalog rule: [helpers-formatter-hooks](../rules/helpers-formatter-hooks.md).
 
+The catalog requires configurable missing-value fallbacks in every formatter, including dates and entity labels. `useFormatDate` accepts `Date | number | string | null | undefined`, with a string `fallback` option defaulting to `'—'`. Missing and invalid dates use this fallback; timestamp zero remains a valid date. Preserve existing styles when migrating, for example `formatDate(value, { style: 'longMonthYear', fallback: '' })`.
+
 In this dashboard, `useFormatNumber`, `useFormatMoney` and `useFormatPercentage` accept `number | null | undefined`:
 
 ```typescript
@@ -52,9 +54,11 @@ formatPercentage(value, { fallback: "", zeroAsFallback: true });
 
 `fallback` defaults to `'—'`. A string is returned as display text; a numeric fallback goes through the same precision, sign, currency and unit options as a regular value. `zeroAsFallback` defaults to `false`; enable it explicitly when zero needs the same placeholder as a missing value. Preserve each caller's current display policy when migrating it.
 
-Enable `local/no-inline-format-fallback` at error level. It checks production TS and TSX, including domain formatter wrappers, for guards on the same stable value passed to a numeric formatter, plus direct `??` and `||` input defaults with a string or numeric literal. It follows immutable boolean aliases and guards nested in `&&`/`||` conditions. A query-state condition can remain while the numeric formatter owns the missing-value placeholder. Imported numeric hooks are resolved through import/local aliases, relative paths and numeric functions destructured from formatter bundles.
+Enable `local/no-inline-format-fallback` at error level. It checks production TS and TSX, including domain formatter wrappers, for guards on the value passed as the formatter's first argument, plus direct `??` and `||` input defaults with a string or numeric literal. It covers both ternary branches and operand orders for `==`, `===`, `!=` and `!==`, null/undefined/zero/empty-string tests, `typeof`, truthiness, negation, `Boolean`, immutable boolean aliases, return-only `if` guards and `&&`/`||` short-circuits that directly return a formatter call. A query-state condition can remain while the formatter owns the missing-value placeholder. Conditionally mounting a JSX element remains structural logic, even when it contains formatted text.
 
-The check is deliberately bounded: it does not follow reassigned aliases, arbitrary providers, helper parameters, structural JSX branches with several children or fallback expressions nested inside calculations. Shared numeric formatter implementations and tests are excluded. There is no automatic fix: preserve the guard's business conditions and the difference between an absent value and zero. `local/no-helper-context-params` separately prevents passing formatter/context dependencies through helper APIs.
+Formatter identity follows imports from `helpers/formatters/`, not a local function name alone. It recognizes `useFormatXxx` hook results and imported `formatXxx` functions, including namespaces, relative imports and immutable aliases. Formatter bundles named `use…Formatters` support destructured aliases and member calls. New formatter names require no registry update. Static member accesses are compared across dot/bracket notation and optional access.
+
+The check is deliberately bounded: it does not follow reassigned aliases, arbitrary providers, helper parameters, dynamic property keys, structural JSX branches with several children or fallback expressions nested inside calculations. Global shared formatter implementations and tests are excluded; domain shared formatter wrappers remain checked. There is no automatic fix: preserve the guard's business conditions and the difference between an absent value and zero. `local/no-helper-context-params` separately prevents passing formatter/context dependencies through helper APIs.
 
 ## Place the Public API First
 

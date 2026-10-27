@@ -80,9 +80,10 @@ export function FundPositionPopover({
                 {i18n.t('ui.fundpositionpopover.holdingsSummary', {
                   count: status.holdingCount,
                   formattedCount: formatNumber(status.holdingCount),
-                  date: status.holdingsDate
-                    ? formatDate(status.holdingsDate, { style: 'isoDate' })
-                    : i18n.t('ui.fundpositionpopover.unknown'),
+                  date: formatDate(status.holdingsDate, {
+                    style: 'isoDate',
+                    fallback: i18n.t('ui.fundpositionpopover.unknown'),
+                  }),
                 })}
               </span>
             </Inline>

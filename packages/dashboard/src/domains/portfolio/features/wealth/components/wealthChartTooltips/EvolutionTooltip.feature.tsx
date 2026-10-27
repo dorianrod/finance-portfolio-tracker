@@ -29,7 +29,7 @@ export function EvolutionTooltip({
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
         <ChartText as="div" tone={'tooltipText'}>
-          {label == null ? '' : formatDate(label, { style: 'longMonthYear' })}
+          {formatDate(label, { style: 'longMonthYear', fallback: '' })}
         </ChartText>
       </Layout>
       <Layout as="div" spaceAfter="compact">

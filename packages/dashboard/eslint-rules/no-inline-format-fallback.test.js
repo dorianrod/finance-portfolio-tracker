@@ -9,6 +9,7 @@ const imports = `
   import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
   import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
   import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+  import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 `
 
 function lint(body, filename = 'Summary.view.tsx', prelude = imports) {
@@ -32,6 +33,188 @@ function lint(body, filename = 'Summary.view.tsx', prelude = imports) {
 }
 
 describe('no-inline-format-fallback', () => {
+  it.each([
+    `value == null ? '' : formatDate(value)`,
+    `value != null ? formatDate(value) : ''`,
+    `null === value ? '' : formatDate(value)`,
+    `null !== value ? formatDate(value) : ''`,
+    `value === undefined ? '' : formatDate(value)`,
+    `undefined !== value ? formatDate(value) : ''`,
+    `value === void 0 ? '' : formatDate(value)`,
+    `value === null || value === undefined ? '' : formatDate(value)`,
+    `value !== null && value !== undefined ? formatDate(value) : ''`,
+    `!(value != null) ? '' : formatDate(value)`,
+    `!!value ? formatDate(value) : ''`,
+    `Boolean(value) ? formatDate(value) : ''`,
+    `!Boolean(value) ? '' : formatDate(value)`,
+    `typeof value === 'undefined' ? '' : formatDate(value)`,
+    `'undefined' !== typeof value ? formatDate(value) : ''`,
+    `value === '' ? '—' : formatDate(value)`,
+    `record?.date == null ? '' : formatDate(record.date)`,
+    `record['date'] == null ? '' : formatDate(record.date)`,
+    `record.date == null ? '' : formatDate(record['date'])`,
+    `value == null ? <Text>{''}</Text> : <Text>{formatDate(value)}</Text>`,
+    `value == null ? '' : formatDate(value satisfies Date)`,
+    `value != null && formatDate(value)`,
+    `value && formatDate(value)`,
+    `!value || formatDate(value)`,
+    `(value != null && formatDate(value)) || ''`,
+    `(value != null && formatDate(value)) ?? ''`,
+  ])('rejects a date display guard: %s', (expression) => {
+    const code = `const formatDate = useFormatDate(); const label = ${expression}`
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'formatterFallback',
+    ])
+  })
+
+  it.each(['==', '===', '!=', '!=='])(
+    'recognizes %s with either operand and either branch',
+    (operator) => {
+      const code = `const formatDate = useFormatDate();
+        const a = value ${operator} null ? '' : formatDate(value);
+        const b = null ${operator} value ? formatDate(value) : '';
+      `
+      expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+        'formatterFallback',
+        'formatterFallback',
+      ])
+    },
+  )
+
+  it.each([
+    "const present = date != null; const available = present; return available ? display(date) : ''",
+    "if (date == null) return ''; return display(date)",
+    "if (date !== undefined) { return display(date) } else { return '' }",
+  ])('follows date formatter and condition aliases: %s', (body) => {
+    expect(
+      lint(
+        `function Label() { const formatter = useDate(); const display = formatter; ${body} }`,
+        undefined,
+        "import { useFormatDate as useDate } from '@/shared/helpers/formatters/useFormatDate'",
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['formatterFallback'])
+  })
+
+  it.each([
+    ['useFormatContact', 'contact'],
+    ['useFormatStatusLabel', 'status'],
+    ['useFormatCustomValue', 'value'],
+  ])('recognizes new formatter hooks without a registry: %s', (hook, value) => {
+    expect(
+      lint(
+        `const display = ${hook}(); const label = ${value} == null ? '' : display(${value})`,
+        undefined,
+        `import { ${hook} } from '@/domains/orders/helpers/formatters/${hook}'`,
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['formatterFallback'])
+  })
+
+  it.each([
+    [
+      "const { formatDate: display } = useTableFormatters(); const label = date == null ? '' : display(date)",
+      'formatterFallback',
+    ],
+    [
+      "const table = useTableFormatters(); const label = date == null ? '' : table.formatDate(date)",
+      'formatterFallback',
+    ],
+    [
+      "const table = useTableFormatters(); const alias = table; const label = date == null ? '' : alias['formatDate'](date)",
+      'formatterFallback',
+    ],
+    [
+      "const table = useTableFormatters(); const display = table.formatDate; const label = display(date ?? '')",
+      'inputFallback',
+    ],
+    [
+      "const { formatContact: display } = useTableFormatters(); const label = contact == null ? '' : display(contact)",
+      'formatterFallback',
+    ],
+  ])('recognizes generic formatter bundle members: %s', (body, messageId) => {
+    expect(
+      lint(
+        body,
+        undefined,
+        "import { useTableFormatters } from '@/domains/orders/helpers/formatters/useTableFormatters'",
+      ).map(({ messageId }) => messageId),
+    ).toEqual([messageId])
+  })
+
+  it.each([
+    [
+      "import { formatDate as display } from '@/shared/helpers/formatters/formatDate'",
+      'display',
+    ],
+    [
+      "import * as dates from '@/shared/helpers/formatters/formatDate'",
+      'dates.formatDate',
+    ],
+  ])('recognizes directly imported formatters: %s', (prelude, formatter) => {
+    expect(
+      lint(
+        `const label = date == null ? '' : ${formatter}(date)`,
+        undefined,
+        prelude,
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['formatterFallback'])
+  })
+
+  it('checks domain shared formatter wrappers', () => {
+    expect(
+      lint(
+        "function useLabel() { const formatDate = useFormatDate(); return value => value == null ? '' : formatDate(value) }",
+        'src/domains/orders/shared/helpers/formatters/useLabel.ts',
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['formatterFallback'])
+  })
+
+  it.each([
+    `ready && formatDate(value)`,
+    `!ready || formatDate(value)`,
+    `other != null && formatDate(value)`,
+    `value && <><Text>{formatDate(value)}</Text><Details /></>`,
+    `value && <Text>{formatDate(value)}</Text>`,
+    `value != null && <MetricDelta tone={getTone(value)}>{formatDate(value)}</MetricDelta>`,
+    `typeof value === 'string' ? '' : formatDate(value)`,
+    `value === 'today' ? '' : formatDate(value)`,
+    `value == null ? <Empty /> : formatDate(value)`,
+    `value == null ? null : formatDate(value)`,
+    `value == null ? undefined : formatDate(value)`,
+    `formatDate(value, { fallback: '' })`,
+  ])('preserves date business or structural conditions: %s', (expression) => {
+    expect(
+      lint(`const formatDate = useFormatDate(); const label = ${expression}`),
+    ).toEqual([])
+  })
+
+  it('preserves a conditional percentage element controlled by an alias', () => {
+    expect(
+      lint(`
+      const formatPercentage = useFormatPercentage();
+      const showPercentage = !missing && pct != null;
+      const content = showPercentage && <Layout as="span"><Text>{formatPercentage(pct)}</Text></Layout>;
+    `),
+    ).toEqual([])
+  })
+
+  it.each([
+    "const formatDate = useFormatDate(); let available = value != null; available = ready; const label = available ? formatDate(value) : ''",
+    "const formatDate = useFormatDate(); function label(Boolean) { return Boolean(value) ? formatDate(value) : '' }",
+    "const formatDate = useFormatDate(); function label(undefined) { return value === undefined ? '' : formatDate(value) }",
+  ])('does not follow reassigned or shadowed date bindings: %s', (code) => {
+    expect(lint(code)).toEqual([])
+  })
+
+  it('does not identify a local formatter hook by name alone', () => {
+    expect(
+      lint(
+        "function useFormatDate() { return value => String(value) }; const display = useFormatDate(); const label = value == null ? '' : display(value)",
+        undefined,
+        '',
+      ),
+    ).toEqual([])
+  })
+
   it('resolves formatter namespaces and relative imports', () => {
     expect(
       lint(

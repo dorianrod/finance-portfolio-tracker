@@ -9,7 +9,7 @@ tags: yup, coercion, entities, response-schema, boolean
 
 **Impact: HIGH (removes defensive parsing and truthy-string bugs downstream)**
 
-All conversion of raw API values (string → number/boolean/Date, `null` → default, `'YES'` → `true`, empty string → `null`) happens once in the hook's response schema. Downstream code receives strict entity types and never re-coerces with `Number(...)`, `=== 'true'`, `new Date(...)` or `?? ''`. If a consumer needs a fallback, the schema or the entity type is wrong.
+All conversion of raw API values (string → number/boolean/Date, `null` → default, `'YES'` → `true`, empty string → `null`) happens once in the hook's response schema. Downstream code receives strict entity types and never re-coerces with `Number(...)`, `=== 'true'`, `new Date(...)` or `?? ''`. If a consumer needs to repair an unexpected missing value, the schema or the entity type is wrong. A formatter's display fallback for a legitimately nullable value is a separate presentation rule (see `helpers-formatter-hooks`); it leaves the domain value unchanged.
 
 Textual booleans are the classic trap: when the domain meaning is yes/no, the entity field is `boolean`, never `string` nor `'YES' | 'NO'`. A non-empty string such as `'NO'` is truthy, so any `if (value)` on it is a silent bug.
 

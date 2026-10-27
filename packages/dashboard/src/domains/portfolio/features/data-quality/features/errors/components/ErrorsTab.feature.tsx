@@ -321,7 +321,7 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
       </Inset>
       <Inset as="td" inset="compact">
         <Text as="div" variant="code" tone="muted">
-          {error.date ? formatDate(error.date, { style: 'isoDate' }) : '—'}
+          {formatDate(error.date, { style: 'isoDate' })}
         </Text>
       </Inset>
       <Inset as="td" inset="compact">

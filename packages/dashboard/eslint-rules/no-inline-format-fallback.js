@@ -1,16 +1,15 @@
-import { isProductionSource, stableInitializer } from './ast-bindings.js'
+import { dirname, resolve } from 'node:path'
+
+import {
+  importedBinding,
+  isProductionSource,
+  stableInitializer,
+} from './ast-bindings.js'
 import { createContextResolver } from './context-provenance.js'
 
-const NUMERIC_HOOKS = new Set([
-  'useFormatMoney',
-  'useFormatNumber',
-  'useFormatPercentage',
-])
-const NUMERIC_FORMATTERS = new Set([
-  'formatMoney',
-  'formatNumber',
-  'formatPercentage',
-])
+const FORMATTER_NAME = /^format[A-Z]\w*$/u
+const FORMATTER_HOOK = /^useFormat[A-Z]\w*$/u
+const FORMATTER_BUNDLE = /^use\w*Formatters$/u
 
 function unwrap(node) {
   let current = node
@@ -49,13 +48,12 @@ export default {
   meta: {
     type: 'suggestion',
     docs: {
-      description:
-        'Keep numeric display fallbacks in the existing formatter options',
+      description: 'Keep display fallbacks in the existing formatter options',
     },
     schema: [],
     messages: {
       formatterFallback:
-        'Pass the value directly to the existing formatter and configure fallback or zeroAsFallback there instead of wrapping formatting in a value guard. [helpers-formatter-hooks]',
+        'Pass the value directly to the existing formatter and configure its fallback options instead of wrapping formatting in a value guard. [helpers-formatter-hooks]',
       inputFallback:
         'Pass the nullable value directly and configure the existing formatter fallback option instead of defaulting its input inline. [helpers-formatter-hooks]',
     },
@@ -63,7 +61,7 @@ export default {
   create(context) {
     if (
       !isProductionSource(context.filename) ||
-      /(?:^|\/)shared\/helpers\/formatters\//u.test(context.filename)
+      /(?:^|\/)src\/shared\/helpers\/formatters\//u.test(context.filename)
     )
       return {}
 
@@ -72,6 +70,26 @@ export default {
       sourceCode,
       context.filename,
     )
+
+    function isFormatterSource(source) {
+      const target = source.startsWith('.')
+        ? resolve(dirname(context.filename), source)
+        : source
+      return /\/helpers\/formatters\//u.test(target)
+    }
+
+    function propertyName(node) {
+      return node.computed ? node.property.value : node.property.name
+    }
+
+    function isFormatterBundle(node, seen = new Set()) {
+      const value = unwrap(node)
+      if (!value || seen.has(value)) return false
+      seen.add(value)
+      if (value.type === 'CallExpression')
+        return FORMATTER_BUNDLE.test(importedHook(value.callee) ?? '')
+      return isFormatterBundle(stableInitializer(sourceCode, value), seen)
+    }
 
     function findVariable(identifier) {
       if (identifier?.type !== 'Identifier') return null
@@ -85,7 +103,17 @@ export default {
     }
 
     function isFormatter(node, seen = new Set()) {
-      const variable = findVariable(unwrap(node))
+      const expression = unwrap(node)
+      if (expression?.type === 'MemberExpression') {
+        const name = propertyName(expression)
+        if (!FORMATTER_NAME.test(name ?? '')) return false
+        const namespace = importedBinding(sourceCode, expression.object)
+        return (
+          (namespace?.name === '*' && isFormatterSource(namespace.source)) ||
+          isFormatterBundle(expression.object)
+        )
+      }
+      const variable = findVariable(expression)
       if (!variable || seen.has(variable)) return false
       seen.add(variable)
       if (
@@ -95,24 +123,33 @@ export default {
       )
         return false
       const definition = variable.defs[0]
+      if (definition?.type === 'ImportBinding') {
+        const binding = importedBinding(sourceCode, expression)
+        return (
+          FORMATTER_NAME.test(binding.name) && isFormatterSource(binding.source)
+        )
+      }
       if (definition?.type !== 'Variable') return false
       const { id, init } = definition.node
       const initialValue = unwrap(init)
-      if (id.type === 'Identifier' && initialValue?.type === 'Identifier')
+      if (
+        id.type === 'Identifier' &&
+        ['Identifier', 'MemberExpression'].includes(initialValue?.type)
+      )
         return isFormatter(initialValue, seen)
       if (initialValue?.type !== 'CallExpression') return false
       const hook = importedHook(initialValue.callee)
-      if (id.type === 'Identifier') return NUMERIC_HOOKS.has(hook)
-      if (
-        id.type !== 'ObjectPattern' ||
-        !/^use\w*Formatters$/u.test(hook ?? '')
-      )
+      if (id.type === 'Identifier')
+        return (
+          FORMATTER_HOOK.test(hook ?? '') && !FORMATTER_BUNDLE.test(hook ?? '')
+        )
+      if (id.type !== 'ObjectPattern' || !FORMATTER_BUNDLE.test(hook ?? ''))
         return false
       return id.properties.some(
         (property) =>
           property.type === 'Property' &&
           !property.computed &&
-          NUMERIC_FORMATTERS.has(property.key.name) &&
+          FORMATTER_NAME.test(property.key.name ?? property.key.value ?? '') &&
           property.value.type === 'Identifier' &&
           findVariable(property.value) === variable,
       )
@@ -135,14 +172,9 @@ export default {
         )
       if (left.type === 'MemberExpression')
         return (
-          left.computed === right.computed &&
-          left.optional === right.optional &&
           sameValue(left.object, right.object) &&
-          (left.computed
-            ? left.property.type === 'Literal' &&
-              right.property.type === 'Literal' &&
-              left.property.value === right.property.value
-            : left.property.name === right.property.name)
+          propertyName(left) !== undefined &&
+          propertyName(left) === propertyName(right)
         )
       return false
     }
@@ -151,10 +183,25 @@ export default {
       const value = unwrap(node)
       return (
         (value?.type === 'Literal' &&
-          (value.value === null || value.value === 0)) ||
+          (value.value === null || value.value === 0 || value.value === '')) ||
+        (value?.type === 'UnaryExpression' &&
+          value.operator === 'void' &&
+          value.argument.type === 'Literal' &&
+          value.argument.value === 0) ||
         (value?.type === 'Identifier' &&
           value.name === 'undefined' &&
           !findVariable(value)?.defs.length)
+      )
+    }
+
+    function isUndefinedTypeCheck(node, expected, value) {
+      const expression = unwrap(node)
+      return (
+        expression?.type === 'UnaryExpression' &&
+        expression.operator === 'typeof' &&
+        sameValue(expression.argument, value) &&
+        expected?.type === 'Literal' &&
+        expected.value === 'undefined'
       )
     }
 
@@ -184,12 +231,23 @@ export default {
           sameValue(condition.argument, value) ||
           guardsValue(condition.argument, value, seen)
         )
+      if (
+        condition.type === 'CallExpression' &&
+        condition.callee.type === 'Identifier' &&
+        condition.callee.name === 'Boolean' &&
+        !findVariable(condition.callee)?.defs.length &&
+        condition.arguments.length === 1
+      )
+        return guardsValue(condition.arguments[0], value, seen)
       return (
         condition?.type === 'BinaryExpression' &&
         ['==', '===', '!=', '!=='].includes(condition.operator) &&
         ((sameValue(condition.left, value) &&
           isEmptyLiteral(condition.right)) ||
-          (sameValue(condition.right, value) && isEmptyLiteral(condition.left)))
+          (sameValue(condition.right, value) &&
+            isEmptyLiteral(condition.left)) ||
+          isUndefinedTypeCheck(condition.left, condition.right, value) ||
+          isUndefinedTypeCheck(condition.right, condition.left, value))
       )
     }
 
@@ -239,6 +297,15 @@ export default {
           returnedValue(node.consequent),
           returnedValue(alternate),
         )
+      },
+      LogicalExpression(node) {
+        if (
+          ['&&', '||'].includes(node.operator) &&
+          unwrap(node.right)?.type === 'CallExpression' &&
+          isFormatterCall(node.right) &&
+          guardsValue(node.left, displayExpression(node.right).arguments[0])
+        )
+          context.report({ node, messageId: 'formatterFallback' })
       },
       CallExpression(node) {
         if (!isFormatter(node.callee)) return

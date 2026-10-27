@@ -37,14 +37,12 @@ export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
       </Inset>
       <Inset as="td" inset="compact">
         <Text as="div" variant="code" tone="muted">
-          {row.date_from
-            ? formatDate(row.date_from, { style: 'isoDate' })
-            : '—'}
+          {formatDate(row.date_from, { style: 'isoDate' })}
         </Text>
       </Inset>
       <Inset as="td" inset="compact">
         <Text as="div" variant="code" tone="muted">
-          {row.date_to ? formatDate(row.date_to, { style: 'isoDate' }) : '—'}
+          {formatDate(row.date_to, { style: 'isoDate' })}
         </Text>
       </Inset>
       <Inset as="td" inset="compact">

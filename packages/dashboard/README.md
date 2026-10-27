@@ -19,7 +19,7 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. The
 [profiler](scripts/profile-eslint.mjs) reports the measurements for the current tree.
 
-`npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `162`.
+`npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `161`.
 Every reviewed suppression produces one tracking warning, even when it names
 several rules. Use a line-scoped directive with named rules and this metadata:
 
@@ -40,8 +40,9 @@ remain visible even under a blanket disable. No autofix dates or approves an
 exception, and nothing automatically updates the ceiling.
 
 The 2026-10-27 audit reviewed all 162 existing directives against the affected code,
-rules and consumers, and confirmed that each still suppresses a diagnostic. The
-ceiling accounts for 57 cohesive-function complexity exceptions (one also covers
+rules and consumers, and confirmed that each still suppressed a diagnostic.
+Centralizing date fallbacks subsequently removed one obsolete complexity directive.
+The current ceiling accounts for 56 cohesive-function complexity exceptions (one also covers
 function length), 69 shared-input ownership exceptions, 35 controlled-component or
 presentation-adapter exceptions and one TanStack Table v8 dependency constraint.
 It leaves no spare capacity. Each directive records its technical reason and actual
@@ -67,6 +68,16 @@ the existing percentage formatter with `decimals: 'auto'` when no rounding was
 previously applied. Rule violations run at error level; reviewed exceptions and
 uncertain feature sharing produce warnings. CI runs the complete test suite,
 including every custom rule.
+
+`local/no-inline-format-fallback` checks dates and domain labels as well as
+numeric formatters. It follows formatter imports and aliases, both ternary
+branches, null/undefined/truthiness checks, return-only guards and `&&`/`||`
+short-circuits. For example, replace `date == null ? '' : formatDate(date)`
+with `formatDate(date, { fallback: '' })`. The date formatter uses the same
+fallback for missing and invalid dates. Loading, permissions and structural
+conditions remain outside the formatter. The rule reports errors without an
+autofix; see the [formatter enforcement reference](../../.agents/skills/generic-react-best-practices/references/project-enforcement.md)
+for its detection boundaries.
 
 The [historical ESLint audit script](scripts/audit-eslint-history.mjs) measures
 these checks against the four audit commits. Run it from this directory with a

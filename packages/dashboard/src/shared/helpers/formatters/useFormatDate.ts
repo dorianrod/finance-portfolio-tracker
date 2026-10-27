@@ -3,12 +3,13 @@ import { useCallback } from 'react'
 export function useFormatDate() {
   return useCallback(
     (
-      value: Date | number | string,
+      value: Date | number | string | null | undefined,
       options: DateFormatOptions = {},
     ): string => {
-      const { style = 'dayMonthYear' } = options
+      const { style = 'dayMonthYear', fallback = '—' } = options
+      if (value == null) return fallback
       const date = value instanceof Date ? value : new Date(value)
-      if (Number.isNaN(date.getTime())) return '—'
+      if (Number.isNaN(date.getTime())) return fallback
       if (style === 'isoDate') return date.toISOString().slice(0, 10)
       return UTC_DATE_FORMATTERS[style].format(date)
     },
@@ -36,6 +37,7 @@ const DATE_OPTIONS: Record<
 }
 
 type DateFormatOptions = {
+  fallback?: string
   style?: DateStyle
   timeZone?: 'UTC'
 }

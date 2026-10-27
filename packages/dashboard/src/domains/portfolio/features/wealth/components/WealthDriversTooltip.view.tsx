@@ -30,7 +30,7 @@ export function DriversTooltip({
     <Surface variant="tooltip">
       <Layout spaceAfter="default">
         <Text as="div" variant="strong" tone="default">
-          {label == null ? '' : formatDate(label, { style: 'shortMonthYear' })}
+          {formatDate(label, { style: 'shortMonthYear', fallback: '' })}
         </Text>
       </Layout>
       <Text as="div" tone="secondary">

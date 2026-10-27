@@ -293,7 +293,6 @@ function ResolvedHoldingDetail({ holding }: { holding: FundHolding }) {
 
 type DiagnosticsRow = ReturnType<typeof buildFundDiagnosticsRows>[number]
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional provenance, issue and expansion fields form one diagnostic table row; source and details already have separate components.
 function FundDiagnosticsRow({
   expanded,
   onToggle,
@@ -340,9 +339,10 @@ function FundDiagnosticsRow({
         <FundDiagnosticSource status={status} />
         <Inset as="td" inset="default">
           <Text as="div" tone="muted">
-            {status.holdingsDate
-              ? formatDate(status.holdingsDate, { style: 'isoDate' })
-              : i18n.t('ui.funddataqualitypanel.unknown')}
+            {formatDate(status.holdingsDate, {
+              style: 'isoDate',
+              fallback: i18n.t('ui.funddataqualitypanel.unknown'),
+            })}
             <Layout spaceBefore="compact">
               <Text as="div" tone="subtle">
                 {i18n.t('ui.funddataqualitypanel.refreshMetrics', {
