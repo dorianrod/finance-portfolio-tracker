@@ -1,10 +1,14 @@
 import * as Primitive from '@radix-ui/react-popover'
-import { type ComponentProps, createContext, useContext } from 'react'
+import { useAtomValue } from 'jotai'
+import { ScopeProvider } from 'jotai-scope'
+import { type ComponentProps } from 'react'
 
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
+import { popoverInputAtom } from '@/shared/ui/stores/popoverInputAtom'
 import { POPOVER_CONTENT_VARIANTS } from '@/shared/ui/surfaceAppearance/popoverContentVariants'
 
 import type { ControlProps } from './controlProps'
-import { type PopoverState, usePopoverState } from './usePopoverState'
+import { usePopoverState } from './usePopoverState'
 
 export function Popover({
   open,
@@ -13,18 +17,17 @@ export function Popover({
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Root>>) {
   const context = usePopoverState(open, defaultOpen, onOpenChange)
+  const scope = useScopedInput(popoverInputAtom, context)
   return (
-    <PopoverContext value={context}>
+    <ScopeProvider scope={scope}>
       <Primitive.Root
         {...props}
         open={context.open}
         onOpenChange={context.setOpen}
       />
-    </PopoverContext>
+    </ScopeProvider>
   )
 }
-
-const PopoverContext = createContext<PopoverState | null>(null)
 
 function PopoverTrigger({
   label,
@@ -32,7 +35,7 @@ function PopoverTrigger({
 }: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
   label?: string
 }) {
-  const context = useContext(PopoverContext)
+  const context = useAtomValue(popoverInputAtom)
   return (
     <Primitive.Trigger
       {...props}
@@ -51,7 +54,7 @@ function PopoverContent({
   label: string
   variant?: 'default' | 'menu'
 }) {
-  const context = useContext(PopoverContext)
+  const context = useAtomValue(popoverInputAtom)
   return (
     <Primitive.Portal>
       <Primitive.Content

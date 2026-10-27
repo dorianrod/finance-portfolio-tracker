@@ -1,9 +1,9 @@
 import * as Primitive from '@radix-ui/react-popover'
+import { useAtomValue } from 'jotai'
+import { ScopeProvider } from 'jotai-scope'
 import {
-  createContext,
   type HTMLAttributes,
   type ReactNode,
-  useContext,
   useId,
   useMemo,
   useRef,
@@ -13,13 +13,15 @@ import { getButtonClassName } from '@/shared/ui/buttonAppearance/getButtonClassN
 import type { ButtonProps } from '@/shared/ui/controls/controls.types'
 import { BUTTON_SIZES } from '@/shared/ui/layoutAppearance/buttonSizes'
 import { PREVIEW_SIZES } from '@/shared/ui/layoutAppearance/previewSizes'
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
+import { previewInputAtom } from '@/shared/ui/stores/previewInputAtom'
 import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 
 import type { ControlProps } from './controlProps'
 import { usePreviewFocus } from './usePreviewFocus'
-import { type PreviewState, usePreviewState } from './usePreviewState'
+import { usePreviewState } from './usePreviewState'
 
 export function Preview({
   open,
@@ -33,16 +35,15 @@ export function Preview({
   children: ReactNode
 }) {
   const context = usePreviewState(open, onOpenChange, onKeepOpen)
+  const scope = useScopedInput(previewInputAtom, context)
   return (
-    <PreviewContext value={context}>
+    <ScopeProvider scope={scope}>
       <Primitive.Root open={open} onOpenChange={onOpenChange}>
         {children}
       </Primitive.Root>
-    </PreviewContext>
+    </ScopeProvider>
   )
 }
-
-const PreviewContext = createContext<PreviewState | null>(null)
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Pointer, keyboard and restored-focus behavior form one accessible preview-trigger protocol.
 function PreviewTrigger({
@@ -62,7 +63,7 @@ function PreviewTrigger({
   expanded?: boolean
   tone?: TextTone
 }) {
-  const context = useContext(PreviewContext)
+  const context = useAtomValue(previewInputAtom)
   const triggerId = useId()
   if (!context) throw new Error('Preview.Trigger requires Preview.')
   function show(element: HTMLButtonElement, interactive: boolean) {
@@ -141,7 +142,7 @@ function PreviewContent({
   anchor: DOMRect
   label: string
 }) {
-  const context = useContext(PreviewContext)
+  const context = useAtomValue(previewInputAtom)
   const contentRef = usePreviewFocus(context?.interactive ?? false, anchor)
   const restoreFocus = useRef(true)
   const virtualRef = useMemo(

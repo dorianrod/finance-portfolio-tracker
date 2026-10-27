@@ -1,32 +1,27 @@
 import * as Primitive from '@radix-ui/react-tooltip'
-import {
-  type ComponentProps,
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
+import { useAtomValue } from 'jotai'
+import { ScopeProvider } from 'jotai-scope'
+import { type ComponentProps, useMemo, useState } from 'react'
+
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
+import { tooltipInputAtom } from '@/shared/ui/stores/tooltipInputAtom'
 
 import type { ControlProps } from './controlProps'
 
 export function Tooltip({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const context = useMemo(() => ({ open, setOpen }), [open])
+  const input = useMemo(() => ({ setOpen }), [setOpen])
+  const scope = useScopedInput(tooltipInputAtom, input)
   return (
     <Primitive.Provider delayDuration={0}>
-      <TooltipContext value={context}>
+      <ScopeProvider scope={scope}>
         <Primitive.Root open={open} onOpenChange={setOpen}>
           {children}
         </Primitive.Root>
-      </TooltipContext>
+      </ScopeProvider>
     </Primitive.Provider>
   )
 }
-
-const TooltipContext = createContext<{
-  open: boolean
-  setOpen: (open: boolean) => void
-} | null>(null)
 
 function TooltipTrigger({
   label,
@@ -36,7 +31,7 @@ function TooltipTrigger({
   label?: string
   variant?: 'info' | 'help' | 'source' | 'columnHelp'
 }) {
-  const context = useContext(TooltipContext)
+  const context = useAtomValue(tooltipInputAtom)
   return (
     <Primitive.Trigger
       {...props}

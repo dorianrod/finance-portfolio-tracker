@@ -4,6 +4,7 @@ import {
   type Row,
   useReactTable,
 } from '@tanstack/react-table'
+import { ScopeProvider } from 'jotai-scope'
 import { Fragment } from 'react'
 
 import { FundPositionPopover } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover.feature'
@@ -21,6 +22,10 @@ import { usePositionGroupPreviews } from '@/domains/portfolio/features/holdings/
 import { usePositionTableData } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableData'
 import { usePositionTableOverlays } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays'
 import { usePositionTableState } from '@/domains/portfolio/features/holdings/features/positions/services/usePositionTableState'
+import { positionAllocationPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionAllocationPreviewAtom'
+import { positionChartPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionChartPreviewAtom'
+import { positionSavingsPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionSavingsPreviewAtom'
+import { positionUnderlyingPopoverAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms'
 import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
@@ -43,7 +48,22 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { TablePanel } from '@/shared/ui/TablePanel.view'
 import { Text } from '@/shared/ui/Text.view'
 
-export function PositionsTable({
+export function PositionsTable(props: Props) {
+  return (
+    <ScopeProvider atoms={POSITION_PREVIEW_ATOMS}>
+      <PositionsTableContent {...props} />
+    </ScopeProvider>
+  )
+}
+
+const POSITION_PREVIEW_ATOMS = [
+  positionChartPreviewAtom,
+  positionSavingsPreviewAtom,
+  positionAllocationPreviewAtom,
+  positionUnderlyingPopoverAtom,
+]
+
+function PositionsTableContent({
   data,
   groupByAccountType = false,
   fundStatuses = EMPTY_FUND_STATUSES,

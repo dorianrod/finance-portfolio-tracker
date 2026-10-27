@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { atom } from 'jotai'
 
 import type { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 import type { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
@@ -10,6 +10,8 @@ export type BarAppearance = {
   prominence?: keyof typeof BAR_PROMINENCE
 }
 
-export const BarAppearanceContext = createContext<BarAppearance | undefined>(
-  undefined,
+const DEFAULT_BAR_APPEARANCE = null
+
+export const barAppearanceAtom = atom<BarAppearance | null>(
+  DEFAULT_BAR_APPEARANCE,
 )

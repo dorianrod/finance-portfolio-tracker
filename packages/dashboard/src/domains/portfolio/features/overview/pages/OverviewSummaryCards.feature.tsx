@@ -288,7 +288,7 @@ function OverviewPerformanceCard({
               numeric
               tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
             >
-              {formatOverviewIrrValue(irrStatus, rollingThreeYearTri.current)}
+              {formatOverviewIrrValue(rollingThreeYearTri.current, irrStatus)}
             </Text>
             {rollingThreeYearDelta != null && (
               <MetricDelta

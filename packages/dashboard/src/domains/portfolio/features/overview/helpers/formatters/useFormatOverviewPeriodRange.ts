@@ -7,7 +7,11 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 export function useFormatOverviewPeriodRange() {
   const formatDate = useFormatDate()
   return useCallback(
-    (period: OverviewPeriod): string => {
+    (
+      period: OverviewPeriod | null | undefined,
+      { fallback = '—' }: { fallback?: string } = {},
+    ): string => {
+      if (period == null) return fallback
       const options = { style: 'dayMonthYear', timeZone: 'UTC' } as const
       return i18n.t('ui.formatters.dateRange', {
         from: formatDate(period.start, options),

@@ -26,6 +26,7 @@ import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noHelperContextParams from './eslint-rules/no-helper-context-params.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
+import noReactContext from './eslint-rules/no-react-context.js'
 import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
@@ -76,6 +77,7 @@ export default defineConfig([
           'no-helper-context-params': noHelperContextParams,
           'no-inline-format-fallback': noInlineFormatFallback,
           'no-prop-drilling': noPropDrilling,
+          'no-react-context': noReactContext,
           'no-shared-ui-classname': noSharedUiClassname,
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
           'no-ui-string-concat': noUiStringConcat,
@@ -192,6 +194,7 @@ export default defineConfig([
       'local/no-helper-context-params': 'error',
       'local/no-inline-format-fallback': 'error',
       'local/no-prop-drilling': 'error',
+      'local/no-react-context': 'error',
       'local/no-shared-ui-classname': 'error',
       'local/no-shared-ui-internal-layout': 'error',
       'local/no-ui-string-concat': 'error',

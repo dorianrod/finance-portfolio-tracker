@@ -277,17 +277,15 @@ function resolveContributionPeriod(
   const startsByFilterId = new Map<string, number>()
   let startDate: number | null
   if (horizon === 'since-tracking') {
+    startDate = null
     for (const row of positions) {
       const filterId = accountFilterId(row)
       const rowDate = datePart(row.snapshot_date)
       const current = startsByFilterId.get(filterId)
       if (current == null || rowDate < current)
         startsByFilterId.set(filterId, rowDate)
+      startDate = startDate == null ? rowDate : Math.min(startDate, rowDate)
     }
-    startDate =
-      [...startsByFilterId.values()].toSorted(
-        (left, right) => left - right,
-      )[0] ?? null
   } else {
     const firstSnapshot = snapshotDates[0]
     const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)

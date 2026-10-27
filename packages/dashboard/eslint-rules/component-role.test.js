@@ -36,6 +36,10 @@ describe('component-role', () => {
   it.each([
     './services/useIndeterminateInput',
     '@/shared/ui/services/useIndeterminateInput',
+    './stores/disclosureInputAtom',
+    '@/shared/ui/stores/disclosureInputAtom',
+    'jotai',
+    'jotai/utils',
   ])('allows shared UI to own its behavior service %s', (source) => {
     expect(
       lint(
@@ -58,14 +62,22 @@ describe('component-role', () => {
     ).toEqual(['viewImportsBusiness'])
   })
 
-  it('does not permit a shared UI view to import a business service', () => {
-    expect(
-      lint(
-        "import { dependency } from '@/domains/orders/services/useOrders'; export function Card() { return <div /> }",
-        'src/shared/ui/Card.view.tsx',
-      ).map(({ messageId }) => messageId),
-    ).toEqual(['viewImportsBusiness'])
-  })
+  it.each([
+    '@/domains/orders/services/useOrders',
+    '@/domains/orders/stores/orderAtom',
+    '@/app/stores/sessionAtom',
+    '@tanstack/react-query',
+  ])(
+    'does not permit a shared UI view to import business or server state: %s',
+    (source) => {
+      expect(
+        lint(
+          `import { dependency } from '${source}'; export function Card() { return <div /> }`,
+          'src/shared/ui/Card.view.tsx',
+        ).map(({ messageId }) => messageId),
+      ).toEqual(['viewImportsBusiness'])
+    },
+  )
 
   it('requires a role suffix on production component modules', () => {
     const messages = lint(

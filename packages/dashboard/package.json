@@ -30,6 +30,7 @@
     "@types/papaparse": "^5.5.2",
     "i18next": "^26.5.6",
     "jotai": "^2.20.3",
+    "jotai-scope": "^0.12.2",
     "papaparse": "^5.5.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

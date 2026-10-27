@@ -1,19 +1,18 @@
 import { useAtom } from 'jotai'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
+import { positionAllocationPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionAllocationPreviewAtom'
+import { positionChartPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionChartPreviewAtom'
+import { positionSavingsPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionSavingsPreviewAtom'
 import { positionUnderlyingPopoverAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms'
-import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
-import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
-import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import { useDelayedDismiss } from '@/shared/ui/services/useDelayedDismiss'
 
 export function usePositionTableOverlays() {
-  const [chart, setChart] = useState<ChartTarget | null>(null)
-  const [savingsChart, setSavingsChart] = useState<SavingsChartTarget | null>(
-    null,
+  const [chart, setChart] = useAtom(positionChartPreviewAtom)
+  const [savingsChart, setSavingsChart] = useAtom(positionSavingsPreviewAtom)
+  const [allocationHover, setAllocationHover] = useAtom(
+    positionAllocationPreviewAtom,
   )
-  const [allocationHover, setAllocationHover] =
-    useState<AllocationHoverTarget | null>(null)
   const [underlyingPopover, setUnderlyingPopover] = useAtom(
     positionUnderlyingPopoverAtom,
   )
@@ -22,15 +21,15 @@ export function usePositionTableOverlays() {
     setSavingsChart(null)
     setAllocationHover(null)
     setUnderlyingPopover(null)
-  }, [setUnderlyingPopover])
+  }, [setChart, setSavingsChart, setAllocationHover, setUnderlyingPopover])
   const { cancel: cancelHide, schedule: scheduleHide } =
     useDelayedDismiss(dismiss)
 
   useEffect(
     () => () => {
-      setUnderlyingPopover(null)
+      dismiss()
     },
-    [setUnderlyingPopover],
+    [dismiss],
   )
 
   return useMemo(

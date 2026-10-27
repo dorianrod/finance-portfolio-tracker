@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useAtom } from 'jotai'
+import { useMemo } from 'react'
 
-import type { ContributionHorizon } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
 import { resolveContributionHorizon } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/resolveContributionHorizon'
+import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
 
 export function useContributionHorizon({
   sinceTracking,
@@ -9,7 +10,7 @@ export function useContributionHorizon({
   trailingThreeYears,
   trailingThreeYearIrr,
 }: Omit<Parameters<typeof resolveContributionHorizon>[0], 'horizon'>) {
-  const [horizon, setHorizon] = useState<ContributionHorizon>('since-tracking')
+  const [horizon, setHorizon] = useAtom(contributionHorizonAtom)
   return useMemo(
     () => ({
       ...resolveContributionHorizon({
@@ -27,6 +28,7 @@ export function useContributionHorizon({
       sinceTrackingIrr,
       trailingThreeYears,
       trailingThreeYearIrr,
+      setHorizon,
     ],
   )
 }

@@ -1,11 +1,10 @@
-import { useContext } from 'react'
+import { useAtomValue } from 'jotai'
 import { type BarShapeProps, Rectangle } from 'recharts'
 
 import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
 import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
-
-import { BarAppearanceContext } from './barAppearanceContext'
+import { barAppearanceAtom } from '@/shared/ui/stores/barAppearanceAtom'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; All four coordinates and inherited appearance must be validated together for one Recharts rectangle.
 export function ChartRectangle({
@@ -17,7 +16,7 @@ export function ChartRectangle({
   tone?: keyof typeof CHART_COLORS
   prominence?: keyof typeof BAR_PROMINENCE
 }) {
-  const appearance = useContext(BarAppearanceContext)
+  const appearance = useAtomValue(barAppearanceAtom)
   if (!appearance)
     throw new Error('ChartRectangle requires a SeriesBar parent.')
   const { x, y, width, height } = geometry

@@ -26,7 +26,7 @@ export function AccountTypeTooltip({
   const formatPercentage = useFormatPercentage()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
-  const point = payload[0]?.payload
+  const point = payload[0].payload
   const { cost, gain, total, portfolioShare, gainPct } =
     computeAccountTypeTooltipMetrics(payload, portfolio)
   return (
@@ -57,7 +57,14 @@ export function AccountTypeTooltip({
           amount: formatMoney(cost, { style: 'full' }),
         })}
       </ChartText>
-      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.performancePositiveText}>
+      <ChartText
+        as="div"
+        tone={
+          gain >= 0
+            ? PORTFOLIO_CHART_TONES.performancePositiveText
+            : PORTFOLIO_CHART_TONES.performanceNegativeText
+        }
+      >
         {i18n.t('ui.portfoliochartsTooltips.unrealizedWithValues', {
           amount: formatMoney(gain, { style: 'full' }),
           percentage: formatPercentage(gainPct, { signed: true }),

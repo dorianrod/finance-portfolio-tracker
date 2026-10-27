@@ -1,3 +1,4 @@
+import { ScopeProvider } from 'jotai-scope'
 import { useState } from 'react'
 
 import { ContributionListItem } from '@/domains/portfolio/features/performance/components/PerformanceRankingLists/performanceRankingLists/ContributionListItem.view'
@@ -9,6 +10,7 @@ import type {
 import { useFormatPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceDateRange'
 import { useFormatPerformanceIrrLabel } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceIrrLabel'
 import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
+import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   FilterScopeSpec,
@@ -30,7 +32,17 @@ import { Text } from '@/shared/ui/Text.view'
 import { AssetIrrView } from './AssetIrrView.feature'
 import { MetricLabel } from './MetricLabel.feature'
 
-export function PerformanceContributionCard({
+export function PerformanceContributionCard(props: Props) {
+  return (
+    <ScopeProvider atoms={CONTRIBUTION_ATOMS}>
+      <PerformanceContributionContent {...props} />
+    </ScopeProvider>
+  )
+}
+
+const CONTRIBUTION_ATOMS = [contributionHorizonAtom]
+
+function PerformanceContributionContent({
   assetIrr,
   assetIrrStatus,
   sinceTracking,
@@ -277,6 +289,7 @@ function ContributionSummaryMetrics({
             </Text>
             <Inline
               as="div"
+              flow="wrap"
               spaceBefore="default"
               align="center"
               justify="between"

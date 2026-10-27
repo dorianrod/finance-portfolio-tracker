@@ -6,11 +6,16 @@ import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 export function useFormatPerformanceAsOfDate() {
   const formatDate = useFormatDate()
   return useCallback(
-    (date: Date | undefined): string =>
+    (
+      date: Date | null | undefined,
+      {
+        fallback = i18n.t('ui.formatperformanceasofdateTs.notAvailable'),
+      }: { fallback?: string } = {},
+    ): string =>
       formatDate(date, {
         style: 'dayMonthYear',
         timeZone: 'UTC',
-        fallback: i18n.t('ui.formatperformanceasofdateTs.notAvailable'),
+        fallback,
       }),
     [formatDate],
   )

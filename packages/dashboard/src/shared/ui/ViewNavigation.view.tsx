@@ -1,22 +1,23 @@
+import { useAtomValue } from 'jotai'
+import { ScopeProvider } from 'jotai-scope'
 import {
   type ComponentProps,
-  createContext,
   type HTMLAttributes,
   type ReactNode,
-  useContext,
   useId,
 } from 'react'
 
 import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
+import { navigationIdAtom } from '@/shared/ui/stores/navigationIdAtom'
 
 import type { ControlProps } from './controlProps'
 
 export function ViewNavigation({ children }: { children: ReactNode }) {
   const id = useId()
-  return <NavigationContext value={id}>{children}</NavigationContext>
+  const scope = useScopedInput(navigationIdAtom, id)
+  return <ScopeProvider scope={scope}>{children}</ScopeProvider>
 }
-
-const NavigationContext = createContext('')
 
 function ViewNavigationItem({
   value,
@@ -24,7 +25,7 @@ function ViewNavigationItem({
 }: ControlProps<ComponentProps<typeof SegmentedControlItem>> & {
   value: string
 }) {
-  const id = useContext(NavigationContext)
+  const id = useAtomValue(navigationIdAtom)
   if (!id) throw new Error('ViewNavigation.Item requires ViewNavigation.')
   return (
     <SegmentedControlItem
@@ -40,7 +41,7 @@ function ViewNavigationPanel({
   value,
   ...props
 }: ControlProps<HTMLAttributes<HTMLDivElement>> & { value: string }) {
-  const id = useContext(NavigationContext)
+  const id = useAtomValue(navigationIdAtom)
   if (!id) throw new Error('ViewNavigation.Panel requires ViewNavigation.')
   return (
     <div

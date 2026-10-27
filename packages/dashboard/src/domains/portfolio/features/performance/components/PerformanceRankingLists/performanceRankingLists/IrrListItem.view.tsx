@@ -36,7 +36,7 @@ export function IrrListItem({
               truncate
               title={item.name}
             >
-              {formatAssetLabel(item, item.label)}
+              {formatAssetLabel(item, { fallback: item.label })}
             </Text>
             <Text
               as="div"

@@ -87,11 +87,13 @@ export default {
         : path
             .resolve(path.dirname(normalizedFilename), source)
             .replaceAll('\\', '/')
-      const isOwnedUiService =
+      const isOwnedUiBehavior =
         isSharedUi &&
-        (source.startsWith('@/')
-          ? resolvedSource.startsWith('shared/ui/services/')
-          : /\/src\/shared\/ui\/services\//u.test(resolvedSource))
+        (source === 'jotai' ||
+          source.startsWith('jotai/') ||
+          (source.startsWith('@/')
+            ? /^shared\/ui\/(?:services|stores)\//u.test(resolvedSource)
+            : /\/src\/shared\/ui\/(?:services|stores)\//u.test(resolvedSource)))
 
       if (source.includes('.feature')) {
         context.report({
@@ -111,7 +113,7 @@ export default {
         return
       }
 
-      if (isBusinessSource(source) && !isOwnedUiService) {
+      if (isBusinessSource(source) && !isOwnedUiBehavior) {
         context.report({
           node: sourceNode,
           messageId: 'viewImportsBusiness',

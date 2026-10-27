@@ -1,25 +1,42 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { useFormatAssetLabel } from './useFormatAssetLabel'
+import {
+  type AssetLabelSource,
+  useFormatAssetLabel,
+} from './useFormatAssetLabel'
 
-function AssetLabelProbe() {
+function AssetLabelProbe({
+  source,
+  fallback,
+}: {
+  source: AssetLabelSource | null | undefined
+  fallback?: string
+}) {
   const formatAssetLabel = useFormatAssetLabel()
-  return (
-    <>
-      {[
-        formatAssetLabel({ name: 'Global Equity', ticker: 'GE' }),
-        formatAssetLabel({ name: ' ', ticker: 'GE' }),
-        formatAssetLabel({}, 'Unknown asset'),
-      ].join('|')}
-    </>
-  )
+  return formatAssetLabel(source, { fallback })
 }
 
 describe('useFormatAssetLabel', () => {
-  it('uses the asset name, ticker and fallback in that order', () => {
-    expect(renderToStaticMarkup(<AssetLabelProbe />)).toBe(
-      'Global Equity|GE|Unknown asset',
-    )
-  })
+  it.each([
+    {
+      source: { name: 'Global Equity', ticker: 'GE' },
+      expected: 'Global Equity',
+    },
+    { source: { name: ' ', ticker: 'GE' }, expected: 'GE' },
+    { source: {}, expected: '' },
+    { source: null, expected: '' },
+    { source: undefined, expected: '' },
+    { source: null, fallback: 'Unknown asset', expected: 'Unknown asset' },
+    { source: undefined, fallback: 'Unknown asset', expected: 'Unknown asset' },
+  ])(
+    'formats $source with fallback $fallback',
+    ({ source, fallback, expected }) => {
+      expect(
+        renderToStaticMarkup(
+          <AssetLabelProbe source={source} fallback={fallback} />,
+        ),
+      ).toBe(expected)
+    },
+  )
 })

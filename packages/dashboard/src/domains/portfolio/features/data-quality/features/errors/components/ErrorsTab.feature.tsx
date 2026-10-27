@@ -331,7 +331,7 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
           truncate
           title={formatAssetLabel(error)}
         >
-          {formatAssetLabel(error, '—')}
+          {formatAssetLabel(error, { fallback: '—' })}
         </Text>
       </Inset>
       <Inset as="td" inset="compact">

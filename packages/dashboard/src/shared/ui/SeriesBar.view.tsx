@@ -1,3 +1,4 @@
+import { ScopeProvider } from 'jotai-scope'
 import {
   type ComponentProps,
   type ReactNode,
@@ -9,11 +10,12 @@ import { Bar, type BarShapeProps } from 'recharts'
 import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
 import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
-
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
 import {
   type BarAppearance,
-  BarAppearanceContext,
-} from './barAppearanceContext'
+  barAppearanceAtom,
+} from '@/shared/ui/stores/barAppearanceAtom'
+
 import { partitionChartSlot } from './chartSlots'
 
 export function SeriesBar({
@@ -33,11 +35,12 @@ export function SeriesBar({
     () => ({ tone, corners, prominence }),
     [tone, corners, prominence],
   )
+  const scope = useScopedInput(barAppearanceAtom, appearance)
   let animationActive
   if (motion === 'none') animationActive = false
   else if (motion === 'selection') animationActive = transitioning
   return (
-    <BarAppearanceContext value={appearance}>
+    <ScopeProvider scope={scope}>
       <Bar
         {...props}
         fill={tone && CHART_COLORS[tone]}
@@ -50,7 +53,7 @@ export function SeriesBar({
       >
         {content}
       </Bar>
-    </BarAppearanceContext>
+    </ScopeProvider>
   )
 }
 

@@ -163,7 +163,13 @@ function createCanonicalIssuerResolver(holdings: FundHolding[]) {
     )
     canonicalIssuerById.set(
       id,
-      matches.toSorted((a, b) => b.length - a.length)[0] ?? id,
+      matches.reduce<string | undefined>(
+        (longest, candidate) =>
+          longest == null || candidate.length > longest.length
+            ? candidate
+            : longest,
+        undefined,
+      ) ?? id,
     )
   }
   const canonicalIssuer = (id: string): { id: string; name: string } => {

@@ -1,10 +1,16 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from '@testing-library/react'
+import { Provider } from 'jotai'
+import type { ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createConcentrationHistoryPoint } from '@/domains/portfolio/features/diversification/features/concentration/mocks/concentrationHistoryPoint.mock'
 
 import { useConcentrationTrendController } from './useConcentrationTrendController'
+
+function TestProvider({ children }: { children: ReactNode }) {
+  return <Provider>{children}</Provider>
+}
 
 const HELD_POINTS = [
   createConcentrationHistoryPoint(),
@@ -36,8 +42,10 @@ describe('useConcentrationTrendController', () => {
   it.each([NaN, Infinity, -Infinity, 0.5])(
     'ignores an invalid timeline index (%s) without changing the snapshot',
     (index) => {
-      const { result } = renderHook(() =>
-        useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+      const { result } = renderHook(
+        () =>
+          useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+        { wrapper: TestProvider },
       )
 
       act(() => result.current.selectPoint(index))
@@ -53,8 +61,10 @@ describe('useConcentrationTrendController', () => {
   ])(
     'clamps timeline selection to its bounds ($index)',
     ({ index, expectedIndex }) => {
-      const { result } = renderHook(() =>
-        useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+      const { result } = renderHook(
+        () =>
+          useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+        { wrapper: TestProvider },
       )
 
       act(() => result.current.selectPoint(index))
@@ -72,7 +82,7 @@ describe('useConcentrationTrendController', () => {
           UNDERLYING_POINTS,
           available,
         ),
-      { initialProps: { available: true } },
+      { wrapper: TestProvider, initialProps: { available: true } },
     )
     act(() => result.current.changeMode('lookThrough'))
     expect(result.current.displayedPoint).toBe(UNDERLYING_POINTS[1])
@@ -89,8 +99,9 @@ describe('useConcentrationTrendController', () => {
   })
 
   it('does not select or play an empty timeline', () => {
-    const { result } = renderHook(() =>
-      useConcentrationTrendController([], [], false),
+    const { result } = renderHook(
+      () => useConcentrationTrendController([], [], false),
+      { wrapper: TestProvider },
     )
 
     act(() => {
@@ -106,8 +117,10 @@ describe('useConcentrationTrendController', () => {
 
   it('replays from the first snapshot and stops at the last snapshot', () => {
     vi.useFakeTimers()
-    const { result } = renderHook(() =>
-      useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+    const { result } = renderHook(
+      () =>
+        useConcentrationTrendController(HELD_POINTS, UNDERLYING_POINTS, true),
+      { wrapper: TestProvider },
     )
 
     act(() => result.current.togglePlayback())

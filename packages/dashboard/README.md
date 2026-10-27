@@ -3,8 +3,24 @@
 React/Vite dashboard for visualising the CSVs produced by
 [finance-pipeline](../pipeline).
 
-[ARCHITECTURE.md](ARCHITECTURE.md) documents business capabilities, feature
-ownership and the import boundaries enforced by ESLint.
+The `portfolio` domain owns portfolio analysis. The application shell composes
+these capabilities; tabs and display modes do not introduce new domain boundaries.
+
+| Capability      | User outcome                                             | Ownership                                                                    |
+| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Scope selection | Choose accounts, positions and reporting periods         | `features/scope-selection`; common filter state in portfolio shared stores   |
+| Overview        | Compare portfolio value and its main change drivers      | `features/overview`                                                          |
+| Wealth          | Understand wealth, contributions, cash flow and savings  | `features/wealth`                                                            |
+| Performance     | Evaluate returns, passive income and asset contributions | `features/performance`                                                       |
+| Diversification | Inspect allocations and concentration                    | Peer `allocation` and `concentration` children of `features/diversification` |
+| Holdings        | Inspect held positions and underlying fund exposures     | Peer `positions` and `fund-look-through` children of `features/holdings`     |
+| Data quality    | Assess reliability and inspect source anomalies          | Peer `assessment` and `errors` children of `features/data-quality`           |
+
+Common source queries, schemas and portfolio contracts live in portfolio `shared/`
+because the shell distributes them to several capabilities. Child calculations and
+interaction stores stay with their feature. Global `src/shared/` contains generic
+infrastructure and UI without portfolio vocabulary. ESLint enforces these import
+directions and the two-level feature limit.
 
 ## Development
 
@@ -59,6 +75,8 @@ and [warning budget rule](../../.agents/skills/generic-react-best-practices/rule
 `npm test` limits concurrency to four workers because the typed ESLint suites
 each load a TypeScript project. This bounds memory use and avoids startup
 timeouts caused by running too many of those projects simultaneously.
+
+Application code, tests and Storybook are checked with TypeScript's strict mode.
 
 The lint also follows dependent component calculations and boolean formatter
 guards, rejects context dependencies passed to helpers, checks numeric conditions,
@@ -175,12 +193,27 @@ DOM measurements and effects in those folders.
 `local/shared-feature-usage` reports exclusive ownership and unused shared code as
 errors. `local/review-shared-feature-sharing` separately requests review when static
 imports cannot prove sharing through application props. Reviewed line-scoped
-exceptions retain their capability evidence in [the ownership audit](SHARED_OWNERSHIP_AUDIT.md).
+exceptions record their actual capability consumers in the dated directives.
 
-The styling migration has no remaining `local/no-domain-styling` diagnostics; see
-[the audit](STYLING_AUDIT.md) for its scope and validation. Existing global theme
+The styling migration has no remaining `local/no-domain-styling` diagnostics.
+Existing global theme
 compatibility overrides remain infrastructure; new code should use the shared
 primitives and semantic tokens.
+
+Compound UI shares visual inputs through module-level Jotai atoms scoped to each
+instance with [`jotai-scope`](https://jotai.org/docs/extensions/scope). Controlled
+inputs initialize a fresh scope when they change, preserving child identity and
+focus without mutating the committed store during render or synchronizing copied
+state in an effect. Other atoms inherit the parent store, so nested overlays retain
+the caller's filters. `local/no-react-context` rejects authored React Contexts,
+including in shared UI. Shared UI views may import their own visual services and
+stores; business stores and server-state dependencies remain forbidden.
+
+Contribution horizons, concentration playback and position previews have
+feature-owned atoms with instance lifetimes. Playback timers and reduced-motion
+subscriptions have dedicated hooks. Value-to-text formatters accept `null` and
+`undefined`, expose a configurable fallback and retain the established display
+for present values, including zero.
 
 ## Run locally via pipx
 

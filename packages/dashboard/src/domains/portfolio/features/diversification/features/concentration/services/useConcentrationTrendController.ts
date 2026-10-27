@@ -1,29 +1,28 @@
-import {
-  useCallback,
-  useEffect,
-  useEffectEvent,
-  useMemo,
-  useState,
-} from 'react'
+import { useAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
 
 import { buildConcentrationChartRows } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/buildConcentrationChartRows'
-import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
 import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/concentrationPlayback/shouldAnimateConcentration'
+import { concentrationTrendDateAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendDateAtom'
+import { concentrationTrendHoveredIndexAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendHoveredIndexAtom'
+import { concentrationTrendModeAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendModeAtom'
+import { concentrationTrendPlayingAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendPlayingAtom'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildConcentrationTrend.types'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
+import { usePrefersReducedMotion } from '@/shared/ui/services/usePrefersReducedMotion'
+
+import { useConcentrationPlayback } from './useConcentrationPlayback'
 
 export function useConcentrationTrendController(
   heldPoints: HistoricalConcentrationPoint[],
   lookThroughPoints: HistoricalConcentrationPoint[],
   lookThroughAvailable: boolean,
 ) {
-  const [preferredMode, setMode] = useState<ConcentrationMode>('held')
-  const [selectedDate, setSelectedDate] = useState(
-    () => heldPoints.at(-1)?.date ?? null,
-  )
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(
-    null,
+  const [preferredMode, setMode] = useAtom(concentrationTrendModeAtom)
+  const [selectedDate, setSelectedDate] = useAtom(concentrationTrendDateAtom)
+  const [isPlaying, setIsPlaying] = useAtom(concentrationTrendPlayingAtom)
+  const [hoveredPointIndex, setHoveredPointIndex] = useAtom(
+    concentrationTrendHoveredIndexAtom,
   )
   const prefersReducedMotion = usePrefersReducedMotion()
   const animationEnabled = shouldAnimateConcentration(prefersReducedMotion)
@@ -39,17 +38,7 @@ export function useConcentrationTrendController(
   const selectedIndex =
     exactIndex >= 0 ? exactIndex : Math.max(0, points.length - 1)
 
-  const advancePlayback = useEffectEvent(() => {
-    const next = nextPlaybackIndex(selectedIndex, points.length)
-    setSelectedDate(points[next.index]?.date ?? null)
-    if (next.complete) setIsPlaying(false)
-  })
-
-  useEffect(() => {
-    if (!isPlaying || points.length < 2) return
-    const interval = window.setInterval(advancePlayback, 500)
-    return () => window.clearInterval(interval)
-  }, [isPlaying, points.length])
+  useConcentrationPlayback(points, selectedIndex)
 
   const changeMode = useCallback(
     (nextMode: ConcentrationMode) => {
@@ -66,7 +55,16 @@ export function useConcentrationTrendController(
         setSelectedDate(nextPoints.at(-1)?.date ?? null)
       }
     },
-    [heldPoints, lookThroughAvailable, lookThroughPoints, selectedDate],
+    [
+      heldPoints,
+      lookThroughAvailable,
+      lookThroughPoints,
+      selectedDate,
+      setIsPlaying,
+      setHoveredPointIndex,
+      setMode,
+      setSelectedDate,
+    ],
   )
 
   const togglePlayback = useCallback(() => {
@@ -78,7 +76,14 @@ export function useConcentrationTrendController(
     if (selectedIndex >= points.length - 1) setSelectedDate(points[0].date)
     setHoveredPointIndex(null)
     setIsPlaying(true)
-  }, [isPlaying, points, selectedIndex])
+  }, [
+    isPlaying,
+    points,
+    selectedIndex,
+    setIsPlaying,
+    setSelectedDate,
+    setHoveredPointIndex,
+  ])
 
   const selectPoint = useCallback(
     (index: number) => {
@@ -88,7 +93,7 @@ export function useConcentrationTrendController(
       const safeIndex = Math.max(0, Math.min(index, points.length - 1))
       setSelectedDate(points[safeIndex].date)
     },
-    [points],
+    [points, setIsPlaying, setHoveredPointIndex, setSelectedDate],
   )
 
   const selectHoveredPoint = useCallback(
@@ -104,7 +109,7 @@ export function useConcentrationTrendController(
       setIsPlaying(false)
       setHoveredPointIndex(pointIndex)
     },
-    [points],
+    [points, setIsPlaying, setHoveredPointIndex],
   )
 
   const selectedPoint = points[selectedIndex]
@@ -163,15 +168,3 @@ export function useConcentrationTrendController(
 }
 
 export type { ConcentrationChartRow } from '@/domains/portfolio/features/diversification/features/concentration/helpers/presenters/buildConcentrationChartRows'
-
-function usePrefersReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setPrefersReducedMotion(media.matches)
-    update()
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [])
-  return prefersReducedMotion
-}

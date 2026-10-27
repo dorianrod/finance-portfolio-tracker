@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table'
 
 import { PositionBreakdownCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature'
-import { PositionExpanderCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionExpanderCell.feature'
+import { PositionExpanderCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionExpanderCell.view'
 import { PositionIncomeCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature'
 import { PositionIrrCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIrrCell.feature'
 import { PositionNameCell } from '@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionNameCell.feature'
