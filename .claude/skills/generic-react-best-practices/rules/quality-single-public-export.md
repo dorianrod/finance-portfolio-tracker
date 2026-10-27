@@ -10,6 +10,8 @@ tags: exports, modules, components, helpers
 
 Give each public component, function, hook or constant a named file. When splitting related components or utilities, group them by theme within their existing owner and helper category; do not introduce a new business feature just to hold the files. Import files directly instead of recreating a multi-export barrel.
 
+For application modules, import the defining file directly; `arch-stores-no-index` adds the state-folder restriction. For dependencies, use documented, typed public exports or supported subpaths. Avoid private `dist/` imports just to bypass a package barrel. Check the actual bundler output before claiming a loading benefit; package structure and tree-shaking differ.
+
 ### Applies When
 
 - A production module exports several values, whether with declarations, a default export, an export list or named reexports.

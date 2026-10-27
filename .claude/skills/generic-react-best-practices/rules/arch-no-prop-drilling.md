@@ -36,7 +36,7 @@ function OrdersPageBody(props: OrdersPageBodyProps) {
 }
 ```
 
-Creating a `OrdersPageContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
+Creating an `OrdersPageContext` and consuming it with `useContext` or `use(context)` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
 
 **Correct (atoms own values; focused hooks own actions; consumers subscribe where needed):**
 
@@ -84,7 +84,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - A prop is forwarded unchanged through one or more components that do not use it.
 - A feature calculates, formats, combines or constructs a value from its props only to pass it to another feature. This includes calls, operations, conditions, templates, objects and arrays, even through aliases or destructuring. Passing the same expression to a view is expected.
 - A component accepts both a state value and its setter only to pass them farther down the tree.
-- A new `createContext` or `useContext` exists primarily to avoid passing client UI state through props.
+- A new `createContext`, `useContext` or `use(context)` exists primarily to avoid passing client UI state through props.
 
 ### Summary
 
@@ -94,6 +94,6 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - Expose writes through small responsibility-specific hooks using `useSetAtom`; use `useAtom` only when one consumer genuinely reads and writes.
 - Keep explicit props for a direct parent-child API. The smell is an intermediary that forwards props it does not use.
 - Pass display-ready values to views. Pass raw inputs to features unless orchestration ownership makes a narrowly documented exception necessary.
-- Do not create application React Contexts for state sharing. Third-party providers required by a library are outside this rule.
+- Do not create application React Contexts for state sharing, including inside project-owned compound UI components. Third-party providers and their consuming hooks required by a library remain outside this rule.
 
-See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
+See also: `quality-usecallback-for-functions`

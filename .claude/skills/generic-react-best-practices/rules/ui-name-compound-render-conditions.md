@@ -13,6 +13,8 @@ Give every compound condition that controls whether a JSX subtree appears an int
 
 Simple flags and single comparisons do not require extraction. Conditions used only to choose a class, attribute or text value are also outside this rule.
 
+For JSX gating, use a real boolean or an explicit ternary with `null`. A numeric left operand such as `{items.length && <Items />}` can render `0`; prefer `{items.length > 0 ? <Items /> : null}`. Boolean `&&` conditions remain valid and do not require a blanket rewrite.
+
 **Incorrect (the reader must decode the display decision inside JSX):**
 
 ```tsx
@@ -31,4 +33,4 @@ return shouldShowOrderTotal ? <OrderTotal value={order.total} /> : null
 
 Do not store the boolean in state or wrap a cheap condition in `useMemo`. Prefer a local name unless extracting a pure business predicate creates a meaningful reusable or testable boundary.
 
-See also: `helpers-business-rules-pure`; `vercel-react-best-practices` → `rendering-conditional-render`, `rerender-simple-expression-in-memo`
+See also: `helpers-business-rules-pure`, `quality-usecallback-for-functions`

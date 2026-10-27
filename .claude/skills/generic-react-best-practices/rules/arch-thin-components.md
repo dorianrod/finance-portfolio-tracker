@@ -60,7 +60,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 }
 ```
 
-See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`, `state-derived-atoms`
 
 ### Compound Derivations
 

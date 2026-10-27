@@ -43,4 +43,4 @@ const showPaymentApprovers = arePaymentApproversProvided(data.payment, paymentAp
 
 Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/businessRules/`; anything that really needs a hook is a formatter, a mapper or a service instead.
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`
+See also: `state-derived-atoms`

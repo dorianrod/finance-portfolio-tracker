@@ -39,6 +39,8 @@ The same boundary covers SVG/Recharts appearance props, local stylesheet imports
 
 Global stylesheets, themes and token definitions remain design-system infrastructure. Shared UI consumes semantic tokens; domains supply data, actions and generic variants. Dynamic layout styles may remain on external containers. Chart geometry is data supplied to the owning UI primitive. Follow `ui-semantic-colors` for tokens and `arch-shared-no-domain-knowledge` for business adapters.
 
+When a shared primitive genuinely needs DOM measurements and imperative layout updates, group reads and writes rather than alternating them in a loop and forcing repeated layout. Prefer declarative variants where possible. Pure presenters receive measurements as inputs and never measure or mutate nodes themselves (`arch-thin-components`).
+
 ### ESLint Enforcement
 
 Use the custom ESLint rule `local/no-domain-styling` to distinguish concrete appearance violations (`nonLayoutClass`, `nonLayoutStyle`), values that require inspection (`unverifiableStyle`) and local stylesheets outside permitted roots (`outsideStylesheet`). Aggregate offending classes or properties for each usage and include this catalog rule's identifier. Inspect unresolved values before deciding whether layout can stay local. Selecting or designing a primitive requires review; do not autofix or suppress diagnostics merely to finish a migration.

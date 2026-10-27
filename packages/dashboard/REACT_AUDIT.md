@@ -1,6 +1,6 @@
 # React audit — 2026-10-24
 
-Scope: the dashboard's React/TypeScript application, its six main sections, shared data access, schemas, stores, chart rendering, dialogs, translations and ESLint rules. References: `generic-react-best-practices`, `vercel-react-best-practices` and the project's semantic-color rules.
+Scope: the dashboard's React/TypeScript application, its six main sections, shared data access, schemas, stores, chart rendering, dialogs, translations and ESLint rules. Current reference: `generic-react-best-practices`, which consolidates the React, performance and semantic-color conventions.
 
 ## Corrected findings
 

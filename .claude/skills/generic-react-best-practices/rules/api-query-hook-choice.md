@@ -50,4 +50,4 @@ const { data: cities = [], isPlaceholderData } = useGetCityOptionsQuery(countryC
 - `useQuery` does not throw: render its `error` yourself, and do not present placeholder data as the new key's result while `isPlaceholderData`.
 - Use `useInfiniteQuery` with `getNextPageParam` for lists loaded by scroll or "load more" instead of page-number state.
 
-See also: `vercel-react-best-practices` → `async-parallel`
+See also: `api-vercel-parallel-work`

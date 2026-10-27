@@ -45,7 +45,7 @@ function Button({ label, ...props }: ButtonProps) {
 - Caller-authored children must not inject layout classes or styles, including padding, margins, gap, flex/grid or dimensions. `<Button><span className="px-3 py-2">Save</span></Button>` still bypasses spacing standards. Use the button's closed size variants and supply its content directly.
 - This boundary also applies to surfaces, cards, dialogs and slots, extracted child components, JSX variables, fragments, spreads and React factories. Compose complex content with shared UI structure primitives and closed spacing tokens.
 - Do not expose equivalent escape hatches such as free-form padding, body classes or inline layout styles. Ancestor selectors must not restyle UI descendants.
-- Shared UI implementations own their native classes. Context-only providers without a visual box do not create an internal layout boundary.
+- Shared UI implementations own their native classes. Third-party library providers without a visual box do not create an internal layout boundary.
 - Preserve compound slot discovery: never insert a layout wrapper between a compound component and its direct slots. External layout wraps the whole component; content slots compose standardized shared UI. Follow `ui-compound-slots-direct-children`.
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
 

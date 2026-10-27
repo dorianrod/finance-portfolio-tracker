@@ -14,6 +14,7 @@ Persist client state only through `atomWithStorage<T>(key, default, storage?, op
 - Export the key as a constant when anything else needs it (tests, cleanup). A single-use inline key is acceptable.
 - Pass `{ getOnInit: true }` when the stored value drives the first render; otherwise the default renders first, then the subtree re-renders with the stored value.
 - When the stored value is not a plain primitive, give a custom storage whose `getItem` validates the parsed value and falls back to the default: a stale or hand-edited entry must never throw at boot. Change the key (or version the value) when its shape changes.
+- Store only the fields needed across reloads, and version the key or payload. Validate and migrate known earlier shapes, or deliberately discard them. Handle unavailable storage and failed reads/writes/removals in the adapter; keep usable in-memory state when persistence is unavailable.
 
 **Incorrect (manual sync, generic key, unchecked parse):**
 
@@ -30,7 +31,7 @@ useEffect(() => localStorage.setItem('columns', JSON.stringify([...pinned])), [p
 
 ```ts
 // src/domains/sales/orders/features/list/stores/pinnedColumns.store.ts
-export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns'
+export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns:v1'
 
 export const pinnedColumnsAtom = atomWithStorage<Set<string>>(
   PINNED_COLUMNS_STORAGE_KEY,
@@ -44,13 +45,23 @@ export const pinnedColumnsAtom = atomWithStorage<Set<string>>(
         return initialValue
       }
     },
-    setItem: (key, value) => localStorage.setItem(key, JSON.stringify([...value])),
-    removeItem: key => localStorage.removeItem(key),
+    setItem: (key, value) => {
+      try {
+        localStorage.setItem(key, JSON.stringify([...value]))
+      } catch {
+        // The atom remains usable when persistence is unavailable.
+      }
+    },
+    removeItem: key => {
+      try {
+        localStorage.removeItem(key)
+      } catch {
+        // Storage may be unavailable even when the in-memory reset succeeds.
+      }
+    },
   },
   { getOnInit: true },
 )
 ```
 
-Persist UI preferences and session data only; never persist server data (see `state-server-state-in-react-query`).
-
-See also: `vercel-react-best-practices` → `client-localstorage-schema`
+Persist minimal UI preferences and non-sensitive client settings; keep credentials and server entities outside this storage (see `state-server-state-in-react-query`). Use the atom/storage adapter as the owner instead of adding a second global cache of storage reads.

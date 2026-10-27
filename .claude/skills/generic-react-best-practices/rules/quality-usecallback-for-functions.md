@@ -85,4 +85,6 @@ Keep separate memos when computations have independently changing inputs and mer
 
 Choose memo boundaries by invalidation and consumer needs, rather than imposing one memo per hook or one memo per field. Use profiling to decide uncertain performance tradeoffs; memo count alone does not establish a speedup.
 
-See also: `vercel-react-best-practices` → `rerender-memo`, `rerender-simple-expression-in-memo`, `rerender-split-combined-hooks`
+Skip `useMemo` for cheap primitive expressions. Extract a costly rendered region behind its own component boundary when this lets a loading/visibility branch avoid the work entirely; add manual `memo` only when unchanged props and measured render cost justify it. Keep calculations in their owning helpers and preserve `arch-component-roles`.
+
+When a default array or object becomes an effect dependency or a memoized child's prop, use an immutable shared default if reference stability matters. Do not share mutable per-instance state through that constant. Avoid caching every field, global unbounded result maps or JSX variables solely to make a memo count smaller. With React Compiler, review the compiler's coverage before adding manual caches; neither compiler optimization nor memoization replaces correct state and effect semantics.

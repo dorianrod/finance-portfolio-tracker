@@ -2,12 +2,11 @@
 name: generic-react-best-practices
 description: >
   Opinionated React/TypeScript rules for any front-end app (React 19, TanStack Query v5, Jotai, Yup,
-  react-i18next, Radix, Jest + React Testing Library). The author's own take on best practices, a delta on
-  top of vercel-react-best-practices. Use it whenever you write, review, refactor or audit React code:
+  react-i18next, Radix, Jest + React Testing Library). Use it whenever you write, review, refactor or audit React code:
   domain-first architecture and import boundaries, API query/mutation hooks, query keys and cache
   invalidation, domain types, Yup schemas and form validation, UI composition and accessibility, Jotai
-  stores, helpers and formatters, i18n, tests and code quality. Apply it alongside
-  vercel-react-best-practices, vercel-composition-patterns and tailwind-design-system on relevant React tasks.
+  stores, helpers and formatters, i18n, tests, rendering performance and code quality. Apply it alongside
+  tailwind-design-system on relevant React tasks.
   Also use for ESLint exception audits and warning budgets.
 license: Internal
 metadata:
@@ -17,11 +16,11 @@ metadata:
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 100 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 109 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
-This skill defines our reusable React conventions. Apply it together with `vercel-react-best-practices` for React and performance guidance, `vercel-composition-patterns` for component architecture and `tailwind-design-system` for design-system implementation. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references.
+This skill defines our reusable React conventions, component composition and client-side performance guidance. Apply it together with `tailwind-design-system` for design-system implementation. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references. Framework-specific server rendering and API-route conventions are outside this catalog.
 
-**Priority:** When this catalog conflicts with `vercel-react-best-practices` or `vercel-composition-patterns`, follow this catalog's applicable rule. Apply both Vercel skills wherever their guidance is compatible.
+**Priority:** When this catalog conflicts with a companion skill, follow this catalog's applicable rule.
 
 Generic means reusable across applications adopting this stack and its conventions. The rules may define shared UI contracts, custom ESLint checks, review thresholds and warning-budget policies. Keep their expected behavior, applicability and analysis limits in the owning rule. Application-specific names, paths and implementation status belong in the consuming application's documentation.
 
@@ -100,6 +99,7 @@ Examples isolate their rule rather than serve as complete application templates.
 - `api-suspense-error-boundary` - Pair Every Suspense Query With an Error Boundary and Handle 404 Separately
 - `api-query-hook-choice` - Pick the TanStack Query Hook by Access Pattern
 - `api-return-result-as-is` - Return the TanStack Result As-Is From API Hooks
+- `api-vercel-parallel-work` - Schedule Independent Async Work Concurrently
 - `api-typed-entity-generic` - Type API Hooks With the Domain Entity and Let the Return Type Infer
 - `api-optimistic-update` - Use Optimistic Updates Only Where Latency Is Visible, With Rollback
 - `api-void-mutation` - Use TData = void for Body-less or Response-less Mutations
@@ -148,12 +148,16 @@ Examples isolate their rule rather than serve as complete application templates.
 - `ui-semantic-colors` - Keep Colors Semantic Behind Shared UI
 - `ui-compound-slots-direct-children` - Keep Compound Component Slots as Direct, Renderable Children
 - `ui-dialog-controlled` - Keep Dialog Mounted and Drive It with a Boolean open
+- `ui-vercel-lazy-loading` - Lazy Load Heavy Optional UI
 - `ui-name-compound-render-conditions` - Name Compound Render Conditions by Intent
 - `ui-no-nested-form` - Never Nest a form Inside a form
 - `ui-required-children` - Require Composition Through Nested Children
 - `ui-form-wraps-dialog` - Wrap the Whole Dialog in a Form Keyed on the Open Target
+- `ui-vercel-offscreen-content` - Defer Offscreen Rendering in Shared UI
 - `ui-no-adhoc-styling` - Style with Design System Components, Utility Classes Only for Layout
 - `ui-accessible-names` - Give Icon-Only Buttons and Custom Controls an Accessible Name
+- `ui-vercel-responsive-rendering` - Keep Inputs Responsive During Expensive Renders
+- `ui-vercel-explicit-variants` - Prefer Explicit Component Variants Over Mode Flags
 
 ### 8. Jotai Client State (MEDIUM-HIGH)
 
@@ -164,6 +168,7 @@ Examples isolate their rule rather than serve as complete application templates.
 - `state-derived-atoms` - Derive Atoms Instead of Storing Duplicates
 - `state-atom-with-storage` - Persist Atoms with atomWithStorage and a Unique Key
 - `state-explicit-types-defaults` - Type Atoms Explicitly with DEFAULT_* Constants
+- `state-vercel-functional-updates` - Update Client State From Its Previous Value
 - `state-atom-naming` - Prefix Atoms with Their Entity
 - `state-hook-variants` - Pick useAtomValue, useSetAtom or useAtom by Need
 
@@ -172,7 +177,9 @@ Examples isolate their rule rather than serve as complete application templates.
 - `helpers-formatter-hooks` - Format Entities Through Formatter Hooks, Never Inline
 - `helpers-business-rules-pure` - Keep Business Rules as Pure, Intent-Named Predicates
 - `helpers-no-context-params` - Never Pass t, navigate or Stores to a Helper
+- `helpers-vercel-immutable-collections` - Preserve Collection Inputs When Transforming
 - `helpers-categories` - Sort Every Helper Into One of a Fixed Set of Categories
+- `helpers-vercel-indexed-lookups` - Index Collections for Repeated Lookups
 
 Every formatter, including dates and entity labels, accepts `null` and `undefined` and owns a configurable display fallback. Pass values directly to it instead of adding missing-value guards in consumers (see `helpers-formatter-hooks`).
 
@@ -202,33 +209,11 @@ Every formatter, including dates and entity labels, accepts `null` and `undefine
 - `quality-no-hook-factory` - Never Build Hooks from Hooks (No createUseXxx Factories)
 - `quality-no-noop-link` - No Clickable No-Op Links or Actions
 - `quality-public-api-first` - Place the Public API First
+- `quality-vercel-ref-as-prop` - Prefer ref as a Prop in React 19
 - `quality-usecallback-for-functions` - useMemo for Data, useCallback for Functions
 - `quality-english-only` - Write Code, Comments and Tests in English
 - `quality-jsdoc-minimal` - Keep JSDoc for Non-Obvious Intent Only
 - `quality-no-nested-ternary` - No Chained or Negated Ternaries
-
-## Delegated to vercel-react-best-practices
-
-These topics are generic React advice. Apply the Vercel rule instead of looking for a rule here:
-
-| Topic | Vercel rule |
-|-------|-------------|
-| Barrel imports in general (`arch-stores-no-index` only adds the circular-dependency rule for state folders) | `bundle-barrel-imports` |
-| `Promise.all` for independent mutations in a page action | `async-parallel` |
-| Sorting without mutating the source array | `js-tosorted-immutable` |
-| Updating state from its previous value (stale closures, stable callbacks) | `rerender-functional-setstate` |
-| Derive values during render instead of syncing with effects | `rerender-derived-state-no-effect` |
-| User-triggered logic in event handlers, not effects | `rerender-move-effect-to-event` |
-| Memoizing expensive subtrees and avoiding trivial `useMemo` | `rerender-memo`, `rerender-simple-expression-in-memo` |
-| Ternary vs `&&` in JSX | `rendering-conditional-render` |
-| No component defined inside another component | `rerender-no-inline-components` |
-| Versioning data persisted in `localStorage` | `client-localstorage-schema` |
-
-### Arbitrations on Vercel rules
-
-- **React Compiler**: when it is not enabled, manually memoize returned functions and object/array values when callers rely on their reference stability (`quality-usecallback-for-functions`). This does not require a memo per field or a stable return wrapper when callers only consume its fields. Build a cohesive result inside one `useMemo`; retain separate caches for independently changing expensive calculations or exposed references (`rerender-split-combined-hooks`).
-- **Client-side SPA with TanStack Query**: `client-swr-dedup` (use the query hooks instead), all `server-*` rules, `async-api-routes`, `rendering-hydration-no-flicker`, `rendering-hydration-suppress-warning` and `rendering-script-defer-async` do not apply.
-- **Suspense boundaries** (`async-suspense-boundaries`) apply, always together with an error boundary (`api-suspense-error-boundary`) and never between a compound component and its content slot (`ui-compound-slots-direct-children`).
 
 ## How to Use
 

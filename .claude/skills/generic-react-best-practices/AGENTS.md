@@ -10,13 +10,13 @@ October 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
-> generating, or refactoring React code. Apply it alongside `vercel-react-best-practices`, `vercel-composition-patterns`, `tailwind-design-system` and other relevant skills. This catalog takes precedence over both Vercel skills when their guidance conflicts. Reusable conventions and associated custom ESLint rules belong in the rule files.
+> generating, or refactoring React code. Apply it alongside `tailwind-design-system` and other relevant skills. This catalog owns architecture, composition, client-side performance and custom ESLint requirements, and takes precedence over conflicting companion guidance.
 
 ---
 
 ## Abstract
 
-Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStack Query v5, Jotai, Yup, react-i18next, Jest + React Testing Library), designed for AI agents and LLMs. It is the author's own take on a best-practices guide, complementary to vercel-react-best-practices: domain-first architecture and import boundaries, API hooks and server state, query keys and cache invalidation, domain types, Yup schemas, UI composition and accessibility, Jotai client state, helpers, i18n, testing and code quality. Each rule includes a rationale and incorrect vs. correct examples using generic business vocabulary. The catalog also owns capability mapping, feature hierarchy, shared UI styling and accessibility boundaries, semantic colors, nested-children composition, component complexity review and public API maintenance.
+Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStack Query v5, Jotai, Yup, react-i18next, Jest + React Testing Library), designed for AI agents and LLMs. The catalog covers domain-first architecture and import boundaries, API hooks and server state, query keys and cache invalidation, domain types, Yup schemas, UI composition and accessibility, Jotai client state, helpers, i18n, testing, code quality and client-side performance. Each rule includes a rationale and incorrect vs. correct examples using generic business vocabulary. The catalog also owns capability mapping, feature hierarchy, shared UI styling and accessibility boundaries, semantic colors, nested-children composition, component complexity review and public API maintenance.
 
 ---
 
@@ -50,11 +50,12 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 2.6 [Pair Every Suspense Query With an Error Boundary and Handle 404 Separately](#26-pair-every-suspense-query-with-an-error-boundary-and-handle-404-separately)
    - 2.7 [Pick the TanStack Query Hook by Access Pattern](#27-pick-the-tanstack-query-hook-by-access-pattern)
    - 2.8 [Return the TanStack Result As-Is From API Hooks](#28-return-the-tanstack-result-as-is-from-api-hooks)
-   - 2.9 [Type API Hooks With the Domain Entity and Let the Return Type Infer](#29-type-api-hooks-with-the-domain-entity-and-let-the-return-type-infer)
-   - 2.10 [Use Optimistic Updates Only Where Latency Is Visible, With Rollback](#210-use-optimistic-updates-only-where-latency-is-visible-with-rollback)
-   - 2.11 [Use TData = void for Body-less or Response-less Mutations](#211-use-tdata--void-for-body-less-or-response-less-mutations)
-   - 2.12 [Destructure Query Data With a Business Name](#212-destructure-query-data-with-a-business-name)
-   - 2.13 [Name API Hooks After the Endpoint Intent](#213-name-api-hooks-after-the-endpoint-intent)
+   - 2.9 [Schedule Independent Async Work Concurrently](#29-schedule-independent-async-work-concurrently)
+   - 2.10 [Type API Hooks With the Domain Entity and Let the Return Type Infer](#210-type-api-hooks-with-the-domain-entity-and-let-the-return-type-infer)
+   - 2.11 [Use Optimistic Updates Only Where Latency Is Visible, With Rollback](#211-use-optimistic-updates-only-where-latency-is-visible-with-rollback)
+   - 2.12 [Use TData = void for Body-less or Response-less Mutations](#212-use-tdata--void-for-body-less-or-response-less-mutations)
+   - 2.13 [Destructure Query Data With a Business Name](#213-destructure-query-data-with-a-business-name)
+   - 2.14 [Name API Hooks After the Endpoint Intent](#214-name-api-hooks-after-the-endpoint-intent)
 3. [Security](#3-security) — **CRITICAL**
    - 3.1 [Clear the Query Cache on Logout](#31-clear-the-query-cache-on-logout)
    - 3.2 [Open External Links with noopener and noreferrer](#32-open-external-links-with-noopener-and-noreferrer)
@@ -88,12 +89,16 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 7.4 [Keep Colors Semantic Behind Shared UI](#74-keep-colors-semantic-behind-shared-ui)
    - 7.5 [Keep Compound Component Slots as Direct, Renderable Children](#75-keep-compound-component-slots-as-direct-renderable-children)
    - 7.6 [Keep Dialog Mounted and Drive It with a Boolean open](#76-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
-   - 7.7 [Name Compound Render Conditions by Intent](#77-name-compound-render-conditions-by-intent)
-   - 7.8 [Never Nest a form Inside a form](#78-never-nest-a-form-inside-a-form)
-   - 7.9 [Require Composition Through Nested Children](#79-require-composition-through-nested-children)
-   - 7.10 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#710-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
-   - 7.11 [Style with Design System Components, Utility Classes Only for Layout](#711-style-with-design-system-components-utility-classes-only-for-layout)
-   - 7.12 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#712-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.7 [Lazy Load Heavy Optional UI](#77-lazy-load-heavy-optional-ui)
+   - 7.8 [Name Compound Render Conditions by Intent](#78-name-compound-render-conditions-by-intent)
+   - 7.9 [Never Nest a form Inside a form](#79-never-nest-a-form-inside-a-form)
+   - 7.10 [Require Composition Through Nested Children](#710-require-composition-through-nested-children)
+   - 7.11 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#711-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
+   - 7.12 [Defer Offscreen Rendering in Shared UI](#712-defer-offscreen-rendering-in-shared-ui)
+   - 7.13 [Style with Design System Components, Utility Classes Only for Layout](#713-style-with-design-system-components-utility-classes-only-for-layout)
+   - 7.14 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#714-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.15 [Keep Inputs Responsive During Expensive Renders](#715-keep-inputs-responsive-during-expensive-renders)
+   - 7.16 [Prefer Explicit Component Variants Over Mode Flags](#716-prefer-explicit-component-variants-over-mode-flags)
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
@@ -102,13 +107,16 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 8.5 [Derive Atoms Instead of Storing Duplicates](#85-derive-atoms-instead-of-storing-duplicates)
    - 8.6 [Persist Atoms with atomWithStorage and a Unique Key](#86-persist-atoms-with-atomwithstorage-and-a-unique-key)
    - 8.7 [Type Atoms Explicitly with DEFAULT_* Constants](#87-type-atoms-explicitly-with-default-constants)
-   - 8.8 [Prefix Atoms with Their Entity](#88-prefix-atoms-with-their-entity)
-   - 8.9 [Pick useAtomValue, useSetAtom or useAtom by Need](#89-pick-useatomvalue-usesetatom-or-useatom-by-need)
+   - 8.8 [Update Client State From Its Previous Value](#88-update-client-state-from-its-previous-value)
+   - 8.9 [Prefix Atoms with Their Entity](#89-prefix-atoms-with-their-entity)
+   - 8.10 [Pick useAtomValue, useSetAtom or useAtom by Need](#810-pick-useatomvalue-usesetatom-or-useatom-by-need)
 9. [Helpers](#9-helpers) — **MEDIUM-HIGH**
    - 9.1 [Format Entities Through Formatter Hooks, Never Inline](#91-format-entities-through-formatter-hooks-never-inline)
    - 9.2 [Keep Business Rules as Pure, Intent-Named Predicates](#92-keep-business-rules-as-pure-intent-named-predicates)
    - 9.3 [Never Pass t, navigate or Stores to a Helper](#93-never-pass-t-navigate-or-stores-to-a-helper)
-   - 9.4 [Sort Every Helper Into One of a Fixed Set of Categories](#94-sort-every-helper-into-one-of-a-fixed-set-of-categories)
+   - 9.4 [Preserve Collection Inputs When Transforming](#94-preserve-collection-inputs-when-transforming)
+   - 9.5 [Sort Every Helper Into One of a Fixed Set of Categories](#95-sort-every-helper-into-one-of-a-fixed-set-of-categories)
+   - 9.6 [Index Collections for Repeated Lookups](#96-index-collections-for-repeated-lookups)
 10. [Internationalization](#10-internationalization) — **MEDIUM**
    - 10.1 [Inject Dynamic Values Through t() Options, Never Concatenation](#101-inject-dynamic-values-through-t-options-never-concatenation)
    - 10.2 [Never Use defaultValue in t()](#102-never-use-defaultvalue-in-t)
@@ -130,10 +138,11 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 12.5 [Never Build Hooks from Hooks (No createUseXxx Factories)](#125-never-build-hooks-from-hooks-no-createusexxx-factories)
    - 12.6 [No Clickable No-Op Links or Actions](#126-no-clickable-no-op-links-or-actions)
    - 12.7 [Place the Public API First](#127-place-the-public-api-first)
-   - 12.8 [useMemo for Data, useCallback for Functions](#128-usememo-for-data-usecallback-for-functions)
-   - 12.9 [Write Code, Comments and Tests in English](#129-write-code-comments-and-tests-in-english)
-   - 12.10 [Keep JSDoc for Non-Obvious Intent Only](#1210-keep-jsdoc-for-non-obvious-intent-only)
-   - 12.11 [No Chained or Negated Ternaries](#1211-no-chained-or-negated-ternaries)
+   - 12.8 [Prefer ref as a Prop in React 19](#128-prefer-ref-as-a-prop-in-react-19)
+   - 12.9 [useMemo for Data, useCallback for Functions](#129-usememo-for-data-usecallback-for-functions)
+   - 12.10 [Write Code, Comments and Tests in English](#1210-write-code-comments-and-tests-in-english)
+   - 12.11 [Keep JSDoc for Non-Obvious Intent Only](#1211-keep-jsdoc-for-non-obvious-intent-only)
+   - 12.12 [No Chained or Negated Ternaries](#1212-no-chained-or-negated-ternaries)
 
 ---
 
@@ -548,7 +557,7 @@ function OrdersPageBody(props: OrdersPageBodyProps) {
 }
 ```
 
-Creating a `OrdersPageContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
+Creating an `OrdersPageContext` and consuming it with `useContext` or `use(context)` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
 
 **Correct (atoms own values; focused hooks own actions; consumers subscribe where needed):**
 
@@ -596,7 +605,7 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - A prop is forwarded unchanged through one or more components that do not use it.
 - A feature calculates, formats, combines or constructs a value from its props only to pass it to another feature. This includes calls, operations, conditions, templates, objects and arrays, even through aliases or destructuring. Passing the same expression to a view is expected.
 - A component accepts both a state value and its setter only to pass them farther down the tree.
-- A new `createContext` or `useContext` exists primarily to avoid passing client UI state through props.
+- A new `createContext`, `useContext` or `use(context)` exists primarily to avoid passing client UI state through props.
 
 ### Summary
 
@@ -606,9 +615,9 @@ Combine manual data-flow analysis with the project's lint output. Run the linter
 - Expose writes through small responsibility-specific hooks using `useSetAtom`; use `useAtom` only when one consumer genuinely reads and writes.
 - Keep explicit props for a direct parent-child API. The smell is an intermediary that forwards props it does not use.
 - Pass display-ready values to views. Pass raw inputs to features unless orchestration ownership makes a narrowly documented exception necessary.
-- Do not create application React Contexts for state sharing. Third-party providers required by a library are outside this rule.
+- Do not create application React Contexts for state sharing, including inside project-owned compound UI components. Third-party providers and their consuming hooks required by a library remain outside this rule.
 
-See also: `vercel-react-best-practices` → `rerender-split-combined-hooks`
+See also: `quality-usecallback-for-functions`
 
 ### 1.7 Decompose Hook-Heavy Components by Responsibility
 
@@ -653,7 +662,7 @@ function OrdersWorkspace() {
 
 The lint threshold is diagnostic, not a target for every component. When a component legitimately wires several facets of one cohesive primitive, document the narrow exception instead of inventing an artificial abstraction.
 
-See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
+See also: `arch-thin-components`, `arch-helpers-vs-services`, `quality-usecallback-for-functions`
 
 ### 1.8 Define Boundaries Through Business Capabilities
 
@@ -789,7 +798,23 @@ function OrderPanel({ orderId }: { orderId: string }) {
 
 Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning feature's `services/` when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
-See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+### Reactive Dependencies and Lifecycle
+
+Use the reactive values actually read by synchronization as dependencies. Prefer a specific field such as `order.id` when the effect only needs that field; do not omit a dependency to reduce reruns. Separate independent synchronization responsibilities instead of giving them one combined dependency set. A user-triggered mutation stays in its page action, while a pure derivation is calculated during render or in a derived atom (`state-derived-atoms`). Moving either into a custom effect hook does not make the effect necessary.
+
+When the installed React version provides `useEffectEvent`, use it only for genuinely nonreactive logic invoked by an effect or its subscription. Keep the effect's reactive dependencies; exclude the Effect Event itself from the dependency array and keep it inside its owning hook. Do not use it as a general stable callback, pass it to another component/hook or use it to hide a synchronization dependency.
+
+Pair subscriptions, timers and listeners with cleanup. Share an app-wide subscription through its actual owner rather than installing one listener per unrelated consumer. Use passive touch/wheel listeners only when they never need `preventDefault`. Keep keyboard/focus behavior inside shared UI (`ui-centralize-accessibility`).
+
+Components can remount. Put app-lifetime initialization in the client bootstrap owner and preserve setup/cleanup symmetry for component-lifetime resources. A once-only guard must not prevent a cleaned-up subscription from being re-established. Pure initializers and effects must tolerate development replay.
+
+### ESLint Enforcement
+
+Keep `react-hooks/rules-of-hooks` and `react-hooks/exhaustive-deps` enabled with a version supporting the installed React APIs. Fix the responsibility or dependency mismatch rather than suppressing it. Effect Events supplement dependency tracking; they do not replace it.
+
+See [React Effect Events](https://react.dev/reference/react/useEffectEvent) for their scope and dependency contract.
+
+See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`, `state-derived-atoms`
 
 ### 1.11 Justify Feature Hierarchy Through Business Scope
 
@@ -850,6 +875,8 @@ Use the custom ESLint rule `local/feature-folder-layout` to count feature scopes
 A `.view.tsx`, `.state.tsx` or `.feature.tsx` module declares components, component-local prop or view types, and inert configuration constants; it does not declare module-level custom hooks or lowercase helper functions. Local callbacks and event handlers may stay inside the component only when they adapt an event and delegate to an imported action or service. Extract business orchestration and every module-level callable into a file whose path states its responsibility.
 
 When a component needs supporting files, give it a named directory. Put an effectful or orchestrating hook in `services/`, and put a pure or read-only helper in `helpers/<category>/`. Use one public helper export per file, name the file after that export, and keep supporting functions private. Do not create `*.logic.ts`: the suffix hides whether the module selects, aggregates, calculates, presents or performs effects.
+
+Declare component types, including `lazy` and `memo` wrappers, at module scope or in their own files. A component defined inside another component gets a new type on each render and can remount, losing local state and focus. Pass inputs through the component's legitimate API instead of capturing them in a nested component definition. Ordinary event callbacks are not component definitions.
 
 **Incorrect (a component module mixes rendering, synchronization and visual derivation):**
 
@@ -950,7 +977,7 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 }
 ```
 
-See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`, `state-derived-atoms`
 
 ### Compound Derivations
 
@@ -1065,7 +1092,7 @@ How the page action gives feedback:
 
 Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
 
-See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`
+See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-parallel-work`
 
 ### 1.15 No index.ts in stores/, One File per Concern
 
@@ -1103,7 +1130,7 @@ import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/store
 
 Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
 
-See also: `vercel-react-best-practices` → `bundle-barrel-imports`
+See also: `quality-single-public-export`
 
 ### 1.16 Review Component Complexity Before Splitting
 
@@ -1533,8 +1560,7 @@ export function ProjectDetailPage() {
 
 - `QueryErrorResetBoundary` lets a retry refetch the failed query; `resetKeys` clears a caught error when the route id changes.
 - Wrap an optional, failure-prone sub-fetch (a badge, a history) in its own small boundary that renders a degraded fallback, so a secondary 500 does not take the page down.
-
-See also: `vercel-react-best-practices` → `async-suspense-boundaries`
+- Keep usable navigation and shell UI outside a slow region's boundary, and use a skeleton matching its eventual layout. Coordinate independent reads through `api-query-hook-choice`; do not create new request promises during render as an alternative to domain query hooks.
 
 ### 2.7 Pick the TanStack Query Hook by Access Pattern
 
@@ -1581,7 +1607,7 @@ const { data: cities = [], isPlaceholderData } = useGetCityOptionsQuery(countryC
 - `useQuery` does not throw: render its `error` yourself, and do not present placeholder data as the new key's result while `isPlaceholderData`.
 - Use `useInfiniteQuery` with `getNextPageParam` for lists loaded by scroll or "load more" instead of page-number state.
 
-See also: `vercel-react-best-practices` → `async-parallel`
+See also: `api-vercel-parallel-work`
 
 ### 2.8 Return the TanStack Result As-Is From API Hooks
 
@@ -1627,7 +1653,50 @@ const { mutateAsync: closeOrder, isPending: isClosing } = useCloseOrder(orderId)
 
 Flattening infinite pages into a single `items` array is done by the page-level hook or by `select`, not by renaming the result of the API hook.
 
-### 2.9 Type API Hooks With the Domain Entity and Let the Return Type Infer
+### 2.9 Schedule Independent Async Work Concurrently
+
+**Impact: HIGH (removes avoidable waits while preserving real ordering constraints)**
+
+In page actions and orchestration services, start independent operations together. Check cheap synchronous preconditions before starting work needed only by a conditional branch. Each dependent operation waits for its own prerequisite rather than an unrelated batch.
+
+**Incorrect (independent saves wait for each other):**
+
+```typescript
+// These functions come from the owning domain mutation hooks.
+await saveOrder(orderInput)
+await saveContact(contactInput)
+```
+
+**Correct (independent saves start together):**
+
+```typescript
+await Promise.all([
+  saveOrder(orderInput),
+  saveContact(contactInput),
+])
+```
+
+For partial dependencies, chain the dependent work immediately:
+
+```typescript
+const orderPromise = createOrder(orderInput)
+const attachmentPromise = orderPromise.then(order =>
+  attachDocument({ orderId: order.id, documentId }),
+)
+await Promise.all([orderPromise, attachmentPromise, saveContact(contactInput)])
+```
+
+### Exceptions
+
+- Keep required ordering, rate limits and transaction constraints explicit. `Promise.all` rejects on a failure but does not cancel other operations or make writes atomic. Preserve feedback and partial-failure behavior.
+- Query hooks remain in `apis/`. Use sibling query consumers or `useSuspenseQueries` for independent Suspense reads (`api-query-hook-choice`); never call React hooks inside `Promise.all`.
+- Keep intentionally optional work in the branch that needs it. Concurrency does not justify requests that should never start.
+
+### Sources
+
+Adapted from Vercel's [parallel operations](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/async-parallel.md), [partial dependencies](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/async-dependencies.md) and [deferred awaits](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/async-defer-await.md), without adding an orchestration dependency.
+
+### 2.10 Type API Hooks With the Domain Entity and Let the Return Type Infer
 
 **Impact: HIGH (typed data everywhere without duplicated annotations)**
 
@@ -1664,7 +1733,7 @@ export function useGetProjectDetailQuery(projectId: string) {
 
 Search the domain `types/` folder and `src/shared/` before creating a new type. Raw API shapes, if needed at all, stay private to the hook file (see `types-entity-vs-response` and `types-consume-entity`).
 
-### 2.10 Use Optimistic Updates Only Where Latency Is Visible, With Rollback
+### 2.11 Use Optimistic Updates Only Where Latency Is Visible, With Rollback
 
 **Impact: MEDIUM (instant feedback with automatic rollback, no stale or lost state)**
 
@@ -1713,7 +1782,7 @@ export function useToggleProjectPinned(projectId: string) {
 - `queryKey` must be the exact key used by the read hook, including the params segment (`['projects', params]` for a list).
 - Callers use the `useMutation` result as-is; user feedback stays in the calling action.
 
-### 2.11 Use TData = void for Body-less or Response-less Mutations
+### 2.12 Use TData = void for Body-less or Response-less Mutations
 
 **Impact: MEDIUM (avoids fake schemas and parse failures on empty bodies)**
 
@@ -1754,7 +1823,7 @@ export function useCloseOrder(orderId: string) {
 
 When the endpoint takes a body but returns nothing, still validate the request with Yup and keep `TData = void` (see `api-use-transformation`).
 
-### 2.12 Destructure Query Data With a Business Name
+### 2.13 Destructure Query Data With a Business Name
 
 **Impact: LOW-MEDIUM (self-documenting call sites with several queries)**
 
@@ -1787,7 +1856,7 @@ const { mutateAsync: closeOrder } = useCloseOrder(orderId)
 
 Use the singular for one entity (`order`, `contract`) and the plural for collections (`documents`, `reminders`). Other fields (`isPending`, `refetch`) keep their names.
 
-### 2.13 Name API Hooks After the Endpoint Intent
+### 2.14 Name API Hooks After the Endpoint Intent
 
 **Impact: LOW-MEDIUM (predictable, greppable hook and file names)**
 
@@ -2879,7 +2948,7 @@ function CategoryItem({ activeCategoryId, category, onSelect }: CategoryItemProp
 
 The item component must be declared at module scope, never inside its parent component.
 
-See also: `vercel-react-best-practices` → `rerender-no-inline-components`
+See also: `arch-component-module-boundaries`
 
 ### 7.3 Keep className Out of Shared UI Component APIs
 
@@ -2921,7 +2990,7 @@ function Button({ label, ...props }: ButtonProps) {
 - Caller-authored children must not inject layout classes or styles, including padding, margins, gap, flex/grid or dimensions. `<Button><span className="px-3 py-2">Save</span></Button>` still bypasses spacing standards. Use the button's closed size variants and supply its content directly.
 - This boundary also applies to surfaces, cards, dialogs and slots, extracted child components, JSX variables, fragments, spreads and React factories. Compose complex content with shared UI structure primitives and closed spacing tokens.
 - Do not expose equivalent escape hatches such as free-form padding, body classes or inline layout styles. Ancestor selectors must not restyle UI descendants.
-- Shared UI implementations own their native classes. Context-only providers without a visual box do not create an internal layout boundary.
+- Shared UI implementations own their native classes. Third-party library providers without a visual box do not create an internal layout boundary.
 - Preserve compound slot discovery: never insert a layout wrapper between a compound component and its direct slots. External layout wraps the whole component; content slots compose standardized shared UI. Follow `ui-compound-slots-direct-children`.
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
 
@@ -3163,13 +3232,67 @@ return (
 
 While the exit transition plays, the target may already be `null`: keep the last displayed values (or render stable text) so the content does not flash empty during the close animation.
 
-### 7.7 Name Compound Render Conditions by Intent
+### 7.7 Lazy Load Heavy Optional UI
+
+**Impact: HIGH (keeps optional features out of the initial loading path)**
+
+Load a heavy editor, report or other infrequently used surface when it is needed. Use React `lazy` at module scope with literal import paths, plus loading and error boundaries. Keep initial-screen essentials eager when deferring them would only introduce a waterfall.
+
+**Incorrect (the optional report is imported eagerly):**
+
+```tsx
+import { HeavyReport } from './HeavyReport.feature'
+
+export function ReportPreview({ visible }: { visible: boolean }) {
+  return visible ? <HeavyReport /> : null
+}
+```
+
+**Correct (the report module loads on demand):**
+
+```tsx
+import { lazy, Suspense } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+
+export function ReportPreview({ visible }: { visible: boolean }) {
+  return (
+    <ErrorBoundary fallback={<ReportError />}>
+      <Suspense fallback={<ReportSkeleton />}>
+        {visible ? <HeavyReport /> : null}
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
+
+const HeavyReport = lazy(() =>
+  import('./HeavyReport.feature').then(module => ({ default: module.HeavyReport })),
+)
+```
+
+### Loading Boundaries
+
+- Keep import paths statically analyzable. For a finite module choice, map keys to functions containing literal `import()` calls rather than constructing arbitrary paths.
+- Preload on credible user intent when useful. Domain code supplies an `onIntent` callback to shared UI, which owns pointer and focus wiring (`ui-centralize-accessibility`). Handle speculative load failures; a rejected lazy import still needs an error boundary.
+- Defer nonessential third-party startup work when appropriate, while preserving any monitoring or initialization required before use.
+- Put Suspense outside a compound root or inside its content slot (`ui-compound-slots-direct-children`). Preserve dialog mounting and exit behavior (`ui-dialog-controlled`).
+
+### Verification
+
+Inspect the generated chunks or a bundle report: a dynamic import does not remove a module from the initial graph when another eager import reaches it. Measure startup and first-use latency rather than assuming every split is beneficial.
+
+### Sources
+
+Adapted from Vercel's [dynamic imports](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/bundle-dynamic-imports.md), [analyzable paths](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/bundle-analyzable-paths.md) and [intent-based preloading](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/bundle-preload.md). Uses [React lazy](https://react.dev/reference/react/lazy) rather than a framework-specific loader.
+
+### 7.8 Name Compound Render Conditions by Intent
 
 **Impact: HIGH (display decisions become readable and reviewable at the JSX boundary)**
 
 Give every compound condition that controls whether a JSX subtree appears an intention-revealing name. Keep a presentation-only decision as a boolean derived during render. Move it to `helpers/businessRules/` as a pure `shouldShowX`, `canX`, `hasX` or `isX` predicate when it expresses a business rule or deserves focused tests.
 
 Simple flags and single comparisons do not require extraction. Conditions used only to choose a class, attribute or text value are also outside this rule.
+
+For JSX gating, use a real boolean or an explicit ternary with `null`. A numeric left operand such as `{items.length && <Items />}` can render `0`; prefer `{items.length > 0 ? <Items /> : null}`. Boolean `&&` conditions remain valid and do not require a blanket rewrite.
 
 **Incorrect (the reader must decode the display decision inside JSX):**
 
@@ -3189,9 +3312,9 @@ return shouldShowOrderTotal ? <OrderTotal value={order.total} /> : null
 
 Do not store the boolean in state or wrap a cheap condition in `useMemo`. Prefer a local name unless extracting a pure business predicate creates a meaningful reusable or testable boundary.
 
-See also: `helpers-business-rules-pure`; `vercel-react-best-practices` → `rendering-conditional-render`, `rerender-simple-expression-in-memo`
+See also: `helpers-business-rules-pure`, `quality-usecallback-for-functions`
 
-### 7.8 Never Nest a form Inside a form
+### 7.9 Never Nest a form Inside a form
 
 **Impact: HIGH (prevents native submit that reloads the SPA and loses data)**
 
@@ -3219,7 +3342,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 
 With a form library, use its "render as div" option or `useForm().handleSubmit` from a button `onClick`. The trade-off is losing native Enter-to-submit on the outer form. Check in the browser console with `document.querySelectorAll('form form').length === 0`.
 
-### 7.9 Require Composition Through Nested Children
+### 7.10 Require Composition Through Nested Children
 
 **Impact: HIGH**
 
@@ -3260,7 +3383,7 @@ Composition is mandatory for project-owned APIs, including shared UI, feature/vi
 </Panel>
 ```
 
-Remove the old content props from the component's type and implementation, then migrate every caller. Slots must render their content. When a root discovers slots by inspecting child types, keep those slots as direct children; put extracted components or conditional content inside them. Add shared context only when the subcomponents need shared state, not for a purely structural layout.
+Remove the old content props from the component's type and implementation, then migrate every caller. Slots must render their content. When a root discovers slots by inspecting child types, keep those slots as direct children; put extracted components or conditional content inside them. Composition does not require creating a React Context. Share client state through scoped Jotai atoms according to `arch-no-prop-drilling`; purely structural slots need no state provider.
 
 ### Exceptions
 
@@ -3289,7 +3412,7 @@ Resolve dependency declarations to distinguish external components from local im
 
 - [Direct, renderable compound slots](rules/ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.
 
-### 7.10 Wrap the Whole Dialog in a Form Keyed on the Open Target
+### 7.11 Wrap the Whole Dialog in a Form Keyed on the Open Target
 
 **Impact: HIGH (submit button inside the form, fresh values on each open)**
 
@@ -3337,7 +3460,47 @@ function SubmitButton() {
 
 Do not let a generic "confirm" action close the dialog by itself: it would close even when validation fails. Close it from the submit handler on success.
 
-### 7.11 Style with Design System Components, Utility Classes Only for Layout
+### 7.12 Defer Offscreen Rendering in Shared UI
+
+**Impact: MEDIUM-HIGH (reduces layout and paint work for long surfaces)**
+
+When a long page spends substantial time laying out and painting offscreen content, consider `content-visibility: auto` inside the owning shared UI primitive. Supply a suitable intrinsic-size estimate to limit layout jumps. Feature code continues to compose primitives without adding local appearance or containment styles.
+
+**Incorrect (a long collection eagerly lays out every heavy row):**
+
+```tsx
+// shared/ui/DeferredRow.view.tsx
+export function DeferredRow({ children }: { children: React.ReactNode }) {
+  return <div>{children}</div>
+}
+```
+
+**Correct (the shared primitive may skip offscreen rendering work):**
+
+```tsx
+// shared/ui/DeferredRow.view.tsx
+export function DeferredRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 80px' }}>
+      {children}
+    </div>
+  )
+}
+```
+
+The size above is illustrative; the primitive owns the appropriate estimate for its content. Preserve valid list/table structure and test scrolling, dynamic heights, focus and accessible content before adopting containment.
+
+### Exceptions
+
+- This targets browser layout and paint. It does not avoid mounting every React item or remove its DOM nodes. Use pagination or a suitable shared virtualized primitive when the measured cost comes from creating too many items.
+- Avoid adding containment to small surfaces without evidence of a benefit, and verify support in the application's browser targets.
+- Keep styling and accessibility implementation in shared UI (`ui-no-adhoc-styling`, `ui-centralize-accessibility`).
+
+### Sources
+
+Adapted from Vercel's [offscreen rendering guidance](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/rendering-content-visibility.md). See [content-visibility](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility) for containment and accessibility behavior.
+
+### 7.13 Style with Design System Components, Utility Classes Only for Layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
@@ -3371,11 +3534,13 @@ The same boundary covers SVG/Recharts appearance props, local stylesheet imports
 
 Global stylesheets, themes and token definitions remain design-system infrastructure. Shared UI consumes semantic tokens; domains supply data, actions and generic variants. Dynamic layout styles may remain on external containers. Chart geometry is data supplied to the owning UI primitive. Follow `ui-semantic-colors` for tokens and `arch-shared-no-domain-knowledge` for business adapters.
 
+When a shared primitive genuinely needs DOM measurements and imperative layout updates, group reads and writes rather than alternating them in a loop and forcing repeated layout. Prefer declarative variants where possible. Pure presenters receive measurements as inputs and never measure or mutate nodes themselves (`arch-thin-components`).
+
 ### ESLint Enforcement
 
 Use the custom ESLint rule `local/no-domain-styling` to distinguish concrete appearance violations (`nonLayoutClass`, `nonLayoutStyle`), values that require inspection (`unverifiableStyle`) and local stylesheets outside permitted roots (`outsideStylesheet`). Aggregate offending classes or properties for each usage and include this catalog rule's identifier. Inspect unresolved values before deciding whether layout can stay local. Selecting or designing a primitive requires review; do not autofix or suppress diagnostics merely to finish a migration.
 
-### 7.12 Give Icon-Only Buttons and Custom Controls an Accessible Name
+### 7.14 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
 **Impact: MEDIUM (usable with assistive tech, queryable by role in tests)**
 
@@ -3408,6 +3573,115 @@ await user.click(screen.getByRole('button', { name: 'common.delete' }))
 ```
 
 In a list, include the row identity when several rows share the same action (`t('contact.actions.deleteNamed', { name })`) so each button has a distinct name. Apply the same naming policy to icon-only links and custom inputs. Shared UI chooses native label associations or ARIA internally; domain code supplies the translated meaning.
+
+### 7.15 Keep Inputs Responsive During Expensive Renders
+
+**Impact: MEDIUM (separates immediate input feedback from slower result rendering)**
+
+Keep controlled input updates immediate. When profiling shows that an expensive results surface delays typing, pass a deferred value to that surface. Its unchanged props must let it skip the urgent render, through React Compiler optimization or an appropriate memoized component boundary.
+
+**Incorrect (the expensive surface follows every input update immediately):**
+
+```tsx
+const query = useAtomValue(orderSearchAtom)
+const setQuery = useSetAtom(orderSearchAtom)
+
+return (
+  <>
+    <SearchField value={query} onValueChange={setQuery} />
+    <ExpensiveOrderResults query={query} />
+  </>
+)
+```
+
+**Correct (the results surface follows a deferred query):**
+
+```tsx
+const query = useAtomValue(orderSearchAtom)
+const setQuery = useSetAtom(orderSearchAtom)
+const deferredQuery = useDeferredValue(query)
+
+return (
+  <>
+    <SearchField value={query} onValueChange={setQuery} />
+    <ExpensiveOrderResults query={deferredQuery} />
+  </>
+)
+```
+
+`ExpensiveOrderResults` owns the expensive work and provides the memoized boundary. The parent owns scheduling the visible results; the search field supplies its translated label through its normal UI contract. Use stable deferred inputs rather than creating a fresh object on every render.
+
+### Limits
+
+- Use transitions for eligible React-owned nonurgent updates. Keep controlled input state outside the transition. External-store writes do not become nonblocking merely because they are wrapped in `startTransition`.
+- Keep TanStack Query request state in its query/mutation result. A transition's `isPending` does not replace network state or cancel requests, and deferral does not debounce them.
+- Show stale-result feedback through shared UI when necessary. Deferral cannot interrupt one long synchronous calculation; reduce that work or move it to an appropriate background execution boundary.
+
+### Sources
+
+Adapted from Vercel's [deferred rendering](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/rerender-use-deferred-value.md) and [transitions](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/rerender-transitions.md). See [useDeferredValue](https://react.dev/reference/react/useDeferredValue) and [useTransition](https://react.dev/reference/react/useTransition) for their scheduling contracts.
+
+### 7.16 Prefer Explicit Component Variants Over Mode Flags
+
+**Impact: MEDIUM (makes distinct workflows explicit and avoids impossible mode combinations)**
+
+When a component combines distinct workflows through flags such as `isCreating`, `isEditing` and `isCancelling`, give those workflows explicit components that compose shared pieces. Callers can then see the fields and actions of each variant without reasoning about conflicting flag combinations.
+
+**Incorrect (one component permits incompatible workflows):**
+
+```tsx
+<OrderComposer isCreating isEditing={false} isCancelling showCancellationReason />
+```
+
+**Correct (each workflow composes its own fields and actions):**
+
+```tsx
+// CreateOrderComposer.feature.tsx
+export function CreateOrderComposer() {
+  return (
+    <OrderComposer>
+      <OrderComposer.Fields>
+        <OrderFields />
+      </OrderComposer.Fields>
+      <OrderComposer.Actions>
+        <SaveDraftButton />
+        <CreateOrderButton />
+      </OrderComposer.Actions>
+    </OrderComposer>
+  )
+}
+
+// CancelOrderComposer.feature.tsx
+export function CancelOrderComposer() {
+  return (
+    <OrderComposer>
+      <OrderComposer.Fields>
+        <CancellationReasonFields />
+      </OrderComposer.Fields>
+      <OrderComposer.Actions>
+        <KeepOrderButton />
+        <CancelOrderButton />
+      </OrderComposer.Actions>
+    </OrderComposer>
+  )
+}
+```
+
+Use nested children according to `ui-required-children` and keep direct slots where `ui-compound-slots-direct-children` requires them. Shared client state stays in scoped Jotai atoms (`arch-no-prop-drilling`); composition does not prescribe a Context provider.
+
+### Exceptions
+
+- Booleans expressing actual state or capabilities remain valid: `open`, `disabled`, `checked`, `selected` and feature flags. Their presence alone does not justify a variant component.
+- Small visual differences belong in closed semantic variants such as `tone` or `size`. Avoid wrappers that merely rename a label or mirror every prop without an independent contract (`arch-component-roles`).
+- A small component with one mutually exclusive mode may use a literal union or discriminated union. Extract variants when their structure, actions or responsibilities differ substantially.
+
+### ESLint Enforcement
+
+Use JSX-condition and complexity diagnostics as review signals. Counting boolean props cannot establish whether they encode incompatible workflows; review their meaning and callers before extracting components. Do not ban legitimate boolean state props through a blanket ESLint restriction.
+
+### Sources
+
+Adapted from Vercel's [boolean prop guidance](https://github.com/vercel-labs/agent-skills/blob/main/skills/composition-patterns/rules/architecture-avoid-boolean-props.md) and [explicit variants](https://github.com/vercel-labs/agent-skills/blob/main/skills/composition-patterns/rules/patterns-explicit-variants.md), using this catalog's composition and Jotai conventions.
 
 ---
 
@@ -3597,7 +3871,9 @@ export const selectedInvoiceCountAtom = atom(get => get(selectedInvoiceIdsAtom).
 
 Derivations that need server data are computed in the page hook (`useMemo` over the query result + atom), not in an atom (see `state-server-state-in-react-query`).
 
-See also: `vercel-react-best-practices` → `rerender-derived-state`
+The same principle applies to props and query results: compute current values during render, using the appropriate pure helper, rather than copying them into local state through an effect. Memoize costly derivations when useful; cheap values need no cache. Reset an independently editable form through its explicit target/key contract (`ui-form-wraps-dialog`) rather than a general prop-to-state synchronization effect.
+
+Subscribe to the derived atom actually needed by a consumer, such as `hasSelectionAtom`, when it only renders a boolean. Keep continuous or full-entity subscriptions for consumers that need those values. This narrows subscriptions without adding Context or a second writable copy (`state-hook-variants`).
 
 ### 8.6 Persist Atoms with atomWithStorage and a Unique Key
 
@@ -3608,6 +3884,7 @@ Persist client state only through `atomWithStorage<T>(key, default, storage?, op
 - Export the key as a constant when anything else needs it (tests, cleanup). A single-use inline key is acceptable.
 - Pass `{ getOnInit: true }` when the stored value drives the first render; otherwise the default renders first, then the subtree re-renders with the stored value.
 - When the stored value is not a plain primitive, give a custom storage whose `getItem` validates the parsed value and falls back to the default: a stale or hand-edited entry must never throw at boot. Change the key (or version the value) when its shape changes.
+- Store only the fields needed across reloads, and version the key or payload. Validate and migrate known earlier shapes, or deliberately discard them. Handle unavailable storage and failed reads/writes/removals in the adapter; keep usable in-memory state when persistence is unavailable.
 
 **Incorrect (manual sync, generic key, unchecked parse):**
 
@@ -3624,7 +3901,7 @@ useEffect(() => localStorage.setItem('columns', JSON.stringify([...pinned])), [p
 
 ```ts
 // src/domains/sales/orders/features/list/stores/pinnedColumns.store.ts
-export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns'
+export const PINNED_COLUMNS_STORAGE_KEY = 'orders.pinnedColumns:v1'
 
 export const pinnedColumnsAtom = atomWithStorage<Set<string>>(
   PINNED_COLUMNS_STORAGE_KEY,
@@ -3638,16 +3915,26 @@ export const pinnedColumnsAtom = atomWithStorage<Set<string>>(
         return initialValue
       }
     },
-    setItem: (key, value) => localStorage.setItem(key, JSON.stringify([...value])),
-    removeItem: key => localStorage.removeItem(key),
+    setItem: (key, value) => {
+      try {
+        localStorage.setItem(key, JSON.stringify([...value]))
+      } catch {
+        // The atom remains usable when persistence is unavailable.
+      }
+    },
+    removeItem: key => {
+      try {
+        localStorage.removeItem(key)
+      } catch {
+        // Storage may be unavailable even when the in-memory reset succeeds.
+      }
+    },
   },
   { getOnInit: true },
 )
 ```
 
-Persist UI preferences and session data only; never persist server data (see `state-server-state-in-react-query`).
-
-See also: `vercel-react-best-practices` → `client-localstorage-schema`
+Persist minimal UI preferences and non-sensitive client settings; keep credentials and server entities outside this storage (see `state-server-state-in-react-query`). Use the atom/storage adapter as the owner instead of adding a second global cache of storage reads.
 
 ### 8.7 Type Atoms Explicitly with DEFAULT_* Constants
 
@@ -3680,7 +3967,47 @@ export const resetOrderFiltersAtom = atom(null, (_get, set) => set(orderFiltersA
 
 A plain boolean flag may rely on inference (`atom(false)`), but `atom<boolean>(false)` is preferred for consistency.
 
-### 8.8 Prefix Atoms with Their Entity
+### 8.8 Update Client State From Its Previous Value
+
+**Impact: MEDIUM (avoids stale closures and lost updates)**
+
+When the next value depends on the previous one, use the setter's functional update form. This applies to React local state and writable Jotai atoms accepting an updater. A write-only action should not subscribe to an atom merely to calculate its next value.
+
+**Incorrect (the action captures a stale selection):**
+
+```typescript
+const selectedIds = useAtomValue(selectedOrderIdsAtom)
+const setSelectedIds = useSetAtom(selectedOrderIdsAtom)
+const selectOrder = useCallback((id: string) => {
+  setSelectedIds(new Set([...selectedIds, id]))
+}, [])
+```
+
+**Correct (the setter receives the current selection):**
+
+```typescript
+const setSelectedIds = useSetAtom(selectedOrderIdsAtom)
+const selectOrder = useCallback((id: string) => {
+  setSelectedIds(current => new Set([...current, id]))
+}, [setSelectedIds])
+```
+
+### Scope
+
+- Direct assignment remains appropriate when the next value comes entirely from an argument or a constant. Keep every other reactive dependency in the callback's dependency array.
+- Updaters are pure: copy collections before changing them and keep requests, navigation and notifications outside the updater (`helpers-vercel-immutable-collections`).
+- For expensive, genuinely local initial state, pass a pure initializer such as `useState(() => createInitialLayout())`. An initializer does not synchronize later prop changes; derive values when they should follow current inputs (`state-derived-atoms`).
+- Shared client state remains in scoped atoms. This rule does not justify moving it into a new local-state facade (`arch-no-prop-drilling`).
+
+### ESLint Enforcement
+
+Keep `react-hooks/exhaustive-deps` enabled. Use functional updates to remove unnecessary state reads while retaining actual dependencies; do not suppress the diagnostic to preserve a stale closure.
+
+### Sources
+
+Adapted from Vercel's [functional updates](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/rerender-functional-setstate.md) and [lazy initialization](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/rerender-lazy-state-init.md), with Jotai ownership preserved.
+
+### 8.9 Prefix Atoms with Their Entity
 
 **Impact: LOW-MEDIUM (avoids ambiguous imports across lists and pages)**
 
@@ -3711,7 +4038,7 @@ export const projectOverviewEditingAtom = atom<boolean>(false)
 
 Pick one naming scheme per kind of atom and keep it across the app. Raw atoms follow `state-explicit-types-defaults` (explicit type parameter, typed default).
 
-### 8.9 Pick useAtomValue, useSetAtom or useAtom by Need
+### 8.10 Pick useAtomValue, useSetAtom or useAtom by Need
 
 **Impact: LOW (write-only consumers stop re-rendering on every change)**
 
@@ -3910,7 +4237,7 @@ const showPaymentApprovers = arePaymentApproversProvided(data.payment, paymentAp
 
 Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/businessRules/`; anything that really needs a hook is a formatter, a mapper or a service instead.
 
-See also: `vercel-react-best-practices` → `rerender-derived-state-no-effect`
+See also: `state-derived-atoms`
 
 ### 9.3 Never Pass t, navigate or Stores to a Helper
 
@@ -3957,7 +4284,41 @@ The formatter itself follows the same pattern (see `arch-helpers-vs-services` an
 
 Use the custom ESLint rule `local/no-helper-context-params` to prevent formatter and context dependencies from being threaded through helper APIs. Review the dependency's actual role and the form-schema exception rather than relying on its name alone.
 
-### 9.4 Sort Every Helper Into One of a Fixed Set of Categories
+### 9.4 Preserve Collection Inputs When Transforming
+
+**Impact: MEDIUM-HIGH (prevents helpers from mutating props, atoms or cached entities)**
+
+Selectors, mappers and calculators treat incoming collections as read-only. Sorting or changing a view of props, Jotai state or query data must produce a separate collection, leaving the original order and values intact.
+
+**Incorrect (the selector reorders its caller's array):**
+
+```typescript
+export function sortOrders(orders: Order[]): Order[] {
+  return orders.sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+}
+```
+
+**Correct (the selector returns a sorted copy):**
+
+```typescript
+// helpers/selectors/sortOrders.ts
+export function sortOrders(orders: readonly Order[]): Order[] {
+  return orders.toSorted((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+}
+```
+
+Use a copied array before `.sort()` when the target runtime lacks `toSorted`. Apply the same policy to reversing, splicing, `Map`/`Set` updates and nested objects. A shallow array copy does not make its elements independent: copy changed records as well.
+
+### Exceptions
+
+- A helper may mutate a fresh accumulator or collection it created itself. Do not deep-clone every input merely to claim purity.
+- Use functional setters for state changes and TanStack Query cache APIs for server-state changes; mutating a shared reference bypasses those ownership boundaries (`state-vercel-functional-updates`).
+
+### Sources
+
+Adapted from Vercel's [immutable sorting](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-tosorted-immutable.md), applied at the helper and state boundaries.
+
+### 9.5 Sort Every Helper Into One of a Fixed Set of Categories
 
 **Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
 
@@ -4030,7 +4391,42 @@ src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
 
 Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
-See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`, `state-derived-atoms`
+
+### 9.6 Index Collections for Repeated Lookups
+
+**Impact: MEDIUM (avoids repeated linear scans in data transformations)**
+
+When a transformation repeatedly checks membership or resolves records by the same key, build a `Set` or `Map` once for that input snapshot. Keep the transformation in the owning selector, mapper or aggregator rather than adding a data pipeline to JSX.
+
+**Incorrect (each order scans the complete allowed-id list):**
+
+```typescript
+export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
+  return orders.filter(order => allowedIds.includes(order.id))
+}
+```
+
+**Correct (membership uses one index):**
+
+```typescript
+// helpers/selectors/selectAllowedOrders.ts
+export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
+  const allowed = new Set(allowedIds)
+  return orders.filter(order => allowed.has(order.id))
+}
+```
+
+### Preserve Semantics
+
+- For record lookup, use a `Map` only with a unique key or an explicit duplicate policy. Replacing `.find()` with a map that keeps the last duplicate changes behavior.
+- Keep order and duplicates when the output requires them. An existence check can stop at its first match; validation that promises every error must still collect every error.
+- Find extrema in one pass when a sorted collection is unnecessary. Combine large repeated traversals only when it improves the measured path without obscuring separate responsibilities.
+- Building an index for one lookup in a tiny array may add cost. Profile uncertain cases and prefer the clearest suitable algorithm. Rebuild or memoize by actual inputs; avoid an unbounded module cache of mutable business data.
+
+### Sources
+
+Adapted from Vercel's [index maps](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-index-maps.md), [membership indexes](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-set-map-lookups.md) and [single-pass extrema](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-min-max-loop.md).
 
 ---
 
@@ -4634,6 +5030,8 @@ Place the directive immediately above the offending line rather than an enclosin
 
 Give each public component, function, hook or constant a named file. When splitting related components or utilities, group them by theme within their existing owner and helper category; do not introduce a new business feature just to hold the files. Import files directly instead of recreating a multi-export barrel.
 
+For application modules, import the defining file directly; `arch-stores-no-index` adds the state-folder restriction. For dependencies, use documented, typed public exports or supported subpaths. Avoid private `dist/` imports just to bypass a package barrel. Check the actual bundler output before claiming a loading benefit; package structure and tree-shaking differ.
+
 ### Applies When
 
 - A production module exports several values, whether with declarations, a default export, an export list or named reexports.
@@ -4796,7 +5194,56 @@ const SCALE = 100;
 
 Preserve initialization order when moving declarations. Hoisted functions may move across erased or hoisted declarations; function-valued initializers and classes must retain their runtime dependencies. Keep attached documentation and overload groups together, and preserve the relative order of the remaining code. Report an unsafe move for manual refactoring instead of introducing a temporal dead zone or crossing a lint suppression.
 
-### 12.8 useMemo for Data, useCallback for Functions
+### 12.8 Prefer ref as a Prop in React 19
+
+**Impact: MEDIUM (removes unnecessary forwardRef wrappers while preserving typed ref forwarding)**
+
+In React 19+ function components, accept a typed `ref` prop and forward it to the owned element. Keep the ref optional unless the component's contract requires it. Accessibility and focus behavior remain inside shared UI according to `ui-centralize-accessibility`.
+
+**Incorrect (an unnecessary wrapper in React 19-only code):**
+
+```tsx
+// shared/ui/TextField.view.tsx
+import { forwardRef } from 'react'
+
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+  ({ label }, ref) => <label>{label}<input ref={ref} /></label>,
+)
+
+type TextFieldProps = { label: string }
+```
+
+**Correct (the component forwards a typed ref prop):**
+
+```tsx
+// shared/ui/TextField.view.tsx
+import type { Ref } from 'react'
+
+export function TextField({ label, ref }: TextFieldProps) {
+  return <label>{label}<input ref={ref} /></label>
+}
+
+type TextFieldProps = {
+  label: string
+  ref?: Ref<HTMLInputElement>
+}
+```
+
+### Exceptions
+
+- Apply this convention to React 19+ targets. Libraries and adapters that must support React 18 may retain `forwardRef` at that compatibility boundary.
+- Preserve the element or imperative handle exposed by an existing component. Changing the wrapper must not change its public ref behavior.
+- Third-party implementations are outside the migration scope. This rule concerns ref forwarding; state sharing continues to follow `arch-no-prop-drilling`.
+
+### ESLint Enforcement
+
+For React 19-only authored code, use ESLint's `no-restricted-imports` to restrict the named `forwardRef` import from `react`. Keep React 18 compatibility adapters outside that restriction. Review namespace/member calls and dependency requirements as well; a named-import restriction does not prove the absence of every wrapper.
+
+### Sources
+
+Adapted from the ref-forwarding part of Vercel's [React 19 guidance](https://github.com/vercel-labs/agent-skills/blob/main/skills/composition-patterns/rules/react19-no-forwardref.md). The [React documentation](https://react.dev/reference/react/forwardRef) describes passing `ref` as a prop in React 19.
+
+### 12.9 useMemo for Data, useCallback for Functions
 
 **Impact: MEDIUM (stable references for returned functions, and the memo hook states what is returned)**
 
@@ -4876,9 +5323,11 @@ Keep separate memos when computations have independently changing inputs and mer
 
 Choose memo boundaries by invalidation and consumer needs, rather than imposing one memo per hook or one memo per field. Use profiling to decide uncertain performance tradeoffs; memo count alone does not establish a speedup.
 
-See also: `vercel-react-best-practices` → `rerender-memo`, `rerender-simple-expression-in-memo`, `rerender-split-combined-hooks`
+Skip `useMemo` for cheap primitive expressions. Extract a costly rendered region behind its own component boundary when this lets a loading/visibility branch avoid the work entirely; add manual `memo` only when unchanged props and measured render cost justify it. Keep calculations in their owning helpers and preserve `arch-component-roles`.
 
-### 12.9 Write Code, Comments and Tests in English
+When a default array or object becomes an effect dependency or a memoized child's prop, use an immutable shared default if reference stability matters. Do not share mutable per-instance state through that constant. Avoid caching every field, global unbounded result maps or JSX variables solely to make a memo count smaller. With React Compiler, review the compiler's coverage before adding manual caches; neither compiler optimization nor memoization replaces correct state and effect semantics.
+
+### 12.10 Write Code, Comments and Tests in English
 
 **Impact: MEDIUM (one language for a codebase reviewed by agents and mixed teams)**
 
@@ -4910,7 +5359,7 @@ it('should display an error when the field is invalid', async () => {
 
 To find leftovers, grep for accented characters in source files (for example `grep -rn "[àâäéèêëïîôùûüÿæœç]" src --include="*.ts*"`). Matches in i18n fixtures or real data samples (names, addresses) are fine. Translate older comments when you touch them.
 
-### 12.10 Keep JSDoc for Non-Obvious Intent Only
+### 12.11 Keep JSDoc for Non-Obvious Intent Only
 
 **Impact: LOW (less noise, and comments that stay true)**
 
@@ -4945,7 +5394,7 @@ export function useContactsSelection() {
 
 A well-named function with explicit types needs no JSDoc at all. Use inline `// WHY:` comments for local surprises, such as a nullable field kept on purpose or an `eslint-disable`.
 
-### 12.11 No Chained or Negated Ternaries
+### 12.12 No Chained or Negated Ternaries
 
 **Impact: LOW (branch logic stays readable and testable)**
 
@@ -4983,6 +5432,4 @@ A single positive ternary between two static i18n keys is fine: `t(isReadOnly ? 
 
 ## References
 
-1. `vercel-react-best-practices`
-2. `vercel-composition-patterns`
-3. `tailwind-design-system`
+1. `tailwind-design-system`

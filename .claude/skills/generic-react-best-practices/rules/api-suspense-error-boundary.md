@@ -58,5 +58,4 @@ export function ProjectDetailPage() {
 
 - `QueryErrorResetBoundary` lets a retry refetch the failed query; `resetKeys` clears a caught error when the route id changes.
 - Wrap an optional, failure-prone sub-fetch (a badge, a history) in its own small boundary that renders a degraded fallback, so a secondary 500 does not take the page down.
-
-See also: `vercel-react-best-practices` → `async-suspense-boundaries`
+- Keep usable navigation and shell UI outside a slow region's boundary, and use a skeleton matching its eventual layout. Coordinate independent reads through `api-query-hook-choice`; do not create new request promises during render as an alternative to domain query hooks.

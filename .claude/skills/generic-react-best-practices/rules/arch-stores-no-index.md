@@ -41,4 +41,4 @@ import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/store
 
 Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
 
-See also: `vercel-react-best-practices` → `bundle-barrel-imports`
+See also: `quality-single-public-export`

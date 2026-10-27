@@ -43,7 +43,7 @@ Composition is mandatory for project-owned APIs, including shared UI, feature/vi
 </Panel>
 ```
 
-Remove the old content props from the component's type and implementation, then migrate every caller. Slots must render their content. When a root discovers slots by inspecting child types, keep those slots as direct children; put extracted components or conditional content inside them. Add shared context only when the subcomponents need shared state, not for a purely structural layout.
+Remove the old content props from the component's type and implementation, then migrate every caller. Slots must render their content. When a root discovers slots by inspecting child types, keep those slots as direct children; put extracted components or conditional content inside them. Composition does not require creating a React Context. Share client state through scoped Jotai atoms according to `arch-no-prop-drilling`; purely structural slots need no state provider.
 
 ### Exceptions
 

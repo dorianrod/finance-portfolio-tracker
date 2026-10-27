@@ -74,4 +74,4 @@ How the page action gives feedback:
 
 Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
 
-See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`
+See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-parallel-work`

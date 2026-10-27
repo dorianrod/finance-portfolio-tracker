@@ -48,4 +48,4 @@ function OrdersWorkspace() {
 
 The lint threshold is diagnostic, not a target for every component. When a component legitimately wires several facets of one cohesive primitive, document the narrow exception instead of inventing an artificial abstraction.
 
-See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
+See also: `arch-thin-components`, `arch-helpers-vs-services`, `quality-usecallback-for-functions`

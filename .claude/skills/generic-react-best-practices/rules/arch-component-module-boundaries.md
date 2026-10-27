@@ -13,6 +13,8 @@ A `.view.tsx`, `.state.tsx` or `.feature.tsx` module declares components, compon
 
 When a component needs supporting files, give it a named directory. Put an effectful or orchestrating hook in `services/`, and put a pure or read-only helper in `helpers/<category>/`. Use one public helper export per file, name the file after that export, and keep supporting functions private. Do not create `*.logic.ts`: the suffix hides whether the module selects, aggregates, calculates, presents or performs effects.
 
+Declare component types, including `lazy` and `memo` wrappers, at module scope or in their own files. A component defined inside another component gets a new type on each render and can remount, losing local state and focus. Pass inputs through the component's legitimate API instead of capturing them in a nested component definition. Ordinary event callbacks are not component definitions.
+
 **Incorrect (a component module mixes rendering, synchronization and visual derivation):**
 
 ```tsx

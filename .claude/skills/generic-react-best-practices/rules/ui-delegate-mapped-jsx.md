@@ -65,4 +65,4 @@ function CategoryItem({ activeCategoryId, category, onSelect }: CategoryItemProp
 
 The item component must be declared at module scope, never inside its parent component.
 
-See also: `vercel-react-best-practices` → `rerender-no-inline-components`
+See also: `arch-component-module-boundaries`

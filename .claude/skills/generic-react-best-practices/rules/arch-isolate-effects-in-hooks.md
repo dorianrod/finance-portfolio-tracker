@@ -46,4 +46,20 @@ function OrderPanel({ orderId }: { orderId: string }) {
 
 Keep the hook in the named component directory when it has one consumer, under the page when several components of that page use it, or in the owning feature's `services/` when reused across pages. The hook should expose inputs and outputs for its responsibility rather than component implementation details.
 
-See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+### Reactive Dependencies and Lifecycle
+
+Use the reactive values actually read by synchronization as dependencies. Prefer a specific field such as `order.id` when the effect only needs that field; do not omit a dependency to reduce reruns. Separate independent synchronization responsibilities instead of giving them one combined dependency set. A user-triggered mutation stays in its page action, while a pure derivation is calculated during render or in a derived atom (`state-derived-atoms`). Moving either into a custom effect hook does not make the effect necessary.
+
+When the installed React version provides `useEffectEvent`, use it only for genuinely nonreactive logic invoked by an effect or its subscription. Keep the effect's reactive dependencies; exclude the Effect Event itself from the dependency array and keep it inside its owning hook. Do not use it as a general stable callback, pass it to another component/hook or use it to hide a synchronization dependency.
+
+Pair subscriptions, timers and listeners with cleanup. Share an app-wide subscription through its actual owner rather than installing one listener per unrelated consumer. Use passive touch/wheel listeners only when they never need `preventDefault`. Keep keyboard/focus behavior inside shared UI (`ui-centralize-accessibility`).
+
+Components can remount. Put app-lifetime initialization in the client bootstrap owner and preserve setup/cleanup symmetry for component-lifetime resources. A once-only guard must not prevent a cleaned-up subscription from being re-established. Pure initializers and effects must tolerate development replay.
+
+### ESLint Enforcement
+
+Keep `react-hooks/rules-of-hooks` and `react-hooks/exhaustive-deps` enabled with a version supporting the installed React APIs. Fix the responsibility or dependency mismatch rather than suppressing it. Effect Events supplement dependency tracking; they do not replace it.
+
+See [React Effect Events](https://react.dev/reference/react/useEffectEvent) for their scope and dependency contract.
+
+See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`, `state-derived-atoms`

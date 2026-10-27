@@ -94,7 +94,8 @@ const validateForbidden = (file, body) => {
   }
   const skillMention =
     /\b[a-z]+(?:-[a-z]+)*-(?:best-practices|conception|strategy|standards)\b|\b(?:domain|shared|development|trustview|project)-(?:create|get|model|write|assistant|standards|processus|planning|implementation)[a-z-]*/g
-  for (const [name] of body.matchAll(skillMention)) {
+  const skillProse = stripCodeBlocks(body).replace(/https?:\/\/[^\s)]+/g, '')
+  for (const [name] of skillProse.matchAll(skillMention)) {
     if (!ALLOWED_SKILLS.has(name)) fail(file, `reference to a skill that is not allowed: "${name}"`)
   }
   const sourceDir = file === 'SKILL.md' ? SKILL_DIR : RULES_DIR

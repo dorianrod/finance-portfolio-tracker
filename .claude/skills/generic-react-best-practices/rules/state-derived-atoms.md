@@ -38,4 +38,6 @@ export const selectedInvoiceCountAtom = atom(get => get(selectedInvoiceIdsAtom).
 
 Derivations that need server data are computed in the page hook (`useMemo` over the query result + atom), not in an atom (see `state-server-state-in-react-query`).
 
-See also: `vercel-react-best-practices` → `rerender-derived-state`
+The same principle applies to props and query results: compute current values during render, using the appropriate pure helper, rather than copying them into local state through an effect. Memoize costly derivations when useful; cheap values need no cache. Reset an independently editable form through its explicit target/key contract (`ui-form-wraps-dialog`) rather than a general prop-to-state synchronization effect.
+
+Subscribe to the derived atom actually needed by a consumer, such as `hasSelectionAtom`, when it only renders a boolean. Keep continuous or full-entity subscriptions for consumers that need those values. This narrows subscriptions without adding Context or a second writable copy (`state-hook-variants`).
