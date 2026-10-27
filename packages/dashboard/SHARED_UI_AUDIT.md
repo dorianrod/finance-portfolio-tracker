@@ -2,7 +2,7 @@
 
 Date : 26 octobre 2026. État : **écarts corrigés**.
 
-Règle : [`architecture-shared-ui-agnostic`](../../.agents/skills/dorian-react-best-pratices/rules/architecture-shared-ui-agnostic.md).
+Règle : [`arch-shared-no-domain-knowledge`](../../.agents/skills/generic-react-best-practices/rules/arch-shared-no-domain-knowledge.md).
 
 L'audit initial avait identifié cinq groupes de couplages. La nouvelle revue couvre les **72 modules de production** de `src/shared/ui`, leurs quatre dépendances TypeScript locales hors du dossier, les consommateurs métier, les **23 fichiers de tests UI** et les **50 fichiers Storybook**. Aucun écart restant à cette règle n'a été relevé dans ce périmètre.
 

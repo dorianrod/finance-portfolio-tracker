@@ -1,15 +1,7 @@
 ---
 title: Justify Feature Hierarchy Through Business Scope
-summary: Place capabilities of equal business scope at the same level, and nest a capability only when its responsibility belongs to the parent.
 impact: HIGH
-tags:
-  - architecture
-  - features
-  - hierarchy
-patterns:
-  - The request chooses between sibling features and sub-features or reviews an inconsistent feature hierarchy.
-  - One responsibility has a sub-feature while a comparable responsibility remains implicit in the parent.
-  - Separate feature folders are proposed for dimensions, periods or display modes of the same capability.
+tags: architecture, features, hierarchy
 ---
 
 ## Justify Feature Hierarchy Through Business Scope
@@ -24,8 +16,7 @@ Answer why a child belongs to its parent in business terms. Sharing a screen, da
 - A parent contains both an explicit child capability and the implementation of another comparable capability.
 - Considering a split by dimension, current versus historical view, or display mode.
 
-### Incorrect
-
+**Incorrect:**
 ```text
 features/parent-capability/
 ├── shared/
@@ -34,8 +25,7 @@ features/parent-capability/
 └── features/first-capability/
 ```
 
-### Correct
-
+**Correct:**
 ```text
 features/parent-capability/
 ├── shared/
@@ -47,11 +37,7 @@ features/parent-capability/
 
 These schematic children represent distinct user outcomes within the parent's business scope. A filter, dimension, period or display mode normally remains a parameter or component within its capability. Split it only when it introduces distinct business rules, workflows or ownership, rather than merely different rendering.
 
-If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain. Follow the generic structural invariant: a feature with `features/` puts every parent-owned role folder under `shared/`; a leaf feature keeps role folders directly at its root.
-
-### Enforcement
-
-The dashboard enables `local/feature-folder-layout` at error level with `maxFeatureDepth: 2`. It counts feature scopes below each domain, using the same parser as import boundaries and ownership. Exactly two levels are allowed. Files with deeper scopes fail even without imports; a folder named `features` inside a role folder does not create another business scope. Parent/leaf layout is checked independently. ESLint does not decide whether the chosen business parent is appropriate and provides no automatic folder move.
+If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain. Follow `arch-feature-slice-layout`:: a feature with `features/` puts every parent-owned role folder under `shared/`; a leaf feature keeps role folders directly at its root.
 
 ### Exceptions
 
@@ -61,5 +47,5 @@ The dashboard enables `local/feature-folder-layout` at error level with `maxFeat
 
 ### References
 
-- [Business boundaries](architecture-business-capability-boundaries.md) — define the capability map first.
-- [Generic React: feature slices](../../generic-react-best-practices/rules/arch-feature-slice-layout.md) — supported layout and dependency direction.
+- [Business boundaries](arch-business-capability-boundaries.md) — define the capability map first.
+- [feature slices](arch-feature-slice-layout.md) — supported layout and dependency direction.

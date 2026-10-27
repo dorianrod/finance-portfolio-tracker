@@ -46,13 +46,13 @@ export default {
     schema: [],
     messages: {
       wiring:
-        'Move "{{name}}" into a shared/ui primitive; pass semantic data, labels and business actions instead. [architecture-centralize-accessibility]',
+        'Move "{{name}}" into a shared/ui primitive; pass semantic data, labels and business actions instead. [ui-centralize-accessibility]',
       library:
-        'Wrap "{{name}}" in shared/ui instead of importing accessibility primitives here. [architecture-centralize-accessibility]',
+        'Wrap "{{name}}" in shared/ui instead of importing accessibility primitives here. [ui-centralize-accessibility]',
       publicWiring:
-        'Keep {{names}} internal to this shared/ui API; expose semantic data, labels and business actions. [architecture-centralize-accessibility]',
+        'Keep {{names}} internal to this shared/ui API; expose semantic data, labels and business actions. [ui-centralize-accessibility]',
       rawPrimitive:
-        'Adapt this accessibility primitive in shared/ui instead of re-exporting its raw API. [architecture-centralize-accessibility]',
+        'Adapt this accessibility primitive in shared/ui instead of re-exporting its raw API. [ui-centralize-accessibility]',
     },
   },
   create(context) {

@@ -116,13 +116,13 @@ export default {
     schema: [],
     messages: {
       nonLayoutClass:
-        'Move non-layout classes {{names}} into a shared/ui primitive; keep only layout here and expose semantic variants. [styling-centralize-in-shared-ui]',
+        'Move non-layout classes {{names}} into a shared/ui primitive; keep only layout here and expose semantic variants. [ui-no-adhoc-styling]',
       nonLayoutStyle:
-        'Move visual properties {{names}} into a shared/ui primitive; pass semantic data or variants instead. [styling-centralize-in-shared-ui]',
+        'Move visual properties {{names}} into a shared/ui primitive; pass semantic data or variants instead. [ui-no-adhoc-styling]',
       unverifiableStyle:
-        'Cannot statically verify {{names}}. Review this styling and centralize visual choices in shared/ui; only layout is allowed here. [styling-centralize-in-shared-ui]',
+        'Cannot statically verify {{names}}. Review this styling and centralize visual choices in shared/ui; only layout is allowed here. [ui-no-adhoc-styling]',
       outsideStylesheet:
-        'Move stylesheet "{{names}}" into shared/ui or the design-system infrastructure (src/index.css, shared/theme). [styling-centralize-in-shared-ui]',
+        'Move stylesheet "{{names}}" into shared/ui or the design-system infrastructure (src/index.css, shared/theme). [ui-no-adhoc-styling]',
     },
   },
   create(context) {

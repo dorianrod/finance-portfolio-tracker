@@ -1,4 +1,0 @@
-interface:
-  display_name: "Dorian React Best Practices"
-  short_description: "Apply Dorian’s curated React conventions"
-  default_prompt: "Use $dorian-react-best-pratices to review or write this React code with the active Dorian rules."

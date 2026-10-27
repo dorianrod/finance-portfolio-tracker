@@ -30,7 +30,7 @@ export default {
       composeChildren:
         'Compose UI through nested children or compound components instead of the "{{prop}}" prop, including component references and render functions.',
       contentProp:
-        'Remove the UI-valued "{{prop}}" prop from this component API; compose it through nested children. [composition-required-children]',
+        'Remove the UI-valued "{{prop}}" prop from this component API; compose it through nested children. [ui-required-children]',
       extractRenderer:
         'Extract the renderer for the external "{{prop}}" prop into a module-level component; pass Component or <Component ... /> as required by the library.',
     },

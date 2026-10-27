@@ -22,7 +22,7 @@ export default {
     schema: [],
     messages: {
       color:
-        'Define this color in shared/theme and consume a semantic token or variant. DOM styling and browser theme metadata follow the same boundary. [styling-semantic-colors]',
+        'Define this color in shared/theme and consume a semantic token or variant. DOM styling and browser theme metadata follow the same boundary. [ui-semantic-colors]',
     },
   },
   create(context) {

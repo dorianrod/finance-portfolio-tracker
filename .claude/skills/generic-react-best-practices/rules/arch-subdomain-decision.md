@@ -35,4 +35,4 @@ src/domains/sales/orders/
 
 Separate API resources (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views can confirm distinct ownership, but none establishes a sub-domain by itself. If two sub-domains need the same code, move genuinely common code to the main domain's `shared/` folder instead of merging them. A main domain with no distinct child concept stays single-level (`src/domains/contracts/`); it may use direct role folders while it remains one cohesive capability.
 
-See also: `arch-domain-first-layout`, `arch-feature-slice-layout`
+See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-business-capability-boundaries`, `arch-feature-hierarchy`

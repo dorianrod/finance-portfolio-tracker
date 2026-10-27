@@ -23,7 +23,7 @@ Enforce this convention with the ESLint rule `local/no-complex-jsx-map` when the
 
     return (
       <button key={category.id} onClick={() => selectCategory(category.id)}>
-        <span className={isActive ? 'active' : undefined}>{category.label}</span>
+        <Text tone={isActive ? 'accent' : 'default'}>{category.label}</Text>
       </button>
     )
   })}
@@ -46,7 +46,7 @@ function CategoryItem({ activeCategoryId, category, onSelect }: CategoryItemProp
 
   return (
     <button onClick={() => onSelect(category.id)}>
-      <span className={isActive ? 'active' : undefined}>{category.label}</span>
+      <Text tone={isActive ? 'accent' : 'default'}>{category.label}</Text>
     </button>
   )
 }

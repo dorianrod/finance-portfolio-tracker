@@ -63,5 +63,5 @@ A rule's impact can never exceed the impact of its section (enforced by `scripts
 
 ## 12. Code Quality (quality)
 
-**Impact:** MEDIUM  
+**Impact:** HIGH
 **Description:** Conventions that keep the codebase consistent and reviewable, beyond what ESLint and TypeScript already enforce.

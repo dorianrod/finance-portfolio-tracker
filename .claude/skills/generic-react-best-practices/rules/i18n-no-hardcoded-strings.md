@@ -9,7 +9,7 @@ tags: i18n, hardcoded-strings, accessibility, toast, catalog
 
 **Impact: MEDIUM-HIGH (no untranslatable copy, no raw keys on screen)**
 
-Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and `aria-label`s. When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
+Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and accessible labels. Domains pass translated semantic labels; shared UI implements any ARIA wiring (`ui-centralize-accessibility`). When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
 
 **Incorrect (hardcoded copy in UI and notifications):**
 

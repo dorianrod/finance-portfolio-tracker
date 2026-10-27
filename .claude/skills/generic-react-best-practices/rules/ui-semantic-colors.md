@@ -1,31 +1,21 @@
 ---
 title: Keep Colors Semantic Behind Shared UI
-summary: Use semantic color tokens inside shared UI primitives and expose semantic variants to business components.
 impact: HIGH
-tags:
-  - react
-  - tailwind
-  - design-tokens
-  - theming
-  - maintainability
-patterns:
-  - A feature or domain component contains a literal CSS color in a class, inline style, or SVG attribute.
-  - A shared UI primitive uses a palette-specific Tailwind utility instead of a semantic token.
-  - A third-party UI or chart API requires a concrete color value from a business component.
+tags: react, tailwind, design-tokens, theming, maintainability
 ---
 
 ## Keep Colors Semantic Behind Shared UI
 
 **Rule:** Use semantic color tokens inside shared UI primitives and expose semantic variants to business components.
 
-The [shared UI boundary](styling-centralize-in-shared-ui.md) applies first:
+The [shared UI boundary](ui-no-adhoc-styling.md) applies first:
 replacing a raw color with `text-positive` or an imported color constant does not
 authorize visual styling in a business component. The styling examples below
 belong inside `shared/ui`; domains consume primitives through semantic variants
 and nested children.
 
 Semantic variants describe generic UI roles, not business entities, operations or
-metrics. Follow [agnostic shared UI](architecture-shared-ui-agnostic.md): domains
+metrics. Follow [agnostic shared UI](arch-shared-no-domain-knowledge.md): domains
 choose the role, and primitives apply its visual tokens without interpreting
 business values.
 
@@ -43,8 +33,7 @@ Hardcoded colors include:
 - A class, inline style, SVG attribute, or component prop selects a concrete color.
 - A charting, canvas, mapping, or other third-party API requires a color value rather than a CSS class.
 
-### Incorrect
-
+**Incorrect:**
 ```tsx
 // shared/ui/StatusBadge.view.tsx
 export function Badge({
@@ -68,8 +57,7 @@ export function Badge({
 }
 ```
 
-### Correct: Semantic Tailwind Classes
-
+**Correct (Semantic Tailwind Classes):**
 ```tsx
 // shared/ui/StatusBadge.view.tsx
 export function Badge({
@@ -97,8 +85,6 @@ The semantic utilities must resolve to centrally defined theme tokens. Business
 components use the primitive instead of applying its color classes themselves:
 
 ```tsx
-import { Badge } from "@/shared/ui/Badge.view";
-
 export function Status({ isPositive }: { isPositive: boolean }) {
   return (
     <Badge tone={isPositive ? "positive" : "negative"}>
@@ -108,8 +94,7 @@ export function Status({ isPositive }: { isPositive: boolean }) {
 }
 ```
 
-### Correct: Centralized Semantic Constants
-
+**Correct (Centralized Semantic Constants):**
 Use this option inside a shared UI wrapper when an API requires a color value
 instead of a Tailwind class. Prefer a semantic CSS custom property; if the API
 cannot resolve CSS variables, keep the concrete fallback value in this dedicated
@@ -127,7 +112,7 @@ export const chartColors = {
 // shared/ui/SeriesBar.view.tsx
 import { Bar } from "recharts";
 
-import { chartColors } from "@/shared/theme/chart-colors";
+import { chartColors } from "../theme/chart-colors";
 
 export function SeriesBar({
   dataKey,
@@ -144,13 +129,9 @@ The exported names describe generic UI roles rather than business metrics or hue
 names such as `green500` or `red700`. A domain presenter may map a business metric
 to one of these roles without owning its concrete color.
 
-### Enforcement
-
-Enable `local/no-hardcoded-colors` at error level. It checks literal appearance values and palette utilities in shared UI as well as application/domain code, and follows immutable local aliases and conditional values. Imperative style assignments, `setProperty`, SVG `setAttribute` and browser `theme-color` metadata follow the same token boundary. Dedicated `shared/theme` and asset files may define concrete values. This bounded check does not parse arbitrary CSS or infer all dynamic DOM targets.
-
 ### Exceptions
 
-- `src/index.css`, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.
+- Global stylesheets, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.
 - Static brand assets may keep mandated brand colors in their dedicated asset or token definition.
 - User-provided or data-driven colors are not hardcoded, but their application, validation and fallback colors must remain in shared UI.
 - Structural CSS keywords such as `currentColor`, `transparent`, and `inherit` may be used inside shared UI; they do not exempt domains from the shared UI boundary.

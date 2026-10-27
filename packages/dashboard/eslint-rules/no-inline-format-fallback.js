@@ -55,9 +55,9 @@ export default {
     schema: [],
     messages: {
       formatterFallback:
-        'Pass the value directly to the existing formatter and configure fallback or zeroAsFallback there instead of wrapping formatting in a value guard. [architecture-formatter-fallbacks]',
+        'Pass the value directly to the existing formatter and configure fallback or zeroAsFallback there instead of wrapping formatting in a value guard. [helpers-formatter-hooks]',
       inputFallback:
-        'Pass the nullable value directly and configure the existing formatter fallback option instead of defaulting its input inline. [architecture-formatter-fallbacks]',
+        'Pass the nullable value directly and configure the existing formatter fallback option instead of defaulting its input inline. [helpers-formatter-hooks]',
     },
   },
   create(context) {

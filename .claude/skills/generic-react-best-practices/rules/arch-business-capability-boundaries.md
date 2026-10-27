@@ -1,14 +1,7 @@
 ---
 title: Define Boundaries Through Business Capabilities
-summary: Define each domain and feature by its business scope and user outcome before choosing its folders.
 impact: HIGH
-tags:
-  - architecture
-  - domains
-  - capabilities
-patterns:
-  - The request reviews domain boundaries or asks where a business capability belongs.
-  - A proposed domain or feature is justified only by a route, tab, endpoint, component or technical data shape.
+tags: architecture, domains, capabilities
 ---
 
 ## Define Boundaries Through Business Capabilities
@@ -34,16 +27,14 @@ Use these meanings:
 
 For an architecture review, write a short capability map before proposing moves: name each capability, its user outcome, its parent and the reason for that relationship, then identify the owners of its data, business rules and state. Derive those names and relationships from the application's users, vocabulary and workflows. The resulting tree must follow those decisions.
 
-### Incorrect
-
+**Incorrect:**
 ```text
 domains/example/features/
 └── dashboard/                    # justified only by the screen name
     └── features/capability/
 ```
 
-### Correct
-
+**Correct:**
 ```text
 domains/example/features/
 └── capability/                   # justified by an identifiable user outcome
@@ -59,6 +50,6 @@ The names in these trees are schematic; choose meaningful business names for the
 
 ### References
 
-- [Feature hierarchy](architecture-feature-hierarchy.md) — choose siblings, children and variants.
-- [Feature ownership](architecture-feature-ownership.md) — move the responsibility with its implementation.
-- [Generic React: domain layout](../../generic-react-best-practices/rules/arch-domain-first-layout.md) — folder and import conventions.
+- [Feature hierarchy](arch-feature-hierarchy.md) — choose siblings, children and variants.
+- [Feature ownership](arch-shared-no-domain-knowledge.md) — move the responsibility with its implementation.
+- [domain layout](arch-domain-first-layout.md) — folder and import conventions.

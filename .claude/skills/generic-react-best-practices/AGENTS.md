@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.4.2**
+**Version 1.5.0**
 
 Frontend Engineering
 
@@ -16,7 +16,7 @@ October 2026
 
 ## Abstract
 
-Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStack Query v5, Jotai, Yup, react-i18next, Jest + React Testing Library), designed for AI agents and LLMs. It is the author's own take on a best-practices guide, complementary to vercel-react-best-practices: domain-first architecture and import boundaries, API hooks and server state, query keys and cache invalidation, domain types, Yup schemas, UI composition and accessibility, Jotai client state, helpers, i18n, testing and code quality. Each rule includes a rationale and incorrect vs. correct examples using generic business vocabulary.
+Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStack Query v5, Jotai, Yup, react-i18next, Jest + React Testing Library), designed for AI agents and LLMs. It is the author's own take on a best-practices guide, complementary to vercel-react-best-practices: domain-first architecture and import boundaries, API hooks and server state, query keys and cache invalidation, domain types, Yup schemas, UI composition and accessibility, Jotai client state, helpers, i18n, testing and code quality. Each rule includes a rationale and incorrect vs. correct examples using generic business vocabulary. The catalog also owns capability mapping, feature hierarchy, shared UI styling and accessibility boundaries, semantic colors, nested-children composition, component complexity review and public API maintenance.
 
 ---
 
@@ -30,14 +30,17 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 1.5 [Organize Every Domain into Vertical Feature Slices](#15-organize-every-domain-into-vertical-feature-slices)
    - 1.6 [Share Client State Through Jotai, Not Prop Chains or Context](#16-share-client-state-through-jotai-not-prop-chains-or-context)
    - 1.7 [Decompose Hook-Heavy Components by Responsibility](#17-decompose-hook-heavy-components-by-responsibility)
-   - 1.8 [Gate Experimental Features With a Typed Flag Registry](#18-gate-experimental-features-with-a-typed-flag-registry)
-   - 1.9 [Isolate Effects in Intent-Named Hooks](#19-isolate-effects-in-intent-named-hooks)
-   - 1.10 [Keep Component Modules Focused on Components](#110-keep-component-modules-focused-on-components)
-   - 1.11 [Keep Components Thin](#111-keep-components-thin)
-   - 1.12 [Keep Visual Logic at the Component or Page Boundary](#112-keep-visual-logic-at-the-component-or-page-boundary)
-   - 1.13 [No index.ts in stores/, One File per Concern](#113-no-indexts-in-stores-one-file-per-concern)
-   - 1.14 [Separate Helpers from Services by Effects and Orchestration](#114-separate-helpers-from-services-by-effects-and-orchestration)
-   - 1.15 [Create a Sub-Domain Only for a Distinct Business Concept](#115-create-a-sub-domain-only-for-a-distinct-business-concept)
+   - 1.8 [Define Boundaries Through Business Capabilities](#18-define-boundaries-through-business-capabilities)
+   - 1.9 [Gate Experimental Features With a Typed Flag Registry](#19-gate-experimental-features-with-a-typed-flag-registry)
+   - 1.10 [Isolate Effects in Intent-Named Hooks](#110-isolate-effects-in-intent-named-hooks)
+   - 1.11 [Justify Feature Hierarchy Through Business Scope](#111-justify-feature-hierarchy-through-business-scope)
+   - 1.12 [Keep Component Modules Focused on Components](#112-keep-component-modules-focused-on-components)
+   - 1.13 [Keep Components Thin](#113-keep-components-thin)
+   - 1.14 [Keep Visual Logic at the Component or Page Boundary](#114-keep-visual-logic-at-the-component-or-page-boundary)
+   - 1.15 [No index.ts in stores/, One File per Concern](#115-no-indexts-in-stores-one-file-per-concern)
+   - 1.16 [Review Component Complexity Before Splitting](#116-review-component-complexity-before-splitting)
+   - 1.17 [Separate Helpers from Services by Effects and Orchestration](#117-separate-helpers-from-services-by-effects-and-orchestration)
+   - 1.18 [Create a Sub-Domain Only for a Distinct Business Concept](#118-create-a-sub-domain-only-for-a-distinct-business-concept)
 2. [API Hooks & Server State](#2-api-hooks--server-state) — **CRITICAL**
    - 2.1 [Validate Both Directions With Yup Inside Every API Hook](#21-validate-both-directions-with-yup-inside-every-api-hook)
    - 2.2 [Wrap Every Endpoint in a Domain API Hook](#22-wrap-every-endpoint-in-a-domain-api-hook)
@@ -79,15 +82,18 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 6.5 [Build Translated Form Validation Schemas in a use[Form]Schema Hook](#65-build-translated-form-validation-schemas-in-a-useformschema-hook)
    - 6.6 [Declare Yup Schemas at Module Level With Explicit Names](#66-declare-yup-schemas-at-module-level-with-explicit-names)
 7. [UI Composition & Accessibility](#7-ui-composition--accessibility) — **HIGH**
-   - 7.1 [Delegate Mapped JSX to a Component](#71-delegate-mapped-jsx-to-a-component)
-   - 7.2 [Keep className Out of Shared UI Component APIs](#72-keep-classname-out-of-shared-ui-component-apis)
-   - 7.3 [Keep Compound Component Slots as Direct, Renderable Children](#73-keep-compound-component-slots-as-direct-renderable-children)
-   - 7.4 [Keep Dialog Mounted and Drive It with a Boolean open](#74-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
-   - 7.5 [Name Compound Render Conditions by Intent](#75-name-compound-render-conditions-by-intent)
-   - 7.6 [Never Nest a form Inside a form](#76-never-nest-a-form-inside-a-form)
-   - 7.7 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#77-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
-   - 7.8 [Style with Design System Components, Utility Classes Only for Layout](#78-style-with-design-system-components-utility-classes-only-for-layout)
-   - 7.9 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#79-give-icon-only-buttons-and-custom-controls-an-accessible-name)
+   - 7.1 [Centralize Accessibility in Shared UI Primitives](#71-centralize-accessibility-in-shared-ui-primitives)
+   - 7.2 [Delegate Mapped JSX to a Component](#72-delegate-mapped-jsx-to-a-component)
+   - 7.3 [Keep className Out of Shared UI Component APIs](#73-keep-classname-out-of-shared-ui-component-apis)
+   - 7.4 [Keep Colors Semantic Behind Shared UI](#74-keep-colors-semantic-behind-shared-ui)
+   - 7.5 [Keep Compound Component Slots as Direct, Renderable Children](#75-keep-compound-component-slots-as-direct-renderable-children)
+   - 7.6 [Keep Dialog Mounted and Drive It with a Boolean open](#76-keep-dialog-mounted-and-drive-it-with-a-boolean-open)
+   - 7.7 [Name Compound Render Conditions by Intent](#77-name-compound-render-conditions-by-intent)
+   - 7.8 [Never Nest a form Inside a form](#78-never-nest-a-form-inside-a-form)
+   - 7.9 [Require Composition Through Nested Children](#79-require-composition-through-nested-children)
+   - 7.10 [Wrap the Whole Dialog in a Form Keyed on the Open Target](#710-wrap-the-whole-dialog-in-a-form-keyed-on-the-open-target)
+   - 7.11 [Style with Design System Components, Utility Classes Only for Layout](#711-style-with-design-system-components-utility-classes-only-for-layout)
+   - 7.12 [Give Icon-Only Buttons and Custom Controls an Accessible Name](#712-give-icon-only-buttons-and-custom-controls-an-accessible-name)
 8. [Jotai Client State](#8-jotai-client-state) — **MEDIUM-HIGH**
    - 8.1 [Create Atoms at Module Scope, Never During Render](#81-create-atoms-at-module-scope-never-during-render)
    - 8.2 [Keep Server Data in React Query, Not in Atoms](#82-keep-server-data-in-react-query-not-in-atoms)
@@ -116,14 +122,18 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 11.5 [Colocate a Test Next to Every File, Covering Errors](#115-colocate-a-test-next-to-every-file-covering-errors)
    - 11.6 [Query by Role and Label, Interact with userEvent](#116-query-by-role-and-label-interact-with-userevent)
    - 11.7 [Test API Hooks with renderHook and a Per-Test Query Wrapper](#117-test-api-hooks-with-renderhook-and-a-per-test-query-wrapper)
-12. [Code Quality](#12-code-quality) — **MEDIUM**
-   - 12.1 [Never Build Hooks from Hooks (No createUseXxx Factories)](#121-never-build-hooks-from-hooks-no-createusexxx-factories)
-   - 12.2 [No Clickable No-Op Links or Actions](#122-no-clickable-no-op-links-or-actions)
-   - 12.3 [useMemo for Data, useCallback for Functions](#123-usememo-for-data-usecallback-for-functions)
-   - 12.4 [Write Code, Comments and Tests in English](#124-write-code-comments-and-tests-in-english)
-   - 12.5 [Scope eslint-disable to the Offending Line with a Reason](#125-scope-eslint-disable-to-the-offending-line-with-a-reason)
-   - 12.6 [Keep JSDoc for Non-Obvious Intent Only](#126-keep-jsdoc-for-non-obvious-intent-only)
-   - 12.7 [No Chained or Negated Ternaries](#127-no-chained-or-negated-ternaries)
+12. [Code Quality](#12-code-quality) — **HIGH**
+   - 12.1 [Avoid Deprecated APIs](#121-avoid-deprecated-apis)
+   - 12.2 [Keep an Explicit ESLint Warning Budget](#122-keep-an-explicit-eslint-warning-budget)
+   - 12.3 [Review and Date ESLint Exceptions](#123-review-and-date-eslint-exceptions)
+   - 12.4 [Export One Public Value per File](#124-export-one-public-value-per-file)
+   - 12.5 [Never Build Hooks from Hooks (No createUseXxx Factories)](#125-never-build-hooks-from-hooks-no-createusexxx-factories)
+   - 12.6 [No Clickable No-Op Links or Actions](#126-no-clickable-no-op-links-or-actions)
+   - 12.7 [Place the Public API First](#127-place-the-public-api-first)
+   - 12.8 [useMemo for Data, useCallback for Functions](#128-usememo-for-data-usecallback-for-functions)
+   - 12.9 [Write Code, Comments and Tests in English](#129-write-code-comments-and-tests-in-english)
+   - 12.10 [Keep JSDoc for Non-Obvious Intent Only](#1210-keep-jsdoc-for-non-obvious-intent-only)
+   - 12.11 [No Chained or Negated Ternaries](#1211-no-chained-or-negated-ternaries)
 
 ---
 
@@ -429,6 +439,16 @@ A reference or demo folder using business vocabulary is not shared code: forbid 
 
 See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-transverse-only-imports`
 
+### Shared UI APIs and Indirect Dependencies
+
+Global `shared/ui` primitives render generic UI roles without interpreting business entities, operations or metrics. An import-free primitive still violates ownership when its props name an order status, its variants encode a business operation, or its defaults choose a business currency, label or threshold. Moving the lookup into a theme module or a generic-sounding helper does not remove the business dependency.
+
+Keep adapters in the owning domain: the domain maps an order status to `positive` or `warning` and supplies labels and actions; a shared badge renders that generic tone and nested content. Charts receive generic series and UI palette roles rather than a business category registry. Inspect public names, literal unions, defaults, branches, type-only contracts and transitive dependencies; passing import lint is not proof of domain independence.
+
+UI selection, expansion, dismissal, generic chart geometry and generic numeric formatting remain shared UI concerns. Caller-provided labels may contain business vocabulary when the primitive renders them without interpretation. Domain-scoped shared components may know their own business scope. Tests and isolated stories may use realistic fixtures without introducing business contracts into production primitives.
+
+See also: `ui-no-adhoc-styling`, `ui-centralize-accessibility`, `ui-semantic-colors`
+
 ### 1.5 Organize Every Domain into Vertical Feature Slices
 
 **Impact: CRITICAL (keeps each business capability cohesive and prevents overlapping technical buckets)**
@@ -439,7 +459,7 @@ Name a feature after a cohesive business capability or user-facing responsibilit
 
 A feature containing `features/` must keep every other role folder under its own `shared/`; only `features/` and `shared/` hold its implementation at that level. Every module in that shared scope must serve multiple distinct child features. Put a cohesive parent-only responsibility in a named child feature, and compose child entry components from the application. A leaf feature without `features/` keeps `components/`, `helpers/`, `services/`, `stores/`, and other role folders directly at its root; do not add an unnecessary `shared/` wrapper. Do not mix these two layouts.
 
-Before reorganizing slices, identify their user outcomes and business owners. Capabilities of equal business scope belong at the same level; nesting requires a meaningful business parent, not just a shared tab, route or dataset. Dimensions, periods and display modes of the same capability normally remain parameters or components within it. Different file counts do not require matching folder structures.
+Before reorganizing slices, identify their user outcomes and business owners with `arch-business-capability-boundaries`, then justify peers, children and variants with `arch-feature-hierarchy`. The folder convention implements those business decisions.
 
 Allow at most two feature levels below a domain: `features/<feature>/` and, when a genuinely distinct responsibility needs it, `features/<feature>/features/<subfeature>/`. Do not nest a third feature level. Promote an overgrown sub-feature to the domain's first level or introduce a real sub-domain when it has an independent business lifecycle. A sub-feature must express a responsibility, not merely isolate one file or technical category.
 
@@ -480,6 +500,14 @@ Application pages compose feature entry components. Sibling features never impor
 Extract the complete responsibility: feature-specific calculations, types and state move with the components. Common inputs may live in shared code used by several children; child-specific logic belongs to its child and application code composes the children. Child-specific code stays inside its child even when only the parent currently calls it. Having children does not automatically establish shared ownership. Inspect actual consumers: several files in one feature count as one feature, and tests or application wrappers do not establish reuse. A business capability remains a feature even if multiple callers use it.
 
 See also: `arch-domain-first-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
+
+### Transfer the Whole Responsibility
+
+When extracting a feature, inspect transformations, validation, API orchestration, business predicates, types and interaction state, including code hidden in parent hooks and broad service modules. Move every child-specific result with the child. Parents may load genuine common inputs and coordinate application composition; reuse cached ancestor-owned sources rather than duplicating requests to give folders an appearance of independence.
+
+Static imports may not prove consumers when application composition passes common inputs as props. Inspect the actual inputs and record the capability evidence instead of inventing imports or treating application wrappers as features. Proven exclusive ownership remains a violation; uncertainty requests review rather than establishing a new exemption. Follow `arch-shared-no-domain-knowledge` for nearest-owner placement and evidence of sharing.
+
+See also: `arch-business-capability-boundaries`, `arch-feature-hierarchy`
 
 ### 1.6 Share Client State Through Jotai, Not Prop Chains or Context
 
@@ -619,7 +647,59 @@ The lint threshold is diagnostic, not a target for every component. When a compo
 
 See also: `arch-thin-components`, `arch-helpers-vs-services`; `vercel-react-best-practices` → `rerender-split-combined-hooks`
 
-### 1.8 Gate Experimental Features With a Typed Flag Registry
+### 1.8 Define Boundaries Through Business Capabilities
+
+**Impact: HIGH**
+
+**Rule:** Define each domain and feature by its business scope and user outcome before choosing its folders.
+
+A valid folder structure can still hide inconsistent responsibilities. Start from what the user needs to understand or accomplish, then identify the owner of its vocabulary, rules and state.
+
+### Applies When
+
+- Creating, reviewing or reorganizing domains and features.
+- Distinguishing a business scope from a screen, delivery mechanism or reusable component.
+
+Use these meanings:
+
+| Boundary | Decision criterion |
+| --- | --- |
+| Domain | A coherent business scope with its own vocabulary and rules. |
+| Sub-domain | A distinct business concept with meaningful ownership and evolution within that scope. |
+| Feature | A cohesive capability serving an identifiable user outcome. |
+| Sub-feature | A distinct responsibility that belongs to a broader capability. |
+| Variant | A dimension, period or mode of the same capability. |
+
+For an architecture review, write a short capability map before proposing moves: name each capability, its user outcome, its parent and the reason for that relationship, then identify the owners of its data, business rules and state. Derive those names and relationships from the application's users, vocabulary and workflows. The resulting tree must follow those decisions.
+
+**Incorrect:**
+```text
+domains/example/features/
+└── dashboard/                    # justified only by the screen name
+    └── features/capability/
+```
+
+**Correct:**
+```text
+domains/example/features/
+└── capability/                   # justified by an identifiable user outcome
+```
+
+The names in these trees are schematic; choose meaningful business names for the actual application. Routes and tabs may compose several capabilities; they do not automatically own them. Endpoint count, CRUD, permission differences and independent lifecycles can support a boundary, but are not mandatory conditions.
+
+### Exceptions
+
+- A small domain with one cohesive capability may keep its role folders directly; do not add empty feature wrappers.
+- Preserve established business vocabulary when it describes a real responsibility, even if a route uses the same name.
+- A reusable visual element without a distinct business outcome remains a component rather than becoming a feature.
+
+### References
+
+- [Feature hierarchy](rules/arch-feature-hierarchy.md) — choose siblings, children and variants.
+- [Feature ownership](rules/arch-shared-no-domain-knowledge.md) — move the responsibility with its implementation.
+- [domain layout](rules/arch-domain-first-layout.md) — folder and import conventions.
+
+### 1.9 Gate Experimental Features With a Typed Flag Registry
 
 **Impact: HIGH (unfinished features never reach production users)**
 
@@ -660,7 +740,7 @@ export const OrdersToolbar: FC = () => {
 - A flag never replaces a permission: hide by permission first, then by flag.
 - Import the flag hook from the module's public entry, never its internal files.
 
-### 1.9 Isolate Effects in Intent-Named Hooks
+### 1.10 Isolate Effects in Intent-Named Hooks
 
 **Impact: HIGH (synchronization responsibilities stay explicit and independently testable)**
 
@@ -703,7 +783,55 @@ Keep the hook in the named component directory when it has one consumer, under t
 
 See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.10 Keep Component Modules Focused on Components
+### 1.11 Justify Feature Hierarchy Through Business Scope
+
+**Impact: HIGH**
+
+**Rule:** Place capabilities of equal business scope at the same level, and nest a capability only when its responsibility belongs to the parent.
+
+Answer why a child belongs to its parent in business terms. Sharing a screen, dataset or component implementation does not establish that relationship. A parent must describe a meaningful capability rather than serve as a generic container.
+
+### Applies When
+
+- Comparing responsibilities to decide whether they are peers or parent and child.
+- A parent contains both an explicit child capability and the implementation of another comparable capability.
+- Considering a split by dimension, current versus historical view, or display mode.
+
+**Incorrect:**
+```text
+features/parent-capability/
+├── shared/
+│   ├── services/useParentCapability.ts   # implements two distinct responsibilities
+│   └── components/SecondCapability.tsx   # one remains implicit in the parent
+└── features/first-capability/
+```
+
+**Correct:**
+```text
+features/parent-capability/
+├── shared/
+│   └── types/commonInput.type.ts         # used by both peer capabilities
+└── features/
+    ├── first-capability/
+    └── second-capability/
+```
+
+These schematic children represent distinct user outcomes within the parent's business scope. A filter, dimension, period or display mode normally remains a parameter or component within its capability. Split it only when it introduces distinct business rules, workflows or ownership, rather than merely different rendering.
+
+If the proposed parent has no business responsibility beyond grouping its children on a screen, place the capabilities at the owning domain level and let the page compose them. Keep the existing limit of two feature levels below a domain. Follow `arch-feature-slice-layout`:: a feature with `features/` puts every parent-owned role folder under `shared/`; a leaf feature keeps role folders directly at its root.
+
+### Exceptions
+
+- Peer responsibilities may have different file counts, implementation sizes and internal layouts; symmetry alone does not justify extraction.
+- A parent may coordinate children through application composition. If the remaining parent behavior is itself a cohesive capability with no shared consumers, give it a named child feature rather than placing its implementation in `shared/`.
+- A technical extraction or a small variant can remain a component, helper or parameter.
+
+### References
+
+- [Business boundaries](rules/arch-business-capability-boundaries.md) — define the capability map first.
+- [feature slices](rules/arch-feature-slice-layout.md) — supported layout and dependency direction.
+
+### 1.12 Keep Component Modules Focused on Components
 
 **Impact: HIGH (component files stay readable while logic gains explicit ownership)**
 
@@ -751,11 +879,11 @@ export function OrderPanel({ order }: { order: Order }) {
 
 Place logic at the narrowest scope that owns it: component-only logic stays in the component directory, page-shared logic goes under that page, and domain-shared logic goes under the domain. Only helpers without business vocabulary belong in application-wide shared code. Presenter helpers stay at component or page scope because their output is coupled to the UI.
 
-PascalCase components may share a component module when they all have the module's declared view, state-renderer or feature role; otherwise split the mixed roles according to `arch-component-roles`. The ESLint rule treats a PascalCase callable as a component candidate, not as proof that it renders React UI, so review its actual role when auditing the module. Inline callbacks and local UI event handlers are allowed, but they must not hide mutations, navigation, notifications or multi-source orchestration that belongs in a service according to `arch-thin-components`.
+Private PascalCase components may share a component module when they all have the module's declared view, state-renderer or feature role; otherwise split mixed roles according to `arch-component-roles`. Export at most one public value according to `quality-single-public-export`; matching component roles do not permit multiple public exports. The ESLint rule treats a PascalCase callable as a component candidate, not as proof that it renders React UI, so review its actual role when auditing the module. Inline callbacks and local UI event handlers are allowed, but they must not hide mutations, navigation, notifications or multi-source orchestration that belongs in a service according to `arch-thin-components`.
 
 See also: `arch-helpers-vs-services`, `arch-isolate-effects-in-hooks`, `arch-thin-components`, `helpers-categories`
 
-### 1.11 Keep Components Thin
+### 1.13 Keep Components Thin
 
 **Impact: HIGH (logic becomes reusable and testable without rendering)**
 
@@ -812,7 +940,43 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 
 See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
 
-### 1.12 Keep Visual Logic at the Component or Page Boundary
+### Compound Derivations
+
+Extract dependent arithmetic and `Math` calls as one intent-named derivation, including intermediate aliases, JSX expressions and callbacks. Putting the expression in `useMemo` does not move its responsibility. UI coordinates, dimensions, chart radii and layout styles belong in component- or page-owned `helpers/presenters/`; quantitative business metrics belong in `helpers/calculators/`. Pass browser measurements as inputs. Pure helpers must not read browser globals, measure nodes or mutate the DOM.
+
+Small independent expressions such as `index + 1`, `row.depth * 20` or `(value / total) * 100` may remain local when they are not part of a larger derivation. Imported helper calls, hook calls, destructuring, direct reads, simple conditions and event adapters also remain in the component. Moving a helper to module scope in the same component file still violates `arch-component-module-boundaries`.
+
+**Incorrect (a calculation stays in the component):**
+
+```tsx
+export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
+  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
+  return <div style={{ left }} />
+}
+```
+
+**Correct (a pure presenter owns the complete derivation):**
+
+```typescript
+// FloatingPanel/helpers/presenters/getFloatingPanelStyle.ts
+export function getFloatingPanelStyle(anchorLeft: number, viewportWidth: number) {
+  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
+  return { left }
+}
+```
+
+```tsx
+// FloatingPanel/FloatingPanel.view.tsx
+import { getFloatingPanelStyle } from './helpers/presenters/getFloatingPanelStyle'
+
+export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
+  return <div style={getFloatingPanelStyle(anchorLeft, viewportWidth)} />
+}
+```
+
+The native container in this example is external layout. Geometry inside a chart remains data supplied to the shared UI primitive, rather than caller-authored CSS injected into it.
+
+### 1.14 Keep Visual Logic at the Component or Page Boundary
 
 **Impact: HIGH (feature hooks stay reusable across pages and contexts)**
 
@@ -883,7 +1047,7 @@ Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest
 
 See also: `arch-component-module-boundaries`, `helpers-categories`; `vercel-react-best-practices` → `async-parallel`
 
-### 1.13 No index.ts in stores/, One File per Concern
+### 1.15 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
 
@@ -921,7 +1085,77 @@ Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. D
 
 See also: `vercel-react-best-practices` → `bundle-barrel-imports`
 
-### 1.14 Separate Helpers from Services by Effects and Orchestration
+### 1.16 Review Component Complexity Before Splitting
+
+**Impact: HIGH**
+
+**Rule:** Review every flagged function manually and extract a component, hook or helper only when it establishes a cohesive responsibility boundary.
+
+Hook count, cyclomatic complexity and function size measure different things. A large JSX tree can have few branches and hooks while still mixing navigation, summaries, content selection and detail panels. Review those responsibilities separately.
+
+### Applies When
+
+- A component owns multiple regions that can be understood and changed independently.
+- ESLint reports excessive function length or cyclomatic complexity, including in a hook or callback used by a component.
+
+### Manual LLM Review
+
+For each function reported by either threshold, the LLM must read the whole function and its relevant callers, identify its responsibilities and decide whether extraction is worthwhile. Record a concrete reason for the decision:
+
+- **Split:** name the responsibility to extract and explain how the new boundary improves understanding or isolates change. Extract a rendered region into a component, cohesive state and actions into an intent-named hook, or pure predicates and derivations into categorized helpers.
+- **Keep:** explain why the function represents one cohesive responsibility and why splitting would add indirection or prop plumbing without improving clarity. A threshold exceedance alone does not mandate refactoring or suppression.
+
+Do not apply an automatic fix or bulk extraction solely to lower the metric. Preserve behavior and keep compound UI slots as direct children where required by the UI API.
+
+**Incorrect:**
+```tsx
+function OrdersWorkspace() {
+  const { orders, selection } = useOrdersWorkspace();
+  return (
+    <Stack>
+      <Surface>
+        <Text as="h2">{selection.label}</Text>
+        <Text>{selection.description}</Text>
+      </Surface>
+      <OrdersTable orders={orders} />
+    </Stack>
+  );
+}
+```
+
+**Correct:**
+```tsx
+function OrdersWorkspace() {
+  const { orders, selection } = useOrdersWorkspace();
+  return (
+    <Stack>
+      <OrderSelectionSummary selection={selection} />
+      <OrdersTable orders={orders} />
+    </Stack>
+  );
+}
+```
+
+The examples abbreviate an independently owned summary region. Small cohesive JSX does not require extraction merely because it uses several elements.
+
+### Exceptions
+
+- Tests (`*.test.*`, `*.spec.*`, `__tests__/`) and Storybook stories (`*.stories.*`) are excluded from these two thresholds; tooling outside `src/` is also outside their scope.
+- The two thresholds are review signals. Keep a cohesive region together when extraction would only fragment it; if a lint suppression is necessary, scope it to the offending line and include the review's concrete reason.
+- Do not compress formatting, replace JSX with local variables, or move all logic into an umbrella hook merely to pass a threshold. An extraction must establish a responsibility boundary.
+
+### References
+
+- [ESLint: complexity](https://eslint.org/docs/latest/rules/complexity)
+- [ESLint: max-lines-per-function](https://eslint.org/docs/latest/rules/max-lines-per-function)
+
+### Review Thresholds
+
+Review complexity above **8** (modified cyclomatic complexity, counting an entire `switch` once) or function size above **150** lines, excluding blank and comment-only lines. Include JSX and nested callback bodies when measuring a function's span. A score of 8 and a size of 150 are allowed. These are review signals rather than instructions to split automatically. Tests, stories and tooling are outside these production thresholds.
+
+Use both measures: few branches do not imply a small component. Hook count, mapped JSX and compound calculations remain separate signals. Resolve a reported exceedance through a cohesive extraction or a justified, line-scoped keep decision; do not compress formatting, hide JSX in variables or move everything into an umbrella hook merely to lower a metric.
+
+### 1.17 Separate Helpers from Services by Effects and Orchestration
 
 **Impact: HIGH (predictable location, minimal test setup)**
 
@@ -962,7 +1196,7 @@ src/domains/sales/orders/shared/
 
 A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
 
-### 1.15 Create a Sub-Domain Only for a Distinct Business Concept
+### 1.18 Create a Sub-Domain Only for a Distinct Business Concept
 
 **Impact: MEDIUM (avoids fragmented domains and forbidden sibling imports)**
 
@@ -992,7 +1226,7 @@ src/domains/sales/orders/
 
 Separate API resources (`/orders` vs `/invoices`), independent CRUD, distinct permissions and multiple views can confirm distinct ownership, but none establishes a sub-domain by itself. If two sub-domains need the same code, move genuinely common code to the main domain's `shared/` folder instead of merging them. A main domain with no distinct child concept stays single-level (`src/domains/contracts/`); it may use direct role folders while it remains one cohesive capability.
 
-See also: `arch-domain-first-layout`, `arch-feature-slice-layout`
+See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-business-capability-boundaries`, `arch-feature-hierarchy`
 
 ---
 
@@ -2511,7 +2745,55 @@ A schema shared across hooks of a sub-domain gets its own file in `helpers/schem
 
 Structural expectations of compound components, dialogs, forms and styling. Breaking them causes silent layout bugs, lost form values or inaccessible controls.
 
-### 7.1 Delegate Mapped JSX to a Component
+### 7.1 Centralize Accessibility in Shared UI Primitives
+
+**Impact: HIGH**
+
+**Rule:** Centralize all ARIA wiring, keyboard navigation and focus behavior in shared UI primitives, and pass only semantic data, translated labels and business actions from domain and application code.
+
+The design system owns accessibility implementation, including simple attributes such as `aria-label`, `aria-hidden` and `role`. Domain and application components own meaning and actions: labels, selected values, expansion state, financial content and business callbacks. Moving behavior into a domain hook or helper does not establish a shared accessibility boundary.
+
+### Applies When
+
+- JSX supplies `aria-*`, `role`, `tabIndex`, `autoFocus`, or keyboard/focus handlers, including on another component.
+- Code generates accessibility associations, moves or restores focus, inspects the active element, or registers keyboard/focus listeners.
+- Code imports Radix or another accessibility primitive implementation directly into a feature.
+
+**Incorrect:**
+```tsx
+<button aria-label={t("details")} aria-pressed={active} onClick={toggle}>
+  <DetailsIcon />
+</button>
+```
+
+**Correct:**
+```tsx
+<ToggleButton label={t("details")} active={active} onClick={toggle}>
+  <DetailsIcon />
+</ToggleButton>
+```
+
+`ToggleButton` and `DetailsIcon` implement their semantics in the shared UI layer. Add or extend a primitive when a capability is missing. Do not create a generic accessibility wrapper that accepts arbitrary roles or an ARIA property bag. Public primitive props describe capabilities (`label`, `active`, `expanded`, `value`, `onOpenChange`); compound components generate their IDs and associations internally. Compose rendered content through nested `children`.
+
+Prefer native HTML for simple controls. Use focused, unstyled primitives such as Radix behind project wrappers for complex widgets; do not repeatedly implement tabs, tooltip dismissal or modal focus management. Preserve pointer and keyboard behavior, translated names, visible focus and nested overlay dismissal when migrating.
+
+Only files under `src/shared/ui`, including its internal hooks and helpers, may depend directly on external accessibility or headless UI libraries such as Radix. Domain code, application code and other shared modules must import project-owned UI primitives instead. Keep imports and library integration inside this boundary; do not bypass it through bare re-exports of third-party components.
+
+### Exceptions
+
+- Shared UI primitives and their internal hooks implement the wiring. They must not depend on business domains.
+- Native HTML without custom ARIA or focus/keyboard wiring remains valid in domain code, including real buttons, labels, forms and normal `onClick`/`onChange` business actions.
+- Domain labels remain translated data. For example, pass `label={t('delete')}` rather than hardcoding a name inside the primitive. A business preload callback may use `onIntent`; the primitive decides how pointer and focus events trigger it.
+- External component contracts do not justify authored ARIA wiring in a domain wrapper. Optional external SVG/HTML types alone are not evidence that wiring was actually supplied.
+
+### References
+
+- [Accessible names](rules/ui-accessible-names.md) — naming and native semantics, implemented inside shared UI.
+- [Tailwind: reusable controls and form components](../tailwind-design-system/references/details.md) — examples of styling and ARIA inside primitives.
+- [mandatory children composition](rules/ui-required-children.md) — labels are data and rendered UI is composed through children.
+- [Radix accessibility](https://www.radix-ui.com/primitives/docs/overview/accessibility) — roles, ARIA, keyboard navigation and focus management behind shared wrappers.
+
+### 7.2 Delegate Mapped JSX to a Component
 
 **Impact: HIGH (keeps list rendering declarative and isolates per-item decisions)**
 
@@ -2529,7 +2811,7 @@ Enforce this convention with the ESLint rule `local/no-complex-jsx-map` when the
 
     return (
       <button key={category.id} onClick={() => selectCategory(category.id)}>
-        <span className={isActive ? 'active' : undefined}>{category.label}</span>
+        <Text tone={isActive ? 'accent' : 'default'}>{category.label}</Text>
       </button>
     )
   })}
@@ -2552,7 +2834,7 @@ function CategoryItem({ activeCategoryId, category, onSelect }: CategoryItemProp
 
   return (
     <button onClick={() => onSelect(category.id)}>
-      <span className={isActive ? 'active' : undefined}>{category.label}</span>
+      <Text tone={isActive ? 'accent' : 'default'}>{category.label}</Text>
     </button>
   )
 }
@@ -2573,11 +2855,11 @@ The item component must be declared at module scope, never inside its parent com
 
 See also: `vercel-react-best-practices` → `rerender-no-inline-components`
 
-### 7.2 Keep className Out of Shared UI Component APIs
+### 7.3 Keep className Out of Shared UI Component APIs
 
 **Impact: HIGH (prevents caller style overrides and keeps layout with the parent)**
 
-Components and compound slots in `shared/ui` must neither expose nor accept a `className` prop. This includes inherited props from `HTMLAttributes`, `ComponentProps`, `ComponentPropsWithoutRef` and similar React types. Omit `className` when composing these types; forwarding or merging caller classes still exposes an override channel. Passing classes through spreads or React element factories follows the same rule.
+Components and compound slots in `shared/ui` must neither expose nor accept `className` or `style` props. This includes inherited props from `HTMLAttributes`, `ComponentProps`, `ComponentPropsWithoutRef` and similar React types. Omit both properties when composing these types; forwarding or merging caller classes still exposes an override channel. Passing classes through spreads or React element factories follows the same rule.
 
 The parent owns the surrounding layout, including margins, widths and flex placement. Put layout classes on a parent container, even when a class would only add spacing. Appearance and internal layout belong to the shared component and its semantic variants. Do not rename the override prop to bypass this boundary.
 
@@ -2596,16 +2878,16 @@ function Button({ className, ...props }: ComponentPropsWithoutRef<'button'>) {
 **Correct (internal classes define the component; the parent handles layout):**
 
 ```tsx
-import type { ComponentPropsWithoutRef } from 'react'
+import type { ReactNode } from 'react'
 
-type ButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'className'>
+type ButtonProps = { children: ReactNode; label: string; onClick?: () => void }
 
-function Button(props: ButtonProps) {
-  return <button {...props} className="rounded px-3 py-2" />
+function Button({ label, ...props }: ButtonProps) {
+  return <button {...props} aria-label={label} className="rounded px-3 py-2" />
 }
 
 <div className="mt-2">
-  <Button>{t('sales.orders.save')}</Button>
+  <Button label={t('sales.orders.save')}>{t('sales.orders.save')}</Button>
 </div>
 ```
 
@@ -2617,7 +2899,143 @@ function Button(props: ButtonProps) {
 - Preserve compound slot discovery: never insert a layout wrapper between a compound component and its direct slots. External layout wraps the whole component; content slots compose standardized shared UI. Follow `ui-compound-slots-direct-children`.
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
 
-### 7.3 Keep Compound Component Slots as Direct, Renderable Children
+Chart geometry supplied as data is distinct from caller-authored CSS layout. Apply `ui-centralize-accessibility` to inherited native props as well; public UI contracts expose semantic labels and behavior instead of raw ARIA or focus/keyboard wiring.
+
+### 7.4 Keep Colors Semantic Behind Shared UI
+
+**Impact: HIGH**
+
+**Rule:** Use semantic color tokens inside shared UI primitives and expose semantic variants to business components.
+
+The [shared UI boundary](rules/ui-no-adhoc-styling.md) applies first:
+replacing a raw color with `text-positive` or an imported color constant does not
+authorize visual styling in a business component. The styling examples below
+belong inside `shared/ui`; domains consume primitives through semantic variants
+and nested children.
+
+Semantic variants describe generic UI roles, not business entities, operations or
+metrics. Follow [agnostic shared UI](rules/arch-shared-no-domain-knowledge.md): domains
+choose the role, and primitives apply its visual tokens without interpreting
+business values.
+
+Business components should express visual intent such as `positive`, `negative`, `warning`, or `muted`, without owning the concrete color that represents it. This keeps themes and visual changes centralized and prevents the same business meaning from drifting across the interface.
+
+Hardcoded colors include:
+
+- hexadecimal, `rgb()`, `hsl()`, `oklch()`, and concrete CSS color names such as `red`, `white`, or `black`;
+- arbitrary Tailwind colors such as `text-[#b91c1c]`;
+- palette-specific utilities such as `text-red-700` or `bg-emerald-100` when they encode a business meaning.
+
+### Applies When
+
+- A React component chooses a color, including inside shared UI primitives.
+- A class, inline style, SVG attribute, or component prop selects a concrete color.
+- A charting, canvas, mapping, or other third-party API requires a color value rather than a CSS class.
+
+**Incorrect:**
+```tsx
+// shared/ui/StatusBadge.view.tsx
+export function Badge({
+  tone,
+  children,
+}: {
+  tone: "positive" | "negative";
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      className={
+        tone === "positive"
+          ? "bg-emerald-100 text-emerald-700"
+          : "bg-[#fef2f2] text-[#b91c1c]"
+      }
+    >
+      {children}
+    </span>
+  );
+}
+```
+
+**Correct (Semantic Tailwind Classes):**
+```tsx
+// shared/ui/StatusBadge.view.tsx
+export function Badge({
+  tone,
+  children,
+}: {
+  tone: "positive" | "negative";
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      className={
+        tone === "positive"
+          ? "bg-positive-muted text-positive"
+          : "bg-negative-muted text-negative"
+      }
+    >
+      {children}
+    </span>
+  );
+}
+```
+
+The semantic utilities must resolve to centrally defined theme tokens. Business
+components use the primitive instead of applying its color classes themselves:
+
+```tsx
+export function Status({ isPositive }: { isPositive: boolean }) {
+  return (
+    <Badge tone={isPositive ? "positive" : "negative"}>
+      {isPositive ? "Gain" : "Loss"}
+    </Badge>
+  );
+}
+```
+
+**Correct (Centralized Semantic Constants):**
+Use this option inside a shared UI wrapper when an API requires a color value
+instead of a Tailwind class. Prefer a semantic CSS custom property; if the API
+cannot resolve CSS variables, keep the concrete fallback value in this dedicated
+theme file as well. Domains supply data and generic UI intent to the wrapper.
+
+```typescript
+// shared/theme/chart-colors.ts
+export const chartColors = {
+  positive: "var(--color-positive)",
+  negative: "var(--color-negative)",
+} as const;
+```
+
+```tsx
+// shared/ui/SeriesBar.view.tsx
+import { Bar } from "recharts";
+
+import { chartColors } from "../theme/chart-colors";
+
+export function SeriesBar({
+  dataKey,
+  tone,
+}: {
+  dataKey: string;
+  tone: keyof typeof chartColors;
+}) {
+  return <Bar dataKey={dataKey} fill={chartColors[tone]} />;
+}
+```
+
+The exported names describe generic UI roles rather than business metrics or hue
+names such as `green500` or `red700`. A domain presenter may map a business metric
+to one of these roles without owning its concrete color.
+
+### Exceptions
+
+- Global stylesheets, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.
+- Static brand assets may keep mandated brand colors in their dedicated asset or token definition.
+- User-provided or data-driven colors are not hardcoded, but their application, validation and fallback colors must remain in shared UI.
+- Structural CSS keywords such as `currentColor`, `transparent`, and `inherit` may be used inside shared UI; they do not exempt domains from the shared UI boundary.
+
+### 7.5 Keep Compound Component Slots as Direct, Renderable Children
 
 **Impact: HIGH (prevents silently dropped slots and empty overflow menus)**
 
@@ -2674,7 +3092,7 @@ const canRestore = canRestoreProject(project) // boolean business rule
 - Gate optional actions in the caller with a boolean predicate: a wrapper that renders `null` still occupies a visible slot and can leave an overflow menu empty, and the container cannot know what its children will render.
 - Put `Suspense` outside the compound component, or inside a content slot (`Card.Body`), never between the compound and its slots.
 
-### 7.4 Keep Dialog Mounted and Drive It with a Boolean open
+### 7.6 Keep Dialog Mounted and Drive It with a Boolean open
 
 **Impact: HIGH (keeps close transitions and focus handling working)**
 
@@ -2711,7 +3129,7 @@ return (
 
 While the exit transition plays, the target may already be `null`: keep the last displayed values (or render stable text) so the content does not flash empty during the close animation.
 
-### 7.5 Name Compound Render Conditions by Intent
+### 7.7 Name Compound Render Conditions by Intent
 
 **Impact: HIGH (display decisions become readable and reviewable at the JSX boundary)**
 
@@ -2739,7 +3157,7 @@ Do not store the boolean in state or wrap a cheap condition in `useMemo`. Prefer
 
 See also: `helpers-business-rules-pure`; `vercel-react-best-practices` → `rendering-conditional-render`, `rerender-simple-expression-in-memo`
 
-### 7.6 Never Nest a form Inside a form
+### 7.8 Never Nest a form Inside a form
 
 **Impact: HIGH (prevents native submit that reloads the SPA and loses data)**
 
@@ -2757,7 +3175,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 **Correct (outer container is a div, submit through the handler):**
 
 ```tsx
-<div role="group" aria-label={t('order.create.title')}>
+<div>
   <DocumentsBlock />
   <button type="button" onClick={() => void handleSubmit()}>
     {t('common.save')}
@@ -2767,7 +3185,71 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 
 With a form library, use its "render as div" option or `useForm().handleSubmit` from a button `onClick`. The trade-off is losing native Enter-to-submit on the outer form. Check in the browser console with `document.querySelectorAll('form form').length === 0`.
 
-### 7.7 Wrap the Whole Dialog in a Form Keyed on the Open Target
+### 7.9 Require Composition Through Nested Children
+
+**Impact: HIGH**
+
+**Rule:** Compose caller-supplied UI through nested children instead of component, element or render-function props, and extract renderers required by external APIs into module-level components.
+
+Composition is mandatory for project-owned APIs, including shared UI, feature/view boundaries and wrappers. A caller must be able to see and arrange the UI structure without hiding elements or rendering functions in props. This convention is stricter than a preference for children, including when callbacks receive data or state.
+
+### Applies When
+
+- A prop such as `title`, `header`, `actions`, `footer`, `tooltip` or `positionsControl` carries rendered UI rather than data.
+- A prop accepts JSX, a fragment, an array of elements, a JSX-valued variable, a component reference, or a render function, with or without arguments.
+- A wrapper forwards such content through named props or a spread object.
+- JSX uses `children={...}`; the `children` declaration/destructuring in a component's props remains necessary and valid.
+- An external API requires a component, element or render function in a named prop.
+
+**Incorrect:**
+```tsx
+<Panel title={<Title />} header={<Toolbar />} />
+<Panel title={titleElement} />
+<Panel header={Toolbar} />
+<Panel renderHeader={() => <Toolbar />} />
+<Panel renderItem={(item) => <Item item={item} />} />
+<Panel children={<Content />} />
+```
+
+**Correct:**
+```tsx
+<Panel>
+  <Panel.Title>
+    <Title />
+  </Panel.Title>
+  <Panel.Header>
+    <Toolbar />
+  </Panel.Header>
+  <Panel.Body>
+    <Content />
+  </Panel.Body>
+</Panel>
+```
+
+Remove the old content props from the component's type and implementation, then migrate every caller. Slots must render their content. When a root discovers slots by inspecting child types, keep those slots as direct children; put extracted components or conditional content inside them. Add shared context only when the subcomponents need shared state, not for a purely structural layout.
+
+### Exceptions
+
+- Scalar data and configuration remain props, including string labels/descriptions, native `title`, numeric values, business event handlers and domain models; do not turn every data field into a slot. A string-only label prop must not be widened to ReactNode to smuggle UI through it. This exception does not permit ARIA or keyboard/focus wiring in domains or application code: follow [centralized accessibility](rules/ui-centralize-accessibility.md) and pass semantic props to shared UI instead.
+- External APIs outside the project's control, such as React `Suspense.fallback` or Recharts `shape`, `content`, `tick` and `label`, may retain their required named UI props at the external integration boundary. Pass a named module-level component reference or an element of that component, according to the installed library's contract. An inline render callback remains forbidden, including one that simply delegates to a component. Do not propagate the external API into project-owned wrappers.
+
+```tsx
+// Incorrect: external APIs do not justify an inline render function.
+<Series shape={(props) => <SeriesShape {...props} selected={selected} />} />
+
+// Correct: SeriesShape is defined at module scope or imported.
+<Series shape={<SeriesShape selected={selected} />} />
+// When the library accepts a component function and no extra props are needed:
+<Series shape={SeriesShape} />
+```
+
+Move captured parent values into the extracted component's data/configuration props. Preserve the library-injected props and their types; do not define the extracted component inside its parent render.
+
+### References
+
+- [Direct, renderable compound slots](rules/ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.
+
+### 7.10 Wrap the Whole Dialog in a Form Keyed on the Open Target
 
 **Impact: HIGH (submit button inside the form, fresh values on each open)**
 
@@ -2815,11 +3297,11 @@ function SubmitButton() {
 
 Do not let a generic "confirm" action close the dialog by itself: it would close even when validation fails. Close it from the submit handler on success.
 
-### 7.8 Style with Design System Components, Utility Classes Only for Layout
+### 7.11 Style with Design System Components, Utility Classes Only for Layout
 
 **Impact: MEDIUM-HIGH (consistent visuals and themeable UI)**
 
-Visual styling (text size, color, weight, background, border, radius, shadow, padding) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. Utility classes are tolerated only for minimal layout (`flex`, `gap`, `grow`) on external parent containers, and a layout primitive of the design system is preferable even there. Do not inject layout classes or styles through children or extracted child components. Internal spacing and structure come from shared UI sizes, variants and structure primitives. Never pass `className` to a shared UI component, including for layout: follow `ui-no-classname-on-shared-ui`. Hand-styled markup drifts from the design tokens and breaks on every theme change.
+Visual styling (text size, color, weight, background, border, radius, shadow, opacity, animations and interaction appearance) comes from design-system components (`Text`, `Badge`, `Separator`, `Card`…), not from Tailwind classes on a `<div>` or `<span>` in feature code. External containers may own display, flex/grid, alignment, order, margins, **padding**, gaps, dimensions, aspect ratio, overflow, position, offsets and z-index. Responsive and arbitrary utilities are allowed only when the underlying property is layout. Use a shared layout primitive when it fits. Do not inject layout classes or styles through children or extracted child components. Internal spacing and structure come from shared UI sizes, variants and structure primitives. Never pass `className` or `style` to a shared UI component, including for layout: follow `ui-no-classname-on-shared-ui`. Hand-styled markup drifts from the design tokens and breaks on every theme change.
 
 **Incorrect (styled div/span with Tailwind):**
 
@@ -2839,37 +3321,39 @@ Visual styling (text size, color, weight, background, border, radius, shadow, pa
   <Text variant="sm-medium" color="secondary">
     {t('contract.reminders.empty')}
   </Text>
-  <Badge type="success" label={statusLabel} />
+  <Badge tone="positive">{statusLabel}</Badge>
 </Stack>
 ```
 
 If no design-system component fits, add or extend one in the shared UI layer instead of styling locally. Detection hint: search feature code for `className=` values containing `bg-`, `text-`, `border-`, `rounded-` or `shadow-`.
 
-### 7.9 Give Icon-Only Buttons and Custom Controls an Accessible Name
+The same boundary covers SVG/Recharts appearance props, local stylesheet imports and imperative DOM style/class/attribute writes, including values supplied through constants, spreads, templates or element factories. A semantic class such as `text-positive` is still visual styling and belongs inside shared UI. Exporting visual class strings does not establish a primitive.
+
+Global stylesheets, themes and token definitions remain design-system infrastructure. Shared UI consumes semantic tokens; domains supply data, actions and generic variants. Dynamic layout styles may remain on external containers. Chart geometry is data supplied to the owning UI primitive. Follow `ui-semantic-colors` for tokens and `arch-shared-no-domain-knowledge` for business adapters.
+
+### 7.12 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
 **Impact: MEDIUM (usable with assistive tech, queryable by role in tests)**
 
-Every interactive element needs an accessible name. A button whose only child is an icon has none, and a tooltip rendered through `data-tooltip-*` attributes (or CSS-only) is not an accessible name: screen readers and `getByRole(…, { name })` ignore it. Pass a translated `aria-label`. Build controls from real buttons, links and inputs (or design-system components that render them) rather than clickable `div`s. When a shared component lacks a name or hardcodes English, fix it there; never work around it with a `data-testid` in a test.
+Every interactive element needs an accessible name. A button whose only child is an icon has none, and a tooltip rendered through `data-tooltip-*` attributes (or CSS-only) is not an accessible name: screen readers and `getByRole(…, { name })` ignore it. Pass a translated semantic `label` to the shared UI primitive, which implements the accessible name internally according to `ui-centralize-accessibility`. Build controls from real buttons, links and inputs (or design-system components that render them) rather than clickable `div`s. When a shared component lacks a name or hardcodes English, fix it there; never work around it with a `data-testid` in a test.
 
-**Incorrect (icon-only button named only by its tooltip):**
+**Incorrect (icon-only button has no accessible name):**
 
 ```tsx
 <Button
   variant="ghost"
-  tooltip={{ content: t('common.delete') }} // rendered as data-tooltip-content
   onClick={() => requestDelete(contact.id)}
 >
   <TrashIcon />
 </Button>
 ```
 
-**Correct (translated accessible name, tooltip kept for sighted users):**
+**Correct (a translated semantic label becomes the accessible name):**
 
 ```tsx
 <Button
   variant="ghost"
-  aria-label={t('common.delete')}
-  tooltip={{ content: t('common.delete') }}
+  label={t('common.delete')}
   onClick={() => requestDelete(contact.id)}
 >
   <TrashIcon />
@@ -2879,7 +3363,7 @@ Every interactive element needs an accessible name. A button whose only child is
 await user.click(screen.getByRole('button', { name: 'common.delete' }))
 ```
 
-In a list, include the row identity when several rows share the same action (`t('contact.actions.deleteNamed', { name })`) so each button has a distinct name. Same rule for icon-only links and for custom inputs (`aria-label`, or a `<label htmlFor>`).
+In a list, include the row identity when several rows share the same action (`t('contact.actions.deleteNamed', { name })`) so each button has a distinct name. Apply the same naming policy to icon-only links and custom inputs. Shared UI chooses native label associations or ARIA internally; domain code supplies the translated meaning.
 
 ---
 
@@ -3268,11 +3752,31 @@ const formatGlobalStatus = useFormatGlobalStatus()
 const formatMoney = useFormatMoney()
 
 <p>{formatContact(access.contact)}</p>
-<span className="badge">{formatGlobalStatus(order.globalStatus)}</span>
+<Badge>{formatGlobalStatus(order.globalStatus)}</Badge>
 <p>{formatMoney(order.amount, order.currency)}</p>
 ```
 
 Where to look first: the app-wide formatters in `src/shared/helpers/formatters/` (money, dates, addresses), then the domain's and its main domain's `shared/helpers/formatters/`. A formatter used by several sub-domains lives once in `[domain]/shared/helpers/formatters/`, one hook per file named after it. A formatter hook returns a `useCallback`-wrapped function taking the entity (see `arch-helpers-vs-services` for its shape). Lint the raw locale calls (`toLocaleDateString`, `toLocaleTimeString`) with `no-restricted-properties` so that dates also go through the shared formatters.
+
+### Missing Values and Zero
+
+Numeric formatters own display fallbacks. Pass nullable values directly instead of guarding with `value == null ? '—' : formatNumber(value)`, checking numeric truthiness, or defaulting a formatter input with `??` or `||`. Extend the existing formatter's options rather than creating a wrapper solely for null or zero.
+
+**Incorrect (the component owns a display fallback):**
+
+```tsx
+<span>{value == null ? '—' : formatNumber(value)}</span>
+```
+
+**Correct (the existing formatter owns the policy):**
+
+```tsx
+<span>{formatNumber(value)}</span>
+```
+
+Numeric formatters should accept `number | null | undefined`. A string fallback is display text; a numeric fallback uses the same precision, sign, currency and unit options as a regular value. Keep zero distinct from absence by default and opt into a zero placeholder explicitly. Preserve each caller's policy when migrating.
+
+Conditions that select structure, loading or error states, permissions or comparability remain component/business logic. A calculation's numeric default belongs to that calculation. A domain formatter may add independent business meaning; a missing-value placeholder alone does not justify one.
 
 ### 9.2 Keep Business Rules as Pure, Intent-Named Predicates
 
@@ -3473,7 +3977,7 @@ Option names must match the placeholders of the catalog value: a placeholder mis
 
 **Impact: MEDIUM-HIGH (no untranslatable copy, no raw keys on screen)**
 
-Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and `aria-label`s. When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
+Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and accessible labels. Domains pass translated semantic labels; shared UI implements any ARIA wiring (`ui-centralize-accessibility`). When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
 
 **Incorrect (hardcoded copy in UI and notifications):**
 
@@ -3870,11 +4374,202 @@ it('should default missing lines to []', async () => {
 
 ## 12. Code Quality
 
-**Impact: MEDIUM**
+**Impact: HIGH**
 
 Conventions that keep the codebase consistent and reviewable, beyond what ESLint and TypeScript already enforce.
 
-### 12.1 Never Build Hooks from Hooks (No createUseXxx Factories)
+### 12.1 Avoid Deprecated APIs
+
+**Impact: HIGH**
+
+**Rule:** Replace deprecated APIs with their supported alternatives before using them in project code.
+
+Use the installed dependency versions and their official migration guidance to identify the replacement. Preserve behavior, event cleanup, accessibility, and visual styling during migration. This applies to application code, tests, and configuration, including imported components and deprecated props, not only method calls.
+
+### Applies When
+
+- The resolved API or overload has a JSDoc `@deprecated` annotation.
+- The installed API's official documentation marks it deprecated even if its types do not yet carry the annotation.
+
+**Incorrect:**
+```typescript
+const breakpoint = window.matchMedia('(min-width: 768px)')
+const handleChange = (event: MediaQueryListEvent) => console.log(event.matches)
+
+breakpoint.addListener(handleChange)
+breakpoint.removeListener(handleChange)
+```
+
+**Correct:**
+```typescript
+const breakpoint = window.matchMedia('(min-width: 768px)')
+const handleChange = (event: MediaQueryListEvent) => console.log(event.matches)
+
+breakpoint.addEventListener('change', handleChange)
+breakpoint.removeEventListener('change', handleChange)
+```
+
+### Exceptions
+
+- Third-party declarations and generated or vendored files are not migration targets; their usage in authored project code still must follow this rule.
+- A matching name alone does not establish deprecation: inspect the resolved symbol and applicable overload rather than banning unrelated APIs by name.
+
+### References
+
+- [typescript-eslint: no-deprecated](https://typescript-eslint.io/rules/no-deprecated/)
+- [typescript-eslint: typed linting](https://typescript-eslint.io/getting-started/typed-linting/)
+
+### Detection
+
+Use `@typescript-eslint/no-deprecated` with type information for authored TypeScript, including tests and configuration. Do not retain a deprecated call through an allowlist or suppression. Annotated aliased symbols are detectable; manually consult the installed version's official documentation when declarations lack the annotation. A clean lint run does not prove the absence of unannotated deprecations.
+
+### 12.2 Keep an Explicit ESLint Warning Budget
+
+**Impact: HIGH**
+
+**Rule:** Keep the versioned ESLint warning ceiling aligned with reviewed warnings and justify every increase instead of leaving spare capacity.
+
+A warning should require an explicit reviewable change to the budget. The global total includes native ESLint warnings and the tracking warnings for [reviewed suppressions](rules/quality-eslint-disable-scoped.md); suppressed original diagnostics are not counted again.
+
+### Applies When
+
+- Setting up or changing the lint command used locally and in CI.
+- Accepting, removing or reauditing an exception, or resolving another warning.
+
+**Incorrect:**
+Two accepted exceptions produce two warnings, but the command leaves spare capacity:
+
+```sh
+eslint . --max-warnings 5
+```
+
+**Correct:**
+```sh
+eslint . --max-warnings 2
+```
+
+### Maintaining the Budget
+
+- Start at `--max-warnings 0`. Keep the ceiling in the versioned lint command, preserving its cache options and `--fix` support; CI must use the same command.
+- Audit each exception before accepting it. Increase the ceiling by one per newly accepted directive, not per suppressed rule, diagnostic or review event. Include the rationale for each increase in the change or PR description and the technical evidence in the dated directive.
+- A new review of an existing exception updates its date and justification as needed without increasing the ceiling. Removing an exception lowers the ceiling by one. Remove unused suppressions rather than budgeting for them.
+- Other warnings also consume the global ceiling: investigate and fix them or record why the affected rule permits retaining them before changing the budget. Never absorb invalid review metadata errors into the warning budget.
+- Lower the ceiling in the same change when the total decreases. Do not create headroom, automatically update the limit, hide output with `--quiet`, weaken severities or widen ignores to bypass the budget.
+
+### Exceptions
+
+- Focused lint runs and profiling may help diagnosis, but do not replace the full-project budget check.
+- Re-running lint or reviewing an existing exception again does not earn an additional allowance.
+
+### References
+
+- [ESLint: max-warnings](https://eslint.org/docs/latest/use/command-line-interface#--max-warnings)
+
+A global warning ceiling rejects excess totals but cannot detect replacing a removed warning with a different warning at the same count. Review new exceptions and lower an oversized ceiling explicitly; neither passing lint nor metadata validation certifies a technical rationale.
+
+### 12.3 Review and Date ESLint Exceptions
+
+**Impact: HIGH**
+
+**Rule:** Keep an ESLint suppression only after reviewing its technical justification, naming the affected rules and recording the actual last review date on a line-scoped directive.
+
+A nonempty comment does not establish a valid exception. Accept only a demonstrated false positive, a dependency constraint or an exception permitted by the affected rule. Being inconvenient to fix, pre-existing or needed to pass lint is not a technical justification. This rule does not grant exceptions to rules that expressly prohibit suppression.
+
+### Applies When
+
+- Authored code contains `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`, including tests and tooling.
+- An initial audit or a targeted reaudit follows changes to the skill, lint rules, dependencies or relevant code.
+
+**Incorrect:**
+```typescript
+for (const entry of entries) {
+  // eslint-disable-next-line no-await-in-loop
+  await writer.append(entry)
+}
+```
+
+**Correct:**
+```typescript
+for (const entry of entries) {
+  // eslint-disable-next-line no-await-in-loop -- reviewed: 2026-10-27; This writer requires each append to finish before the next write starts.
+  await writer.append(entry)
+}
+```
+
+Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual last review date, not the date lint ran. Name each affected rule explicitly; use `eslint-disable-next-line` or `eslint-disable-line`, never a block/file or all-rules disable.
+
+### Audit and Reaudit
+
+1. Inventory the suppressions in scope. For a targeted reaudit, select exceptions affected by the changed rules, skills, dependencies or code; use their dates to identify when they were last examined.
+2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Verify whether the original diagnostic still occurs and whether the rationale remains valid. Do not infer approval from an earlier comment or a syntactically valid date.
+3. Remove unused suppressions. For a real violation without an allowed exception, correct the code and remove the suppression. For a justified exception, retain the narrow directive and record the concrete rationale and actual review date.
+4. Run lint and maintain the [warning budget](rules/quality-eslint-warning-budget.md). A retained directive contributes one tracking warning, even if it names several rules. A new review of the same exception updates its date without adding another warning.
+
+Never bulk-date existing ignores or raise the budget before examining them. If an audit is explicitly deferred, leave the missing metadata as errors rather than approving the exceptions in advance. Do not replace a suppression with a configuration exclusion or a lower severity to bypass review.
+
+### Exceptions
+
+- Generated and vendored code outside the project's lint scope is not an audit target.
+- Examples embedded in strings or ordinary explanatory comments are not suppression directives.
+- A prior review does not expire automatically; re-examine it when a requested audit or a relevant change calls the justification into question.
+
+### References
+
+- [ESLint: configuration comments and descriptions](https://eslint.org/docs/latest/use/configure/rules#using-configuration-comments)
+- [ESLint: unused disable directives](https://eslint.org/docs/latest/use/configure/configuration-files#report-unused-disable-directives)
+
+Place the directive immediately above the offending line rather than an enclosing hook, function or JSX block. A misplaced directive suppresses nothing and should fail as unused. First look for a clean fix; do not approve a suppression merely because its metadata is complete.
+
+### 12.4 Export One Public Value per File
+
+**Impact: MEDIUM**
+
+**Rule:** Export at most one public value per production file and group related extracted files in a themed directory.
+
+Give each public component, function, hook or constant a named file. When splitting related components or utilities, group them by theme within their existing owner and helper category; do not introduce a new business feature just to hold the files. Import files directly instead of recreating a multi-export barrel.
+
+### Applies When
+
+- A production module exports several values, whether with declarations, a default export, an export list or named reexports.
+- Several names in one export statement count separately, including aliases of the same binding.
+- An `export *` hides how many values the module exposes; replace it with an explicit single value export or direct imports. A namespace export (`export * as values`) exposes one value.
+
+**Incorrect:**
+```tsx
+// actions/Actions.view.tsx
+export function SaveAction() {
+  return <button>Save</button>;
+}
+export function CancelAction() {
+  return <button>Cancel</button>;
+}
+```
+
+**Correct:**
+```tsx
+// actions/SaveAction.view.tsx
+export function SaveAction() {
+  return <button>Save</button>;
+}
+
+// actions/CancelAction.view.tsx
+export function CancelAction() {
+  return <button>Cancel</button>;
+}
+```
+
+The same split applies to helpers: put `sumAmounts.ts` and `averageAmount.ts` in an `amounts/` directory under the appropriate helper category when they previously shared a public module. Keep private support functions in the public helper's file when they serve only that helper.
+
+### Exceptions
+
+- Type-only exports do not count, including local interfaces or type aliases exported without an explicit `type` modifier. A value and its associated exported types may share a file.
+- Private components and private helper functions remain allowed, subject to the other component and helper rules.
+- A file may export no values. Function overload signatures belong to one public function, not separate exports.
+- Tests, stories and Storybook support files, declaration files and tooling configurations are outside this production-module convention.
+
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`
+
+### 12.5 Never Build Hooks from Hooks (No createUseXxx Factories)
 
 **Impact: MEDIUM (keeps hooks traceable, statically analyzable and Rules-of-Hooks safe)**
 
@@ -3917,7 +4612,7 @@ export function useFormatInvoiceStatusOptions() {
 
 A hook that composes behavior from callbacks and atoms (not from hooks passed as parameters) is fine.
 
-### 12.2 No Clickable No-Op Links or Actions
+### 12.6 No Clickable No-Op Links or Actions
 
 **Impact: MEDIUM (users never click something that silently does nothing)**
 
@@ -3948,7 +4643,50 @@ The tooltip must explain the reason with a dedicated translation key (the one ab
 
 Empty handlers are fine in Storybook stories and documentation examples. They are not fine in a rendered page.
 
-### 12.3 useMemo for Data, useCallback for Functions
+### 12.7 Place the Public API First
+
+**Impact: MEDIUM**
+
+**Rule:** Declare exported functions and components immediately after imports and module directives, before types, constants and private declarations.
+
+Expose the module's callable API before its implementation details. Keep directives such as `'use client'`, file headers and imports at the start. Public types and constants are also placed after the public function or component; the rule does not impose an order within the remaining declarations.
+
+### Applies When
+
+- A function declaration, function expression, arrow function, class declaration/expression or React component wrapped in `memo` or `forwardRef` is exported.
+- A locally declared callable is exposed through an export list or a default identifier export: order the declaration itself, not just the export statement.
+
+**Incorrect:**
+```typescript
+type Amount = { value: number };
+const SCALE = 100;
+
+export function toMinorUnits(amount: Amount) {
+  return amount.value * SCALE;
+}
+```
+
+**Correct:**
+```typescript
+export function toMinorUnits(amount: Amount) {
+  return amount.value * SCALE;
+}
+
+type Amount = { value: number };
+const SCALE = 100;
+```
+
+### Exceptions
+
+- Headers, module directives and imports precede the public API.
+- Modules exporting only constants or types have no callable API to reorder. Reexports do not require moving a declaration from another module.
+- Tests, stories and Storybook support files, declaration files and tooling configurations are excluded.
+
+### Safe Reordering
+
+Preserve initialization order when moving declarations. Hoisted functions may move across erased or hoisted declarations; function-valued initializers and classes must retain their runtime dependencies. Keep attached documentation and overload groups together, and preserve the relative order of the remaining code. Report an unsafe move for manual refactoring instead of introducing a temporal dead zone or crossing a lint suppression.
+
+### 12.8 useMemo for Data, useCallback for Functions
 
 **Impact: MEDIUM (stable references for returned functions, and the memo hook states what is returned)**
 
@@ -3996,7 +4734,7 @@ When a hook exposes several methods (a modal controller), memoize each one with 
 
 See also: `vercel-react-best-practices` → `rerender-memo`, `rerender-simple-expression-in-memo`
 
-### 12.4 Write Code, Comments and Tests in English
+### 12.9 Write Code, Comments and Tests in English
 
 **Impact: MEDIUM (one language for a codebase reviewed by agents and mixed teams)**
 
@@ -4028,35 +4766,7 @@ it('should display an error when the field is invalid', async () => {
 
 To find leftovers, grep for accented characters in source files (for example `grep -rn "[àâäéèêëïîôùûüÿæœç]" src --include="*.ts*"`). Matches in i18n fixtures or real data samples (names, addresses) are fine. Translate older comments when you touch them.
 
-### 12.5 Scope eslint-disable to the Offending Line with a Reason
-
-**Impact: LOW-MEDIUM (keeps every lint exception visible, minimal and justified)**
-
-First look for a clean fix. If you still need an exception, put `// eslint-disable-next-line <rule> -- <why>` directly above the line that triggers the rule, not above the enclosing `useEffect`, function or JSX block. A misplaced directive suppresses nothing and is reported as an `Unused eslint-disable directive`. A file-wide `/* eslint-disable */` hides every future violation in the file.
-
-**Incorrect (directive placed on the wrapper instead of the offending line):**
-
-```tsx
-// eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset of the radio selection when the modal closes
-useEffect(() => {
-  if (isOpen) return
-  setStatus(null)
-}, [isOpen])
-```
-
-**Correct (directive on the exact line, named rule, reason after `--`):**
-
-```tsx
-useEffect(() => {
-  if (isOpen) return
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional reset of the radio selection when the modal closes
-  setStatus(null)
-}, [isOpen])
-```
-
-Never omit the rule name or the `--` reason. A file-wide `/* eslint-disable */` is acceptable only for tooling files (Storybook docs, dev mocks, scripts). Even there, name the rule and give a reason, as in `/* eslint-disable jest/no-mocks-import -- dev tooling reuses the mocked catalogue */`.
-
-### 12.6 Keep JSDoc for Non-Obvious Intent Only
+### 12.10 Keep JSDoc for Non-Obvious Intent Only
 
 **Impact: LOW (less noise, and comments that stay true)**
 
@@ -4091,7 +4801,7 @@ export function useContactsSelection() {
 
 A well-named function with explicit types needs no JSDoc at all. Use inline `// WHY:` comments for local surprises, such as a nullable field kept on purpose or an `eslint-disable`.
 
-### 12.7 No Chained or Negated Ternaries
+### 12.11 No Chained or Negated Ternaries
 
 **Impact: LOW (branch logic stays readable and testable)**
 

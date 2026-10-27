@@ -5,7 +5,7 @@
 // Zero dependencies (Node >= 18). The same script is shipped in every *-react-best-practices skill;
 // it is configured by the skill's metadata.json (title, note, dependsOn).
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { basename, dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SKILL_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -195,6 +195,13 @@ const renderRuleBody = (rule, number) => {
   if (!/^\*\*Impact:/m.test(body)) {
     body = body.replace(/^(### .+)$/m, `$1\n\n${impactLine}`)
   }
+  // Rule links are relative to rules/; the compiled document lives one level up.
+  body = body.replace(/(\[[^\]\n]*\]\()([^\s)]+)(\))/g, (match, start, target, end) => {
+    if (/^(?:[a-z][\w+.-]*:|#|\/)/i.test(target)) return match
+    const [path, ...fragment] = target.split('#')
+    const destination = relative(SKILL_DIR, resolve(RULES_DIR, path))
+    return `${start}${destination}${fragment.length ? `#${fragment.join('#')}` : ''}${end}`
+  })
   return body
 }
 

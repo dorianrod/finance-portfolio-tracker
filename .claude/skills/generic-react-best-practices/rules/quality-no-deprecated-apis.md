@@ -1,14 +1,7 @@
 ---
 title: Avoid Deprecated APIs
-summary: Replace deprecated APIs with their supported alternatives before using them in project code.
 impact: HIGH
-tags:
-  - typescript
-  - dependencies
-  - maintenance
-patterns:
-  - A method, function, component, prop, type, or other API is marked with @deprecated in its declaration or official documentation.
-  - The request asks to detect, prohibit, or migrate deprecated API usage.
+tags: typescript, dependencies, maintenance
 ---
 
 ## Avoid Deprecated APIs
@@ -22,8 +15,7 @@ Use the installed dependency versions and their official migration guidance to i
 - The resolved API or overload has a JSDoc `@deprecated` annotation.
 - The installed API's official documentation marks it deprecated even if its types do not yet carry the annotation.
 
-### Incorrect
-
+**Incorrect:**
 ```typescript
 const breakpoint = window.matchMedia('(min-width: 768px)')
 const handleChange = (event: MediaQueryListEvent) => console.log(event.matches)
@@ -32,8 +24,7 @@ breakpoint.addListener(handleChange)
 breakpoint.removeListener(handleChange)
 ```
 
-### Correct
-
+**Correct:**
 ```typescript
 const breakpoint = window.matchMedia('(min-width: 768px)')
 const handleChange = (event: MediaQueryListEvent) => console.log(event.matches)
@@ -41,12 +32,6 @@ const handleChange = (event: MediaQueryListEvent) => console.log(event.matches)
 breakpoint.addEventListener('change', handleChange)
 breakpoint.removeEventListener('change', handleChange)
 ```
-
-### Enforcement
-
-Enable `@typescript-eslint/no-deprecated` at error level with type information for every checked TypeScript file, including TSX, tests, and configuration. In this dashboard, ESLint uses `parserOptions.projectService` and the application and tooling TSConfigs. Do not add an allowlist or suppress the rule to retain a deprecated call.
-
-The rule detects annotated symbols, including aliased imports. Manually review official documentation when a dependency has incomplete types; a clean lint run cannot detect an undocumented or unannotated deprecation.
 
 ### Exceptions
 
@@ -57,3 +42,7 @@ The rule detects annotated symbols, including aliased imports. Manually review o
 
 - [typescript-eslint: no-deprecated](https://typescript-eslint.io/rules/no-deprecated/)
 - [typescript-eslint: typed linting](https://typescript-eslint.io/getting-started/typed-linting/)
+
+### Detection
+
+Use `@typescript-eslint/no-deprecated` with type information for authored TypeScript, including tests and configuration. Do not retain a deprecated call through an allowlist or suppression. Annotated aliased symbols are detectable; manually consult the installed version's official documentation when declarations lack the annotation. A clean lint run does not prove the absence of unannotated deprecations.

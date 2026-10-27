@@ -100,7 +100,7 @@ export default {
     ],
     messages: {
       extractCalculation:
-        'Extract this compound calculation into an intent-named helper; UI geometry belongs in helpers/presenters, quantitative metrics in helpers/calculators. Passing the calculation to useMemo or a callback does not extract it. [architecture-extract-component-calculations]',
+        'Extract this compound calculation into an intent-named helper; UI geometry belongs in helpers/presenters, quantitative metrics in helpers/calculators. Passing the calculation to useMemo or a callback does not extract it. [arch-thin-components]',
     },
   },
   create(context) {

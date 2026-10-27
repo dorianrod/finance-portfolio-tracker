@@ -93,7 +93,7 @@ It also checks resolved DOM style writes, class-list changes and static style
 attribute text. Opaque styling receives an explicit diagnostic. Tests and generated
 files are exempt. The check does not parse stylesheet contents or reconstruct all
 dynamic DOM mutations, and it has no autofix. Diagnostics reference
-[`styling-centralize-in-shared-ui`](../../.agents/skills/dorian-react-best-pratices/rules/styling-centralize-in-shared-ui.md)
+[`ui-no-adhoc-styling`](../../.agents/skills/generic-react-best-practices/rules/ui-no-adhoc-styling.md)
 to guide subsequent component migrations.
 
 Shared UI public props exclude both `className` and `style`, including inherited

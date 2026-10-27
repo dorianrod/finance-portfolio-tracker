@@ -61,3 +61,39 @@ export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
 ```
 
 See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks`; `vercel-react-best-practices` → `rerender-derived-state-no-effect`, `rerender-move-effect-to-event`
+
+### Compound Derivations
+
+Extract dependent arithmetic and `Math` calls as one intent-named derivation, including intermediate aliases, JSX expressions and callbacks. Putting the expression in `useMemo` does not move its responsibility. UI coordinates, dimensions, chart radii and layout styles belong in component- or page-owned `helpers/presenters/`; quantitative business metrics belong in `helpers/calculators/`. Pass browser measurements as inputs. Pure helpers must not read browser globals, measure nodes or mutate the DOM.
+
+Small independent expressions such as `index + 1`, `row.depth * 20` or `(value / total) * 100` may remain local when they are not part of a larger derivation. Imported helper calls, hook calls, destructuring, direct reads, simple conditions and event adapters also remain in the component. Moving a helper to module scope in the same component file still violates `arch-component-module-boundaries`.
+
+**Incorrect (a calculation stays in the component):**
+
+```tsx
+export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
+  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
+  return <div style={{ left }} />
+}
+```
+
+**Correct (a pure presenter owns the complete derivation):**
+
+```typescript
+// FloatingPanel/helpers/presenters/getFloatingPanelStyle.ts
+export function getFloatingPanelStyle(anchorLeft: number, viewportWidth: number) {
+  const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
+  return { left }
+}
+```
+
+```tsx
+// FloatingPanel/FloatingPanel.view.tsx
+import { getFloatingPanelStyle } from './helpers/presenters/getFloatingPanelStyle'
+
+export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
+  return <div style={getFloatingPanelStyle(anchorLeft, viewportWidth)} />
+}
+```
+
+The native container in this example is external layout. Geometry inside a chart remains data supplied to the shared UI primitive, rather than caller-authored CSS injected into it.

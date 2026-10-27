@@ -1,6 +1,6 @@
 # Generic React Best Practices
 
-An opinionated set of rules for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + React Testing Library), optimized for agents and LLMs. It follows the layout of `vercel-react-best-practices` and is meant to be applied **on top of it**: Vercel covers generic React and performance advice, this skill holds our own conventions. Rules never reference custom code of a given repository.
+An opinionated set of rules for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + React Testing Library), optimized for agents and LLMs. It follows the layout of `vercel-react-best-practices` and is meant to be applied **on top of it**: Vercel covers generic React and performance advice, this skill holds our own conventions. Rules use portable examples. Repository-specific lint implementation details live in `references/project-enforcement.md`. The `.agents/skills/generic-react-best-practices` entry is a symlink to this canonical `.claude/skills/` catalog.
 
 ## Structure
 
@@ -9,6 +9,9 @@ An opinionated set of rules for any React front (React 19, TanStack Query, Jotai
   - `_template.md` - Template for creating new rules
   - `<prefix>-<description>.md` - Individual rule files
 - `scripts/build.mjs` - Zero-dependency build and validation script
+- `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
+- `references/project-enforcement.md` - Dashboard-specific enforcement and formatter contracts
+- `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
 - `SKILL.md` - Skill entry point (sections table and Quick Reference)
 - __`AGENTS.md`__ - Compiled output (generated, never edit by hand)
@@ -19,10 +22,10 @@ From the repository root:
 
 ```bash
 # Validate rule files and regenerate AGENTS.md
-node .github/skills/generic-react-best-practices/scripts/build.mjs
+node .agents/skills/generic-react-best-practices/scripts/build.mjs
 
 # Validate only, and fail if AGENTS.md is outdated (use before committing)
-node .github/skills/generic-react-best-practices/scripts/build.mjs --check
+node .agents/skills/generic-react-best-practices/scripts/build.mjs --check
 ```
 
 The validation checks:
@@ -38,13 +41,16 @@ The validation checks:
 - portability: no reference to a skill other than the allowed ones, no `Reference:` line, no custom code, repository path or tooling of a host repository
 - in `--check` mode, `AGENTS.md` is up to date
 
+The compiler also rebases relative rule links for `AGENTS.md`, so the source rules and compiled guide both link to the same files.
+
 ## Creating a New Rule
 
-1. Check that the rule is **not** already covered by `vercel-react-best-practices` (if it is, add at most a `See also` pointer) and that it is **not** specific to an admin app.
+1. State the observable pattern, applicability and exceptions. Check existing catalog rules for overlap; extend the owning rule instead of duplicating it. Check that the rule is **not** already covered by `vercel-react-best-practices` (if it is, add at most a `See also` pointer) and that it is **not** specific to an admin app.
 2. Copy `rules/_template.md` to `rules/<prefix>-<description>.md` with one of the prefixes of `rules/_sections.md` (`arch`, `api`, `security`, `cache`, `types`, `yup`, `ui`, `state`, `helpers`, `i18n`, `test`, `quality`).
 3. Write it with framework APIs only (React, TanStack Query, Jotai, Yup, react-i18next, Radix, Jest, RTL…) and generic business vocabulary (`sales/orders`, `sales/invoices`, `contracts`, `projects`, `directory/contacts`…). No custom shared hook or component of a repository, no ticket number, no link to another skill (only `vercel-react-best-practices`), no `Reference:` line.
 4. Add the rule id to the Quick Reference of `SKILL.md`, at the position given by its section, impact and title.
-5. Run the build script to regenerate `AGENTS.md`.
+5. Add precise routing signals to `rules/_routing.md` when the rule refines a business or UI boundary. For other topics, the categorized Quick Reference is sufficient. Keep repository-specific enforcement in `references/project-enforcement.md`.
+6. Run the build script to regenerate `AGENTS.md`, then run its `--check` mode and the skill validator.
 
 ## Impact Levels
 

@@ -1,14 +1,7 @@
 ---
 title: Review Component Complexity Before Splitting
-summary: Review every flagged function manually and extract a component, hook or helper only when it establishes a cohesive responsibility boundary.
 impact: HIGH
-tags:
-  - components
-  - complexity
-  - eslint
-patterns:
-  - A component combines several independent rendered regions or exceeds the function-size or branching threshold.
-  - The request asks to detect oversized or complex components with ESLint.
+tags: components, complexity, eslint
 ---
 
 ## Review Component Complexity Before Splitting
@@ -31,8 +24,7 @@ For each function reported by either threshold, the LLM must read the whole func
 
 Do not apply an automatic fix or bulk extraction solely to lower the metric. Preserve behavior and keep compound UI slots as direct children where required by the UI API.
 
-### Incorrect
-
+**Incorrect:**
 ```tsx
 function OrdersWorkspace() {
   const { orders, selection } = useOrdersWorkspace();
@@ -48,8 +40,7 @@ function OrdersWorkspace() {
 }
 ```
 
-### Correct
-
+**Correct:**
 ```tsx
 function OrdersWorkspace() {
   const { orders, selection } = useOrdersWorkspace();
@@ -64,15 +55,6 @@ function OrdersWorkspace() {
 
 The examples abbreviate an independently owned summary region. Small cohesive JSX does not require extraction merely because it uses several elements.
 
-### Enforcement
-
-The dashboard enables these built-in ESLint rules at error level for production `src/**/*.{ts,tsx}`, including components, hooks and helpers:
-
-- `complexity`: maximum **8**, variant **modified** (one decision for an entire `switch`). A score of 8 is allowed; 9 or higher requires manual review. It measures branches per function; callbacks have their own complexity.
-- `max-lines-per-function`: maximum **150**, excluding blank lines and comment-only lines. It includes JSX and nested callback bodies in the containing function's span.
-
-Both are necessary: low cyclomatic complexity does not imply a small component. Hook-count, JSX-condition, mapped-JSX and calculation checks remain complementary. An exceedance fails lint until a cohesive extraction or a justified line-scoped keep decision resolves it. The threshold does not determine that decision.
-
 ### Exceptions
 
 - Tests (`*.test.*`, `*.spec.*`, `__tests__/`) and Storybook stories (`*.stories.*`) are excluded from these two thresholds; tooling outside `src/` is also outside their scope.
@@ -81,6 +63,11 @@ Both are necessary: low cyclomatic complexity does not imply a small component. 
 
 ### References
 
-- [Dashboard audit and case-by-case decisions](../../../../packages/dashboard/COMPONENT_COMPLEXITY_AUDIT.md) — Recheck the rationale when a function changes; a previous keep decision is not a permanent exemption.
 - [ESLint: complexity](https://eslint.org/docs/latest/rules/complexity)
 - [ESLint: max-lines-per-function](https://eslint.org/docs/latest/rules/max-lines-per-function)
+
+### Review Thresholds
+
+Review complexity above **8** (modified cyclomatic complexity, counting an entire `switch` once) or function size above **150** lines, excluding blank and comment-only lines. Include JSX and nested callback bodies when measuring a function's span. A score of 8 and a size of 150 are allowed. These are review signals rather than instructions to split automatically. Tests, stories and tooling are outside these production thresholds.
+
+Use both measures: few branches do not imply a small component. Hook count, mapped JSX and compound calculations remain separate signals. Resolve a reported exceedance through a cohesive extraction or a justified, line-scoped keep decision; do not compress formatting, hide JSX in variables or move everything into an umbrella hook merely to lower a metric.

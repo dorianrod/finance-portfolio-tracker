@@ -9,7 +9,7 @@ tags: ui, design-system, props, className, layout, composition
 
 **Impact: HIGH (prevents caller style overrides and keeps layout with the parent)**
 
-Components and compound slots in `shared/ui` must neither expose nor accept a `className` prop. This includes inherited props from `HTMLAttributes`, `ComponentProps`, `ComponentPropsWithoutRef` and similar React types. Omit `className` when composing these types; forwarding or merging caller classes still exposes an override channel. Passing classes through spreads or React element factories follows the same rule.
+Components and compound slots in `shared/ui` must neither expose nor accept `className` or `style` props. This includes inherited props from `HTMLAttributes`, `ComponentProps`, `ComponentPropsWithoutRef` and similar React types. Omit both properties when composing these types; forwarding or merging caller classes still exposes an override channel. Passing classes through spreads or React element factories follows the same rule.
 
 The parent owns the surrounding layout, including margins, widths and flex placement. Put layout classes on a parent container, even when a class would only add spacing. Appearance and internal layout belong to the shared component and its semantic variants. Do not rename the override prop to bypass this boundary.
 
@@ -28,16 +28,16 @@ function Button({ className, ...props }: ComponentPropsWithoutRef<'button'>) {
 **Correct (internal classes define the component; the parent handles layout):**
 
 ```tsx
-import type { ComponentPropsWithoutRef } from 'react'
+import type { ReactNode } from 'react'
 
-type ButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'className'>
+type ButtonProps = { children: ReactNode; label: string; onClick?: () => void }
 
-function Button(props: ButtonProps) {
-  return <button {...props} className="rounded px-3 py-2" />
+function Button({ label, ...props }: ButtonProps) {
+  return <button {...props} aria-label={label} className="rounded px-3 py-2" />
 }
 
 <div className="mt-2">
-  <Button>{t('sales.orders.save')}</Button>
+  <Button label={t('sales.orders.save')}>{t('sales.orders.save')}</Button>
 </div>
 ```
 
@@ -48,3 +48,5 @@ function Button(props: ButtonProps) {
 - Shared UI implementations own their native classes. Context-only providers without a visual box do not create an internal layout boundary.
 - Preserve compound slot discovery: never insert a layout wrapper between a compound component and its direct slots. External layout wraps the whole component; content slots compose standardized shared UI. Follow `ui-compound-slots-direct-children`.
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
+
+Chart geometry supplied as data is distinct from caller-authored CSS layout. Apply `ui-centralize-accessibility` to inherited native props as well; public UI contracts expose semantic labels and behavior instead of raw ARIA or focus/keyboard wiring.

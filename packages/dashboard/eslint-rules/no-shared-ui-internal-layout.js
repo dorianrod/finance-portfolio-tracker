@@ -11,11 +11,11 @@ export default {
     schema: [],
     messages: {
       internal:
-        'Move caller layout out of shared/ui content. Use standardized UI structure, sizes and spacing instead. Found at {{location}}. [styling-external-layout-only]',
+        'Move caller layout out of shared/ui content. Use standardized UI structure, sizes and spacing instead. Found at {{location}}. [ui-no-classname-on-shared-ui]',
       unverifiable:
-        'Cannot verify layout injected into shared/ui content at {{location}}. Supply semantic UI composition instead of opaque class/style props. [styling-external-layout-only]',
+        'Cannot verify layout injected into shared/ui content at {{location}}. Supply semantic UI composition instead of opaque class/style props. [ui-no-classname-on-shared-ui]',
       descendant:
-        'Do not override shared/ui internals through a descendant selector. Keep layout on the outside container. Found at {{location}}. [styling-external-layout-only]',
+        'Do not override shared/ui internals through a descendant selector. Keep layout on the outside container. Found at {{location}}. [ui-no-classname-on-shared-ui]',
     },
   },
   create(context) {

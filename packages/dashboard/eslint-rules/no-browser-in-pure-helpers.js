@@ -84,9 +84,9 @@ export default {
     schema: [],
     messages: {
       browserContext:
-        'Pass browser data into this helper as explicit inputs; keep "{{name}}" at the component or service boundary. [architecture-extract-component-calculations]',
+        'Pass browser data into this helper as explicit inputs; keep "{{name}}" at the component or service boundary. [arch-thin-components]',
       domEffect:
-        'Keep DOM effects and measurements outside pure helpers ({{name}}); pass values in and apply the result at the UI boundary. [architecture-extract-component-calculations]',
+        'Keep DOM effects and measurements outside pure helpers ({{name}}); pass values in and apply the result at the UI boundary. [arch-thin-components]',
     },
   },
   create(context) {

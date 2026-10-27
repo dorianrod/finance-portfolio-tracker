@@ -7,18 +7,20 @@ description: >
   domain-first architecture and import boundaries, API query/mutation hooks, query keys and cache
   invalidation, domain types, Yup schemas and form validation, UI composition and accessibility, Jotai
   stores, helpers and formatters, i18n, tests and code quality. Apply it alongside
-  vercel-react-best-practices on any React task, even when it isn't named.
+  vercel-react-best-practices on any React task, even when it isn't named. Also use for ESLint exception audits and warning budgets.
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.4.2"
+  version: "1.5.0"
 ---
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 90 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 100 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
+
+This catalog is the single source for our React conventions, including business capability boundaries, strict shared UI composition, semantic colors, centralized accessibility and public API maintenance.
 
 Examples use a generic business vocabulary: main domain `sales` (`orders`, `invoices`, `opportunities`, `shared`), single-level domains `contracts` and `projects`, main domain `directory` (`contacts`, `accounts`, `teams`). Map them to your own domains.
 
@@ -48,7 +50,17 @@ Several rules describe the target standard, not the current state of every file.
 | 9 | Helpers | MEDIUM-HIGH | `helpers-` |
 | 10 | Internationalization | MEDIUM-HIGH | `i18n-` |
 | 11 | Testing | MEDIUM-HIGH | `test-` |
-| 12 | Code Quality | MEDIUM | `quality-` |
+| 12 | Code Quality | HIGH | `quality-` |
+
+## Apply Rules
+
+1. Use [focused routing signals](rules/_routing.md) and the Quick Reference below to select relevant rule files.
+2. Read those files and confirm applicability and exceptions before applying them. Do not load the entire compiled guide for a focused task.
+3. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
+
+Examples isolate their rule rather than serve as complete application templates. Apply the other relevant rules when writing production code. Files beginning with `_` are maintenance material.
+
+For this repository's lint implementation, formatter options and static-analysis limits, read [dashboard enforcement](references/project-enforcement.md). It supplements the portable rules without introducing a second conventions catalog.
 
 ## Quick Reference
 
@@ -61,12 +73,15 @@ Several rules describe the target standard, not the current state of every file.
 - `arch-feature-slice-layout` - Organize Every Domain into Vertical Feature Slices
 - `arch-no-prop-drilling` - Share Client State Through Jotai, Not Prop Chains or Context
 - `arch-decompose-hook-heavy-components` - Decompose Hook-Heavy Components by Responsibility
+- `arch-business-capability-boundaries` - Define Boundaries Through Business Capabilities
 - `arch-feature-flags` - Gate Experimental Features With a Typed Flag Registry
 - `arch-isolate-effects-in-hooks` - Isolate Effects in Intent-Named Hooks
+- `arch-feature-hierarchy` - Justify Feature Hierarchy Through Business Scope
 - `arch-component-module-boundaries` - Keep Component Modules Focused on Components
 - `arch-thin-components` - Keep Components Thin
 - `arch-no-visual-logic-below-page` - Keep Visual Logic at the Component or Page Boundary
 - `arch-stores-no-index` - No index.ts in stores/, One File per Concern
+- `arch-component-complexity` - Review Component Complexity Before Splitting
 - `arch-helpers-vs-services` - Separate Helpers from Services by Effects and Orchestration
 - `arch-subdomain-decision` - Create a Sub-Domain Only for a Distinct Business Concept
 
@@ -122,12 +137,15 @@ Several rules describe the target standard, not the current state of every file.
 
 ### 7. UI Composition & Accessibility (HIGH)
 
+- `ui-centralize-accessibility` - Centralize Accessibility in Shared UI Primitives
 - `ui-delegate-mapped-jsx` - Delegate Mapped JSX to a Component
 - `ui-no-classname-on-shared-ui` - Keep className Out of Shared UI Component APIs
+- `ui-semantic-colors` - Keep Colors Semantic Behind Shared UI
 - `ui-compound-slots-direct-children` - Keep Compound Component Slots as Direct, Renderable Children
 - `ui-dialog-controlled` - Keep Dialog Mounted and Drive It with a Boolean open
 - `ui-name-compound-render-conditions` - Name Compound Render Conditions by Intent
 - `ui-no-nested-form` - Never Nest a form Inside a form
+- `ui-required-children` - Require Composition Through Nested Children
 - `ui-form-wraps-dialog` - Wrap the Whole Dialog in a Form Keyed on the Open Target
 - `ui-no-adhoc-styling` - Style with Design System Components, Utility Classes Only for Layout
 - `ui-accessible-names` - Give Icon-Only Buttons and Custom Controls an Accessible Name
@@ -168,13 +186,17 @@ Several rules describe the target standard, not the current state of every file.
 - `test-semantic-queries` - Query by Role and Label, Interact with userEvent
 - `test-renderhook` - Test API Hooks with renderHook and a Per-Test Query Wrapper
 
-### 12. Code Quality (MEDIUM)
+### 12. Code Quality (HIGH)
 
+- `quality-no-deprecated-apis` - Avoid Deprecated APIs
+- `quality-eslint-warning-budget` - Keep an Explicit ESLint Warning Budget
+- `quality-eslint-disable-scoped` - Review and Date ESLint Exceptions
+- `quality-single-public-export` - Export One Public Value per File
 - `quality-no-hook-factory` - Never Build Hooks from Hooks (No createUseXxx Factories)
 - `quality-no-noop-link` - No Clickable No-Op Links or Actions
+- `quality-public-api-first` - Place the Public API First
 - `quality-usecallback-for-functions` - useMemo for Data, useCallback for Functions
 - `quality-english-only` - Write Code, Comments and Tests in English
-- `quality-eslint-disable-scoped` - Scope eslint-disable to the Offending Line with a Reason
 - `quality-jsdoc-minimal` - Keep JSDoc for Non-Obvious Intent Only
 - `quality-no-nested-ternary` - No Chained or Negated Ternaries
 
@@ -215,6 +237,10 @@ Each rule file contains:
 - An incorrect example and a correct example, using generic business entities and real library APIs
 - Notes on exceptions
 - An optional `See also` link to Vercel rules
+
+## Add or Change a Rule
+
+Read [the maintenance guide](README.md#creating-a-new-rule). Identify the observable pattern, check for overlap and extend an existing rule when it owns the same decision. Keep exceptions and distinguishing examples in the rule file, update the Quick Reference and focused routing when relevant, then regenerate and validate the compiled guide.
 
 ## Full Compiled Document
 

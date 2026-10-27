@@ -16,11 +16,11 @@ export function createSharedFeatureUsageRule(reviewOnly = false) {
       schema: [],
       messages: {
         singleFeature:
-          'This shared module serves only "{{feature}}", including indirect consumers. Keep it with that feature instead of using shared/ to bypass import boundaries. [architecture-feature-ownership]',
+          'This shared module serves only "{{feature}}", including indirect consumers. Keep it with that feature instead of using shared/ to bypass import boundaries. [arch-shared-no-domain-knowledge]',
         unprovenSharing:
-          'This shared module has no proven use by multiple features ({{features}} identified; {{external}} consumers outside the owning feature tree). Review its business owner; application wrappers and tests do not establish sharing. [architecture-feature-ownership]',
+          'This shared module has no proven use by multiple features ({{features}} identified; {{external}} consumers outside the owning feature tree). Review its business owner; application wrappers and tests do not establish sharing. [arch-shared-no-domain-knowledge]',
         unusedShared:
-          'This shared module has no production consumer. Remove it or place it with its actual feature before treating it as shared. [architecture-feature-ownership]',
+          'This shared module has no production consumer. Remove it or place it with its actual feature before treating it as shared. [arch-shared-no-domain-knowledge]',
       },
     },
     create(context) {

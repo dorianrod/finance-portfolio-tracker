@@ -23,7 +23,7 @@ A page-level form that hosts an editable row or block with its own `<form>` prod
 **Correct (outer container is a div, submit through the handler):**
 
 ```tsx
-<div role="group" aria-label={t('order.create.title')}>
+<div>
   <DocumentsBlock />
   <button type="button" onClick={() => void handleSubmit()}>
     {t('common.save')}

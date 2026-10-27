@@ -42,3 +42,13 @@ Static import graphs cannot always prove use of common inputs passed through app
 A reference or demo folder using business vocabulary is not shared code: forbid importing it from production code with ESLint.
 
 See also: `arch-domain-first-layout`, `arch-feature-slice-layout`, `arch-transverse-only-imports`
+
+### Shared UI APIs and Indirect Dependencies
+
+Global `shared/ui` primitives render generic UI roles without interpreting business entities, operations or metrics. An import-free primitive still violates ownership when its props name an order status, its variants encode a business operation, or its defaults choose a business currency, label or threshold. Moving the lookup into a theme module or a generic-sounding helper does not remove the business dependency.
+
+Keep adapters in the owning domain: the domain maps an order status to `positive` or `warning` and supplies labels and actions; a shared badge renders that generic tone and nested content. Charts receive generic series and UI palette roles rather than a business category registry. Inspect public names, literal unions, defaults, branches, type-only contracts and transitive dependencies; passing import lint is not proof of domain independence.
+
+UI selection, expansion, dismissal, generic chart geometry and generic numeric formatting remain shared UI concerns. Caller-provided labels may contain business vocabulary when the primitive renders them without interpretation. Domain-scoped shared components may know their own business scope. Tests and isolated stories may use realistic fixtures without introducing business contracts into production primitives.
+
+See also: `ui-no-adhoc-styling`, `ui-centralize-accessibility`, `ui-semantic-colors`

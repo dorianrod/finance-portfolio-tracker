@@ -23,7 +23,7 @@ export default {
       leafFolder:
         'Feature "{{feature}}" has no features/ folder: keep "{{folder}}/" directly inside the feature instead of shared/. [arch-feature-slice-layout]',
       featureDepth:
-        'Feature "{{feature}}" exceeds the maximum of {{max}} feature levels below a domain. Review its business owner. [architecture-feature-hierarchy]',
+        'Feature "{{feature}}" exceeds the maximum of {{max}} feature levels below a domain. Review its business owner. [arch-feature-hierarchy]',
     },
   },
   create(context) {

@@ -44,9 +44,9 @@ export default {
       suppliedClassName:
         'Do not pass "className" to a shared/ui component, even for layout. Move layout to the parent and use semantic variants for appearance. [ui-no-classname-on-shared-ui]',
       exposedStyle:
-        'Do not expose "style" in shared/ui component props, including inherited library props. Use semantic variants and keep caller layout outside the primitive. [styling-external-layout-only]',
+        'Do not expose "style" in shared/ui component props, including inherited library props. Use semantic variants and keep caller layout outside the primitive. [ui-no-classname-on-shared-ui]',
       suppliedStyle:
-        'Do not pass "style" to a shared/ui component, even for layout. Move layout to the parent and use semantic variants for appearance. [styling-external-layout-only]',
+        'Do not pass "style" to a shared/ui component, even for layout. Move layout to the parent and use semantic variants for appearance. [ui-no-classname-on-shared-ui]',
     },
   },
   create(context) {
