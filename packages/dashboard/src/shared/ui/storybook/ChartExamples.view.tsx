@@ -36,14 +36,14 @@ export function CartesianExample({ children }: { children: ReactNode }) {
   )
 }
 export function BarShapeExample(
-  geometry: Partial<Omit<BarShapeProps, 'className'>>,
+  geometry: Partial<Omit<BarShapeProps, 'className' | 'style'>>,
 ) {
   return <ChartRectangle geometry={geometry} />
 }
 export function PieShapeExample({
   selectedName,
   ...geometry
-}: Partial<Omit<PieSectorShapeProps, 'className'>> & {
+}: Partial<Omit<PieSectorShapeProps, 'className' | 'style'>> & {
   selectedName?: string
   name?: string
 }) {
@@ -59,7 +59,7 @@ export function PieLabelExample({
   x,
   y,
   name,
-}: Partial<Omit<PieLabelRenderProps, 'className'>>) {
+}: Partial<Omit<PieLabelRenderProps, 'className' | 'style'>>) {
   return (
     <ChartLabel x={x} y={y} variant="pie">
       {name}
@@ -67,7 +67,7 @@ export function PieLabelExample({
   )
 }
 export function ScatterShapeExample(
-  geometry: Partial<Omit<ScatterShapeProps, 'className'>>,
+  geometry: Partial<Omit<ScatterShapeProps, 'className' | 'style'>>,
 ) {
   return (
     <ChartSymbol
@@ -80,6 +80,6 @@ export function ScatterShapeExample(
 export function MarkerDotExample({
   cx,
   cy,
-}: Partial<Omit<DotProps, 'className'>>) {
+}: Partial<Omit<DotProps, 'className' | 'style'>>) {
   return <ChartMarker cx={cx} cy={cy} tone="series1" outline="series1Stroke" />
 }

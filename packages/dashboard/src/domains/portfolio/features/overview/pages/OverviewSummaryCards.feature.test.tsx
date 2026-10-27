@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
+import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
@@ -56,6 +57,38 @@ function comparison(): OverviewComparison {
 }
 
 describe('OverviewSummaryCards', () => {
+  it.each<{
+    previous: number | null
+    status: IrrStatus
+    expected: string
+  }>([
+    { previous: 0, status: 'ready', expected: '+0.00%' },
+    { previous: -2.5, status: 'ready', expected: '-2.50%' },
+    { previous: null, status: 'ready', expected: '—' },
+    { previous: 6.2, status: 'loading', expected: '—' },
+    { previous: 6.2, status: 'error', expected: '—' },
+  ])(
+    'formats previous IRR $previous with status $status',
+    ({ previous, status, expected }) => {
+      const model = comparison()
+      const html = renderToStaticMarkup(
+        <Provider store={createStore()}>
+          <OverviewSummaryCards
+            comparison={model}
+            heldConcentration={model.heldConcentration}
+            underlyingConcentration={model.lookThroughConcentration}
+            rollingThreeYearTri={metric(8.42, previous)}
+            irrStatus={status}
+          />
+        </Provider>,
+      )
+      const irrDetail = html.slice(html.indexOf('IRR · trailing 3y'))
+      expect(irrDetail.match(/Previous <span[^>]*>([^<]*)<\/span>/u)?.[1]).toBe(
+        expected,
+      )
+    },
+  )
+
   it('renders four accessible drill-down cards with comparison context', () => {
     const model = comparison()
     const html = renderToStaticMarkup(

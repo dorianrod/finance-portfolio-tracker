@@ -50,7 +50,6 @@ type AreaDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'style'
   | 'children'
   | 'stackId'
 type SeriesAreaProps = Pick<

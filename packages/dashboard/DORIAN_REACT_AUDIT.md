@@ -4,6 +4,71 @@ Périmètre : code React/TypeScript de `src`, application, sept capacités de pr
 
 Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Ce rapport présente la revue du 27 octobre puis conserve les corrections et validations des audits du 26 octobre.
 
+## Contre-audit des contrats publics du 27 octobre 2026
+
+Cette passe reprend les 15 règles Dorian sur les **992 sources TypeScript/TSX**,
+dont **818 modules de production hors catalogue**, **102 modules de feature** et
+**178 modules de production du design system**. Le lint typé couvre tout le
+dashboard, tests et configuration compris. La revue manuelle complète les
+contrôles sur les contrats graphiques, les dépendances UI/thème, les calculs et
+les valeurs de repli, ainsi que les chemins de composition décrits dans
+[ARCHITECTURE.md](ARCHITECTURE.md). Point de départ : lint sans diagnostic et
+**149 fichiers, 1 386 tests réussis**.
+
+Trois écarts supplémentaires ont été corrigés :
+
+| Constat                                                                                                                                                                                                                                                         | Correction                                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Les séries `SeriesLine`, `SeriesBar`, `SeriesArea`, les deux axes, la grille et les lignes de référence exposaient encore `style` via leurs types Recharts. La règle interdisait uniquement `className`, et un de ses tests acceptait explicitement les styles. | Suppression de `style` des six listes de propriétés qui définissent ces sept contrats. Extension de `local/no-shared-ui-classname` aux API explicites et héritées, unions et génériques, puis aux appelants JSX, spreads et fabriques React. Les renderers de tests et de Storybook excluent aussi les deux propriétés. Les styles natifs internes et le layout externe restent autorisés. |
+| La valeur précédente du TRI était encore protégée contre `null` dans `OverviewPerformanceCard`, au sein d'une condition sur l'état de la requête.                                                                                                               | La disponibilité métier reste déterminée par `irrStatus` ; le formatter de pourcentage décide seul du placeholder numérique. Cinq cas vérifient zéro, valeur négative, absence, chargement et erreur avec une ancienne valeur disponible.                                                                                                                                                  |
+| La classe React `DashboardPanelErrorBoundary` suivait ses déclarations de types.                                                                                                                                                                                | La classe publique précède maintenant ses types privés. L'ordre des initialisations et le comportement restent identiques. Ce cas a été relevé manuellement : le contrôle d'ordre automatique porte sur les fonctions et composants fonctionnels.                                                                                                                                          |
+
+### Décisions par règle
+
+| Règle                                         | Résultat de la passe                                                                                                                                                                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `styling-external-layout-only`                | Contrats graphiques fermés aux styles arbitraires ; styles de positionnement laissés aux conteneurs externes. Les composants de layout partagés conservent leurs tokens fermés.                                               |
+| `styling-centralize-in-shared-ui`             | Aucun style visuel relevé hors du design system après contrôle des JSX, spreads, propriétés graphiques et feuilles de style. Les géométries et le layout externe restent autorisés.                                           |
+| `styling-semantic-colors`                     | Palette et thème centralisés ; recherche des couleurs littérales et revue des adaptations métier vers les tons UI. Aucun nouveau token métier dans les primitives.                                                            |
+| `composition-required-children`               | Composition, slots directs et intégrations Recharts contrôlés ; les renderers externes restent des composants de module. Aucune nouvelle prop de rendu introduite.                                                            |
+| `architecture-business-capability-boundaries` | Carte des sept capacités du portefeuille conservée. Le shell assemble leurs entrées et modèles ; aucun déplacement de responsabilité métier dans l'application.                                                               |
+| `architecture-feature-hierarchy`              | Allocation/concentration, positions/look-through et assessment/errors conservent leurs parents métier. Dimensions, périodes et modes restent des variantes.                                                                   |
+| `architecture-feature-ownership`              | Graphe résolu contrôlé ; les entrées communes distribuées par le shell restent justifiées dans [SHARED_OWNERSHIP_AUDIT.md](SHARED_OWNERSHIP_AUDIT.md). Aucun faux consommateur ni nouvelle dérogation ajouté.                 |
+| `architecture-component-complexity`           | Seuils 8/150 conservés. Les décisions cohésives documentées restent dans leurs propriétaires ; les modifications n'introduisent aucun dépassement ni suppression.                                                             |
+| `architecture-shared-ui-agnostic`             | Contrats, vocabulaire et dépendances UI/thème contrôlés ; aucun type ni choix financier introduit dans les primitives. Les données et labels fournis par les domaines restent opaques pour elles.                             |
+| `architecture-centralize-accessibility`       | Aucun attribut ARIA, traitement clavier/focus ou import Radix relevé dans la production métier/application. Les comportements restent dans les primitives et leurs tests.                                                     |
+| `architecture-extract-component-calculations` | Recherche AST des opérations et revue des variables/callbacks candidats. Les petits calculs indépendants de proportion ou de hauteur relèvent de l'exception prévue ; aucune nouvelle chaîne de calcul à extraire identifiée. |
+| `architecture-formatter-fallbacks`            | Fallback du TRI précédent centralisé. Les gardes qui choisissent une structure, un état métier ou la visibilité des montants non positifs restent distinctes du formatage.                                                    |
+| `quality-single-public-export`                | Contrôle de tous les modules de production ; aucun export multiple de valeur ni barrel introduit.                                                                                                                             |
+| `quality-public-api-first`                    | Classe de la frontière d'erreur réordonnée manuellement ; fonctions et composants fonctionnels contrôlés automatiquement.                                                                                                     |
+| `quality-no-deprecated-apis`                  | Contrôle typé actif, sans dérogation ; aucun usage annoté déprécié détecté dans le code, les tests ou les configurations installées.                                                                                          |
+
+Les conventions React génériques et Vercel applicables à cette SPA complètent
+ces décisions : requêtes indépendantes parallélisées, validation Yup aux entrées,
+cache serveur dans TanStack Query, chargement des panneaux différé avec Suspense
+et frontière d'erreur, effets isolés dans les hooks. Les graphiques qui adaptent
+un modèle métier conservent leur configuration cohésive ; une extraction qui
+recopierait seulement leurs props ne créerait pas de contrat visuel autonome.
+Les règles serveur Next.js et les parcours absents de cette application ne
+s'appliquent pas.
+
+### Validation de cette passe
+
+- Suite complète : **149 fichiers, 1 407 tests réussis**, soit 21 cas nets
+  supplémentaires ; le contrôle des styles compte 87 tests.
+- Lint complet sans cache, puis `npm run lint -- --max-warnings=0` : aucune
+  erreur ni avertissement, aucun seuil modifié ni désactivation ajoutée.
+- `npm run build` : typage de l'application et du catalogue, puis bundle de
+  production réussis.
+- `npm run build-storybook` : catalogue statique construit ; les diagnostics
+  de bundling des dépendances et des chunks de documentation restent propres au
+  catalogue.
+- Prettier, catalogue i18n et `git diff --check` : conformes.
+
+Cette passe vérifie le code, les contrats typés et les comportements testés ;
+elle ne comprend pas de validation visuelle interactive en navigateur. Aucun
+écart Dorian identifié par cette passe ne reste à corriger.
+
 ## Revue complète du 27 octobre 2026
 
 Point de départ : lint complet sans diagnostic et **147 fichiers, 1 385 tests réussis**.

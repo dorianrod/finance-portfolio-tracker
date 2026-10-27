@@ -292,12 +292,10 @@ function OverviewPerformanceCard({
             <Text tone="subtle">
               {i18n.t('ui.overviewsummarycards.previous')}{' '}
               <Text variant="medium" tone="muted" numeric>
-                {irrStatus === 'ready' && rollingThreeYearTri.previous != null
-                  ? formatPercentage(rollingThreeYearTri.previous, {
-                      decimals: 2,
-                      signed: true,
-                    })
-                  : '—'}
+                {formatPercentage(
+                  irrStatus === 'ready' ? rollingThreeYearTri.previous : null,
+                  { decimals: 2, signed: true },
+                )}
               </Text>
             </Text>
           </Inline>

@@ -19,7 +19,6 @@ type ReferenceDataKeys =
   | 'ifOverflow'
   | 'position'
   | 'id'
-  | 'style'
 
 type ChartReferenceProps = Pick<
   ComponentProps<typeof ReferenceLine>,

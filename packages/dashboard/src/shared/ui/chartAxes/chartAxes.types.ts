@@ -20,5 +20,4 @@ export type AxisConfigKeys =
   | 'includeHidden'
   | 'name'
   | 'unit'
-  | 'style'
   | 'children'

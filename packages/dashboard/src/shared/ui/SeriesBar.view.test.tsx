@@ -12,7 +12,9 @@ import { SeriesBar } from './SeriesBar.view'
 
 afterEach(cleanup)
 
-function SignedRectangle(props: Partial<Omit<BarShapeProps, 'className'>>) {
+function SignedRectangle(
+  props: Partial<Omit<BarShapeProps, 'className' | 'style'>>,
+) {
   return (
     <ChartRectangle
       geometry={props}

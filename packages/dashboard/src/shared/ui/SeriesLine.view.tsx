@@ -49,7 +49,6 @@ type LineDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'style'
   | 'children'
 type SeriesLineProps = Pick<
   ComponentProps<typeof Line>,

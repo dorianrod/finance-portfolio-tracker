@@ -64,7 +64,6 @@ type BarDataKeys =
   | 'hide'
   | 'legendType'
   | 'id'
-  | 'style'
   | 'children'
   | 'stackId'
   | 'barSize'

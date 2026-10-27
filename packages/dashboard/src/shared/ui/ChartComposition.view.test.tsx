@@ -24,7 +24,9 @@ import { SeriesBar } from './SeriesBar.view'
 import { SeriesPie } from './SeriesPie.view'
 
 afterEach(cleanup)
-function PieShape(props: Partial<Omit<PieSectorShapeProps, 'className'>>) {
+function PieShape(
+  props: Partial<Omit<PieSectorShapeProps, 'className' | 'style'>>,
+) {
   return (
     <ChartSector
       geometry={props}
@@ -33,7 +35,9 @@ function PieShape(props: Partial<Omit<PieSectorShapeProps, 'className'>>) {
     />
   )
 }
-function ScatterShape(props: Partial<Omit<ScatterShapeProps, 'className'>>) {
+function ScatterShape(
+  props: Partial<Omit<ScatterShapeProps, 'className' | 'style'>>,
+) {
   return (
     <ChartSymbol
       geometry={props}

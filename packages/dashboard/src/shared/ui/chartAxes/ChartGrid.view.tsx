@@ -24,7 +24,6 @@ type GridConfigKeys =
   | 'width'
   | 'height'
   | 'syncWithTicks'
-  | 'style'
 
 type GridProps = Pick<ComponentProps<typeof CartesianGrid>, GridConfigKeys> & {
   pattern?: keyof typeof CHART_GRID_PATTERNS

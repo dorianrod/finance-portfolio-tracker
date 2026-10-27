@@ -7,15 +7,6 @@ import { Inset } from '@/shared/ui/layout/Inset.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
-type DashboardPanelErrorBoundaryProps = {
-  children: ReactNode
-  onRetry: () => void
-}
-
-type DashboardPanelErrorBoundaryState = {
-  error: Error | null
-}
-
 export class DashboardPanelErrorBoundary extends Component<
   DashboardPanelErrorBoundaryProps,
   DashboardPanelErrorBoundaryState
@@ -65,4 +56,13 @@ export class DashboardPanelErrorBoundary extends Component<
       </div>
     )
   }
+}
+
+type DashboardPanelErrorBoundaryProps = {
+  children: ReactNode
+  onRetry: () => void
+}
+
+type DashboardPanelErrorBoundaryState = {
+  error: Error | null
 }

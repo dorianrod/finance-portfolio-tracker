@@ -74,9 +74,11 @@ analyze imperative DOM mutations, and it has no autofix. Warnings reference
 to guide subsequent component migrations.
 
 Shared UI public props exclude both `className` and `style`, including inherited
-native React props. Callers position primitives through external containers and
-use their semantic sizing and appearance options. Internal chart text and
-swatches apply their styles within the owning primitive.
+native React and chart-library props. `local/no-shared-ui-classname` checks both
+properties on component APIs and callers, including spreads and React element
+factories. Callers position primitives through external containers and use their
+semantic sizing and appearance options. Internal chart text and swatches apply
+their styles within the owning primitive.
 
 Reusable interaction patterns live in `src/shared/ui`. Typography, surfaces,
 controls, KPI values, chart series, SVG marks and tooltip appearance are exposed

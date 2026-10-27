@@ -35,7 +35,7 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Keep className out of shared UI component APIs and put layout on the parent',
+        'Keep className and style out of shared UI APIs and put layout on the parent',
     },
     schema: [],
     messages: {
@@ -43,6 +43,10 @@ export default {
         'Do not expose "className" in shared/ui component props, including inherited React props. Omit it from the API and let the parent own layout. [ui-no-classname-on-shared-ui]',
       suppliedClassName:
         'Do not pass "className" to a shared/ui component, even for layout. Move layout to the parent and use semantic variants for appearance. [ui-no-classname-on-shared-ui]',
+      exposedStyle:
+        'Do not expose "style" in shared/ui component props, including inherited library props. Use semantic variants and keep caller layout outside the primitive. [styling-external-layout-only]',
+      suppliedStyle:
+        'Do not pass "style" to a shared/ui component, even for layout. Move layout to the parent and use semantic variants for appearance. [styling-external-layout-only]',
     },
   },
   create(context) {
@@ -74,15 +78,16 @@ export default {
         : symbol
     }
 
-    function hasClassName(type, seen = new Set()) {
+    function hasProperty(type, property, seen = new Set()) {
       if (!type || seen.has(type)) return false
       seen.add(type)
       if (type.isUnion())
-        return type.types.some((part) => hasClassName(part, seen))
-      if (checker.getPropertyOfType(type, 'className')) return true
+        return type.types.some((part) => hasProperty(part, property, seen))
+      if (checker.getPropertyOfType(type, property)) return true
       const apparent = checker.getApparentType(type)
-      if (apparent !== type && hasClassName(apparent, seen)) return true
-      return hasClassName(checker.getBaseConstraintOfType(type), seen)
+      if (apparent !== type && hasProperty(apparent, property, seen))
+        return true
+      return hasProperty(checker.getBaseConstraintOfType(type), property, seen)
     }
 
     function reactFactoryName(input, seen = new Set()) {
@@ -133,21 +138,21 @@ export default {
       return false
     }
 
-    function suppliesClassName(input, seen = new Set()) {
+    function suppliesProperty(input, property, seen = new Set()) {
       const node = unwrap(input)
       if (!node || seen.has(node)) return false
       seen.add(node)
-      if (hasClassName(checker.getTypeAtLocation(node))) return true
+      if (hasProperty(checker.getTypeAtLocation(node), property)) return true
       if (ts.isObjectLiteralExpression(node))
-        return node.properties.some((property) =>
-          ts.isSpreadAssignment(property)
-            ? suppliesClassName(property.expression, seen)
-            : propertyName(property.name) === 'className',
+        return node.properties.some((entry) =>
+          ts.isSpreadAssignment(entry)
+            ? suppliesProperty(entry.expression, property, seen)
+            : propertyName(entry.name) === property,
         )
       if (ts.isConditionalExpression(node))
         return (
-          suppliesClassName(node.whenTrue, seen) ||
-          suppliesClassName(node.whenFalse, seen)
+          suppliesProperty(node.whenTrue, property, seen) ||
+          suppliesProperty(node.whenFalse, property, seen)
         )
       if (
         ts.isBinaryExpression(node) &&
@@ -158,28 +163,34 @@ export default {
         ].includes(node.operatorToken.kind)
       )
         return (
-          suppliesClassName(node.left, seen) ||
-          suppliesClassName(node.right, seen)
+          suppliesProperty(node.left, property, seen) ||
+          suppliesProperty(node.right, property, seen)
         )
       for (const declaration of symbolAt(node)?.declarations ?? [])
-        if (suppliesClassName(declaration.initializer, seen)) return true
+        if (suppliesProperty(declaration.initializer, property, seen))
+          return true
       return false
     }
 
     function inspectComponent(location, expression) {
       const type = checker.getTypeAtLocation(expression)
-      if (
+      const property = ['className', 'style'].find((property) =>
         type.getCallSignatures().some((signature) => {
           const props = signature.parameters[0]
           return (
             props &&
-            hasClassName(checker.getTypeOfSymbolAtLocation(props, expression))
+            hasProperty(
+              checker.getTypeOfSymbolAtLocation(props, expression),
+              property,
+            )
           )
-        })
+        }),
       )
+      if (property)
         context.report({
           node: services.tsNodeToESTreeNodeMap.get(location),
-          messageId: 'exposedClassName',
+          messageId:
+            property === 'className' ? 'exposedClassName' : 'exposedStyle',
         })
     }
 
@@ -223,15 +234,20 @@ export default {
       JSXOpeningElement(node) {
         if (!isSharedComponent(mapped(node).tagName)) return
         for (const attribute of node.attributes) {
-          if (
-            (attribute.type === 'JSXAttribute' &&
-              attribute.name.name === 'className') ||
-            (attribute.type === 'JSXSpreadAttribute' &&
-              suppliesClassName(mapped(attribute.argument)))
+          const property = ['className', 'style'].find(
+            (property) =>
+              (attribute.type === 'JSXAttribute' &&
+                attribute.name.name === property) ||
+              (attribute.type === 'JSXSpreadAttribute' &&
+                suppliesProperty(mapped(attribute.argument), property)),
           )
+          if (property)
             context.report({
               node: attribute,
-              messageId: 'suppliedClassName',
+              messageId:
+                property === 'className'
+                  ? 'suppliedClassName'
+                  : 'suppliedStyle',
             })
         }
       },
@@ -239,13 +255,20 @@ export default {
         const call = mapped(node)
         if (
           reactFactoryName(call.expression) &&
-          isSharedComponent(call.arguments[0]) &&
-          suppliesClassName(call.arguments[1])
-        )
-          context.report({
-            node: node.arguments[1],
-            messageId: 'suppliedClassName',
-          })
+          isSharedComponent(call.arguments[0])
+        ) {
+          const property = ['className', 'style'].find((property) =>
+            suppliesProperty(call.arguments[1], property),
+          )
+          if (property)
+            context.report({
+              node: node.arguments[1],
+              messageId:
+                property === 'className'
+                  ? 'suppliedClassName'
+                  : 'suppliedStyle',
+            })
+        }
       },
     }
   },

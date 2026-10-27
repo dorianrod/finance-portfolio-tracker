@@ -12,7 +12,7 @@ const uiFile = 'src/shared/ui/LintButton.view.tsx'
 const mainFile = 'src/main.tsx'
 const component = `
   import type { ComponentPropsWithoutRef } from 'react'
-  export function Button(props: Omit<ComponentPropsWithoutRef<'button'>, 'className'>) {
+  export function Button(props: Omit<ComponentPropsWithoutRef<'button'>, 'className' | 'style'>) {
     return <button {...props} className="rounded" />
   }
   function Header(props: { children?: React.ReactNode }) { return <header {...props} /> }
@@ -149,11 +149,11 @@ describe('shared UI component APIs', () => {
   )
 
   it.each([
-    'function Button(props: Omit<React.ComponentPropsWithoutRef<"button">, "className">) { return <button {...props} className="rounded" /> }',
-    'function Button<T extends "button" | "a" = "button">(props: Omit<React.ComponentPropsWithoutRef<T>, "className"> & { as?: T }) { return <button className="rounded" /> }',
+    'function Button(props: Omit<React.ComponentPropsWithoutRef<"button">, "className" | "style">) { return <button {...props} className="rounded" /> }',
+    'function Button<T extends "button" | "a" = "button">(props: Omit<React.ComponentPropsWithoutRef<T>, "className" | "style"> & { as?: T }) { return <button className="rounded" /> }',
     'function Button({ variant }: { variant: "primary" | "secondary" }) { return <button className={variant === "primary" ? "bg-blue-500" : "bg-gray-500"} /> }',
-    'const Button = React.memo((props: Omit<React.ComponentProps<"button">, "className">) => <button {...props} className="rounded" />)',
-    'const Button = React.forwardRef<HTMLButtonElement, Omit<React.ComponentProps<"button">, "className">>((props, ref) => <button {...props} ref={ref} className="rounded" />)',
+    'const Button = React.memo((props: Omit<React.ComponentProps<"button">, "className" | "style">) => <button {...props} className="rounded" />)',
+    'const Button = React.forwardRef<HTMLButtonElement, Omit<React.ComponentProps<"button">, "className" | "style">>((props, ref) => <button {...props} ref={ref} className="rounded" />)',
     'const className = "rounded"; function Button() { return <button className={className} /> }',
     'function Button() { return React.createElement("button", { className: "rounded" }) }',
     'function Label({ as: Tag = "span" }: { as?: "span" | "div" }) { return <Tag className="rounded" /> }',
@@ -292,8 +292,7 @@ describe('shared UI callers', () => {
     `${imports}; <Button><Button.Header>Title</Button.Header></Button>`,
     `${imports}; const props = { disabled: true }; <Button {...props} />`,
     `${imports}; const className = "title"; const props = { [className]: "Title" } as unknown; <Button {...props} />`,
-    `${imports}; function Example(props: Omit<React.ComponentProps<"button">, "className">) { return <Button {...props} /> }`,
-    `${imports}; <Button variant="primary" style={{ width: "100%" }} />`,
+    `${imports}; function Example(props: Omit<React.ComponentProps<"button">, "className" | "style">) { return <Button {...props} /> }`,
     `${imports}; <Button />; <button className="mt-2" />`,
     `${imports}; function ButtonOutsideUi(props: React.ComponentProps<"button">) { return <button {...props} /> }; <ButtonOutsideUi className="mt-2" />`,
     'import * as Primitive from "@radix-ui/react-tabs"; <Primitive.List className="flex" />',
@@ -307,6 +306,47 @@ describe('shared UI callers', () => {
       expect(lint(code)).toEqual([])
     },
   )
+})
+
+describe('shared UI inline style boundaries', () => {
+  it.each([
+    'function Button(props: { style?: React.CSSProperties }) { return <button /> }',
+    'function Button(props: Omit<React.ComponentProps<"button">, "className">) { return <button {...props} /> }',
+    'function Button(props: Pick<React.ComponentProps<"button">, "style" | "children">) { return <button {...props} /> }',
+    'function Button<T extends { style?: React.CSSProperties }>(props: T) { return <button /> }',
+    'function Button(props: { style?: React.CSSProperties } | { label: string }) { return <button /> }',
+  ])('rejects explicit and inherited style APIs: %s', (code) => {
+    expect(
+      lint(`import * as React from "react"; ${code}`, uiFile),
+    ).toMatchObject([{ messageId: 'exposedStyle' }])
+  })
+
+  it.each([
+    `${imports}; <Button style={{ color: "red" }} />`,
+    `${imports}; <Button style={{ width: "100%" }} />`,
+    `${imports}; <Button.Header style={{ padding: 4 }} />`,
+    `${imports}; const props = { style: { color: "red" } }; <Button {...props} />`,
+    `${imports}; const props = { style: { color: "red" } } as unknown; <Button {...({ ...props } as unknown)} />`,
+    `${imports}; function Example(props: { style?: React.CSSProperties }) { return <Button {...props} /> }`,
+    `${imports}; const props = visible ? { style: { padding: 4 } } : {}; <Button {...props} />`,
+    `${imports}; <Button {...{ ["style"]: { padding: 4 } }} />`,
+    `${imports}; import { createElement as element } from "react"; element(Button, { style: { color: "red" } })`,
+    `${imports}; import { cloneElement } from "react"; const element = <Button />; cloneElement(element, { style: { padding: 4 } })`,
+  ])(
+    'rejects styles supplied through JSX, spreads and factories: %s',
+    (code) => {
+      expect(lint(code)).toMatchObject([{ messageId: 'suppliedStyle' }])
+    },
+  )
+
+  it('allows internal native styles and external layout containers', () => {
+    expect(
+      lint(
+        `${imports}; function Panel() { return <div style={{ width: "100%" }}><Button /></div> }`,
+        'src/shared/ui/LintPanel.view.tsx',
+      ),
+    ).toEqual([])
+  })
 })
 
 describe('real ESLint configuration', () => {
@@ -327,5 +367,17 @@ describe('real ESLint configuration', () => {
     ).toMatchObject([{ severity: 2, messageId: 'suppliedClassName' }])
     expect(result.fatalErrorCount).toBe(0)
     expect(noSharedUiClassname.meta).not.toHaveProperty('fixable')
+  }, 20_000)
+
+  it('rejects inline styles on production chart primitives', async () => {
+    const [result] = await eslint.lintText(
+      `import { SeriesLine } from '@/shared/ui/SeriesLine.view'; <SeriesLine tone="accent" style={{ opacity: 0.5 }} />`,
+      { filePath: resolve(directory, mainFile) },
+    )
+    expect(
+      result.messages.filter(
+        ({ ruleId }) => ruleId === 'local/no-shared-ui-classname',
+      ),
+    ).toMatchObject([{ severity: 2, messageId: 'suppliedStyle' }])
   }, 20_000)
 })
