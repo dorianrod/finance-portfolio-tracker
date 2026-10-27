@@ -19,6 +19,10 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. See the
 [ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
 
+`npm test` limits concurrency to four workers because the typed ESLint suites
+each load a TypeScript project. This bounds memory use and avoids startup
+timeouts caused by running too many of those projects simultaneously.
+
 The lint also follows dependent component calculations and boolean formatter
 guards, rejects context dependencies passed to helpers, checks numeric conditions,
 public class ordering, collection pipelines, translated text assembly and DOM
@@ -96,6 +100,11 @@ properties on component APIs and callers, including spreads and React element
 factories. Callers position primitives through external containers and use their
 semantic sizing and appearance options. Internal chart text and swatches apply
 their styles within the owning primitive.
+
+`local/no-shared-ui-internal-layout` also follows resolvable business wrappers
+that forward their `children` into a visual primitive. Such wrappers preserve
+the primitive's internal-layout boundary; an external container or a provider
+without a visual box does not introduce that boundary.
 
 Reusable interaction patterns live in `src/shared/ui`. Typography, surfaces,
 controls, KPI values, chart series, SVG marks and tooltip appearance are exposed

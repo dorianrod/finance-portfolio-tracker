@@ -129,11 +129,17 @@ function OverviewValueCard({
           {formatMoney(comparison.value.current)}
         </Layout>
       </Text>
-      <span className="mt-3 flex flex-wrap items-center gap-2">
+      <Inline
+        as="span"
+        flow="wrap"
+        align="center"
+        gap="default"
+        spaceBefore="default"
+      >
         <DeltaBadge metric={comparison.value} />
         <PreviousValue value={comparison.value.previous} />
-      </span>
-      <span className="block mt-3">
+      </Inline>
+      <Layout as="span" flow="block" spaceBefore="default">
         <Text variant="micro" tone="subtle">
           <Layout as="span" flow="block">
             {i18n.t(
@@ -141,7 +147,7 @@ function OverviewValueCard({
             )}
           </Layout>
         </Text>
-      </span>
+      </Layout>
     </CardShell>
   )
 }
@@ -167,11 +173,17 @@ function OverviewContributionsCard({
           {formatMoney(comparison.contributions.current)}
         </Layout>
       </Text>
-      <span className="mt-3 flex flex-wrap items-center gap-2">
+      <Inline
+        as="span"
+        flow="wrap"
+        align="center"
+        gap="default"
+        spaceBefore="default"
+      >
         <DeltaBadge metric={comparison.contributions} tone="contributions" />
         <PreviousValue value={comparison.contributions.previous} />
-      </span>
-      <span className="block mt-3">
+      </Inline>
+      <Layout as="span" flow="block" spaceBefore="default">
         <Text variant="micro" tone="subtle">
           <Layout as="span" flow="block">
             {i18n.t(
@@ -179,7 +191,7 @@ function OverviewContributionsCard({
             )}
           </Layout>
         </Text>
-      </span>
+      </Layout>
     </CardShell>
   )
 }
@@ -211,7 +223,7 @@ function OverviewPerformanceCard({
       destination="performance"
       accent="positive"
     >
-      <span className="flex items-baseline justify-between gap-2">
+      <Inline as="span" align="baseline" justify="between" gap="default">
         <Text
           variant="metric"
           numeric
@@ -222,8 +234,8 @@ function OverviewPerformanceCard({
           {formatMoney(comparison.marketPerformance.current)}
         </Text>
         <DeltaBadge metric={comparison.marketPerformance} />
-      </span>
-      <span className="block mt-3">
+      </Inline>
+      <Layout as="span" flow="block" spaceBefore="default">
         <Text variant="caption">
           <Inline as="span" align="center" justify="between" gap="default">
             <Text tone="subtle">
@@ -245,8 +257,8 @@ function OverviewPerformanceCard({
             </Text>
           </Inline>
         </Text>
-      </span>
-      <span className="block mt-3">
+      </Layout>
+      <Layout as="span" flow="block" spaceBefore="default">
         <Surface as="span" variant="microFooter" tone="subtle">
           <Inline
             as="span"
@@ -300,7 +312,7 @@ function OverviewPerformanceCard({
             </Text>
           </Inline>
         </Surface>
-      </span>
+      </Layout>
     </CardShell>
   )
 }
@@ -339,21 +351,21 @@ function OverviewConcentrationCard({
       destination="diversification"
       accent={'attention'}
     >
-      <span className="grid grid-cols-2 gap-4">
+      <Layout as="span" flow="grid" arrangement="comparison" gap="relaxed">
         <span>
           <Text variant="micro" tone="subtle">
             <Layout as="span" flow="block">
               {i18n.t('ui.overviewsummarycards.largestAsset')}
             </Layout>
           </Text>
-          <span className="block mt-1">
+          <Layout as="span" flow="block" spaceBefore="compact">
             <Text variant="metricSecondary" tone={'attention'} numeric>
               <Layout as="span" flow="block">
                 {formatPercentage(primaryConcentration.current?.topHoldingPct)}
               </Layout>
             </Text>
-          </span>
-          <span className="block mt-1">
+          </Layout>
+          <Layout as="span" flow="block" spaceBefore="compact">
             <Text
               variant="tinyLabel"
               numeric
@@ -366,7 +378,7 @@ function OverviewConcentrationCard({
                 })}
               </Layout>
             </Text>
-          </span>
+          </Layout>
         </span>
         <span>
           <Text variant="micro" tone="subtle">
@@ -374,14 +386,14 @@ function OverviewConcentrationCard({
               {i18n.t('ui.overviewsummarycards.topFive')}
             </Layout>
           </Text>
-          <span className="block mt-1">
+          <Layout as="span" flow="block" spaceBefore="compact">
             <Text variant="metricSecondary" tone={'attention'} numeric>
               <Layout as="span" flow="block">
                 {formatPercentage(primaryConcentration.current?.topFivePct)}
               </Layout>
             </Text>
-          </span>
-          <span className="block mt-1">
+          </Layout>
+          <Layout as="span" flow="block" spaceBefore="compact">
             <Text
               variant="tinyLabel"
               numeric
@@ -394,10 +406,10 @@ function OverviewConcentrationCard({
                 })}
               </Layout>
             </Text>
-          </span>
+          </Layout>
         </span>
-      </span>
-      <span className="block mt-3">
+      </Layout>
+      <Layout as="span" flow="block" spaceBefore="default">
         <Surface as="span" variant="microFooter" tone="subtle">
           <Stack as="span" gap="compact" inset="compact">
             {underlyingAvailable ? (
@@ -422,7 +434,7 @@ function OverviewConcentrationCard({
             )}
           </Stack>
         </Surface>
-      </span>
+      </Layout>
     </CardShell>
   )
 }

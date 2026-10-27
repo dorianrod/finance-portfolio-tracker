@@ -4,6 +4,64 @@ Périmètre : code React/TypeScript de `src`, application, sept capacités de pr
 
 Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Ce rapport présente la revue du 27 octobre puis conserve les corrections et validations des audits du 26 octobre.
 
+## Revue des frontières de composition du 27 octobre 2026
+
+Périmètre actuel : **995 sources TypeScript/TSX**, dont **819 modules de production
+hors catalogue**, **102 modules de feature** et **178 modules de production du
+design system**. Les 15 règles Dorian sont contrôlées sur l'ensemble du dashboard
+par le lint typé, complété par la revue des frontières de composition, du shell,
+des primitives interactives, des calculs et des fallbacks. Le point de départ
+avait un lint sans diagnostic et **1 498 tests réussis dans 156 fichiers** avec
+quatre workers.
+
+### Écarts corrigés
+
+| Constat                                                                                                                                                                                       | Correction                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CardShell` transmettait ses `children` à `MetricCard.Body`. Treize conteneurs des cartes de synthèse injectaient ainsi des classes de layout dans une primitive visuelle sans être signalés. | Remplacement par `Inline` et `Layout` avec leurs tokens existants : mêmes éléments `span`, espacements, alignements et grille fixe à deux colonnes. Le conteneur de grille extérieur reste autorisé.                                                                                                                                                                                         |
+| Le contrôle de layout suivait les composants extraits placés dans une primitive, mais ne remontait pas la transmission de `children` par un wrapper métier.                                   | `local/no-shared-ui-internal-layout` suit désormais les paramètres `children`, leur renommage, les accès par props, les alias, les spreads typés et les chaînes de wrappers résolues, y compris importées. Les factories React sont également couvertes. Les tests distinguent les contenus internes, les conteneurs extérieurs et les providers sans boîte visuelle ; les cycles terminent. |
+| L'exécution initiale sans limite de concurrence lançait de nombreux projets ESLint/TypeScript simultanément : six tests dépassaient leurs délais.                                             | `vitest.config.ts` limite la concurrence à quatre workers. La suite initiale passe à cette concurrence ; les délais et assertions restent inchangés.                                                                                                                                                                                                                                         |
+
+### Décisions de revue
+
+| Règle                                         | Décision                                                                                                                                                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `styling-external-layout-only`                | Les 13 écarts de composition sont corrigés ; la transmission par wrapper possède maintenant des régressions dédiées. Le layout extérieur demeure permis.                                                                        |
+| `styling-centralize-in-shared-ui`             | Aucun nouvel écart identifié dans les styles JSX, spreads, propriétés graphiques et imports de feuilles de style.                                                                                                               |
+| `styling-semantic-colors`                     | Les choix concrets restent dans le thème ; les domaines choisissent les rôles sémantiques des primitives.                                                                                                                       |
+| `composition-required-children`               | Les slots restent imbriqués et directement composés ; les intégrations externes conservent leurs renderers de module.                                                                                                           |
+| `architecture-business-capability-boundaries` | La carte des sept capacités de premier niveau dans `ARCHITECTURE.md` reste cohérente avec leurs usages. Aucun nouveau domaine nécessaire.                                                                                       |
+| `architecture-feature-hierarchy`              | Allocation/concentration, positions/look-through et assessment/errors gardent leurs parents métier. Les périodes et modes restent des variantes.                                                                                |
+| `architecture-feature-ownership`              | Les dépendances résolues et les entrées partagées transmises par le shell restent justifiées dans `SHARED_OWNERSHIP_AUDIT.md`. Aucune nouvelle exception.                                                                       |
+| `architecture-component-complexity`           | Seuils 8/150 conservés. Les cartes gardent leurs décisions métier de portée, navigation et disponibilité ; leur composition ne justifie pas une vue recopiant simplement leurs props. Aucun nouveau dépassement ni suppression. |
+| `architecture-shared-ui-agnostic`             | Aucun vocabulaire ni dépendance métier identifié dans les contrats UI et thème revus ; les données financières demeurent opaques pour les primitives.                                                                           |
+| `architecture-centralize-accessibility`       | Le câblage ARIA, le clavier et le focus restent dans les primitives. Les régressions de tabs, disclosure, popover, preview et panneau modal sont incluses dans la suite.                                                        |
+| `architecture-extract-component-calculations` | Les chaînes de calcul restent dans les helpers propriétaires. Les proportions, incréments et hauteurs simples observés relèvent des exceptions prévues.                                                                         |
+| `architecture-formatter-fallbacks`            | Les placeholders numériques restent dans les formatters existants ; les gardes de disponibilité, de structure ou de visibilité métier restent dans leurs propriétaires.                                                         |
+| `quality-single-public-export`                | Contrôle actif de tous les modules de production, sans nouvelle dérogation.                                                                                                                                                     |
+| `quality-public-api-first`                    | Contrôle typé actif, y compris pour les classes ; aucune modification d'ordre d'initialisation nécessaire.                                                                                                                      |
+| `quality-no-deprecated-apis`                  | Aucun usage annoté déprécié détecté par le lint typé des versions installées.                                                                                                                                                   |
+
+Les règles génériques et Vercel applicables complètent la revue : rôles des
+composants, effets isolés, état Jotai, cache TanStack Query, requêtes indépendantes,
+chargement différé et frontières d'erreur. Les règles serveur Next.js et les
+parcours absents ne s'appliquent pas à cette SPA.
+
+### Validation de cette passe
+
+- `npm test` avec la configuration par défaut : **1 513 tests réussis dans
+  156 fichiers**, dont 15 nouveaux cas de régression pour la composition. Aucun
+  délai ni seuil d'assertion augmenté.
+- `npx eslint . --max-warnings=0`, sans cache : aucune erreur ni avertissement.
+  La configuration Vitest modifiée ensuite est également contrôlée séparément.
+- `npm run build` : typage de l'application et du catalogue, puis bundle Vite
+  réussis.
+- Catalogue i18n, Prettier du dashboard et `git diff --check` : conformes.
+
+Aucun autre écart Dorian identifié dans le périmètre revu. La revue ne comprend
+pas de validation visuelle interactive dans un navigateur ; l'analyse statique
+reste bornée aux transmissions résolubles.
+
 ## Contre-audit des contrats publics du 27 octobre 2026
 
 Cette passe reprend les 15 règles Dorian sur les **992 sources TypeScript/TSX**,

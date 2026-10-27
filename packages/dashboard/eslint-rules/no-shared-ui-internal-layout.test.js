@@ -90,6 +90,14 @@ describe('caller-owned internal layout', () => {
     'import { createElement } from "react"; <div className="[&>button]:p-4">{createElement(Button)}</div>',
     '<div className="[&>button]:p-4"><Button /></div>',
     '<div className="*:p-4"><Button /></div>',
+    'function Shell({ children }) { return <Card><Card.Body>{children}</Card.Body></Card> }; <Shell><span className="p-4" /></Shell>',
+    'function Shell({ children: body }) { return <Card>{body}</Card> }; <Shell><span style={{ padding: 4 }} /></Shell>',
+    'function Shell(props) { return <Card>{props.children}</Card> }; <Shell><span className="p-4" /></Shell>',
+    'function Shell(props) { const { children: body } = props; return <Card>{body}</Card> }; <Shell><span className="p-4" /></Shell>',
+    'function Shell({ title, ...props }: { title?: string; children: React.ReactNode }) { return <Card {...props} /> }; <Shell><span className="p-4" /></Shell>',
+    'function Inner({ children }) { return <Card>{children}</Card> }; function Shell({ children }) { return <Inner>{children}</Inner> }; <Shell><span className="p-4" /></Shell>',
+    'function Shell({ children }) { const body = children; return <Card>{body}</Card> }; <Shell><span className="p-4" /></Shell>',
+    'import { createElement } from "react"; function Shell({ children }) { return createElement(Card, null, children) }; createElement(Shell, null, <span className="p-4" />)',
   ])(
     'reports injected layout: %s',
     (code) => {
@@ -119,6 +127,18 @@ describe('caller-owned internal layout', () => {
     ).toMatchObject([{ messageId: 'internal', severity: 1 }])
   })
 
+  it('follows an imported wrapper that forwards children into shared UI', () => {
+    expect(
+      lint(
+        `import { Shell } from '@/shared/LintShell.view'; <Shell><div className="p-4" /></Shell>`,
+        mainFile,
+        {
+          'src/shared/LintShell.view.tsx': `${imports}; export function Shell({ children }) { return <Card>{children}</Card> }`,
+        },
+      ),
+    ).toMatchObject([{ messageId: 'internal', severity: 1 }])
+  })
+
   it.each([
     '<div className="mt-2 flex gap-4"><Button>Save</Button><Button>Cancel</Button></div>',
     '<Provider><div className="p-4"><Button>Save</Button></div></Provider>',
@@ -128,6 +148,12 @@ describe('caller-owned internal layout', () => {
     '<div style={{ width: measuredWidth }}><Button>Save</Button></div>',
     '<Card><svg><rect x={0} y={0} width={width} height={height} /></svg></Card>',
     'function External(props) { return <div {...props} /> }; <External><div className="p-4" /></External>',
+    'function Shell({ children }) { return <><Card>Heading</Card>{children}</> }; <Shell><div className="p-4" /></Shell>',
+    'function Shell({ children }) { return <Provider>{children}</Provider> }; <Shell><div className="p-4" /></Shell>',
+    'function Shell({ children }) { return <Card>{children}</Card> }; <div className="p-4"><Shell><span>Body</span></Shell></div>',
+    'function Shell({ children }) { return <Card>{children}</Card> }; <Shell><Card.Body>Body</Card.Body></Shell>',
+    'function Shell({ children, className }) { return <div className={className}><Card>{children}</Card></div> }; <Shell className="mt-2"><span>Body</span></Shell>',
+    'function Shell({ children }) { return <Shell>{children}</Shell> }; <Shell><div className="p-4" /></Shell>',
   ])(
     'accepts external layout, standard UI and data geometry: %s',
     (code) => {

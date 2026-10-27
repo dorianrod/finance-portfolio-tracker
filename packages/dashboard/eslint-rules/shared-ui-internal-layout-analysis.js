@@ -32,6 +32,7 @@ export function createInternalLayoutAnalysis(program) {
   const checker = program.getTypeChecker()
   const boundaries = new Map()
   const bodies = new Map()
+  const childBoundaries = new Map()
 
   function symbolAt(node) {
     if (!node) return undefined
@@ -213,6 +214,138 @@ export function createInternalLayoutAnalysis(program) {
     return (
       isShared(tag) && componentBodies(tag).some((body) => rendersBox(body))
     )
+  }
+
+  function parameterBinding(declaration, callable) {
+    let current = declaration
+    while (current && !ts.isParameter(current)) current = current.parent
+    return current && callable.parameters?.includes(current)
+  }
+
+  function propsParameter(input, callable, seen = new Set()) {
+    const node = unwrap(input)
+    if (!node || seen.has(node)) return false
+    seen.add(node)
+    return (symbolAt(node)?.declarations ?? []).some((declaration) => {
+      if (ts.isParameter(declaration))
+        return callable.parameters?.includes(declaration)
+      if (ts.isBindingElement(declaration))
+        return (
+          !!declaration.dotDotDotToken &&
+          parameterBinding(declaration, callable)
+        )
+      return (
+        ts.isVariableDeclaration(declaration) &&
+        propsParameter(declaration.initializer, callable, seen)
+      )
+    })
+  }
+
+  function childrenReference(input, callable, seen = new Set()) {
+    const node = unwrap(input)
+    if (!node || seen.has(node)) return false
+    seen.add(node)
+    if (
+      (ts.isPropertyAccessExpression(node) && node.name.text === 'children') ||
+      (ts.isElementAccessExpression(node) &&
+        nameOf(node.argumentExpression) === 'children')
+    )
+      return propsParameter(node.expression, callable)
+    return (symbolAt(node)?.declarations ?? []).some((declaration) => {
+      if (
+        ts.isBindingElement(declaration) &&
+        nameOf(declaration.propertyName ?? declaration.name) === 'children'
+      ) {
+        const binding = declaration.parent.parent
+        return (
+          (ts.isParameter(binding) && callable.parameters?.includes(binding)) ||
+          (ts.isVariableDeclaration(binding) &&
+            propsParameter(binding.initializer, callable))
+        )
+      }
+      return (
+        ts.isVariableDeclaration(declaration) &&
+        childrenReference(declaration.initializer, callable, seen)
+      )
+    })
+  }
+
+  // A business wrapper preserves the UI boundary when it renders its caller's
+  // children inside a primitive. Its own external container stays unrestricted.
+  function forwardsChildren(tag, seen = new Set()) {
+    if (!tag || seen.has(tag)) return false
+    if (childBoundaries.has(tag)) return childBoundaries.get(tag)
+    seen.add(tag)
+    const result = componentBodies(tag).some((body) => {
+      const callable = body.parent
+      if (
+        !callable.parameters?.some((parameter) => {
+          if (
+            ts.isObjectBindingPattern(parameter.name) &&
+            parameter.name.elements.some(
+              (binding) =>
+                nameOf(binding.propertyName ?? binding.name) === 'children',
+            )
+          )
+            return true
+          const type = checker.getTypeAtLocation(parameter)
+          return (
+            !!(type.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown)) ||
+            !!checker.getPropertyOfType(type, 'children')
+          )
+        })
+      )
+        return false
+      let found = false
+      function visit(node, inside = false) {
+        if (!node || found) return
+        if (inside && childrenReference(node, callable)) {
+          found = true
+          return
+        }
+        if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
+          const opening = ts.isJsxElement(node) ? node.openingElement : node
+          const within =
+            inside ||
+            boundary(opening.tagName) ||
+            forwardsChildren(opening.tagName, new Set(seen))
+          for (const attribute of opening.attributes.properties) {
+            if (
+              within &&
+              ts.isJsxSpreadAttribute(attribute) &&
+              propsParameter(attribute.expression, callable) &&
+              checker.getPropertyOfType(
+                checker.getTypeAtLocation(attribute.expression),
+                'children',
+              )
+            )
+              found = true
+            if (
+              within &&
+              ts.isJsxAttribute(attribute) &&
+              attribute.name.text === 'children'
+            )
+              visit(attribute.initializer, true)
+          }
+          if (ts.isJsxElement(node))
+            for (const child of node.children) visit(child, within)
+          return
+        }
+        if (ts.isCallExpression(node) && factory(node.expression)) {
+          const within =
+            inside ||
+            boundary(node.arguments[0]) ||
+            forwardsChildren(node.arguments[0], new Set(seen))
+          for (const child of node.arguments.slice(1)) visit(child, within)
+          return
+        }
+        ts.forEachChild(node, (child) => visit(child, inside))
+      }
+      visit(body)
+      return found
+    })
+    childBoundaries.set(tag, result)
+    return result
   }
 
   function elementBoundary(input, seen = new Set()) {
@@ -433,7 +566,12 @@ export function createInternalLayoutAnalysis(program) {
             )
         }
         if (ts.isJsxElement(node))
-          for (const child of node.children) walk(child, inside || shared, own)
+          for (const child of node.children)
+            walk(
+              child,
+              inside || shared || forwardsChildren(opening.tagName),
+              own,
+            )
         // Caller-authored extracted components cannot hide internal layout.
         if (inside && !isShared(opening.tagName))
           for (const body of componentBodies(opening.tagName))
@@ -446,7 +584,11 @@ export function createInternalLayoutAnalysis(program) {
         const shared = tag && (cloned ? elementBoundary(tag) : boundary(tag))
         props(node.arguments[1], inside, shared, own, node)
         for (const child of node.arguments.slice(cloned ? 0 : 2))
-          walk(child, inside || shared, own)
+          walk(
+            child,
+            inside || shared || (!cloned && forwardsChildren(tag)),
+            own,
+          )
         return
       }
       if (inside && ts.isCallExpression(node)) {
