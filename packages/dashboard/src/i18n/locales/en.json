@@ -688,6 +688,7 @@
   "ui.errorstab.showingAnomalies": "Showing {{shown}} / {{total}} anomalies",
   "ui.errorstab.filterLevel": "Filter anomalies by level",
   "ui.errorstab.filterType": "Filter anomalies by type",
+  "ui.buildfilterscopebadges.dateRange": "{{from}} – {{to}}",
   "ui.buildfilterscopebadges.sinceDate": "Since {{date}}",
   "ui.buildfilterscopebadges.untilDate": "Until {{date}}",
   "ui.performancecontributioncard.shareOfGains": "Share of gains",

@@ -1,4 +1,4 @@
-import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { QualityThemeOption } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeOption.view'
 import { QualityThemeTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeTab.view'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'

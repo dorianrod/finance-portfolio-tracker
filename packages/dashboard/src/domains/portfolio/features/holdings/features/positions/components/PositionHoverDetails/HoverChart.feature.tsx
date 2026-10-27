@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { usePositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/usePositionHistoryQuery'
+import { hasUnitPriceHistory } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/businessRules/hasUnitPriceHistory'
 import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
@@ -21,9 +22,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
     error,
   } = usePositionHistoryQuery(target.isin)
 
-  const showUnitPrice =
-    history != null &&
-    history.some((p) => Math.abs(p.last_price - p.value) > 0.01)
+  const showUnitPrice = hasUnitPriceHistory(history)
 
   const chartData = useMemo(
     () => (history ? buildHoverChartSeries(history, target.operations) : []),

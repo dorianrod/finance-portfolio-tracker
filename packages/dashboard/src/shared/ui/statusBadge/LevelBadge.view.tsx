@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 export function LevelBadge({
   level,
   ...props
-}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'> & {
   level: keyof typeof LEVEL_TONES
 }) {
   return (

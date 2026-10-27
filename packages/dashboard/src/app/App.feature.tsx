@@ -7,11 +7,10 @@ import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.v
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
 import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
-import { filterSummaries } from '@/domains/portfolio/features/scope-selection/helpers/filters/filterSummaries'
+import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection/helpers/filters/useFilterSummaries'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 import { DashboardContent } from './DashboardContent.feature'
@@ -21,7 +20,6 @@ import { DashboardPanelFallback } from './DashboardPanelFallback.view'
 import { DashboardSectionHeader } from './DashboardSectionHeader.feature'
 
 export default function App() {
-  const formatDate = useFormatDate()
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const filters = useAtomValue(dashboardFiltersAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
@@ -29,11 +27,10 @@ export default function App() {
   const { loadState, accountFilterLabels, qualitySummary } = dashboard
   const { hasFundValidationError, hasPipelineError, qualityCount } =
     qualitySummary
-  const activeFilterSummaries = filterSummaries(
+  const activeFilterSummaries = useFilterSummaries(
     filters,
     accountFilterLabels,
     filterVisibilityForTab(activeTab, holdingsView),
-    (date) => formatDate(date, { style: 'isoDate' }),
   )
   return (
     <ViewNavigation>

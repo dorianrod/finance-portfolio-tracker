@@ -1,4 +1,4 @@
-import { type QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { type QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles'
 import { DialogButton } from '@/shared/ui/controls/DialogButton.view'
 import { NextIcon } from '@/shared/ui/icons/NextIcon.view'

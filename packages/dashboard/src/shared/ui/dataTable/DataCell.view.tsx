@@ -10,7 +10,7 @@ export function DataCell({
   align,
   numeric = false,
   ...props
-}: Omit<ComponentPropsWithoutRef<'td'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'td'>, 'className' | 'style'> & {
   variant?: keyof typeof DATA_CELL_VARIANTS
   tone?: TextTone
   align?: 'left' | 'right'

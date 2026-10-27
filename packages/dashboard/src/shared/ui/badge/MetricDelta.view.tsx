@@ -8,7 +8,7 @@ export function MetricDelta({
   tone,
   variant = 'summary',
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
   tone: TextTone
   variant?: keyof typeof DELTA_VARIANTS
 }) {
@@ -23,7 +23,7 @@ export function MetricDelta({
 }
 
 function MetricDeltaDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'>,
 ) {
   return (
     <span

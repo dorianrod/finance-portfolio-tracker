@@ -9,7 +9,7 @@ export function TableRowSurface({
   variant,
   dimmed = false,
   ...props
-}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className' | 'style'> & {
   variant: TableRowVariant
   dimmed?: boolean
 }) {

@@ -5,7 +5,7 @@ import { CHOICE_ROW_VARIANTS } from '@/shared/ui/fieldAppearance/choiceRowVarian
 export function ChoiceRow({
   variant = 'default',
   ...props
-}: Omit<ComponentPropsWithoutRef<'label'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'label'>, 'className' | 'style'> & {
   variant?: keyof typeof CHOICE_ROW_VARIANTS
 }) {
   return (

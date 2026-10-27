@@ -1,5 +1,25 @@
 # Audit de complexité React et TypeScript — 26 octobre 2026
 
+## Mise à jour du 27 octobre 2026
+
+La fermeture des props publiques `style` a fait apparaître deux nouveaux signaux,
+revus avec leurs composants et appelants :
+
+- `getTextClassName` (complexité 12) : la politique de troncature distingue les
+  cellules de tableau des autres éléments. `getTextTruncationClassName` possède
+  cette responsabilité HTML ; le helper principal compose les options de texte.
+- `SwatchFrame` (complexité 11) : `getSeriesSwatchStyle` possède la couleur et
+  le contour de sélection d'une série, tandis que le frame garde la forme et
+  les dimensions du swatch.
+
+Les deux frontières conservent l'apparence et passent le seuil de complexité 8.
+La suppression historique de complexité de `Text` a été retirée : son rendu
+utilise les helpers de typographie communs avec `ChartText`. Aucun nouveau seuil
+ni suppression ajouté. Les builders de qualité et d'erreurs utilisent leurs
+formatters depuis des hooks ; `buildDataQualityViewModel` se nomme désormais
+`useBuildDataQualityViewModel`. Les tableaux historiques ci-dessous décrivent
+les mesures de la revue initiale.
+
 > État historique avant le passage des seuils en `error`. La revue des exceptions et les extractions suivantes sont documentées dans [ESLINT_COMPLEXITY_REVIEW.md](ESLINT_COMPLEXITY_REVIEW.md).
 
 Périmètre : tous les fichiers de production `src/**/*.{ts,tsx}`, avec `complexity` à **8** (variante `modified`) et `max-lines-per-function` à **150** hors lignes blanches et commentaires. Tests, specs, stories et dossiers `__tests__` sont exclus, conformément à la configuration.
@@ -23,7 +43,7 @@ Chaque dépassement a été relu selon sa responsabilité. Les cas conservés re
 | [`PerformanceContributionCard`](src/domains/portfolio/features/performance/components/PerformanceContributionCard.feature.tsx)                         | 10 → 7                   | 223 → 97             |
 | [`buildPositionRows`](src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy.ts)                                                          | 51 → 7                   | 235 → 37             |
 | [`computePerformanceContributions`](src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.ts)                 | 40 → 4                   | 146 → 85             |
-| [`buildDataQualityViewModel`](src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel.ts)            | 21 → 8                   | 203 → 111            |
+| [`buildDataQualityViewModel`](src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel.ts)         | 21 → 8                   | 203 → 111            |
 | [`scopeFundQualityData`](src/domains/portfolio/shared/helpers/quality/scopeFundQualityData.ts)                                                         | 23 → 8                   | 151 → 119            |
 
 Les fonctions de routage courtes délèguent maintenant à des régions nommées. Les fonctions et callbacks de ces régions sont également contrôlés : la table des reliquats ci-dessous inclut leurs éventuels dépassements. Les cartes ne changent pas leur composition de slots ni leur ordre de rendu.
@@ -49,7 +69,7 @@ Les conversions de fonds partagent le mapping des positions courantes et histori
 | [`LookThroughCoverageSummary.view.tsx`](src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.view.tsx) — `LookThroughCoverageSummaryView`                      | Découpé                          | Séparation des variantes compacte et détaillée, des connecteurs de l’arbre, de la branche identifiée et de la branche non résolue. Les slots de tooltip sont toujours fournis par composition.                                                                                                                                                    |
 | [`ErrorsTab.feature.tsx`](src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab.feature.tsx) — `ErrorsTab`                                                                           | Conservé                         | Une table d’anomalies avec ses filtres, son tri et son état vide ; modèle de lignes et cellules déjà extraits. Les neuf décisions concernent ce seul écran.                                                                                                                                                                                       |
 | [`buildDataQualitySummary.ts`](src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts) — `buildDataQualitySummary`                                          | Conservé                         | Jointure des indicateurs de classification, pipeline et look-through en un résumé de fiabilité ; les politiques de ton et les pourcentages sont déjà délégués aux helpers dédiés.                                                                                                                                                                 |
-| [`buildDataQualityViewModel.ts`](src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel.ts) — `buildDataQualityViewModel`                                    | Découpé                          | Une politique de thème par helper : pipeline, prix manuels, classification et look-through. Le modèle assemble les métriques et choisit le thème recommandé sans cumuler les quatre politiques d’affichage.                                                                                                                                       |
+| [`buildDataQualityViewModel.ts`](src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel.ts) — `buildDataQualityViewModel`                                 | Découpé                          | Une politique de thème par helper : pipeline, prix manuels, classification et look-through. Le modèle assemble les métriques et choisit le thème recommandé sans cumuler les quatre politiques d’affichage.                                                                                                                                       |
 | [`DataQualityTab.feature.tsx`](src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab.feature.tsx) — `DataQualityTab`                                                             | Découpé                          | La navigation, l’en-tête, le panneau des actifs affectés et les états du look-through ont maintenant des propriétaires explicites ; le parent compose la page et choisit les actions du thème actif.                                                                                                                                              |
 | [`GainCells.feature.tsx`](src/domains/portfolio/features/holdings/features/positions/components/GainCells.feature.tsx) — `UnrealizedGainCell`, `RealizedGainCell`                                               | Corrigé                          | Calcul des détails de taxe partagé entre plus-value latente et réalisée ; les composants conservent leurs différences de visibilité pour zéro et les pertes.                                                                                                                                                                                      |
 | [`HoverChart.feature.tsx`](src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.tsx) — `HoverChart`                                                    | Conservé                         | Un petit adaptateur de requête avec chargement, erreur, absence et données. La série et le domaine sont déjà calculés par des helpers ; extraire un composant par message fragmenterait cette lecture.                                                                                                                                            |

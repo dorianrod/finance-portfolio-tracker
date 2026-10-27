@@ -1,4 +1,4 @@
-import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { DetailKpiButton } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/DetailKpiButton.view'
 import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles'
 import { Inline } from '@/shared/ui/layout/Inline.view'

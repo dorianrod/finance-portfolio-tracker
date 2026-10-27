@@ -38,7 +38,7 @@ export function ChartLabel({
 
 type Props = Pick<
   SVGProps<SVGTextElement>,
-  'x' | 'y' | 'dx' | 'dy' | 'transform' | 'style'
+  'x' | 'y' | 'dx' | 'dy' | 'transform'
 > & {
   as?: 'text' | 'tspan'
   children: ReactNode

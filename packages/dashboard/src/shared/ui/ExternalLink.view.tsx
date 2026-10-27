@@ -36,7 +36,7 @@ export function ExternalLink({
 }
 
 type ExternalLinkProps = Omit<
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'>,
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className' | 'style'>,
   'href' | 'target' | 'rel'
 > & {
   variant?: 'source'

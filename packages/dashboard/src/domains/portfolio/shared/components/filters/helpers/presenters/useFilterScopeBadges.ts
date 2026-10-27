@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type {
   AccountScopeMode,
@@ -5,24 +7,31 @@ import type {
   PeriodScopeMode,
 } from '@/domains/portfolio/shared/types/filterScope.type'
 import i18n from '@/i18n/i18n'
-import type { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
-export function buildFilterScopeBadges({
+export function useFilterScopeBadges({
   account,
   accountLabels,
   effectiveDate,
   filters,
-  formatDate,
   period,
 }: FilterScopeSpec & {
   accountLabels: Record<string, string>
   filters: DashboardFilters
-  formatDate: ReturnType<typeof useFormatDate>
 }): ScopeBadge[] {
-  return [
-    accountBadge(account, filters, accountLabels),
-    periodBadge(period, filters, formatDate, effectiveDate),
-  ]
+  const formatDate = useFormatDate()
+  const endDate = effectiveDate ?? filters.dateTo
+  return useMemo(
+    () => [
+      accountBadge(account, filters, accountLabels),
+      periodBadge(period, filters, {
+        from: filters.dateFrom ? formatDate(filters.dateFrom) : null,
+        to: filters.dateTo ? formatDate(filters.dateTo) : null,
+        end: endDate ? formatDate(endDate) : null,
+      }),
+    ],
+    [account, accountLabels, endDate, filters, formatDate, period],
+  )
 }
 
 export type ScopeBadge = {
@@ -31,13 +40,7 @@ export type ScopeBadge = {
   tone: 'applied' | 'default' | 'ignored'
 }
 
-function friendlyDate(
-  value: Date | null | undefined,
-  formatDate: ReturnType<typeof useFormatDate>,
-): string | null {
-  if (!value) return null
-  return formatDate(value, { style: 'dayMonthYear', timeZone: 'UTC' })
-}
+type ScopeDates = { from: string | null; to: string | null; end: string | null }
 
 function accountBadge(
   mode: AccountScopeMode,
@@ -89,12 +92,11 @@ function accountBadge(
 function periodBadge(
   mode: PeriodScopeMode,
   filters: DashboardFilters,
-  formatDate: ReturnType<typeof useFormatDate>,
-  effectiveDate?: Date | null,
+  dates: ScopeDates,
 ): ScopeBadge {
   const active = !!(filters.dateFrom || filters.dateTo)
-  const end = friendlyDate(effectiveDate ?? filters.dateTo, formatDate)
-  const range = formatPeriodRange(filters, formatDate)
+  const end = dates.end
+  const range = formatPeriodRange(dates)
   switch (mode) {
     case 'latest':
     case 'mixed':
@@ -110,20 +112,17 @@ function periodBadge(
       return fixedHorizonPeriodBadge(mode, filters, end)
   }
 }
-function formatPeriodRange(
-  filters: DashboardFilters,
-  formatDate: ReturnType<typeof useFormatDate>,
-): string | null {
+function formatPeriodRange({ from, to }: ScopeDates): string | null {
   let range: string | null = null
-  if (filters.dateFrom && filters.dateTo) {
-    range = `${friendlyDate(filters.dateFrom, formatDate)} – ${friendlyDate(filters.dateTo, formatDate)}`
-  } else if (filters.dateFrom) {
+  if (from && to) {
+    range = i18n.t('ui.buildfilterscopebadges.dateRange', { from, to })
+  } else if (from) {
     range = i18n.t('ui.buildfilterscopebadges.sinceDate', {
-      date: friendlyDate(filters.dateFrom, formatDate),
+      date: from,
     })
-  } else if (filters.dateTo) {
+  } else if (to) {
     range = i18n.t('ui.buildfilterscopebadges.untilDate', {
-      date: friendlyDate(filters.dateTo, formatDate),
+      date: to,
     })
   }
 

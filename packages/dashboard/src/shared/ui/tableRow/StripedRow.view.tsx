@@ -3,7 +3,9 @@ import type { ComponentPropsWithoutRef } from 'react'
 export function StripedRow({
   shaded,
   ...props
-}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & { shaded: boolean }) {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className' | 'style'> & {
+  shaded: boolean
+}) {
   return (
     <tr
       {...props}

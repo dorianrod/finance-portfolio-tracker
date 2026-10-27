@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 export function CompactBadge({
   tone,
   ...props
-}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'> & {
   tone: keyof typeof COMPACT_TONES
 }) {
   return (

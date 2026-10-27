@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 
-import type { DataQualityDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import type { DataQualityDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 
 export const dataQualityClassificationDimensionAtom =
   atom<DataQualityDimension | null>(null)

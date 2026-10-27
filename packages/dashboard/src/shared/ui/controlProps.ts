@@ -4,6 +4,7 @@ import type { AriaAttributes } from 'react'
 export type ControlProps<Props> = Omit<
   Props,
   | 'className'
+  | 'style'
   | keyof AriaAttributes
   | 'role'
   | 'tabIndex'

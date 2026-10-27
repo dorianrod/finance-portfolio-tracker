@@ -11,6 +11,8 @@ import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { StripedRow } from '@/shared/ui/tableRow/StripedRow.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { getFilteredPositionShare } from './helpers/presenters/getFilteredPositionShare'
+
 export function FilteredPositionRow({
   category,
   index,
@@ -22,8 +24,7 @@ export function FilteredPositionRow({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const percentage =
-    row.totalValue > 0 ? (row.filteredValue / row.totalValue) * 100 : 0
+  const { percentage, barShare } = getFilteredPositionShare(row)
   return (
     <StripedRow shaded={index % 2 !== 0}>
       <Inset as="td" inset="default">
@@ -60,7 +61,7 @@ export function FilteredPositionRow({
           >
             <Layout height="track" overflow="clip">
               <Surface variant="track">
-                <Proportion value={Math.min(percentage, 100)}>
+                <Proportion value={barShare}>
                   <SeriesSwatch
                     as="div"
                     shape="dot"

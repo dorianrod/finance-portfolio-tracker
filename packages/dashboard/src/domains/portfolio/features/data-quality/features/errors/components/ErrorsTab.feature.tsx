@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 
-import { buildPipelineErrorsViewModel } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel'
 import type { PipelineErrorSortColumn } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel.types'
 import { PIPELINE_ERROR_TYPE_LABELS } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/pipelineErrorTypeLabels'
+import { useBuildPipelineErrorsViewModel } from '@/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import i18n from '@/i18n/i18n'
@@ -20,7 +20,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 // eslint-disable-next-line complexity -- Filtering, sorting and availability belong to one anomaly table; row mapping and cells are already separate.
 export function ErrorsTab({ errors }: Props) {
-  const formatAssetLabel = useFormatAssetLabel()
+  const buildPipelineErrorsViewModel = useBuildPipelineErrorsViewModel()
   const [filterLevel, setFilterLevel] = useState<'all' | 'error' | 'warning'>(
     'all',
   )
@@ -47,11 +47,17 @@ export function ErrorsTab({ errors }: Props) {
         errors,
         filterLevel,
         filterType,
-        formatAssetLabel,
         sortColumn: sortCol,
         sortDirection: sortDir,
       }),
-    [errors, filterLevel, filterType, formatAssetLabel, sortCol, sortDir],
+    [
+      errors,
+      filterLevel,
+      filterType,
+      buildPipelineErrorsViewModel,
+      sortCol,
+      sortDir,
+    ],
   )
   const hasActiveFilters = filterLevel !== 'all' || filterType !== 'all'
 
@@ -246,7 +252,7 @@ function ErrorColumnHeader({
 }
 
 type PipelineErrorRow = ReturnType<
-  typeof buildPipelineErrorsViewModel
+  ReturnType<typeof useBuildPipelineErrorsViewModel>
 >['rows'][number]
 
 function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {

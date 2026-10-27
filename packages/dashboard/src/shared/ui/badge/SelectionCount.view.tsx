@@ -2,7 +2,7 @@ import type { HTMLAttributes } from 'react'
 
 export function SelectionCount({
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'>) {
   return (
     <span
       {...props}

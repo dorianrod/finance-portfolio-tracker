@@ -6,20 +6,7 @@ import { SwatchFrame } from './SwatchFrame.view'
 export function SeriesSwatch({
   tone,
   selected = false,
-  style,
   ...props
 }: SwatchProps & { tone: keyof typeof CHART_COLORS; selected?: boolean }) {
-  return (
-    <SwatchFrame
-      {...props}
-      style={{
-        ...style,
-        backgroundColor: CHART_COLORS[tone],
-        ...(selected && {
-          outline: '2px solid var(--ds-content)',
-          outlineOffset: 1,
-        }),
-      }}
-    />
-  )
+  return <SwatchFrame {...props} series={{ tone, selected }} />
 }

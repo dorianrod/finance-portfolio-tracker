@@ -1,8 +1,80 @@
-# Audit React Dorian — 26 octobre 2026
+# Audit React Dorian — 27 octobre 2026
 
 Périmètre : code React/TypeScript de `src`, application, sept capacités de premier niveau du domaine portfolio, sous-features, design system, tests et configuration ESLint. Référence principale : [dorian-react-best-pratices](../../.agents/skills/dorian-react-best-pratices/SKILL.md), version 0.11.0. Les conventions techniques génériques de dossiers, rôles et imports complètent ses décisions métier.
 
-Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Ce rapport conserve les corrections du premier audit et présente en premier le contre-audit effectué sur son résultat.
+Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Ce rapport présente la revue du 27 octobre puis conserve les corrections et validations des audits du 26 octobre.
+
+## Revue complète du 27 octobre 2026
+
+Point de départ : lint complet sans diagnostic et **147 fichiers, 1 385 tests réussis**.
+La revue couvre les 15 règles Dorian, complétées par les conventions techniques
+React génériques et les règles Vercel applicables à cette SPA. Les règles serveur
+Next.js, authentification, formulaires de mutation et fonctionnalités absentes ne
+sont pas applicables.
+
+### Écarts corrigés
+
+| Constat                                                                                                                                                                | Correction                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Les primitives excluaient `className`, mais plusieurs contrats héritaient encore de `style`, et `Preview.Content` le déclarait explicitement.                          | Les props publiques des contrôles, textes, surfaces, badges, tables, swatches et labels SVG excluent désormais `style`. Le positionnement reste sur les conteneurs externes et les dimensions sémantiques restent dans les primitives.                                                                                    |
+| `ChartText` et `SeriesSwatch` dépendaient du passage d'un objet CSS à une autre primitive.                                                                             | `Text` et `ChartText` partagent un presenter de typographie ; chaque renderer possède son élément natif et son apparence. `SwatchFrame` reçoit les données sémantiques de série et de sélection. Aucun objet CSS ne transite par leur API publique.                                                                       |
+| Quatre helpers recevaient des fonctions de formatage de leurs appelants.                                                                                               | `useFilterSummaries`, `useFilterScopeBadges`, `useBuildDataQualityViewModel` et `useBuildPipelineErrorsViewModel` composent les formatters existants. Leurs signatures prennent uniquement les données nécessaires ; valeurs et fonctions retournées sont mémorisées. Les helpers privés reçoivent des valeurs formatées. |
+| Le pourcentage d'une position filtrée, puis sa borne d'affichage, étaient calculés dans le composant.                                                                  | `getFilteredPositionShare`, presenter auprès de `FilteredPositionRow`, possède toute la dérivation. Le cas de valeur totale nulle et la borne de 100 restent identiques.                                                                                                                                                  |
+| Le tick de concentration dérivait ses coordonnées et dimensions dans le JSX.                                                                                           | `getHoldingLabelGeometry` possède la géométrie au périmètre du composant.                                                                                                                                                                                                                                                 |
+| L'aperçu de position décidait directement de la pertinence de l'historique de prix unitaire.                                                                           | `hasUnitPriceHistory`, prédicat auprès des graphiques de position, possède la règle métier et sa tolérance de 0,01.                                                                                                                                                                                                       |
+| Le tooltip mensuel filtrait les opérations dans le composant et utilisait le compte comme clé React, alors qu'un même compte peut avoir plusieurs opérations par mois. | Un sélecteur local partitionne les opérations et conserve leur identité dans le snapshot. Le test de régression vérifie plusieurs dépôts et retraits du même compte, leur remplacement au changement de mois et l'absence de diagnostic React.                                                                            |
+| Une plage de dates était assemblée directement dans un helper de présentation.                                                                                         | Le catalogue possède maintenant `ui.buildfilterscopebadges.dateRange`, avec interpolation des deux dates. Les labels d'opération des résumés sont également résolus au moment de l'appel.                                                                                                                                 |
+
+Les trois tests des résumés ont été déplacés auprès du hook propriétaire et
+exécutent ses vrais formatters. Aucun mock de formatter ni wrapper de fallback
+n'a été ajouté.
+
+### Couverture et décisions
+
+- **Styles, couleurs et composition** : contrôle des contrats hérités, usages JSX,
+  spreads et intégrations graphiques ; les primitives conservent les tokens et
+  slots. Les props de géométrie des bibliothèques restent des données.
+- **Frontières, hiérarchie et propriété** : la carte des capacités de
+  [ARCHITECTURE.md](ARCHITECTURE.md) reste justifiée. Les extractions appartiennent
+  à leur feature et, lorsqu'elles sont spécifiques à un composant, à son dossier.
+  Les usages communs transmis par le shell conservent les preuves de
+  [SHARED_OWNERSHIP_AUDIT.md](SHARED_OWNERSHIP_AUDIT.md).
+- **Complexité et calculs** : les nouvelles frontières isolent une dérivation,
+  une géométrie ou une sélection identifiable. Les opérations simples et
+  autonomes autorisées par la règle restent locales. Le presenter de typographie
+  représente un seul contrat de classes ; les builders de qualité et d'erreurs
+  conservent leur responsabilité. Aucun seuil ni suppression ESLint ajouté.
+- **Indépendance UI et accessibilité** : revue du vocabulaire et des dépendances
+  UI/thème, contrôles des associations, clavier et restauration du focus via les
+  tests existants. Aucune logique métier ni câblage ARIA ajouté aux primitives
+  ou aux domaines respectivement.
+- **Fallbacks, exports et dépréciations** : contrôles typés actifs ; les valeurs
+  absentes restent traitées par les formatters numériques. Un export de valeur
+  par module et API publique en tête restent vérifiés. La vérification de la
+  [documentation Recharts sur `Cell`](https://recharts.github.io/guide/cell/)
+  confirme sa dépréciation ; le projet ne l'utilise pas.
+- **Conventions React complémentaires** : vérification des effets, imports,
+  stores, chargements différés, frontières d'erreur et requêtes communes. Les
+  helpers modifiés ne reçoivent plus de dépendance de contexte.
+
+### Validation
+
+- `npm test` : **149 fichiers, 1 386 tests réussis**. Les trois tests existants
+  des résumés ont suivi leur hook ; un test de régression couvre les opérations
+  répétées d'un compte et le changement de mois.
+- `npm run lint -- --max-warnings=0` : aucune erreur ni avertissement, sans
+  nouvelle désactivation de règle ni modification des seuils.
+- `npm run build` : typage TypeScript, catalogue typé et bundle de production
+  réussis.
+- `npm run build-storybook` : catalogue statique construit. Le bundler signale
+  des directives `use client` de dépendances Radix et la taille des chunks de
+  documentation Storybook ; ces diagnostics concernent le catalogue et ne
+  bloquent pas sa génération.
+- `npx prettier --check .`, `node scripts/check-i18n-catalog.mjs` et
+  `git diff --check` : conformes.
+
+Cette revue de code ne comprend pas de validation visuelle interactive en
+navigateur. Aucun écart Dorian identifié par cette passe ne reste à corriger.
 
 ## Contre-audit : corrections supplémentaires
 

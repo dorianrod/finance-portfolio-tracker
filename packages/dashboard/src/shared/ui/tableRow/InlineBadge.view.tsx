@@ -3,7 +3,7 @@ import type { HTMLAttributes } from 'react'
 export function InlineBadge({
   tone,
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
   tone: 'accent' | 'attention' | 'decorative'
 }) {
   const appearance = {

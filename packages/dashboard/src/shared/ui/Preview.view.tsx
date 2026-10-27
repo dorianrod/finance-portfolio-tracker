@@ -1,7 +1,6 @@
 import * as Primitive from '@radix-ui/react-popover'
 import {
   createContext,
-  type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
   useContext,
@@ -134,7 +133,6 @@ function PreviewContent({
   size = 'default',
   label,
   children,
-  style,
   variant,
   ...props
 }: ControlProps<HTMLAttributes<HTMLDivElement>> & {
@@ -142,7 +140,6 @@ function PreviewContent({
   size?: keyof typeof PREVIEW_SIZES
   anchor: DOMRect
   label: string
-  style?: CSSProperties
 }) {
   const context = useContext(PreviewContext)
   const contentRef = usePreviewFocus(context?.interactive ?? false, anchor)
@@ -172,7 +169,6 @@ function PreviewContent({
           collisionPadding={8}
           style={{
             maxHeight: 'var(--radix-popover-content-available-height)',
-            ...style,
           }}
           onOpenAutoFocus={(event) => event.preventDefault()}
           onCloseAutoFocus={(event) => {

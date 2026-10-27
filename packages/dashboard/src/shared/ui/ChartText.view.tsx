@@ -1,24 +1,37 @@
-import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
+import { createElement } from 'react'
 
-import { Text, type TextProps, type TextTag } from './Text.view'
+import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
+import { getTextClassName } from '@/shared/ui/textAppearance/getTextClassName'
+
+import type { TextProps, TextTag } from './Text.view'
 
 export function ChartText<T extends TextTag = 'span'>({
+  as,
+  variant,
+  align,
+  wrap,
+  numeric,
+  truncate,
   tone,
   series,
   separator = false,
-  style,
   ...props
 }: ChartTextProps<T>) {
-  return (
-    <Text
-      {...props}
-      style={{
-        ...style,
-        color: series?.color ?? (tone && CHART_TEXT_TONES[tone]),
-        ...(separator && { borderTop: '1px solid var(--tooltip-border)' }),
-      }}
-    />
-  )
+  return createElement(as ?? 'span', {
+    ...props,
+    className: getTextClassName({
+      as,
+      variant,
+      align,
+      wrap,
+      numeric,
+      truncate,
+    }),
+    style: {
+      color: series?.color ?? (tone && CHART_TEXT_TONES[tone]),
+      ...(separator && { borderTop: '1px solid var(--tooltip-border)' }),
+    },
+  })
 }
 
 type ChartTextProps<T extends TextTag> = Omit<TextProps<T>, 'tone'> & {

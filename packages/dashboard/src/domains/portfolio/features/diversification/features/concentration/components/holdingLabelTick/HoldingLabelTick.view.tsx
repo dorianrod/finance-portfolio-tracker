@@ -1,7 +1,7 @@
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inset } from '@/shared/ui/layout/Inset.view'
 
-import { HOLDING_LABEL_WIDTH } from './holdingLabelWidth'
+import { getHoldingLabelGeometry } from './helpers/presenters/getHoldingLabelGeometry'
 
 export function HoldingLabelTick({
   x = 0,
@@ -12,10 +12,7 @@ export function HoldingLabelTick({
 
   return (
     <foreignObject
-      x={x - HOLDING_LABEL_WIDTH}
-      y={y - 10}
-      width={HOLDING_LABEL_WIDTH - 10}
-      height={20}
+      {...getHoldingLabelGeometry(x, y)}
       style={{ overflow: 'visible' }}
     >
       <ChartText

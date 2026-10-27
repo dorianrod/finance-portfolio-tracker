@@ -1,5 +1,8 @@
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
-import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+import type {
+  MonthlyOperation,
+  MonthlyOperationsByMonth,
+} from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -11,6 +14,8 @@ import {
 } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
+
+import { selectMonthlyTooltipOperations } from './helpers/selectors/selectMonthlyTooltipOperations'
 
 // eslint-disable-next-line complexity -- Monthly operations and trailing totals are the context of one savings-history hover point.
 export function MonthlyTooltip({
@@ -32,14 +37,7 @@ export function MonthlyTooltip({
     : String(label).slice(0, 7)
   const monthOps: ReturnType<MonthlyOperationsByMonth['get']> =
     ops.get(month) ?? []
-  const deposits = monthOps.filter(
-    (o) => o.operation_type === 'DEPOSIT' && o.total_amount > 0,
-  )
-  const withdrawals = monthOps.filter(
-    (o) =>
-      o.operation_type === 'WITHDRAWAL' ||
-      (o.operation_type === 'DEPOSIT' && o.total_amount < 0),
-  )
+  const { deposits, withdrawals } = selectMonthlyTooltipOperations(monthOps)
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -56,9 +54,9 @@ export function MonthlyTooltip({
       </Layout>
       {deposits.length > 0 && (
         <div>
-          {deposits.map((operation) => (
+          {deposits.map(({ id, operation }) => (
             <MonthlyOperationRow
-              key={operation.account}
+              key={id}
               operation={operation}
               withdrawal={false}
             />
@@ -67,12 +65,8 @@ export function MonthlyTooltip({
       )}
       {withdrawals.length > 0 && (
         <div>
-          {withdrawals.map((operation) => (
-            <MonthlyOperationRow
-              key={operation.account}
-              operation={operation}
-              withdrawal
-            />
+          {withdrawals.map(({ id, operation }) => (
+            <MonthlyOperationRow key={id} operation={operation} withdrawal />
           ))}
         </div>
       )}
@@ -128,10 +122,6 @@ type MonthlyTooltipProps = NumericTooltipProps<
 > & {
   ops: MonthlyOperationsByMonth
 }
-
-type MonthlyOperation = NonNullable<
-  ReturnType<MonthlyOperationsByMonth['get']>
->[number]
 
 function MonthlyOperationRow({
   operation,

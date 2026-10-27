@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension'
@@ -21,124 +23,131 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 import { buildClassificationViewState } from './buildClassificationViewState'
 
-export function buildDataQualityViewModel({
-  positions,
-  errors,
-  manualPriceOverrides,
-  fundStatuses,
-  fundReport,
-  fundHoldings,
-  fundSnapshots,
-  fundUnresolved,
-  rawData,
-  formatPercentage,
-}: BuildDataQualityViewModelInput) {
-  const coverage = rawData.loading
-    ? []
-    : computeAllocationCoverageByAccount(positions, rawData)
-  const dimensionCoverage = rawData.loading
-    ? []
-    : computeAllocationCoverageByDimension(positions, rawData)
-  const scopedFundData = scopeFundQualityData(
-    positions,
-    fundHoldings,
-    fundStatuses,
-    fundSnapshots,
-    fundUnresolved,
-    fundReport,
-  )
+export function useBuildDataQualityViewModel() {
+  const formatPercentage = useFormatPercentage()
+  return useCallback(
+    ({
+      positions,
+      errors,
+      manualPriceOverrides,
+      fundStatuses,
+      fundReport,
+      fundHoldings,
+      fundSnapshots,
+      fundUnresolved,
+      rawData,
+    }: BuildDataQualityViewModelInput) => {
+      const coverage = rawData.loading
+        ? []
+        : computeAllocationCoverageByAccount(positions, rawData)
+      const dimensionCoverage = rawData.loading
+        ? []
+        : computeAllocationCoverageByDimension(positions, rawData)
+      const scopedFundData = scopeFundQualityData(
+        positions,
+        fundHoldings,
+        fundStatuses,
+        fundSnapshots,
+        fundUnresolved,
+        fundReport,
+      )
 
-  const classificationMappedValue = coverage.reduce(
-    (sum, item) => sum + item.allocated,
-    0,
-  )
-  const classificationUnmappedValue = coverage.reduce(
-    (sum, item) => sum + item.unallocated,
-    0,
-  )
-  const classificationApplicableValue =
-    classificationMappedValue + classificationUnmappedValue
-  const classificationNotApplicableValue = coverage.reduce(
-    (sum, item) => sum + item.notApplicable,
-    0,
-  )
-  const [, classificationGap] = partitionPercentages([
-    classificationMappedValue,
-    classificationUnmappedValue,
-    classificationNotApplicableValue,
-  ])
-  const classificationIsNotApplicable =
-    !rawData.loading &&
-    classificationApplicableValue <= 0 &&
-    classificationNotApplicableValue > 0
-  const classificationViewState = buildClassificationViewState({
-    loading: rawData.loading,
-    classificationIsNotApplicable,
-    coverage,
-    dimensionCoverage,
-  })
-  const affectedAssets = buildAffectedAssets(dimensionCoverage)
+      const classificationMappedValue = coverage.reduce(
+        (sum, item) => sum + item.allocated,
+        0,
+      )
+      const classificationUnmappedValue = coverage.reduce(
+        (sum, item) => sum + item.unallocated,
+        0,
+      )
+      const classificationApplicableValue =
+        classificationMappedValue + classificationUnmappedValue
+      const classificationNotApplicableValue = coverage.reduce(
+        (sum, item) => sum + item.notApplicable,
+        0,
+      )
+      const [, classificationGap] = partitionPercentages([
+        classificationMappedValue,
+        classificationUnmappedValue,
+        classificationNotApplicableValue,
+      ])
+      const classificationIsNotApplicable =
+        !rawData.loading &&
+        classificationApplicableValue <= 0 &&
+        classificationNotApplicableValue > 0
+      const classificationViewState = buildClassificationViewState({
+        loading: rawData.loading,
+        classificationIsNotApplicable,
+        coverage,
+        dimensionCoverage,
+      })
+      const affectedAssets = buildAffectedAssets(dimensionCoverage)
 
-  const unresolvedValue = scopedFundData.report
-    ? scopedFundData.report.undisclosedFundValue +
-      scopedFundData.report.opaqueValue
-    : 0
-  const identifiedValue = scopedFundData.report
-    ? scopedFundData.report.directIdentifiedValue +
-      scopedFundData.report.decomposedValue
-    : 0
-  const unresolvedPct = computeFundExposurePercentages(
-    identifiedValue,
-    unresolvedValue,
-    scopedFundData.notApplicableValue,
-  ).unresolved
-  const fundErrorCount = scopedFundData.statuses.filter(
-    (status) => status.validationStatus === 'error',
-  ).length
-  const fundIssueCount = scopedFundData.statuses.filter(
-    (status) =>
-      status.validationStatus !== 'ok' ||
-      hasMaterialQualityGap(status.residualPct),
-  ).length
-  const hasLookThroughScope =
-    !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
+      const unresolvedValue = scopedFundData.report
+        ? scopedFundData.report.undisclosedFundValue +
+          scopedFundData.report.opaqueValue
+        : 0
+      const identifiedValue = scopedFundData.report
+        ? scopedFundData.report.directIdentifiedValue +
+          scopedFundData.report.decomposedValue
+        : 0
+      const unresolvedPct = computeFundExposurePercentages(
+        identifiedValue,
+        unresolvedValue,
+        scopedFundData.notApplicableValue,
+      ).unresolved
+      const fundErrorCount = scopedFundData.statuses.filter(
+        (status) => status.validationStatus === 'error',
+      ).length
+      const fundIssueCount = scopedFundData.statuses.filter(
+        (status) =>
+          status.validationStatus !== 'ok' ||
+          hasMaterialQualityGap(status.residualPct),
+      ).length
+      const hasLookThroughScope =
+        !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
-  const themes = [
-    buildPipelineTheme(errors),
-    buildManualPricesTheme(manualPriceOverrides),
-    buildClassificationTheme(
-      classificationGap,
-      rawData.loading,
-      classificationIsNotApplicable,
-      formatPercentage,
-    ),
-    buildLookThroughTheme(
-      Boolean(scopedFundData.report),
-      hasLookThroughScope,
-      unresolvedPct,
-      fundErrorCount,
-      formatPercentage,
-    ),
-  ]
+      const themes = [
+        buildPipelineTheme(errors),
+        buildManualPricesTheme(manualPriceOverrides),
+        buildClassificationTheme(
+          classificationGap,
+          rawData.loading,
+          classificationIsNotApplicable,
+          formatPercentage(classificationGap),
+        ),
+        buildLookThroughTheme(
+          Boolean(scopedFundData.report),
+          hasLookThroughScope,
+          unresolvedPct,
+          fundErrorCount,
+          formatPercentage(unresolvedPct),
+        ),
+      ]
 
-  const recommendedTheme = themes.reduce(
-    (highest, theme) => (theme.priority > highest.priority ? theme : highest),
-    themes[0],
+      const recommendedTheme = themes.reduce(
+        (highest, theme) =>
+          theme.priority > highest.priority ? theme : highest,
+        themes[0],
+      )
+
+      return {
+        affectedAssets,
+        classificationApplicableValue,
+        classificationViewState,
+        fundIssueCount,
+        hasLookThroughScope,
+        recommendedTheme,
+        scopedFundData,
+        themes,
+      }
+    },
+    [formatPercentage],
   )
-
-  return {
-    affectedAssets,
-    classificationApplicableValue,
-    classificationViewState,
-    fundIssueCount,
-    hasLookThroughScope,
-    recommendedTheme,
-    scopedFundData,
-    themes,
-  }
 }
 
 export type DataQualityDimension = keyof typeof DATA_QUALITY_DIMENSION_LABELS
@@ -171,7 +180,6 @@ type BuildDataQualityViewModelInput = {
   fundSnapshots: FundSnapshot[]
   fundUnresolved: FundUnresolved[]
   rawData: RawIsinData
-  formatPercentage: (value: number) => string
 }
 
 function buildAffectedAssets(
@@ -258,9 +266,9 @@ function buildClassificationTheme(
   classificationGap: number,
   loading: boolean,
   classificationIsNotApplicable: boolean,
-  formatPercentage: BuildDataQualityViewModelInput['formatPercentage'],
+  formattedPercentage: string,
 ): QualityTheme {
-  let classificationMetric = formatPercentage(classificationGap)
+  let classificationMetric = formattedPercentage
   let classificationMetricLabel = i18n.t(
     'ui.builddataqualityviewmodel.unmapped',
   )
@@ -303,7 +311,7 @@ function buildLookThroughTheme(
   hasLookThroughScope: boolean,
   unresolvedPct: number,
   fundErrorCount: number,
-  formatPercentage: BuildDataQualityViewModelInput['formatPercentage'],
+  formattedPercentage: string,
 ): QualityTheme {
   let lookThroughMetric = hasReport
     ? i18n.t('ui.builddataqualityviewmodel.notApplicableShort')
@@ -314,7 +322,7 @@ function buildLookThroughTheme(
   let lookThroughTone: QualityTone = 'unavailable'
   let lookThroughPriority = -1
   if (hasLookThroughScope) {
-    lookThroughMetric = formatPercentage(unresolvedPct)
+    lookThroughMetric = formattedPercentage
     lookThroughMetricLabel = i18n.t('ui.builddataqualityviewmodel.unresolved')
     if (fundErrorCount > 0) {
       lookThroughTone = 'critical'

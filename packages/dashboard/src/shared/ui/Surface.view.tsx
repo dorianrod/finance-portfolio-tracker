@@ -90,7 +90,7 @@ type SurfaceTag =
 
 type SurfaceProps<T extends SurfaceTag> = Omit<
   ComponentPropsWithoutRef<T>,
-  'className'
+  'className' | 'style'
 > & {
   as?: T
   variant: keyof typeof SURFACE_VARIANTS

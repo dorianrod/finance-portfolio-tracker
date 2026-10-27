@@ -8,7 +8,9 @@ import type { BadgeTone } from './badge.types'
 export function Badge({
   tone,
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & { tone: BadgeTone }) {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
+  tone: BadgeTone
+}) {
   return (
     <span
       {...props}
@@ -18,7 +20,7 @@ export function Badge({
 }
 
 function BadgeDetail(
-  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className'>,
+  props: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'>,
 ) {
   return (
     <span

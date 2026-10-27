@@ -1,39 +1,46 @@
+import { useMemo } from 'react'
+
 import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 import type {
   FilterSummaryItem,
   FilterVisibility,
 } from './portfolioFilters.types'
 
-export function filterSummaries(
+export function useFilterSummaries(
   filters: DashboardFilters,
   accountLabels: Record<string, string>,
   visibility: FilterVisibility,
-  formatDate: (date: Date) => string,
 ): FilterSummaryItem[] {
-  return [
-    accountSummary(filters, accountLabels),
-    visibility.showPeriod ? periodSummary(filters, formatDate) : null,
-    visibility.showPositionFilters ? operationSummary(filters) : null,
-    visibility.showPositionFilters && !filters.hideClosedPositions
-      ? {
-          key: 'closed-positions' as const,
-          label: i18n.t('ui.portfoliofiltersTs.closedPositionsIncluded'),
-        }
-      : null,
-  ].filter((item): item is FilterSummaryItem => item !== null)
-}
-
-const OP_LABELS: Record<OperationType, string> = {
-  BUY: i18n.t('ui.portfoliofilters.buy'),
-  SELL: i18n.t('ui.portfoliofilters.sell'),
-  DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
-  INTEREST: i18n.t('ui.portfoliofilters.interest'),
-  DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
-  WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
+  const formatDate = useFormatDate()
+  return useMemo(
+    () =>
+      [
+        accountSummary(filters, accountLabels),
+        visibility.showPeriod
+          ? periodSummary(
+              filters.dateFrom
+                ? formatDate(filters.dateFrom, { style: 'isoDate' })
+                : undefined,
+              filters.dateTo
+                ? formatDate(filters.dateTo, { style: 'isoDate' })
+                : undefined,
+            )
+          : null,
+        visibility.showPositionFilters ? operationSummary(filters) : null,
+        visibility.showPositionFilters && !filters.hideClosedPositions
+          ? {
+              key: 'closed-positions' as const,
+              label: i18n.t('ui.portfoliofiltersTs.closedPositionsIncluded'),
+            }
+          : null,
+      ].filter((item): item is FilterSummaryItem => item !== null),
+    [filters, accountLabels, visibility, formatDate],
+  )
 }
 
 function accountSummary(
@@ -54,21 +61,21 @@ function accountSummary(
 }
 
 function periodSummary(
-  filters: DashboardFilters,
-  formatDate: (date: Date) => string,
+  from: string | undefined,
+  to: string | undefined,
 ): FilterSummaryItem | null {
-  if (!filters.dateFrom && !filters.dateTo) return null
+  if (!from && !to) return null
   let label = i18n.t('ui.portfoliofilters.untilDate', {
-    date: filters.dateTo ? formatDate(filters.dateTo) : '',
+    date: to,
   })
-  if (filters.dateFrom && filters.dateTo) {
+  if (from && to) {
     label = i18n.t('ui.portfoliofilters.dateRange', {
-      from: formatDate(filters.dateFrom),
-      to: formatDate(filters.dateTo),
+      from,
+      to,
     })
-  } else if (filters.dateFrom) {
+  } else if (from) {
     label = i18n.t('ui.portfoliofilters.sinceDate', {
-      date: formatDate(filters.dateFrom),
+      date: from,
     })
   }
   return { key: 'period', label }
@@ -76,12 +83,20 @@ function periodSummary(
 
 function operationSummary(filters: DashboardFilters): FilterSummaryItem | null {
   if (filters.operationTypes.size === 0) return null
+  const labels: Record<OperationType, string> = {
+    BUY: i18n.t('ui.portfoliofilters.buy'),
+    SELL: i18n.t('ui.portfoliofilters.sell'),
+    DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
+    INTEREST: i18n.t('ui.portfoliofilters.interest'),
+    DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
+    WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
+  }
   const operation = [...filters.operationTypes][0]
   return {
     key: 'operations',
     label:
       filters.operationTypes.size === 1
-        ? OP_LABELS[operation]
+        ? labels[operation]
         : i18n.t('ui.portfoliofiltersTs.value0OperationTypes', {
             value0: filters.operationTypes.size,
           }),

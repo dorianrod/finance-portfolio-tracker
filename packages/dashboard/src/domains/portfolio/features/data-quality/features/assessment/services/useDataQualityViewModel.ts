@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { buildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { useBuildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useQualityNavigation'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dashboardQuality.atoms'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
@@ -15,7 +15,6 @@ import type {
 } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function useDataQualityViewModel({
   positions,
@@ -28,7 +27,7 @@ export function useDataQualityViewModel({
   fundUnresolved,
   rawData,
 }: DataQualityViewModelInput) {
-  const formatPercentage = useFormatPercentage()
+  const buildDataQualityViewModel = useBuildDataQualityViewModel()
   const selectedTheme = useAtomValue(dashboardSelectedQualityThemeAtom)
   const { setSelectedQualityTheme } = useQualityNavigation()
   const viewModel = useMemo(
@@ -43,7 +42,6 @@ export function useDataQualityViewModel({
         fundSnapshots,
         fundUnresolved,
         rawData,
-        formatPercentage,
       }),
     [
       positions,
@@ -55,7 +53,7 @@ export function useDataQualityViewModel({
       fundSnapshots,
       fundUnresolved,
       rawData,
-      formatPercentage,
+      buildDataQualityViewModel,
     ],
   )
   const activeThemeId = selectedTheme ?? viewModel.recommendedTheme.id

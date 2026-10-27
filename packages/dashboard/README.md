@@ -73,6 +73,11 @@ analyze imperative DOM mutations, and it has no autofix. Warnings reference
 [`styling-centralize-in-shared-ui`](../../.agents/skills/dorian-react-best-pratices/rules/styling-centralize-in-shared-ui.md)
 to guide subsequent component migrations.
 
+Shared UI public props exclude both `className` and `style`, including inherited
+native React props. Callers position primitives through external containers and
+use their semantic sizing and appearance options. Internal chart text and
+swatches apply their styles within the owning primitive.
+
 Reusable interaction patterns live in `src/shared/ui`. Typography, surfaces,
 controls, KPI values, chart series, SVG marks and tooltip appearance are exposed
 through semantic variants. Compose custom chart renderers through nested

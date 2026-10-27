@@ -1,12 +1,10 @@
 import { type ComponentPropsWithoutRef, createElement } from 'react'
 
-import { TEXT_ALIGNMENTS } from '@/shared/ui/textAppearance/textAlignments'
-import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
-import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
-import { TEXT_VARIANTS } from '@/shared/ui/textAppearance/textVariants'
-import { TEXT_WRAPPING } from '@/shared/ui/textAppearance/textWrapping'
+import {
+  getTextClassName,
+  type TextAppearance,
+} from '@/shared/ui/textAppearance/getTextClassName'
 
-// eslint-disable-next-line complexity -- Typography, numeric alignment and table-cell truncation implement one Text primitive contract.
 export function Text<T extends TextTag = 'span'>({
   as,
   variant = 'inherit',
@@ -19,17 +17,15 @@ export function Text<T extends TextTag = 'span'>({
 }: TextProps<T>) {
   return createElement(as ?? 'span', {
     ...props,
-    className: [
-      TEXT_VARIANTS[variant],
-      tone && TEXT_TONES[tone],
-      align && TEXT_ALIGNMENTS[align],
-      wrap && TEXT_WRAPPING[wrap],
-      numeric && 'tabular-nums',
-      truncate && 'truncate',
-      truncate && as !== 'td' && as !== 'th' && 'block',
-    ]
-      .filter(Boolean)
-      .join(' '),
+    className: getTextClassName({
+      as,
+      variant,
+      tone,
+      align,
+      wrap,
+      numeric,
+      truncate,
+    }),
   })
 }
 
@@ -56,13 +52,8 @@ export type TextTag =
 
 export type TextProps<T extends TextTag> = Omit<
   ComponentPropsWithoutRef<T>,
-  'className'
-> & {
-  as?: T
-  variant?: keyof typeof TEXT_VARIANTS
-  tone?: TextTone
-  align?: keyof typeof TEXT_ALIGNMENTS
-  wrap?: keyof typeof TEXT_WRAPPING
-  numeric?: boolean
-  truncate?: boolean
-}
+  'className' | 'style'
+> &
+  TextAppearance & {
+    as?: T
+  }

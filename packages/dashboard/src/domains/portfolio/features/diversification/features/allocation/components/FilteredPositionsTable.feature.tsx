@@ -15,7 +15,7 @@ import { SidePanel } from '@/shared/ui/SidePanel.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { FilteredPositionRow } from './FilteredPositionRow.view'
+import { FilteredPositionRow } from './FilteredPositionRow/FilteredPositionRow.view'
 
 export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const formatMoney = useFormatMoney()

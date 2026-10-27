@@ -5,7 +5,7 @@ import {
   Tooltip,
 } from 'recharts'
 
-import { MonthlyTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip.view'
+import { MonthlyTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'

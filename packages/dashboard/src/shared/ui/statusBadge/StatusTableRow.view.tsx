@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 export function StatusTableRow({
   level,
   ...props
-}: Omit<ComponentPropsWithoutRef<'tr'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'tr'>, 'className' | 'style'> & {
   level: 'error' | 'warning'
 }) {
   return (

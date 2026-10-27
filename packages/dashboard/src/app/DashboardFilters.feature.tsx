@@ -8,7 +8,7 @@ import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/page
 import { ActiveFilterSummary } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary.feature'
 import { FilterPanel } from '@/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature'
 import { ResetFiltersButton } from '@/domains/portfolio/features/scope-selection/components/filterBar/ResetFiltersButton.feature'
-import { filterSummaries } from '@/domains/portfolio/features/scope-selection/helpers/filters/filterSummaries'
+import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
 
@@ -19,7 +19,7 @@ export function DashboardFilters({
   activeFilterSummaries,
 }: {
   dashboard: DashboardViewModel
-  activeFilterSummaries: ReturnType<typeof filterSummaries>
+  activeFilterSummaries: FilterSummaryItem[]
 }) {
   const resetDashboardFilters = useResetDashboardFilters()
   const activeTab = useAtomValue(dashboardActiveTabAtom)

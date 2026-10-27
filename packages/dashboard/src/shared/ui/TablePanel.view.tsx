@@ -3,7 +3,7 @@ import { type ComponentPropsWithoutRef, createElement } from 'react'
 import { DATA_TABLE_STYLES } from './tableStyles'
 
 export function TablePanel(
-  props: Omit<ComponentPropsWithoutRef<'section'>, 'className'>,
+  props: Omit<ComponentPropsWithoutRef<'section'>, 'className' | 'style'>,
 ) {
   return (
     <section
@@ -13,7 +13,7 @@ export function TablePanel(
   )
 }
 function TableToolbar(
-  props: Omit<ComponentPropsWithoutRef<'div'>, 'className'>,
+  props: Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'style'>,
 ) {
   return (
     <div
@@ -22,7 +22,9 @@ function TableToolbar(
     />
   )
 }
-function TableTitle(props: Omit<ComponentPropsWithoutRef<'h2'>, 'className'>) {
+function TableTitle(
+  props: Omit<ComponentPropsWithoutRef<'h2'>, 'className' | 'style'>,
+) {
   return (
     <h2
       {...props}
@@ -31,7 +33,7 @@ function TableTitle(props: Omit<ComponentPropsWithoutRef<'h2'>, 'className'>) {
   )
 }
 function TableDescription(
-  props: Omit<ComponentPropsWithoutRef<'p'>, 'className'>,
+  props: Omit<ComponentPropsWithoutRef<'p'>, 'className' | 'style'>,
 ) {
   return (
     <p
@@ -41,7 +43,7 @@ function TableDescription(
   )
 }
 function TableActions(
-  props: Omit<ComponentPropsWithoutRef<'div'>, 'className'>,
+  props: Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'style'>,
 ) {
   return (
     <div
@@ -53,7 +55,7 @@ function TableActions(
 function TableHeader({
   as = 'thead',
   ...props
-}: Omit<ComponentPropsWithoutRef<'thead'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'thead'>, 'className' | 'style'> & {
   as?: 'thead' | 'div'
 }) {
   return createElement(as, {

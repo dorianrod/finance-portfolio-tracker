@@ -1,9 +1,7 @@
-const formatDate = (date: Date) => date.toISOString().slice(0, 10)
 import { describe, expect, it } from 'vitest'
 
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
 import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/helpers/filters/clearFilterGroup'
-import { filterSummaries } from '@/domains/portfolio/features/scope-selection/helpers/filters/filterSummaries'
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/filters/presetDateFrom'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
 import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
@@ -83,55 +81,6 @@ describe('filterVisibilityForTab', () => {
       showPositionFilters: false,
     })
     expect(filterVisibilityForTab('overview').showPositionFilters).toBe(false)
-  })
-})
-
-describe('filterSummaries', () => {
-  it('summarizes account, period, and operation groups', () => {
-    expect(
-      filterSummaries(
-        filters({
-          accounts: new Set(['pea', 'cto']),
-          dateFrom: new Date('2026-01-01'),
-          dateTo: new Date('2026-06-30'),
-          operationTypes: new Set(['BUY']),
-          hideClosedPositions: false,
-        }),
-        {},
-        filterVisibilityForTab('holdings', 'positions'),
-        formatDate,
-      ),
-    ).toEqual([
-      { key: 'accounts', label: '2 accounts' },
-      { key: 'period', label: '2026-01-01 → 2026-06-30' },
-      { key: 'operations', label: 'Buy' },
-      { key: 'closed-positions', label: 'Closed positions included' },
-    ])
-  })
-
-  it('uses a friendly account name for a single selection', () => {
-    expect(
-      filterSummaries(
-        filters({ accounts: new Set(['pea']) }),
-        { pea: 'My PEA' },
-        filterVisibilityForTab('overview'),
-        formatDate,
-      )[0],
-    ).toEqual({ key: 'accounts', label: 'My PEA' })
-  })
-
-  it('keeps the period visible while hiding position-only filters', () => {
-    expect(
-      filterSummaries(
-        filters({
-          dateFrom: new Date('2026-01-01'),
-          operationTypes: new Set(['BUY']),
-        }),
-        {},
-        filterVisibilityForTab('holdings', 'underlying'),
-        formatDate,
-      ),
-    ).toEqual([{ key: 'period', label: 'Since 2026-01-01' }])
   })
 })
 

@@ -1,4 +1,4 @@
-import { type AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualityViewModel'
+import { type AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import i18n from '@/i18n/i18n'
 import { Inset } from '@/shared/ui/layout/Inset.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'

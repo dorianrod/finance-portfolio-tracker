@@ -5,7 +5,7 @@ import { COUNT_BADGE_TONES } from '@/shared/ui/badgeAppearance/countBadgeTones'
 export function CountBadge({
   tone,
   ...props
-}: Omit<HTMLAttributes<HTMLSpanElement>, 'className'> & {
+}: Omit<HTMLAttributes<HTMLSpanElement>, 'className' | 'style'> & {
   tone: keyof typeof COUNT_BADGE_TONES
 }) {
   return (

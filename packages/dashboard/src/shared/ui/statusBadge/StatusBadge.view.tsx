@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 export function StatusBadge({
   tone,
   ...props
-}: Omit<ComponentPropsWithoutRef<'span'>, 'className'> & {
+}: Omit<ComponentPropsWithoutRef<'span'>, 'className' | 'style'> & {
   tone: keyof typeof STATUS_TONES
 }) {
   return (

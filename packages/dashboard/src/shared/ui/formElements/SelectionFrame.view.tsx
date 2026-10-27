@@ -5,7 +5,9 @@ import { SELECTION_FRAME_STATES } from '@/shared/ui/fieldAppearance/selectionFra
 export function SelectionFrame({
   selected,
   ...props
-}: Omit<ComponentPropsWithoutRef<'div'>, 'className'> & { selected: boolean }) {
+}: Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'style'> & {
+  selected: boolean
+}) {
   return (
     <div
       {...props}
