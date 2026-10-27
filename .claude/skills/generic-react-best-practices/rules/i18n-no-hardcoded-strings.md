@@ -1,13 +1,13 @@
 ---
 title: Translate Every User-Facing String with a Catalog Key
-impact: MEDIUM-HIGH
+impact: MEDIUM
 impactDescription: no untranslatable copy, no raw keys on screen
 tags: i18n, hardcoded-strings, accessibility, toast, catalog
 ---
 
 ## Translate Every User-Facing String with a Catalog Key
 
-**Impact: MEDIUM-HIGH (no untranslatable copy, no raw keys on screen)**
+**Impact: MEDIUM (no untranslatable copy, no raw keys on screen)**
 
 Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and accessible labels. Domains pass translated semantic labels; shared UI implements any ARIA wiring (`ui-centralize-accessibility`). When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
 

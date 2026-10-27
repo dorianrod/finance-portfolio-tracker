@@ -13,64 +13,64 @@ State consumed below its owner must not be threaded through intermediate compone
 
 Apply this rule together with `arch-component-roles`. A view may receive calculations and display-ready objects because rendering them is its declared responsibility. A feature should receive raw business inputs or read shared state itself; warn when a parent derives a value from its own props and passes that result to another feature. The warning is a review signal: move the calculation to the receiving feature when it owns the decision, classify a truly presentational child as a view, or suppress only the verified exception on the affected line with a reason.
 
-Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useDashboardFilters`, `useDashboardSort`, `useDashboardSelection` and `useDashboardModal`. A `useDashboardUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
+Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useOrdersPageFilters`, `useOrdersPageSort`, `useOrdersPageSelection` and `useOrdersPageModal`. A `useOrdersPageUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
 
 **Incorrect (one hook owns unrelated state, then drills values and actions):**
 
 ```tsx
-function useDashboardUi() {
-  const [filters, setFilters] = useState<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
-  const [sort, setSort] = useState<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+function useOrdersPageUi() {
+  const [filters, setFilters] = useState<OrdersPageFilters>(DEFAULT_ORDERS_PAGE_FILTERS)
+  const [sort, setSort] = useState<OrdersPageSort>(DEFAULT_ORDERS_PAGE_SORT)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   return { filters, setFilters, sort, setSort, selectedIds, setSelectedIds }
 }
 
-function Dashboard() {
-  const dashboardUi = useDashboardUi()
-  return <DashboardBody filters={dashboardUi.filters} setFilters={dashboardUi.setFilters} />
+function OrdersPage() {
+  const ordersPageUi = useOrdersPageUi()
+  return <OrdersPageBody filters={ordersPageUi.filters} setFilters={ordersPageUi.setFilters} />
 }
 
-function DashboardBody(props: DashboardBodyProps) {
-  return <DashboardToolbar filters={props.filters} setFilters={props.setFilters} />
+function OrdersPageBody(props: OrdersPageBodyProps) {
+  return <OrdersPageToolbar filters={props.filters} setFilters={props.setFilters} />
 }
 ```
 
-Creating a `DashboardContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
+Creating a `OrdersPageContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
 
 **Correct (atoms own values; focused hooks own actions; consumers subscribe where needed):**
 
 ```tsx
-// pages/dashboard/stores/dashboardFilters.atoms.ts
-export const dashboardFiltersAtom = atom<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
+// pages/orders/stores/ordersPageFilters.atoms.ts
+export const ordersPageFiltersAtom = atom<OrdersPageFilters>(DEFAULT_ORDERS_PAGE_FILTERS)
 
-// pages/dashboard/stores/dashboardSort.atoms.ts
-export const dashboardSortAtom = atom<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+// pages/orders/stores/ordersPageSort.atoms.ts
+export const ordersPageSortAtom = atom<OrdersPageSort>(DEFAULT_ORDERS_PAGE_SORT)
 
-// pages/dashboard/services/useDashboardFilters.ts
-export function useDashboardFilters() {
-  const setFilters = useSetAtom(dashboardFiltersAtom)
+// pages/orders/services/useOrdersPageFilters.ts
+export function useOrdersPageFilters() {
+  const setFilters = useSetAtom(ordersPageFiltersAtom)
 
   const setStatus = useCallback(
     (status: OrderStatus | null) => setFilters(current => ({ ...current, status })),
     [setFilters],
   )
-  const resetFilters = useCallback(() => setFilters(DEFAULT_DASHBOARD_FILTERS), [setFilters])
+  const resetFilters = useCallback(() => setFilters(DEFAULT_ORDERS_PAGE_FILTERS), [setFilters])
 
   return useMemo(() => ({ setStatus, resetFilters }), [setStatus, resetFilters])
 }
 
-// pages/dashboard/components/DashboardToolbar.tsx
-function DashboardToolbar() {
-  const filters = useAtomValue(dashboardFiltersAtom)
-  const { setStatus, resetFilters } = useDashboardFilters()
+// pages/orders/components/OrdersPageToolbar.tsx
+function OrdersPageToolbar() {
+  const filters = useAtomValue(ordersPageFiltersAtom)
+  const { setStatus, resetFilters } = useOrdersPageFilters()
 
   return <Filters value={filters} onStatusChange={setStatus} onReset={resetFilters} />
 }
 
 // A different deep consumer reads only what it needs, without intermediary props.
-function DashboardResults() {
-  const sort = useAtomValue(dashboardSortAtom)
+function OrdersPageResults() {
+  const sort = useAtomValue(ordersPageSortAtom)
   return <OrderList sort={sort} />
 }
 ```

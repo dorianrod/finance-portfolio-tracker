@@ -30,7 +30,7 @@ For an architecture review, write a short capability map before proposing moves:
 **Incorrect:**
 ```text
 domains/example/features/
-└── dashboard/                    # justified only by the screen name
+└── screen/                    # justified only by the screen name
     └── features/capability/
 ```
 

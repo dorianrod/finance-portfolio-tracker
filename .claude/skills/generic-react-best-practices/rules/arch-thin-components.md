@@ -97,3 +97,11 @@ export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
 ```
 
 The native container in this example is external layout. Geometry inside a chart remains data supplied to the shared UI primitive, rather than caller-authored CSS injected into it.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-complex-component-calculation` to report more than two arithmetic operations (`+`, `-`, `*`, `/`, `%`, `**`) or deterministic `Math` calls in one component derivation, including callbacks and JSX. Follow immutable local initializers and aliases, counting each operation once. Check returned fields of an inline `map`/`flatMap` object together, and group computed geometry properties (`x`, `y`, `cx`, `cy`, `width`, `height`, `r`, `rx`, `ry`) of one JSX element. The `maxOperations` default is two.
+
+Independent small expressions outside those output groups remain independent. This bounded check does not trace reassigned variables, imported helper implementations or arbitrary interprocedural data flow. `local/no-component-data-pipeline` complements it by reporting inline reductions and compound collection predicates in application/domain components; module-boundary and JSX-condition checks address different patterns.
+
+Use the custom ESLint rule `local/no-browser-in-pure-helpers` for production `helpers/presenters/` and `helpers/calculators/`, including component-owned helpers. Resolve browser globals, DOM measurements, known DOM mutation methods and DOM property writes. Locally shadowed names, type-only references and reads of supplied `DOMRect` values remain valid. Exclude tests, declaration files and generated files. This check does not prove purity or follow arbitrary helper implementations and detached DOM methods.

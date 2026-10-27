@@ -129,6 +129,10 @@ The exported names describe generic UI roles rather than business metrics or hue
 names such as `green500` or `red700`. A domain presenter may map a business metric
 to one of these roles without owning its concrete color.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-hardcoded-colors` to check literal appearance values and palette utilities in shared UI and application/domain code. Follow immutable aliases and conditional values. Apply the token boundary to imperative style assignments, `setProperty`, SVG `setAttribute` and browser `theme-color` metadata. Dedicated theme and asset definitions may contain concrete values. This bounded check does not parse arbitrary CSS or infer every dynamic DOM target.
+
 ### Exceptions
 
 - Global stylesheets, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.

@@ -52,3 +52,11 @@ Keep adapters in the owning domain: the domain maps an order status to `positive
 UI selection, expansion, dismissal, generic chart geometry and generic numeric formatting remain shared UI concerns. Caller-provided labels may contain business vocabulary when the primitive renders them without interpretation. Domain-scoped shared components may know their own business scope. Tests and isolated stories may use realistic fixtures without introducing business contracts into production primitives.
 
 See also: `ui-no-adhoc-styling`, `ui-centralize-accessibility`, `ui-semantic-colors`
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/shared-feature-usage` to report exclusive one-feature ownership and missing production consumers in resolved import graphs. Use a separate `local/review-shared-feature-sharing` warning when consumers outside the owning feature tree prevent proving reuse. An indeterminate graph requests review rather than establishing an invalid owner. Keep layout diagnostics in `local/feature-folder-layout` and forbidden dependencies in `local/import-boundaries`; these ESLint rules should share the same business-scope interpretation without duplicating diagnostics.
+
+When application props distribute common inputs, inspect actual feature consumers. A reviewed line-scoped suppression may address `local/review-shared-feature-sharing` with concrete evidence; it must not disable proven ownership errors. Do not count application wrappers as features, add fake imports or exempt all parent-owned code. Folder moves require a business ownership decision and have no automatic fix.
+
+Import-boundary checks should resolve imports, re-exports, dynamic imports and type imports from global shared code into application or domain modules, and prevent production imports of Storybook modules. They cannot detect business knowledge declared locally or hidden in another shared module. Review names, literal unions, branches, defaults and transitive dependencies even when lint passes.

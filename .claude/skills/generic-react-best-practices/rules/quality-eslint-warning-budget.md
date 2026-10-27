@@ -10,6 +10,8 @@ tags: eslint, warnings, review
 
 A warning should require an explicit reviewable change to the budget. The global total includes native ESLint warnings and the tracking warnings for [reviewed suppressions](quality-eslint-disable-scoped.md); suppressed original diagnostics are not counted again.
 
+Configure the custom ESLint suppression-tracking rule described there before counting accepted directives. It implements this catalog's reusable one-warning-per-directive policy.
+
 ### Applies When
 
 - Setting up or changing the lint command used locally and in CI.

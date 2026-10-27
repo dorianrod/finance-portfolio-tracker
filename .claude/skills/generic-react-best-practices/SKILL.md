@@ -7,7 +7,8 @@ description: >
   domain-first architecture and import boundaries, API query/mutation hooks, query keys and cache
   invalidation, domain types, Yup schemas and form validation, UI composition and accessibility, Jotai
   stores, helpers and formatters, i18n, tests and code quality. Apply it alongside
-  vercel-react-best-practices on any React task, even when it isn't named. Also use for ESLint exception audits and warning budgets.
+  vercel-react-best-practices, vercel-composition-patterns and tailwind-design-system on relevant React tasks.
+  Also use for ESLint exception audits and warning budgets.
 license: Internal
 metadata:
   author: frontend-engineering
@@ -18,7 +19,13 @@ metadata:
 
 Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 100 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
-This skill is the equivalent of `vercel-react-best-practices` for our own conventions. Generic React and performance rules (waterfalls, barrel imports, memoization, derived state, conditional rendering…) live in `vercel-react-best-practices`: apply **both**.
+This skill defines our reusable React conventions. Apply it together with `vercel-react-best-practices` for React and performance guidance, `vercel-composition-patterns` for component architecture and `tailwind-design-system` for design-system implementation. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references.
+
+**Priority:** When this catalog conflicts with `vercel-react-best-practices` or `vercel-composition-patterns`, follow this catalog's applicable rule. Apply both Vercel skills wherever their guidance is compatible.
+
+Generic means reusable across applications adopting this stack and its conventions. The rules may define shared UI contracts, custom ESLint checks, review thresholds and warning-budget policies. Keep their expected behavior, applicability and analysis limits in the owning rule. Application-specific names, paths and implementation status belong in the consuming application's documentation.
+
+**ESLint:** Rule identifiers prefixed with `local/` name custom ESLint rules under the configured `local` plugin namespace. Register them in the consuming application's ESLint configuration and enable the checks described in each rule's ESLint section.
 
 This catalog is the single source for our React conventions, including business capability boundaries, strict shared UI composition, semantic colors, centralized accessibility and public API maintenance.
 
@@ -48,8 +55,8 @@ Several rules describe the target standard, not the current state of every file.
 | 7 | UI Composition & Accessibility | HIGH | `ui-` |
 | 8 | Jotai Client State | MEDIUM-HIGH | `state-` |
 | 9 | Helpers | MEDIUM-HIGH | `helpers-` |
-| 10 | Internationalization | MEDIUM-HIGH | `i18n-` |
-| 11 | Testing | MEDIUM-HIGH | `test-` |
+| 10 | Internationalization | MEDIUM | `i18n-` |
+| 11 | Testing | MEDIUM | `test-` |
 | 12 | Code Quality | HIGH | `quality-` |
 
 ## Apply Rules
@@ -59,8 +66,6 @@ Several rules describe the target standard, not the current state of every file.
 3. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
 
 Examples isolate their rule rather than serve as complete application templates. Apply the other relevant rules when writing production code. Files beginning with `_` are maintenance material.
-
-For this repository's lint implementation, formatter options and static-analysis limits, read [dashboard enforcement](references/project-enforcement.md). It supplements the portable rules without introducing a second conventions catalog.
 
 ## Quick Reference
 
@@ -171,20 +176,20 @@ For this repository's lint implementation, formatter options and static-analysis
 
 Every formatter, including dates and entity labels, accepts `null` and `undefined` and owns a configurable display fallback. Pass values directly to it instead of adding missing-value guards in consumers (see `helpers-formatter-hooks`).
 
-### 10. Internationalization (MEDIUM-HIGH)
+### 10. Internationalization (MEDIUM)
 
 - `i18n-interpolation` - Inject Dynamic Values Through t() Options, Never Concatenation
+- `i18n-no-default-value` - Never Use defaultValue in t()
 - `i18n-no-hardcoded-strings` - Translate Every User-Facing String with a Catalog Key
 - `i18n-static-keys` - Use Literal Translation Keys Only
-- `i18n-no-default-value` - Never Use defaultValue in t()
 
-### 11. Testing (MEDIUM-HIGH)
+### 11. Testing (MEDIUM)
 
-- `test-jotai-provider-isolation` - Isolate Jotai State with a Fresh Store per Test
-- `test-mock-network-not-internals` - Mock the Network Boundary, Never Internal Modules
 - `test-behavior-not-implementation` - Assert Behavior with Parametrized, Unconditional Tests
 - `test-mock-data` - Build Typed, Deterministic Mock Data in the Owning mocks Folder
 - `test-colocated-tests` - Colocate a Test Next to Every File, Covering Errors
+- `test-jotai-provider-isolation` - Isolate Jotai State with a Fresh Store per Test
+- `test-mock-network-not-internals` - Mock the Network Boundary, Never Internal Modules
 - `test-semantic-queries` - Query by Role and Label, Interact with userEvent
 - `test-renderhook` - Test API Hooks with renderHook and a Per-Test Query Wrapper
 
@@ -238,7 +243,7 @@ Each rule file contains:
 - Why the rule matters
 - An incorrect example and a correct example, using generic business entities and real library APIs
 - Notes on exceptions
-- An optional `See also` link to Vercel rules
+- Optional links to declared companion skills
 
 ## Add or Change a Rule
 

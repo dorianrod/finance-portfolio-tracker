@@ -1,13 +1,13 @@
 ---
 title: Mock the Network Boundary, Never Internal Modules
-impact: MEDIUM-HIGH
+impact: MEDIUM
 impactDescription: tests that mock internals stay green while the real hook stack is broken
 tags: test, mocking, axios, msw, jest-mock
 ---
 
 ## Mock the Network Boundary, Never Internal Modules
 
-**Impact: MEDIUM-HIGH (tests that mock internals stay green while the real hook stack is broken)**
+**Impact: MEDIUM (tests that mock internals stay green while the real hook stack is broken)**
 
 Never `jest.mock` an internal module: a hook, component, helper, provider or a schema library such as `yup` (a domain `apis/`, `services/`, `components/` or `helpers/` module). The test then checks a stub instead of the real query key, Yup parsing, permissions and rendering. Stub only the network boundary — MSW handlers or an axios adapter — and let every project hook run.
 

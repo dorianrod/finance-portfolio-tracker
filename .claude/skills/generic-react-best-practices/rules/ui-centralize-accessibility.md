@@ -8,7 +8,7 @@ tags: accessibility, architecture, design-system
 
 **Rule:** Centralize all ARIA wiring, keyboard navigation and focus behavior in shared UI primitives, and pass only semantic data, translated labels and business actions from domain and application code.
 
-The design system owns accessibility implementation, including simple attributes such as `aria-label`, `aria-hidden` and `role`. Domain and application components own meaning and actions: labels, selected values, expansion state, financial content and business callbacks. Moving behavior into a domain hook or helper does not establish a shared accessibility boundary.
+The design system owns accessibility implementation, including simple attributes such as `aria-label`, `aria-hidden` and `role`. Domain and application components own meaning and actions: labels, selected values, expansion state, business content and business callbacks. Moving behavior into a domain hook or helper does not establish a shared accessibility boundary.
 
 ### Applies When
 
@@ -42,6 +42,12 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 - Native HTML without custom ARIA or focus/keyboard wiring remains valid in domain code, including real buttons, labels, forms and normal `onClick`/`onChange` business actions.
 - Domain labels remain translated data. For example, pass `label={t('delete')}` rather than hardcoding a name inside the primitive. A business preload callback may use `onIntent`; the primitive decides how pointer and focus events trigger it.
 - External component contracts do not justify authored ARIA wiring in a domain wrapper. Optional external SVG/HTML types alone are not evidence that wiring was actually supplied.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-domain-accessibility` with type information for authored application code. Outside shared UI, check JSX attributes, explicitly supplied properties in resolvable spreads, direct accessibility-library imports/re-exports/dynamic imports and resolved DOM focus, keyboard-listener and ARIA APIs. Within shared UI, check public component contracts and compound slots for raw wiring props, including inherited HTML attributes, and reject bare third-party value re-exports, namespace exports and resolved import aliases. Type-only re-exports and internal primitive wiring remain valid. Exclude tests, generated files and isolated Storybook support.
+
+Resolve declarations to avoid false positives from optional attributes inherited from external HTML/SVG types, such as chart renderer props. Static checks cannot prove runtime accessibility or reconstruct arbitrary dynamic property names, opaque objects or transitive helper behavior. Test reusable primitives by role and label, and verify keyboard navigation, relationships, dismissal and focus restoration.
 
 ### References
 

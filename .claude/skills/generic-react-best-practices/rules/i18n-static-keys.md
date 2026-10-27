@@ -1,13 +1,13 @@
 ---
 title: Use Literal Translation Keys Only
-impact: MEDIUM-HIGH
+impact: MEDIUM
 impactDescription: keys stay visible to i18next-scanner and the missing-key check
 tags: i18n, translation-keys, i18next-scanner, static-analysis, mapping
 ---
 
 ## Use Literal Translation Keys Only
 
-**Impact: MEDIUM-HIGH (keys stay visible to i18next-scanner and the missing-key check)**
+**Impact: MEDIUM (keys stay visible to i18next-scanner and the missing-key check)**
 
 The key extraction check (typically `i18next-scanner` or `i18next-parser`, configured for `t` and `i18next.t`) only extracts **string literals passed directly to `t()`**, then compares them with the reference translation catalog. A key built or stored elsewhere (template literal, concatenation, constant, `Record` value) is invisible: a missing key ships unnoticed and the user sees the raw key. For a finite union, write one literal `t('…')` call per value inside a formatter hook.
 

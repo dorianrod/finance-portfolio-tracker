@@ -11,7 +11,7 @@ tags: arch, feature-slices, folders, boundaries, shared
 
 Use `features/` when a domain or entity contains several distinct business capabilities. A small domain that already represents one cohesive capability may own its role folders directly; do not add a feature wrapper merely to satisfy a template. Conversely, once several capabilities coexist, move them into named vertical slices instead of scattering them across domain-level role folders.
 
-Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `dashboard`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
+Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `screen`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
 
 A feature containing `features/` must keep every other role folder under its own `shared/`; only `features/` and `shared/` hold its implementation at that level. Every module in that shared scope must serve multiple distinct child features. Put a cohesive parent-only responsibility in a named child feature, and compose child entry components from the application. A leaf feature without `features/` keeps `components/`, `helpers/`, `services/`, `stores/`, and other role folders directly at its root; do not add an unnecessary `shared/` wrapper. Do not mix these two layouts.
 
@@ -24,7 +24,7 @@ Allow at most two feature levels below a domain: `features/<feature>/` and, when
 ```text
 src/domains/sales/orders/
 └── features/
-    └── dashboard/                         # generic wrapper with no business responsibility
+    └── screen/                         # generic wrapper with no business responsibility
         └── features/
             └── detail/
                 └── features/

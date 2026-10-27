@@ -25,4 +25,4 @@ const bad = example()
 const good = example()
 ```
 
-See also: `vercel-react-best-practices` → `rule-id` (optional, only when a Vercel rule exists)
+See also: `vercel-react-best-practices` → `rule-id` (optional; other declared companion skills may also be linked)

@@ -10,7 +10,7 @@ October 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
-> generating, or refactoring React code. It is a delta on top of `vercel-react-best-practices`: apply both.
+> generating, or refactoring React code. Apply it alongside `vercel-react-best-practices`, `vercel-composition-patterns`, `tailwind-design-system` and other relevant skills. This catalog takes precedence over both Vercel skills when their guidance conflicts. Reusable conventions and associated custom ESLint rules belong in the rule files.
 
 ---
 
@@ -109,17 +109,17 @@ Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStac
    - 9.2 [Keep Business Rules as Pure, Intent-Named Predicates](#92-keep-business-rules-as-pure-intent-named-predicates)
    - 9.3 [Never Pass t, navigate or Stores to a Helper](#93-never-pass-t-navigate-or-stores-to-a-helper)
    - 9.4 [Sort Every Helper Into One of a Fixed Set of Categories](#94-sort-every-helper-into-one-of-a-fixed-set-of-categories)
-10. [Internationalization](#10-internationalization) — **MEDIUM-HIGH**
+10. [Internationalization](#10-internationalization) — **MEDIUM**
    - 10.1 [Inject Dynamic Values Through t() Options, Never Concatenation](#101-inject-dynamic-values-through-t-options-never-concatenation)
-   - 10.2 [Translate Every User-Facing String with a Catalog Key](#102-translate-every-user-facing-string-with-a-catalog-key)
-   - 10.3 [Use Literal Translation Keys Only](#103-use-literal-translation-keys-only)
-   - 10.4 [Never Use defaultValue in t()](#104-never-use-defaultvalue-in-t)
-11. [Testing](#11-testing) — **MEDIUM-HIGH**
-   - 11.1 [Isolate Jotai State with a Fresh Store per Test](#111-isolate-jotai-state-with-a-fresh-store-per-test)
-   - 11.2 [Mock the Network Boundary, Never Internal Modules](#112-mock-the-network-boundary-never-internal-modules)
-   - 11.3 [Assert Behavior with Parametrized, Unconditional Tests](#113-assert-behavior-with-parametrized-unconditional-tests)
-   - 11.4 [Build Typed, Deterministic Mock Data in the Owning mocks Folder](#114-build-typed-deterministic-mock-data-in-the-owning-mocks-folder)
-   - 11.5 [Colocate a Test Next to Every File, Covering Errors](#115-colocate-a-test-next-to-every-file-covering-errors)
+   - 10.2 [Never Use defaultValue in t()](#102-never-use-defaultvalue-in-t)
+   - 10.3 [Translate Every User-Facing String with a Catalog Key](#103-translate-every-user-facing-string-with-a-catalog-key)
+   - 10.4 [Use Literal Translation Keys Only](#104-use-literal-translation-keys-only)
+11. [Testing](#11-testing) — **MEDIUM**
+   - 11.1 [Assert Behavior with Parametrized, Unconditional Tests](#111-assert-behavior-with-parametrized-unconditional-tests)
+   - 11.2 [Build Typed, Deterministic Mock Data in the Owning mocks Folder](#112-build-typed-deterministic-mock-data-in-the-owning-mocks-folder)
+   - 11.3 [Colocate a Test Next to Every File, Covering Errors](#113-colocate-a-test-next-to-every-file-covering-errors)
+   - 11.4 [Isolate Jotai State with a Fresh Store per Test](#114-isolate-jotai-state-with-a-fresh-store-per-test)
+   - 11.5 [Mock the Network Boundary, Never Internal Modules](#115-mock-the-network-boundary-never-internal-modules)
    - 11.6 [Query by Role and Label, Interact with userEvent](#116-query-by-role-and-label-interact-with-userevent)
    - 11.7 [Test API Hooks with renderHook and a Per-Test Query Wrapper](#117-test-api-hooks-with-renderhook-and-a-per-test-query-wrapper)
 12. [Code Quality](#12-code-quality) — **HIGH**
@@ -332,7 +332,7 @@ src/
 ├── hooks/useDebounce.ts                       # catch-all root outside domains and shared
 ├── utils/formatAmount.ts                      # catch-all root
 └── domains/sales/orders/
-    └── features/dashboard/features/           # delivery wrapper, not a business capability
+    └── features/screen/features/           # delivery wrapper, not a business capability
         ├── list/
         └── detail/
 ```
@@ -449,13 +449,21 @@ UI selection, expansion, dismissal, generic chart geometry and generic numeric f
 
 See also: `ui-no-adhoc-styling`, `ui-centralize-accessibility`, `ui-semantic-colors`
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/shared-feature-usage` to report exclusive one-feature ownership and missing production consumers in resolved import graphs. Use a separate `local/review-shared-feature-sharing` warning when consumers outside the owning feature tree prevent proving reuse. An indeterminate graph requests review rather than establishing an invalid owner. Keep layout diagnostics in `local/feature-folder-layout` and forbidden dependencies in `local/import-boundaries`; these ESLint rules should share the same business-scope interpretation without duplicating diagnostics.
+
+When application props distribute common inputs, inspect actual feature consumers. A reviewed line-scoped suppression may address `local/review-shared-feature-sharing` with concrete evidence; it must not disable proven ownership errors. Do not count application wrappers as features, add fake imports or exempt all parent-owned code. Folder moves require a business ownership decision and have no automatic fix.
+
+Import-boundary checks should resolve imports, re-exports, dynamic imports and type imports from global shared code into application or domain modules, and prevent production imports of Storybook modules. They cannot detect business knowledge declared locally or hidden in another shared module. Review names, literal unions, branches, defaults and transitive dependencies even when lint passes.
+
 ### 1.5 Organize Every Domain into Vertical Feature Slices
 
 **Impact: CRITICAL (keeps each business capability cohesive and prevents overlapping technical buckets)**
 
 Use `features/` when a domain or entity contains several distinct business capabilities. A small domain that already represents one cohesive capability may own its role folders directly; do not add a feature wrapper merely to satisfy a template. Conversely, once several capabilities coexist, move them into named vertical slices instead of scattering them across domain-level role folders.
 
-Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `dashboard`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
+Name a feature after a cohesive business capability or user-facing responsibility. Never introduce a generic wrapper such as `screen`, `main`, `workspace` or a repetition of the domain name when its only purpose is to contain all the real features. A feature owns only the role folders it needs among `apis/`, `components/`, `constants/`, `helpers/`, `mocks/`, `pages/`, `services/`, `stores` and `types/`; do not group code by implementation technique in catch-all folders such as `charts/`, `cards/`, `modals/`, `common/` or `misc/`.
 
 A feature containing `features/` must keep every other role folder under its own `shared/`; only `features/` and `shared/` hold its implementation at that level. Every module in that shared scope must serve multiple distinct child features. Put a cohesive parent-only responsibility in a named child feature, and compose child entry components from the application. A leaf feature without `features/` keeps `components/`, `helpers/`, `services/`, `stores/`, and other role folders directly at its root; do not add an unnecessary `shared/` wrapper. Do not mix these two layouts.
 
@@ -468,7 +476,7 @@ Allow at most two feature levels below a domain: `features/<feature>/` and, when
 ```text
 src/domains/sales/orders/
 └── features/
-    └── dashboard/                         # generic wrapper with no business responsibility
+    └── screen/                         # generic wrapper with no business responsibility
         └── features/
             └── detail/
                 └── features/
@@ -517,64 +525,64 @@ State consumed below its owner must not be threaded through intermediate compone
 
 Apply this rule together with `arch-component-roles`. A view may receive calculations and display-ready objects because rendering them is its declared responsibility. A feature should receive raw business inputs or read shared state itself; warn when a parent derives a value from its own props and passes that result to another feature. The warning is a review signal: move the calculation to the receiving feature when it owns the decision, classify a truly presentational child as a view, or suppress only the verified exception on the affected line with a reason.
 
-Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useDashboardFilters`, `useDashboardSort`, `useDashboardSelection` and `useDashboardModal`. A `useDashboardUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
+Keep each stateful hook aligned with one concern. For example, split filters, sorting, selection and modal behavior into `useOrdersPageFilters`, `useOrdersPageSort`, `useOrdersPageSelection` and `useOrdersPageModal`. A `useOrdersPageUi` hook may compose these hooks as a thin facade for a caller that genuinely needs all of them, but it must not become the owner of several unrelated `useState` values or a mandatory gateway for deep consumers.
 
 **Incorrect (one hook owns unrelated state, then drills values and actions):**
 
 ```tsx
-function useDashboardUi() {
-  const [filters, setFilters] = useState<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
-  const [sort, setSort] = useState<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+function useOrdersPageUi() {
+  const [filters, setFilters] = useState<OrdersPageFilters>(DEFAULT_ORDERS_PAGE_FILTERS)
+  const [sort, setSort] = useState<OrdersPageSort>(DEFAULT_ORDERS_PAGE_SORT)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   return { filters, setFilters, sort, setSort, selectedIds, setSelectedIds }
 }
 
-function Dashboard() {
-  const dashboardUi = useDashboardUi()
-  return <DashboardBody filters={dashboardUi.filters} setFilters={dashboardUi.setFilters} />
+function OrdersPage() {
+  const ordersPageUi = useOrdersPageUi()
+  return <OrdersPageBody filters={ordersPageUi.filters} setFilters={ordersPageUi.setFilters} />
 }
 
-function DashboardBody(props: DashboardBodyProps) {
-  return <DashboardToolbar filters={props.filters} setFilters={props.setFilters} />
+function OrdersPageBody(props: OrdersPageBodyProps) {
+  return <OrdersPageToolbar filters={props.filters} setFilters={props.setFilters} />
 }
 ```
 
-Creating a `DashboardContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
+Creating a `OrdersPageContext` and consuming it with `useContext` is not an accepted fix: it hides the same broad dependency behind a provider and keeps unrelated responsibilities coupled.
 
 **Correct (atoms own values; focused hooks own actions; consumers subscribe where needed):**
 
 ```tsx
-// pages/dashboard/stores/dashboardFilters.atoms.ts
-export const dashboardFiltersAtom = atom<DashboardFilters>(DEFAULT_DASHBOARD_FILTERS)
+// pages/orders/stores/ordersPageFilters.atoms.ts
+export const ordersPageFiltersAtom = atom<OrdersPageFilters>(DEFAULT_ORDERS_PAGE_FILTERS)
 
-// pages/dashboard/stores/dashboardSort.atoms.ts
-export const dashboardSortAtom = atom<DashboardSort>(DEFAULT_DASHBOARD_SORT)
+// pages/orders/stores/ordersPageSort.atoms.ts
+export const ordersPageSortAtom = atom<OrdersPageSort>(DEFAULT_ORDERS_PAGE_SORT)
 
-// pages/dashboard/services/useDashboardFilters.ts
-export function useDashboardFilters() {
-  const setFilters = useSetAtom(dashboardFiltersAtom)
+// pages/orders/services/useOrdersPageFilters.ts
+export function useOrdersPageFilters() {
+  const setFilters = useSetAtom(ordersPageFiltersAtom)
 
   const setStatus = useCallback(
     (status: OrderStatus | null) => setFilters(current => ({ ...current, status })),
     [setFilters],
   )
-  const resetFilters = useCallback(() => setFilters(DEFAULT_DASHBOARD_FILTERS), [setFilters])
+  const resetFilters = useCallback(() => setFilters(DEFAULT_ORDERS_PAGE_FILTERS), [setFilters])
 
   return useMemo(() => ({ setStatus, resetFilters }), [setStatus, resetFilters])
 }
 
-// pages/dashboard/components/DashboardToolbar.tsx
-function DashboardToolbar() {
-  const filters = useAtomValue(dashboardFiltersAtom)
-  const { setStatus, resetFilters } = useDashboardFilters()
+// pages/orders/components/OrdersPageToolbar.tsx
+function OrdersPageToolbar() {
+  const filters = useAtomValue(ordersPageFiltersAtom)
+  const { setStatus, resetFilters } = useOrdersPageFilters()
 
   return <Filters value={filters} onStatusChange={setStatus} onReset={resetFilters} />
 }
 
 // A different deep consumer reads only what it needs, without intermediary props.
-function DashboardResults() {
-  const sort = useAtomValue(dashboardSortAtom)
+function OrdersPageResults() {
+  const sort = useAtomValue(ordersPageSortAtom)
   return <OrderList sort={sort} />
 }
 ```
@@ -675,7 +683,7 @@ For an architecture review, write a short capability map before proposing moves:
 **Incorrect:**
 ```text
 domains/example/features/
-└── dashboard/                    # justified only by the screen name
+└── screen/                    # justified only by the screen name
     └── features/capability/
 ```
 
@@ -826,6 +834,10 @@ If the proposed parent has no business responsibility beyond grouping its childr
 - A parent may coordinate children through application composition. If the remaining parent behavior is itself a cohesive capability with no shared consumers, give it a named child feature rather than placing its implementation in `shared/`.
 - A technical extraction or a small variant can remain a component, helper or parameter.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/feature-folder-layout` to count feature scopes below each domain with `maxFeatureDepth: 2`, using the same business-scope interpretation as import boundaries and ownership checks. Report deeper scopes even when no imports exist. A folder named `features` inside a role folder does not create another business scope. Check parent/leaf layout independently. ESLint cannot decide whether the chosen business parent is appropriate and should not move folders automatically.
+
 ### References
 
 - [Business boundaries](rules/arch-business-capability-boundaries.md) — define the capability map first.
@@ -975,6 +987,14 @@ export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
 ```
 
 The native container in this example is external layout. Geometry inside a chart remains data supplied to the shared UI primitive, rather than caller-authored CSS injected into it.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-complex-component-calculation` to report more than two arithmetic operations (`+`, `-`, `*`, `/`, `%`, `**`) or deterministic `Math` calls in one component derivation, including callbacks and JSX. Follow immutable local initializers and aliases, counting each operation once. Check returned fields of an inline `map`/`flatMap` object together, and group computed geometry properties (`x`, `y`, `cx`, `cy`, `width`, `height`, `r`, `rx`, `ry`) of one JSX element. The `maxOperations` default is two.
+
+Independent small expressions outside those output groups remain independent. This bounded check does not trace reassigned variables, imported helper implementations or arbitrary interprocedural data flow. `local/no-component-data-pipeline` complements it by reporting inline reductions and compound collection predicates in application/domain components; module-boundary and JSX-condition checks address different patterns.
+
+Use the custom ESLint rule `local/no-browser-in-pure-helpers` for production `helpers/presenters/` and `helpers/calculators/`, including component-owned helpers. Resolve browser globals, DOM measurements, known DOM mutation methods and DOM property writes. Locally shadowed names, type-only references and reads of supplied `DOMRect` values remain valid. Exclude tests, declaration files and generated files. This check does not prove purity or follow arbitrary helper implementations and detached DOM methods.
 
 ### 1.14 Keep Visual Logic at the Component or Page Boundary
 
@@ -1524,7 +1544,7 @@ TanStack Query v5 hooks behave differently on loading, errors and key changes. P
 
 | Access pattern | Hook | Loading / errors |
 | --- | --- | --- |
-| One resource the screen needs to render (detail, form, dashboard) | `useSuspenseQuery` | suspends / throws (Suspense and error boundary required) |
+| One resource the screen needs to render (detail, form, screen) | `useSuspenseQuery` | suspends / throws (Suspense and error boundary required) |
 | Paginated or infinite list | `useInfiniteQuery` | `isPending` / `isFetchingNextPage`, `data` undefined first |
 | Data whose key changes while the component stays mounted (options of a select driven by another field, a filter above a table) | `useQuery` with `placeholderData: keepPreviousData` | `isPending` / `isPlaceholderData`; keeps the previous key's data while fetching |
 
@@ -2751,7 +2771,7 @@ Structural expectations of compound components, dialogs, forms and styling. Brea
 
 **Rule:** Centralize all ARIA wiring, keyboard navigation and focus behavior in shared UI primitives, and pass only semantic data, translated labels and business actions from domain and application code.
 
-The design system owns accessibility implementation, including simple attributes such as `aria-label`, `aria-hidden` and `role`. Domain and application components own meaning and actions: labels, selected values, expansion state, financial content and business callbacks. Moving behavior into a domain hook or helper does not establish a shared accessibility boundary.
+The design system owns accessibility implementation, including simple attributes such as `aria-label`, `aria-hidden` and `role`. Domain and application components own meaning and actions: labels, selected values, expansion state, business content and business callbacks. Moving behavior into a domain hook or helper does not establish a shared accessibility boundary.
 
 ### Applies When
 
@@ -2786,6 +2806,12 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 - Domain labels remain translated data. For example, pass `label={t('delete')}` rather than hardcoding a name inside the primitive. A business preload callback may use `onIntent`; the primitive decides how pointer and focus events trigger it.
 - External component contracts do not justify authored ARIA wiring in a domain wrapper. Optional external SVG/HTML types alone are not evidence that wiring was actually supplied.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-domain-accessibility` with type information for authored application code. Outside shared UI, check JSX attributes, explicitly supplied properties in resolvable spreads, direct accessibility-library imports/re-exports/dynamic imports and resolved DOM focus, keyboard-listener and ARIA APIs. Within shared UI, check public component contracts and compound slots for raw wiring props, including inherited HTML attributes, and reject bare third-party value re-exports, namespace exports and resolved import aliases. Type-only re-exports and internal primitive wiring remain valid. Exclude tests, generated files and isolated Storybook support.
+
+Resolve declarations to avoid false positives from optional attributes inherited from external HTML/SVG types, such as chart renderer props. Static checks cannot prove runtime accessibility or reconstruct arbitrary dynamic property names, opaque objects or transitive helper behavior. Test reusable primitives by role and label, and verify keyboard navigation, relationships, dismissal and focus restoration.
+
 ### References
 
 - [Accessible names](rules/ui-accessible-names.md) — naming and native semantics, implemented inside shared UI.
@@ -2799,7 +2825,7 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 
 When `map` produces JSX, its callback only renders one named component and passes source values to it. Put branching, derived values, event-handler construction, styling decisions and element structure inside that item component. Data-only transformations that do not produce JSX are unaffected.
 
-Enforce this convention with the ESLint rule `local/no-complex-jsx-map` when the project provides it. Treat a warning from that rule as a request to extract or simplify the mapped item, not as a reason to disable the rule.
+Enforce this convention with the custom ESLint rule `local/no-complex-jsx-map` when the project provides it. Treat a warning from that rule as a request to extract or simplify the mapped item, not as a reason to disable the rule.
 
 **Incorrect (the map callback owns conditions and markup):**
 
@@ -2900,6 +2926,10 @@ function Button({ label, ...props }: ButtonProps) {
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
 
 Chart geometry supplied as data is distinct from caller-authored CSS layout. Apply `ui-centralize-accessibility` to inherited native props as well; public UI contracts expose semantic labels and behavior instead of raw ARIA or focus/keyboard wiring.
+
+### ESLint Enforcement
+
+Use the custom ESLint rules `local/no-shared-ui-classname` to protect the public API and `local/no-shared-ui-internal-layout` to report injected classes and inline layout styles, including through statically resolvable extracted components. Apply the same composition rules to tests and Storybook usages. Neither rule should autofix composition or be suppressed merely to complete a migration.
 
 ### 7.4 Keep Colors Semantic Behind Shared UI
 
@@ -3028,6 +3058,10 @@ The exported names describe generic UI roles rather than business metrics or hue
 names such as `green500` or `red700`. A domain presenter may map a business metric
 to one of these roles without owning its concrete color.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-hardcoded-colors` to check literal appearance values and palette utilities in shared UI and application/domain code. Follow immutable aliases and conditional values. Apply the token boundary to imperative style assignments, `setProperty`, SVG `setAttribute` and browser `theme-color` metadata. Dedicated theme and asset definitions may contain concrete values. This bounded check does not parse arbitrary CSS or infer every dynamic DOM target.
+
 ### Exceptions
 
 - Global stylesheets, `shared/theme` and dedicated token definitions may define the concrete values behind semantic names.
@@ -3039,7 +3073,7 @@ to one of these roles without owning its concrete color.
 
 **Impact: HIGH (prevents silently dropped slots and empty overflow menus)**
 
-Compound components often discover their slots by scanning their **direct** children (`Children.toArray`, matching on `displayName` or `type`). Anything that is not a slot element at that level is silently ignored: a custom component wrapping a slot, a Fragment next to other slots, a `Suspense` boundary, or a slot that renders `null`. No error is raised; the slot just disappears or sits in the wrong place.
+This rule applies to compound APIs that discover slots by scanning their **direct** children (`Children.toArray`, matching on `displayName` or `type`). A custom component wrapping a slot, a Fragment or a `Suspense` boundary hides the slot from that scan. The container may ignore the element or place it incorrectly without an error. A wrapper that later renders `null` can still occupy an action position. Verify the compound API's discovery contract; context-based APIs may support deeper composition.
 
 ```tsx
 // Card scans its direct children: Card.Header, Card.Body, Card.Actions
@@ -3088,7 +3122,7 @@ const canRestore = canRestoreProject(project) // boolean business rule
 ```
 
 - Extract the **content** of a slot into a component, never the slot itself.
-- Condition each slot individually (`{cond && <Card.Actions>…</Card.Actions>}` is fine, the element keeps its identity) or inside the slot; never group several slots in a Fragment. A Fragment is only unwrapped when it is the sole child.
+- Condition each slot individually (`{cond && <Card.Actions>…</Card.Actions>}` is fine, the element keeps its identity) or inside the slot. `Children.toArray` does not unwrap Fragments, even when a Fragment is the sole child. Unwrapping requires explicit support in the compound implementation; do not assume it.
 - Gate optional actions in the caller with a boolean predicate: a wrapper that renders `null` still occupies a visible slot and can leave an overflow menu empty, and the container cannot know what its children will render.
 - Put `Suspense` outside the compound component, or inside a content slot (`Card.Body`), never between the compound and its slots.
 
@@ -3245,6 +3279,12 @@ Remove the old content props from the component's type and implementation, then 
 
 Move captured parent values into the extracted component's data/configuration props. Preserve the library-injected props and their types; do not define the extracted component inside its parent render.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/require-children-composition` with type information to check declared component contracts as well as JSX, `createElement` and `cloneElement`, including resolved factory aliases. Reject named UI props before a caller exists, including typed functions, classes, `memo`, `forwardRef` and public compound slots. Factory calls supply nested children positionally.
+
+Resolve dependency declarations to distinguish external components from local imports and wrappers; do not rely on prop names or a blanket chart-library exemption. Reject external inline render functions and render-local component references. Private dependency renderers may receive inherited external contracts; locally declared UI props and inherited props on public project APIs remain checked. Data, event handlers and scalar formatters remain valid. Arbitrary runtime factories and reassigned element aliases are outside this bounded analysis. Changing a component API requires review and has no automatic fix.
+
 ### References
 
 - [Direct, renderable compound slots](rules/ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.
@@ -3330,6 +3370,10 @@ If no design-system component fits, add or extend one in the shared UI layer ins
 The same boundary covers SVG/Recharts appearance props, local stylesheet imports and imperative DOM style/class/attribute writes, including values supplied through constants, spreads, templates or element factories. A semantic class such as `text-positive` is still visual styling and belongs inside shared UI. Exporting visual class strings does not establish a primitive.
 
 Global stylesheets, themes and token definitions remain design-system infrastructure. Shared UI consumes semantic tokens; domains supply data, actions and generic variants. Dynamic layout styles may remain on external containers. Chart geometry is data supplied to the owning UI primitive. Follow `ui-semantic-colors` for tokens and `arch-shared-no-domain-knowledge` for business adapters.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-domain-styling` to distinguish concrete appearance violations (`nonLayoutClass`, `nonLayoutStyle`), values that require inspection (`unverifiableStyle`) and local stylesheets outside permitted roots (`outsideStylesheet`). Aggregate offending classes or properties for each usage and include this catalog rule's identifier. Inspect unresolved values before deciding whether layout can stay local. Selecting or designing a primitive requires review; do not autofix or suppress diagnostics merely to finish a migration.
 
 ### 7.12 Give Icon-Only Buttons and Custom Controls an Accessible Name
 
@@ -3820,6 +3864,14 @@ Numeric formatters accept `number | null | undefined`. A string fallback is disp
 
 Conditions that select structure, loading or error states, permissions or comparability remain component/business logic. A calculation's numeric default belongs to that calculation. A domain formatter may add independent business meaning; a missing-value placeholder alone does not justify one.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-inline-format-fallback` for production TS and TSX, including domain formatter wrappers. Detect guards on the formatter's first argument and direct `??`/`||` input defaults with string or numeric literals. Cover both ternary branches, either operand order for `==`, `===`, `!=` and `!==`, null/undefined/zero/empty-string tests, `typeof`, truthiness, negation, `Boolean`, immutable boolean aliases, return-only `if` guards and `&&`/`||` short-circuits that directly return a formatter call. Keep query-state conditions and conditional mounting when they select UI structure rather than a text fallback.
+
+Resolve formatter identity from `helpers/formatters/` imports rather than local names alone: `useFormatXxx` hook results, imported `formatXxx` functions, namespaces, relative imports and immutable aliases. Support destructured aliases and member calls from `use…Formatters` bundles without a registry per formatter. Compare stable member accesses across dot/bracket notation and optional access.
+
+The check does not follow reassigned aliases, arbitrary providers, helper parameters, dynamic property keys, multi-child structural JSX branches or fallback expressions nested inside calculations. Exclude global shared formatter implementations and tests; keep domain shared wrappers checked. Do not autofix: preserve business conditions and the distinction between absence and zero.
+
 ### 9.2 Keep Business Rules as Pure, Intent-Named Predicates
 
 **Impact: MEDIUM-HIGH (decisions readable in JSX and testable without rendering)**
@@ -3901,6 +3953,10 @@ const statusOptions = useOrderStatusOptions()
 
 The formatter itself follows the same pattern (see `arch-helpers-vs-services` and `helpers-formatter-hooks`). One explicit exception: a pure `build[Form]Schema(t)` exported next to its `use[Form]Schema` hook, to test the schema without rendering (see `yup-form-schema-hook`). A dependency that triggers a side effect (`navigate`, a mutation, a toast) does not belong in `helpers/` at all: it goes in a page action hook or a domain `services/` hook.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-helper-context-params` to prevent formatter and context dependencies from being threaded through helper APIs. Review the dependency's actual role and the form-schema exception rather than relying on its name alone.
+
 ### 9.4 Sort Every Helper Into One of a Fixed Set of Categories
 
 **Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
@@ -3980,13 +4036,13 @@ See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-l
 
 ## 10. Internationalization
 
-**Impact: MEDIUM-HIGH**
+**Impact: MEDIUM**
 
 Every user-facing string goes through react-i18next with static, analyzable keys so that tooling can detect missing or unused keys.
 
 ### 10.1 Inject Dynamic Values Through t() Options, Never Concatenation
 
-**Impact: MEDIUM-HIGH (translatable sentences and checked placeholders)**
+**Impact: MEDIUM (translatable sentences and checked placeholders)**
 
 Pass every dynamic value as an interpolation option — `t('key', { name, count })` — and let the catalog sentence place it. Never concatenate a translated string with variables, spaces, numbers or another `t()`: the sentence becomes untranslatable (word order, punctuation, plurals), and a translation check can no longer verify that code and catalog agree on the placeholders.
 
@@ -4015,9 +4071,37 @@ const secondaryText = t('order.shipping.upload.limits', {
 
 Option names must match the placeholders of the catalog value: a placeholder missing in code is an error, an unused one a warning. If no key holds the full sentence yet, add one rather than gluing fragments. For counts, use i18next plural keys (`count`) instead of branching in code.
 
-### 10.2 Translate Every User-Facing String with a Catalog Key
+### 10.2 Never Use defaultValue in t()
 
-**Impact: MEDIUM-HIGH (no untranslatable copy, no raw keys on screen)**
+**Impact: MEDIUM (missing keys surface instead of hardcoded fallbacks)**
+
+When translations are served from a catalog (a backend export or JSON files), a `defaultValue` hides a key that does not exist there: the English fallback ships as a hardcoded string, translators never see it, and the copy silently forks from the catalog. Every key must exist in the reference translation catalog; add the key instead of a fallback.
+
+**Incorrect (fallback masks a missing key):**
+
+```tsx
+<h2>
+  {t('contract.modal.appendix.deleteTitle', {
+    defaultValue: 'Delete document',
+  })}
+</h2>
+
+<button onClick={close}>{t('common.cancel', 'Cancel')}</button>
+```
+
+**Correct (plain key, present in the catalog):**
+
+```tsx
+<h2>{t('contract.modal.appendix.deleteTitle')}</h2>
+
+<button onClick={close}>{t('common.cancel')}</button>
+```
+
+The second argument of `t()` is reserved for interpolation options (`{ name }`), never a default string. The only acceptable built-in fallbacks are the few boot-time keys of screens shown before the catalog loads; do not add feature keys there.
+
+### 10.3 Translate Every User-Facing String with a Catalog Key
+
+**Impact: MEDIUM (no untranslatable copy, no raw keys on screen)**
 
 Every string a user can see or hear goes through `t()`: titles, labels, buttons, placeholders, empty states, toasts, tooltips and accessible labels. Domains pass translated semantic labels; shared UI implements any ARIA wiring (`ui-centralize-accessibility`). When you introduce a key, check that it exists in the reference translation catalog; if not, add it there (and have it created wherever the catalog is maintained) — otherwise the app renders the raw key. Then run the key extraction check.
 
@@ -4045,9 +4129,9 @@ toast.success(t('contract.reminder.messages.addSuccess'))
 
 Reuse shared keys (`common.cancel`, `common.confirm`, `common.close`, `common.delete`) before creating new ones. Not concerned: technical identifiers, CSS classes, test IDs, log messages and data coming from the API.
 
-### 10.3 Use Literal Translation Keys Only
+### 10.4 Use Literal Translation Keys Only
 
-**Impact: MEDIUM-HIGH (keys stay visible to i18next-scanner and the missing-key check)**
+**Impact: MEDIUM (keys stay visible to i18next-scanner and the missing-key check)**
 
 The key extraction check (typically `i18next-scanner` or `i18next-parser`, configured for `t` and `i18next.t`) only extracts **string literals passed directly to `t()`**, then compares them with the reference translation catalog. A key built or stored elsewhere (template literal, concatenation, constant, `Record` value) is invisible: a missing key ships unnoticed and the user sees the raw key. For a finite union, write one literal `t('…')` call per value inside a formatter hook.
 
@@ -4083,134 +4167,15 @@ export function useFormatShippingStatus() {
 
 A ternary of literals (`t(isEdit ? 'contract.modal.reminder.editTitle' : 'contract.modal.reminder.addTitle')`) is fine: the scanner reads both branches. Only the **value** may be dynamic, via interpolation options. A lint rule that only forbids template literals does not catch a `Record<Union, 'literal.key'>` mapper passed to `t()`: avoid that pattern too.
 
-### 10.4 Never Use defaultValue in t()
-
-**Impact: MEDIUM (missing keys surface instead of hardcoded fallbacks)**
-
-When translations are served from a catalog (a backend export or JSON files), a `defaultValue` hides a key that does not exist there: the English fallback ships as a hardcoded string, translators never see it, and the copy silently forks from the catalog. Every key must exist in the reference translation catalog; add the key instead of a fallback.
-
-**Incorrect (fallback masks a missing key):**
-
-```tsx
-<h2>
-  {t('contract.modal.appendix.deleteTitle', {
-    defaultValue: 'Delete document',
-  })}
-</h2>
-
-<button onClick={close}>{t('common.cancel', 'Cancel')}</button>
-```
-
-**Correct (plain key, present in the catalog):**
-
-```tsx
-<h2>{t('contract.modal.appendix.deleteTitle')}</h2>
-
-<button onClick={close}>{t('common.cancel')}</button>
-```
-
-The second argument of `t()` is reserved for interpolation options (`{ name }`), never a default string. The only acceptable built-in fallbacks are the few boot-time keys of screens shown before the catalog loads; do not add feature keys there.
-
 ---
 
 ## 11. Testing
 
-**Impact: MEDIUM-HIGH**
+**Impact: MEDIUM**
 
 Jest + React Testing Library tests exercise visible behavior through the real hook stack, stubbing only the network boundary, which makes them robust to refactors.
 
-### 11.1 Isolate Jotai State with a Fresh Store per Test
-
-**Impact: MEDIUM-HIGH (prevents state leaking between tests through module-level atoms)**
-
-Atoms declared in `stores/*.atoms.ts` are module singletons. Without a `Provider`, every test in the file writes to the same default Jotai store, so the outcome depends on test order. Give each test its own `createStore()` and wrap the render in `<Provider store={store}>`. Seed initial values with `store.set(atom, value)`: it is typed against the atom, and the store lets you read the result back.
-
-**Incorrect (no Provider: every test writes to the shared default store):**
-
-```tsx
-it('should reset the filters when the contract changes', () => {
-  const { rerender } = renderHook(({ id }) => useResetHistoryFilters(id), {
-    initialProps: { id: 'contract-a' },
-  })
-  rerender({ id: 'contract-b' })
-})
-```
-
-**Correct (one store per test, typed seeding, assertions on the store):**
-
-```tsx
-import { Provider, createStore } from 'jotai'
-
-import {
-  DEFAULT_HISTORY_FILTERS,
-  historyFiltersAtom,
-} from '@/domains/contracts/features/histories/pages/histories/stores/filters.atoms'
-
-it('should reset the filters when the contract changes', () => {
-  const store = createStore()
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  )
-  const { rerender } = renderHook(({ id }) => useResetHistoryFilters(id), {
-    wrapper,
-    initialProps: { id: 'contract-a' },
-  })
-
-  store.set(historyFiltersAtom, { statuses: ['ONGOING'], changeReasons: ['STATUS_CHANGED'] })
-  rerender({ id: 'contract-b' })
-
-  expect(store.get(historyFiltersAtom)).toEqual(DEFAULT_HISTORY_FILTERS)
-})
-```
-
-If a component has to start from a hydrated value, write a small typed component, for example `HydrateUser({ user, children }: { user: CurrentUser; children: ReactNode })` that calls `useHydrateAtoms([[userAtom, user]])`. Do not write a generic `any` helper. Test atoms through their owner hooks rather than the internals of an atom factory.
-
-### 11.2 Mock the Network Boundary, Never Internal Modules
-
-**Impact: MEDIUM-HIGH (tests that mock internals stay green while the real hook stack is broken)**
-
-Never `jest.mock` an internal module: a hook, component, helper, provider or a schema library such as `yup` (a domain `apis/`, `services/`, `components/` or `helpers/` module). The test then checks a stub instead of the real query key, Yup parsing, permissions and rendering. Stub only the network boundary — MSW handlers or an axios adapter — and let every project hook run.
-
-**Incorrect (stubs the query hook and the permissions hook):**
-
-```tsx
-jest.mock('@/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery', () => ({
-  useGetOrderDetailQuery: () => mockUseGetOrderDetailQuery(),
-}))
-jest.mock('@/domains/sales/orders/features/detail/pages/detail/services/permissions/usePermissions', () => ({
-  usePermissions: () => mockUsePermissions(),
-}))
-
-render(<OrderSummary orderId="order-1" />)
-```
-
-**Correct (only the HTTP layer is stubbed, the real hook and schema run):**
-
-```tsx
-import { HttpResponse, http } from 'msw'
-
-import { server } from '@/testing/server'
-
-it('should accept a null customerType', async () => {
-  server.use(
-    http.get('*/orders/order-1', () =>
-      HttpResponse.json({ id: 'order-1', customerType: null }),
-    ),
-  )
-
-  render(<OrderSummary orderId="order-1" />, { wrapper: AppProviders })
-
-  expect(await screen.findByRole('heading', { name: 'order-1' })).toBeInTheDocument()
-  expect(screen.queryByText('order.customerType.label')).not.toBeInTheDocument()
-})
-```
-
-- Where MSW cannot run in the test environment, pass an axios instance whose `adapter` returns canned responses, or stub `axios.create` once at the boundary; the hooks above it stay real.
-- Third-party and infrastructure modules that cannot run in jsdom (error reporters, file download helpers, auth libraries that build a client on import) may be stubbed; own code may not.
-- Do not share a "common mocks" helper that stubs internal modules: it hides the same problem in every test that imports it.
-- When touching a test that mocks internals, replace those mocks by a network stub.
-
-### 11.3 Assert Behavior with Parametrized, Unconditional Tests
+### 11.1 Assert Behavior with Parametrized, Unconditional Tests
 
 **Impact: MEDIUM (one failing case points at one input, and refactors stop breaking tests)**
 
@@ -4255,7 +4220,7 @@ Assert what the user or caller observes, not the implementation:
 
 Move repeated setup into `beforeEach` or a local `setup()` helper, not into a branch. Use `test.each` for the null, undefined and empty-string variants as well.
 
-### 11.4 Build Typed, Deterministic Mock Data in the Owning mocks Folder
+### 11.2 Build Typed, Deterministic Mock Data in the Owning mocks Folder
 
 **Impact: MEDIUM (reproducible tests that break when the domain type changes)**
 
@@ -4295,7 +4260,7 @@ export const mockInvoices: Invoice[] = [
 
 When fixtures from two domains have to agree (contacts → accounts), add a small `*.mock.test.ts` that checks the shared ids and their uniqueness.
 
-### 11.5 Colocate a Test Next to Every File, Covering Errors
+### 11.3 Colocate a Test Next to Every File, Covering Errors
 
 **Impact: MEDIUM (untested files and happy-path-only tests hide regressions in business logic)**
 
@@ -4328,6 +4293,97 @@ describe('useGetOrderDetailQuery', () => {
 A sibling file makes a missing test visible in the file tree, moves with the code when a folder is renamed, and keeps relative imports short (`./useGetOrderDetailQuery`).
 
 Do not leave a silent `it.skip`: either fix the test or add a `// TODO:` comment that states why it is skipped. Run the tests of the folder you changed.
+
+### 11.4 Isolate Jotai State with a Fresh Store per Test
+
+**Impact: MEDIUM (prevents state leaking between tests through module-level atoms)**
+
+Atoms declared in `stores/*.atoms.ts` are module singletons. Without a `Provider`, every test in the file writes to the same default Jotai store, so the outcome depends on test order. Give each test its own `createStore()` and wrap the render in `<Provider store={store}>`. Seed initial values with `store.set(atom, value)`: it is typed against the atom, and the store lets you read the result back.
+
+**Incorrect (no Provider: every test writes to the shared default store):**
+
+```tsx
+it('should reset the filters when the contract changes', () => {
+  const { rerender } = renderHook(({ id }) => useResetHistoryFilters(id), {
+    initialProps: { id: 'contract-a' },
+  })
+  rerender({ id: 'contract-b' })
+})
+```
+
+**Correct (one store per test, typed seeding, assertions on the store):**
+
+```tsx
+import { Provider, createStore } from 'jotai'
+
+import {
+  DEFAULT_HISTORY_FILTERS,
+  historyFiltersAtom,
+} from '@/domains/contracts/features/histories/pages/histories/stores/filters.atoms'
+
+it('should reset the filters when the contract changes', () => {
+  const store = createStore()
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <Provider store={store}>{children}</Provider>
+  )
+  const { rerender } = renderHook(({ id }) => useResetHistoryFilters(id), {
+    wrapper,
+    initialProps: { id: 'contract-a' },
+  })
+
+  store.set(historyFiltersAtom, { statuses: ['ONGOING'], changeReasons: ['STATUS_CHANGED'] })
+  rerender({ id: 'contract-b' })
+
+  expect(store.get(historyFiltersAtom)).toEqual(DEFAULT_HISTORY_FILTERS)
+})
+```
+
+If a component has to start from a hydrated value, write a small typed component, for example `HydrateUser({ user, children }: { user: CurrentUser; children: ReactNode })` that calls `useHydrateAtoms([[userAtom, user]])`. Do not write a generic `any` helper. Test atoms through their owner hooks rather than the internals of an atom factory.
+
+### 11.5 Mock the Network Boundary, Never Internal Modules
+
+**Impact: MEDIUM (tests that mock internals stay green while the real hook stack is broken)**
+
+Never `jest.mock` an internal module: a hook, component, helper, provider or a schema library such as `yup` (a domain `apis/`, `services/`, `components/` or `helpers/` module). The test then checks a stub instead of the real query key, Yup parsing, permissions and rendering. Stub only the network boundary — MSW handlers or an axios adapter — and let every project hook run.
+
+**Incorrect (stubs the query hook and the permissions hook):**
+
+```tsx
+jest.mock('@/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery', () => ({
+  useGetOrderDetailQuery: () => mockUseGetOrderDetailQuery(),
+}))
+jest.mock('@/domains/sales/orders/features/detail/pages/detail/services/permissions/usePermissions', () => ({
+  usePermissions: () => mockUsePermissions(),
+}))
+
+render(<OrderSummary orderId="order-1" />)
+```
+
+**Correct (only the HTTP layer is stubbed, the real hook and schema run):**
+
+```tsx
+import { HttpResponse, http } from 'msw'
+
+import { server } from '@/testing/server'
+
+it('should accept a null customerType', async () => {
+  server.use(
+    http.get('*/orders/order-1', () =>
+      HttpResponse.json({ id: 'order-1', customerType: null }),
+    ),
+  )
+
+  render(<OrderSummary orderId="order-1" />, { wrapper: AppProviders })
+
+  expect(await screen.findByRole('heading', { name: 'order-1' })).toBeInTheDocument()
+  expect(screen.queryByText('order.customerType.label')).not.toBeInTheDocument()
+})
+```
+
+- Where MSW cannot run in the test environment, pass an axios instance whose `adapter` returns canned responses, or stub `axios.create` once at the boundary; the hooks above it stay real.
+- Third-party and infrastructure modules that cannot run in jsdom (error reporters, file download helpers, auth libraries that build a client on import) may be stubbed; own code may not.
+- Do not share a "common mocks" helper that stubs internal modules: it hides the same problem in every test that imports it.
+- When touching a test that mocks internals, replace those mocks by a network stub.
 
 ### 11.6 Query by Role and Label, Interact with userEvent
 
@@ -4473,6 +4529,8 @@ Use `@typescript-eslint/no-deprecated` with type information for authored TypeSc
 
 A warning should require an explicit reviewable change to the budget. The global total includes native ESLint warnings and the tracking warnings for [reviewed suppressions](rules/quality-eslint-disable-scoped.md); suppressed original diagnostics are not counted again.
 
+Configure the custom ESLint suppression-tracking rule described there before counting accepted directives. It implements this catalog's reusable one-warning-per-directive policy.
+
 ### Applies When
 
 - Setting up or changing the lint command used locally and in CI.
@@ -4549,6 +4607,12 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 
 Never bulk-date existing ignores or raise the budget before examining them. If an audit is explicitly deferred, leave the missing metadata as errors rather than approving the exceptions in advance. Do not replace a suppression with a configuration exclusion or a lower severity to bypass review.
 
+### ESLint Enforcement
+
+Configure ESLint with the custom rules `local/require-reviewed-eslint-suppression` at error level and `local/reviewed-eslint-suppression` at warning level for authored JS and TS, including tests and tooling. Reject invalid scope, unnamed rules, missing rationale and missing or invalid calendar dates. Emit one tracking warning per conforming directive containing its rules, rationale and last review date. These tracking warnings require the custom rule; ESLint does not emit them by default.
+
+Enable `reportUnusedDisableDirectives: 'error'` and preserve policy diagnostics even under a blanket disable. Neither check should autofix metadata: validation cannot certify a technical rationale or perform a review.
+
 ### Exceptions
 
 - Generated and vendored code outside the project's lint scope is not an audit target.
@@ -4610,6 +4674,10 @@ The same split applies to helpers: put `sumAmounts.ts` and `averageAmount.ts` in
 - Tests, stories and Storybook support files, declaration files and tooling configurations are outside this production-module convention.
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/single-public-export` to report production-module violations. Choosing a meaningful owner and directory for extracted files requires review and has no automatic fix.
 
 ### 12.5 Never Build Hooks from Hooks (No createUseXxx Factories)
 
@@ -4916,3 +4984,5 @@ A single positive ternary between two static i18n keys is fine: `t(isReadOnly ? 
 ## References
 
 1. `vercel-react-best-practices`
+2. `vercel-composition-patterns`
+3. `tailwind-design-system`

@@ -50,3 +50,7 @@ function Button({ label, ...props }: ButtonProps) {
 - Existing components may still expose classes during migration. Follow this API boundary for new code and record existing violations without copying the legacy pattern.
 
 Chart geometry supplied as data is distinct from caller-authored CSS layout. Apply `ui-centralize-accessibility` to inherited native props as well; public UI contracts expose semantic labels and behavior instead of raw ARIA or focus/keyboard wiring.
+
+### ESLint Enforcement
+
+Use the custom ESLint rules `local/no-shared-ui-classname` to protect the public API and `local/no-shared-ui-internal-layout` to report injected classes and inline layout styles, including through statically resolvable extracted components. Apply the same composition rules to tests and Storybook usages. Neither rule should autofix composition or be suppressed merely to complete a migration.

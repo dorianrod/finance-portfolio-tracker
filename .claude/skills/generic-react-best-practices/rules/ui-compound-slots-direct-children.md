@@ -9,7 +9,7 @@ tags: ui, compound, slots, fragment, suspense, conditional
 
 **Impact: HIGH (prevents silently dropped slots and empty overflow menus)**
 
-Compound components often discover their slots by scanning their **direct** children (`Children.toArray`, matching on `displayName` or `type`). Anything that is not a slot element at that level is silently ignored: a custom component wrapping a slot, a Fragment next to other slots, a `Suspense` boundary, or a slot that renders `null`. No error is raised; the slot just disappears or sits in the wrong place.
+This rule applies to compound APIs that discover slots by scanning their **direct** children (`Children.toArray`, matching on `displayName` or `type`). A custom component wrapping a slot, a Fragment or a `Suspense` boundary hides the slot from that scan. The container may ignore the element or place it incorrectly without an error. A wrapper that later renders `null` can still occupy an action position. Verify the compound API's discovery contract; context-based APIs may support deeper composition.
 
 ```tsx
 // Card scans its direct children: Card.Header, Card.Body, Card.Actions
@@ -58,6 +58,6 @@ const canRestore = canRestoreProject(project) // boolean business rule
 ```
 
 - Extract the **content** of a slot into a component, never the slot itself.
-- Condition each slot individually (`{cond && <Card.Actions>…</Card.Actions>}` is fine, the element keeps its identity) or inside the slot; never group several slots in a Fragment. A Fragment is only unwrapped when it is the sole child.
+- Condition each slot individually (`{cond && <Card.Actions>…</Card.Actions>}` is fine, the element keeps its identity) or inside the slot. `Children.toArray` does not unwrap Fragments, even when a Fragment is the sole child. Unwrapping requires explicit support in the compound implementation; do not assume it.
 - Gate optional actions in the caller with a boolean predicate: a wrapper that renders `null` still occupies a visible slot and can leave an overflow menu empty, and the container cannot know what its children will render.
 - Put `Suspense` outside the compound component, or inside a content slot (`Card.Body`), never between the compound and its slots.

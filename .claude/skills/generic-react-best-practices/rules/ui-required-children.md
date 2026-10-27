@@ -62,6 +62,12 @@ Remove the old content props from the component's type and implementation, then 
 
 Move captured parent values into the extracted component's data/configuration props. Preserve the library-injected props and their types; do not define the extracted component inside its parent render.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/require-children-composition` with type information to check declared component contracts as well as JSX, `createElement` and `cloneElement`, including resolved factory aliases. Reject named UI props before a caller exists, including typed functions, classes, `memo`, `forwardRef` and public compound slots. Factory calls supply nested children positionally.
+
+Resolve dependency declarations to distinguish external components from local imports and wrappers; do not rely on prop names or a blanket chart-library exemption. Reject external inline render functions and render-local component references. Private dependency renderers may receive inherited external contracts; locally declared UI props and inherited props on public project APIs remain checked. Data, event handlers and scalar formatters remain valid. Arbitrary runtime factories and reassigned element aliases are outside this bounded analysis. Changing a component API requires review and has no automatic fix.
+
 ### References
 
 - [Direct, renderable compound slots](ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.

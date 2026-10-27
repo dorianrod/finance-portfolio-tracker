@@ -42,6 +42,12 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 
 Never bulk-date existing ignores or raise the budget before examining them. If an audit is explicitly deferred, leave the missing metadata as errors rather than approving the exceptions in advance. Do not replace a suppression with a configuration exclusion or a lower severity to bypass review.
 
+### ESLint Enforcement
+
+Configure ESLint with the custom rules `local/require-reviewed-eslint-suppression` at error level and `local/reviewed-eslint-suppression` at warning level for authored JS and TS, including tests and tooling. Reject invalid scope, unnamed rules, missing rationale and missing or invalid calendar dates. Emit one tracking warning per conforming directive containing its rules, rationale and last review date. These tracking warnings require the custom rule; ESLint does not emit them by default.
+
+Enable `reportUnusedDisableDirectives: 'error'` and preserve policy diagnostics even under a blanket disable. Neither check should autofix metadata: validation cannot certify a technical rationale or perform a review.
+
 ### Exceptions
 
 - Generated and vendored code outside the project's lint scope is not an audit target.

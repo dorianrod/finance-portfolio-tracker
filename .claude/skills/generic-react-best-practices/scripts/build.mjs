@@ -5,7 +5,7 @@
 // Zero dependencies (Node >= 18). The same script is shipped in every *-react-best-practices skill;
 // it is configured by the skill's metadata.json (title, note, dependsOn).
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { basename, dirname, join, relative, resolve } from 'node:path'
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SKILL_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -80,21 +80,11 @@ const parseFrontmatter = (file, content) => {
 
 const stripCodeBlocks = body => body.replace(/```[\s\S]*?```/g, '')
 
-// A skill must stay portable: no custom code of a host repository, no repository tooling.
+// Guard known host-repository references. Reusable custom APIs and lint contracts are allowed.
 const FORBIDDEN = [
   [/\bsrc\/(configs|providers|router|__mocks__|index)\b/, 'repository file path'],
   [/@\/(configs|providers|shared\/(hooks|ui|ux))\b/, 'repository import path'],
   [/(CLAUDE\.md|\.docs\/|eslint\.config|tsconfig|vite\.config)/, 'repository documentation or config'],
-  [/\bmake [a-z-]+|\bmadge\b/, 'repository tooling'],
-  [
-    /\b(useTransformation|transformInput|parseResponse|createDataControlsAtoms|createSelectionAtom|createEditableBlockAtom|useSelection|useDataControls\w*|useQueryWithSuspense|useQueryKeepingPreviousData|usePaginatedQuery|usePost|usePut|usePatch|useDelete|RestQueryContext|useOptimisticUpdate|useDisplayToastOnAction|useAsyncFunction|useClearSelectionOnChange|useModalValidation|getApiErrorMessage|isApiError|useFeatureFlag|FEATURE_FLAGS|DataTableV2|ListOfValues|EditableBlock|getTypedBlocksByTypes|useFormManager|useFormValues|useFormat|formik|useToast|errorMsg|successMsg|NETWORK_ERROR_KEY|TIMEOUT_ERROR_KEY|VLayout|HLayout|splitActions)\b/i,
-    'custom code of the host repository',
-  ],
-  [
-    /\b(Hero|Block|Page|Form|Dialog|Document|UploadedFile)\.(Root|List|Content|Title|Subtitle|Actions|Body|Field\w*|SubmitButton|InfiniteLoader)\b/,
-    'custom design system component',
-  ],
-  [/\bAPI\.[A-Za-z]/, 'custom endpoint registry'],
 ]
 
 const validateForbidden = (file, body) => {
@@ -106,6 +96,18 @@ const validateForbidden = (file, body) => {
     /\b[a-z]+(?:-[a-z]+)*-(?:best-practices|conception|strategy|standards)\b|\b(?:domain|shared|development|trustview|project)-(?:create|get|model|write|assistant|standards|processus|planning|implementation)[a-z-]*/g
   for (const [name] of body.matchAll(skillMention)) {
     if (!ALLOWED_SKILLS.has(name)) fail(file, `reference to a skill that is not allowed: "${name}"`)
+  }
+  const sourceDir = file === 'SKILL.md' ? SKILL_DIR : RULES_DIR
+  for (const [, target] of stripCodeBlocks(body).matchAll(/\[[^\]\n]*\]\(([^\s)]+)\)/g)) {
+    if (/^(?:[a-z][\w+.-]*:|#|\/)/i.test(target)) continue
+    const destination = resolve(sourceDir, target.split('#')[0])
+    const skillPath = relative(SKILLS_DIR, destination)
+    if (skillPath === '..' || skillPath.startsWith('../') || isAbsolute(skillPath)) {
+      fail(file, `relative link leaves the skills directory: "${target}"`)
+      continue
+    }
+    const [skill] = skillPath.split(/[\\/]/)
+    if (!ALLOWED_SKILLS.has(skill)) fail(file, `link to an undeclared companion skill: "${skill}"`)
   }
   if (/^Reference:/m.test(stripCodeBlocks(body)))
     fail(file, '"Reference:" lines are forbidden (no link to repository code)')

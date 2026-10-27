@@ -1,13 +1,13 @@
 ---
 title: Inject Dynamic Values Through t() Options, Never Concatenation
-impact: MEDIUM-HIGH
+impact: MEDIUM
 impactDescription: translatable sentences and checked placeholders
 tags: i18n, interpolation, placeholders, concatenation
 ---
 
 ## Inject Dynamic Values Through t() Options, Never Concatenation
 
-**Impact: MEDIUM-HIGH (translatable sentences and checked placeholders)**
+**Impact: MEDIUM (translatable sentences and checked placeholders)**
 
 Pass every dynamic value as an interpolation option — `t('key', { name, count })` — and let the catalog sentence place it. Never concatenate a translated string with variables, spaces, numbers or another `t()`: the sentence becomes untranslatable (word order, punctuation, plurals), and a translation check can no longer verify that code and catalog agree on the placeholders.
 

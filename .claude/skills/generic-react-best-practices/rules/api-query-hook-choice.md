@@ -13,7 +13,7 @@ TanStack Query v5 hooks behave differently on loading, errors and key changes. P
 
 | Access pattern | Hook | Loading / errors |
 | --- | --- | --- |
-| One resource the screen needs to render (detail, form, dashboard) | `useSuspenseQuery` | suspends / throws (Suspense and error boundary required) |
+| One resource the screen needs to render (detail, form, screen) | `useSuspenseQuery` | suspends / throws (Suspense and error boundary required) |
 | Paginated or infinite list | `useInfiniteQuery` | `isPending` / `isFetchingNextPage`, `data` undefined first |
 | Data whose key changes while the component stays mounted (options of a select driven by another field, a filter above a table) | `useQuery` with `placeholderData: keepPreviousData` | `isPending` / `isPlaceholderData`; keeps the previous key's data while fetching |
 

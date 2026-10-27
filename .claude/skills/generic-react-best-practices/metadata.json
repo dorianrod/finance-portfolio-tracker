@@ -3,12 +3,16 @@
   "title": "Generic React Best Practices",
   "organization": "Frontend Engineering",
   "date": "October 2026",
-  "note": "It is a delta on top of `vercel-react-best-practices`: apply both.",
+  "note": "Apply it alongside `vercel-react-best-practices`, `vercel-composition-patterns`, `tailwind-design-system` and other relevant skills. This catalog takes precedence over both Vercel skills when their guidance conflicts. Reusable conventions and associated custom ESLint rules belong in the rule files.",
   "dependsOn": [
-    "vercel-react-best-practices"
+    "vercel-react-best-practices",
+    "vercel-composition-patterns",
+    "tailwind-design-system"
   ],
   "abstract": "Opinionated React/TypeScript guidelines for any front-end app (React 19, TanStack Query v5, Jotai, Yup, react-i18next, Jest + React Testing Library), designed for AI agents and LLMs. It is the author's own take on a best-practices guide, complementary to vercel-react-best-practices: domain-first architecture and import boundaries, API hooks and server state, query keys and cache invalidation, domain types, Yup schemas, UI composition and accessibility, Jotai client state, helpers, i18n, testing and code quality. Each rule includes a rationale and incorrect vs. correct examples using generic business vocabulary. The catalog also owns capability mapping, feature hierarchy, shared UI styling and accessibility boundaries, semantic colors, nested-children composition, component complexity review and public API maintenance.",
   "references": [
-    "vercel-react-best-practices"
+    "vercel-react-best-practices",
+    "vercel-composition-patterns",
+    "tailwind-design-system"
   ]
 }

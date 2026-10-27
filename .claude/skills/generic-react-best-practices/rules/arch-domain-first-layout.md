@@ -24,7 +24,7 @@ src/
 ├── hooks/useDebounce.ts                       # catch-all root outside domains and shared
 ├── utils/formatAmount.ts                      # catch-all root
 └── domains/sales/orders/
-    └── features/dashboard/features/           # delivery wrapper, not a business capability
+    └── features/screen/features/           # delivery wrapper, not a business capability
         ├── list/
         └── detail/
 ```

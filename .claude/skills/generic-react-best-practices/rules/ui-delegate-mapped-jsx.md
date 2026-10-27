@@ -11,7 +11,7 @@ tags: ui, components, lists, jsx, eslint
 
 When `map` produces JSX, its callback only renders one named component and passes source values to it. Put branching, derived values, event-handler construction, styling decisions and element structure inside that item component. Data-only transformations that do not produce JSX are unaffected.
 
-Enforce this convention with the ESLint rule `local/no-complex-jsx-map` when the project provides it. Treat a warning from that rule as a request to extract or simplify the mapped item, not as a reason to disable the rule.
+Enforce this convention with the custom ESLint rule `local/no-complex-jsx-map` when the project provides it. Treat a warning from that rule as a request to extract or simplify the mapped item, not as a reason to disable the rule.
 
 **Incorrect (the map callback owns conditions and markup):**
 

@@ -45,3 +45,7 @@ const statusOptions = useOrderStatusOptions()
 ```
 
 The formatter itself follows the same pattern (see `arch-helpers-vs-services` and `helpers-formatter-hooks`). One explicit exception: a pure `build[Form]Schema(t)` exported next to its `use[Form]Schema` hook, to test the schema without rendering (see `yup-form-schema-hook`). A dependency that triggers a side effect (`navigate`, a mutation, a toast) does not belong in `helpers/` at all: it goes in a page action hook or a domain `services/` hook.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-helper-context-params` to prevent formatter and context dependencies from being threaded through helper APIs. Review the dependency's actual role and the form-schema exception rather than relying on its name alone.

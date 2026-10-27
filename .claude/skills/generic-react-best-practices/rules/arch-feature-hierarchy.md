@@ -45,6 +45,10 @@ If the proposed parent has no business responsibility beyond grouping its childr
 - A parent may coordinate children through application composition. If the remaining parent behavior is itself a cohesive capability with no shared consumers, give it a named child feature rather than placing its implementation in `shared/`.
 - A technical extraction or a small variant can remain a component, helper or parameter.
 
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/feature-folder-layout` to count feature scopes below each domain with `maxFeatureDepth: 2`, using the same business-scope interpretation as import boundaries and ownership checks. Report deeper scopes even when no imports exist. A folder named `features` inside a role folder does not create another business scope. Check parent/leaf layout independently. ESLint cannot decide whether the chosen business parent is appropriate and should not move folders automatically.
+
 ### References
 
 - [Business boundaries](arch-business-capability-boundaries.md) — define the capability map first.

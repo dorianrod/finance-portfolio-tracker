@@ -50,3 +50,7 @@ The same split applies to helpers: put `sumAmounts.ts` and `averageAmount.ts` in
 - Tests, stories and Storybook support files, declaration files and tooling configurations are outside this production-module convention.
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/single-public-export` to report production-module violations. Choosing a meaningful owner and directory for extracted files requires review and has no automatic fix.

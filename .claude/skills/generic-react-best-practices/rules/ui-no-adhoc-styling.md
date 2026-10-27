@@ -38,3 +38,7 @@ If no design-system component fits, add or extend one in the shared UI layer ins
 The same boundary covers SVG/Recharts appearance props, local stylesheet imports and imperative DOM style/class/attribute writes, including values supplied through constants, spreads, templates or element factories. A semantic class such as `text-positive` is still visual styling and belongs inside shared UI. Exporting visual class strings does not establish a primitive.
 
 Global stylesheets, themes and token definitions remain design-system infrastructure. Shared UI consumes semantic tokens; domains supply data, actions and generic variants. Dynamic layout styles may remain on external containers. Chart geometry is data supplied to the owning UI primitive. Follow `ui-semantic-colors` for tokens and `arch-shared-no-domain-knowledge` for business adapters.
+
+### ESLint Enforcement
+
+Use the custom ESLint rule `local/no-domain-styling` to distinguish concrete appearance violations (`nonLayoutClass`, `nonLayoutStyle`), values that require inspection (`unverifiableStyle`) and local stylesheets outside permitted roots (`outsideStylesheet`). Aggregate offending classes or properties for each usage and include this catalog rule's identifier. Inspect unresolved values before deciding whether layout can stay local. Selecting or designing a primitive requires review; do not autofix or suppress diagnostics merely to finish a migration.

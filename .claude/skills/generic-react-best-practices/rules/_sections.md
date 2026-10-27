@@ -53,12 +53,12 @@ A rule's impact can never exceed the impact of its section (enforced by `scripts
 
 ## 10. Internationalization (i18n)
 
-**Impact:** MEDIUM-HIGH  
+**Impact:** MEDIUM
 **Description:** Every user-facing string goes through react-i18next with static, analyzable keys so that tooling can detect missing or unused keys.
 
 ## 11. Testing (test)
 
-**Impact:** MEDIUM-HIGH  
+**Impact:** MEDIUM
 **Description:** Jest + React Testing Library tests exercise visible behavior through the real hook stack, stubbing only the network boundary, which makes them robust to refactors.
 
 ## 12. Code Quality (quality)

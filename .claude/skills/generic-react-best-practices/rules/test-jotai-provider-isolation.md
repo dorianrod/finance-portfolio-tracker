@@ -1,13 +1,13 @@
 ---
 title: Isolate Jotai State with a Fresh Store per Test
-impact: MEDIUM-HIGH
+impact: MEDIUM
 impactDescription: prevents state leaking between tests through module-level atoms
 tags: test, jotai, provider, createStore, hydrate
 ---
 
 ## Isolate Jotai State with a Fresh Store per Test
 
-**Impact: MEDIUM-HIGH (prevents state leaking between tests through module-level atoms)**
+**Impact: MEDIUM (prevents state leaking between tests through module-level atoms)**
 
 Atoms declared in `stores/*.atoms.ts` are module singletons. Without a `Provider`, every test in the file writes to the same default Jotai store, so the outcome depends on test order. Give each test its own `createStore()` and wrap the render in `<Provider store={store}>`. Seed initial values with `store.set(atom, value)`: it is typed against the atom, and the store lets you read the result back.
 
