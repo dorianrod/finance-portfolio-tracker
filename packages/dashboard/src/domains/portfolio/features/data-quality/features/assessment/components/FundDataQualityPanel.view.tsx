@@ -293,7 +293,7 @@ function ResolvedHoldingDetail({ holding }: { holding: FundHolding }) {
 
 type DiagnosticsRow = ReturnType<typeof buildFundDiagnosticsRows>[number]
 
-// eslint-disable-next-line complexity -- Optional provenance, issue and expansion fields form one diagnostic table row; source and details already have separate components.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional provenance, issue and expansion fields form one diagnostic table row; source and details already have separate components.
 function FundDiagnosticsRow({
   expanded,
   onToggle,

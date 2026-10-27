@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- Validated fund status inputs feed holdings previews and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund status inputs feed holdings previews and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
 import type { InferType } from 'yup'
 
 import type { RAW_FUND_HOLDING_STATUS_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema'

@@ -60,11 +60,11 @@ export function CombinedAnalysisReliabilityKpi({
     <CompactDataQualityKpi
       tone={tone}
       tooltip={tooltip}
-      // eslint-disable-next-line local/no-prop-drilling -- This feature owns the combined visual metric rows.
+      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats its combined reliability metrics; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges.
       rows={rows}
       qualityTheme={qualityTheme}
       scope={scope}
-      // eslint-disable-next-line local/no-prop-drilling -- This feature owns its composed accessible summary.
+      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality',
         {

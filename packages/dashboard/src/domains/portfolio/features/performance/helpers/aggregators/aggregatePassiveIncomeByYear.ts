@@ -1,7 +1,7 @@
 import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 
-// eslint-disable-next-line complexity -- Account, date and income-kind guards feed one annual passive-income accumulator.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account, date and income-kind guards feed one annual passive-income accumulator.
 export function aggregatePassiveIncomeByYear(
   rows: RawPassiveIncomeOp[],
   accountSet: Set<string> | null,

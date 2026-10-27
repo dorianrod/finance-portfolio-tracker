@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md.
 import { buildPortfolioFilterOptions } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/buildPortfolioFilterOptions'
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'

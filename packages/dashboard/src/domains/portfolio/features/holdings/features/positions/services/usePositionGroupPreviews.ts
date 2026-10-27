@@ -16,7 +16,7 @@ export function usePositionGroupPreviews({
   setAllocationHover,
   setUnderlyingPopover,
 }: Input) {
-  // eslint-disable-next-line complexity -- Trade and savings group handlers share the same preview exclusivity, anchor and dismissal protocol.
+  // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Trade and savings group handlers share the same preview exclusivity, anchor and dismissal protocol.
   return useMemo(() => {
     const item = row.original
     const isTradeGroup = item.kind === 'group' && item.groupType === 'trades'

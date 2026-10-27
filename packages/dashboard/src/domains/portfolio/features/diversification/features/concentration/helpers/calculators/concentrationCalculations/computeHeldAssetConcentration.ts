@@ -4,7 +4,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 import type { ConcentrationSummary } from './concentrationCalculations.types'
 import { isValuedAnalysisPosition } from './isValuedAnalysisPosition'
 
-// eslint-disable-next-line complexity -- One held-asset aggregation normalizes identity, weights and the top-ten summary against the same total.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; One held-asset aggregation normalizes identity, weights and the top-ten summary against the same total.
 export function computeHeldAssetConcentration(
   positions: PositionRow[],
 ): ConcentrationSummary {

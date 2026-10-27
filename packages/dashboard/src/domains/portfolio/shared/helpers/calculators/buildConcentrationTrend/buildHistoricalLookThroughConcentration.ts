@@ -7,7 +7,7 @@ import { historicalSnapshotsByParent } from './historicalSnapshotsByParent'
 import { latestSnapshotAt } from './latestSnapshotAt'
 import { matchesFilters } from './matchesFilters'
 
-// eslint-disable-next-line complexity -- Historical snapshot applicability and account scope define one look-through history pipeline.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Historical snapshot applicability and account scope define one look-through history pipeline.
 export function buildHistoricalLookThroughConcentration(
   rows: RawPosition[],
   history: HistoricalFundHolding[],
@@ -33,7 +33,7 @@ export function buildHistoricalLookThroughConcentration(
   return (
     [...byDate.entries()]
       .toSorted(([left], [right]) => left - right)
-      // eslint-disable-next-line complexity -- Each dated accumulator conserves identified, undisclosed and opaque totals against the same selected value.
+      // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Each dated accumulator conserves identified, undisclosed and opaque totals against the same selected value.
       .map(([date, positions]) => {
         const assets = new Map<
           string,

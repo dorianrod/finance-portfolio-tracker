@@ -180,11 +180,11 @@ function SelectAccountType({
         <SelectAccountRow
           key={account}
           account={account}
-          // eslint-disable-next-line local/no-prop-drilling -- Account rows are direct children of their owning account-type group.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries.
           accountLabels={accountLabels}
-          // eslint-disable-next-line local/no-prop-drilling -- Account rows are direct children of their owning account-type group.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.
           onChange={onChange}
-          // eslint-disable-next-line local/no-prop-drilling -- Account rows are direct children of their owning account-type group.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.
           selected={selected}
         />
       ))}

@@ -64,9 +64,7 @@ export function PositionsTable({
   } = usePositionTableOverlays()
   const { allocationData, groupTotals } = usePositionTableData(data)
 
-  // @tanstack/react-table returns fresh row/column helper functions on every
-  // call, which the React Compiler can never safely memoize — not fixable here.
-  // eslint-disable-next-line react-hooks/incompatible-library
+  // eslint-disable-next-line react-hooks/incompatible-library -- reviewed: 2026-10-27; TanStack Table v8 mutates a stable table instance; React Compiler is not enabled here, and getRowModel() is read on every render without memoizing the table's mutable API.
   const table = useReactTable<TableRow>({
     data,
     columns: POSITION_COLUMNS,
@@ -264,7 +262,7 @@ function PositionBodyRow({
   )
 }
 
-// eslint-disable-next-line complexity -- Optional monetary totals and tones form one account separator row with the table column contract.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional monetary totals and tones form one account separator row with the table column contract.
 function PositionGroupSeparator({
   separatorType,
   totals,

@@ -14,7 +14,7 @@ import { partitionPercentages } from '@/shared/helpers/calculators/partitionPerc
 
 import { buildAnalysisReliabilityMetrics } from './buildAnalysisReliabilityMetrics'
 
-// eslint-disable-next-line complexity -- This joins classification, look-through and pipeline reliability; tone policies and display metrics are delegated to their existing helpers.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; This joins classification, look-through and pipeline reliability; tone policies and display metrics are delegated to their existing helpers.
 export function buildDataQualitySummary({
   allocationLoading,
   coverage,

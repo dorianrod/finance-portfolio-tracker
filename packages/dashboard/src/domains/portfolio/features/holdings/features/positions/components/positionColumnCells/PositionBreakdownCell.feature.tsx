@@ -10,7 +10,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
-// eslint-disable-next-line complexity -- Allocation and underlying previews share the same exclusive overlay protocol and table metadata.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Allocation and underlying previews share the same exclusive overlay protocol and table metadata.
 export function PositionBreakdownCell({
   row,
   table,
@@ -85,7 +85,7 @@ export function PositionBreakdownCell({
       )}
       {fundStatus && (
         <UnderlyingStatusControl
-          // eslint-disable-next-line local/no-prop-drilling -- The table checks action availability; the control receives the matching API entity and owns only popover selection.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The table checks action availability; the control receives the matching API entity and owns only popover selection.
           status={fundStatus}
           assetName={r.name}
           positionId={r.id}

@@ -12,7 +12,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { SavingsHistoryChart } from './SavingsHistoryChart.view'
 
-// eslint-disable-next-line complexity -- Remote-history and operation-history fallbacks are states of the same savings preview.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Remote-history and operation-history fallbacks are states of the same savings preview.
 export function HoverSavingsChart({
   target,
   onMouseEnter,

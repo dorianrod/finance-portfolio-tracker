@@ -19,7 +19,7 @@ changes, including imported types and translation catalogs. Use
 parsing time, expensive rules and slow files. See the
 [ESLint performance audit](ESLINT_PERFORMANCE_AUDIT.md) for measurements and scope.
 
-`npm run lint` also enforces a versioned `--max-warnings` ceiling, initially `0`.
+`npm run lint` also enforces a versioned `--max-warnings` ceiling, currently `162`.
 Every reviewed suppression produces one tracking warning, even when it names
 several rules. Use a line-scoped directive with named rules and this metadata:
 
@@ -39,10 +39,19 @@ errors; blanket and file/block disables are forbidden. These policy diagnostics
 remain visible even under a blanket disable. No autofix dates or approves an
 exception, and nothing automatically updates the ceiling.
 
-The existing undated suppressions have deliberately not been audited or approved;
-lint reports them as errors until a separate audit using
-[`generic-react-best-practices`](../../.agents/skills/generic-react-best-practices/SKILL.md)
-reviews them. See its
+The 2026-10-27 audit reviewed all 162 existing directives against the affected code,
+rules and consumers, and confirmed that each still suppresses a diagnostic. The
+ceiling accounts for 57 cohesive-function complexity exceptions (one also covers
+function length), 69 shared-input ownership exceptions, 35 controlled-component or
+presentation-adapter exceptions and one TanStack Table v8 dependency constraint.
+It leaves no spare capacity. Each directive records its technical reason and actual
+review date. The table exception follows React's
+[incompatible-library guidance](https://react.dev/reference/eslint-plugin-react-hooks/lints/incompatible-library):
+the stable table instance uses interior mutability, so its row model is read on
+every render without memoizing that API; React Compiler is not enabled.
+
+Future reviews follow
+[`generic-react-best-practices`](../../.agents/skills/generic-react-best-practices/SKILL.md), its
 [exception review rule](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md)
 and [warning budget rule](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-warning-budget.md).
 

@@ -9,7 +9,7 @@ import type {
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 
-// eslint-disable-next-line complexity -- Canonical issuers and source funds share one accumulation pass; splitting would distribute the same mutable ledger.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Canonical issuers and source funds share one accumulation pass; splitting would distribute the same mutable ledger.
 export function buildIssuerExposures(
   positions: PositionRow[],
   holdings: FundHolding[],

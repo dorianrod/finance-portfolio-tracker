@@ -176,7 +176,7 @@ function toOverviewConcentration(
   }
 }
 
-// eslint-disable-next-line complexity -- Nullable current and previous metrics are projections of the same concentration comparison window.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Nullable current and previous metrics are projections of the same concentration comparison window.
 function concentrationComparison(
   points: HistoricalConcentrationPoint[],
   windows: OverviewWindows,

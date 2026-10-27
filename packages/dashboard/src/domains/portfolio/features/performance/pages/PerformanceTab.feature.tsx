@@ -28,7 +28,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-// eslint-disable-next-line complexity -- This feature composes performance entry components and their shared availability; financial calculations are delegated.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; This feature composes performance entry components and their shared availability; financial calculations are delegated.
 export function PerformanceTab({
   history,
   passiveIncome,
@@ -129,7 +129,7 @@ export function PerformanceTab({
               scopeLabel={irrScopeLabel}
             />
             <TrailingThreeYearIrrKpi
-              // eslint-disable-next-line local/no-prop-drilling -- The page feature owns trailing-period selection.
+              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR from its scoped history; the KPI formats that scalar with the shared availability status.
               value={rollingTri3y}
               status={irrStatus}
               scopeLabel={irrScopeLabel}
@@ -152,7 +152,7 @@ export function PerformanceTab({
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}
         sinceTrackingIrr={globalTri}
-        // eslint-disable-next-line local/no-prop-drilling -- The page feature owns trailing-period IRR selection.
+        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR once for both the KPI and contribution card; the card consumes that same reporting value.
         trailingThreeYearIrr={rollingTri3y}
         irrStatus={irrStatus}
       />

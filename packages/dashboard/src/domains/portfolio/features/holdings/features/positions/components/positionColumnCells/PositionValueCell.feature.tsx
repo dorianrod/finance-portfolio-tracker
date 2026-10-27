@@ -9,7 +9,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Text } from '@/shared/ui/Text.view'
 
-// eslint-disable-next-line complexity -- Value, quantity, purchase basis and cash variants implement the same table value column.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Value, quantity, purchase basis and cash variants implement the same table value column.
 export function PositionValueCell({ row }: { row: Row<TableRow> }) {
   const { formatMoney, formatNumber } = usePositionTableFormatters()
 

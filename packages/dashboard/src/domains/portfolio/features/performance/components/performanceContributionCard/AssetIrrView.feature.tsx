@@ -54,7 +54,7 @@ export function AssetIrrView({
                 tooltip={i18n.t(
                   'ui.performancecontributioncard.numberOfAssetsWithEnoughPositiveAndNegativeCash',
                 )}
-                // eslint-disable-next-line local/no-prop-drilling -- The asset-IRR feature owns its effective reporting scope.
+                // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The asset-IRR result supplies its actual end date; MetricLabel only presents the label and adds live filter badges.
                 scope={{
                   account: 'filterable',
                   period: 'range',

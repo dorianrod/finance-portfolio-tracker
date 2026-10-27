@@ -87,4 +87,6 @@ Three additional scoped exceptions concern
 the scoped allocation rows to allocation; both analyses share the availability
 gates derived from that scope. These are parent-owned common inputs rather than
 category selection or concentration calculations. Application wrappers are not
-counted as feature consumers. See [DORIAN_REACT_AUDIT.md](DORIAN_REACT_AUDIT.md).
+counted as feature consumers. This path was rechecked in
+[DashboardDiversification.feature.tsx](src/app/DashboardDiversification.feature.tsx)
+during the 2026-10-27 ESLint exception review.

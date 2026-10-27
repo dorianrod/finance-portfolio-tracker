@@ -7,7 +7,7 @@ import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
 
 import { BarAppearanceContext } from './barAppearanceContext'
 
-// eslint-disable-next-line complexity -- All four coordinates and inherited appearance must be validated together for one Recharts rectangle.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; All four coordinates and inherited appearance must be validated together for one Recharts rectangle.
 export function ChartRectangle({
   geometry,
   tone,

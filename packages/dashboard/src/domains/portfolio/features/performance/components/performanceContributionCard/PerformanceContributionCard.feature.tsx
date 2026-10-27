@@ -165,7 +165,7 @@ function ContributionList({
           <Inline as="span" align="center">
             {title}
             <ScopedInfoTooltip
-              // eslint-disable-next-line local/no-prop-drilling -- Copy selection is presentation logic owned by this contribution section.
+              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
               text={
                 positive
                   ? i18n.t(
@@ -235,7 +235,7 @@ function ContributionSummaryMetrics({
               tooltip={i18n.t(
                 'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
               )}
-              // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
+              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
               scope={{
                 account: 'filterable',
                 period: activeHorizon,
@@ -256,7 +256,7 @@ function ContributionSummaryMetrics({
               tooltip={i18n.t(
                 'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
               )}
-              // eslint-disable-next-line local/no-prop-drilling -- This card owns the selected reporting horizon.
+              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
               scope={{
                 account: 'filterable',
                 period: activeHorizon,
@@ -344,7 +344,7 @@ function ContributionRankings({
 
         items={summary.contributors}
         positive
-        // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
+        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.
         scope={{
           account: 'filterable',
           period: scopePeriod,
@@ -356,7 +356,7 @@ function ContributionRankings({
 
         items={summary.detractors}
         positive={false}
-        // eslint-disable-next-line local/no-prop-drilling -- Contribution ranking and scope are computed by the owning card feature.
+        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.
         scope={{
           account: 'filterable',
           period: scopePeriod,

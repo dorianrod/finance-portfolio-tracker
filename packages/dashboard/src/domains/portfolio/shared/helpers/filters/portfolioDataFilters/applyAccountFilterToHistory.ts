@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -6,7 +6,7 @@ import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPositio
 // When an account filter is active, the portfolio-wide history series is
 // replaced with one rebuilt from raw per-account position snapshots
 // restricted to the selected accounts.
-// eslint-disable-next-line complexity -- Selected-account values and cost basis reconstruct one fallback history series with explicitly unavailable IRR.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Selected-account values and cost basis reconstruct one fallback history series with explicitly unavailable IRR.
 export function applyAccountFilterToHistory(
   allPositionRows: RawPositionRow[],
   enrichedHistory: PortfolioHistoryPoint[],

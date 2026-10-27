@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- The shell distributes the prepared scope to both allocation and concentration; see DORIAN_REACT_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell distributes the prepared scope to both allocation and concentration. See SHARED_OWNERSHIP_AUDIT.md.
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'

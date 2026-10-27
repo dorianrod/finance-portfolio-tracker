@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 import { CASH_SUFFIX } from '@/domains/portfolio/shared/constants/accountCategories/cashSuffix'
 import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories/categoryOrder'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
@@ -286,7 +286,7 @@ function buildAssetPositionRow(
   }
 }
 
-// eslint-disable-next-line complexity -- Latest-snapshot and operation fallbacks must resolve one consistent asset identity and active/closed status.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Latest-snapshot and operation fallbacks must resolve one consistent asset identity and active/closed status.
 function resolvePositionIdentity(
   key: string,
   assetOps: RawOperation[],

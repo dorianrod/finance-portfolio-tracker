@@ -4,7 +4,7 @@ import { BUTTON_SIZES } from '@/shared/ui/layoutAppearance/buttonSizes'
 
 import type { ButtonProps } from './controls.types'
 
-// eslint-disable-next-line complexity -- Selected appearance and current-page accessibility state belong to the same navigation button.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Selected appearance and current-page accessibility state belong to the same navigation button.
 export function NavigationButton({
   active,
   onIntent,

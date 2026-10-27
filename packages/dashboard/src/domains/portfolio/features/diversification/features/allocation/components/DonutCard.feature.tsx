@@ -55,14 +55,14 @@ export function DonutCard({
       </DonutCardView.PositionsControl>
       <DonutCardView.Tooltip>
         <ScopedInfoTooltip
-          // eslint-disable-next-line local/no-prop-drilling -- The chart feature owns its translated description; the adapter adds live filter scope.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
           text={i18n.t(
             'ui.donutcard.portfolioAllocationByValue0AtTheDisplayedSnapshot',
             {
               value0: title.toLowerCase(),
             },
           )}
-          // eslint-disable-next-line local/no-prop-drilling -- This feature owns the chart's reporting snapshot.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the allocation snapshot; ScopedInfoTooltip only adds live filter badges to its reporting date.
           scope={{
             account: 'filterable',
             period: 'as-of',

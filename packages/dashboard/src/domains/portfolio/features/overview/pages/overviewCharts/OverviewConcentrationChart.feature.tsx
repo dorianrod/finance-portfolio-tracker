@@ -50,9 +50,9 @@ export function OverviewConcentrationChart({
                 ? i18n.t('ui.overviewcharts.largestUnderlyingAssets')
                 : i18n.t('ui.overviewcharts.largestHeldPositions')}
               <ScopedInfoTooltip
-                // eslint-disable-next-line local/no-prop-drilling -- Mode-specific chart copy is owned by this feature.
+                // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart chooses held versus underlying explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
                 text={description}
-                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the effective concentration snapshot scope.
+                // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the concentration snapshot; ScopedInfoTooltip only adds live filter badges to the supplied reporting date.
                 scope={{
                   account: 'filterable',
                   period: 'as-of',

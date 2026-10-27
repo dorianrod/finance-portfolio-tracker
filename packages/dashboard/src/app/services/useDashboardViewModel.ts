@@ -38,7 +38,7 @@ import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.t
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
-// eslint-disable-next-line complexity, max-lines-per-function -- This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
+// eslint-disable-next-line complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
 export function useDashboardViewModel() {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const filters = useAtomValue(dashboardFiltersAtom)

@@ -1,4 +1,4 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
+// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'

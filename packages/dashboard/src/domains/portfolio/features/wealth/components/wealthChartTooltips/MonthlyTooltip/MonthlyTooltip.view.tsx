@@ -17,7 +17,7 @@ import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 import { selectMonthlyTooltipOperations } from './helpers/selectors/selectMonthlyTooltipOperations'
 
-// eslint-disable-next-line complexity -- Monthly operations and trailing totals are the context of one savings-history hover point.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Monthly operations and trailing totals are the context of one savings-history hover point.
 export function MonthlyTooltip({
   active,
   payload,

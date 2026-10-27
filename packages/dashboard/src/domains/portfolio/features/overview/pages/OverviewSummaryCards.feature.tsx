@@ -114,7 +114,7 @@ function OverviewValueCard({
       description={i18n.t(
         'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTaxMeasuredAtThe',
       )}
-      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its period-end summary scope.
+      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the period-end snapshot; CardShell adds navigation and live filter badges without reinterpreting that reporting date.
       scope={{
         account: 'filterable',
         period: 'as-of',
@@ -274,7 +274,7 @@ function OverviewPerformanceCard({
                   text={i18n.t(
                     'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
                   )}
-                  // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns its trailing-period tooltip scope.
+                  // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the comparison end date; ScopedInfoTooltip only adds live filter badges to this trailing-period specification.
                   scope={{
                     account: 'filterable',
                     period: 'trailing-3y',
@@ -340,13 +340,13 @@ function OverviewConcentrationCard({
       description={i18n.t(
         'ui.overviewsummarycards.shareOfThePortfolioRepresentedByTheLargestAsset',
       )}
-      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
+      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.
       scope={{
         account: 'filterable',
         period: 'as-of',
         effectiveDate: comparison.windows.current.end,
       }}
-      // eslint-disable-next-line local/no-prop-drilling -- The overview feature owns concentration scope and fallback labeling.
+      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.
       eyebrow={primaryLabel}
       destination="diversification"
       accent={'attention'}

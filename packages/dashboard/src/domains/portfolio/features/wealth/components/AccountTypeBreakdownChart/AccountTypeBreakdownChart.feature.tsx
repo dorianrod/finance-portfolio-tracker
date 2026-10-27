@@ -73,7 +73,7 @@ export function AccountTypeBreakdownChart({
   )
 }
 
-// eslint-disable-next-line complexity -- Optional Recharts coordinates and row index guard one account label; collision geometry is already delegated.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional Recharts coordinates and row index guard one account label; collision geometry is already delegated.
 function AccountTypeLabel({
   data,
   ...props

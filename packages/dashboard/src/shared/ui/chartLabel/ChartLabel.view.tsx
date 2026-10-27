@@ -4,7 +4,7 @@ import { CHART_THEME } from '@/shared/theme/chartTheme'
 import { type ChartAge, chartAgeOpacity } from '@/shared/ui/chartAgeAppearance'
 import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
 
-// eslint-disable-next-line complexity -- SVG typography, baseline and historical-age appearance belong to the same label primitive.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; SVG typography, baseline and historical-age appearance belong to the same label primitive.
 export function ChartLabel({
   as: Tag = 'text',
   tone = 'label',

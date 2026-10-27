@@ -2,7 +2,7 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 
 import { matchesPositionScope } from './matchesPositionScope'
 
-// eslint-disable-next-line complexity -- Account scope and finite snapshot guards produce one gross-value history series.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account scope and finite snapshot guards produce one gross-value history series.
 export function buildGrossValueHistory(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),

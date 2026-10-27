@@ -60,14 +60,14 @@ export function ConcentrationChart({
             <Inline as="span" align="center">
               {i18n.t('ui.concentrationchart.largestHoldings')}
               <ScopedInfoTooltip
-                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+                // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart owns the fallback description and snapshot date; ScopedInfoTooltip only renders that specification with live filter badges.
                 text={
                   description ??
                   i18n.t(
                     'ui.concentrationchart.largestPortfolioExposuresAggregatedAcrossAccounts',
                   )
                 }
-                // eslint-disable-next-line local/no-prop-drilling -- This feature owns the fallback copy and scope passed to the tooltip feature adapter.
+                // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart owns the fallback description and snapshot date; ScopedInfoTooltip only renders that specification with live filter badges.
                 scope={{
                   account: 'filterable',
                   period: 'as-of',

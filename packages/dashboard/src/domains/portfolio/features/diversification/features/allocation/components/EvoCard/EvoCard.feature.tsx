@@ -54,7 +54,7 @@ export function EvoCard({
     >
       <EvoCardView.Tooltip>
         <ScopedInfoTooltip
-          // eslint-disable-next-line local/no-prop-drilling -- The chart feature owns its translated description; the adapter adds live filter scope.
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
           text={i18n.t('ui.evocard.historicalPortfolioAllocationByValue0', {
             value0: title.toLowerCase(),
           })}
