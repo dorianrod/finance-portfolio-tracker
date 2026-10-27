@@ -6,6 +6,14 @@ Source configuration: [ESLint](../../../../packages/dashboard/eslint.config.js),
 
 Recheck each recorded complexity rationale when its function changes; an earlier keep decision is not a permanent exemption.
 
+## Choose Memo Boundaries by Invalidation
+
+Catalog rule: [quality-usecallback-for-functions](../rules/quality-usecallback-for-functions.md).
+
+`react-hooks/exhaustive-deps` runs at error level and checks dependencies. It does not determine calculation cost, independently useful reference stability or whether a hook's callers need its return wrapper to be stable. There is no local rule imposing a memo count or automatically merging memo callbacks.
+
+Review those decisions using the actual inputs and consumers. In `useDashboardPerformance`, the position summaries, trailing income and passive-income request state can change independently. Combining all calculations into the returned object's memo would recompute summaries and recreate their references on request updates. Its current consumer destructures the result, so stabilizing the outer wrapper alone supplies no benefit to that consumer. Grouping cohesive calculations and dropping an unused wrapper cache are separate decisions; neither justifies merging every cache.
+
 ## Review and Date ESLint Exceptions
 
 Catalog rule: [quality-eslint-disable-scoped](../rules/quality-eslint-disable-scoped.md).

@@ -219,7 +219,7 @@ These topics are generic React advice. Apply the Vercel rule instead of looking 
 
 ### Arbitrations on Vercel rules
 
-- **React Compiler**: when it is not enabled, ignore the Vercel notes saying manual memoization is unnecessary: functions and objects returned by hooks must be memoized (`quality-usecallback-for-functions`).
+- **React Compiler**: when it is not enabled, manually memoize returned functions and object/array values when callers rely on their reference stability (`quality-usecallback-for-functions`). This does not require a memo per field or a stable return wrapper when callers only consume its fields. Build a cohesive result inside one `useMemo`; retain separate caches for independently changing expensive calculations or exposed references (`rerender-split-combined-hooks`).
 - **Client-side SPA with TanStack Query**: `client-swr-dedup` (use the query hooks instead), all `server-*` rules, `async-api-routes`, `rendering-hydration-no-flicker`, `rendering-hydration-suppress-warning` and `rendering-script-defer-async` do not apply.
 - **Suspense boundaries** (`async-suspense-boundaries`) apply, always together with an error boundary (`api-suspense-error-boundary`) and never between a compound component and its content slot (`ui-compound-slots-direct-children`).
 
