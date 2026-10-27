@@ -10,7 +10,7 @@ October 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
-> generating, or refactoring React code. Apply it alongside `tailwind-design-system` and other relevant skills. This catalog owns architecture, composition, client-side performance and custom ESLint requirements, and takes precedence over conflicting companion guidance.
+> generating, or refactoring React code. Load `tailwind-design-system` only when implementing or reviewing code inside `shared/ui`, where advanced styling and design-system patterns belong. Composing shared UI primitives and using basic layout classes in domain code do not require that skill. This catalog owns architecture, composition, client-side performance and custom ESLint requirements, and takes precedence over conflicting companion guidance.
 
 ---
 

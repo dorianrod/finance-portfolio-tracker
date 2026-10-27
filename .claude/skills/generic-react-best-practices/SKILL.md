@@ -5,8 +5,9 @@ description: >
   react-i18next, Radix, Jest + React Testing Library). Use it whenever you write, review, refactor or audit React code:
   domain-first architecture and import boundaries, API query/mutation hooks, query keys and cache
   invalidation, domain types, Yup schemas and form validation, UI composition and accessibility, Jotai
-  stores, helpers and formatters, i18n, tests, rendering performance and code quality. Apply it alongside
-  tailwind-design-system on relevant React tasks.
+  stores, helpers and formatters, i18n, tests, rendering performance and code quality. Load
+  tailwind-design-system alongside it only when working inside shared/ui, where advanced styling patterns belong.
+  Basic layout classes in domain code do not require that companion skill.
   Also use for ESLint exception audits and warning budgets.
 license: Internal
 metadata:
@@ -18,7 +19,9 @@ metadata:
 
 Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 109 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
-This skill defines our reusable React conventions, component composition and client-side performance guidance. Apply it together with `tailwind-design-system` for design-system implementation. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references. Framework-specific server rendering and API-route conventions are outside this catalog.
+This skill defines our reusable React conventions, component composition and client-side performance guidance. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references. Framework-specific server rendering and API-route conventions are outside this catalog.
+
+**Companion skill scope:** Load `tailwind-design-system` only when the work targets implementation or review inside `shared/ui`, where advanced styling and design-system patterns belong. Domain code composes shared UI primitives and uses only basic layout classes; this does not require the Tailwind skill. Importing or composing a shared UI component alone does not trigger loading it.
 
 **Priority:** When this catalog conflicts with a companion skill, follow this catalog's applicable rule.
 
