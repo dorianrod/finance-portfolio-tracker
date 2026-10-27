@@ -71,6 +71,43 @@ describe('no-inline-format-fallback', () => {
     ])
   })
 
+  it.each([
+    `value == null ? <Text>—</Text> : <Text>{formatNumber(value)}</Text>`,
+    `value == null ? <Text>—</Text> : formatNumber(value)`,
+    `value === 0 ? <Text>{i18n.t('missing')}</Text> : <Text>{formatNumber(value)}</Text>`,
+    `value ? <><Text>{formatNumber(value)}</Text></> : <Text>—</Text>`,
+    `record.value == null ? <Text>\n —\n </Text> : <Text>\n {formatNumber(record.value)}\n </Text>`,
+  ])('rejects a display guard through JSX wrappers: %s', (expression) => {
+    const code = `const formatNumber = useFormatNumber(); const label = ${expression}`
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'formatterFallback',
+    ])
+  })
+
+  it.each([
+    `if (value == null) return <Text>—</Text>; return <Text>{formatNumber(value)}</Text>`,
+    `if (value === 0) { return <Text>{i18n.t('missing')}</Text> }; return formatNumber(value)`,
+    `if (value) return formatNumber(value); else return <Text>—</Text>`,
+    `if (value != null) { return <Text>{formatNumber(value)}</Text> } else { return <Text>—</Text> }`,
+  ])('rejects a return-only display guard: %s', (body) => {
+    const code = `function Value({ value }) { const formatNumber = useFormatNumber(); ${body} }`
+    expect(lint(code).map(({ messageId }) => messageId)).toEqual([
+      'formatterFallback',
+    ])
+  })
+
+  it.each([
+    `if (!ready) return <Text>—</Text>; return formatNumber(value)`,
+    `if (other == null) return <Text>—</Text>; return formatNumber(value)`,
+    `if (value == null) return <Empty />; return formatNumber(value)`,
+    `if (value == null) { reportMissing(); return <Text>—</Text> }; return formatNumber(value)`,
+    `if (value == null) return <Text>—</Text>; value = getValue(); return formatNumber(value)`,
+    `if (value == null) { return <Text>—</Text> } else { reportValue(); return formatNumber(value) }`,
+  ])('preserves structural and business return guards: %s', (body) => {
+    const code = `function Value({ value }) { const formatNumber = useFormatNumber(); ${body} }`
+    expect(lint(code)).toEqual([])
+  })
+
   it('resolves aliases of both the imported hook and its result', () => {
     const code = `const money = useMoney(); const display = money; const label = value == null ? '—' : display(value)`
     const prelude = `import { useFormatMoney as useMoney } from '@/shared/helpers/formatters/useFormatMoney'`
@@ -97,6 +134,10 @@ describe('no-inline-format-fallback', () => {
     `record.other == null ? '—' : formatNumber(record.value)`,
     `record[key] == null ? '—' : formatNumber(record[otherKey])`,
     `value == null ? <Empty /> : formatNumber(value)`,
+    `value == null ? <Text><Icon />Missing</Text> : formatNumber(value)`,
+    `value == null ? <Text>—</Text> : <Text>{formatNumber(value)}<Details /></Text>`,
+    `status === 'ready' ? <Text>{formatNumber(value)}</Text> : <Text>—</Text>`,
+    `other == null ? <Text>—</Text> : <Text>{formatNumber(value)}</Text>`,
     `value == null ? null : formatNumber(value)`,
     `value == null ? undefined : formatNumber(value)`,
     `status === 'ready' && value != null ? formatNumber(value) : '—'`,

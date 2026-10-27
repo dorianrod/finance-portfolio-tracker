@@ -2,9 +2,40 @@
 
 Périmètre : code React/TypeScript de `src`, application, sept capacités de premier niveau du domaine portfolio, sous-features, design system, tests et configuration ESLint. Référence principale : [dorian-react-best-pratices](../../.agents/skills/dorian-react-best-pratices/SKILL.md), version 0.11.0. Les conventions techniques génériques de dossiers, rôles et imports complètent ses décisions métier.
 
-Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Le lint initial et les 1 312 tests initiaux passaient ; les corrections ci-dessous concernent donc essentiellement des écarts que ces contrôles ne détectaient pas.
+Le contrôle automatique porte sur tout le dashboard. La revue manuelle complète ces contrôles par l'examen des calculs répartis entre variables et callbacks, des fallbacks cachés dans les helpers, des contrats UI et des données qui transitent par le shell. Ce rapport conserve les corrections du premier audit et présente en premier le contre-audit effectué sur son résultat.
 
-## Corrections
+## Contre-audit : corrections supplémentaires
+
+Le contre-audit partait d'un lint sans diagnostic, d'un typage valide et de **143 fichiers, 1 339 tests réussis**. Il reprend les 15 règles du catalogue : styles et couleurs, composition, frontières métier et propriété, complexité, indépendance du design system, accessibilité, calculs, formatters, exports et dépréciations. Les conventions génériques complètent la revue technique ; la carte métier reste celle de [ARCHITECTURE.md](ARCHITECTURE.md).
+
+| Constat                                                                                                      | Correction                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Des cellules choisissaient encore elles-mêmes `null/0 → —`, parfois à travers des éléments JSX.              | `GainCell`, les cellules de gain et de valeur, et `PreviousValue` utilisent les fallbacks des formatters existants. `GainCell` transmet explicitement la politique `zeroAsFallback` : un gain nul reste formaté ailleurs, et reste masqué pour les gains réalisés où c'était le comportement attendu. |
+| La cellule TRI ne rendait le rendement glissant que si le rendement global était présent.                    | Le rendement glissant s'affiche indépendamment, y compris lorsqu'il vaut zéro ou est négatif. Le formatter de pourcentage possède un suffixe textuel générique : `/yr` s'ajoute aux nombres et jamais au placeholder. La traduction devenue inutilisée a été supprimée.                               |
+| Le pourcentage non classifié était dérivé dans le composant par une somme puis un ratio dépendant.           | `getUnclassifiedAllocationPercentage`, dans les helpers de qualité d'assessment, possède la dérivation et son cas de total nul. Le composant conserve le choix du ton et le rendu.                                                                                                                    |
+| `PieLabel` rejetait les coordonnées et angles valant zéro par des tests de truthiness.                       | Les coordonnées et l'angle sont vérifiés contre l'absence. Les étiquettes avec un angle de zéro ou un centre sur un axe s'affichent ; les données manquantes et parts trop petites restent masquées.                                                                                                  |
+| La règle de fallback ne détectait ni les éléments JSX enveloppant le texte, ni les gardes de retour simples. | `local/no-inline-format-fallback` reconnaît les wrappers à contenu unique, fragments, traductions et retours adjacents ou `if/else`. Les branches structurelles, gardes métier, valeurs différentes et instructions intermédiaires restent exclues.                                                   |
+
+### Décisions de revue
+
+- La carte des capacités et les chemins de données du shell restent cohérents. Les entrées communes distribuées par props conservent les justifications de [SHARED_OWNERSHIP_AUDIT.md](SHARED_OWNERSHIP_AUDIT.md) ; aucun déplacement ni consommateur artificiel n'a été ajouté.
+- Les opérations simples et autonomes autorisées par la règle de calcul restent dans les composants. La dérivation somme/ratio a été extraite dans son propriétaire. L'implémentation interne du formatter de pourcentage garde une responsabilité de formatage distincte de la résolution du fallback, sous les seuils de complexité.
+- Les primitives existantes possèdent toujours l'apparence et les comportements d'accessibilité. Les contrôles couvrent les imports, props, spreads et usages JSX ; les tests des primitives vérifient notamment clavier, associations, dismissal et restauration du focus. Les changements n'ajoutent aucun style visuel ni câblage ARIA dans les features.
+- Un export public de valeur par module et API callable en premier restent vérifiés. Le contrôle typé des dépréciations reste actif sur production, tests et configuration.
+- Aucune désactivation ESLint, hausse de seuil ou dérogation d'architecture n'a été ajoutée. La garde géométrique de `PieLabel` conserve sa responsabilité unique et sa justification de complexité existante.
+
+### Vérification du contre-audit
+
+- `npm test` : **147 fichiers, 1 385 tests réussis**, soit **46 cas supplémentaires** couvrant fallbacks, zéro, pertes, rendements indépendants, couverture, géométrie nulle valide et diagnostics ESLint.
+- `npm run build` : typage TypeScript et bundle de production réussis.
+- `npm run lint -- --max-warnings=0` : aucune erreur ni avertissement.
+- `npx prettier --check .`, `node scripts/check-i18n-catalog.mjs` et `git diff --check` : conformes.
+
+La revue manuelle complète les contrôles automatiques sur les flux et motifs ci-dessus ; elle ne constitue pas une preuve d'absence de tout bug. Ces validations n'incluent pas une revue visuelle interactive en navigateur.
+
+## Corrections du premier audit
+
+Le premier audit partait de 1 312 tests réussis et d'un lint sans diagnostic. Les corrections historiques ci-dessous portaient également sur des écarts que ces contrôles ne détectaient pas.
 
 | Écart                                                                                                                                | Correction et propriété finale                                                                                                                                                                                                                                                |
 | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -53,7 +84,7 @@ Les trois modules `prepareDiversificationScope`, `scopeRawAllocationData` et `ex
 
 Le chemin réel est `DiversificationCharts` → `prepareDiversificationScope` → `AllocationSection` et `ConcentrationSection`. Allocation reçoit les dimensions filtrées ; concentration reçoit les positions applicables. Les deux partagent les gardes qui déterminent si ce périmètre permet l'analyse, notamment l'absence de breakdown courant. Les règles spécifiques de sélection des catégories et de calcul de concentration restent dans leurs enfants respectifs. L'application n'est pas comptée comme une feature supplémentaire.
 
-## Vérification
+## Vérification du premier audit
 
 - Suite complète : **143 fichiers, 1 339 tests réussis**, contre 137 fichiers et
   1 312 tests au départ. Les 27 cas supplémentaires couvrent notamment les signes

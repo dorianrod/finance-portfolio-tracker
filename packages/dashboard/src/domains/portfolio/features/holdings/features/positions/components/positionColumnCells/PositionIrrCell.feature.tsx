@@ -28,21 +28,16 @@ export function PositionIrrCell({ row }: { row: Row<TableRow> }) {
             </Layout>
           </Text>
         )}
-        {r.xirr != null && (
-          <Layout as="span" flow="inline" spaceBefore="compact">
-            <Text variant="tiny" tone="subtle">
-              {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
-              {r.xirr_rolling_3y == null
-                ? '—'
-                : i18n.t('ui.positionstable.value0Yr', {
-                    value0: formatPercentage(r.xirr_rolling_3y, {
-                      decimals: 2,
-                      signed: true,
-                    }),
-                  })}
-            </Text>
-          </Layout>
-        )}
+        <Layout as="span" flow="inline" spaceBefore="compact">
+          <Text variant="tiny" tone="subtle">
+            {formatIrrPeriodLabel(r.xirr_rolling_period_years)}:{' '}
+            {formatPercentage(r.xirr_rolling_3y, {
+              decimals: 2,
+              signed: true,
+              suffix: i18n.t('ui.positionstable.yr.22ed45'),
+            })}
+          </Text>
+        </Layout>
       </Stack>
     </Text>
   )

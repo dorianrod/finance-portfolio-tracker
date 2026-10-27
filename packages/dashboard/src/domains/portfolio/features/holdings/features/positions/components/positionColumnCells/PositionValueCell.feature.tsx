@@ -20,18 +20,17 @@ export function PositionValueCell({ row }: { row: Row<TableRow> }) {
       <Text variant="compact">
         <Stack as="span">
           <Inline as="span" align="center" gap="compact">
-            {r.total_value == null ? (
-              <Text tone="subtle">—</Text>
-            ) : (
-              <Text variant="medium" tone="default">
-                {formatMoney(r.total_value)}
-              </Text>
-            )}
+            <Text
+              variant={r.total_value == null ? undefined : 'medium'}
+              tone={r.total_value == null ? 'subtle' : 'default'}
+            >
+              {formatMoney(r.total_value)}
+            </Text>
           </Inline>
           {showQuantity && (
             <Layout as="span" flow="inline" spaceBefore="compact">
               <Text variant="tiny" tone="subtle">
-                {formatNumber(r.quantity!, {
+                {formatNumber(r.quantity, {
                   maximumFractionDigits: 0,
                 })}
                 {r.last_price != null && (

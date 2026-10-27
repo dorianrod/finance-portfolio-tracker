@@ -23,6 +23,25 @@ function unwrap(node) {
   return current
 }
 
+function displayExpression(node) {
+  const value = unwrap(node)
+  if (value?.type === 'JSXExpressionContainer')
+    return displayExpression(value.expression)
+  if (value?.type !== 'JSXElement' && value?.type !== 'JSXFragment')
+    return value
+  const content = value.children.filter(
+    (child) => child.type !== 'JSXText' || child.value.trim().length > 0,
+  )
+  return content.length === 1 ? displayExpression(content[0]) : value
+}
+
+function returnedValue(statement) {
+  if (statement?.type === 'ReturnStatement') return statement.argument
+  if (statement?.type === 'BlockStatement' && statement.body.length === 1)
+    return returnedValue(statement.body[0])
+  return null
+}
+
 export default {
   meta: {
     type: 'suggestion',
@@ -105,7 +124,7 @@ export default {
     }
 
     function isFormatterCall(node) {
-      const expression = unwrap(node)
+      const expression = displayExpression(node)
       return (
         expression?.type === 'CallExpression' && isFormatter(expression.callee)
       )
@@ -159,9 +178,10 @@ export default {
     }
 
     function isTextFallback(node) {
-      const value = unwrap(node)
+      const value = displayExpression(node)
       return (
         (value?.type === 'Literal' && typeof value.value === 'string') ||
+        value?.type === 'JSXText' ||
         value?.type === 'TemplateLiteral' ||
         (value?.type === 'Identifier' && !isEmptyLiteral(value)) ||
         (value?.type === 'CallExpression' &&
@@ -170,21 +190,39 @@ export default {
       )
     }
 
+    function checkGuard(node, consequent, alternate) {
+      for (const [formatted, fallback] of [
+        [consequent, alternate],
+        [alternate, consequent],
+      ]) {
+        if (
+          isFormatterCall(formatted) &&
+          isTextFallback(fallback) &&
+          guardsValue(node.test, displayExpression(formatted).arguments[0])
+        ) {
+          context.report({ node, messageId: 'formatterFallback' })
+          return
+        }
+      }
+    }
+
     return {
       ConditionalExpression(node) {
-        for (const [formatted, fallback] of [
-          [node.consequent, node.alternate],
-          [node.alternate, node.consequent],
-        ]) {
-          if (
-            isFormatterCall(formatted) &&
-            isTextFallback(fallback) &&
-            guardsValue(node.test, unwrap(formatted).arguments[0])
-          ) {
-            context.report({ node, messageId: 'formatterFallback' })
-            return
-          }
+        checkGuard(node, node.consequent, node.alternate)
+      },
+      IfStatement(node) {
+        let alternate = node.alternate
+        if (!alternate && node.parent.type === 'BlockStatement') {
+          const statements = node.parent.body
+          alternate = statements
+            .slice(statements.indexOf(node) + 1)
+            .find((statement) => statement.type !== 'EmptyStatement')
         }
+        checkGuard(
+          node,
+          returnedValue(node.consequent),
+          returnedValue(alternate),
+        )
       },
       CallExpression(node) {
         if (!isFormatter(node.callee)) return

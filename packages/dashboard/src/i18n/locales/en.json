@@ -582,7 +582,6 @@
   "ui.positionstable.totalReturn": "Total return",
   "ui.positionstable.transactionAndIncomeAmountsUseTheSelectedPeriod": "Transaction and income amounts use the selected period.",
   "ui.positionstable.unrealizedPLGross": "Unrealized P&L (gross)",
-  "ui.positionstable.value0Yr": "{{value0}}/yr",
   "ui.positionstable.viewAllocationsForValue0": "View allocations for {{value0}}",
   "ui.positionstable.viewAssetAllocations": "View asset allocations",
   "ui.positionstable.yr.22ed45": "/yr",

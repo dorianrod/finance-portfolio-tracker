@@ -24,7 +24,15 @@ export function PieLabel({
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (!cx || !cy || !midAngle || !outerRadius || !name || !value || !percent)
+  if (
+    cx == null ||
+    cy == null ||
+    midAngle == null ||
+    !outerRadius ||
+    !name ||
+    !value ||
+    !percent
+  )
     return null
   if (percent < 0.025) return null
   const { x, y, anchor } = getPieLabelPosition(cx, cy, midAngle, outerRadius)

@@ -14,7 +14,7 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
   const gross = position.unrealized_gain
   const net = position.unrealized_gain_net
   const taxRate = position.tax_rate
-  if (gross == null) return <Text tone="subtle">—</Text>
+  if (gross == null) return <GainCell value={gross} />
   const taxDetails = calculateGainTaxDetails(gross, net, taxRate)
   const isTaxFreeGain = taxRate === 0 && gross !== 0
   return (

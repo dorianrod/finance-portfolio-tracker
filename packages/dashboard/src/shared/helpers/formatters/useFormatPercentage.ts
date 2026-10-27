@@ -8,12 +8,9 @@ export function useFormatPercentage() {
       value: number | null | undefined,
       options: PercentageFormatOptions = {},
     ): string => {
-      const { decimals = 1, unit = '%' } = options
       const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
-      const safeValue = Number.isFinite(displayValue) ? displayValue : 0
-      const sign = options.signed && safeValue >= 0 ? '+' : ''
-      return `${sign}${safeValue.toFixed(decimals)}${unit}`
+      return formatPercentageValue(displayValue, options)
     },
     [],
   )
@@ -23,6 +20,16 @@ type PercentageFormatOptions = {
   decimals?: number
   fallback?: string | number
   signed?: boolean
+  suffix?: string
   unit?: '%' | ' %' | ' pp' | ''
   zeroAsFallback?: boolean
+}
+
+function formatPercentageValue(
+  value: number,
+  { decimals = 1, unit = '%', suffix = '', signed }: PercentageFormatOptions,
+): string {
+  const safeValue = Number.isFinite(value) ? value : 0
+  const sign = signed && safeValue >= 0 ? '+' : ''
+  return `${sign}${safeValue.toFixed(decimals)}${unit}${suffix}`
 }

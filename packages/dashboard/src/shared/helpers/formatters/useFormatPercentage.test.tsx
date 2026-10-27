@@ -42,6 +42,17 @@ describe('useFormatPercentage', () => {
     },
     { value: -2, options: { zeroAsFallback: true }, expected: '-2.0%' },
     { value: Infinity, expected: '0.0%' },
+    { value: null, options: { suffix: '/yr' }, expected: '—' },
+    {
+      value: 0,
+      options: { suffix: '/yr', zeroAsFallback: true },
+      expected: '—',
+    },
+    {
+      value: 6,
+      options: { decimals: 2, signed: true, suffix: '/yr' },
+      expected: '+6.00%/yr',
+    },
     {
       value: null,
       options: { fallback: 0, decimals: 2, signed: true, unit: ' pp' },

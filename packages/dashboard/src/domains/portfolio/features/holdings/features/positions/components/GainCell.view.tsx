@@ -7,17 +7,20 @@ import { Text } from '@/shared/ui/Text.view'
 export function GainCell({
   value,
   pct,
+  zeroAsFallback = false,
 }: {
   value: number | null
   pct?: number | null
+  zeroAsFallback?: boolean
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  if (value == null) return <Text tone="subtle">—</Text>
+  const missing = value == null || (zeroAsFallback && value === 0)
+  const showPercentage = !missing && pct != null
   return (
-    <Text tone={getGainTone(value)}>
-      {formatMoney(value)}
-      {pct != null && (
+    <Text tone={missing ? 'subtle' : getGainTone(value)}>
+      {formatMoney(value, { zeroAsFallback })}
+      {showPercentage && (
         <Layout as="span" flow="inline">
           <Text variant="secondaryCaption">
             {formatPercentage(pct, { decimals: 2, signed: true })}

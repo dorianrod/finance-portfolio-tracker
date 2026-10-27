@@ -1,4 +1,5 @@
 import type { DimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
+import { getUnclassifiedAllocationPercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/getUnclassifiedAllocationPercentage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { useDataQualityClassificationDetails } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useDataQualityClassificationDetails'
 import i18n from '@/i18n/i18n'
@@ -38,8 +39,7 @@ function AllocationDimensionRow({ item }: { item: DimensionCoverage }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const { openClassificationDetails } = useDataQualityClassificationDetails()
-  const total = item.allocated + item.unallocated
-  const missingPct = total > 0 ? (item.unallocated / total) * 100 : 0
+  const missingPct = getUnclassifiedAllocationPercentage(item)
   const materialGap = hasMaterialQualityGap(missingPct)
   const label = LABELS[item.dimension]
 
