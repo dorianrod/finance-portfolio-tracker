@@ -12,7 +12,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Generic React Best Practices
@@ -77,7 +77,11 @@ Every audit covers three required passes within its stated scope:
 
 Follow the [audit method](references/audit-method.md) for all three passes. By default, correct confirmed violations in scope; honor an explicit findings-only request. A focused review uses the routing above and states its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
 
-Keep the audit working checklist as needed for the task; a persistent report is optional. Durable prevention belongs in this skill's owning rules, configured ESLint checks and executable regression tests. Do not declare completion while known applicable violations or unexamined rules remain; state the actual scope and remaining gaps.
+For an audit, use the [coverage and report contract](references/audit-report.md): inventory the requested files, rules and exceptions; retain a versioned audit state; derive per-rule OK, error, justified-exception and pending counts from identified occurrences; and attach the exhaustive findings and ESLint diagnostics. A full audit accounts for every catalog rule and every in-scope authored file. Focused audits record their selected rules and scope explicitly. Ordinary implementation work does not require an audit report.
+
+Continue through the outstanding batches until coverage and the requested corrections are complete. Passing checks or reaching an accepted warning total is not a stopping condition. Do not silently narrow scope or treat a status question as cancellation. If an actual blocker or explicit user interruption stops work, retain the checkpoint, identify the remaining entries and report an incomplete result. Use the report validator's completion check before claiming completion; its bookkeeping checks supplement the review evidence and do not certify its correctness.
+
+Keep reusable prevention in the owning rules, configured ESLint checks and executable regression tests. Store application audit artifacts at a caller-selected location outside the inspected source set; keep their paths and results out of this reusable catalog.
 
 Examples isolate their rule rather than serve as complete application templates. Apply the other relevant rules when writing production code. Files beginning with `_` are maintenance material.
 

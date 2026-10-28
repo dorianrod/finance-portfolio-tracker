@@ -5,6 +5,26 @@ to the stated scope and must not imply a full-catalog result. Correct confirmed
 violations by default; an explicit findings-only request limits the work to
 analysis and proposed corrections.
 
+## Establish scope and keep a checkpoint
+
+Before inspecting findings, initialize the versioned state defined in
+[the coverage and report contract](audit-report.md). Inventory the authored files,
+catalog rules, inline suppressions and configuration exceptions in the requested
+scope. Include source, tests and relevant tooling/configuration. Record excluded
+paths and their reasons; generated and vendored code may be excluded with evidence.
+Do not replace a global request with a sample or a few failing files.
+
+For each catalog rule, define its eligible unit and enumeration method before
+counting occurrences. Inspect all candidate files and actual callers needed to
+decide ownership or behavior. Record correct instances as well as violations;
+absence from lint output is not an inventory of correct instances.
+
+Process the inventory in manageable batches and update the state after each batch.
+Keep unresolved entries explicit and continue with the next batch. Preserve stable
+occurrence/finding IDs across moves and line changes. Refresh source fingerprints
+after corrections, re-review affected code and rerun affected checks. Save the
+checkpoint where a later run can compare it; the caller chooses the artifact path.
+
 ## 1. Investigate ESLint diagnostics and correct violations
 
 Identify the consuming application's lint command, effective configuration,
@@ -18,6 +38,12 @@ detector reports valid code, prefer correcting it with a regression case; when
 that is not feasible, assess any proposed exception through pass 3. Verify
 changed code through the application's actual configuration and relevant checks. Do not lower
 severity, add ignores or raise the warning ceiling merely to obtain a pass.
+
+Capture the original machine-readable ESLint results before corrections and fresh
+results afterward. Retain errors, warnings and suppressed diagnostics, the exact
+command, exit status and effective-configuration evidence. ESLint diagnostic
+counts and catalog occurrence counts are different measurements; report both
+according to the output contract.
 
 ## 2. Review the catalog beyond ESLint
 
@@ -112,14 +138,24 @@ warning budget after removals and justified retentions using its owning policy.
 ## Finish with the evidence that exists
 
 Run the required checks after corrections, including the full-project warning
-budget check. Summarize the results of all three passes: ESLint findings and
-corrections, catalog coverage and manual findings, and exceptions removed,
-corrected, retained with evidence or left unresolved. In a focused review,
-distinguish project-wide check results from the code actually reviewed.
+budget check. Reconcile every in-scope file, rule, occurrence, finding and
+exception, then run the report validator with `--complete`. For an audit-and-fix
+request, remaining violations prevent completion. For findings-only work, complete
+coverage may coexist with documented open findings; report those separately.
 
-Reconcile findings and applicability per rule before claiming a full audit.
-A large test count or a clean lint run does not fill an unexamined entry.
-Preserve stable guarantees in rule contracts,
-configuration and tests so they remain effective when a task's notes or report
-are deleted. A working checklist can be transient; do not require a repository
-report or introduce application-specific filenames into this skill.
+Produce the synthetic per-rule tables, exhaustive findings and diagnostics, and
+comparison with the previous retained run when available. Distinguish project-wide
+checks from manually reviewed scope. Explain changed units, scope, contracts and
+configuration before interpreting volume changes; a disappearing diagnostic alone
+does not prove a correction.
+
+Do not conclude merely because a batch is finished, lint passes, tests pass or
+the task is large. Continue until the requested scope and corrections are complete.
+An actual blocker or explicit user interruption may require an incomplete handoff:
+save the checkpoint and name the pending entries, evidence needed and next batch.
+Never mark them OK or narrow the inventory to obtain a complete report.
+
+The validator detects incomplete bookkeeping and inconsistent counts, not whether
+the reviewer genuinely inspected code or reached a sound conclusion. Review the
+evidence. Preserve stable guarantees in the rule contracts, configured checks and
+regression tests so they remain effective independently of any retained report.
