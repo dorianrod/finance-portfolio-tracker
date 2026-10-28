@@ -1,18 +1,18 @@
-import type {
-  AnimationInterpolateFn,
-  AnimationItem,
-  BarRectangleItem,
-  CartesianLayout,
-} from 'recharts'
+import type { AnimationItem, BarRectangleItem, CartesianLayout } from 'recharts'
 
 /**
  * Keeps ranked bars at their current width while they enter or leave, so a
  * date change reads as a reordering rather than a fresh chart reveal.
  */
-export const interpolateRankedBars: AnimationInterpolateFn<
-  BarRectangleItem,
-  CartesianLayout
-> = (items, progress) => {
+export function interpolateRankedBars<T extends BarRectangleItem>(
+  items: readonly AnimationItem<T>[] | null,
+  progress: number,
+  layout: CartesianLayout,
+): T[]
+export function interpolateRankedBars<T extends BarRectangleItem>(
+  items: readonly AnimationItem<T>[] | null,
+  progress: number,
+): T[] {
   if (items == null || items.length === 0) return []
 
   const rectangles = items.map(rectangleFor)

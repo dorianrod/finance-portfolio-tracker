@@ -5,11 +5,11 @@ import { CHART_AXIS_TICK } from '@/shared/ui/chartAppearance/chartAxisTick'
 
 import type { AxisConfigKeys } from './chartAxes.types'
 
-export function ChartYAxis({
+export function ChartYAxis<T extends 'number' | 'category' = 'number'>({
   density = 'standard',
   axis = false,
   ...props
-}: YAxisConfig & { density?: 'standard' | 'compact'; axis?: boolean }) {
+}: YAxisConfig<T> & { density?: 'standard' | 'compact'; axis?: boolean }) {
   return (
     <YAxis
       {...props}
@@ -20,10 +20,19 @@ export function ChartYAxis({
   )
 }
 
-type YAxisConfig = Pick<
-  ComponentProps<typeof YAxis>,
-  Extract<
-    keyof ComponentProps<typeof YAxis>,
-    AxisConfigKeys | 'yAxisId' | 'width'
-  >
->
+type YAxisConfig<T extends 'number' | 'category'> = Omit<
+  Pick<
+    ComponentProps<typeof YAxis>,
+    Extract<
+      keyof ComponentProps<typeof YAxis>,
+      AxisConfigKeys | 'yAxisId' | 'width'
+    >
+  >,
+  'type' | 'tickFormatter'
+> & {
+  type?: T
+  tickFormatter?: (
+    value: T extends 'number' ? number : string | number,
+    index: number,
+  ) => string
+}

@@ -120,15 +120,13 @@ describe('computePerformanceContributions', () => {
     expect(result.available).toBe(true)
     expect(result.netContribution).toBe(95)
     expect(
-      result.contributors.map(({ label, amount, share }) => ({
-        label,
-        amount,
-        share,
-      })),
+      result.contributors.map(({ label, amount }) => ({ label, amount })),
     ).toEqual([
-      { label: 'Asset A', amount: 115, share: expect.closeTo(79.31, 2) },
-      { label: 'Closed asset', amount: 30, share: expect.closeTo(20.69, 2) },
+      { label: 'Asset A', amount: 115 },
+      { label: 'Closed asset', amount: 30 },
     ])
+    expect(result.contributors[0].share).toBeCloseTo(79.31, 2)
+    expect(result.contributors[1].share).toBeCloseTo(20.69, 2)
     expect(result.detractors).toMatchObject([
       { label: 'Asset B', amount: -50, share: 100 },
     ])

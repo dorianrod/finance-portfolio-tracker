@@ -1,4 +1,4 @@
-import { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
+import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
 
 import type { SwatchProps } from './swatch.types'
 import { SwatchFrame } from './SwatchFrame.view'

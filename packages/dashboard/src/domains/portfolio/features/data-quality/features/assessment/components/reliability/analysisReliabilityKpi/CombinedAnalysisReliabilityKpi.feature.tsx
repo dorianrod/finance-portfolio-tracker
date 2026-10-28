@@ -1,9 +1,7 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
 import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
-import {
-  type QualityTooltipRow,
-  RELIABILITY_TONES,
-} from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import type { QualityTooltipRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

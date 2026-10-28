@@ -1,3 +1,5 @@
+import type { CellContext } from '@tanstack/react-table'
+
 import { usePositionPreviewActions } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/actions/usePositionPreviewActions'
 import { UnderlyingStatusControl } from '@/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature'
 import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition'
@@ -16,7 +18,7 @@ import { Surface } from '@/shared/ui/Surface.view'
 export function PositionBreakdownCell({
   row,
   table,
-}: import('@tanstack/react-table').CellContext<TableRow, unknown>) {
+}: CellContext<TableRow, unknown>) {
   const context = table.options.meta?.positionColumns
   const { showPreview } = usePositionPreviewActions()
   if (!context) return null

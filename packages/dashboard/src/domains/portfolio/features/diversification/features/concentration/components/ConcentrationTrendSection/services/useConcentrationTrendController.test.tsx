@@ -127,7 +127,9 @@ describe('useConcentrationTrendController', () => {
     expect(result.current.displayedPoint).toBe(HELD_POINTS[0])
     expect(result.current.isPlaying).toBe(true)
 
-    act(() => vi.advanceTimersByTime(500))
+    act(() => {
+      vi.advanceTimersByTime(500)
+    })
 
     expect(result.current.displayedPoint).toBe(HELD_POINTS[1])
     expect(result.current.isPlaying).toBe(false)

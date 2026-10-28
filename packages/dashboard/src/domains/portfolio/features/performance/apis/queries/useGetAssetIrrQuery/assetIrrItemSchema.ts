@@ -12,12 +12,12 @@ export const ASSET_IRR_ITEM_SCHEMA: yup.ObjectSchema<AssetIrrItem> = yup.object(
     value: FINITE_NUMBER_SCHEMA.defined(),
     accounts: yup
       .array(yup.string().defined())
-      .transform((value) => value ?? [])
+      .transform((value: unknown) => value ?? [])
       .default([])
       .defined(),
     account_types: yup
       .array(yup.string().defined())
-      .transform((value) => value ?? [])
+      .transform((value: unknown) => value ?? [])
       .default([])
       .defined(),
   },

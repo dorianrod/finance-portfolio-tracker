@@ -32,7 +32,7 @@ src/domains/contracts/features/detail/
 ```text
 src/domains/contracts/features/detail/
 ├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
-├── helpers/formatters/getContractTypeLabel.ts
+├── helpers/formatters/useFormatContractType.ts
 └── services/useCloseContract.ts                    # mutation + confirmation dialog
 
 src/domains/contracts/features/detail/components/ContractPanel/
@@ -44,4 +44,4 @@ src/domains/sales/orders/shared/
 └── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
 ```
 
-A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
+A value-to-text formatter is a `useFormatXxx` hook returning a memoized function, including a pure label formatter. It reads translation context when needed and never receives `t` as a parameter. Read-only query subscriptions, atom reads and translation context do not by themselves turn a categorized helper into a service; effects and orchestration decide that boundary. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).

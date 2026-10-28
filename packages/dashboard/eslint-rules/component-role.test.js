@@ -79,6 +79,34 @@ describe('component-role', () => {
     },
   )
 
+  it.each([
+    'export function Card() {return <span/>}',
+    'function Card() {return <span/>}; export {Card as Panel}',
+    "import {memo as cache} from 'react'; export const Card = cache(() => <span/>)",
+    'export const Card = ({children}) => <>{children}</>',
+  ])('rejects a visual-only feature: %s', (code) => {
+    expect(lint(code, 'Card.feature.tsx')).toMatchObject([
+      { messageId: 'featureWithoutBusiness' },
+    ])
+  })
+
+  it('keeps an opaque hook as a review candidate rather than guessing its role', () => {
+    expect(
+      lint(
+        "import {useCard} from './useCard'; export function Card() {const value = useCard(); return <span>{value}</span>}",
+        'Card.feature.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it.each([
+    "import {memo} from 'other-library'; export const Card = memo(() => <span/>)",
+    "import {use as read} from 'react'; export function Card({resource}) {const value = read(resource); return <span>{value}</span>}",
+    "import {calculateTotal} from './helpers/calculators/total'; const value = calculateTotal(); export function Card() {return <span>{value}</span>}",
+  ])('preserves opaque wrappers and referenced business values: %s', (code) => {
+    expect(lint(code, 'Card.feature.tsx')).toEqual([])
+  })
+
   it('requires a role suffix on production component modules', () => {
     const messages = lint(
       'export function Card() { return <div /> }',

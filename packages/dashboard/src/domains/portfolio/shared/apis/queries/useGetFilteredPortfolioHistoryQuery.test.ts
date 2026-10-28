@@ -45,7 +45,9 @@ describe('requestFilteredPortfolioHistory', () => {
 
     expect(result).toEqual(payload)
     expect(fetchMock).toHaveBeenCalledOnce()
-    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
+    expect(
+      JSON.parse(await new Response(fetchMock.mock.calls[0][1]?.body).text()),
+    ).toEqual({
       accounts: ['a', 'b'],
     })
   })
@@ -60,10 +62,10 @@ describe('requestFilteredPortfolioHistory', () => {
     )
 
     expect(result).toEqual(payload)
-    expect(fetchImpl).toHaveBeenCalledWith(
-      expect.stringContaining('demo_filtered_history.json'),
-      expect.objectContaining({ signal: expect.any(AbortSignal) }),
-    )
+    expect(fetchImpl).toHaveBeenCalledOnce()
+    const [url, options] = fetchImpl.mock.calls[0]
+    expect(url).toEqual(expect.stringContaining('demo_filtered_history.json'))
+    expect(options?.signal).toBeInstanceOf(AbortSignal)
   })
 
   it('rejects arbitrary scopes in the static demo', async () => {

@@ -38,7 +38,9 @@ describe('account-scoped queries', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>(async (input) =>
-        String(input).endsWith('saving_capacity_by_account.csv')
+        (input instanceof Request ? input.url : input.toString()).endsWith(
+          'saving_capacity_by_account.csv',
+        )
           ? pendingResponse
           : csv('snapshot_date,savings_delta,perf_delta\n2026-01-31,100,10\n'),
       ),

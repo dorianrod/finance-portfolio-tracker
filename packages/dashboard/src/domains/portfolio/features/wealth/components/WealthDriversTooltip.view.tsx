@@ -1,18 +1,12 @@
 import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'
-type DriversTooltipProps = {
-  active?: boolean
-  payload?: Array<{ payload: WealthDriverPoint }>
-  label?: string | number | Date
-}
-
-import i18n from '@/i18n/i18n'
-import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -25,7 +19,7 @@ export function DriversTooltip({
   const formatDate = useFormatDate()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
-  const row = payload[0]?.payload as WealthDriverPoint
+  const row = payload[0]?.payload
   return (
     <Surface variant="tooltip">
       <Layout spaceAfter="default">
@@ -69,4 +63,10 @@ export function DriversTooltip({
       </Text>
     </Surface>
   )
+}
+
+type DriversTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: WealthDriverPoint }>
+  label?: string | number | Date
 }

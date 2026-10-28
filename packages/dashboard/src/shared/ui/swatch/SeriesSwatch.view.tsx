@@ -1,4 +1,4 @@
-import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
+import type { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 
 import type { SwatchProps } from './swatch.types'
 import { SwatchFrame } from './SwatchFrame.view'

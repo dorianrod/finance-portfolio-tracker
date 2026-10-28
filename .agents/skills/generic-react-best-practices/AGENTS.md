@@ -177,13 +177,41 @@ Create a feature only when the component owns an autonomous business responsibil
 - it applies a business rule or calculation for its own subtree;
 - it transforms raw domain inputs into a display model for its own subtree;
 - it coordinates business states such as availability, permissions, loading or errors;
-- it exposes a self-contained use case that several parents can render.
+- it composes features or state renderers into a named business workflow. Reuse alone does not establish a business responsibility.
 
 Use a view when its complete behavior can be exercised with display-ready props and interaction callbacks, without installing business providers or mocking queries and stores.
 
 Use a state renderer when a surface has multiple mutually exclusive UI states and naming the boundary removes boolean combinations or repeated fallback conditions from its parent. A state renderer may accept explicit interaction callbacks such as `onRetry`, but it never discovers those actions through hooks.
 
 Do not create a feature merely because a component receives raw props, and do not create a matching view for every feature. Split a feature from its view only when the visual part has an independent contract: it is reused with another data source, has meaningful visual variants or interactions, benefits from isolated rendering tests, or contains enough layout to obscure the orchestration. A feature with trivial markup may render that markup directly.
+
+### Decide the role before deciding the split
+
+Use observable responsibility rather than component size, naming or the presence of a hook:
+
+| Responsibility | Role |
+| --- | --- |
+| Render a supplied entity, translate its labels, format amounts/dates | View |
+| Keep hover, disclosure, focus or local visual selection state | View |
+| Invoke a supplied `onSelect`/`onRetry` callback without owning the action | View |
+| Clamp a meter, choose a visual tone or prepare chart geometry | View with a scoped presenter when needed |
+| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature |
+| Compose child features/state renderers into a business surface, even without its own hook | Feature |
+| Exhaustively render an already resolved loading/error/empty/ready union | State renderer |
+
+Receiving an entity does not make a component a feature. Neither `useState`, `useMemo`, `useFormatXxx`, reuse by several parents nor a `use…` name proves business ownership. Deriving a business metric or resolving permissions differs from formatting an already supplied value. A formatter that reads business state is not a way to hide that dependency from a view.
+
+Decide the role first, then whether extraction creates a useful visual contract. A genuine feature may keep a short button or tightly coupled JSX. A large JSX count is a review signal, not an automatic extraction rule. Inspect every local component in mixed modules; the outer feature's business imports do not justify a purely visual local child.
+
+Shared UI views may use their own UI behavior services/stores, including Jotai for primitive interaction state. This exception does not permit server queries, application stores or domain state in shared UI. Domain views cannot import business services merely because those services also manage UI state.
+
+### ESLint enforcement and review inventory
+
+Enable `local/component-role` at error level. Check runtime imports, reexports and literal dynamic imports using resolved module paths, including configured aliases, extensionless imports and local reexport modules. Ignore erased type-only edges. Follow local runtime dependencies through indirection to detect hidden feature/state/API/store/service dependencies; report the path. Another classified view owns its own enforcement, and shared UI owns its primitive behavior boundary. Pure business classifications inside a label formatter do not by themselves introduce shared state or orchestration.
+
+Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
+
+Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
 ### Audit every component boundary
 
@@ -1101,11 +1129,13 @@ See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-
 
 ### ESLint Enforcement
 
-Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
+Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject direct and indirect value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
 Apply the same dependency check to domain `helpers/calculators/`, including component- and page-owned calculators. A calculation returns quantitative values and semantic period identifiers; a formatter translates their labels at display time. Component ownership does not turn translation into a calculation. Verify an aliased translation import, a rejected reexport or dynamic import, and a neighboring valid numeric calculation through the application's configuration.
 
-This check identifies explicit display dependencies. It does not infer presentation from arbitrary strings, inspect every transitive helper or decide ownership from a function's name. Presentation hidden behind an opaque adapter and chart geometry still require review. Move the display responsibility to its owning component/page instead of renaming imports to bypass the check.
+Resolve project aliases and follow local runtime helper/service dependencies and reexport modules. A service importing a mapper that imports a formatter violates the same contract as a direct formatter import. Report the dependency path, ignore erased type-only edges and terminate on cycles. Preserve validation/API/store boundaries: schema validation diagnostics and API error normalization do not make every caller a display service. These boundaries are checked by their own contracts rather than treating every reachable translation as display formatting.
+
+This is a bounded module dependency check, not a call-graph proof. Value imports and reexports evaluate their modules, including other runtime dependencies in a reexport module. External packages, computed dynamic imports, injected callbacks, arbitrary strings and chart geometry require review. Test the indirect failure and a numeric neighbor through the application configuration. Move the display responsibility to its owning component/page instead of renaming imports to bypass the check.
 
 ### 1.15 No index.ts in stores/, One File per Concern
 
@@ -1242,7 +1272,7 @@ src/domains/contracts/features/detail/
 ```text
 src/domains/contracts/features/detail/
 ├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
-├── helpers/formatters/getContractTypeLabel.ts
+├── helpers/formatters/useFormatContractType.ts
 └── services/useCloseContract.ts                    # mutation + confirmation dialog
 
 src/domains/contracts/features/detail/components/ContractPanel/
@@ -1254,7 +1284,7 @@ src/domains/sales/orders/shared/
 └── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
 ```
 
-A formatter that needs `t` is a hook returning a memoized function; it never receives `t` as a parameter. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
+A value-to-text formatter is a `useFormatXxx` hook returning a memoized function, including a pure label formatter. It reads translation context when needed and never receives `t` as a parameter. Read-only query subscriptions, atom reads and translation context do not by themselves turn a categorized helper into a service; effects and orchestration decide that boundary. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
 
 ### 1.18 Create a Sub-Domain Only for a Distinct Business Concept
 
@@ -2460,6 +2490,15 @@ export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSE
 export type InvoiceFilters = { /* ... */ }
 ```
 
+
+### Enforcement and local support contracts
+
+Enable `local/entity-type-files` at error level. In canonical entity files, reject independent exported object shapes that are not sub-shapes of the main entity; preserve derived variants and closed status unions. Follow references between local sub-shapes. Use type aliases except when a dependency explicitly requires interface merging.
+
+Also inspect exported object aliases in domain implementation modules. An independent object exported beside an unrelated helper should not be hidden there merely because the file is outside `types/`. A local function's explicit input/output contract and its referenced sub-shapes may stay local. Private implementation shapes, dependency augmentations and dedicated colocated support-contract modules remain valid; neither a record's size nor its name alone establishes an entity.
+
+This bounded check does not decide whether every return shape or colocated `*.types.ts` contract deserves entity status. Review those candidates by their actual consumers, lifetime and ownership. Reusable entities go to the nearest owning `types/[entity].type.ts`; small component props and helper configuration stay with their owner. Verify an incorrectly placed exported object and a valid helper signature through the application's configuration.
+
 ### 5.9 Type Amounts as number and Format Them at Display Time
 
 **Impact: MEDIUM (keeps amounts computable and rendered by a single set of formatters)**
@@ -2558,6 +2597,15 @@ export const convertToFormData = <T extends Record<string, unknown>>(data: T): F
 ```
 
 Test files may relax `no-explicit-any`, but prefer real domain types and mocks there too.
+
+
+### Typed safety checks
+
+`no-explicit-any` only prevents writing the keyword. Enable typed `@typescript-eslint/no-unsafe-assignment`, `no-unsafe-argument`, `no-unsafe-call`, `no-unsafe-member-access` and `no-unsafe-return` to catch `any` propagated by dependencies, generic defaults and parsing. Keep raw transform inputs `unknown`; preserve generic schema outputs and give untyped collections explicit element types. Narrow third-party callback contracts at the shared adapter boundary rather than asserting each consumer's input.
+
+Use typed `await-thenable`, `no-floating-promises`, `no-misused-promises`, `prefer-promise-reject-errors`, `only-throw-error`, `no-base-to-string`, `restrict-plus-operands`, `restrict-template-expressions`, `no-misused-spread` and `unbound-method` for their respective runtime hazards. Use `switch-exhaustiveness-check` for closed unions, `no-unnecessary-type-assertion`, `no-duplicate-type-constituents` and `no-redundant-type-constituents` for misleading type declarations, and `consistent-type-imports` to expose erased dependencies. Apply these to tests and tooling too where the same hazards occur. An intentionally asynchronous mock is not a reason to enable `require-await` blindly.
+
+Use `strict` in both browser and tooling TypeScript projects, plus `noImplicitReturns`, `noImplicitOverride` and `noPropertyAccessFromIndexSignature`. Evaluate `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` against the real project before migration: index access may be absent, and an omitted property differs from an explicit `undefined`. Correct the contracts and callers before enabling them; avoid assertions or blanket `| undefined` additions merely to silence diagnostics. These checks complement architecture rules; TypeScript does not infer business ownership.
 
 ### 5.11 No Fallback After a Record Lookup on a Union Key
 
@@ -4278,6 +4326,8 @@ Numeric formatters accept `number | null | undefined`. A string fallback is disp
 Conditions that select structure, loading or error states, permissions or comparability remain component/business logic. A calculation's numeric default belongs to that calculation. A domain formatter may add independent business meaning; a missing-value placeholder alone does not justify one.
 
 ### ESLint Enforcement
+
+Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
 
 Use the custom ESLint rule `local/no-inline-format-fallback` for production TS and TSX, including domain formatter wrappers. Detect guards on the formatter's first argument and direct `??`/`||` input defaults with string or numeric literals. Cover both ternary branches, either operand order for `==`, `===`, `!=` and `!==`, null/undefined/zero/empty-string tests, `typeof`, truthiness, negation, `Boolean`, immutable boolean aliases, return-only `if` guards and `&&`/`||` short-circuits that directly return a formatter call. Keep query-state conditions and conditional mounting when they select UI structure rather than a text fallback.
 

@@ -9,8 +9,8 @@ import { type Connect, defineConfig, type Plugin } from 'vite'
 // var, falling back to the monorepo's shared data/ folder) so `npm run dev`
 // keeps reading live CSVs without baking personal data into dist/.
 function resolveOutputDir(): string {
-  const base = process.env.FINANCE_DATA_DIR
-    ? resolve(process.env.FINANCE_DATA_DIR)
+  const base = process.env['FINANCE_DATA_DIR']
+    ? resolve(process.env['FINANCE_DATA_DIR'])
     : resolve(import.meta.dirname, '../../data')
   return resolve(base, 'output')
 }
@@ -48,13 +48,13 @@ function serveFinanceData(): Plugin {
 export default defineConfig({
   // The demo builder uses an isolated public directory so generated fixtures
   // never overwrite (or accidentally include) files from a developer's tree.
-  publicDir: process.env.FINANCE_DEMO_PUBLIC_DIR || 'public',
+  publicDir: process.env['FINANCE_DEMO_PUBLIC_DIR'] || 'public',
   // Static demo builds already contain their synthetic CSVs. In particular,
   // do not let `vite preview` shadow them with the developer's local data.
   plugins: [
     react(),
     tailwindcss(),
-    ...(process.env.VITE_STATIC_DEMO === 'true' ? [] : [serveFinanceData()]),
+    ...(process.env['VITE_STATIC_DEMO'] === 'true' ? [] : [serveFinanceData()]),
   ],
   server: {
     proxy: {

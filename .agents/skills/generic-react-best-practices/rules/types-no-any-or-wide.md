@@ -53,3 +53,12 @@ export const convertToFormData = <T extends Record<string, unknown>>(data: T): F
 ```
 
 Test files may relax `no-explicit-any`, but prefer real domain types and mocks there too.
+
+
+### Typed safety checks
+
+`no-explicit-any` only prevents writing the keyword. Enable typed `@typescript-eslint/no-unsafe-assignment`, `no-unsafe-argument`, `no-unsafe-call`, `no-unsafe-member-access` and `no-unsafe-return` to catch `any` propagated by dependencies, generic defaults and parsing. Keep raw transform inputs `unknown`; preserve generic schema outputs and give untyped collections explicit element types. Narrow third-party callback contracts at the shared adapter boundary rather than asserting each consumer's input.
+
+Use typed `await-thenable`, `no-floating-promises`, `no-misused-promises`, `prefer-promise-reject-errors`, `only-throw-error`, `no-base-to-string`, `restrict-plus-operands`, `restrict-template-expressions`, `no-misused-spread` and `unbound-method` for their respective runtime hazards. Use `switch-exhaustiveness-check` for closed unions, `no-unnecessary-type-assertion`, `no-duplicate-type-constituents` and `no-redundant-type-constituents` for misleading type declarations, and `consistent-type-imports` to expose erased dependencies. Apply these to tests and tooling too where the same hazards occur. An intentionally asynchronous mock is not a reason to enable `require-await` blindly.
+
+Use `strict` in both browser and tooling TypeScript projects, plus `noImplicitReturns`, `noImplicitOverride` and `noPropertyAccessFromIndexSignature`. Evaluate `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` against the real project before migration: index access may be absent, and an omitted property differs from an explicit `undefined`. Correct the contracts and callers before enabling them; avoid assertions or blanket `| undefined` additions merely to silence diagnostics. These checks complement architecture rules; TypeScript does not infer business ownership.

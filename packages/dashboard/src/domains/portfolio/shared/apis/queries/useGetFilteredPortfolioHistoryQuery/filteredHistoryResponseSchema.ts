@@ -9,12 +9,12 @@ export const FILTERED_HISTORY_RESPONSE_SCHEMA: yup.ObjectSchema<PortfolioHistory
   yup.object({
     accounts: yup
       .array(yup.string().defined())
-      .transform((value) => value ?? [])
+      .transform((value: unknown) => value ?? [])
       .default([])
       .defined(),
     history: yup
       .array(API_HISTORY_POINT_SCHEMA)
-      .transform((value) => value ?? [])
+      .transform((value: unknown) => value ?? [])
       .default([])
       .defined(),
   })

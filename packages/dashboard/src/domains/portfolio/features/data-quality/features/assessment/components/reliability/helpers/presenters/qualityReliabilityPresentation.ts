@@ -3,13 +3,6 @@ import i18n from '@/i18n/i18n'
 import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 
-export type QualityTooltipRow = {
-  label: string
-  value: string
-  secondary?: string
-  tone: AnalysisReliabilityTone
-}
-
 export const RELIABILITY_TONES: Record<
   AnalysisReliabilityTone,
   {

@@ -1,60 +1,24 @@
 import path from 'node:path'
 
-const BUSINESS_MODULES = ['jotai', '@tanstack/react-query']
-const BUSINESS_PATH_SEGMENTS = [
-  '/apis/',
-  '/services/',
-  '/stores/',
-  '/helpers/businessRules/',
-  '/helpers/calculators/',
-  '/helpers/filters/',
-  '/helpers/mappers/',
-  '/helpers/quality/',
-  '/helpers/validators/',
-]
-
-function componentRole(filename) {
-  if (filename.endsWith('.view.tsx')) return 'view'
-  if (filename.endsWith('.state.tsx')) return 'state'
-  if (filename.endsWith('.feature.tsx')) return 'feature'
-  return null
-}
-
-function isExempt(filename) {
-  const basename = path.basename(filename)
-  return (
-    basename === 'main.tsx' ||
-    basename.endsWith('.test.tsx') ||
-    basename.endsWith('.spec.tsx')
-  )
-}
-
-function isTypeOnlyImport(node) {
-  if (node.importKind === 'type') return true
-  return (
-    node.specifiers.length > 0 &&
-    node.specifiers.every((specifier) => specifier.importKind === 'type')
-  )
-}
-
-function isBusinessSource(source) {
-  return (
-    BUSINESS_MODULES.some(
-      (module) => source === module || source.startsWith(`${module}/`),
-    ) || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
-  )
-}
-
-function declarationIsTypeOnly(node) {
-  return node.exportKind === 'type'
-}
+import { isProductionSource } from './ast-bindings.js'
+import {
+  analyzeComponentRoles,
+  businessSource,
+  exportedComponent,
+} from './component-role-analysis.js'
+import {
+  runtimeDependencies,
+  staticModuleSource,
+  typeOnlyExport,
+  typeOnlyImport,
+} from './runtime-dependencies.js'
 
 export default {
   meta: {
     type: 'problem',
     docs: {
       description:
-        'Require explicit React component roles and enforce view import boundaries',
+        'Require explicit component roles, reject visual-only features and enforce runtime view boundaries',
     },
     schema: [],
     messages: {
@@ -66,81 +30,96 @@ export default {
         'A view cannot import the state-rendering module "{{source}}".',
       viewImportsBusiness:
         'A view cannot import runtime business state or logic from "{{source}}".',
+      featureWithoutBusiness:
+        '{{name}} has only presentation, formatting or local UI state. Use a .view.tsx module; a feature must own business behavior or compose features/state renderers. [arch-component-roles]',
     },
   },
   create(context) {
-    const filename = context.filename
-    if (!filename.endsWith('.tsx') || isExempt(filename)) return {}
-
-    const role = componentRole(filename)
-
-    function inspectSource(node, sourceNode, typeOnly) {
-      if (role !== 'view' || typeOnly) return
-
-      const source = sourceNode?.value
-      if (typeof source !== 'string') return
-
-      const normalizedFilename = filename.replaceAll('\\', '/')
-      const isSharedUi = /(?:^|\/)src\/shared\/ui\//u.test(normalizedFilename)
-      const resolvedSource = source.startsWith('@/')
-        ? path.posix.normalize(source.slice(2))
-        : path
-            .resolve(path.dirname(normalizedFilename), source)
-            .replaceAll('\\', '/')
-      const isOwnedUiBehavior =
-        isSharedUi &&
+    const filename = context.filename.replaceAll('\\', '/')
+    if (
+      !filename.endsWith('.tsx') ||
+      !isProductionSource(filename) ||
+      path.basename(filename) === 'main.tsx'
+    )
+      return {}
+    const role = /\.(view|state|feature)\.tsx$/u.exec(filename)?.[1]
+    const dependencies = runtimeDependencies(context)
+    const sharedUi = /(?:^|\/)src\/shared\/ui\//u.test(filename)
+    function ownedUiBehavior(source, target) {
+      return (
+        sharedUi &&
         (source === 'jotai' ||
           source.startsWith('jotai/') ||
-          (source.startsWith('@/')
-            ? /^shared\/ui\/(?:services|stores)\//u.test(resolvedSource)
-            : /\/src\/shared\/ui\/(?:services|stores)\//u.test(resolvedSource)))
-
-      if (source.includes('.feature')) {
-        context.report({
-          node: sourceNode,
-          messageId: 'viewImportsFeature',
-          data: { source },
-        })
-        return
-      }
-
-      if (source.includes('.state')) {
-        context.report({
-          node: sourceNode,
-          messageId: 'viewImportsState',
-          data: { source },
-        })
-        return
-      }
-
-      if (isBusinessSource(source) && !isOwnedUiBehavior) {
-        context.report({
-          node: sourceNode,
-          messageId: 'viewImportsBusiness',
-          data: { source },
-        })
-      }
+          /\/src\/shared\/ui\/(?:services|stores)\//u.test(target ?? ''))
+      )
     }
-
+    function inspectSource(sourceNode, typeOnly) {
+      if (
+        role !== 'view' ||
+        typeOnly ||
+        typeof staticModuleSource(sourceNode) !== 'string'
+      )
+        return
+      const found = dependencies.trace(
+        staticModuleSource(sourceNode),
+        (source, target, depth) => {
+          const resolved = target ?? source
+          if (/\.feature(?:\.|$)/u.test(resolved)) return 'viewImportsFeature'
+          if (/\.state(?:\.|$)/u.test(resolved)) return 'viewImportsState'
+          if (ownedUiBehavior(source, target)) return null
+          // Pure classification helpers inside formatters remain valid. Indirect
+          // state, API and service dependencies still make a view stateful.
+          const business =
+            depth === 0
+              ? businessSource(source) || businessSource(resolved)
+              : ['jotai', '@tanstack/react-query'].some(
+                  (module) =>
+                    source === module || source.startsWith(`${module}/`),
+                ) || /\/(?:apis|stores|services)\//u.test(resolved)
+          return business ? 'viewImportsBusiness' : null
+        },
+        {
+          stop: (target) =>
+            /\.view\.tsx$/u.test(target) || /\/src\/shared\/ui\//u.test(target),
+        },
+      )
+      if (found)
+        context.report({
+          node: sourceNode,
+          messageId: found.match,
+          data: { source: found.chain.join(' → ') },
+        })
+    }
     return {
       Program(node) {
         if (!role) context.report({ node, messageId: 'missingRole' })
       },
       ImportDeclaration(node) {
-        inspectSource(node, node.source, isTypeOnlyImport(node))
-      },
-      ExportAllDeclaration(node) {
-        inspectSource(node, node.source, declarationIsTypeOnly(node))
+        inspectSource(node.source, typeOnlyImport(node))
       },
       ExportNamedDeclaration(node) {
-        if (!node.source) return
-        const typeOnly =
-          declarationIsTypeOnly(node) ||
-          (node.specifiers.length > 0 &&
-            node.specifiers.every(
-              (specifier) => specifier.exportKind === 'type',
-            ))
-        inspectSource(node, node.source, typeOnly)
+        inspectSource(node.source, typeOnlyExport(node))
+      },
+      ExportAllDeclaration(node) {
+        inspectSource(node.source, typeOnlyExport(node))
+      },
+      ImportExpression(node) {
+        inspectSource(node.source, false)
+      },
+      'Program:exit'(node) {
+        if (role !== 'feature') return
+        for (const component of analyzeComponentRoles(context.sourceCode, node))
+          if (
+            exportedComponent(component.node, context.sourceCode) &&
+            component.elements > 0 &&
+            component.business.size === 0 &&
+            component.opaque.size === 0
+          )
+            context.report({
+              node: component.node,
+              messageId: 'featureWithoutBusiness',
+              data: { name: component.name },
+            })
       },
     }
   },

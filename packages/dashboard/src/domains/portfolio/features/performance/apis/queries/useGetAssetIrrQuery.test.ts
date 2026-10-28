@@ -72,7 +72,9 @@ describe('requestAssetIrr', () => {
       end_date: new Date(payload.end_date),
     })
     expect(fetchMock).toHaveBeenCalledOnce()
-    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
+    expect(
+      JSON.parse(await new Response(fetchMock.mock.calls[0][1]?.body).text()),
+    ).toEqual({
       accounts: ['Example Employee Savings'],
       account_types: ['PEE'],
       date_from: '2026-06-30',

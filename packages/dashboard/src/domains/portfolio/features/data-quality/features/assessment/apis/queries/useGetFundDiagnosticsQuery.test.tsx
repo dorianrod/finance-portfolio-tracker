@@ -24,7 +24,9 @@ function serveUnresolved(csv: string) {
   vi.stubGlobal(
     'fetch',
     vi.fn<typeof fetch>(async (input) =>
-      String(input).endsWith('fund_unresolved.csv')
+      (input instanceof Request ? input.url : input.toString()).endsWith(
+        'fund_unresolved.csv',
+      )
         ? new Response(csv, { headers: { 'Content-Type': 'text/csv' } })
         : new Response(null, { status: 404 }),
     ),
@@ -118,7 +120,12 @@ describe('fund diagnostics sources', () => {
       vi.fn<typeof fetch>(
         async (input) =>
           new Response(null, {
-            status: String(input).endsWith(filename) ? 503 : 404,
+            status: (input instanceof Request
+              ? input.url
+              : input.toString()
+            ).endsWith(filename)
+              ? 503
+              : 404,
           }),
       ),
     )

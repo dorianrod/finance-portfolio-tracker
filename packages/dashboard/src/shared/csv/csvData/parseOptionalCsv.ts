@@ -1,13 +1,13 @@
-import { type InferType, type Schema } from 'yup'
+import { type Schema } from 'yup'
 
 import { HttpError } from '@/shared/http/httpError'
 
 import { parseCsv } from './parseCsv'
 
-export async function parseOptionalCsv<S extends Schema>(
+export async function parseOptionalCsv<T>(
   url: string,
-  rowSchema: S,
-): Promise<InferType<S>[]> {
+  rowSchema: Schema<T>,
+): Promise<T[]> {
   try {
     return await parseCsv(url, rowSchema)
   } catch (error) {

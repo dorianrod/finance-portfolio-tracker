@@ -31,4 +31,5 @@ function assignRef<T>(
       ref.current = null
     }
   }
+  return undefined
 }

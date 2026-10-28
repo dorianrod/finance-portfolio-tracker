@@ -1,11 +1,11 @@
-import { array, type InferType, type Schema } from 'yup'
+import { array, type Schema } from 'yup'
 
 import { loadCsv } from './loadCsv'
 
-export async function parseCsv<S extends Schema>(
+export async function parseCsv<T>(
   url: string,
-  rowSchema: S,
-): Promise<InferType<S>[]> {
+  rowSchema: Schema<T>,
+): Promise<T[]> {
   const rows = await loadCsv(url)
   return array(rowSchema).defined().validate(rows, {
     abortEarly: false,

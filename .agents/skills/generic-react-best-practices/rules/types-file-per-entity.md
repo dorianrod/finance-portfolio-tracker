@@ -45,3 +45,12 @@ export type ContractStatus = 'DRAFT' | 'WAITING_FOR_REVIEW' | 'ONGOING' | 'CLOSE
 // domains/sales/invoices/features/list/pages/list/types/invoiceFilters.type.ts
 export type InvoiceFilters = { /* ... */ }
 ```
+
+
+### Enforcement and local support contracts
+
+Enable `local/entity-type-files` at error level. In canonical entity files, reject independent exported object shapes that are not sub-shapes of the main entity; preserve derived variants and closed status unions. Follow references between local sub-shapes. Use type aliases except when a dependency explicitly requires interface merging.
+
+Also inspect exported object aliases in domain implementation modules. An independent object exported beside an unrelated helper should not be hidden there merely because the file is outside `types/`. A local function's explicit input/output contract and its referenced sub-shapes may stay local. Private implementation shapes, dependency augmentations and dedicated colocated support-contract modules remain valid; neither a record's size nor its name alone establishes an entity.
+
+This bounded check does not decide whether every return shape or colocated `*.types.ts` contract deserves entity status. Review those candidates by their actual consumers, lifetime and ownership. Reusable entities go to the nearest owning `types/[entity].type.ts`; small component props and helper configuration stay with their owner. Verify an incorrectly placed exported object and a valid helper signature through the application's configuration.

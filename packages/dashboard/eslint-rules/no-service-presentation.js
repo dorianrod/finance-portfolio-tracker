@@ -1,4 +1,10 @@
 import { isProductionSource } from './ast-bindings.js'
+import {
+  runtimeDependencies,
+  staticModuleSource,
+  typeOnlyExport,
+  typeOnlyImport,
+} from './runtime-dependencies.js'
 
 export default {
   meta: {
@@ -10,7 +16,7 @@ export default {
     schema: [],
     messages: {
       presentation:
-        'Keep translation and display formatting in component/page presenters or formatters. Return raw data and errors from domain services and calculations. [arch-no-visual-logic-below-page]',
+        'Keep translation and display formatting in component/page presenters or formatters. Runtime dependency: {{chain}}. Return raw data and errors from domain services and calculations. [arch-no-visual-logic-below-page]',
     },
   },
   create(context) {
@@ -23,44 +29,39 @@ export default {
       !/\/(?:components|pages|mocks)\//u.test(filename)
     if (!isProductionSource(filename) || (!calculation && !reusableService))
       return {}
+    const dependencies = runtimeDependencies(context)
     function check(node, source) {
-      if (
-        typeof source === 'string' &&
-        (source === 'i18next' ||
-          source === 'react-i18next' ||
-          /(?:^|\/)i18n(?:\/|$)/u.test(source) ||
-          /(?:^|\/)helpers\/formatters(?:\/|$)/u.test(source))
+      if (typeof source !== 'string') return
+      const found = dependencies.trace(
+        source,
+        (specifier, target) =>
+          specifier === 'i18next' ||
+          specifier === 'react-i18next' ||
+          /(?:^|\/)i18n(?:\/|$)/u.test(target ?? specifier) ||
+          /(?:^|\/)helpers\/formatters(?:\/|$)/u.test(target ?? specifier),
+        { stop: (target) => /\/(?:apis|schemas|stores)\//u.test(target) },
       )
-        context.report({ node, messageId: 'presentation' })
+      if (found)
+        context.report({
+          node,
+          messageId: 'presentation',
+          data: { chain: found.chain.join(' → ') },
+        })
     }
     return {
       ImportDeclaration(node) {
-        if (
-          node.importKind === 'type' ||
-          (node.specifiers.length > 0 &&
-            node.specifiers.every(
-              (specifier) => specifier.importKind === 'type',
-            ))
-        )
-          return
-        check(node, node.source.value)
+        if (typeOnlyImport(node)) return
+        check(node, staticModuleSource(node.source))
       },
       ExportNamedDeclaration(node) {
-        if (
-          node.exportKind !== 'type' &&
-          node.source &&
-          (node.specifiers.length === 0 ||
-            node.specifiers.some(
-              (specifier) => specifier.exportKind !== 'type',
-            ))
-        )
-          check(node, node.source.value)
+        if (!typeOnlyExport(node) && node.source)
+          check(node, staticModuleSource(node.source))
       },
       ExportAllDeclaration(node) {
-        if (node.exportKind !== 'type') check(node, node.source.value)
+        if (!typeOnlyExport(node)) check(node, staticModuleSource(node.source))
       },
       ImportExpression(node) {
-        check(node, node.source.value)
+        check(node, staticModuleSource(node.source))
       },
     }
   },

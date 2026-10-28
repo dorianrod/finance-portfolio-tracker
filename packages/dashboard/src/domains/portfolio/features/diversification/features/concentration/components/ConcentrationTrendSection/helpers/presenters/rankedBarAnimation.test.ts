@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest'
 
 import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/rankedBarAnimation'
 
-function rectangle(key: string, y: number, width: number): BarRectangleItem {
+type TestRectangle = Omit<BarRectangleItem, 'payload'> & {
+  payload: { key: string }
+}
+
+function rectangle(key: string, y: number, width: number): TestRectangle {
   return {
     x: 260,
     y,
@@ -20,7 +24,7 @@ function rectangle(key: string, y: number, width: number): BarRectangleItem {
 
 describe('interpolateRankedBars', () => {
   it('moves a matched holding between ranks without restarting its width at zero', () => {
-    const items: AnimationItem<BarRectangleItem>[] = [
+    const items: AnimationItem<TestRectangle>[] = [
       {
         status: 'matched',
         prev: rectangle('A', 30, 80),
@@ -36,7 +40,7 @@ describe('interpolateRankedBars', () => {
   })
 
   it('slides added and removed holdings below the ranking at full width', () => {
-    const items: AnimationItem<BarRectangleItem>[] = [
+    const items: AnimationItem<TestRectangle>[] = [
       { status: 'removed', prev: rectangle('OUT', 0, 100) },
       { status: 'added', next: rectangle('IN', 30, 60) },
     ]

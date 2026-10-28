@@ -11,7 +11,7 @@ export class DashboardPanelErrorBoundary extends Component<
   DashboardPanelErrorBoundaryProps,
   DashboardPanelErrorBoundaryState
 > {
-  state: DashboardPanelErrorBoundaryState = { error: null }
+  override state: DashboardPanelErrorBoundaryState = { error: null }
 
   static getDerivedStateFromError(
     error: Error,
@@ -19,11 +19,11 @@ export class DashboardPanelErrorBoundary extends Component<
     return { error }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('Dashboard panel failed to render', error, errorInfo)
   }
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (!this.state.error) return this.props.children
 
     return (

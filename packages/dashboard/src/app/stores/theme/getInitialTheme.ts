@@ -3,7 +3,7 @@ import { isTheme } from '@/app/stores/theme/isTheme'
 
 export function getInitialTheme(): Theme {
   if (typeof document !== 'undefined') {
-    const theme = document.documentElement.dataset.theme
+    const theme = document.documentElement.dataset['theme']
     if (isTheme(theme)) return theme
   }
   if (

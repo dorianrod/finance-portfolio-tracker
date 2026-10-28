@@ -20,7 +20,7 @@ function TooltipContent({
 }: {
   active?: boolean
   label?: string | number
-  payload?: ReadonlyArray<{ value?: unknown }>
+  payload?: ReadonlyArray<{ value?: number | string }>
 }) {
   if (!active) return null
   return (

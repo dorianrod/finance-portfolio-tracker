@@ -1,7 +1,5 @@
-import {
-  type QualityTooltipRow,
-  RELIABILITY_TONES,
-} from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import type { QualityTooltipRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'

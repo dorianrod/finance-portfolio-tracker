@@ -1,6 +1,6 @@
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 
-import { PRIMARY_TABS } from './primaryTabs'
+import type { PRIMARY_TABS } from './primaryTabs'
 
 export type PrimaryTabButtonProps = {
   activeTab: AnalysisTab

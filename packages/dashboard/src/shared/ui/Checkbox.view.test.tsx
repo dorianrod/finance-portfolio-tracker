@@ -18,9 +18,9 @@ describe('Checkbox', () => {
         </span>
       </label>,
     )
-    const input = screen.getByRole('checkbox', {
+    const input = screen.getByRole<HTMLInputElement>('checkbox', {
       name: 'Accounts',
-    }) as HTMLInputElement
+    })
     expect(input.indeterminate).toBe(true)
     await userEvent.setup().click(input)
     expect(onChange).toHaveBeenCalledOnce()

@@ -156,3 +156,32 @@ also runs on-demand from the Actions tab (`workflow_dispatch`).
 Note this makes the dashboard's UI (with fake numbers) reachable by
 anyone with the `https://<user>.github.io/<repo>/` URL, regardless of
 whether the source repo itself is public or private.
+
+## Architecture and TypeScript prevention
+
+Run `npm run audit:architecture` before an architecture review. It lists features
+with unclear business ownership, mixed local presentation, substantial JSX and
+exported object contracts outside canonical entity files. Each entry is a review
+candidate, with its observed dependencies; it does not fail lint or certify that
+an extraction is necessary. Group comparable candidates before correcting them.
+
+ESLint rejects clearly visual-only features and follows local runtime dependency
+paths, including aliases, reexports and dynamic imports. It rejects hidden display
+formatting in reusable services and independent exported object shapes hidden in
+domain implementation modules. See the skill's owning rules for the boundaries
+and valid local support contracts.
+
+Typed ESLint checks cover unhandled/misused promises, propagated `any`, incomplete
+union switches, unsafe coercions and redundant assertions. Shared chart axes expose
+typed tick values, and CSV schema helpers preserve their validated generic output.
+Browser and tooling projects both use `strict`, `noImplicitReturns`,
+`noImplicitOverride` and `noPropertyAccessFromIndexSignature`.
+
+`noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` remain migration
+candidates. Enable them after reviewing collection completeness and the intended
+meaning of absent versus explicitly undefined props. `no-unnecessary-condition`
+should follow accurate indexed-access types so it does not encourage removing
+useful absence guards. `require-await` adds noise to intentionally async network
+mocks; `consistent-type-definitions` conflicts with required dependency interface
+merging, which the local entity rule already handles. Do not solve these cases by
+adding suppressions or widening every optional property.

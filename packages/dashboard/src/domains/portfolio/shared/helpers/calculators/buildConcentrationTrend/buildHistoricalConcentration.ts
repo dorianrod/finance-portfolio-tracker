@@ -26,7 +26,9 @@ export function buildHistoricalConcentration(
     const key = assetKey(row)
     if (!key || value == null || !Number.isFinite(value) || value <= 0) continue
 
-    const assets = byDate.get(row.snapshot_date.getTime()) ?? new Map()
+    const assets =
+      byDate.get(row.snapshot_date.getTime()) ??
+      new Map<string, { label: string; name: string; value: number }>()
     const current = assets.get(key) ?? {
       label: row.ticker.trim() || row.name.trim() || row.isin.trim(),
       name: row.name.trim() || row.ticker.trim() || row.isin.trim(),

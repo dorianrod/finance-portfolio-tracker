@@ -108,7 +108,9 @@ function periodBadge(
       return rangePeriodBadge(mode, active, range)
     case 'as-of':
       return snapshotPeriodBadge(filters, end)
-    default:
+    case 'trailing-12m':
+    case 'trailing-3y':
+    case 'since-tracking':
       return fixedHorizonPeriodBadge(mode, filters, end)
   }
 }

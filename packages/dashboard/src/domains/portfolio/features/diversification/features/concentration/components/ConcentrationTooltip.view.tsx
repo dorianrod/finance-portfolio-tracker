@@ -13,7 +13,7 @@ export function ConcentrationTooltip({
   const formatPercentage = useFormatPercentage()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
-  const row = payload[0].payload as HoldingConcentration
+  const row = payload[0].payload
   return (
     <Surface variant="tooltip">
       <Text as="div" variant="strong" tone="default">

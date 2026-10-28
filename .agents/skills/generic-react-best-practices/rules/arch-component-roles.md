@@ -30,13 +30,41 @@ Create a feature only when the component owns an autonomous business responsibil
 - it applies a business rule or calculation for its own subtree;
 - it transforms raw domain inputs into a display model for its own subtree;
 - it coordinates business states such as availability, permissions, loading or errors;
-- it exposes a self-contained use case that several parents can render.
+- it composes features or state renderers into a named business workflow. Reuse alone does not establish a business responsibility.
 
 Use a view when its complete behavior can be exercised with display-ready props and interaction callbacks, without installing business providers or mocking queries and stores.
 
 Use a state renderer when a surface has multiple mutually exclusive UI states and naming the boundary removes boolean combinations or repeated fallback conditions from its parent. A state renderer may accept explicit interaction callbacks such as `onRetry`, but it never discovers those actions through hooks.
 
 Do not create a feature merely because a component receives raw props, and do not create a matching view for every feature. Split a feature from its view only when the visual part has an independent contract: it is reused with another data source, has meaningful visual variants or interactions, benefits from isolated rendering tests, or contains enough layout to obscure the orchestration. A feature with trivial markup may render that markup directly.
+
+### Decide the role before deciding the split
+
+Use observable responsibility rather than component size, naming or the presence of a hook:
+
+| Responsibility | Role |
+| --- | --- |
+| Render a supplied entity, translate its labels, format amounts/dates | View |
+| Keep hover, disclosure, focus or local visual selection state | View |
+| Invoke a supplied `onSelect`/`onRetry` callback without owning the action | View |
+| Clamp a meter, choose a visual tone or prepare chart geometry | View with a scoped presenter when needed |
+| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature |
+| Compose child features/state renderers into a business surface, even without its own hook | Feature |
+| Exhaustively render an already resolved loading/error/empty/ready union | State renderer |
+
+Receiving an entity does not make a component a feature. Neither `useState`, `useMemo`, `useFormatXxx`, reuse by several parents nor a `use…` name proves business ownership. Deriving a business metric or resolving permissions differs from formatting an already supplied value. A formatter that reads business state is not a way to hide that dependency from a view.
+
+Decide the role first, then whether extraction creates a useful visual contract. A genuine feature may keep a short button or tightly coupled JSX. A large JSX count is a review signal, not an automatic extraction rule. Inspect every local component in mixed modules; the outer feature's business imports do not justify a purely visual local child.
+
+Shared UI views may use their own UI behavior services/stores, including Jotai for primitive interaction state. This exception does not permit server queries, application stores or domain state in shared UI. Domain views cannot import business services merely because those services also manage UI state.
+
+### ESLint enforcement and review inventory
+
+Enable `local/component-role` at error level. Check runtime imports, reexports and literal dynamic imports using resolved module paths, including configured aliases, extensionless imports and local reexport modules. Ignore erased type-only edges. Follow local runtime dependencies through indirection to detect hidden feature/state/API/store/service dependencies; report the path. Another classified view owns its own enforcement, and shared UI owns its primitive behavior boundary. Pure business classifications inside a label formatter do not by themselves introduce shared state or orchestration.
+
+Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
+
+Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
 ### Audit every component boundary
 

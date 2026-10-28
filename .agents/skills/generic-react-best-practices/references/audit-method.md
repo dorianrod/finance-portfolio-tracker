@@ -30,6 +30,16 @@ revalidation of existing ignores. If interrupted, keep a usable checkpoint and
 identify the remaining work. No particular file format, schema, count table or
 generated report is required.
 
+## Calibrate detection before the first correction batch
+
+Build a candidate inventory by recurring failure family before opening correction batches: component roles/composition, mixed local presentation, helper/service effects, indirect presentation dependencies, formatter exports and contracts, and entity types outside canonical files. Include valid-looking candidates; searching only for known bad names reproduces the previous audit's blind spots. Read related callers together to establish each family's scope.
+
+For deterministic families, first prove one representative incorrect case and one neighboring valid case through the actual project configuration. Include aliases, reexports/dynamic imports, indirection or wrappers when they caused the omission. A clean command without this negative proof is unverified coverage. Strengthen a sound detector early so that it enumerates comparable violations across the whole scope before correction begins.
+
+Keep semantic candidates distinct from proven errors. Record the observed responsibility and the unresolved question, rather than inferring the role from a suffix, hook count or JSX size. Use an architecture inventory command when supplied by the application; review signals do not need to become warning-budget entries.
+
+Fix complete families with their callers, then run focused checks. Run full-project checks at meaningful milestones and after the final change; repeating the full suite after every small move does not increase semantic coverage. Update the inventory when a new failure mechanism appears and search its comparable cases before starting another batch. Keep execution logs compact and outside authored source; retain the durable prevention in rule contracts and regression tests rather than committing repeated full logs.
+
 ## 1. Investigate ESLint diagnostics and correct violations
 
 Identify the consuming application's lint command, effective configuration,

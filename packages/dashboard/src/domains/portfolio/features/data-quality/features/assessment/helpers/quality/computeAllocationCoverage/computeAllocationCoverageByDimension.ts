@@ -49,7 +49,7 @@ export function computeAllocationCoverageByDimension(
           allocationTotal > 0
             ? Math.min(
                 1,
-                Math.max(0, (allocation?.values.nc ?? 0) / allocationTotal),
+                Math.max(0, (allocation?.values['nc'] ?? 0) / allocationTotal),
               )
             : 1
         const missing = value * ncRatio

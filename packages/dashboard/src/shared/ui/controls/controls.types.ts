@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, HTMLAttributes } from 'react'
 
-import { BUTTON_VARIANTS } from '@/shared/ui/buttonAppearance/buttonVariants'
+import type { BUTTON_VARIANTS } from '@/shared/ui/buttonAppearance/buttonVariants'
 import type { ControlProps } from '@/shared/ui/controlProps'
-import { BUTTON_SIZES } from '@/shared/ui/layoutAppearance/buttonSizes'
+import type { BUTTON_SIZES } from '@/shared/ui/layoutAppearance/buttonSizes'
 
 export type ButtonProps = ControlProps<
   ButtonHTMLAttributes<HTMLButtonElement>

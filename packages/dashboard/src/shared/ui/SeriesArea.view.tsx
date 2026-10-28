@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Area } from 'recharts'
 
 import { getLineHoverMarker } from '@/shared/ui/chartAppearance/getLineHoverMarker'
-import { LINE_HOVER_MARKERS } from '@/shared/ui/chartAppearance/lineHoverMarkers'
+import type { LINE_HOVER_MARKERS } from '@/shared/ui/chartAppearance/lineHoverMarkers'
 import { LINE_MARKERS } from '@/shared/ui/chartAppearance/lineMarkers'
 import { LINE_PATTERNS } from '@/shared/ui/chartAppearance/linePatterns'
 import { LINE_WEIGHTS } from '@/shared/ui/chartAppearance/lineWeights'

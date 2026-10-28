@@ -46,12 +46,14 @@ export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
         .map(([key, value]) => [key, Number(value)] as const)
         .filter(([, value]) => !Number.isFinite(value) || value > 0),
     )
+    const hasAccount = Boolean(source['account'])
+    const hasAccountType = Boolean(source['account_type'])
     return {
-      snapshot_date: source.snapshot_date,
-      account: source.account || undefined,
-      account_type: source.account_type || undefined,
-      isin: source.isin,
-      name: source.name,
+      snapshot_date: source['snapshot_date'],
+      account: hasAccount ? source['account'] : undefined,
+      account_type: hasAccountType ? source['account_type'] : undefined,
+      isin: source['isin'],
+      name: source['name'],
       values,
     }
   })

@@ -8,7 +8,7 @@ export function useDashboardThemeSync() {
   const theme = useAtomValue(dashboardThemeAtom)
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
+    document.documentElement.dataset['theme'] = theme
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', PAGE_THEME_COLORS[theme])

@@ -38,4 +38,4 @@ export function useGetAssetIrrQuery(
   })
 }
 
-const STATIC_DEMO = import.meta.env.VITE_STATIC_DEMO === 'true'
+const STATIC_DEMO = import.meta.env['VITE_STATIC_DEMO'] === 'true'

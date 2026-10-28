@@ -24,7 +24,9 @@ function serveHoldings(csv: string) {
   vi.stubGlobal(
     'fetch',
     vi.fn<typeof fetch>(async (input) =>
-      String(input).endsWith('/fund_holdings.csv')
+      (input instanceof Request ? input.url : input.toString()).endsWith(
+        '/fund_holdings.csv',
+      )
         ? new Response(csv, { headers: { 'Content-Type': 'text/csv' } })
         : new Response(null, { status: 404 }),
     ),

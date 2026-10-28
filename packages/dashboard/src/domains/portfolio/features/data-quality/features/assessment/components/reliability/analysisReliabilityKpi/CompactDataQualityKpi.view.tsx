@@ -1,11 +1,9 @@
 import type { ReactNode } from 'react'
 
-import {
-  type QualityTooltipRow,
-  RELIABILITY_TONES,
-} from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
 import { InfoIcon } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/qualityTooltipDetails/InfoIcon.view'
 import { QualityTooltipMetricRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/qualityTooltipDetails/QualityTooltipMetricRow.view'
+import type { QualityTooltipRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type'
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/controls/Button.view'

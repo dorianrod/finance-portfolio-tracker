@@ -2,6 +2,7 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   type Row,
+  type Table,
   useReactTable,
 } from '@tanstack/react-table'
 import { ScopeProvider } from 'jotai-scope'
@@ -220,11 +221,7 @@ function PositionBodyRow({
   )
 }
 
-function PositionTableToolbar({
-  table,
-}: {
-  table: import('@tanstack/react-table').Table<TableRow>
-}) {
+function PositionTableToolbar({ table }: { table: Table<TableRow> }) {
   return (
     <TablePanel.Toolbar>
       <div>

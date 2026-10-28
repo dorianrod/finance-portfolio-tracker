@@ -12,7 +12,7 @@ export const ASSET_IRR_RESPONSE_SCHEMA: yup.ObjectSchema<AssetIrrSummary> =
     end_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
     assets: yup
       .array(ASSET_IRR_ITEM_SCHEMA)
-      .transform((value) => value ?? [])
+      .transform((value: unknown) => value ?? [])
       .default([])
       .defined(),
   })

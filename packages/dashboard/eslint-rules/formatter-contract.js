@@ -1,6 +1,7 @@
 import ts from 'typescript'
 
 import { isProductionSource } from './ast-bindings.js'
+import { getPublicExports } from './get-public-exports.js'
 
 export default {
   meta: {
@@ -17,6 +18,9 @@ export default {
         'Expose a configurable fallback option on the formatter. [helpers-formatter-hooks]',
       string:
         'A value-to-text formatter must return string for every input. [helpers-formatter-hooks]',
+      callable:
+        'A useFormatXxx hook must return a callable value-to-text formatter. [helpers-formatter-hooks]',
+      hook: 'Export value-to-text formatters as useFormatXxx hooks returning a formatter, rather than a plain formatting function. [helpers-formatter-hooks]',
     },
   },
   create(context) {
@@ -27,12 +31,39 @@ export default {
       return {}
     const services = context.sourceCode.parserServices
     const checker = services.program.getTypeChecker()
-    function inspect(identifier) {
-      if (!/^useFormat[A-Z]/u.test(identifier?.name ?? '')) return
+    function inspect(identifier, name) {
+      if (!identifier) return
+      if (name === 'default')
+        name =
+          identifier.name ??
+          context.filename
+            .split(/[\\/]/u)
+            .at(-1)
+            .replace(/\.tsx?$/u, '')
       const declaration = services.esTreeNodeToTSNodeMap.get(identifier)
       const hook = checker.getTypeAtLocation(declaration)
       for (const signature of hook.getCallSignatures()) {
         const formatter = checker.getReturnTypeOfSignature(signature)
+        const parts = (
+          formatter.isUnion() ? formatter.types : [formatter]
+        ).filter(
+          (part) =>
+            !(part.flags & (ts.TypeFlags.Null | ts.TypeFlags.Undefined)),
+        )
+        if (
+          parts.length > 0 &&
+          parts.every((part) => part.flags & ts.TypeFlags.StringLike)
+        ) {
+          context.report({ node: identifier, messageId: 'hook' })
+          continue
+        }
+        if (!/^useFormat[A-Z]/u.test(name)) {
+          if (formatter.getCallSignatures().length > 0)
+            context.report({ node: identifier, messageId: 'hook' })
+          continue
+        }
+        if (formatter.getCallSignatures().length === 0)
+          context.report({ node: identifier, messageId: 'callable' })
         for (const call of formatter.getCallSignatures()) {
           const value = call.parameters[0]
           if (!value) continue
@@ -66,12 +97,10 @@ export default {
       }
     }
     return {
-      ExportNamedDeclaration(node) {
-        if (node.declaration?.type === 'FunctionDeclaration')
-          inspect(node.declaration.id)
-        if (node.declaration?.type === 'VariableDeclaration')
-          for (const declaration of node.declaration.declarations)
-            inspect(declaration.id)
+      'Program:exit'(node) {
+        for (const entry of getPublicExports(node, context.sourceCode))
+          for (const declaration of entry.declarations)
+            inspect(declaration.id ?? declaration, entry.name)
       },
     }
   },

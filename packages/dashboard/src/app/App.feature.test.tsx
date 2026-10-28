@@ -26,7 +26,9 @@ describe('dashboard loading controls', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>(async (input) =>
-        String(input).endsWith('portfolio_history.csv')
+        (input instanceof Request ? input.url : input.toString()).endsWith(
+          'portfolio_history.csv',
+        )
           ? pendingResponse
           : new Response('', { headers: { 'Content-Type': 'text/csv' } }),
       ),
