@@ -434,7 +434,7 @@ function ConcentrationPlaybackControls({
               />
             </Layout>
             <span>
-              {formatDate(points.at(-1)!.date, {
+              {formatDate(points.at(-1)?.date, {
                 style: 'shortMonthShortYear',
               })}
             </span>

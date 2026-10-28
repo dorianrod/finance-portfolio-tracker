@@ -1,4 +1,4 @@
-import { type HeaderGroup } from '@tanstack/react-table'
+import type { HeaderGroup } from '@tanstack/react-table'
 
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 

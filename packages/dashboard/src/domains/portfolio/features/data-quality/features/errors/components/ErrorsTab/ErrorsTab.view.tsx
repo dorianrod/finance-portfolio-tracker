@@ -69,9 +69,11 @@ export function ErrorsTabView({
             <Select
               label={i18n.t('ui.errorstab.filterLevel')}
               value={filterLevel}
-              onChange={(e) =>
-                onLevelChange(e.target.value as typeof filterLevel)
-              }
+              onChange={(event) => {
+                const value = event.target.value
+                if (value === 'all' || value === 'error' || value === 'warning')
+                  onLevelChange(value)
+              }}
               variant="compact"
             >
               <option value="all">{i18n.t('ui.errorstab.allLevels')}</option>

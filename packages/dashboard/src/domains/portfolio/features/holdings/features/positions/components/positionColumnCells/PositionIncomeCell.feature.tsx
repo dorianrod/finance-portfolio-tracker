@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { isTaxFreePassiveIncome } from '@/domains/portfolio/features/holdings/features/positions/helpers/businessRules/positionDisplayRules/isTaxFreePassiveIncome'
 import { calculatePassiveIncomeTax } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePassiveIncomeTax'
@@ -74,6 +74,7 @@ export function PositionIncomeCell({ row }: { row: Row<TableRow> }) {
 function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
   const { formatMoney, formatPercentage } = usePositionTableFormatters()
 
+  const taxRatePercentage = r.tax_rate == null ? null : r.tax_rate * 100
   const hasDivs = r.total_dividends > 0
   const hasInt = r.total_interest > 0
   if (!hasDivs && !hasInt) return <Text tone="subtle">—</Text>
@@ -109,7 +110,7 @@ function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
             <Text variant="tiny" tone="subtle">
               {i18n.t('ui.positionstable.taxOnDivWithValues', {
                 amount: formatMoney(-displayedDividendTax),
-                percentage: formatPercentage(r.tax_rate! * 100, {
+                percentage: formatPercentage(taxRatePercentage, {
                   decimals: 0,
                 }),
               })}
@@ -121,7 +122,7 @@ function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
             <Text variant="tiny" tone="subtle">
               {i18n.t('ui.positionstable.taxOnIntWithValues', {
                 amount: formatMoney(-displayedInterestTax),
-                percentage: formatPercentage(r.tax_rate! * 100, {
+                percentage: formatPercentage(taxRatePercentage, {
                   decimals: 0,
                 }),
               })}

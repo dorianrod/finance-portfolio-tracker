@@ -36,15 +36,8 @@ export function computeTrailing12mYearOverYear(
   const comparisonMonths = currentMonths.map((month) => shiftMonth(month, -12))
 
   const metric = (key: 'savings' | 'performance'): YearOverYearMetric => {
-    const current = currentMonths.every((month) => byMonth.has(month))
-      ? currentMonths.reduce((sum, month) => sum + byMonth.get(month)![key], 0)
-      : null
-    const previous = comparisonMonths.every((month) => byMonth.has(month))
-      ? comparisonMonths.reduce(
-          (sum, month) => sum + byMonth.get(month)![key],
-          0,
-        )
-      : null
+    const current = sumMonths(currentMonths, byMonth, key)
+    const previous = sumMonths(comparisonMonths, byMonth, key)
     let changePct: number | null = null
     if (current === 0 && previous === 0) changePct = 0
     else if (current != null && previous != null && previous !== 0) {
@@ -66,4 +59,18 @@ function shiftMonth(month: string, offset: number): string {
   const [year, monthNumber] = month.split('-').map(Number)
   const shifted = new Date(Date.UTC(year, monthNumber - 1 + offset, 1))
   return shifted.toISOString().slice(0, 7)
+}
+
+function sumMonths(
+  months: string[],
+  values: ReadonlyMap<string, { savings: number; performance: number }>,
+  key: 'savings' | 'performance',
+): number | null {
+  let total = 0
+  for (const month of months) {
+    const value = values.get(month)
+    if (!value) return null
+    total += value[key]
+  }
+  return total
 }

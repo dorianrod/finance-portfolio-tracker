@@ -121,13 +121,11 @@ export function useConcentrationTrendController(
     [displayedPoint],
   )
   const selectedTimestamp = selectedPoint?.date.getTime()
-  const dateDomain = useMemo<[number, number]>(
-    () =>
-      chartData.length > 0
-        ? [chartData[0].timestamp, chartData.at(-1)!.timestamp]
-        : [0, 0],
-    [chartData],
-  )
+  const dateDomain = useMemo<[number, number]>(() => {
+    const first = chartData.at(0)
+    const last = chartData.at(-1)
+    return first && last ? [first.timestamp, last.timestamp] : [0, 0]
+  }, [chartData])
 
   return useMemo(
     () => ({

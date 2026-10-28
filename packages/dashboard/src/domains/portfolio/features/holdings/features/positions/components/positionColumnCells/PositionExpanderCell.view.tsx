@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { ExpandBtn } from '@/domains/portfolio/features/holdings/features/positions/components/ExpandBtn.view'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'

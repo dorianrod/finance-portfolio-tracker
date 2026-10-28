@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, assert, describe, expect, it } from 'vitest'
 
 import i18n from '@/i18n/i18n'
 
@@ -11,7 +11,8 @@ afterEach(async () => {
 
 describe('navigation translations', () => {
   it('resolves labels after a language change without reimporting the configuration', async () => {
-    const overview = PRIMARY_TABS.find((tab) => tab.id === 'overview')!
+    const overview = PRIMARY_TABS.find((tab) => tab.id === 'overview')
+    assert.isDefined(overview)
     const original = overview.label
     i18n.addResourceBundle('regression', 'translation', {
       'ui.app.overview': 'Updated overview',

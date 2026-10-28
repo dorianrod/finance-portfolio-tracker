@@ -188,7 +188,11 @@ function PositionBodyRow({
   if (isPosition) rowKind = 'position'
   else if (isGroup) rowKind = 'group'
   let rootRow = row
-  while (rootRow.getParentRow()) rootRow = rootRow.getParentRow()!
+  let parentRow = rootRow.getParentRow()
+  while (parentRow) {
+    rootRow = parentRow
+    parentRow = rootRow.getParentRow()
+  }
   const isClosed = isClosedPosition(rootRow.original)
   const { chartHandlers, savingsHandlers } = usePositionGroupPreviews({
     row,

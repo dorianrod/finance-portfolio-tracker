@@ -38,9 +38,12 @@ export function QualityThemeNavigation({
             label={i18n.t('ui.dataqualitytab.qualityTheme')}
             id="quality-theme"
             value={activeThemeId}
-            onChange={(event) =>
-              onThemeChange(event.target.value as QualityThemeId)
-            }
+            onChange={(event) => {
+              const theme = themes.find(
+                (theme) => theme.id === event.target.value,
+              )
+              if (theme) onThemeChange(theme.id)
+            }}
             variant="stacked"
           >
             {themes.map((theme) => (

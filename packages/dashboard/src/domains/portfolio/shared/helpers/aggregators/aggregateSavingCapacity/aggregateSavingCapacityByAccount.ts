@@ -14,11 +14,10 @@ export function aggregateSavingCapacityByAccount(
   >()
   for (const r of filtered) {
     const d = r.snapshot_date
-    if (!byDate.has(d.getTime()))
-      byDate.set(d.getTime(), { savings_delta: 0, perf_delta: 0 })
-    const entry = byDate.get(d.getTime())!
+    const entry = byDate.get(d.getTime()) ?? { savings_delta: 0, perf_delta: 0 }
     entry.savings_delta += r.savings_delta
     entry.perf_delta += r.perf_delta
+    byDate.set(d.getTime(), entry)
   }
   return Array.from(byDate.entries())
     .toSorted(([a], [b]) => a - b)

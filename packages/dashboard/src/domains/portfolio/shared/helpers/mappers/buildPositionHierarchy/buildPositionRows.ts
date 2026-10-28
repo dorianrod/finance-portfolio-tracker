@@ -31,8 +31,9 @@ export function buildPositionRows(
     const asset = assetKey(op)
     if (!asset) continue
     const key = positionKey(asset, op.account)
-    if (!byAsset.has(key)) byAsset.set(key, [])
-    byAsset.get(key)!.push(op)
+    const operations = byAsset.get(key) ?? []
+    operations.push(op)
+    byAsset.set(key, operations)
   }
 
   const rows: PositionRow[] = []

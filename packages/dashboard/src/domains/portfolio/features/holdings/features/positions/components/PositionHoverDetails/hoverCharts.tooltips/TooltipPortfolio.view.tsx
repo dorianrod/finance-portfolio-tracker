@@ -2,7 +2,7 @@ import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import { type NumericTooltipProps } from '@/shared/ui/chartTooltip'
+import type { NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'

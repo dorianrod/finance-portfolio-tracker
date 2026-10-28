@@ -66,10 +66,13 @@ export function TopPerformersChart({
               dataKey="pct"
               position="right"
               formatter={(value: unknown) =>
-                formatPercentage(value as number, {
-                  decimals: 0,
-                  signed: true,
-                })
+                formatPercentage(
+                  typeof value === 'number' ? value : undefined,
+                  {
+                    decimals: 0,
+                    signed: true,
+                  },
+                )
               }
             />
           </SeriesBar>

@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { GainCell } from '@/domains/portfolio/features/holdings/features/positions/components/GainCell.view'
 import { RealizedGainCell } from '@/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature'

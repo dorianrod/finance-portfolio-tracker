@@ -9,7 +9,7 @@ export function computeTopPerformers(
   if (!positions) return []
   return positions
     .filter(
-      (p) =>
+      (p): p is PositionRow & { unrealized_gain_pct: number } =>
         p.status === 'active' &&
         p.unrealized_gain_pct !== null &&
         p.unrealized_gain_pct !== 0,
@@ -17,7 +17,7 @@ export function computeTopPerformers(
     .map((p) => ({
       label: resolveAssetName(p, p.isin),
       name: p.name,
-      pct: Math.round(p.unrealized_gain_pct! * 10) / 10,
+      pct: Math.round(p.unrealized_gain_pct * 10) / 10,
       gain: Math.round(p.unrealized_gain ?? 0),
       value: Math.round(p.total_value ?? 0),
       account_type: p.account_type ?? '',

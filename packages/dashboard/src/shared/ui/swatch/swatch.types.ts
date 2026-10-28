@@ -1,4 +1,4 @@
-import { type HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react'
 
 import type { ControlProps } from '@/shared/ui/controlProps'
 import type { SWATCH_SHAPES } from '@/shared/ui/swatchAppearance/swatchShapes'

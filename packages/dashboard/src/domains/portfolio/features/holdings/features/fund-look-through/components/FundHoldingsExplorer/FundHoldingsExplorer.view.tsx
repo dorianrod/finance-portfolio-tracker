@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { VirtualExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/VirtualExposureRow.view'
 import type { useFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel'
 import type { useVirtualExposureList } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList'
-import type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Input } from '@/shared/ui/controls/Input.view'
@@ -68,9 +67,10 @@ export function FundHoldingsExplorerView({
           </Layout>
           <Select
             value={sort}
-            onChange={(event) =>
-              setSort(event.target.value as FundExposureSort)
-            }
+            onChange={(event) => {
+              const value = event.target.value
+              if (value === 'value' || value === 'name') setSort(value)
+            }}
             label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
             variant="canvasSelect"
           >

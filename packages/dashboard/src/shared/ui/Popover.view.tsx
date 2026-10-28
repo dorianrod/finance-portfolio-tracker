@@ -1,7 +1,7 @@
 import * as Primitive from '@radix-ui/react-popover'
 import { useAtomValue } from 'jotai'
 import { ScopeProvider } from 'jotai-scope'
-import { type ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
 import { useComposedRefs } from '@/shared/ui/services/useComposedRefs'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'

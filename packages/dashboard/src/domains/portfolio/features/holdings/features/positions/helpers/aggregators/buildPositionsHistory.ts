@@ -17,14 +17,15 @@ export function buildPositionsHistory(
     const qty = row.quantity
     const lp = row.last_price
     if (val == null || avgP == null || qty == null) continue
-    if (!map.has(key)) map.set(key, [])
-    map.get(key)!.push({
+    const points = map.get(key) ?? []
+    points.push({
       date: row.snapshot_date,
       value: val,
       costBasis: Math.round(avgP * qty * 100) / 100,
       pct: row.unrealized_gain_pct,
       last_price: lp ?? 0,
     })
+    map.set(key, points)
   }
 
   // sort by date asc, aggregate across accounts by summing value/costBasis

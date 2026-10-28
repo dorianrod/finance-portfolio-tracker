@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'

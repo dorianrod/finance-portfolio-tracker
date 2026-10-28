@@ -1,4 +1,4 @@
-import { type Schema } from 'yup'
+import type { Schema } from 'yup'
 
 import { HttpError } from '@/shared/http/httpError'
 

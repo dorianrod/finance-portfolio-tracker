@@ -69,8 +69,8 @@ function PreviewTrigger({
   const context = useAtomValue(previewInputAtom)
   const triggerId = useId()
   if (!context) throw new Error('Preview.Trigger requires Preview.')
-  function show(element: HTMLButtonElement, interactive: boolean) {
-    context!.activate(element, interactive)
+  const show = (element: HTMLButtonElement, interactive: boolean) => {
+    context.activate(element, interactive)
     onPreview(element)
   }
   return (

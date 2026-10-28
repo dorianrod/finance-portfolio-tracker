@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { UnrealizedGainCell } from '@/domains/portfolio/features/holdings/features/positions/components/gainCells/UnrealizedGainCell.feature'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'

@@ -1,6 +1,6 @@
 import { CompactBadge } from '@/shared/ui/statusBadge/CompactBadge.view'
 
-import { type ScopeBadge as ScopeBadgeData } from './helpers/presenters/useFilterScopeBadges'
+import type { ScopeBadge as ScopeBadgeData } from './helpers/presenters/useFilterScopeBadges'
 
 export function FilterScopeBadge({ badge }: { badge: ScopeBadgeData }) {
   const tones = {

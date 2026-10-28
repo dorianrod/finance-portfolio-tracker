@@ -44,7 +44,10 @@ function QualityTabs() {
   return (
     <Tabs
       value={active}
-      onValueChange={(value) => setActive(value as QualityThemeId)}
+      onValueChange={(value) => {
+        const theme = themes.find((theme) => theme.id === value)
+        if (theme) setActive(theme.id)
+      }}
       orientation="vertical"
     >
       <Tabs.List label="Quality themes">

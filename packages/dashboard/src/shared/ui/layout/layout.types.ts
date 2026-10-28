@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef } from 'react'
+import type { ComponentPropsWithRef } from 'react'
 
 import type { ControlProps } from '@/shared/ui/controlProps'
 import type { LAYOUT_AFTER } from '@/shared/ui/layoutAppearance/layoutAfter'

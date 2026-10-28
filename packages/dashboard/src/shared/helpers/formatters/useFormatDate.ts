@@ -25,26 +25,31 @@ type DateStyle =
   | 'shortMonthYear'
   | 'shortMonthShortYear'
 
-const DATE_OPTIONS: Record<
-  Exclude<DateStyle, 'isoDate'>,
-  Intl.DateTimeFormatOptions
-> = {
-  dayMonthYear: { day: 'numeric', month: 'short', year: 'numeric' },
-  longDayMonthYear: { day: 'numeric', month: 'long', year: 'numeric' },
-  longMonthYear: { month: 'long', year: 'numeric' },
-  shortMonthYear: { month: 'short', year: 'numeric' },
-  shortMonthShortYear: { month: 'short', year: '2-digit' },
-}
-
 type DateFormatOptions = {
   fallback?: string
   style?: DateStyle
   timeZone?: 'UTC'
 }
 
-const UTC_DATE_FORMATTERS = Object.fromEntries(
-  Object.entries(DATE_OPTIONS).map(([style, options]) => [
-    style,
-    new Intl.DateTimeFormat('en-GB', { ...options, timeZone: 'UTC' }),
-  ]),
-) as Record<Exclude<DateStyle, 'isoDate'>, Intl.DateTimeFormat>
+const UTC_DATE_FORMATTERS: Record<
+  Exclude<DateStyle, 'isoDate'>,
+  Intl.DateTimeFormat
+> = {
+  dayMonthYear: utcFormatter({
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }),
+  longDayMonthYear: utcFormatter({
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
+  longMonthYear: utcFormatter({ month: 'long', year: 'numeric' }),
+  shortMonthYear: utcFormatter({ month: 'short', year: 'numeric' }),
+  shortMonthShortYear: utcFormatter({ month: 'short', year: '2-digit' }),
+}
+
+function utcFormatter(options: Intl.DateTimeFormatOptions) {
+  return new Intl.DateTimeFormat('en-GB', { ...options, timeZone: 'UTC' })
+}

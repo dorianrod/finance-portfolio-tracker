@@ -172,7 +172,9 @@ domain implementation modules. See the skill's owning rules for the boundaries
 and valid local support contracts.
 
 Typed ESLint checks cover unhandled/misused promises, propagated `any`, incomplete
-union switches, unsafe coercions and redundant assertions. Shared chart axes expose
+union switches, unchecked narrowing/non-null assertions and unnecessary conversions.
+Type-only imports are fully erased, promise rejection callbacks use `unknown`,
+and returned promises are awaited where error handling requires it. Shared chart axes expose
 typed tick values, and CSV schema helpers preserve their validated generic output.
 Browser and tooling projects both use `strict`, `noImplicitReturns`,
 `noImplicitOverride` and `noPropertyAccessFromIndexSignature`.

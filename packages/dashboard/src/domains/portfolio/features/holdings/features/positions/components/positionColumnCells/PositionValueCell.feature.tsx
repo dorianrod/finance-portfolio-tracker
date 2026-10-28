@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { shouldShowPositionQuantity } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/shouldShowPositionQuantity'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'

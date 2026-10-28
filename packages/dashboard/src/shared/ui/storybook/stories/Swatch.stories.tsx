@@ -48,9 +48,13 @@ export const SemanticTones: Story = {
   render: function Tones() {
     return (
       <div className="grid gap-3">
-        {Object.keys(CHART_COLORS).map((tone) => (
-          <ToneExample key={tone} tone={tone as keyof typeof CHART_COLORS} />
-        ))}
+        {Object.keys(CHART_COLORS)
+          .filter((tone): tone is keyof typeof CHART_COLORS =>
+            Object.hasOwn(CHART_COLORS, tone),
+          )
+          .map((tone) => (
+            <ToneExample key={tone} tone={tone} />
+          ))}
       </div>
     )
   },
@@ -59,12 +63,13 @@ export const Shapes: Story = {
   render: function Shapes() {
     return (
       <div className="grid gap-3">
-        {Object.keys(SWATCH_SHAPES).map((shape) => (
-          <ShapeExample
-            key={shape}
-            shape={shape as keyof typeof SWATCH_SHAPES}
-          />
-        ))}
+        {Object.keys(SWATCH_SHAPES)
+          .filter((shape): shape is keyof typeof SWATCH_SHAPES =>
+            Object.hasOwn(SWATCH_SHAPES, shape),
+          )
+          .map((shape) => (
+            <ShapeExample key={shape} shape={shape} />
+          ))}
       </div>
     )
   },

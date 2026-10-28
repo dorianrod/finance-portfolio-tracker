@@ -69,7 +69,7 @@ export function AnnualIncomeSavingsChart({
             yAxisId="rate"
             orientation="right"
             tickFormatter={(value) =>
-              formatPercentage(Number(value), { decimals: 'auto' })
+              formatPercentage(value, { decimals: 'auto' })
             }
             width={48}
           />

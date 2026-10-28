@@ -59,12 +59,13 @@ export const Variants: Story = {
   render: function Variants() {
     return (
       <div className="flex flex-wrap gap-3">
-        {Object.keys(BUTTON_VARIANTS).map((variant) => (
-          <ButtonVariant
-            key={variant}
-            variant={variant as keyof typeof BUTTON_VARIANTS}
-          />
-        ))}
+        {Object.keys(BUTTON_VARIANTS)
+          .filter((variant): variant is keyof typeof BUTTON_VARIANTS =>
+            Object.hasOwn(BUTTON_VARIANTS, variant),
+          )
+          .map((variant) => (
+            <ButtonVariant key={variant} variant={variant} />
+          ))}
       </div>
     )
   },
@@ -145,14 +146,18 @@ export const InputVariants: Story = {
   render: function Variants() {
     return (
       <div className="grid gap-3">
-        {Object.keys(FIELD_VARIANTS).map((variant) => (
-          <Input
-            key={variant}
-            label={variant}
-            placeholder={variant}
-            variant={variant as keyof typeof FIELD_VARIANTS}
-          />
-        ))}
+        {Object.keys(FIELD_VARIANTS)
+          .filter((variant): variant is keyof typeof FIELD_VARIANTS =>
+            Object.hasOwn(FIELD_VARIANTS, variant),
+          )
+          .map((variant) => (
+            <Input
+              key={variant}
+              label={variant}
+              placeholder={variant}
+              variant={variant}
+            />
+          ))}
       </div>
     )
   },

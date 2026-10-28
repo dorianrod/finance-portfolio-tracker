@@ -9,7 +9,10 @@ import { createRoot } from 'react-dom/client'
 import App from './app/App.feature'
 import { queryClient } from './app/queryClient.ts'
 
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')
+if (!root) throw new Error('Dashboard root element is missing')
+
+createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <JotaiProvider>

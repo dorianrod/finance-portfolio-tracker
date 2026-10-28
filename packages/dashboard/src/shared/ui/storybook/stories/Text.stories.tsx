@@ -27,11 +27,15 @@ export const Variants: Story = {
   render: function Variants() {
     return (
       <div className="grid gap-3">
-        {Object.keys(TEXT_VARIANTS).map((variant) => (
-          <Text key={variant} variant={variant as keyof typeof TEXT_VARIANTS}>
-            {variant}
-          </Text>
-        ))}
+        {Object.keys(TEXT_VARIANTS)
+          .filter((variant): variant is keyof typeof TEXT_VARIANTS =>
+            Object.hasOwn(TEXT_VARIANTS, variant),
+          )
+          .map((variant) => (
+            <Text key={variant} variant={variant}>
+              {variant}
+            </Text>
+          ))}
       </div>
     )
   },
@@ -40,11 +44,15 @@ export const Tones: Story = {
   render: function Tones() {
     return (
       <div className="grid gap-3">
-        {Object.keys(TEXT_TONES).map((tone) => (
-          <Text key={tone} tone={tone as keyof typeof TEXT_TONES}>
-            {tone}
-          </Text>
-        ))}
+        {Object.keys(TEXT_TONES)
+          .filter((tone): tone is keyof typeof TEXT_TONES =>
+            Object.hasOwn(TEXT_TONES, tone),
+          )
+          .map((tone) => (
+            <Text key={tone} tone={tone}>
+              {tone}
+            </Text>
+          ))}
       </div>
     )
   },

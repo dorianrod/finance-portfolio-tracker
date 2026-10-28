@@ -1,4 +1,4 @@
-import { type Row } from '@tanstack/react-table'
+import type { Row } from '@tanstack/react-table'
 
 import { TransactionBadge } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableAppearance/TransactionBadge.view'
 import { useFormatOperationGroupLabel } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatOperationGroupLabel'

@@ -92,7 +92,7 @@ export function AccountTypeHistoryChart({
               tickFormatter={
                 percentageMode
                   ? (value) =>
-                      formatPercentage(Math.round(Number(value)), {
+                      formatPercentage(Math.round(value), {
                         decimals: 0,
                       })
                   : (value) => formatMoney(value, { style: 'compact' })

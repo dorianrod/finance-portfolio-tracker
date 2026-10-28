@@ -8,10 +8,11 @@ export function computeMonthlyBalances(
     const month = toCalendarMonth(op.date)
     netByMonth.set(month, (netByMonth.get(month) ?? 0) + op.total_amount)
   }
-  const months = [...netByMonth.keys()].toSorted()
+  const months = [...netByMonth.entries()].toSorted(([left], [right]) =>
+    left.localeCompare(right),
+  )
   let balance = 0
-  return months.map((month) => {
-    const delta = netByMonth.get(month)!
+  return months.map(([month, delta]) => {
     balance += delta
     return { month, balance: Math.round(balance), delta: Math.round(delta) }
   })

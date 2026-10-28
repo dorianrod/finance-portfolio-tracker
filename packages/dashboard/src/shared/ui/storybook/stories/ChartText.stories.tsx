@@ -21,11 +21,15 @@ export const Tones: Story = {
   render: function Tones() {
     return (
       <div className="grid gap-2">
-        {Object.keys(CHART_TEXT_TONES).map((tone) => (
-          <ChartText key={tone} tone={tone as keyof typeof CHART_TEXT_TONES}>
-            {tone}
-          </ChartText>
-        ))}
+        {Object.keys(CHART_TEXT_TONES)
+          .filter((tone): tone is keyof typeof CHART_TEXT_TONES =>
+            Object.hasOwn(CHART_TEXT_TONES, tone),
+          )
+          .map((tone) => (
+            <ChartText key={tone} tone={tone}>
+              {tone}
+            </ChartText>
+          ))}
       </div>
     )
   },

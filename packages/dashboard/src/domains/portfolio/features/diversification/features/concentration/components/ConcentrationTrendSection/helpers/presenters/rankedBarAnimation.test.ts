@@ -50,9 +50,9 @@ describe('interpolateRankedBars', () => {
     const entering = halfway.find((item) => item.payload?.key === 'IN')
 
     expect(leaving).toMatchObject({ width: 100, opacity: 0.5 })
-    expect(leaving!.y).toBeGreaterThan(0)
+    expect(leaving?.y).toBeGreaterThan(0)
     expect(entering).toMatchObject({ width: 60, opacity: 0.5 })
-    expect(entering!.y).toBeGreaterThan(30)
+    expect(entering?.y).toBeGreaterThan(30)
 
     const completed = interpolateRankedBars(items, 1, 'vertical')
     expect(completed.map((item) => item.payload?.key)).toEqual(['IN'])

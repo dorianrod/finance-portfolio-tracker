@@ -4,7 +4,6 @@ import { ClassificationCoverageState } from '@/domains/portfolio/features/data-q
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel'
-import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
@@ -116,9 +115,10 @@ export function DataQualityTab({
         <Tabs
           orientation="vertical"
           value={activeThemeId}
-          onValueChange={(value) =>
-            setSelectedQualityTheme(value as QualityThemeId)
-          }
+          onValueChange={(value) => {
+            const theme = themes.find((theme) => theme.id === value)
+            if (theme) setSelectedQualityTheme(theme.id)
+          }}
         >
           <Grid arrangement="sidebar" align="start" gap="relaxed">
             <QualityThemeNavigation

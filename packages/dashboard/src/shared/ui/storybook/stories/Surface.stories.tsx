@@ -30,12 +30,13 @@ export const Variants: Story = {
   render: function Variants() {
     return (
       <div className="grid gap-4 sm:grid-cols-3">
-        {Object.keys(SURFACE_VARIANTS).map((variant) => (
-          <SurfaceVariant
-            key={variant}
-            variant={variant as keyof typeof SURFACE_VARIANTS}
-          />
-        ))}
+        {Object.keys(SURFACE_VARIANTS)
+          .filter((variant): variant is keyof typeof SURFACE_VARIANTS =>
+            Object.hasOwn(SURFACE_VARIANTS, variant),
+          )
+          .map((variant) => (
+            <SurfaceVariant key={variant} variant={variant} />
+          ))}
       </div>
     )
   },

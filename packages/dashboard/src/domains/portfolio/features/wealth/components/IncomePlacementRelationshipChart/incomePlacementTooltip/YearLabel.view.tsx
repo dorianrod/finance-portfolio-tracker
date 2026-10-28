@@ -1,4 +1,4 @@
-import { type LabelProps } from 'recharts'
+import type { LabelProps } from 'recharts'
 
 import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/calculateYearLabelLayout'
 import { getYearLabelPosition } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/getYearLabelPosition'

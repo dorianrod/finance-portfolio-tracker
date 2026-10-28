@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { DiversificationViewToggle } from '@/app/DiversificationViewToggle.feature'
-import { type HoldingsView } from '@/app/HoldingsViewTabs.feature'
+import type { HoldingsView } from '@/app/HoldingsViewTabs.feature'
 import { FilterButton } from '@/domains/portfolio/features/scope-selection/components/filterBar/FilterButton.feature'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'

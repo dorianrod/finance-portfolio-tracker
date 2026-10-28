@@ -37,9 +37,8 @@ export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
     values: ALLOCATION_VALUES_SCHEMA,
   })
   .transform((row: unknown) => {
-    if (typeof row !== 'object' || row === null || Array.isArray(row))
-      return row
-    const source = row as Record<string, unknown>
+    if (!isRecord(row)) return row
+    const source = row
     const values = Object.fromEntries(
       Object.entries(source)
         .filter(([key]) => !ALLOCATION_METADATA_COLUMNS.has(key))
@@ -57,3 +56,7 @@ export const ALLOCATION_BY_ISIN_ROW_SCHEMA: yup.ObjectSchema<RawIsinRow> = yup
       values,
     }
   })
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}

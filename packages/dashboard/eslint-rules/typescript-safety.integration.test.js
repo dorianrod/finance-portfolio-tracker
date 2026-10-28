@@ -49,6 +49,41 @@ describe('typed ESLint safety through the application configuration', () => {
       "import {ReactNode} from 'react'; const children: ReactNode = null",
       "import type {ReactNode} from 'react'; const children: ReactNode = null",
     ],
+    [
+      'no-import-type-side-effects',
+      "import {type ReactNode} from 'react'; const children: ReactNode = null",
+      "import type {ReactNode} from 'react'; const children: ReactNode = null",
+    ],
+    [
+      'no-unsafe-type-assertion',
+      "function select(value: string) {return value as 'first' | 'second'}",
+      "function select(value: string) {if (value === 'first' || value === 'second') return value; throw new Error('Invalid choice')}",
+    ],
+    [
+      'no-non-null-assertion',
+      'function read(value: string | undefined) {return value!.trim()}',
+      "function read(value: string | undefined) {if (value === undefined) throw new Error('Missing value'); return value.trim()}",
+    ],
+    [
+      'no-unnecessary-type-conversion',
+      'function read(value: number) {return Number(value)}',
+      'function read(value: number) {return value}',
+    ],
+    [
+      'return-await',
+      'async function read() {try {return Promise.resolve(1)} catch (error) {throw error}}',
+      'async function read() {try {return await Promise.resolve(1)} catch (error) {throw error}}',
+    ],
+    [
+      'use-unknown-in-catch-callback-variable',
+      "void Promise.reject(new Error('Example')).catch(error => console.error(error))",
+      "void Promise.reject(new Error('Example')).catch((error: unknown) => console.error(error))",
+    ],
+    [
+      'no-confusing-void-expression',
+      'function send(): void {} const result = send()',
+      'function send(): void {} send(); const handleClick = () => send()',
+    ],
   ])(
     'rejects unsafe code and preserves its valid neighbor: %s',
     async (rule, invalid, valid) => {

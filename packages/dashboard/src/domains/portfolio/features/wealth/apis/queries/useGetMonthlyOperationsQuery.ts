@@ -24,13 +24,14 @@ export function useGetMonthlyOperationsQuery() {
         const amount = row.total_amount
         // month key = YYYY-MM
         const month = toCalendarMonth(row.date)
-        if (!map.has(month)) map.set(month, [])
-        map.get(month)!.push({
+        const operations = map.get(month) ?? []
+        operations.push({
           date: row.date,
           account: row.account,
           operation_type: row.operation_type,
           total_amount: amount,
         })
+        map.set(month, operations)
       }
       return map
     },

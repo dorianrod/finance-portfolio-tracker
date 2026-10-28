@@ -31,22 +31,24 @@ export function resolveAccountTypeLabelPositions(
     const side = positions
       .filter((position) => position.isRight === isRight)
       .toSorted((a, b) => a.desiredY - b.desiredY)
-    if (side.length === 0) continue
+    const last = side.at(-1)
+    if (!last) continue
+    const first = side[0]
     const gap =
       side.length > 1 ? Math.min(17, (maxY - minY) / (side.length - 1)) : 0
 
-    side[0].y = Math.max(minY, side[0].desiredY)
+    first.y = Math.max(minY, first.desiredY)
     for (let i = 1; i < side.length; i++) {
       side[i].y = Math.max(side[i].desiredY, side[i - 1].y + gap)
     }
-    if (side.at(-1)!.y > maxY) {
-      side[side.length - 1].y = maxY
+    if (last.y > maxY) {
+      last.y = maxY
       for (let i = side.length - 2; i >= 0; i--) {
         side[i].y = Math.min(side[i].y, side[i + 1].y - gap)
       }
     }
-    if (side[0].y < minY) {
-      const shift = minY - side[0].y
+    if (first.y < minY) {
+      const shift = minY - first.y
       side.forEach((position) => {
         position.y += shift
       })

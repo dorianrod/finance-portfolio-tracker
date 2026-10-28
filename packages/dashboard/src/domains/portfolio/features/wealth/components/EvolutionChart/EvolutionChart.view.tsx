@@ -91,7 +91,7 @@ export function EvolutionChart({
             tickFormatter={
               percentageMode
                 ? (value) =>
-                    formatPercentage(Math.round(Number(value)), { decimals: 0 })
+                    formatPercentage(Math.round(value), { decimals: 0 })
                 : (value) => formatMoney(value, { style: 'compact' })
             }
             domain={percentageMode ? ['auto', 'auto'] : undefined}

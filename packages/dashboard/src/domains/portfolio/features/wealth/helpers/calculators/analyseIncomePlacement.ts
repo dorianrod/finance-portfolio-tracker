@@ -5,7 +5,7 @@ export function analyseIncomePlacement(
   data: AnnualIncomeSavingsPoint[],
 ): IncomePlacementAnalysis {
   const points = data.filter(
-    (point) =>
+    (point): point is AnnualIncomeSavingsPoint & { placementRate: number } =>
       point.comparable &&
       point.incomeStatus === 'actual' &&
       point.savingsStatus === 'complete' &&
@@ -23,11 +23,10 @@ export function analyseIncomePlacement(
   const meanIncome =
     points.reduce((sum, point) => sum + point.totalIncome, 0) / points.length
   const meanRate =
-    points.reduce((sum, point) => sum + point.placementRate!, 0) / points.length
+    points.reduce((sum, point) => sum + point.placementRate, 0) / points.length
   const covariance = points.reduce(
     (sum, point) =>
-      sum +
-      (point.totalIncome - meanIncome) * (point.placementRate! - meanRate),
+      sum + (point.totalIncome - meanIncome) * (point.placementRate - meanRate),
     0,
   )
   const incomeVariance = points.reduce(
@@ -35,7 +34,7 @@ export function analyseIncomePlacement(
     0,
   )
   const rateVariance = points.reduce(
-    (sum, point) => sum + (point.placementRate! - meanRate) ** 2,
+    (sum, point) => sum + (point.placementRate - meanRate) ** 2,
     0,
   )
 

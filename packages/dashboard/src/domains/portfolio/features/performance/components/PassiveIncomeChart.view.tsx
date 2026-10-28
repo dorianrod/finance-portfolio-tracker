@@ -64,7 +64,9 @@ export function PassiveIncomeChart({
                 dataKey="dividends"
                 position="inside"
                 formatter={(value: unknown) =>
-                  formatMoney(value as number, { style: 'compact' })
+                  formatMoney(typeof value === 'number' ? value : undefined, {
+                    style: 'compact',
+                  })
                 }
               />
             </SeriesBar>

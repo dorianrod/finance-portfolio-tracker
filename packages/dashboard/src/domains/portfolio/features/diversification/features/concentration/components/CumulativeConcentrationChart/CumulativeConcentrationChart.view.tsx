@@ -81,7 +81,7 @@ export function CumulativeConcentrationChart({
             domain={[0, 100]}
             ticks={[0, 25, 50, 75, 100]}
             tickFormatter={(value: number) =>
-              formatPercentage(Number(value), { decimals: 'auto' })
+              formatPercentage(value, { decimals: 'auto' })
             }
             width={42}
           />

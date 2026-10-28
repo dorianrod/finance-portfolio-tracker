@@ -23,12 +23,13 @@ export const Variants: Story = {
     return (
       <table>
         <tbody>
-          {Object.keys(DATA_CELL_VARIANTS).map((variant) => (
-            <VariantRow
-              key={variant}
-              variant={variant as keyof typeof DATA_CELL_VARIANTS}
-            />
-          ))}
+          {Object.keys(DATA_CELL_VARIANTS)
+            .filter((variant): variant is keyof typeof DATA_CELL_VARIANTS =>
+              Object.hasOwn(DATA_CELL_VARIANTS, variant),
+            )
+            .map((variant) => (
+              <VariantRow key={variant} variant={variant} />
+            ))}
         </tbody>
       </table>
     )

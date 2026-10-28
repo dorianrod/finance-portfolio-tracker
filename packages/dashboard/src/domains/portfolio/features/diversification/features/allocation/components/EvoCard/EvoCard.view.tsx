@@ -117,9 +117,7 @@ export function EvoCardView({
             }
           />
           <ChartYAxis
-            tickFormatter={(v) =>
-              formatPercentage(Number(v), { decimals: 'auto' })
-            }
+            tickFormatter={(v) => formatPercentage(v, { decimals: 'auto' })}
             domain={[0, 100]}
             width={36}
           />
