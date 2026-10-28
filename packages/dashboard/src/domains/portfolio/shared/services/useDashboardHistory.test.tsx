@@ -4,7 +4,7 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/resetFilters'
+import { resetFilters } from '@/domains/portfolio/features/scope-selection/helpers/filters/resetFilters'
 import { makePortfolioHistoryResponse } from '@/domains/portfolio/shared/mocks/portfolioHistoryResponse.mock'
 
 import { useDashboardHistory } from './useDashboardHistory'

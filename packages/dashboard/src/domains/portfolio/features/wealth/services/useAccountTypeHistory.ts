@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 
-import {
-  type AccountTypeHistory,
-  buildAccountTypeHistory,
-} from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
+import { buildAccountTypeHistory } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
+import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
 
 export function useAccountTypeHistory(

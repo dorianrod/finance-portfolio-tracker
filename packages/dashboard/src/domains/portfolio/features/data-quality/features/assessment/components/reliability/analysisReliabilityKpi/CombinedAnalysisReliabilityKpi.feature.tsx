@@ -1,35 +1,23 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
 import {
   type QualityTooltipRow,
   RELIABILITY_TONES,
 } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
-import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/normalizeCoveragePercentage'
-import type {
-  AnalysisReliabilityMetric,
-  AnalysisReliabilityTone,
-  StatusReliabilityMetric,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
-import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
-import { type FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
-export function CombinedAnalysisReliabilityKpi({
-  metrics,
-  statusMetric,
-  tone,
-  tooltip,
-  qualityTheme,
-  scope,
-}: {
-  metrics: AnalysisReliabilityMetric[]
-  statusMetric?: StatusReliabilityMetric
-  tone: AnalysisReliabilityTone
-  tooltip: string
-  qualityTheme: QualityThemeId
-  scope: FilterScopeSpec
-}) {
+import {
+  type CombinedReliabilityInput,
+  useCombinedReliabilityPresentation,
+} from './services/useCombinedReliabilityPresentation'
+
+export function CombinedAnalysisReliabilityKpi(
+  props: CombinedReliabilityInput,
+) {
+  const { metrics, statusMetric, tone, tooltip, qualityTheme, scope } =
+    useCombinedReliabilityPresentation(props)
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const styles = RELIABILITY_TONES[tone]
@@ -65,11 +53,11 @@ export function CombinedAnalysisReliabilityKpi({
     <CompactDataQualityKpi
       tone={tone}
       tooltip={tooltip}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats its combined reliability metrics; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges.
+
       rows={rows}
       qualityTheme={qualityTheme}
       scope={scope}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.
+
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality',
         {

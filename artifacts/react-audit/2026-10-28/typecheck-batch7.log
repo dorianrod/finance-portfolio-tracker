@@ -1,0 +1,9 @@
+
+> dashboard@1.1.0 typecheck
+> tsc -b --pretty false
+
+src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.feature.tsx(164,15): error TS2322: Type '(point: AccountTypeChartPoint) => number' is not assignable to type 'string | number | ((obj: unknown) => unknown)'.
+  Type '(point: AccountTypeChartPoint) => number' is not assignable to type '(obj: unknown) => unknown'.
+    Types of parameters 'point' and 'obj' are incompatible.
+      Type 'unknown' is not assignable to type 'AccountTypeChartPoint'.
+        Type 'unknown' is not assignable to type 'AccountTypeHistoryPoint'.

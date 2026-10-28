@@ -1,7 +1,6 @@
+import type { TopPerformer } from '@/domains/portfolio/features/performance/types/topPerformer.type'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-import type { TopPerformer } from './performanceCalculations.types'
 
 // Active positions with non-zero unrealized P&L, sorted best to worst.
 export function computeTopPerformers(

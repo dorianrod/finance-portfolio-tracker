@@ -1,6 +1,5 @@
+import type { PeriodDrivers } from '@/domains/portfolio/features/wealth/types/periodDrivers.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-
-import type { PeriodDrivers } from './wealthCalculations.types'
 
 export function computePeriodDrivers(
   points: SavingCapacityPoint[],

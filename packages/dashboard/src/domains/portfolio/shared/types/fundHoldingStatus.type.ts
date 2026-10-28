@@ -16,7 +16,9 @@ export type FundHoldingStatus = {
   replicationMethod: string
   proxyName: string
   proxyIsin: string
+  // Manual or unresolved sources may have no fetch timestamp.
   fetchedAt: Date | null
+  // Unresolved sources may not disclose a composition date.
   holdingsDate: Date | null
   freshnessDays: number
   isStale: boolean

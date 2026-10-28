@@ -1,4 +1,5 @@
-import type { HistoricalConcentrationPoint } from './buildConcentrationTrend.types'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
+
 import { positionsNeededForShare } from './positionsNeededForShare'
 
 export function concentrationPoint(

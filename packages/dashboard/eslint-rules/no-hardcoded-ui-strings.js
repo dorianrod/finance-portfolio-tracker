@@ -53,7 +53,7 @@ const looksLikeCopy = (value) =>
   !/^[A-Z0-9_-]+$/.test(value) &&
   (/[\s.!?&/]/.test(value) || /^[A-ZÀ-ÖØ-Þ]/u.test(value))
 
-function reportExpressionStrings(context, node) {
+function reportExpressionStrings(context, node, inferCopy = false) {
   if (
     node.type === 'Literal' &&
     typeof node.value === 'string' &&
@@ -64,21 +64,23 @@ function reportExpressionStrings(context, node) {
   }
   if (
     node.type === 'TemplateLiteral' &&
-    node.quasis.some((quasi) => hasWords(quasi.value.raw))
+    node.quasis.some((quasi) =>
+      inferCopy ? looksLikeCopy(quasi.value.raw) : hasWords(quasi.value.raw),
+    )
   ) {
     context.report({ node, messageId: 'hardcoded' })
     return
   }
   if (node.type === 'ConditionalExpression') {
-    reportExpressionStrings(context, node.consequent)
-    reportExpressionStrings(context, node.alternate)
+    reportExpressionStrings(context, node.consequent, inferCopy)
+    reportExpressionStrings(context, node.alternate, inferCopy)
   }
   if (
     node.type === 'LogicalExpression' ||
     (node.type === 'BinaryExpression' && node.operator === '+')
   ) {
-    reportExpressionStrings(context, node.left)
-    reportExpressionStrings(context, node.right)
+    reportExpressionStrings(context, node.left, inferCopy)
+    reportExpressionStrings(context, node.right, inferCopy)
   }
 }
 
@@ -95,6 +97,9 @@ export default {
     schema: [],
   },
   create(context) {
+    const isFixtureData = /(?:\/mocks\/|\.mock\.[cm]?[jt]sx?$)/u.test(
+      context.filename.replaceAll('\\', '/'),
+    )
     const isComponentSource = context.filename.endsWith('.tsx')
     const isPresentationHelper = /\/(?:formatters|presenters)\//.test(
       context.filename,
@@ -126,6 +131,7 @@ export default {
     }
     return {
       Literal(node) {
+        if (isFixtureData) return
         if (
           typeof node.value !== 'string' ||
           !looksLikeCopy(node.value) ||
@@ -193,6 +199,7 @@ export default {
         reportExpressionStrings(context, node.expression)
       },
       Property(node) {
+        if (isFixtureData) return
         if (node.computed || node.key.type !== 'Identifier') return
         const isKnownCopy = USER_FACING_PROPERTIES.has(node.key.name)
         const isComponentCopy = isComponentSource
@@ -232,7 +239,7 @@ export default {
       },
       ReturnStatement(node) {
         if (!isPresentationHelper || !node.argument) return
-        reportExpressionStrings(context, node.argument)
+        reportExpressionStrings(context, node.argument, true)
       },
     }
   },

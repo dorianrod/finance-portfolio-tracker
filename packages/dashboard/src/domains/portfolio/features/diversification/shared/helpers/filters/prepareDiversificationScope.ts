@@ -1,6 +1,6 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell distributes the prepared scope to both allocation and concentration. See SHARED_OWNERSHIP_AUDIT.md.
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 import { excludeNonApplicableAllocationData } from './scopeDiversificationData/excludeNonApplicableAllocationData'

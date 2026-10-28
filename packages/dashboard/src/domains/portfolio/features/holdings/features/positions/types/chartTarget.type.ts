@@ -1,8 +1,8 @@
-import type { Operation } from './positionChartOperation.type'
+import type { PositionChartOperation } from './positionChartOperation.type'
 
 export type ChartTarget = {
   isin: string
   name: string
-  operations: Operation[]
+  operations: PositionChartOperation[]
   buttonRect: DOMRect
 }

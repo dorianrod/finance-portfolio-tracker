@@ -3,11 +3,11 @@
 // Display order used for sorting and as a fallback when assigning colors
 // to literal account "type" values that don't have a dedicated color.
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
-export const CATEGORY_ORDER: Record<string, number> = {
-  brokerage: 0,
-  private_equity: 1,
-  employer_savings: 2,
-  retirement: 3,
-  savings: 4,
-  checking: 5,
-}
+export const CATEGORY_ORDER: ReadonlyMap<string, number> = new Map([
+  ['brokerage', 0],
+  ['private_equity', 1],
+  ['employer_savings', 2],
+  ['retirement', 3],
+  ['savings', 4],
+  ['checking', 5],
+])

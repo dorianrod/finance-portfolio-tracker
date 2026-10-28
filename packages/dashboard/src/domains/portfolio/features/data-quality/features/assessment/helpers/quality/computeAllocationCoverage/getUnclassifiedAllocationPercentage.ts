@@ -1,4 +1,4 @@
-import type { DimensionCoverage } from './computeAllocationCoverage.types'
+import type { DimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
 
 export function getUnclassifiedAllocationPercentage({
   allocated,

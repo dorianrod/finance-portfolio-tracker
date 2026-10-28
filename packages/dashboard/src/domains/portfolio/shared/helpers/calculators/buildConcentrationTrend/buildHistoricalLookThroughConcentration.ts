@@ -1,7 +1,7 @@
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-import type { HistoricalConcentrationPoint } from './buildConcentrationTrend.types'
 import { concentrationPoint } from './concentrationPoint'
 import { historicalSnapshotsByParent } from './historicalSnapshotsByParent'
 import { latestSnapshotAt } from './latestSnapshotAt'

@@ -1,14 +1,11 @@
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
+import type { PipelineIssueStatus } from '@/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type'
 
 export function pipelineReliabilityTone({
   errorCount,
   warningCount,
   loading = false,
-}: {
-  errorCount: number
-  warningCount: number
-  loading?: boolean
-}): AnalysisReliabilityTone {
+}: PipelineIssueStatus): AnalysisReliabilityTone {
   if (loading) return 'unavailable'
   if (errorCount > 0) return 'critical'
   if (warningCount > 0) return 'warning'

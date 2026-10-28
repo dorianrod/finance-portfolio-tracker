@@ -60,6 +60,8 @@ Components can remount. Put app-lifetime initialization in the client bootstrap 
 
 Keep `react-hooks/rules-of-hooks` and `react-hooks/exhaustive-deps` enabled with a version supporting the installed React APIs. Fix the responsibility or dependency mismatch rather than suppressing it. Effect Events supplement dependency tracking; they do not replace it.
 
+Enable `local/no-effects-in-components` to identify React effects by their resolved library binding, including import aliases, immutable aliases and destructured namespace bindings. Recognize aliased React component wrappers and respect lexical shadowing instead of matching local identifier names alone. Keep custom hook ownership valid. Arbitrary wrapper behavior requires manual review. Exercise invalid component effects, valid custom hooks and unrelated or shadowed callbacks through the actual consuming configuration.
+
 See [React Effect Events](https://react.dev/reference/react/useEffectEvent) for their scope and dependency contract.
 
 See also: `arch-component-module-boundaries`, `arch-thin-components`, `arch-decompose-hook-heavy-components`, `state-derived-atoms`

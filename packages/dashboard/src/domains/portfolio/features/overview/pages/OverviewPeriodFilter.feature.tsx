@@ -1,6 +1,6 @@
 import type { OverviewWindows } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
 import { useFormatOverviewPeriodRange } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewPeriodRange'
-import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/controls/Button.view'
 import { Group } from '@/shared/ui/controls/Group.view'
@@ -13,7 +13,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 export function OverviewPeriodFilter({ windows }: OverviewPeriodFilterProps) {
   const formatOverviewPeriodRange = useFormatOverviewPeriodRange()
-  const { openFilters } = useDashboardFilters()
+  const { openFilters } = useDashboardFilterPanel()
 
   return (
     <div className="w-full min-w-0 overflow-hidden sm:w-auto">

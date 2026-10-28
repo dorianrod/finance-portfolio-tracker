@@ -1,12 +1,13 @@
 import { useCallback } from 'react'
 
+import { useFormatPipelineErrorType } from '@/domains/portfolio/features/data-quality/features/errors/helpers/formatters/useFormatPipelineErrorType'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 
 import type { PipelineErrorSortColumn } from './buildPipelineErrorsViewModel.types'
-import { PIPELINE_ERROR_TYPE_LABELS } from './pipelineErrorTypeLabels'
 
 export function useBuildPipelineErrorsViewModel() {
+  const formatType = useFormatPipelineErrorType()
   const formatAssetLabel = useFormatAssetLabel()
   return useCallback(
     ({
@@ -44,7 +45,7 @@ export function useBuildPipelineErrorsViewModel() {
             case 'level':
               return error.level
             case 'type':
-              return PIPELINE_ERROR_TYPE_LABELS[error.type] ?? error.type
+              return formatType(error.type)
             case 'source':
               return error.source
             case 'name':
@@ -67,6 +68,6 @@ export function useBuildPipelineErrorsViewModel() {
           .length,
       }
     },
-    [formatAssetLabel],
+    [formatAssetLabel, formatType],
   )
 }

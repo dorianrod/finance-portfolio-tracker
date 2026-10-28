@@ -1,6 +1,6 @@
-export type Operation = {
-  date: Date
-  operation_type: string
-  total_amount: number
-  realized_gain: number | null
-}
+import type { OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
+
+export type PositionChartOperation = Pick<
+  OperationRow,
+  'date' | 'operation_type' | 'total_amount' | 'realized_gain'
+>

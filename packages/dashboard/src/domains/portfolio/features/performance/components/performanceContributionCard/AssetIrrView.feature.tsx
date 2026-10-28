@@ -58,7 +58,7 @@ export function AssetIrrView({
                 scope={{
                   account: 'filterable',
                   period: 'range',
-                  effectiveDate: summary.end_date,
+                  effectiveDate: summary.end_date ?? undefined,
                 }}
               />
               <Layout spaceBefore="compact">

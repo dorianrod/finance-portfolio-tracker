@@ -1,0 +1,225 @@
+
+> dashboard@1.1.0 test
+> vitest run
+
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ eslint-rules/import-boundaries.test.js (60 tests | 19 failed) 20746ms
+     × rejects sibling feature dependencies: import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison' 2971ms
+     × rejects sibling feature dependencies: export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison' 15ms
+     × rejects sibling feature dependencies: const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison') 23ms
+     × rejects sibling feature dependencies: type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison').OverviewComparison 14ms
+     × rejects sibling feature dependencies: import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison' 21ms
+     × does not expose child implementation to parent shared contracts: import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration' 5553ms
+     × rejects renderer dependencies in services: import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature' 1298ms
+     × rejects renderer dependencies in services: import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature' 18ms
+     × rejects renderer dependencies in services: import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature.js' 10ms
+     × rejects renderer dependencies in services: export { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature' 10ms
+     × rejects renderer dependencies in services: export * from '../components/PositionHoverDetails/HoverChart.feature' 5ms
+     × rejects renderer dependencies in services: const chart = import('../components/PositionHoverDetails/HoverChart.feature') 13ms
+     × rejects renderer dependencies in services: type Chart = typeof import('../components/PositionHoverDetails/HoverChart.feature').HoverChart 5ms
+     × rejects renderer dependencies in services: import type { Button } from '@/shared/ui/controls/Button.view' 13ms
+     × checks the non-UI layer src/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms.ts 42ms
+     × does not let a component helper become a feature-level dependency 1505ms
+     × allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts 17ms
+     × allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts 111ms
+     × allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts 13ms
+ ❯ src/domains/portfolio/shared/apis/queries/accountScopes.test.tsx (4 tests | 1 failed) 1366ms
+     × preserves commas when aggregating account types 1018ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 20 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects sibling feature dependencies: import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects sibling feature dependencies: export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects sibling feature dependencies: const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison')
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects sibling feature dependencies: type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison').OverviewComparison
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects sibling feature dependencies: import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'
+AssertionError: expected [ { ruleId: null, fatal: true, …(4) } ] to match object [ { …(2) } ]
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  [
+    {
+-     "messageId": "siblingFeature",
+      "severity": 2,
+    },
+  ]
+
+ ❯ eslint-rules/import-boundaries.test.js:35:45
+     33|     'rejects sibling feature dependencies: %s',
+     34|     async (code) => {
+     35|       expect(await lint(code, serviceFile)).toMatchObject([
+       |                                             ^
+     36|         { messageId: 'siblingFeature', severity: 2 },
+     37|       ])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/20]⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > does not expose child implementation to parent shared contracts: import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ eslint-rules/import-boundaries.test.js:45:5
+     43|     "import { useCurrentConcentration } from '@/domains/portfolio/feat…
+     44|     "import type { HoldingConcentration } from '@/domains/portfolio/fe…
+     45|   ])(
+       |     ^
+     46|     'does not expose child implementation to parent shared contracts: …
+     47|     async (code) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/20]⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature.js'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: export { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: export * from '../components/PositionHoverDetails/HoverChart.feature'
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: const chart = import('../components/PositionHoverDetails/HoverChart.feature')
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: type Chart = typeof import('../components/PositionHoverDetails/HoverChart.feature').HoverChart
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > rejects renderer dependencies in services: import type { Button } from '@/shared/ui/controls/Button.view'
+AssertionError: expected [ { ruleId: null, fatal: true, …(4) } ] to match object [ { messageId: 'component', …(1) } ]
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  [
+    {
+-     "messageId": "component",
+      "severity": 2,
+    },
+  ]
+
+ ❯ eslint-rules/import-boundaries.test.js:182:43
+    180|     "import type { Button } from '@/shared/ui/controls/Button.view'",
+    181|   ])('rejects renderer dependencies in services: %s', async (code) => {
+    182|     expect(await lint(code, serviceFile)).toMatchObject([
+       |                                           ^
+    183|       { messageId: 'component', severity: 2 },
+    184|     ])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/20]⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > checks the non-UI layer src/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms.ts
+AssertionError: expected [ { ruleId: null, fatal: true, …(4) } ] to match object [ { messageId: 'component', …(1) } ]
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  [
+    {
+-     "messageId": "component",
+      "severity": 2,
+    },
+  ]
+
+ ❯ eslint-rules/import-boundaries.test.js:200:7
+    198|         file,
+    199|       ),
+    200|     ).toMatchObject([{ messageId: 'component', severity: 2 }])
+       |       ^
+    201|   })
+    202|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/20]⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > does not let a component helper become a feature-level dependency
+AssertionError: expected [ { ruleId: null, fatal: true, …(4) } ] to match object [ { …(2) } ]
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  [
+    {
+-     "messageId": "componentLogic",
+      "severity": 2,
+    },
+  ]
+
+ ❯ eslint-rules/import-boundaries.test.js:209:7
+    207|         serviceFile,
+    208|       ),
+    209|     ).toMatchObject([{ messageId: 'componentLogic', severity: 2 }])
+       |       ^
+    210|   })
+    211|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/20]⎯
+
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts
+ FAIL  eslint-rules/import-boundaries.test.js > configured import boundaries > allows dependencies inside their ownership boundary: src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts
+AssertionError: expected [ { ruleId: null, fatal: true, …(4) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "column": undefined,
++     "fatal": true,
++     "line": undefined,
++     "message": "Parsing error: <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.",
++     "ruleId": null,
++     "severity": 2,
++   },
++ ]
+
+ ❯ eslint-rules/import-boundaries.test.js:249:38
+    247|     'allows dependencies inside their ownership boundary: %s',
+    248|     async (file, code) => {
+    249|       expect(await lint(code, file)).toEqual([])
+       |                                      ^
+    250|     },
+    251|   )
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/20]⎯
+
+ FAIL  src/domains/portfolio/shared/apis/queries/accountScopes.test.tsx > account-scoped queries > preserves commas when aggregating account types
+AssertionError: expected [ { …(2) } ] to deeply equal [ { …(2) } ]
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div />[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+  [
+    {
+-     "PEA": 42,
+      "date": 2026-01-31T00:00:00.000Z,
++     "values": {
++       "PEA": 42,
++     },
+    },
+  ]
+
+ ❯ src/domains/portfolio/shared/apis/queries/accountScopes.test.tsx:144:35
+    142|     )
+    143|     await waitFor(() =>
+    144|       expect(result.current.data).toEqual([
+       |                                   ^
+    145|         { date: new Date('2026-01-31'), PEA: 42 },
+    146|       ]),
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/20]⎯
+
+
+ Test Files  2 failed | 209 passed (211)
+      Tests  20 failed | 2303 passed (2323)
+   Start at  14:44:40
+   Duration  106.39s (transform 7.52s, setup 0ms, import 59.35s, tests 271.05s, environment 63.91s)
+

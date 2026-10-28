@@ -15,6 +15,25 @@ afterEach(() => {
 })
 
 describe('MonthlyTooltip', () => {
+  it.each([
+    { name: 'ISO date', label: '2026-01-31' },
+    { name: 'Date', label: new Date('2026-01-31T00:00:00Z') },
+    { name: 'timestamp', label: Date.UTC(2026, 0, 31) },
+  ])(
+    'resolves operations from a $name label without point metadata',
+    ({ label }) => {
+      render(
+        <MonthlyTooltip
+          active
+          label={label}
+          ops={new Map([['2026-01', [operation(100)]]])}
+          payload={[{ value: 0 }]}
+        />,
+      )
+      expect(screen.getByText('+ 100 € — Main account')).toBeTruthy()
+    },
+  )
+
   it('keeps repeated account operations distinct when the month changes', () => {
     const errors = vi.spyOn(console, 'error')
     const ops = new Map([

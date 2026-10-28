@@ -1,9 +1,9 @@
 import { type ReactNode, useMemo } from 'react'
 
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state'
-import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel.feature'
-import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDataQualityPanels'
-import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDataQualityViewModel'
+import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature'
+import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityPanels'
+import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import i18n from '@/i18n/i18n'

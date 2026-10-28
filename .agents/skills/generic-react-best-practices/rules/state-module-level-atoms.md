@@ -36,3 +36,7 @@ export const OverviewBlock = () => {
 ```
 
 Only exception: one atom per repeated item (each card of a list) — create it once per instance with `useMemo(() => atom<boolean>(false), [])`, e.g. in an `AttachmentCard` rendered once per attachment.
+
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level. Resolve Jotai constructor imports, namespace access and immutable aliases; report constructors lexically inside components or hooks unless the nearest function is a `useMemo` callback with an empty dependency array. A memo returning a factory does not stabilize atoms created later by that factory. Preserve pure module-level atom factories and unrelated or shadowed names. This bounded check does not follow custom factory calls into render; review their call sites and the business justification for per-instance atoms manually.

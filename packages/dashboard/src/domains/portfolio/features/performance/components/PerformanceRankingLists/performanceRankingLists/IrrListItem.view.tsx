@@ -1,4 +1,5 @@
 import { getIrrBarShare } from '@/domains/portfolio/features/performance/components/PerformanceRankingLists/helpers/presenters/getIrrBarShare'
+import { useFormatAccountList } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatAccountList'
 import type { AssetIrrItem } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 import i18n from '@/i18n/i18n'
@@ -21,6 +22,7 @@ export function IrrListItem({
   strongestIrr: number
 }) {
   const formatAssetLabel = useFormatAssetLabel()
+  const formatAccountList = useFormatAccountList()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const tone = positive ? 'positive' : 'negative'
@@ -43,9 +45,11 @@ export function IrrListItem({
               variant="micro"
               tone="subtle"
               truncate
-              title={item.accounts.join(', ')}
+              title={formatAccountList(item.accounts)}
             >
-              {item.account_types.join(', ') || item.accounts.join(', ')}
+              {formatAccountList(item.account_types, {
+                fallback: formatAccountList(item.accounts),
+              })}
             </Text>
           </Layout>
           <Layout sizing="fixed">

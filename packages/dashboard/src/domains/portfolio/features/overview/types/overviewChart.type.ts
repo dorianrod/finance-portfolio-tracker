@@ -2,7 +2,9 @@ import type { OverviewConcentrationComparison } from '@/domains/portfolio/featur
 import type { ChartTone } from '@/shared/theme/chartColors/chartColors.types'
 export type DriverRow = {
   label: string
+  // The preceding comparison window may have no usable data.
   previous: number | null
+  // The current comparison window may have no usable data.
   current: number | null
   tone: ChartTone
 }

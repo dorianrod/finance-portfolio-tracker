@@ -1,0 +1,679 @@
+{
+  "languageOptions": {
+    "parserOptions": {
+      "projectService": true,
+      "tsconfigRootDir": "<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard"
+    }
+  },
+  "rules": {
+    "local/require-reviewed-eslint-suppression": [
+      2
+    ],
+    "local/reviewed-eslint-suppression": [
+      1
+    ],
+    "local/no-conditional-test-assertions": [
+      2
+    ],
+    "local/no-test-style-assertions": [
+      2
+    ],
+    "local/prefer-semantic-test-queries": [
+      2
+    ],
+    "local/test-fixture-contract": [
+      2
+    ],
+    "simple-import-sort/exports": [
+      2
+    ],
+    "simple-import-sort/imports": [
+      2
+    ],
+    "constructor-super": [
+      0
+    ],
+    "for-direction": [
+      2
+    ],
+    "getter-return": [
+      0,
+      {
+        "allowImplicit": false
+      }
+    ],
+    "no-async-promise-executor": [
+      2
+    ],
+    "no-case-declarations": [
+      2
+    ],
+    "no-class-assign": [
+      0
+    ],
+    "no-compare-neg-zero": [
+      2
+    ],
+    "no-cond-assign": [
+      2,
+      "except-parens"
+    ],
+    "no-const-assign": [
+      0
+    ],
+    "no-constant-binary-expression": [
+      2
+    ],
+    "no-constant-condition": [
+      2,
+      {
+        "checkLoops": "allExceptWhileTrue"
+      }
+    ],
+    "no-control-regex": [
+      2
+    ],
+    "no-debugger": [
+      2
+    ],
+    "no-delete-var": [
+      2
+    ],
+    "no-dupe-args": [
+      0
+    ],
+    "no-dupe-class-members": [
+      0
+    ],
+    "no-dupe-else-if": [
+      2
+    ],
+    "no-dupe-keys": [
+      0
+    ],
+    "no-duplicate-case": [
+      2
+    ],
+    "no-empty": [
+      2,
+      {
+        "allowEmptyCatch": false
+      }
+    ],
+    "no-empty-character-class": [
+      2
+    ],
+    "no-empty-pattern": [
+      2,
+      {
+        "allowObjectPatternsAsParameters": false
+      }
+    ],
+    "no-empty-static-block": [
+      2
+    ],
+    "no-ex-assign": [
+      2
+    ],
+    "no-extra-boolean-cast": [
+      2,
+      {}
+    ],
+    "no-fallthrough": [
+      2,
+      {
+        "allowEmptyCase": false,
+        "reportUnusedFallthroughComment": false
+      }
+    ],
+    "no-func-assign": [
+      0
+    ],
+    "no-global-assign": [
+      2,
+      {
+        "exceptions": []
+      }
+    ],
+    "no-import-assign": [
+      0
+    ],
+    "no-invalid-regexp": [
+      2,
+      {}
+    ],
+    "no-irregular-whitespace": [
+      2,
+      {
+        "skipComments": false,
+        "skipJSXText": false,
+        "skipRegExps": false,
+        "skipStrings": true,
+        "skipTemplates": false
+      }
+    ],
+    "no-loss-of-precision": [
+      2
+    ],
+    "no-misleading-character-class": [
+      2,
+      {
+        "allowEscape": false
+      }
+    ],
+    "no-new-native-nonconstructor": [
+      0
+    ],
+    "no-nonoctal-decimal-escape": [
+      2
+    ],
+    "no-obj-calls": [
+      0
+    ],
+    "no-octal": [
+      2
+    ],
+    "no-prototype-builtins": [
+      2
+    ],
+    "no-redeclare": [
+      0,
+      {
+        "builtinGlobals": true
+      }
+    ],
+    "no-regex-spaces": [
+      2
+    ],
+    "no-self-assign": [
+      2,
+      {
+        "props": true
+      }
+    ],
+    "no-setter-return": [
+      0
+    ],
+    "no-shadow-restricted-names": [
+      2,
+      {
+        "reportGlobalThis": true
+      }
+    ],
+    "no-sparse-arrays": [
+      2
+    ],
+    "no-this-before-super": [
+      0
+    ],
+    "no-unassigned-vars": [
+      2
+    ],
+    "no-undef": [
+      0,
+      {
+        "typeof": false
+      }
+    ],
+    "no-unexpected-multiline": [
+      2
+    ],
+    "no-unreachable": [
+      0
+    ],
+    "no-unsafe-finally": [
+      2
+    ],
+    "no-unsafe-negation": [
+      0,
+      {
+        "enforceForOrderingRelations": false
+      }
+    ],
+    "no-unsafe-optional-chaining": [
+      2,
+      {
+        "disallowArithmeticOperators": false
+      }
+    ],
+    "no-unused-labels": [
+      2
+    ],
+    "no-unused-private-class-members": [
+      2
+    ],
+    "no-unused-vars": [
+      0,
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false,
+        "caughtErrors": "all",
+        "ignoreClassWithStaticInitBlock": false,
+        "ignoreUsingDeclarations": false,
+        "reportUsedIgnorePattern": false
+      }
+    ],
+    "no-useless-assignment": [
+      2
+    ],
+    "no-useless-backreference": [
+      2
+    ],
+    "no-useless-catch": [
+      2
+    ],
+    "no-useless-escape": [
+      2,
+      {
+        "allowRegexCharacters": []
+      }
+    ],
+    "no-with": [
+      0
+    ],
+    "preserve-caught-error": [
+      2,
+      {
+        "requireCatchParameter": false
+      }
+    ],
+    "require-yield": [
+      2
+    ],
+    "use-isnan": [
+      2,
+      {
+        "enforceForIndexOf": false,
+        "enforceForSwitchCase": true
+      }
+    ],
+    "valid-typeof": [
+      2,
+      {
+        "requireStringLiterals": false
+      }
+    ],
+    "no-new-symbol": [
+      0
+    ],
+    "no-var": [
+      2
+    ],
+    "prefer-const": [
+      2,
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
+    "prefer-rest-params": [
+      2
+    ],
+    "prefer-spread": [
+      2
+    ],
+    "@typescript-eslint/ban-ts-comment": [
+      2
+    ],
+    "no-array-constructor": [
+      0
+    ],
+    "@typescript-eslint/no-array-constructor": [
+      2
+    ],
+    "@typescript-eslint/no-duplicate-enum-values": [
+      2
+    ],
+    "@typescript-eslint/no-empty-object-type": [
+      2
+    ],
+    "@typescript-eslint/no-explicit-any": [
+      2
+    ],
+    "@typescript-eslint/no-extra-non-null-assertion": [
+      2
+    ],
+    "@typescript-eslint/no-misused-new": [
+      2
+    ],
+    "@typescript-eslint/no-namespace": [
+      2
+    ],
+    "@typescript-eslint/no-non-null-asserted-optional-chain": [
+      2
+    ],
+    "@typescript-eslint/no-require-imports": [
+      2
+    ],
+    "@typescript-eslint/no-this-alias": [
+      2
+    ],
+    "@typescript-eslint/no-unnecessary-type-constraint": [
+      2
+    ],
+    "@typescript-eslint/no-unsafe-declaration-merging": [
+      2
+    ],
+    "@typescript-eslint/no-unsafe-function-type": [
+      2
+    ],
+    "no-unused-expressions": [
+      0,
+      {
+        "allowShortCircuit": false,
+        "allowTernary": false,
+        "allowTaggedTemplates": false,
+        "enforceForJSX": false,
+        "ignoreDirectives": false
+      }
+    ],
+    "@typescript-eslint/no-unused-expressions": [
+      2,
+      {
+        "allowShortCircuit": false,
+        "allowTaggedTemplates": false,
+        "allowTernary": false
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      2
+    ],
+    "@typescript-eslint/no-wrapper-object-types": [
+      2
+    ],
+    "@typescript-eslint/prefer-as-const": [
+      2
+    ],
+    "@typescript-eslint/prefer-namespace-keyword": [
+      2
+    ],
+    "@typescript-eslint/triple-slash-reference": [
+      2
+    ],
+    "react-hooks/rules-of-hooks": [
+      2
+    ],
+    "react-hooks/exhaustive-deps": [
+      2
+    ],
+    "react-hooks/static-components": [
+      2
+    ],
+    "react-hooks/use-memo": [
+      2
+    ],
+    "react-hooks/preserve-manual-memoization": [
+      2
+    ],
+    "react-hooks/incompatible-library": [
+      2
+    ],
+    "react-hooks/immutability": [
+      2
+    ],
+    "react-hooks/globals": [
+      2
+    ],
+    "react-hooks/refs": [
+      2
+    ],
+    "react-hooks/set-state-in-effect": [
+      2
+    ],
+    "react-hooks/error-boundaries": [
+      2
+    ],
+    "react-hooks/purity": [
+      2
+    ],
+    "react-hooks/set-state-in-render": [
+      2
+    ],
+    "react-hooks/unsupported-syntax": [
+      2
+    ],
+    "react-hooks/config": [
+      2
+    ],
+    "react-hooks/gating": [
+      2
+    ],
+    "react-refresh/only-export-components": [
+      2,
+      {
+        "allowConstantExport": true
+      }
+    ],
+    "default-case-last": [
+      2
+    ],
+    "eqeqeq": [
+      2,
+      "smart"
+    ],
+    "no-alert": [
+      2
+    ],
+    "no-else-return": [
+      2,
+      {
+        "allowElseIf": true
+      }
+    ],
+    "no-lonely-if": [
+      2
+    ],
+    "no-negated-condition": [
+      2
+    ],
+    "no-nested-ternary": [
+      2
+    ],
+    "no-restricted-properties": [
+      0,
+      {
+        "property": "toFixed",
+        "message": "Format display values through a formatter hook."
+      },
+      {
+        "property": "toLocaleDateString",
+        "message": "Format dates through useFormatDate."
+      },
+      {
+        "property": "toLocaleString",
+        "message": "Format display values through a formatter hook."
+      },
+      {
+        "property": "toLocaleTimeString",
+        "message": "Format dates through useFormatDate."
+      }
+    ],
+    "no-restricted-syntax": [
+      0,
+      {
+        "selector": "NewExpression[callee.object.name='Intl'][callee.property.name='DateTimeFormat']",
+        "message": "Format dates through useFormatDate."
+      },
+      {
+        "selector": "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+        "message": "Format display values through a formatter hook."
+      }
+    ],
+    "no-unneeded-ternary": [
+      2,
+      {
+        "defaultAssignment": true
+      }
+    ],
+    "object-shorthand": [
+      2,
+      "always"
+    ],
+    "prefer-object-spread": [
+      2
+    ],
+    "prefer-template": [
+      2
+    ],
+    "radix": [
+      2
+    ],
+    "@typescript-eslint/no-deprecated": [
+      2
+    ],
+    "local/api-hook-contract": [
+      2
+    ],
+    "local/api-business-destructuring": [
+      2
+    ],
+    "local/entity-type-files": [
+      2
+    ],
+    "local/formatter-contract": [
+      2
+    ],
+    "local/no-lossy-boolean-transform": [
+      2
+    ],
+    "local/no-number-string-roundtrip": [
+      2
+    ],
+    "local/no-returned-local-state": [
+      2
+    ],
+    "local/no-service-presentation": [
+      2
+    ],
+    "local/no-overwritten-ui-props": [
+      2
+    ],
+    "local/no-sort-for-extremum": [
+      2
+    ],
+    "local/prefer-functional-state-update": [
+      2
+    ],
+    "local/component-role": [
+      2
+    ],
+    "local/feature-folder-layout": [
+      2,
+      {
+        "maxFeatureDepth": 2
+      }
+    ],
+    "local/i18n-consistency": [
+      2
+    ],
+    "local/import-boundaries": [
+      2
+    ],
+    "local/max-hooks-per-component": [
+      2,
+      {
+        "max": 6
+      }
+    ],
+    "local/no-browser-in-pure-helpers": [
+      2
+    ],
+    "local/no-complex-component-calculation": [
+      2
+    ],
+    "local/no-complex-jsx-condition": [
+      2
+    ],
+    "local/no-complex-jsx-map": [
+      2
+    ],
+    "local/no-component-module-logic": [
+      2
+    ],
+    "local/no-component-data-pipeline": [
+      2
+    ],
+    "local/no-domain-accessibility": [
+      2
+    ],
+    "local/no-domain-styling": [
+      2
+    ],
+    "local/no-effects-in-components": [
+      2
+    ],
+    "local/no-hardcoded-ui-strings": [
+      2
+    ],
+    "local/no-hardcoded-colors": [
+      2
+    ],
+    "local/no-helper-context-params": [
+      2
+    ],
+    "local/no-inline-format-fallback": [
+      2
+    ],
+    "local/no-prop-drilling": [
+      2
+    ],
+    "local/no-react-context": [
+      2
+    ],
+    "local/no-shared-ui-classname": [
+      2
+    ],
+    "local/no-shared-ui-internal-layout": [
+      2
+    ],
+    "local/no-ui-string-concat": [
+      2
+    ],
+    "local/require-children-composition": [
+      2
+    ],
+    "local/shared-feature-usage": [
+      2
+    ],
+    "local/review-shared-feature-sharing": [
+      1
+    ],
+    "local/state-component-contract": [
+      2
+    ],
+    "@typescript-eslint/strict-boolean-expressions": [
+      2,
+      {
+        "allowNumber": false,
+        "allowNullableNumber": false,
+        "allowString": true,
+        "allowNullableString": true,
+        "allowNullableBoolean": true,
+        "allowNullableObject": true,
+        "allowAny": true
+      }
+    ],
+    "complexity": [
+      2,
+      {
+        "max": 8,
+        "variant": "modified"
+      }
+    ],
+    "max-lines-per-function": [
+      2,
+      {
+        "max": 150,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "local/public-api-first": [
+      2
+    ],
+    "local/single-public-export": [
+      2
+    ]
+  }
+}

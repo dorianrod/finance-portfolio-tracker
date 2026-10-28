@@ -1,6 +1,6 @@
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-import type { HistoricalConcentrationPoint } from './buildConcentrationTrend.types'
 import { concentrationPoint } from './concentrationPoint'
 import { matchesFilters } from './matchesFilters'
 

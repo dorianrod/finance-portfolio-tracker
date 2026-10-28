@@ -1,6 +1,6 @@
 import type { ComparedMetric } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
-import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
-import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
+import { getConcentrationTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone'
+import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'

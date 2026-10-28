@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 import i18n from '@/i18n/i18n'
 
 import { useFormatPerformanceAsOfDate } from './useFormatPerformanceAsOfDate'

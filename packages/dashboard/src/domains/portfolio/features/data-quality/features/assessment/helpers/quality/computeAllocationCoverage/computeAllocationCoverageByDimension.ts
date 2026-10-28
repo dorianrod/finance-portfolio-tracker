@@ -1,11 +1,11 @@
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-
 import type {
   AllocationCoverageIssue,
   DimensionCoverage,
-} from './computeAllocationCoverage.types'
+} from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
+import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
 /** Monetary allocation coverage per dimension. Explicit `nc` weights and
  * completely missing rows are both counted as unallocated and remain
@@ -37,7 +37,7 @@ export function computeAllocationCoverageByDimension(
             : 0
         if (value <= 0) continue
         if (!isAssetAnalysisApplicablePosition(position)) continue
-        const key = position.isin || `NC-${position.name}`
+        const key = getPositionAllocationKey(position)
         const allocation = latestByKey.get(key)
         const allocationTotal = allocation
           ? Object.values(allocation.values).reduce(

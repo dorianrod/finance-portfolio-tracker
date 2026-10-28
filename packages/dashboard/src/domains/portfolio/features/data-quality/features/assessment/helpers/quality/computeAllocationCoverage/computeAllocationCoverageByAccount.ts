@@ -1,13 +1,12 @@
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
+import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-
-import type { AccountCoverage } from './computeAllocationCoverage.types'
 
 /** Current (active, positive-value) positions split into allocated vs
  * unallocated amounts, grouped by account.
  */
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; One account accumulator partitions active value into mapped, missing and inapplicable coverage.
 export function computeAllocationCoverageByAccount(
   positions: PositionRow[],
   rawData: RawIsinData,
@@ -27,7 +26,7 @@ export function computeAllocationCoverageByAccount(
       notApplicable: 0,
     }
     if (isAssetAnalysisApplicablePosition(p)) {
-      const key = p.isin || `NC-${p.name}`
+      const key = getPositionAllocationKey(p)
       if (allocated.has(key)) cur.allocated += value
       else cur.unallocated += value
     } else {

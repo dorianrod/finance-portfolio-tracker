@@ -6,11 +6,9 @@ export function resolveAssetName(
   return clean(source.name) || clean(source.ticker) || clean(fallback)
 }
 
-export type AssetNameSource = {
-  name?: string | null
-  ticker?: string | null
-}
+export type AssetNameSource = Partial<Pick<RawPosition, 'name' | 'ticker'>>
 
 function clean(value: string | null | undefined): string {
   return value?.trim() ?? ''
 }
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'

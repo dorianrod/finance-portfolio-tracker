@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { analyseIncomePlacement } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/analyseIncomePlacement'
-import { filterAnnualIncomeSavingsByPeriod } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/filterAnnualIncomeSavingsByPeriod'
+import { analyseIncomePlacement } from '@/domains/portfolio/features/wealth/helpers/calculators/analyseIncomePlacement'
 import { mapAnnualIncomeSavings } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import { filterAnnualIncomeSavingsByPeriod } from '@/domains/portfolio/features/wealth/helpers/selectors/filterAnnualIncomeSavingsByPeriod'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 
 function point(
   overrides: Partial<AnnualIncomeSavingsPoint>,

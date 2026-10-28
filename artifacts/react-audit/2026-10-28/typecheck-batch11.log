@@ -1,0 +1,12 @@
+
+> dashboard@1.1.0 typecheck
+> tsc -b --pretty false
+
+src/domains/portfolio/features/performance/components/TopPerformersChart.view.tsx(5,35): error TS2307: Cannot find module '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/performanceCalculations.types' or its corresponding type declarations.
+src/domains/portfolio/features/performance/components/TriChart/helpers/presenters/buildTriChartData.ts(3,36): error TS2307: Cannot find module './performanceCalculations.types' or its corresponding type declarations.
+src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary.ts(3,41): error TS2307: Cannot find module './performanceCalculations.types' or its corresponding type declarations.
+src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers.ts(4,35): error TS2307: Cannot find module './performanceCalculations.types' or its corresponding type declarations.
+src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome.ts(3,36): error TS2307: Cannot find module './performanceCalculations.types' or its corresponding type declarations.
+src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.test.ts(6,7): error TS6133: 'points' is declared but its value is never read.
+src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.test.ts(58,7): error TS6133: 'points' is declared but its value is never read.
+src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.test.ts(83,7): error TS6133: 'points' is declared but its value is never read.

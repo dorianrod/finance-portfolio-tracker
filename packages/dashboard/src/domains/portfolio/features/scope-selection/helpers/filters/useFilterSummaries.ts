@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
+import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 import i18n from '@/i18n/i18n'
@@ -16,19 +16,21 @@ export function useFilterSummaries(
   accountLabels: Record<string, string>,
   visibility: FilterVisibility,
 ): FilterSummaryItem[] {
+  const formatAccountLabel = useFormatAccountLabel()
   const formatDate = useFormatDate()
   return useMemo(
     () =>
       [
-        accountSummary(filters, accountLabels),
+        accountSummary(
+          filters,
+          formatAccountLabel([...filters.accounts][0], {
+            labels: accountLabels,
+          }),
+        ),
         visibility.showPeriod
           ? periodSummary(
-              filters.dateFrom
-                ? formatDate(filters.dateFrom, { style: 'isoDate' })
-                : undefined,
-              filters.dateTo
-                ? formatDate(filters.dateTo, { style: 'isoDate' })
-                : undefined,
+              formatDate(filters.dateFrom, { style: 'isoDate', fallback: '' }),
+              formatDate(filters.dateTo, { style: 'isoDate', fallback: '' }),
             )
           : null,
         visibility.showPositionFilters ? operationSummary(filters) : null,
@@ -39,31 +41,27 @@ export function useFilterSummaries(
             }
           : null,
       ].filter((item): item is FilterSummaryItem => item !== null),
-    [filters, accountLabels, visibility, formatDate],
+    [filters, accountLabels, visibility, formatAccountLabel, formatDate],
   )
 }
 
 function accountSummary(
   filters: DashboardFilters,
-  accountLabels: Record<string, string>,
+  selectedAccountLabel: string,
 ): FilterSummaryItem | null {
   if (filters.accounts.size === 0) return null
-  const account = [...filters.accounts][0]
   return {
     key: 'accounts',
     label:
       filters.accounts.size === 1
-        ? accountLabel(account, accountLabels)
+        ? selectedAccountLabel
         : i18n.t('ui.portfoliofiltersTs.value0Accounts', {
             value0: filters.accounts.size,
           }),
   }
 }
 
-function periodSummary(
-  from: string | undefined,
-  to: string | undefined,
-): FilterSummaryItem | null {
+function periodSummary(from: string, to: string): FilterSummaryItem | null {
   if (!from && !to) return null
   let label = i18n.t('ui.portfoliofilters.untilDate', {
     date: to,

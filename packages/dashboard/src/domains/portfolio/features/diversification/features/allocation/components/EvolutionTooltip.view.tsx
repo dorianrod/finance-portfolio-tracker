@@ -1,19 +1,19 @@
+import type { AllocationTrendPoint } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import {
-  type NumericTooltipProps,
-  tooltipValue,
-} from '@/shared/ui/chartTooltip'
+import { type NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
+
+import type { AllocationTrendSeries } from './EvoCard/types/allocationTrendSeries.type'
 
 export function EvolutionTooltip({
   active,
   payload,
   label,
-  categories,
+  series,
 }: EvolutionTooltipProps) {
   const formatDate = useFormatDate()
   if (payload == null) return null
@@ -25,11 +25,11 @@ export function EvolutionTooltip({
           {formatDate(label, { style: 'longMonthYear', fallback: '' })}
         </ChartText>
       </Layout>
-      {categories.toReversed().map((category) => (
+      {series.toReversed().map((item) => (
         <EvolutionTooltipRow
-          key={category}
-          category={category}
-          payload={payload}
+          key={item.index}
+          series={item}
+          point={payload[0]?.payload}
         />
       ))}
     </TooltipBox>
@@ -37,26 +37,28 @@ export function EvolutionTooltip({
 }
 
 type EvolutionTooltipRowProps = {
-  category: string
-  payload: NonNullable<
-    NumericTooltipProps<Record<string, number | string>>['payload']
-  >
+  series: AllocationTrendSeries
+  point: AllocationTrendPoint | undefined
 }
 
-function EvolutionTooltipRow({ category, payload }: EvolutionTooltipRowProps) {
+function EvolutionTooltipRow({ series, point }: EvolutionTooltipRowProps) {
   const formatPercentage = useFormatPercentage()
-  const value = tooltipValue(payload, category)
-  if (value === 0) return null
+  const value = point?.values[series.index]
+  const category = series.category
+  if (value == null || value === 0) return null
 
   return (
-    <ChartText as="div" tone={getAllocationTone(category)}>
-      {category}: {formatPercentage(value)}
+    <ChartText
+      as="div"
+      tone={
+        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
+      }
+    >
+      {series.label}: {formatPercentage(value)}
     </ChartText>
   )
 }
 
-type EvolutionTooltipProps = NumericTooltipProps<
-  Record<string, number | string>
-> & {
-  categories: string[]
+type EvolutionTooltipProps = NumericTooltipProps<AllocationTrendPoint> & {
+  series: AllocationTrendSeries[]
 }

@@ -4,6 +4,7 @@ export type FundSnapshot = {
   snapshotId: string
   snapshotDate: Date
   asOfDate: Date
+  // Imported evidence may omit its generation timestamp.
   generatedAt: Date | null
   origin: string
   status: string

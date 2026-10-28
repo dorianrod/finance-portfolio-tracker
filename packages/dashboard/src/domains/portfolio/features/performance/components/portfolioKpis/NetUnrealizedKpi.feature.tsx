@@ -1,7 +1,7 @@
-import type { PerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/performanceCalculations.types'
+import type { PerformanceSummary } from '@/domains/portfolio/features/performance/types/performanceSummary.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { getPerformanceTone } from '@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone'
 import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
-import { getPerformanceTone } from '@/domains/portfolio/shared/helpers/presenters/getPerformanceTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 

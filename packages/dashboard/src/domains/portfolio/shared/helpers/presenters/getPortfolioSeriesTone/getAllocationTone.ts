@@ -11,5 +11,5 @@ export function getAllocationTone(category: string): ChartTone {
     category.startsWith('others (')
   )
     return 'dim'
-  return ALLOCATION_TONES[category] ?? getHashedSeriesTone(category)
+  return ALLOCATION_TONES.get(category) ?? getHashedSeriesTone(category)
 }

@@ -1,0 +1,40 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.test.ts (5 tests | 1 failed | 4 skipped) 10ms
+     × keeps a reserved field name from overwriting the snapshot date 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.test.ts > buildAccountTypeHistory > keeps a reserved field name from overwriting the snapshot date
+AssertionError: expected [ { date: 120, shares: 30 } ] to deeply equal [ { …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "date": 2024-01-01T00:00:00.000Z,
+-     "values": {
+      "date": 120,
+      "shares": 30,
+-     },
+    },
+  ]
+
+ ❯ src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.test.ts:89:18
+     87|       row({ account_type: 'shares', total_value: 30 }),
+     88|     ], null)
+     89|     expect(data).toEqual([{
+       |                  ^
+     90|       date: new Date('2024-01-01'),
+     91|       values: { date: 120, shares: 30 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  14:43:31
+   Duration  212ms (transform 48ms, setup 0ms, import 69ms, tests 10ms, environment 0ms)
+

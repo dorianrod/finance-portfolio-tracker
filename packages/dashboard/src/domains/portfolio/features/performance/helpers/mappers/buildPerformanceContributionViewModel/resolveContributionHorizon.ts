@@ -1,7 +1,7 @@
 import type {
   ContributionHorizon,
   PerformanceContributionSummary,
-} from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+} from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 
 export function resolveContributionHorizon({
   horizon,

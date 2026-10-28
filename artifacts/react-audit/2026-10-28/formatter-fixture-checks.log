@@ -1,0 +1,55 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts (8 tests | 8 failed) 15ms
+     × formats 'No anomaly' 6ms
+     × formats '2 anomalies' 2ms
+     × formats '1 anomaly' 1ms
+     × formats '5 anomalies' 1ms
+     × formats 'Loading…' 1ms
+     × formats '—' 1ms
+     × formats '—' 1ms
+     × preserves an explicit empty fallback 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats 'No anomaly'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats '2 anomalies'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats '1 anomaly'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats '5 anomalies'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats 'Loading…'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats '—'
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > formats '—'
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:265:5
+ ❯ renderHook node_modules/@testing-library/react/dist/pure.js:348:7
+ ❯ src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts:16:24
+     14|     { status: undefined, expected: '—' },
+     15|   ])('formats $expected', ({ status, expected }) => {
+     16|     const { result } = renderHook(() => useFormatPipelineStatus())
+       |                        ^
+     17|     expect(result.current(status)).toBe(expected)
+     18|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts > useFormatPipelineStatus > preserves an explicit empty fallback
+ReferenceError: document is not defined
+ ❯ render node_modules/@testing-library/react/dist/pure.js:265:5
+ ❯ renderHook node_modules/@testing-library/react/dist/pure.js:348:7
+ ❯ src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts:20:24
+     18|   })
+     19|   it('preserves an explicit empty fallback', () => {
+     20|     const { result } = renderHook(() => useFormatPipelineStatus())
+       |                        ^
+     21|     expect(result.current(null, { fallback: '' })).toBe('')
+     22|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  8 failed | 7 passed (15)
+   Start at  15:50:06
+   Duration  4.97s (transform 75ms, setup 0ms, import 381ms, tests 4.64s, environment 0ms)
+

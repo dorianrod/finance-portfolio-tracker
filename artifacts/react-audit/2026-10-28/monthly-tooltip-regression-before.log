@@ -1,0 +1,93 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.test.tsx (4 tests | 2 failed) 85ms
+     × resolves operations from a 'Date' label without point metadata 11ms
+     × resolves operations from a 'timestamp' label without point metadata 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.test.tsx > MonthlyTooltip > resolves operations from a 'Date' label without point metadata
+ FAIL  src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.test.tsx > MonthlyTooltip > resolves operations from a 'timestamp' label without point metadata
+TestingLibraryElementError: Unable to find an element with the text: + 100 € — Main account. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"w-72 max-w-[calc(100vw-2rem)] rounded-lg text-xs px-3 py-2"[39m
+      [33mstyle[39m=[32m"background: var(--tooltip-bg); border: 1px solid var(--tooltip-border);"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mb-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"font-semibold"[39m
+          [33mstyle[39m=[32m"color: var(--tooltip-text);"[39m
+        [36m>[39m
+          [0mJanuary 2026[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mb-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m""[39m
+          [33mstyle[39m=[32m"color: rgb(96, 165, 250);"[39m
+        [36m>[39m
+          [0mNet contributions: 0 €[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"p-2 mt-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m""[39m
+          [33mstyle[39m=[32m"color: rgb(74, 222, 128); border-top: 1px solid var(--tooltip-border);"[39m
+        [36m>[39m
+          [0mMarket performance: 0 €[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"p-2 mt-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m""[39m
+          [33mstyle[39m=[32m"color: rgb(96, 165, 250); border-top: 1px solid var(--tooltip-border);"[39m
+        [36m>[39m
+          [0mTrailing 12-month net contributions: 0 €[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m""[39m
+          [33mstyle[39m=[32m"color: rgb(74, 222, 128);"[39m
+        [36m>[39m
+          [0mTrailing 12-month performance: 0 €[0m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.test.tsx:31:19
+     29|       />,
+     30|     )
+     31|     expect(screen.getByText('+ 100 € — Main account')).toBeTruthy()
+       |                   ^
+     32|   })
+     33|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  13:34:01
+   Duration  1.27s (transform 206ms, setup 0ms, import 395ms, tests 85ms, environment 658ms)
+

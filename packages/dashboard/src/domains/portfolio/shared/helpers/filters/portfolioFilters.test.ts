@@ -3,9 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
 import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/helpers/filters/clearFilterGroup'
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/filters/presetDateFrom'
+import { resetFilters } from '@/domains/portfolio/features/scope-selection/helpers/filters/resetFilters'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
-import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
-import { resetFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/resetFilters'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
 function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
@@ -17,18 +16,6 @@ function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
     ...overrides,
   }
 }
-
-describe('accountLabel', () => {
-  it('uses the provided label when one exists for the account', () => {
-    expect(accountLabel('acc1', { acc1: 'Compte Bourse' })).toBe(
-      'Compte Bourse',
-    )
-  })
-
-  it('falls back to title-casing the account key when no label exists', () => {
-    expect(accountLabel('my_savings_account', {})).toBe('My Savings Account')
-  })
-})
 
 describe('toggle', () => {
   it('adds a value not yet in the set, without mutating the original', () => {

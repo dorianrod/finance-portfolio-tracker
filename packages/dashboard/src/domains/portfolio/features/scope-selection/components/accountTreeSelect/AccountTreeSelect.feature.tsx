@@ -1,12 +1,12 @@
 import { useState } from 'react'
 
 import type { AccountTreeProps } from '@/domains/portfolio/features/scope-selection/components/accountTreeSelect/accountTreeSelect.types'
+import { useFormatAccountSelectionLabel } from '@/domains/portfolio/features/scope-selection/components/accountTreeSelect/helpers/formatters/useFormatAccountSelectionLabel'
 import { accountsForType } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountsForType'
 import { accountTypeSelectionState } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountTypeSelectionState'
-import { buildAccountSelectionLabel } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/buildAccountSelectionLabel'
 import { toggleAccountTypeSelection } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/toggleAccountTypeSelection'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
-import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
+import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import i18n from '@/i18n/i18n'
 import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -28,13 +28,14 @@ export function AccountTreeSelect({
   selected,
   onChange,
 }: AccountTreeProps) {
+  const formatSelection = useFormatAccountSelectionLabel()
   const [open, setOpen] = useState(false)
 
   function typeAccounts(type: string) {
     return accountsForType(type, allAccounts, accountToType)
   }
 
-  const triggerLabel = buildAccountSelectionLabel({
+  const triggerLabel = formatSelection({
     accountLabels,
     accountToType,
     allAccountTypes,
@@ -127,6 +128,7 @@ function SelectAccountRow({
   onChange: (next: Set<string>) => void
   selected: Set<string>
 }) {
+  const formatAccountLabel = useFormatAccountLabel()
   return (
     <ChoiceRow>
       <Inline as="span" align="center" gap="default" inset="default">
@@ -135,7 +137,7 @@ function SelectAccountRow({
           onChange={() => onChange(toggle(selected, account))}
         />
         <Text variant="caption" tone="muted">
-          {accountLabel(account, accountLabels)}
+          {formatAccountLabel(account, { labels: accountLabels })}
         </Text>
       </Inline>
     </ChoiceRow>

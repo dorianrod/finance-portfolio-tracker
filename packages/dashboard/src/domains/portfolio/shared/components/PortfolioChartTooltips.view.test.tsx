@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import { TriTooltip } from '@/domains/portfolio/features/performance/components/performanceChartTooltips/TriTooltip.view'
+import { TriTooltip } from '@/domains/portfolio/features/performance/components/TriChart/TriTooltip.view'
 
 describe('TriTooltip', () => {
   it('labels dotted backfill values as not yet available', () => {

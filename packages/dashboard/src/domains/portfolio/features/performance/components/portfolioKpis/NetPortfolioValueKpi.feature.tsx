@@ -1,4 +1,4 @@
-import type { PerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/performanceCalculations.types'
+import type { PerformanceSummary } from '@/domains/portfolio/features/performance/types/performanceSummary.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
 import i18n from '@/i18n/i18n'

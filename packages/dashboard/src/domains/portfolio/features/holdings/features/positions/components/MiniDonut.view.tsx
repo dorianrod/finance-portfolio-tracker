@@ -7,7 +7,8 @@ import {
 } from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
+import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
+import { getPieEntryTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getPieEntryTone'
 import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/buildAllocationPieData'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
@@ -27,6 +28,15 @@ export function MiniDonut({
   point: AllocationPoint
 }) {
   const { total, data } = buildAllocationPieData(point)
+  const formatLabel = useFormatPieEntryLabel()
+  const chartData = data.map((entry) => ({
+    ...entry,
+    name: formatLabel(entry),
+  }))
+  const legendEntries = data.map((entry) => ({
+    entry,
+    key: JSON.stringify([Boolean(entry.subItems), entry.name]),
+  }))
   return (
     <div>
       <Layout spaceAfter="compact">
@@ -37,7 +47,7 @@ export function MiniDonut({
       <ResponsiveContainer width="100%" height={110}>
         <PieChart>
           <Pie
-            data={data}
+            data={chartData}
             dataKey="value"
             innerRadius="30%"
             outerRadius="56%"
@@ -48,8 +58,12 @@ export function MiniDonut({
         </PieChart>
       </ResponsiveContainer>
       <Inline as="div" flow="wrap" gap="compact" spaceBefore="compact">
-        {data.map((entry) => (
-          <MiniDonutLegendItem key={entry.name} entry={entry} total={total} />
+        {legendEntries.map((item) => (
+          <MiniDonutLegendItem
+            key={item.key}
+            entry={item.entry}
+            total={total}
+          />
         ))}
       </Inline>
     </div>
@@ -63,6 +77,7 @@ function MiniDonutLegendItem({
   entry: PieEntry
   total: number
 }) {
+  const formatLabel = useFormatPieEntryLabel()
   const formatPercentage = useFormatPercentage()
   const percentage = formatPercentage(
     total > 0 ? (entry.value / total) * 100 : 0,
@@ -73,11 +88,11 @@ function MiniDonutLegendItem({
     <Text variant="tiny" tone="muted">
       <Inline as="span" align="center" gap="compact">
         <SeriesSwatch
-          tone={getAllocationTone(entry.name)}
+          tone={getPieEntryTone(entry)}
           shape="dot"
           size="default"
         />
-        {entry.name} {percentage}
+        {formatLabel(entry)} {percentage}
       </Inline>
     </Text>
   )
@@ -88,7 +103,5 @@ function MiniDonutSector(
 ) {
   const entry = shapeProps.payload
   if (!entry) return null
-  return (
-    <ChartSector geometry={shapeProps} tone={getAllocationTone(entry.name)} />
-  )
+  return <ChartSector geometry={shapeProps} tone={getPieEntryTone(entry)} />
 }

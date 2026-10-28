@@ -1,0 +1,54 @@
+
+> dashboard@1.1.0 build
+> tsc -b && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 1496 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                             2.04 kB │ gzip:   0.82 kB
+dist/assets/index-DlLQT2EN.css                             56.93 kB │ gzip:  10.74 kB
+dist/assets/chartTooltip-qq8hF9Nb.js                        0.07 kB │ gzip:   0.09 kB
+dist/assets/dashboardActiveTabAtom-Bpm3pdxi.js              0.08 kB │ gzip:   0.10 kB
+dist/assets/dashboardHoldingsViewAtom-gFViNJCw.js           0.08 kB │ gzip:   0.10 kB
+dist/assets/indexFundHoldingsByParent-BSiLTRj-.js           0.16 kB │ gzip:   0.14 kB
+dist/assets/Grid.view-DSFgQMy8.js                           0.19 kB │ gzip:   0.17 kB
+dist/assets/SeriesSwatch.view-IiiHqsD9.js                   0.21 kB │ gzip:   0.18 kB
+dist/assets/ChartLabels.view-DEKXWkcb.js                    0.25 kB │ gzip:   0.21 kB
+dist/assets/Proportion.view-DAHrfbcg.js                     0.25 kB │ gzip:   0.21 kB
+dist/assets/ScopedInfoTooltip.feature-COE4xhUQ.js           0.25 kB │ gzip:   0.19 kB
+dist/assets/Select.view-D5eZZ1It.js                         0.26 kB │ gzip:   0.22 kB
+dist/assets/useFormatAssetLabel-C5ezsKHM.js                 0.26 kB │ gzip:   0.21 kB
+dist/assets/LineChart-BPklT7_B.js                           0.38 kB │ gzip:   0.28 kB
+dist/assets/BarChart-CNDe5Mc5.js                            0.39 kB │ gzip:   0.28 kB
+dist/assets/ChartLabel.view-BvUPYw4s.js                     0.59 kB │ gzip:   0.42 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js                    0.72 kB │ gzip:   0.42 kB
+dist/assets/InfoTooltip.view-DHxTeft7.js                    0.79 kB │ gzip:   0.39 kB
+dist/assets/ConcentrationModeToggle.view-BfZwN66f.js        0.87 kB │ gzip:   0.44 kB
+dist/assets/useFormatNumber-BC-rHL97.js                     0.90 kB │ gzip:   0.40 kB
+dist/assets/fieldVariants-BVuNDMh7.js                       1.17 kB │ gzip:   0.51 kB
+dist/assets/TablePanel.view-DmN0xgvp.js                     1.35 kB │ gzip:   0.60 kB
+dist/assets/portfolioChartTones-0ky4HCoD.js                 1.79 kB │ gzip:   0.75 kB
+dist/assets/PieTooltip.view-BjJDXZYq.js                     1.84 kB │ gzip:   0.87 kB
+dist/assets/SwatchFrame.view-Cr-GLaW1.js                    2.16 kB │ gzip:   1.15 kB
+dist/assets/Kpi.view-DtDrsyeI.js                            2.42 kB │ gzip:   1.03 kB
+dist/assets/useFormatFundQualitySourceLabel-6nHa9ml2.js     5.44 kB │ gzip:   2.45 kB
+dist/assets/Button.view-Dl1RzoOY.js                         5.86 kB │ gzip:   1.38 kB
+dist/assets/es2015-Dp6MAKzM.js                             13.30 kB │ gzip:   5.15 kB
+dist/assets/Legend-5_2DWJ3s.js                             14.28 kB │ gzip:   4.80 kB
+dist/assets/ChartReference.view-DIsSEP5R.js                25.79 kB │ gzip:   8.48 kB
+dist/assets/OverviewTab.feature-CTk2m9LK.js                27.03 kB │ gzip:   6.87 kB
+dist/assets/SeriesGradient.view-CFqWF6w5.js                33.79 kB │ gzip:  10.48 kB
+dist/assets/PerformanceTab.feature-CmUBnBwB.js             34.23 kB │ gzip:   8.20 kB
+dist/assets/FundLookThroughTab.feature-CeE_pMS-.js         39.76 kB │ gzip:  12.11 kB
+dist/assets/endpoints-CSfMtJA9.js                          42.67 kB │ gzip:  13.46 kB
+dist/assets/DashboardDiversification.feature-spDslPdw.js   44.68 kB │ gzip:  11.77 kB
+dist/assets/WealthTab.feature-CQpRBhKA.js                  49.05 kB │ gzip:  12.74 kB
+dist/assets/DashboardDataQuality.feature-BQezqp_6.js       78.62 kB │ gzip:  20.27 kB
+dist/assets/PositionsTable.feature-Bj1iwFnZ.js            102.64 kB │ gzip:  27.36 kB
+dist/assets/useFormatPercentage-Cs8EEPYx.js               239.56 kB │ gzip:  74.25 kB
+dist/assets/index-BnLtV7dg.js                             314.46 kB │ gzip:  96.88 kB
+dist/assets/SeriesLine.view-CLf-RCMS.js                   362.71 kB │ gzip: 106.01 kB
+
+✓ built in 816ms

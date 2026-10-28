@@ -1,3 +1,4 @@
+import { FundHoldingsExplorer } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature'
 import { selectExposurePositions } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
@@ -7,8 +8,6 @@ import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import { FundHoldingsExplorer } from './FundHoldingsExplorer.feature'
 
 export function FundLookThroughTab({
   positions,

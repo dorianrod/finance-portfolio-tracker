@@ -1,7 +1,9 @@
-import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
+import type { PositionChartOperation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-export function getPositionTradeOperations(position: PositionRow): Operation[] {
+export function getPositionTradeOperations(
+  position: PositionRow,
+): PositionChartOperation[] {
   return position.subRows
     .flatMap((group) => group.subRows)
     .filter(

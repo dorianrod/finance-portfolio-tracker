@@ -1,5 +1,5 @@
-import { type ConcentrationChartRow } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationTrendController'
-import type { HistoricalConcentrationHolding } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildConcentrationTrend.types'
+import { type ConcentrationChartRow } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/services/useConcentrationTrendController'
+import type { HistoricalConcentrationHolding } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 export type TrendTooltipProps = {
   active?: boolean

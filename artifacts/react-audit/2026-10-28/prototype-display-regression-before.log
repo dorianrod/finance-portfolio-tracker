@@ -1,0 +1,151 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts (4 tests | 3 failed) 10ms
+     × uses a real palette fallback for constructor 5ms
+     × uses a real palette fallback for __proto__ 1ms
+     × uses a real palette fallback for toString 1ms
+ ❯ src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts (4 tests | 3 failed) 10ms
+     × ignores inherited palette entries for constructor 5ms
+     × ignores inherited palette entries for __proto__ 2ms
+     × ignores inherited palette entries for toString 1ms
+ ❯ src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.feature.test.tsx (4 tests | 1 failed) 542ms
+     × renders and sorts unknown diagnostic types and sources with prototype-like names 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts > getAllocationTone > uses a real palette fallback for constructor
+AssertionError: expected [Function Object] to be 'series11' // Object.is equality
+
+- Expected:
+"series11"
+
++ Received:
+[Function Object]
+
+ ❯ src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts:7:41
+      5| describe('getAllocationTone', () => {
+      6|   it.each(['constructor', '__proto__', 'toString'])('uses a real palet…
+      7|     expect(getAllocationTone(category)).toBe(getHashedSeriesTone(categ…
+       |                                         ^
+      8|   })
+      9|   it('preserves existing semantic palette entries', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts > getAllocationTone > uses a real palette fallback for __proto__
+AssertionError: expected { …(12) } to be 'series9' // Object.is equality
+
+- Expected:
+"series9"
+
++ Received:
+{}
+
+ ❯ src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts:7:41
+      5| describe('getAllocationTone', () => {
+      6|   it.each(['constructor', '__proto__', 'toString'])('uses a real palet…
+      7|     expect(getAllocationTone(category)).toBe(getHashedSeriesTone(categ…
+       |                                         ^
+      8|   })
+      9|   it('preserves existing semantic palette entries', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts > getAllocationTone > uses a real palette fallback for toString
+AssertionError: expected [Function toString] to be 'series9' // Object.is equality
+
+- Expected:
+"series9"
+
++ Received:
+[Function toString]
+
+ ❯ src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone.test.ts:7:41
+      5| describe('getAllocationTone', () => {
+      6|   it.each(['constructor', '__proto__', 'toString'])('uses a real palet…
+      7|     expect(getAllocationTone(category)).toBe(getHashedSeriesTone(categ…
+       |                                         ^
+      8|   })
+      9|   it('preserves existing semantic palette entries', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.feature.test.tsx > ErrorsTab > renders and sorts unknown diagnostic types and sources with prototype-like names
+Error: Objects are not valid as a React child (found: object with keys {}). If you meant to render a collection of children, use an array instead.
+ ❯ throwOnInvalidObjectTypeImpl node_modules/react-dom/cjs/react-dom-client.development.js:6099:13
+ ❯ throwOnInvalidObjectType node_modules/react-dom/cjs/react-dom-client.development.js:6113:11
+ ❯ reconcileChildFibersImpl node_modules/react-dom/cjs/react-dom-client.development.js:7058:11
+ ❯ node_modules/react-dom/cjs/react-dom-client.development.js:7098:33
+ ❯ reconcileChildren node_modules/react-dom/cjs/react-dom-client.development.js:9701:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12049:13
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts > getAccountTypeTone > ignores inherited palette entries for constructor
+AssertionError: expected [Function Object] to be 'series9' // Object.is equality
+
+- Expected:
+"series9"
+
++ Received:
+[Function Object]
+
+ ❯ src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts:6:69
+      4| describe('getAccountTypeTone', () => {
+      5|   it.each(['constructor', '__proto__', 'toString'])('ignores inherited…
+      6|     expect(getAccountTypeTone('account', 0, { account: category })).to…
+       |                                                                     ^
+      7|   })
+      8|   it('preserves known categories and cycles the fallback palette', () …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts > getAccountTypeTone > ignores inherited palette entries for __proto__
+AssertionError: expected { …(12) } to be 'series9' // Object.is equality
+
+- Expected:
+"series9"
+
++ Received:
+{}
+
+ ❯ src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts:6:69
+      4| describe('getAccountTypeTone', () => {
+      5|   it.each(['constructor', '__proto__', 'toString'])('ignores inherited…
+      6|     expect(getAccountTypeTone('account', 0, { account: category })).to…
+       |                                                                     ^
+      7|   })
+      8|   it('preserves known categories and cycles the fallback palette', () …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts > getAccountTypeTone > ignores inherited palette entries for toString
+AssertionError: expected [Function toString] to be 'series9' // Object.is equality
+
+- Expected:
+"series9"
+
++ Received:
+[Function toString]
+
+ ❯ src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.test.ts:6:69
+      4| describe('getAccountTypeTone', () => {
+      5|   it.each(['constructor', '__proto__', 'toString'])('ignores inherited…
+      6|     expect(getAccountTypeTone('account', 0, { account: category })).to…
+       |                                                                     ^
+      7|   })
+      8|   it('preserves known categories and cycles the fallback palette', () …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  7 failed | 5 passed (12)
+   Start at  17:24:45
+   Duration  1.70s (transform 232ms, setup 0ms, import 457ms, tests 562ms, environment 630ms)
+

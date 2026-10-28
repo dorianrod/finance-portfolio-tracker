@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 
-import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/features/wealth/types/rawAnnualIncomeSavingsRow.type'
 import { nullableNumber } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/nullableNumber'
 import { requiredNumber } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/requiredNumber'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'

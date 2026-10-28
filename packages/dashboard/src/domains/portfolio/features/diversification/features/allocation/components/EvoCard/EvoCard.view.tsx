@@ -1,6 +1,11 @@
 import { type ReactNode, useId } from 'react'
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
+import type {
+  AllocationTrend,
+  AllocationTrendCategory,
+  AllocationTrendPoint,
+} from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
 import { EvolutionTooltip } from '@/domains/portfolio/features/diversification/features/allocation/components/EvolutionTooltip.view'
 import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -18,11 +23,12 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { useFormatAllocationTrendCategory } from './helpers/formatters/useFormatAllocationTrendCategory'
+import type { AllocationTrendSeries } from './types/allocationTrendSeries.type'
+
 export function EvoCardView({
   title,
-  categories,
-  chartData,
-  groupedCategory,
+  trend,
   dateDomain,
   activeCategory,
   isFiltered,
@@ -31,9 +37,7 @@ export function EvoCardView({
 }: {
   children: ReactNode
   title: string
-  categories: string[]
-  chartData: Array<Record<string, number | null>>
-  groupedCategory: string | null
+  trend: AllocationTrend
   dateDomain: [number, number]
   activeCategory: string | null
   isFiltered: boolean
@@ -47,11 +51,15 @@ export function EvoCardView({
     remainingChildren,
     EvoCardViewPositionsControl,
   )
+  const formatCategory = useFormatAllocationTrendCategory()
+  const { categories, rows: chartData } = trend
   const formatDate = useFormatDate()
   const formatPercentage = useFormatPercentage()
   const id = useId()
-  const series = categories.map((category, index) => ({
+  const series: AllocationTrendSeries[] = categories.map((category, index) => ({
     category,
+    index,
+    label: formatCategory(category),
     gradientId: `${id}-allocation-${index}`,
   }))
   return (
@@ -72,12 +80,12 @@ export function EvoCardView({
         {positionsControl}
       </Inline>
       <Inline as="div" flow="wrap" gap="compact" spaceAfter="default">
-        {categories.map((category) => (
+        {series.map((item) => (
           <EvolutionLegendItem
-            key={category}
+            key={item.index}
             activeCategory={activeCategory}
-            category={category}
-            groupedCategory={groupedCategory}
+            category={item.category}
+            label={item.label}
             isFiltered={isFiltered}
             onSelect={onSelect}
           />
@@ -91,7 +99,7 @@ export function EvoCardView({
           <defs>
             {series.map((item) => (
               <EvolutionGradient
-                key={item.category}
+                key={item.index}
                 category={item.category}
                 gradientId={item.gradientId}
               />
@@ -115,11 +123,13 @@ export function EvoCardView({
             domain={[0, 100]}
             width={36}
           />
-          <Tooltip content={<EvolutionTooltip categories={categories} />} />
+          <Tooltip content={<EvolutionTooltip series={series} />} />
           {series.map((item) => (
             <EvolutionArea
-              key={item.category}
+              key={item.index}
               category={item.category}
+              index={item.index}
+              label={item.label}
               gradientId={item.gradientId}
             />
           ))}
@@ -132,46 +142,44 @@ export function EvoCardView({
 function EvolutionLegendItem({
   activeCategory,
   category,
-  groupedCategory,
+  label,
   isFiltered,
   onSelect,
 }: {
   activeCategory: string | null
-  category: string
-  groupedCategory: string | null
+  category: AllocationTrendCategory
+  label: string
   isFiltered: boolean
   onSelect: (category: string) => void
 }) {
-  if (category === groupedCategory)
+  const tone =
+    category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
+  if (category.kind === 'group')
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <SeriesSwatch
-            tone={getAllocationTone(category)}
-            shape="bar"
-            size="default"
-          />
-          {category}
+          <SeriesSwatch tone={tone} shape="bar" size="default" />
+          {label}
         </Inline>
       </Text>
     )
-  const isActive = activeCategory === category
+  const isActive = activeCategory === category.name
   const isDimmed = isFiltered && !isActive
   return (
     <ToggleButton
       type="button"
       active={isActive}
-      onClick={() => onSelect(category)}
+      onClick={() => onSelect(category.name)}
       variant="legend"
       dimmed={isDimmed}
     >
       <SeriesSwatch
-        tone={getAllocationTone(category)}
+        tone={tone}
         shape="bar"
         selected={isActive}
         size="default"
       />
-      <ChartText tone={getAllocationTone(category)}>{category}</ChartText>
+      <ChartText tone={tone}>{label}</ChartText>
     </ToggleButton>
   )
 }
@@ -180,14 +188,16 @@ function EvolutionGradient({
   category,
   gradientId,
 }: {
-  category: string
+  category: AllocationTrendCategory
   gradientId: string
 }) {
   return (
     <SeriesGradient
       id={gradientId}
       profile="dense"
-      tone={getAllocationTone(category)}
+      tone={
+        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
+      }
     />
   )
 }
@@ -195,16 +205,23 @@ function EvolutionGradient({
 function EvolutionArea({
   category,
   gradientId,
+  index,
+  label,
 }: {
-  category: string
+  category: AllocationTrendCategory
+  index: number
+  label: string
   gradientId: string
 }) {
   return (
     <SeriesArea
       type="monotone"
-      dataKey={category}
+      dataKey={(point: AllocationTrendPoint) => point.values[index]}
+      name={label}
       stackId="a"
-      tone={getAllocationTone(category)}
+      tone={
+        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
+      }
       gradientId={`${gradientId}`}
       weight="fine"
     />

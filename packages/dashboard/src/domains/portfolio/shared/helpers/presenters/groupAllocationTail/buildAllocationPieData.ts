@@ -1,7 +1,6 @@
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 
-import { formatGroupedAllocationLabel } from './formatGroupedAllocationLabel'
 import { groupAllocationTail } from './groupAllocationTail'
 
 export function buildAllocationPieData(point: AllocationPoint) {
@@ -17,7 +16,8 @@ export function buildAllocationPieData(point: AllocationPoint) {
   const data: PieEntry[] = main.map((category) => ({ ...category, total }))
   if (grouped.length > 1)
     data.push({
-      name: formatGroupedAllocationLabel(grouped.length),
+      // Synthetic aggregate; subItems identifies it independently of translated copy.
+      name: '',
       value: groupedTotal,
       total,
       subItems: grouped,

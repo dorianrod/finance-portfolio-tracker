@@ -1,0 +1,13 @@
+
+> dashboard@1.1.0 test
+> vitest run
+
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+
+ Test Files  253 passed (253)
+      Tests  2424 passed (2424)
+   Start at  16:32:40
+   Duration  135.63s (transform 7.91s, setup 0ms, import 68.94s, tests 349.67s, environment 80.55s)
+

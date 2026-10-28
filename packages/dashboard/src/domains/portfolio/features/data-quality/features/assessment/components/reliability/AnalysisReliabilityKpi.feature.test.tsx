@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import { CombinedAnalysisReliabilityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature'
 import { PipelineReliabilityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature'
+import { makeCombinedReliabilitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/combinedReliabilitySummary.mock'
 
 function renderWithProviders(node: ReactNode) {
   return render(
@@ -26,29 +27,10 @@ describe('CombinedAnalysisReliabilityKpi', () => {
     const user = userEvent.setup()
     renderWithProviders(
       <CombinedAnalysisReliabilityKpi
-        statusMetric={{
-          value: 'No anomaly',
-          metricLabel: 'Portfolio data',
-          tone: 'healthy',
-        }}
-        metrics={[
-          {
-            percentage: 100,
-            amount: 120_000,
-            metricLabel: 'Diversification',
-            tone: 'healthy',
-          },
-          {
-            percentage: 54,
-            amount: 64_800,
-            metricLabel: 'Underlying assets',
-            tone: 'critical',
-          },
-        ]}
-        tone="critical"
-        tooltip="Aggregate quality"
-        qualityTheme="classification"
-        scope={{ account: 'filterable', period: 'mixed' }}
+        summary={makeCombinedReliabilitySummary()}
+        allocationLoading={false}
+        pipelineErrorsLoading={false}
+        variant="portfolio"
       />,
     )
     expect(
@@ -64,7 +46,11 @@ describe('CombinedAnalysisReliabilityKpi', () => {
     await user.click(trigger)
     const tooltip = screen.getByRole('tooltip')
     expect(trigger.getAttribute('aria-describedby')).toBe(tooltip.id)
-    expect(within(tooltip).getByText('Aggregate quality')).toBeTruthy()
+    expect(
+      within(tooltip).getByText(
+        'Aggregate reliability for portfolio data, diversification mapping and underlying-assets look-through. The overall status follows the weakest indicator.',
+      ),
+    ).toBeTruthy()
     expect(tooltip.textContent).toContain('No anomaly')
     expect(tooltip.textContent).toContain('Portfolio data')
     expect(tooltip.textContent).toContain('100.0%')

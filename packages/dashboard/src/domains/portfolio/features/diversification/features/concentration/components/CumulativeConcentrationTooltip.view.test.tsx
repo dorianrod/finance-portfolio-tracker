@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type'
 
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 

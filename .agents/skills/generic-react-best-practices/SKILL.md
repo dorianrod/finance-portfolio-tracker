@@ -12,7 +12,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # Generic React Best Practices
@@ -69,19 +69,20 @@ Several rules describe the target standard, not the current state of every file.
 
 ### Audits
 
-Every audit covers three required passes within its stated scope:
+Every audit covers these activities within its stated scope:
 
 1. **ESLint diagnostics and corrections:** run the application's configured lint checks, investigate errors and warnings, and correct confirmed violations.
 2. **Catalog review beyond ESLint:** read applicable rule files and manually inspect requirements and analysis limits that lint does not cover.
-3. **Ignored diagnostics and exception validity:** inspect suppressions and configuration exclusions, verify the underlying diagnostic and technical justification, remove obsolete exceptions and correct unjustified violations. Valid metadata alone does not justify an exception.
+3. **Existing ignores, only on request:** revalidate existing suppressions and configuration exceptions only when the user explicitly asks to review them. A general audit or fix-all request does not enable this pass. Keep normal metadata and unused-suppression checks active; review any exception introduced or modified by the task before accepting it.
+4. **Deterministic prevention after the audit:** examine findings and manual coverage gaps for reusable ESLint, TypeScript or equivalent checks. Prefer existing enforcement; add or strengthen a check when its generic contract and valid/invalid cases can be established. Keep application-specific names, paths and one-off allowlists out of the check's logic.
 
-Follow the [audit method](references/audit-method.md) for all three passes. By default, correct confirmed violations in scope; honor an explicit findings-only request. A focused review uses the routing above and states its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
+Follow the [audit method](references/audit-method.md). By default, correct confirmed violations in scope; honor an explicit findings-only request. A focused review uses the routing above and states its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Existing ignores remain outside technical revalidation unless explicitly requested, including in a full audit. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
 
-For an audit, use the [coverage and report contract](references/audit-report.md): inventory the requested files, rules and exceptions; retain a versioned audit state; derive per-rule OK, error, justified-exception and pending counts from identified occurrences; and attach the exhaustive findings and ESLint diagnostics. A full audit accounts for every catalog rule and every in-scope authored file. Focused audits record their selected rules and scope explicitly. Ordinary implementation work does not require an audit report.
+Inventory the requested files and rules, and keep enough working notes to distinguish reviewed code from pending work. A full audit accounts for every catalog rule and every in-scope authored file under the requested ignore-review policy. Focused audits state their scope explicitly. No output template, per-rule count table, JSON state or generated report is required.
 
-Continue through the outstanding batches until coverage and the requested corrections are complete. Passing checks or reaching an accepted warning total is not a stopping condition. Do not silently narrow scope or treat a status question as cancellation. If an actual blocker or explicit user interruption stops work, retain the checkpoint, identify the remaining entries and report an incomplete result. Use the report validator's completion check before claiming completion; its bookkeeping checks supplement the review evidence and do not certify its correctness.
+Continue through the outstanding batches until coverage and the requested corrections are complete. Passing checks or reaching an accepted warning total is not a stopping condition. Do not silently narrow scope or treat a status question as cancellation. If an actual blocker or explicit user interruption stops work, retain enough notes to resume, identify what remains and report an incomplete result. Check the inventory and substantive review evidence before claiming completion.
 
-Keep reusable prevention in the owning rules, configured ESLint checks and executable regression tests. Store application audit artifacts at a caller-selected location outside the inspected source set; keep their paths and results out of this reusable catalog.
+Keep reusable prevention in the owning rules, configured checks and executable regression tests. In the final response, briefly summarize the ESLint, TypeScript or equivalent protections actually added or strengthened and the rationale for each, using only the main points. Distinguish proposals from implemented checks; if none were added, say so with a short reason. Keep the rest of the response free-form and concise. Any retained application audit artifacts belong outside the inspected source set; keep their paths and results out of this reusable catalog.
 
 Examples isolate their rule rather than serve as complete application templates. Apply the other relevant rules when writing production code. Files beginning with `_` are maintenance material.
 

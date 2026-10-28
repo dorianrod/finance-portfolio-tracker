@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { QualityThemeTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeTab.view'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
+import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
 import { Tabs } from '@/shared/ui/Tabs.view'
 
 const themes: QualityTheme[] = [

@@ -1,5 +1,7 @@
 import { useCallback } from 'react'
 
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+
 export function useFormatAssetLabel() {
   return useCallback(
     (
@@ -11,10 +13,7 @@ export function useFormatAssetLabel() {
   )
 }
 
-export type AssetLabelSource = {
-  name?: string | null
-  ticker?: string | null
-}
+export type AssetLabelSource = Partial<Pick<RawPosition, 'name' | 'ticker'>>
 
 function clean(value: string | null | undefined): string {
   return value?.trim() ?? ''

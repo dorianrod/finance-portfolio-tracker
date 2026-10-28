@@ -13,11 +13,9 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
   - `_template.md` - Template for creating new rules
   - `<prefix>-<description>.md` - Individual rule files
 - `scripts/build.mjs` - Zero-dependency build and validation script
-- `scripts/audit-report.mjs` - Initialize, validate, summarize and compare versioned audit evidence (Node >= 18, no dependencies)
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
 - `references/project-enforcement.md` - Minimal note; all conventions and ESLint requirements live in the rules
-- `references/audit-method.md` - Three audit passes: ESLint diagnostics and corrections, manual catalog review, and verification of ignored diagnostics and exception justifications
-- `references/audit-report.md` - Occurrence counting, exhaustive findings, completion criteria and cross-run comparison
+- `references/audit-method.md` - Exhaustive scope review, opt-in revalidation of existing ignores, and generic static prevention with a concise summary of added checks and their rationale; no required report format
 - `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
 - `SKILL.md` - Skill entry point (sections table and Quick Reference)
@@ -33,9 +31,6 @@ node .agents/skills/generic-react-best-practices/scripts/build.mjs
 
 # Validate only, and fail if AGENTS.md is outdated (use before committing)
 node .agents/skills/generic-react-best-practices/scripts/build.mjs --check
-
-# Exercise audit accounting and CLI behavior on isolated fictional projects
-node --test .agents/skills/generic-react-best-practices/scripts/audit-report.test.mjs
 ```
 
 The validation checks:

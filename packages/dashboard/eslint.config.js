@@ -8,9 +8,11 @@ import tseslint from 'typescript-eslint'
 
 import apiBusinessDestructuring from './eslint-rules/api-business-destructuring.js'
 import apiHookContract from './eslint-rules/api-hook-contract.js'
+import atomContract from './eslint-rules/atom-contract.js'
 import componentRole from './eslint-rules/component-role.js'
 import entityTypeFiles from './eslint-rules/entity-type-files.js'
 import eslintSuppressionProcessor from './eslint-rules/eslint-suppression-processor.js'
+import explicitNullability from './eslint-rules/explicit-nullability.js'
 import featureFolderLayout from './eslint-rules/feature-folder-layout.js'
 import formatterContract from './eslint-rules/formatter-contract.js'
 import i18nConsistency from './eslint-rules/i18n-consistency.js'
@@ -75,8 +77,10 @@ export default defineConfig([
         rules: {
           'api-hook-contract': apiHookContract,
           'api-business-destructuring': apiBusinessDestructuring,
+          'atom-contract': atomContract,
           'component-role': componentRole,
           'entity-type-files': entityTypeFiles,
+          'explicit-nullability': explicitNullability,
           'feature-folder-layout': featureFolderLayout,
           'formatter-contract': formatterContract,
           'i18n-consistency': i18nConsistency,
@@ -211,7 +215,9 @@ export default defineConfig([
       'simple-import-sort/imports': 'error',
       'local/api-hook-contract': 'error',
       'local/api-business-destructuring': 'error',
+      'local/atom-contract': 'error',
       'local/entity-type-files': 'error',
+      'local/explicit-nullability': 'error',
       'local/formatter-contract': 'error',
       'local/no-lossy-boolean-transform': 'error',
       'local/no-number-string-roundtrip': 'error',

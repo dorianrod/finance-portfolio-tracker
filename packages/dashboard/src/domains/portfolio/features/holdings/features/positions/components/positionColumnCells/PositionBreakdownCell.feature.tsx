@@ -1,5 +1,7 @@
+import { usePositionPreviewActions } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/actions/usePositionPreviewActions'
 import { UnderlyingStatusControl } from '@/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature'
 import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition'
+import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { Decorative } from '@/shared/ui/controls/Decorative.view'
@@ -16,45 +18,30 @@ export function PositionBreakdownCell({
   table,
 }: import('@tanstack/react-table').CellContext<TableRow, unknown>) {
   const context = table.options.meta?.positionColumns
+  const { showPreview } = usePositionPreviewActions()
   if (!context) return null
-  const {
-    allocationData,
-    fundStatuses,
-    cancelHide,
-    scheduleHide,
-    setAllocationHover,
-    setChart,
-    setSavingsChart,
-    setUnderlyingPopover,
-  } = context
+  const { allocationData, fundStatuses, cancelHide, scheduleHide } = context
   const r = row.original
   if (r.kind !== 'position') return null
-  const allocKey = r.isin || `NC-${r.name}`
+  const allocKey = getPositionAllocationKey(r)
   const allocation = allocationData.get(allocKey)
   const fundStatus = statusForPosition(r, fundStatuses)
   const hasNoBreakdown = !allocation && !fundStatus
   const showAllocation = (button: HTMLButtonElement) => {
     if (!allocation) return
     cancelHide()
-    setChart(null)
-    setSavingsChart(null)
-    setUnderlyingPopover(null)
-    setAllocationHover({
-      isin: allocKey,
-      name: r.name,
+    showPreview({
+      kind: 'allocation',
+      positionId: r.id,
       buttonRect: button.getBoundingClientRect(),
-      allocation,
     })
   }
   const showUnderlying = (button: HTMLButtonElement) => {
     if (!fundStatus) return
     cancelHide()
-    setChart(null)
-    setSavingsChart(null)
-    setAllocationHover(null)
-    setUnderlyingPopover({
-      position: r,
-      status: fundStatus,
+    showPreview({
+      kind: 'underlying',
+      positionId: r.id,
       buttonRect: button.getBoundingClientRect(),
     })
   }

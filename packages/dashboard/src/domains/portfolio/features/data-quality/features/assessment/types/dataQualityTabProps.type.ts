@@ -13,6 +13,7 @@ export type DataQualityTabProps = {
   errors: PipelineError[]
   manualPriceOverrides: ManualPriceOverride[]
   fundStatuses: FundHoldingStatus[]
+  // The coverage report is absent when the optional diagnostic export is missing.
   fundReport: FundCoverageReport | null
   fundHoldings: FundHolding[]
   fundSnapshots: FundSnapshot[]

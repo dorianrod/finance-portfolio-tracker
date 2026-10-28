@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/presenters/normalizeCoveragePercentage'
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

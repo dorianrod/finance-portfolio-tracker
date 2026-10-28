@@ -1,5 +1,5 @@
 import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
-import { type AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
+import type { AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/types/affectedAsset.type'
 import { Surface } from '@/shared/ui/Surface.view'
 
 export function AffectedDimensionBadge({

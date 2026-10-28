@@ -9,7 +9,7 @@ export function buildAccountTypeHistory(
 ): AccountTypeHistory {
   const byDate = new Map<number, Map<string, number>>()
   const typeSet = new Set<string>()
-  const typeCategories: Record<string, string> = {}
+  const typeCategories = new Map<string, string>()
 
   for (const row of rows) {
     if (!row.account_type || (row.total_value ?? 0) === 0) continue
@@ -17,7 +17,7 @@ export function buildAccountTypeHistory(
     const tv = row.total_value ?? 0
     typeSet.add(row.account_type)
     if (row.account_category)
-      typeCategories[row.account_type] = row.account_category
+      typeCategories.set(row.account_type, row.account_category)
     const dateMap =
       byDate.get(row.snapshot_date.getTime()) ?? new Map<string, number>()
     dateMap.set(row.account_type, (dateMap.get(row.account_type) ?? 0) + tv)
@@ -26,8 +26,8 @@ export function buildAccountTypeHistory(
 
   // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Known-category priority and alphabetical fallback form one total ordering comparator.
   const accountTypes = [...typeSet].toSorted((a, b) => {
-    const ia = CATEGORY_ORDER[typeCategories[a] ?? ''] ?? -1
-    const ib = CATEGORY_ORDER[typeCategories[b] ?? ''] ?? -1
+    const ia = CATEGORY_ORDER.get(typeCategories.get(a) ?? '') ?? -1
+    const ib = CATEGORY_ORDER.get(typeCategories.get(b) ?? '') ?? -1
     if (ia !== -1 && ib !== -1) return ia - ib
     if (ia !== -1) return -1
     if (ib !== -1) return 1
@@ -37,23 +37,25 @@ export function buildAccountTypeHistory(
   const data: AccountTypeHistoryPoint[] = [...byDate.entries()]
     .toSorted(([a], [b]) => a - b)
     .map(([date, typeMap]) => {
-      const point: AccountTypeHistoryPoint = { date: new Date(date) }
-      for (const t of accountTypes) {
-        point[t] = Math.round(typeMap.get(t) ?? 0)
+      return {
+        date: new Date(date),
+        values: Object.fromEntries(
+          accountTypes.map((type) => [
+            type,
+            Math.round(typeMap.get(type) ?? 0),
+          ]),
+        ),
       }
-      return point
     })
 
-  return { data, accountTypes, typeCategories }
+  return {
+    data,
+    accountTypes,
+    typeCategories: Object.fromEntries(typeCategories),
+  }
 }
 
-export type AccountTypeHistoryPoint = {
-  date: Date
-  [key: string]: number | Date
-}
-
-export type AccountTypeHistory = {
-  data: AccountTypeHistoryPoint[]
-  accountTypes: string[]
-  typeCategories: Record<string, string>
-}
+import type {
+  AccountTypeHistory,
+  AccountTypeHistoryPoint,
+} from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'

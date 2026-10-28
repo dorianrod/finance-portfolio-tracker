@@ -1,4 +1,4 @@
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type'
 
 export function cumulativeConcentrationCrosshair(
   point: CumulativeConcentrationPoint | null,

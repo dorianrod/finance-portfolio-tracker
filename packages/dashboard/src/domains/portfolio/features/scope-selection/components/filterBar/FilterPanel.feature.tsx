@@ -6,8 +6,9 @@ import { FilterSection } from '@/domains/portfolio/features/scope-selection/comp
 import type { FilterVisibility } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/filters/presetDateFrom'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
-import { usePortfolioFilterOptions } from '@/domains/portfolio/features/scope-selection/services/usePortfolioFilterOptions'
-import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+import { usePortfolioFilterOptions } from '@/domains/portfolio/features/scope-selection/helpers/filters/usePortfolioFilterOptions'
+import { useDashboardFilters } from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
+import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
 import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
@@ -32,7 +33,7 @@ export function FilterPanel({
   demoPresetActive = false,
 }: FilterPanelProps & { onReset: () => void }) {
   const open = useAtomValue(dashboardFiltersOpenAtom)
-  const { closeFilters } = useDashboardFilters()
+  const { closeFilters } = useDashboardFilterPanel()
 
   return (
     <SidePanel
@@ -65,7 +66,8 @@ export function FilterPanel({
 
 type FilterPanelProps = {
   visibility: FilterVisibility
-  demoPresetSelection?: Set<string> | null
+  // The static demo endpoint may not provide a precomputed account preset.
+  demoPresetSelection: Set<string> | null
   demoPresetActive?: boolean
 }
 

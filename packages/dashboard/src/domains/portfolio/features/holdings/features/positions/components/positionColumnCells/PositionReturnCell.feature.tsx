@@ -1,7 +1,7 @@
 import { type Row } from '@tanstack/react-table'
 
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
-import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import { Text } from '@/shared/ui/Text.view'
 

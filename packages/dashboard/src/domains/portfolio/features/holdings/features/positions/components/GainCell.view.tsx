@@ -1,4 +1,4 @@
-import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -10,7 +10,7 @@ export function GainCell({
   zeroAsFallback = false,
 }: {
   value: number | null
-  pct?: number | null
+  pct?: number
   zeroAsFallback?: boolean
 }) {
   const formatMoney = useFormatMoney()

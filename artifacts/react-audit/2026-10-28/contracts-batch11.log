@@ -1,0 +1,537 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.test.tsx (4 tests | 1 failed) 419ms
+     × switches horizons and metrics without losing the selected contribution horizon 304ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.test.tsx > PerformanceContributionCard > switches horizons and metrics without losing the selected contribution horizon
+TestingLibraryElementError: Unable to find an accessible element with the role "heading" and name "Top contributors"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "Performance by asset":
+  [36m<h2[39m
+    [33mclass[39m=[32m"text-sm font-medium text-content-muted"[39m
+  [36m/>[39m
+
+  Name "Top contributorsi":
+  [36m<h3[39m
+    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wider text-content-subtle"[39m
+  [36m/>[39m
+
+  Name "Main detractorsi":
+  [36m<h3[39m
+    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wider text-content-subtle"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-xs text-content-subtle"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "Performance metric":
+  [36m<div[39m
+    [33maria-label[39m=[32m"Performance metric"[39m
+    [33mclass[39m=[32m"size-full bg-canvas border border-border-strong rounded-lg"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  Name "Contribution horizon":
+  [36m<div[39m
+    [33maria-label[39m=[32m"Contribution horizon"[39m
+    [33mclass[39m=[32m"size-full bg-canvas/40 border border-border rounded-lg"[39m
+    [33mrole[39m=[32m"group"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Contribution €":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-xs transition-colors bg-surface-hover text-content px-3 py-1.5 text-xs gap-2"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "IRR %":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-xs transition-colors text-content-subtle hover:text-content-secondary px-3 py-1.5 text-xs gap-2"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More information":
+  [36m<button[39m
+    [33maria-label[39m=[32m"More information"[39m
+    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+    [33mdata-state[39m=[32m"closed"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More information":
+  [36m<button[39m
+    [33maria-label[39m=[32m"More information"[39m
+    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+    [33mdata-state[39m=[32m"closed"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Since tracking":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"true"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-[11px] transition-colors bg-surface-hover text-content px-3 py-1.5 text-xs gap-2"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Trailing 3 years":
+  [36m<button[39m
+    [33maria-pressed[39m=[32m"false"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-[11px] transition-colors disabled:cursor-not-allowed disabled:text-content-subtle text-content-subtle hover:text-content-secondary px-3 py-1.5 text-xs gap-2"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More information":
+  [36m<button[39m
+    [33maria-label[39m=[32m"More information"[39m
+    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+    [33mdata-state[39m=[32m"closed"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "More information":
+  [36m<button[39m
+    [33maria-label[39m=[32m"More information"[39m
+    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+    [33mdata-state[39m=[32m"closed"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"flex flex-col gap-2"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<ol[39m
+    [33mclass[39m=[32m"flex flex-col gap-2"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"block h-full bg-surface border border-border rounded-xl p-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col gap-2 items-start justify-between"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-sm font-medium text-content-muted"[39m
+          [36m>[39m
+            [0mPerformance by asset[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-1"[39m
+          [36m>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-content-subtle"[39m
+            [36m>[39m
+              [0mMain assets creating or reducing portfolio value.[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"Performance metric"[39m
+            [33mclass[39m=[32m"size-full bg-canvas border border-border-strong rounded-lg"[39m
+            [33mrole[39m=[32m"group"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex gap-2 p-2 items-center"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"true"[39m
+                [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-xs transition-colors bg-surface-hover text-content px-3 py-1.5 text-xs gap-2"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mContribution €[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-xs transition-colors text-content-subtle hover:text-content-secondary px-3 py-1.5 text-xs gap-2"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0mIRR %[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"block h-full bg-canvas/40 border border-border rounded-lg p-4"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"grid gap-2 p-4 grid-cols-1 lg:grid-cols-3"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-[11px] uppercase tracking-wider text-content-subtle"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex gap-2 items-center"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0mIRR context[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"inline-flex gap-2 items-center relative"[39m
+                  [36m>[39m
+                    [36m<button[39m
+                      [33maria-label[39m=[32m"More information"[39m
+                      [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+                      [33mdata-state[39m=[32m"closed"[39m
+                      [33mtype[39m=[32m"button"[39m
+                    [36m>[39m
+                      [0mi[0m
+                    [36m</button>[39m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"mt-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-lg font-semibold text-contrast tabular-nums"[39m
+                [36m>[39m
+                  [0m+12.34%[0m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-[11px] uppercase tracking-wider text-content-subtle"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex gap-2 items-center"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0mAttributed net performance[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"inline-flex gap-2 items-center relative"[39m
+                  [36m>[39m
+                    [36m<button[39m
+                      [33maria-label[39m=[32m"More information"[39m
+                      [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+                      [33mdata-state[39m=[32m"closed"[39m
+                      [33mtype[39m=[32m"button"[39m
+                    [36m>[39m
+                      [0mi[0m
+                    [36m</button>[39m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"mt-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"text-lg font-semibold text-positive tabular-nums"[39m
+                [36m>[39m
+                  [0m750 €[0m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-[11px] uppercase tracking-wider text-content-subtle"[39m
+              [36m>[39m
+                [0mPeriod[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-wrap gap-2 mt-3 items-center justify-between"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"text-sm font-medium text-content-muted whitespace-nowrap"[39m
+                  [36m>[39m
+                    [0mJan 2021 – Oct 2026[0m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"shrink-0"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"Contribution horizon"[39m
+                    [33mclass[39m=[32m"size-full bg-canvas/40 border border-border rounded-lg"[39m
+                    [33mrole[39m=[32m"group"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"flex gap-2 p-2 items-center"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33maria-pressed[39m=[32m"true"[39m
+                        [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-[11px] transition-colors bg-surface-hover text-content px-3 py-1.5 text-xs gap-2"[39m
+                        [33mtype[39m=[32m"button"[39m
+                      [36m>[39m
+                        [0mSince tracking[0m
+                      [36m</button>[39m
+                      [36m<button[39m
+                        [33maria-pressed[39m=[32m"false"[39m
+                        [33mclass[39m=[32m"inline-flex items-center justify-center rounded-md text-[11px] transition-colors disabled:cursor-not-allowed disabled:text-content-subtle text-content-subtle hover:text-content-secondary px-3 py-1.5 text-xs gap-2"[39m
+                        [33mtype[39m=[32m"button"[39m
+                      [36m>[39m
+                        [0mTrailing 3 years[0m
+                      [36m</button>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid gap-6 mt-6 grid-cols-1 sm:grid-cols-2"[39m
+      [36m>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-2 mb-3 items-baseline justify-between"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wider text-content-subtle"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"inline-flex gap-2 items-center"[39m
+              [36m>[39m
+                [0mTop contributors[0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"inline-flex gap-2 items-center relative"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"More information"[39m
+                    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+                    [33mdata-state[39m=[32m"closed"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [0mi[0m
+                  [36m</button>[39m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h3>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-[11px] text-content-subtle"[39m
+            [36m>[39m
+              [0mShare of gains[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<ol[39m
+            [33mclass[39m=[32m"flex flex-col gap-2"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-sm"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex gap-4 items-start justify-between"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"font-medium text-content-secondary truncate block"[39m
+                      [33mtitle[39m=[32m"Asset A"[39m
+                    [36m>[39m
+                      [0mAAA[0m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"text-[11px] text-content-subtle truncate block"[39m
+                      [33mtitle[39m=[32m"PEA"[39m
+                    [36m>[39m
+                      [0mPEA[0m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"shrink-0"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"text-right tabular-nums"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"font-semibold text-positive"[39m
+                      [36m>[39m
+                        [0m1,000 €[0m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"text-[11px] text-content-subtle"[39m
+                      [36m>[39m
+                        [0m100.0%[0m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"mt-3 h-1.5 overflow-hidden"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"block h-full bg-surface-raised rounded-full overflow-hidden"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"h-full"[39m
+                    [33mstyle[39m=[32m"width: 100%;"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"block h-full w-full rounded-full bg-positive"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</li>[39m
+          [36m</ol>[39m
+        [36m</section>[39m
+        [36m<section>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-2 mb-3 items-baseline justify-between"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wider text-content-subtle"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"inline-flex gap-2 items-center"[39m
+              [36m>[39m
+                [0mMain detractors[0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"inline-flex gap-2 items-center relative"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"More information"[39m
+                    [33mclass[39m=[32m"flex size-5 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold leading-none text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary"[39m
+                    [33mdata-state[39m=[32m"closed"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [0mi[0m
+                  [36m</button>[39m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h3>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-[11px] text-content-subtle"[39m
+            [36m>[39m
+              [0mShare of losses[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<ol[39m
+            [33mclass[39m=[32m"flex flex-col gap-2"[39m
+          [36m>[39m
+            [36m<li>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-sm"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex gap-4 items-start justify-between"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"font-medium text-content-secondary truncate block"[39m
+                      [33mtitle[39m=[32m"Asset B"[39m
+                    [36m>[39m
+                      [0mBBB[0m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"text-[11px] text-content-subtle truncate block"[39m
+                      [33mtitle[39m=[32m"CTO"[39m
+                    [36m>[39m
+                      [0mCTO[0m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"shrink-0"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"text-right tabular-nums"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"font-semibold text-danger"[39m
+                      [36m>[39m
+                        [0m-250 €[0m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"text-[11px] text-content-subtle"[39m
+                      [36m>[39m
+                        [0m100.0%[0m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"mt-3 h-1.5 overflow-hidden"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"block h-full bg-surface-raised rounded-full overflow-hidden"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"h-full"[39m
+                    [33mstyle[39m=[32m"width: 100%;"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"block h-full w-full rounded-full bg-danger"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</li>[39m
+          [36m</ol>[39m
+        [36m</section>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.test.tsx:23:19
+     21|     /></Provider>)
+     22|     expect(screen.getByRole('heading', { name: 'Performance by asset',…
+     23|     expect(screen.getByRole('heading', { name: 'Top contributors' })).…
+       |                   ^
+     24|     expect(screen.getByRole('heading', { name: 'Main detractors' })).t…
+     25|     expect(screen.getAllByRole('button', { name: 'More information' })…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 20 passed (21)
+   Start at  15:52:38
+   Duration  2.06s (transform 753ms, setup 0ms, import 1.83s, tests 710ms, environment 2.33s)
+

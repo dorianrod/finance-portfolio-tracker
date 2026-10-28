@@ -2,7 +2,7 @@ import { type LabelProps } from 'recharts'
 
 import type { YearLabelPlacement } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/calculateYearLabelLayout'
 import { getYearLabelPosition } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/getYearLabelPosition'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
 

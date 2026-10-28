@@ -20,7 +20,10 @@ export function UnrealizedGainCell({ position }: { position: PositionRow }) {
   return (
     <Text variant="compact">
       <Stack as="span">
-        <GainCell value={gross} pct={position.unrealized_gain_pct} />
+        <GainCell
+          value={gross}
+          pct={position.unrealized_gain_pct ?? undefined}
+        />
         {taxDetails && (
           <Layout as="span" flow="inline" spaceBefore="compact">
             <Text variant="tiny" tone="subtle">

@@ -1,10 +1,12 @@
-import { FUND_QUALITY_LABELS } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/fundQualityLabels'
-import { getFundQualityPresentation } from '@/domains/portfolio/shared/helpers/presenters/getFundQualityPresentation/getFundQualityPresentation'
+import { useFormatFundQualityLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualityLabel'
+import { useFormatFundQualitySourceLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualitySourceLabel'
+import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { HierarchyIcon } from '@/shared/ui/icons/HierarchyIcon.view'
 import { Preview } from '@/shared/ui/Preview.view'
+import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 
 export function UnderlyingStatusButton({
   status,
@@ -20,20 +22,13 @@ export function UnderlyingStatusButton({
   onHide: () => void
 }) {
   const formatPercentage = useFormatPercentage()
-  const { category, sourceLabel } = getFundQualityPresentation(
-    status.qualityTier,
-  )
-  const label = FUND_QUALITY_LABELS[category]
+  const formatQualityLabel = useFormatFundQualityLabel()
+  const formatSourceLabel = useFormatFundQualitySourceLabel()
   const title = i18n.t('ui.positionstable.fundQualitySummary', {
-    label,
-    source: sourceLabel,
+    label: formatQualityLabel(status.qualityTier),
+    source: formatSourceLabel(status.qualityTier),
     percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
   })
-  const tone = {
-    reliable: 'positive',
-    partial: 'warning',
-    unavailable: 'negative',
-  }[category] as 'positive' | 'warning' | 'negative'
 
   return (
     <Preview.Trigger
@@ -55,7 +50,7 @@ export function UnderlyingStatusButton({
           ? i18n.t('ui.positionstable.hideComposition', { title })
           : i18n.t('ui.positionstable.showComposition', { title })
       }
-      tone={tone}
+      tone={TIER_TONES[status.qualityTier]}
       selected={isOpen}
       onPreview={onShow}
       onDismiss={onHide}
@@ -63,4 +58,11 @@ export function UnderlyingStatusButton({
       <HierarchyIcon />
     </Preview.Trigger>
   )
+}
+
+const TIER_TONES: Record<FundQualityTier, TextTone> = {
+  A: 'positive',
+  B: 'positive',
+  C: 'warning',
+  D: 'negative',
 }

@@ -1,6 +1,7 @@
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
@@ -14,6 +15,7 @@ export function IncomeSavingsTooltip({
   active?: boolean
   payload?: Array<{ payload?: AnnualIncomeSavingsPoint }>
 }) {
+  const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const point = payload?.[0]?.payload
@@ -25,7 +27,7 @@ export function IncomeSavingsTooltip({
   const savingsSuffix =
     point.savingsStatus === 'partial'
       ? i18n.t('ui.annualincomesavingschart.ytdThrough', {
-          date: point.savingsThrough,
+          date: formatDate(point.savingsThrough),
         })
       : ''
   return (

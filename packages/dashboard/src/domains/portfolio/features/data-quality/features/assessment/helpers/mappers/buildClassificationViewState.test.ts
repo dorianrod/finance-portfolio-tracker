@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import type {
-  AccountCoverage,
-  DimensionCoverage,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
+import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
+import type { DimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
 
 import { buildClassificationViewState } from './buildClassificationViewState'
 

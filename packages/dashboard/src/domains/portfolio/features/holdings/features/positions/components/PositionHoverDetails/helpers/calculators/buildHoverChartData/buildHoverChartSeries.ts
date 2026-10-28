@@ -1,5 +1,5 @@
 import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
-import type { Operation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
+import type { PositionChartOperation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
 import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
 import type { HoverChartDataPoint } from './buildHoverChartData.types'
@@ -10,9 +10,9 @@ import { computeRollingReturns } from './computeRollingReturns'
 // tooltip breakdown).
 export function buildHoverChartSeries(
   history: HistoryPoint[],
-  operations: Operation[],
+  operations: PositionChartOperation[],
 ): HoverChartDataPoint[] {
-  const operationsByMonth = new Map<string, Operation[]>()
+  const operationsByMonth = new Map<string, PositionChartOperation[]>()
   for (const operation of operations) {
     const month = toCalendarMonth(operation.date)
     const monthlyOperations = operationsByMonth.get(month) ?? []

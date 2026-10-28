@@ -1,8 +1,8 @@
 import { type Row } from '@tanstack/react-table'
 
-import { formatIrrPeriodLabel } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/formatIrrPeriodLabel'
+import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone'
+import { useFormatIrrPeriodLabel } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
-import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/helpers/presenters/getGainTone'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -10,6 +10,7 @@ import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export function PositionIrrCell({ row }: { row: Row<TableRow> }) {
+  const formatIrrPeriodLabel = useFormatIrrPeriodLabel()
   const { formatPercentage } = usePositionTableFormatters()
 
   const r = row.original

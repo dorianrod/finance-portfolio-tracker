@@ -1,3 +1,7 @@
+import type { PerformanceContributionFilters } from '@/domains/portfolio/features/performance/types/performanceContributionFilters.type'
+import type { ContributionHorizon } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
+import type { PerformanceContribution } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
+import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
@@ -94,34 +98,6 @@ export function computePerformanceContributions(
     contributors,
     detractors,
   }
-}
-
-export type ContributionHorizon = 'since-tracking' | 'trailing-3y'
-
-export type PerformanceContribution = {
-  key: string
-  label: string
-  name: string
-  amount: number
-  share: number
-  accounts: string[]
-}
-
-export type PerformanceContributionSummary = {
-  horizon: ContributionHorizon
-  available: boolean
-  startDate: Date | null
-  endDate: Date | null
-  netContribution: number
-  positiveTotal: number
-  negativeTotal: number
-  contributors: PerformanceContribution[]
-  detractors: PerformanceContribution[]
-}
-
-export type PerformanceContributionFilters = {
-  accounts: Set<string>
-  accountTypes: Set<string>
 }
 
 type AssetMeta = {

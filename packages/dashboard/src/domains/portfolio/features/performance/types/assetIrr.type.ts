@@ -10,7 +10,9 @@ export type AssetIrrItem = {
 
 export type AssetIrrSummary = {
   available: boolean
+  // No comparable interval exists when the summary is unavailable.
   start_date: Date | null
+  // No comparable interval exists when the summary is unavailable.
   end_date: Date | null
   assets: AssetIrrItem[]
 }

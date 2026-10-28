@@ -1,4 +1,4 @@
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 
 /** Greedily gives the newest years first choice, then moves colliding labels around their point. */
 export function calculateYearLabelLayout(

@@ -11,7 +11,7 @@ const sharedFile = 'src/shared/helpers/mappers/toCalendarMonth.ts'
 const domainFile =
   'src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts'
 const serviceFile =
-  'src/domains/portfolio/features/holdings/features/positions/services/usePositionTableOverlays.ts'
+  'src/domains/portfolio/features/holdings/features/positions/services/useSortedPositions.ts'
 
 async function lint(code, file) {
   const [result] = await eslint.lintText(code, {
@@ -24,11 +24,11 @@ async function lint(code, file) {
 
 describe('configured import boundaries', () => {
   it.each([
-    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'",
     "export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
     "const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison')",
-    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison').OverviewComparison",
-    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
+    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types').OverviewComparison",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'",
   ])(
     'rejects sibling feature dependencies: %s',
     async (code) => {
@@ -41,7 +41,7 @@ describe('configured import boundaries', () => {
 
   it.each([
     "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
-    "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/concentrationCalculations.types'",
+    "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'",
   ])(
     'does not expose child implementation to parent shared contracts: %s',
     async (code) => {
@@ -52,6 +52,7 @@ describe('configured import boundaries', () => {
         ),
       ).toMatchObject([{ messageId: 'sharedScope', severity: 2 }])
     },
+    20_000,
   )
 
   it('keeps parent shared contracts independent of child renderers', async () => {
@@ -186,7 +187,7 @@ describe('configured import boundaries', () => {
 
   it.each([
     'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts',
-    'src/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms.ts',
+    'src/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
     'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',

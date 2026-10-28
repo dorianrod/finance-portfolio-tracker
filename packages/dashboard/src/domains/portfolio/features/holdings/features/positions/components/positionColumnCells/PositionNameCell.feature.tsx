@@ -1,6 +1,7 @@
 import { type Row } from '@tanstack/react-table'
 
 import { TransactionBadge } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableAppearance/TransactionBadge.view'
+import { useFormatOperationGroupLabel } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatOperationGroupLabel'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
@@ -11,6 +12,7 @@ import { Text } from '@/shared/ui/Text.view'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Position identity, grouped labels and dated operations implement the same table name column.
 export function PositionNameCell({ row }: { row: Row<TableRow> }) {
+  const formatGroupLabel = useFormatOperationGroupLabel()
   const { formatDate } = usePositionTableFormatters()
 
   const r = row.original
@@ -54,7 +56,7 @@ export function PositionNameCell({ row }: { row: Row<TableRow> }) {
   if (r.kind === 'group') {
     return (
       <Text variant="bodyStrong" tone="secondary">
-        {r.label}
+        {formatGroupLabel(r.groupType)}
       </Text>
     )
   }

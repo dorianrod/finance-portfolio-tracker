@@ -11,6 +11,7 @@ export type FundHolding = {
   weight: number
   sourceTier: FundQualityTier | ''
   sourceName: string
+  // Some composition sources do not disclose their holdings date.
   holdingsDate: Date | null
   holdingKind?: string
   lookthroughPath?: string
@@ -23,5 +24,6 @@ export type FundHolding = {
 export type HistoricalFundHolding = FundHolding & {
   effectiveDate: Date
   historySnapshotId: string
+  // Historical imports can lack the original collection timestamp.
   capturedAt: Date | null
 }

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 
 import { calculateYearLabelLayout } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/calculateYearLabelLayout'
-import { analyseIncomePlacement } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/analyseIncomePlacement'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import { analyseIncomePlacement } from '@/domains/portfolio/features/wealth/helpers/calculators/analyseIncomePlacement'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 
 export function useIncomePlacementChart(data: AnnualIncomeSavingsPoint[]) {
   const analysis = useMemo(() => analyseIncomePlacement(data), [data])

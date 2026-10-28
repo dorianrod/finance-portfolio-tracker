@@ -1,0 +1,10 @@
+
+> dashboard@1.1.0 typecheck
+> tsc -b --pretty false
+
+src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.feature.tsx(5,3): error TS6196: 'DimensionCoverage' is declared but never used.
+src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.view.tsx(3,3): error TS6196: 'DimensionCoverage' is declared but never used.
+src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature.tsx(5,3): error TS6133: 'RELIABILITY_TONES' is declared but its value is never read.
+src/domains/portfolio/features/performance/components/performanceContributionCard/ContributionList.view.tsx(4,3): error TS6196: 'ContributionHorizon' is declared but never used.
+src/domains/portfolio/features/performance/components/performanceContributionCard/ContributionList.view.tsx(6,3): error TS6196: 'PerformanceContributionSummary' is declared but never used.
+src/domains/portfolio/features/performance/components/performanceContributionCard/ContributionSummaryMetrics.view.tsx(5,3): error TS6196: 'PerformanceContribution' is declared but never used.

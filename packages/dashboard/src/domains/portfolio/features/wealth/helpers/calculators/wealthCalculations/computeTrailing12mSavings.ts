@@ -1,7 +1,6 @@
-import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
+import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
+import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/selectors/filterPointsByPeriod'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-
-import type { TrailingSavingCapacityPoint } from './wealthCalculations.types'
 
 // Last 12 months of savings capacity, each enriched with its own trailing
 // 12-month rolling sums (computed from the full history, not just the

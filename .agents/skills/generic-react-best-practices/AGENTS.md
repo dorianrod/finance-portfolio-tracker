@@ -2,7 +2,7 @@
 
 # Generic React Best Practices
 
-**Version 1.6.0**
+**Version 1.7.0**
 
 Frontend Engineering
 
@@ -311,6 +311,7 @@ Composition is valid: a feature may pass a calculated expression to a view. When
 - Every production component module declares `.view.tsx`, `.state.tsx` or `.feature.tsx`.
 - A view has no runtime import of a state renderer, feature, query, atom, API, service, store or business helper.
 - A state renderer receives a resolved discriminated union, renders it exhaustively and has no hooks or runtime business imports.
+- Enable `local/state-component-contract` to reject runtime business imports and hook calls in state renderers. Resolve imported/immutable hook aliases, React namespace calls and React 19 `use`; respect shadowing. Opaque wrappers still require manual review. Verify rejected and valid cases through the actual project configuration.
 - Type-only imports do not create a runtime boundary violation.
 - Every feature audit explicitly decides whether its presentation should be extracted to a view.
 - An unsplit feature keeps only presentation that is trivial, tightly coupled or lacks an independent visual contract.
@@ -662,6 +663,8 @@ function OrdersWorkspace() {
 
 The lint threshold is diagnostic, not a target for every component. When a component legitimately wires several facets of one cohesive primitive, document the narrow exception instead of inventing an artificial abstraction.
 
+Enable `local/max-hooks-per-component` at error level. Count direct conventional hook calls and resolved React hooks, including imported aliases, immutable aliases, destructured namespace bindings and React 19 `use`. Recognize components wrapped with resolved React `memo` or `forwardRef`, including aliases. Respect lexical shadowing and exclude calls inside nested callbacks from the containing component's count. Hook behavior hidden behind arbitrary wrappers or reassigned aliases still requires review. Exercise rejected and valid neighboring examples through the application's actual configuration.
+
 See also: `arch-thin-components`, `arch-helpers-vs-services`, `quality-usecallback-for-functions`
 
 ### 1.8 Define Boundaries Through Business Capabilities
@@ -811,6 +814,8 @@ Components can remount. Put app-lifetime initialization in the client bootstrap 
 ### ESLint Enforcement
 
 Keep `react-hooks/rules-of-hooks` and `react-hooks/exhaustive-deps` enabled with a version supporting the installed React APIs. Fix the responsibility or dependency mismatch rather than suppressing it. Effect Events supplement dependency tracking; they do not replace it.
+
+Enable `local/no-effects-in-components` to identify React effects by their resolved library binding, including import aliases, immutable aliases and destructured namespace bindings. Recognize aliased React component wrappers and respect lexical shadowing instead of matching local identifier names alone. Keep custom hook ownership valid. Arbitrary wrapper behavior requires manual review. Exercise invalid component effects, valid custom hooks and unrelated or shadowed callbacks through the actual consuming configuration.
 
 See [React Effect Events](https://react.dev/reference/react/useEffectEvent) for their scope and dependency contract.
 
@@ -2207,6 +2212,12 @@ export type Order = {
 
 const total = order.lines.length
 ```
+
+### ESLint Enforcement
+
+Enable `local/explicit-nullability` for production domain code to reject an optional property whose direct type union also contains `null`. Preserve required nullable properties, optional non-nullable properties, nullable collection items and nullable function results. Dependency module augmentation follows the external contract and is outside this convention. Check rejected and neighboring valid examples through the consuming application's actual configuration.
+
+This syntax-level check does not resolve nullability hidden in named aliases, imported types or mapped types. Review those contracts and the business reason for each nullable field manually; a diagnostic cannot decide which absence representation is appropriate. Do not autofix the choice between a missing property and an explicit null.
 
 ### 5.3 Separate the Domain Entity from the API Response
 
@@ -3790,6 +3801,10 @@ export const OverviewBlock = () => {
 
 Only exception: one atom per repeated item (each card of a list) — create it once per instance with `useMemo(() => atom<boolean>(false), [])`, e.g. in an `AttachmentCard` rendered once per attachment.
 
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level. Resolve Jotai constructor imports, namespace access and immutable aliases; report constructors lexically inside components or hooks unless the nearest function is a `useMemo` callback with an empty dependency array. A memo returning a factory does not stabilize atoms created later by that factory. Preserve pure module-level atom factories and unrelated or shadowed names. This bounded check does not follow custom factory calls into render; review their call sites and the business justification for per-instance atoms manually.
+
 ### 8.2 Keep Server Data in React Query, Not in Atoms
 
 **Impact: MEDIUM-HIGH (avoids stale copies that miss cache invalidation)**
@@ -4034,6 +4049,10 @@ export const resetOrderFiltersAtom = atom(null, (_get, set) => set(orderFiltersA
 
 A plain boolean flag may rely on inference (`atom(false)`), but `atom<boolean>(false)` is preferred for consistency.
 
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level. For raw `atom` and `atomWithStorage` declarations, require explicit generics except for plain boolean flags, and report inline object, array and constructed defaults. With type information, also check calls that produce object defaults. Preserve derived read atoms and named defaults. Resolve imported constructors, namespace access and immutable aliases while respecting shadowing. Named defaults still require manual review for their type, exported `DEFAULT_*` name, ownership and safe reset semantics; arbitrary atom factories and mutable aliases are outside this bounded check.
+
 ### 8.8 Update Client State From Its Previous Value
 
 **Impact: MEDIUM (avoids stale closures and lost updates)**
@@ -4266,6 +4285,8 @@ Resolve formatter identity from `helpers/formatters/` imports rather than local 
 
 The check does not follow reassigned aliases, arbitrary providers, helper parameters, dynamic property keys, multi-child structural JSX branches or fallback expressions nested inside calculations. Exclude global shared formatter implementations and tests; keep domain shared wrappers checked. Do not autofix: preserve business conditions and the distinction between absence and zero.
 
+At translation boundaries, enable the typed `local/i18n-consistency` check to reject native `Date` values supplied directly as interpolation options. Formatting the date belongs to the existing formatter before interpolation; otherwise the translation may expose JavaScript's date string and the host time zone. Resolve translation bindings and native Date declarations, including aliases and nullable unions; preserve formatted strings and unrelated objects with the same names. Opaque option objects and nested interpolation values require manual review. Verify rejected and valid neighboring cases through the application's actual configuration.
+
 ### 9.2 Keep Business Rules as Pure, Intent-Named Predicates
 
 **Impact: MEDIUM-HIGH (decisions readable in JSX and testable without rendering)**
@@ -4491,6 +4512,12 @@ export function selectAllowedOrders(orders: readonly Order[], allowedIds: readon
 - Find extrema in one pass when a sorted collection is unnecessary. Combine large repeated traversals only when it improves the measured path without obscuring separate responsibilities.
 - Building an index for one lookup in a tiny array may add cost. Profile uncertain cases and prefer the clearest suitable algorithm. Rebuild or memoize by actual inputs; avoid an unbounded module cache of mutable business data.
 
+### Keep Source Keys Separate from Object Metadata
+
+Source-controlled names and IDs may equal `constructor`, `__proto__` or a row's metadata field. Prefer `Map` for these lookups, and expose fixed indexes as `ReadonlyMap` when consumers must not mutate them. Its `.get()` result also makes a missing entry explicit in TypeScript. An object dictionary needs own-property checks; `dictionary[key] ?? fallback` can still return an inherited property. Use `Object.fromEntries` when converting arbitrary keys into an object so that `__proto__` remains an own data property.
+
+Keep dynamic values separate from metadata, for example `{ timestamp, values }`. A chart series should read its value through a typed accessor when a source label could be interpreted as a property path. Keep aggregate identity independent of translated labels so a real category can have the same display text as a synthetic group. These are data-contract decisions: test literal names, missing entries and an aggregate/source-label collision instead of adding identifier-specific exclusions.
+
 ### Sources
 
 Adapted from Vercel's [index maps](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-index-maps.md), [membership indexes](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-set-map-lookups.md) and [single-pass extrema](https://github.com/vercel-labs/agent-skills/blob/main/skills/react-best-practices/rules/js-min-max-loop.md).
@@ -4533,6 +4560,8 @@ const secondaryText = t('order.shipping.upload.limits', {
 ```
 
 Option names must match the placeholders of the catalog value: a placeholder missing in code is an error, an unused one a warning. If no key holds the full sentence yet, add one rather than gluing fragments. For counts, use i18next plural keys (`count`) instead of branching in code.
+
+Enable `local/no-ui-string-concat` for production code. Reject concatenated translations and decorated formatter results in display expressions, for both templates and `+`. Resolve imported formatter hooks and immutable aliases; preserve numeric arithmetic and technical keys, URLs, chart data keys and CSS expressions. For binary expressions, use a proven string operand before calling an operation concatenation. Implicit display text outside JSX/presentation helpers, opaque wrappers and reassigned aliases require manual review. Verify rejected and neighboring valid examples through the consuming application's configuration.
 
 ### 10.2 Never Use defaultValue in t()
 
@@ -4591,6 +4620,12 @@ toast.success(t('contract.reminder.messages.addSuccess'))
 ```
 
 Reuse shared keys (`common.cancel`, `common.confirm`, `common.close`, `common.delete`) before creating new ones. Not concerned: technical identifiers, CSS classes, test IDs, log messages and data coming from the API.
+
+### ESLint Enforcement
+
+Enable `local/no-hardcoded-ui-strings` for production code. Check visible JSX and user-facing attributes directly, including interpolated templates. Presenter and formatter placement is only a signal: their return values can also be technical keys, CSS references or chart identifiers. In an implicit helper return, report recognizable natural-language copy rather than treating every template containing letters as translated text. Keep explicit UI text and attributes checked. Typed data fixtures under `mocks/` or in `*.mock.*` may carry raw entity names and source messages; do not treat those object values as product copy. Keep JSX text and attributes checked even in such a module.
+
+This bounded syntax check cannot prove the meaning of every bare string, follow arbitrary adapters or identify all runtime-generated copy. Review ambiguous helper outputs and API-provided data at their display sites. Verify rejected copy, valid technical identifiers and explicit UI templates through the consuming application's actual configuration; do not add application-specific identifier allowlists.
 
 ### 10.4 Use Literal Translation Keys Only
 
@@ -5042,6 +5077,7 @@ eslint . --max-warnings 2
 - Start at `--max-warnings 0`. Keep the ceiling in the versioned lint command, preserving its cache options and `--fix` support; CI must use the same command.
 - Audit each exception before accepting it. Increase the ceiling by one per newly accepted directive, not per suppressed rule, diagnostic or review event. Include the rationale for each increase in the change or PR description and the technical evidence in the dated directive.
 - A new review of an existing exception updates its date and justification as needed without increasing the ceiling. Removing an exception lowers the ceiling by one. Remove unused suppressions rather than budgeting for them.
+- Revalidation of existing exceptions is opt-in under [the exception policy](rules/quality-eslint-disable-scoped.md). A routine audit or budget check preserves their existing allowance without renewing their technical approval or dates. New or modified exceptions still need review; ordinary lint policy errors remain errors.
 - Other warnings also consume the global ceiling: investigate and fix them or record why the affected rule permits retaining them before changing the budget. Never absorb invalid review metadata errors into the warning budget.
 - Lower the ceiling in the same change when the total decreases. Do not create headroom, automatically update the limit, hide output with `--quiet`, weaken severities or widen ignores to bypass the budget.
 
@@ -5060,14 +5096,14 @@ A global warning ceiling rejects excess totals but cannot detect replacing a rem
 
 **Impact: HIGH**
 
-**Rule:** Keep an ESLint suppression only after reviewing its technical justification, naming the affected rules and recording the actual last review date on a line-scoped directive.
+**Rule:** Review every new or modified ESLint suppression before accepting it, name the affected rules and record the actual review date on a line-scoped directive. Revalidate existing suppressions only when the user explicitly requests it.
 
 A nonempty comment does not establish a valid exception. Accept only a demonstrated false positive, a dependency constraint or an exception permitted by the affected rule. Being inconvenient to fix, pre-existing or needed to pass lint is not a technical justification. This rule does not grant exceptions to rules that expressly prohibit suppression.
 
 ### Applies When
 
 - Authored code contains `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`, including tests and tooling.
-- An initial audit or a targeted reaudit follows changes to the skill, lint rules, dependencies or relevant code.
+- A suppression is introduced or modified, or the user explicitly requests revalidation of existing ignores. A general audit or changes to the skill, dependencies or nearby code do not enable revalidation by themselves.
 
 **Incorrect:**
 ```typescript
@@ -5089,7 +5125,11 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 
 ### Audit and Reaudit
 
-1. Inventory the suppressions in scope. For a targeted reaudit, select exceptions affected by the changed rules, skills, dependencies or code; use their dates to identify when they were last examined.
+Existing suppressions and configuration exceptions are not technically revalidated by default, even during an initial or full audit. Leave their justification and review date unchanged, and do not lift them merely to complete catalog coverage. Recording their presence or running normal lint is not revalidation or renewed approval. Keep metadata validation, tracking warnings and unused-disable detection enabled; fix policy diagnostics they actually report without bulk-reviewing unrelated exceptions. A newly introduced, widened or otherwise modified exception always needs review before acceptance.
+
+When reviewing a new/modified exception or explicitly revalidating existing ones:
+
+1. Inventory the suppressions in the requested scope. For a targeted reaudit, select the requested exceptions; use their dates to identify when they were last examined.
 2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Lift the relevant suppression in an in-memory or isolated check using the application's actual configuration; verify the original rule ID and diagnostic for each named rule. Confirm the check applies to the file before concluding that a suppression is unused. Compare the claimed rationale with the implementation and rule contract; do not infer approval from an earlier comment or a syntactically valid date. If the diagnostic or rationale cannot be verified, leave the exception unresolved rather than updating its review date as if approved.
 3. Remove unused suppressions. For a real violation without an allowed exception, correct the code and remove the suppression. For a justified exception, retain the narrow directive and record the concrete rationale and actual review date.
 4. Run lint and maintain the [warning budget](rules/quality-eslint-warning-budget.md). A retained directive contributes one tracking warning, even if it names several rules. A new review of the same exception updates its date without adding another warning.
@@ -5106,7 +5146,7 @@ Enable `reportUnusedDisableDirectives: 'error'` and preserve policy diagnostics 
 
 - Generated and vendored code outside the project's lint scope is not an audit target.
 - Examples embedded in strings or ordinary explanatory comments are not suppression directives.
-- A prior review does not expire automatically; re-examine it when a requested audit or a relevant change calls the justification into question.
+- A prior review does not expire automatically. Technical revalidation of an existing ignore requires an explicit user request; a new or modified exception still requires review before acceptance.
 
 ### References
 

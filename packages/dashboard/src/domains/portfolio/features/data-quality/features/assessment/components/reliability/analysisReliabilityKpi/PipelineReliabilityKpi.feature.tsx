@@ -1,7 +1,7 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
 import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { useFormatPipelineStatus } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus'
 import { pipelineReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineReliabilityTone'
-import { pipelineStatusLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineStatusLabel'
 import { type FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import i18n from '@/i18n/i18n'
 
@@ -16,9 +16,10 @@ export function PipelineReliabilityKpi({
   loading?: boolean
   scope: FilterScopeSpec
 }) {
+  const formatPipelineStatus = useFormatPipelineStatus()
   const tone = pipelineReliabilityTone({ errorCount, warningCount, loading })
   const styles = RELIABILITY_TONES[tone]
-  const statusLabel = pipelineStatusLabel({
+  const statusLabel = formatPipelineStatus({
     errorCount,
     warningCount,
     loading,

@@ -1,4 +1,4 @@
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import i18n from '@/i18n/i18n'
 import type { SWATCH_TONES } from '@/shared/ui/swatchAppearance/swatchTones'
 import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'

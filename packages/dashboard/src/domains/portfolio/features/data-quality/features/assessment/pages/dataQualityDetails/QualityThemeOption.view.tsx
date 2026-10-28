@@ -1,4 +1,4 @@
-import { type QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
+import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
 
 export function QualityThemeOption({ theme }: { theme: QualityTheme }) {
   return (

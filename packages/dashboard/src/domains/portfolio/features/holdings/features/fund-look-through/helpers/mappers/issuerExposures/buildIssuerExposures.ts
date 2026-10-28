@@ -1,6 +1,6 @@
 import type { IssuerExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
-import { isFundPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/isFundPosition'
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
+import { isFundPosition } from '@/domains/portfolio/shared/helpers/businessRules/isFundPosition'
 import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'

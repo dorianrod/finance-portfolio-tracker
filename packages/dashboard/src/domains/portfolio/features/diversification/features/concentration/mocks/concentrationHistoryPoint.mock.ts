@@ -1,4 +1,4 @@
-import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildConcentrationTrend.types'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 export function createConcentrationHistoryPoint(
   overrides: Partial<HistoricalConcentrationPoint> = {},

@@ -1,4 +1,4 @@
-import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
+import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'

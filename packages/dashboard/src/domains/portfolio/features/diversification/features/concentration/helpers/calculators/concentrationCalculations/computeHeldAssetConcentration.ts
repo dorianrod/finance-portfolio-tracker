@@ -1,7 +1,7 @@
+import type { ConcentrationSummary } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-import type { ConcentrationSummary } from './concentrationCalculations.types'
 import { isValuedAnalysisPosition } from './isValuedAnalysisPosition'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; One held-asset aggregation normalizes identity, weights and the top-ten summary against the same total.

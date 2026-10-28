@@ -1,0 +1,35 @@
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+
+export function position(overrides: Partial<PositionRow>): PositionRow {
+  return {
+    kind: 'position',
+    id: 'p1',
+    name: 'Asset',
+    ticker: '',
+    isin: '',
+    account: 'acc1',
+    status: 'active',
+    operationTypes: new Set(['BUY', 'SELL']),
+    quantity: 10,
+    last_price: 100,
+    total_value: 1000,
+    unrealized_gain: 100,
+    unrealized_gain_net: 70,
+    unrealized_gain_pct: 10,
+    realized_gain: 50,
+    realized_gain_net: 35,
+    tax_rate: 0.3,
+    total_dividends: 20,
+    total_dividends_net: 14,
+    total_interest: 0,
+    total_interest_net: 0,
+    total_realized_return: 70,
+    total_invested: 1000,
+    total_return_pct: 12,
+    xirr: 8,
+    xirr_rolling_3y: 6,
+    xirr_rolling_period_years: 3,
+    subRows: [],
+    ...overrides,
+  }
+}

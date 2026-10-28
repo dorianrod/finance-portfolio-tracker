@@ -34,6 +34,7 @@ eslint . --max-warnings 2
 - Start at `--max-warnings 0`. Keep the ceiling in the versioned lint command, preserving its cache options and `--fix` support; CI must use the same command.
 - Audit each exception before accepting it. Increase the ceiling by one per newly accepted directive, not per suppressed rule, diagnostic or review event. Include the rationale for each increase in the change or PR description and the technical evidence in the dated directive.
 - A new review of an existing exception updates its date and justification as needed without increasing the ceiling. Removing an exception lowers the ceiling by one. Remove unused suppressions rather than budgeting for them.
+- Revalidation of existing exceptions is opt-in under [the exception policy](quality-eslint-disable-scoped.md). A routine audit or budget check preserves their existing allowance without renewing their technical approval or dates. New or modified exceptions still need review; ordinary lint policy errors remain errors.
 - Other warnings also consume the global ceiling: investigate and fix them or record why the affected rule permits retaining them before changing the budget. Never absorb invalid review metadata errors into the warning budget.
 - Lower the ceiling in the same change when the total decreases. Do not create headroom, automatically update the limit, hide output with `--quiet`, weaken severities or widen ignores to bypass the budget.
 

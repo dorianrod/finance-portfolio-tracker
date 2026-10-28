@@ -1,10 +1,10 @@
-import { isFundPosition } from '@/domains/portfolio/shared/helpers/mappers/buildFundHoldingsViewModel/isFundPosition'
+import type { ConcentrationSummary } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'
+import { isFundPosition } from '@/domains/portfolio/shared/helpers/businessRules/isFundPosition'
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'
 import { indexFundHoldingsByParent } from '@/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-import type { ConcentrationSummary } from './concentrationCalculations.types'
 import { isValuedAnalysisPosition } from './isValuedAnalysisPosition'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Direct, decomposed, undisclosed and opaque positions share one conservation accumulator and ranking.

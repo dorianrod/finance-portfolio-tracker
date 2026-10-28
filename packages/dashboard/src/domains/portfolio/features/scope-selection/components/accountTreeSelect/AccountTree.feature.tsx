@@ -3,7 +3,7 @@ import { accountsForType } from '@/domains/portfolio/features/scope-selection/he
 import { accountTypeSelectionState } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountTypeSelectionState'
 import { toggleAccountTypeSelection } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/toggleAccountTypeSelection'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
-import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
+import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import i18n from '@/i18n/i18n'
 import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -75,6 +75,7 @@ function TreeAccountRow({
   onChange: (next: Set<string>) => void
   selected: Set<string>
 }) {
+  const formatAccountLabel = useFormatAccountLabel()
   return (
     <ChoiceRow variant="nested">
       <Inline as="span" align="center" gap="default" inset="default">
@@ -84,7 +85,7 @@ function TreeAccountRow({
         />
         <Layout as="span" flow="inline">
           <Text variant="caption" tone="secondary" truncate>
-            {accountLabel(account, accountLabels)}
+            {formatAccountLabel(account, { labels: accountLabels })}
           </Text>
         </Layout>
       </Inline>

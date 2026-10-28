@@ -1,5 +1,5 @@
-import { type QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/useBuildDataQualityViewModel'
 import { QUALITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles'
+import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
 import i18n from '@/i18n/i18n'
 import { DialogButton } from '@/shared/ui/controls/DialogButton.view'
 import { NextIcon } from '@/shared/ui/icons/NextIcon.view'

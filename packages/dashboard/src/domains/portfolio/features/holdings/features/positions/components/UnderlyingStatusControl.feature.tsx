@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { UnderlyingStatusButton } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/UnderlyingStatusButton.view'
-import { positionUnderlyingPopoverAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionUnderlyingPopover.atoms'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 export function UnderlyingStatusControl({
@@ -14,11 +14,13 @@ export function UnderlyingStatusControl({
   onShow: (button: HTMLButtonElement) => void
   onHide: () => void
 }) {
-  const popover = useAtomValue(positionUnderlyingPopoverAtom)
+  const selection = useAtomValue(positionPreviewAtom)
   return (
     <UnderlyingStatusButton
       {...props}
-      isOpen={popover?.position.id === positionId}
+      isOpen={
+        selection?.kind === 'underlying' && selection.positionId === positionId
+      }
     />
   )
 }

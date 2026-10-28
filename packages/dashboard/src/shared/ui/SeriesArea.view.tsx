@@ -11,7 +11,7 @@ import { seriesFill } from '@/shared/ui/chartAppearance/seriesFill'
 import { resolveSeriesColor, type SeriesColor } from './chartSeriesColor'
 import { partitionChartSlot } from './chartSlots'
 
-export function SeriesArea({
+export function SeriesArea<TData = unknown>({
   tone,
   gradientId,
   weight,
@@ -20,11 +20,11 @@ export function SeriesArea({
   hover,
   children,
   ...props
-}: SeriesAreaProps) {
+}: SeriesAreaProps<TData>) {
   const { renderer, content } = partitionChartSlot(children, SeriesAreaMarkers)
   const color = resolveSeriesColor({ tone })
   return (
-    <Area
+    <Area<TData, unknown>
       {...props}
       stroke={color}
       fill={seriesFill(gradientId)}
@@ -52,9 +52,9 @@ type AreaDataKeys =
   | 'id'
   | 'children'
   | 'stackId'
-type SeriesAreaProps = Pick<
-  ComponentProps<typeof Area>,
-  Extract<keyof ComponentProps<typeof Area>, AreaDataKeys>
+type SeriesAreaProps<TData> = Pick<
+  ComponentProps<typeof Area<TData, unknown>>,
+  Extract<keyof ComponentProps<typeof Area<TData, unknown>>, AreaDataKeys>
 > &
   SeriesColor & {
     gradientId?: string

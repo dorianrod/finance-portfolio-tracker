@@ -8,5 +8,6 @@ export type FundUnresolved = {
   weight: number
   marketValue: number
   queuedForResearch: boolean
+  // Older unresolved-item exports may omit their detection timestamp.
   detectedAt: Date | null
 }

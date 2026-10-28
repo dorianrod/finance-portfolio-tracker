@@ -1,5 +1,5 @@
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 
 export function percentageReliabilityTone(
   percentage: number | null,

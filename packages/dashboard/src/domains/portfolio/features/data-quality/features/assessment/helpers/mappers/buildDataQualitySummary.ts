@@ -1,18 +1,15 @@
 import { aggregateReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/aggregateReliabilityTone'
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
 import { percentageReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/percentageReliabilityTone'
 import { pipelineReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineReliabilityTone'
-import { pipelineStatusLabel } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineStatusLabel'
-import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
 import type { ScopedFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.types'
+import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-
-import { buildAnalysisReliabilityMetrics } from './buildAnalysisReliabilityMetrics'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; This joins classification, look-through and pipeline reliability; tone policies and display metrics are delegated to their existing helpers.
 export function buildDataQualitySummary({
@@ -102,11 +99,6 @@ export function buildDataQualitySummary({
     warningCount: scopedPipelineWarningCount,
     loading: pipelineErrorsLoading,
   })
-  const portfolioDataStatus = pipelineStatusLabel({
-    errorCount: scopedPipelineErrorCount,
-    warningCount: scopedPipelineWarningCount,
-    loading: pipelineErrorsLoading,
-  })
   const overviewReliabilityTone = aggregateReliabilityTone([
     portfolioDataTone,
     classificationMetricTone,
@@ -126,20 +118,7 @@ export function buildDataQualitySummary({
         hasMaterialQualityGap(fundExposurePercentages.unresolved),
     )
 
-  const reliabilityMetrics = buildAnalysisReliabilityMetrics({
-    allocationLoading,
-    classificationReliabilityPct,
-    classificationMappedValue,
-    classificationMetricTone,
-    underlyingReliabilityPct,
-    identifiedFundValue,
-    underlyingMetricTone,
-    portfolioDataStatus,
-    portfolioDataTone,
-  })
-
   return {
-    ...reliabilityMetrics,
     classificationMappedValue,
     classificationMetricTone,
     classificationReliabilityPct,
@@ -150,7 +129,6 @@ export function buildDataQualitySummary({
     identifiedFundValue,
     overviewQualityTheme,
     overviewReliabilityTone,
-    portfolioDataStatus,
     portfolioDataTone,
     qualityCount,
     scopedPipelineErrorCount,

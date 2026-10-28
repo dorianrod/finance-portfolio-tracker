@@ -1,4 +1,5 @@
-import { getCalleeName, isTestFile } from './react-component-utils.js'
+import { getHookName } from './hook-name.js'
+import { isTestFile } from './react-component-utils.js'
 
 const BUSINESS_MODULES = ['jotai', '@tanstack/react-query']
 const BUSINESS_PATH_SEGMENTS = [
@@ -31,11 +32,6 @@ function isBusinessSource(source) {
       (module) => source === module || source.startsWith(`${module}/`),
     ) || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
   )
-}
-
-function isHookCall(node) {
-  const name = getCalleeName(node.callee)
-  return typeof name === 'string' && /^use[A-Z0-9]/u.test(name)
 }
 
 export default {
@@ -89,11 +85,12 @@ export default {
         inspectSource(node, node.source, typeOnly)
       },
       CallExpression(node) {
-        if (!isHookCall(node)) return
+        const name = getHookName(context.sourceCode, node.callee)
+        if (!name) return
         context.report({
           node,
           messageId: 'stateUsesHook',
-          data: { name: getCalleeName(node.callee) },
+          data: { name },
         })
       },
     }

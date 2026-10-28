@@ -1,4 +1,4 @@
-import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
+import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
 
 export function getFilteredPositionShare(row: MatchingIsinRow) {
   const percentage =

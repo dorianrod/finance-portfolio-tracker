@@ -1,10 +1,9 @@
-import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
-
 import type {
   TrailingYearOverYear,
   YearOverYearMetric,
-} from './wealthCalculations.types'
+} from '@/domains/portfolio/features/wealth/types/trailingYearOverYear.type'
+import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
+import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
 
 export function computeTrailing12mYearOverYear(
   points: SavingCapacityPoint[],

@@ -1,8 +1,10 @@
-import { ConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationChart.feature'
-import { CumulativeConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/CumulativeConcentrationChart.feature'
+import { ConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationChart.view'
+import { CumulativeConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/CumulativeConcentrationChart.view'
 import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
+import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 import i18n from '@/i18n/i18n'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -57,16 +59,34 @@ export function CurrentConcentration({
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
               <CumulativeConcentrationChart
                 data={cumulativeConcentration}
-                effectiveDate={dateTo}
                 description={cumulativeDescription}
-              />
+              >
+                <InfoTooltip text={cumulativeDescription}>
+                  <InfoTooltip.Footer>
+                    <FilterScopeBadges
+                      account="filterable"
+                      period="as-of"
+                      effectiveDate={dateTo}
+                    />
+                  </InfoTooltip.Footer>
+                </InfoTooltip>
+              </CumulativeConcentrationChart>
               <ConcentrationChart
                 data={concentration.holdings}
-                effectiveDate={dateTo}
                 topTenValue={concentration.topTenValue}
                 topTenPct={concentration.topTenPct}
                 description={holdingsDescription}
-              />
+              >
+                <InfoTooltip text={holdingsDescription}>
+                  <InfoTooltip.Footer>
+                    <FilterScopeBadges
+                      account="filterable"
+                      period="as-of"
+                      effectiveDate={dateTo}
+                    />
+                  </InfoTooltip.Footer>
+                </InfoTooltip>
+              </ConcentrationChart>
             </div>
           ) : (
             <Surface variant="contentCard" tone="subtle" align="center">

@@ -1,17 +1,11 @@
+import { getHookName } from './hook-name.js'
 import {
   functionVisitors,
-  getCalleeName,
   getFunctionComponentName,
   isTestFile,
 } from './react-component-utils.js'
 
 const DEFAULT_MAX = 6
-
-function isHookCall(node) {
-  const name =
-    node?.type === 'CallExpression' ? getCalleeName(node.callee) : null
-  return typeof name === 'string' && /^use[A-Z0-9]/u.test(name)
-}
 
 export default {
   meta: {
@@ -43,7 +37,7 @@ export default {
     function enterFunction(node) {
       functionStack.push({
         count: 0,
-        name: getFunctionComponentName(node),
+        name: getFunctionComponentName(node, context.sourceCode),
         node,
       })
     }
@@ -67,7 +61,8 @@ export default {
       ...functionVisitors(enterFunction, exitFunction),
       CallExpression(node) {
         const frame = functionStack.at(-1)
-        if (frame?.name && isHookCall(node)) frame.count += 1
+        if (frame?.name && getHookName(context.sourceCode, node.callee))
+          frame.count += 1
       },
     }
   },

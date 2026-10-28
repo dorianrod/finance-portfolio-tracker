@@ -1,6 +1,5 @@
+import type { IncomeSummary } from '@/domains/portfolio/features/performance/types/incomeSummary.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-import type { IncomeSummary } from './performanceCalculations.types'
 
 export function computeTrailing12mIncome(
   positions: PositionRow[],

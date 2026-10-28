@@ -1,5 +1,7 @@
 import path from 'node:path'
 
+import { libraryBinding } from './library-binding.js'
+
 const REACT_COMPONENT_WRAPPERS = new Set(['forwardRef', 'memo'])
 const TYPESCRIPT_EXPRESSION_WRAPPERS = new Set([
   'TSAsExpression',
@@ -36,20 +38,23 @@ function isPascalCase(name) {
   return typeof name === 'string' && /^[A-Z]/u.test(name)
 }
 
-function isComponentWrapper(node) {
+function isComponentWrapper(node, sourceCode) {
   return (
     node?.type === 'CallExpression' &&
-    REACT_COMPONENT_WRAPPERS.has(getCalleeName(node.callee))
+    REACT_COMPONENT_WRAPPERS.has(
+      (sourceCode && libraryBinding(sourceCode, node.callee, 'react')) ||
+        getCalleeName(node.callee),
+    )
   )
 }
 
-export function getFunctionComponentName(node) {
+export function getFunctionComponentName(node, sourceCode) {
   if (!isFunctionNode(node)) return null
   if (isPascalCase(node.id?.name)) return node.id.name
 
   let current = node
   while (
-    (isComponentWrapper(current.parent) &&
+    (isComponentWrapper(current.parent, sourceCode) &&
       current.parent.arguments.includes(current)) ||
     (TYPESCRIPT_EXPRESSION_WRAPPERS.has(current.parent?.type) &&
       current.parent.expression === current)

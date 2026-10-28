@@ -76,6 +76,33 @@ export default {
         )
       return false
     }
+    function displaySite(node) {
+      if (presentationHelper) return true
+      for (let parent = node.parent; parent; parent = parent.parent) {
+        if (parent.type === 'JSXExpressionContainer') return true
+        if (parent.type.endsWith('Statement')) return false
+      }
+      return false
+    }
+    function containsDisplayValue(node) {
+      return (
+        displayValue(node) ||
+        childrenOf(source, node).some(containsDisplayValue)
+      )
+    }
+    function stringValue(node) {
+      if (node.type === 'Literal') return typeof node.value === 'string'
+      if (node.type === 'TemplateLiteral') return true
+      const services = source.parserServices
+      if (!services?.program || !services.esTreeNodeToTSNodeMap) return false
+      const checker = services.program.getTypeChecker()
+      const type = checker.getTypeAtLocation(
+        services.esTreeNodeToTSNodeMap.get(node),
+      )
+      return (type.isUnion() ? type.types : [type]).every(
+        (part) => part.flags & ts.TypeFlags.StringLike,
+      )
+    }
     return {
       TemplateLiteral(node) {
         if (!node.expressions.length || technical(node)) return
@@ -106,9 +133,14 @@ export default {
             node.parent.operator === '+')
         )
           return
-        if (containsTranslation(node))
+        const decoratedDisplay =
+          displaySite(node) &&
+          containsDisplayValue(node) &&
+          (stringValue(node.left) || stringValue(node.right))
+        if (containsTranslation(node) || decoratedDisplay)
           context.report({ node, messageId: 'interpolation' })
       },
     }
   },
 }
+import ts from 'typescript'

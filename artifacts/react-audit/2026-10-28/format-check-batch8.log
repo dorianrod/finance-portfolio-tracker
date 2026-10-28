@@ -1,0 +1,18 @@
+
+> dashboard@1.1.0 format:check
+> prettier --check . && npm run lint
+
+Checking formatting...
+[warn] src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/formatters/useFormatFundDiagnosticsFilter.test.tsx
+[warn] src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.test.ts
+[warn] src/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildIssuerExposures.test.ts
+[warn] src/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerHolding.mock.ts
+[warn] src/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerPosition.mock.ts
+[warn] src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.ts
+[warn] src/domains/portfolio/features/wealth/mocks/accountPositionSnapshot.mock.ts
+[warn] src/domains/portfolio/shared/helpers/formatters/useFormatFundQualityCategory.test.tsx
+[warn] src/domains/portfolio/shared/helpers/formatters/useFormatFundQualityCategory.ts
+[warn] src/domains/portfolio/shared/helpers/formatters/useFormatFundQualityLabel.test.tsx
+[warn] src/domains/portfolio/shared/helpers/formatters/useFormatFundQualitySourceLabel.test.tsx
+[warn] src/domains/portfolio/shared/helpers/formatters/useFormatFundQualitySourceLabel.ts
+[warn] Code style issues found in 12 files. Run Prettier with --write to fix.

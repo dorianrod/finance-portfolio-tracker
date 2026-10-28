@@ -1,4 +1,5 @@
-import type { PerformanceContribution } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import { useFormatAccountList } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatAccountList'
+import type { PerformanceContribution } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Inline } from '@/shared/ui/layout/Inline.view'
@@ -16,6 +17,7 @@ export function ContributionListItem({
   positive: boolean
 }) {
   const formatMoney = useFormatMoney()
+  const formatAccountList = useFormatAccountList()
   const formatPercentage = useFormatPercentage()
   const tone = positive ? 'positive' : 'negative'
   return (
@@ -37,9 +39,9 @@ export function ContributionListItem({
               variant="micro"
               tone="subtle"
               truncate
-              title={item.accounts.join(', ')}
+              title={formatAccountList(item.accounts)}
             >
-              {item.accounts.join(', ')}
+              {formatAccountList(item.accounts)}
             </Text>
           </Layout>
           <Layout sizing="fixed">

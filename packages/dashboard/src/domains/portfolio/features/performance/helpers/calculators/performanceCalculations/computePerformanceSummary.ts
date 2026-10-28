@@ -1,6 +1,5 @@
+import type { PerformanceSummary } from '@/domains/portfolio/features/performance/types/performanceSummary.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-
-import type { PerformanceSummary } from './performanceCalculations.types'
 
 export function computePerformanceSummary(
   positions: PositionRow[],

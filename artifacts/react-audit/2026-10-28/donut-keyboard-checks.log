@@ -1,0 +1,27 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.test.tsx (2 tests | 1 failed) 5334ms
+     × offers keyboard filtering for real categories and leaves grouped exposure informational 5007ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.test.tsx > DonutCardView > offers keyboard filtering for real categories and leaves grouped exposure informational
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.test.tsx:65:3
+     63|     expect(screen.queryByRole('button', { name: 'Japan' })).toBeNull()
+     64|   })
+     65|   it('offers keyboard filtering for real categories and leaves grouped…
+       |   ^
+     66|     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTi…
+     67|     const onSelect = vi.fn()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  16:38:04
+   Duration  6.85s (transform 276ms, setup 0ms, import 741ms, tests 5.33s, environment 647ms)
+

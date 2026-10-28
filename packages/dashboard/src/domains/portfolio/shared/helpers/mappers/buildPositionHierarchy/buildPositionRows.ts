@@ -9,7 +9,6 @@ import type {
 } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-import i18n from '@/i18n/i18n'
 
 export function buildPositionRows(
   ops: RawOperation[],
@@ -46,7 +45,7 @@ export function buildPositionRows(
   // brokerage positions before their synthetic cash row), then by
   // total_value desc
   function categoryRank(row: PositionRow): number {
-    const base = CATEGORY_ORDER[row.account_category ?? ''] ?? 99
+    const base = CATEGORY_ORDER.get(row.account_category ?? '') ?? 99
     const isCash = (row.account_type ?? '').endsWith(CASH_SUFFIX)
     return base * 2 + (isCash ? 1 : 0)
   }
@@ -218,7 +217,6 @@ function buildAssetPositionRow(
       kind: 'group',
       id: `${key}-dividends`,
       groupType: 'dividends',
-      label: i18n.t('ui.buildpositionhierarchyTs.dividends'),
       total_dividends: totalDividends,
       dividend_count: dividendOps.length,
       annualized_dividends: annualizedDividends,
@@ -233,7 +231,6 @@ function buildAssetPositionRow(
       kind: 'group',
       id: `${key}-interest`,
       groupType: 'interest',
-      label: i18n.t('ui.buildpositionhierarchyTs.interest'),
       total_interest: totalInterest,
       interest_count: interestOps.length,
       subRows: intOpRows,
@@ -247,7 +244,6 @@ function buildAssetPositionRow(
       kind: 'group',
       id: `${key}-deposits`,
       groupType: 'cash',
-      label: i18n.t('ui.buildpositionhierarchyTs.depositsWithdrawals'),
       deposit_total: totalDeposits,
       withdrawal_total: totalWithdrawals,
       subRows: depOpRows,
@@ -261,7 +257,6 @@ function buildAssetPositionRow(
       kind: 'group',
       id: `${key}-trades`,
       groupType: 'trades',
-      label: i18n.t('ui.buildpositionhierarchyTs.buysSells'),
       total_invested: totalInvested,
       total_sold: totalSold,
       realized_pnl: realizedPnl,

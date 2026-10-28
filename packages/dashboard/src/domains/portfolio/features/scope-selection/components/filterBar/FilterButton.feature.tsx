@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 
-import { useDashboardFilters } from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
 import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'
 import i18n from '@/i18n/i18n'
 import { SelectionCount } from '@/shared/ui/badge/SelectionCount.view'
@@ -10,7 +10,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 
 export function FilterButton({ activeCount }: { activeCount: number }) {
   const open = useAtomValue(dashboardFiltersOpenAtom)
-  const { openFilters } = useDashboardFilters()
+  const { openFilters } = useDashboardFilterPanel()
 
   return (
     <Layout as="span" flow="control" sizing="fixed">

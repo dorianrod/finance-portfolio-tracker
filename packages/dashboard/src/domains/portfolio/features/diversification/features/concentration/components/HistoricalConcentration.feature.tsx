@@ -1,7 +1,7 @@
 import { useHistoricalConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useHistoricalConcentration'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 
-import { ConcentrationTrendSection } from './ConcentrationTrendSection.feature'
+import { ConcentrationTrendSection } from './ConcentrationTrendSection/ConcentrationTrendSection.feature'
 
 export function HistoricalConcentration(
   inputs: Pick<

@@ -41,6 +41,8 @@ export default {
         'Translation "{{key}}" requires interpolation option "{{name}}".',
       missingKey:
         'Translation key "{{key}}" is missing from the English catalog.',
+      unformattedDate:
+        'Format the Date interpolation value with a formatter hook before translating. [helpers-formatter-hooks]',
     },
     schema: [],
   },
@@ -48,6 +50,19 @@ export default {
     // ESLint keeps rule modules loaded in the editor across catalog edits.
     let catalog
     const translationCall = createTranslationResolver(context.sourceCode)
+    const services = context.sourceCode.parserServices
+    const checker = services?.program?.getTypeChecker()
+
+    function containsDate(type) {
+      if (type.isUnion()) return type.types.some(containsDate)
+      const symbol = type.getSymbol()
+      return (
+        symbol?.name === 'Date' &&
+        symbol.declarations?.some((declaration) =>
+          /[/\\]lib\.es5\.d\.ts$/u.test(declaration.getSourceFile().fileName),
+        )
+      )
+    }
 
     function evaluatedAtModuleScope(node) {
       for (let parent = node.parent; parent; parent = parent.parent) {
@@ -76,6 +91,19 @@ export default {
         // only when needed, while still observing catalog edits in the editor.
         catalog ??= JSON.parse(readFileSync(catalogUrl, 'utf8'))
         const [keyNode, optionsNode] = node.arguments
+        // Check typed direct interpolation values, including aliases and nullable
+        // dates. Opaque option objects and nested values still require review.
+        if (checker && optionsNode?.type === 'ObjectExpression') {
+          for (const property of optionsNode.properties) {
+            if (property.type !== 'Property') continue
+            const value = services.esTreeNodeToTSNodeMap.get(property.value)
+            if (value && containsDate(checker.getTypeAtLocation(value)))
+              context.report({
+                node: property.value,
+                messageId: 'unformattedDate',
+              })
+          }
+        }
         const keyNodes = translationKeyLiterals(keyNode)
         if (!keyNodes) {
           context.report({ node: keyNode ?? node, messageId: 'dynamicKey' })

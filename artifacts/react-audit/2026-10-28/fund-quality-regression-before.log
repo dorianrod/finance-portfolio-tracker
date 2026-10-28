@@ -1,0 +1,30 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/data-quality/features/assessment/components/FundQualityBadge.view.test.tsx (2 tests | 1 failed) 38ms
+     × formats composition metadata as 'Composition dated 30 Sept 2026' 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/data-quality/features/assessment/components/FundQualityBadge.view.test.tsx > FundQualityBadge > formats composition metadata as 'Composition dated 30 Sept 2026'
+AssertionError: expected 'Reliable: Source officielle · Officia…' to be 'Reliable: Source officielle · Officia…' // Object.is equality
+
+Expected: "Reliable: Source officielle · Official source · 90.0 % explained · Composition dated 30 Sept 2026"
+Received: "Reliable: Source officielle · Official source · 90.0 % explained · Composition dated Wed Sep 30 2026 02:00:00 GMT+0200 (Central European Summer Time)"
+
+ ❯ src/domains/portfolio/features/data-quality/features/assessment/components/FundQualityBadge.view.test.tsx:21:64
+     19|     render(<FundQualityBadge status={makeFundHoldingStatus({ holdingsD…
+     20|
+     21|     expect(screen.getByText('Reliable').getAttribute('title')).toBe(
+       |                                                                ^
+     22|       `Reliable: Source officielle · Official source · 90.0 % explaine…
+     23|     )
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  12:56:14
+   Duration  1.05s (transform 99ms, setup 0ms, import 230ms, tests 38ms, environment 662ms)
+

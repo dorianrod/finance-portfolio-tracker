@@ -1,4 +1,4 @@
-import type { HistoricalConcentrationHolding } from './buildConcentrationTrend.types'
+import type { HistoricalConcentrationHolding } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 export function positionsNeededForShare(
   holdings: HistoricalConcentrationHolding[],

@@ -1,0 +1,4 @@
+
+> dashboard@1.1.0 audit:i18n
+> eslint src --quiet && node scripts/check-i18n-catalog.mjs
+

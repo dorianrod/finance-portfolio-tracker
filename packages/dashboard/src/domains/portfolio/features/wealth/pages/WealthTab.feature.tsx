@@ -1,21 +1,20 @@
-import { AccountTypeBreakdownChart } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.feature'
-import { AccountTypeHistoryChart } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart.feature'
-import { AnnualIncomeSavingsChart } from '@/domains/portfolio/features/wealth/components/AnnualIncomeSavingsChart.feature'
-import { EvolutionChart } from '@/domains/portfolio/features/wealth/components/EvolutionChart.feature'
+import { AccountTypeBreakdownChart } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view'
+import { AccountTypeHistoryChart } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view'
+import { AnnualIncomeSavingsChart } from '@/domains/portfolio/features/wealth/components/AnnualIncomeSavingsChart.view'
+import { EvolutionChart } from '@/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view'
 import { IncomePlacementRelationshipChart } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.feature'
-import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart.feature'
+import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart.view'
 import { WealthComparisonKpi } from '@/domains/portfolio/features/wealth/components/WealthComparisonKpi.view'
-import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.feature'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory'
-import type {
-  TrailingSavingCapacityPoint,
-  TrailingYearOverYear,
-  WealthDriverPoint,
-} from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.view'
+import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
+import type { TrailingYearOverYear } from '@/domains/portfolio/features/wealth/types/trailingYearOverYear.type'
+import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { Inline } from '@/shared/ui/layout/Inline.view'
@@ -62,18 +61,60 @@ export function WealthTab({
         </Inline>
       </Surface>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {history.length > 0 && <EvolutionChart history={history} />}
+        {history.length > 0 && (
+          <EvolutionChart history={history}>
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.evolutionchart.portfolioMarketValueOverTimeSplitBetweenCostBasis',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </EvolutionChart>
+        )}
         {accountTypeData.length > 0 && (
-          <AccountTypeBreakdownChart data={accountTypeData} />
+          <AccountTypeBreakdownChart data={accountTypeData}>
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.accounttypebreakdownchart.eachSliceIsAnAccountTypeTheRadialSplit',
+              )}
+              scope={{ account: 'filterable', period: 'as-of' }}
+            />
+          </AccountTypeBreakdownChart>
         )}
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <MonthlySavingsChart data={savings} ops={monthlyOps} />
-        {drivers.length > 0 && <WealthDriversChart data={drivers} />}
+        <MonthlySavingsChart data={savings} ops={monthlyOps}>
+          <ScopedInfoTooltip
+            text={i18n.t(
+              'ui.monthlysavingschart.monthlyNetContributionsAndMarketPerformanceWithARolling',
+            )}
+            scope={{
+              account: 'filterable',
+              period: 'range-or-trailing-12m',
+            }}
+          />
+        </MonthlySavingsChart>
+        {drivers.length > 0 && (
+          <WealthDriversChart data={drivers}>
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.wealthdriverschart.howNetContributionsAndMarketPerformanceBuiltTheChange',
+              )}
+              scope={{ account: 'filterable', period: 'range' }}
+            />
+          </WealthDriversChart>
+        )}
       </div>
       {annualIncomeSavings.length > 0 && (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <AnnualIncomeSavingsChart data={annualIncomeSavings} />
+          <AnnualIncomeSavingsChart data={annualIncomeSavings}>
+            <ScopedInfoTooltip
+              text={i18n.t(
+                'ui.annualincomesavingschart.annualDeclaredIncomeComparedWithDepositsMinusWithdrawalsAcross',
+              )}
+              scope={{ account: 'global', period: 'year-range' }}
+            />
+          </AnnualIncomeSavingsChart>
           <IncomePlacementRelationshipChart data={annualIncomeSavings} />
         </div>
       )}
@@ -82,7 +123,14 @@ export function WealthTab({
           data={accountTypeHistory}
           accountTypes={accountTypes}
           typeCategories={typeCategories}
-        />
+        >
+          <ScopedInfoTooltip
+            text={i18n.t(
+              'ui.accounttypehistorychart.evolutionOfPortfolioValueByAccountTypeShownAs',
+            )}
+            scope={{ account: 'filterable', period: 'range' }}
+          />
+        </AccountTypeHistoryChart>
       )}
     </div>
   )

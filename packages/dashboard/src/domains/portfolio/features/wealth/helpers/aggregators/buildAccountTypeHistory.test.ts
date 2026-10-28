@@ -1,23 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
+import { makeAccountPositionSnapshot as row } from '@/domains/portfolio/features/wealth/mocks/accountPositionSnapshot.mock'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
-import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { buildAccountTypeHistory } from './buildAccountTypeHistory'
-
-function row(overrides: Partial<RawPositionRow>): RawPositionRow {
-  return {
-    snapshot_date: new Date('2024-01-01'),
-    account: 'acc1',
-    account_type: 'PEA',
-    account_category: 'brokerage',
-    quantity: 1,
-    avg_buy_price: 100,
-    total_value: 1000,
-    unrealized_gain: 0,
-    ...overrides,
-  }
-}
 
 describe('buildAccountTypeHistory', () => {
   it('sums total value per account type per date, ordered by the fixed category order', () => {
@@ -46,7 +32,7 @@ describe('buildAccountTypeHistory', () => {
     expect(accountTypes).toEqual(['PEA', 'Livret']) // brokerage (rank 0) before savings (rank 4)
     expect(typeCategories).toEqual({ PEA: 'brokerage', Livret: 'savings' })
     expect(data).toEqual([
-      { date: new Date('2024-01-01'), PEA: 1200, Livret: 500 },
+      { date: new Date('2024-01-01'), values: { PEA: 1200, Livret: 500 } },
     ])
   })
 
@@ -56,7 +42,9 @@ describe('buildAccountTypeHistory', () => {
       row({ account: 'acc2', total_value: 999 }),
     ]
     const { data } = buildAccountTypeHistory(rows, new Set(['acc1']))
-    expect(data).toEqual([{ date: new Date('2024-01-01'), PEA: 1000 }])
+    expect(data).toEqual([
+      { date: new Date('2024-01-01'), values: { PEA: 1000 } },
+    ])
   })
 
   it('filters synthetic cash separately from other rows in the same account', () => {
@@ -70,7 +58,7 @@ describe('buildAccountTypeHistory', () => {
     )
 
     expect(data).toEqual([
-      { date: new Date('2024-01-01'), 'Bourse – Cash': 50 },
+      { date: new Date('2024-01-01'), values: { 'Bourse – Cash': 50 } },
     ])
   })
 
@@ -80,4 +68,32 @@ describe('buildAccountTypeHistory', () => {
     expect(data).toEqual([])
     expect(accountTypes).toEqual([])
   })
+
+  it('keeps a reserved field name from overwriting the snapshot date', () => {
+    const { data } = buildAccountTypeHistory(
+      [
+        row({ account_type: 'date', total_value: 120 }),
+        row({ account_type: 'shares', total_value: 30 }),
+      ],
+      null,
+    )
+    expect(data).toEqual([
+      {
+        date: new Date('2024-01-01'),
+        values: { date: 120, shares: 30 },
+      },
+    ])
+  })
+
+  it.each(['__proto__', 'constructor', 'Account.with.dot'])(
+    'preserves the literal account type %s and its category',
+    (accountType) => {
+      const { data, typeCategories } = buildAccountTypeHistory(
+        [row({ account_type: accountType, total_value: 120 })],
+        null,
+      )
+      expect(data[0].values[accountType]).toBe(120)
+      expect(typeCategories[accountType]).toBe('brokerage')
+    },
+  )
 })

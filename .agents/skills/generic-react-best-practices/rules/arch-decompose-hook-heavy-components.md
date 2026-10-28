@@ -48,4 +48,6 @@ function OrdersWorkspace() {
 
 The lint threshold is diagnostic, not a target for every component. When a component legitimately wires several facets of one cohesive primitive, document the narrow exception instead of inventing an artificial abstraction.
 
+Enable `local/max-hooks-per-component` at error level. Count direct conventional hook calls and resolved React hooks, including imported aliases, immutable aliases, destructured namespace bindings and React 19 `use`. Recognize components wrapped with resolved React `memo` or `forwardRef`, including aliases. Respect lexical shadowing and exclude calls inside nested callbacks from the containing component's count. Hook behavior hidden behind arbitrary wrappers or reassigned aliases still requires review. Exercise rejected and valid neighboring examples through the application's actual configuration.
+
 See also: `arch-thin-components`, `arch-helpers-vs-services`, `quality-usecallback-for-functions`

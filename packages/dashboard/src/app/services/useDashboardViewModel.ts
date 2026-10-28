@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { resolveDashboardLoadState } from '@/app/helpers/mappers/resolveDashboardLoadState'
+import { useBuildDashboardSourceData } from '@/app/helpers/mappers/useBuildDashboardSourceData'
 import { useGetFundDiagnosticsQuery } from '@/domains/portfolio/features/data-quality/features/assessment/apis/queries/useGetFundDiagnosticsQuery'
 import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/services/useDashboardQuality'
 import type { FundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type'
@@ -16,8 +17,8 @@ import { useOverviewComparison } from '@/domains/portfolio/features/overview/ser
 import { useDashboardPerformance } from '@/domains/portfolio/features/performance/services/useDashboardPerformance'
 import { useGetAnnualIncomeSavingsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery'
 import { useGetMonthlyOperationsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
 import { useDashboardWealth } from '@/domains/portfolio/features/wealth/services/useDashboardWealth'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import { useGetAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery'
 import { useGetBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery'
@@ -26,7 +27,6 @@ import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries
 import { useGetPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery'
 import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
 import { useGetSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery'
-import { buildDashboardSourceData } from '@/domains/portfolio/shared/helpers/mappers/buildDashboardSourceData'
 import { useDashboardHistory } from '@/domains/portfolio/shared/services/useDashboardHistory'
 import { usePortfolioPositions } from '@/domains/portfolio/shared/services/usePortfolioPositions'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
@@ -42,6 +42,7 @@ import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savin
 
 // eslint-disable-next-line complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
 export function useDashboardViewModel() {
+  const buildDashboardSourceData = useBuildDashboardSourceData()
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const filters = useAtomValue(dashboardFiltersAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
@@ -109,7 +110,7 @@ export function useDashboardViewModel() {
         history,
         positions,
       }),
-    [accountLabels, cashHistory, history, positions],
+    [accountLabels, buildDashboardSourceData, cashHistory, history, positions],
   )
 
   const {

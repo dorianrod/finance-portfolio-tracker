@@ -6,14 +6,14 @@ tags: eslint, exceptions, review
 
 ## Review and Date ESLint Exceptions
 
-**Rule:** Keep an ESLint suppression only after reviewing its technical justification, naming the affected rules and recording the actual last review date on a line-scoped directive.
+**Rule:** Review every new or modified ESLint suppression before accepting it, name the affected rules and record the actual review date on a line-scoped directive. Revalidate existing suppressions only when the user explicitly requests it.
 
 A nonempty comment does not establish a valid exception. Accept only a demonstrated false positive, a dependency constraint or an exception permitted by the affected rule. Being inconvenient to fix, pre-existing or needed to pass lint is not a technical justification. This rule does not grant exceptions to rules that expressly prohibit suppression.
 
 ### Applies When
 
 - Authored code contains `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`, including tests and tooling.
-- An initial audit or a targeted reaudit follows changes to the skill, lint rules, dependencies or relevant code.
+- A suppression is introduced or modified, or the user explicitly requests revalidation of existing ignores. A general audit or changes to the skill, dependencies or nearby code do not enable revalidation by themselves.
 
 **Incorrect:**
 ```typescript
@@ -35,7 +35,11 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 
 ### Audit and Reaudit
 
-1. Inventory the suppressions in scope. For a targeted reaudit, select exceptions affected by the changed rules, skills, dependencies or code; use their dates to identify when they were last examined.
+Existing suppressions and configuration exceptions are not technically revalidated by default, even during an initial or full audit. Leave their justification and review date unchanged, and do not lift them merely to complete catalog coverage. Recording their presence or running normal lint is not revalidation or renewed approval. Keep metadata validation, tracking warnings and unused-disable detection enabled; fix policy diagnostics they actually report without bulk-reviewing unrelated exceptions. A newly introduced, widened or otherwise modified exception always needs review before acceptance.
+
+When reviewing a new/modified exception or explicitly revalidating existing ones:
+
+1. Inventory the suppressions in the requested scope. For a targeted reaudit, select the requested exceptions; use their dates to identify when they were last examined.
 2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Lift the relevant suppression in an in-memory or isolated check using the application's actual configuration; verify the original rule ID and diagnostic for each named rule. Confirm the check applies to the file before concluding that a suppression is unused. Compare the claimed rationale with the implementation and rule contract; do not infer approval from an earlier comment or a syntactically valid date. If the diagnostic or rationale cannot be verified, leave the exception unresolved rather than updating its review date as if approved.
 3. Remove unused suppressions. For a real violation without an allowed exception, correct the code and remove the suppression. For a justified exception, retain the narrow directive and record the concrete rationale and actual review date.
 4. Run lint and maintain the [warning budget](quality-eslint-warning-budget.md). A retained directive contributes one tracking warning, even if it names several rules. A new review of the same exception updates its date without adding another warning.
@@ -52,7 +56,7 @@ Enable `reportUnusedDisableDirectives: 'error'` and preserve policy diagnostics 
 
 - Generated and vendored code outside the project's lint scope is not an audit target.
 - Examples embedded in strings or ordinary explanatory comments are not suppression directives.
-- A prior review does not expire automatically; re-examine it when a requested audit or a relevant change calls the justification into question.
+- A prior review does not expire automatically. Technical revalidation of an existing ignore requires an explicit user request; a new or modified exception still requires review before acceptance.
 
 ### References
 

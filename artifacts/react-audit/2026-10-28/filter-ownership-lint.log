@@ -1,0 +1,16 @@
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/app/services/useDashboardViewModel.ts
+  43:1  warning  Reviewed ESLint exception for complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx
+  138:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries. [quality-eslint-warning-budget]           local/reviewed-eslint-suppression
+  140:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  142:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx
+  183:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries. [quality-eslint-warning-budget]           local/reviewed-eslint-suppression
+  185:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  187:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+✖ 7 problems (0 errors, 7 warnings)
+

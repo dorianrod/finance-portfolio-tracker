@@ -1,4 +1,5 @@
 import type { OperationType } from './operationType.type'
+import type { RawPosition } from './rawPosition.type'
 export type RowKind = 'position' | 'group' | 'operation'
 
 export type OperationRow = {
@@ -7,9 +8,12 @@ export type OperationRow = {
   date: Date
   account: string
   operation_type: OperationType
+  // Cash and income operations may have no traded units.
   quantity: number | null
+  // Cash and income operations may have no unit price.
   price_per_unit: number | null
   total_amount: number
+  // Only sales have an applicable realized gain.
   realized_gain: number | null
 }
 
@@ -17,7 +21,6 @@ export type GroupRow = {
   kind: 'group'
   groupType: 'trades' | 'dividends' | 'interest' | 'cash'
   id: string
-  label: string
   total_dividends?: number
   dividend_count?: number
   annualized_dividends?: number
@@ -33,36 +36,39 @@ export type GroupRow = {
   subRows: OperationRow[]
 }
 
-export type PositionRow = {
+// Closed positions have no current snapshot; nullable snapshot metrics stay unknown.
+export type PositionRow = Pick<
+  RawPosition,
+  | 'name'
+  | 'ticker'
+  | 'isin'
+  | 'account'
+  | 'quantity'
+  | 'last_price'
+  | 'total_value'
+  | 'unrealized_gain'
+  | 'unrealized_gain_net'
+  | 'unrealized_gain_pct'
+  | 'realized_gain_net'
+  | 'tax_rate'
+  | 'total_dividends_net'
+  | 'total_interest_net'
+  | 'total_return_pct'
+  | 'xirr'
+  | 'xirr_rolling_3y'
+  | 'xirr_rolling_period_years'
+> & {
   kind: 'position'
   id: string
-  name: string
-  ticker: string
-  isin: string
-  account: string
   account_type?: string
   account_category?: string
   status: 'active' | 'closed'
   operationTypes: Set<OperationType>
-  quantity: number | null
-  last_price: number | null
-  total_value: number | null
-  unrealized_gain: number | null
-  unrealized_gain_net: number | null
-  unrealized_gain_pct: number | null
   realized_gain: number
-  realized_gain_net: number | null
-  tax_rate: number | null
   total_dividends: number
-  total_dividends_net: number | null
   total_interest: number
-  total_interest_net: number | null
   total_realized_return: number
   total_invested: number
-  total_return_pct: number | null
-  xirr: number | null
-  xirr_rolling_3y: number | null
-  xirr_rolling_period_years: number | null
   subRows: GroupRow[]
 }
 

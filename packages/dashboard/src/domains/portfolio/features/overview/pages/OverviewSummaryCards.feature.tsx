@@ -6,8 +6,8 @@ import type {
   OverviewConcentrationComparison,
 } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
 import { useFormatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue'
-import { getConcentrationTone } from '@/domains/portfolio/features/overview/helpers/presenters/getConcentrationTone'
-import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/helpers/presenters/getOverviewPerformanceTone'
+import { getConcentrationTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone'
+import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
 import { PreviousValue } from '@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'

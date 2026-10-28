@@ -26,7 +26,7 @@ function countOperations(node, sourceCode, seen = new Set()) {
   seen.add(node)
   if (node.type === 'Identifier') {
     const value = stableInitializer(sourceCode, node)
-    return value && isInsideComponent(value)
+    return value && isInsideComponent(value, sourceCode)
       ? countOperations(value, sourceCode, seen)
       : 0
   }
@@ -63,9 +63,9 @@ function countOperations(node, sourceCode, seen = new Set()) {
   )
 }
 
-function isInsideComponent(node) {
+function isInsideComponent(node, sourceCode) {
   for (let current = node.parent; current; current = current.parent) {
-    if (getFunctionComponentName(current)) return true
+    if (getFunctionComponentName(current, sourceCode)) return true
   }
   return false
 }
@@ -113,7 +113,7 @@ export default {
       if (
         !isCalculation(node) ||
         hasCalculationParent(node) ||
-        !isInsideComponent(node) ||
+        !isInsideComponent(node, context.sourceCode) ||
         countOperations(node, context.sourceCode) <= maxOperations
       )
         return
@@ -126,7 +126,7 @@ export default {
       CallExpression(node) {
         inspect(node)
         if (
-          !isInsideComponent(node) ||
+          !isInsideComponent(node, context.sourceCode) ||
           node.callee.type !== 'MemberExpression' ||
           !['map', 'flatMap'].includes(
             getStaticPropertyName(node.callee.property),
@@ -148,7 +148,7 @@ export default {
           candidates.add(node)
       },
       JSXOpeningElement(node) {
-        if (!isInsideComponent(node)) return
+        if (!isInsideComponent(node, context.sourceCode)) return
         const geometry = node.attributes.filter(
           (attribute) =>
             attribute.type === 'JSXAttribute' &&

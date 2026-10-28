@@ -1,7 +1,5 @@
-import type {
-  AnnualIncomeSavingsPoint,
-  RawAnnualIncomeSavingsRow,
-} from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.types'
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
+import type { RawAnnualIncomeSavingsRow } from '@/domains/portfolio/features/wealth/types/rawAnnualIncomeSavingsRow.type'
 
 export function mapAnnualIncomeSavings(
   rows: RawAnnualIncomeSavingsRow[],

@@ -1,0 +1,400 @@
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/app/DashboardCombinedReliability.feature.tsx
+  47:13  error  Business ownership: "DashboardCombinedReliability" calculates "CombinedAnalysisReliabilityKpi.statusMetric" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view  local/no-prop-drilling
+  48:13  error  Business ownership: "DashboardCombinedReliability" calculates "CombinedAnalysisReliabilityKpi.metrics" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view       local/no-prop-drilling
+  61:13  error  Business ownership: "DashboardCombinedReliability" calculates "CombinedAnalysisReliabilityKpi.metrics" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view       local/no-prop-drilling
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/app/services/useDashboardViewModel.ts
+  43:1  warning  Reviewed ESLint exception for complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx
+  38:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter normalizes and formats its coverage metric; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  51:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button. [quality-eslint-warning-budget]            local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature.tsx
+  68:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats its combined reliability metrics; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  72:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button. [quality-eslint-warning-budget]          local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx
+  30:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter derives severity from pipeline counts and loading; CompactDataQualityKpi consumes that semantic tone for presentation and navigation. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  35:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats pipeline status and issue counts; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges. [quality-eslint-warning-budget]   local/reviewed-eslint-suppression
+  55:7  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button. [quality-eslint-warning-budget]           local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopeManualPriceOverrides.ts
+  22:3  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Date overlap and alternative asset identifiers define one manual-price visibility predicate. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopePipelineErrors.ts
+  25:3  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Month, account and identifier precedence define one anomaly-scope predicate, including unattributable pipeline issues. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts
+  14:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; This joins classification, look-through and pipeline reliability; tone policies and display metrics are delegated to their existing helpers. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts
+  20:5  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; One dimension accumulator combines the latest breakdown, missing ratio and corresponding issue totals. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.ts
+  144:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; ISIN, ticker and name are alternative identifiers in one fund-status match predicate. [quality-eslint-warning-budget]                         local/reviewed-eslint-suppression
+  177:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; One exclusive classification partitions fund, direct and opaque values without distributing its accumulator. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.view.tsx
+  19:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Filtering, sorting and availability belong to one anomaly table; row mapping and cells are already separate. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx
+  58:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  65:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the allocation snapshot; ScopedInfoTooltip only adds live filter badges to its reporting date. [quality-eslint-warning-budget]    local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx
+  55:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/allocation/components/PieLabel/PieLabel.view.tsx
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional Recharts geometry and minimum-share guards protect one SVG label; positioning is already delegated. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/CurrentConcentration.feature.tsx
+  65:19  error  Business ownership: "CurrentConcentration" calculates "ScopedInfoTooltip.scope" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view  local/no-prop-drilling
+  80:19  error  Business ownership: "CurrentConcentration" calculates "ScopedInfoTooltip.scope" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view  local/no-prop-drilling
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts
+  10:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Direct, decomposed, undisclosed and opaque positions share one conservation accumulator and ranking. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration.ts
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; One held-asset aggregation normalizes identity, weights and the top-ten summary against the same total. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/shared/helpers/filters/prepareDiversificationScope.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell distributes the prepared scope to both allocation and concentration. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/shared/helpers/filters/scopeDiversificationData/excludeNonApplicableAllocationData.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell distributes the prepared scope to both allocation and concentration. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/diversification/shared/helpers/filters/scopeDiversificationData/scopeRawAllocationData.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell distributes the prepared scope to both allocation and concentration. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel.ts
+  10:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Exact fund selection, free-text search and expansion build one exposure-explorer result from the same issuer set. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildIssuerExposures.ts
+  10:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Canonical issuers and source funds share one accumulation pass; splitting would distribute the same mutable ledger. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/apis/queries/useGetAllocationsByIsinQuery.ts
+  13:5  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; The four optional allocation dimensions use one explicit name-precedence and missing-point policy. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/MiniDonut.view.tsx
+  57:19  error  Extract mapped JSX into a component and keep the callback declarative: items.map((item) => <Item key={item.id} item={item} />)  local/no-complex-jsx-map
+  59:45  error  Move this user-facing string to the i18n catalog                                                                                local/no-hardcoded-ui-strings
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature.tsx
+  15:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Remote-history and operation-history fallbacks are states of the same savings preview. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/SavingsTooltip.view.tsx
+  13:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional Recharts metadata and signed balance changes form one savings tooltip. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/TooltipPortfolio.view.tsx
+  12:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Value, cost basis and unrealized availability describe one hover point and its operation summary. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionGroupSeparator.view.tsx
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional monetary totals and tones form one account separator row with the table column contract. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx
+  64:3  warning  Reviewed ESLint exception for react-hooks/incompatible-library -- reviewed: 2026-10-27; TanStack Table v8 mutates a stable table instance; React Compiler is not enabled here, and getRowModel() is read on every render without memoizing the table's mutable API. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionGroupPreviews.ts
+  15:3  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Trade and savings group handlers share the same preview exclusivity, anchor and dismissal protocol. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx
+  15:1   warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Allocation and underlying previews share the same exclusive overlay protocol and table metadata. [quality-eslint-warning-budget]                                 local/reviewed-eslint-suppression
+  75:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The table checks action availability; the control receives the matching API entity and owns only popover selection. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature.tsx
+  15:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Position, payment-group and operation variants implement the same income column contract. [quality-eslint-warning-budget]                         local/reviewed-eslint-suppression
+  73:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Dividend and interest visibility share one passive-income cell; tax calculations already have dedicated helpers. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionNameCell.feature.tsx
+  12:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Position identity, grouped labels and dated operations implement the same table name column. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature.tsx
+  12:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Value, quantity, purchase basis and cash variants implement the same table value column. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/helpers/aggregators/buildPositionsHistory.ts
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Identity validation and cross-account date aggregation preserve one position-history series and its cost basis. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/helpers/mappers/toLatestAllocationByIsin.ts
+  4:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Latest-date selection and same-date allocation coalescing implement one canonical per-identifier breakdown. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildGrossValueHistory.ts
+  5:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Account scope and finite snapshot guards produce one gross-value history series. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts
+  179:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Nullable current and previous metrics are projections of the same concentration comparison window. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx
+  117:7   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the period-end snapshot; CardShell adds navigation and live filter badges without reinterpreting that reporting date. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  277:19  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the comparison end date; ScopedInfoTooltip only adds live filter badges to this trailing-period specification. [quality-eslint-warning-budget]         local/reviewed-eslint-suppression
+  343:7   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation. [quality-eslint-warning-budget]     local/reviewed-eslint-suppression
+  349:7   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation. [quality-eslint-warning-budget]     local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx
+  44:9  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This chart chooses held versus underlying explanatory copy; ScopedInfoTooltip only renders it with live filter badges. [quality-eslint-warning-budget]         local/reviewed-eslint-suppression
+  46:9  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the concentration snapshot; ScopedInfoTooltip only adds live filter badges to the supplied reporting date. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/components/TriChart/TriTooltip.view.tsx
+  11:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Observed and backfilled one-year and three-year series share one tooltip availability contract. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/components/performanceChartTooltips/TopPerformersTooltip.view.tsx
+  11:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional name, account and amount metadata all describe one Recharts performer point. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx
+  57:17  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The asset-IRR result supplies its actual end date; MetricLabel only presents the label and adds live filter badges. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx
+  168:9   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges. [quality-eslint-warning-budget]          local/reviewed-eslint-suppression
+  214:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges. [quality-eslint-warning-budget]         local/reviewed-eslint-suppression
+  230:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges. [quality-eslint-warning-budget]         local/reviewed-eslint-suppression
+  256:9   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  268:9   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/helpers/aggregators/aggregatePassiveIncomeByYear.ts
+  4:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Account, date and income-kind guards feed one annual passive-income accumulator. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.ts
+  270:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Since-tracking and three-year bounds are the two modes of the same contribution-period policy. [quality-eslint-warning-budget]                   local/reviewed-eslint-suppression
+  312:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Opening and closing unrealized values feed one per-position contribution update. [quality-eslint-warning-budget]                                 local/reviewed-eslint-suppression
+  334:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Realized sales and income operations feed the same scoped contribution ledger with identical identity fallback. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  365:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Operation kind, date, asset and account bounds form one contribution eligibility decision. [quality-eslint-warning-budget]                       local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx
+   30:1   warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; This feature composes performance entry components and their shared availability; financial calculations are delegated. [quality-eslint-warning-budget]                           local/reviewed-eslint-suppression
+  130:15  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR from its scoped history; the KPI formats that scalar with the shared availability status. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  169:9   warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR once for both the KPI and contribution card; the card consumes that same reporting value. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx
+  138:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries. [quality-eslint-warning-budget]           local/reviewed-eslint-suppression
+  140:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  142:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx
+  184:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries. [quality-eslint-warning-budget]           local/reviewed-eslint-suppression
+  186:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  188:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx
+  74:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional Recharts coordinates and row index guard one account label; collision geometry is already delegated. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionTooltip.view.tsx
+  13:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Monetary and percentage display are variants of the same value-evolution tooltip. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.tsx
+  20:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Monthly operations and trailing totals are the context of one savings-history hover point. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.ts
+   5:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Account/category validation feeds one date-by-account-type accumulator and its stable category order. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  27:3  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Known-category priority and alphabetical fallback form one total ordering comparator. [quality-eslint-warning-budget]                  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAccountSavingsQueryOptions.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAllocationQueryOptions.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this allocation source to diversification charts and quality assessment coverage. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioSavingCapacityQueryOptions.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this allocation source to diversification charts and quality assessment coverage. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/apiHistoryPointSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/demoScopeUnavailableError.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/filteredHistoryRequestSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/filteredHistoryResponseSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/readResponse.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/requestFilteredPortfolioHistory.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/sameAccounts.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/staticDemo.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetDemoFilteredHistoryAccountsQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetFilteredPortfolioHistoryQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Snapshot history feeds wealth account-type history directly and overview and performance through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/optionalNumber.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/optionalText.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingHistorySchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/accountRowSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/allocationByIsinRowSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this allocation source to diversification charts and quality assessment coverage. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawCashRowSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawPortfolioHistorySchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacityByAccountSchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacitySchema.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/constants/accountCategories/categoryOrder.ts
+  5:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacity.types.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacityByAccount.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/mapSavingCapacity.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration.ts
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Scoped valid snapshots feed one date-by-asset accumulator and its concentration denominator. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts
+  10:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Historical snapshot applicability and account scope define one look-through history pipeline. [quality-eslint-warning-budget]                local/reviewed-eslint-suppression
+  36:7  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Each dated accumulator conserves identified, undisclosed and opaque totals against the same selected value. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyAccountFilterToHistory.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  9:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Selected-account values and cost basis reconstruct one fallback history series with explicitly unavailable IRR. [quality-eslint-warning-budget]                                                      local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyPositionFilters.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/buildDemoPresetSelection.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/isDemoPresetActive.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationAndPeriodFilters.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationFilters.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/filters/portfolioFilters/buildPortfolioFilterOptions.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/buildDashboardSourceData.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildAccountLabels.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Account labels and identities feed scope selection and the scope badges used by performance, wealth and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows.ts
+    1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  289:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Latest-snapshot and operation fallbacks must resolve one consistent asset identity and active/closed status. [quality-eslint-warning-budget]                                                              local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/mapFundHolding.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/mapFundHoldingStatus.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund status inputs feed holdings previews and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  4:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Account-key matching, fallback history, loading and error are one atomic stale-response resolution policy. [quality-eslint-warning-budget]                                                           local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This account-scope protocol keeps the same filtered history for overview comparisons, wealth and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/services/actions/useDashboardNavigation.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; This common navigation action serves overview links and shell routing to the other portfolio capabilities. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/services/useDashboardHistory.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/services/usePortfolioPositions.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/types/cashHistoryPoint.type.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts
+  1:1  warning  Reviewed ESLint exception for local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/helpers/formatters/useFormatNumber.ts
+  46:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Known formatting profiles choose cached formatters before the single arbitrary-options fallback. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/ChartRectangle.view.tsx
+  9:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; All four coordinates and inherited appearance must be validated together for one Recharts rectangle. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/Preview.view.tsx
+  49:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-28; Pointer, keyboard and restored-focus behavior form one accessible preview-trigger protocol; unmasking confirms complexity 19, and the interaction tests exercise cancellation and focus restoration. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/Surface.view.tsx
+  9:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Element-specific structure, padding and semantic appearance belong to the same Surface primitive. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/chartLabel/ChartLabel.view.tsx
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; SVG typography, baseline and historical-age appearance belong to the same label primitive. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/controls/NavigationButton.view.tsx
+  7:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Selected appearance and current-page accessibility state belong to the same navigation button. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/shared/ui/layout/Layout.view.tsx
+  22:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Closed layout tokens map directly to classes in one primitive; splitting each option would add indirection. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+✖ 155 problems (7 errors, 148 warnings)
+

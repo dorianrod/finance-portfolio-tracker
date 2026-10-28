@@ -1,4 +1,4 @@
-import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/analysisReliability.types'
+import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 
 export function aggregateReliabilityTone(
   tones: AnalysisReliabilityTone[],

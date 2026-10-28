@@ -35,3 +35,5 @@ const secondaryText = t('order.shipping.upload.limits', {
 ```
 
 Option names must match the placeholders of the catalog value: a placeholder missing in code is an error, an unused one a warning. If no key holds the full sentence yet, add one rather than gluing fragments. For counts, use i18next plural keys (`count`) instead of branching in code.
+
+Enable `local/no-ui-string-concat` for production code. Reject concatenated translations and decorated formatter results in display expressions, for both templates and `+`. Resolve imported formatter hooks and immutable aliases; preserve numeric arithmetic and technical keys, URLs, chart data keys and CSS expressions. For binary expressions, use a proven string operand before calling an operation concatenation. Implicit display text outside JSX/presentation helpers, opaque wrappers and reassigned aliases require manual review. Verify rejected and neighboring valid examples through the consuming application's configuration.

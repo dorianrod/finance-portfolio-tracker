@@ -1,11 +1,11 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
-import type { ApiHistoryPoint } from '@/domains/portfolio/shared/types/apiHistoryPoint.type'
+import type { RawPortfolioHistory } from '@/domains/portfolio/shared/types/rawPortfolioHistory.type'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
 import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
-export const API_HISTORY_POINT_SCHEMA: yup.ObjectSchema<ApiHistoryPoint> =
+export const API_HISTORY_POINT_SCHEMA: yup.ObjectSchema<RawPortfolioHistory> =
   yup.object({
     snapshot_date: CALENDAR_DATE_SCHEMA.required(),
     total_value: FINITE_NUMBER_SCHEMA.defined(),

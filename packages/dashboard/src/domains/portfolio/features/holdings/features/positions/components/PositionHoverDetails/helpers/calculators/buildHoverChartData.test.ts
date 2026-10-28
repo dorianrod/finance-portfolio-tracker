@@ -5,6 +5,7 @@ import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/fea
 import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
+import type { PositionChartOperation } from '@/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type'
 
 describe('computeMonthlyBalances', () => {
   it('accumulates a running balance per month from dated deltas', () => {
@@ -63,7 +64,7 @@ describe('buildHoverChartSeries', () => {
         last_price: 110,
       },
     ]
-    const operations = [
+    const operations: PositionChartOperation[] = [
       {
         date: new Date('2024-01-05'),
         operation_type: 'BUY',

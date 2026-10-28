@@ -1,5 +1,5 @@
 import { preloadDashboardTab } from '@/app/routing/dashboardTabLoaders/preloadDashboardTab'
-import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/services/actions/useQualityNavigation'
+import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import i18n from '@/i18n/i18n'

@@ -25,9 +25,9 @@ export function useFilterScopeBadges({
     () => [
       accountBadge(account, filters, accountLabels),
       periodBadge(period, filters, {
-        from: filters.dateFrom ? formatDate(filters.dateFrom) : null,
-        to: filters.dateTo ? formatDate(filters.dateTo) : null,
-        end: endDate ? formatDate(endDate) : null,
+        from: formatDate(filters.dateFrom, { fallback: '' }),
+        to: formatDate(filters.dateTo, { fallback: '' }),
+        end: formatDate(endDate, { fallback: '' }),
       }),
     ],
     [account, accountLabels, endDate, filters, formatDate, period],
@@ -40,7 +40,7 @@ export type ScopeBadge = {
   tone: 'applied' | 'default' | 'ignored'
 }
 
-type ScopeDates = { from: string | null; to: string | null; end: string | null }
+type ScopeDates = { from: string; to: string; end: string }
 
 function accountBadge(
   mode: AccountScopeMode,
@@ -71,7 +71,7 @@ function accountBadge(
   if (filters.accounts.size === 1) {
     const account = [...filters.accounts][0]
     return {
-      label: labels[account] ?? account,
+      label: Object.hasOwn(labels, account) ? labels[account] : account,
       detail: i18n.t(
         'ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccount',
       ),
@@ -233,7 +233,7 @@ function rangePeriodBadge(
 }
 function snapshotPeriodBadge(
   filters: DashboardFilters,
-  end: string | null,
+  end: string,
 ): ScopeBadge {
   if (filters.dateTo)
     return {
@@ -254,9 +254,9 @@ function snapshotPeriodBadge(
       tone: 'ignored',
     }
   return {
-    label: i18n.t('ui.buildfilterscopebadgesTs.latestSnapshotValue0', {
-      value0: end ? ` · ${end}` : '',
-    }),
+    label: end
+      ? i18n.t('ui.buildfilterscopebadges.latestSnapshotAtDate', { date: end })
+      : i18n.t('ui.buildfilterscopebadges.latestSnapshot'),
     detail: i18n.t(
       'ui.buildfilterscopebadgesTs.usesTheLatestAvailablePortfolioSnapshot',
     ),
@@ -266,7 +266,7 @@ function snapshotPeriodBadge(
 function fixedHorizonPeriodBadge(
   mode: 'trailing-12m' | 'trailing-3y' | 'since-tracking',
   filters: DashboardFilters,
-  end: string | null,
+  end: string,
 ): ScopeBadge {
   const horizonByMode = {
     'trailing-12m': i18n.t('ui.buildfilterscopebadges.trailing12m'),

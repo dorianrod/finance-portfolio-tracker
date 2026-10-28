@@ -1,0 +1,85 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx (7 tests | 6 failed) 65ms
+     × formats null as 3 years 34ms
+     × formats undefined as 3 years 5ms
+     × formats 4 as 3 years 5ms
+     × formats 1.25 as 1.2 years 4ms
+     × formats 0.5 as 6 months 6ms
+     × formats 0 as 1 months 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats null as 3 years
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats undefined as 3 years
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats 4 as 3 years
+AssertionError: expected '3y' to be '3 years' // Object.is equality
+
+Expected: "3 years"
+Received: "3y"
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx:13:35
+     11|   ])('formats %s as %s', (years, expected) => {
+     12|     const { result } = renderHook(() => useFormatIrrPeriodLabel())
+     13|     expect(result.current(years)).toBe(expected)
+       |                                   ^
+     14|   })
+     15|   it('allows an explicit fallback for an unknown period', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats 1.25 as 1.2 years
+AssertionError: expected '1.2y' to be '1.2 years' // Object.is equality
+
+Expected: "1.2 years"
+Received: "1.2y"
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx:13:35
+     11|   ])('formats %s as %s', (years, expected) => {
+     12|     const { result } = renderHook(() => useFormatIrrPeriodLabel())
+     13|     expect(result.current(years)).toBe(expected)
+       |                                   ^
+     14|   })
+     15|   it('allows an explicit fallback for an unknown period', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats 0.5 as 6 months
+AssertionError: expected '6mo' to be '6 months' // Object.is equality
+
+Expected: "6 months"
+Received: "6mo"
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx:13:35
+     11|   ])('formats %s as %s', (years, expected) => {
+     12|     const { result } = renderHook(() => useFormatIrrPeriodLabel())
+     13|     expect(result.current(years)).toBe(expected)
+       |                                   ^
+     14|   })
+     15|   it('allows an explicit fallback for an unknown period', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx > useFormatIrrPeriodLabel > formats 0 as 1 months
+AssertionError: expected '1mo' to be '1 months' // Object.is equality
+
+Expected: "1 months"
+Received: "1mo"
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/helpers/formatters/useFormatIrrPeriodLabel.test.tsx:13:35
+     11|   ])('formats %s as %s', (years, expected) => {
+     12|     const { result } = renderHook(() => useFormatIrrPeriodLabel())
+     13|     expect(result.current(years)).toBe(expected)
+       |                                   ^
+     14|   })
+     15|   it('allows an explicit fallback for an unknown period', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  6 failed | 31 passed (37)
+   Start at  16:04:43
+   Duration  3.07s (transform 854ms, setup 0ms, import 2.49s, tests 1.24s, environment 5.54s)
+

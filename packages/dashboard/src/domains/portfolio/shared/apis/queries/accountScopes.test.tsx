@@ -142,7 +142,7 @@ describe('account-scoped queries', () => {
     )
     await waitFor(() =>
       expect(result.current.data).toEqual([
-        { date: new Date('2026-01-31'), PEA: 42 },
+        { date: new Date('2026-01-31'), values: { PEA: 42 } },
       ]),
     )
   })

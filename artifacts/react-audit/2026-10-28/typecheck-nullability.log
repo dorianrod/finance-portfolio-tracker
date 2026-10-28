@@ -1,0 +1,14 @@
+
+> dashboard@1.1.0 typecheck
+> tsc -b --pretty false
+
+src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx(61,19): error TS2322: Type 'Date | null' is not assignable to type 'Date | undefined'.
+  Type 'null' is not assignable to type 'Date | undefined'.
+src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx(254,17): error TS2322: Type 'Date | null' is not assignable to type 'Date | undefined'.
+  Type 'null' is not assignable to type 'Date | undefined'.
+src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx(275,17): error TS2322: Type 'Date | null' is not assignable to type 'Date | undefined'.
+  Type 'null' is not assignable to type 'Date | undefined'.
+src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx(364,11): error TS2322: Type 'Date | null' is not assignable to type 'Date | undefined'.
+  Type 'null' is not assignable to type 'Date | undefined'.
+src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx(376,11): error TS2322: Type 'Date | null' is not assignable to type 'Date | undefined'.
+  Type 'null' is not assignable to type 'Date | undefined'.

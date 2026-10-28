@@ -1,3 +1,4 @@
+import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -8,6 +9,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
+  const formatLabel = useFormatPieEntryLabel()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   if (payload == null) return null
@@ -21,7 +23,7 @@ export function PieTooltip({ active, payload }: NumericTooltipProps<PieEntry>) {
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
         <ChartText as="div" tone={'tooltipText'} variant="strong">
-          {item.name}
+          {formatLabel(item)}
         </ChartText>
       </Layout>
       <ChartText as="div" tone={'tooltipLabel'} variant="bold">

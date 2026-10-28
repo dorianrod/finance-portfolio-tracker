@@ -1,17 +1,14 @@
 import { ScopeProvider } from 'jotai-scope'
 import { useState } from 'react'
 
-import { ContributionListItem } from '@/domains/portfolio/features/performance/components/PerformanceRankingLists/performanceRankingLists/ContributionListItem.view'
+import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
+import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
+import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   ContributionHorizon,
   PerformanceContribution,
   PerformanceContributionSummary,
-} from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import { useFormatPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceDateRange'
-import { useFormatPerformanceIrrLabel } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatPerformanceIrrLabel'
-import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
-import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
-import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
+} from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 import type {
   FilterScopeSpec,
   PeriodScopeMode,
@@ -19,7 +16,6 @@ import type {
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Group } from '@/shared/ui/controls/Group.view'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Grid } from '@/shared/ui/layout/Grid.view'
@@ -30,6 +26,8 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { AssetIrrView } from './AssetIrrView.feature'
+import { ContributionListView } from './ContributionList.view'
+import { ContributionSummaryMetricsView } from './ContributionSummaryMetrics.view'
 import { MetricLabel } from './MetricLabel.feature'
 
 export function PerformanceContributionCard(props: Props) {
@@ -165,56 +163,21 @@ function ContributionList({
   scope: FilterScopeSpec
 }) {
   return (
-    <section>
-      <Inline
-        as="div"
-        spaceAfter="default"
-        align="baseline"
-        justify="between"
-        gap="default"
-      >
-        <Text as="h3" variant="overline" tone="subtle">
-          <Inline as="span" align="center">
-            {title}
-            <ScopedInfoTooltip
-              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
-              text={
-                positive
-                  ? i18n.t(
-                      'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
-                    )
-                  : i18n.t(
-                      'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
-                    )
-              }
-              scope={scope}
-            />
-          </Inline>
-        </Text>
-        <Text variant="micro" tone="subtle">
-          {positive
-            ? i18n.t('ui.performancecontributioncard.shareOfGains')
-            : i18n.t('ui.performancecontributioncard.shareOfLosses')}
-        </Text>
-      </Inline>
-      {items.length === 0 ? (
-        <Surface variant="emptyCaption" as="p" tone="subtle" align="center">
-          {positive
-            ? i18n.t('ui.performancecontributioncard.noPositiveContribution')
-            : i18n.t('ui.performancecontributioncard.noNegativeContribution')}
-        </Surface>
-      ) : (
-        <Stack as="ol" gap="default">
-          {items.map((item) => (
-            <ContributionListItem
-              key={item.key}
-              item={item}
-              positive={positive}
-            />
-          ))}
-        </Stack>
-      )}
-    </section>
+    <ContributionListView title={title} items={items} positive={positive}>
+      <ScopedInfoTooltip
+        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
+        text={
+          positive
+            ? i18n.t(
+                'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
+              )
+            : i18n.t(
+                'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
+              )
+        }
+        scope={scope}
+      />
+    </ContributionListView>
   )
 }
 
@@ -233,113 +196,46 @@ function ContributionSummaryMetrics({
   threeYearUnavailable: boolean
   onHorizonChange: (horizon: ContributionHorizon) => void
 }) {
-  const formatPerformanceIrrLabel = useFormatPerformanceIrrLabel()
-  const formatPerformanceDateRange = useFormatPerformanceDateRange()
-  const formatMoney = useFormatMoney()
-  const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
   return (
-    <Layout spaceBefore="spacious">
-      <Surface variant="inset">
-        <Grid columns={3} gap="default" inset="default">
-          <div>
-            <MetricLabel
-              label={i18n.t('ui.performancecontributioncard.irrContext')}
-              tooltip={i18n.t(
-                'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
-              )}
-              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
-              scope={{
-                account: 'filterable',
-                period: activeHorizon,
-                effectiveDate: summary.endDate,
-              }}
-            />
-            <Layout spaceBefore="compact">
-              <Text as="div" variant="statistic" tone={'contrast'} numeric>
-                {formatPerformanceIrrLabel(irr, irrStatus)}
-              </Text>
-            </Layout>
-          </div>
-          <div>
-            <MetricLabel
-              label={i18n.t(
-                'ui.performancecontributioncard.attributedNetPerformance',
-              )}
-              tooltip={i18n.t(
-                'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
-              )}
-              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
-              scope={{
-                account: 'filterable',
-                period: activeHorizon,
-                effectiveDate: summary.endDate,
-              }}
-            />
-            <Layout spaceBefore="compact">
-              <Text as="div" variant="statistic" tone={netTone} numeric>
-                {formatMoney(summary.netContribution, {
-                  style: 'full',
-                })}
-              </Text>
-            </Layout>
-          </div>
-          <div>
-            <Text as="div" variant="microOverline" tone="subtle">
-              {i18n.t('ui.performancecontributioncard.period')}
-            </Text>
-            <Inline
-              as="div"
-              flow="wrap"
-              spaceBefore="default"
-              align="center"
-              justify="between"
-              gap="default"
-            >
-              <Layout>
-                <Text as="div" variant="label" tone="muted" wrap="nowrap">
-                  {formatPerformanceDateRange(summary)}
-                </Text>
-              </Layout>
-              <Layout sizing="fixed">
-                <Group
-                  variant="inset"
-                  label={i18n.t(
-                    'ui.performancecontributioncard.contributionHorizon',
-                  )}
-                >
-                  <Inline as="div" inset="compact">
-                    <ToggleButton
-                      type="button"
-                      onClick={() => onHorizonChange('since-tracking')}
-                      active={activeHorizon === 'since-tracking'}
-                      variant="compactChoice"
-                    >
-                      {i18n.t('ui.performancecontributioncard.sinceTracking')}
-                    </ToggleButton>
-                    <ToggleButton
-                      type="button"
-                      onClick={() => onHorizonChange('trailing-3y')}
-                      disabled={threeYearUnavailable}
-                      active={activeHorizon === 'trailing-3y'}
-                      title={
-                        threeYearUnavailable
-                          ? i18n.t(
-                              'ui.performancecontributioncard.threeYearsOfHistoryAreNotYetAvailable',
-                            )
-                          : undefined
-                      }
-                      variant="optionalCompactChoice"
-                    >
-                      {i18n.t('ui.performancecontributioncard.trailing3Years')}
-                    </ToggleButton>
-                  </Inline>
-                </Group>
-              </Layout>
-            </Inline>
-          </div>
-        </Grid>
-      </Surface>
-    </Layout>
+    <ContributionSummaryMetricsView
+      summary={summary}
+      irr={irr}
+      irrStatus={irrStatus}
+      activeHorizon={activeHorizon}
+      threeYearUnavailable={threeYearUnavailable}
+      onHorizonChange={onHorizonChange}
+    >
+      <ContributionSummaryMetricsView.IrrLabel>
+        <MetricLabel
+          label={i18n.t('ui.performancecontributioncard.irrContext')}
+          tooltip={i18n.t(
+            'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
+          )}
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
+          scope={{
+            account: 'filterable',
+            period: activeHorizon,
+            effectiveDate: summary.endDate ?? undefined,
+          }}
+        />
+      </ContributionSummaryMetricsView.IrrLabel>
+      <ContributionSummaryMetricsView.NetLabel>
+        <MetricLabel
+          label={i18n.t(
+            'ui.performancecontributioncard.attributedNetPerformance',
+          )}
+          tooltip={i18n.t(
+            'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
+          )}
+          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
+          scope={{
+            account: 'filterable',
+            period: activeHorizon,
+            effectiveDate: summary.endDate ?? undefined,
+          }}
+        />
+      </ContributionSummaryMetricsView.NetLabel>
+    </ContributionSummaryMetricsView>
   )
 }
 
@@ -361,7 +257,7 @@ function ContributionRankings({
         scope={{
           account: 'filterable',
           period: scopePeriod,
-          effectiveDate: summary.endDate,
+          effectiveDate: summary.endDate ?? undefined,
         }}
       />
       <ContributionList
@@ -373,7 +269,7 @@ function ContributionRankings({
         scope={{
           account: 'filterable',
           period: scopePeriod,
-          effectiveDate: summary.endDate,
+          effectiveDate: summary.endDate ?? undefined,
         }}
       />
     </Grid>

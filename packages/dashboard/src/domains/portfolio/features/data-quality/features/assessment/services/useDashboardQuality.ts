@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import { scopeManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopeManualPriceOverrides'
-import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/filters/qualityDataFilters/scopePipelineErrors'
 import { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
+import { scopeManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopeManualPriceOverrides'
+import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopePipelineErrors'
 import type { FundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'

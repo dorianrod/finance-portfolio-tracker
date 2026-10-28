@@ -1,7 +1,5 @@
-import type {
-  CumulativeConcentrationPoint,
-  HoldingConcentration,
-} from './concentrationCalculations.types'
+import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type'
 
 export function buildCumulativeConcentration(
   holdings: HoldingConcentration[],

@@ -1,5 +1,9 @@
+import type { OperationRow } from '@/domains/portfolio/shared/types/positionRow.type'
+
 export type SavingsChartTarget = {
   name: string
-  operations: { date: Date; total_amount: number; operation_type: string }[]
+  operations: Array<
+    Pick<OperationRow, 'date' | 'total_amount' | 'operation_type'>
+  >
   buttonRect: DOMRect
 }

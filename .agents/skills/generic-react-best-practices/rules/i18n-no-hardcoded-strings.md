@@ -34,3 +34,9 @@ toast.success(t('contract.reminder.messages.addSuccess'))
 ```
 
 Reuse shared keys (`common.cancel`, `common.confirm`, `common.close`, `common.delete`) before creating new ones. Not concerned: technical identifiers, CSS classes, test IDs, log messages and data coming from the API.
+
+### ESLint Enforcement
+
+Enable `local/no-hardcoded-ui-strings` for production code. Check visible JSX and user-facing attributes directly, including interpolated templates. Presenter and formatter placement is only a signal: their return values can also be technical keys, CSS references or chart identifiers. In an implicit helper return, report recognizable natural-language copy rather than treating every template containing letters as translated text. Keep explicit UI text and attributes checked. Typed data fixtures under `mocks/` or in `*.mock.*` may carry raw entity names and source messages; do not treat those object values as product copy. Keep JSX text and attributes checked even in such a module.
+
+This bounded syntax check cannot prove the meaning of every bare string, follow arbitrary adapters or identify all runtime-generated copy. Review ambiguous helper outputs and API-provided data at their display sites. Verify rejected copy, valid technical identifiers and explicit UI templates through the consuming application's actual configuration; do not add application-specific identifier allowlists.

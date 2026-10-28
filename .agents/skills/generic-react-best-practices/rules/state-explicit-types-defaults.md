@@ -35,3 +35,7 @@ export const resetOrderFiltersAtom = atom(null, (_get, set) => set(orderFiltersA
 ```
 
 A plain boolean flag may rely on inference (`atom(false)`), but `atom<boolean>(false)` is preferred for consistency.
+
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level. For raw `atom` and `atomWithStorage` declarations, require explicit generics except for plain boolean flags, and report inline object, array and constructed defaults. With type information, also check calls that produce object defaults. Preserve derived read atoms and named defaults. Resolve imported constructors, namespace access and immutable aliases while respecting shadowing. Named defaults still require manual review for their type, exported `DEFAULT_*` name, ownership and safe reset semantics; arbitrary atom factories and mutable aliases are outside this bounded check.

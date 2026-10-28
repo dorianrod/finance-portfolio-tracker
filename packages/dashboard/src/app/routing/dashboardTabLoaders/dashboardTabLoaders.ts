@@ -16,7 +16,7 @@ export const DASHBOARD_TAB_LOADERS = {
       default: module.DiversificationCharts,
     })),
   holdings: () =>
-    import('@/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature').then(
+    import('@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature').then(
       (module) => ({ default: module.PositionsTable }),
     ),
   quality: () =>

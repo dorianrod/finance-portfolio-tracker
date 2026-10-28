@@ -1,0 +1,6 @@
+
+> dashboard@1.1.0 typecheck
+> tsc -b --pretty false
+
+src/shared/ui/SeriesArea.view.test.tsx(77,22): error TS2344: Type 'string | number | ((point: RecordPoint) => unknown)' does not satisfy the constraint '"Expected: string, Actual: never" | "Expected: number, Actual: never" | "Expected: function, Actual: never"'.
+  Type 'string' is not assignable to type '"Expected: string, Actual: never" | "Expected: number, Actual: never" | "Expected: function, Actual: never"'.

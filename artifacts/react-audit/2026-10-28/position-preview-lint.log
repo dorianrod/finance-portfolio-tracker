@@ -1,0 +1,21 @@
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount.ts
+  11:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; One account accumulator partitions active value into mapped, missing and inapplicable coverage. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  11:1  error    Unused eslint-disable directive (no problems were reported from 'complexity')
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts
+  20:5  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; One dimension accumulator combines the latest breakdown, missing ratio and corresponding issue totals. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx
+   65:3  warning  Reviewed ESLint exception for react-hooks/incompatible-library -- reviewed: 2026-10-27; TanStack Table v8 mutates a stable table instance; React Compiler is not enabled here, and getRowModel() is read on every render without memoizing the table's mutable API. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+  234:1  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Optional monetary totals and tones form one account separator row with the table column contract. [quality-eslint-warning-budget]                                                                                                  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionGroupPreviews.ts
+  15:3  warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Trade and savings group handlers share the same preview exclusivity, anchor and dismissal protocol. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+<local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard/src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx
+  15:1   warning  Reviewed ESLint exception for complexity -- reviewed: 2026-10-27; Allocation and underlying previews share the same exclusive overlay protocol and table metadata. [quality-eslint-warning-budget]                                 local/reviewed-eslint-suppression
+  75:11  warning  Reviewed ESLint exception for local/no-prop-drilling -- reviewed: 2026-10-27; The table checks action availability; the control receives the matching API entity and owns only popover selection. [quality-eslint-warning-budget]  local/reviewed-eslint-suppression
+
+✖ 8 problems (1 error, 7 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.

@@ -1,0 +1,125 @@
+
+ RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
+
+ ❯ src/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature.test.tsx (1 test | 1 failed) 389ms
+     × updates an open composition preview when the source status changes 388ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature.test.tsx > PositionsTable previews > updates an open composition preview when the source status changes
+TestingLibraryElementError: Unable to find an element with the text: Updated source. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-label[39m=[32m"Asset"[39m
+  [33mclass[39m=[32m"z-[9999] overflow-y-auto p-4 w-[min(640px,calc(100vw-2rem))] bg-surface border border-border-strong rounded-xl shadow-2xl"[39m
+  [33mdata-align[39m=[32m"center"[39m
+  [33mdata-side[39m=[32m"bottom"[39m
+  [33mdata-state[39m=[32m"open"[39m
+  [33mid[39m=[32m"_r_0_"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"max-height: var(--radix-popover-content-available-height); --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"[39m
+  [33mtabindex[39m=[32m"-1"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"p-4 overflow-y-auto"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex gap-2 mb-3 items-start"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"min-w-0 flex-1"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-sm font-semibold text-content truncate block"[39m
+        [36m>[39m
+          [0mAsset[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-1"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-[10px] font-mono text-content-subtle truncate block"[39m
+          [36m>[39m
+            [0mFR0000000001[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"inline-grid min-w-0 shrink-0"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center text-xs font-medium text-accent hover:text-accent px-3 py-1.5 text-xs gap-2"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mOpen all →[0m
+        [36m</button>[39m
+      [36m</span>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"mb-3"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"block h-full border-b border-border text-xs text-content-subtle"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-1 p-4 items-center"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0mOriginal source[0m
+          [36m</span>[39m
+          [36m<span>[39m
+            [0mHoldings 2026-09-30 · 10 rows[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"text-xs text-content-subtle text-center"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"block p-6"[39m
+      [36m>[39m
+        [0mNo underlying holdings available.[0m
+      [36m</span>[39m
+    [36m</p>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"mt-3"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"text-xs text-content-subtle"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-1 items-center"[39m
+        [36m>[39m
+          [36m<span>[39m
+            [0m90.0% explained (990 €)[0m
+          [36m</span>[39m
+          [36m<span>[39m
+            [0m10.0% undisclosed (110 €)[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</div>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/domains/portfolio/features/holdings/features/positions/components/PositionsTable.feature.test.tsx:61:28
+     59|       />,
+     60|     )
+     61|     expect(within(preview).getByText('Updated source')).toBeTruthy()
+       |                            ^
+     62|     expect(within(preview).queryByText('Original source')).toBeNull()
+     63|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  13:49:45
+   Duration  2.64s (transform 874ms, setup 0ms, import 1.52s, tests 389ms, environment 601ms)
+

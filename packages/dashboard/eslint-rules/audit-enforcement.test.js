@@ -174,7 +174,7 @@ describe('functional state updates', () => {
         `
       import {useAtomValue} from 'jotai'
       import {dashboardFiltersAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
-      import {useDashboardFilters} from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+      import {useDashboardFilters} from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
       const filters = useAtomValue(dashboardFiltersAtom)
       const {setFilters} = useDashboardFilters()
       setFilters({...filters, dateFrom: undefined})
@@ -188,7 +188,7 @@ describe('functional state updates', () => {
         'prefer-functional-state-update',
         `
       import {atom, useAtomValue} from 'jotai'
-      import {useDashboardFilters} from '@/domains/portfolio/shared/services/actions/useDashboardFilters'
+      import {useDashboardFilters} from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
       const backupAtom = atom({accounts: new Set<string>()})
       const backup = useAtomValue(backupAtom)
       const {setFilters} = useDashboardFilters()

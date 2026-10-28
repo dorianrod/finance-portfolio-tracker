@@ -26,7 +26,7 @@ export default {
       return {}
     function insideComponent(node) {
       for (let parent = node.parent; parent; parent = parent.parent)
-        if (getFunctionComponentName(parent)) return true
+        if (getFunctionComponentName(parent, context.sourceCode)) return true
       return false
     }
     function compound(node) {

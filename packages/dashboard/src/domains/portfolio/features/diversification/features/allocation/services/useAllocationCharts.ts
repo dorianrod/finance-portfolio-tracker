@@ -5,7 +5,7 @@ import { aggregateFilteredPoints } from '@/domains/portfolio/features/diversific
 import { computeMatchingIsins } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeMatchingIsins'
 import { computeTableRows } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeTableRows'
 import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
-import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/filters/filterPointsByPeriod'
+import { filterPointsByPeriod } from '@/domains/portfolio/shared/helpers/selectors/filterPointsByPeriod'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
 export function useAllocationCharts({

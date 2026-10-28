@@ -44,3 +44,9 @@ export type Order = {
 
 const total = order.lines.length
 ```
+
+### ESLint Enforcement
+
+Enable `local/explicit-nullability` for production domain code to reject an optional property whose direct type union also contains `null`. Preserve required nullable properties, optional non-nullable properties, nullable collection items and nullable function results. Dependency module augmentation follows the external contract and is outside this convention. Check rejected and neighboring valid examples through the consuming application's actual configuration.
+
+This syntax-level check does not resolve nullability hidden in named aliases, imported types or mapped types. Review those contracts and the business reason for each nullable field manually; a diagnostic cannot decide which absence representation is appropriate. Do not autofix the choice between a missing property and an explicit null.

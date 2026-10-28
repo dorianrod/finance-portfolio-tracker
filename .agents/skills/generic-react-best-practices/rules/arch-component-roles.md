@@ -164,6 +164,7 @@ Composition is valid: a feature may pass a calculated expression to a view. When
 - Every production component module declares `.view.tsx`, `.state.tsx` or `.feature.tsx`.
 - A view has no runtime import of a state renderer, feature, query, atom, API, service, store or business helper.
 - A state renderer receives a resolved discriminated union, renders it exhaustively and has no hooks or runtime business imports.
+- Enable `local/state-component-contract` to reject runtime business imports and hook calls in state renderers. Resolve imported/immutable hook aliases, React namespace calls and React 19 `use`; respect shadowing. Opaque wrappers still require manual review. Verify rejected and valid cases through the actual project configuration.
 - Type-only imports do not create a runtime boundary violation.
 - Every feature audit explicitly decides whether its presentation should be extracted to a view.
 - An unsplit feature keeps only presentation that is trivial, tightly coupled or lacks an independent visual contract.

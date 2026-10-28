@@ -16,11 +16,7 @@ describe('allocation pie presentation', () => {
       categories,
     })
     expect(result.total).toBe(100)
-    expect(result.data.map((entry) => entry.name)).toEqual([
-      'Equity',
-      'nc',
-      'others (3)',
-    ])
+    expect(result.data.map((entry) => entry.name)).toEqual(['Equity', 'nc', ''])
     expect(result.data.reduce((sum, entry) => sum + entry.value, 0)).toBe(100)
     expect(result.data[2].subItems).toEqual([
       categories[1],

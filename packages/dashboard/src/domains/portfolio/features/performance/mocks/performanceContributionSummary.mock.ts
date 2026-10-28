@@ -1,4 +1,4 @@
-import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import type { PerformanceContributionSummary } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
 
 export function createPerformanceContributionSummary(
   overrides: Partial<PerformanceContributionSummary> = {},

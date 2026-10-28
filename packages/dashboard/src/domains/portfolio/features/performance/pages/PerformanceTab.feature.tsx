@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { UNAVAILABLE_ASSET_IRR_SUMMARY } from '@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/unavailableAssetIrrSummary'
 import { useGetAssetIrrQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/useGetAssetIrrQuery'
-import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.feature'
+import { PassiveIncomeChart } from '@/domains/portfolio/features/performance/components/PassiveIncomeChart.view'
 import { PerformanceContributionCard } from '@/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature'
 import { IrrSinceTrackingKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature'
 import { NetRealizedKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature'
@@ -10,14 +10,13 @@ import { NetUnrealizedKpi } from '@/domains/portfolio/features/performance/compo
 import { PassiveIncomeKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature'
 import { TotalNetPerformanceKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TotalNetPerformanceKpi.feature'
 import { TrailingThreeYearIrrKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature'
-import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart.feature'
+import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart/TriChart.view'
 import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
 import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
-import type {
-  IncomeSummary,
-  PerformanceSummary,
-} from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/performanceCalculations.types'
+import type { IncomeSummary } from '@/domains/portfolio/features/performance/types/incomeSummary.type'
 import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
+import type { PerformanceSummary } from '@/domains/portfolio/features/performance/types/performanceSummary.type'
+import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -139,9 +138,25 @@ export function PerformanceTab({
       {hasChartData && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {history.length > 0 && <UnrealizedPnlChart history={history} />}
-          {history.length > 0 && <TriChart history={history} />}
+          {history.length > 0 && (
+            <TriChart history={history}>
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.trichart.annualizedMoneyWeightedReturnCalculatedOverRollingFixedWindows',
+                )}
+                scope={{ account: 'filterable', period: 'range' }}
+              />
+            </TriChart>
+          )}
           {passiveIncome.length > 0 && (
-            <PassiveIncomeChart data={passiveIncome} />
+            <PassiveIncomeChart data={passiveIncome}>
+              <ScopedInfoTooltip
+                text={i18n.t(
+                  'ui.passiveincomechart.netDividendsAndInterestGroupedByCalendarYear',
+                )}
+                scope={{ account: 'filterable', period: 'range' }}
+              />
+            </PassiveIncomeChart>
           )}
         </div>
       )}

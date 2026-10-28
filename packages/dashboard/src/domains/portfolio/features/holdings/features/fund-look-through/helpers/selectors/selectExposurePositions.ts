@@ -1,4 +1,4 @@
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/quality/accountApplicability'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function selectExposurePositions(

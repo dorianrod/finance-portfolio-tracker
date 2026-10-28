@@ -2,8 +2,8 @@ import { useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
 import { allocationTrendDomain } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain'
+import { buildAllocationTrend } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend'
 import { PositionsToggle } from '@/domains/portfolio/features/diversification/features/allocation/components/PositionsToggle.view'
-import { buildAllocationTrend } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/buildAllocationTrend'
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
 import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
@@ -42,9 +42,7 @@ export function EvoCard({
   return (
     <EvoCardView
       title={title}
-      categories={model.categories}
-      chartData={model.rows}
-      groupedCategory={model.groupedCategory}
+      trend={model}
       dateDomain={model.dateDomain}
       activeCategory={
         activeFilter?.type === dimension ? activeFilter.value : null

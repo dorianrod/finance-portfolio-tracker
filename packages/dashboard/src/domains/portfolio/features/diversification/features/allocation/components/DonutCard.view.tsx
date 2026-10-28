@@ -7,7 +7,8 @@ import {
 } from 'recharts'
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
+import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
+import { getPieEntryTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getPieEntryTone'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -15,10 +16,12 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesPie } from '@/shared/ui/SeriesPie.view'
 import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { PieLabel } from './PieLabel/PieLabel.view'
@@ -50,8 +53,17 @@ export function DonutCardView({
     remainingChildren,
     DonutCardViewPositionsControl,
   )
+  const formatLabel = useFormatPieEntryLabel()
+  const chartData = data.map((entry) => ({
+    ...entry,
+    name: formatLabel(entry),
+  }))
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
+  const legendEntries = data.map((entry) => ({
+    entry,
+    key: JSON.stringify([Boolean(entry.subItems?.length), entry.name]),
+  }))
   const dateLabel = formatDate(date, { style: 'longMonthYear' })
   return (
     <Surface variant="chart">
@@ -87,10 +99,21 @@ export function DonutCardView({
           {i18n.t('ui.donutcard.clickASegmentToFilter')}
         </Text>
       </Layout>
+      <Inline as="div" flow="wrap" gap="compact" spaceAfter="default">
+        {legendEntries.map((item) => (
+          <DonutLegendItem
+            key={item.key}
+            entry={item.entry}
+            activeCategory={activeCategory}
+            isFiltered={isFiltered}
+            onSelect={onSelect}
+          />
+        ))}
+      </Inline>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <SeriesPie
-            data={data}
+            data={chartData}
             dataKey="value"
             nameKey="name"
             innerRadius="32%"
@@ -98,7 +121,6 @@ export function DonutCardView({
             paddingAngle={1}
             labelConnector
             onClick={(_entry, index) => onSelect(data[index])}
-            interactive
           >
             <SeriesPie.Labels>
               <PieLabel />
@@ -117,6 +139,44 @@ export function DonutCardView({
   )
 }
 
+function DonutLegendItem({
+  entry,
+  activeCategory,
+  isFiltered,
+  onSelect,
+}: {
+  entry: PieEntry
+  activeCategory: string | null
+  isFiltered: boolean
+  onSelect: (entry: PieEntry) => void
+}) {
+  const formatLabel = useFormatPieEntryLabel()
+  const label = formatLabel(entry)
+  const tone = getPieEntryTone(entry)
+  if ((entry.subItems?.length ?? 0) > 0)
+    return (
+      <Text variant="micro" tone="subtle">
+        <Inline as="span" align="center" gap="compact">
+          <SeriesSwatch tone={tone} shape="bar" size="default" />
+          {label}
+        </Inline>
+      </Text>
+    )
+  const active = activeCategory === entry.name
+  return (
+    <ToggleButton
+      type="button"
+      active={active}
+      onClick={() => onSelect(entry)}
+      variant="legend"
+      dimmed={isFiltered && !active}
+    >
+      <SeriesSwatch tone={tone} shape="bar" size="default" selected={active} />
+      {label}
+    </ToggleButton>
+  )
+}
+
 function DonutSector({
   activeCategory,
   isFiltered,
@@ -130,9 +190,9 @@ function DonutSector({
   return (
     <ChartSector
       geometry={shapeProps}
-      tone={getAllocationTone(entry.name)}
+      tone={getPieEntryTone(entry)}
       dimmed={isFiltered && activeCategory !== entry.name}
-      selected={activeCategory === entry.name}
+      selected={!entry.subItems && activeCategory === entry.name}
     />
   )
 }

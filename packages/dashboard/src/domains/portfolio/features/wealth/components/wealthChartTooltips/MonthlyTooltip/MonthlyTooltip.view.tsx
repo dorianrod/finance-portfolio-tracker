@@ -1,8 +1,8 @@
-import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/wealthCalculations.types'
 import type {
   MonthlyOperation,
   MonthlyOperationsByMonth,
 } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
@@ -33,9 +33,10 @@ export function MonthlyTooltip({
   const rolling12m = tooltipValue(payload, 'rolling_12m')
   const rollingPerf12m = tooltipValue(payload, 'rolling_perf_12m')
   const pointDate = payload[0]?.payload?.date
-  const month = pointDate
-    ? formatDate(pointDate, { style: 'isoDate' }).slice(0, 7)
-    : String(label).slice(0, 7)
+  const month = formatDate(pointDate ?? label, {
+    style: 'isoDate',
+    fallback: '',
+  }).slice(0, 7)
   const monthOps: ReturnType<MonthlyOperationsByMonth['get']> =
     ops.get(month) ?? []
   const { deposits, withdrawals } = selectMonthlyTooltipOperations(monthOps)

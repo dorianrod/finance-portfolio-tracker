@@ -1,6 +1,5 @@
+import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-
-import type { AccountCoverage } from './computeAllocationCoverage.types'
 
 export function summarizeAllocationCoverage(coverage: CoverageAmounts[]) {
   const totals = coverage.reduce(

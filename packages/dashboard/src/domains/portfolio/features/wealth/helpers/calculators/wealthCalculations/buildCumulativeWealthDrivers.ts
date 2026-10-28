@@ -1,6 +1,5 @@
+import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-
-import type { WealthDriverPoint } from './wealthCalculations.types'
 
 export function buildCumulativeWealthDrivers(
   points: SavingCapacityPoint[],

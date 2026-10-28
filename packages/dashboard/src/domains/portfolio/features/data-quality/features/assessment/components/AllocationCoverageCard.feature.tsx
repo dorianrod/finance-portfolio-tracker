@@ -1,255 +1,38 @@
-import { useState } from 'react'
-
-import { QualityIndicatorCard } from '@/domains/portfolio/features/data-quality/features/assessment/components/QualityIndicatorCard.view'
-import type {
-  AccountCoverage,
-  DimensionCoverage,
-} from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverage.types'
 import { summarizeAllocationCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/hasMaterialQualityGap'
+import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
+import type { DimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import { accountLabel } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/accountLabel'
-import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
-import i18n from '@/i18n/i18n'
-import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { Disclosure } from '@/shared/ui/Disclosure.view'
-import { Grid } from '@/shared/ui/layout/Grid.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
-import { Inset } from '@/shared/ui/layout/Inset.view'
-import { Layout } from '@/shared/ui/layout/Layout.view'
-import { Stack } from '@/shared/ui/layout/Stack.view'
-import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
-import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
-import { Text } from '@/shared/ui/Text.view'
 
-import { AllocationCoverageConnectors } from './AllocationCoverageConnectors.view'
+import { AccountCoverageRow } from './AccountCoverageRow.feature'
+import { AllocationCoverageCardView } from './AllocationCoverageCard.view'
 import { AllocationDimensionQuality } from './AllocationDimensionQuality.feature'
-import { DetailToggle } from './DetailToggle.view'
 
 export function AllocationCoverageCard({
   coverage,
   dimensionCoverage,
-}: AllocationCoverageCardProps) {
-  const accountLabels = useAccountFilterLabels()
-  const [expandedDetail, setExpandedDetail] = useState<
-    'accounts' | 'dimensions' | null
-  >(null)
-  const {
-    allocated: totalAllocated,
-    unallocated: totalUnallocated,
-    notApplicable: totalNotApplicable,
-    total,
-    allocatedPct: mappedPct,
-    unallocatedPct: unmappedPct,
-    notApplicablePct,
-  } = summarizeAllocationCoverage(coverage)
-  if (total <= 0) return null
-
-  return (
-    <div>
-      <Layout>
-        <QualityIndicatorCard
-          label={i18n.t('ui.allocationcoveragecard.portfolioScope')}
-          tooltip={i18n.t(
-            'ui.allocationcoveragecard.totalValueOfTheCurrentActivePositionsIncludedIn',
-          )}
-          amount={total}
-          percentage={100}
-          detail={i18n.t('ui.allocationcoveragecard.currentActivePortfolio')}
-        >
-          <QualityIndicatorCard.TooltipFooter>
-            <LatestQualityScope />
-          </QualityIndicatorCard.TooltipFooter>
-        </QualityIndicatorCard>
-      </Layout>
-
-      <AllocationCoverageConnectors
-        hasUnmappedGap={hasMaterialQualityGap(unmappedPct)}
-      />
-
-      <Grid columns={3} align="start" gap="default">
-        <QualityIndicatorCard
-          label={i18n.t('ui.allocationcoveragecard.mappedPositions')}
-          tooltip={i18n.t(
-            'ui.allocationcoveragecard.currentPositionValueFoundInAtLeastOneAllocation',
-          )}
-          amount={totalAllocated}
-          percentage={mappedPct}
-          detail={i18n.t('ui.allocationcoveragecard.shareOfSelectedPortfolio')}
-          tone="coverage"
-        >
-          <QualityIndicatorCard.TooltipFooter>
-            <LatestQualityScope />
-          </QualityIndicatorCard.TooltipFooter>
-          <Disclosure expanded={expandedDetail === 'accounts'}>
-            <DetailToggle
-              label={i18n.t('ui.allocationcoveragecard.detailsByAccount')}
-              expanded={expandedDetail === 'accounts'}
-              onClick={() =>
-                setExpandedDetail((current) =>
-                  current === 'accounts' ? null : 'accounts',
-                )
-              }
-            />
-            <Layout spaceBefore="default">
-              <Disclosure.Content variant="sectionStart">
-                <Stack gap="relaxed" inset="default">
-                  {coverage.map((item) => (
-                    <AccountCoverageRow
-                      key={item.account}
-                      accountLabels={accountLabels}
-                      coverage={item}
-                    />
-                  ))}
-                </Stack>
-              </Disclosure.Content>
-            </Layout>
-          </Disclosure>
-        </QualityIndicatorCard>
-        <QualityIndicatorCard
-          label={i18n.t('ui.allocationcoveragecard.unmappedPositions')}
-          tooltip={i18n.t(
-            'ui.allocationcoveragecard.positionValueWithNoAllocationRowFoundTogetherWith',
-          )}
-          amount={totalUnallocated}
-          percentage={unmappedPct}
-          detail={
-            totalUnallocated > 0
-              ? i18n.t('ui.allocationcoveragecard.noAllocationRowFound')
-              : i18n.t('ui.allocationcoveragecard.allApplicablePositionsMapped')
-          }
-          tone={hasMaterialQualityGap(unmappedPct) ? 'warning' : 'coverage'}
-        >
-          <QualityIndicatorCard.TooltipFooter>
-            <LatestQualityScope />
-          </QualityIndicatorCard.TooltipFooter>
-          <Disclosure expanded={expandedDetail === 'dimensions'}>
-            <DetailToggle
-              label={i18n.t('ui.allocationcoveragecard.detailsByDimension')}
-              expanded={expandedDetail === 'dimensions'}
-              onClick={() =>
-                setExpandedDetail((current) =>
-                  current === 'dimensions' ? null : 'dimensions',
-                )
-              }
-            />
-            <Layout spaceBefore="default">
-              <Disclosure.Content variant="sectionStart">
-                <Inset inset="default">
-                  <Layout spaceAfter="default">
-                    <Text as="p" variant="microHelper" tone="subtle">
-                      {i18n.t(
-                        'ui.allocationcoveragecard.unmappedPositionsAreNcInEveryDimensionMappedRows',
-                      )}
-                    </Text>
-                  </Layout>
-                  <AllocationDimensionQuality coverage={dimensionCoverage} />
-                </Inset>
-              </Disclosure.Content>
-            </Layout>
-          </Disclosure>
-        </QualityIndicatorCard>
-        <QualityIndicatorCard
-          label={i18n.t('ui.allocationcoveragecard.notApplicable')}
-          tooltip={i18n.t(
-            'ui.allocationcoveragecard.savingsCheckingAndBrokerageCashBalancesAreIntentionallyExcluded',
-          )}
-          amount={totalNotApplicable}
-          percentage={notApplicablePct}
-          detail={i18n.t(
-            'ui.allocationcoveragecard.savingsCheckingAndBrokerageCash',
-          )}
-          tone="muted"
-        >
-          <QualityIndicatorCard.TooltipFooter>
-            <LatestQualityScope />
-          </QualityIndicatorCard.TooltipFooter>
-        </QualityIndicatorCard>
-      </Grid>
-    </div>
-  )
-}
-
-function LatestQualityScope() {
-  return <FilterScopeBadges account="filterable" period="latest" />
-}
-
-type AllocationCoverageCardProps = {
+}: {
   coverage: AccountCoverage[]
   dimensionCoverage: DimensionCoverage[]
-}
-
-function AccountCoverageRow({
-  accountLabels,
-  coverage,
-}: {
-  accountLabels: Record<string, string>
-  coverage: AccountCoverage
 }) {
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
-  const { total, allocatedPct, unallocatedPct, notApplicablePct } =
-    summarizeAllocationCoverage([coverage])
-  if (total <= 0) return null
-  const label = accountLabel(coverage.account, accountLabels)
-  const summary =
-    coverage.allocated + coverage.unallocated > 0
-      ? i18n.t('ui.allocationcoveragecard.allocatedSummary', {
-          amount: formatMoney(coverage.allocated, { style: 'full' }),
-          percentage: formatPercentage(allocatedPct),
-        })
-      : i18n.t('ui.allocationcoveragecard.notApplicableSummary', {
-          amount: formatMoney(coverage.notApplicable, { style: 'full' }),
-        })
-  const detail = i18n.t('ui.allocationcoveragecard.accountCoverageDetail', {
-    allocated: formatMoney(coverage.allocated, { style: 'full' }),
-    unallocated: formatMoney(coverage.unallocated, { style: 'full' }),
-    notApplicable: formatMoney(coverage.notApplicable, { style: 'full' }),
-  })
+  const summary = summarizeAllocationCoverage(coverage)
+  if (summary.total <= 0) return null
   return (
-    <div>
-      <Inline
-        as="div"
-        spaceAfter="default"
-        align="baseline"
-        justify="between"
-        gap="default"
-      >
-        <Text variant="caption" tone="muted" truncate title={label}>
-          {label}
-        </Text>
-        <Layout as="span" flow="inline" sizing="fixed">
-          <Text variant="micro" tone="subtle" numeric>
-            {summary}
-          </Text>
-        </Layout>
-      </Inline>
-      <Layout height="track" overflow="clip">
-        <Surface variant="track" title={detail}>
-          <Inline as="div" height="full">
-            {coverage.allocated > 0 && (
-              <SeriesSwatch
-                as="div"
-                tone={PORTFOLIO_CHART_TONES.coverage}
-                share={allocatedPct}
-              />
-            )}
-            {coverage.unallocated > 0 && (
-              <SeriesSwatch
-                as="div"
-                tone={PORTFOLIO_CHART_TONES.coverageGap}
-                share={unallocatedPct}
-              />
-            )}
-            {coverage.notApplicable > 0 && (
-              <ToneSwatch as="div" tone="subtle" share={notApplicablePct} />
-            )}
-          </Inline>
-        </Surface>
-      </Layout>
-    </div>
+    <AllocationCoverageCardView
+      summary={summary}
+      hasUnmappedGap={hasMaterialQualityGap(summary.unallocatedPct)}
+    >
+      <AllocationCoverageCardView.Scope>
+        <FilterScopeBadges account="filterable" period="latest" />
+      </AllocationCoverageCardView.Scope>
+      <AllocationCoverageCardView.Accounts>
+        {coverage.map((item) => (
+          <AccountCoverageRow key={item.account} coverage={item} />
+        ))}
+      </AllocationCoverageCardView.Accounts>
+      <AllocationCoverageCardView.Dimensions>
+        <AllocationDimensionQuality coverage={dimensionCoverage} />
+      </AllocationCoverageCardView.Dimensions>
+    </AllocationCoverageCardView>
   )
 }

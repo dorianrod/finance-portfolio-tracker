@@ -1,7 +1,5 @@
-import type {
-  AllocationFilter,
-  MatchingIsinRow,
-} from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
+import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
+import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 
 export function computeTableRows(
