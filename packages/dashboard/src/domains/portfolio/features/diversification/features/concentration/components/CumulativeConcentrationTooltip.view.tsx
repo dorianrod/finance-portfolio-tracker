@@ -2,6 +2,7 @@ import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -12,6 +13,7 @@ export function CumulativeConcentrationTooltip({
   payload,
 }: CumulativeConcentrationTooltipProps) {
   const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
@@ -27,13 +29,18 @@ export function CumulativeConcentrationTooltip({
       </ChartText>
       <Layout spaceBefore="compact">
         <ChartText as="div" tone={'tooltipLabel'}>
-          #{point.rank} {point.name}
+          {i18n.t('ui.cumulativeconcentrationtooltip.rankedAsset', {
+            rank: formatNumber(point.rank),
+            name: point.name,
+          })}
         </ChartText>
       </Layout>
       <Layout spaceBefore="compact">
         <ChartText as="div" tone={PORTFOLIO_CHART_TONES.riskSecondary}>
-          {formatMoney(point.value, { style: 'full' })} ·{' '}
-          {formatPercentage(point.weight)}
+          {i18n.t('ui.cumulativeconcentrationtooltip.holdingValue', {
+            amount: formatMoney(point.value, { style: 'full' }),
+            percentage: formatPercentage(point.weight),
+          })}
         </ChartText>
       </Layout>
     </TooltipBox>

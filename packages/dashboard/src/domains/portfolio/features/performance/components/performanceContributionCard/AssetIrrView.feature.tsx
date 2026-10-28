@@ -4,6 +4,7 @@ import { buildAssetIrrRankings } from '@/domains/portfolio/features/performance/
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -19,6 +20,7 @@ export function AssetIrrView({
   status: IrrStatus
 }) {
   const formatExactPerformanceDateRange = useFormatExactPerformanceDateRange()
+  const formatNumber = useFormatNumber()
   if (status === 'loading') {
     return (
       <Layout spaceBefore="spacious">
@@ -63,7 +65,7 @@ export function AssetIrrView({
               />
               <Layout spaceBefore="compact">
                 <Text as="div" variant="statistic" tone="secondary" numeric>
-                  {measuredCount}
+                  {formatNumber(measuredCount)}
                 </Text>
               </Layout>
             </div>

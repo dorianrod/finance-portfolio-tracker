@@ -179,6 +179,18 @@ typed tick values, and CSV schema helpers preserve their validated generic outpu
 Browser and tooling projects both use `strict`, `noImplicitReturns`,
 `noImplicitOverride` and `noPropertyAccessFromIndexSignature`.
 
+Discarding a promise with `void` still requires rejection handling. Speculative
+tab downloads defer failure feedback to the navigation error boundary, while
+translation initialization completes before dependent modules render. Numeric
+JSX text uses the shared formatter hooks; the configured check also follows
+immutable text aliases and native number-to-string conversions, keeping scalar
+props and technical attributes valid. Component-role analysis recognizes
+translation calls and native boolean coercion so they cannot disguise a purely
+presentational component as a feature.
+External UI renderers are named module-level components, including renderers
+supplied in literal configuration objects to dependency factories such as table
+column builders.
+
 `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` remain migration
 candidates. Enable them after reviewing collection completeness and the intended
 meaning of absent versus explicitly undefined props. `no-unnecessary-condition`

@@ -68,6 +68,10 @@ Use the custom ESLint rule `local/require-children-composition` with type inform
 
 Resolve dependency declarations to distinguish external components from local imports and wrappers; do not rely on prop names or a blanket chart-library exemption. Reject external inline render functions and render-local component references. Private dependency renderers may receive inherited external contracts; locally declared UI props and inherited props on public project APIs remain checked. Data, event handlers and scalar formatters remain valid. Arbitrary runtime factories and reassigned element aliases are outside this bounded analysis. Changing a component API requires review and has no automatic fix.
 
+Apply the external-renderer boundary to UI-valued fields in literal configuration objects passed to resolved dependency functions, including aliased factory methods. Inspect nested literal objects and arrays, preserving named module-level renderers, scalar callbacks and local data APIs. Configuration assembled through opaque calls, mutable values or arbitrary object spreads still requires manual review. Extracting a renderer must preserve the dependency's injected props and the component's actual role.
+
+Testing Library's `wrapper` option in tests is an explicit exception: per-test provider factories or locally named wrappers may capture that test's query client or Jotai store, as required by `test-renderhook` and `test-jotai-provider-isolation`. Resolve the external Testing Library contract; this does not permit render-local components in application code or other inline UI configuration callbacks in tests.
+
 ### References
 
 - [Direct, renderable compound slots](ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.

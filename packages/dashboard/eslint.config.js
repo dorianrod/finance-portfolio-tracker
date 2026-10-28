@@ -32,6 +32,7 @@ import noHardcodedColors from './eslint-rules/no-hardcoded-colors.js'
 import noHardcodedUiStrings from './eslint-rules/no-hardcoded-ui-strings.js'
 import noHelperContextParams from './eslint-rules/no-helper-context-params.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
+import noInlineNumberDisplay from './eslint-rules/no-inline-number-display.js'
 import noLossyBooleanTransform from './eslint-rules/no-lossy-boolean-transform.js'
 import noNumberStringRoundtrip from './eslint-rules/no-number-string-roundtrip.js'
 import noOverwrittenUiProps from './eslint-rules/no-overwritten-ui-props.js'
@@ -100,6 +101,7 @@ export default defineConfig([
           'no-hardcoded-colors': noHardcodedColors,
           'no-helper-context-params': noHelperContextParams,
           'no-inline-format-fallback': noInlineFormatFallback,
+          'no-inline-number-display': noInlineNumberDisplay,
           'no-lossy-boolean-transform': noLossyBooleanTransform,
           'no-number-string-roundtrip': noNumberStringRoundtrip,
           'no-overwritten-ui-props': noOverwrittenUiProps,
@@ -209,7 +211,10 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-deprecated': 'error',
       '@typescript-eslint/await-thenable': 'error',
-      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        { ignoreVoid: false },
+      ],
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',
@@ -277,6 +282,7 @@ export default defineConfig([
       'local/no-hardcoded-colors': 'error',
       'local/no-helper-context-params': 'error',
       'local/no-inline-format-fallback': 'error',
+      'local/no-inline-number-display': 'error',
       'local/no-prop-drilling': 'error',
       'local/no-react-context': 'error',
       'local/no-shared-ui-classname': 'error',

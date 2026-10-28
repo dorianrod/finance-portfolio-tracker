@@ -23,7 +23,16 @@ async function lint(rule, code) {
 
 describe('typed ESLint safety through the application configuration', () => {
   it.each([
-    ['no-floating-promises', 'Promise.resolve(1)', 'void Promise.resolve(1)'],
+    [
+      'no-floating-promises',
+      'Promise.resolve(1)',
+      'Promise.resolve(1).catch((error: unknown) => console.error(error))',
+    ],
+    [
+      'no-floating-promises',
+      "void Promise.reject(new Error('Example'))",
+      "void Promise.reject(new Error('Example')).catch((error: unknown) => console.error(error))",
+    ],
     [
       'await-thenable',
       'async function read() {return await 1}',

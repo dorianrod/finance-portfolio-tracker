@@ -3,6 +3,7 @@ import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import i18n from '@/i18n/i18n'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { CountBadge } from '@/shared/ui/badge/CountBadge.view'
 import { Navigation } from '@/shared/ui/controls/Navigation.view'
 import { NavigationButton } from '@/shared/ui/controls/NavigationButton.view'
@@ -25,6 +26,7 @@ export function DashboardNavigation({
 }) {
   const { navigateTo } = useDashboardNavigation()
   const { openQualityOverview } = useQualityNavigation()
+  const formatNumber = useFormatNumber()
 
   return (
     <div className="mb-5 overflow-x-auto">
@@ -56,7 +58,7 @@ export function DashboardNavigation({
                   }
                 >
                   <Layout as="span" flow="inline" inset="compact">
-                    {qualityCount}
+                    {formatNumber(qualityCount)}
                   </Layout>
                 </CountBadge>
               )}

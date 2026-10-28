@@ -10,6 +10,29 @@ afterEach(cleanup)
 
 describe('IncomeSavingsTooltip', () => {
   it.each([
+    { incomeStatus: 'actual', expected: '2026' },
+    { incomeStatus: 'forecast', expected: '2026 · forecast' },
+  ] as const)(
+    'formats the $incomeStatus year without grouping',
+    ({ incomeStatus, expected }) => {
+      render(
+        <IncomeSavingsTooltip
+          active
+          payload={[
+            {
+              payload: makeAnnualIncomeSavingsPoint({
+                year: 2026,
+                incomeStatus,
+              }),
+            },
+          ]}
+        />,
+      )
+      expect(screen.getByText(expected)).toBeTruthy()
+    },
+  )
+
+  it.each([
     {
       savingsThrough: new Date('2026-09-30T00:00:00Z'),
       expected: '30 Sept 2026',

@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest'
 const dashboardDirectory = resolve(import.meta.dirname, '..')
 const eslint = new ESLint({ cwd: dashboardDirectory })
 
-async function lint(code) {
+async function lint(code, file = 'src/main.tsx') {
   const [result] = await eslint.lintText(code, {
-    filePath: resolve(dashboardDirectory, 'src/main.tsx'),
+    filePath: resolve(dashboardDirectory, file),
   })
   return result.messages.filter(
     (message) =>
@@ -17,6 +17,69 @@ async function lint(code) {
 }
 
 describe('configured children composition enforcement', () => {
+  const isolatedWrapper = `
+    import {renderHook as mount} from '@testing-library/react'
+    import {createStore, Provider} from 'jotai'
+    function mountIsolated() {
+      const store = createStore()
+      function Wrapper({children}: {children: React.ReactNode}) {return <Provider store={store}>{children}</Provider>}
+      return mount(() => true, {wrapper: Wrapper})
+    }
+  `
+
+  it.each(['wrapper', '"wrapper"'])(
+    'preserves per-test isolation through the Testing Library %s contract',
+    async (property) => {
+      expect(
+        await lint(
+          isolatedWrapper.replace('wrapper:', `${property}:`),
+          'src/app/services/useResetDashboardFilters.test.tsx',
+        ),
+      ).toEqual([])
+    },
+    30_000,
+  )
+
+  it('keeps render-local wrapper components forbidden in application code', async () => {
+    expect(await lint(isolatedWrapper)).toEqual([
+      expect.objectContaining({ messageId: 'extractRenderer', severity: 2 }),
+    ])
+  }, 30_000)
+
+  it.each([
+    "const columns = createColumnHelper<{id: string}>(); columns.display({id: 'name', header: () => <span>Title</span>})",
+    "const columns = createColumnHelper<{id: string}>(); const display = columns['display']; display({id: 'name', header: () => <span>Title</span>})",
+    "const columns = createColumnHelper<{id: string}>(); columns.display({id: 'name', header() {return <span>Title</span>}})",
+  ])(
+    'rejects inline UI renderers in external configuration: %s',
+    async (expression) => {
+      const messages = await lint(
+        `import {createColumnHelper} from '@tanstack/react-table'; ${expression}`,
+      )
+      expect(messages).toEqual([
+        expect.objectContaining({ messageId: 'extractRenderer', severity: 2 }),
+      ])
+    },
+    30_000,
+  )
+
+  it.each([
+    "const columns = createColumnHelper<{id: string}>(); function Header() {return <span>Title</span>}; columns.display({id: 'name', header: Header})",
+    "const columns = createColumnHelper<{id: string}>(); columns.display({id: 'name', header: () => 'Title'})",
+    'function configure(options: {renderer: () => React.ReactNode}) {return options}; configure({renderer: () => <span/>})',
+    'function run(createColumnHelper: () => {display: (options: {header: () => React.ReactNode}) => unknown}) {createColumnHelper().display({header: () => <span/>})}',
+  ])(
+    'preserves named renderers, scalar callbacks and local APIs: %s',
+    async (expression) => {
+      expect(
+        await lint(
+          `import {createColumnHelper} from '@tanstack/react-table'; ${expression}`,
+        ),
+      ).toEqual([])
+    },
+    30_000,
+  )
+
   it.each([
     ['JSX', '<Panel header={<Header />} />'],
     ['a fragment', '<Panel header={<><Header /></>} />'],

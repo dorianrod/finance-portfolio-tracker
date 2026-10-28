@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-import { PositionIrrCell } from './PositionIrrCell.feature'
+import { PositionIrrCell } from './PositionIrrCell.view'
 
 afterEach(cleanup)
 

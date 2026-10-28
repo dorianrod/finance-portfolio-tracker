@@ -2,11 +2,13 @@ import {
   childrenOf,
   findVariable,
   importedBinding,
+  stableInitializer,
   unwrap,
 } from './ast-bindings.js'
 import { getPublicExports } from './get-public-exports.js'
 import { libraryBinding } from './library-binding.js'
 import { getFunctionComponentName } from './react-component-utils.js'
+import { createTranslationResolver } from './translation-bindings.js'
 
 export const BUSINESS_PATH_SEGMENTS = [
   '/apis/',
@@ -41,6 +43,19 @@ function visualSource(source) {
 // Opaque calls are review candidates, never proof that business behavior is absent.
 export function analyzeComponentRoles(sourceCode, program) {
   const components = []
+  const translate = createTranslationResolver(sourceCode)
+  function booleanConversion(input, seen = new Set()) {
+    const node = unwrap(input)
+    if (!node || seen.has(node)) return false
+    seen.add(node)
+    if (
+      node.type === 'Identifier' &&
+      node.name === 'Boolean' &&
+      !findVariable(sourceCode, node)?.defs.length
+    )
+      return true
+    return booleanConversion(stableInitializer(sourceCode, node), seen)
+  }
   function collect(node) {
     const name = getFunctionComponentName(node, sourceCode)
     if (name)
@@ -79,6 +94,11 @@ export function analyzeComponentRoles(sourceCode, program) {
   }
   for (const component of components) {
     function invocation(node) {
+      if (
+        translate(node) ||
+        (node.type === 'CallExpression' && booleanConversion(node.callee))
+      )
+        return
       if (libraryBinding(sourceCode, node.callee, 'react') === 'use') {
         component.opaque.add('React.use: inspect the resource responsibility')
         return

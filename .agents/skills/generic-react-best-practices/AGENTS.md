@@ -211,6 +211,8 @@ Enable `local/component-role` at error level. Check runtime imports, reexports a
 
 Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
 
+Recognize resolved translation calls and native boolean coercion, including immutable aliases, as presentation-compatible operations rather than opaque evidence of business behavior. Preserve shadowed callbacks as unresolved. These operations alone do not justify a feature; state, actions and business calculations retain their own ownership signals.
+
 Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
 ### Audit every component boundary
@@ -2605,6 +2607,8 @@ Test files may relax `no-explicit-any`, but prefer real domain types and mocks t
 
 Use typed `await-thenable`, `no-floating-promises`, `no-misused-promises`, `prefer-promise-reject-errors`, `only-throw-error`, `no-base-to-string`, `restrict-plus-operands`, `restrict-template-expressions`, `no-misused-spread` and `unbound-method` for their respective runtime hazards. Use `switch-exhaustiveness-check` for closed unions, `no-unnecessary-type-assertion`, `no-duplicate-type-constituents` and `no-redundant-type-constituents` for misleading type declarations, and `consistent-type-imports` to expose erased dependencies. Apply these to tests and tooling too where the same hazards occur. An intentionally asynchronous mock is not a reason to enable `require-await` blindly.
 
+Configure `no-floating-promises` with `ignoreVoid: false`: discarding a promise does not handle a rejection. Await or return required initialization, and attach an explicit rejection handler to speculative work such as module preloading. A handled promise may still be discarded; an empty handler needs a concrete reason why the failure is intentionally delegated or ignored. Exercise both an unhandled `void` call and its handled neighbor through the consuming configuration.
+
 Enable `no-unsafe-type-assertion` and `no-non-null-assertion` to prevent narrowing with `as` or postfix `!` in place of a proof. Validate external strings against actual options before invoking a callback with a closed union. Narrow nullable fields with checked type predicates; read map entries into a local value or iterate entries instead of assuming a later lookup exists. Keep `as const` and widening assertions valid. A type predicate must verify the property it claims; moving an unchecked assertion into a predicate is not a correction.
 
 Use `no-unnecessary-type-conversion` to reject conversions that do not change a declared primitive value. Pair `consistent-type-imports` with `no-import-type-side-effects` when using `verbatimModuleSyntax`: `import { type Order }` can leave a runtime module import, whereas `import type { Order }` is erased completely. Keep mixed type/value imports and intentional side-effect imports valid.
@@ -3540,6 +3544,10 @@ Use the custom ESLint rule `local/require-children-composition` with type inform
 
 Resolve dependency declarations to distinguish external components from local imports and wrappers; do not rely on prop names or a blanket chart-library exemption. Reject external inline render functions and render-local component references. Private dependency renderers may receive inherited external contracts; locally declared UI props and inherited props on public project APIs remain checked. Data, event handlers and scalar formatters remain valid. Arbitrary runtime factories and reassigned element aliases are outside this bounded analysis. Changing a component API requires review and has no automatic fix.
 
+Apply the external-renderer boundary to UI-valued fields in literal configuration objects passed to resolved dependency functions, including aliased factory methods. Inspect nested literal objects and arrays, preserving named module-level renderers, scalar callbacks and local data APIs. Configuration assembled through opaque calls, mutable values or arbitrary object spreads still requires manual review. Extracting a renderer must preserve the dependency's injected props and the component's actual role.
+
+Testing Library's `wrapper` option in tests is an explicit exception: per-test provider factories or locally named wrappers may capture that test's query client or Jotai store, as required by `test-renderhook` and `test-jotai-provider-isolation`. Resolve the external Testing Library contract; this does not permit render-local components in application code or other inline UI configuration callbacks in tests.
+
 ### References
 
 - [Direct, renderable compound slots](rules/ui-compound-slots-direct-children.md) — preserve slot discovery during extraction and conditional rendering.
@@ -4332,6 +4340,8 @@ Numeric formatters accept `number | null | undefined`. A string fallback is disp
 Conditions that select structure, loading or error states, permissions or comparability remain component/business logic. A calculation's numeric default belongs to that calculation. A domain formatter may add independent business meaning; a missing-value placeholder alone does not justify one.
 
 ### ESLint Enforcement
+
+Enable the typed `local/no-inline-number-display` rule for numeric text rendered as JSX children. Report number-valued expressions, native `String(number)` conversions (including immutable constructor aliases), numeric `.toString()` calls and raw numeric template expressions. Follow immutable local text aliases and conditional output branches; respect shadowed constructors. Keep scalar props, native input values and technical JSX attributes outside the text-display check. Nullable numbers still need the formatter's fallback contract. Verify rejected and neighboring valid cases through the consuming configuration. Do not autofix: the reviewer chooses the intended precision, grouping and missing-value behavior. This bounded check does not trace arbitrary renderer functions, object properties or mutable bindings; inspect display models and their consumers manually.
 
 Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
 

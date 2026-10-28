@@ -8,21 +8,17 @@ import { computeFundExposurePercentages } from '@/domains/portfolio/features/dat
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
 import type { AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/types/affectedAsset.type'
 import type { QualityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
-import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
-import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
-import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
+import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
-import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import i18n from '@/i18n/i18n'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function useBuildDataQualityViewModel() {
+  const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   return useCallback(
     ({
@@ -35,7 +31,7 @@ export function useBuildDataQualityViewModel() {
       fundSnapshots,
       fundUnresolved,
       rawData,
-    }: BuildDataQualityViewModelInput) => {
+    }: DataQualityTabProps) => {
       const coverage = rawData.loading
         ? []
         : computeAllocationCoverageByAccount(positions, rawData)
@@ -107,8 +103,11 @@ export function useBuildDataQualityViewModel() {
         !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
       const themes = [
-        buildPipelineTheme(errors),
-        buildManualPricesTheme(manualPriceOverrides),
+        buildPipelineTheme(errors, formatNumber(errors.length)),
+        buildManualPricesTheme(
+          manualPriceOverrides,
+          formatNumber(manualPriceOverrides.length),
+        ),
         buildClassificationTheme(
           classificationGap,
           rawData.loading,
@@ -141,20 +140,8 @@ export function useBuildDataQualityViewModel() {
         themes,
       }
     },
-    [formatPercentage],
+    [formatNumber, formatPercentage],
   )
-}
-
-type BuildDataQualityViewModelInput = {
-  positions: PositionRow[]
-  errors: PipelineError[]
-  manualPriceOverrides: ManualPriceOverride[]
-  fundStatuses: FundHoldingStatus[]
-  fundReport: FundCoverageReport | null
-  fundHoldings: FundHolding[]
-  fundSnapshots: FundSnapshot[]
-  fundUnresolved: FundUnresolved[]
-  rawData: RawIsinData
 }
 
 function buildAffectedAssets(
@@ -192,7 +179,10 @@ function buildAffectedAssets(
   )
 }
 
-function buildPipelineTheme(errors: PipelineError[]): QualityTheme {
+function buildPipelineTheme(
+  errors: PipelineError[],
+  formattedCount: string,
+): QualityTheme {
   const errorCount = errors.filter((item) => item.level === 'error').length
   const warningCount = errors.length - errorCount
   let pipelineTone: QualityTone = 'healthy'
@@ -211,7 +201,7 @@ function buildPipelineTheme(errors: PipelineError[]): QualityTheme {
     description: i18n.t(
       'ui.builddataqualityviewmodelTs.importPositionAndMarketDataAnomaliesDetectedDuringThe',
     ),
-    metric: String(errors.length),
+    metric: formattedCount,
     metricLabel: i18n.t('ui.builddataqualityviewmodel.anomalyLabel', {
       count: errors.length,
     }),
@@ -221,6 +211,7 @@ function buildPipelineTheme(errors: PipelineError[]): QualityTheme {
 }
 function buildManualPricesTheme(
   manualPriceOverrides: ManualPriceOverride[],
+  formattedCount: string,
 ): QualityTheme {
   return {
     id: 'prices',
@@ -228,7 +219,7 @@ function buildManualPricesTheme(
     description: i18n.t(
       'ui.builddataqualityviewmodelTs.overridesThatReplaceAutomaticMarketPrices',
     ),
-    metric: String(manualPriceOverrides.length),
+    metric: formattedCount,
     metricLabel: i18n.t('ui.builddataqualityviewmodel.overrideLabel', {
       count: manualPriceOverrides.length,
     }),

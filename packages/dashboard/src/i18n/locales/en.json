@@ -72,7 +72,6 @@
   "ui.analysisreliabilitykpi.warningCount_other": "{{count}} warnings",
   "ui.annualincomesavingschart.annualAllAccounts": "Annual · All accounts",
   "ui.annualincomesavingschart.annualDeclaredIncomeComparedWithDepositsMinusWithdrawalsAcross": "Annual declared income compared with deposits minus withdrawals across all accounts.",
-  "ui.annualincomesavingschart.forecast": "· forecast",
   "ui.annualincomesavingschart.incomeVsNetContributions": "Income vs net contributions",
   "ui.annualincomesavingschart.netContributions.643e29": "Net contributions",
   "ui.annualincomesavingschart.netSalary.970d84": "Net salary",
@@ -801,5 +800,9 @@
   "ui.hoverchartsTooltips.seriesValue": "{{label}}: {{amount}}",
   "ui.portfoliochartsTooltips.accountOperation": "{{direction}} {{amount}} — {{account}}",
   "ui.rollingunitpriceperf.sixMonths": "6m",
-  "ui.rollingunitpriceperf.oneYear": "1y"
+  "ui.rollingunitpriceperf.oneYear": "1y",
+  "ui.accounttreeselect.selectedCount": "{{selected}}/{{total}}",
+  "ui.cumulativeconcentrationtooltip.rankedAsset": "#{{rank}} {{name}}",
+  "ui.cumulativeconcentrationtooltip.holdingValue": "{{amount}} · {{percentage}}",
+  "ui.annualincomesavingschart.forecastYear": "{{year}} · forecast"
 }

@@ -64,6 +64,8 @@ Enable `local/component-role` at error level. Check runtime imports, reexports a
 
 Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
 
+Recognize resolved translation calls and native boolean coercion, including immutable aliases, as presentation-compatible operations rather than opaque evidence of business behavior. Preserve shadowed callbacks as unresolved. These operations alone do not justify a feature; state, actions and business calculations retain their own ownership signals.
+
 Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
 ### Audit every component boundary

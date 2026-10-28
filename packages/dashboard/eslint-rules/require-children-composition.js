@@ -197,6 +197,39 @@ export default {
       }
     }
 
+    function inspectConfiguration(input, testWrapper = false) {
+      const argument = unwrap(input)
+      if (ts.isArrayLiteralExpression(argument)) {
+        for (const element of argument.elements) inspectConfiguration(element)
+      } else if (ts.isObjectLiteralExpression(argument)) {
+        for (const property of argument.properties) {
+          const name = property.name
+          const propertyName =
+            name && (ts.isIdentifier(name) || ts.isStringLiteral(name))
+              ? name.text
+              : name?.getText()
+          if (testWrapper && propertyName === 'wrapper') continue
+          if (ts.isMethodDeclaration(property)) {
+            inspectValue(
+              services.tsNodeToESTreeNodeMap.get(property),
+              property,
+              property.name.getText(),
+              true,
+            )
+            continue
+          }
+          if (!ts.isPropertyAssignment(property)) continue
+          inspectValue(
+            services.tsNodeToESTreeNodeMap.get(property),
+            property.initializer,
+            property.name.getText(),
+            true,
+          )
+          inspectConfiguration(property.initializer)
+        }
+      }
+    }
+
     function factoryName(input, seen = new Set()) {
       const node = unwrap(input)
       if (!node || seen.has(node)) return undefined
@@ -278,7 +311,27 @@ export default {
       },
       CallExpression(node) {
         const call = services.esTreeNodeToTSNodeMap.get(node)
-        if (!factoryName(call.expression) || !call.arguments[1]) return
+        if (!factoryName(call.expression)) {
+          const declaration = checker.getResolvedSignature(call)?.declaration
+          if (
+            declaration &&
+            services.program.isSourceFileFromExternalLibrary(
+              declaration.getSourceFile(),
+            )
+          )
+            for (const argument of call.arguments)
+              inspectConfiguration(
+                argument,
+                /(?:\.(?:test|spec)\.[cm]?[jt]sx?$|\/__tests__\/)/u.test(
+                  context.filename,
+                ) &&
+                  /[/\\]@testing-library[/\\]react[/\\]/u.test(
+                    declaration.getSourceFile().fileName,
+                  ),
+              )
+          return
+        }
+        if (!call.arguments[1]) return
         const target = factoryTarget(call.arguments[0])
         if (!target) return
         const intrinsic = Boolean(

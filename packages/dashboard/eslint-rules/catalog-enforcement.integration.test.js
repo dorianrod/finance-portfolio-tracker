@@ -15,6 +15,24 @@ const state = 'src/app/DashboardLoadState.state.tsx'
 const cases = [
   {
     rule: 'component-role',
+    file: feature,
+    message: 'featureWithoutBusiness',
+    invalid:
+      "import text from '@/i18n/i18n'; const label = text.t; export function Field({value}: {value: string}) {return <span>{Boolean(value) ? label('ui.app.loading') : null}</span>}",
+    valid:
+      "import text from '@/i18n/i18n'; import {useAtomValue} from 'jotai'; import {dashboardFiltersOpenAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'; export function Field() {const open = useAtomValue(dashboardFiltersOpenAtom);return <span>{open ? text.t('ui.app.loading') : null}</span>}",
+  },
+  {
+    rule: 'component-role',
+    file: feature,
+    message: 'featureWithoutBusiness',
+    invalid:
+      "import {useTranslation} from 'react-i18next'; export function Field() {const {t: label} = useTranslation();return <span>{label('ui.app.loading')}</span>}",
+    valid:
+      'export function Field({Boolean}: {Boolean: () => string}) {return <span>{Boolean()}</span>}',
+  },
+  {
+    rule: 'component-role',
     file: view,
     message: 'viewImportsBusiness',
     invalid:

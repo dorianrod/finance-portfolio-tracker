@@ -5,6 +5,7 @@ import { toggleAccountTypeSelection } from '@/domains/portfolio/features/scope-s
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
 import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import i18n from '@/i18n/i18n'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { Button } from '@/shared/ui/controls/Button.view'
 import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
@@ -106,6 +107,7 @@ function TreeAccountType({
   selected: Set<string>
   type: string
 }) {
+  const formatNumber = useFormatNumber()
   if (accounts.length === 0) return null
   const { allSelected, partiallySelected, selectedCount } =
     accountTypeSelectionState(accounts, selected)
@@ -126,7 +128,10 @@ function TreeAccountType({
           {selectedCount > 0 && (
             <Layout as="span" flow="inline" placement="trailing">
               <Text variant="micro" tone="subtle" numeric>
-                {selectedCount}/{accounts.length}
+                {i18n.t('ui.accounttreeselect.selectedCount', {
+                  selected: formatNumber(selectedCount),
+                  total: formatNumber(accounts.length),
+                })}
               </Text>
             </Layout>
           )}

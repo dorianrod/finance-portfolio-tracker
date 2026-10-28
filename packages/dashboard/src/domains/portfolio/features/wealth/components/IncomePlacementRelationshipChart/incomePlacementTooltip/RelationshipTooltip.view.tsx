@@ -2,6 +2,7 @@ import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/weal
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -15,6 +16,7 @@ export function RelationshipTooltip({
   payload?: Array<{ payload?: AnnualIncomeSavingsPoint }>
 }) {
   const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
   const point = payload?.[0]?.payload
   if (!active || !point) return null
@@ -22,7 +24,7 @@ export function RelationshipTooltip({
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
         <ChartText as="div" tone={'tooltipText'} variant="strong">
-          {point.year}
+          {formatNumber(point.year, { useGrouping: false })}
         </ChartText>
       </Layout>
       <ChartText as="div" tone={'tooltipLabel'}>
