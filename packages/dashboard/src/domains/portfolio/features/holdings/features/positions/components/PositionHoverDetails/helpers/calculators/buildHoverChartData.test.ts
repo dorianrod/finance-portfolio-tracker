@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartData.types'
 import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
 import { computeMonthlyBalances } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'
-import { computeRollingReturns } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns'
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
 
@@ -18,26 +17,6 @@ describe('computeMonthlyBalances', () => {
       { month: '2024-01', balance: 150, delta: 150 },
       { month: '2024-02', balance: 120, delta: -30 },
     ])
-  })
-})
-
-describe('computeRollingReturns', () => {
-  const series = Array.from({ length: 13 }, (_, i) => ({
-    date: `m${i}`,
-    'Unit price': 100 + i * 10, // m0=100 ... m12=220
-  }))
-
-  it('computes 6m, 1y and since-start returns relative to the hovered point', () => {
-    const rows = computeRollingReturns(series, 'm12')
-    expect(rows).toEqual([
-      { label: '6m', pct: (220 / 160 - 1) * 100 },
-      { label: '1y', pct: (220 / 100 - 1) * 100 },
-      { label: 'Since start', pct: (220 / 100 - 1) * 100 },
-    ])
-  })
-
-  it('returns an empty list when the label is not found in the series', () => {
-    expect(computeRollingReturns(series, 'unknown')).toEqual([])
   })
 })
 
@@ -124,7 +103,7 @@ describe('buildHoverChartSeries', () => {
         sellAmount: 500,
         sellGain: 50,
         unrealized: 200,
-        rollingReturns: [{ label: 'Since start', pct: (110 / 100 - 1) * 100 }],
+        rollingReturns: [{ period: 'since-start', pct: (110 / 100 - 1) * 100 }],
       },
     ])
   })

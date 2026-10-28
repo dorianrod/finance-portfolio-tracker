@@ -20,6 +20,7 @@ import type { TextTone } from '@/shared/ui/textAppearance/textAppearance.types'
 import { TEXT_TONES } from '@/shared/ui/textAppearance/textTones'
 
 import type { ControlProps } from './controlProps'
+import { getTabbableElements } from './focusNavigation/getTabbableElements'
 import { usePreviewFocus } from './usePreviewFocus'
 import { usePreviewState } from './usePreviewState'
 
@@ -45,7 +46,7 @@ export function Preview({
   )
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Pointer, keyboard and restored-focus behavior form one accessible preview-trigger protocol.
+// eslint-disable-next-line complexity -- reviewed: 2026-10-28; Pointer, keyboard and restored-focus behavior form one accessible preview-trigger protocol; unmasking confirms complexity 19, and the interaction tests exercise cancellation and focus restoration.
 function PreviewTrigger({
   onPreview,
   onDismiss,
@@ -194,6 +195,16 @@ function PreviewContent({
           onInteractOutside={(event) => {
             if (event.target === context.trigger) event.preventDefault()
             else restoreFocus.current = false
+          }}
+          onKeyDown={(event) => {
+            if (event.key !== 'Tab') return
+            const controls = getTabbableElements(event.currentTarget)
+            const boundary = event.shiftKey ? controls[0] : controls.at(-1)
+            if (!boundary || document.activeElement === boundary) {
+              event.preventDefault()
+              restoreFocus.current = false
+              context.exitWithTab(event.currentTarget, event.shiftKey)
+            }
           }}
           onFocusCapture={() => {
             context.markContentFocus()

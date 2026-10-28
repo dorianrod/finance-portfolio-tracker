@@ -15,6 +15,7 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
 - `scripts/build.mjs` - Zero-dependency build and validation script
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
 - `references/project-enforcement.md` - Minimal note; all conventions and ESLint requirements live in the rules
+- `references/audit-method.md` - Three audit passes: ESLint diagnostics and corrections, manual catalog review, and verification of ignored diagnostics and exception justifications
 - `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
 - `SKILL.md` - Skill entry point (sections table and Quick Reference)

@@ -1,34 +1,56 @@
-import i18n from '@/i18n/i18n'
+import type {
+  HoverChartDataPoint,
+  RollingReturn,
+} from './buildHoverChartData.types'
 
-import type { RollingReturn } from './buildHoverChartData.types'
-
-// 6-month, 1-year and since-start rolling unit-price performance as of the
-// hovered `label` (a 'Unit price' series keyed by month).
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Missing or zero reference prices must be guarded consistently for the two rolling periods and since-start return.
 export function computeRollingReturns(
-  series: Array<{ date: string; 'Unit price': number }>,
-  label: string,
+  series: readonly Pick<HoverChartDataPoint, 'date' | 'Unit price'>[],
+): Map<string, RollingReturn[]> {
+  const prices = new Map(
+    series.map((point) => [point.date, point['Unit price']]),
+  )
+  const firstMonth = series.reduce(
+    (first, point) => (point.date < first ? point.date : first),
+    series[0]?.date ?? '',
+  )
+  return new Map(
+    [...prices].map(([month, current]) => [
+      month,
+      returnsAtMonth(prices, month, current, firstMonth),
+    ]),
+  )
+}
+
+function returnsAtMonth(
+  prices: ReadonlyMap<string, number>,
+  month: string,
+  current: number,
+  firstMonth: string,
 ): RollingReturn[] {
-  const idx = series.findIndex((d) => d.date === label)
-  if (idx < 0) return []
-  const current = series[idx]['Unit price']
-  if (current == null) return []
-
+  if (!Number.isFinite(current)) return []
+  const [year, calendarMonth] = month.split('-').map(Number)
+  const monthIndex = year * 12 + calendarMonth - 1
   const rows: RollingReturn[] = []
-  for (const [lbl, months] of [
-    ['6m', 6],
-    ['1y', 12],
+  for (const [period, months] of [
+    ['six-months', 6],
+    ['one-year', 12],
   ] as const) {
-    const ref = series[idx - months]?.['Unit price']
-    if (ref != null && ref !== 0)
-      rows.push({ label: lbl, pct: (current / ref - 1) * 100 })
+    const referenceIndex = monthIndex - months
+    const referenceMonth = `${Math.floor(referenceIndex / 12)}-${String((referenceIndex % 12) + 1).padStart(2, '0')}`
+    appendReturn(rows, period, current, prices.get(referenceMonth))
   }
-  const first = series[0]?.['Unit price']
-  if (idx > 0 && first != null && first !== 0)
-    rows.push({
-      label: i18n.t('ui.buildhoverchartdataTs.sinceStart'),
-      pct: (current / first - 1) * 100,
-    })
-
+  if (month !== firstMonth)
+    appendReturn(rows, 'since-start', current, prices.get(firstMonth))
   return rows
+}
+
+function appendReturn(
+  rows: RollingReturn[],
+  period: RollingReturn['period'],
+  current: number,
+  reference: number | undefined,
+) {
+  if (reference == null || reference === 0 || !Number.isFinite(reference))
+    return
+  rows.push({ period, pct: (current / reference - 1) * 100 })
 }

@@ -8,7 +8,7 @@ description: >
   stores, helpers and formatters, i18n, tests, rendering performance and code quality. Load
   tailwind-design-system alongside it only when working inside shared/ui, where advanced styling patterns belong.
   Basic layout classes in domain code do not require that companion skill.
-  Also use for ESLint exception audits and warning budgets.
+  Also use for ESLint fixes, manual catalog audits, exception validity reviews and warning budgets.
 license: Internal
 metadata:
   author: frontend-engineering
@@ -69,7 +69,13 @@ Several rules describe the target standard, not the current state of every file.
 
 ### Audits
 
-For a focused review, use the routing above and state its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Follow the [audit method](references/audit-method.md): establish applicability and evidence per rule, verify automatic checks with rejected and accepted examples, and review the remaining behavior manually. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
+Every audit covers three required passes within its stated scope:
+
+1. **ESLint diagnostics and corrections:** run the application's configured lint checks, investigate errors and warnings, and correct confirmed violations.
+2. **Catalog review beyond ESLint:** read applicable rule files and manually inspect requirements and analysis limits that lint does not cover.
+3. **Ignored diagnostics and exception validity:** inspect suppressions and configuration exclusions, verify the underlying diagnostic and technical justification, remove obsolete exceptions and correct unjustified violations. Valid metadata alone does not justify an exception.
+
+Follow the [audit method](references/audit-method.md) for all three passes. By default, correct confirmed violations in scope; honor an explicit findings-only request. A focused review uses the routing above and states its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
 
 Keep the audit working checklist as needed for the task; a persistent report is optional. Durable prevention belongs in this skill's owning rules, configured ESLint checks and executable regression tests. Do not declare completion while known applicable violations or unexamined rules remain; state the actual scope and remaining gaps.
 

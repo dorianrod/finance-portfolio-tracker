@@ -5,21 +5,23 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Keep translation and display formatting out of reusable domain services',
+        'Keep translation and display formatting out of domain services and calculations',
     },
     schema: [],
     messages: {
       presentation:
-        'Keep translation and display formatting in component/page presenters or formatters. Return raw data and errors from reusable domain services. [arch-no-visual-logic-below-page]',
+        'Keep translation and display formatting in component/page presenters or formatters. Return raw data and errors from domain services and calculations. [arch-no-visual-logic-below-page]',
     },
   },
   create(context) {
     const filename = context.filename.replaceAll('\\', '/')
-    if (
-      !isProductionSource(filename) ||
-      !/\/src\/domains\/.+\/services\//u.test(filename) ||
-      /\/(?:components|pages|mocks)\//u.test(filename)
+    const calculation = /\/src\/domains\/.+\/helpers\/calculators\//u.test(
+      filename,
     )
+    const reusableService =
+      /\/src\/domains\/.+\/services\//u.test(filename) &&
+      !/\/(?:components|pages|mocks)\//u.test(filename)
+    if (!isProductionSource(filename) || (!calculation && !reusableService))
       return {}
     function check(node, source) {
       if (

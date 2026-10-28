@@ -35,6 +35,30 @@ function PreviewExample({ children }: { children: ReactNode }) {
 }
 
 describe('preview activation and focus', () => {
+  it.each([false, true])(
+    'exits the preview with Tab, shift=%s',
+    async (shift) => {
+      const user = userEvent.setup()
+      render(
+        <PreviewExample>
+          <button>Open asset</button>
+        </PreviewExample>,
+      )
+      await user.tab()
+      await user.keyboard('{Enter}')
+      expect(document.activeElement).toBe(
+        screen.getByRole('button', { name: 'Open asset' }),
+      )
+      await user.tab({ shift })
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+      expect(document.activeElement).toBe(
+        screen.getByRole('button', {
+          name: shift ? 'Preview asset' : 'Next action',
+        }),
+      )
+    },
+  )
+
   it('runs the inherited preload intent on pointer entry and keyboard focus', async () => {
     const user = userEvent.setup()
     const onIntent = vi.fn()

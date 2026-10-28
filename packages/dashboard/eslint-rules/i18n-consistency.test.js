@@ -79,6 +79,7 @@ describe('i18n-consistency', () => {
     `i18n.t('ui.accounttreeselect.selected')`,
     `i18n.t('greeting', { name: user.name })`,
     `i18n.t('items', { count: items.length })`,
+    `i18n.t(active ? 'ui.accounttreeselect.allAccounts' : 'ui.accounttreeselect.reset')`,
     `other.t('unknown')`,
   ])('accepts %s', (code) => {
     expect(lint(code)).toEqual([])
@@ -88,6 +89,12 @@ describe('i18n-consistency', () => {
     [`i18n.t('unknown')`, 'missingKey'],
     [`i18n.t(key)`, 'dynamicKey'],
     [`i18n.t()`, 'dynamicKey'],
+    [`i18n.t(active ? 'ui.accounttreeselect.reset' : key)`, 'dynamicKey'],
+    [`i18n.t(active ? 'ui.accounttreeselect.reset' : 'unknown')`, 'missingKey'],
+    [
+      `i18n.t(active ? 'ui.accounttreeselect.reset' : 'greeting')`,
+      'missingInterpolation',
+    ],
     [`i18n.t('greeting')`, 'missingInterpolation'],
     [`i18n.t('greeting', { other: user.name })`, 'missingInterpolation'],
     [`i18n.t('items')`, 'missingInterpolation'],

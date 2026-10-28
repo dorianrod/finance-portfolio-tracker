@@ -12,13 +12,21 @@ export function buildHoverChartSeries(
   history: HistoryPoint[],
   operations: Operation[],
 ): HoverChartDataPoint[] {
+  const operationsByMonth = new Map<string, Operation[]>()
+  for (const operation of operations) {
+    const month = toCalendarMonth(operation.date)
+    const monthlyOperations = operationsByMonth.get(month) ?? []
+    monthlyOperations.push(operation)
+    operationsByMonth.set(month, monthlyOperations)
+  }
   const series = history.map((p) => {
     const month = toCalendarMonth(p.date)
-    const buysThisMonth = operations.filter(
-      (o) => toCalendarMonth(o.date) === month && o.operation_type === 'BUY',
+    const monthlyOperations = operationsByMonth.get(month) ?? []
+    const buysThisMonth = monthlyOperations.filter(
+      (o) => o.operation_type === 'BUY',
     )
-    const sellsThisMonth = operations.filter(
-      (o) => toCalendarMonth(o.date) === month && o.operation_type === 'SELL',
+    const sellsThisMonth = monthlyOperations.filter(
+      (o) => o.operation_type === 'SELL',
     )
     const buyAmount = buysThisMonth.reduce(
       (s, o) => s + Math.abs(o.total_amount),
@@ -45,9 +53,9 @@ export function buildHoverChartSeries(
       unrealized: p.value - p.costBasis,
     }
   })
-
+  const rollingReturnsByMonth = computeRollingReturns(series)
   return series.map((point) => ({
     ...point,
-    rollingReturns: computeRollingReturns(series, point.date),
+    rollingReturns: rollingReturnsByMonth.get(point.date) ?? [],
   }))
 }

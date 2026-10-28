@@ -1,9 +1,10 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-import ts from 'typescript'
+import { collectTranslationKeys } from './collect-translation-keys.mjs'
 
-const root = new URL('..', import.meta.url).pathname
+const root = fileURLToPath(new URL('..', import.meta.url))
 const sourceRoot = join(root, 'src')
 const catalog = JSON.parse(
   readFileSync(join(sourceRoot, 'i18n', 'locales', 'en.json'), 'utf8'),
@@ -11,27 +12,8 @@ const catalog = JSON.parse(
 const usedKeys = new Set()
 
 function visitSourceFile(path) {
-  const sourceFile = ts.createSourceFile(
-    path,
-    readFileSync(path, 'utf8'),
-    ts.ScriptTarget.Latest,
-    true,
-    path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  )
-  const visit = (node) => {
-    if (
-      ts.isCallExpression(node) &&
-      ts.isPropertyAccessExpression(node.expression) &&
-      node.expression.expression.getText(sourceFile) === 'i18n' &&
-      node.expression.name.text === 't' &&
-      node.arguments[0] &&
-      ts.isStringLiteral(node.arguments[0])
-    ) {
-      usedKeys.add(node.arguments[0].text)
-    }
-    ts.forEachChild(node, visit)
-  }
-  visit(sourceFile)
+  for (const key of collectTranslationKeys(readFileSync(path, 'utf8'), path))
+    usedKeys.add(key)
 }
 
 function walk(directory) {

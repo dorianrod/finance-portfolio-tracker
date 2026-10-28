@@ -14,6 +14,6 @@ export type HoverChartDataPoint = {
 }
 
 export type RollingReturn = {
-  label: string
+  period: 'six-months' | 'one-year' | 'since-start'
   pct: number
 }

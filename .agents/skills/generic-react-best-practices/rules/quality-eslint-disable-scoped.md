@@ -36,7 +36,7 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 ### Audit and Reaudit
 
 1. Inventory the suppressions in scope. For a targeted reaudit, select exceptions affected by the changed rules, skills, dependencies or code; use their dates to identify when they were last examined.
-2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Verify whether the original diagnostic still occurs and whether the rationale remains valid. Do not infer approval from an earlier comment or a syntactically valid date.
+2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Lift the relevant suppression in an in-memory or isolated check using the application's actual configuration; verify the original rule ID and diagnostic for each named rule. Confirm the check applies to the file before concluding that a suppression is unused. Compare the claimed rationale with the implementation and rule contract; do not infer approval from an earlier comment or a syntactically valid date. If the diagnostic or rationale cannot be verified, leave the exception unresolved rather than updating its review date as if approved.
 3. Remove unused suppressions. For a real violation without an allowed exception, correct the code and remove the suppression. For a justified exception, retain the narrow directive and record the concrete rationale and actual review date.
 4. Run lint and maintain the [warning budget](quality-eslint-warning-budget.md). A retained directive contributes one tracking warning, even if it names several rules. A new review of the same exception updates its date without adding another warning.
 

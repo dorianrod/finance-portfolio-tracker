@@ -799,5 +799,7 @@
   "ui.analysisreliabilitykpi.metricSeparator": "; ",
   "ui.dataqualitydetails.openMetricDetails": "{{action}}: {{metric}} {{metricLabel}}, {{detail}}",
   "ui.hoverchartsTooltips.seriesValue": "{{label}}: {{amount}}",
-  "ui.portfoliochartsTooltips.accountOperation": "{{direction}} {{amount}} — {{account}}"
+  "ui.portfoliochartsTooltips.accountOperation": "{{direction}} {{amount}} — {{account}}",
+  "ui.rollingunitpriceperf.sixMonths": "6m",
+  "ui.rollingunitpriceperf.oneYear": "1y"
 }

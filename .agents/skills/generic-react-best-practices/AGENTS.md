@@ -1098,6 +1098,8 @@ See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-
 
 Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
+Apply the same dependency check to domain `helpers/calculators/`, including component- and page-owned calculators. A calculation returns quantitative values and semantic period identifiers; a formatter translates their labels at display time. Component ownership does not turn translation into a calculation. Verify an aliased translation import, a rejected reexport or dynamic import, and a neighboring valid numeric calculation through the application's configuration.
+
 This check identifies explicit display dependencies. It does not infer presentation from arbitrary strings, inspect every transitive helper or decide ownership from a function's name. Presentation hidden behind an opaque adapter and chart geometry still require review. Move the display responsibility to its owning component/page instead of renaming imports to bypass the check.
 
 ### 1.15 No index.ts in stores/, One File per Concern
@@ -4628,6 +4630,8 @@ export function useFormatShippingStatus() {
 
 A ternary of literals (`t(isEdit ? 'contract.modal.reminder.editTitle' : 'contract.modal.reminder.addTitle')`) is fine: the scanner reads both branches. Only the **value** may be dynamic, via interpolation options. A lint rule that only forbids template literals does not catch a `Record<Union, 'literal.key'>` mapper passed to `t()`: avoid that pattern too.
 
+Unused-key extraction must recognize the same supported translation bindings as the configured key check: the i18n instance, imported `t`, and `t` obtained from `useTranslation`, including aliases. Resolve lexical bindings so unrelated or shadowed functions do not keep a catalog key alive. Exercise each supported binding and a neighboring unrelated call; matching only the text `i18n.t` wrongly reports valid hook-based translations as unused.
+
 ---
 
 ## 11. Testing
@@ -5086,7 +5090,7 @@ Use `-- reviewed: YYYY-MM-DD; concrete technical reason`. The date is the actual
 ### Audit and Reaudit
 
 1. Inventory the suppressions in scope. For a targeted reaudit, select exceptions affected by the changed rules, skills, dependencies or code; use their dates to identify when they were last examined.
-2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Verify whether the original diagnostic still occurs and whether the rationale remains valid. Do not infer approval from an earlier comment or a syntactically valid date.
+2. Read each applicable rule, the affected code and relevant callers or dependency evidence. Lift the relevant suppression in an in-memory or isolated check using the application's actual configuration; verify the original rule ID and diagnostic for each named rule. Confirm the check applies to the file before concluding that a suppression is unused. Compare the claimed rationale with the implementation and rule contract; do not infer approval from an earlier comment or a syntactically valid date. If the diagnostic or rationale cannot be verified, leave the exception unresolved rather than updating its review date as if approved.
 3. Remove unused suppressions. For a real violation without an allowed exception, correct the code and remove the suppression. For a justified exception, retain the narrow directive and record the concrete rationale and actual review date.
 4. Run lint and maintain the [warning budget](rules/quality-eslint-warning-budget.md). A retained directive contributes one tracking warning, even if it names several rules. A new review of the same exception updates its date without adding another warning.
 

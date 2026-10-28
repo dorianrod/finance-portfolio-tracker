@@ -1,5 +1,7 @@
 import { useCallback, useId, useMemo, useRef, useState } from 'react'
 
+import { getTabbableElements } from './focusNavigation/getTabbableElements'
+
 export function usePreviewState(
   open: boolean,
   onOpenChange: (open: boolean) => void,
@@ -41,6 +43,24 @@ export function usePreviewState(
     }
   }, [])
   const close = useCallback(() => onOpenChange(false), [onOpenChange])
+  const exitWithTab = useCallback(
+    (content: HTMLElement, backwards: boolean) => {
+      const currentTrigger = activation.current.trigger
+      const controls = getTabbableElements(document).filter(
+        (element) => !content.contains(element),
+      )
+      const triggerIndex = currentTrigger
+        ? controls.indexOf(currentTrigger)
+        : -1
+      const destination = backwards
+        ? currentTrigger
+        : (controls[triggerIndex + 1] ?? currentTrigger)
+      if (destination === currentTrigger) restoringFocus.current = true
+      onOpenChange(false)
+      destination?.focus()
+    },
+    [onOpenChange],
+  )
   return useMemo(
     () => ({
       id,
@@ -52,6 +72,7 @@ export function usePreviewState(
       markContentFocus,
       restoreFocus,
       close,
+      exitWithTab,
       keepOpen,
     }),
     [
@@ -64,6 +85,7 @@ export function usePreviewState(
       markContentFocus,
       restoreFocus,
       close,
+      exitWithTab,
       keepOpen,
     ],
   )

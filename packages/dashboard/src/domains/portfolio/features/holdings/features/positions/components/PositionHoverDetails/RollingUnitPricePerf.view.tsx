@@ -5,6 +5,8 @@ import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { useFormatRollingReturnPeriod } from './helpers/formatters/useFormatRollingReturnPeriod'
+
 export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
   if (rows.length === 0) return null
   return (
@@ -12,7 +14,7 @@ export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
       <Surface variant="strongSectionStart">
         <Stack inset="compact" gap="compact">
           {rows.map((row) => (
-            <RollingUnitPriceRow key={row.label} row={row} />
+            <RollingUnitPriceRow key={row.period} row={row} />
           ))}
         </Stack>
       </Surface>
@@ -22,9 +24,10 @@ export function RollingUnitPricePerf({ rows }: { rows: RollingReturn[] }) {
 
 function RollingUnitPriceRow({ row }: { row: RollingReturn }) {
   const formatPercentage = useFormatPercentage()
+  const formatPeriod = useFormatRollingReturnPeriod()
   return (
     <Text as="p" tone={row.pct >= 0 ? 'positive' : 'negative'}>
-      {row.label}: {formatPercentage(row.pct, { signed: true })}
+      {formatPeriod(row.period)}: {formatPercentage(row.pct, { signed: true })}
     </Text>
   )
 }

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { isProductionSource } from './ast-bindings.js'
 import { isFunctionNode } from './react-component-utils.js'
 import { createTranslationResolver } from './translation-bindings.js'
+import { translationKeyLiterals } from './translation-key-literals.js'
 
 const catalogUrl = new URL('../src/i18n/locales/en.json', import.meta.url)
 
@@ -75,23 +76,9 @@ export default {
         // only when needed, while still observing catalog edits in the editor.
         catalog ??= JSON.parse(readFileSync(catalogUrl, 'utf8'))
         const [keyNode, optionsNode] = node.arguments
-        if (keyNode?.type !== 'Literal' || typeof keyNode.value !== 'string') {
+        const keyNodes = translationKeyLiterals(keyNode)
+        if (!keyNodes) {
           context.report({ node: keyNode ?? node, messageId: 'dynamicKey' })
-          return
-        }
-        const key = keyNode.value
-        const catalogKey =
-          key in catalog
-            ? key
-            : `${key}_one` in catalog && `${key}_other` in catalog
-              ? `${key}_other`
-              : null
-        if (!catalogKey) {
-          context.report({
-            node: keyNode,
-            messageId: 'missingKey',
-            data: { key },
-          })
           return
         }
         if (
@@ -105,16 +92,33 @@ export default {
         if (names.has('defaultValue')) {
           context.report({ node: optionsNode, messageId: 'defaultValue' })
         }
-        const placeholders = [
-          ...catalog[catalogKey].matchAll(/{{\s*([\w.-]+)\s*}}/g),
-        ].map((match) => match[1])
-        for (const name of placeholders) {
-          if (!names.has(name)) {
+        for (const literal of keyNodes) {
+          const key = literal.value
+          const catalogKey =
+            key in catalog
+              ? key
+              : `${key}_one` in catalog && `${key}_other` in catalog
+                ? `${key}_other`
+                : null
+          if (!catalogKey) {
             context.report({
-              node: optionsNode ?? node,
-              messageId: 'missingInterpolation',
-              data: { key, name },
+              node: literal,
+              messageId: 'missingKey',
+              data: { key },
             })
+            continue
+          }
+          const placeholders = [
+            ...catalog[catalogKey].matchAll(/{{\s*([\w.-]+)\s*}}/g),
+          ].map((match) => match[1])
+          for (const name of placeholders) {
+            if (!names.has(name)) {
+              context.report({
+                node: optionsNode ?? node,
+                messageId: 'missingInterpolation',
+                data: { key, name },
+              })
+            }
           }
         }
       },

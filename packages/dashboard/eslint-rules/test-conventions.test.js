@@ -265,6 +265,26 @@ describe('domain service presentation boundaries', () => {
   })
 })
 
+describe('pure calculation presentation boundaries', () => {
+  const filename =
+    '/project/src/domains/sales/features/analytics/components/Summary/helpers/calculators/computeReturns.ts'
+  it.each([
+    `import translated from '@/i18n/i18n'; export const label = translated.t('returns')`,
+    `export {useTranslation as useLabels} from 'react-i18next'`,
+    `const labels = import('@/shared/helpers/formatters/useFormatMoney')`,
+  ])('rejects presentation inside component-owned calculations: %s', (code) => {
+    expect(lint('no-service-presentation', code, filename)).toEqual([
+      'presentation',
+    ])
+  })
+  it.each([
+    `import type {TFunction} from 'i18next'`,
+    `export const computeReturn = (current: number, reference: number) => current / reference - 1`,
+  ])('preserves type dependencies and numeric results: %s', (code) => {
+    expect(lint('no-service-presentation', code, filename)).toEqual([])
+  })
+})
+
 describe('typed fixture casts and actual configuration', () => {
   const directory = resolve(import.meta.dirname, '..')
   const eslint = new ESLint({ cwd: directory })
@@ -361,6 +381,36 @@ describe('typed fixture casts and actual configuration', () => {
         'src/domains/portfolio/shared/services/useDashboardHistory.ts',
       ),
     ).toEqual(['presentation'])
+  })
+  it('rejects calculator translations with the configured rule and severity', async () => {
+    const filename = resolve(
+      directory,
+      'src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.ts',
+    )
+    const [invalid] = await eslint.lintText(
+      `import translated from '@/i18n/i18n'`,
+      { filePath: filename },
+    )
+    expect(
+      invalid.messages.filter(
+        (message) => message.ruleId === 'local/no-service-presentation',
+      ),
+    ).toMatchObject([
+      {
+        ruleId: 'local/no-service-presentation',
+        messageId: 'presentation',
+        severity: 2,
+      },
+    ])
+    const [valid] = await eslint.lintText(
+      `export const computeReturn = (current: number, reference: number) => current / reference - 1`,
+      { filePath: filename },
+    )
+    expect(
+      valid.messages.filter(
+        (message) => message.ruleId === 'local/no-service-presentation',
+      ),
+    ).toEqual([])
   })
   it.each(Object.keys(implementations))(
     'enables %s at error severity',
