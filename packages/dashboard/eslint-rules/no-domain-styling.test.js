@@ -372,12 +372,13 @@ describe('configured styling boundary', () => {
     ).toEqual([])
   })
 
-  it('also checks application components, domain helpers and shared utilities', async () => {
-    for (const file of [
-      'src/app/App.feature.tsx',
-      'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
-      'src/shared/helpers/presenters/getErrorMessage.ts',
-    ]) {
+  it.each([
+    'src/app/App.feature.tsx',
+    'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
+    'src/shared/helpers/presenters/getErrorMessage.ts',
+  ])(
+    'also checks application, helper and utility styling in %s',
+    async (file) => {
       expect(
         (
           await lint(
@@ -386,8 +387,8 @@ describe('configured styling boundary', () => {
           )
         ).map(({ messageId }) => messageId),
       ).toEqual(['nonLayoutStyle'])
-    }
-  })
+    },
+  )
 
   it.each([
     'import "@/domains/portfolio/feature.css"',

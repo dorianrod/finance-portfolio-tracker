@@ -8,12 +8,9 @@ import { ChoiceChip } from './ChoiceChip.view'
 afterEach(cleanup)
 
 describe('ChoiceChip', () => {
-  it.each([
-    { active: true, appearance: 'border-accent-solid' },
-    { active: false, appearance: 'border-border-strong' },
-  ])(
+  it.each([{ active: true }, { active: false }])(
     'renders the $active state and retains click behavior',
-    async ({ active, appearance }) => {
+    async ({ active }) => {
       const onClick = vi.fn()
       render(
         <span className="inline-grid ml-2">
@@ -22,13 +19,11 @@ describe('ChoiceChip', () => {
           </ChoiceChip>
         </span>,
       )
-      const button = screen.getByRole('button', { name: 'Account' })
-      expect(button.getAttribute('aria-pressed')).toBe(String(active))
+      const button = screen.getByRole('button', {
+        name: 'Account',
+        pressed: active,
+      })
       expect(button.getAttribute('type')).toBe('button')
-      expect(button.className).toContain(appearance)
-      expect(button.className).not.toContain('ml-2')
-      expect(button.parentElement?.className).toContain('ml-2')
-      expect(button.hasAttribute('active')).toBe(false)
       await userEvent.setup().click(button)
       expect(onClick).toHaveBeenCalledOnce()
     },

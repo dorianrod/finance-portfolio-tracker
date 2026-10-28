@@ -34,6 +34,30 @@ The design system owns accessibility implementation, including simple attributes
 
 Prefer native HTML for simple controls. Use focused, unstyled primitives such as Radix behind project wrappers for complex widgets; do not repeatedly implement tabs, tooltip dismissal or modal focus management. Preserve pointer and keyboard behavior, translated names, visible focus and nested overlay dismissal when migrating.
 
+### Compose Caller Events
+
+When a primitive adapts a caller's cancelable native event handler, invoke that
+handler before built-in activation or other work. Honor the same event's
+`defaultPrevented` after the caller returns. A callback reference alone does not
+forward the event, and a guard before the caller cannot observe its cancellation.
+Keep necessary propagation bookkeeping and read-only DOM metadata within the UI
+boundary. Noncancelable value-change notifications do not gain a cancellation
+contract from an `on...` name alone.
+
+```tsx
+<button onClick={event => {
+  onClick?.(event)
+  if (event.defaultPrevented) return
+  activate()
+}} />
+```
+
+Test the caller's observable cancellation as well as successful activation. For
+reusable overlays, exercise supported sequences: outside dismissal followed by
+keyboard reopening and Escape, available/unavailable focus targets, and Tab in
+both directions for each supported modality. An isolated first-open test does not
+establish the protocol across later openings or other modes.
+
 Only files under `src/shared/ui`, including its internal hooks and helpers, may depend directly on external accessibility or headless UI libraries such as Radix. Domain code, application code and other shared modules must import project-owned UI primitives instead. Keep imports and library integration inside this boundary; do not bypass it through bare re-exports of third-party components.
 
 ### Exceptions
@@ -48,6 +72,20 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 Use the custom ESLint rule `local/no-domain-accessibility` with type information for authored application code. Outside shared UI, check JSX attributes, explicitly supplied properties in resolvable spreads, direct accessibility-library imports/re-exports/dynamic imports and resolved DOM focus, keyboard-listener and ARIA APIs. Within shared UI, check public component contracts and compound slots for raw wiring props, including inherited HTML attributes, and reject bare third-party value re-exports, namespace exports and resolved import aliases. Type-only re-exports and internal primitive wiring remain valid. Exclude tests, generated files and isolated Storybook support.
 
 Resolve declarations to avoid false positives from optional attributes inherited from external HTML/SVG types, such as chart renderer props. Static checks cannot prove runtime accessibility or reconstruct arbitrary dynamic property names, opaque objects or transitive helper behavior. Test reusable primitives by role and label, and verify keyboard navigation, relationships, dismissal and focus restoration.
+
+Enable `local/no-overwritten-ui-props` at error level for shared UI. Check handlers
+and refs replaced after a props spread. Native cancelable handlers extracted from
+the public parameter object remain subject to the composition contract. Resolve
+direct, named and immutable handler aliases; recognize invocation rather than
+mere property reads. For supported synchronous branches and short-circuits,
+check caller-first ordering and a guard on the same event after forwarding.
+Keep direct forwarding, read-only DOM metadata, guarded built-in work and
+noncancelable notifications valid. Preserve ref composition separately.
+
+This bounded flow analysis does not prove arbitrary higher-order handlers,
+asynchronous continuations, loops, exceptions, getter effects or transitive helper
+semantics. Opaque composition needs review and executable behavior tests. Do not
+approve a missing guard because the callback property appears in the function.
 
 ### References
 

@@ -64,7 +64,7 @@ describe('FilterScopeBadges', () => {
       'global',
     )
     expect(html).toContain('Global accounts')
-    expect(html).toContain('text-warning')
+    expect(html).not.toContain('Main PEA')
   })
 
   it('distinguishes an as-of date from a start-only filter', () => {

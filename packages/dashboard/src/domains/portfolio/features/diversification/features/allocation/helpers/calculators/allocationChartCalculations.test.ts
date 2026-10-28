@@ -10,7 +10,7 @@ import { excludeNonApplicableAllocationData } from '@/domains/portfolio/features
 import { scopeRawAllocationData } from '@/domains/portfolio/features/diversification/shared/helpers/filters/scopeDiversificationData/scopeRawAllocationData'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
 import { groupAllocationTail as groupTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
@@ -125,14 +125,14 @@ describe('buildAllocationTrend', () => {
       'current only': 50,
       'historic only': 0,
     })
-    for (const row of trend.rows) {
-      expect(
+    expect(
+      trend.rows.map((row) =>
         trend.categories.reduce(
           (sum, category) => sum + Number(row[category]),
           0,
         ),
-      ).toBe(100)
-    }
+      ),
+    ).toEqual([100, 100])
   })
 
   it('uses null values to leave a visible gap when a date has no allocation data', () => {
@@ -364,11 +364,11 @@ describe('account allocation scope', () => {
 
   it('removes synthetic brokerage cash from allocation analysis', () => {
     const scoped = excludeNonApplicableAllocationData(data, [
-      {
+      makePosition({
         account: 'CTO',
         account_type: 'Brokerage – Cash',
         account_category: 'brokerage',
-      } as PositionRow,
+      }),
     ])
 
     expect(scoped.geo.map((row) => row.isin)).toEqual(['A', 'A'])

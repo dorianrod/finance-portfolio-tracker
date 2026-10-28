@@ -18,7 +18,7 @@ export function useDashboardPerformance({
     filters.dateFrom,
     filters.dateTo,
   )
-  const passiveIncome = passiveIncomeQuery.data ?? EMPTY_PASSIVE_INCOME
+  const { data: passiveIncome = EMPTY_PASSIVE_INCOME } = passiveIncomeQuery
   const asOfPerformance = useMemo(
     () => computePerformanceSummary(currentPositions),
     [currentPositions],

@@ -55,6 +55,8 @@ function PreviewTrigger({
   variant = 'plain',
   selected = false,
   size = 'compact',
+  onIntent,
+  dimmed = false,
   tone,
   ...props
 }: ButtonProps & {
@@ -78,6 +80,7 @@ function PreviewTrigger({
         getButtonClassName(variant, selected),
         BUTTON_SIZES[size],
         'gap-2',
+        dimmed && 'opacity-[0.35]',
         tone && TEXT_TONES[tone],
         tone &&
           'rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1',
@@ -96,10 +99,13 @@ function PreviewTrigger({
       }
       onMouseEnter={(event) => {
         props.onMouseEnter?.(event)
+        if (event.defaultPrevented) return
+        onIntent?.()
         show(event.currentTarget, false)
       }}
       onMouseLeave={(event) => {
         props.onMouseLeave?.(event)
+        if (event.defaultPrevented) return
         if (
           document.activeElement !== context.trigger &&
           !document.getElementById(context.id)?.contains(document.activeElement)
@@ -108,6 +114,7 @@ function PreviewTrigger({
       }}
       onFocus={(event) => {
         if (context.consumeRestoredFocus()) return
+        onIntent?.()
         show(event.currentTarget, false)
       }}
       onBlur={(event) => {
@@ -116,8 +123,9 @@ function PreviewTrigger({
       }}
       onClick={(event) => {
         event.stopPropagation()
-        show(event.currentTarget, event.detail === 0)
         props.onClick?.(event)
+        if (event.defaultPrevented) return
+        show(event.currentTarget, event.detail === 0)
       }}
       onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
         if (event.key === 'ArrowDown' && context.open) {
@@ -175,7 +183,10 @@ function PreviewContent({
           style={{
             maxHeight: 'var(--radix-popover-content-available-height)',
           }}
-          onOpenAutoFocus={(event) => event.preventDefault()}
+          onOpenAutoFocus={(event) => {
+            restoreFocus.current = true
+            event.preventDefault()
+          }}
           onCloseAutoFocus={(event) => {
             event.preventDefault()
             if (restoreFocus.current) context.restoreFocus()

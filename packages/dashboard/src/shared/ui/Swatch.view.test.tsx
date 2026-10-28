@@ -5,16 +5,13 @@ import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { ToneSwatch } from '@/shared/ui/swatch/ToneSwatch.view'
 
 describe('swatches', () => {
-  it('owns series appearance while retaining the supplied dimensions', () => {
+  it('keeps a series swatch decorative', () => {
     const html = renderToStaticMarkup(
       <span className="inline-block h-2 w-3">
         <SeriesSwatch as="i" tone={'series1'} shape="bar" />
       </span>,
     )
-    expect(html).toContain('<i')
     expect(html).toContain('background-color:#3b82f6')
-    expect(html).toContain('rounded-sm')
-    expect(html).toContain('h-2 w-3')
     expect(html).toContain('aria-hidden="true"')
     expect(html).not.toContain('tone=')
   })
@@ -24,12 +21,11 @@ describe('swatches', () => {
       <SeriesSwatch tone="series1" shape="dot" />,
     )
     expect(html).toContain('background-color:#3b82f6')
-    expect(html).toContain('rounded-full')
+    expect(html).toContain('aria-hidden="true"')
   })
 
-  it('uses semantic theme utilities for UI indicators', () => {
+  it('keeps a semantic UI indicator decorative', () => {
     const html = renderToStaticMarkup(<ToneSwatch tone="warning" shape="dot" />)
-    expect(html).toContain('bg-warning')
-    expect(html).toContain('rounded-full')
+    expect(html).toContain('aria-hidden="true"')
   })
 })

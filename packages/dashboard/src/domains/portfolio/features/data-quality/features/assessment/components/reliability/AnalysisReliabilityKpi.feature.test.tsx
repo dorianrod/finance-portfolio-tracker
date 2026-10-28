@@ -65,15 +65,12 @@ describe('CombinedAnalysisReliabilityKpi', () => {
     const tooltip = screen.getByRole('tooltip')
     expect(trigger.getAttribute('aria-describedby')).toBe(tooltip.id)
     expect(within(tooltip).getByText('Aggregate quality')).toBeTruthy()
-    for (const detail of [
-      'No anomaly',
-      'Portfolio data',
-      '100.0%',
-      'Diversification',
-      '54.0%',
-      'Underlying assets',
-    ])
-      expect(tooltip.textContent).toContain(detail)
+    expect(tooltip.textContent).toContain('No anomaly')
+    expect(tooltip.textContent).toContain('Portfolio data')
+    expect(tooltip.textContent).toContain('100.0%')
+    expect(tooltip.textContent).toContain('Diversification')
+    expect(tooltip.textContent).toContain('54.0%')
+    expect(tooltip.textContent).toContain('Underlying assets')
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('tooltip')).toBeNull()
   })
@@ -97,12 +94,11 @@ describe('PipelineReliabilityKpi', () => {
     await user.tab()
     await user.tab()
     const tooltip = screen.getByRole('tooltip')
-    for (const detail of [
+    expect(tooltip.textContent).toContain(
       'Import, position and market-data anomalies',
-      'Portfolio data',
-      'No anomaly',
-      '0 errors · 0 warnings',
-    ])
-      expect(tooltip.textContent).toContain(detail)
+    )
+    expect(tooltip.textContent).toContain('Portfolio data')
+    expect(tooltip.textContent).toContain('No anomaly')
+    expect(tooltip.textContent).toContain('0 errors · 0 warnings')
   })
 })

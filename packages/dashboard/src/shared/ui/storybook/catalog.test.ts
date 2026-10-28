@@ -100,11 +100,12 @@ describe('shared UI Storybook catalog', () => {
         }
       }
       expect(components.length).toBeGreaterThan(0)
-      for (const component of components)
-        expect(
-          demonstrated.has(`${modulePath}#${component}`),
-          `Missing JSX example for ${component}`,
-        ).toBe(true)
+      expect(
+        components.filter(
+          (component) => !demonstrated.has(`${modulePath}#${component}`),
+        ),
+        'Public components and slots without a JSX example',
+      ).toEqual([])
     },
   )
 })

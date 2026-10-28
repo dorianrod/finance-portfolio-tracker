@@ -67,6 +67,12 @@ Several rules describe the target standard, not the current state of every file.
 2. Read those files and confirm applicability and exceptions before applying them. Do not load the entire compiled guide for a focused task.
 3. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
 
+### Audits
+
+For a focused review, use the routing above and state its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Follow the [audit method](references/audit-method.md): establish applicability and evidence per rule, verify automatic checks with rejected and accepted examples, and review the remaining behavior manually. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
+
+Keep the audit working checklist as needed for the task; a persistent report is optional. Durable prevention belongs in this skill's owning rules, configured ESLint checks and executable regression tests. Do not declare completion while known applicable violations or unexamined rules remain; state the actual scope and remaining gaps.
+
 Examples isolate their rule rather than serve as complete application templates. Apply the other relevant rules when writing production code. Files beginning with `_` are maintenance material.
 
 ## Quick Reference

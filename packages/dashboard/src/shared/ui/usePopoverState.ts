@@ -1,9 +1,12 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 
+import { getTabbableElements } from './focusNavigation/getTabbableElements'
+
 export function usePopoverState(
   open: boolean | undefined,
   defaultOpen: boolean | undefined,
   onOpenChange?: (open: boolean) => void,
+  modal = false,
 ) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen ?? false)
   const trigger = useRef<HTMLButtonElement | null>(null)
@@ -20,16 +23,8 @@ export function usePopoverState(
   }, [])
   const exitWithTab = useCallback(
     (content: HTMLElement, backwards: boolean) => {
-      const controls = Array.from(
-        document.querySelectorAll<HTMLElement>(FOCUSABLE),
-      ).filter(
-        (element) =>
-          element.tabIndex >= 0 &&
-          !element.matches(':disabled') &&
-          !content.contains(element) &&
-          !element.closest('[hidden], [aria-hidden="true"]') &&
-          getComputedStyle(element).visibility !== 'hidden' &&
-          getComputedStyle(element).display !== 'none',
+      const controls = getTabbableElements(document).filter(
+        (element) => !content.contains(element),
       )
       const index = trigger.current ? controls.indexOf(trigger.current) : -1
       destination.current = backwards
@@ -49,6 +44,7 @@ export function usePopoverState(
   return useMemo(
     () => ({
       open: open ?? internalOpen,
+      modal,
       setOpen,
       registerTrigger,
       exitWithTab,
@@ -57,6 +53,7 @@ export function usePopoverState(
     [
       open,
       internalOpen,
+      modal,
       setOpen,
       registerTrigger,
       exitWithTab,
@@ -64,7 +61,5 @@ export function usePopoverState(
     ],
   )
 }
-
-const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]'
 
 export type PopoverState = ReturnType<typeof usePopoverState>

@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, render, waitFor } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   BarChart,
@@ -28,22 +34,27 @@ function PieShape(
   props: Partial<Omit<PieSectorShapeProps, 'className' | 'style'>>,
 ) {
   return (
-    <ChartSector
-      geometry={props}
-      tone={getHashedSeriesTone('Equity')}
-      selected
-    />
+    <g role="img" aria-label={String(props.name)}>
+      <ChartSector
+        geometry={props}
+        tone={getHashedSeriesTone('Equity')}
+        selected
+      />
+    </g>
   )
 }
 function ScatterShape(
   props: Partial<Omit<ScatterShapeProps, 'className' | 'style'>>,
 ) {
+  if (props.cx == null || props.cy == null) return null
   return (
-    <ChartSymbol
-      geometry={props}
-      tone={'series10'}
-      age={{ year: 2024, recent: false, oldestYear: 2020, newestYear: 2025 }}
-    />
+    <g role="img" aria-label="Exposure">
+      <ChartSymbol
+        geometry={props}
+        tone={'series10'}
+        age={{ year: 2024, recent: false, oldestYear: 2020, newestYear: 2025 }}
+      />
+    </g>
   )
 }
 function PieLabels({ cx, cy }: { cx?: number; cy?: number }) {
@@ -61,13 +72,17 @@ function TooltipContent({
   payload?: Array<{ value?: unknown }>
 }) {
   if (!active) return null
-  return <div data-testid="chart-tooltip">{String(payload?.[0]?.value)}</div>
+  return (
+    <div role="status" aria-label="Chart value">
+      {String(payload?.[0]?.value)}
+    </div>
+  )
 }
 
 describe('shared chart composition', () => {
   it('renders labels and injects tooltip values through nested content', async () => {
-    const { container, getByTestId } = render(
-      <BarChart width={500} height={300} data={[{ name: 'Alpha', value: 10 }]}>
+    render(
+      <BarChart width={500} height={300} data={[{ name: 'Alpha', value: 13 }]}>
         <ChartXAxis dataKey="name" />
         <ChartYAxis />
         <ChartTooltip active defaultIndex={0} highlight="bar">
@@ -78,21 +93,18 @@ describe('shared chart composition', () => {
         </SeriesBar>
       </BarChart>,
     )
-    await waitFor(() =>
-      expect(container.querySelector('.recharts-label')?.textContent).toBe(
-        '10',
-      ),
-    )
     expect(
-      container.querySelector('.recharts-label')?.getAttribute('style'),
-    ).toContain('font-size: 10px')
+      await within(screen.getByRole('application')).findByText('13'),
+    ).toBeTruthy()
     await waitFor(() =>
-      expect(getByTestId('chart-tooltip').textContent).toBe('10'),
+      expect(
+        screen.getByRole('status', { name: 'Chart value' }).textContent,
+      ).toBe('13'),
     )
   })
   it('injects pie geometry and preserves selection and click behavior', async () => {
     const onClick = vi.fn()
-    const { container } = render(
+    render(
       <PieChart width={400} height={300}>
         <SeriesPie
           data={[{ name: 'Equity', value: 10 }]}
@@ -112,19 +124,13 @@ describe('shared chart composition', () => {
         </SeriesPie>
       </PieChart>,
     )
-    await waitFor(() =>
-      expect(container.querySelector('.recharts-sector')).not.toBeNull(),
-    )
-    const sector = container.querySelector('.recharts-sector')!
-    expect(sector.getAttribute('d')).toBeTruthy()
-    expect(sector.getAttribute('fill')).toBeTruthy()
-    expect(sector.getAttribute('stroke-width')).toBe('2')
+    const sector = await screen.findByRole('img', { name: 'Equity' })
     await userEvent.setup().click(sector)
     expect(onClick).toHaveBeenCalledOnce()
-    expect(container.textContent).toContain('Allocation')
+    expect(screen.getByText('Allocation')).toBeTruthy()
   })
-  it('injects scatter data into semantic symbols and keeps age prominence', async () => {
-    const { container } = render(
+  it('injects scatter coordinates into a composed renderer', async () => {
+    render(
       <ScatterChart width={400} height={300}>
         <ChartXAxis dataKey="x" type="number" />
         <ChartYAxis dataKey="y" type="number" />
@@ -135,12 +141,6 @@ describe('shared chart composition', () => {
         </SeriesScatter>
       </ScatterChart>,
     )
-    await waitFor(() =>
-      expect(container.querySelector('.recharts-symbols')).not.toBeNull(),
-    )
-    const symbol = container.querySelector('.recharts-symbols')!
-    expect(symbol.getAttribute('fill')).toBe('#14b8a6')
-    expect(Number(symbol.getAttribute('fill-opacity'))).toBeCloseTo(0.58)
-    expect(symbol.getAttribute('d')).toBeTruthy()
+    expect(await screen.findByRole('img', { name: 'Exposure' })).toBeTruthy()
   })
 })

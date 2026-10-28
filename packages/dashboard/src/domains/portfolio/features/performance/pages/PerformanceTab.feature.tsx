@@ -41,7 +41,6 @@ export function PerformanceTab({
   income,
   globalTri,
   irrStatus,
-  irrScopeLabel,
 }: {
   history: PortfolioHistoryPoint[]
   passiveIncome: PassiveIncomePoint[]
@@ -54,7 +53,6 @@ export function PerformanceTab({
   income: IncomeSummary
   globalTri: number | null
   irrStatus: IrrStatus
-  irrScopeLabel?: string
 }) {
   const rollingTri3y = history[history.length - 1]?.tri_rolling_3y ?? null
   const asOfDate = history.at(-1)?.date
@@ -94,6 +92,7 @@ export function PerformanceTab({
     asOfDate,
   )
   let assetIrrStatus: IrrStatus = 'ready'
+  const { data: assetIrr = UNAVAILABLE_ASSET_IRR_SUMMARY } = assetIrrQuery
   if (assetIrrQuery.isLoading || assetIrrQuery.isPlaceholderData)
     assetIrrStatus = 'loading'
   else if (assetIrrQuery.isError) assetIrrStatus = 'error'
@@ -126,13 +125,13 @@ export function PerformanceTab({
             <IrrSinceTrackingKpi
               value={globalTri}
               status={irrStatus}
-              scopeLabel={irrScopeLabel}
+              accountFilters={accountFilters}
             />
             <TrailingThreeYearIrrKpi
               // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR from its scoped history; the KPI formats that scalar with the shared availability status.
               value={rollingTri3y}
               status={irrStatus}
-              scopeLabel={irrScopeLabel}
+              accountFilters={accountFilters}
             />
           </Inline>
         </Surface>
@@ -147,7 +146,7 @@ export function PerformanceTab({
         </div>
       )}
       <PerformanceContributionCard
-        assetIrr={assetIrrQuery.data ?? UNAVAILABLE_ASSET_IRR_SUMMARY}
+        assetIrr={assetIrr}
         assetIrrStatus={assetIrrStatus}
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}

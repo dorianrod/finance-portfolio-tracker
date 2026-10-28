@@ -13,8 +13,6 @@ import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboar
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
-import i18n from '@/i18n/i18n'
-import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
 
 export function useDashboardHistory({
   allAccounts,
@@ -34,7 +32,8 @@ export function useDashboardHistory({
   const filteredHistoryQuery = useGetFilteredPortfolioHistoryQuery(
     filters.accounts,
   )
-  const demoFilteredHistoryAccountsQuery =
+  const { data: queriedAccountHistory } = filteredHistoryQuery
+  const { data: demoPresetAccounts = null } =
     useGetDemoFilteredHistoryAccountsQuery()
   const filteredAccountKey = useMemo(
     () => normalizeAccountSelection(filters.accounts).join('\u0000'),
@@ -47,13 +46,11 @@ export function useDashboardHistory({
         filters.accounts.size > 0,
         filteredAccountKey,
         !filteredHistoryQuery.isPlaceholderData &&
-          (filteredHistoryQuery.data || filteredHistoryQuery.error)
+          (queriedAccountHistory || filteredHistoryQuery.error)
           ? {
               key: filteredAccountKey,
-              history: filteredHistoryQuery.data ?? null,
-              error: filteredHistoryQuery.error
-                ? getErrorMessage(filteredHistoryQuery.error)
-                : null,
+              history: queriedAccountHistory ?? null,
+              error: filteredHistoryQuery.error,
             }
           : null,
       ),
@@ -61,7 +58,7 @@ export function useDashboardHistory({
       fallbackAccountHistory,
       filters.accounts.size,
       filteredAccountKey,
-      filteredHistoryQuery.data,
+      queriedAccountHistory,
       filteredHistoryQuery.error,
       filteredHistoryQuery.isPlaceholderData,
     ],
@@ -79,11 +76,6 @@ export function useDashboardHistory({
   let irrStatus: IrrStatus = 'ready'
   if (filteredHistory.loading) irrStatus = 'loading'
   else if (filteredHistory.error) irrStatus = 'error'
-  const irrScopeLabel =
-    filters.accounts.size > 0 && irrStatus === 'ready'
-      ? i18n.t('ui.usedashboardviewmodel.selectedAccounts')
-      : undefined
-  const demoPresetAccounts = demoFilteredHistoryAccountsQuery.data ?? null
   const demoPresetSelection = useMemo(
     () => buildDemoPresetSelection(allAccounts, demoPresetAccounts),
     [allAccounts, demoPresetAccounts],
@@ -100,7 +92,6 @@ export function useDashboardHistory({
       demoPresetSelection,
       displayedHistory,
       globalTri,
-      irrScopeLabel,
       irrStatus,
     }),
     [
@@ -109,7 +100,6 @@ export function useDashboardHistory({
       demoPresetSelection,
       displayedHistory,
       globalTri,
-      irrScopeLabel,
       irrStatus,
     ],
   )

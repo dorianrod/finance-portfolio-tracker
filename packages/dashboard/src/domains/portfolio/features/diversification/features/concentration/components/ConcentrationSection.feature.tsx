@@ -4,7 +4,7 @@ import type { DiversificationInputs } from '@/domains/portfolio/features/diversi
 import type { DiversificationView } from '@/domains/portfolio/features/diversification/shared/types/diversificationView.type'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
 
-import { CurrentConcentration } from './CurrentConcentration.feature'
+import { CurrentConcentration } from './CurrentConcentration/CurrentConcentration.feature'
 import { HistoricalConcentration } from './HistoricalConcentration.feature'
 
 export function ConcentrationSection({

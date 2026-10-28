@@ -41,8 +41,12 @@ describe('common diversification scope', () => {
     expect(result.hasSelectedValue).toBe(true)
     expect(result.hasApplicableValue).toBe(true)
     expect(result.hasCurrentData).toBe(true)
-    for (const dimension of ['geo', 'secteur', 'currency', 'classe'] as const)
-      expect(result.scopedRawData[dimension]).toEqual([row])
+    expect(result.scopedRawData).toMatchObject({
+      geo: [row],
+      secteur: [row],
+      currency: [row],
+      classe: [row],
+    })
     expect(rawData.geo).toHaveLength(2)
   })
 

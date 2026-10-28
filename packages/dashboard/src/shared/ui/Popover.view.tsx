@@ -9,20 +9,23 @@ import { popoverInputAtom } from '@/shared/ui/stores/popoverInputAtom'
 import { POPOVER_CONTENT_VARIANTS } from '@/shared/ui/surfaceAppearance/popoverContentVariants'
 
 import type { ControlProps } from './controlProps'
+import { getTabbableElements } from './focusNavigation/getTabbableElements'
 import { usePopoverState } from './usePopoverState'
 
 export function Popover({
   open,
   defaultOpen,
   onOpenChange,
+  modal = false,
   ...props
 }: ControlProps<ComponentProps<typeof Primitive.Root>>) {
-  const context = usePopoverState(open, defaultOpen, onOpenChange)
+  const context = usePopoverState(open, defaultOpen, onOpenChange, modal)
   const scope = useScopedInput(popoverInputAtom, context)
   return (
     <ScopeProvider scope={scope}>
       <Primitive.Root
         {...props}
+        modal={modal}
         open={context.open}
         onOpenChange={context.setOpen}
       />
@@ -67,17 +70,8 @@ function PopoverContent({
         collisionPadding={8}
         onCloseAutoFocus={context?.restoreAfterTab}
         onKeyDown={(event) => {
-          if (event.key !== 'Tab') return
-          const controls = Array.from(
-            event.currentTarget.querySelectorAll<HTMLElement>(
-              'a[href], button, input, select, textarea, [tabindex]',
-            ),
-          ).filter(
-            (element) =>
-              element.tabIndex >= 0 &&
-              !element.matches(':disabled') &&
-              !element.closest('[hidden]'),
-          )
+          if (event.key !== 'Tab' || context?.modal) return
+          const controls = getTabbableElements(event.currentTarget)
           const boundary = event.shiftKey ? controls[0] : controls.at(-1)
           if (!boundary || document.activeElement === boundary) {
             event.preventDefault()

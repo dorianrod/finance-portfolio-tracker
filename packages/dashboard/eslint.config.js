@@ -6,6 +6,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
+import apiBusinessDestructuring from './eslint-rules/api-business-destructuring.js'
 import apiHookContract from './eslint-rules/api-hook-contract.js'
 import componentRole from './eslint-rules/component-role.js'
 import entityTypeFiles from './eslint-rules/entity-type-files.js'
@@ -21,6 +22,7 @@ import noComplexJsxCondition from './eslint-rules/no-complex-jsx-condition.js'
 import noComplexJsxMap from './eslint-rules/no-complex-jsx-map.js'
 import noComponentDataPipeline from './eslint-rules/no-component-data-pipeline.js'
 import noComponentModuleLogic from './eslint-rules/no-component-module-logic.js'
+import noConditionalTestAssertions from './eslint-rules/no-conditional-test-assertions.js'
 import noDomainAccessibility from './eslint-rules/no-domain-accessibility.js'
 import noDomainStyling from './eslint-rules/no-domain-styling.js'
 import noEffectsInComponents from './eslint-rules/no-effects-in-components.js'
@@ -34,11 +36,14 @@ import noOverwrittenUiProps from './eslint-rules/no-overwritten-ui-props.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
 import noReactContext from './eslint-rules/no-react-context.js'
 import noReturnedLocalState from './eslint-rules/no-returned-local-state.js'
+import noServicePresentation from './eslint-rules/no-service-presentation.js'
 import noSharedUiClassname from './eslint-rules/no-shared-ui-classname.js'
 import noSharedUiInternalLayout from './eslint-rules/no-shared-ui-internal-layout.js'
 import noSortForExtremum from './eslint-rules/no-sort-for-extremum.js'
+import noTestStyleAssertions from './eslint-rules/no-test-style-assertions.js'
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
 import preferFunctionalStateUpdate from './eslint-rules/prefer-functional-state-update.js'
+import preferSemanticTestQueries from './eslint-rules/prefer-semantic-test-queries.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import requireReviewedEslintSuppression from './eslint-rules/require-reviewed-eslint-suppression.js'
@@ -47,6 +52,7 @@ import reviewedEslintSuppression from './eslint-rules/reviewed-eslint-suppressio
 import sharedFeatureUsage from './eslint-rules/shared-feature-usage.js'
 import singlePublicExport from './eslint-rules/single-public-export.js'
 import stateComponentContract from './eslint-rules/state-component-contract.js'
+import testFixtureContract from './eslint-rules/test-fixture-contract.js'
 import { eslintProjectFingerprint } from './scripts/eslint-project-fingerprint.mjs'
 
 export default defineConfig([
@@ -68,6 +74,7 @@ export default defineConfig([
       local: {
         rules: {
           'api-hook-contract': apiHookContract,
+          'api-business-destructuring': apiBusinessDestructuring,
           'component-role': componentRole,
           'entity-type-files': entityTypeFiles,
           'feature-folder-layout': featureFolderLayout,
@@ -77,6 +84,7 @@ export default defineConfig([
           'max-hooks-per-component': maxHooksPerComponent,
           'no-browser-in-pure-helpers': noBrowserInPureHelpers,
           'no-complex-component-calculation': noComplexComponentCalculation,
+          'no-conditional-test-assertions': noConditionalTestAssertions,
           'no-complex-jsx-condition': noComplexJsxCondition,
           'no-complex-jsx-map': noComplexJsxMap,
           'no-component-module-logic': noComponentModuleLogic,
@@ -94,11 +102,14 @@ export default defineConfig([
           'no-prop-drilling': noPropDrilling,
           'no-react-context': noReactContext,
           'no-returned-local-state': noReturnedLocalState,
+          'no-service-presentation': noServicePresentation,
           'no-shared-ui-classname': noSharedUiClassname,
           'no-shared-ui-internal-layout': noSharedUiInternalLayout,
           'no-sort-for-extremum': noSortForExtremum,
+          'no-test-style-assertions': noTestStyleAssertions,
           'no-ui-string-concat': noUiStringConcat,
           'prefer-functional-state-update': preferFunctionalStateUpdate,
+          'prefer-semantic-test-queries': preferSemanticTestQueries,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
           'require-reviewed-eslint-suppression':
@@ -108,6 +119,7 @@ export default defineConfig([
           'shared-feature-usage': sharedFeatureUsage,
           'single-public-export': singlePublicExport,
           'state-component-contract': stateComponentContract,
+          'test-fixture-contract': testFixtureContract,
         },
       },
       'simple-import-sort': simpleImportSort,
@@ -115,6 +127,10 @@ export default defineConfig([
     rules: {
       'local/require-reviewed-eslint-suppression': 'error',
       'local/reviewed-eslint-suppression': 'warn',
+      'local/no-conditional-test-assertions': 'error',
+      'local/no-test-style-assertions': 'error',
+      'local/prefer-semantic-test-queries': 'error',
+      'local/test-fixture-contract': 'error',
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
     },
@@ -194,11 +210,13 @@ export default defineConfig([
       'simple-import-sort/exports': 'error',
       'simple-import-sort/imports': 'error',
       'local/api-hook-contract': 'error',
+      'local/api-business-destructuring': 'error',
       'local/entity-type-files': 'error',
       'local/formatter-contract': 'error',
       'local/no-lossy-boolean-transform': 'error',
       'local/no-number-string-roundtrip': 'error',
       'local/no-returned-local-state': 'error',
+      'local/no-service-presentation': 'error',
       'local/no-overwritten-ui-props': 'error',
       'local/no-sort-for-extremum': 'error',
       'local/prefer-functional-state-update': 'error',

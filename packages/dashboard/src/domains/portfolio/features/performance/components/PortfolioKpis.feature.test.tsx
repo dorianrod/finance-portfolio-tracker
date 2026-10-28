@@ -10,7 +10,7 @@ describe('filtered IRR KPIs', () => {
       <IrrSinceTrackingKpi
         value={12.74}
         status="ready"
-        scopeLabel="Selected accounts"
+        accountFilters={new Set(['account'])}
       />,
     )
 
@@ -23,7 +23,7 @@ describe('filtered IRR KPIs', () => {
       <TrailingThreeYearIrrKpi
         value={17.95}
         status="loading"
-        scopeLabel="Selected accounts"
+        accountFilters={new Set(['account'])}
       />,
     )
 

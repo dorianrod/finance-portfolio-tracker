@@ -44,3 +44,11 @@ export const mockInvoices: Invoice[] = [
 ```
 
 When fixtures from two domains have to agree (contacts → accounts), add a small `*.mock.test.ts` that checks the shared ids and their uniqueness.
+
+### ESLint Enforcement
+
+Enable `local/test-fixture-contract` at error level for tests and mock-data modules. With TypeScript information, reject object/array fixtures whose source shape is not assignable to the asserted type, including angle-bracket casts, immutable aliases and double casts through `unknown`. Preserve annotations, `satisfies`, `as const`, explicit partial contracts and DOM narrowing. A complete cast may remain assignable; prefer the annotation/factory convention during review.
+
+In `mocks/` and `*.mock.*`, reject the live clock (`new Date()`, `Date()`, `Date.now()`) and `Math.random()`, including immutable aliases. Keep controlled-clock assertions in tests valid. Fixed dates and explicitly seeded generators remain valid.
+
+The check does not prove unique IDs or fixture ownership, follow arbitrary factories or discover every nondeterministic source. Review those properties separately. It does not autofix missing fields, choose business defaults or invent dates.

@@ -23,7 +23,6 @@ export function DashboardContent({
     displayedTypeHistory,
     fundData,
     globalTri,
-    irrScopeLabel,
     irrStatus,
     latestAccountPositions,
     monthlyOps,
@@ -79,7 +78,6 @@ export function DashboardContent({
           income={trailingIncome}
           globalTri={globalTri}
           irrStatus={irrStatus}
-          irrScopeLabel={irrScopeLabel}
         />
       )}
       {activeTab === 'diversification' && (

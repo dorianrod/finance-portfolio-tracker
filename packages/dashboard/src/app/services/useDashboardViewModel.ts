@@ -57,37 +57,42 @@ export function useDashboardViewModel() {
   const rawAllocationQuery = useGetAllocationRowsQuery()
   const fundHoldingsQuery = useGetFundHoldingsQuery()
   const fundDiagnosticsQuery = useGetFundDiagnosticsQuery()
+  const { data: fundHoldings = EMPTY_FUND_HOLDINGS } = fundHoldingsQuery
+  const { data: fundDiagnostics = EMPTY_FUND_DIAGNOSTICS } =
+    fundDiagnosticsQuery
   const fundData = useMemo(
     () => ({
-      ...(fundHoldingsQuery.data ?? EMPTY_FUND_HOLDINGS),
-      ...(fundDiagnosticsQuery.data ?? EMPTY_FUND_DIAGNOSTICS),
+      ...fundHoldings,
+      ...fundDiagnostics,
     }),
-    [fundHoldingsQuery.data, fundDiagnosticsQuery.data],
+    [fundHoldings, fundDiagnostics],
   )
   const savingCapacityQuery = useGetSavingCapacityQuery(filters.accounts)
-  const savingCapacity = savingCapacityQuery.data ?? EMPTY_SAVING_CAPACITY
+  const { data: savingCapacity = EMPTY_SAVING_CAPACITY } = savingCapacityQuery
   const savingCapacityLoading = savingCapacityQuery.isPending
   const savingCapacityError = savingCapacityQuery.error
   const annualIncomeSavingsQuery = useGetAnnualIncomeSavingsQuery()
+  const { data: dashboardData = EMPTY_DASHBOARD_DATA } = dashboardQuery
   const { positions, rawPositions, rawOperations, accountLabels } =
-    dashboardQuery.data ?? EMPTY_DASHBOARD_DATA
-  const history = historyQuery.data ?? EMPTY_PORTFOLIO_HISTORY
-  const cashHistory = cashHistoryQuery.data ?? EMPTY_CASH_HISTORY
-  const allPositionRows = allPositionsQuery.data ?? EMPTY_RAW_POSITIONS
-  const pipelineErrors = pipelineErrorsQuery.data ?? EMPTY_ERRORS
+    dashboardData
+  const { data: history = EMPTY_PORTFOLIO_HISTORY } = historyQuery
+  const { data: cashHistory = EMPTY_CASH_HISTORY } = cashHistoryQuery
+  const { data: allPositionRows = EMPTY_RAW_POSITIONS } = allPositionsQuery
+  const { data: pipelineErrors = EMPTY_ERRORS } = pipelineErrorsQuery
   const pipelineErrorsLoading = pipelineErrorsQuery.isPending
-  const manualPriceOverrides =
-    manualPriceOverridesQuery.data ?? EMPTY_MANUAL_PRICE_OVERRIDES
-  const allMonthlyOps = monthlyOpsQuery.data ?? EMPTY_MONTHLY_OPS
+  const { data: manualPriceOverrides = EMPTY_MANUAL_PRICE_OVERRIDES } =
+    manualPriceOverridesQuery
+  const { data: allMonthlyOps = EMPTY_MONTHLY_OPS } = monthlyOpsQuery
+  const { data: allocationRows = EMPTY_RAW_ISIN_DATA } = rawAllocationQuery
   const rawAllocationData = useMemo(
     () => ({
-      ...(rawAllocationQuery.data ?? EMPTY_RAW_ISIN_DATA),
+      ...allocationRows,
       loading: rawAllocationQuery.isPending,
     }),
-    [rawAllocationQuery.data, rawAllocationQuery.isPending],
+    [allocationRows, rawAllocationQuery.isPending],
   )
-  const annualIncomeSavings =
-    annualIncomeSavingsQuery.data ?? EMPTY_ANNUAL_INCOME_SAVINGS
+  const { data: annualIncomeSavings = EMPTY_ANNUAL_INCOME_SAVINGS } =
+    annualIncomeSavingsQuery
 
   const {
     accountFilterLabels,
@@ -135,7 +140,6 @@ export function useDashboardViewModel() {
     demoPresetSelection,
     displayedHistory,
     globalTri,
-    irrScopeLabel,
     irrStatus,
   } = useDashboardHistory({
     allAccounts,
@@ -294,7 +298,6 @@ export function useDashboardViewModel() {
       error,
       fundData,
       globalTri,
-      irrScopeLabel,
       irrStatus,
       latestAccountPositions,
       loading,
@@ -340,7 +343,6 @@ export function useDashboardViewModel() {
       error,
       fundData,
       globalTri,
-      irrScopeLabel,
       irrStatus,
       latestAccountPositions,
       loading,

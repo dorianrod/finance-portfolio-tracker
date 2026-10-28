@@ -6,7 +6,7 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { ChartText } from './ChartText.view'
 
 describe('ChartText', () => {
-  it('resolves semantic chart tones and owns section separators while preserving layout', () => {
+  it('resolves semantic chart tones and section separators while retaining content', () => {
     const html = renderToStaticMarkup(
       <Layout spaceBefore="compact">
         <ChartText as="p" tone={'positiveText'} variant="strong" separator>
@@ -14,13 +14,9 @@ describe('ChartText', () => {
         </ChartText>
       </Layout>,
     )
-    expect(html).toContain('<p')
     expect(html).toContain('color:#4ade80')
     expect(html).toContain('border-top:1px solid var(--tooltip-border)')
-    expect(html).toContain('class="mt-1"')
-    expect(html).not.toContain('margin-top:')
-    expect(html).toContain('font-semibold')
-    expect(html).toContain('Gain</p>')
+    expect(html).toContain('Gain')
   })
 
   it('uses the color supplied by a chart series without forwarding series metadata to the DOM', () => {

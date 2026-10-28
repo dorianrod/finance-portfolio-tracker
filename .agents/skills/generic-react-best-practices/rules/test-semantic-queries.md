@@ -38,3 +38,9 @@ expect(message).toHaveValue('Please review')
 ```
 
 If `react-i18next` is mocked globally with an identity `t`, accessible names are the i18n keys rather than the translated text; query with the key. If a query fails, the component may be missing its accessible name: fix the component (see `ui-accessible-names`), do not fall back to a test id.
+
+### ESLint Enforcement
+
+Enable `local/prefer-semantic-test-queries` at error level in authored test files, including tooling tests. Resolve Testing Library bindings, namespaces, aliases, destructured render queries and `within` results to reject test-ID queries and `fireEvent` interactions. Check DOM selectors and DOM `tagName` access using receiver types or proven DOM/Testing Library origins.
+
+Preserve semantic queries, `userEvent`, compiler AST properties and unrelated APIs with matching method names. Type information extends detection through local helpers returning DOM nodes. Opaque untyped wrappers, runtime property names and nonstandard query libraries require review. The check has no autofix because selecting a role and accessible name may require correcting the component.

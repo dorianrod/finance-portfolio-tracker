@@ -34,10 +34,12 @@ export function Button({
       aria-label={label ?? nativeProps['aria-label']}
       onFocus={(event) => {
         nativeProps.onFocus?.(event)
+        if (event.defaultPrevented) return
         onIntent?.()
       }}
       onMouseEnter={(event) => {
         props.onMouseEnter?.(event)
+        if (event.defaultPrevented) return
         onIntent?.()
       }}
     />

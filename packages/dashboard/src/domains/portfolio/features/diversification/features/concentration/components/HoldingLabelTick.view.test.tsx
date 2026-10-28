@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/HoldingLabelTick.view'
 
 describe('HoldingLabelTick', () => {
-  it('reserves a wide clipped label area and exposes the full name as a tooltip', () => {
+  it('exposes the full holding name as visible text and a tooltip', () => {
     const name = 'Example Asia Pacific Equity Enhanced Fund USD (Acc)'
     const html = renderToStaticMarkup(
       <svg>
@@ -12,9 +12,7 @@ describe('HoldingLabelTick', () => {
       </svg>,
     )
 
-    expect(html).toContain('width="250"')
-    expect(html).toMatch(/class="[^"]*\btruncate\b/)
     expect(html).toContain(`title="${name}"`)
-    expect(html).toContain(`>${name}</div>`)
+    expect(html).toContain(name)
   })
 })

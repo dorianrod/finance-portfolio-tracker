@@ -1094,6 +1094,12 @@ Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest
 
 See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-parallel-work`
 
+### ESLint Enforcement
+
+Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
+
+This check identifies explicit display dependencies. It does not infer presentation from arbitrary strings, inspect every transitive helper or decide ownership from a function's name. Presentation hidden behind an opaque adapter and chart geometry still require review. Move the display responsibility to its owning component/page instead of renaming imports to bypass the check.
+
 ### 1.15 No index.ts in stores/, One File per Concern
 
 **Impact: HIGH (prevents circular imports and keeps atoms discoverable)**
@@ -1855,6 +1861,27 @@ const { mutateAsync: closeOrder } = useCloseOrder(orderId)
 ```
 
 Use the singular for one entity (`order`, `contract`) and the plural for collections (`documents`, `reminders`). Other fields (`isPending`, `refetch`) keep their names.
+
+A caller may retain the result object for status, errors, refetching or unchanged
+forwarding. Destructure its data separately before consuming it:
+
+```typescript
+const orderQuery = useGetOrderDetailQuery(orderId)
+const { data: order } = orderQuery
+```
+
+### ESLint Enforcement
+
+Enable `local/api-business-destructuring` at error level with TypeScript information
+for production consumers. Resolve the TanStack result type through direct hooks,
+domain wrappers and aliases; do not classify an arbitrary object by a `data`
+property or a `Query` suffix alone. Reject direct `data` and `mutateAsync` reads,
+including optional/static computed access, and destructuring without a distinct
+identifier alias. Allow named aliases with defaults, other result fields and
+unchanged result returns. Do not choose the business name automatically.
+
+Meaningful business vocabulary still requires review. Dynamic property names,
+opaque untyped results and unrelated libraries are outside this bounded check.
 
 ### 2.14 Name API Hooks After the Endpoint Intent
 
@@ -2866,6 +2893,30 @@ The design system owns accessibility implementation, including simple attributes
 
 Prefer native HTML for simple controls. Use focused, unstyled primitives such as Radix behind project wrappers for complex widgets; do not repeatedly implement tabs, tooltip dismissal or modal focus management. Preserve pointer and keyboard behavior, translated names, visible focus and nested overlay dismissal when migrating.
 
+### Compose Caller Events
+
+When a primitive adapts a caller's cancelable native event handler, invoke that
+handler before built-in activation or other work. Honor the same event's
+`defaultPrevented` after the caller returns. A callback reference alone does not
+forward the event, and a guard before the caller cannot observe its cancellation.
+Keep necessary propagation bookkeeping and read-only DOM metadata within the UI
+boundary. Noncancelable value-change notifications do not gain a cancellation
+contract from an `on...` name alone.
+
+```tsx
+<button onClick={event => {
+  onClick?.(event)
+  if (event.defaultPrevented) return
+  activate()
+}} />
+```
+
+Test the caller's observable cancellation as well as successful activation. For
+reusable overlays, exercise supported sequences: outside dismissal followed by
+keyboard reopening and Escape, available/unavailable focus targets, and Tab in
+both directions for each supported modality. An isolated first-open test does not
+establish the protocol across later openings or other modes.
+
 Only files under `src/shared/ui`, including its internal hooks and helpers, may depend directly on external accessibility or headless UI libraries such as Radix. Domain code, application code and other shared modules must import project-owned UI primitives instead. Keep imports and library integration inside this boundary; do not bypass it through bare re-exports of third-party components.
 
 ### Exceptions
@@ -2880,6 +2931,20 @@ Only files under `src/shared/ui`, including its internal hooks and helpers, may 
 Use the custom ESLint rule `local/no-domain-accessibility` with type information for authored application code. Outside shared UI, check JSX attributes, explicitly supplied properties in resolvable spreads, direct accessibility-library imports/re-exports/dynamic imports and resolved DOM focus, keyboard-listener and ARIA APIs. Within shared UI, check public component contracts and compound slots for raw wiring props, including inherited HTML attributes, and reject bare third-party value re-exports, namespace exports and resolved import aliases. Type-only re-exports and internal primitive wiring remain valid. Exclude tests, generated files and isolated Storybook support.
 
 Resolve declarations to avoid false positives from optional attributes inherited from external HTML/SVG types, such as chart renderer props. Static checks cannot prove runtime accessibility or reconstruct arbitrary dynamic property names, opaque objects or transitive helper behavior. Test reusable primitives by role and label, and verify keyboard navigation, relationships, dismissal and focus restoration.
+
+Enable `local/no-overwritten-ui-props` at error level for shared UI. Check handlers
+and refs replaced after a props spread. Native cancelable handlers extracted from
+the public parameter object remain subject to the composition contract. Resolve
+direct, named and immutable handler aliases; recognize invocation rather than
+mere property reads. For supported synchronous branches and short-circuits,
+check caller-first ordering and a guard on the same event after forwarding.
+Keep direct forwarding, read-only DOM metadata, guarded built-in work and
+noncancelable notifications valid. Preserve ref composition separately.
+
+This bounded flow analysis does not prove arbitrary higher-order handlers,
+asynchronous continuations, loops, exceptions, getter effects or transitive helper
+semantics. Opaque composition needs review and executable behavior tests. Do not
+approve a missing guard because the callback property appears in the function.
 
 ### References
 
@@ -4616,6 +4681,16 @@ Assert what the user or caller observes, not the implementation:
 
 Move repeated setup into `beforeEach` or a local `setup()` helper, not into a branch. Use `test.each` for the null, undefined and empty-string variants as well.
 
+### ESLint Enforcement
+
+Enable `local/no-test-style-assertions` and `local/no-conditional-test-assertions` at error level in authored test files (`*.test.*`, `*.spec.*`, `__tests__/`), including tooling tests.
+
+The style check recognizes Jest/Vitest assertions, import aliases and immutable aliases. Reject `toHaveClass`, class attributes, DOM `className`/`classList` reads and equivalent `getAttribute('class')` assertions. For HTML returned by React server rendering or DOM serialization, detect literal class attributes and recognizable Tailwind utility sequences, including static strings, regex literals, templates, aliases and statically available `test.each` tables. Preserve semantic attributes, visible text, ordinary data comparisons and public SVG drawing contracts. A permitted public state-class exception requires a narrow reviewed directive with its technical rationale.
+
+The conditional-assertion check reports assertions lexically inside branches, loops, collection iteration, catch clauses and short-circuit right operands. Allow parametrized tests, unconditional aggregate assertions and polling callbacks such as `waitFor`. Follow the actual imported assertion binding and respect shadowing.
+
+These are bounded checks: opaque helper results, reassigned aliases, arbitrary regex syntax, dynamic CSS generation and conditional execution hidden behind another function require review. Do not infer Tailwind classes from ordinary prose or attribute all properties named `className` to DOM nodes. There is no automatic conversion to a behavior test.
+
 ### 11.2 Build Typed, Deterministic Mock Data in the Owning mocks Folder
 
 **Impact: MEDIUM (reproducible tests that break when the domain type changes)**
@@ -4655,6 +4730,14 @@ export const mockInvoices: Invoice[] = [
 ```
 
 When fixtures from two domains have to agree (contacts → accounts), add a small `*.mock.test.ts` that checks the shared ids and their uniqueness.
+
+### ESLint Enforcement
+
+Enable `local/test-fixture-contract` at error level for tests and mock-data modules. With TypeScript information, reject object/array fixtures whose source shape is not assignable to the asserted type, including angle-bracket casts, immutable aliases and double casts through `unknown`. Preserve annotations, `satisfies`, `as const`, explicit partial contracts and DOM narrowing. A complete cast may remain assignable; prefer the annotation/factory convention during review.
+
+In `mocks/` and `*.mock.*`, reject the live clock (`new Date()`, `Date()`, `Date.now()`) and `Math.random()`, including immutable aliases. Keep controlled-clock assertions in tests valid. Fixed dates and explicitly seeded generators remain valid.
+
+The check does not prove unique IDs or fixture ownership, follow arbitrary factories or discover every nondeterministic source. Review those properties separately. It does not autofix missing fields, choose business defaults or invent dates.
 
 ### 11.3 Colocate a Test Next to Every File, Covering Errors
 
@@ -4814,6 +4897,12 @@ expect(message).toHaveValue('Please review')
 ```
 
 If `react-i18next` is mocked globally with an identity `t`, accessible names are the i18n keys rather than the translated text; query with the key. If a query fails, the component may be missing its accessible name: fix the component (see `ui-accessible-names`), do not fall back to a test id.
+
+### ESLint Enforcement
+
+Enable `local/prefer-semantic-test-queries` at error level in authored test files, including tooling tests. Resolve Testing Library bindings, namespaces, aliases, destructured render queries and `within` results to reject test-ID queries and `fireEvent` interactions. Check DOM selectors and DOM `tagName` access using receiver types or proven DOM/Testing Library origins.
+
+Preserve semantic queries, `userEvent`, compiler AST properties and unrelated APIs with matching method names. Type information extends detection through local helpers returning DOM nodes. Opaque untyped wrappers, runtime property names and nonstandard query libraries require review. The check has no autofix because selecting a role and accessible name may require correcting the component.
 
 ### 11.7 Test API Hooks with renderHook and a Per-Test Query Wrapper
 

@@ -10,11 +10,13 @@ import type { IrrKpiProps } from './portfolioKpis.types'
 export function IrrSinceTrackingKpi({
   value,
   status = 'ready',
-  scopeLabel,
+  accountFilters,
 }: IrrKpiProps) {
   const formatIrrKpiValue = useFormatIrrKpiValue()
   const formattedValue = formatIrrKpiValue(value, status)
   const note = getIrrKpiNote(status)
+  const hasAccountScope =
+    status === 'ready' && accountFilters != null && accountFilters.size > 0
   return (
     <Kpi.Root accent={value == null || value >= 0 ? 'positive' : 'negative'}>
       <Kpi.Label
@@ -25,7 +27,7 @@ export function IrrSinceTrackingKpi({
         <Kpi.TooltipFooter>
           <FilterScopeBadges account="filterable" period="since-tracking" />
         </Kpi.TooltipFooter>
-        {scopeLabel
+        {hasAccountScope
           ? i18n.t('ui.portfoliokpis.irrSinceTrackingSelectedAccounts')
           : i18n.t('ui.portfoliokpis.irrSinceTracking')}
       </Kpi.Label>

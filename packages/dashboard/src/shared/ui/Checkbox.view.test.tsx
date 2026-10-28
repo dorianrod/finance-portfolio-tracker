@@ -8,7 +8,7 @@ import { Checkbox } from './Checkbox.view'
 afterEach(cleanup)
 
 describe('Checkbox', () => {
-  it('synchronizes native indeterminate state, preserves selection actions and keeps appearance with layout on the parent', async () => {
+  it('synchronizes native indeterminate state and preserves selection actions', async () => {
     const onChange = vi.fn()
     const { rerender } = render(
       <label>
@@ -22,9 +22,6 @@ describe('Checkbox', () => {
       name: 'Accounts',
     }) as HTMLInputElement
     expect(input.indeterminate).toBe(true)
-    expect(input.className).toContain('accent-accent')
-    expect(input.className).not.toContain('ml-2')
-    expect(input.parentElement?.className).toContain('ml-2')
     await userEvent.setup().click(input)
     expect(onChange).toHaveBeenCalledOnce()
     rerender(

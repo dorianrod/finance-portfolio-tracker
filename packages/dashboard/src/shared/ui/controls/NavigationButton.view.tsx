@@ -37,6 +37,7 @@ export function NavigationButton({
       onFocus={onIntent}
       onMouseEnter={(event) => {
         props.onMouseEnter?.(event)
+        if (event.defaultPrevented) return
         onIntent?.()
       }}
     />

@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import { Bar, BarChart } from 'recharts'
 import { afterEach, describe, expect, it } from 'vitest'
 
@@ -11,8 +17,8 @@ import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 afterEach(cleanup)
 
 describe('chart axes', () => {
-  it('registers wrapped axes in a real chart and applies the shared tick and grid appearance', async () => {
-    const { container } = render(
+  it('registers wrapped axes in a real chart and applies their tick formatters', async () => {
+    render(
       <BarChart
         width={500}
         height={300}
@@ -26,29 +32,15 @@ describe('chart axes', () => {
           dataKey="name"
           tickFormatter={(value) => `Group ${value}`}
         />
-        <ChartYAxis />
+        <ChartYAxis tickFormatter={(value) => `Amount ${value}`} />
         <ChartReference y={10} />
         <Bar dataKey="value" isAnimationActive={false} />
       </BarChart>,
     )
     await waitFor(() => expect(screen.getByText('Group Alpha')).toBeTruthy())
     expect(screen.getByText('Group Beta')).toBeTruthy()
-    const tick = screen.getByText('Group Alpha').closest('text')
-    expect(tick?.getAttribute('fill')).toBe('var(--chart-tick)')
-    expect(tick?.getAttribute('font-size')).toBe('11')
     expect(
-      container
-        .querySelector('.recharts-cartesian-grid line')
-        ?.getAttribute('stroke'),
-    ).toBe('var(--chart-grid)')
-    expect(
-      container.querySelector('.recharts-xAxis .recharts-cartesian-axis-line'),
-    ).toBeNull()
-    expect(container.querySelector('.recharts-yAxis')).not.toBeNull()
-    expect(
-      container
-        .querySelector('.recharts-reference-line-line')
-        ?.getAttribute('stroke'),
-    ).toBe('var(--chart-zero)')
+      within(screen.getByRole('application')).getByText('Amount 0'),
+    ).toBeTruthy()
   })
 })

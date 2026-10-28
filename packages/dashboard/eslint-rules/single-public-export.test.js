@@ -71,28 +71,23 @@ describe('single-public-export', () => {
     expect(messages[0].fix).toBeUndefined()
   })
 
-  it('enables both rules as errors only for production modules', async () => {
-    const eslint = new ESLint()
-    for (const filename of [
-      'src/shared/ui/Example.view.tsx',
-      'src/shared/helpers/example.ts',
-    ]) {
+  it.each([
+    { filename: 'src/shared/ui/Example.view.tsx', expected: [2] },
+    { filename: 'src/shared/helpers/example.ts', expected: [2] },
+    { filename: 'src/example.test.ts', expected: undefined },
+    { filename: 'src/example.spec.tsx', expected: undefined },
+    { filename: 'src/__tests__/example.ts', expected: undefined },
+    { filename: 'src/example.stories.tsx', expected: undefined },
+    { filename: 'src/shared/ui/storybook/example.tsx', expected: undefined },
+    { filename: 'src/types.d.ts', expected: undefined },
+    { filename: 'vite.config.ts', expected: undefined },
+  ])(
+    'configures public module checks for $filename',
+    async ({ filename, expected }) => {
+      const eslint = new ESLint()
       const config = await eslint.calculateConfigForFile(filename)
-      expect(config.rules['local/single-public-export']).toEqual([2])
-      expect(config.rules['local/public-api-first']).toEqual([2])
-    }
-    for (const filename of [
-      'src/example.test.ts',
-      'src/example.spec.tsx',
-      'src/__tests__/example.ts',
-      'src/example.stories.tsx',
-      'src/shared/ui/storybook/example.tsx',
-      'src/types.d.ts',
-      'vite.config.ts',
-    ]) {
-      const config = await eslint.calculateConfigForFile(filename)
-      expect(config.rules['local/single-public-export']).toBeUndefined()
-      expect(config.rules['local/public-api-first']).toBeUndefined()
-    }
-  })
+      expect(config.rules['local/single-public-export']).toEqual(expected)
+      expect(config.rules['local/public-api-first']).toEqual(expected)
+    },
+  )
 })

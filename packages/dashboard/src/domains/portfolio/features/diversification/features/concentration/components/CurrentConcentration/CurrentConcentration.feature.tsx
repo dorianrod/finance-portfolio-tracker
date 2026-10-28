@@ -1,4 +1,5 @@
-import { useConcentrationDescriptions } from '@/domains/portfolio/features/diversification/features/concentration/services/useConcentrationDescriptions'
+import { ConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationChart.feature'
+import { CumulativeConcentrationChart } from '@/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/CumulativeConcentrationChart.feature'
 import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
@@ -7,8 +8,7 @@ import i18n from '@/i18n/i18n'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { ConcentrationChart } from './ConcentrationChart.feature'
-import { CumulativeConcentrationChart } from './CumulativeConcentrationChart/CumulativeConcentrationChart.feature'
+import { useConcentrationDescriptions } from './helpers/presenters/useConcentrationDescriptions'
 
 export function CurrentConcentration({
   positions,

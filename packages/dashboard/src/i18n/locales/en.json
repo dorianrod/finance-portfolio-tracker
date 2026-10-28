@@ -659,7 +659,6 @@
   "ui.useconcentrationdescriptions.heldPositionsDescription": "Positions effectively held, aggregated across accounts.",
   "ui.useconcentrationdescriptions.underlyingCumulativeDescription": "Share of the applicable portfolio identified in the largest N look-through exposures · {{coverage}} coverage.",
   "ui.useconcentrationdescriptions.underlyingPositionsDescription": "Identified {{identified}} · undisclosed funds {{undisclosed}} · opaque {{opaque}}.",
-  "ui.usedashboardviewmodel.selectedAccounts": "Selected accounts",
   "ui.usefilteredportfoliohistory.localDashboardOnly": "Filtered IRR is available in the local dashboard for this selection.",
   "ui.buildfilterscopebadges.sinceTracking": "Since tracking",
   "ui.buildfilterscopebadges.trailing12m": "Trailing 12m",

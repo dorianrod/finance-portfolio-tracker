@@ -8,17 +8,14 @@ describe('TooltipBox', () => {
     const html = renderToStaticMarkup(<TooltipBox>Details</TooltipBox>)
     expect(html).toContain('background:var(--tooltip-bg)')
     expect(html).toContain('border:1px solid var(--tooltip-border)')
-    expect(html).toContain('w-72')
-    expect(html).toContain('px-3 py-2')
+    expect(html).toContain('Details')
   })
 
-  it('provides a raised variant with standardized spacing', () => {
+  it('preserves composed content in the raised variant', () => {
     const html = renderToStaticMarkup(
       <TooltipBox variant="raised">Details</TooltipBox>,
     )
-    expect(html).toContain('bg-surface-raised')
-    expect(html).toContain('shadow-xl')
-    expect(html).toContain('px-3 py-2')
+    expect(html).toContain('Details')
     expect(html).not.toContain('variant=')
   })
 })

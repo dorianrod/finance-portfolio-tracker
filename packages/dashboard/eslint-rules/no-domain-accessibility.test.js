@@ -106,17 +106,15 @@ describe('configured accessibility boundary', () => {
     expect(messages).toEqual([])
   })
 
-  it('also checks domain helpers and shared utilities', async () => {
-    for (const file of [
-      'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
-      'src/shared/helpers/presenters/getErrorMessage.ts',
-    ]) {
-      expect(
-        (await lint('document.body.focus()', file)).map(
-          ({ messageId }) => messageId,
-        ),
-      ).toEqual(['wiring'])
-    }
+  it.each([
+    'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
+    'src/shared/helpers/presenters/getErrorMessage.ts',
+  ])('also checks helpers and utilities in %s', async (file) => {
+    expect(
+      (await lint('document.body.focus()', file)).map(
+        ({ messageId }) => messageId,
+      ),
+    ).toEqual(['wiring'])
   })
 
   it.each([

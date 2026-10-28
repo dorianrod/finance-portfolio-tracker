@@ -22,5 +22,5 @@ export function resolveFilteredHistoryState(
 type FilteredResponseState = {
   key: string
   history: PortfolioHistoryPoint[] | null
-  error: string | null
+  error: Error | null
 }

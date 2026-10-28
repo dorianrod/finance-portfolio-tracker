@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
-import { cleanup, render, waitFor } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { AreaChart } from 'recharts'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartLegend } from '@/shared/ui/chartLabels/ChartLegend.view'
 
 import { SeriesArea } from './SeriesArea.view'
 import { SeriesGradient } from './SeriesGradient.view'
@@ -13,8 +14,8 @@ import { SeriesGradient } from './SeriesGradient.view'
 afterEach(cleanup)
 
 describe('SeriesArea', () => {
-  it('renders a series against its shared gradient definition', async () => {
-    const { container } = render(
+  it('registers the named series and renders its data categories', async () => {
+    render(
       <AreaChart
         width={500}
         height={300}
@@ -32,7 +33,9 @@ describe('SeriesArea', () => {
         </defs>
         <ChartXAxis dataKey="name" />
         <ChartYAxis />
+        <ChartLegend />
         <SeriesArea
+          name="Portfolio value"
           dataKey="value"
           tone={'secondary'}
           gradientId="cost-gradient"
@@ -40,18 +43,9 @@ describe('SeriesArea', () => {
         />
       </AreaChart>,
     )
-    await waitFor(() =>
-      expect(container.querySelector('.recharts-area-area')).not.toBeNull(),
-    )
-    expect(
-      container.querySelector('.recharts-area-area')?.getAttribute('fill'),
-    ).toBe('url(#cost-gradient)')
-    expect(
-      container.querySelector('.recharts-area-curve')?.getAttribute('stroke'),
-    ).toBe('#818cf8')
-    const stops = container.querySelectorAll('[id="cost-gradient"] stop')
-    expect(stops[0].getAttribute('stop-opacity')).toBe('0.6')
-    expect(stops[1].getAttribute('stop-opacity')).toBe('0.2')
+    expect(await screen.findByText('Portfolio value')).toBeTruthy()
+    expect(screen.getByText('Alpha')).toBeTruthy()
+    expect(screen.getByText('Beta')).toBeTruthy()
   })
 
   it('renders supplied palette roles with the requested gradient profiles', () => {

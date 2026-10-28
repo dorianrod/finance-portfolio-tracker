@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, waitFor } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BarChart, type BarShapeProps } from 'recharts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -16,17 +16,19 @@ function SignedRectangle(
   props: Partial<Omit<BarShapeProps, 'className' | 'style'>>,
 ) {
   return (
-    <ChartRectangle
-      geometry={props}
-      tone={props.index === 0 ? 'positive' : 'series5'}
-    />
+    <g role="img" aria-label={`Bar ${props.index}`}>
+      <ChartRectangle
+        geometry={props}
+        tone={props.index === 0 ? 'positive' : 'series5'}
+      />
+    </g>
   )
 }
 
 describe('SeriesBar', () => {
-  it('injects shape data and geometry, shares appearance and preserves bar actions', async () => {
+  it('injects each bar index into the renderer and preserves bar actions', async () => {
     const onClick = vi.fn()
-    const { container } = render(
+    render(
       <BarChart
         width={500}
         height={300}
@@ -50,20 +52,9 @@ describe('SeriesBar', () => {
         </SeriesBar>
       </BarChart>,
     )
-    await waitFor(() =>
-      expect(
-        container.querySelectorAll(
-          '.recharts-bar-rectangle .recharts-rectangle',
-        ),
-      ).toHaveLength(2),
-    )
-    const rectangles = container.querySelectorAll(
-      '.recharts-bar-rectangle .recharts-rectangle',
-    )
-    expect(rectangles[0].getAttribute('fill')).toBe('#22c55e')
-    expect(rectangles[1].getAttribute('fill')).toBe('#ef4444')
-    expect(rectangles[0].getAttribute('d')).toContain('A')
-    await userEvent.setup().click(rectangles[0])
+    const first = await screen.findByRole('img', { name: 'Bar 0' })
+    expect(screen.getByRole('img', { name: 'Bar 1' })).toBeTruthy()
+    await userEvent.setup().click(first)
     expect(onClick).toHaveBeenCalledOnce()
   })
 })

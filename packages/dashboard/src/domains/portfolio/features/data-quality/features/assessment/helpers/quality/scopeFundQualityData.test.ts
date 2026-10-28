@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
+import { makeFundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/fundSnapshot.mock'
+import { makeFundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/fundUnresolved.mock'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
-import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
-import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
-import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import { makeFundHolding } from '@/domains/portfolio/shared/mocks/fundHolding.mock'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
@@ -161,13 +161,13 @@ describe('scopeFundQualityData', () => {
       explainedPct: 0,
       residualPct: 100,
     })
-    const holding = {
+    const holding = makeFundHolding({
       parentIsin: '',
       parentTicker: '',
       parentName: 'Employee fund',
-    } as FundHolding
-    const snapshot = { fundId: 'Employee fund' } as FundSnapshot
-    const unresolved = { parentId: 'Employee fund' } as FundUnresolved
+    })
+    const snapshot = makeFundSnapshot({ fundId: 'Employee fund' })
+    const unresolved = makeFundUnresolved({ parentId: 'Employee fund' })
     const result = scopeFundQualityData(
       [position({ name: 'Employee fund', total_value: 500 })],
       [holding],
