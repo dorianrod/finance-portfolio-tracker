@@ -42,6 +42,32 @@ refresh the installed copy before checks. A clean CI install packages the curren
 contents of the skill. Keep reusable implementations here and application-specific
 integration cases, warning ceilings, roots and catalog paths in the consumer.
 
+## Formatting and sorting
+
+The [formatting rule](../rules/quality-formatting-and-sorting.md) owns the Prettier
+baseline, import groups and sorting limits. The package supplies ESLint sorting;
+each consumer installs Prettier as a direct, pinned dev dependency and commits
+its configuration and ignore file. Keep exact application options and paths in
+that application's documentation. The preset does not install a Prettier config.
+
+Expose fix and check scripts from the application root, preserving its existing
+normal lint command and warning ceiling:
+
+```json
+{
+  "format": "prettier --write . && npm run lint -- --fix && prettier --write .",
+  "format:check": "prettier --check . && npm run lint"
+}
+```
+
+The final Prettier pass formats changes made by ESLint autofixes. Use the same
+local tools and configuration for editor formatting, import fixes and CI. The
+check command validates both formatting and lint; the normal lint command alone
+does not check Prettier layout. When formatting files outside the application,
+explicitly select the intended configuration with `--config <path>` if it cannot
+be discovered from those files. Ignore generated files and output directories in
+the consumer's `.prettierignore`; ESLint has its own ignores.
+
 ## Choose checks for the selected rules
 
 Commands below are package binaries, run from the consuming application's root
@@ -50,6 +76,7 @@ exceptions; the table is an association index, not a sequence of audit passes.
 
 | Owning catalog rules | ESLint aids | Complementary command and trigger |
 | --- | --- | --- |
+| [Formatting and sorting](../rules/quality-formatting-and-sorting.md) | `simple-import-sort/imports`, `simple-import-sort/exports`; type imports and public declaration order retain their separate owning rules | Run the consuming application's Prettier check when changing supported authored files or formatting policy. Use its combined format/check scripts to cover both layout and lint. |
 | [Component roles](../rules/arch-component-roles.md) | `local/component-role`, `local/state-component-contract` | `react-best-practices-architecture` when reviewing component responsibilities and presentation boundaries. Inspect each candidate and its dependencies before choosing a role or extraction. |
 | [Domain import boundaries](../rules/arch-transverse-only-imports.md) | `local/import-boundaries` | `react-best-practices-cycles --project <config.json>` when reviewing dependencies or changing runtime imports. An acyclic forbidden domain import still violates its owning rule. |
 | [Component complexity](../rules/arch-component-complexity.md) | `complexity`, `max-lines-per-function` | Reuse architecture inventory output for substantial-JSX candidates. Element count measures neither lint threshold and cannot require extraction. |

@@ -37,6 +37,24 @@ in [package.json](package.json).
 For audits, select and prioritize the skill's applicable rules first, then use
 the [rule-to-tool bindings](#rule-to-tool-bindings) below to gather evidence.
 
+### Formatting and sorting
+
+[Prettier configuration](.prettierrc.json) sets `semi: false`, `singleQuote: true`
+and `trailingComma: "all"`. The pinned Prettier 3 version supplies the remaining
+defaults, including a preferred width of 80, two-space indentation, double quotes
+for JSX attributes and LF line endings. The [ignore file](.prettierignore)
+excludes generated output, dependencies, generated data, caches and coverage.
+
+The skill's ESLint preset sorts imports and exports with `simple-import-sort`.
+It also enforces erased type-only imports and places the public callable API
+before implementation details in production source. See the skill's
+[formatting rule](../../.agents/skills/generic-react-best-practices/rules/quality-formatting-and-sorting.md)
+for exact import groups and ordering scope. Object/schema keys, JSX props and
+Tailwind classes have no configured automatic sorter.
+
+Run `npm run format` to apply Prettier, ESLint fixes and a final Prettier pass.
+Run `npm run format:check` to check both formatting and lint.
+
 ## Development
 
 From `packages/dashboard`:

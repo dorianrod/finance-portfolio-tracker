@@ -17,7 +17,7 @@ metadata:
 
 # Generic React Best Practices
 
-Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 109 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
+Opinionated coding guide for any React front (React 19, TanStack Query, Jotai, Yup, react-i18next, Jest + RTL). It contains 110 rules across 12 categories, ordered by impact, to guide code generation, reviews and refactoring.
 
 This skill defines our reusable React conventions, component composition and client-side performance guidance. Use other relevant skills alongside this catalog; declare them in `metadata.json` when adding cross-skill references. Framework-specific server rendering and API-route conventions are outside this catalog.
 
@@ -83,6 +83,10 @@ Apply the naming and placement conventions when creating or moving code. Read th
 | Helper, entity and API-hook filenames and placement | [Helper categories](rules/helpers-categories.md), [entity files](rules/types-file-per-entity.md), [API naming](rules/api-naming.md) |
 
 Mechanically observable conventions require deterministic checks in the consuming application. Verify the effective ESLint configuration with invalid and valid neighboring examples; a convention written in this skill does not install its detector. Keep business ownership and component-role decisions under semantic review. Follow [layout enforcement and coordinated renames](rules/arch-domain-first-layout.md#enforcement-and-coordinated-renames) when normalizing files.
+
+### Formatting and sorting
+
+Use the consuming application's committed Prettier policy for layout and the shared ESLint preset for import/export sorting. Read [formatting and sorting](rules/quality-formatting-and-sorting.md) when configuring these tools or changing ordering conventions: it defines the baseline options, default import groups, related type/public-API contracts and coverage limits. The [integration guide](references/project-enforcement.md#formatting-and-sorting) shows separate fix and check commands.
 
 ### Audits
 
@@ -249,6 +253,7 @@ Every formatter, including dates and entity labels, accepts `null` and `undefine
 - `quality-vercel-ref-as-prop` - Prefer ref as a Prop in React 19
 - `quality-usecallback-for-functions` - useMemo for Data, useCallback for Functions
 - `quality-english-only` - Write Code, Comments and Tests in English
+- `quality-formatting-and-sorting` - Format with Prettier and Sort Imports with ESLint
 - `quality-jsdoc-minimal` - Keep JSDoc for Non-Obvious Intent Only
 - `quality-no-nested-ternary` - No Chained or Negated Ternaries
 
