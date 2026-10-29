@@ -132,7 +132,7 @@ describe('account-scoped queries', () => {
       'fetch',
       vi.fn(async () =>
         csv(
-          'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value\n2026-01-31,"A,B",PEA,investment,,,Fund,42\n2026-01-31,A,PEA,investment,,,Fund,10\n',
+          'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value\n2026-01-31,"A,B",PEA,brokerage,,,Fund,42\n2026-01-31,A,PEA,brokerage,,,Fund,10\n',
         ),
       ),
     )

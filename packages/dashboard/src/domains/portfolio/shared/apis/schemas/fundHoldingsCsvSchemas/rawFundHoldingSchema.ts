@@ -1,7 +1,6 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Validated fund inputs feed holdings inspection, overview comparisons, diversification and quality assessment through the shell. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
-import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 
 import { optionalNumber } from './optionalNumber'
@@ -18,11 +17,7 @@ export const RAW_FUND_HOLDING_SCHEMA = yup.object({
   issuer_id: optionalText(),
   issuer_name: optionalText(),
   weight: requiredNumber(),
-  source_tier: yup
-    .string<FundQualityTier | ''>()
-    .ensure()
-    .oneOf(['A', 'B', 'C', 'D', ''])
-    .defined(),
+  source_tier: yup.string().ensure().defined(),
   source_name: optionalText(),
   holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
   holding_kind: optionalText()

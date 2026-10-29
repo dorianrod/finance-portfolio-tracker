@@ -4,6 +4,7 @@ import { createStore, Provider } from 'jotai'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { indexFundStatuses } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses'
 import { makePositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/mocks/positionPreviewSelection.mock'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import { makeFundHoldingStatus } from '@/domains/portfolio/shared/mocks/fundHoldingStatus.mock'
@@ -32,7 +33,11 @@ function setup() {
   const mount = () =>
     renderHook(
       ({ positions, statuses, allocations }: Input) => ({
-        ...usePositionTableOverlays(positions, statuses, allocations),
+        ...usePositionTableOverlays(
+          positions,
+          indexFundStatuses(statuses),
+          allocations,
+        ),
         ...usePositionPreviewActions(),
       }),
       { wrapper: Wrapper, initialProps },

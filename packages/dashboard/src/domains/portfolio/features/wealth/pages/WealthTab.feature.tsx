@@ -3,9 +3,10 @@ import { AccountTypeHistoryChart } from '@/domains/portfolio/features/wealth/com
 import { AnnualIncomeSavingsChart } from '@/domains/portfolio/features/wealth/components/AnnualIncomeSavingsChart.view'
 import { EvolutionChart } from '@/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view'
 import { IncomePlacementRelationshipChart } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.feature'
-import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart.view'
+import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature'
 import { WealthComparisonKpi } from '@/domains/portfolio/features/wealth/components/WealthComparisonKpi.view'
 import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.view'
+import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
@@ -141,7 +142,7 @@ type WealthTabProps = {
   accountTypeData: AccountTypePoint[]
   accountTypeHistory: AccountTypeHistoryPoint[]
   accountTypes: string[]
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
   savings: TrailingSavingCapacityPoint[]
   monthlyOps: MonthlyOperationsByMonth
   drivers: WealthDriverPoint[]

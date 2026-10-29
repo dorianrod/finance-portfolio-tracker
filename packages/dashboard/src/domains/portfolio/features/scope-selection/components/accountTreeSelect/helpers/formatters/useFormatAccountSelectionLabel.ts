@@ -5,6 +5,7 @@ import type { AccountTreeProps } from '@/domains/portfolio/features/scope-select
 import { accountsForType } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountsForType'
 import { accountTypeSelectionState } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountTypeSelectionState'
 import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
+import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 
 export function useFormatAccountSelectionLabel() {
   const formatAccountLabel = useFormatAccountLabel()
@@ -28,7 +29,7 @@ export function useFormatAccountSelectionLabel() {
         return accountTypeSelectionState(accounts, selected).allSelected
       })
       const partialAccounts = [...selected].filter((account) => {
-        const type = accountToType[account]
+        const type = getOwnValue(accountToType, account)
         return !type || !fullTypes.includes(type)
       })
       const parts = [

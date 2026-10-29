@@ -5,7 +5,7 @@ import { useResetDashboardFilters } from '@/app/services/useResetDashboardFilter
 import { FilterChipBar } from '@/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature'
-import { ActiveFilterSummary } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary.feature'
+import { ActiveFilterSummary } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature'
 import { FilterPanel } from '@/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature'
 import { ResetFiltersButton } from '@/domains/portfolio/features/scope-selection/components/filterBar/ResetFiltersButton.view'
 import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'

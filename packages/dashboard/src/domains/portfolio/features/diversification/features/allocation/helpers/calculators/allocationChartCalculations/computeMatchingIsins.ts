@@ -1,5 +1,6 @@
 import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 
 export function computeMatchingIsins(
   rawData: RawIsinData,
@@ -20,7 +21,7 @@ export function computeMatchingIsins(
   for (const row of rows) {
     if (
       row.snapshot_date.getTime() === latestDate &&
-      (row.values[filter.value] ?? 0) > 0
+      (getOwnValue(row.values, filter.value) ?? 0) > 0
     ) {
       result.add(row.isin)
     }

@@ -5,6 +5,15 @@ import { fundHoldingStatusRow } from '@/domains/portfolio/shared/mocks/fundHoldi
 import { RAW_FUND_HOLDING_STATUS_SCHEMA } from './rawFundHoldingStatusSchema'
 
 describe('fund holding status normalization', () => {
+  it('preserves a new display-only decomposition state', () => {
+    expect(
+      RAW_FUND_HOLDING_STATUS_SCHEMA.validateSync({
+        ...fundHoldingStatusRow(),
+        decomposition_state: 'source-specific-state',
+      }),
+    ).toMatchObject({ decomposition_state: 'source-specific-state' })
+  })
+
   it.each(['', null, undefined])(
     'normalizes missing status fields represented by %s',
     (value) => {

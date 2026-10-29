@@ -31,7 +31,8 @@ export type FundHoldingStatus = {
   residualValue: number
   refreshStreak: number
   issues: string
-  decompositionState: 'resolved' | 'partial' | 'unresolved' | 'stale'
+  // Source-owned descriptive state; availability uses validationStatus and isStale.
+  decompositionState: string
   snapshotId: string
   sourceOrigin: string
   manualAttention: boolean

@@ -2,10 +2,8 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import type {
-  MonthlyOperation,
-  MonthlyOperationType,
-} from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+import { groupMonthlyTooltipOperations } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations'
+import { makeMonthlyOperation } from '@/domains/portfolio/features/wealth/mocks/monthlyOperation.mock'
 
 import { MonthlyTooltip } from './MonthlyTooltip.view'
 
@@ -26,7 +24,11 @@ describe('MonthlyTooltip', () => {
         <MonthlyTooltip
           active
           label={label}
-          ops={new Map([['2026-01', [operation(100)]]])}
+          operationGroups={groupMonthlyTooltipOperations(
+            new Map([
+              ['2026-01', [makeMonthlyOperation({ total_amount: 100 })]],
+            ]),
+          )}
           payload={[{ value: 0 }]}
         />,
       )
@@ -40,19 +42,28 @@ describe('MonthlyTooltip', () => {
       [
         '2026-01',
         [
-          operation(100),
-          operation(200),
-          operation(-50),
-          operation(30, 'WITHDRAWAL'),
+          makeMonthlyOperation({ total_amount: 100 }),
+          makeMonthlyOperation({ total_amount: 200 }),
+          makeMonthlyOperation({ total_amount: -50 }),
+          makeMonthlyOperation({
+            total_amount: 30,
+            operation_type: 'WITHDRAWAL',
+          }),
         ],
       ],
-      ['2026-02', [operation(400), operation(-90)]],
+      [
+        '2026-02',
+        [
+          makeMonthlyOperation({ total_amount: 400 }),
+          makeMonthlyOperation({ total_amount: -90 }),
+        ],
+      ],
     ])
     const { rerender } = render(
       <MonthlyTooltip
         active
         label="2026-01-31"
-        ops={ops}
+        operationGroups={groupMonthlyTooltipOperations(ops)}
         payload={[{ value: 0 }]}
       />,
     )
@@ -66,7 +77,7 @@ describe('MonthlyTooltip', () => {
       <MonthlyTooltip
         active
         label="2026-02-28"
-        ops={ops}
+        operationGroups={groupMonthlyTooltipOperations(ops)}
         payload={[{ value: 0 }]}
       />,
     )
@@ -79,15 +90,3 @@ describe('MonthlyTooltip', () => {
     expect(errors).not.toHaveBeenCalled()
   })
 })
-
-function operation(
-  total_amount: number,
-  operation_type: MonthlyOperationType = 'DEPOSIT',
-): MonthlyOperation {
-  return {
-    date: new Date('2026-01-15'),
-    account: 'Main account',
-    operation_type,
-    total_amount,
-  }
-}

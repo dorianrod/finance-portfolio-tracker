@@ -61,7 +61,7 @@ export type PositionRow = Pick<
   kind: 'position'
   id: string
   account_type?: string
-  account_category?: string
+  account_category: RawPosition['account_category']
   status: 'active' | 'closed'
   operationTypes: Set<OperationType>
   realized_gain: number

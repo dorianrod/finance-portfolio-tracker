@@ -1,8 +1,11 @@
+import type { AccountCategory } from './accountCategory.type'
+
 export type RawPosition = {
   snapshot_date: Date
   account: string
   account_type: string
-  account_category: string
+  // Older exports and accounts without metadata have no category.
+  account_category: AccountCategory | null
   isin: string
   ticker: string
   name: string

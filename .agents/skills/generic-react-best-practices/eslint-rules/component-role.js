@@ -4,7 +4,6 @@ import { isProductionSource } from './ast-bindings.js'
 import {
   analyzeComponentRoles,
   businessSource,
-  exportedComponent,
 } from './component-role-analysis.js'
 import {
   runtimeDependencies,
@@ -110,8 +109,7 @@ export default {
         if (role !== 'feature') return
         for (const component of analyzeComponentRoles(context.sourceCode, node))
           if (
-            exportedComponent(component.node, context.sourceCode) &&
-            component.elements > 0 &&
+            (component.elements > 0 || component.forwardsChildren) &&
             component.business.size === 0 &&
             component.opaque.size === 0
           )

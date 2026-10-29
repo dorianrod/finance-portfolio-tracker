@@ -2,8 +2,12 @@ import { type ReactNode, useMemo } from 'react'
 
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state'
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature'
+import { AffectedAssetsPanel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature'
+import { DataQualityHeader } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityHeader.view'
 import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityPanels'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel'
+import { LookThroughQualityContent } from '@/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature'
+import { QualityThemeNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/QualityThemeNavigation.view'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
@@ -12,10 +16,8 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Tabs } from '@/shared/ui/Tabs.view'
 
-import { AffectedAssetsPanel } from './AffectedAssetsPanel.feature'
-import { DataQualityHeader } from './DataQualityHeader.view'
-import { LookThroughQualityContent } from './LookThroughQualityContent.feature'
-import { QualityThemeNavigation } from './QualityThemeNavigation.view'
+import { PipelinePanel } from './PipelinePanel.view'
+import { PricesPanel } from './PricesPanel.view'
 
 export function DataQualityTab({
   children,
@@ -170,11 +172,5 @@ export function DataQualityTab({
 
 export type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 
-function PipelinePanel({ children }: { children: ReactNode }) {
-  return children
-}
-function PricesPanel({ children }: { children: ReactNode }) {
-  return children
-}
 DataQualityTab.Pipeline = PipelinePanel
 DataQualityTab.Prices = PricesPanel

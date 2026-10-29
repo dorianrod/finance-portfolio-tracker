@@ -5,6 +5,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 
 import { useBuildAccountFilterLabels } from './useBuildAccountFilterLabels'
 
+// The shell also uses these account IDs for history scope and types for position grouping.
 export function useBuildPortfolioFilterOptions() {
   const buildAccountFilterLabels = useBuildAccountFilterLabels()
   return useCallback(

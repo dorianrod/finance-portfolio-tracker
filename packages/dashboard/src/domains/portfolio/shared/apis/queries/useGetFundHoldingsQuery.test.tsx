@@ -40,6 +40,22 @@ afterEach(() => {
 })
 
 describe('useGetFundHoldingsQuery', () => {
+  it('keeps holdings available when a source adds a descriptive tier', async () => {
+    serveHoldings(
+      HOLDING_CSV.replace(
+        'weight,holdings_date',
+        'weight,source_tier,holdings_date',
+      ).replace('0.5,2026-09-30', '0.5,source-specific-tier,2026-09-30'),
+    )
+    const { result } = renderHook(useGetFundHoldingsQuery, {
+      wrapper: queryWrapper(),
+    })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.holdings[0]?.sourceTier).toBe(
+      'source-specific-tier',
+    )
+  })
+
   it('normalizes holdings at the schema boundary and defaults absent optional files', async () => {
     serveHoldings(HOLDING_CSV)
     const { result } = renderHook(useGetFundHoldingsQuery, {

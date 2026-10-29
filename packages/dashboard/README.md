@@ -16,6 +16,12 @@ Portfolio analysis lives in `src/domains/portfolio/`. The application shell in
 | Holdings        | Inspect held positions and underlying fund exposures     | Peer `positions` and `fund-look-through` children of `features/holdings`     |
 | Data quality    | Assess reliability and inspect source anomalies          | Peer `assessment` and `errors` children of `features/data-quality`           |
 
+Filter-option construction also belongs to portfolio `shared/`: scope selection
+uses its choices, while `useBuildDashboardSourceData` supplies its account IDs to
+`useDashboardHistory` and its account types to position sorting/grouping. The
+sharing detector cannot follow these shell data flows, so its review warning is
+retained with this ownership evidence rather than moving common data into a leaf.
+
 Common source queries, schemas and portfolio contracts live in portfolio `shared/`
 and feed several capabilities through the shell. Fund holdings, composition history
 and statuses are common sources; coverage reports, snapshot manifests and unresolved
@@ -212,6 +218,14 @@ presentational component as a feature.
 External UI renderers are named module-level components, including renderers
 supplied in literal configuration objects to dependency factories such as table
 column builders.
+
+Component-role enforcement also checks private JSX components and slots that
+forward children, so a feature cannot hide a presentation-only child. Views
+cannot import domain aggregators; chart features prepare grouped tooltip data.
+Account categories use a closed domain union validated and normalized in Yup; absent
+metadata stays explicitly unknown. Source dictionaries use own-property reads,
+with an optional result that callers must handle. Fund-status lookups share a
+memoized index and preserve source order when identifiers overlap.
 
 `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` remain migration
 candidates. Enable them after reviewing collection completeness and the intended

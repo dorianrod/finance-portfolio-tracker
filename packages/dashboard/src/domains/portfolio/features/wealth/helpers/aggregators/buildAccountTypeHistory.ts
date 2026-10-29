@@ -4,6 +4,7 @@ import type {
 } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories/categoryOrder'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
+import type { AccountCategory } from '@/domains/portfolio/shared/types/accountCategory.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account/category validation feeds one date-by-account-type accumulator and its stable category order.
@@ -13,7 +14,7 @@ export function buildAccountTypeHistory(
 ): AccountTypeHistory {
   const byDate = new Map<number, Map<string, number>>()
   const typeSet = new Set<string>()
-  const typeCategories = new Map<string, string>()
+  const typeCategories = new Map<string, AccountCategory>()
 
   for (const row of rows) {
     if (!row.account_type || (row.total_value ?? 0) === 0) continue

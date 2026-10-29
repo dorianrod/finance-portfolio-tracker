@@ -29,7 +29,7 @@ describe('useGetPositionHistoryQuery', () => {
     const fetchMock = vi.fn(
       async () =>
         new Response(
-          'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value,avg_buy_price,quantity,last_price\n2026-01-31,A,PEA,investment,FR1,FUND,Fund,120,100,1,120\n',
+          'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value,avg_buy_price,quantity,last_price\n2026-01-31,A,PEA,brokerage,FR1,FUND,Fund,120,100,1,120\n',
           { headers: { 'Content-Type': 'text/csv' } },
         ),
     )
@@ -66,7 +66,7 @@ describe('useGetPositionHistoryQuery', () => {
       vi.fn(
         async () =>
           new Response(
-            'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value\n2026-01-31,A,PEA,investment,FR1,FUND,Fund,invalid\n',
+            'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value\n2026-01-31,A,PEA,brokerage,FR1,FUND,Fund,invalid\n',
             { headers: { 'Content-Type': 'text/csv' } },
           ),
       ),

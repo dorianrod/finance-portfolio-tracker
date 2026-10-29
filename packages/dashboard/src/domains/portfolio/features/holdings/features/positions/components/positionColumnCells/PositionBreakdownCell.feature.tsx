@@ -22,12 +22,12 @@ export function PositionBreakdownCell({
   const context = table.options.meta?.positionColumns
   const { showPreview } = usePositionPreviewActions()
   if (!context) return null
-  const { allocationData, fundStatuses, cancelHide, scheduleHide } = context
+  const { allocationData, fundStatusIndex, cancelHide, scheduleHide } = context
   const r = row.original
   if (r.kind !== 'position') return null
   const allocKey = getPositionAllocationKey(r)
   const allocation = allocationData.get(allocKey)
-  const fundStatus = statusForPosition(r, fundStatuses)
+  const fundStatus = statusForPosition(r, fundStatusIndex)
   const hasNoBreakdown = !allocation && !fundStatus
   const showAllocation = (button: HTMLButtonElement) => {
     if (!allocation) return

@@ -6,6 +6,7 @@ import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/he
 import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 
 /** Monetary allocation coverage per dimension. Explicit `nc` weights and
  * completely missing rows are both counted as unallocated and remain
@@ -49,7 +50,11 @@ export function computeAllocationCoverageByDimension(
           allocationTotal > 0
             ? Math.min(
                 1,
-                Math.max(0, (allocation?.values['nc'] ?? 0) / allocationTotal),
+                Math.max(
+                  0,
+                  (getOwnValue(allocation?.values, 'nc') ?? 0) /
+                    allocationTotal,
+                ),
               )
             : 1
         const missing = value * ncRatio

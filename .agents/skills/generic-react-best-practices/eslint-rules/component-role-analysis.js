@@ -7,7 +7,10 @@ import {
 } from './ast-bindings.js'
 import { getPublicExports } from './get-public-exports.js'
 import { libraryBinding } from './library-binding.js'
-import { getFunctionComponentName } from './react-component-utils.js'
+import {
+  getFunctionComponentName,
+  isFunctionNode,
+} from './react-component-utils.js'
 import { createTranslationResolver } from './translation-bindings.js'
 
 export const BUSINESS_PATH_SEGMENTS = [
@@ -15,6 +18,7 @@ export const BUSINESS_PATH_SEGMENTS = [
   '/services/',
   '/stores/',
   '/helpers/businessRules/',
+  '/helpers/aggregators/',
   '/helpers/calculators/',
   '/helpers/filters/',
   '/helpers/mappers/',
@@ -66,10 +70,58 @@ export function analyzeComponentRoles(sourceCode, program) {
         opaque: new Set(),
         local: new Set(),
         elements: 0,
+        forwardsChildren: forwardsChildren(node),
       })
     for (const child of childrenOf(sourceCode, node)) collect(child)
   }
   collect(program)
+
+  function forwardsChildren(component) {
+    const parameter = component.params[0]
+    let childrenBinding
+    let propsBinding
+    if (parameter?.type === 'ObjectPattern') {
+      const property = parameter.properties.find(
+        (entry) =>
+          entry.type === 'Property' &&
+          !entry.computed &&
+          (entry.key.name ?? entry.key.value) === 'children',
+      )
+      let identifier = property?.value
+      if (identifier?.type === 'AssignmentPattern') identifier = identifier.left
+      if (identifier?.type === 'Identifier')
+        childrenBinding = findVariable(sourceCode, identifier)
+    } else if (parameter?.type === 'Identifier')
+      propsBinding = findVariable(sourceCode, parameter)
+    if (!childrenBinding && !propsBinding) return false
+
+    function isChildren(input) {
+      const value = unwrap(input)
+      if (value?.type === 'Identifier')
+        return Boolean(
+          childrenBinding &&
+          findVariable(sourceCode, value) === childrenBinding,
+        )
+      return Boolean(
+        propsBinding &&
+        value?.type === 'MemberExpression' &&
+        value.object.type === 'Identifier' &&
+        findVariable(sourceCode, value.object) === propsBinding &&
+        (value.computed
+          ? value.property.type === 'Literal' &&
+            value.property.value === 'children'
+          : value.property.name === 'children'),
+      )
+    }
+
+    function inspect(node) {
+      if (node !== component && isFunctionNode(node)) return false
+      if (node.type === 'ReturnStatement' && isChildren(node.argument))
+        return true
+      return childrenOf(sourceCode, node).some(inspect)
+    }
+    return isChildren(component.body) || inspect(component)
+  }
   const componentNodes = new Set(components.map(({ node }) => node))
   function origin(node, seen = new Set()) {
     node = unwrap(node)

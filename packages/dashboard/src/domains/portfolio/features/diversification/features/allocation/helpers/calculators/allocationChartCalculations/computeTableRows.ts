@@ -1,6 +1,7 @@
 import type { AllocationFilter } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 
 export function computeTableRows(
   rawData: RawIsinData,
@@ -28,7 +29,7 @@ export function computeTableRows(
       (sum, value) => sum + value,
       0,
     )
-    const filteredValue = row.values[filter.value] ?? 0
+    const filteredValue = getOwnValue(row.values, filter.value) ?? 0
     const current = byIsin.get(row.isin)
     if (current) {
       current.totalValue += totalValue

@@ -301,7 +301,7 @@ function resolvePositionIdentity(
   // Derive account: from latest position snapshot, or from most recent operation
   const account = lp?.account || assetOps[assetOps.length - 1].account
   const rawType = lp?.account_type || undefined
-  const account_category = lp?.account_category || undefined
+  const account_category = lp?.account_category ?? null
   const account_type = rawType
 
   return {

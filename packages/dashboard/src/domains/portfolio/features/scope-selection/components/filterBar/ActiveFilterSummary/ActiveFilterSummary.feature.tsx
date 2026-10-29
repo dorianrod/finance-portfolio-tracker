@@ -15,6 +15,9 @@ import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { ActiveFilterActions } from './ActiveFilterActions.view'
+import { ActiveFilterLeading } from './ActiveFilterLeading.view'
+
 export function ActiveFilterSummary({
   items,
   children,
@@ -73,14 +76,6 @@ function ActiveFilterChip({ item }: { item: FilterSummaryItem }) {
       </Button>
     </Layout>
   )
-}
-
-function ActiveFilterLeading({ children }: { children: ReactNode }) {
-  return children
-}
-
-function ActiveFilterActions({ children }: { children: ReactNode }) {
-  return children
 }
 
 ActiveFilterSummary.Leading = ActiveFilterLeading

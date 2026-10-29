@@ -3,6 +3,7 @@ import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.t
 export function position(overrides: Partial<PositionRow>): PositionRow {
   return {
     kind: 'position',
+    account_category: null,
     id: 'x',
     name: 'Asset X',
     ticker: 'XYZ',

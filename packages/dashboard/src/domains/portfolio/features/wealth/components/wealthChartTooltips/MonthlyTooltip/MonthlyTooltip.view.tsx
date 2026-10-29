@@ -1,7 +1,8 @@
 import type {
-  MonthlyOperation,
-  MonthlyOperationsByMonth,
-} from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
+  MonthlyTooltipOperations,
+  MonthlyTooltipOperationsByMonth,
+} from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations'
+import type { MonthlyOperation } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
@@ -15,14 +16,12 @@ import {
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-import { selectMonthlyTooltipOperations } from './helpers/selectors/selectMonthlyTooltipOperations'
-
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Monthly operations and trailing totals are the context of one savings-history hover point.
 export function MonthlyTooltip({
   active,
   payload,
   label,
-  ops,
+  operationGroups,
 }: MonthlyTooltipProps) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -37,9 +36,8 @@ export function MonthlyTooltip({
     style: 'isoDate',
     fallback: '',
   }).slice(0, 7)
-  const monthOps: ReturnType<MonthlyOperationsByMonth['get']> =
-    ops.get(month) ?? []
-  const { deposits, withdrawals } = selectMonthlyTooltipOperations(monthOps)
+  const { deposits, withdrawals } =
+    operationGroups.get(month) ?? EMPTY_OPERATIONS
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -122,7 +120,7 @@ type MonthlyTooltipProps = NumericTooltipProps<
   TrailingSavingCapacityPoint,
   Date | string | number
 > & {
-  ops: MonthlyOperationsByMonth
+  operationGroups: MonthlyTooltipOperationsByMonth
 }
 
 function MonthlyOperationRow({
@@ -153,4 +151,9 @@ function MonthlyOperationRow({
       })}
     </ChartText>
   )
+}
+
+const EMPTY_OPERATIONS: MonthlyTooltipOperations = {
+  deposits: [],
+  withdrawals: [],
 }

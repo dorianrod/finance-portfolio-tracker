@@ -6,8 +6,8 @@ import {
   Tooltip,
 } from 'recharts'
 
+import { MonthlySavingsLegend } from '@/domains/portfolio/features/wealth/components/MonthlySavingsLegend.view'
 import { MonthlyTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view'
-import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
@@ -26,16 +26,16 @@ import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { MonthlySavingsLegend } from './MonthlySavingsLegend.view'
+import type { MonthlyTooltipOperationsByMonth } from './helpers/aggregators/groupMonthlyTooltipOperations'
 
-export function MonthlySavingsChart({
+export function MonthlySavingsChartView({
   data,
   children,
-  ops,
+  operationGroups,
 }: {
   children: ReactNode
   data: TrailingSavingCapacityPoint[]
-  ops: MonthlyOperationsByMonth
+  operationGroups: MonthlyTooltipOperationsByMonth
 }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -78,7 +78,9 @@ export function MonthlySavingsChart({
               }
               width={52}
             />
-            <Tooltip content={<MonthlyTooltip ops={ops} />} />
+            <Tooltip
+              content={<MonthlyTooltip operationGroups={operationGroups} />}
+            />
             <ChartReference yAxisId="left" y={0} kind="zero" />
             <SeriesBar
               yAxisId="left"

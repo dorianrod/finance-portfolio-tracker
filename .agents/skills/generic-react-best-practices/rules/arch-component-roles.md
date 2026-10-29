@@ -19,6 +19,12 @@ The suffix is a controlled declaration, not proof that the implementation is cor
 
 A view may import React, visual libraries, other views, types, formatters, and colocalized purely visual logic. It must not import a state renderer, feature or runtime dependencies from server-state hooks, client stores, APIs, services, or business helpers. If a deep component needs shared client state, classify it as a feature and let it read the atom directly.
 
+Domain collection aggregation belongs to feature orchestration, including when
+its result feeds a chart or tooltip. Views receive the grouped items and metrics;
+local visual selection, such as omitting empty chart panels, may remain in a
+component-owned presenter or selector. Include `helpers/aggregators/` in the
+runtime business-dependency check and review selector meaning separately.
+
 A state renderer is a narrow composition boundary for states such as loading, error, empty, unavailable, degraded and ready. Its owning feature or a pure mapper resolves precedence and constructs the union before rendering. Each union variant carries only the data valid for that state, and the state renderer handles every variant exhaustively with a `never` check. Keep one-off optional sections and simple visual variants in their owning component instead of creating a state renderer.
 
 ### Choose the boundary by ownership
@@ -71,6 +77,14 @@ a filename-only autofix cannot establish it.
 Enable `local/component-role` at error level. Check runtime imports, reexports and literal dynamic imports using resolved module paths, including configured aliases, extensionless imports and local reexport modules. Ignore erased type-only edges. Follow local runtime dependencies through indirection to detect hidden feature/state/API/store/service dependencies; report the path. Another classified view owns its own enforcement, and shared UI owns its primitive behavior boundary. Pure business classifications inside a label formatter do not by themselves introduce shared state or orchestration.
 
 Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
+
+Apply the same presentation check to private components with JSX or direct
+forwarding of their `children` parameter inside a feature module; the exported
+parent's business responsibility does not classify its local children. Resolve
+renamed children and direct props access, and exclude returns inside nested
+callbacks. Preserve private components that own business behavior or compose
+features. Indirect children adapters, opaque callbacks and arbitrary element
+factories still require semantic review.
 
 Recognize resolved translation calls and native boolean coercion, including immutable aliases, as presentation-compatible operations rather than opaque evidence of business behavior. Preserve shadowed callbacks as unresolved. These operations alone do not justify a feature; state, actions and business calculations retain their own ownership signals.
 

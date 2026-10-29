@@ -2,10 +2,7 @@
 import * as yup from 'yup'
 
 import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type {
-  FundHoldingStatus,
-  FundValidationStatus,
-} from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
+import type { FundValidationStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 import { CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/csvBoolean.schema'
 import { OPTIONAL_CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/optionalCsvBoolean.schema'
@@ -54,10 +51,9 @@ export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
   refresh_streak: requiredNumber(),
   issues: requiredText(),
   decomposition_state: yup
-    .string<FundHoldingStatus['decompositionState']>()
+    .string()
     .ensure()
     .transform((value: string) => value || 'unresolved')
-    .oneOf(['resolved', 'partial', 'unresolved', 'stale'])
     .default('unresolved')
     .defined(),
   snapshot_id: optionalText(),

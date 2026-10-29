@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
 
+import { ACCOUNT_CATEGORY_SCHEMA } from './accountCategorySchema'
 import { nullableNumber } from './nullableNumber'
 import { requiredText } from './requiredText'
 
@@ -10,7 +11,7 @@ export const RAW_POSITION_SCHEMA: yup.ObjectSchema<RawPosition> = yup.object({
   snapshot_date: CALENDAR_DATE_SCHEMA.required(),
   account: requiredText(),
   account_type: requiredText(),
-  account_category: requiredText(),
+  account_category: ACCOUNT_CATEGORY_SCHEMA,
   isin: requiredText(),
   ticker: requiredText(),
   name: requiredText(),

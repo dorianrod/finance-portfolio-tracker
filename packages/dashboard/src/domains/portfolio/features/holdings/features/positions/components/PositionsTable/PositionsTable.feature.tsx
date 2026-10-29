@@ -9,7 +9,7 @@ import { ScopeProvider } from 'jotai-scope'
 import { Fragment } from 'react'
 
 import { FundPositionPopover } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/FundPositionPopover.feature'
-import { HoverAllocationPopover } from '@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.view'
+import { HoverAllocationPopover } from '@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature'
 import { POSITION_COLUMNS } from '@/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature'
 import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'
 import { HoverSavingsChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature'
@@ -58,9 +58,12 @@ function PositionsTableContent({
   fundStatuses = EMPTY_FUND_STATUSES,
 }: Props) {
   const { expanded, setExpanded } = usePositionTableState()
-  const { allocationData, groupTotals } = usePositionTableData(data)
+  const { allocationData, groupTotals, fundStatusIndex } = usePositionTableData(
+    data,
+    fundStatuses,
+  )
   const { preview, dismiss, cancelHide, scheduleHide } =
-    usePositionTableOverlays(data, fundStatuses, allocationData)
+    usePositionTableOverlays(data, fundStatusIndex, allocationData)
 
   // eslint-disable-next-line react-hooks/incompatible-library -- reviewed: 2026-10-27; TanStack Table v8 mutates a stable table instance; React Compiler is not enabled here, and getRowModel() is read on every render without memoizing the table's mutable API.
   const table = useReactTable<TableRow>({
@@ -69,7 +72,7 @@ function PositionsTableContent({
     meta: {
       positionColumns: {
         allocationData,
-        fundStatuses,
+        fundStatusIndex,
         cancelHide,
         scheduleHide,
       },

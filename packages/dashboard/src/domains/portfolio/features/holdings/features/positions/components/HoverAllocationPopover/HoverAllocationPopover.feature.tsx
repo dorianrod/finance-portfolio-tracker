@@ -1,3 +1,4 @@
+import { MiniDonut } from '@/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature'
 import type { AllocationHoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type'
 import i18n from '@/i18n/i18n'
 import { Grid } from '@/shared/ui/layout/Grid.view'
@@ -5,7 +6,6 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import { MiniDonut } from '../MiniDonut.view'
 import { selectRenderableAllocationCharts } from './helpers/selectors/selectRenderableAllocationCharts'
 
 export function HoverAllocationPopover({

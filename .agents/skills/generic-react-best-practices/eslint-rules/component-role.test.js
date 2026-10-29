@@ -90,6 +90,55 @@ describe('component-role', () => {
     ])
   })
 
+  it.each([
+    'function Caption() { return <span/> }',
+    'const Caption = ({children}) => <>{children}</>',
+    'function Caption({children: content}) {return content}',
+    'const Caption = ({children = null}) => children',
+    'function Caption(props) {return props.children}',
+    "const Caption = (props) => props['children']",
+    "import {memo as cache} from 'react'; const Caption = cache(() => <span/>)",
+  ])('rejects a private view hidden in a feature module: %s', (declaration) => {
+    expect(
+      lint(
+        `import {useAtomValue} from 'jotai'; ${declaration}; export function Orders() {useAtomValue(orderAtom); return <Caption/>}`,
+        'Orders.feature.tsx',
+      ),
+    ).toMatchObject([
+      {
+        messageId: 'featureWithoutBusiness',
+        message: expect.stringContaining('Caption'),
+      },
+    ])
+  })
+
+  it('allows private components that own business state', () => {
+    expect(
+      lint(
+        "import {useAtomValue} from 'jotai'; function Selection() {const selected = useAtomValue(selectionAtom); return <span>{selected}</span>} export function Orders() {return <Selection/>}",
+        'Orders.feature.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it('allows a private presentation component in a view module', () => {
+    expect(
+      lint(
+        'function Caption() {return <span/>} export function Card() {return <Caption/>}',
+        'Card.view.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it('does not mistake a nested callback return for rendered children', () => {
+    expect(
+      lint(
+        'function Transform({children}) { const read = () => children; return null }',
+        'Transform.feature.tsx',
+      ),
+    ).toEqual([])
+  })
+
   it('keeps an opaque hook as a review candidate rather than guessing its role', () => {
     expect(
       lint(
@@ -149,6 +198,7 @@ describe('component-role', () => {
     '@/domains/orders/services/useOrders',
     '@/domains/orders/stores/filters.atoms',
     '@/domains/orders/helpers/businessRules/canEditOrder',
+    '@/domains/orders/helpers/aggregators/groupOrders',
     '@/domains/orders/helpers/calculators/calculateTotal',
     '@/domains/orders/helpers/filters/orderFilters',
     '@/domains/orders/helpers/mappers/buildOrderRows',

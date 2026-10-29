@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
 
+import { indexFundStatuses } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses'
 import { makeIsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/mocks/isinAllocation.mock'
 import { makePositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/mocks/positionPreviewSelection.mock'
 import { makeFundHoldingStatus } from '@/domains/portfolio/shared/mocks/fundHoldingStatus.mock'
@@ -46,7 +47,7 @@ describe('resolvePositionPreview', () => {
         resolvePositionPreview(
           makePositionPreviewSelection({ kind }),
           [makePosition()],
-          [makeFundHoldingStatus()],
+          indexFundStatuses([makeFundHoldingStatus()]),
           new Map([[allocation.isin, allocation]]),
         ),
       ).toMatchObject(expected)
@@ -76,7 +77,12 @@ describe('resolvePositionPreview', () => {
     'does not invent data for an unavailable selection $selection',
     ({ selection, positions }) => {
       expect(
-        resolvePositionPreview(selection, positions, [], new Map()),
+        resolvePositionPreview(
+          selection,
+          positions,
+          indexFundStatuses([]),
+          new Map(),
+        ),
       ).toBeNull()
     },
   )

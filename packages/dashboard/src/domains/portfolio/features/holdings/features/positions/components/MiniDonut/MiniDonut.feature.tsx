@@ -1,22 +1,15 @@
-import {
-  Pie,
-  PieChart,
-  type PieSectorShapeProps,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
-import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
 import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData'
 import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
-import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
-import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
+
+import { MiniDonutLegendItem } from './MiniDonutLegendItem.view'
+import { MiniDonutSector } from './MiniDonutSector.view'
 
 export function MiniDonut({
   title,
@@ -65,48 +58,5 @@ export function MiniDonut({
         ))}
       </Inline>
     </div>
-  )
-}
-
-function MiniDonutLegendItem({
-  entry,
-  total,
-}: {
-  entry: PieEntry
-  total: number
-}) {
-  const formatLabel = useFormatPieEntryLabel()
-  const formatPercentage = useFormatPercentage()
-  const percentage = formatPercentage(
-    total > 0 ? (entry.value / total) * 100 : 0,
-    { decimals: 0 },
-  )
-
-  return (
-    <Text variant="tiny" tone="muted">
-      <Inline as="span" align="center" gap="compact">
-        <AllocationCategory.Swatch
-          category={entry.name}
-          aggregate={(entry.subItems?.length ?? 0) > 1}
-          shape="dot"
-          size="default"
-        />
-        {formatLabel(entry)} {percentage}
-      </Inline>
-    </Text>
-  )
-}
-
-function MiniDonutSector(
-  shapeProps: ChartShapeProps<PieSectorShapeProps, PieEntry>,
-) {
-  const entry = shapeProps.payload
-  if (!entry) return null
-  return (
-    <AllocationCategory.Sector
-      geometry={shapeProps}
-      category={entry.name}
-      aggregate={(entry.subItems?.length ?? 0) > 1}
-    />
   )
 }

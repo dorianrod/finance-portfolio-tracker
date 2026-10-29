@@ -1,5 +1,6 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md.
 import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
+import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 // Only brokerage accounts hold real free cash; other categories
 // (employer savings, insurance wrappers, retirement…) only ever
@@ -25,6 +26,6 @@ export type RawCashRow = {
   snapshot_date: Date
   account: string
   account_type: string
-  account_category: string
+  account_category: RawPosition['account_category']
   cumulative_cash: number
 }

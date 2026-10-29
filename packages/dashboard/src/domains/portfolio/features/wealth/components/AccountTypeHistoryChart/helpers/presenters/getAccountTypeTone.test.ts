@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
+import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
+
 import { getAccountTypeTone } from './getAccountTypeTone'
 
 describe('account type tones', () => {
   it.each<{
     account: string
     index: number
-    categories: Record<string, string>
+    categories: AccountTypeHistory['typeCategories']
     expected: string
   }>([
     {

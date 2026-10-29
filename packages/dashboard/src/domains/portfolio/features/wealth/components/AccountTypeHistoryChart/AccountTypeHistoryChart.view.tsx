@@ -6,11 +6,13 @@ import { AccountTypeHistoryTooltip } from '@/domains/portfolio/features/wealth/c
 import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone'
 import { withAccountTypeShares } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/withAccountTypeShares'
 import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
+import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -34,7 +36,7 @@ export function AccountTypeHistoryChart({
   children: ReactNode
   data: AccountTypeHistoryPoint[]
   accountTypes: string[]
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
 }) {
   const formatDate = useFormatDate()
   const formatMoney = useFormatMoney()
@@ -133,7 +135,7 @@ function AccountTypeGradient({
 }: {
   accountType: string
   index: number
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
 }) {
   return (
     <SeriesGradient
@@ -153,13 +155,15 @@ function AccountTypeArea({
   accountType: string
   index: number
   percentageMode: boolean
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
 }) {
   return (
     <SeriesArea
       type="monotone"
       dataKey={(point: AccountTypeChartPoint) =>
-        percentageMode ? point.shares[index] : point.values[accountType]
+        percentageMode
+          ? point.shares[index]
+          : getOwnValue(point.values, accountType)
       }
       name={accountType}
       stackId="a"

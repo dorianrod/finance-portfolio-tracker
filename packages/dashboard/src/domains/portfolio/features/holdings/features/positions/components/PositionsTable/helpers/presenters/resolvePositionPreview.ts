@@ -1,17 +1,17 @@
 import type { PositionPreviewModel } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/types/positionPreviewModel.type'
 import { getPositionSavingsOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionSavingsOperations'
 import { getPositionTradeOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations'
+import type { FundStatusIndex } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses'
 import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import type { PositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/types/positionPreviewSelection.type'
 import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function resolvePositionPreview(
   selection: PositionPreviewSelection | null,
   positions: PositionRow[],
-  statuses: FundHoldingStatus[],
+  fundStatusIndex: FundStatusIndex,
   allocations: Map<string, IsinAllocation>,
 ): PositionPreviewModel | null {
   if (!selection) return null
@@ -32,7 +32,7 @@ export function resolvePositionPreview(
     case 'allocation':
       return allocationPreview(selection, position, allocations)
     case 'underlying':
-      return underlyingPreview(selection, position, statuses)
+      return underlyingPreview(selection, position, fundStatusIndex)
   }
 }
 
@@ -75,9 +75,9 @@ function allocationPreview(
 function underlyingPreview(
   selection: PositionPreviewSelection,
   position: PositionRow,
-  statuses: FundHoldingStatus[],
+  fundStatusIndex: FundStatusIndex,
 ): PositionPreviewModel | null {
-  const status = statusForPosition(position, statuses)
+  const status = statusForPosition(position, fundStatusIndex)
   if (!status) return null
   return {
     kind: 'underlying',

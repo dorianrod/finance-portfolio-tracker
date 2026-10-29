@@ -257,6 +257,35 @@ describe('architecture prevention through the configured rules', () => {
       ),
     ).toEqual([])
   })
+  it('rejects an aliased domain aggregator imported by a view', async () => {
+    expect(
+      await lint(
+        'component-role',
+        "import {group as aggregate} from '@/domains/orders/helpers/aggregators/group'; export function Card() {return <span>{aggregate([])}</span>}",
+      ),
+    ).toMatchObject([{ messageId: 'viewImportsBusiness', severity: 2 }])
+  })
+  it.each([
+    'function Caption() {return <span/>}',
+    'function Caption({children: content}) {return content}',
+  ])('rejects private presentation beside a feature: %s', async (caption) => {
+    expect(
+      await lint(
+        'component-role',
+        `import {Panel} from './Panel.feature'; ${caption}; export function Card() {return <><Panel/><Caption/></>}`,
+        'src/domains/orders/components/Card.feature.tsx',
+      ),
+    ).toMatchObject([{ messageId: 'featureWithoutBusiness', severity: 2 }])
+  })
+  it('preserves private components with their own feature composition', async () => {
+    expect(
+      await lint(
+        'component-role',
+        "import {Panel} from './Panel.feature'; function Section() {return <Panel/>} export function Card() {return <Section/>}",
+        'src/domains/orders/components/Card.feature.tsx',
+      ),
+    ).toEqual([])
+  })
   it('rejects a plain formatter despite an exported alias', async () => {
     expect(
       await lint(

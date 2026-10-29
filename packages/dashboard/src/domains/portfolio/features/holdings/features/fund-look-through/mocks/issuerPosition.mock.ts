@@ -5,6 +5,7 @@ export function makeIssuerPosition(
 ): PositionRow {
   return {
     kind: 'position',
+    account_category: null,
     id: 'x',
     name: 'Asset',
     ticker: '',

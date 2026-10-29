@@ -9,6 +9,7 @@ import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.typ
 function position(overrides: Partial<PositionRow>): PositionRow {
   return {
     kind: 'position',
+    account_category: null,
     id: 'x',
     name: 'Asset X',
     ticker: 'XYZ',

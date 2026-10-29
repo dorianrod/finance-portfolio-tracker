@@ -4,6 +4,36 @@ import { computeTableRows } from '@/domains/portfolio/features/diversification/f
 import { rawData } from '@/domains/portfolio/features/diversification/shared/mocks/rawIsinData.mock'
 
 describe('computeTableRows', () => {
+  it.each(['constructor', '__proto__', 'toString'])(
+    'counts only own allocation values for %s across accounts',
+    (category) => {
+      const data = rawData({
+        geo: [
+          {
+            snapshot_date: new Date('2026-01-31'),
+            isin: 'A',
+            name: 'Asset A',
+            values: { [category]: 10 },
+          },
+          {
+            snapshot_date: new Date('2026-01-31'),
+            isin: 'A',
+            name: 'Asset A',
+            values: { france: 5 },
+          },
+        ],
+      })
+      expect(
+        computeTableRows(data, new Set(['A']), {
+          type: 'geo',
+          value: category,
+        }),
+      ).toEqual([
+        { isin: 'A', name: 'Asset A', totalValue: 15, filteredValue: 10 },
+      ])
+    },
+  )
+
   it('uses only the global latest snapshot and combines duplicate isin rows', () => {
     const data = rawData({
       geo: [

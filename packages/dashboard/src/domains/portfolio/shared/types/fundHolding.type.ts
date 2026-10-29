@@ -9,7 +9,8 @@ export type FundHolding = {
   issuerId: string
   issuerName: string
   weight: number
-  sourceTier: FundQualityTier | ''
+  // Descriptive source metadata; classification uses the status report's quality tier.
+  sourceTier: string
   sourceName: string
   // Some composition sources do not disclose their holdings date.
   holdingsDate: Date | null

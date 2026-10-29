@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { aggregateBrokerageCash } from './aggregateBrokerageCash'
+import {
+  aggregateBrokerageCash,
+  type RawCashRow,
+} from './aggregateBrokerageCash'
 
 describe('aggregateBrokerageCash', () => {
   it('sums cumulative cash across brokerage accounts by date, ignoring other categories', () => {
-    const rows = [
+    const rows: RawCashRow[] = [
       {
         snapshot_date: new Date('2024-01-01'),
         account: 'a1',

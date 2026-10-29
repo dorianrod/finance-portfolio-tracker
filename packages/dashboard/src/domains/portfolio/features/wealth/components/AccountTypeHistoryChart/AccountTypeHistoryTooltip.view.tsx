@@ -1,5 +1,6 @@
 import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone'
 import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
+import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -62,7 +63,7 @@ type AccountTypeHistoryTooltipProps = NumericTooltipProps<
 > & {
   accountTypes: string[]
   percentageMode?: boolean
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
 }
 
 function AccountTypeTooltipRow({
@@ -78,7 +79,7 @@ function AccountTypeTooltipRow({
   percentageMode: boolean
   value: number
   share: number | null
-  typeCategories: Record<string, string>
+  typeCategories: AccountTypeHistory['typeCategories']
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
