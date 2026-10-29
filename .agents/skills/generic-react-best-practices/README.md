@@ -13,8 +13,13 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
   - `_template.md` - Template for creating new rules
   - `<prefix>-<description>.md` - Individual rule files
 - `scripts/build.mjs` - Zero-dependency build and validation script
+- `eslint-rules/` - Packaged custom ESLint plugin, supporting analyses and generic unit tests; `index.js` exports the plugin
+- `eslint.config.mjs` - `createReactConfig` consuming-project preset and the default lint configuration for the tooling itself
+- `scripts/` - Packaged lint runner, profiler, architecture inventory, cycle checker, translation catalog checker and their generic regression tests
+- `package.json` - Local npm package, exports, command entry points and peer dependency contract
+- `vitest.config.mjs` - Generic tooling test suite, independent of a consuming application's source and setup files
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
-- `references/project-enforcement.md` - Resolve each selected rule's ESLint and complementary script bindings in the consuming application; rule contracts and tool limits stay in the owning rules
+- `references/project-enforcement.md` - Install the packaged tooling and select its ESLint/script bindings per rule; consumers configure project roots, catalogs and command aliases
 - `references/audit-method.md` - Review by rule impact using lint, associated scripts and semantic inspection; exhaustive scope review, opt-in revalidation of existing ignores, and generic static prevention; no required report format
 - `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
@@ -54,7 +59,7 @@ The compiler also rebases relative rule links for `AGENTS.md`, so the source rul
 2. Copy `rules/_template.md` to `rules/<prefix>-<description>.md` with one of the prefixes of `rules/_sections.md` (`arch`, `api`, `security`, `cache`, `types`, `yup`, `ui`, `state`, `helpers`, `i18n`, `test`, `quality`).
 3. Use real library APIs and generic business vocabulary (`sales/orders`, `sales/invoices`, `contracts`, `projects`, `directory/contacts`…). Custom hooks, UI primitives and ESLint checks are valid when their reusable contract is defined or illustrated. Explain required tooling rather than presenting custom behavior as a library default. Keep application-specific names, paths, configuration and implementation status in the consuming application's documentation. Declare companion skills in `metadata.json` before linking to them. Do not add ticket numbers or `Reference:` lines to rules.
 4. Add the rule id to the Quick Reference of `SKILL.md`, at the position given by its section, impact and title.
-5. Add precise routing signals to `rules/_routing.md` when the rule refines a business or UI boundary. For other topics, the categorized Quick Reference is sufficient. Keep associated ESLint checks, complementary script capabilities, usage triggers and analysis limits in the owning rule alongside its examples. Bind concrete commands in the consuming application's documentation. A rule without automatic detection still requires semantic review at its own impact; a script must not introduce a parallel priority system.
+5. Add precise routing signals to `rules/_routing.md` when the rule refines a business or UI boundary. For other topics, the categorized Quick Reference is sufficient. Keep associated ESLint checks, complementary script capabilities, usage triggers and analysis limits in the owning rule alongside its examples. Implement reusable detectors and tests in this skill, maintain their bindings in `references/project-enforcement.md`, and keep application parameters in the consumer's adapter. A rule without automatic detection still requires semantic review at its own impact; a script must not introduce a parallel priority system.
 6. Run the build script to regenerate `AGENTS.md`, then run its `--check` mode and the skill validator.
 
 ## Impact Levels

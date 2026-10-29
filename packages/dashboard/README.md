@@ -25,9 +25,9 @@ source diagnostics belong to `features/data-quality/features/assessment`.
 
 The conventions and audit method are defined in
 [`generic-react-best-practices`](../../.agents/skills/generic-react-best-practices/SKILL.md).
-The dashboard implements its ESLint checks in [eslint.config.js](eslint.config.js)
-and [eslint-rules/](eslint-rules/). Commands and the warning ceiling are defined in
-[package.json](package.json).
+The dashboard consumes the skill's npm package through the small
+[ESLint adapter](eslint.config.js). Commands and the warning ceiling are defined
+in [package.json](package.json).
 For audits, select and prioritize the skill's applicable rules first, then use
 the [rule-to-tool bindings](#rule-to-tool-bindings) below to gather evidence.
 
@@ -59,7 +59,7 @@ npm run build-storybook
 ```
 
 `npm run format:check` checks formatting and runs ESLint. Lint results are cached
-with a [project fingerprint](scripts/eslint-project-fingerprint.mjs) that includes
+with the skill's [project fingerprint](../../.agents/skills/generic-react-best-practices/scripts/eslint-project-fingerprint.mjs) that includes
 imported types, rules and translation catalogs. Use `npm run lint -- --no-cache`
 for an uncached run, or `npm run lint:profile` to inspect expensive rules and slow
 files.
@@ -160,53 +160,30 @@ whether the source repo itself is public or private.
 
 ## Rule-to-tool bindings
 
-The skill owns each rule's contract, impact, exceptions and incorrect/correct
-examples. Start with applicable CRITICAL rules, then HIGH, MEDIUM-HIGH, MEDIUM,
-LOW-MEDIUM and LOW, using the skill's category priority for ties. Read individual
-rule impacts rather than assuming every rule has its category's impact. These
-bindings implement that review; scripts do not define a separate audit sequence.
-Run commands from `packages/dashboard`. Shared output can be collected once and
-reused across selected rules; process its findings at each owning rule's priority.
+The skill packages the custom ESLint rules, shared configuration, analysis scripts
+and generic tests. Follow its [installation and per-rule tool bindings](../../.agents/skills/generic-react-best-practices/references/project-enforcement.md)
+and priority order before choosing audit commands. Run dashboard commands from
+`packages/dashboard`; their aliases are defined in [package.json](package.json).
 
-| Catalog rules (impact) | Configured ESLint aids | Complementary script: when to use it and what it establishes |
-| --- | --- | --- |
-| [`arch-component-roles`](../../.agents/skills/generic-react-best-practices/rules/arch-component-roles.md) (CRITICAL) | `local/component-role`, `local/state-component-contract` | `npm run audit:architecture` for component-role reviews: lists visual-only or unresolved features, local presentation and substantial JSX, with business evidence and opaque calls. Each entry needs a responsibility decision. |
-| [`arch-transverse-only-imports`](../../.agents/skills/generic-react-best-practices/rules/arch-transverse-only-imports.md) (CRITICAL) | `local/import-boundaries` | `npm run audit:cycles` when reviewing dependency boundaries or changing runtime imports: detects synchronous graph cycles. An acyclic forbidden import still violates the catalog; inspect ownership separately. |
-| [`arch-component-complexity`](../../.agents/skills/generic-react-best-practices/rules/arch-component-complexity.md) (HIGH) | `complexity`, `max-lines-per-function` | Reuse `npm run audit:architecture` output for substantial-JSX candidates. Its element count does not measure either lint threshold or require extraction. |
-| [`arch-stores-no-index`](../../.agents/skills/generic-react-best-practices/rules/arch-stores-no-index.md) (HIGH) | `local/atom-contract` for module placement/naming | `npm run audit:cycles` for store dependency reviews and runtime import changes. It rejects cycles; inspect barrels, direct imports and concern boundaries separately, using the rule's barrel inventory. |
-| [`types-file-per-entity`](../../.agents/skills/generic-react-best-practices/rules/types-file-per-entity.md) (MEDIUM) | `local/entity-type-files` | Reuse `npm run audit:architecture` when reviewing entity placement. Exported object aliases outside canonical type files are candidates; valid helper or component contracts can appear. Decide from actual consumers and ownership. |
-| [`i18n-static-keys`](../../.agents/skills/generic-react-best-practices/rules/i18n-static-keys.md), [`i18n-no-hardcoded-strings`](../../.agents/skills/generic-react-best-practices/rules/i18n-no-hardcoded-strings.md), [`i18n-no-default-value`](../../.agents/skills/generic-react-best-practices/rules/i18n-no-default-value.md), [`i18n-interpolation`](../../.agents/skills/generic-react-best-practices/rules/i18n-interpolation.md) (MEDIUM) | `local/i18n-consistency` for supported keys, missing entries, defaults and required interpolation options; `local/no-hardcoded-ui-strings`, `local/no-ui-string-concat` for copy | `npm run audit:i18n` when reviewing translation calls or changing keys: runs quiet source lint, then checks unused reference-catalog entries. Inspect reports before removing keys and review display sites manually. |
+The [ESLint adapter](eslint.config.js) supplies this project root and the reference
+catalog at `src/i18n/locales/en.json`. `audit:cycles` selects `tsconfig.app.json`;
+`audit:i18n` selects the same reference catalog, runs quiet source lint first and
+does not replace the normal `lint` warning-budget gate. The other bundled tools
+use the calling project as their root. No application-specific implementation is
+copied into the skill.
 
-The architecture inventory walks `src`, inspecting `.feature.tsx` components and
-production domain `.ts` modules outside `types/*.type.ts` for directly exported
-object aliases. Its substantial-JSX signal starts at 12 elements. It does not
-inventory all component roles or type forms, and its candidate count and successful
-exit do not establish compliance or become ESLint warning-budget entries.
+The package is a local file dependency. [.npmrc](.npmrc) enables `install-links`
+so npm installs a packed copy with access to the dashboard's peer dependencies.
+Run `npm ci` after editing the skill's tooling to refresh that installed copy;
+CI installs the current skill contents on every run. Keep the dependency path in
+[package.json](package.json) relative to the dashboard.
 
-The cycle checker uses `tsconfig.app.json` resolution and aliases for the local
-production graph. Synchronous value imports and reexports form edges; erased
-type-only and deferred dynamic imports do not. It fails when cycles are found,
-and its regression suite also checks the actual application graph in CI. It does
-not prove business ownership or safety of deferred loading.
-
-The catalog script scans source `.ts`/`.tsx` calls using
-`collect-translation-keys.mjs`, resolves supported translation bindings and
-checks unused keys in `src/i18n/locales/en.json`, including `_one`/`_other`
-variants. It does not check other locales, all visible copy or arbitrary runtime
-key consumers. Missing keys and several call-site contracts are checked by
-ESLint. `audit:i18n` uses `--quiet` and runs the catalog step only after lint
-succeeds; it does not replace `npm run lint` with its full warnings and budget.
-
-For every selected rule with configured lint detection, use `npm run lint` for
-the normal full-project gate, including
-[`quality-eslint-warning-budget`](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-warning-budget.md)
-and suppression metadata. `scripts/lint.mjs` is its cached runner;
-`eslint-project-fingerprint.mjs` is loaded by the lint configuration to invalidate
-results after lint inputs change. `npm run lint:profile -- <paths>` profiles
-lint cost when needed; its timings and error-based exit do not enforce the warning
-ceiling. These helpers, `collect-translation-keys.mjs` and `*.test.mjs` support
-the mapped checks rather than adding independent audit passes. Rules without a
-script still require their configured checks and manual review at catalog priority.
+`npm test` runs application tests and the skill's generic suite (`npm run test:skill`).
+Project-specific integration cases live in [tests/eslint/](tests/eslint/) and
+exercise the installed preset against actual dashboard paths, dependencies and
+catalog values. The cycle integration case checks the actual production graph.
+The lint runner also checks the packaged tooling itself with its own zero-warning
+gate, preserving coverage after the move out of the dashboard directory.
 
 ## Architecture and TypeScript prevention
 

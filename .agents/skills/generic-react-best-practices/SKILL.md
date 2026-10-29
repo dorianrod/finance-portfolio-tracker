@@ -27,7 +27,7 @@ This skill defines our reusable React conventions, component composition and cli
 
 Generic means reusable across applications adopting this stack and its conventions. The rules may define shared UI contracts, custom ESLint checks, review thresholds and warning-budget policies. Keep their expected behavior, applicability and analysis limits in the owning rule. Application-specific names, paths and implementation status belong in the consuming application's documentation.
 
-**Analysis tools:** The catalog defines the rules, their impact, exceptions and incorrect/correct examples. ESLint and application scripts provide partial detection or review candidates for those rules. Rule identifiers prefixed with `local/` name custom ESLint rules under the configured `local` plugin namespace. Register the checks described by the owning rules and use the [rule-to-tool bindings](references/project-enforcement.md) to resolve application commands and their limits.
+**Bundled analysis tools:** This skill packages the catalog, custom ESLint plugin, reusable configuration, analysis scripts and their generic regression tests. ESLint and scripts provide partial detection or review candidates for the rules. Rule identifiers prefixed with `local/` name the packaged plugin's checks under the configured `local` namespace. Use the [installation and rule-to-tool bindings](references/project-enforcement.md) to enable them in a consuming application. Application roots, reference catalogs, warning ceilings and project integration tests remain with that application.
 
 This catalog is the single source for our React conventions, including business capability boundaries, strict shared UI composition, semantic colors, centralized accessibility and public API maintenance.
 
@@ -67,7 +67,7 @@ Start review and correction with the selected rules' own impact: **CRITICAL → 
 
 1. Use [focused routing signals](rules/_routing.md) and the Quick Reference below to select relevant rule files.
 2. Read those files for impact, applicability, exceptions, incorrect/correct examples and analysis aids. Do not load the entire compiled guide for a focused task.
-3. Order the applicable rules by impact, then category priority. Resolve their ESLint checks and complementary scripts through the application's documented [rule-to-tool bindings](references/project-enforcement.md). Use a script when it supports a selected rule; do not run every audit script as an independent checklist. A shared command may serve several selected rules in one run.
+3. Order the applicable rules by impact, then category priority. Select their packaged ESLint checks and complementary scripts through the [rule-to-tool bindings](references/project-enforcement.md), using the consuming application's configured roots, catalog and commands. Use a script when it supports a selected rule; do not run every audit script as an independent checklist. A shared command may serve several selected rules in one run.
 4. Confirm findings against the owning rule and inspect requirements beyond automatic coverage. A tool's silence does not establish compliance, and a review candidate does not establish a violation.
 5. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
 
@@ -266,7 +266,7 @@ Each rule file contains:
 - Why the rule matters
 - An incorrect example and a correct example, using generic business entities and real library APIs
 - Notes on exceptions
-- Associated ESLint checks and complementary script capabilities where available, with detection limits and the remaining semantic review; application command bindings live in the application's documentation
+- Associated packaged ESLint checks and complementary script capabilities where available, with detection limits and the remaining semantic review; consuming applications configure their roots, catalog and command aliases
 - Optional links to declared companion skills
 
 ## Add or Change a Rule

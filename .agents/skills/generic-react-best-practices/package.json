@@ -1,0 +1,44 @@
+{
+  "name": "@frontend-engineering/react-best-practices",
+  "version": "1.7.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./eslint": "./eslint.config.mjs",
+    "./plugin": "./eslint-rules/index.js",
+    "./rules/*": "./eslint-rules/*",
+    "./scripts/*": "./scripts/*"
+  },
+  "bin": {
+    "react-best-practices-lint": "scripts/lint.mjs",
+    "react-best-practices-profile": "scripts/profile-eslint.mjs",
+    "react-best-practices-architecture": "scripts/audit-architecture.mjs",
+    "react-best-practices-cycles": "scripts/import-cycles.mjs",
+    "react-best-practices-i18n": "scripts/check-i18n-catalog.mjs"
+  },
+  "files": [
+    "eslint-rules/",
+    "scripts/",
+    "eslint.config.mjs",
+    "vitest.config.mjs",
+    "rules/",
+    "references/",
+    "SKILL.md",
+    "AGENTS.md",
+    "metadata.json"
+  ],
+  "peerDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-simple-import-sort": "14.0.0",
+    "globals": "^17.6.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.9",
+    "prettier": "3.9.10"
+  }
+}

@@ -1,34 +1,118 @@
-# Project Enforcement
+# Packaged tooling and rule bindings
 
-## Bind tools to catalog rules
+The [catalog](../SKILL.md) owns contracts, impact, exceptions and incorrect/correct
+examples. This skill also owns the executable checks and their generic tests.
+Select rules and order their review by impact before choosing tools. A command
+may support several rules; collect its output once and assign findings to their
+owning rules. Neither tool availability nor output order sets review priority.
 
-The [catalog rules](../SKILL.md) own the required behavior, impact, exceptions,
-incorrect/correct examples and analysis limits. Read them before selecting tools.
-The consuming application's documentation owns the concrete command bindings;
-inspect its frontend README, package scripts and effective lint configuration.
+## Install in a consuming application
 
-For each selected rule, resolve:
+Add `@frontend-engineering/react-best-practices` as a local file dev dependency
+pointing to this skill directory. Enable `install-links=true` in the consuming
+application's `.npmrc` so npm installs a packed copy whose peer dependencies
+resolve from the application. Commit its updated lockfile. The package manifest
+declares compatible ESLint, TypeScript and plugin versions; install those peers
+in the consuming application. Vitest and Prettier are needed to run the tooling
+regression suite. Nothing needs to be installed to read the catalog or run its
+zero-dependency documentation compiler.
 
-- The configured ESLint rule IDs and the part of the contract they detect.
-- Any complementary script, its working directory and invocation, when it helps
-  review that rule, and whether it reports candidates or rejects a bounded defect.
-- The files and patterns the tool examines, its omissions, and what must still
-  be inspected manually. Record unavailable automation as a manual review need.
+Import the shared preset in the consuming application's flat ESLint adapter:
 
-Keep the reusable capability in the owning rule and application-specific script
-names, paths, catalog locations and implementation status in the application.
-A command may support several rules, and a rule may have several detectors or
-none. Do not invent a check or infer coverage merely from a tool's name.
+```js
+import { createReactConfig } from '@frontend-engineering/react-best-practices/eslint'
 
-Run the relevant commands as evidence for the selected rules, following the
-skill's impact ordering. Broad commands may collect evidence once for several
-rules; their output order does not determine the review or correction queue.
-An inventory candidate requires a semantic decision using the rule's examples
-and exceptions. A failing deterministic check establishes only the property and
-scope it actually examines. Missing tools, quiet output and successful exit codes
-never waive the rest of a rule.
+export default createReactConfig({
+  projectRoot: import.meta.dirname,
+  catalogFile: 'translations/reference.json',
+  ignores: ['dist', 'storybook-static'],
+})
+```
 
-Lint runners, cache helpers, profilers and script regression tests support tool
-operation. They are not additional catalog rules or standalone audit passes.
-Use profiling to investigate lint cost; preserve the normal lint command and
-warning-budget check as the validation gate.
+The adapter supplies project parameters; the skill owns the checks and their
+default severities. `catalogFile` is required and resolved from `projectRoot`.
+The plugin is also exported as `@frontend-engineering/react-best-practices/plugin`
+for applications composing a flat configuration themselves. Register it under
+`local`, configure `react-best-practices/catalogFile` with an absolute reference
+catalog path, and preserve its suppression processor and warning-budget policy.
+The shared preset wires these together already.
+
+After changing the skill's tooling, run `npm ci` in the consuming application to
+refresh the installed copy before checks. A clean CI install packages the current
+contents of the skill. Keep reusable implementations here and application-specific
+integration cases, warning ceilings, roots and catalog paths in the consumer.
+
+## Choose checks for the selected rules
+
+Commands below are package binaries, run from the consuming application's root
+or through its npm script aliases. Follow each linked rule's own impact and
+exceptions; the table is an association index, not a sequence of audit passes.
+
+| Owning catalog rules | ESLint aids | Complementary command and trigger |
+| --- | --- | --- |
+| [Component roles](../rules/arch-component-roles.md) | `local/component-role`, `local/state-component-contract` | `react-best-practices-architecture` when reviewing component responsibilities and presentation boundaries. Inspect each candidate and its dependencies before choosing a role or extraction. |
+| [Domain import boundaries](../rules/arch-transverse-only-imports.md) | `local/import-boundaries` | `react-best-practices-cycles --project <config.json>` when reviewing dependencies or changing runtime imports. An acyclic forbidden domain import still violates its owning rule. |
+| [Component complexity](../rules/arch-component-complexity.md) | `complexity`, `max-lines-per-function` | Reuse architecture inventory output for substantial-JSX candidates. Element count measures neither lint threshold and cannot require extraction. |
+| [Store modules](../rules/arch-stores-no-index.md) | `local/atom-contract` for module naming and placement | Use the cycle command for store dependency reviews and runtime import changes. Inspect barrels, direct imports and concern boundaries separately. |
+| [Entity placement](../rules/types-file-per-entity.md) | `local/entity-type-files` | Reuse architecture inventory output when reviewing exported contracts outside canonical type files. Valid local helper/component contracts may be listed. |
+| [Static keys](../rules/i18n-static-keys.md), [translated copy](../rules/i18n-no-hardcoded-strings.md), [translation defaults](../rules/i18n-no-default-value.md), [interpolation](../rules/i18n-interpolation.md) | `local/i18n-consistency`, `local/no-hardcoded-ui-strings`, `local/no-ui-string-concat` | `react-best-practices-i18n --catalog <reference.json>` when reviewing translation calls or changing keys. Inspect unused-key reports before removal and review display sites manually. |
+| [Warning budget](../rules/quality-eslint-warning-budget.md), [suppression policy](../rules/quality-eslint-disable-scoped.md), and selected rules with configured checks | The normal configured checks, suppression processor and metadata/tracking rules | `react-best-practices-lint --max-warnings <reviewed-ceiling>` is the full-project gate. Preserve its warnings; a quiet catalog command or profiling does not replace it. |
+
+Other packaged custom checks are registered by [the plugin](../eslint-rules/index.js)
+and configured by [the preset](../eslint.config.mjs); their contracts remain in
+their owning rule files. A rule can have several detectors or none. A missing
+detector still requires manual review at that rule's catalog priority.
+
+## Output and analysis limits
+
+- **Architecture inventory:** [implementation](../scripts/audit-architecture.mjs).
+  Walks `<root>/src`, inspects declared features and production domain `.ts`
+  modules outside `types/*.type.ts` for directly exported object aliases. Features
+  with no identified business signal, opaque calls, local presentation or at
+  least 12 JSX elements become candidates. Output includes file/line and observed
+  dependencies. It does not cover every component role or type form, prove a
+  violation, require an extraction or add warning-budget entries.
+- **Cycles:** [implementation](../scripts/import-cycles.mjs). Uses the selected
+  TypeScript configuration and aliases for the local production graph. Synchronous
+  value imports and reexports form edges; erased type-only and deferred imports
+  do not. Cycles fail the command. An empty result proves neither business
+  ownership nor safety of deferred loading.
+- **Catalog usage:** [implementation](../scripts/check-i18n-catalog.mjs) and
+  [collector](../scripts/collect-translation-keys.mjs). Scans `<root>/src` `.ts`/`.tsx`
+  calls using supported translation bindings and checks unused entries in the
+  supplied flat reference catalog, including `_one`/`_other` variants. Unused
+  entries fail the command. Other locales, unsupported runtime consumers and
+  whether all visible copy is translated require separate review. Missing keys,
+  defaults and required interpolation options are checked by the configured lint
+  rules, within their own analysis limits.
+
+Architecture, cycles and catalog commands accept `--root <application-directory>`;
+the calling directory is the default. Cycles default to `tsconfig.app.json` and
+accept `--project`; the catalog command requires `--catalog` and accepts `--source`
+(default `src`). Relative options resolve from the selected root. Scripts analyze
+that application, never a source tree relative to the installed skill.
+
+## Runners, cache and regression checks
+
+[The lint runner](../scripts/lint.mjs) preserves ESLint flags such as `--fix` and
+`--no-cache` and the consuming application's explicit warning ceiling. It also
+lints the packaged tooling with its own zero-warning gate. The
+[fingerprint](../scripts/eslint-project-fingerprint.mjs) includes project source,
+integration tests, configuration, the configured reference catalog and packaged
+tooling inputs, so changes outside a linted file invalidate cached results.
+
+Use `react-best-practices-profile [paths...]` to investigate expensive lint rules
+or files. Its timings and error-based exit do not enforce the warning ceiling.
+Runners, profiling and regression suites support the mapped checks; they do not
+create additional catalog rules or independent audit priorities.
+
+Run the generic suite through the consuming application's Vitest installation:
+
+```sh
+vitest run --config node_modules/@frontend-engineering/react-best-practices/vitest.config.mjs
+```
+
+This suite uses its own root and no application setup files. Keep integration
+tests that require actual application paths or dependencies with that application
+and run both suites in CI. Passing either suite, lint or scripts does not replace
+the catalog's required semantic review.
