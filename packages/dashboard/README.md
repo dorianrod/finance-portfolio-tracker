@@ -28,6 +28,8 @@ The conventions and audit method are defined in
 The dashboard implements its ESLint checks in [eslint.config.js](eslint.config.js)
 and [eslint-rules/](eslint-rules/). Commands and the warning ceiling are defined in
 [package.json](package.json).
+For audits, select and prioritize the skill's applicable rules first, then use
+the [rule-to-tool bindings](#rule-to-tool-bindings) below to gather evidence.
 
 ## Development
 
@@ -52,8 +54,6 @@ implement XIRR itself.
 npm run format:check
 npm run typecheck
 npm test
-npm run audit:i18n
-npm run audit:cycles
 npm run build
 npm run build-storybook
 ```
@@ -158,18 +158,57 @@ Note this makes the dashboard's UI (with fake numbers) reachable by
 anyone with the `https://<user>.github.io/<repo>/` URL, regardless of
 whether the source repo itself is public or private.
 
+## Rule-to-tool bindings
+
+The skill owns each rule's contract, impact, exceptions and incorrect/correct
+examples. Start with applicable CRITICAL rules, then HIGH, MEDIUM-HIGH, MEDIUM,
+LOW-MEDIUM and LOW, using the skill's category priority for ties. Read individual
+rule impacts rather than assuming every rule has its category's impact. These
+bindings implement that review; scripts do not define a separate audit sequence.
+Run commands from `packages/dashboard`. Shared output can be collected once and
+reused across selected rules; process its findings at each owning rule's priority.
+
+| Catalog rules (impact) | Configured ESLint aids | Complementary script: when to use it and what it establishes |
+| --- | --- | --- |
+| [`arch-component-roles`](../../.agents/skills/generic-react-best-practices/rules/arch-component-roles.md) (CRITICAL) | `local/component-role`, `local/state-component-contract` | `npm run audit:architecture` for component-role reviews: lists visual-only or unresolved features, local presentation and substantial JSX, with business evidence and opaque calls. Each entry needs a responsibility decision. |
+| [`arch-transverse-only-imports`](../../.agents/skills/generic-react-best-practices/rules/arch-transverse-only-imports.md) (CRITICAL) | `local/import-boundaries` | `npm run audit:cycles` when reviewing dependency boundaries or changing runtime imports: detects synchronous graph cycles. An acyclic forbidden import still violates the catalog; inspect ownership separately. |
+| [`arch-component-complexity`](../../.agents/skills/generic-react-best-practices/rules/arch-component-complexity.md) (HIGH) | `complexity`, `max-lines-per-function` | Reuse `npm run audit:architecture` output for substantial-JSX candidates. Its element count does not measure either lint threshold or require extraction. |
+| [`arch-stores-no-index`](../../.agents/skills/generic-react-best-practices/rules/arch-stores-no-index.md) (HIGH) | `local/atom-contract` for module placement/naming | `npm run audit:cycles` for store dependency reviews and runtime import changes. It rejects cycles; inspect barrels, direct imports and concern boundaries separately, using the rule's barrel inventory. |
+| [`types-file-per-entity`](../../.agents/skills/generic-react-best-practices/rules/types-file-per-entity.md) (MEDIUM) | `local/entity-type-files` | Reuse `npm run audit:architecture` when reviewing entity placement. Exported object aliases outside canonical type files are candidates; valid helper or component contracts can appear. Decide from actual consumers and ownership. |
+| [`i18n-static-keys`](../../.agents/skills/generic-react-best-practices/rules/i18n-static-keys.md), [`i18n-no-hardcoded-strings`](../../.agents/skills/generic-react-best-practices/rules/i18n-no-hardcoded-strings.md), [`i18n-no-default-value`](../../.agents/skills/generic-react-best-practices/rules/i18n-no-default-value.md), [`i18n-interpolation`](../../.agents/skills/generic-react-best-practices/rules/i18n-interpolation.md) (MEDIUM) | `local/i18n-consistency` for supported keys, missing entries, defaults and required interpolation options; `local/no-hardcoded-ui-strings`, `local/no-ui-string-concat` for copy | `npm run audit:i18n` when reviewing translation calls or changing keys: runs quiet source lint, then checks unused reference-catalog entries. Inspect reports before removing keys and review display sites manually. |
+
+The architecture inventory walks `src`, inspecting `.feature.tsx` components and
+production domain `.ts` modules outside `types/*.type.ts` for directly exported
+object aliases. Its substantial-JSX signal starts at 12 elements. It does not
+inventory all component roles or type forms, and its candidate count and successful
+exit do not establish compliance or become ESLint warning-budget entries.
+
+The cycle checker uses `tsconfig.app.json` resolution and aliases for the local
+production graph. Synchronous value imports and reexports form edges; erased
+type-only and deferred dynamic imports do not. It fails when cycles are found,
+and its regression suite also checks the actual application graph in CI. It does
+not prove business ownership or safety of deferred loading.
+
+The catalog script scans source `.ts`/`.tsx` calls using
+`collect-translation-keys.mjs`, resolves supported translation bindings and
+checks unused keys in `src/i18n/locales/en.json`, including `_one`/`_other`
+variants. It does not check other locales, all visible copy or arbitrary runtime
+key consumers. Missing keys and several call-site contracts are checked by
+ESLint. `audit:i18n` uses `--quiet` and runs the catalog step only after lint
+succeeds; it does not replace `npm run lint` with its full warnings and budget.
+
+For every selected rule with configured lint detection, use `npm run lint` for
+the normal full-project gate, including
+[`quality-eslint-warning-budget`](../../.agents/skills/generic-react-best-practices/rules/quality-eslint-warning-budget.md)
+and suppression metadata. `scripts/lint.mjs` is its cached runner;
+`eslint-project-fingerprint.mjs` is loaded by the lint configuration to invalidate
+results after lint inputs change. `npm run lint:profile -- <paths>` profiles
+lint cost when needed; its timings and error-based exit do not enforce the warning
+ceiling. These helpers, `collect-translation-keys.mjs` and `*.test.mjs` support
+the mapped checks rather than adding independent audit passes. Rules without a
+script still require their configured checks and manual review at catalog priority.
+
 ## Architecture and TypeScript prevention
-
-Run `npm run audit:architecture` before an architecture review. It lists features
-with unclear business ownership, mixed local presentation, substantial JSX and
-exported object contracts outside canonical entity files. Each entry is a review
-candidate, with its observed dependencies; it does not fail lint or certify that
-an extraction is necessary. Group comparable candidates before correcting them.
-
-`npm run audit:cycles` checks synchronous runtime imports and reexports using the
-application's TypeScript resolution and aliases. Type-only and deferred imports
-do not create synchronous initialization cycles. The test suite runs the same
-check against application source, so CI also rejects newly introduced cycles.
 
 ESLint rejects clearly visual-only features and follows local runtime dependency
 paths, including aliases, reexports and dynamic imports. It rejects hidden display

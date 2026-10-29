@@ -32,3 +32,12 @@ When translations are served from a catalog (a backend export or JSON files), a 
 ```
 
 The second argument of `t()` is reserved for interpolation options (`{ name }`), never a default string. The only acceptable built-in fallbacks are the few boot-time keys of screens shown before the catalog loads; do not add feature keys there.
+
+### Analysis aids
+
+Use `local/i18n-consistency` or equivalent configured checks for fallback strings,
+explicit `defaultValue` options and missing catalog entries in supported calls.
+Opaque option objects and wrappers still require inspection. When replacing a
+fallback with a catalog key, run the catalog usage check described by
+`i18n-static-keys`; it complements call-site lint and does not detect defaults
+by itself. Verify the key's presence and review its actual displayed text.

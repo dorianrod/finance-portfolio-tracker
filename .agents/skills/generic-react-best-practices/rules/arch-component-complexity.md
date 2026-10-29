@@ -71,3 +71,12 @@ The examples abbreviate an independently owned summary region. Small cohesive JS
 Review complexity above **8** (modified cyclomatic complexity, counting an entire `switch` once) or function size above **150** lines, excluding blank and comment-only lines. Include JSX and nested callback bodies when measuring a function's span. A score of 8 and a size of 150 are allowed. These are review signals rather than instructions to split automatically. Tests, stories and tooling are outside these production thresholds.
 
 Use both measures: few branches do not imply a small component. Hook count, mapped JSX and compound calculations remain separate signals. Resolve a reported exceedance through a cohesive extraction or a justified, line-scoped keep decision; do not compress formatting, hide JSX in variables or move everything into an umbrella hook merely to lower a metric.
+
+### Complementary script use
+
+An architecture inventory associated with `arch-component-roles` may also surface
+features with substantial JSX. Use those entries as additional candidates for
+responsibility review under this rule. A JSX element count does not measure the
+ESLint `complexity` or `max-lines-per-function` thresholds and cannot replace
+either check. Read the whole function and callers before choosing split or keep;
+an inventory entry alone requires neither extraction nor suppression.

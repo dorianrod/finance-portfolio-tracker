@@ -48,6 +48,7 @@ import noTestStyleAssertions from './eslint-rules/no-test-style-assertions.js'
 import noUiStringConcat from './eslint-rules/no-ui-string-concat.js'
 import preferFunctionalStateUpdate from './eslint-rules/prefer-functional-state-update.js'
 import preferSemanticTestQueries from './eslint-rules/prefer-semantic-test-queries.js'
+import preferUsecallback from './eslint-rules/prefer-usecallback.js'
 import publicApiFirst from './eslint-rules/public-api-first.js'
 import requireChildrenComposition from './eslint-rules/require-children-composition.js'
 import requireReviewedEslintSuppression from './eslint-rules/require-reviewed-eslint-suppression.js'
@@ -118,6 +119,7 @@ export default defineConfig([
           'no-ui-string-concat': noUiStringConcat,
           'prefer-functional-state-update': preferFunctionalStateUpdate,
           'prefer-semantic-test-queries': preferSemanticTestQueries,
+          'prefer-usecallback': preferUsecallback,
           'public-api-first': publicApiFirst,
           'require-children-composition': requireChildrenComposition,
           'require-reviewed-eslint-suppression':
@@ -279,6 +281,7 @@ export default defineConfig([
       'local/no-overwritten-ui-props': 'error',
       'local/no-sort-for-extremum': 'error',
       'local/prefer-functional-state-update': 'error',
+      'local/prefer-usecallback': 'error',
       'local/component-role': 'error',
       'local/feature-folder-layout': ['error', { maxFeatureDepth: 2 }],
       'local/i18n-consistency': 'error',

@@ -1,7 +1,10 @@
 # Audit method
 
-Every audit includes lint investigation, catalog review and a final review of
-deterministic prevention. Technical revalidation of existing ignores is opt-in.
+Every audit is driven by catalog rules and their impact. ESLint and complementary
+scripts supply evidence for those rules; they do not define a separate audit
+agenda. Every audit includes lint investigation, semantic review and a final
+review of deterministic prevention. Technical revalidation of existing ignores
+is opt-in.
 A focused review applies these activities only to the stated scope and must not
 imply a full-catalog result. Correct confirmed violations by default; an explicit
 findings-only request limits the work to analysis and proposed corrections,
@@ -30,13 +33,41 @@ revalidation of existing ignores. If interrupted, keep a usable checkpoint and
 identify the remaining work. No particular file format, schema, count table or
 generated report is required.
 
+## Select rules, order the review and bind tools
+
+Select rules through focused routing or the full Quick Reference, then read their
+contracts, examples, exceptions and actual impact. Process CRITICAL rules first,
+then HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM and LOW. Use category priority to break
+ties. Category impact is a ceiling, not the impact of every rule it contains.
+Review rules without detectors at the same priority as equally impactful rules
+with detectors. Respect correction dependencies needed to resolve a higher-impact
+finding; a lint error is not automatically more urgent than a confirmed critical
+semantic violation found through inventory review.
+
+Resolve associated checks through the application's documented
+[rule-to-tool bindings](project-enforcement.md). Use the script capabilities
+described by each owning rule when available and useful to the requested scope.
+Read their configured scope and limits before interpreting results. Do not run
+every script simply because it exists. Baseline lint and shared script output
+may be collected together, but assign each result to an owning rule before
+review and correction. Inspect relevant in-scope results from a project-wide
+command without silently expanding a focused audit to unrelated code.
+
+Distinguish bounded deterministic failures from semantic review candidates.
+An architecture inventory's unresolved dependency or large JSX count requires
+inspection; it does not prescribe an extraction. An acyclic import graph does
+not prove lawful ownership, and a catalog usage check does not prove all visible
+copy is translated. Apply the rule's examples and exceptions to decide.
+The ESLint and beyond-ESLint sections below describe complementary activities
+for each prioritized rule, rather than separate correction phases.
+
 ## Calibrate detection before the first correction batch
 
 Build a candidate inventory by recurring failure family before opening correction batches: component roles/composition, mixed local presentation, helper/service effects, indirect presentation dependencies, formatter exports and contracts, and entity types outside canonical files. Include valid-looking candidates; searching only for known bad names reproduces the previous audit's blind spots. Read related callers together to establish each family's scope.
 
 For deterministic families, first prove one representative incorrect case and one neighboring valid case through the actual project configuration. Include aliases, reexports/dynamic imports, indirection or wrappers when they caused the omission. A clean command without this negative proof is unverified coverage. Strengthen a sound detector early so that it enumerates comparable violations across the whole scope before correction begins.
 
-Keep semantic candidates distinct from proven errors. Record the observed responsibility and the unresolved question, rather than inferring the role from a suffix, hook count or JSX size. Use an architecture inventory command when supplied by the application; review signals do not need to become warning-budget entries.
+Keep semantic candidates distinct from proven errors. Record the observed responsibility and the unresolved question, rather than inferring the role from a suffix, hook count or JSX size. Use the architecture inventory associated with the selected component-role or entity-placement rules when supplied by the application; review signals do not need to become warning-budget entries.
 
 Fix complete families with their callers, then run focused checks. Run full-project checks at meaningful milestones and after the final change; repeating the full suite after every small move does not increase semantic coverage. Update the inventory when a new failure mechanism appears and search its comparable cases before starting another batch. Keep execution logs compact and outside authored source; retain the durable prevention in rule contracts and regression tests rather than committing repeated full logs.
 
@@ -46,6 +77,8 @@ Identify the consuming application's lint command, effective configuration,
 authored file scope and warning budget. Run the configured checks and inspect
 both errors and warnings. Keep the initial findings available for comparison;
 do not treat a passing exit code or an accepted warning total as compliance.
+This collects detection evidence; process it alongside script findings and manual
+review in catalog impact order, rather than finishing every lint fix first.
 
 For each diagnostic, inspect the affected code and the owning rule's contract,
 including exceptions. Correct confirmed violations and review autofixes. If the
@@ -84,8 +117,9 @@ selected rule, keep one of these results with concrete evidence:
 - **Unresolved:** record a known violation, unexamined scope or unproven claim.
   Resolve it within the authorized task or state it explicitly when work stops.
 
-A rule may have both automated and manual parts. An ESLint rule sharing a category
-or a similar name does not establish that it checks the catalog requirement.
+A rule may have both automated and manual parts. An ESLint rule or script sharing
+a category or a similar name does not establish that it checks the catalog
+requirement.
 TypeScript checks declared types; it does not establish business meanings such as
 dates, amounts, ownership or complete fixture data hidden behind assertions.
 
@@ -200,8 +234,9 @@ After an enforcement change, recheck its affected scope before closing the audit
 ## Finish with the evidence that exists
 
 Run the required checks after corrections, including the full-project warning
-budget check. Reconcile the inventory, findings and pending work, including any
-exception reviews explicitly requested or required for new/modified exceptions.
+budget check and affected rule-associated scripts. Reconcile the inventory,
+findings and pending work, including exception reviews explicitly requested or
+required for new/modified exceptions.
 Complete the prevention review in section 4. Existing ignores whose revalidation
 was not requested do not block completion and are not counted as newly reviewed.
 For audit-and-fix work, remaining in-scope violations prevent completion. For

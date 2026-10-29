@@ -76,6 +76,20 @@ Recognize resolved translation calls and native boolean coercion, including immu
 
 Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
+### Complementary script use
+
+When reviewing component roles, run the application's architecture inventory
+associated with this rule through its documented [command bindings](../references/project-enforcement.md).
+Use each entry's business evidence and unresolved calls to inspect the component
+and its dependencies, then compare its responsibility with the incorrect/correct
+examples below. Group comparable boundaries before correcting them.
+
+An inventory may examine only declared features and use a JSX-count heuristic;
+check its actual scope. It does not cover every view or state renderer, establish
+an independent visual contract, or justify a split or rename by itself. Review
+all in-scope component roles even when they are absent from the output. Process
+support-type candidates under `types-file-per-entity` at that rule's own impact.
+
 ### Audit every component boundary
 
 An architecture audit is incomplete if it only verifies suffixes and import restrictions. For every `.feature.tsx`, inspect the component responsibilities and reach an explicit boundary decision:

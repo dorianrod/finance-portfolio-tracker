@@ -54,3 +54,16 @@ Enable `local/entity-type-files` at error level. In canonical entity files, reje
 Also inspect exported object aliases in domain implementation modules. An independent object exported beside an unrelated helper should not be hidden there merely because the file is outside `types/`. A local function's explicit input/output contract and its referenced sub-shapes may stay local. Private implementation shapes, dependency augmentations and dedicated colocated support-contract modules remain valid; neither a record's size nor its name alone establishes an entity.
 
 This bounded check does not decide whether every return shape or colocated `*.types.ts` contract deserves entity status. Review those candidates by their actual consumers, lifetime and ownership. Reusable entities go to the nearest owning `types/[entity].type.ts`; small component props and helper configuration stay with their owner. Verify an incorrectly placed exported object and a valid helper signature through the application's configuration.
+
+### Complementary script use
+
+When reviewing entity placement, use an application architecture inventory that
+enumerates exported object aliases outside canonical entity files, if available
+through the documented [command bindings](../references/project-enforcement.md).
+Inspect each candidate's actual consumers, lifetime and relation to its owning
+function before moving it. A valid local helper contract can appear in the output.
+
+Check the inventory's file and syntax limits; it may omit interfaces, reexports
+or other type forms. Review eligible contracts beyond that output and keep
+`local/entity-type-files` enabled. Apply this rule's MEDIUM impact to these
+candidates even when the same command also emits critical component-role signals.

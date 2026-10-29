@@ -14,8 +14,8 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
   - `<prefix>-<description>.md` - Individual rule files
 - `scripts/build.mjs` - Zero-dependency build and validation script
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
-- `references/project-enforcement.md` - Minimal note; all conventions and ESLint requirements live in the rules
-- `references/audit-method.md` - Exhaustive scope review, opt-in revalidation of existing ignores, and generic static prevention with a concise summary of added checks and their rationale; no required report format
+- `references/project-enforcement.md` - Resolve each selected rule's ESLint and complementary script bindings in the consuming application; rule contracts and tool limits stay in the owning rules
+- `references/audit-method.md` - Review by rule impact using lint, associated scripts and semantic inspection; exhaustive scope review, opt-in revalidation of existing ignores, and generic static prevention; no required report format
 - `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
 - `SKILL.md` - Skill entry point (sections table and Quick Reference)
@@ -54,7 +54,7 @@ The compiler also rebases relative rule links for `AGENTS.md`, so the source rul
 2. Copy `rules/_template.md` to `rules/<prefix>-<description>.md` with one of the prefixes of `rules/_sections.md` (`arch`, `api`, `security`, `cache`, `types`, `yup`, `ui`, `state`, `helpers`, `i18n`, `test`, `quality`).
 3. Use real library APIs and generic business vocabulary (`sales/orders`, `sales/invoices`, `contracts`, `projects`, `directory/contacts`…). Custom hooks, UI primitives and ESLint checks are valid when their reusable contract is defined or illustrated. Explain required tooling rather than presenting custom behavior as a library default. Keep application-specific names, paths, configuration and implementation status in the consuming application's documentation. Declare companion skills in `metadata.json` before linking to them. Do not add ticket numbers or `Reference:` lines to rules.
 4. Add the rule id to the Quick Reference of `SKILL.md`, at the position given by its section, impact and title.
-5. Add precise routing signals to `rules/_routing.md` when the rule refines a business or UI boundary. For other topics, the categorized Quick Reference is sufficient. Keep reusable ESLint behavior and analysis limits in the owning rule.
+5. Add precise routing signals to `rules/_routing.md` when the rule refines a business or UI boundary. For other topics, the categorized Quick Reference is sufficient. Keep associated ESLint checks, complementary script capabilities, usage triggers and analysis limits in the owning rule alongside its examples. Bind concrete commands in the consuming application's documentation. A rule without automatic detection still requires semantic review at its own impact; a script must not introduce a parallel priority system.
 6. Run the build script to regenerate `AGENTS.md`, then run its `--check` mode and the skill validator.
 
 ## Impact Levels

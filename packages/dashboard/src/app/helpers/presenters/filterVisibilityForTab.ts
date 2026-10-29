@@ -1,11 +1,12 @@
 import type { FilterVisibility } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
+import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
+import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 
 export function filterVisibilityForTab(
-  tab: string,
-  holdingsView: 'positions' | 'underlying' = 'positions',
+  tab: AnalysisTab,
+  holdingsView: HoldingsView = 'positions',
 ): FilterVisibility {
-  const positionsView =
-    tab === 'positions' || (tab === 'holdings' && holdingsView === 'positions')
+  const positionsView = tab === 'holdings' && holdingsView === 'positions'
   return {
     showPeriod: true,
     showPositionFilters: positionsView,

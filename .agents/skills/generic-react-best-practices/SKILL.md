@@ -8,7 +8,7 @@ description: >
   stores, helpers and formatters, i18n, tests, rendering performance and code quality. Load
   tailwind-design-system alongside it only when working inside shared/ui, where advanced styling patterns belong.
   Basic layout classes in domain code do not require that companion skill.
-  Also use for ESLint fixes, manual catalog audits, exception validity reviews and warning budgets.
+  Also use for ESLint fixes, rule-led audits with complementary scripts, exception validity reviews and warning budgets.
 license: Internal
 metadata:
   author: frontend-engineering
@@ -27,7 +27,7 @@ This skill defines our reusable React conventions, component composition and cli
 
 Generic means reusable across applications adopting this stack and its conventions. The rules may define shared UI contracts, custom ESLint checks, review thresholds and warning-budget policies. Keep their expected behavior, applicability and analysis limits in the owning rule. Application-specific names, paths and implementation status belong in the consuming application's documentation.
 
-**ESLint:** Rule identifiers prefixed with `local/` name custom ESLint rules under the configured `local` plugin namespace. Register them in the consuming application's ESLint configuration and enable the checks described in each rule's ESLint section.
+**Analysis tools:** The catalog defines the rules, their impact, exceptions and incorrect/correct examples. ESLint and application scripts provide partial detection or review candidates for those rules. Rule identifiers prefixed with `local/` name custom ESLint rules under the configured `local` plugin namespace. Register the checks described by the owning rules and use the [rule-to-tool bindings](references/project-enforcement.md) to resolve application commands and their limits.
 
 This catalog is the single source for our React conventions, including business capability boundaries, strict shared UI composition, semantic colors, centralized accessibility and public API maintenance.
 
@@ -61,11 +61,15 @@ Several rules describe the target standard, not the current state of every file.
 | 11 | Testing | MEDIUM | `test-` |
 | 12 | Code Quality | HIGH | `quality-` |
 
+Start review and correction with the selected rules' own impact: **CRITICAL → HIGH → MEDIUM-HIGH → MEDIUM → LOW-MEDIUM → LOW**. The category impact is a ceiling; read each rule's frontmatter for its actual impact. At equal impact, follow the category priority above. The Quick Reference groups rules for navigation; it is not a global execution queue. A prerequisite correction may come first when needed to resolve a higher-impact violation. ESLint severity, output order, candidate counts and script exit codes do not set catalog priority.
+
 ## Apply Rules
 
 1. Use [focused routing signals](rules/_routing.md) and the Quick Reference below to select relevant rule files.
-2. Read those files and confirm applicability and exceptions before applying them. Do not load the entire compiled guide for a focused task.
-3. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
+2. Read those files for impact, applicability, exceptions, incorrect/correct examples and analysis aids. Do not load the entire compiled guide for a focused task.
+3. Order the applicable rules by impact, then category priority. Resolve their ESLint checks and complementary scripts through the application's documented [rule-to-tool bindings](references/project-enforcement.md). Use a script when it supports a selected rule; do not run every audit script as an independent checklist. A shared command may serve several selected rules in one run.
+4. Confirm findings against the owning rule and inspect requirements beyond automatic coverage. A tool's silence does not establish compliance, and a review candidate does not establish a violation.
+5. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
 
 ### File naming and folder normalization
 
@@ -84,8 +88,8 @@ Mechanically observable conventions require deterministic checks in the consumin
 
 Every audit covers these activities within its stated scope:
 
-1. **ESLint diagnostics and corrections:** run the application's configured lint checks, investigate errors and warnings, and correct confirmed violations.
-2. **Catalog review beyond ESLint:** read applicable rule files and manually inspect requirements and analysis limits that lint does not cover.
+1. **Rule selection and prioritization:** establish the applicable rules and process them by impact, then category priority, including rules without automatic detection.
+2. **Detection and semantic review per rule:** run the configured lint checks and the complementary scripts associated with the selected rules. Map diagnostics and candidates to their owning rules, investigate errors and warnings, inspect coverage limits and correct confirmed violations in catalog priority order. Baseline collection may be batched; review and correction follow rule impact. Neither lint nor scripts exhaust the catalog.
 3. **Existing ignores, only on request:** revalidate existing suppressions and configuration exceptions only when the user explicitly asks to review them. A general audit or fix-all request does not enable this pass. Keep normal metadata and unused-suppression checks active; review any exception introduced or modified by the task before accepting it.
 4. **Deterministic prevention after the audit:** examine findings and manual coverage gaps for reusable ESLint, TypeScript or equivalent checks. Prefer existing enforcement; add or strengthen a check when its generic contract and valid/invalid cases can be established. Keep application-specific names, paths and one-off allowlists out of the check's logic.
 
@@ -258,9 +262,11 @@ rules/state-prefer-factories.md
 ```
 
 Each rule file contains:
+
 - Why the rule matters
 - An incorrect example and a correct example, using generic business entities and real library APIs
 - Notes on exceptions
+- Associated ESLint checks and complementary script capabilities where available, with detection limits and the remaining semantic review; application command bindings live in the application's documentation
 - Optional links to declared companion skills
 
 ## Add or Change a Rule

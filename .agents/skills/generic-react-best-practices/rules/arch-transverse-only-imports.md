@@ -34,4 +34,18 @@ Escape hatches, in order of preference:
 2. Reference the other entity by id or route (store `projectId`, link with a path string) instead of importing its hooks or components.
 3. Add a domain to the transverse list only by an explicit architecture decision.
 
+### Analysis aids
+
+Enable `local/import-boundaries` at error level, or equivalent resolved import
+restrictions, to detect forbidden domain dependencies. Inspect ownership and the
+explicit transverse list manually; a valid import path alone does not establish
+a justified business boundary.
+
+Use the application's synchronous import-cycle checker when reviewing dependency
+boundaries or changing runtime import paths, following the graph contract in
+`arch-stores-no-index`. It complements the import restrictions: a forbidden
+one-way domain import can be acyclic, and a cycle can exist inside one domain.
+Assign each finding to the violated rule rather than treating every graph result
+as a cross-domain violation.
+
 See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`

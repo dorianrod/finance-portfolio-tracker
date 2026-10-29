@@ -29,18 +29,16 @@ export function scopeFundQualityData(
       positiveValue(position) > 0 &&
       isAssetAnalysisApplicablePosition(position),
   )
+  const positionIndex = indexPositionsByIdentifiers(activePositions)
   const statusByPosition = new Map<PositionRow, FundHoldingStatus>()
-  for (const position of activePositions) {
-    const status = statuses.find((candidate) =>
-      positionMatchesStatus(position, candidate),
-    )
-    if (status) statusByPosition.set(position, status)
-  }
-
   const scopedStatuses = statuses.flatMap((status) => {
-    const marketValue = activePositions
-      .filter((position) => positionMatchesStatus(position, status))
-      .reduce((sum, position) => sum + positiveValue(position), 0)
+    const matchingPositions = positionsForStatus(positionIndex, status)
+    let marketValue = 0
+    for (const position of matchingPositions) {
+      marketValue += positiveValue(position)
+      if (!statusByPosition.has(position))
+        statusByPosition.set(position, status)
+    }
     if (marketValue <= 0) return []
     const explainedValue = marketValue * clampRatio(status.explainedPct)
     const residualValue = marketValue * clampRatio(status.residualPct)
@@ -57,10 +55,11 @@ export function scopeFundQualityData(
       ])
       .filter(Boolean),
   )
-  const scopedHoldings = holdings.filter((holding) =>
-    activePositions.some((position) =>
-      positionMatchesHolding(position, holding),
-    ),
+  const scopedHoldings = holdings.filter(
+    (holding) =>
+      positionIndex.isin.has(holding.parentIsin) ||
+      positionIndex.ticker.has(holding.parentTicker) ||
+      positionIndex.name.has(holding.parentName),
   )
   const scopedSnapshots = snapshots.filter((snapshot) =>
     selectedParentKeys.has(snapshot.fundId),
@@ -111,7 +110,7 @@ export function scopeFundQualityData(
     notApplicableValue,
     report: baseReport
       ? {
-          asOfDate: baseReport?.asOfDate ?? '',
+          asOfDate: baseReport.asOfDate,
           portfolioValue,
           fundValue,
           directIdentifiedValue,
@@ -141,33 +140,36 @@ function positiveValue(position: PositionRow): number {
     : 0
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; ISIN, ticker and name are alternative identifiers in one fund-status match predicate.
-function positionMatchesStatus(
-  position: PositionRow,
-  status: FundHoldingStatus,
-): boolean {
-  return (
-    (!!position.isin &&
-      (position.isin === status.parentIsin ||
-        position.isin === status.parentId)) ||
-    (!!position.ticker &&
-      (position.ticker === status.parentTicker ||
-        position.ticker === status.parentId)) ||
-    (!!position.name &&
-      (position.name === status.parentName ||
-        position.name === status.parentId))
-  )
+function indexPositionsByIdentifiers(positions: PositionRow[]) {
+  const index = {
+    isin: new Map<string, PositionRow[]>(),
+    ticker: new Map<string, PositionRow[]>(),
+    name: new Map<string, PositionRow[]>(),
+  }
+  for (const position of positions) {
+    for (const field of ['isin', 'ticker', 'name'] as const) {
+      const key = position[field]
+      if (!key) continue
+      const matches = index[field].get(key) ?? []
+      matches.push(position)
+      index[field].set(key, matches)
+    }
+  }
+  return index
 }
 
-function positionMatchesHolding(
-  position: PositionRow,
-  holding: FundHolding,
-): boolean {
-  return (
-    (!!position.isin && position.isin === holding.parentIsin) ||
-    (!!position.ticker && position.ticker === holding.parentTicker) ||
-    (!!position.name && position.name === holding.parentName)
-  )
+function positionsForStatus(
+  index: ReturnType<typeof indexPositionsByIdentifiers>,
+  status: FundHoldingStatus,
+): Set<PositionRow> {
+  return new Set([
+    ...(index.isin.get(status.parentIsin) ?? []),
+    ...(index.isin.get(status.parentId) ?? []),
+    ...(index.ticker.get(status.parentTicker) ?? []),
+    ...(index.ticker.get(status.parentId) ?? []),
+    ...(index.name.get(status.parentName) ?? []),
+    ...(index.name.get(status.parentId) ?? []),
+  ])
 }
 
 function clampRatio(percentage: number): number {

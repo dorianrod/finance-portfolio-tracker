@@ -5,17 +5,11 @@ import { hasUnitPriceHistory } from '@/domains/portfolio/features/holdings/featu
 import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries'
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
-import i18n from '@/i18n/i18n'
-import { useFormatErrorMessage } from '@/shared/helpers/formatters/useFormatErrorMessage'
-import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
-import { Layout } from '@/shared/ui/layout/Layout.view'
-import { Preview } from '@/shared/ui/Preview.view'
-import { Text } from '@/shared/ui/Text.view'
 
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
+import { PositionHistoryPreview } from './PositionHistoryPreview.view'
 
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
-  const formatErrorMessage = useFormatErrorMessage()
   const {
     data: history,
     isPending,
@@ -36,62 +30,25 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
   const displayedChartData = chartData.length > 0 ? chartData : null
 
   return (
-    <Preview.Content
+    <PositionHistoryPreview
       anchor={target.buttonRect}
-      label={target.name}
-
-      variant="floatingPanel"
+      name={target.name}
+      description={target.isin}
+      descriptionVariant="captionCode"
+      pending={isPending}
+      error={error}
+      empty={showEmptyHistory}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      size="wide"
     >
-      <Layout overflow="scroll" inset="default">
-        <Layout spaceAfter="default">
-          <Text as="p" variant="bodyStrong" tone="default">
-            {target.name}
-          </Text>
-          <Text as="p" variant="captionCode" tone="subtle">
-            {target.isin}
-          </Text>
-        </Layout>
-
-        {isPending && (
-          <StatusMessage variant="caption" tone="muted" align="center">
-            <Layout as="span" flow="block" inset="default">
-              {i18n.t('ui.hoverchart.loading')}
-            </Layout>
-          </StatusMessage>
-        )}
-
-        {error && (
-          <StatusMessage
-            urgent
-            variant="caption"
-            tone="negative"
-            align="center"
-          >
-            <Layout as="span" flow="block" inset="default">
-              {formatErrorMessage(error)}
-            </Layout>
-          </StatusMessage>
-        )}
-        {showEmptyHistory && (
-          <StatusMessage variant="caption" tone="muted" align="center">
-            <Layout as="span" flow="block" inset="default">
-              {i18n.t('ui.hoverchart.noHistory')}
-            </Layout>
-          </StatusMessage>
-        )}
-
-        {displayedChartData && (
-          <PositionHistoryCharts
-            chartData={displayedChartData}
-            unitPriceDomain={unitPriceDomain}
-            showUnitPrice={showUnitPrice}
-          />
-        )}
-      </Layout>
-    </Preview.Content>
+      {displayedChartData && (
+        <PositionHistoryCharts
+          chartData={displayedChartData}
+          unitPriceDomain={unitPriceDomain}
+          showUnitPrice={showUnitPrice}
+        />
+      )}
+    </PositionHistoryPreview>
   )
 }
 

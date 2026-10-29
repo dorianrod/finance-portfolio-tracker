@@ -88,3 +88,18 @@ Choose memo boundaries by invalidation and consumer needs, rather than imposing 
 Skip `useMemo` for cheap primitive expressions. Extract a costly rendered region behind its own component boundary when this lets a loading/visibility branch avoid the work entirely; add manual `memo` only when unchanged props and measured render cost justify it. Keep calculations in their owning helpers and preserve `arch-component-roles`.
 
 When a default array or object becomes an effect dependency or a memoized child's prop, use an immutable shared default if reference stability matters. Do not share mutable per-instance state through that constant. Avoid caching every field, global unbounded result maps or JSX variables solely to make a memo count smaller. With React Compiler, review the compiler's coverage before adding manual caches; neither compiler optimization nor memoization replaces correct state and effect semantics.
+
+### ESLint Enforcement
+
+Enable `local/prefer-usecallback` at error level for production TypeScript.
+Resolve React `useMemo` imports, namespace access and immutable aliases while
+respecting lexical shadowing. With type information, reject a memo callback whose
+return type is entirely callable, including named callbacks and function unions.
+Preserve data objects containing methods, arrays, `useCallback` and unrelated
+functions with matching names. Verify invalid and valid neighbors through the
+consuming application's configuration.
+
+This bounded check does not decide whether a memo is needed or whether several
+data memos share an invalidation boundary. Review those responsibilities and
+opaque callback types manually. Do not autofix: moving setup from a memo factory
+into an event callback can change when that setup runs.

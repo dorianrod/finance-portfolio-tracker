@@ -1,2 +1,3 @@
-export type AnalysisReliabilityTone =
-  'healthy' | 'warning' | 'critical' | 'unavailable'
+import type { QualityTone } from './dataQuality.type'
+
+export type AnalysisReliabilityTone = QualityTone

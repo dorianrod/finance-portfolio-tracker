@@ -10,7 +10,7 @@
     "build": "tsc -b && vite build",
     "format": "prettier --write . && npm run lint -- --fix && prettier --write .",
     "format:check": "prettier --check . && npm run lint",
-    "lint": "node scripts/lint.mjs --max-warnings 145",
+    "lint": "node scripts/lint.mjs --max-warnings 143",
     "lint:profile": "node scripts/profile-eslint.mjs",
     "audit:i18n": "eslint src --quiet && node scripts/check-i18n-catalog.mjs",
     "typecheck": "tsc -b --pretty false",

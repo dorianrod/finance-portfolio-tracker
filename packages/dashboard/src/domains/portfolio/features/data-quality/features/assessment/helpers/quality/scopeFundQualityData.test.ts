@@ -101,6 +101,96 @@ const report: FundCoverageReport = {
 }
 
 describe('scopeFundQualityData', () => {
+  it('counts each position once when several identifiers match the same status', () => {
+    const selected = [
+      position({
+        id: 'first',
+        isin: 'FUND',
+        ticker: 'WORLD',
+        name: 'World ETF',
+        total_value: 200,
+      }),
+      position({
+        id: 'second',
+        isin: 'FUND',
+        ticker: 'WORLD',
+        name: 'World ETF',
+        total_value: 300,
+      }),
+    ]
+    const holding = makeFundHolding({
+      parentIsin: 'FUND',
+      parentTicker: 'WORLD',
+      parentName: 'World ETF',
+    })
+    const result = scopeFundQualityData(
+      selected,
+      [holding],
+      [status({ parentTicker: 'WORLD' })],
+      [],
+      [],
+      report,
+    )
+    expect(result.statuses).toMatchObject([
+      { marketValue: 500, explainedValue: 450 },
+    ])
+    expect(result.holdings).toEqual([holding])
+    expect(result.report?.asOfDate).toEqual(report.asOfDate)
+  })
+
+  it.each(['constructor', '__proto__'])(
+    'indexes literal identifiers without object metadata collisions: %s',
+    (identifier) => {
+      const holding = makeFundHolding({
+        parentIsin: identifier,
+        parentName: identifier,
+      })
+      const result = scopeFundQualityData(
+        [position({ isin: identifier, name: identifier, total_value: 250 })],
+        [holding],
+        [
+          status({
+            parentId: identifier,
+            parentIsin: identifier,
+            parentName: identifier,
+          }),
+        ],
+        [],
+        [],
+        report,
+      )
+      expect(result.statuses).toMatchObject([{ marketValue: 250 }])
+      expect(result.holdings).toEqual([holding])
+    },
+  )
+
+  it('keeps absent identifiers from matching unrelated diagnostics', () => {
+    const result = scopeFundQualityData(
+      [position({ name: 'Direct share', total_value: 250 })],
+      [
+        makeFundHolding({
+          parentIsin: '',
+          parentTicker: '',
+          parentName: 'Other fund',
+        }),
+      ],
+      [
+        status({
+          parentId: '',
+          parentIsin: '',
+          parentTicker: '',
+          parentName: 'Other fund',
+        }),
+      ],
+      [],
+      [],
+      null,
+    )
+    expect(result.statuses).toEqual([])
+    expect(result.holdings).toEqual([])
+    expect(result.report).toBeNull()
+  })
+
   it('uses the whole selected portfolio for the shared identified percentage', () => {
     expect(computeFundExposurePercentages(575, 425, 59)).toEqual({
       identified: 54.3,

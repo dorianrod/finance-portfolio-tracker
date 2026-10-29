@@ -48,7 +48,14 @@ import { ordersFiltersAtom } from '@/domains/sales/orders/features/list/stores/f
 import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/stores/selection.atoms'
 ```
 
-Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
+### Complementary script use
+
+Inventory store barrels, for example with
+`rg --files src/domains | rg '(^|/)stores/(.*/)?index\.ts$'`; the inventory must
+be empty. Use the application's synchronous import-cycle checker when reviewing
+store dependencies or changing their runtime imports. Resolve its invocation
+through the application's documented [command bindings](../references/project-enforcement.md)
+and run the same graph check in CI.
 
 Resolve the application's configured aliases and follow synchronous value imports
 and reexports. Erased type-only edges and deferred dynamic imports do not create
@@ -56,6 +63,9 @@ synchronous initialization cycles. Exercise a real aliased cycle, an acyclic
 neighbor and type-only/deferred edges, then run the check against production
 source in CI. This graph check does not prove that deferred module loading is
 deadlock-free or that every business dependency has the correct owner.
+Inspect store naming, concern boundaries and direct imports separately; an empty
+cycle result does not prove any of those requirements. A store barrel violates
+this rule even when its current graph is acyclic.
 
 ### ESLint Enforcement
 

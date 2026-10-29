@@ -223,6 +223,20 @@ Recognize resolved translation calls and native boolean coercion, including immu
 
 Provide a repeatable candidate inventory alongside lint. Enumerate features with no identified business signal, opaque calls, local presentation components and substantial JSX. Include file/line, observed business dependencies and unresolved calls so the reviewer can group the whole family before fixing it. Keep these candidates separate from errors and from the warning budget. Inventory output is a triage aid, not evidence of completed semantic review; callback parameters, computed imports, opaque wrappers and business meanings still need inspection.
 
+### Complementary script use
+
+When reviewing component roles, run the application's architecture inventory
+associated with this rule through its documented [command bindings](references/project-enforcement.md).
+Use each entry's business evidence and unresolved calls to inspect the component
+and its dependencies, then compare its responsibility with the incorrect/correct
+examples below. Group comparable boundaries before correcting them.
+
+An inventory may examine only declared features and use a JSX-count heuristic;
+check its actual scope. It does not cover every view or state renderer, establish
+an independent visual contract, or justify a split or rename by itself. Review
+all in-scope component roles even when they are absent from the output. Process
+support-type candidates under `types-file-per-entity` at that rule's own impact.
+
 ### Audit every component boundary
 
 An architecture audit is incomplete if it only verifies suffixes and import restrictions. For every `.feature.tsx`, inspect the component responsibilities and reach an explicit boundary decision:
@@ -470,6 +484,20 @@ Escape hatches, in order of preference:
 1. Move the code to the main domain's `shared/` (used by sibling sub-domains) or to `src/shared/` (generic, no domain vocabulary).
 2. Reference the other entity by id or route (store `projectId`, link with a path string) instead of importing its hooks or components.
 3. Add a domain to the transverse list only by an explicit architecture decision.
+
+### Analysis aids
+
+Enable `local/import-boundaries` at error level, or equivalent resolved import
+restrictions, to detect forbidden domain dependencies. Inspect ownership and the
+explicit transverse list manually; a valid import path alone does not establish
+a justified business boundary.
+
+Use the application's synchronous import-cycle checker when reviewing dependency
+boundaries or changing runtime import paths, following the graph contract in
+`arch-stores-no-index`. It complements the import restrictions: a forbidden
+one-way domain import can be acyclic, and a cycle can exist inside one domain.
+Assign each finding to the violated rule rather than treating every graph result
+as a cross-domain violation.
 
 See also: `arch-shared-no-domain-knowledge`, `arch-feature-flags`
 
@@ -1238,7 +1266,14 @@ import { ordersFiltersAtom } from '@/domains/sales/orders/features/list/stores/f
 import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/stores/selection.atoms'
 ```
 
-Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
+### Complementary script use
+
+Inventory store barrels, for example with
+`rg --files src/domains | rg '(^|/)stores/(.*/)?index\.ts$'`; the inventory must
+be empty. Use the application's synchronous import-cycle checker when reviewing
+store dependencies or changing their runtime imports. Resolve its invocation
+through the application's documented [command bindings](references/project-enforcement.md)
+and run the same graph check in CI.
 
 Resolve the application's configured aliases and follow synchronous value imports
 and reexports. Erased type-only edges and deferred dynamic imports do not create
@@ -1246,6 +1281,9 @@ synchronous initialization cycles. Exercise a real aliased cycle, an acyclic
 neighbor and type-only/deferred edges, then run the check against production
 source in CI. This graph check does not prove that deferred module loading is
 deadlock-free or that every business dependency has the correct owner.
+Inspect store naming, concern boundaries and direct imports separately; an empty
+cycle result does not prove any of those requirements. A store barrel violates
+this rule even when its current graph is acyclic.
 
 ### ESLint Enforcement
 
@@ -1332,6 +1370,15 @@ The examples abbreviate an independently owned summary region. Small cohesive JS
 Review complexity above **8** (modified cyclomatic complexity, counting an entire `switch` once) or function size above **150** lines, excluding blank and comment-only lines. Include JSX and nested callback bodies when measuring a function's span. A score of 8 and a size of 150 are allowed. These are review signals rather than instructions to split automatically. Tests, stories and tooling are outside these production thresholds.
 
 Use both measures: few branches do not imply a small component. Hook count, mapped JSX and compound calculations remain separate signals. Resolve a reported exceedance through a cohesive extraction or a justified, line-scoped keep decision; do not compress formatting, hide JSX in variables or move everything into an umbrella hook merely to lower a metric.
+
+### Complementary script use
+
+An architecture inventory associated with `arch-component-roles` may also surface
+features with substantial JSX. Use those entries as additional candidates for
+responsibility review under this rule. A JSX element count does not measure the
+ESLint `complexity` or `max-lines-per-function` thresholds and cannot replace
+either check. Read the whole function and callers before choosing split or keep;
+an inventory entry alone requires neither extraction nor suppression.
 
 ### 1.17 Separate Helpers from Services by Effects and Orchestration
 
@@ -2603,6 +2650,19 @@ Enable `local/entity-type-files` at error level. In canonical entity files, reje
 Also inspect exported object aliases in domain implementation modules. An independent object exported beside an unrelated helper should not be hidden there merely because the file is outside `types/`. A local function's explicit input/output contract and its referenced sub-shapes may stay local. Private implementation shapes, dependency augmentations and dedicated colocated support-contract modules remain valid; neither a record's size nor its name alone establishes an entity.
 
 This bounded check does not decide whether every return shape or colocated `*.types.ts` contract deserves entity status. Review those candidates by their actual consumers, lifetime and ownership. Reusable entities go to the nearest owning `types/[entity].type.ts`; small component props and helper configuration stay with their owner. Verify an incorrectly placed exported object and a valid helper signature through the application's configuration.
+
+### Complementary script use
+
+When reviewing entity placement, use an application architecture inventory that
+enumerates exported object aliases outside canonical entity files, if available
+through the documented [command bindings](references/project-enforcement.md).
+Inspect each candidate's actual consumers, lifetime and relation to its owning
+function before moving it. A valid local helper contract can appear in the output.
+
+Check the inventory's file and syntax limits; it may omit interfaces, reexports
+or other type forms. Review eligible contracts beyond that output and keep
+`local/entity-type-files` enabled. Apply this rule's MEDIUM impact to these
+candidates even when the same command also emits critical component-role signals.
 
 ### 5.9 Type Amounts as number and Format Them at Display Time
 
@@ -4746,6 +4806,12 @@ Option names must match the placeholders of the catalog value: a placeholder mis
 
 Enable `local/no-ui-string-concat` for production code. Reject concatenated translations and decorated formatter results in display expressions, for both templates and `+`. Resolve imported formatter hooks and immutable aliases; preserve numeric arithmetic and technical keys, URLs, chart data keys and CSS expressions. For binary expressions, use a proven string operand before calling an operation concatenation. Implicit display text outside JSX/presentation helpers, opaque wrappers and reassigned aliases require manual review. Verify rejected and neighboring valid examples through the consuming application's configuration.
 
+Use `local/i18n-consistency` or an equivalent check for required interpolation
+options in supported calls. Inspect opaque options and sentence semantics
+manually. When a correction adds or renames a full-sentence key, run the catalog
+usage check described by `i18n-static-keys`; unused-key detection does not verify
+interpolation values or sentence construction.
+
 ### 10.2 Never Use defaultValue in t()
 
 **Impact: MEDIUM (missing keys surface instead of hardcoded fallbacks)**
@@ -4773,6 +4839,15 @@ When translations are served from a catalog (a backend export or JSON files), a 
 ```
 
 The second argument of `t()` is reserved for interpolation options (`{ name }`), never a default string. The only acceptable built-in fallbacks are the few boot-time keys of screens shown before the catalog loads; do not add feature keys there.
+
+### Analysis aids
+
+Use `local/i18n-consistency` or equivalent configured checks for fallback strings,
+explicit `defaultValue` options and missing catalog entries in supported calls.
+Opaque option objects and wrappers still require inspection. When replacing a
+fallback with a catalog key, run the catalog usage check described by
+`i18n-static-keys`; it complements call-site lint and does not detect defaults
+by itself. Verify the key's presence and review its actual displayed text.
 
 ### 10.3 Translate Every User-Facing String with a Catalog Key
 
@@ -4809,6 +4884,15 @@ Reuse shared keys (`common.cancel`, `common.confirm`, `common.close`, `common.de
 Enable `local/no-hardcoded-ui-strings` for production code. Check visible JSX and user-facing attributes directly, including interpolated templates. Presenter and formatter placement is only a signal: their return values can also be technical keys, CSS references or chart identifiers. In an implicit helper return, report recognizable natural-language copy rather than treating every template containing letters as translated text. Keep explicit UI text and attributes checked. Typed data fixtures under `mocks/` or in `*.mock.*` may carry raw entity names and source messages; do not treat those object values as product copy. Keep JSX text and attributes checked even in such a module.
 
 This bounded syntax check cannot prove the meaning of every bare string, follow arbitrary adapters or identify all runtime-generated copy. Review ambiguous helper outputs and API-provided data at their display sites. Verify rejected copy, valid technical identifiers and explicit UI templates through the consuming application's actual configuration; do not add application-specific identifier allowlists.
+
+### Complementary script use
+
+After adding or renaming translation keys, use the catalog check described by
+`i18n-static-keys` alongside the configured missing-key and hardcoded-copy checks.
+This checks catalog/call-site consistency within their supported patterns; it
+does not inspect whether every user-facing string uses `t()`. Review display
+sites and ambiguous helper outputs using this rule's examples even when the
+catalog command succeeds.
 
 ### 10.4 Use Literal Translation Keys Only
 
@@ -4849,6 +4933,21 @@ export function useFormatShippingStatus() {
 A ternary of literals (`t(isEdit ? 'contract.modal.reminder.editTitle' : 'contract.modal.reminder.addTitle')`) is fine: the scanner reads both branches. Only the **value** may be dynamic, via interpolation options. A lint rule that only forbids template literals does not catch a `Record<Union, 'literal.key'>` mapper passed to `t()`: avoid that pattern too.
 
 Unused-key extraction must recognize the same supported translation bindings as the configured key check: the i18n instance, imported `t`, and `t` obtained from `useTranslation`, including aliases. Resolve lexical bindings so unrelated or shadowed functions do not keep a catalog key alive. Exercise each supported binding and a neighboring unrelated call; matching only the text `i18n.t` wrongly reports valid hook-based translations as unused.
+
+### ESLint and complementary script use
+
+Enable `local/i18n-consistency` or an equivalent check to reject nonliteral keys
+and missing reference-catalog entries for resolved translation calls, including
+supported aliases and literal branches. Verify invalid and valid neighboring
+calls through the actual configuration.
+
+When reviewing translation calls or changing keys, run the application's catalog
+usage check through its documented [command bindings](references/project-enforcement.md).
+Use it to find reference-catalog keys with no recognized call sites, including
+supported plural variants. Inspect reported keys before removal: an unsupported
+binding or an external consumer can make a key appear unused. The catalog check
+and missing-key lint check cover opposite directions; neither proves that every
+visible string is translated. Review that contract under `i18n-no-hardcoded-strings`.
 
 ---
 
@@ -5648,6 +5747,21 @@ Choose memo boundaries by invalidation and consumer needs, rather than imposing 
 Skip `useMemo` for cheap primitive expressions. Extract a costly rendered region behind its own component boundary when this lets a loading/visibility branch avoid the work entirely; add manual `memo` only when unchanged props and measured render cost justify it. Keep calculations in their owning helpers and preserve `arch-component-roles`.
 
 When a default array or object becomes an effect dependency or a memoized child's prop, use an immutable shared default if reference stability matters. Do not share mutable per-instance state through that constant. Avoid caching every field, global unbounded result maps or JSX variables solely to make a memo count smaller. With React Compiler, review the compiler's coverage before adding manual caches; neither compiler optimization nor memoization replaces correct state and effect semantics.
+
+### ESLint Enforcement
+
+Enable `local/prefer-usecallback` at error level for production TypeScript.
+Resolve React `useMemo` imports, namespace access and immutable aliases while
+respecting lexical shadowing. With type information, reject a memo callback whose
+return type is entirely callable, including named callbacks and function unions.
+Preserve data objects containing methods, arrays, `useCallback` and unrelated
+functions with matching names. Verify invalid and valid neighbors through the
+consuming application's configuration.
+
+This bounded check does not decide whether a memo is needed or whether several
+data memos share an invalidation boundary. Review those responsibilities and
+opaque callback types manually. Do not autofix: moving setup from a memo factory
+into an event callback can change when that setup runs.
 
 ### 12.10 Write Code, Comments and Tests in English
 

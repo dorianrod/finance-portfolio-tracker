@@ -25,4 +25,13 @@ const bad = example()
 const good = example()
 ```
 
+### Analysis aids
+
+Name the associated ESLint checks where available and state which observable
+part of the rule they detect. Describe any complementary script capability,
+when to use it for this rule, whether its output is a defect or a review candidate,
+its coverage limits and the remaining manual review. Keep concrete application
+commands and paths in the consuming application's rule-to-tool bindings. If no
+reliable detector exists, say what to inspect manually; do not invent automation.
+
 See also: link to a relevant local rule or declared companion skill (optional).
