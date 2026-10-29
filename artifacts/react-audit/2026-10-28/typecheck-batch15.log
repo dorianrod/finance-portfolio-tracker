@@ -1,5 +1,0 @@
-
-> dashboard@1.1.0 typecheck
-> tsc -b --pretty false
-
-src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy.test.ts(98,37): error TS2339: Property 'label' does not exist on type 'GroupRow'.

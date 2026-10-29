@@ -1,6 +1,0 @@
-
-> dashboard@1.1.0 typecheck
-> tsc -b --pretty false
-
-src/domains/portfolio/features/wealth/components/wealthChartTooltips/AccountTypeTooltip.feature.test.tsx(7,36): error TS2307: Cannot find module './AccountTypeTooltip.feature' or its corresponding type declarations.
-src/domains/portfolio/features/wealth/helpers/calculators/computeAccountTypeTooltipMetrics.test.ts(5,50): error TS2307: Cannot find module './computeAccountTypeTooltipMetrics' or its corresponding type declarations.

@@ -1,5 +1,0 @@
-
-> dashboard@1.1.0 typecheck
-> tsc -b --pretty false
-
-src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx(10,37): error TS2307: Cannot find module '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover.feature' or its corresponding type declarations.

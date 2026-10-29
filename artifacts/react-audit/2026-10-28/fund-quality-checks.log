@@ -1,9 +1,0 @@
-
- RUN  v4.1.12 <local-home>/Documents/Finance/finance-portfolio-tracker/packages/dashboard
-
-
- Test Files  4 passed (4)
-      Tests  42 passed (42)
-   Start at  12:59:23
-   Duration  4.81s (transform 236ms, setup 0ms, import 767ms, tests 4.65s, environment 643ms)
-
