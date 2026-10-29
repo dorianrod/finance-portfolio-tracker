@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
+import { useFormatOperationType } from '@/domains/portfolio/features/scope-selection/helpers/formatters/useFormatOperationType'
 import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
@@ -18,6 +18,7 @@ export function useFilterSummaries(
 ): FilterSummaryItem[] {
   const formatAccountLabel = useFormatAccountLabel()
   const formatDate = useFormatDate()
+  const formatOperationType = useFormatOperationType()
   return useMemo(
     () =>
       [
@@ -33,7 +34,12 @@ export function useFilterSummaries(
               formatDate(filters.dateTo, { style: 'isoDate', fallback: '' }),
             )
           : null,
-        visibility.showPositionFilters ? operationSummary(filters) : null,
+        visibility.showPositionFilters
+          ? operationSummary(
+              filters,
+              formatOperationType([...filters.operationTypes][0]),
+            )
+          : null,
         visibility.showPositionFilters && !filters.hideClosedPositions
           ? {
               key: 'closed-positions' as const,
@@ -41,7 +47,14 @@ export function useFilterSummaries(
             }
           : null,
       ].filter((item): item is FilterSummaryItem => item !== null),
-    [filters, accountLabels, visibility, formatAccountLabel, formatDate],
+    [
+      filters,
+      accountLabels,
+      visibility,
+      formatAccountLabel,
+      formatDate,
+      formatOperationType,
+    ],
   )
 }
 
@@ -79,22 +92,16 @@ function periodSummary(from: string, to: string): FilterSummaryItem | null {
   return { key: 'period', label }
 }
 
-function operationSummary(filters: DashboardFilters): FilterSummaryItem | null {
+function operationSummary(
+  filters: DashboardFilters,
+  operationLabel: string,
+): FilterSummaryItem | null {
   if (filters.operationTypes.size === 0) return null
-  const labels: Record<OperationType, string> = {
-    BUY: i18n.t('ui.portfoliofilters.buy'),
-    SELL: i18n.t('ui.portfoliofilters.sell'),
-    DIVIDEND: i18n.t('ui.portfoliofilters.dividend'),
-    INTEREST: i18n.t('ui.portfoliofilters.interest'),
-    DEPOSIT: i18n.t('ui.portfoliofilters.deposit'),
-    WITHDRAWAL: i18n.t('ui.portfoliofilters.withdrawal'),
-  }
-  const operation = [...filters.operationTypes][0]
   return {
     key: 'operations',
     label:
       filters.operationTypes.size === 1
-        ? labels[operation]
+        ? operationLabel
         : i18n.t('ui.portfoliofiltersTs.value0OperationTypes', {
             value0: filters.operationTypes.size,
           }),

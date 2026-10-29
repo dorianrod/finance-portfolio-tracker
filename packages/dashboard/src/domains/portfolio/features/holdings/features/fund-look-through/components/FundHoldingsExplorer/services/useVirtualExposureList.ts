@@ -44,7 +44,13 @@ export function useVirtualExposureList(rows: ExposureRow[]) {
 const ROW_HEIGHT = 40
 
 function rowKey(row: ExposureRow): string {
-  if (row.kind === 'issuer') return row.issuer.id
-  if (row.kind === 'security') return `${row.issuer.id}|${row.security.id}`
-  return `${row.issuer.id}|${row.security.id}|${row.fund}`
+  if (row.kind === 'issuer') return JSON.stringify(['issuer', row.issuer.id])
+  if (row.kind === 'security')
+    return JSON.stringify(['security', row.issuer.id, row.security.id])
+  return JSON.stringify([
+    'source',
+    row.issuer.id,
+    row.security.id,
+    row.source.fund,
+  ])
 }

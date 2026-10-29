@@ -6,8 +6,8 @@ export const ASSET_IRR_REQUEST_SCHEMA = yup
   .object({
     accounts: yup.array(yup.string().defined()).defined(),
     account_types: yup.array(yup.string().defined()).defined(),
-    date_from: DATE_REQUEST_SCHEMA,
-    date_to: DATE_REQUEST_SCHEMA,
+    date_from: DATE_REQUEST_SCHEMA.default(null),
+    date_to: DATE_REQUEST_SCHEMA.default(null),
   })
   .test(
     'date-range',

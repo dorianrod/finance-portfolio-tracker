@@ -1,25 +1,26 @@
+import { useFormatExposureSourceLabel } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/formatters/useFormatExposureSourceLabel'
+import type { ExposureSource } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
-import type { Source } from './fundExposureRows.types'
-
 export function SourceTooltipRow({
   source,
   total,
 }: {
-  source: Source
+  source: ExposureSource
   total: number
 }) {
   const formatMoney = useFormatMoney()
+  const formatSourceLabel = useFormatExposureSourceLabel()
   const formatPercentage = useFormatPercentage()
   return (
     <Inline as="li" align="baseline" gap="default">
       <Layout as="span" flow="inline" sizing="flexible">
         <Text tone="secondary" truncate>
-          {source.fund}
+          {formatSourceLabel(source)}
         </Text>
       </Layout>
       <Text tone="muted" numeric>

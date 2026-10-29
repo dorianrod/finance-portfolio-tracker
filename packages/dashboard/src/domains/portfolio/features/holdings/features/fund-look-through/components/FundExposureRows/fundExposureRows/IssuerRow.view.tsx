@@ -1,6 +1,6 @@
 import { memo } from 'react'
 
-import type { IssuerExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
+import type { IssuerExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'

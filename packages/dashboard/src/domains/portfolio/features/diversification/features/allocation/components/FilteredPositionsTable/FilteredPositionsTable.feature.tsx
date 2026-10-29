@@ -1,3 +1,4 @@
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { useAtomValue } from 'jotai'
 
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
@@ -5,10 +6,8 @@ import { useDashboardDiversificationPositions } from '@/domains/portfolio/featur
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilterAtom'
 import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpenAtom'
 import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
-import { ChartText } from '@/shared/ui/ChartText.view'
 import { Button } from '@/shared/ui/controls/Button.view'
 import { Inset } from '@/shared/ui/layout/Inset.view'
 import { SidePanel } from '@/shared/ui/SidePanel.view'
@@ -36,9 +35,9 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
       <SidePanel.Title>
         <>
           {i18n.t('ui.filteredpositionstable.positions')}{' '}
-          <ChartText tone={getAllocationTone(filterValue)}>
+          <AllocationCategory category={filterValue}>
             {filterValue}
-          </ChartText>
+          </AllocationCategory>
         </>
       </SidePanel.Title>
       <SidePanel.Description>
@@ -66,14 +65,14 @@ export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
               </Text>
             </Inset>
             <Inset as="th" inset="default">
-              <ChartText
+              <AllocationCategory
                 as="div"
                 variant="sectionLabel"
                 align="right"
-                tone={getAllocationTone(filterValue)}
+                category={filterValue}
               >
                 {filterValue}
-              </ChartText>
+              </AllocationCategory>
             </Inset>
           </Surface>
         </Surface>

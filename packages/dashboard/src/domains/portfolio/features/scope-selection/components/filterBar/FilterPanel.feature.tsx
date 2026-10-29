@@ -7,6 +7,7 @@ import type { FilterVisibility } from '@/domains/portfolio/features/scope-select
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/filters/presetDateFrom'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/filters/toggle'
 import { usePortfolioFilterOptions } from '@/domains/portfolio/features/scope-selection/helpers/filters/usePortfolioFilterOptions'
+import { useFormatOperationType } from '@/domains/portfolio/features/scope-selection/helpers/formatters/useFormatOperationType'
 import { useDashboardFilters } from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
 import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
@@ -71,27 +72,6 @@ type FilterPanelProps = {
   demoPresetActive?: boolean
 }
 
-const OP_LABELS: Record<OperationType, string> = {
-  get BUY() {
-    return i18n.t('ui.filterbar.buy')
-  },
-  get SELL() {
-    return i18n.t('ui.filterbar.sell')
-  },
-  get DIVIDEND() {
-    return i18n.t('ui.filterbar.dividend')
-  },
-  get INTEREST() {
-    return i18n.t('ui.filterbar.interest')
-  },
-  get DEPOSIT() {
-    return i18n.t('ui.filterbar.deposit')
-  },
-  get WITHDRAWAL() {
-    return i18n.t('ui.filterbar.withdrawal')
-  },
-}
-
 const DATE_PRESETS = [
   {
     get label() {
@@ -145,11 +125,12 @@ function DatePresetChip({ preset }: { preset: (typeof DATE_PRESETS)[number] }) {
 }
 
 function OperationTypeChip({ operation }: { operation: OperationType }) {
+  const formatOperationType = useFormatOperationType()
   const filters = useAtomValue(dashboardFiltersAtom)
   const { setFilters } = useDashboardFilters()
   return (
     <Chip
-      label={OP_LABELS[operation]}
+      label={formatOperationType(operation)}
       active={filters.operationTypes.has(operation)}
       onClick={() =>
         setFilters((current) => ({

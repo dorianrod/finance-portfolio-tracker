@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { DATA_QUALITY_DIMENSION_LABELS } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels'
+import { useFormatDataQualityDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatDataQualityDimension'
 import { AffectedAssetsTable } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/AffectedAssetsTable.view'
 import { useDataQualityClassificationDetails } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useDataQualityClassificationDetails'
 import { dataQualityClassificationDetailsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityClassificationDetailsOpenAtom'
@@ -27,6 +27,7 @@ export function AffectedAssetsPanel({ assets }: { assets: AffectedAsset[] }) {
     [assets, classificationDimension],
   )
 
+  const formatDimension = useFormatDataQualityDimension()
   return (
     <SidePanel
       open={classificationDetailsOpen}
@@ -37,7 +38,7 @@ export function AffectedAssetsPanel({ assets }: { assets: AffectedAsset[] }) {
       <SidePanel.Title>
         {classificationDimension
           ? i18n.t('ui.dataqualitytab.affectedAssetsValue0', {
-              value0: DATA_QUALITY_DIMENSION_LABELS[classificationDimension],
+              value0: formatDimension(classificationDimension),
             })
           : i18n.t('ui.dataqualitytab.affectedAssets')}
       </SidePanel.Title>

@@ -225,6 +225,7 @@ describe('formatter contracts through TypeScript', () => {
       ['string'],
     ],
     ['number', '{}', 'string', ['nullable', 'fallback']],
+    ['unknown', '{fallback?: string}', 'string', []],
   ])(
     'validates input %s, options %s and output %s',
     async (input, options, output, expected) => {

@@ -1,6 +1,6 @@
 import type { AllocationTrend } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
 import { dateTimestamp } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/dateTimestamp'
-import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/presenters/groupAllocationTail/groupAllocationTail'
+import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/selectors/groupAllocationTail'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
 

@@ -1,3 +1,4 @@
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import type { ReactNode } from 'react'
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
@@ -6,7 +7,6 @@ import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/componen
 import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/resolveAccountTypeLabelPositions'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import i18n from '@/i18n/i18n'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
@@ -140,11 +140,11 @@ function AccountTypeSector({
   if (point.unrealized_gain < 0) {
     return (
       <g>
-        <ChartSector
+        <AllocationCategory.Sector
           {...sectorBase}
           innerRadius={0}
           outerRadius={radius}
-          tone={getAllocationTone(point.account_type)}
+          category={point.account_type}
           variant="splitBase"
         />
         <ChartSector
@@ -161,11 +161,11 @@ function AccountTypeSector({
   return (
     <g>
       {splitRadius > 0 && (
-        <ChartSector
+        <AllocationCategory.Sector
           {...sectorBase}
           innerRadius={0}
           outerRadius={splitRadius}
-          tone={getAllocationTone(point.account_type)}
+          category={point.account_type}
           variant="splitBase"
         />
       )}

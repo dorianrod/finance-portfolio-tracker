@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    setupFiles: ['src/i18n/i18n.ts'],
     // Typed ESLint suites each load a TypeScript project into their worker.
     maxWorkers: 4,
   },

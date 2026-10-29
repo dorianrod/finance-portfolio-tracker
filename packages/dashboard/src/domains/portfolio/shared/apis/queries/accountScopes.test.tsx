@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { useGetPassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery'
-import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
+import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/helpers/aggregators/useAccountTypeHistory'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useGetSavingCapacityQuery } from './useGetSavingCapacityQuery'

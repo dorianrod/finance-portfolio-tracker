@@ -122,6 +122,20 @@ Enable the typed `local/no-inline-number-display` rule for numeric text rendered
 
 Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
 
+An `unknown` input already accepts both `null` and `undefined`; preserve it for
+boundaries that narrow arbitrary values, while still requiring fallback options
+and a string result. `any` is not a substitute for narrowing.
+
+Formatter hooks that need translations read the React translation context. Reject
+runtime imports of the global `i18next` instance or conventional `i18n` modules,
+including indirect local dependencies, while preserving erased type imports and
+`useTranslation` from `react-i18next`. Resolve local aliases, terminate dependency
+cycles and report the dependency path. A global instance ignores a caller's
+translation provider and does not subscribe the hook to language changes. Verify
+a rejected global dependency and a valid context-based neighbor through the
+consuming configuration, and test provider-specific labels at runtime. Dynamic
+module paths, injected translator callbacks and opaque reexports require review.
+
 Use the custom ESLint rule `local/no-inline-format-fallback` for production TS and TSX, including domain formatter wrappers. Detect guards on the formatter's first argument and direct `??`/`||` input defaults with string or numeric literals. Cover both ternary branches, either operand order for `==`, `===`, `!=` and `!==`, null/undefined/zero/empty-string tests, `typeof`, truthiness, negation, `Boolean`, immutable boolean aliases, return-only `if` guards and `&&`/`||` short-circuits that directly return a formatter call. Keep query-state conditions and conditional mounting when they select UI structure rather than a text fallback.
 
 Resolve formatter identity from `helpers/formatters/` imports rather than local names alone: `useFormatXxx` hook results, imported `formatXxx` functions, namespaces, relative imports and immutable aliases. Support destructured aliases and member calls from `use…Formatters` bundles without a registry per formatter. Compare stable member accesses across dot/bracket notation and optional access.

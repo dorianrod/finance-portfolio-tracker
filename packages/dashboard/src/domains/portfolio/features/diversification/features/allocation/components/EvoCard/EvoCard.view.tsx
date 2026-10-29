@@ -1,3 +1,4 @@
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { type ReactNode, useId } from 'react'
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
@@ -7,20 +8,15 @@ import type {
   AllocationTrendPoint,
 } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
 import { EvolutionTooltip } from '@/domains/portfolio/features/diversification/features/allocation/components/EvolutionTooltip.view'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
-import { ChartText } from '@/shared/ui/ChartText.view'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
-import { SeriesArea } from '@/shared/ui/SeriesArea.view'
-import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { useFormatAllocationTrendCategory } from './helpers/formatters/useFormatAllocationTrendCategory'
@@ -150,13 +146,13 @@ function EvolutionLegendItem({
   isFiltered: boolean
   onSelect: (category: string) => void
 }) {
-  const tone =
-    category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
+  const categoryName = category.kind === 'category' ? category.name : ''
+  const aggregate = category.kind === 'group'
   if (category.kind === 'group')
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <SeriesSwatch tone={tone} shape="bar" size="default" />
+          <AllocationCategory.Swatch category={categoryName} aggregate={aggregate} shape="bar" size="default" />
           {label}
         </Inline>
       </Text>
@@ -171,13 +167,13 @@ function EvolutionLegendItem({
       variant="legend"
       dimmed={isDimmed}
     >
-      <SeriesSwatch
-        tone={tone}
+      <AllocationCategory.Swatch
+        category={categoryName} aggregate={aggregate}
         shape="bar"
         selected={isActive}
         size="default"
       />
-      <ChartText tone={tone}>{label}</ChartText>
+      <AllocationCategory category={categoryName} aggregate={aggregate}>{label}</AllocationCategory>
     </ToggleButton>
   )
 }
@@ -190,12 +186,11 @@ function EvolutionGradient({
   gradientId: string
 }) {
   return (
-    <SeriesGradient
+    <AllocationCategory.Gradient
       id={gradientId}
       profile="dense"
-      tone={
-        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
-      }
+      category={category.kind === 'category' ? category.name : ''}
+      aggregate={category.kind === 'group'}
     />
   )
 }
@@ -212,14 +207,13 @@ function EvolutionArea({
   gradientId: string
 }) {
   return (
-    <SeriesArea
+    <AllocationCategory.Area
       type="monotone"
       dataKey={(point: AllocationTrendPoint) => point.values[index]}
       name={label}
       stackId="a"
-      tone={
-        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
-      }
+      category={category.kind === 'category' ? category.name : ''}
+      aggregate={category.kind === 'group'}
       gradientId={`${gradientId}`}
       weight="fine"
     />

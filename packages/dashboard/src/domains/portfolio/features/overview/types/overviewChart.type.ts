@@ -10,4 +10,7 @@ export type DriverRow = {
 }
 export type OverviewConcentrationRowData = NonNullable<
   OverviewConcentrationComparison['current']
->['holdings'][number] & { previousWeight: number | null }
+>['holdings'][number] & {
+  // A holding absent from the comparison snapshot has no previous weight.
+  previousWeight: number | null
+}

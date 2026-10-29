@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import i18n from '@/i18n/i18n'
 import {
   type NumericDisplayOptions,
   resolveNumericDisplayValue,
@@ -8,6 +8,7 @@ import {
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 
 export function useFormatPositionCount() {
+  const { t } = useTranslation()
   const formatNumber = useFormatNumber()
   return useCallback(
     (
@@ -17,11 +18,11 @@ export function useFormatPositionCount() {
       const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
       const formatted = formatNumber(displayValue, { useGrouping: false })
-      return i18n.t('ui.formatpositioncount.position', {
+      return t('ui.formatpositioncount.position', {
         count: displayValue,
         value: formatted,
       })
     },
-    [formatNumber],
+    [t, formatNumber],
   )
 }

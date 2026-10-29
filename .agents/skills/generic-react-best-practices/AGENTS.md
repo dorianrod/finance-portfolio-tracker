@@ -1133,7 +1133,7 @@ See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-
 
 Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject direct and indirect value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
-Apply the same dependency check to domain `helpers/calculators/`, including component- and page-owned calculators. A calculation returns quantitative values and semantic period identifiers; a formatter translates their labels at display time. Component ownership does not turn translation into a calculation. Verify an aliased translation import, a rejected reexport or dynamic import, and a neighboring valid numeric calculation through the application's configuration.
+Apply the same dependency check to domain `helpers/calculators/` and `helpers/aggregators/`, including component- and page-owned helpers. Calculations and aggregations return quantitative values, grouped records and semantic identifiers; a formatter translates their labels at display time. Do not use translated labels as aggregation keys: a source can have the same name as a synthetic group. Keep source identity separate from display labels. Component ownership does not turn translation into a calculation or aggregation. Verify an aliased translation import, a rejected reexport or dynamic import, and neighboring valid numeric calculations and aggregations through the application's configuration.
 
 Resolve project aliases and follow local runtime helper/service dependencies and reexport modules. A service importing a mapper that imports a formatter violates the same contract as a direct formatter import. Report the dependency path, ignore erased type-only edges and terminate on cycles. Preserve validation/API/store boundaries: schema validation diagnostics and API error normalization do not make every caller a display service. These boundaries are checked by their own contracts rather than treating every reachable translation as display formatting.
 
@@ -1287,6 +1287,23 @@ src/domains/sales/orders/shared/
 ```
 
 A value-to-text formatter is a `useFormatXxx` hook returning a memoized function, including a pure label formatter. It reads translation context when needed and never receives `t` as a parameter. Read-only query subscriptions, atom reads and translation context do not by themselves turn a categorized helper into a service; effects and orchestration decide that boundary. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
+
+### ESLint Enforcement
+
+Enable `local/no-memo-only-service` at error level for production domain services,
+including component- and page-owned services. Reject an exported hook whose only
+statement returns React `useMemo` around a direct call to an imported categorized
+helper, with data-only arguments and dependencies. Resolve React and helper
+import aliases, immutable aliases, namespace access and local export lists;
+respect lexical shadowing. Preserve services with effects, additional statements,
+effectful argument evaluation or opaque callbacks.
+
+This deliberately bounded check identifies a memoized helper adapter, rather
+than proving arbitrary code pure. Review other service implementations, helper
+categories and read-only query subscriptions manually. There is no automatic
+folder move: choose the category and nearest owner from the actual inputs,
+outputs and consumers. Verify rejected and neighboring valid cases through the
+consuming application's configuration.
 
 ### 1.18 Create a Sub-Domain Only for a Distinct Business Concept
 
@@ -4344,6 +4361,20 @@ Conditions that select structure, loading or error states, permissions or compar
 Enable the typed `local/no-inline-number-display` rule for numeric text rendered as JSX children. Report number-valued expressions, native `String(number)` conversions (including immutable constructor aliases), numeric `.toString()` calls and raw numeric template expressions. Follow immutable local text aliases and conditional output branches; respect shadowed constructors. Keep scalar props, native input values and technical JSX attributes outside the text-display check. Nullable numbers still need the formatter's fallback contract. Verify rejected and neighboring valid cases through the consuming configuration. Do not autofix: the reviewer chooses the intended precision, grouping and missing-value behavior. This bounded check does not trace arbitrary renderer functions, object properties or mutable bindings; inspect display models and their consumers manually.
 
 Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
+
+An `unknown` input already accepts both `null` and `undefined`; preserve it for
+boundaries that narrow arbitrary values, while still requiring fallback options
+and a string result. `any` is not a substitute for narrowing.
+
+Formatter hooks that need translations read the React translation context. Reject
+runtime imports of the global `i18next` instance or conventional `i18n` modules,
+including indirect local dependencies, while preserving erased type imports and
+`useTranslation` from `react-i18next`. Resolve local aliases, terminate dependency
+cycles and report the dependency path. A global instance ignores a caller's
+translation provider and does not subscribe the hook to language changes. Verify
+a rejected global dependency and a valid context-based neighbor through the
+consuming configuration, and test provider-specific labels at runtime. Dynamic
+module paths, injected translator callbacks and opaque reexports require review.
 
 Use the custom ESLint rule `local/no-inline-format-fallback` for production TS and TSX, including domain formatter wrappers. Detect guards on the formatter's first argument and direct `??`/`||` input defaults with string or numeric literals. Cover both ternary branches, either operand order for `==`, `===`, `!=` and `!==`, null/undefined/zero/empty-string tests, `typeof`, truthiness, negation, `Boolean`, immutable boolean aliases, return-only `if` guards and `&&`/`||` short-circuits that directly return a formatter call. Keep query-state conditions and conditional mounting when they select UI structure rather than a text fallback.
 

@@ -375,7 +375,7 @@ describe('configured styling boundary', () => {
   it.each([
     'src/app/App.feature.tsx',
     'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
-    'src/shared/helpers/presenters/getErrorMessage.ts',
+    'src/shared/helpers/presenters/partitionSlot.ts',
   ])(
     'also checks application, helper and utility styling in %s',
     async (file) => {

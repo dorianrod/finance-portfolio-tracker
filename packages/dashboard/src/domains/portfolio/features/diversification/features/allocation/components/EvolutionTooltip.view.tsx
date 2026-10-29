@@ -1,5 +1,5 @@
 import type { AllocationTrendPoint } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { ChartText } from '@/shared/ui/ChartText.view'
@@ -48,14 +48,13 @@ function EvolutionTooltipRow({ series, point }: EvolutionTooltipRowProps) {
   if (value == null || value === 0) return null
 
   return (
-    <ChartText
+    <AllocationCategory
       as="div"
-      tone={
-        category.kind === 'group' ? 'dim' : getAllocationTone(category.name)
-      }
+      category={category.kind === 'category' ? category.name : ''}
+      aggregate={category.kind === 'group'}
     >
       {series.label}: {formatPercentage(value)}
-    </ChartText>
+    </AllocationCategory>
   )
 }
 

@@ -25,6 +25,11 @@ const files = {
     "import {useFormatOrder} from '../formatters/useFormatOrder'; export const toRow = useFormatOrder",
   'src/domains/orders/helpers/mappers/numeric.ts':
     'export const numeric = (value: number) => value * 2',
+  'src/domains/orders/helpers/mappers/globalLabels.ts':
+    "import {t} from 'i18next'; export const label = t",
+  'src/i18n/useTranslations.ts': "export {useTranslation} from 'react-i18next'",
+  'src/domains/orders/helpers/aggregators/group.ts':
+    'export const group = (values: number[]) => values',
   'src/domains/orders/helpers/formatters/useFormatOrder.ts':
     'export function useFormatOrder() {return (value: string | null | undefined, options: {fallback?: string} = {}) => value ?? options.fallback ?? ""}',
   'src/domains/orders/helpers/barrel.ts':
@@ -164,6 +169,31 @@ describe('architecture prevention through the configured rules', () => {
       ),
     ).toEqual([])
   })
+  it.each([
+    "import {t as label} from 'i18next'; export const group = label('orders.direct')",
+    "export {toRow} from '@/domains/orders/helpers/mappers/toRow'",
+    "import('@/domains/orders/helpers/cycleDisplay')",
+  ])(
+    'keeps aggregation identity independent of display labels: %s',
+    async (code) => {
+      expect(
+        await lint(
+          'no-service-presentation',
+          code,
+          'src/domains/orders/helpers/aggregators/group.ts',
+        ),
+      ).toMatchObject([{ messageId: 'presentation', severity: 2 }])
+    },
+  )
+  it('preserves numeric aggregations', async () => {
+    expect(
+      await lint(
+        'no-service-presentation',
+        "import {numeric} from '@/domains/orders/helpers/mappers/numeric'; export const group = (values: number[]) => values.map(numeric)",
+        'src/domains/orders/helpers/aggregators/group.ts',
+      ),
+    ).toEqual([])
+  })
   it('keeps calculations free of translation even inside a component', async () => {
     expect(
       await lint(
@@ -218,6 +248,46 @@ describe('architecture prevention through the configured rules', () => {
       ),
     ).toEqual([])
   })
+  it.each([
+    "import {t as label} from 'i18next'",
+    "import translations from '@/i18n/i18n'",
+    "import {label} from '@/domains/orders/helpers/mappers/globalLabels'",
+  ])(
+    'requires formatter hooks to read the React translation context: %s',
+    async (dependency) => {
+      expect(
+        await lint(
+          'formatter-contract',
+          `${dependency}; export function useFormatOrder() { return (value: string | null | undefined, {fallback = '—'}: {fallback?: string} = {}): string => value ?? fallback }`,
+          'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+        ),
+      ).toMatchObject([{ messageId: 'translationContext', severity: 2 }])
+    },
+  )
+  it('preserves formatter hooks that read the provider translation instance', async () => {
+    expect(
+      await lint(
+        'formatter-contract',
+        "import {useTranslation as translations} from 'react-i18next'; export function useFormatOrder() {const {t} = translations(); return (value: string | null | undefined, {fallback = '—'}: {fallback?: string} = {}): string => value ?? t('orders.empty') ?? fallback}",
+        'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+      ),
+    ).toEqual([])
+  })
+  it.each([
+    "import {useTranslation} from '@/i18n/useTranslations'",
+    "import type {TFunction} from 'i18next'",
+  ])(
+    'preserves translation wrappers and erased type dependencies: %s',
+    async (dependency) => {
+      expect(
+        await lint(
+          'formatter-contract',
+          `${dependency}; export function useFormatOrder() {return (value: string | null | undefined, {fallback = '—'}: {fallback?: string} = {}): string => value ?? fallback}`,
+          'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+        ),
+      ).toEqual([])
+    },
+  )
   it('rejects a formatter hook returning a non-callable value', async () => {
     expect(
       await lint(

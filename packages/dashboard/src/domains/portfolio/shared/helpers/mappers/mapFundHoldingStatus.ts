@@ -12,8 +12,8 @@ export function mapFundHoldingStatus(
     parentIsin: row.parent_isin,
     parentTicker: row.parent_ticker,
     parentName: row.parent_name,
-    qualityTier: row.quality_tier || 'D',
-    validationStatus: row.validation_status || 'error',
+    qualityTier: row.quality_tier,
+    validationStatus: row.validation_status,
     sourceName: row.source_name,
     sourceType: row.source_type,
     sourceUrl: row.source_url,
@@ -34,10 +34,10 @@ export function mapFundHoldingStatus(
     residualValue: row.residual_value,
     refreshStreak: row.refresh_streak,
     issues: row.issues,
-    decompositionState: row.decomposition_state || 'unresolved',
+    decompositionState: row.decomposition_state,
     snapshotId: row.snapshot_id,
     sourceOrigin: row.source_origin,
-    manualAttention: row.manual_attention ?? false,
+    manualAttention: row.manual_attention,
     checksumSha256: row.checksum_sha256,
   }
 }

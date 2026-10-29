@@ -60,8 +60,8 @@ describe('configured deprecated API enforcement', () => {
   })
 
   it.each([
-    'src/shared/helpers/presenters/getErrorMessage.ts',
-    'src/shared/helpers/presenters/getErrorMessage.test.ts',
+    'src/shared/helpers/presenters/partitionSlot.ts',
+    'src/shared/helpers/formatters/useFormatErrorMessage.test.tsx',
     'vite.config.ts',
     'vitest.config.ts',
   ])('checks deprecated methods in %s', async (filename) => {

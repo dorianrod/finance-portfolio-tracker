@@ -11,23 +11,27 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Keep translation and display formatting out of domain services and calculations',
+        'Keep translation and display formatting out of domain services, calculations and aggregations',
     },
     schema: [],
     messages: {
       presentation:
-        'Keep translation and display formatting in component/page presenters or formatters. Runtime dependency: {{chain}}. Return raw data and errors from domain services and calculations. [arch-no-visual-logic-below-page]',
+        'Keep translation and display formatting in component/page presenters or formatters. Runtime dependency: {{chain}}. Return raw data and errors from domain services, calculations and aggregations. [arch-no-visual-logic-below-page]',
     },
   },
   create(context) {
     const filename = context.filename.replaceAll('\\', '/')
-    const calculation = /\/src\/domains\/.+\/helpers\/calculators\//u.test(
-      filename,
-    )
+    const quantitativeHelper =
+      /\/src\/domains\/.+\/helpers\/(?:calculators|aggregators)\//u.test(
+        filename,
+      )
     const reusableService =
       /\/src\/domains\/.+\/services\//u.test(filename) &&
       !/\/(?:components|pages|mocks)\//u.test(filename)
-    if (!isProductionSource(filename) || (!calculation && !reusableService))
+    if (
+      !isProductionSource(filename) ||
+      (!quantitativeHelper && !reusableService)
+    )
       return {}
     const dependencies = runtimeDependencies(context)
     function check(node, source) {

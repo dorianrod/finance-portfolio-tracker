@@ -1,9 +1,24 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import i18n from '@/i18n/i18n'
 import { resolveNumericDisplayValue } from '@/shared/helpers/formatters/resolveNumericDisplayValue'
 
 export function useFormatMoney() {
+  const { t } = useTranslation()
+  const formatCompactEuro = useCallback(
+    (value: number): string => {
+      if (Math.abs(value) >= 1_000_000)
+        return t('ui.useformatmoney.millions', {
+          value: (value / 1_000_000).toFixed(1),
+        })
+      if (Math.abs(value) >= 1_000)
+        return t('ui.useformatmoney.thousands', {
+          value: (value / 1_000).toFixed(0),
+        })
+      return t('ui.useformatmoney.euros', { value: Math.round(value) })
+    },
+    [t],
+  )
   return useCallback(
     (
       value: number | null | undefined,
@@ -11,12 +26,18 @@ export function useFormatMoney() {
     ): string => {
       const displayValue = resolveNumericDisplayValue(value, options)
       if (typeof displayValue === 'string') return displayValue
-      const formatted = isStandardEuroFormat(options)
-        ? formatStandardEuro(displayValue, options.style ?? 'currency')
-        : formatConfiguredMoney(displayValue, options)
+      let formatted: string
+      if (isStandardEuroFormat(options)) {
+        formatted =
+          options.style === 'compact'
+            ? formatCompactEuro(displayValue)
+            : formatStandardEuro(displayValue, options.style ?? 'currency')
+      } else {
+        formatted = formatConfiguredMoney(displayValue, options)
+      }
       return options.signed && displayValue > 0 ? `+${formatted}` : formatted
     },
-    [],
+    [formatCompactEuro],
   )
 }
 
@@ -49,18 +70,6 @@ const FULL_EUR_FORMATTER = new Intl.NumberFormat('en-GB', {
   maximumFractionDigits: 0,
 })
 
-function formatCompactEuro(value: number): string {
-  if (Math.abs(value) >= 1_000_000)
-    return i18n.t('ui.useformatmoney.millions', {
-      value: (value / 1_000_000).toFixed(1),
-    })
-  if (Math.abs(value) >= 1_000)
-    return i18n.t('ui.useformatmoney.thousands', {
-      value: (value / 1_000).toFixed(0),
-    })
-  return i18n.t('ui.useformatmoney.euros', { value: Math.round(value) })
-}
-
 function formatFullEuro(value: number): string {
   return `${FULL_EUR_FORMATTER.format(value)} €`
 }
@@ -73,7 +82,6 @@ function isStandardEuroFormat(options: MoneyFormatOptions): boolean {
   )
 }
 function formatStandardEuro(value: number, style: MoneyStyle): string {
-  if (style === 'compact') return formatCompactEuro(value)
   if (style === 'full') return formatFullEuro(value)
   return style === 'decimal'
     ? DECIMAL_EUR_FORMATTER.format(value)

@@ -20,14 +20,19 @@ export const RAW_FUND_HOLDING_SCHEMA = yup.object({
   weight: requiredNumber(),
   source_tier: yup
     .string<FundQualityTier | ''>()
+    .ensure()
     .oneOf(['A', 'B', 'C', 'D', ''])
-    .optional(),
+    .defined(),
   source_name: optionalText(),
   holdings_date: OPTIONAL_CALENDAR_DATE_SCHEMA,
-  holding_kind: optionalText(),
+  holding_kind: optionalText()
+    .transform((value: string) => value || 'security')
+    .default('security'),
   lookthrough_path: optionalText(),
   depth: optionalNumber(),
   snapshot_id: optionalText(),
-  source_origin: optionalText(),
+  source_origin: optionalText()
+    .transform((value: string) => value || 'deterministic')
+    .default('deterministic'),
   source_url: optionalText(),
 })

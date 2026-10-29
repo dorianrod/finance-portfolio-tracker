@@ -20,12 +20,18 @@ export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
   parent_ticker: requiredText(),
   parent_name: requiredText(),
   quality_tier: yup
-    .string<FundQualityTier | ''>()
-    .oneOf(['A', 'B', 'C', 'D', ''])
+    .string<FundQualityTier>()
+    .ensure()
+    .transform((value: string) => value || 'D')
+    .oneOf(['A', 'B', 'C', 'D'])
+    .default('D')
     .defined(),
   validation_status: yup
-    .string<FundValidationStatus | ''>()
-    .oneOf(['ok', 'warning', 'error', ''])
+    .string<FundValidationStatus>()
+    .ensure()
+    .transform((value: string) => value || 'error')
+    .oneOf(['ok', 'warning', 'error'])
+    .default('error')
     .defined(),
   source_name: requiredText(),
   source_type: requiredText(),
@@ -48,11 +54,14 @@ export const RAW_FUND_HOLDING_STATUS_SCHEMA = yup.object({
   refresh_streak: requiredNumber(),
   issues: requiredText(),
   decomposition_state: yup
-    .string<FundHoldingStatus['decompositionState'] | ''>()
-    .oneOf(['resolved', 'partial', 'unresolved', 'stale', ''])
-    .optional(),
+    .string<FundHoldingStatus['decompositionState']>()
+    .ensure()
+    .transform((value: string) => value || 'unresolved')
+    .oneOf(['resolved', 'partial', 'unresolved', 'stale'])
+    .default('unresolved')
+    .defined(),
   snapshot_id: optionalText(),
   source_origin: optionalText(),
-  manual_attention: OPTIONAL_CSV_BOOLEAN_SCHEMA,
+  manual_attention: OPTIONAL_CSV_BOOLEAN_SCHEMA.default(false).defined(),
   checksum_sha256: optionalText(),
 })

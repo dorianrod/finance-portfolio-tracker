@@ -1,4 +1,4 @@
-import type { CombinedReliabilityInput } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/services/useCombinedReliabilityPresentation'
+import type { CombinedReliabilityInput } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useCombinedReliabilityPresentation'
 
 export function makeCombinedReliabilitySummary(
   overrides: Partial<CombinedReliabilityInput['summary']> = {},

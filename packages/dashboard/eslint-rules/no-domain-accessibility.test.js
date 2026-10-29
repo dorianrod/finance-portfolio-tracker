@@ -108,7 +108,7 @@ describe('configured accessibility boundary', () => {
 
   it.each([
     'src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/dataQualityDimensionLabels.ts',
-    'src/shared/helpers/presenters/getErrorMessage.ts',
+    'src/shared/helpers/presenters/partitionSlot.ts',
   ])('also checks helpers and utilities in %s', async (file) => {
     expect(
       (await lint('document.body.focus()', file)).map(

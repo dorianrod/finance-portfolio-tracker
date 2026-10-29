@@ -1,15 +1,16 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 
 export function useFormatPerformanceAsOfDate() {
+  const { t } = useTranslation()
   const formatDate = useFormatDate()
   return useCallback(
     (
       date: Date | null | undefined,
       {
-        fallback = i18n.t('ui.formatperformanceasofdateTs.notAvailable'),
+        fallback = t('ui.formatperformanceasofdateTs.notAvailable'),
       }: { fallback?: string } = {},
     ): string =>
       formatDate(date, {
@@ -17,6 +18,6 @@ export function useFormatPerformanceAsOfDate() {
         timeZone: 'UTC',
         fallback,
       }),
-    [formatDate],
+    [t, formatDate],
   )
 }

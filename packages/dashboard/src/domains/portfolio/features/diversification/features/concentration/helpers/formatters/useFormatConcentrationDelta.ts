@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import i18n from '@/i18n/i18n'
 import {
   type NumericDisplayOptions,
   resolveNumericDisplayValue,
@@ -8,6 +8,7 @@ import {
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 
 export function useFormatConcentrationDelta() {
+  const { t } = useTranslation()
   const formatNumber = useFormatNumber()
   return useCallback(
     (
@@ -18,10 +19,10 @@ export function useFormatConcentrationDelta() {
         ...options,
         fallback:
           options.fallback ??
-          i18n.t('ui.formatconcentrationdeltaTs.firstComparableObservation'),
+          t('ui.formatconcentrationdeltaTs.firstComparableObservation'),
       })
       if (typeof displayValue === 'string') return displayValue
-      return i18n.t(
+      return t(
         'ui.formatconcentrationdeltaTs.value0Value1PositionsVsPreviousMonth',
         {
           value0: displayValue > 0 ? '+' : '',
@@ -29,6 +30,6 @@ export function useFormatConcentrationDelta() {
         },
       )
     },
-    [formatNumber],
+    [t, formatNumber],
   )
 }

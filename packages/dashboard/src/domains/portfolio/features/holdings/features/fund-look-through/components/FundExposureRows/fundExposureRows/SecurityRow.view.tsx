@@ -1,6 +1,7 @@
 import { memo } from 'react'
 
-import type { SecurityExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
+import { useFormatExposureSourceLabel } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/formatters/useFormatExposureSourceLabel'
+import type { SecurityExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Grid } from '@/shared/ui/layout/Grid.view'
@@ -16,7 +17,10 @@ export const SecurityRow = memo(function SecurityRow({
   security: SecurityExposure
 }) {
   const formatMoney = useFormatMoney()
-  const [single] = security.funds
+  const formatSourceLabel = useFormatExposureSourceLabel()
+  const single = formatSourceLabel(security.sources[0], {
+    fallback: i18n.t('ui.fundholdingsexplorer.directHolding'),
+  })
   return (
     <Surface variant="detailRow">
       <Grid arrangement="labelThreeValues">
@@ -36,9 +40,9 @@ export const SecurityRow = memo(function SecurityRow({
           {formatMoney(security.value, { style: 'full' })}
         </Text>
         <span />
-        {security.funds.length <= 1 ? (
+        {security.sources.length <= 1 ? (
           <Text tone="subtle" truncate title={single}>
-            {single ?? i18n.t('ui.fundholdingsexplorer.directHolding')}
+            {single}
           </Text>
         ) : (
           <SourcesCell

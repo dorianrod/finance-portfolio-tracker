@@ -16,14 +16,14 @@ export function mapFundHolding(
     issuerId: row.issuer_id || row.holding_id,
     issuerName: row.issuer_name || row.holding_name,
     weight: row.weight,
-    sourceTier: row.source_tier ?? '',
+    sourceTier: row.source_tier,
     sourceName: row.source_name,
     holdingsDate: row.holdings_date,
-    holdingKind: row.holding_kind || 'security',
+    holdingKind: row.holding_kind,
     lookthroughPath: row.lookthrough_path,
     depth: row.depth,
     snapshotId: row.snapshot_id,
-    sourceOrigin: row.source_origin || 'deterministic',
+    sourceOrigin: row.source_origin,
     sourceUrl: row.source_url,
   }
 }

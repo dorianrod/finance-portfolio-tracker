@@ -1,28 +1,30 @@
 import { memo } from 'react'
 
+import { useFormatExposureSourceLabel } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/formatters/useFormatExposureSourceLabel'
+import type { ExposureSource } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 export const SourceRow = memo(function SourceRow({
-  fund,
-  value,
+  source,
 }: {
-  fund: string
-  value: number
+  source: ExposureSource
 }) {
   const formatMoney = useFormatMoney()
+  const formatSourceLabel = useFormatExposureSourceLabel()
+  const label = formatSourceLabel(source)
   return (
     <Surface variant="detailRow">
       <Grid arrangement="labelThreeValues">
         <span />
         <Text tone="subtle" align="right" numeric>
-          {formatMoney(value, { style: 'full' })}
+          {formatMoney(source.value, { style: 'full' })}
         </Text>
         <span />
-        <Text tone="subtle" truncate title={fund}>
-          {fund}
+        <Text tone="subtle" truncate title={label}>
+          {label}
         </Text>
       </Grid>
     </Surface>

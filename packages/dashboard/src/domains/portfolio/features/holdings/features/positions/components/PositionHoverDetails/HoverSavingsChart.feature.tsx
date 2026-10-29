@@ -4,7 +4,7 @@ import { useGetPositionHistoryQuery } from '@/domains/portfolio/features/holding
 import { buildSavingsHistorySeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import i18n from '@/i18n/i18n'
-import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
+import { useFormatErrorMessage } from '@/shared/helpers/formatters/useFormatErrorMessage'
 import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
@@ -18,6 +18,7 @@ export function HoverSavingsChart({
   onMouseEnter,
   onMouseLeave,
 }: SavingsProps) {
+  const formatErrorMessage = useFormatErrorMessage()
   const {
     data: history,
     isPending,
@@ -66,7 +67,7 @@ export function HoverSavingsChart({
             align="center"
           >
             <Layout as="span" flow="block" inset="default">
-              {getErrorMessage(error)}
+              {formatErrorMessage(error)}
             </Layout>
           </StatusMessage>
         )}

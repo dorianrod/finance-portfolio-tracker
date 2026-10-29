@@ -9,7 +9,7 @@ import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercen
 import {
   type CombinedReliabilityInput,
   useCombinedReliabilityPresentation,
-} from './services/useCombinedReliabilityPresentation'
+} from './helpers/presenters/useCombinedReliabilityPresentation'
 
 export function CombinedAnalysisReliabilityKpi(
   props: CombinedReliabilityInput,

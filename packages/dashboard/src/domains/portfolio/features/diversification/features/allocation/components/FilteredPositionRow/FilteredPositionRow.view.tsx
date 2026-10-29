@@ -1,5 +1,5 @@
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
-import { getAllocationTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getAllocationTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Inline } from '@/shared/ui/layout/Inline.view'
@@ -7,7 +7,6 @@ import { Inset } from '@/shared/ui/layout/Inset.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Proportion } from '@/shared/ui/proportion/Proportion.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { StripedRow } from '@/shared/ui/tableRow/StripedRow.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -62,10 +61,10 @@ export function FilteredPositionRow({
             <Layout height="track" overflow="clip">
               <Surface variant="track">
                 <Proportion value={barShare}>
-                  <SeriesSwatch
+                  <AllocationCategory.Swatch
                     as="div"
                     shape="dot"
-                    tone={getAllocationTone(category)}
+                    category={category}
                   />
                 </Proportion>
               </Surface>

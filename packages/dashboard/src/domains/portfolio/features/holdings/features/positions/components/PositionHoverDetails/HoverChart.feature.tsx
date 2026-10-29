@@ -6,7 +6,7 @@ import { buildHoverChartSeries } from '@/domains/portfolio/features/holdings/fea
 import { computeUnitPriceDomain } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain'
 import type { ChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type'
 import i18n from '@/i18n/i18n'
-import { getErrorMessage } from '@/shared/helpers/presenters/getErrorMessage'
+import { useFormatErrorMessage } from '@/shared/helpers/formatters/useFormatErrorMessage'
 import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
@@ -15,6 +15,7 @@ import { Text } from '@/shared/ui/Text.view'
 import { PositionHistoryCharts } from './PositionHistoryCharts.view'
 
 export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
+  const formatErrorMessage = useFormatErrorMessage()
   const {
     data: history,
     isPending,
@@ -70,7 +71,7 @@ export function HoverChart({ target, onMouseEnter, onMouseLeave }: Props) {
             align="center"
           >
             <Layout as="span" flow="block" inset="default">
-              {getErrorMessage(error)}
+              {formatErrorMessage(error)}
             </Layout>
           </StatusMessage>
         )}

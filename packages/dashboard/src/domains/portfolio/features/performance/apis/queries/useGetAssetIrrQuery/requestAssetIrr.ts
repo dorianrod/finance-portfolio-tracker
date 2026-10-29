@@ -17,8 +17,8 @@ export async function requestAssetIrr(
     {
       accounts,
       account_types: accountTypes,
-      date_from: dateFrom ?? null,
-      date_to: dateTo ?? null,
+      date_from: dateFrom,
+      date_to: dateTo,
     },
     { stripUnknown: true },
   )

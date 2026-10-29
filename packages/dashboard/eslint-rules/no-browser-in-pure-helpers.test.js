@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 const directory = resolve(import.meta.dirname, '..')
 const eslint = new ESLint({ cwd: directory })
-const presenter = 'src/shared/helpers/presenters/getErrorMessage.ts'
+const presenter = 'src/shared/helpers/presenters/partitionSlot.ts'
 
 async function lint(code, file = presenter) {
   const [result] = await eslint.lintText(code, {

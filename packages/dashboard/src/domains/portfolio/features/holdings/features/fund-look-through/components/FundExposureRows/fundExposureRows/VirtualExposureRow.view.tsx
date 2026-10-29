@@ -23,7 +23,7 @@ export function VirtualExposureRow({
         <IssuerRow issuer={row.issuer} open={row.open} onToggle={onToggle} />
       )}
       {row.kind === 'security' && <SecurityRow security={row.security} />}
-      {row.kind === 'source' && <SourceRow fund={row.fund} value={row.value} />}
+      {row.kind === 'source' && <SourceRow source={row.source} />}
     </VirtualRow>
   )
 }

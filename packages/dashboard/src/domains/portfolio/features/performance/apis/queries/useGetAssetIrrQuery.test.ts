@@ -27,6 +27,27 @@ function jsonResponse(body: object, status = 200): Response {
 }
 
 describe('requestAssetIrr', () => {
+  it('normalizes absent date bounds before serializing the request', async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => jsonResponse(payload))
+    await requestAssetIrr(
+      [],
+      [],
+      undefined,
+      undefined,
+      new AbortController().signal,
+      fetchMock,
+    )
+
+    expect(
+      JSON.parse(await new Response(fetchMock.mock.calls[0][1]?.body).text()),
+    ).toEqual({
+      accounts: [],
+      account_types: [],
+      date_from: null,
+      date_to: null,
+    })
+  })
+
   it.each([
     { start: new Date(NaN), end: new Date('2026-10-13') },
     { start: undefined, end: new Date(NaN) },

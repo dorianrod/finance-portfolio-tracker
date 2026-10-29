@@ -1,8 +1,9 @@
+import { buildIssuerExposures } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures'
 import type {
+  ExposureSource,
   IssuerExposure,
   SecurityExposure,
-} from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildFundHoldingsViewModel.types'
-import { buildIssuerExposures } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/issuerExposures/buildIssuerExposures'
+} from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
@@ -74,8 +75,7 @@ export function buildFundExposureViewModel({
                 kind: 'source' as const,
                 issuer,
                 security,
-                fund: source.fund,
-                value: source.value,
+                source,
               }))
             : []),
         ])
@@ -102,8 +102,7 @@ export type ExposureRow =
       kind: 'source'
       issuer: IssuerExposure
       security: SecurityExposure
-      fund: string
-      value: number
+      source: ExposureSource
     }
 
 type BuildFundExposureViewModelInput = {

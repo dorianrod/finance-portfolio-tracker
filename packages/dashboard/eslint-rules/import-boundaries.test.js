@@ -11,7 +11,7 @@ const sharedFile = 'src/shared/helpers/mappers/toCalendarMonth.ts'
 const domainFile =
   'src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts'
 const serviceFile =
-  'src/domains/portfolio/features/holdings/features/positions/services/useSortedPositions.ts'
+  'src/domains/portfolio/features/holdings/features/positions/services/actions/useDashboardPositionSort.ts'
 
 async function lint(code, file) {
   const [result] = await eslint.lintText(code, {
@@ -40,7 +40,7 @@ describe('configured import boundaries', () => {
   )
 
   it.each([
-    "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
+    "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration'",
     "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'",
   ])(
     'does not expose child implementation to parent shared contracts: %s',
@@ -67,8 +67,8 @@ describe('configured import boundaries', () => {
   it('rejects dependencies between nested sibling capabilities', async () => {
     expect(
       await lint(
-        "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/services/useCurrentConcentration'",
-        'src/domains/portfolio/features/diversification/features/allocation/services/useAllocationCharts.ts',
+        "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration'",
+        'src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts',
       ),
     ).toMatchObject([{ messageId: 'siblingFeature', severity: 2 }])
   })
@@ -83,7 +83,7 @@ describe('configured import boundaries', () => {
     expect(
       await lint(
         "import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'",
-        'src/domains/portfolio/features/diversification/features/allocation/services/useAllocationCharts.ts',
+        'src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts',
       ),
     ).toEqual([])
   })
@@ -172,12 +172,12 @@ describe('configured import boundaries', () => {
 
   it.each([
     "import { HoverChart } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature'",
-    "import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature'",
-    "import type { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature.js'",
-    "export { HoverChart } from '../components/PositionHoverDetails/HoverChart.feature'",
-    "export * from '../components/PositionHoverDetails/HoverChart.feature'",
-    "const chart = import('../components/PositionHoverDetails/HoverChart.feature')",
-    "type Chart = typeof import('../components/PositionHoverDetails/HoverChart.feature').HoverChart",
+    "import type { HoverChart } from '../../components/PositionHoverDetails/HoverChart.feature'",
+    "import type { HoverChart } from '../../components/PositionHoverDetails/HoverChart.feature.js'",
+    "export { HoverChart } from '../../components/PositionHoverDetails/HoverChart.feature'",
+    "export * from '../../components/PositionHoverDetails/HoverChart.feature'",
+    "const chart = import('../../components/PositionHoverDetails/HoverChart.feature')",
+    "type Chart = typeof import('../../components/PositionHoverDetails/HoverChart.feature').HoverChart",
     "import type { Button } from '@/shared/ui/controls/Button.view'",
   ])('rejects renderer dependencies in services: %s', async (code) => {
     expect(await lint(code, serviceFile)).toMatchObject([
@@ -191,7 +191,7 @@ describe('configured import boundaries', () => {
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
     'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',
-    'src/app/helpers/mappers/resolveDashboardLoadState.ts',
+    'src/app/helpers/mappers/useBuildDashboardLoadState.ts',
   ])('checks the non-UI layer %s', async (file) => {
     expect(
       await lint(
@@ -204,7 +204,7 @@ describe('configured import boundaries', () => {
   it('does not let a component helper become a feature-level dependency', async () => {
     expect(
       await lint(
-        "import { computeMonthlyBalances } from '../components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'",
+        "import { computeMonthlyBalances } from '../../components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'",
         serviceFile,
       ),
     ).toMatchObject([{ messageId: 'componentLogic', severity: 2 }])
@@ -213,7 +213,7 @@ describe('configured import boundaries', () => {
   it.each([
     [
       serviceFile,
-      "import type { ChartTarget } from '../types/chartTarget.type'",
+      "import type { ChartTarget } from '../../types/chartTarget.type'",
     ],
     [serviceFile, "import type { RefObject } from 'react'"],
     [

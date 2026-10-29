@@ -1,3 +1,4 @@
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import type { ReactNode } from 'react'
 import {
   PieChart,
@@ -8,20 +9,17 @@ import {
 
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
 import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
-import { getPieEntryTone } from '@/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone/getPieEntryTone'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
-import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesPie } from '@/shared/ui/SeriesPie.view'
 import { Surface } from '@/shared/ui/Surface.view'
-import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { PieLabel } from './PieLabel/PieLabel.view'
@@ -152,12 +150,11 @@ function DonutLegendItem({
 }) {
   const formatLabel = useFormatPieEntryLabel()
   const label = formatLabel(entry)
-  const tone = getPieEntryTone(entry)
   if ((entry.subItems?.length ?? 0) > 0)
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <SeriesSwatch tone={tone} shape="bar" size="default" />
+          <AllocationCategory.Swatch category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1} shape="bar" size="default" />
           {label}
         </Inline>
       </Text>
@@ -171,7 +168,7 @@ function DonutLegendItem({
       variant="legend"
       dimmed={isFiltered && !active}
     >
-      <SeriesSwatch tone={tone} shape="bar" size="default" selected={active} />
+      <AllocationCategory.Swatch category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1} shape="bar" size="default" selected={active} />
       {label}
     </ToggleButton>
   )
@@ -188,9 +185,9 @@ function DonutSector({
   const entry = shapeProps.payload
   if (!entry) return null
   return (
-    <ChartSector
+    <AllocationCategory.Sector
       geometry={shapeProps}
-      tone={getPieEntryTone(entry)}
+      category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1}
       dimmed={isFiltered && activeCategory !== entry.name}
       selected={!entry.subItems && activeCategory === entry.name}
     />

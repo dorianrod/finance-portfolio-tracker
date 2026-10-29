@@ -1,13 +1,14 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useFormatFundQualityLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualityLabel'
 import { useFormatFundQualitySourceLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualitySourceLabel'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
-import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 
 export function useFormatFundQualityTitle() {
+  const { t } = useTranslation()
   const formatDate = useFormatDate()
   const formatPercentage = useFormatPercentage()
   const formatQualityLabel = useFormatFundQualityLabel()
@@ -20,22 +21,22 @@ export function useFormatFundQualityTitle() {
       if (status == null) return fallback
       const date = formatDate(status.holdingsDate, { fallback: '' })
       return [
-        i18n.t('ui.fundqualitybadge.qualityAndSource', {
+        t('ui.fundqualitybadge.qualityAndSource', {
           quality: formatQualityLabel(status.qualityTier),
           source: formatSourceLabel(status.qualityTier),
         }),
-        status.sourceName || i18n.t('ui.fundqualitybadge.noSource'),
-        i18n.t('ui.fundqualitybadge.explainedPercentage', {
+        status.sourceName || t('ui.fundqualitybadge.noSource'),
+        t('ui.fundqualitybadge.explainedPercentage', {
           percentage: formatPercentage(status.explainedPct, { unit: ' %' }),
         }),
         date
-          ? i18n.t('ui.fundqualitybadge.compositionDate', { date })
-          : i18n.t('ui.fundqualitybadge.unknownCompositionDate'),
+          ? t('ui.fundqualitybadge.compositionDate', { date })
+          : t('ui.fundqualitybadge.unknownCompositionDate'),
         status.issues,
       ]
         .filter(Boolean)
         .join(' · ')
     },
-    [formatDate, formatPercentage, formatQualityLabel, formatSourceLabel],
+    [t, formatDate, formatPercentage, formatQualityLabel, formatSourceLabel],
   )
 }

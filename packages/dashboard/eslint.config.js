@@ -34,6 +34,7 @@ import noHelperContextParams from './eslint-rules/no-helper-context-params.js'
 import noInlineFormatFallback from './eslint-rules/no-inline-format-fallback.js'
 import noInlineNumberDisplay from './eslint-rules/no-inline-number-display.js'
 import noLossyBooleanTransform from './eslint-rules/no-lossy-boolean-transform.js'
+import noMemoOnlyService from './eslint-rules/no-memo-only-service.js'
 import noNumberStringRoundtrip from './eslint-rules/no-number-string-roundtrip.js'
 import noOverwrittenUiProps from './eslint-rules/no-overwritten-ui-props.js'
 import noPropDrilling from './eslint-rules/no-prop-drilling.js'
@@ -103,6 +104,7 @@ export default defineConfig([
           'no-inline-format-fallback': noInlineFormatFallback,
           'no-inline-number-display': noInlineNumberDisplay,
           'no-lossy-boolean-transform': noLossyBooleanTransform,
+          'no-memo-only-service': noMemoOnlyService,
           'no-number-string-roundtrip': noNumberStringRoundtrip,
           'no-overwritten-ui-props': noOverwrittenUiProps,
           'no-prop-drilling': noPropDrilling,
@@ -258,6 +260,7 @@ export default defineConfig([
       'local/explicit-nullability': 'error',
       'local/formatter-contract': 'error',
       'local/no-lossy-boolean-transform': 'error',
+      'local/no-memo-only-service': 'error',
       'local/no-number-string-roundtrip': 'error',
       'local/no-returned-local-state': 'error',
       'local/no-service-presentation': 'error',
