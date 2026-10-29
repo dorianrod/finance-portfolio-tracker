@@ -1,4 +1,5 @@
 import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone'
+import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -93,4 +94,3 @@ function AccountTypeTooltipRow({
     </ChartText>
   )
 }
-import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'

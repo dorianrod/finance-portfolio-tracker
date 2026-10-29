@@ -114,3 +114,19 @@ describe('composed information tooltips', () => {
     expect(onClose).toHaveBeenCalledOnce()
   })
 })
+
+it('preserves the heading name and exposes the explanation from the named control', async () => {
+  const user = userEvent.setup()
+  render(
+    <h2>
+      Portfolio value
+      <InfoTooltip text="Value at the reporting date" />
+    </h2>,
+  )
+
+  expect(screen.getByRole('heading', { name: 'Portfolio value' })).toBeTruthy()
+  await user.click(screen.getByRole('button', { name: 'More information' }))
+  expect(screen.getByRole('tooltip').textContent).toBe(
+    'Value at the reporting date',
+  )
+})

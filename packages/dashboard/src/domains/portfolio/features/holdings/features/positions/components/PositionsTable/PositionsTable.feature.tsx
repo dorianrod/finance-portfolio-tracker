@@ -23,7 +23,7 @@ import { PositionBodyCell } from '@/domains/portfolio/features/holdings/features
 import { PositionHeaderRow } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/PositionHeaderRow.view'
 import { isClosedPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/businessRules/positionDisplayRules/isClosedPosition'
 import type { PositionGroupTotal } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePositionTableValues.types'
-import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type {

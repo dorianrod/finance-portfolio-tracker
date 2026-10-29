@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest'
 const directory = resolve(import.meta.dirname, '..')
 const eslint = new ESLint({ cwd: directory })
 
-async function lint(code) {
+async function lint(code, file = 'src/app/App.feature.tsx') {
   const [result] = await eslint.lintText(code, {
-    filePath: resolve(directory, 'src/app/App.feature.tsx'),
+    filePath: resolve(directory, file),
   })
   return result.messages.filter(
     (message) => message.fatal || message.ruleId === 'local/atom-contract',
@@ -17,6 +17,34 @@ async function lint(code) {
 
 describe('atom contracts through the application configuration', () => {
   it.each([
+    'src/shared/ui/stores/tooltipInput.atoms.ts',
+    'src/app/stores/theme/dashboardTheme.store.ts',
+  ])(
+    'preserves explicitly owned exported atoms in %s',
+    async (file) => {
+      expect(
+        await lint(
+          "import {atom as make} from 'jotai'; export const selectedAtom = make<boolean>(false)",
+          file,
+        ),
+      ).toEqual([])
+    },
+    30_000,
+  )
+
+  it('checks a separately exported immutable atom binding', async () => {
+    expect(
+      await lint(
+        "import * as state from 'jotai'; const make = state.atom; const selected = make<boolean>(false); export {selected}",
+      ),
+    ).toMatchObject([{ messageId: 'file', severity: 2 }])
+  }, 30_000)
+
+  it.each([
+    [
+      "import {atom as create} from 'jotai'; export const selectedAtom = create<boolean>(false)",
+      'file',
+    ],
     ["import {atom} from 'jotai'; const value = atom('')", 'generic'],
     [
       "import {atom as make} from 'jotai'; const value = make<Set<string>>(new Set())",

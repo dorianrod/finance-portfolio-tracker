@@ -1,3 +1,7 @@
+import type {
+  AccountTypeHistory,
+  AccountTypeHistoryPoint,
+} from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import { CATEGORY_ORDER } from '@/domains/portfolio/shared/constants/accountCategories/categoryOrder'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -54,8 +58,3 @@ export function buildAccountTypeHistory(
     typeCategories: Object.fromEntries(typeCategories),
   }
 }
-
-import type {
-  AccountTypeHistory,
-  AccountTypeHistoryPoint,
-} from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'

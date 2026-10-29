@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { CombinedAnalysisReliabilityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature'
-import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import type { DashboardViewModel } from './types/dashboardViewModel.type'

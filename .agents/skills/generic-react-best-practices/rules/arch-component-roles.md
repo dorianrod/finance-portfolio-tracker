@@ -60,6 +60,14 @@ Shared UI views may use their own UI behavior services/stores, including Jotai f
 
 ### ESLint enforcement and review inventory
 
+For eligible production component modules, `local/component-role` must report a
+missing `.view.tsx`, `.state.tsx` or `.feature.tsx` suffix, in addition to checking
+runtime boundaries. The suffix declares the module's role; the exported component
+may keep its business name, such as `OrderPanel`. Exercise an unclassified module
+and a valid classified neighbor, preserving the documented entrypoint, test and
+Storybook exceptions. Choosing the role still requires inspecting responsibility;
+a filename-only autofix cannot establish it.
+
 Enable `local/component-role` at error level. Check runtime imports, reexports and literal dynamic imports using resolved module paths, including configured aliases, extensionless imports and local reexport modules. Ignore erased type-only edges. Follow local runtime dependencies through indirection to detect hidden feature/state/API/store/service dependencies; report the path. Another classified view owns its own enforcement, and shared UI owns its primitive behavior boundary. Pure business classifications inside a label formatter do not by themselves introduce shared state or orchestration.
 
 Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.

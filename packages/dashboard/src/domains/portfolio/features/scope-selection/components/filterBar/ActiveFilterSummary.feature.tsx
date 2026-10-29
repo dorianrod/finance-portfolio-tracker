@@ -5,7 +5,7 @@ import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/h
 import { filterSummariesForTab } from '@/domains/portfolio/features/scope-selection/helpers/filters/filterSummariesForTab'
 import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
 import { useDashboardFilters } from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
-import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTabAtom'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { Button } from '@/shared/ui/controls/Button.view'

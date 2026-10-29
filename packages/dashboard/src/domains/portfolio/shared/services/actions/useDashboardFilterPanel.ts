@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'
+import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'
 
 export function useDashboardFilterPanel() {
   const setOpen = useSetAtom(dashboardFiltersOpenAtom)

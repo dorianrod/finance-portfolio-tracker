@@ -43,4 +43,10 @@ const SCALE = 100;
 
 ### Safe Reordering
 
+Keep imports at the start after headers and directives. A trailing import must
+not hide earlier private declarations from the ordering check: report the late
+import and review its move before ordering the public API. Verify a rejected
+late type import and a valid import-first neighbor through the consuming
+configuration.
+
 Preserve initialization order when moving declarations. Hoisted functions may move across erased or hoisted declarations; function-valued initializers and classes must retain their runtime dependencies. Keep attached documentation and overload groups together, and preserve the relative order of the remaining code. Report an unsafe move for manual refactoring instead of introducing a temporal dead zone or crossing a lint suppression.

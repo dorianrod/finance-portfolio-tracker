@@ -16,6 +16,15 @@ Give each file one concern and a name that says it:
 - `<concern>.atoms.ts` for feature and page atoms: `filters.atoms.ts`, `selection.atoms.ts`, `form.atoms.ts`, or a feature name (`reminderModal.atoms.ts`). Never a generic `atoms.ts` / `state.ts` mixing filters, selection, modals and tabs.
 - `<name>.store.ts` for app-level stores (session, user, flags) and for shared modules that pair a factory with its hook.
 
+The module suffix and exported identifier have separate roles. For example,
+`stores/orderFilters.atoms.ts` may export `orderFiltersAtom`:
+`orderFiltersAtom.ts` does not follow the module convention. A shorter concern
+name such as `filters.atoms.ts` is valid when the owning folder supplies the
+business scope. Do not require the filename to repeat the exported `Atom` suffix.
+Apply the same module convention to generic atom modules owned by shared UI.
+Keep exported identifier conventions in `state-atom-naming` and decide the owning
+scope through `state-domain-vs-page-location`.
+
 **Incorrect (barrel re-export):**
 
 ```ts
@@ -41,4 +50,25 @@ import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/store
 
 Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
 
-See also: `quality-single-public-export`
+Resolve the application's configured aliases and follow synchronous value imports
+and reexports. Erased type-only edges and deferred dynamic imports do not create
+synchronous initialization cycles. Exercise a real aliased cycle, an acyclic
+neighbor and type-only/deferred edges, then run the check against production
+source in CI. This graph check does not prove that deferred module loading is
+deadlock-free or that every business dependency has the correct owner.
+
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level to check production variable exports
+initialized directly by resolved Jotai `atom` or `atomWithStorage` constructors,
+including aliases and separate export lists. Require a concern-owned module
+under `stores/` ending in `.atoms.ts` or `.store.ts`. Keep private per-instance
+atoms and factory implementations under their existing stability contract.
+Custom factory outputs and opaque wrappers still require ownership review.
+
+Verify a rejected legacy filename and valid `.atoms.ts` and `.store.ts` neighbors
+through the consuming configuration. Use coordinated refactoring to rename files
+and update their consumers as described by `arch-domain-first-layout`; the lint
+diagnostic does not itself perform that migration.
+
+See also: `quality-single-public-export`, `state-atom-naming`, `state-domain-vs-page-location`

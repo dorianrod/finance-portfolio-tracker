@@ -6,7 +6,10 @@ import type { DataQualityDimension } from '@/domains/portfolio/features/data-qua
 export function useFormatDataQualityDimension() {
   const { t } = useTranslation()
   return useCallback(
-    (dimension: DataQualityDimension | null | undefined, {fallback = '—'}: {fallback?: string} = {}): string => {
+    (
+      dimension: DataQualityDimension | null | undefined,
+      { fallback = '—' }: { fallback?: string } = {},
+    ): string => {
       if (dimension == null) return fallback
       const labels: Record<DataQualityDimension, string> = {
         geo: t('ui.builddataqualityviewmodel.geography'),

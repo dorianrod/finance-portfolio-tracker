@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
+import { cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import {cleanup, renderHook} from '@testing-library/react'
 import { ValidationError } from 'yup'
 
 import { HttpError } from '@/shared/http/httpError'
@@ -10,15 +10,18 @@ import { useFormatErrorMessage } from './useFormatErrorMessage'
 afterEach(cleanup)
 
 function formatErrorMessage(error: unknown) {
-  const {result} = renderHook(useFormatErrorMessage)
+  const { result } = renderHook(useFormatErrorMessage)
   return result.current(error)
 }
 
 describe('formatErrorMessage', () => {
-  it.each([null, undefined])('supports an empty display fallback for %s', (error) => {
-    const { result } = renderHook(useFormatErrorMessage)
-    expect(result.current(error, { fallback: '' })).toBe('')
-  })
+  it.each([null, undefined])(
+    'supports an empty display fallback for %s',
+    (error) => {
+      const { result } = renderHook(useFormatErrorMessage)
+      expect(result.current(error, { fallback: '' })).toBe('')
+    },
+  )
 
   it.each([
     [

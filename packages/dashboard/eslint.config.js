@@ -173,6 +173,18 @@ export default defineConfig([
       'no-lonely-if': 'error',
       'no-negated-condition': 'error',
       'no-nested-ternary': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'react',
+              importNames: ['forwardRef'],
+              message: 'React 19 components accept ref as a typed prop.',
+            },
+          ],
+        },
+      ],
       'no-restricted-properties': [
         'error',
         {

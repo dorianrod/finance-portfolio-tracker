@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
+import { Decorative } from '@/shared/ui/controls/Decorative.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -21,7 +22,7 @@ export function InfoTooltip({
           label={i18n.t('ui.infotooltip.moreInformation')}
           variant="info"
         >
-          {i18n.t('ui.infotooltip.i')}
+          <Decorative>{i18n.t('ui.infotooltip.i')}</Decorative>
         </Tooltip.Trigger>
         <Tooltip.Content side="top" variant="info">
           <Layout as="span" flow="block">

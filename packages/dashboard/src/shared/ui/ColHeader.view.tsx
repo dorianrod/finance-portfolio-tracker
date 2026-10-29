@@ -1,5 +1,6 @@
 import i18n from '@/i18n/i18n'
 
+import { Decorative } from './controls/Decorative.view'
 import { Tooltip } from './Tooltip.view'
 
 export function ColHeader({ label, columnName = label, content }: Props) {
@@ -13,7 +14,7 @@ export function ColHeader({ label, columnName = label, content }: Props) {
           })}
           variant="columnHelp"
         >
-          ⓘ
+          <Decorative>ⓘ</Decorative>
         </Tooltip.Trigger>
         <Tooltip.Content variant="info">
           <div className="w-72">{content}</div>

@@ -37,6 +37,33 @@ function lint(file, nestedParents = [], options = {}) {
 
 describe('parent and leaf feature folder layout', () => {
   it.each([
+    'src/domains/contracts/helpers/presenters/tone.ts',
+    'src/domains/directory/contacts/shared/helpers/presenters/tone.ts',
+    'src/domains/contracts/features/reminders/helpers/presenters/tone.ts',
+    'src/domains/components/features/summary/helpers/presenters/tone.ts',
+    'src/domains/contracts/features/components/helpers/presenters/tone.ts',
+    'src/domains/contracts/helpers/calculators/components/card/helpers/presenters/tone.ts',
+  ])('rejects presenters without UI ownership: %s', (file) => {
+    expect(lint(file)).toMatchObject([
+      { messageId: 'presenterScope', severity: 2 },
+    ])
+  })
+
+  it.each([
+    'src/domains/contracts/components/Card/helpers/presenters/tone.ts',
+    'src/domains/contracts/pages/detail/helpers/presenters/tone.ts',
+    'src/domains/contracts/shared/components/Card/helpers/presenters/tone.ts',
+    'src/domains/contracts/features/reminders/pages/detail/helpers/presenters/tone.ts',
+    'src/domains/helpers/presenters/types/value.ts',
+    'src/domains/contracts/helpers/formatters/useFormatStatus.ts',
+    'src/domains/contracts/helpers/presenters/tone.test.ts',
+    'src/shared/helpers/presenters/tone.ts',
+    'src/app/helpers/presenters/tone.ts',
+  ])('preserves valid owners and neighboring roles: %s', (file) => {
+    expect(lint(file)).toEqual([])
+  })
+
+  it.each([
     'components',
     'pages',
     'helpers',

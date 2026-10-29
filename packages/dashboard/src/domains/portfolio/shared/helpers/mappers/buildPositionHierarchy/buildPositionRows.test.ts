@@ -5,6 +5,39 @@ import { op } from '@/domains/portfolio/shared/mocks/rawOperation.mock'
 import { pos } from '@/domains/portfolio/shared/mocks/rawPosition.mock'
 
 describe('buildPositionRows', () => {
+  it('keeps asset and account identities distinct when their names contain separators', () => {
+    const rows = buildPositionRows(
+      [
+        op({ isin: '', ticker: '', name: 'Fund|Class', account: 'Broker' }),
+        op({ isin: '', ticker: '', name: 'Fund', account: 'Class|Broker' }),
+      ],
+      [
+        pos({
+          isin: '',
+          ticker: '',
+          name: 'Fund|Class',
+          account: 'Broker',
+          total_value: 100,
+        }),
+        pos({
+          isin: '',
+          ticker: '',
+          name: 'Fund',
+          account: 'Class|Broker',
+          total_value: 200,
+        }),
+      ],
+    )
+
+    expect(
+      rows.map(({ account, total_value }) => ({ account, total_value })),
+    ).toEqual([
+      { account: 'Class|Broker', total_value: 200 },
+      { account: 'Broker', total_value: 100 },
+    ])
+    expect(new Set(rows.map((row) => row.id)).size).toBe(2)
+  })
+
   it('builds an active position with a Dividends group and a Buys / Sells group', () => {
     const ops = [
       op({
@@ -85,7 +118,7 @@ describe('buildPositionRows', () => {
       [closedOp, activeOp],
       [pos({ isin: 'ACTIVE' })],
     )
-    expect(rows.map((r) => r.id)).toEqual(['ACTIVE|acc1', 'CLOSED|acc1'])
+    expect(rows.map((r) => r.isin)).toEqual(['ACTIVE', 'CLOSED'])
   })
 
   it('gives the same asset held in two accounts one row per account, each with its own account_type', () => {

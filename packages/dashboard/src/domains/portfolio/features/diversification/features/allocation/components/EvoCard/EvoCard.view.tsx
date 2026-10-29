@@ -1,4 +1,3 @@
-import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { type ReactNode, useId } from 'react'
 import { AreaChart, ResponsiveContainer, Tooltip } from 'recharts'
 
@@ -8,6 +7,7 @@ import type {
   AllocationTrendPoint,
 } from '@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/types/allocationTrend.type'
 import { EvolutionTooltip } from '@/domains/portfolio/features/diversification/features/allocation/components/EvolutionTooltip.view'
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
@@ -152,7 +152,12 @@ function EvolutionLegendItem({
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <AllocationCategory.Swatch category={categoryName} aggregate={aggregate} shape="bar" size="default" />
+          <AllocationCategory.Swatch
+            category={categoryName}
+            aggregate={aggregate}
+            shape="bar"
+            size="default"
+          />
           {label}
         </Inline>
       </Text>
@@ -168,12 +173,15 @@ function EvolutionLegendItem({
       dimmed={isDimmed}
     >
       <AllocationCategory.Swatch
-        category={categoryName} aggregate={aggregate}
+        category={categoryName}
+        aggregate={aggregate}
         shape="bar"
         selected={isActive}
         size="default"
       />
-      <AllocationCategory category={categoryName} aggregate={aggregate}>{label}</AllocationCategory>
+      <AllocationCategory category={categoryName} aggregate={aggregate}>
+        {label}
+      </AllocationCategory>
     </ToggleButton>
   )
 }

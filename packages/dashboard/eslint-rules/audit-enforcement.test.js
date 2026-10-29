@@ -173,7 +173,7 @@ describe('functional state updates', () => {
         'prefer-functional-state-update',
         `
       import {useAtomValue} from 'jotai'
-      import {dashboardFiltersAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
+      import {dashboardFiltersAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
       import {useDashboardFilters} from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
       const filters = useAtomValue(dashboardFiltersAtom)
       const {setFilters} = useDashboardFilters()

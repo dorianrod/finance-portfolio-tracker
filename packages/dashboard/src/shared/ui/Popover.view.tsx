@@ -5,7 +5,7 @@ import type { ComponentProps } from 'react'
 
 import { useComposedRefs } from '@/shared/ui/services/useComposedRefs'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
-import { popoverInputAtom } from '@/shared/ui/stores/popoverInputAtom'
+import { popoverInputAtom } from '@/shared/ui/stores/popoverInput.atoms'
 import { POPOVER_CONTENT_VARIANTS } from '@/shared/ui/surfaceAppearance/popoverContentVariants'
 
 import type { ControlProps } from './controlProps'

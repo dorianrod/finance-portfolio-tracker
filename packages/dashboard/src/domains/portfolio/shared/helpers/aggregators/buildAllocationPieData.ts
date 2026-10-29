@@ -1,7 +1,6 @@
+import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/selectors/groupAllocationTail'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
-
-import { groupAllocationTail } from '@/domains/portfolio/shared/helpers/selectors/groupAllocationTail'
 
 export function buildAllocationPieData(point: AllocationPoint) {
   const total = point.categories.reduce(

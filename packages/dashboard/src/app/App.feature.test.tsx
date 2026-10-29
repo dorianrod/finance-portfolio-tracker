@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { createStore, Provider } from 'jotai'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import App from './App.feature'

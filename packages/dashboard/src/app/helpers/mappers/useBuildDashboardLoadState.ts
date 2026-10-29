@@ -5,13 +5,16 @@ import { useFormatErrorMessage } from '@/shared/helpers/formatters/useFormatErro
 
 export function useBuildDashboardLoadState() {
   const formatErrorMessage = useFormatErrorMessage()
-  return useCallback((queries: SourceQuery[]): DashboardLoadState => {
-    const failure = queries.find((query) => query.error != null)
-    if (failure)
-      return { status: 'error', message: formatErrorMessage(failure.error) }
-    if (queries.some((query) => query.isPending)) return { status: 'loading' }
-    return { status: 'ready' }
-  }, [formatErrorMessage])
+  return useCallback(
+    (queries: SourceQuery[]): DashboardLoadState => {
+      const failure = queries.find((query) => query.error != null)
+      if (failure)
+        return { status: 'error', message: formatErrorMessage(failure.error) }
+      if (queries.some((query) => query.isPending)) return { status: 'loading' }
+      return { status: 'ready' }
+    },
+    [formatErrorMessage],
+  )
 }
 
 type SourceQuery = { error: unknown; isPending: boolean }

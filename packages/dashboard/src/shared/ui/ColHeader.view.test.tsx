@@ -9,6 +9,24 @@ import { SidePanel } from './SidePanel.view'
 afterEach(cleanup)
 
 describe('ColHeader', () => {
+  it('keeps the decorative help icon out of the column name', () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <ColHeader label="Value" content="Current market value" />
+            </th>
+          </tr>
+        </thead>
+      </table>,
+    )
+    expect(screen.getByRole('columnheader', { name: 'Value' })).toBeTruthy()
+    expect(
+      screen.getByRole('button', { name: 'More information about Value' }),
+    ).toBeTruthy()
+  })
+
   it('identifies the column when the visible label is rendered separately', () => {
     render(
       <ColHeader

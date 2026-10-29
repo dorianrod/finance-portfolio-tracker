@@ -9,7 +9,7 @@ tags: state, jotai, atoms, factories, render
 
 **Impact: MEDIUM-HIGH (prevents state reset on every render)**
 
-An atom's identity is its state key: calling `atom()` or an atom factory inside a component or hook body creates a new atom on every render, so the edit mode, selection or filters reset immediately and every effect depending on the atom re-runs. Declare atoms and factory bundles once, at module scope, in a `stores/*.atoms.ts` file.
+An atom's identity is its state key: calling `atom()` or an atom factory inside a component or hook body creates a new atom on every render, so the edit mode, selection or filters reset immediately and every effect depending on the atom re-runs. Declare atoms and factory bundles once, at module scope, in a concern-owned `stores/*.atoms.ts` or `stores/*.store.ts` module according to `arch-stores-no-index`. Exported identifiers follow `state-atom-naming`.
 
 **Incorrect (new atom on each render):**
 

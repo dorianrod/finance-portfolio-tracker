@@ -65,7 +65,7 @@ describe('pure helper browser boundary', () => {
   it.each([
     'src/main.tsx',
     'src/shared/ui/usePopoverState.ts',
-    'src/domains/portfolio/shared/helpers/presenters/getPortfolioSeriesTone.test.ts',
+    'src/domains/portfolio/shared/components/AllocationCategory/helpers/presenters/getAllocationTone.test.ts',
   ])(
     'keeps browser integration and tests outside the pure-helper scope: %s',
     async (file) => {

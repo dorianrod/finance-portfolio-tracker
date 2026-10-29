@@ -16,7 +16,8 @@
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
     "test": "vitest run",
-    "audit:architecture": "node scripts/audit-architecture.mjs"
+    "audit:architecture": "node scripts/audit-architecture.mjs",
+    "audit:cycles": "node scripts/import-cycles.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.3.1",

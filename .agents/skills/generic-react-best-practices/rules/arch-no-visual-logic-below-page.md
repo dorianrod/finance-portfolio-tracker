@@ -78,6 +78,18 @@ See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-
 
 ### ESLint Enforcement
 
+Enable `local/feature-folder-layout` at error level to reject production domain
+`helpers/presenters/` outside component or page ownership. Resolve the domain,
+sub-domain, feature and scoped shared boundary before interpreting role folders:
+a business scope named `components`, or a `components/` folder inside another
+helper, does not establish UI ownership. Keep application-wide infrastructure
+outside this domain-specific path check. Exercise an invalid reusable presenter
+and valid component/page neighbors through the consuming configuration.
+
+This checks declared placement, not the meaning of an arbitrary function. Review
+CSS, tones and geometry hidden in other helper categories manually; renaming a
+presenter to bypass the path check does not make its result UI-agnostic.
+
 Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject direct and indirect value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
 Apply the same dependency check to domain `helpers/calculators/` and `helpers/aggregators/`, including component- and page-owned helpers. Calculations and aggregations return quantitative values, grouped records and semantic identifiers; a formatter translates their labels at display time. Do not use translated labels as aggregation keys: a source can have the same name as a synthetic group. Keep source identity separate from display labels. Component ownership does not turn translation into a calculation or aggregation. Verify an aliased translation import, a rejected reexport or dynamic import, and neighboring valid numeric calculations and aggregations through the application's configuration.

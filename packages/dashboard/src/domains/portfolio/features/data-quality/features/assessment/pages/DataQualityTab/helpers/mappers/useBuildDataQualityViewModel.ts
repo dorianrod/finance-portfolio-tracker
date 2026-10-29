@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 
+import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap'
 import { buildClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildClassificationViewState'
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension'
-import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap'
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData'
 import type { AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/types/affectedAsset.type'

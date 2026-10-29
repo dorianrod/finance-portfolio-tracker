@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { dashboardThemeAtom } from '@/app/stores/theme/dashboardThemeAtom'
+import { dashboardThemeAtom } from '@/app/stores/theme/dashboardTheme.store'
 
 export function useDashboardTheme() {
   const setTheme = useSetAtom(dashboardThemeAtom)

@@ -187,7 +187,7 @@ describe('configured import boundaries', () => {
 
   it.each([
     'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts',
-    'src/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom.ts',
+    'src/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
     'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',

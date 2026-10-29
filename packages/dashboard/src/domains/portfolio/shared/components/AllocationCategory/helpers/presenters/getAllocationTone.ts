@@ -5,11 +5,6 @@ import { getHashedSeriesTone } from '@/shared/theme/chartColors/getHashedSeriesT
 export function getAllocationTone(category: string): ChartTone {
   if (category === 'nc') return 'subtle'
   if (category === 'Not concerned') return 'muted'
-  if (
-    category === 'autre' ||
-    category === 'Autre' ||
-    category.startsWith('others (')
-  )
-    return 'dim'
+  if (category === 'autre' || category === 'Autre') return 'dim'
   return ALLOCATION_TONES.get(category) ?? getHashedSeriesTone(category)
 }

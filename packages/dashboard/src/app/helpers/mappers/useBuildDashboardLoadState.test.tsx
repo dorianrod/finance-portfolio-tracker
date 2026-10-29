@@ -9,10 +9,19 @@ afterEach(cleanup)
 describe('dashboard loading precedence', () => {
   it.each([
     { queries: [], expected: { status: 'ready' } },
-    { queries: [{ isPending: false, error: null }], expected: { status: 'ready' } },
-    { queries: [{ isPending: true, error: null }], expected: { status: 'loading' } },
     {
-      queries: [{ isPending: true, error: null }, { isPending: false, error: new Error('Server unavailable') }],
+      queries: [{ isPending: false, error: null }],
+      expected: { status: 'ready' },
+    },
+    {
+      queries: [{ isPending: true, error: null }],
+      expected: { status: 'loading' },
+    },
+    {
+      queries: [
+        { isPending: true, error: null },
+        { isPending: false, error: new Error('Server unavailable') },
+      ],
       expected: { status: 'error', message: 'Server unavailable' },
     },
   ])('resolves $expected.status', ({ queries, expected }) => {

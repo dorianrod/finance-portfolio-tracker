@@ -9,7 +9,7 @@ import {
 
 import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
-import { navigationIdAtom } from '@/shared/ui/stores/navigationIdAtom'
+import { navigationIdAtom } from '@/shared/ui/stores/navigationId.atoms'
 
 import type { ControlProps } from './controlProps'
 

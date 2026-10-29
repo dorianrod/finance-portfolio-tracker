@@ -4,7 +4,7 @@ import { type BarShapeProps, Rectangle } from 'recharts'
 import { CHART_COLORS } from '@/shared/theme/chartColors/chartColors'
 import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
 import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
-import { barAppearanceAtom } from '@/shared/ui/stores/barAppearanceAtom'
+import { barAppearanceAtom } from '@/shared/ui/stores/barAppearance.atoms'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; All four coordinates and inherited appearance must be validated together for one Recharts rectangle.
 export function ChartRectangle({

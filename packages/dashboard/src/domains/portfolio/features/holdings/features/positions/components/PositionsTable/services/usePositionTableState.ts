@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai'
 import { useMemo } from 'react'
 
-import { dashboardExpandedPositionRowsAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardExpandedPositionRowsAtom'
+import { dashboardExpandedPositionRowsAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardExpandedPositionRows.atoms'
 
 export function usePositionTableState() {
   const [expanded, setExpanded] = useAtom(dashboardExpandedPositionRowsAtom)

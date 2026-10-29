@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
-import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'
+import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { SelectionCount } from '@/shared/ui/badge/SelectionCount.view'

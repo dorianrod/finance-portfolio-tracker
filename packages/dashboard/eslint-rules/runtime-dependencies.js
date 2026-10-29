@@ -29,7 +29,7 @@ export function typeOnlyExport(node) {
 
 // Module-level runtime dependencies are intentional: importing one value still
 // evaluates the module's other value imports and reexports. Type edges are erased.
-export function runtimeSources(sourceFile) {
+export function runtimeSources(sourceFile, { includeDynamic = true } = {}) {
   const sources = []
   function visit(node) {
     if (ts.isImportDeclaration(node)) {
@@ -62,6 +62,7 @@ export function runtimeSources(sourceFile) {
       return
     }
     if (
+      includeDynamic &&
       ts.isCallExpression(node) &&
       node.expression.kind === ts.SyntaxKind.ImportKeyword &&
       node.arguments[0] &&

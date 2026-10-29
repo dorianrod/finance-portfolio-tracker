@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 
-import { dashboardThemeAtom } from '@/app/stores/theme/dashboardThemeAtom'
+import { dashboardThemeAtom } from '@/app/stores/theme/dashboardTheme.store'
 import { PAGE_THEME_COLORS } from '@/shared/theme/pageThemeColors'
 
 export function useDashboardThemeSync() {

@@ -2,7 +2,9 @@ import type { InferType } from 'yup'
 
 import type { RAW_FUND_HOLDING_STATUS_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema'
 
-export function fundHoldingStatusRow(): InferType<typeof RAW_FUND_HOLDING_STATUS_SCHEMA> {
+export function fundHoldingStatusRow(): InferType<
+  typeof RAW_FUND_HOLDING_STATUS_SCHEMA
+> {
   return {
     parent_id: 'FR0000000001',
     parent_isin: 'FR0000000001',

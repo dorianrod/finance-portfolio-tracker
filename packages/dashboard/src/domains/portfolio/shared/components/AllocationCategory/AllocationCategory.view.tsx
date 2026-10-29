@@ -14,9 +14,13 @@ export function AllocationCategory<T extends TextTag = 'span'>({
   aggregate = false,
   children,
   ...props
-}: Omit<ComponentProps<typeof ChartText<T>>, 'tone' | 'series'> & CategoryProps) {
+}: Omit<ComponentProps<typeof ChartText<T>>, 'tone' | 'series'> &
+  CategoryProps) {
   return (
-    <ChartText {...props} tone={aggregate ? 'dim' : getAllocationTone(category)}>
+    <ChartText
+      {...props}
+      tone={aggregate ? 'dim' : getAllocationTone(category)}
+    >
       {children}
     </ChartText>
   )
@@ -29,7 +33,12 @@ function CategorySwatch({
   aggregate = false,
   ...props
 }: Omit<ComponentProps<typeof SeriesSwatch>, 'tone'> & CategoryProps) {
-  return <SeriesSwatch {...props} tone={aggregate ? 'dim' : getAllocationTone(category)} />
+  return (
+    <SeriesSwatch
+      {...props}
+      tone={aggregate ? 'dim' : getAllocationTone(category)}
+    />
+  )
 }
 
 function CategorySector({
@@ -37,7 +46,12 @@ function CategorySector({
   aggregate = false,
   ...props
 }: Omit<ComponentProps<typeof ChartSector>, 'tone'> & CategoryProps) {
-  return <ChartSector {...props} tone={aggregate ? 'dim' : getAllocationTone(category)} />
+  return (
+    <ChartSector
+      {...props}
+      tone={aggregate ? 'dim' : getAllocationTone(category)}
+    />
+  )
 }
 
 function CategoryGradient({
@@ -45,7 +59,12 @@ function CategoryGradient({
   aggregate = false,
   ...props
 }: Omit<ComponentProps<typeof SeriesGradient>, 'tone'> & CategoryProps) {
-  return <SeriesGradient {...props} tone={aggregate ? 'dim' : getAllocationTone(category)} />
+  return (
+    <SeriesGradient
+      {...props}
+      tone={aggregate ? 'dim' : getAllocationTone(category)}
+    />
+  )
 }
 
 function CategoryArea<TData = unknown>({
@@ -55,7 +74,10 @@ function CategoryArea<TData = unknown>({
   ...props
 }: Omit<ComponentProps<typeof SeriesArea<TData>>, 'tone'> & CategoryProps) {
   return (
-    <SeriesArea {...props} tone={aggregate ? 'dim' : getAllocationTone(category)}>
+    <SeriesArea
+      {...props}
+      tone={aggregate ? 'dim' : getAllocationTone(category)}
+    >
       {children}
     </SeriesArea>
   )

@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { UnderlyingStatusButton } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/UnderlyingStatusButton.view'
-import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 
 export function UnderlyingStatusControl({

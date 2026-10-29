@@ -136,7 +136,7 @@ function assetKey(
 }
 
 function accountAssetKey(account: string, key: string): string {
-  return `${account}\u0000${key}`
+  return JSON.stringify([account, key])
 }
 
 function datePart(value: Date): number {

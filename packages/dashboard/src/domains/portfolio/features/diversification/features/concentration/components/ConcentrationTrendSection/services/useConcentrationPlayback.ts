@@ -2,8 +2,8 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useEffectEvent } from 'react'
 
 import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
-import { concentrationTrendDateAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendDateAtom'
-import { concentrationTrendPlayingAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendPlayingAtom'
+import { concentrationTrendDateAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendDate.atoms'
+import { concentrationTrendPlayingAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendPlaying.atoms'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 export function useConcentrationPlayback(

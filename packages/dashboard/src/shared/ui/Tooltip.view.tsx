@@ -4,7 +4,7 @@ import { ScopeProvider } from 'jotai-scope'
 import { type ComponentProps, useMemo, useState } from 'react'
 
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
-import { tooltipInputAtom } from '@/shared/ui/stores/tooltipInputAtom'
+import { tooltipInputAtom } from '@/shared/ui/stores/tooltipInput.atoms'
 
 import type { ControlProps } from './controlProps'
 

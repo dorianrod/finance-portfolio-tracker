@@ -1,4 +1,3 @@
-import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import type { ReactNode } from 'react'
 import {
   PieChart,
@@ -7,6 +6,7 @@ import {
   Tooltip,
 } from 'recharts'
 
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
 import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
@@ -154,7 +154,12 @@ function DonutLegendItem({
     return (
       <Text variant="micro" tone="subtle">
         <Inline as="span" align="center" gap="compact">
-          <AllocationCategory.Swatch category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1} shape="bar" size="default" />
+          <AllocationCategory.Swatch
+            category={entry.name}
+            aggregate
+            shape="bar"
+            size="default"
+          />
           {label}
         </Inline>
       </Text>
@@ -168,7 +173,12 @@ function DonutLegendItem({
       variant="legend"
       dimmed={isFiltered && !active}
     >
-      <AllocationCategory.Swatch category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1} shape="bar" size="default" selected={active} />
+      <AllocationCategory.Swatch
+        category={entry.name}
+        shape="bar"
+        size="default"
+        selected={active}
+      />
       {label}
     </ToggleButton>
   )
@@ -187,7 +197,8 @@ function DonutSector({
   return (
     <AllocationCategory.Sector
       geometry={shapeProps}
-      category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1}
+      category={entry.name}
+      aggregate={(entry.subItems?.length ?? 0) > 1}
       dimmed={isFiltered && activeCategory !== entry.name}
       selected={!entry.subItems && activeCategory === entry.name}
     />

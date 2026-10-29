@@ -19,6 +19,14 @@ const files = {
     'export function usePanel() {}',
   'src/domains/orders/components/Panel/helpers/calculators/total.ts':
     'export const total = 1',
+  'src/domains/orders/components/Panel/helpers/presenters/tone.ts':
+    "export const tone = 'positive'",
+  'src/domains/orders/pages/detail/helpers/presenters/tone.ts':
+    "export const tone = 'positive'",
+  'src/domains/orders/helpers/presenters/tone.ts':
+    "export const tone = 'positive'",
+  'src/domains/components/features/summary/helpers/presenters/tone.ts':
+    "export const tone = 'positive'",
   'src/domains/orders/services/useOrders.ts':
     'export function useOrders() {return []}',
   'src/domains/orders/helpers/mappers/toRow.ts':
@@ -124,6 +132,25 @@ async function lint(
 }
 
 describe('architecture prevention through the configured rules', () => {
+  it.each([
+    'src/domains/orders/helpers/presenters/tone.ts',
+    'src/domains/components/features/summary/helpers/presenters/tone.ts',
+  ])(
+    'rejects visual helpers without a component or page owner: %s',
+    async (file) => {
+      expect(
+        await lint('feature-folder-layout', files[file], file),
+      ).toMatchObject([{ messageId: 'presenterScope', severity: 2 }])
+    },
+  )
+
+  it.each([
+    'src/domains/orders/components/Panel/helpers/presenters/tone.ts',
+    'src/domains/orders/pages/detail/helpers/presenters/tone.ts',
+  ])('preserves component- and page-owned visual helpers: %s', async (file) => {
+    expect(await lint('feature-folder-layout', files[file], file)).toEqual([])
+  })
+
   it.each([
     "import('@/domains/orders/components/Panel.feature')",
     "import('@/domains/orders/helpers/barrel')",

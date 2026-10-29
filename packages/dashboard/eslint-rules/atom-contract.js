@@ -1,6 +1,7 @@
 import ts from 'typescript'
 
 import { isProductionSource, unwrap } from './ast-bindings.js'
+import { getPublicExports } from './get-public-exports.js'
 import { libraryBinding } from './library-binding.js'
 import {
   getFunctionComponentName,
@@ -22,6 +23,7 @@ export default {
         'Give this raw atom an explicit type parameter. [state-explicit-types-defaults]',
       default:
         'Give this non-trivial atom default a named, typed DEFAULT_* constant. [state-explicit-types-defaults]',
+      file: 'Declare exported atoms in a concern-owned stores/*.atoms.ts or stores/*.store.ts module. [arch-stores-no-index]',
     },
   },
   create(context) {
@@ -79,6 +81,26 @@ export default {
           libraryBinding(source, node.callee, 'jotai') ??
           libraryBinding(source, node.callee, 'jotai/utils')
         if (name !== 'atom' && name !== 'atomWithStorage') return
+        let declaration = node.parent
+        while (
+          declaration &&
+          declaration.type !== 'VariableDeclarator' &&
+          declaration.type !== 'Program'
+        )
+          declaration = declaration.parent
+        const exported =
+          declaration?.type === 'VariableDeclarator' &&
+          unwrap(declaration.init) === node &&
+          getPublicExports(source.ast, source).some((entry) =>
+            entry.declarations.includes(declaration),
+          )
+        const filename = context.filename.replaceAll('\\', '/')
+        if (
+          exported &&
+          (!filename.includes('/stores/') ||
+            !/\.(?:atoms|store)\.ts$/u.test(filename))
+        )
+          context.report({ node, messageId: 'file' })
         if (hasRenderOwner(node) && !stableInstanceMemo(node))
           context.report({ node, messageId: 'render' })
         const value = unwrap(node.arguments[name === 'atomWithStorage' ? 1 : 0])

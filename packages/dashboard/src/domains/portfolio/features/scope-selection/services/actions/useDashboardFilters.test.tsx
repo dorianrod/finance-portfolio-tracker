@@ -5,8 +5,8 @@ import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { DEFAULT_DASHBOARD_FILTERS } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/defaultDashboardFilters'
-import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersAtom'
-import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
+import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'
 
 import { useDashboardFilters } from './useDashboardFilters'
 

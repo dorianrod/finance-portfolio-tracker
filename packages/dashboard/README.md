@@ -53,6 +53,7 @@ npm run format:check
 npm run typecheck
 npm test
 npm run audit:i18n
+npm run audit:cycles
 npm run build
 npm run build-storybook
 ```
@@ -164,6 +165,11 @@ with unclear business ownership, mixed local presentation, substantial JSX and
 exported object contracts outside canonical entity files. Each entry is a review
 candidate, with its observed dependencies; it does not fail lint or certify that
 an extraction is necessary. Group comparable candidates before correcting them.
+
+`npm run audit:cycles` checks synchronous runtime imports and reexports using the
+application's TypeScript resolution and aliases. Type-only and deferred imports
+do not create synchronous initialization cycles. The test suite runs the same
+check against application source, so CI also rejects newly introduced cycles.
 
 ESLint rejects clearly visual-only features and follows local runtime dependency
 paths, including aliases, reexports and dynamic imports. It rejects hidden display

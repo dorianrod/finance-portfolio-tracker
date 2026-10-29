@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { lazy } from 'react'
 
 import { DASHBOARD_TAB_LOADERS } from '@/app/routing/dashboardTabLoaders/dashboardTabLoaders'
-import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsViewAtom'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 
 import type { DashboardViewModel } from './types/dashboardViewModel.type'

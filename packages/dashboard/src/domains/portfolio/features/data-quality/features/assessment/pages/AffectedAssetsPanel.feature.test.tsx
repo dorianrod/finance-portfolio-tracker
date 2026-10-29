@@ -3,7 +3,7 @@ import { cleanup, render } from '@testing-library/react'
 import { createStore, Provider } from 'jotai'
 import { afterEach, expect, it } from 'vitest'
 
-import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityFundDiagnosticsOpenAtom'
+import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityFundDiagnosticsOpen.atoms'
 
 import { AffectedAssetsPanel } from './AffectedAssetsPanel.feature'
 

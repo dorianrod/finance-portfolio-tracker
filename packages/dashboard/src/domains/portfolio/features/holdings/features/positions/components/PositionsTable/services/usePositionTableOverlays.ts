@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 
 import { resolvePositionPreview } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview'
 import { usePositionPreviewActions } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/actions/usePositionPreviewActions'
-import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

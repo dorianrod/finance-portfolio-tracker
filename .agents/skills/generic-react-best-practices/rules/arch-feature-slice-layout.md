@@ -63,4 +63,16 @@ When extracting a feature, inspect transformations, validation, API orchestratio
 
 Static imports may not prove consumers when application composition passes common inputs as props. Inspect the actual inputs and record the capability evidence instead of inventing imports or treating application wrappers as features. Proven exclusive ownership remains a violation; uncertainty requests review rather than establishing a new exemption. Follow `arch-shared-no-domain-knowledge` for nearest-owner placement and evidence of sharing.
 
+### ESLint Enforcement
+
+Enable `local/feature-folder-layout` at error level for parent/leaf folder shape
+and the feature-depth contract in `arch-feature-hierarchy`. Check authored file
+paths even when a misplaced file has no imports. Resolve business scopes before
+interpreting role folders; names alone do not establish their position in the
+hierarchy. Enforce dependency direction and shared-consumer evidence through the
+checks owned by `arch-transverse-only-imports` and `arch-shared-no-domain-knowledge`.
+Verify invalid parent/leaf layouts and valid neighboring layouts through the
+consuming configuration. Choosing the capability, parent and nearest owner remains
+a semantic decision before a coordinated move (`arch-domain-first-layout`).
+
 See also: `arch-business-capability-boundaries`, `arch-feature-hierarchy`

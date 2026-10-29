@@ -20,11 +20,9 @@ export function historicalSnapshotsByParent(
       capturedAt: first.capturedAt,
       holdings,
     }
-    for (const key of [
-      first.parentIsin,
-      first.parentTicker,
-      first.parentName,
-    ].filter(Boolean)) {
+    for (const key of new Set(
+      [first.parentIsin, first.parentTicker, first.parentName].filter(Boolean),
+    )) {
       const current = byParent.get(key) ?? []
       current.push(snapshot)
       byParent.set(key, current)

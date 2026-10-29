@@ -1,7 +1,8 @@
 import { statSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-import { featureScopes } from './business-ownership.js'
+import { isProductionSource } from './ast-bindings.js'
+import { businessScopes, featureScopes } from './business-ownership.js'
 
 export default {
   meta: {
@@ -24,6 +25,8 @@ export default {
         'Feature "{{feature}}" has no features/ folder: keep "{{folder}}/" directly inside the feature instead of shared/. [arch-feature-slice-layout]',
       featureDepth:
         'Feature "{{feature}}" exceeds the maximum of {{max}} feature levels below a domain. Review its business owner. [arch-feature-hierarchy]',
+      presenterScope:
+        'Keep presenters within an owning component or page. Domain, feature and scoped shared helpers must return UI-agnostic data. [arch-no-visual-logic-below-page]',
     },
   },
   create(context) {
@@ -33,6 +36,17 @@ export default {
     const sourceRoot = filename.slice(0, marker + '/src/'.length)
     const source = filename.slice(sourceRoot.length)
     const violations = []
+    const owner = businessScopes(source).at(-1)
+    if (isProductionSource(filename) && owner) {
+      const roles = source.slice(owner.length + 1).split('/')
+      if (roles[0] === 'shared') roles.shift()
+      if (
+        /(?:^|\/)helpers\/presenters\//u.test(roles.join('/')) &&
+        roles[0] !== 'components' &&
+        roles[0] !== 'pages'
+      )
+        violations.push({ messageId: 'presenterScope' })
+    }
     const scopes = featureScopes(source)
     const max = context.options[0]?.maxFeatureDepth ?? 2
     if (scopes.length > max)

@@ -60,4 +60,28 @@ src/shared/                                # generic code with no business knowl
 
 Create only the role folders you need inside each feature or scoped `shared/` folder. Import across folders through one path alias (`@/` → `src/`) and reject deep relative paths (`../../*`) with ESLint; keep `./` for colocated files.
 
+### Enforcement and coordinated renames
+
+Treat observable filename and folder conventions as deterministic enforcement
+requirements during ordinary changes as well as audits. Use the owning rules:
+`arch-component-roles` for component suffixes and runtime role boundaries,
+`arch-component-module-boundaries` for component support modules,
+`arch-feature-slice-layout` and `arch-feature-hierarchy` for folder shape and depth,
+and `arch-stores-no-index` for store filenames. Import direction is governed by
+`arch-transverse-only-imports` and `arch-shared-no-domain-knowledge`.
+
+Inspect the consuming application's effective configuration and the detector's
+analysis limits. Prefer an existing check; implement or strengthen generic
+enforcement for an uncovered deterministic convention. Prove a rejected example
+and a valid neighbor through that configuration, including aliases or indirection
+when relevant. Business capability names, actual shared ownership and the choice
+between view and feature require the responsibility reviews in their owning rules.
+
+Coordinate file moves through IDE refactoring or a codemod. Update static imports,
+reexports, literal dynamic imports and affected tests and stories, then run the
+relevant lint, type and behavior checks. ESLint rules report violations and may
+offer safe edits within the inspected file; they must not rename files or mutate
+other files from rule visitors. Preserve the declared responsibility when only
+normalizing a filename, and reassess ownership before changing its folder or role.
+
 See also: `arch-feature-slice-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`

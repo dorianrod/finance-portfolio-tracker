@@ -68,7 +68,7 @@ function assetKey(op: RawOperation): string {
 // has no single account/account_type to show, which drops it out of
 // per-account filters and mislabels it as "Other" in type breakdowns.
 function positionKey(asset: string, account: string): string {
-  return `${asset}|${account}`
+  return JSON.stringify([asset, account])
 }
 
 function buildOperationRows(

@@ -36,8 +36,8 @@ describe('component-role', () => {
   it.each([
     './services/useIndeterminateInput',
     '@/shared/ui/services/useIndeterminateInput',
-    './stores/disclosureInputAtom',
-    '@/shared/ui/stores/disclosureInputAtom',
+    './stores/disclosureInput.atoms',
+    '@/shared/ui/stores/disclosureInput.atoms',
     'jotai',
     'jotai/utils',
   ])('allows shared UI to own its behavior service %s', (source) => {

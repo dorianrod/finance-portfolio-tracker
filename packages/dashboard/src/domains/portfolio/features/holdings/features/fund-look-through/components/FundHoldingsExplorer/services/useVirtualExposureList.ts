@@ -17,7 +17,7 @@ export function useVirtualExposureList(rows: ExposureRow[]) {
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [])
+  }, [rows.length])
 
   const virtualizer = useWindowVirtualizer({
     count: rows.length,

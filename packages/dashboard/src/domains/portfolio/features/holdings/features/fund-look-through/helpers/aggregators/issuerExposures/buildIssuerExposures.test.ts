@@ -5,6 +5,23 @@ import { makeIssuerHolding as holding } from '@/domains/portfolio/features/holdi
 import { makeIssuerPosition as position } from '@/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerPosition.mock'
 
 describe('buildIssuerExposures', () => {
+  it('counts partial exposure once when the fund uses the same ISIN and ticker', () => {
+    const exposures = buildIssuerExposures(
+      [
+        position({
+          isin: 'FUND',
+          ticker: 'FUND',
+          name: 'World ETF',
+          total_value: 1_000,
+        }),
+      ],
+      [holding({ parentIsin: 'FUND', parentTicker: 'FUND', weight: 0.1 })],
+    )
+
+    expect(exposures).toHaveLength(1)
+    expect(exposures[0]).toMatchObject({ value: 100, weight: 10 })
+  })
+
   it.each(['Direct', '__proto__', 'constructor'])(
     'keeps the fund %s separate from direct holdings',
     (fundName) => {

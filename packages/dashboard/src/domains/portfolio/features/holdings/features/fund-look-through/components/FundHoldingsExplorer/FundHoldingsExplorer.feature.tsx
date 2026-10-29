@@ -1,3 +1,4 @@
+import { FundExposureNotice } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureNotice.view'
 import { useFundExposureViewModel } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel'
 import { useVirtualExposureList } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
@@ -16,6 +17,17 @@ export function FundHoldingsExplorer({
 }) {
   const model = useFundExposureViewModel(positions, holdings)
   const list = useVirtualExposureList(model.rows)
+  if (model.totalIssuerCount === 0)
+    return (
+      <FundExposureNotice applicable>
+        <ScopedInfoTooltip
+          text={i18n.t(
+            'ui.fundlookthroughtab.unresolvedCompositePositionsRemainListedWithTheirMonetaryImpact',
+          )}
+          scope={{ account: 'filterable', period: 'as-of' }}
+        />
+      </FundExposureNotice>
+    )
   return (
     <FundHoldingsExplorerView model={model} list={list}>
       <ScopedInfoTooltip

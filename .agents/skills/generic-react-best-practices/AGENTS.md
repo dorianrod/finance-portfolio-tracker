@@ -207,6 +207,14 @@ Shared UI views may use their own UI behavior services/stores, including Jotai f
 
 ### ESLint enforcement and review inventory
 
+For eligible production component modules, `local/component-role` must report a
+missing `.view.tsx`, `.state.tsx` or `.feature.tsx` suffix, in addition to checking
+runtime boundaries. The suffix declares the module's role; the exported component
+may keep its business name, such as `OrderPanel`. Exercise an unclassified module
+and a valid classified neighbor, preserving the documented entrypoint, test and
+Storybook exceptions. Choosing the role still requires inspecting responsibility;
+a filename-only autofix cannot establish it.
+
 Enable `local/component-role` at error level. Check runtime imports, reexports and literal dynamic imports using resolved module paths, including configured aliases, extensionless imports and local reexport modules. Ignore erased type-only edges. Follow local runtime dependencies through indirection to detect hidden feature/state/API/store/service dependencies; report the path. Another classified view owns its own enforcement, and shared UI owns its primitive behavior boundary. Pure business classifications inside a label formatter do not by themselves introduce shared state or orchestration.
 
 Reject features proven to contain only presentation, formatting and local React UI state. Keep feature composition valid. Resolve imported aliases and stable local bindings; a shadowed binding or opaque custom call is not proof of business ownership or of its absence. Verify the checks against the consuming project's actual configuration, including aliases, dynamic imports, a reexport chain, type-only neighbors and cycles.
@@ -408,6 +416,30 @@ src/shared/                                # generic code with no business knowl
 
 Create only the role folders you need inside each feature or scoped `shared/` folder. Import across folders through one path alias (`@/` → `src/`) and reject deep relative paths (`../../*`) with ESLint; keep `./` for colocated files.
 
+### Enforcement and coordinated renames
+
+Treat observable filename and folder conventions as deterministic enforcement
+requirements during ordinary changes as well as audits. Use the owning rules:
+`arch-component-roles` for component suffixes and runtime role boundaries,
+`arch-component-module-boundaries` for component support modules,
+`arch-feature-slice-layout` and `arch-feature-hierarchy` for folder shape and depth,
+and `arch-stores-no-index` for store filenames. Import direction is governed by
+`arch-transverse-only-imports` and `arch-shared-no-domain-knowledge`.
+
+Inspect the consuming application's effective configuration and the detector's
+analysis limits. Prefer an existing check; implement or strengthen generic
+enforcement for an uncovered deterministic convention. Prove a rejected example
+and a valid neighbor through that configuration, including aliases or indirection
+when relevant. Business capability names, actual shared ownership and the choice
+between view and feature require the responsibility reviews in their owning rules.
+
+Coordinate file moves through IDE refactoring or a codemod. Update static imports,
+reexports, literal dynamic imports and affected tests and stories, then run the
+relevant lint, type and behavior checks. ESLint rules report violations and may
+offer safe edits within the inspected file; they must not rename files or mutate
+other files from rule visitors. Preserve the declared responsibility when only
+normalizing a filename, and reassess ownership before changing its folder or role.
+
 See also: `arch-feature-slice-layout`, `arch-shared-no-domain-knowledge`, `arch-subdomain-decision`
 
 ### 1.3 Import Other Domains Only Through Transverse Domains
@@ -554,6 +586,18 @@ See also: `arch-domain-first-layout`, `arch-shared-no-domain-knowledge`, `arch-s
 When extracting a feature, inspect transformations, validation, API orchestration, business predicates, types and interaction state, including code hidden in parent hooks and broad service modules. Move every child-specific result with the child. Parents may load genuine common inputs and coordinate application composition; reuse cached ancestor-owned sources rather than duplicating requests to give folders an appearance of independence.
 
 Static imports may not prove consumers when application composition passes common inputs as props. Inspect the actual inputs and record the capability evidence instead of inventing imports or treating application wrappers as features. Proven exclusive ownership remains a violation; uncertainty requests review rather than establishing a new exemption. Follow `arch-shared-no-domain-knowledge` for nearest-owner placement and evidence of sharing.
+
+### ESLint Enforcement
+
+Enable `local/feature-folder-layout` at error level for parent/leaf folder shape
+and the feature-depth contract in `arch-feature-hierarchy`. Check authored file
+paths even when a misplaced file has no imports. Resolve business scopes before
+interpreting role folders; names alone do not establish their position in the
+hierarchy. Enforce dependency direction and shared-consumer evidence through the
+checks owned by `arch-transverse-only-imports` and `arch-shared-no-domain-knowledge`.
+Verify invalid parent/leaf layouts and valid neighboring layouts through the
+consuming configuration. Choosing the capability, parent and nearest owner remains
+a semantic decision before a coordinated move (`arch-domain-first-layout`).
 
 See also: `arch-business-capability-boundaries`, `arch-feature-hierarchy`
 
@@ -1131,6 +1175,18 @@ See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-
 
 ### ESLint Enforcement
 
+Enable `local/feature-folder-layout` at error level to reject production domain
+`helpers/presenters/` outside component or page ownership. Resolve the domain,
+sub-domain, feature and scoped shared boundary before interpreting role folders:
+a business scope named `components`, or a `components/` folder inside another
+helper, does not establish UI ownership. Keep application-wide infrastructure
+outside this domain-specific path check. Exercise an invalid reusable presenter
+and valid component/page neighbors through the consuming configuration.
+
+This checks declared placement, not the meaning of an arbitrary function. Review
+CSS, tones and geometry hidden in other helper categories manually; renaming a
+presenter to bypass the path check does not make its result UI-agnostic.
+
 Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject direct and indirect value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
 Apply the same dependency check to domain `helpers/calculators/` and `helpers/aggregators/`, including component- and page-owned helpers. Calculations and aggregations return quantitative values, grouped records and semantic identifiers; a formatter translates their labels at display time. Do not use translated labels as aggregation keys: a source can have the same name as a synthetic group. Keep source identity separate from display labels. Component ownership does not turn translation into a calculation or aggregation. Verify an aliased translation import, a rejected reexport or dynamic import, and neighboring valid numeric calculations and aggregations through the application's configuration.
@@ -1149,6 +1205,15 @@ Give each file one concern and a name that says it:
 
 - `<concern>.atoms.ts` for feature and page atoms: `filters.atoms.ts`, `selection.atoms.ts`, `form.atoms.ts`, or a feature name (`reminderModal.atoms.ts`). Never a generic `atoms.ts` / `state.ts` mixing filters, selection, modals and tabs.
 - `<name>.store.ts` for app-level stores (session, user, flags) and for shared modules that pair a factory with its hook.
+
+The module suffix and exported identifier have separate roles. For example,
+`stores/orderFilters.atoms.ts` may export `orderFiltersAtom`:
+`orderFiltersAtom.ts` does not follow the module convention. A shorter concern
+name such as `filters.atoms.ts` is valid when the owning folder supplies the
+business scope. Do not require the filename to repeat the exported `Atom` suffix.
+Apply the same module convention to generic atom modules owned by shared UI.
+Keep exported identifier conventions in `state-atom-naming` and decide the owning
+scope through `state-domain-vs-page-location`.
 
 **Incorrect (barrel re-export):**
 
@@ -1175,7 +1240,28 @@ import { selectedOrderIdsAtom } from '@/domains/sales/orders/features/list/store
 
 Audit: `find src/domains -path "*stores*" -name index.ts` must return nothing. Detect cycles with a circular-dependency checker in CI.
 
-See also: `quality-single-public-export`
+Resolve the application's configured aliases and follow synchronous value imports
+and reexports. Erased type-only edges and deferred dynamic imports do not create
+synchronous initialization cycles. Exercise a real aliased cycle, an acyclic
+neighbor and type-only/deferred edges, then run the check against production
+source in CI. This graph check does not prove that deferred module loading is
+deadlock-free or that every business dependency has the correct owner.
+
+### ESLint Enforcement
+
+Enable `local/atom-contract` at error level to check production variable exports
+initialized directly by resolved Jotai `atom` or `atomWithStorage` constructors,
+including aliases and separate export lists. Require a concern-owned module
+under `stores/` ending in `.atoms.ts` or `.store.ts`. Keep private per-instance
+atoms and factory implementations under their existing stability contract.
+Custom factory outputs and opaque wrappers still require ownership review.
+
+Verify a rejected legacy filename and valid `.atoms.ts` and `.store.ts` neighbors
+through the consuming configuration. Use coordinated refactoring to rename files
+and update their consumers as described by `arch-domain-first-layout`; the lint
+diagnostic does not itself perform that migration.
+
+See also: `quality-single-public-export`, `state-atom-naming`, `state-domain-vs-page-location`
 
 ### 1.16 Review Component Complexity Before Splitting
 
@@ -3852,7 +3938,7 @@ Jotai holds client-only shared state (filters, selection, edit modes, tabs). Reu
 
 **Impact: MEDIUM-HIGH (prevents state reset on every render)**
 
-An atom's identity is its state key: calling `atom()` or an atom factory inside a component or hook body creates a new atom on every render, so the edit mode, selection or filters reset immediately and every effect depending on the atom re-runs. Declare atoms and factory bundles once, at module scope, in a `stores/*.atoms.ts` file.
+An atom's identity is its state key: calling `atom()` or an atom factory inside a component or hook body creates a new atom on every render, so the edit mode, selection or filters reset immediately and every effect depending on the atom re-runs. Declare atoms and factory bundles once, at module scope, in a concern-owned `stores/*.atoms.ts` or `stores/*.store.ts` module according to `arch-stores-no-index`. Exported identifiers follow `state-atom-naming`.
 
 **Incorrect (new atom on each render):**
 
@@ -5421,6 +5507,12 @@ const SCALE = 100;
 - Tests, stories and Storybook support files, declaration files and tooling configurations are excluded.
 
 ### Safe Reordering
+
+Keep imports at the start after headers and directives. A trailing import must
+not hide earlier private declarations from the ordering check: report the late
+import and review its move before ordering the public API. Verify a rejected
+late type import and a valid import-first neighbor through the consuming
+configuration.
 
 Preserve initialization order when moving declarations. Hoisted functions may move across erased or hoisted declarations; function-valued initializers and classes must retain their runtime dependencies. Keep attached documentation and overload groups together, and preserve the relative order of the remaining code. Report an unsafe move for manual refactoring instead of introducing a temporal dead zone or crossing a lint suppression.
 

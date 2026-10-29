@@ -2,7 +2,7 @@ import { ScopeProvider } from 'jotai-scope'
 import { useState } from 'react'
 
 import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
-import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
+import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizon.atoms'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   ContributionHorizon,

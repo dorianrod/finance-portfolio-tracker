@@ -2,7 +2,7 @@ import { useAtom } from 'jotai'
 import { useMemo } from 'react'
 
 import { resolveContributionHorizon } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/resolveContributionHorizon'
-import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizonAtom'
+import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizon.atoms'
 
 export function useContributionHorizon({
   sinceTracking,

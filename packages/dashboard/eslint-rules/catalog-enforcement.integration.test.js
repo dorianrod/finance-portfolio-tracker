@@ -20,7 +20,7 @@ const cases = [
     invalid:
       "import text from '@/i18n/i18n'; const label = text.t; export function Field({value}: {value: string}) {return <span>{Boolean(value) ? label('ui.app.loading') : null}</span>}",
     valid:
-      "import text from '@/i18n/i18n'; import {useAtomValue} from 'jotai'; import {dashboardFiltersOpenAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpenAtom'; export function Field() {const open = useAtomValue(dashboardFiltersOpenAtom);return <span>{open ? text.t('ui.app.loading') : null}</span>}",
+      "import text from '@/i18n/i18n'; import {useAtomValue} from 'jotai'; import {dashboardFiltersOpenAtom} from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'; export function Field() {const open = useAtomValue(dashboardFiltersOpenAtom);return <span>{open ? text.t('ui.app.loading') : null}</span>}",
   },
   {
     rule: 'component-role',
@@ -164,6 +164,15 @@ const cases = [
     invalid: "const FALLBACK = '';export function read() {return FALLBACK}",
     valid: "export function read() {return FALLBACK} const FALLBACK = ''",
   },
+  {
+    rule: 'public-api-first',
+    file: helper,
+    message: 'importsFirst',
+    invalid:
+      "export function read() {return 1} import type {PositionRow} from '@/domains/portfolio/shared/types/positionRow.type'",
+    valid:
+      "import type {PositionRow} from '@/domains/portfolio/shared/types/positionRow.type'; export function read(row: PositionRow) {return row.name}",
+  },
 ]
 
 async function diagnostics(rule, code, file = feature) {
@@ -176,6 +185,35 @@ async function diagnostics(rule, code, file = feature) {
 }
 
 describe('catalog guards through the actual project configuration', () => {
+  it('requires ref props instead of importing the React 19 forwardRef wrapper', async () => {
+    const [result] = await eslint.lintText(
+      "import {forwardRef as wrap} from 'react'; export const Field = wrap(() => null)",
+      { filePath: resolve(directory, view) },
+    )
+    expect(result.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: 'no-restricted-imports',
+          severity: 2,
+          message: expect.stringContaining('React 19'),
+        }),
+      ]),
+    )
+  }, 30_000)
+
+  it('preserves typed ref props in React 19 components', async () => {
+    const [result] = await eslint.lintText(
+      "import type {Ref} from 'react'; export function Field({ref}: {ref?: Ref<HTMLInputElement>}) {return <input ref={ref}/>}",
+      { filePath: resolve(directory, view) },
+    )
+    expect(
+      result.messages.filter(
+        (message) =>
+          message.fatal || message.ruleId === 'no-restricted-imports',
+      ),
+    ).toEqual([])
+  }, 30_000)
+
   it.each(cases)(
     'rejects the invalid $rule example with its own error',
     async ({ rule, file, invalid, message }) => {

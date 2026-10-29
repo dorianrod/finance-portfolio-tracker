@@ -14,7 +14,7 @@ import { useScopedInput } from '@/shared/ui/services/useScopedInput'
 import {
   type BarAppearance,
   barAppearanceAtom,
-} from '@/shared/ui/stores/barAppearanceAtom'
+} from '@/shared/ui/stores/barAppearance.atoms'
 
 import { partitionChartSlot } from './chartSlots'
 

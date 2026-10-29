@@ -4,7 +4,7 @@ import { createStore, Provider, useAtomValue } from 'jotai'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { dashboardThemeAtom } from '@/app/stores/theme/dashboardThemeAtom'
+import { dashboardThemeAtom } from '@/app/stores/theme/dashboardTheme.store'
 import { DEFAULT_DASHBOARD_THEME } from '@/app/stores/theme/defaultDashboardTheme'
 import { THEME_STORAGE_KEY } from '@/app/stores/theme/themeStorageKey'
 

@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 
 import { useDashboardTheme } from '@/app/services/theme/useDashboardTheme'
 import { useDashboardThemeSync } from '@/app/services/theme/useDashboardThemeSync'
-import { dashboardThemeAtom } from '@/app/stores/theme/dashboardThemeAtom'
+import { dashboardThemeAtom } from '@/app/stores/theme/dashboardTheme.store'
 import i18n from '@/i18n/i18n'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Text } from '@/shared/ui/Text.view'

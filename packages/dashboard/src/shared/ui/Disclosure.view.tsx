@@ -5,7 +5,7 @@ import { type HTMLAttributes, type ReactNode, useId, useMemo } from 'react'
 import { Button } from '@/shared/ui/controls/Button.view'
 import type { ButtonProps } from '@/shared/ui/controls/controls.types'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
-import { disclosureInputAtom } from '@/shared/ui/stores/disclosureInputAtom'
+import { disclosureInputAtom } from '@/shared/ui/stores/disclosureInput.atoms'
 import { SURFACE_VARIANTS } from '@/shared/ui/surfaceAppearance/surfaceVariants'
 
 import type { ControlProps } from './controlProps'

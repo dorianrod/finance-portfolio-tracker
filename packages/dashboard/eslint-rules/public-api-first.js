@@ -142,11 +142,29 @@ export default {
     messages: {
       first:
         'Place the exported function or component after imports and module directives, before types, constants and private declarations. Automatic moves are offered only when initialization order is preserved. [quality-public-api-first]',
+      importsFirst:
+        'Keep imports before module declarations so a trailing import cannot hide the public API ordering. [quality-public-api-first]',
     },
   },
   create(context) {
     return {
       'Program:exit'(program) {
+        let declarationsStarted = false
+        let lateImports = false
+        for (const statement of program.body) {
+          if (statement.type === 'ImportDeclaration') {
+            if (declarationsStarted) {
+              context.report({ node: statement, messageId: 'importsFirst' })
+              lateImports = true
+            }
+          } else if (
+            !statement.directive &&
+            statement.type !== 'EmptyStatement'
+          ) {
+            declarationsStarted = true
+          }
+        }
+        if (lateImports) return
         const groups = []
         const seen = new Set()
         for (const { declarations } of getPublicExports(

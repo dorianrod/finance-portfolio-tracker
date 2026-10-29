@@ -6,7 +6,7 @@ import { ScopeProvider } from 'jotai-scope'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { makePositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/mocks/positionPreviewSelection.mock'
-import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreviewAtom'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms'
 
 import { usePositionPreviewActions } from './usePositionPreviewActions'
 

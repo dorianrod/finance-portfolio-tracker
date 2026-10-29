@@ -19,8 +19,11 @@ describe('data quality dimension labels', () => {
     expect(result.current(dimension)).toBe(expected)
   })
 
-  it.each([null, undefined])('supports the caller fallback for %s', (dimension) => {
-    const { result } = renderHook(useFormatDataQualityDimension)
-    expect(result.current(dimension, { fallback: '' })).toBe('')
-  })
+  it.each([null, undefined])(
+    'supports the caller fallback for %s',
+    (dimension) => {
+      const { result } = renderHook(useFormatDataQualityDimension)
+      expect(result.current(dimension, { fallback: '' })).toBe('')
+    },
+  )
 })

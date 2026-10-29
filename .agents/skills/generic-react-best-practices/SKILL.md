@@ -67,6 +67,19 @@ Several rules describe the target standard, not the current state of every file.
 2. Read those files and confirm applicability and exceptions before applying them. Do not load the entire compiled guide for a focused task.
 3. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
 
+### File naming and folder normalization
+
+Apply the naming and placement conventions when creating or moving code. Read the owning rules for their contracts, exceptions and enforcement limits:
+
+| Concern | Owning rules |
+| --- | --- |
+| Component roles and `.view.tsx`, `.feature.tsx`, `.state.tsx` suffixes | [Component roles](rules/arch-component-roles.md), [component support modules](rules/arch-component-module-boundaries.md) |
+| Domains, features, parent/leaf folders and scoped `shared/` | [Domain layout](rules/arch-domain-first-layout.md), [feature slices](rules/arch-feature-slice-layout.md), [feature hierarchy](rules/arch-feature-hierarchy.md) |
+| `stores/<concern>.atoms.ts`, `<name>.store.ts` and exported `Atom`/`Atoms` names | [Store modules](rules/arch-stores-no-index.md), [atom identifiers](rules/state-atom-naming.md) |
+| Helper, entity and API-hook filenames and placement | [Helper categories](rules/helpers-categories.md), [entity files](rules/types-file-per-entity.md), [API naming](rules/api-naming.md) |
+
+Mechanically observable conventions require deterministic checks in the consuming application. Verify the effective ESLint configuration with invalid and valid neighboring examples; a convention written in this skill does not install its detector. Keep business ownership and component-role decisions under semantic review. Follow [layout enforcement and coordinated renames](rules/arch-domain-first-layout.md#enforcement-and-coordinated-renames) when normalizing files.
+
 ### Audits
 
 Every audit covers these activities within its stated scope:

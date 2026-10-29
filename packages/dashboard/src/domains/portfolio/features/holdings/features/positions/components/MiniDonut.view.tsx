@@ -1,4 +1,3 @@
-import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import {
   Pie,
   PieChart,
@@ -7,9 +6,10 @@ import {
   Tooltip,
 } from 'recharts'
 
+import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
-import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
 import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData'
+import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -86,7 +86,8 @@ function MiniDonutLegendItem({
     <Text variant="tiny" tone="muted">
       <Inline as="span" align="center" gap="compact">
         <AllocationCategory.Swatch
-          category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1}
+          category={entry.name}
+          aggregate={(entry.subItems?.length ?? 0) > 1}
           shape="dot"
           size="default"
         />
@@ -101,5 +102,11 @@ function MiniDonutSector(
 ) {
   const entry = shapeProps.payload
   if (!entry) return null
-  return <AllocationCategory.Sector geometry={shapeProps} category={entry.name} aggregate={(entry.subItems?.length ?? 0) > 1} />
+  return (
+    <AllocationCategory.Sector
+      geometry={shapeProps}
+      category={entry.name}
+      aggregate={(entry.subItems?.length ?? 0) > 1}
+    />
+  )
 }

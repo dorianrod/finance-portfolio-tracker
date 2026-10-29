@@ -2,7 +2,10 @@ import { ValidationError } from 'yup'
 
 import { HttpError } from '@/shared/http/httpError'
 import { isNetworkError } from '@/shared/http/isNetworkError'
-import type { RequestError, RequestErrorCode } from '@/shared/types/requestError.type'
+import type {
+  RequestError,
+  RequestErrorCode,
+} from '@/shared/types/requestError.type'
 
 export function normalizeRequestError(error: unknown): RequestError {
   if (error instanceof ValidationError || error instanceof SyntaxError)
