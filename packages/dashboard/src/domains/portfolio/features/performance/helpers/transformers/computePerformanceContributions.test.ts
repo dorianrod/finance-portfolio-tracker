@@ -1,58 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
+import { operation } from '@/domains/portfolio/features/performance/mocks/contributionOperation.mock'
+import { position } from '@/domains/portfolio/features/performance/mocks/contributionPosition.mock'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix'
-import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { computePerformanceContributions } from './computePerformanceContributions'
-
-function position(overrides: Partial<RawPosition>): RawPosition {
-  return {
-    snapshot_date: new Date('2021-01-31'),
-    account: 'acc1',
-    account_type: 'Bourse',
-    account_category: 'brokerage',
-    isin: 'FR0000000001',
-    ticker: 'AAA',
-    name: 'Asset A',
-    quantity: 10,
-    avg_buy_price: 100,
-    last_price: 101,
-    total_value: 1010,
-    unrealized_gain: 10,
-    unrealized_gain_pct: 1,
-    realized_gain: 0,
-    total_dividends: 0,
-    total_dividends_net: 0,
-    total_interest: 0,
-    total_interest_net: 0,
-    tax_rate: 0.3,
-    unrealized_gain_net: 7,
-    realized_gain_net: 0,
-    xirr: 1,
-    xirr_rolling_3y: 0,
-    xirr_rolling_period_years: 0,
-    total_return_pct: 1,
-    ...overrides,
-  }
-}
-
-function operation(overrides: Partial<RawOperation>): RawOperation {
-  return {
-    date: new Date('2023-01-01'),
-    account: 'acc1',
-    isin: 'FR0000000001',
-    ticker: 'AAA',
-    name: 'Asset A',
-    operation_type: 'SELL',
-    quantity: 1,
-    price_per_unit: 100,
-    total_amount: 100,
-    currency: 'EUR',
-    realized_gain: 20,
-    ...overrides,
-  }
-}
 
 const noFilters = {
   accounts: new Set<string>(),

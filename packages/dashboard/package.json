@@ -18,6 +18,8 @@
     "test": "vitest run && npm run test:skill",
     "audit:architecture": "react-best-practices-architecture",
     "audit:cycles": "react-best-practices-cycles --project tsconfig.app.json",
+    "audit:colocation": "react-best-practices-test-colocation",
+    "audit:metrics": "react-best-practices-audit-metrics",
     "test:skill": "vitest run --config node_modules/@frontend-engineering/react-best-practices/vitest.config.mjs"
   },
   "dependencies": {

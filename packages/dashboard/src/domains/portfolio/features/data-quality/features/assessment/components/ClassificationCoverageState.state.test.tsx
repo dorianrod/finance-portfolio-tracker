@@ -3,6 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildClassificationViewState'
+import { makeAccountCoverage as fixtureAccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/accountCoverage.mock'
+import { makeDimensionCoverage as fixtureDimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/dimensionCoverage.mock'
 
 import { ClassificationCoverageState } from './ClassificationCoverageState.state'
 
@@ -29,22 +31,8 @@ describe('ClassificationCoverageState', () => {
   it('renders the allocation coverage card when ready', () => {
     const html = renderClassificationState({
       status: 'ready',
-      coverage: [
-        {
-          account: 'Brokerage',
-          allocated: 1_000,
-          unallocated: 0,
-          notApplicable: 0,
-        },
-      ],
-      dimensionCoverage: [
-        {
-          dimension: 'geo',
-          allocated: 1_000,
-          unallocated: 0,
-          issues: [],
-        },
-      ],
+      coverage: [fixtureAccountCoverage()],
+      dimensionCoverage: [fixtureDimensionCoverage()],
     })
 
     expect(html).toContain('Portfolio scope')

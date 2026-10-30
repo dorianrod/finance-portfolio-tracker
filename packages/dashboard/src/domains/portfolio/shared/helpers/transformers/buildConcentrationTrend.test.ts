@@ -3,61 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix'
 import { buildHistoricalConcentration } from '@/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalConcentration'
 import { buildHistoricalLookThroughConcentration } from '@/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalLookThroughConcentration'
-import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-function row(overrides: Partial<RawPosition> = {}): RawPosition {
-  return {
-    snapshot_date: new Date('2025-12-31'),
-    account: 'PEA',
-    account_type: 'Brokerage',
-    account_category: 'brokerage',
-    isin: 'ISIN-A',
-    ticker: 'AAA',
-    name: 'Asset A',
-    quantity: 1,
-    avg_buy_price: 100,
-    last_price: 100,
-    total_value: 100,
-    unrealized_gain: 0,
-    unrealized_gain_pct: 0,
-    realized_gain: 0,
-    total_dividends: 0,
-    total_dividends_net: 0,
-    total_interest: 0,
-    total_interest_net: 0,
-    tax_rate: 0,
-    unrealized_gain_net: 0,
-    realized_gain_net: 0,
-    xirr: 0,
-    xirr_rolling_3y: 0,
-    xirr_rolling_period_years: 0,
-    total_return_pct: 0,
-    ...overrides,
-  }
-}
-
-function historicalHolding(
-  overrides: Partial<HistoricalFundHolding> = {},
-): HistoricalFundHolding {
-  return {
-    parentIsin: 'ISIN-FUND',
-    parentTicker: '',
-    parentName: 'Example UCITS ETF',
-    holdingId: 'ISIN-UNDERLYING',
-    holdingName: 'Underlying Corp',
-    issuerId: 'ISSUER-UNDERLYING',
-    issuerName: 'Underlying Corp',
-    weight: 0.6,
-    sourceTier: 'A',
-    sourceName: 'Official provider',
-    holdingsDate: new Date('2025-01-31'),
-    effectiveDate: new Date('2025-01-31'),
-    historySnapshotId: '2025-01-31/ISIN-FUND/a',
-    capturedAt: new Date('2025-02-01T10:00:00Z'),
-    ...overrides,
-  }
-}
+import { historicalHolding } from '@/domains/portfolio/shared/mocks/historicalFundHolding.mock'
+import { row } from '@/domains/portfolio/shared/mocks/historicalPosition.mock'
 
 describe('buildHistoricalConcentration', () => {
   it('aggregates the same ISIN across accounts and ranks holdings', () => {

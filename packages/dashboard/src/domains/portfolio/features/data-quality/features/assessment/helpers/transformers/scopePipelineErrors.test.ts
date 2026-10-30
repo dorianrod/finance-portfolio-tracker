@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { scopePipelineErrors } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopePipelineErrors'
-import { pipelineError } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/pipelineError.mock'
+import { pipelineError } from '@/domains/portfolio/features/data-quality/shared/mocks/pipelineError.mock'
 import { baseFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import { position } from '@/domains/portfolio/shared/mocks/filteredPosition.mock'
 

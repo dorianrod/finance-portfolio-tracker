@@ -1,20 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
+import { makePortfolioHistoryPoint as fixturePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 import { buildUnrealizedPnlHistory } from './buildUnrealizedPnlHistory'
 
-const point: PortfolioHistoryPoint = {
-  date: new Date('2026-01-31'),
-  total_value: 100,
+const point: PortfolioHistoryPoint = fixturePortfolioHistoryPoint({
   total_cost_basis: 125,
   unrealized_gain: -25,
   net_cash_injected: 125,
-  cash_delta: null,
-  tri: null,
-  tri_rolling_1y: null,
-  tri_rolling_3y: null,
-}
+})
 
 describe('unrealized P&L history', () => {
   it('preserves losses and distinguishes the first snapshot from a zero change', () => {

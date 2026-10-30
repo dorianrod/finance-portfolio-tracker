@@ -2,65 +2,9 @@ import { describe, expect, it } from 'vitest'
 
 import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByAccount'
 import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByDimension'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
-import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
-
-function position(overrides: Partial<PositionRow>): PositionRow {
-  return {
-    kind: 'position',
-    account_category: null,
-    id: 'x',
-    name: 'Asset X',
-    ticker: 'XYZ',
-    isin: '',
-    account: 'acc1',
-    status: 'active',
-    operationTypes: new Set(),
-    quantity: 10,
-    last_price: 100,
-    total_value: 1000,
-    unrealized_gain: 0,
-    unrealized_gain_net: 0,
-    unrealized_gain_pct: 0,
-    realized_gain: 0,
-    realized_gain_net: 0,
-    tax_rate: 0,
-    total_dividends: 0,
-    total_dividends_net: 0,
-    total_interest: 0,
-    total_interest_net: 0,
-    total_realized_return: 0,
-    total_invested: 0,
-    total_return_pct: 0,
-    xirr: null,
-    xirr_rolling_3y: null,
-    xirr_rolling_period_years: null,
-    subRows: [],
-    ...overrides,
-  }
-}
-
-function isinRow(overrides: Partial<RawIsinRow>): RawIsinRow {
-  return {
-    snapshot_date: new Date('2026-09-30'),
-    isin: 'FR0000000000',
-    name: 'Fund',
-    values: { actions: 100 },
-    ...overrides,
-  }
-}
-
-function rawData(overrides: Partial<RawIsinData> = {}): RawIsinData {
-  return {
-    geo: [],
-    secteur: [],
-    currency: [],
-    classe: [],
-    loading: false,
-    ...overrides,
-  }
-}
+import { position } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/coveragePosition.mock'
+import { rawData } from '@/domains/portfolio/shared/mocks/rawIsinData.mock'
+import { isinRow } from '@/domains/portfolio/shared/mocks/rawIsinRow.mock'
 
 describe('computeAllocationCoverageByAccount', () => {
   it('splits allocated vs unallocated value by account', () => {

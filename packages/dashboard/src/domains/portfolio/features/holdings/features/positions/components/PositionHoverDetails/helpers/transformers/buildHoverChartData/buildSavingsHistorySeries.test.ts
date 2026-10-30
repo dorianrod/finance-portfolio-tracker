@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { makePositionHistoryPoint as fixtureHistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/mocks/positionHistoryPoint.mock'
 import type { HistoryPoint } from '@/domains/portfolio/features/holdings/features/positions/types/historyPoint.type'
 
 import { buildSavingsHistorySeries } from './buildSavingsHistorySeries'
@@ -22,20 +23,20 @@ describe('savings preview history', () => {
 
   it('uses snapshot changes instead of adding the operation fallback twice', () => {
     const history: HistoryPoint[] = [
-      {
+      fixtureHistoryPoint({
         date: new Date('2026-01-31'),
         value: 100.4,
         costBasis: 100,
         pct: null,
         last_price: 0,
-      },
-      {
+      }),
+      fixtureHistoryPoint({
         date: new Date('2026-02-28'),
         value: 74.6,
         costBasis: 75,
         pct: null,
         last_price: 0,
-      },
+      }),
     ]
     expect(
       buildSavingsHistorySeries(history, [

@@ -3,27 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { ANNUAL_INCOME_SAVINGS_SCHEMA } from '@/domains/portfolio/features/wealth/apis/schemas/annualIncomeSavingsSchema'
 import { analyseIncomePlacement } from '@/domains/portfolio/features/wealth/helpers/transformers/analyseIncomePlacement'
 import { filterAnnualIncomeSavingsByPeriod } from '@/domains/portfolio/features/wealth/helpers/transformers/filterAnnualIncomeSavingsByPeriod'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
-
-function point(
-  overrides: Partial<AnnualIncomeSavingsPoint>,
-): AnnualIncomeSavingsPoint {
-  return {
-    year: 2024,
-    incomeStatus: 'actual',
-    netSalary: 50000,
-    otherIncome: 10000,
-    totalIncome: 60000,
-    grossSalary: 75000,
-    placedSavings: 30000,
-    savingsThrough: new Date('2024-12-31'),
-    savingsStatus: 'complete',
-    placementRate: 50,
-    unplacedIncomeProxy: 30000,
-    comparable: true,
-    ...overrides,
-  }
-}
+import { point } from '@/domains/portfolio/features/wealth/mocks/completeAnnualIncomeSavings.mock'
 
 describe('mapAnnualIncomeSavings', () => {
   it('maps nullable values, statuses and booleans', () => {

@@ -17,8 +17,16 @@ A `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one 
 
 ```ts
 export const mockInvoices = [
-  { id: 'invoice-1', createdAt: new Date('2026-01-15T09:00:00.000Z'), status: 'DRAFT' },
-  { id: 'invoice-2', createdAt: new Date('2026-02-01T09:00:00.000Z'), status: 'PAID' },
+  {
+    id: 'invoice-1',
+    createdAt: new Date('2026-01-15T09:00:00.000Z'),
+    status: 'DRAFT',
+  },
+  {
+    id: 'invoice-2',
+    createdAt: new Date('2026-02-01T09:00:00.000Z'),
+    status: 'PAID',
+  },
 ] as Invoice[]
 ```
 
@@ -39,7 +47,11 @@ export const makeInvoice = (overrides: Partial<Invoice> = {}): Invoice => ({
 
 export const mockInvoices: Invoice[] = [
   makeInvoice(),
-  makeInvoice({ id: 'invoice-2', status: 'PAID', paidAt: new Date('2026-03-01T00:00:00.000Z') }),
+  makeInvoice({
+    id: 'invoice-2',
+    status: 'PAID',
+    paidAt: new Date('2026-03-01T00:00:00.000Z'),
+  }),
 ]
 ```
 
@@ -52,3 +64,41 @@ Enable `local/test-fixture-contract` at error level for tests and mock-data modu
 In `mocks/` and `*.mock.*`, reject the live clock (`new Date()`, `Date()`, `Date.now()`) and `Math.random()`, including immutable aliases. Keep controlled-clock assertions in tests valid. Fixed dates and explicitly seeded generators remain valid.
 
 The check does not prove unique IDs or fixture ownership, follow arbitrary factories or discover every nondeterministic source. Review those properties separately. It does not autofix missing fields, choose business defaults or invent dates.
+
+### Fixture ownership detection
+
+The configured `local/test-fixture-contract` check also rejects a statically
+recognizable complete defaults factory inside a test: an explicit return type
+resolves to a domain-owned `types/*.type.ts` entity, a direct returned object
+supplies its required base fields, and at most one optional-field override
+parameter is spread last. It follows imported entity aliases and supported union
+variants, and handles function declarations, expressions and arrow functions.
+
+**Incorrect (typed, deterministic defaults remain in a test):**
+
+```ts
+// order.test.ts
+import type { Order } from './domains/orders/types/order.type'
+function order(overrides: Partial<Order> = {}): Order {
+  return { id: 'order-1', amount: 100, ...overrides }
+}
+```
+
+**Correct (owning fixture plus test-specific overrides):**
+
+```ts
+// domains/orders/mocks/order.mock.ts
+export function order(overrides: Partial<Order> = {}): Order {
+  return { id: 'order-1', amount: 100, ...overrides }
+}
+// order.test.ts
+const sample = order({ amount: 200 })
+```
+
+The detector deliberately leaves expected assertion values, raw validation input,
+Partial arguments and existing-state updates alone. Inferred/opaque factories,
+multiple-statement builders, local support contracts and the nearest business
+owner need semantic review. An imported type or structural assignability alone
+does not prove a fixture. Inventory complete sample baselines and factories,
+including valid-looking typed ones, separately from cast/clock diagnostics.
+Do not mark placement reviewed merely because typing and determinism pass.

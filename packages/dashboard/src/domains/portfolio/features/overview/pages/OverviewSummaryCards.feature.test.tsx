@@ -2,59 +2,11 @@ import { createStore, Provider } from 'jotai'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
+import { metric } from '@/domains/portfolio/features/overview/mocks/comparedMetric.mock'
+import { comparison } from '@/domains/portfolio/features/overview/mocks/overviewComparison.mock'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
-
-const metric = (current: number | null, previous: number | null) => ({
-  current,
-  previous,
-  delta: current == null || previous == null ? null : current - previous,
-  deltaPct:
-    current == null || previous == null || previous === 0
-      ? null
-      : ((current - previous) / Math.abs(previous)) * 100,
-})
-
-function comparison(): OverviewComparison {
-  const concentration = {
-    current: {
-      date: new Date('2026-10-20'),
-      topHoldingPct: 24,
-      topFivePct: 62,
-      coveragePct: 88,
-      holdings: [
-        { key: 'A', label: 'AAA', name: 'Asset A', value: 240, weight: 24 },
-      ],
-    },
-    previous: {
-      date: new Date('2025-10-20'),
-      topHoldingPct: 26,
-      topFivePct: 65,
-      coveragePct: 86,
-      holdings: [
-        { key: 'A', label: 'AAA', name: 'Asset A', value: 260, weight: 26 },
-      ],
-    },
-    topHolding: metric(24, 26),
-    topFive: metric(62, 65),
-  }
-  return {
-    windows: {
-      current: { start: new Date('2025-10-21'), end: new Date('2026-10-20') },
-      previous: { start: new Date('2024-10-21'), end: new Date('2025-10-20') },
-      defaultedToTrailingYear: true,
-    },
-    value: metric(120_000, 100_000),
-    contributions: metric(15_000, 12_000),
-    marketPerformance: metric(5_000, 3_000),
-    passiveIncome: metric(800, 650),
-    valueHistory: [],
-    heldConcentration: concentration,
-    lookThroughConcentration: concentration,
-  }
-}
 
 describe('OverviewSummaryCards', () => {
   it.each<{

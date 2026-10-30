@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
 import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms'
+import { baseFilters as fixtureDashboardFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 
 import { useResetDashboardFilters } from './useResetDashboardFilters'
@@ -16,14 +17,16 @@ afterEach(cleanup)
 describe('reset dashboard filters', () => {
   it('clears portfolio and allocation selections together while retaining the display mode', () => {
     const store = createStore()
-    store.set(dashboardFiltersAtom, {
-      accounts: new Set(['broker']),
-      accountTypes: new Set(['PEA']),
-      operationTypes: new Set(['BUY'] as const),
-      hideClosedPositions: false,
-      dateFrom: new Date('2024-01-01'),
-      dateTo: new Date('2024-12-31'),
-    })
+    store.set(
+      dashboardFiltersAtom,
+      fixtureDashboardFilters({
+        accounts: new Set(['broker']),
+        accountTypes: new Set(['PEA']),
+        operationTypes: new Set(['BUY'] as const),
+        dateFrom: new Date('2024-01-01'),
+        dateTo: new Date('2024-12-31'),
+      }),
+    )
     store.set(dashboardDiversificationFilterAtom, {
       type: 'geo',
       value: 'France',

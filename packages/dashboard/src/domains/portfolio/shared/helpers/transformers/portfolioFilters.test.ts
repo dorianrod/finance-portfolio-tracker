@@ -4,17 +4,7 @@ import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/h
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/transformers/presetDateFrom'
 import { resetFilters } from '@/domains/portfolio/features/scope-selection/helpers/transformers/resetFilters'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/transformers/toggle'
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
-
-function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
-  return {
-    accountTypes: new Set(),
-    accounts: new Set(),
-    operationTypes: new Set(),
-    hideClosedPositions: true,
-    ...overrides,
-  }
-}
+import { filters } from '@/domains/portfolio/shared/mocks/hiddenClosedFilters.mock'
 
 describe('toggle', () => {
   it('adds a value not yet in the set, without mutating the original', () => {

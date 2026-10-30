@@ -144,3 +144,28 @@ This suite uses its own root and no application setup files. Keep integration
 tests that require actual application paths or dependencies with that application
 and run both suites in CI. Passing either suite, lint or scripts does not replace
 the catalog's required semantic review.
+
+## Audit colocation and metrics
+
+`test-colocated-tests` binds to `react-best-practices-test-colocation`. Capture
+`--root <application> --source src --snapshot` as an audit baseline before edits.
+Then run the same root/source with `--baseline <snapshot.json>` and optional
+`--provenance <reviews.json>`. Output is JSON; exit 1 means missing siblings or
+pending classifications; exit 2 means invalid/unavailable input. This checks
+presence for introduced contracts, not meaningful behavior coverage.
+
+Provenance is `{ "moves": [], "roles": [] }`. Each move names `from`, `to`,
+`previousSha256`, `sha256` and a review `reason`; changed bodies also need an
+explicit `sameContract: true` review. Leave a new/extracted contract out of the
+move map so it receives introduced-owner checks. Role reviews name an unresolved
+`file`, its current `sha256`, a reason and one supported role: component, hook,
+helper, service, store, type-only, fixture, story, support or asset. Stale, duplicate
+or unproven mappings fail validation. Reviews are semantic evidence, not arbitrary
+exemptions. Baseline and current snapshots must describe the same source root.
+
+The [audit metrics contract](audit-metrics.md) binds reporting to
+`react-best-practices-audit-metrics --input <metrics-input.json>`. It emits the
+fixed formula/version, all impact volumes, score and scope/coverage limits as
+JSON; invalid input exits 2. Keep application finding/rule inputs and snapshot
+outputs in its dossier. These report/check commands do not add catalog rules
+or replace the existing full-project lint warning gate.

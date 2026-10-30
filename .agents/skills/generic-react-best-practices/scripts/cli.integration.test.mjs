@@ -13,6 +13,48 @@ import { afterEach, expect, it } from 'vitest'
 
 const directories = []
 
+it('checks new-owner test presence through the packaged CLI', () => {
+  const root = project()
+  const baseline = run('check-test-colocation.mjs', root, ['--snapshot'])
+  expect(baseline.status, baseline.stderr).toBe(0)
+  const file = join(root, 'baseline.json')
+  writeFileSync(file, baseline.stdout)
+  writeFileSync(
+    join(root, 'src/Panel.view.tsx'),
+    'export function Panel() {return <div/>}',
+  )
+  const missing = run('check-test-colocation.mjs', root, ['--baseline', file])
+  expect(missing.status, missing.stderr).toBe(1)
+  expect(JSON.parse(missing.stdout).missing).toBe(1)
+  writeFileSync(join(root, 'src/Panel.view.test.tsx'), '')
+  expect(
+    run('check-test-colocation.mjs', root, ['--baseline', file]).status,
+  ).toBe(0)
+})
+
+it('fails unavailable colocation input and calculates metrics through the CLI', () => {
+  const root = project()
+  expect(run('check-test-colocation.mjs', root, []).status).toBe(2)
+  const file = join(root, 'metrics.json')
+  writeFileSync(
+    file,
+    JSON.stringify({
+      schemaVersion: 1,
+      scope: 'orders/full',
+      unreviewedExceptions: 0,
+      rules: [{ id: 'example', impact: 'HIGH', coverage: 'complete' }],
+      findings: [],
+    }),
+  )
+  const result = spawnSync(
+    process.execPath,
+    [resolve(import.meta.dirname, 'audit-metrics.mjs'), '--input', file],
+    { encoding: 'utf8' },
+  )
+  expect(result.status, result.stderr).toBe(0)
+  expect(JSON.parse(result.stdout).score).toBe(100)
+})
+
 afterEach(() => {
   for (const directory of directories.splice(0))
     rmSync(directory, { recursive: true, force: true })
@@ -27,6 +69,7 @@ function project() {
 
 function run(script, root, args) {
   const executable = join(root, 'tool.mjs')
+  rmSync(executable, { force: true })
   symlinkSync(resolve(import.meta.dirname, script), executable)
   return spawnSync(process.execPath, [executable, '--root', root, ...args], {
     encoding: 'utf8',

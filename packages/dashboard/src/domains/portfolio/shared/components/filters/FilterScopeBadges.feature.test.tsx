@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import { filters } from '@/domains/portfolio/shared/mocks/hiddenClosedFilters.mock'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
@@ -31,16 +32,6 @@ function render(
       </QueryClientProvider>
     </Provider>,
   )
-}
-
-function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
-  return {
-    accounts: new Set(),
-    accountTypes: new Set(),
-    operationTypes: new Set(),
-    hideClosedPositions: true,
-    ...overrides,
-  }
 }
 
 describe('FilterScopeBadges', () => {

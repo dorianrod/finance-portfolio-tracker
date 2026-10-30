@@ -2,104 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/computeFundExposurePercentages'
 import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData'
+import { makeFundCoverageReport as fixtureFundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/fundCoverageReport.mock'
 import { makeFundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/fundSnapshot.mock'
 import { makeFundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/fundUnresolved.mock'
+import { status } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/qualityFundStatus.mock'
+import { position } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/qualityPosition.mock'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 import { makeFundHolding } from '@/domains/portfolio/shared/mocks/fundHolding.mock'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-function position(overrides: Partial<PositionRow>): PositionRow {
-  return {
-    kind: 'position',
-    account_category: null,
-    id: 'position',
-    name: 'Asset',
-    ticker: '',
-    isin: '',
-    account: 'account',
-    status: 'active',
-    operationTypes: new Set(),
-    quantity: 1,
-    last_price: 1,
-    total_value: 0,
-    unrealized_gain: 0,
-    unrealized_gain_net: 0,
-    unrealized_gain_pct: 0,
-    realized_gain: 0,
-    realized_gain_net: 0,
-    tax_rate: 0,
-    total_dividends: 0,
-    total_dividends_net: 0,
-    total_interest: 0,
-    total_interest_net: 0,
-    total_realized_return: 0,
-    total_invested: 0,
-    total_return_pct: 0,
-    xirr: null,
-    xirr_rolling_3y: null,
-    xirr_rolling_period_years: null,
-    subRows: [],
-    ...overrides,
-  }
-}
-
-function status(overrides: Partial<FundHoldingStatus>): FundHoldingStatus {
-  return {
-    parentId: 'FUND',
-    parentIsin: 'FUND',
-    parentTicker: '',
-    parentName: 'World ETF',
-    qualityTier: 'A',
-    validationStatus: 'ok',
-    sourceName: 'Official',
-    sourceType: 'official',
-    sourceUrl: '',
-    indexName: '',
-    replicationMethod: '',
-    proxyName: '',
-    proxyIsin: '',
-    fetchedAt: null,
-    holdingsDate: null,
-    freshnessDays: 1,
-    isStale: false,
-    holdingCount: 10,
-    rawWeightSum: 1,
-    explainedPct: 90,
-    residualPct: 10,
-    marketValue: 1_000,
-    explainedValue: 900,
-    residualValue: 100,
-    refreshStreak: 2,
-    issues: '',
-    decompositionState: 'partial',
-    snapshotId: 'snapshot',
-    sourceOrigin: 'deterministic',
-    manualAttention: false,
-    checksumSha256: '',
-    ...overrides,
-  }
-}
-
-const report: FundCoverageReport = {
-  asOfDate: new Date('2026-10-18'),
-  portfolioValue: 2_000,
-  fundValue: 1_000,
-  directIdentifiedValue: 100,
-  opaqueValue: 900,
-  decomposedValue: 900,
-  highConfidenceExplainedValue: 900,
-  undisclosedFundValue: 100,
-  fundCoveragePct: 90,
-  portfolioCoveragePct: 50,
-  coverageGatePass: true,
-  topFundsGatePass: true,
-  exactProxyGatePass: true,
-  repeatabilityGatePass: true,
-  feasibilityStatus: 'passed',
-  fundCount: 1,
-  issueCount: 0,
-}
+const report: FundCoverageReport = fixtureFundCoverageReport()
 
 describe('scopeFundQualityData', () => {
   it('counts each position once when several identifiers match the same status', () => {

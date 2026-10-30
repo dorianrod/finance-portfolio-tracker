@@ -5,35 +5,30 @@ import { describe, expect, it } from 'vitest'
 
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dashboardQuality.atoms'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
+import { createManualPriceOverride as fixtureManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/mocks/manualPriceOverride.mock'
+import { pipelineError as fixturePipelineError } from '@/domains/portfolio/features/data-quality/shared/mocks/pipelineError.mock'
 
 import { DashboardDataQuality } from './DashboardDataQuality.feature'
 
 const INPUTS: DataQualityTabProps = {
   positions: [],
   errors: [
-    {
+    fixturePipelineError({
       source: 'prices',
       level: 'error',
-      type: 'missing_price',
-      date: null,
       account: 'broker',
       isin: 'ERROR_ASSET',
-      ticker: '',
       name: 'Missing price asset',
       message: 'Price unavailable for regression asset',
-    },
+    }),
   ],
   manualPriceOverrides: [
-    {
+    fixtureManualPriceOverride({
       name: 'Manual override asset',
       ticker: 'MANUAL',
-      isin: '',
       price: 42,
-      currency: 'EUR',
-      date_from: null,
-      date_to: null,
       source_file: 'prices.csv',
-    },
+    }),
   ],
   fundStatuses: [],
   fundReport: null,

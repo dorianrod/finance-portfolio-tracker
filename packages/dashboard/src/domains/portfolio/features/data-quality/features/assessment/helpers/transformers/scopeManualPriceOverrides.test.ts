@@ -1,20 +1,19 @@
 import { describe, expect, it } from 'vitest'
 
 import { scopeManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeManualPriceOverrides'
+import { createManualPriceOverride as fixtureManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/mocks/manualPriceOverride.mock'
 import { baseFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import { position } from '@/domains/portfolio/shared/mocks/filteredPosition.mock'
 
 describe('scopeManualPriceOverrides', () => {
-  const override = {
+  const override = fixtureManualPriceOverride({
     name: 'Asset',
     ticker: 'AAA',
     isin: 'FR1',
     price: 100,
-    currency: 'EUR',
     date_from: new Date('2025-01-01'),
-    date_to: null,
     source_file: 'manual.csv',
-  }
+  })
 
   it('matches selected-account assets and overlapping dates', () => {
     const result = scopeManualPriceOverrides(

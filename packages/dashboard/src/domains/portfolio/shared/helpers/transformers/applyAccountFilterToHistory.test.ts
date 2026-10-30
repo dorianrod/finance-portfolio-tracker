@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix'
+import { makePortfolioHistoryPoint as fixturePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
 import { rawRow } from '@/domains/portfolio/shared/mocks/rawPositionRow.mock'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
@@ -8,18 +9,15 @@ import { applyAccountFilterToHistory } from './applyAccountFilterToHistory'
 
 describe('applyAccountFilterToHistory', () => {
   const enrichedHistory: PortfolioHistoryPoint[] = [
-    {
+    fixturePortfolioHistoryPoint({
       date: new Date('2024-01-01'),
       total_value: 999,
       total_cost_basis: 999,
       unrealized_gain: 999,
       net_cash_injected: 0,
-      cash_delta: null,
       tri: 1.5,
-      tri_rolling_1y: null,
-      tri_rolling_3y: null,
       total_broker_cash: 50,
-    },
+    }),
   ]
 
   it('returns the precomputed history unchanged when no account filter is set', () => {

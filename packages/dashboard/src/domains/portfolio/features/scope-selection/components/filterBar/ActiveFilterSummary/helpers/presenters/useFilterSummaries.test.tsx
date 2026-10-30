@@ -3,21 +3,11 @@ import { cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
-import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
+import { filters } from '@/domains/portfolio/shared/mocks/hiddenClosedFilters.mock'
 
 import { useFilterSummaries } from './useFilterSummaries'
 
 afterEach(cleanup)
-
-function filters(overrides: Partial<DashboardFilters> = {}): DashboardFilters {
-  return {
-    accountTypes: new Set(),
-    accounts: new Set(),
-    operationTypes: new Set(),
-    hideClosedPositions: true,
-    ...overrides,
-  }
-}
 
 describe('useFilterSummaries', () => {
   it('summarizes account, period, and operation groups', () => {

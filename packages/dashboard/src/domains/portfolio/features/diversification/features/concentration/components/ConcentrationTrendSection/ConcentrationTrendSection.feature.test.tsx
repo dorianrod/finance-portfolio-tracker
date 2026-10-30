@@ -4,39 +4,15 @@ import { describe, expect, it } from 'vitest'
 import { ConcentrationTrendSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature'
 import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
 import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/shouldAnimateConcentration'
+import { createConcentrationHistoryPoint as fixtureHistoricalConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/mocks/concentrationHistoryPoint.mock'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 const points: HistoricalConcentrationPoint[] = [
-  {
+  fixtureHistoricalConcentrationPoint({
     date: new Date('2024-12-31'),
-    positionsTo25Pct: 1,
-    positionsTo50Pct: 1,
-    positionsTo75Pct: 2,
-    positionsTo90Pct: 2,
     effectiveCount: 1.92,
-    holdingCount: 2,
-    coveragePct: 100,
-    identifiedValue: 200,
-    undisclosedValue: 0,
-    opaqueValue: 0,
-    selectedValue: 200,
-    holdings: [],
-  },
-  {
-    date: new Date('2025-01-31'),
-    positionsTo25Pct: 1,
-    positionsTo50Pct: 1,
-    positionsTo75Pct: 2,
-    positionsTo90Pct: 2,
-    effectiveCount: 2,
-    holdingCount: 2,
-    coveragePct: 100,
-    identifiedValue: 200,
-    undisclosedValue: 0,
-    opaqueValue: 0,
-    selectedValue: 200,
-    holdings: [],
-  },
+  }),
+  fixtureHistoricalConcentrationPoint({ date: new Date('2025-01-31') }),
 ]
 
 describe('ConcentrationTrendSection helpers', () => {

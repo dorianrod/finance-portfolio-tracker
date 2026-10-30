@@ -4,57 +4,11 @@ import { buildGrossValueHistory } from '@/domains/portfolio/features/overview/he
 import { buildOverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison'
 import { compareRollingThreeYearIrr } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/compareRollingThreeYearIrr'
 import { resolveOverviewWindows } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/resolveOverviewWindows'
+import { operation } from '@/domains/portfolio/features/overview/mocks/overviewOperation.mock'
+import { position } from '@/domains/portfolio/features/overview/mocks/overviewPosition.mock'
+import { makePortfolioHistoryPoint as fixturePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
+import { makeSavingCapacityPoint as fixtureSavingCapacityPoint } from '@/domains/portfolio/shared/mocks/savingCapacityPoint.mock'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
-import type { RawOperation } from '@/domains/portfolio/shared/types/rawOperation.type'
-import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-function position(overrides: Partial<RawPosition> = {}): RawPosition {
-  return {
-    snapshot_date: new Date('2025-01-31'),
-    account: 'A',
-    account_type: 'Brokerage',
-    account_category: 'brokerage',
-    isin: 'ASSET-A',
-    ticker: 'AAA',
-    name: 'Asset A',
-    quantity: 1,
-    avg_buy_price: 100,
-    last_price: 100,
-    total_value: 100,
-    unrealized_gain: 10,
-    unrealized_gain_net: 7,
-    unrealized_gain_pct: 10,
-    realized_gain: 0,
-    realized_gain_net: 0,
-    total_dividends: 0,
-    total_dividends_net: 0,
-    total_interest: 0,
-    total_interest_net: 0,
-    tax_rate: 0.3,
-    xirr: 0,
-    xirr_rolling_3y: 0,
-    xirr_rolling_period_years: 0,
-    total_return_pct: 0,
-    ...overrides,
-  }
-}
-
-function operation(overrides: Partial<RawOperation> = {}): RawOperation {
-  return {
-    date: new Date('2025-01-15'),
-    account: 'A',
-    isin: 'ASSET-A',
-    ticker: 'AAA',
-    name: 'Asset A',
-    operation_type: 'DIVIDEND',
-    quantity: 0,
-    price_per_unit: 0,
-    total_amount: 10,
-    currency: 'EUR',
-    realized_gain: 0,
-    ...overrides,
-  }
-}
 
 describe('resolveOverviewWindows', () => {
   const dates = [new Date('2024-01-31'), new Date('2026-10-20')]
@@ -144,17 +98,15 @@ describe('buildGrossValueHistory', () => {
 
 describe('compareRollingThreeYearIrr', () => {
   it('compares the rolling three-year IRR at each period end', () => {
-    const point = (date: Date, tri: number): PortfolioHistoryPoint => ({
-      date,
-      total_value: 0,
-      total_cost_basis: 0,
-      unrealized_gain: 0,
-      net_cash_injected: 0,
-      cash_delta: null,
-      tri: null,
-      tri_rolling_1y: null,
-      tri_rolling_3y: tri,
-    })
+    const point = (date: Date, tri: number): PortfolioHistoryPoint =>
+      fixturePortfolioHistoryPoint({
+        date,
+        total_value: 0,
+        total_cost_basis: 0,
+        unrealized_gain: 0,
+        net_cash_injected: 0,
+        tri_rolling_3y: tri,
+      })
     const result = compareRollingThreeYearIrr(
       [point(new Date('2025-10-20'), 6.2), point(new Date('2026-10-20'), 8.4)],
       {
@@ -230,8 +182,12 @@ describe('buildOverviewComparison', () => {
         }),
       ],
       savingCapacity: [
-        { date: new Date('2025-01-31'), savings_delta: 100, perf_delta: 20 },
-        { date: new Date('2025-02-28'), savings_delta: 150, perf_delta: -10 },
+        fixtureSavingCapacityPoint(),
+        fixtureSavingCapacityPoint({
+          date: new Date('2025-02-28'),
+          savings_delta: 150,
+          perf_delta: -10,
+        }),
       ],
       fundHoldingsHistory: [],
       accountFilters: new Set(['A']),
@@ -290,8 +246,11 @@ describe('buildOverviewComparison', () => {
       ],
       rawOperations: [],
       savingCapacity: [
-        { date: new Date('2025-01-31'), savings_delta: 0, perf_delta: 0 },
-        { date: new Date('2025-02-28'), savings_delta: 100, perf_delta: 0 },
+        fixtureSavingCapacityPoint({ savings_delta: 0, perf_delta: 0 }),
+        fixtureSavingCapacityPoint({
+          date: new Date('2025-02-28'),
+          perf_delta: 0,
+        }),
       ],
       fundHoldingsHistory: [],
       dateFrom: new Date('2025-02-01'),

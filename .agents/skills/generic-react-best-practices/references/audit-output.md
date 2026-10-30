@@ -28,6 +28,10 @@ dossiers; do not overwrite an independent audit's conclusions. Compare relevant
 earlier findings and code decision comments to identify a missed violation,
 regression, changed requirement or unsupported reinterpretation.
 
+Every dossier also includes the baseline impact-volume table and versioned score
+defined in [audit metrics](audit-metrics.md); implementations add a final snapshot
+without replacing the baseline. Store machine-readable inputs/results in evidence.
+
 Keep all five Markdown files even for a clean audit: explicitly record no
 findings, no corrective actions or no pending decisions as appropriate. Preserve
 the headings below. Write content in English and use project-relative source
@@ -42,11 +46,17 @@ Use these headings:
 
 ```markdown
 # Audit scope
+
 ## Request and phase status
+
 ## Frozen inputs
+
 ## File inventory and exclusions
+
 ## Rule inventory
+
 ## Required checks and completion criteria
+
 ## Checkpoint
 ```
 
@@ -83,23 +93,30 @@ Use these headings:
 
 ```markdown
 # Audit coverage
+
 ## File review
+
 ## Rule review
+
 ## Existing decisions and ignores
+
 ## Pending inspection
 ```
 
 Maintain two inventories:
 
-| Inventory | Required columns |
-| --- | --- |
-| File review | Project-relative file, applicable rule IDs or linked rule group, inspection evidence, linked findings/decisions, review status. |
+| Inventory   | Required columns                                                                                                                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| File review | Project-relative file, applicable rule IDs or linked rule group, inspection evidence, linked findings/decisions, review status.    |
 | Rule review | Catalog rule ID and actual impact, eligible targets, automatic/manual coverage, analysis limits, evidence/findings, review status. |
 
 Use the method's coverage statuses: `automatically checked`, `manually reviewed`,
 `not applicable`, `existing ignore not revalidated` or `pending`. Combine automatic
 and manual evidence when both apply. Rule rows may link named target lists and
 shared command evidence; avoid repeating a full file-by-rule Cartesian table.
+For rules with distinct obligations, identify the verified automatic/manual
+obligations and those still pending, with evidence for each relevant family.
+A partial detector result cannot justify a whole-rule manually-reviewed status.
 Every eligible target must still be accounted for. State an actual reason for
 non-applicability and for configured exclusions.
 
@@ -124,6 +141,7 @@ reason when a field is not applicable; do not leave empty template placeholders.
 
 ```markdown
 ## F-001 — Short concrete title
+
 - Kind: violation | ambiguity | prevention-gap | suggestion
 - Rule IDs and actual impact:
 - Affected files, symbols and callers:
@@ -131,10 +149,15 @@ reason when a field is not applicable; do not leave empty template placeholders.
 - Plan actions and related code decision identifiers:
 
 ### Requirement and evidence
+
 ### Why this matters
+
 ### Alternatives considered
+
 ### Proposed corrective plan
+
 ### Decision or clarification required
+
 ### Acceptance and prevention
 ```
 
@@ -180,10 +203,15 @@ Use these headings:
 
 ```markdown
 # Corrective plan
+
 ## Implementation scope and authorization
+
 ## Prioritized actions
+
 ## User decisions
+
 ## Rule and enforcement feedback
+
 ## Follow-ups and plan changes
 ```
 
@@ -191,16 +219,16 @@ Create stable `P-001` action identifiers, ordered by catalog impact and required
 dependencies. This file is the source of truth for implementation status; findings
 link here instead of maintaining a second independent status list.
 
-| Required action field | Content |
-| --- | --- |
-| Findings and priority | Finding IDs, rule impact and any prerequisite exception to ordering. |
-| Action and proposed option | `fix`, `ask-user`, `keep` or `defer`, selected/recommended option and affected source/rule/check files. |
-| Status | `proposed`, `ready`, `awaiting-user`, `in-progress`, `verified`, `retained`, `rejected` or `deferred`. |
-| Authorization or choice | User request, prior instruction/decision or actual answer that permits implementation/selects the option; otherwise the pending question. |
-| Dependencies | Other action/decision IDs and which independent actions can proceed. |
-| Implementation | Concrete steps, proposed non-obvious code decision comment and any contract or detector change. |
-| Acceptance | Observable criteria, required commands and intended invalid/valid regression cases. |
-| Outcome | Actual changed owners, verification references and material remaining work. |
+| Required action field      | Content                                                                                                                                   |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Findings and priority      | Finding IDs, rule impact and any prerequisite exception to ordering.                                                                      |
+| Action and proposed option | `fix`, `ask-user`, `keep` or `defer`, selected/recommended option and affected source/rule/check files.                                   |
+| Status                     | `proposed`, `ready`, `awaiting-user`, `in-progress`, `verified`, `retained`, `rejected` or `deferred`.                                    |
+| Authorization or choice    | User request, prior instruction/decision or actual answer that permits implementation/selects the option; otherwise the pending question. |
+| Dependencies               | Other action/decision IDs and which independent actions can proceed.                                                                      |
+| Implementation             | Concrete steps, proposed non-obvious code decision comment and any contract or detector change.                                           |
+| Acceptance                 | Observable criteria, required commands and intended invalid/valid regression cases.                                                       |
+| Outcome                    | Actual changed owners, verification references and material remaining work.                                                               |
 
 Do not mark an action `ready` merely because the agent recommended it: phase-2
 authorization and any necessary option selection must exist. Mark a fix `verified`
@@ -230,9 +258,13 @@ Use these headings:
 
 ```markdown
 # Audit verification
+
 ## Baseline checks
+
 ## Detector calibration and reproductions
+
 ## Implementation checks
+
 ## Completion review
 ```
 
@@ -247,6 +279,11 @@ neighboring valid example, actual configuration and analysis limits. Runtime
 evidence describes the sequence and observable outcome. Link each completed
 plan action to its relevant acceptance evidence. Full-project warning-budget
 results remain visible even when focused checks pass.
+
+At implementation completion, list actual introduced/extracted/moved owners,
+reviewed provenance, newly triggered obligations and their verification. Retain
+the original phase-1 table; add current coverage rather than silently reusing its
+applicability. Include the colocation command result and remaining semantic checks.
 
 At completion, reconcile the file/rule inventories, findings, actions, pending
 choices, affected code decision comments and final input deltas. State which

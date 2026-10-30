@@ -51,7 +51,10 @@ For each selected rule, enumerate eligible patterns, including valid-looking
 candidates, rather than searching only for known errors. Read the implementations
 and callers needed to decide ownership or behavior. Track file review and rule
 coverage separately, linking findings and evidence. A category name or passing
-command is not coverage evidence. Process manageable batches and retain pending
+command is not coverage evidence. For rules with distinct obligations, identify
+which obligations each check verifies and link the remaining semantic review.
+Keep an unexamined obligation pending even when another part of its rule passes.
+For example, typed deterministic fixtures do not establish their owning location. Process manageable batches and retain pending
 entries so an interruption can resume without silently narrowing the scope.
 
 ### Stabilize verdicts and record architecture decisions in code
@@ -114,8 +117,9 @@ contracts and entity placement. Include callers and neighboring valid cases.
 For a deterministic family, prove a representative incorrect case is rejected
 by the intended rule at the expected severity, and a neighboring valid case is
 accepted through the actual project configuration. Use isolated probes in phase
+
 1. Include aliases, reexports, dynamic imports, wrappers, indirection and
-shadowing where they affect recognition. An unrelated error is not detection.
+   shadowing where they affect recognition. An unrelated error is not detection.
 
 If coverage is missing, record the detector gap, inspect comparable in-scope code
 manually and propose a bounded prevention action. Do not modify the detector
@@ -204,14 +208,14 @@ is part of phase 2 only when included in the authorized plan.
 Set each finding's proposed action according to this table. A plan's `fix`
 classification establishes a recommendation, not user authorization by itself.
 
-| Evidence and existing decisions | Action |
-| --- | --- |
-| Proven violation with a correction selected by the contract or existing instructions/decisions | `fix`: propose the correction and acceptance checks; implement in authorized phase 2. |
-| Proven violation with materially different conforming corrections and no established selection | `ask-user`: present concrete options, consequences and a recommendation. |
-| Reasonable interpretations give contradictory compliance verdicts | `ask-user`: propose the exact contract clarification and distinguishing examples before correction. |
-| Existing code conforms, including a supported recorded architecture choice | `keep`: retain it; an optional alternative is a suggestion. |
-| Sound generic prevention opportunity beyond existing enforcement | `fix` when part of the authorized implementation plan; otherwise `defer` as a prevention proposal. |
-| Missing implementation evidence or incomplete inspection | Keep coverage pending; investigate rather than inventing a proven violation. |
+| Evidence and existing decisions                                                                | Action                                                                                              |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Proven violation with a correction selected by the contract or existing instructions/decisions | `fix`: propose the correction and acceptance checks; implement in authorized phase 2.               |
+| Proven violation with materially different conforming corrections and no established selection | `ask-user`: present concrete options, consequences and a recommendation.                            |
+| Reasonable interpretations give contradictory compliance verdicts                              | `ask-user`: propose the exact contract clarification and distinguishing examples before correction. |
+| Existing code conforms, including a supported recorded architecture choice                     | `keep`: retain it; an optional alternative is a suggestion.                                         |
+| Sound generic prevention opportunity beyond existing enforcement                               | `fix` when part of the authorized implementation plan; otherwise `defer` as a prevention proposal.  |
+| Missing implementation evidence or incomplete inspection                                       | Keep coverage pending; investigate rather than inventing a proven violation.                        |
 
 When materially different conforming corrections remain and no existing
 instruction or decision selects one, ask the user to choose before implementing
@@ -274,6 +278,14 @@ including an authorized keep decision. Move it with its owner and remove it
 when the choice disappears. Keep its rationale and revisit conditions current;
 the dossier records implementation progress rather than replacing the comment.
 
+Reconcile actual added, extracted and moved modules with the frozen starting
+inventory. Review every obligation triggered by their final contracts, including
+requirements absent from the original corrective-action list. Keep the historical
+phase-1 table and add a current delta; do not inherit an earlier non-applicability
+reason for newly introduced code. Run the source-snapshot colocation check bound
+to test-colocated-tests, including untracked additions and reviewed move evidence.
+Presence alone still needs nominal/error/edge behavior review.
+
 Run focused checks after coherent batches and required full-project checks at
 meaningful milestones and after final changes. Re-review affected code and
 callers, compare final diagnostics to the baseline and update findings, plan and
@@ -302,7 +314,9 @@ Mark implementation complete only when the authorized correction scope is
 fulfilled, all its required user decisions are resolved, confirmed violations
 are corrected, planned enforcement and comment updates are complete, required
 checks pass and affected code and callers have been re-reviewed. Every completed
-action links to verification evidence. Existing ignores follow the announced
+action links to verification evidence. Distinct obligations and the introduced-code
+delta must have current evidence; original plan acceptance alone does not close
+newly triggered requirements. Existing ignores follow the announced
 review policy and are not counted as newly approved.
 
 If the user requested only selected actions, identify that limited implementation
@@ -314,6 +328,14 @@ Once the applicable closure conditions hold, finish. Another conforming solution
 does not reopen a settled choice. After a correction, revisit only decisions
 whose assumptions or compliance can change through its actual effects. Separate
 new preferences and broader prevention work from the completed scope.
+
+### Report volumes and the score
+
+Use the fixed [metrics contract](audit-metrics.md) for every dossier. Preserve
+baseline/final snapshots and report all actual impact levels, confirmed families
+and affected files separately. The versioned score counts each violated rule once
+and is withheld for pending inspection. Disclose scope and unrevalidated exceptions;
+a score does not replace coverage evidence or change correction priority.
 
 ### Handoff
 

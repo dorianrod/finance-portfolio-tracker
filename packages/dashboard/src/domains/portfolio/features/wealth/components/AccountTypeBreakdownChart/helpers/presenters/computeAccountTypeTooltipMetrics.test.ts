@@ -1,15 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import { createAccountTypePoint } from '@/domains/portfolio/features/wealth/mocks/accountTypePoint.mock'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 
 import { computeAccountTypeTooltipMetrics } from './computeAccountTypeTooltipMetrics'
 
-const point: AccountTypePoint = {
-  account_type: 'Brokerage',
-  total_value: 90,
-  total_cost_basis: 100,
-  unrealized_gain: -10,
-}
+const point: AccountTypePoint = createAccountTypePoint(-10)
 
 describe('account tooltip metrics', () => {
   it('uses the snapshot over series fallbacks and measures its share of the raw portfolio', () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
+import { isinRow as fixtureRawIsinRow } from '@/domains/portfolio/shared/mocks/rawIsinRow.mock'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
@@ -13,14 +14,14 @@ const savings = makePosition({
   account_category: 'savings',
   total_value: 200,
 })
-const row: RawIsinRow = {
+const row: RawIsinRow = fixtureRawIsinRow({
   snapshot_date: new Date('2026-01-31'),
   account: 'broker',
   account_type: 'PEA',
   isin: 'ASSET',
   name: 'Asset',
   values: { Equity: 100 },
-}
+})
 const rows = [row, { ...row, account: 'savings', account_type: 'Savings' }]
 const rawData: RawIsinData = {
   geo: rows,

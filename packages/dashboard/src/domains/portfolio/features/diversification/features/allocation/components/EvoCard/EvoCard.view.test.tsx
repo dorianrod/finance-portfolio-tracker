@@ -5,7 +5,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { makeAllocationPoint } from '@/domains/portfolio/features/diversification/features/allocation/mocks/allocationPoint.mock'
+import { makeAllocationPoint } from '@/domains/portfolio/shared/mocks/allocationPoint.mock'
 
 import { EvoCardView } from './EvoCard.view'
 import { buildAllocationTrend } from './helpers/presenters/buildAllocationTrend'

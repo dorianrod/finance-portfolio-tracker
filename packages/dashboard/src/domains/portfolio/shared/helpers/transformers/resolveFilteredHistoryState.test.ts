@@ -1,20 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
+import { makePortfolioHistoryPoint as fixturePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
+
 import { resolveFilteredHistoryState } from './resolveFilteredHistoryState'
 
 describe('resolveFilteredHistoryState', () => {
   const fallback = [
-    {
+    fixturePortfolioHistoryPoint({
       date: new Date('2026-10-12'),
-      total_value: 100,
       total_cost_basis: 90,
       unrealized_gain: 10,
-      net_cash_injected: 80,
       cash_delta: 0,
-      tri: null,
-      tri_rolling_1y: null,
-      tri_rolling_3y: null,
-    },
+    }),
   ]
 
   it('never exposes a response belonging to an older selection', () => {

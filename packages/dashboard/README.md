@@ -184,6 +184,16 @@ whether the source repo itself is public or private.
 
 ## Rule-to-tool bindings
 
+The audit method also uses `audit:colocation` to compare introduced runtime owners
+with a frozen source snapshot, and `audit:metrics` to calculate the versioned impact
+volumes and score. Run `npm run --silent audit:colocation -- --snapshot` before
+implementation and save its JSON in the dossier. After edits, run the same command
+with `--baseline <snapshot.json>` and any reviewed provenance file. Run
+`npm run --silent audit:metrics -- --input <metrics-input.json>` for baseline and
+final findings. The skill's project-enforcement and audit-metrics references define
+the input contracts and limits. Presence does not establish test quality, and the
+score describes the reviewed scope with its recorded exceptions.
+
 The skill packages the custom ESLint rules, shared configuration, analysis scripts
 and generic tests. Follow its [installation and per-rule tool bindings](../../.agents/skills/generic-react-best-practices/references/project-enforcement.md)
 and priority order before choosing audit commands. Run dashboard commands from

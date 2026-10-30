@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { PORTFOLIO_COST_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioCostShareKey'
 import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioGainShareKey'
 import { withPortfolioComposition } from '@/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition'
-import { makePortfolioHistoryPoint } from '@/domains/portfolio/features/wealth/mocks/portfolioHistoryPoint.mock'
+import { makePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
 
 const historyPoint = makePortfolioHistoryPoint()
 

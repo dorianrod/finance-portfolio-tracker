@@ -14,7 +14,9 @@
     "react-best-practices-profile": "scripts/profile-eslint.mjs",
     "react-best-practices-architecture": "scripts/audit-architecture.mjs",
     "react-best-practices-cycles": "scripts/import-cycles.mjs",
-    "react-best-practices-i18n": "scripts/check-i18n-catalog.mjs"
+    "react-best-practices-i18n": "scripts/check-i18n-catalog.mjs",
+    "react-best-practices-test-colocation": "scripts/check-test-colocation.mjs",
+    "react-best-practices-audit-metrics": "scripts/audit-metrics.mjs"
   },
   "files": [
     "eslint-rules/",

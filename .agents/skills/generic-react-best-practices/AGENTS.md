@@ -5148,8 +5148,16 @@ A `mocks/` folder holds typed fixtures only. Network handlers (MSW) live in one 
 
 ```ts
 export const mockInvoices = [
-  { id: 'invoice-1', createdAt: new Date('2026-01-15T09:00:00.000Z'), status: 'DRAFT' },
-  { id: 'invoice-2', createdAt: new Date('2026-02-01T09:00:00.000Z'), status: 'PAID' },
+  {
+    id: 'invoice-1',
+    createdAt: new Date('2026-01-15T09:00:00.000Z'),
+    status: 'DRAFT',
+  },
+  {
+    id: 'invoice-2',
+    createdAt: new Date('2026-02-01T09:00:00.000Z'),
+    status: 'PAID',
+  },
 ] as Invoice[]
 ```
 
@@ -5170,7 +5178,11 @@ export const makeInvoice = (overrides: Partial<Invoice> = {}): Invoice => ({
 
 export const mockInvoices: Invoice[] = [
   makeInvoice(),
-  makeInvoice({ id: 'invoice-2', status: 'PAID', paidAt: new Date('2026-03-01T00:00:00.000Z') }),
+  makeInvoice({
+    id: 'invoice-2',
+    status: 'PAID',
+    paidAt: new Date('2026-03-01T00:00:00.000Z'),
+  }),
 ]
 ```
 
@@ -5184,6 +5196,44 @@ In `mocks/` and `*.mock.*`, reject the live clock (`new Date()`, `Date()`, `Date
 
 The check does not prove unique IDs or fixture ownership, follow arbitrary factories or discover every nondeterministic source. Review those properties separately. It does not autofix missing fields, choose business defaults or invent dates.
 
+### Fixture ownership detection
+
+The configured `local/test-fixture-contract` check also rejects a statically
+recognizable complete defaults factory inside a test: an explicit return type
+resolves to a domain-owned `types/*.type.ts` entity, a direct returned object
+supplies its required base fields, and at most one optional-field override
+parameter is spread last. It follows imported entity aliases and supported union
+variants, and handles function declarations, expressions and arrow functions.
+
+**Incorrect (typed, deterministic defaults remain in a test):**
+
+```ts
+// order.test.ts
+import type { Order } from './domains/orders/types/order.type'
+function order(overrides: Partial<Order> = {}): Order {
+  return { id: 'order-1', amount: 100, ...overrides }
+}
+```
+
+**Correct (owning fixture plus test-specific overrides):**
+
+```ts
+// domains/orders/mocks/order.mock.ts
+export function order(overrides: Partial<Order> = {}): Order {
+  return { id: 'order-1', amount: 100, ...overrides }
+}
+// order.test.ts
+const sample = order({ amount: 200 })
+```
+
+The detector deliberately leaves expected assertion values, raw validation input,
+Partial arguments and existing-state updates alone. Inferred/opaque factories,
+multiple-statement builders, local support contracts and the nearest business
+owner need semantic review. An imported type or structural assignability alone
+does not prove a fixture. Inventory complete sample baselines and factories,
+including valid-looking typed ones, separately from cast/clock diagnostics.
+Do not mark placement reviewed merely because typing and determinism pass.
+
 ### 11.3 Colocate a Test Next to Every File, Covering Errors
 
 **Impact: MEDIUM (untested files and happy-path-only tests hide regressions in business logic)**
@@ -5195,9 +5245,13 @@ Every new hook, helper, service, store or component gets a sibling test file wit
 ```tsx
 // src/__tests__/order.test.tsx
 describe('useGetOrderDetailQuery', () => {
-  it('should parse the API payload', async () => { /* ... */ })
+  it('should parse the API payload', async () => {
+    /* ... */
+  })
 
-  it('should throw when the API answers 404', async () => { /* ... */ })
+  it('should throw when the API answers 404', async () => {
+    /* ... */
+  })
 })
 ```
 
@@ -5206,17 +5260,52 @@ describe('useGetOrderDetailQuery', () => {
 ```tsx
 // src/domains/sales/orders/features/detail/apis/queries/useGetOrderDetailQuery.test.tsx
 describe('useGetOrderDetailQuery', () => {
-  it('should parse the API payload and strip unknown fields', async () => { /* ... */ })
+  it('should parse the API payload and strip unknown fields', async () => {
+    /* ... */
+  })
 
-  it('should default lines and attachments to [] when missing', async () => { /* ... */ })
+  it('should default lines and attachments to [] when missing', async () => {
+    /* ... */
+  })
 
-  it('should throw when the API answers 404', async () => { /* ... */ })
+  it('should throw when the API answers 404', async () => {
+    /* ... */
+  })
 })
 ```
 
 A sibling file makes a missing test visible in the file tree, moves with the code when a folder is renamed, and keeps relative imports short (`./useGetOrderDetailQuery`).
 
 Do not leave a silent `it.skip`: either fix the test or add a `// TODO:` comment that states why it is skipped. Run the tests of the folder you changed.
+
+### Introduced-code closure check
+
+Newly extracted views, hooks and other independent runtime owners count as new
+modules even when existing integration tests exercise them. Before implementation,
+capture and compare the authored source inventory through the command bound in
+project-enforcement, using the consuming root/source parameters:
+
+```sh
+react-best-practices-test-colocation --snapshot
+react-best-practices-test-colocation --baseline snapshot.json
+```
+
+The command compares filesystem inventories, including untracked additions, and
+checks same-base test/spec siblings for recognized new components, hooks, helpers,
+services and stores. Type-only modules, fixtures, stories, assets and support
+modules outside this contract receive explicit non-applicability. Opaque runtime
+roles stay pending until a reasoned, content-fingerprinted role review is supplied.
+
+A reviewed move map requires valid old/new source hashes and a reason. Moving an
+unchanged legacy owner without a former sibling does not itself create a new-file
+violation. A moved owner must retain an existing sibling; changed moves require
+explicit same-contract review or are treated as introduced contracts. Renaming
+is not a waiver for an extraction or a new responsibility.
+
+A missing/invalid baseline is an unavailable check, never a clean empty result.
+Keep this provenance-aware command separate from ordinary ESLint. Presence cannot
+establish meaningful nominal/error/edge assertions: empty siblings do not satisfy
+the complete rule. Review that remaining obligation before closing phase 2.
 
 ### 11.4 Isolate Jotai State with a Fresh Store per Test
 

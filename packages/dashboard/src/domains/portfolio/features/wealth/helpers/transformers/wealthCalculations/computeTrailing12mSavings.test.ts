@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { computeTrailing12mSavings } from '@/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mSavings'
+import { makeSavingCapacityPoint as fixtureSavingCapacityPoint } from '@/domains/portfolio/shared/mocks/savingCapacityPoint.mock'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 describe('computeTrailing12mSavings', () => {
@@ -22,8 +23,12 @@ describe('computeTrailing12mSavings', () => {
 
   it('clamps the rolling window when there is less than 12 months of history', () => {
     const points: SavingCapacityPoint[] = [
-      { date: new Date('2024-01'), savings_delta: 100, perf_delta: 5 },
-      { date: new Date('2024-02'), savings_delta: 200, perf_delta: 5 },
+      fixtureSavingCapacityPoint({ date: new Date('2024-01'), perf_delta: 5 }),
+      fixtureSavingCapacityPoint({
+        date: new Date('2024-02'),
+        savings_delta: 200,
+        perf_delta: 5,
+      }),
     ]
     const last12 = computeTrailing12mSavings(points)
     expect(last12).toHaveLength(2)

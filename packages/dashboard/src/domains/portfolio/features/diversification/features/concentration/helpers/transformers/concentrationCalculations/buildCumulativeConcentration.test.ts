@@ -2,14 +2,26 @@ import { describe, expect, it } from 'vitest'
 
 import { buildCumulativeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration'
 import { computeConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/computeConcentration'
+import { makeHoldingConcentration as fixtureHoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/mocks/holdingConcentration.mock'
+import { makeFundHolding as fixtureFundHolding } from '@/domains/portfolio/shared/mocks/fundHolding.mock'
 import { position } from '@/domains/portfolio/shared/mocks/summaryPosition.mock'
 
 describe('buildCumulativeConcentration', () => {
   it('builds a sorted monotone cumulative concentration from every holding', () => {
     const result = buildCumulativeConcentration([
-      { label: 'Small', name: 'Small', value: 20, weight: 20 },
-      { label: 'Large', name: 'Large', value: 50, weight: 50 },
-      { label: 'Medium', name: 'Medium', value: 30, weight: 30 },
+      fixtureHoldingConcentration(),
+      fixtureHoldingConcentration({
+        label: 'Large',
+        name: 'Large',
+        value: 50,
+        weight: 50,
+      }),
+      fixtureHoldingConcentration({
+        label: 'Medium',
+        name: 'Medium',
+        value: 30,
+        weight: 30,
+      }),
     ])
 
     expect(result.map((point) => point.name)).toEqual([
@@ -53,7 +65,7 @@ describe('buildCumulativeConcentration', () => {
         }),
       ],
       [
-        {
+        fixtureFundHolding({
           parentIsin: 'FUND-A',
           parentTicker: '',
           parentName: 'World ETF',
@@ -62,11 +74,9 @@ describe('buildCumulativeConcentration', () => {
           issuerId: 'DIRECT-ASSET',
           issuerName: 'Direct Asset',
           weight: 0.1,
-          sourceTier: 'A',
-          sourceName: 'Official',
           holdingsDate: new Date('2026-10-01'),
-        },
-        {
+        }),
+        fixtureFundHolding({
           parentIsin: 'FUND-A',
           parentTicker: '',
           parentName: 'World ETF',
@@ -75,11 +85,9 @@ describe('buildCumulativeConcentration', () => {
           issuerId: 'apple',
           issuerName: 'Apple',
           weight: 0.08,
-          sourceTier: 'A',
-          sourceName: 'Official',
           holdingsDate: new Date('2026-10-01'),
-        },
-        {
+        }),
+        fixtureFundHolding({
           parentIsin: 'FUND-B',
           parentTicker: '',
           parentName: 'US UCITS ETF',
@@ -88,10 +96,8 @@ describe('buildCumulativeConcentration', () => {
           issuerId: 'DIRECT-ASSET',
           issuerName: 'Direct Asset',
           weight: 0.2,
-          sourceTier: 'A',
-          sourceName: 'Official',
           holdingsDate: new Date('2026-10-01'),
-        },
+        }),
       ],
     )
 

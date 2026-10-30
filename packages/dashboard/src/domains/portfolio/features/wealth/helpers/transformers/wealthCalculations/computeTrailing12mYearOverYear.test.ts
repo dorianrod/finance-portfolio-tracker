@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { computeTrailing12mYearOverYear } from '@/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear'
+import { makeSavingCapacityPoint as fixtureSavingCapacityPoint } from '@/domains/portfolio/shared/mocks/savingCapacityPoint.mock'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 describe('computeTrailing12mYearOverYear', () => {
@@ -53,8 +54,16 @@ describe('computeTrailing12mYearOverYear', () => {
 describe('computeTrailing12mYearOverYear', () => {
   it('does not report an incomplete trailing twelve-month window', () => {
     const result = computeTrailing12mYearOverYear([
-      { date: new Date('2025-10-31'), savings_delta: 1000, perf_delta: 100 },
-      { date: new Date('2026-10-11'), savings_delta: 2000, perf_delta: 200 },
+      fixtureSavingCapacityPoint({
+        date: new Date('2025-10-31'),
+        savings_delta: 1000,
+        perf_delta: 100,
+      }),
+      fixtureSavingCapacityPoint({
+        date: new Date('2026-10-11'),
+        savings_delta: 2000,
+        perf_delta: 200,
+      }),
     ])
 
     expect(result.savings).toEqual({

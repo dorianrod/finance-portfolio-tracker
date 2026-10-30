@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { makeAllocationPoint } from '@/domains/portfolio/features/diversification/features/allocation/mocks/allocationPoint.mock'
+import {
+  makeAllocationPoint as fixtureAllocationPoint,
+  makeAllocationPoint,
+} from '@/domains/portfolio/shared/mocks/allocationPoint.mock'
 
 import { buildAllocationTrend } from './buildAllocationTrend'
 
@@ -60,20 +63,20 @@ describe('buildAllocationTrend identity', () => {
 describe('buildAllocationTrend', () => {
   it('uses one category base for the whole period and totals 100% on every populated date', () => {
     const trend = buildAllocationTrend([
-      {
+      fixtureAllocationPoint({
         date: new Date('2024-01-31'),
         categories: [
           { name: 'historic only', value: 20 },
           { name: 'shared', value: 80 },
         ],
-      },
-      {
+      }),
+      fixtureAllocationPoint({
         date: new Date('2024-02-29'),
         categories: [
           { name: 'shared', value: 50 },
           { name: 'current only', value: 50 },
         ],
-      },
+      }),
     ])
 
     expect(trend.categories).toEqual([
@@ -92,11 +95,11 @@ describe('buildAllocationTrend', () => {
 
   it('uses null values to leave a visible gap when a date has no allocation data', () => {
     const trend = buildAllocationTrend([
-      {
+      fixtureAllocationPoint({
         date: new Date('2024-01-31'),
         categories: [{ name: 'equity', value: 100 }],
-      },
-      { date: new Date('2024-02-29'), categories: [] },
+      }),
+      fixtureAllocationPoint({ date: new Date('2024-02-29'), categories: [] }),
     ])
 
     expect(trend.rows[1].values[0]).toBeNull()

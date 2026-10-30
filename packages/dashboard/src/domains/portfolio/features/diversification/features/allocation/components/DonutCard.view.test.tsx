@@ -3,7 +3,7 @@ import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { makePieEntry } from '@/domains/portfolio/features/diversification/features/allocation/mocks/pieEntry.mock'
+import { makePieEntry } from '@/domains/portfolio/shared/mocks/pieEntry.mock'
 
 import { DonutCardView } from './DonutCard.view'
 

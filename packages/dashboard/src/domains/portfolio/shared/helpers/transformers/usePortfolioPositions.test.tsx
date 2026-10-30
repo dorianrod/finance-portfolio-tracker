@@ -1,16 +1,12 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { baseFilters as fixtureDashboardFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
 import { usePortfolioPositions } from './usePortfolioPositions'
 
-const FILTERS: DashboardFilters = {
-  accountTypes: new Set(),
-  accounts: new Set(),
-  operationTypes: new Set(),
-  hideClosedPositions: false,
-}
+const FILTERS: DashboardFilters = fixtureDashboardFilters()
 
 function Probe() {
   const model = usePortfolioPositions({

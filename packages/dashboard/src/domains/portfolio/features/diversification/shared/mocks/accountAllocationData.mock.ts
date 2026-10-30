@@ -1,7 +1,6 @@
+import { rawData } from '@/domains/portfolio/shared/mocks/rawIsinData.mock'
 import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
-
-import { rawData } from './rawIsinData.mock'
 
 export function makeAccountAllocationData(): RawIsinData {
   return rawData({

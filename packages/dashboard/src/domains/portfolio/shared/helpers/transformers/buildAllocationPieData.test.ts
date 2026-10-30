@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { makeAllocationPoint as fixtureAllocationPoint } from '@/domains/portfolio/shared/mocks/allocationPoint.mock'
+
 import { buildAllocationPieData } from './buildAllocationPieData'
 
 describe('allocation pie presentation', () => {
@@ -11,10 +13,9 @@ describe('allocation pie presentation', () => {
       { name: 'Other A', value: 2 },
       { name: 'Other B', value: 2 },
     ]
-    const result = buildAllocationPieData({
-      date: new Date('2026-01-31'),
-      categories,
-    })
+    const result = buildAllocationPieData(
+      fixtureAllocationPoint({ date: new Date('2026-01-31'), categories }),
+    )
     expect(result.total).toBe(100)
     expect(result.data.map((entry) => entry.name)).toEqual(['Equity', 'nc', ''])
     expect(result.data.reduce((sum, entry) => sum + entry.value, 0)).toBe(100)

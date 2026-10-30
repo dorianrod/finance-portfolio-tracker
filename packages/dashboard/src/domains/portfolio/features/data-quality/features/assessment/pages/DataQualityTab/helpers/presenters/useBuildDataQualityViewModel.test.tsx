@@ -3,8 +3,8 @@ import { cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { createDataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/dataQualityTabProps.mock'
-import { createManualPriceOverride } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/manualPriceOverride.mock'
-import { pipelineError } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/pipelineError.mock'
+import { createManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/mocks/manualPriceOverride.mock'
+import { pipelineError } from '@/domains/portfolio/features/data-quality/shared/mocks/pipelineError.mock'
 
 import { useBuildDataQualityViewModel } from './useBuildDataQualityViewModel'
 

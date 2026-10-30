@@ -4,39 +4,28 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
+import { makeQualityTheme as fixtureQualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/qualityTheme.mock'
 import { QualityThemeTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/QualityThemeTab.view'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
 import { Tabs } from '@/shared/ui/Tabs.view'
 
 const themes: QualityTheme[] = [
-  {
-    id: 'pipeline',
-    label: 'Portfolio data',
-    metric: '0',
-    metricLabel: 'errors',
-    tone: 'healthy',
-    description: '',
-    priority: 0,
-  },
-  {
+  fixtureQualityTheme(),
+  fixtureQualityTheme({
     id: 'prices',
     label: 'Prices',
     metric: '100%',
     metricLabel: 'coverage',
-    tone: 'healthy',
-    description: '',
     priority: 1,
-  },
-  {
+  }),
+  fixtureQualityTheme({
     id: 'classification',
     label: 'Diversification',
     metric: '100%',
     metricLabel: 'coverage',
-    tone: 'healthy',
-    description: '',
     priority: 2,
-  },
+  }),
 ]
 
 function QualityTabs() {
