@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
-import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyPositionFilters'
 import { baseFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import { position } from '@/domains/portfolio/shared/mocks/filteredPosition.mock'
 import { group } from '@/domains/portfolio/shared/mocks/groupRow.mock'
 import { op } from '@/domains/portfolio/shared/mocks/operationRow.mock'
+
+import { applyPositionFilters } from './applyPositionFilters'
 
 describe('applyPositionFilters', () => {
   it('recomputes cash totals for the selected period independently of the translated label', () => {

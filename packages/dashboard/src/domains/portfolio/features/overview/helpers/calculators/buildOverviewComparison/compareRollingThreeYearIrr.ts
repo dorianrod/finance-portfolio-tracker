@@ -1,3 +1,4 @@
+import { latestAtOrBefore } from '@/domains/portfolio/features/overview/helpers/selectors/latestAtOrBefore'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
 import type {
@@ -5,7 +6,6 @@ import type {
   OverviewWindows,
 } from './buildOverviewComparison.types'
 import { compared } from './compared'
-import { latestAtOrBefore } from './latestAtOrBefore'
 
 export function compareRollingThreeYearIrr(
   history: PortfolioHistoryPoint[],

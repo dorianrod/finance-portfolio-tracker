@@ -16,6 +16,7 @@ import {
 } from 'recharts'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { getHashedSeriesTone } from '@/shared/theme/chartColors/getHashedSeriesTone'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -30,6 +31,16 @@ import { SeriesBar } from './SeriesBar.view'
 import { SeriesPie } from './SeriesPie.view'
 
 afterEach(cleanup)
+
+function ValueLabels() {
+  const formatNumber = useFormatNumber()
+  return (
+    <ChartLabels
+      label={(point: { value: number }) => formatNumber(point.value)}
+      position="inside"
+    />
+  )
+}
 function PieShape(
   props: Partial<Omit<PieSectorShapeProps, 'className' | 'style'>>,
 ) {
@@ -89,7 +100,7 @@ describe('shared chart composition', () => {
           <TooltipContent />
         </ChartTooltip>
         <SeriesBar dataKey="value" tone={'series6'} motion="none">
-          <ChartLabels dataKey="value" position="inside" />
+          <ValueLabels />
         </SeriesBar>
       </BarChart>,
     )

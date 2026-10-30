@@ -237,6 +237,12 @@ External UI renderers are named module-level components, including renderers
 supplied in literal configuration objects to dependency factories such as table
 column builders.
 
+Helper modules use documented categories and match their public callable export;
+the shared preset checks both conventions, including local export aliases.
+Chart labels use typed selectors over validated chart data and return formatted
+text. Their public API exposes neither Recharts' broad formatter nor an untyped
+field name, so callers format domain fields without runtime coercion.
+
 Component-role enforcement also checks private JSX components and slots that
 forward children, so a feature cannot hide a presentation-only child. Views
 cannot import domain aggregators; chart features prepare grouped tooltip data.

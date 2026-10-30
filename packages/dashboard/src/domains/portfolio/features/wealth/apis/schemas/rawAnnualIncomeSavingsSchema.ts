@@ -8,7 +8,7 @@ import { CSV_BOOLEAN_SCHEMA } from '@/shared/schemas/csvBoolean.schema'
 
 export const RAW_ANNUAL_INCOME_SAVINGS_SCHEMA: yup.ObjectSchema<RawAnnualIncomeSavingsRow> =
   yup.object({
-    year: requiredNumber(),
+    year: requiredNumber().transform(Math.trunc),
     income_status: yup
       .string<RawAnnualIncomeSavingsRow['income_status']>()
       .oneOf(['actual', 'forecast'])

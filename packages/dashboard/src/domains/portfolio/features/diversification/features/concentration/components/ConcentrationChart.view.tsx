@@ -111,10 +111,9 @@ export function ConcentrationChart({
                   <LeadingHoldingBar />
                 </SeriesBar.Shape>
                 <ChartLabels
-                  dataKey="weight"
                   position="right"
-                  formatter={(value: unknown) =>
-                    formatPercentage(Number(value))
+                  label={(holding: HoldingConcentration) =>
+                    formatPercentage(holding.weight)
                   }
                   density="standard"
                 />

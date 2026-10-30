@@ -3,6 +3,26 @@ import { describe, expect, it } from 'vitest'
 import { partitionPercentages } from './partitionPercentages'
 
 describe('partitionPercentages', () => {
+  it.each([
+    [
+      [Number.MAX_VALUE, Number.MAX_VALUE],
+      [50, 50],
+    ],
+    [
+      [Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE],
+      [33.4, 33.3, 33.3],
+    ],
+    [
+      [Number.MIN_VALUE, Number.MIN_VALUE],
+      [50, 50],
+    ],
+  ])(
+    'conserves shares for finite values at numerical extremes: %j',
+    (values, expected) => {
+      expect(partitionPercentages(values)).toEqual(expected)
+    },
+  )
+
   it('returns exclusive one-decimal shares that add up to exactly 100%', () => {
     const percentages = partitionPercentages([1, 1, 1])
 

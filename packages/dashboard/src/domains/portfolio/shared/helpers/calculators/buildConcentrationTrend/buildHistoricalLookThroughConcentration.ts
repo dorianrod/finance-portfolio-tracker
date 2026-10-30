@@ -1,11 +1,12 @@
+import { historicalSnapshotsByParent } from '@/domains/portfolio/shared/helpers/aggregators/historicalFundSnapshots/historicalSnapshotsByParent'
+import { isFundPosition } from '@/domains/portfolio/shared/helpers/businessRules/isFundPosition'
+import { matchesFilters } from '@/domains/portfolio/shared/helpers/businessRules/matchesFilters'
+import { latestSnapshotAt } from '@/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/latestSnapshotAt'
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { concentrationPoint } from './concentrationPoint'
-import { historicalSnapshotsByParent } from './historicalSnapshotsByParent'
-import { latestSnapshotAt } from './latestSnapshotAt'
-import { matchesFilters } from './matchesFilters'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Historical snapshot applicability and account scope define one look-through history pipeline.
 export function buildHistoricalLookThroughConcentration(
@@ -125,16 +126,5 @@ export function buildHistoricalLookThroughConcentration(
           hasApplicableHistoricalSnapshot,
       )
       .map(({ point }) => point)
-  )
-}
-
-function isFundPosition(row: RawPosition): boolean {
-  return (
-    /\b(?:ETF|UCITS|FUND|FCP|FCPE|SICAV|OPCVM|PEE|PEI|PERCO)\b/i.test(
-      row.name,
-    ) ||
-    /^(?:Amundi|BNP Paribas Easy|Global X|iShares|L&G|Xtrackers|DWS|SPDR|Vanguard|Invesco|UBS|HSBC)\b/i.test(
-      row.name,
-    )
   )
 }

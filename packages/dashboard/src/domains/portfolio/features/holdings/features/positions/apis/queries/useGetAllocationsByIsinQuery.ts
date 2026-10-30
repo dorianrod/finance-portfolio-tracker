@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { toLatestByIsin } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/toLatestAllocationByIsin'
+import { toLatestAllocationByIsin } from '@/domains/portfolio/features/holdings/features/positions/helpers/aggregators/toLatestAllocationByIsin'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import { PORTFOLIO_ALLOCATION_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAllocationQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
@@ -16,10 +16,10 @@ export function useGetAllocationsByIsinQuery() {
         ...PORTFOLIO_ALLOCATION_QUERY_OPTIONS,
         staleTime: 'static',
       })
-      const geoMap = toLatestByIsin(geo)
-      const secteurMap = toLatestByIsin(secteur)
-      const currencyMap = toLatestByIsin(currency)
-      const classeMap = toLatestByIsin(classe)
+      const geoMap = toLatestAllocationByIsin(geo)
+      const secteurMap = toLatestAllocationByIsin(secteur)
+      const currencyMap = toLatestAllocationByIsin(currency)
+      const classeMap = toLatestAllocationByIsin(classe)
 
       const allIsins = new Set([
         ...geoMap.keys(),

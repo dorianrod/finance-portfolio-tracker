@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeTableRows } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeTableRows'
 import { rawData } from '@/domains/portfolio/features/diversification/shared/mocks/rawIsinData.mock'
+
+import { computeTableRows } from './computeTableRows'
 
 describe('computeTableRows', () => {
   it.each(['constructor', '__proto__', 'toString'])(

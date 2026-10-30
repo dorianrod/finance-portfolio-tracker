@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { holdingsForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/holdingsForPosition'
 import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import type {
   FundHolding,

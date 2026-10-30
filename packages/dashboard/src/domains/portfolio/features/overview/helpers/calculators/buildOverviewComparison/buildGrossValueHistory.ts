@@ -1,6 +1,5 @@
+import { matchesPositionScope } from '@/domains/portfolio/features/overview/helpers/businessRules/matchesPositionScope'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
-
-import { matchesPositionScope } from './matchesPositionScope'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account scope and finite snapshot guards produce one gross-value history series.
 export function buildGrossValueHistory(

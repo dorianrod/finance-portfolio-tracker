@@ -2,7 +2,7 @@ import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocatio
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Latest-date selection and same-date allocation coalescing implement one canonical per-identifier breakdown.
-export function toLatestByIsin(
+export function toLatestAllocationByIsin(
   rows: RawIsinRow[],
 ): Map<string, { name: string; point: AllocationPoint }> {
   const latestByIsin = new Map<

@@ -44,6 +44,7 @@ export function createReactConfig({
         'local/no-test-style-assertions': 'error',
         'local/prefer-semantic-test-queries': 'error',
         'local/test-fixture-contract': 'error',
+        'local/helper-module-contract': 'error',
         'simple-import-sort/exports': 'error',
         'simple-import-sort/imports': 'error',
       },

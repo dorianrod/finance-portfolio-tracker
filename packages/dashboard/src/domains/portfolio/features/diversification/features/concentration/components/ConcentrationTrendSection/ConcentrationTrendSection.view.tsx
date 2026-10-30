@@ -10,7 +10,7 @@ import {
   YAxis,
 } from 'recharts'
 
-import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/rankedBarAnimation'
+import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/interpolateRankedBars'
 import type { useConcentrationTrendController } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/services/useConcentrationTrendController'
 import { ChartLegend } from '@/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ChartLegend.view'
 import { ConcentrationTrendTooltip } from '@/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ConcentrationTrendTooltip.view'
@@ -18,6 +18,7 @@ import { HistoricalHoldingTooltip } from '@/domains/portfolio/features/diversifi
 import { HoldingLabelTick } from '@/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/HoldingLabelTick.view'
 import { ConcentrationModeToggle } from '@/domains/portfolio/shared/components/ConcentrationModeToggle.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import type { HistoricalConcentrationHolding } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -489,9 +490,10 @@ function HistoricalHoldingsBars({
                 <LeadingHoldingBar />
               </SeriesBar.Shape>
               <ChartLabels
-                dataKey="weight"
                 position="right"
-                formatter={(value: unknown) => formatPercentage(Number(value))}
+                label={(holding: HistoricalConcentrationHolding) =>
+                  formatPercentage(holding.weight)
+                }
                 density="standard"
               />
             </SeriesBar>

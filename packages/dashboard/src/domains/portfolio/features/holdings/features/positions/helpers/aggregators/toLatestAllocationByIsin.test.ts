@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest'
 
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
-import { toLatestByIsin } from './toLatestAllocationByIsin'
+import { toLatestAllocationByIsin } from './toLatestAllocationByIsin'
 
-describe('toLatestByIsin', () => {
+describe('toLatestAllocationByIsin', () => {
   it('uses the latest snapshot and sums the same asset across accounts', () => {
     const rows: RawIsinRow[] = [
       {
@@ -34,7 +34,7 @@ describe('toLatestByIsin', () => {
         values: { usa: 40 },
       },
     ]
-    const result = toLatestByIsin(rows)
+    const result = toLatestAllocationByIsin(rows)
     expect(result.get('A')).toEqual({
       name: 'Asset A',
       point: {
@@ -57,7 +57,7 @@ describe('toLatestByIsin', () => {
 
   it('skips rows without an isin', () => {
     expect(
-      toLatestByIsin([
+      toLatestAllocationByIsin([
         {
           snapshot_date: new Date('2024-01-01'),
           isin: '',

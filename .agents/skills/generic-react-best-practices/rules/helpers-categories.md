@@ -79,3 +79,21 @@ src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
 Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`, `state-derived-atoms`
+
+### ESLint Enforcement
+
+Enable `local/helper-module-contract` at error level for authored production
+helpers, including component-, page- and shared-owned modules. Reject flat or
+undocumented categories and `*.logic.*` names. Match the filename stem to the
+public callable export, including named default exports, local export aliases,
+overloads and immutable callable aliases. Type-only exports, constants, private
+support functions, tests, stories, fixtures and declaration files do not establish
+a public helper naming violation.
+Resolve business scopes before identifying the helper role; a domain or feature
+named `helpers` is not itself a helper folder.
+
+The check does not infer a function's category from its implementation or prove
+that an opaque reexport or factory result is callable. Review those cases and
+actual ownership manually. Verify mismatched and matching neighbors through the
+consuming configuration. There is no autofix: a rename must update imports and
+callers together, and choosing a category requires responsibility review.

@@ -1,4 +1,4 @@
-type PortfolioResource =
+type PortfolioSourceResource =
   | 'dashboard'
   | 'all-positions'
   | 'operations'
@@ -8,21 +8,35 @@ type PortfolioResource =
   | 'portfolio-history'
   | 'cash-history'
   | 'annual-income-savings'
-  | 'asset-irr'
-  | 'filtered-history'
   | 'demo-filtered-history-accounts'
   | 'fund-holdings'
   | 'fund-diagnostics'
   | 'manual-price-overrides'
   | 'monthly-operations'
-  | 'passive-income'
   | 'pipeline-errors'
   | 'raw-isin-allocation'
   | 'allocation-by-isin'
-  | 'saving-capacity'
+
+type PortfolioQueryScopes = Record<PortfolioSourceResource, []> & {
+  'filtered-history': string[]
+  'saving-capacity': [accounts: readonly string[]]
+  'passive-income': [
+    accounts: readonly string[],
+    dateFrom: Date | undefined,
+    dateTo: Date | undefined,
+  ]
+  'asset-irr': [
+    accounts: readonly string[],
+    accountTypes: readonly string[],
+    dateFrom: Date | undefined,
+    dateTo: Date | undefined,
+  ]
+}
 
 export const portfolioQueryKeys = {
   all: ['portfolio'] as const,
-  data: (resource: PortfolioResource, ...scope: ReadonlyArray<unknown>) =>
-    ['portfolio', 'data', resource, ...scope] as const,
+  data: <TResource extends keyof PortfolioQueryScopes>(
+    resource: TResource,
+    ...scope: PortfolioQueryScopes[TResource]
+  ) => ['portfolio', 'data', resource, ...scope] as const,
 }

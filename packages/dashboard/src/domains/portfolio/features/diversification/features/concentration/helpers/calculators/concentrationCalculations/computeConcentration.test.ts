@@ -5,6 +5,21 @@ import { computeHeldAssetConcentration } from '@/domains/portfolio/features/dive
 import { position } from '@/domains/portfolio/shared/mocks/summaryPosition.mock'
 
 describe('computeConcentration', () => {
+  it.each(['Example FCP', 'Example SCPI', 'DWS Europe'])(
+    'keeps the unresolved fund %s outside identified direct holdings',
+    (name) => {
+      expect(
+        computeConcentration([position({ name, total_value: 100 })]),
+      ).toMatchObject({
+        holdings: [],
+        identifiedValue: 0,
+        undisclosedValue: 100,
+        selectedValue: 100,
+        coveragePct: 0,
+      })
+    },
+  )
+
   it('aggregates the same asset across accounts for concentration', () => {
     const result = computeConcentration([
       position({ id: 'a', isin: 'FR1', total_value: 600 }),

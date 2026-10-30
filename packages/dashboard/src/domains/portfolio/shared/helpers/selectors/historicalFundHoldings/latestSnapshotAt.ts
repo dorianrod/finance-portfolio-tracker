@@ -1,4 +1,4 @@
-import type { HistoricalSnapshot } from './buildConcentrationTrend.types'
+import type { HistoricalSnapshot } from '@/domains/portfolio/shared/helpers/aggregators/historicalFundSnapshots/historicalFundSnapshots.types'
 
 export function latestSnapshotAt(
   snapshots: HistoricalSnapshot[] | undefined,

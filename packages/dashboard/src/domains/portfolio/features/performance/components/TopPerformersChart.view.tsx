@@ -63,16 +63,12 @@ export function TopPerformersChart({
               <PerformerBar />
             </SeriesBar.Shape>
             <ChartLabels
-              dataKey="pct"
               position="right"
-              formatter={(value: unknown) =>
-                formatPercentage(
-                  typeof value === 'number' ? value : undefined,
-                  {
-                    decimals: 0,
-                    signed: true,
-                  },
-                )
+              label={(point: TopPerformer) =>
+                formatPercentage(point.pct, {
+                  decimals: 0,
+                  signed: true,
+                })
               }
             />
           </SeriesBar>

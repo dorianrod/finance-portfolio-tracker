@@ -2795,6 +2795,36 @@ Enable `return-await` with `error-handling-correctness-only` so a promise return
 
 Use `strict` in both browser and tooling TypeScript projects, plus `noImplicitReturns`, `noImplicitOverride` and `noPropertyAccessFromIndexSignature`. Evaluate `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` against the real project before migration: index access may be absent, and an omitted property differs from an explicit `undefined`. Correct the contracts and callers before enabling them; avoid assertions or blanket `| undefined` additions merely to silence diagnostics. These checks complement architecture rules; TypeScript does not infer business ownership.
 
+### Prefer Typed Source Selectors at Presentation Boundaries
+
+When validated domain data already has a concrete type, preserve it through
+presentation callbacks. A third-party scalar callback with a broad parameter is
+not a reason to expose `unknown`, re-coerce values or add a type assertion in
+every consumer. When the dependency supports an accessor over the original data,
+let the shared wrapper accept a typed selector returning display-ready text:
+
+```tsx
+import { LabelList } from 'recharts'
+
+function ChartLabels<TPoint extends object>({ label }: {
+  label: (point: TPoint) => string
+}) {
+  return <LabelList dataKey={label} />
+}
+```
+
+The caller reads a typed entity field and delegates formatting to the existing
+formatter hook. Verify with the consuming compiler that incorrect field names,
+incompatible value types and unformatted numeric results are rejected. Keep the
+selector consistent with the actual chart data; unrelated JSX siblings do not
+share generic type inference automatically.
+
+Use the same principle for closed infrastructure contracts, such as query scopes:
+declare the allowed argument tuples instead of an unconstrained `unknown[]`.
+Keep `unknown` at genuinely untrusted JSON, storage and error boundaries until
+validation or narrowing establishes their types. Static annotations do not
+validate external data or establish that every number is finite.
+
 ### 5.11 No Fallback After a Record Lookup on a Union Key
 
 **Impact: LOW-MEDIUM (removes dead code that hides overly wide input types)**
@@ -4738,6 +4768,24 @@ src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
 Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
 
 See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`, `state-derived-atoms`
+
+### ESLint Enforcement
+
+Enable `local/helper-module-contract` at error level for authored production
+helpers, including component-, page- and shared-owned modules. Reject flat or
+undocumented categories and `*.logic.*` names. Match the filename stem to the
+public callable export, including named default exports, local export aliases,
+overloads and immutable callable aliases. Type-only exports, constants, private
+support functions, tests, stories, fixtures and declaration files do not establish
+a public helper naming violation.
+Resolve business scopes before identifying the helper role; a domain or feature
+named `helpers` is not itself a helper folder.
+
+The check does not infer a function's category from its implementation or prove
+that an opaque reexport or factory result is callable. Review those cases and
+actual ownership manually. Verify mismatched and matching neighbors through the
+consuming configuration. There is no autofix: a rename must update imports and
+callers together, and choosing a category requires responsibility review.
 
 ### 9.6 Index Collections for Repeated Lookups
 

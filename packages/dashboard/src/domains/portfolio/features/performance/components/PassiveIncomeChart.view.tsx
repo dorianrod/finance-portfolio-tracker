@@ -61,10 +61,9 @@ export function PassiveIncomeChart({
               corners="flat"
             >
               <ChartLabels
-                dataKey="dividends"
                 position="inside"
-                formatter={(value: unknown) =>
-                  formatMoney(typeof value === 'number' ? value : undefined, {
+                label={(point: PassiveIncomePoint) =>
+                  formatMoney(point.dividends, {
                     style: 'compact',
                   })
                 }

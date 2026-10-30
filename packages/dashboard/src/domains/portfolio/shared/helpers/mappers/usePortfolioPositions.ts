@@ -1,11 +1,11 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 import { useMemo } from 'react'
 
-import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/selectHistoricalFundHoldingsAtDate'
-import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyPositionFilters'
 import { withoutOperationAndPeriodFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationAndPeriodFilters'
 import { withoutOperationFilters } from '@/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationFilters'
 import { buildPositionRows } from '@/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows'
+import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/selectors/applyPositionFilters'
+import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'

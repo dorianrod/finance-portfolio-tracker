@@ -1,6 +1,7 @@
-import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition'
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
+
+import { isAssetAnalysisApplicablePosition } from './isAssetAnalysisApplicablePosition'
 
 export function matchesFilters(
   row: RawPosition,

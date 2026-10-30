@@ -1,3 +1,4 @@
+import type { UseQueryResult } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
 import type { DashboardLoadState } from '@/app/types/dashboardLoadState.type'
@@ -17,4 +18,4 @@ export function useBuildDashboardLoadState() {
   )
 }
 
-type SourceQuery = { error: unknown; isPending: boolean }
+type SourceQuery = Pick<UseQueryResult, 'error' | 'isPending'>

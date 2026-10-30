@@ -1,6 +1,6 @@
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 
-import type { HistoricalSnapshot } from './buildConcentrationTrend.types'
+import type { HistoricalSnapshot } from './historicalFundSnapshots.types'
 
 export function historicalSnapshotsByParent(
   history: HistoricalFundHolding[],

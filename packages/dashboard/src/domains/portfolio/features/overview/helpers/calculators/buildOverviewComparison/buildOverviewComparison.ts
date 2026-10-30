@@ -1,3 +1,4 @@
+import { latestAtOrBefore } from '@/domains/portfolio/features/overview/helpers/selectors/latestAtOrBefore'
 import { buildHistoricalConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration'
 import { buildHistoricalLookThroughConcentration } from '@/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
@@ -16,7 +17,6 @@ import type {
   OverviewWindows,
 } from './buildOverviewComparison.types'
 import { compared } from './compared'
-import { latestAtOrBefore } from './latestAtOrBefore'
 import { resolveOverviewWindows } from './resolveOverviewWindows'
 
 export function buildOverviewComparison(

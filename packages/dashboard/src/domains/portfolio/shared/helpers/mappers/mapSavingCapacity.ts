@@ -1,7 +1,6 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md.
+import type { RawSavingCapacityRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacity.types'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
-
-import type { RawSavingCapacityRow } from './aggregateSavingCapacity.types'
 
 export function mapSavingCapacity(
   rows: RawSavingCapacityRow[],

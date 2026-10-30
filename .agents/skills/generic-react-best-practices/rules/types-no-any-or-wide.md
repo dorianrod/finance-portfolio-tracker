@@ -70,3 +70,33 @@ Use `no-unnecessary-type-conversion` to reject conversions that do not change a 
 Enable `return-await` with `error-handling-correctness-only` so a promise returned inside error-handling scopes is awaited before `catch`/`finally` run. Enable `use-unknown-in-catch-callback-variable` for promise rejection callbacks; strict compiler catch-variable checks alone do not cover them. Use `no-confusing-void-expression` with `ignoreArrowShorthand: true` to reject consuming a void result while preserving concise event callbacks. Verify rejected and neighboring valid cases through the actual application configuration before enabling these checks.
 
 Use `strict` in both browser and tooling TypeScript projects, plus `noImplicitReturns`, `noImplicitOverride` and `noPropertyAccessFromIndexSignature`. Evaluate `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` against the real project before migration: index access may be absent, and an omitted property differs from an explicit `undefined`. Correct the contracts and callers before enabling them; avoid assertions or blanket `| undefined` additions merely to silence diagnostics. These checks complement architecture rules; TypeScript does not infer business ownership.
+
+### Prefer Typed Source Selectors at Presentation Boundaries
+
+When validated domain data already has a concrete type, preserve it through
+presentation callbacks. A third-party scalar callback with a broad parameter is
+not a reason to expose `unknown`, re-coerce values or add a type assertion in
+every consumer. When the dependency supports an accessor over the original data,
+let the shared wrapper accept a typed selector returning display-ready text:
+
+```tsx
+import { LabelList } from 'recharts'
+
+function ChartLabels<TPoint extends object>({ label }: {
+  label: (point: TPoint) => string
+}) {
+  return <LabelList dataKey={label} />
+}
+```
+
+The caller reads a typed entity field and delegates formatting to the existing
+formatter hook. Verify with the consuming compiler that incorrect field names,
+incompatible value types and unformatted numeric results are rejected. Keep the
+selector consistent with the actual chart data; unrelated JSX siblings do not
+share generic type inference automatically.
+
+Use the same principle for closed infrastructure contracts, such as query scopes:
+declare the allowed argument tuples instead of an unconstrained `unknown[]`.
+Keep `unknown` at genuinely untrusted JSON, storage and error boundaries until
+validation or narrowing establishes their types. Static annotations do not
+validate external data or establish that every number is finite.

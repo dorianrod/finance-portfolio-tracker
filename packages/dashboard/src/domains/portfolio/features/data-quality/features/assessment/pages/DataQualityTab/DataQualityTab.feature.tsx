@@ -1,15 +1,14 @@
-import { type ReactNode, useMemo } from 'react'
+import type { ReactNode } from 'react'
 
 import { ClassificationCoverageState } from '@/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state'
 import { FundDataQualityPanel } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature'
 import { AffectedAssetsPanel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature'
 import { DataQualityHeader } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityHeader.view'
-import { useDataQualityPanels } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityPanels'
+import { useDataQualityInspection } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityInspection'
 import { useDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel'
 import { LookThroughQualityContent } from '@/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature'
 import { QualityThemeNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/QualityThemeNavigation.view'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
-import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
 import { Grid } from '@/shared/ui/layout/Grid.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
@@ -58,58 +57,14 @@ export function DataQualityTab({
     fundUnresolved,
     rawData,
   })
-  const {
-    classificationDetailsOpen,
-    fundDiagnosticsOpen,
-    openAllClassificationDetails,
-    openFundDiagnostics,
-  } = useDataQualityPanels()
-  const activeDetailAction = useMemo(() => {
-    if (
-      activeThemeId === 'lookthrough' &&
-      hasLookThroughScope &&
-      scopedFundData.statuses.length > 0
-    ) {
-      return {
-        label: i18n.t('ui.dataqualitytab.inspect'),
-        detail: i18n.t('ui.dataqualitytab.issuesToInspect', {
-          count: fundIssueCount,
-        }),
-        expanded: fundDiagnosticsOpen,
-        onClick: openFundDiagnostics,
-      }
-    }
-
-    if (
-      activeThemeId === 'classification' &&
-      classificationApplicableValue > 0
-    ) {
-      return {
-        label: i18n.t('ui.dataqualitytab.inspect'),
-        detail:
-          affectedAssets.length > 0
-            ? i18n.t('ui.dataqualitytab.assetsToInspect', {
-                count: affectedAssets.length,
-              })
-            : i18n.t('ui.dataqualitytab.noAffectedAsset'),
-        expanded: classificationDetailsOpen,
-        onClick: openAllClassificationDetails,
-      }
-    }
-
-    return null
-  }, [
+  const activeDetailAction = useDataQualityInspection({
     activeThemeId,
-    affectedAssets.length,
+    affectedAssetCount: affectedAssets.length,
     classificationApplicableValue,
-    classificationDetailsOpen,
-    fundDiagnosticsOpen,
     fundIssueCount,
+    fundStatusCount: scopedFundData.statuses.length,
     hasLookThroughScope,
-    openAllClassificationDetails,
-    openFundDiagnostics,
-    scopedFundData.statuses.length,
-  ])
+  })
 
   return (
     <div className="mb-6">

@@ -1,7 +1,7 @@
 import type { AnimationItem, BarRectangleItem } from 'recharts'
 import { describe, expect, it } from 'vitest'
 
-import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/rankedBarAnimation'
+import { interpolateRankedBars } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/interpolateRankedBars'
 
 type TestRectangle = Omit<BarRectangleItem, 'payload'> & {
   payload: { key: string }

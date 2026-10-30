@@ -38,6 +38,39 @@ describe('domain boundary compiler contracts', () => {
       "export const category: AccountCategory = 'brokerage'",
     ],
     [
+      'typed chart label selectors',
+      `import {ChartLabels} from '${join(directory, 'src/shared/ui/chartLabels/ChartLabels.view')}'`,
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = (point: {value: string}) => point.value',
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = point => point.value.toFixed(1)',
+    ],
+    [
+      'display-ready chart label results',
+      `import {ChartLabels} from '${join(directory, 'src/shared/ui/chartLabels/ChartLabels.view')}'`,
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = point => point.value',
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = point => point.value.toFixed(1)',
+    ],
+    [
+      'chart label field access',
+      `import {ChartLabels} from '${join(directory, 'src/shared/ui/chartLabels/ChartLabels.view')}'`,
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = point => point.missing',
+      'export const label: Parameters<typeof ChartLabels<{value: number}>>[0]["label"] = point => point.value.toFixed(1)',
+      2339,
+    ],
+    [
+      'resource-specific query scopes',
+      `import {portfolioQueryKeys} from '${join(directory, 'src/domains/portfolio/shared/apis/queryKeys')}'`,
+      'portfolioQueryKeys.data("passive-income", "pea", new Date("2026-01-01"), undefined)',
+      'portfolioQueryKeys.data("passive-income", ["pea"], new Date("2026-01-01"), undefined)',
+      2345,
+    ],
+    [
+      'unscoped query resources',
+      `import {portfolioQueryKeys} from '${join(directory, 'src/domains/portfolio/shared/apis/queryKeys')}'`,
+      'portfolioQueryKeys.data("dashboard", {scope: "unexpected"})',
+      'portfolioQueryKeys.data("dashboard")',
+      2554,
+    ],
+    [
       'missing dictionary entries',
       `import {getOwnValue} from '${join(directory, 'src/shared/helpers/selectors/getOwnValue')}'`,
       "export const value: number = getOwnValue({present: 1}, 'missing')",
@@ -45,8 +78,8 @@ describe('domain boundary compiler contracts', () => {
     ],
   ])(
     'checks %s with the application compiler',
-    (_name, imports, invalid, valid) => {
-      expect(diagnostics(`${imports}; ${invalid}`)).toContain(2322)
+    (_name, imports, invalid, valid, expectedCode = 2322) => {
+      expect(diagnostics(`${imports}; ${invalid}`)).toContain(expectedCode)
       expect(diagnostics(`${imports}; ${valid}`)).toEqual([])
     },
   )

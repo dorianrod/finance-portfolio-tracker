@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix'
-import { applyAccountFilterToHistory } from '@/domains/portfolio/shared/helpers/filters/portfolioDataFilters/applyAccountFilterToHistory'
 import { rawRow } from '@/domains/portfolio/shared/mocks/rawPositionRow.mock'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+
+import { applyAccountFilterToHistory } from './applyAccountFilterToHistory'
 
 describe('applyAccountFilterToHistory', () => {
   const enrichedHistory: PortfolioHistoryPoint[] = [

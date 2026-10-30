@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { aggregateFilteredPoints } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/aggregateFilteredPoints'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
+
+import { aggregateFilteredPoints } from './aggregateFilteredPoints'
 
 describe('aggregateFilteredPoints', () => {
   it('sums category values across matching isins by date, sorted with nc last', () => {

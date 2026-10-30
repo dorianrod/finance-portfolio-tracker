@@ -5,6 +5,15 @@ import { makeIssuerHolding as holding } from '@/domains/portfolio/features/holdi
 import { makeIssuerPosition as position } from '@/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerPosition.mock'
 
 describe('buildIssuerExposures', () => {
+  it.each(['Example FCP', 'Example SCPI', 'DWS Europe'])(
+    'does not invent a direct issuer for the unresolved fund %s',
+    (name) => {
+      expect(
+        buildIssuerExposures([position({ name, total_value: 100 })], []),
+      ).toEqual([])
+    },
+  )
+
   it('counts partial exposure once when the fund uses the same ISIN and ticker', () => {
     const exposures = buildIssuerExposures(
       [

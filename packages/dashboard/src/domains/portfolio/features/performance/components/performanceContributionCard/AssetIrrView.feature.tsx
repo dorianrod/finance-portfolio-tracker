@@ -1,6 +1,6 @@
 import { IrrList } from '@/domains/portfolio/features/performance/components/PerformanceRankingLists/performanceRankingLists/IrrList.view'
 import { useFormatExactPerformanceDateRange } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatExactPerformanceDateRange'
-import { buildAssetIrrRankings } from '@/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/buildAssetIrrRankings'
+import { buildAssetIrrRankings } from '@/domains/portfolio/features/performance/helpers/selectors/buildAssetIrrRankings'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'

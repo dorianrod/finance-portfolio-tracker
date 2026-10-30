@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeMatchingIsins } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/computeMatchingIsins'
 import { rawData } from '@/domains/portfolio/features/diversification/shared/mocks/rawIsinData.mock'
+
+import { computeMatchingIsins } from './computeMatchingIsins'
 
 describe('computeMatchingIsins', () => {
   it('returns isins whose latest snapshot has a positive value for the filtered category', () => {

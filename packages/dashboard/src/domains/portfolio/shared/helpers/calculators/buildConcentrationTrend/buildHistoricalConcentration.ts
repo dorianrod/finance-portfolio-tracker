@@ -1,8 +1,8 @@
+import { matchesFilters } from '@/domains/portfolio/shared/helpers/businessRules/matchesFilters'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { concentrationPoint } from './concentrationPoint'
-import { matchesFilters } from './matchesFilters'
 
 // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Scoped valid snapshots feed one date-by-asset accumulator and its concentration denominator.
 export function buildHistoricalConcentration(

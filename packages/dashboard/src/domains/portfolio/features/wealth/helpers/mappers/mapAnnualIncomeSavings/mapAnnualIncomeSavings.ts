@@ -6,14 +6,14 @@ export function mapAnnualIncomeSavings(
 ): AnnualIncomeSavingsPoint[] {
   return rows
     .map((row) => ({
-      year: Math.trunc(row.year),
+      year: row.year,
       incomeStatus: row.income_status,
       netSalary: row.net_salary,
       otherIncome: row.other_income,
       totalIncome: row.total_income,
       grossSalary: row.gross_salary,
       placedSavings: row.placed_savings,
-      savingsThrough: row.savings_through || null,
+      savingsThrough: row.savings_through,
       savingsStatus: row.savings_status,
       placementRate: row.placement_rate,
       unplacedIncomeProxy: row.unplaced_income_proxy,

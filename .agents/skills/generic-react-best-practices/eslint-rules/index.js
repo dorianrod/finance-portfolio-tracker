@@ -7,6 +7,7 @@ import eslintSuppressionProcessor from './eslint-suppression-processor.js'
 import explicitNullability from './explicit-nullability.js'
 import featureFolderLayout from './feature-folder-layout.js'
 import formatterContract from './formatter-contract.js'
+import helperModuleContract from './helper-module-contract.js'
 import i18nConsistency from './i18n-consistency.js'
 import importBoundaries from './import-boundaries.js'
 import maxHooksPerComponent from './max-hooks-per-component.js'
@@ -62,6 +63,7 @@ export default {
     'explicit-nullability': explicitNullability,
     'feature-folder-layout': featureFolderLayout,
     'formatter-contract': formatterContract,
+    'helper-module-contract': helperModuleContract,
     'i18n-consistency': i18nConsistency,
     'import-boundaries': importBoundaries,
     'max-hooks-per-component': maxHooksPerComponent,

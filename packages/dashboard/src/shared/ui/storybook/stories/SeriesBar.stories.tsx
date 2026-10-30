@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { ChartLabels } from '@/shared/ui/chartLabels/ChartLabels.view'
 
 import { ChartTooltip } from '../../ChartTooltip.view'
@@ -22,11 +23,15 @@ export const Playground: Story = {
     prominence: 'full',
   },
   render: function Render(args) {
+    const formatNumber = useFormatNumber()
     return (
       <CartesianExample>
         <ChartTooltip highlight="bar" />
         <SeriesBar {...args}>
-          <ChartLabels dataKey="value" position="top" />
+          <ChartLabels
+            label={(point: { value: number }) => formatNumber(point.value)}
+            position="top"
+          />
         </SeriesBar>
       </CartesianExample>
     )
