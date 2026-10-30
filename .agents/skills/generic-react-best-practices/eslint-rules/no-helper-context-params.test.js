@@ -24,14 +24,14 @@ describe('helper context signatures and callers', () => {
   it('resolves namespaced formatter hooks and helper aliases', () => {
     expect(
       lint(
-        "import * as money from '@/shared/helpers/formatters/useFormatMoney'; import { build } from '@/domains/orders/helpers/mappers/build'; const alias = build; const format = money.useFormatMoney(); alias(rows, format)",
+        "import * as money from '@/shared/helpers/formatters/useFormatMoney'; import { build } from '@/domains/orders/helpers/transformers/build'; const alias = build; const format = money.useFormatMoney(); alias(rows, format)",
       ).map((message) => message.messageId),
     ).toEqual(['context'])
   })
   it('resolves namespace helper calls', () => {
     expect(
       lint(
-        "import {useFormatMoney} from '@/shared/helpers/formatters/useFormatMoney'; import * as helpers from '@/domains/orders/helpers/mappers/build'; const format = useFormatMoney(); helpers.build(rows, format)",
+        "import {useFormatMoney} from '@/shared/helpers/formatters/useFormatMoney'; import * as helpers from '@/domains/orders/helpers/transformers/build'; const format = useFormatMoney(); helpers.build(rows, format)",
       ).map((message) => message.messageId),
     ).toEqual(['context'])
   })
@@ -43,7 +43,7 @@ describe('helper context signatures and callers', () => {
   ])(
     'rejects formatter dependencies through aliases and object arguments: %s',
     (body) => {
-      const code = `import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'; import { usePositionFormatters } from '@/domains/orders/helpers/formatters/usePositionFormatters'; import { build } from '@/domains/orders/helpers/mappers/build'; ${body}`
+      const code = `import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'; import { usePositionFormatters } from '@/domains/orders/helpers/formatters/usePositionFormatters'; import { build } from '@/domains/orders/helpers/transformers/build'; ${body}`
       expect(lint(code).map((message) => message.messageId)).toEqual([
         'context',
       ])
@@ -70,7 +70,7 @@ describe('helper context signatures and callers', () => {
   ])('rejects resolved context clients: %s', (body, expected) => {
     expect(
       lint(
-        `import { build } from '@/domains/orders/helpers/mappers/build'; ${body}`,
+        `import { build } from '@/domains/orders/helpers/transformers/build'; ${body}`,
       ).map((message) => message.messageId),
     ).toEqual([expected])
   })
@@ -79,7 +79,7 @@ describe('helper context signatures and callers', () => {
     expect(
       lint(
         `import type { useFormatMoney as useMoney } from '@/shared/helpers/formatters/useFormatMoney'; export function build(rows: Row[], format: ReturnType<typeof useMoney>) { return rows.map(format) }`,
-        'src/domains/orders/helpers/mappers/build.ts',
+        'src/domains/orders/helpers/transformers/build.ts',
       ).map((message) => message.messageId),
     ).toEqual(['context'])
   })
@@ -93,7 +93,7 @@ describe('helper context signatures and callers', () => {
   ])(
     'allows data, formatted values, ordinary callbacks and shadowed bindings: %s',
     (body) => {
-      const code = `import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'; import { useTranslation } from 'react-i18next'; import { useAtomValue } from 'jotai'; import { build } from '@/domains/orders/helpers/mappers/build'; ${body}`
+      const code = `import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'; import { useTranslation } from 'react-i18next'; import { useAtomValue } from 'jotai'; import { build } from '@/domains/orders/helpers/transformers/build'; ${body}`
       expect(lint(code)).toEqual([])
     },
   )
@@ -102,7 +102,7 @@ describe('helper context signatures and callers', () => {
     expect(
       lint(
         `import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'; export function useBuild() { const format = useFormatMoney(); return rows => rows.map(row => format(row.amount)) }`,
-        'src/domains/orders/helpers/mappers/useBuild.ts',
+        'src/domains/orders/helpers/transformers/useBuild.ts',
       ),
     ).toEqual([])
   })

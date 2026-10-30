@@ -1,4 +1,5 @@
 import { isProductionSource } from './ast-bindings.js'
+import { helperRole } from './helper-categories.js'
 import {
   runtimeDependencies,
   staticModuleSource,
@@ -11,27 +12,21 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Keep translation and display formatting out of domain services, calculations and aggregations',
+        'Keep translation and display formatting out of transformers and reusable domain services',
     },
     schema: [],
     messages: {
       presentation:
-        'Keep translation and display formatting in component/page presenters or formatters. Runtime dependency: {{chain}}. Return raw data and errors from domain services, calculations and aggregations. [arch-no-visual-logic-below-page]',
+        'Keep display dependencies in presenters or formatters. Runtime dependency: {{chain}}. Transformers and reusable domain services return UI-independent data and semantic reasons. [arch-no-visual-logic-below-page]',
     },
   },
   create(context) {
     const filename = context.filename.replaceAll('\\', '/')
-    const quantitativeHelper =
-      /\/src\/domains\/.+\/helpers\/(?:calculators|aggregators)\//u.test(
-        filename,
-      )
+    const transformer = helperRole(filename) === 'data'
     const reusableService =
       /\/src\/domains\/.+\/services\//u.test(filename) &&
       !/\/(?:components|pages|mocks)\//u.test(filename)
-    if (
-      !isProductionSource(filename) ||
-      (!quantitativeHelper && !reusableService)
-    )
+    if (!isProductionSource(filename) || (!transformer && !reusableService))
       return {}
     const dependencies = runtimeDependencies(context)
     function check(node, source) {
@@ -41,8 +36,13 @@ export default {
         (specifier, target) =>
           specifier === 'i18next' ||
           specifier === 'react-i18next' ||
-          /(?:^|\/)i18n(?:\/|$)/u.test(target ?? specifier) ||
-          /(?:^|\/)helpers\/formatters(?:\/|$)/u.test(target ?? specifier),
+          /(?:^|\/)i18n(?:[./]|$)/u.test(target ?? specifier) ||
+          helperRole(target ?? specifier) === 'presentation' ||
+          (transformer &&
+            (/^(?:recharts|react-dom|@radix-ui\/[^/]+)(?:\/|$)/u.test(
+              specifier,
+            ) ||
+              /(?:^|\/)shared\/ui\//u.test(target ?? specifier))),
         { stop: (target) => /\/(?:apis|schemas|stores)\//u.test(target) },
       )
       if (found)

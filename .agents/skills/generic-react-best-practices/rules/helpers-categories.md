@@ -1,99 +1,88 @@
 ---
 title: Sort Every Helper Into One of a Fixed Set of Categories
 impact: MEDIUM-HIGH
-impactDescription: predictable location, no grab-bag folders, no duplicated helpers
-tags: helpers, categories, selectors, aggregators, calculators, mappers, presenters, quality
+impactDescription: explicit contracts, predictable dependencies and no duplicated helpers
+tags: helpers, categories, transformers, formatters, presenters, contracts
 ---
 
 ## Sort Every Helper Into One of a Fixed Set of Categories
 
-**Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
+**Impact: MEDIUM-HIGH (explicit contracts, predictable dependencies and no duplicated helpers)**
 
-`helpers/` is never flat and never holds a `utils.ts` or `*.logic.ts`. Each file lives in one category folder, is named after its single public helper export, and may keep private support functions. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects or orchestration (effect, mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
+Every helper lives in exactly one of `helpers/transformers/`, `helpers/formatters/` or `helpers/presenters/`. The exposed result's responsibility determines its category. Filtering, grouping, calculating and testing describe operations, not separate categories. Keep one public helper per file, name the file after that export and keep support functions private. Never use a flat helpers folder, `utils.ts` or `*.logic.ts`.
 
-| Category | Input → output | Examples |
-| --- | --- | --- |
-| `businessRules/` | entity/state → `boolean` (or a closed union) | `isContractClosed`, `canCancelOrder`, `shouldShowApprovers` |
-| `formatters/` | entity/value → display text | `useFormatContact`, `useFormatOrderStatus` |
-| `selectors/` | collection → same items filtered, ordered, indexed or selected | `selectVisibleOrders`, `findLatestInvoice`, `sortContacts` |
-| `aggregators/` | many records → grouped or consolidated collection | `aggregateInvoicesByMonth`, `buildAccountHistory` |
-| `calculators/` | values/entities → quantitative metric or metric summary | `getInvoiceTotal`, `computeOrderPerformance` |
-| `mappers/` | one representation → another, without material selection or aggregation | `toContactOption`, `buildOrderViewModel` |
-| `presenters/` | display data → UI class, tone, geometry or library-specific shape | `getOrderStatusTone`, `getChartDomain`, `computePopoverPosition` |
-| `quality/` | data → coverage, reliability, missing-data or anomaly diagnostic | `computeInvoiceCoverage`, `assessContactCompleteness` |
-| `validators/` | entity/items → list of business errors (never throws, no toast) | `validateOrdersForCancellation` |
-| `payloads/` | domain values → API request body | `buildOrderPayload` |
-| `forms/` | entity → form initial values, and form values → domain input | `getOrderFormInitialValues` |
-| `filters/` | domain data → filter options and filter defaults | `useStatusFilterOptions` |
-| `schemas/` | Yup schemas reused by several hooks (see `yup-module-level-schemas`) | `ORDER_LIST_ITEM_SCHEMA` |
-| `links/` | ids → route or URL | `getContractDetailPath` |
+### Transformers: validated data to derived data
 
-Use these boundaries when neighboring categories look plausible:
+A transformer receives explicit, typed, already validated inputs and derives values independent of their presentation. This includes selection, sorting, indexing, grouping, calculations, classifications, predicates and business diagnostics. A result may be a boolean, number, identifier, closed union, collection or structured summary. Returning a string does not make it a formatter.
 
-- Same item shape with fewer, reordered or selected items → `selectors`.
-- Several records grouped by a key into consolidated records → `aggregators`.
-- Primarily numeric or statistical result, including a structured metric summary → `calculators`.
-- Representation change without material selection or aggregation → `mappers`.
-- CSS, design-system, charting or geometry vocabulary in the output → `presenters`.
-- Completeness, reliability, coverage or anomaly evidence in the output → `quality`.
-- A simple quality predicate still belongs in `businessRules/`; a quality label still belongs in `formatters/`.
+Transformers are pure functions; a helper hook may memoize their composition with `useMemo` or `useCallback`. Obtain business data and context in API hooks or services and pass them in. Do not acquire data, subscribe to stores or context, translate, format display text or depend on UI contracts here. Preserve input collections and keep diagnostic codes separate from user-facing messages.
 
-Parsing and coercion of raw API values are not helper categories. They belong in the API hook's Yup schema so the domain never receives unvalidated wire values (see `yup-last-coercion-barrier`).
+Raw API parsing, coercion and adaptation stay at the owning API boundary: textual dates/numbers, wire-field renames and external-code normalization belong in response schemas. Request validation, payload serialization and transport shapes stay in API schemas and modules. Reusable API schemas live in `apis/schemas/`; generic schemas live in their owning `schemas/`; translated form schemas remain with their form. A helper must not perform another validation/coercion pass downstream. Constructing a Date from a computed timestamp or rounding a domain calculation is not itself wire coercion.
 
-Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
+### Formatters: values to display text
 
-When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; feature-shared logic belongs under that feature; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
+A unit formatter is a `useFormatXxx` hook returning a memoized function whose value parameter accepts `null | undefined`, whose options expose a configurable fallback and whose result is always `string`. It owns labels, descriptions, dates, numbers, units and locale-dependent display conventions. See `helpers-formatter-hooks` for the complete fallback contract.
 
-**Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
+Presentation context such as language or display preferences may be read inside the hook. Data acquisition, business state, effects and writable local state are outside its contract. A formatter may compose a pure domain classification. A grouping used only to select display wording may stay inside it; a classification used independently in filtering, eligibility or statistics belongs in a transformer and can be reused by the formatter.
 
-```text
-src/domains/sales/orders/features/list/helpers/
-├── utils.ts                      # formatDate, isCancelable, buildBody, …
-├── orderHelpers.ts
-├── order.logic.ts                # selection, aggregation and display mixed together
-├── responsiveness/useIsMobile.ts # not domain logic
-└── lists/useOrderListData.ts     # page data orchestration, not a helper
+A formatter never returns a color, tone, icon, CSS class, geometry, JSX or UI configuration. A technical string such as an API payload, identifier or control value is not display text. Bundles only compose existing formatter functions; constants and private numeric utilities are not unit formatters. No filename or primitive return type can establish that a string is intended for people.
+
+### Presenters: explicit data to a visual contract
+
+A presenter adapts supplied data to semantic tones/variants, geometry, positioning or component/chart-library contracts. It may be a pure function or a read-only hook composing transformers and formatters. Independently useful business operations stay implemented in transformers. Return data or configuration, never JSX or React elements.
+
+Keep domain presenters at the owning component or page. Generic visual infrastructure follows shared UI ownership. A presenter returns a semantic tone or variant; concrete colors and appearance remain in the design system. It does not acquire data, read business state, mutate, navigate, notify, measure the DOM or read browser globals. Supply measurements as explicit inputs and apply results at the UI boundary.
+
+For `{ label, tone }`, a presenter composes a formatter for the label and visual mapping for the tone. Pass already formatted text to a pure presenter, or compose the formatter hook inside a presenter hook; never inject `t` or a formatter function.
+
+### Boundary examples
+
+| Exposed responsibility                                               | Owner                    |
+| -------------------------------------------------------------------- | ------------------------ |
+| Raw API date/code to a validated domain value                        | API response schema      |
+| Domain statuses to a stable group used for eligibility or statistics | Transformer              |
+| Total amount, chronological series, predicate or diagnostic codes    | Transformer              |
+| Localized amount, status label or diagnostic message                 | Formatter                |
+| Semantic tone, chart-library rows or geometry                        | Presenter                |
+| Date adapted to a UI control's technical value                       | Presenter                |
+| Domain input to an API request body                                  | Owning API schema/module |
+| Fetching, mutation, navigation, notification or other effect         | API hook or service      |
+
+**Incorrect (wire coercion and display configuration hidden in a transformer):**
+
+```typescript
+// helpers/transformers/buildOrder.ts
+export function buildOrder(raw: { amount: string; status: string }) {
+  return { amount: Number(raw.amount), label: raw.status, tone: 'positive' }
+}
 ```
 
-**Correct (one category per file, file named after its export):**
+**Correct (the public contract and ownership are explicit):**
 
 ```text
-src/domains/sales/orders/features/list/helpers/
-├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
-├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
-├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
-├── aggregators/aggregateOrdersByMonth.ts    # Order[] -> MonthlyOrders[]
-├── calculators/getOrderTotal.ts             # OrderLine[] -> number
-├── mappers/toOrderOption.ts                 # Order -> SelectOption
-├── quality/computeOrderCoverage.ts          # Order[] -> CoverageDiagnostic
-├── validators/validateOrdersForCancellation.ts
-├── payloads/buildOrderPayload.ts           # OrderFormValues -> OrderPayload
-├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
-└── filters/useOrderStatusFilterOptions.ts
-
-src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
-├── OrdersChart.feature.tsx
-└── helpers/presenters/getOrdersChartDomain.ts
+features/detail/
+├── apis/queries/useGetOrderQuery.ts       # validates wire values into Order
+├── helpers/transformers/getOrderTotal.ts  # OrderLine[] -> number
+├── helpers/transformers/canCancelOrder.ts # Order -> boolean
+├── helpers/transformers/getOrderGroup.ts  # OrderStatus -> OrderGroup
+├── helpers/formatters/useFormatOrderStatus.ts
+└── components/OrderPanel/
+    ├── OrderPanel.feature.tsx
+    └── helpers/presenters/getOrderTone.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
+Choose the narrowest actual owner: component, page, feature or the nearest shared ancestor of consumers. Only business-agnostic helpers belong in application-wide shared code. All three categories preserve input collections and exclude effects, rendering and data acquisition. The former categories (`businessRules`, `selectors`, `aggregators`, `calculators`, `mappers`, `quality`, `validators`, `filters`, `payloads`, `forms`, `schemas`, `links`) are rejected; there are no aliases or compatibility mode. Classify their contents by contract rather than mechanically moving every file into transformers.
 
-See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`, `state-derived-atoms`
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `helpers-formatter-hooks`, `helpers-business-rules-pure`, `yup-last-coercion-barrier`
 
 ### ESLint Enforcement
 
-Enable `local/helper-module-contract` at error level for authored production
-helpers, including component-, page- and shared-owned modules. Reject flat or
-undocumented categories and `*.logic.*` names. Match the filename stem to the
-public callable export, including named default exports, local export aliases,
-overloads and immutable callable aliases. Type-only exports, constants, private
-support functions, tests, stories, fixtures and declaration files do not establish
-a public helper naming violation.
-Resolve business scopes before identifying the helper role; a domain or feature
-named `helpers` is not itself a helper folder.
+Enable `local/helper-module-contract` at error level. The shared helper-category registry is the source for naming, component roles, presenter placement, presentation dependencies, formatter provenance and browser boundaries. Resolve business ownership before role folders, including domains/features named `helpers`. Reject flat/retired categories and `*.logic.*`; match the filename to the callable public export, including aliases, overloads and immutable callable aliases. Type-only exports, constants and private support functions do not establish a naming violation. Tests, stories, mocks and declarations are excluded.
 
-The check does not infer a function's category from its implementation or prove
-that an opaque reexport or factory result is callable. Review those cases and
-actual ownership manually. Verify mismatched and matching neighbors through the
-consuming configuration. There is no autofix: a rename must update imports and
-callers together, and choosing a category requires responsibility review.
+For canonical helpers, the same check rejects runtime dependencies on Yup, API/schema/service roles, known HTTP/query libraries and domain stores. Dedicated named error exports (`ValidationError` from Yup and Axios error classes/guards) are allowed for pure error classification, including aliases and reexports; they do not construct schemas or issue requests. Mixed schema/client imports and namespace/default imports remain outside helpers. Transformers also reject store dependencies and Jotai/router subscriptions, and calls to React context/subscription APIs. Follow resolvable local dependencies, aliases, reexports and literal dynamic imports; ignore erased type edges and terminate on cycles. Generic presentation preferences may be read from presentation context, but they must not conceal business state.
+
+Formatters also reject presenter and known UI-library runtime dependencies; pure transformer composition remains valid.
+
+Reject resolved React effect/writable-state hooks, Jotai writers, navigation hooks, JSX and React element creation. Resolve aliases/namespaces and preserve shadowing. Use `local/no-service-presentation` to reject translation, formatter, presenter and known UI-library dependencies in transformers. Reusable domain services retain their separate presentation boundary. Use `local/no-browser-in-pure-helpers` for all canonical helper categories and `local/formatter-contract` for unit formatter signatures.
+
+These are bounded checks, not a proof of purity or an automatic semantic classifier. Injected callbacks, arbitrary external libraries, computed module paths, custom wrappers and values with indistinguishable primitive types require review. In particular, inspect display-only versus business grouping, technical versus human-readable strings, and UI-shaped data hidden in transformers. Do not infer category from a method named `transform`, function prefixes, or boolean/string return types alone. Do not autofix category or ownership; coordinate moves with callers and verify the affected checks.

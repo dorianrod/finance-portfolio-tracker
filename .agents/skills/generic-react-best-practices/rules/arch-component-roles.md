@@ -22,8 +22,8 @@ A view may import React, visual libraries, other views, types, formatters, and c
 Domain collection aggregation belongs to feature orchestration, including when
 its result feeds a chart or tooltip. Views receive the grouped items and metrics;
 local visual selection, such as omitting empty chart panels, may remain in a
-component-owned presenter or selector. Include `helpers/aggregators/` in the
-runtime business-dependency check and review selector meaning separately.
+component-owned presenter. Include `helpers/transformers/` in the
+runtime business-dependency check. Selection is an operation: visual selection belongs in presenters, while domain selection belongs in transformers.
 
 A state renderer is a narrow composition boundary for states such as loading, error, empty, unavailable, degraded and ready. Its owning feature or a pure mapper resolves precedence and constructs the union before rendering. Each union variant carries only the data valid for that state, and the state renderer handles every variant exhaustively with a `never` check. Keep one-off optional sections and simple visual variants in their owning component instead of creating a state renderer.
 
@@ -48,15 +48,15 @@ Do not create a feature merely because a component receives raw props, and do no
 
 Use observable responsibility rather than component size, naming or the presence of a hook:
 
-| Responsibility | Role |
-| --- | --- |
-| Render a supplied entity, translate its labels, format amounts/dates | View |
-| Keep hover, disclosure, focus or local visual selection state | View |
-| Invoke a supplied `onSelect`/`onRetry` callback without owning the action | View |
-| Clamp a meter, choose a visual tone or prepare chart geometry | View with a scoped presenter when needed |
-| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature |
-| Compose child features/state renderers into a business surface, even without its own hook | Feature |
-| Exhaustively render an already resolved loading/error/empty/ready union | State renderer |
+| Responsibility                                                                                       | Role                                     |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Render a supplied entity, translate its labels, format amounts/dates                                 | View                                     |
+| Keep hover, disclosure, focus or local visual selection state                                        | View                                     |
+| Invoke a supplied `onSelect`/`onRetry` callback without owning the action                            | View                                     |
+| Clamp a meter, choose a visual tone or prepare chart geometry                                        | View with a scoped presenter when needed |
+| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature                                  |
+| Compose child features/state renderers into a business surface, even without its own hook            | Feature                                  |
+| Exhaustively render an already resolved loading/error/empty/ready union                              | State renderer                           |
 
 Receiving an entity does not make a component a feature. Neither `useState`, `useMemo`, `useFormatXxx`, reuse by several parents nor a `use…` name proves business ownership. Deriving a business metric or resolving permissions differs from formatting an already supplied value. A formatter that reads business state is not a way to hide that dependency from a view.
 
@@ -125,7 +125,7 @@ Also flag an unnecessary split when the feature is only a pass-through wrapper o
 // OrderTotal.view.tsx
 import { useAtomValue } from 'jotai'
 import { activeOrderAtom } from '../stores/order.atoms'
-import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+import { calculateOrderTotal } from '../helpers/transformers/orderTotal'
 
 export function OrderTotal() {
   const order = useAtomValue(activeOrderAtom)
@@ -141,7 +141,7 @@ Renaming the file does not turn this component into a view: it still consumes st
 // OrderTotal.feature.tsx
 import { useAtomValue } from 'jotai'
 import { activeOrderAtom } from '../stores/order.atoms'
-import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+import { calculateOrderTotal } from '../helpers/transformers/orderTotal'
 import { OrderTotalView } from './OrderTotal.view'
 
 export function OrderTotal() {
@@ -151,8 +151,15 @@ export function OrderTotal() {
 }
 
 // OrderTotal.view.tsx
-export function OrderTotalView(props: { label: string; formattedTotal: string }) {
-  return <p><span>{props.label}</span> <strong>{props.formattedTotal}</strong></p>
+export function OrderTotalView(props: {
+  label: string
+  formattedTotal: string
+}) {
+  return (
+    <p>
+      <span>{props.label}</span> <strong>{props.formattedTotal}</strong>
+    </p>
+  )
 }
 ```
 
@@ -180,15 +187,22 @@ type OrdersViewState =
   | { status: 'empty' }
   | { status: 'ready'; orders: Order[] }
 
-export function OrdersState({ state, onRetry }: {
+export function OrdersState({
+  state,
+  onRetry,
+}: {
   state: OrdersViewState
   onRetry: () => void
 }) {
   switch (state.status) {
-    case 'loading': return <Spinner />
-    case 'error': return <ErrorMessage error={state.error} onRetry={onRetry} />
-    case 'empty': return <EmptyOrders />
-    case 'ready': return <OrdersList orders={state.orders} />
+    case 'loading':
+      return <Spinner />
+    case 'error':
+      return <ErrorMessage error={state.error} onRetry={onRetry} />
+    case 'empty':
+      return <EmptyOrders />
+    case 'ready':
+      return <OrdersList orders={state.orders} />
   }
   const exhaustiveState: never = state
   return exhaustiveState

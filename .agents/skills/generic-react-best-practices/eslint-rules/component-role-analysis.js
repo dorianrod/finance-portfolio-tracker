@@ -6,6 +6,7 @@ import {
   unwrap,
 } from './ast-bindings.js'
 import { getPublicExports } from './get-public-exports.js'
+import { helperRole } from './helper-categories.js'
 import { libraryBinding } from './library-binding.js'
 import {
   getFunctionComponentName,
@@ -13,33 +14,23 @@ import {
 } from './react-component-utils.js'
 import { createTranslationResolver } from './translation-bindings.js'
 
-export const BUSINESS_PATH_SEGMENTS = [
-  '/apis/',
-  '/services/',
-  '/stores/',
-  '/helpers/businessRules/',
-  '/helpers/aggregators/',
-  '/helpers/calculators/',
-  '/helpers/filters/',
-  '/helpers/mappers/',
-  '/helpers/quality/',
-  '/helpers/validators/',
-]
+export const BUSINESS_PATH_SEGMENTS = ['/apis/', '/services/', '/stores/']
 
 export function businessSource(source) {
   return (
     ['jotai', '@tanstack/react-query'].some(
       (module) => source === module || source.startsWith(`${module}/`),
-    ) || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
+    ) ||
+    BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment)) ||
+    helperRole(source) === 'data'
   )
 }
 
 function visualSource(source) {
   return (
     ['react', 'react-i18next', 'recharts'].includes(source) ||
-    /(?:^|\/)(?:shared\/ui|helpers\/(?:formatters|presenters))(?:\/|$)/u.test(
-      source,
-    ) ||
+    /(?:^|\/)shared\/ui(?:\/|$)/u.test(source) ||
+    helperRole(source) === 'presentation' ||
     source.includes('.view')
   )
 }

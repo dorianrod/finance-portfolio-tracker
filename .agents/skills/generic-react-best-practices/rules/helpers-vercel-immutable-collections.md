@@ -9,22 +9,26 @@ tags: helpers, arrays, immutability, sorting, vercel
 
 **Impact: MEDIUM-HIGH (prevents helpers from mutating props, atoms or cached entities)**
 
-Selectors, mappers and calculators treat incoming collections as read-only. Sorting or changing a view of props, Jotai state or query data must produce a separate collection, leaving the original order and values intact.
+All helper categories treat incoming collections as read-only. Sorting or changing a view of props, Jotai state or query data must produce a separate collection, leaving the original order and values intact.
 
 **Incorrect (the selector reorders its caller's array):**
 
 ```typescript
 export function sortOrders(orders: Order[]): Order[] {
-  return orders.sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+  return orders.sort(
+    (left, right) => left.createdAt.getTime() - right.createdAt.getTime(),
+  )
 }
 ```
 
 **Correct (the selector returns a sorted copy):**
 
 ```typescript
-// helpers/selectors/sortOrders.ts
+// helpers/transformers/sortOrders.ts
 export function sortOrders(orders: readonly Order[]): Order[] {
-  return orders.toSorted((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+  return orders.toSorted(
+    (left, right) => left.createdAt.getTime() - right.createdAt.getTime(),
+  )
 }
 ```
 

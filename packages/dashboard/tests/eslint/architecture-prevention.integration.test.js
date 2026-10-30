@@ -17,7 +17,7 @@ const files = {
     'export function Panel() {return <span/>}',
   'src/domains/orders/components/Panel/services/usePanel.ts':
     'export function usePanel() {}',
-  'src/domains/orders/components/Panel/helpers/calculators/total.ts':
+  'src/domains/orders/components/Panel/helpers/transformers/total.ts':
     'export const total = 1',
   'src/domains/orders/components/Panel/helpers/presenters/tone.ts':
     "export const tone = 'positive'",
@@ -29,14 +29,27 @@ const files = {
     "export const tone = 'positive'",
   'src/domains/orders/services/useOrders.ts':
     'export function useOrders() {return []}',
-  'src/domains/orders/helpers/mappers/toRow.ts':
+  'src/domains/orders/helpers/transformers/toRow.ts':
     "import {useFormatOrder} from '../formatters/useFormatOrder'; export const toRow = useFormatOrder",
-  'src/domains/orders/helpers/mappers/numeric.ts':
+  'src/domains/orders/helpers/transformers/numeric.ts':
     'export const numeric = (value: number) => value * 2',
-  'src/domains/orders/helpers/mappers/globalLabels.ts':
+  'src/domains/orders/helpers/transformers/requestAdapter.ts':
+    "export { schema as value } from '../../apis/schemas/orderSchema'",
+  'src/domains/orders/apis/schemas/orderSchema.ts':
+    "import { object } from 'yup'; export const schema = object()",
+  'src/domains/orders/helpers/transformers/stateAdapter.ts':
+    "export { value } from '../../stores/orders.atoms'",
+  'src/domains/orders/stores/orders.atoms.ts': 'export const value = 1',
+  'src/domains/orders/helpers/transformers/getOrderGroup.ts':
+    "export const getOrderGroup = (code: string) => code === 'pending' || code === 'processing' ? 'inProgress' : 'closed'",
+  'src/domains/orders/helpers/transformers/classifyError.ts':
+    "import {ValidationError as InvalidData} from 'yup'; export const classifyError = (value: unknown) => value instanceof InvalidData ? 'invalid-data' : 'unexpected'",
+  'src/domains/orders/helpers/transformers/mixedSchema.ts':
+    "import {ValidationError, object} from 'yup'; export const schema = object(); export {ValidationError}",
+  'src/domains/orders/helpers/transformers/globalLabels.ts':
     "import {t} from 'i18next'; export const label = t",
   'src/i18n/useTranslations.ts': "export {useTranslation} from 'react-i18next'",
-  'src/domains/orders/helpers/aggregators/group.ts':
+  'src/domains/orders/helpers/transformers/group.ts':
     'export const group = (values: number[]) => values',
   'src/domains/orders/helpers/formatters/useFormatOrder.ts':
     'export function useFormatOrder() {return (value: string | null | undefined, options: {fallback?: string} = {}) => value ?? options.fallback ?? ""}',
@@ -49,7 +62,7 @@ const files = {
   'src/domains/orders/helpers/cycleB.ts':
     "export {a} from './cycleA'; export const b = 1",
   'src/domains/orders/helpers/cycleDisplay.ts':
-    "export {a} from './cycleA'; export {toRow} from './mappers/toRow'",
+    "export {a} from './cycleA'; export {toRow} from './transformers/toRow'",
 }
 for (const [file, code] of Object.entries(files)) {
   const name = join(root, file)
@@ -133,6 +146,114 @@ async function lint(
 
 describe('architecture prevention through the configured rules', () => {
   it.each([
+    "import { object as schema } from 'yup'; export const numeric = schema",
+    "export { value as numeric } from '@/domains/orders/helpers/transformers/requestAdapter'",
+    "import('@/domains/orders/helpers/transformers/stateAdapter')",
+    "export * from '@/domains/orders/apis/schemas/orderSchema'",
+    "export { schema as numeric } from '@/domains/orders/helpers/transformers/mixedSchema'",
+    "import { useQuery as read } from '@tanstack/react-query'; export const numeric = read",
+  ])(
+    'rejects direct and indirect API, schema and business-state dependencies: %s',
+    async (code) => {
+      const messages = await lint(
+        'helper-module-contract',
+        code,
+        'src/domains/orders/helpers/transformers/numeric.ts',
+      )
+      expect(messages).toMatchObject([{ messageId: 'dependency', severity: 2 }])
+    },
+  )
+
+  it.each([
+    "import type { ObjectSchema } from 'yup'; export type Schema = ObjectSchema<{}>",
+    "export type { value } from '@/domains/orders/helpers/transformers/stateAdapter'",
+    "import {getOrderGroup} from '@/domains/orders/helpers/transformers/getOrderGroup'; export const numeric = getOrderGroup",
+    "import {classifyError} from '@/domains/orders/helpers/transformers/classifyError'; export const numeric = classifyError",
+  ])(
+    'preserves erased dependencies and pure classifications: %s',
+    async (code) => {
+      expect(
+        await lint(
+          'helper-module-contract',
+          code,
+          'src/domains/orders/helpers/transformers/numeric.ts',
+        ),
+      ).toEqual([])
+    },
+  )
+
+  it.each([
+    "import {useEffect as effect} from 'react'; export function numeric() { effect(() => {}, []) }",
+    "import * as React from 'react'; const effect = React.useLayoutEffect; export function numeric() { effect(() => {}, []) }",
+  ])('rejects effects through the application preset: %s', async (code) => {
+    expect(
+      await lint(
+        'helper-module-contract',
+        code,
+        'src/domains/orders/helpers/transformers/numeric.ts',
+      ),
+    ).toMatchObject([{ messageId: 'effect', severity: 2 }])
+  })
+
+  it('preserves a formatter composing a pure business classification', async () => {
+    const code =
+      "import {useTranslation} from 'react-i18next'; import {getOrderGroup} from '@/domains/orders/helpers/transformers/getOrderGroup'; export function useFormatOrder() {const {t} = useTranslation(); return (value: string | null | undefined, {fallback = ''}: {fallback?: string} = {}): string => {if (value == null) return fallback; return getOrderGroup(value) === 'inProgress' ? t('orders.status.inProgress') : t('orders.status.closed')}}"
+    expect(
+      await lint(
+        'helper-module-contract',
+        code,
+        'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+      ),
+    ).toEqual([])
+    expect(
+      await lint(
+        'formatter-contract',
+        code,
+        'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+      ),
+    ).toEqual([])
+  })
+
+  it('keeps visual configuration dependencies out of formatters', async () => {
+    expect(
+      await lint(
+        'helper-module-contract',
+        "import {tone} from '@/domains/orders/components/Panel/helpers/presenters/tone'; export const useFormatOrder = tone",
+        'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+      ),
+    ).toMatchObject([{ messageId: 'displayOnly', severity: 2 }])
+  })
+
+  it.each([
+    'src/domains/orders/helpers/transformers/numeric.ts',
+    'src/domains/orders/helpers/formatters/useFormatOrder.ts',
+    'src/domains/orders/components/Panel/helpers/presenters/tone.ts',
+  ])('protects every helper contract from browser reads: %s', async (file) => {
+    expect(
+      await lint(
+        'no-browser-in-pure-helpers',
+        'export const width = window.innerWidth',
+        file,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: 'local/no-browser-in-pure-helpers',
+          messageId: 'browserContext',
+          severity: 2,
+        }),
+      ]),
+    )
+    expect(
+      await lint(
+        'no-browser-in-pure-helpers',
+        'export function width(rect: DOMRectReadOnly) {return rect.width}',
+        file,
+      ),
+    ).toEqual([])
+  })
+
+  it.each([
     'src/domains/orders/helpers/presenters/tone.ts',
     'src/domains/components/features/summary/helpers/presenters/tone.ts',
   ])(
@@ -175,8 +296,8 @@ describe('architecture prevention through the configured rules', () => {
     },
   )
   it.each([
-    "import {toRow as map} from '@/domains/orders/helpers/mappers/toRow'; export const rows = map",
-    "export {toRow} from '@/domains/orders/helpers/mappers/toRow'",
+    "import {toRow as map} from '@/domains/orders/helpers/transformers/toRow'; export const rows = map",
+    "export {toRow} from '@/domains/orders/helpers/transformers/toRow'",
     "import('@/domains/orders/helpers/cycleDisplay')",
   ])('rejects transitive formatting in reusable services: %s', async (code) => {
     const messages = await lint(
@@ -191,14 +312,14 @@ describe('architecture prevention through the configured rules', () => {
     expect(
       await lint(
         'no-service-presentation',
-        "import {toRow} from '@/domains/orders/helpers/mappers/toRow'; export const rows = toRow",
+        "import {toRow} from '@/domains/orders/helpers/transformers/toRow'; export const rows = toRow",
         'src/domains/orders/components/Panel/services/usePanel.ts',
       ),
     ).toEqual([])
   })
   it.each([
     "import {t as label} from 'i18next'; export const group = label('orders.direct')",
-    "export {toRow} from '@/domains/orders/helpers/mappers/toRow'",
+    "export {toRow} from '@/domains/orders/helpers/transformers/toRow'",
     "import('@/domains/orders/helpers/cycleDisplay')",
   ])(
     'keeps aggregation identity independent of display labels: %s',
@@ -207,7 +328,7 @@ describe('architecture prevention through the configured rules', () => {
         await lint(
           'no-service-presentation',
           code,
-          'src/domains/orders/helpers/aggregators/group.ts',
+          'src/domains/orders/helpers/transformers/group.ts',
         ),
       ).toMatchObject([{ messageId: 'presentation', severity: 2 }])
     },
@@ -216,8 +337,8 @@ describe('architecture prevention through the configured rules', () => {
     expect(
       await lint(
         'no-service-presentation',
-        "import {numeric} from '@/domains/orders/helpers/mappers/numeric'; export const group = (values: number[]) => values.map(numeric)",
-        'src/domains/orders/helpers/aggregators/group.ts',
+        "import {numeric} from '@/domains/orders/helpers/transformers/numeric'; export const group = (values: number[]) => values.map(numeric)",
+        'src/domains/orders/helpers/transformers/group.ts',
       ),
     ).toEqual([])
   })
@@ -225,8 +346,8 @@ describe('architecture prevention through the configured rules', () => {
     expect(
       await lint(
         'no-service-presentation',
-        "import {toRow} from '@/domains/orders/helpers/mappers/toRow'; export const rows = toRow",
-        'src/domains/orders/components/Panel/helpers/calculators/total.ts',
+        "import {toRow} from '@/domains/orders/helpers/transformers/toRow'; export const rows = toRow",
+        'src/domains/orders/components/Panel/helpers/transformers/total.ts',
       ),
     ).toMatchObject([{ messageId: 'presentation', severity: 2 }])
   })
@@ -234,7 +355,7 @@ describe('architecture prevention through the configured rules', () => {
     expect(
       await lint(
         'no-service-presentation',
-        "import {numeric} from '@/domains/orders/helpers/mappers/numeric'; export const rows = numeric",
+        "import {numeric} from '@/domains/orders/helpers/transformers/numeric'; export const rows = numeric",
         'src/domains/orders/services/useOrders.ts',
       ),
     ).toEqual([])
@@ -261,7 +382,7 @@ describe('architecture prevention through the configured rules', () => {
     expect(
       await lint(
         'component-role',
-        "import {group as aggregate} from '@/domains/orders/helpers/aggregators/group'; export function Card() {return <span>{aggregate([])}</span>}",
+        "import {group as aggregate} from '@/domains/orders/helpers/transformers/group'; export function Card() {return <span>{aggregate([])}</span>}",
       ),
     ).toMatchObject([{ messageId: 'viewImportsBusiness', severity: 2 }])
   })
@@ -307,7 +428,7 @@ describe('architecture prevention through the configured rules', () => {
   it.each([
     "import {t as label} from 'i18next'",
     "import translations from '@/i18n/i18n'",
-    "import {label} from '@/domains/orders/helpers/mappers/globalLabels'",
+    "import {label} from '@/domains/orders/helpers/transformers/globalLabels'",
   ])(
     'requires formatter hooks to read the React translation context: %s',
     async (dependency) => {
@@ -367,7 +488,7 @@ describe('architecture prevention through the configured rules', () => {
       await lint(
         'entity-type-files',
         'export type Invoice = {reference: string}; export function total(value: number) {return value}',
-        'src/domains/orders/helpers/mappers/numeric.ts',
+        'src/domains/orders/helpers/transformers/numeric.ts',
       ),
     ).toMatchObject([{ messageId: 'misplaced', severity: 2 }])
   })
@@ -376,7 +497,7 @@ describe('architecture prevention through the configured rules', () => {
       await lint(
         'entity-type-files',
         'export type Options = {multiplier: number}; export function total(value: number, options: Options) {return value * options.multiplier}',
-        'src/domains/orders/helpers/mappers/numeric.ts',
+        'src/domains/orders/helpers/transformers/numeric.ts',
       ),
     ).toEqual([])
   })

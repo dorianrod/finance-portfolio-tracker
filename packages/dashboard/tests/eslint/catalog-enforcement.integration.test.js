@@ -121,9 +121,9 @@ const cases = [
     rule: 'no-helper-context-params',
     message: 'context',
     invalid:
-      "import {useFormatMoney as useCurrency} from '@/shared/helpers/formatters/useFormatMoney'; import {resolveAssetName as build} from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'; export function Field() {const format = useCurrency();return <span>{build({}, format)}</span>}",
+      "import {useFormatMoney as useCurrency} from '@/shared/helpers/formatters/useFormatMoney'; import {resolveAssetName as build} from '@/domains/portfolio/shared/helpers/transformers/resolveAssetName'; export function Field() {const format = useCurrency();return <span>{build({}, format)}</span>}",
     valid:
-      "import {useFormatMoney as useCurrency} from '@/shared/helpers/formatters/useFormatMoney'; import {resolveAssetName as build} from '@/domains/portfolio/shared/helpers/mappers/resolveAssetName'; export function Field() {const format = useCurrency();return <span>{build({}, format(10))}</span>}",
+      "import {useFormatMoney as useCurrency} from '@/shared/helpers/formatters/useFormatMoney'; import {resolveAssetName as build} from '@/domains/portfolio/shared/helpers/transformers/resolveAssetName'; export function Field() {const format = useCurrency();return <span>{build({}, format(10))}</span>}",
   },
   {
     rule: 'no-inline-format-fallback',

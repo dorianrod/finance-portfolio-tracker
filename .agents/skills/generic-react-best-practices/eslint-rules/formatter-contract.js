@@ -2,6 +2,7 @@ import ts from 'typescript'
 
 import { isProductionSource } from './ast-bindings.js'
 import { getPublicExports } from './get-public-exports.js'
+import { helperCategory } from './helper-categories.js'
 import { runtimeDependencies, typeOnlyImport } from './runtime-dependencies.js'
 
 export default {
@@ -29,7 +30,7 @@ export default {
   create(context) {
     if (
       !isProductionSource(context.filename) ||
-      !/\/helpers\/formatters\//u.test(context.filename)
+      helperCategory(context.filename) !== 'formatters'
     )
       return {}
     const services = context.sourceCode.parserServices

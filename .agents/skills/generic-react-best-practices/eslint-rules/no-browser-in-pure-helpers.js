@@ -1,5 +1,7 @@
 import ts from 'typescript'
 
+import { helperRole } from './helper-categories.js'
+
 const BROWSER_GLOBALS = new Set([
   'window',
   'self',
@@ -79,7 +81,7 @@ export default {
     type: 'problem',
     docs: {
       description:
-        'Pass browser measurements into pure presenters and calculators instead of reading or mutating the DOM',
+        'Pass browser measurements into helpers instead of reading or mutating the DOM',
     },
     schema: [],
     messages: {
@@ -92,7 +94,8 @@ export default {
   create(context) {
     const filename = context.filename.replaceAll('\\', '/')
     if (
-      !/\/src\/.+\/helpers\/(?:presenters|calculators)\//u.test(filename) ||
+      !/(?:^|\/)src\//u.test(filename) ||
+      !helperRole(filename) ||
       /\/(?:__tests__|generated|__generated__)\//u.test(filename) ||
       /\.(?:test|spec|stories|generated|gen|d)\.[cm]?[jt]sx?$/u.test(filename)
     )

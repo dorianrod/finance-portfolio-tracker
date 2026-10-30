@@ -4,6 +4,7 @@ import {
   stableInitializer,
 } from './ast-bindings.js'
 import { createContextResolver } from './context-provenance.js'
+import { helperRole } from './helper-categories.js'
 import { createTranslationResolver } from './translation-bindings.js'
 
 export default {
@@ -28,9 +29,7 @@ export default {
     const source = context.sourceCode
     const translate = createTranslationResolver(source)
     const resolver = createContextResolver(source, context.filename)
-    const presentationHelper = /\/helpers\/(?:formatters|presenters)\//u.test(
-      context.filename,
-    )
+    const presentationHelper = helperRole(context.filename) === 'presentation'
     function containsTranslation(node) {
       return (
         translate(node) || childrenOf(source, node).some(containsTranslation)

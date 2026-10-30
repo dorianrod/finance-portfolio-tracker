@@ -1,18 +1,6 @@
+import { businessSource } from './component-role-analysis.js'
 import { getHookName } from './hook-name.js'
 import { isTestFile } from './react-component-utils.js'
-
-const BUSINESS_MODULES = ['jotai', '@tanstack/react-query']
-const BUSINESS_PATH_SEGMENTS = [
-  '/apis/',
-  '/services/',
-  '/stores/',
-  '/helpers/businessRules/',
-  '/helpers/calculators/',
-  '/helpers/filters/',
-  '/helpers/mappers/',
-  '/helpers/quality/',
-  '/helpers/validators/',
-]
 
 function isStateComponentModule(filename) {
   return filename.endsWith('.state.tsx')
@@ -23,14 +11,6 @@ function isTypeOnlyImport(node) {
   return (
     node.specifiers.length > 0 &&
     node.specifiers.every((specifier) => specifier.importKind === 'type')
-  )
-}
-
-function isBusinessSource(source) {
-  return (
-    BUSINESS_MODULES.some(
-      (module) => source === module || source.startsWith(`${module}/`),
-    ) || BUSINESS_PATH_SEGMENTS.some((segment) => source.includes(segment))
   )
 }
 
@@ -59,7 +39,7 @@ export default {
     function inspectSource(node, sourceNode, typeOnly) {
       if (typeOnly) return
       const source = sourceNode?.value
-      if (typeof source !== 'string' || !isBusinessSource(source)) return
+      if (typeof source !== 'string' || !businessSource(source)) return
       context.report({
         node,
         messageId: 'stateImportsBusiness',

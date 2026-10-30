@@ -5,6 +5,7 @@ import {
   unwrap,
 } from './ast-bindings.js'
 import { getPublicExports } from './get-public-exports.js'
+import { helperRole } from './helper-categories.js'
 import { libraryBinding } from './library-binding.js'
 import { runtimeDependencies } from './runtime-dependencies.js'
 
@@ -37,7 +38,7 @@ export default {
       const binding = importedBinding(sourceCode, node)
       if (binding) {
         const target = dependencies.resolveSource(binding.source, filename)
-        return /\/helpers\/[^/]+\//u.test(target ?? binding.source)
+        return Boolean(helperRole(target ?? binding.source))
       }
       if (node.type === 'MemberExpression')
         return (

@@ -39,7 +39,7 @@ src/domains/sales/                              # main domain with entity sub-do
     │   ├── list/
     │   │   ├── apis/{queries,mutations}/       # TanStack Query hooks owned by the list
     │   │   ├── components/                     # list UI
-    │   │   ├── helpers/{formatters,mappers,…}/
+    │   │   ├── helpers/{transformers,formatters,presenters}/
     │   │   ├── pages/list/
     │   │   ├── services/{actions,forms}/
     │   │   ├── stores/

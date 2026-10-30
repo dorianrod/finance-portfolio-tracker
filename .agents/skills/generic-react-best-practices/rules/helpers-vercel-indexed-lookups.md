@@ -9,23 +9,29 @@ tags: helpers, map, set, collections, algorithms, vercel
 
 **Impact: MEDIUM (avoids repeated linear scans in data transformations)**
 
-When a transformation repeatedly checks membership or resolves records by the same key, build a `Set` or `Map` once for that input snapshot. Keep the transformation in the owning selector, mapper or aggregator rather than adding a data pipeline to JSX.
+When a transformation repeatedly checks membership or resolves records by the same key, build a `Set` or `Map` once for that input snapshot. Keep the transformation in the owning transformer rather than adding a data pipeline to JSX.
 
 **Incorrect (each order scans the complete allowed-id list):**
 
 ```typescript
-export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
-  return orders.filter(order => allowedIds.includes(order.id))
+export function selectAllowedOrders(
+  orders: readonly Order[],
+  allowedIds: readonly string[],
+) {
+  return orders.filter((order) => allowedIds.includes(order.id))
 }
 ```
 
 **Correct (membership uses one index):**
 
 ```typescript
-// helpers/selectors/selectAllowedOrders.ts
-export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
+// helpers/transformers/selectAllowedOrders.ts
+export function selectAllowedOrders(
+  orders: readonly Order[],
+  allowedIds: readonly string[],
+) {
   const allowed = new Set(allowedIds)
-  return orders.filter(order => allowed.has(order.id))
+  return orders.filter((order) => allowed.has(order.id))
 }
 ```
 

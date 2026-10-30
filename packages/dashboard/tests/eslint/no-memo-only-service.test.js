@@ -17,8 +17,8 @@ beforeAll(async () => {
 const imports = `
 import * as React from 'react';
 import {useMemo as memo, useEffect} from 'react';
-import {partitionPercentages as calculate} from '@/shared/helpers/calculators/partitionPercentages';
-import * as metrics from '@/shared/helpers/calculators/partitionPercentages';
+import {partitionPercentages as calculate} from '@/shared/helpers/transformers/partitionPercentages';
+import * as metrics from '@/shared/helpers/transformers/partitionPercentages';
 `
 
 async function lint(code, filename = filePath) {

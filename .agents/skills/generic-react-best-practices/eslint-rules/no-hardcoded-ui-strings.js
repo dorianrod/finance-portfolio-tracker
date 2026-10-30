@@ -1,3 +1,5 @@
+import { helperRole } from './helper-categories.js'
+
 const USER_FACING_ATTRIBUTES = new Set([
   'alt',
   'aria-description',
@@ -101,9 +103,7 @@ export default {
       context.filename.replaceAll('\\', '/'),
     )
     const isComponentSource = context.filename.endsWith('.tsx')
-    const isPresentationHelper = /\/(?:formatters|presenters)\//.test(
-      context.filename,
-    )
+    const isPresentationHelper = helperRole(context.filename) === 'presentation'
     const isTranslationKey = (node) =>
       node.parent.type === 'CallExpression' &&
       node.parent.arguments[0] === node &&

@@ -53,15 +53,6 @@ describe('pure helper browser boundary', () => {
     },
   )
 
-  it('also protects calculators', async () => {
-    expect(
-      await lint(
-        'export const width = window.innerWidth',
-        'src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings.ts',
-      ),
-    ).not.toEqual([])
-  })
-
   it.each([
     'src/main.tsx',
     'src/shared/ui/usePopoverState.ts',

@@ -23,8 +23,9 @@ Turn every failed request into one predictable shape in one place: an axios resp
 
 ```tsx
 // shared: one place that knows the error shapes
+import { isAxiosError } from 'axios'
 export const getErrorMessage = (error: unknown): string | undefined => {
-  if (axios.isAxiosError(error)) {
+  if (isAxiosError(error)) {
     if (!error.response) return error.code === 'ECONNABORTED' ? 'error.timeout' : 'error.network'
     if (error.response.status === 503) return 'error.maintenance'
     return error.response.data?.errors?.map((e: { message: string }) => e.message).join(', ')
@@ -54,3 +55,5 @@ const translateError = useTranslatedErrorMessage()
 ```
 
 Error handling and user feedback live in the action that triggers the mutation, not inside the API hook. Keep a single normalizer for the whole app instead of per-domain variants.
+
+Pure error classification may use dedicated named error exports such as Yup `ValidationError` or Axios `isAxiosError`, including aliases and reexports. These guards do not parse responses or perform requests. Keep schema construction, response coercion and HTTP client operations at the API boundary; do not suppress the helper dependency check for an entire validation or HTTP library. See `helpers-categories`.

@@ -151,7 +151,7 @@ describe('component-role', () => {
   it.each([
     "import {memo} from 'other-library'; export const Card = memo(() => <span/>)",
     "import {use as read} from 'react'; export function Card({resource}) {const value = read(resource); return <span>{value}</span>}",
-    "import {calculateTotal} from './helpers/calculators/total'; const value = calculateTotal(); export function Card() {return <span>{value}</span>}",
+    "import {calculateTotal} from './helpers/transformers/total'; const value = calculateTotal(); export function Card() {return <span>{value}</span>}",
   ])('preserves opaque wrappers and referenced business values: %s', (code) => {
     expect(lint(code, 'Card.feature.tsx')).toEqual([])
   })
@@ -197,13 +197,13 @@ describe('component-role', () => {
     '@/domains/orders/apis/useOrders',
     '@/domains/orders/services/useOrders',
     '@/domains/orders/stores/filters.atoms',
-    '@/domains/orders/helpers/businessRules/canEditOrder',
-    '@/domains/orders/helpers/aggregators/groupOrders',
-    '@/domains/orders/helpers/calculators/calculateTotal',
-    '@/domains/orders/helpers/filters/orderFilters',
-    '@/domains/orders/helpers/mappers/buildOrderRows',
-    '@/domains/orders/helpers/quality/orderQuality',
-    '@/domains/orders/helpers/validators/validateOrder',
+    '@/domains/orders/helpers/transformers/canEditOrder',
+    '@/domains/orders/helpers/transformers/groupOrders',
+    '@/domains/orders/helpers/transformers/calculateTotal',
+    '@/domains/orders/helpers/transformers/orderFilters',
+    '@/domains/orders/helpers/transformers/buildOrderRows',
+    '@/domains/orders/helpers/transformers/orderQuality',
+    '@/domains/orders/helpers/transformers/validateOrder',
   ])('rejects runtime import %s from a view', (source) => {
     const messages = lint(
       `import { dependency } from '${source}'; export function Card() { return <div>{dependency}</div> }`,

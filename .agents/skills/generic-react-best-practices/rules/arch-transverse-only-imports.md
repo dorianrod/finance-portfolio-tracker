@@ -22,7 +22,7 @@ import { InvoiceCard } from '@/domains/sales/invoices/features/detail/components
 
 ```tsx
 // Promoted once to the main domain's shared folder, used by both sub-domains
-import { toOrderReference } from '@/domains/sales/shared/helpers/mappers/toOrderReference'
+import { toOrderReference } from '@/domains/sales/shared/helpers/transformers/toOrderReference'
 // Transverse domains from the explicit list are always allowed, through their public entry
 import { Alert } from '@/domains/appShell/features/alerts/components/Alert.view'
 import { useFlag } from '@/domains/featureFlags/features/registry/services/useFlag'

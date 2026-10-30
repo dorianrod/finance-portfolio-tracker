@@ -39,7 +39,7 @@ describe('state-component-contract', () => {
     '@/domains/orders/apis/useOrders',
     '@/domains/orders/services/useOrders',
     '@/domains/orders/stores/orders.atoms',
-    '@/domains/orders/helpers/mappers/buildOrdersState',
+    '@/domains/orders/helpers/transformers/buildOrdersState',
   ])('rejects runtime business dependency %s', (source) => {
     const code = `import { dependency } from '${source}'; export function OrdersState() { return <div>{dependency}</div> }`
     expect(lint(code).map(({ messageId }) => messageId)).toEqual([
@@ -56,7 +56,7 @@ describe('state-component-contract', () => {
 
   it('allows type-only business imports and rendering feature components', () => {
     const code = `
-      import type { OrdersViewState } from '@/domains/orders/helpers/mappers/buildOrdersViewState'
+      import type { OrdersViewState } from '@/domains/orders/helpers/transformers/buildOrdersViewState'
       import { Orders } from './Orders.feature'
       export function OrdersState({ state }: { state: OrdersViewState }) {
         switch (state.status) {
@@ -73,12 +73,12 @@ describe('state-component-contract', () => {
   it('enforces the runtime boundary for re-exports', () => {
     expect(
       lint(
-        `export { buildOrdersState } from '@/domains/orders/helpers/mappers/buildOrdersState'`,
+        `export { buildOrdersState } from '@/domains/orders/helpers/transformers/buildOrdersState'`,
       ).map(({ messageId }) => messageId),
     ).toEqual(['stateImportsBusiness'])
     expect(
       lint(
-        `export type { OrdersViewState } from '@/domains/orders/helpers/mappers/buildOrdersState'`,
+        `export type { OrdersViewState } from '@/domains/orders/helpers/transformers/buildOrdersState'`,
       ),
     ).toEqual([])
   })

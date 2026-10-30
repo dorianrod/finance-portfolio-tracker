@@ -243,7 +243,7 @@ describe('domain service presentation boundaries', () => {
     `import type {TFunction} from 'i18next'`,
     `import {type TFunction} from 'i18next'`,
     `export type {TFunction} from 'i18next'`,
-    `import {summarize} from '@/domains/sales/shared/helpers/calculators/summarize'`,
+    `import {summarize} from '@/domains/sales/shared/helpers/transformers/summarize'`,
   ])('allows type-only dependencies and business calculations: %s', (code) => {
     expect(lint('no-service-presentation', code, filename)).toEqual([])
   })
@@ -266,7 +266,7 @@ describe('domain service presentation boundaries', () => {
 
 describe('pure calculation presentation boundaries', () => {
   const filename =
-    '/project/src/domains/sales/features/analytics/components/Summary/helpers/calculators/computeReturns.ts'
+    '/project/src/domains/sales/features/analytics/components/Summary/helpers/transformers/computeReturns.ts'
   it.each([
     `import translated from '@/i18n/i18n'; export const label = translated.t('returns')`,
     `export {useTranslation as useLabels} from 'react-i18next'`,
@@ -381,43 +381,23 @@ describe('typed fixture casts and actual configuration', () => {
       ),
     ).toEqual(['presentation'])
   })
-  it('rejects calculator translations with the configured rule and severity', async () => {
-    const filename = resolve(
+  it('rejects retired helper categories with the configured rule and severity', async () => {
+    const filePath = resolve(
       directory,
       'src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.ts',
     )
-    const [invalid] = await eslint.lintText(
-      `import translated from '@/i18n/i18n'`,
-      { filePath: filename },
-    )
+    const [result] = await eslint.lintText('', { filePath })
     expect(
-      invalid.messages.filter(
-        (message) => message.ruleId === 'local/no-service-presentation',
+      result.messages.filter(
+        (message) =>
+          message.fatal || message.ruleId === 'local/helper-module-contract',
       ),
     ).toMatchObject([
       {
-        ruleId: 'local/no-service-presentation',
-        messageId: 'presentation',
+        ruleId: 'local/helper-module-contract',
+        messageId: 'category',
         severity: 2,
       },
     ])
-    const [valid] = await eslint.lintText(
-      `export const computeReturn = (current: number, reference: number) => current / reference - 1`,
-      { filePath: filename },
-    )
-    expect(
-      valid.messages.filter(
-        (message) => message.ruleId === 'local/no-service-presentation',
-      ),
-    ).toEqual([])
   })
-  it.each(Object.keys(implementations))(
-    'enables %s at error severity',
-    async (rule) => {
-      const config = await eslint.calculateConfigForFile(
-        resolve(directory, 'src/main.tsx'),
-      )
-      expect(config.rules[`local/${rule}`]).toEqual([2])
-    },
-  )
 })

@@ -170,8 +170,8 @@ A view may import React, visual libraries, other views, types, formatters, and c
 Domain collection aggregation belongs to feature orchestration, including when
 its result feeds a chart or tooltip. Views receive the grouped items and metrics;
 local visual selection, such as omitting empty chart panels, may remain in a
-component-owned presenter or selector. Include `helpers/aggregators/` in the
-runtime business-dependency check and review selector meaning separately.
+component-owned presenter. Include `helpers/transformers/` in the
+runtime business-dependency check. Selection is an operation: visual selection belongs in presenters, while domain selection belongs in transformers.
 
 A state renderer is a narrow composition boundary for states such as loading, error, empty, unavailable, degraded and ready. Its owning feature or a pure mapper resolves precedence and constructs the union before rendering. Each union variant carries only the data valid for that state, and the state renderer handles every variant exhaustively with a `never` check. Keep one-off optional sections and simple visual variants in their owning component instead of creating a state renderer.
 
@@ -196,15 +196,15 @@ Do not create a feature merely because a component receives raw props, and do no
 
 Use observable responsibility rather than component size, naming or the presence of a hook:
 
-| Responsibility | Role |
-| --- | --- |
-| Render a supplied entity, translate its labels, format amounts/dates | View |
-| Keep hover, disclosure, focus or local visual selection state | View |
-| Invoke a supplied `onSelect`/`onRetry` callback without owning the action | View |
-| Clamp a meter, choose a visual tone or prepare chart geometry | View with a scoped presenter when needed |
-| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature |
-| Compose child features/state renderers into a business surface, even without its own hook | Feature |
-| Exhaustively render an already resolved loading/error/empty/ready union | State renderer |
+| Responsibility                                                                                       | Role                                     |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Render a supplied entity, translate its labels, format amounts/dates                                 | View                                     |
+| Keep hover, disclosure, focus or local visual selection state                                        | View                                     |
+| Invoke a supplied `onSelect`/`onRetry` callback without owning the action                            | View                                     |
+| Clamp a meter, choose a visual tone or prepare chart geometry                                        | View with a scoped presenter when needed |
+| Read a query/atom, own a mutation/navigation action, aggregate business values or decide eligibility | Feature                                  |
+| Compose child features/state renderers into a business surface, even without its own hook            | Feature                                  |
+| Exhaustively render an already resolved loading/error/empty/ready union                              | State renderer                           |
 
 Receiving an entity does not make a component a feature. Neither `useState`, `useMemo`, `useFormatXxx`, reuse by several parents nor a `use…` name proves business ownership. Deriving a business metric or resolving permissions differs from formatting an already supplied value. A formatter that reads business state is not a way to hide that dependency from a view.
 
@@ -273,7 +273,7 @@ Also flag an unnecessary split when the feature is only a pass-through wrapper o
 // OrderTotal.view.tsx
 import { useAtomValue } from 'jotai'
 import { activeOrderAtom } from '../stores/order.atoms'
-import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+import { calculateOrderTotal } from '../helpers/transformers/orderTotal'
 
 export function OrderTotal() {
   const order = useAtomValue(activeOrderAtom)
@@ -289,7 +289,7 @@ Renaming the file does not turn this component into a view: it still consumes st
 // OrderTotal.feature.tsx
 import { useAtomValue } from 'jotai'
 import { activeOrderAtom } from '../stores/order.atoms'
-import { calculateOrderTotal } from '../helpers/calculators/orderTotal'
+import { calculateOrderTotal } from '../helpers/transformers/orderTotal'
 import { OrderTotalView } from './OrderTotal.view'
 
 export function OrderTotal() {
@@ -299,8 +299,15 @@ export function OrderTotal() {
 }
 
 // OrderTotal.view.tsx
-export function OrderTotalView(props: { label: string; formattedTotal: string }) {
-  return <p><span>{props.label}</span> <strong>{props.formattedTotal}</strong></p>
+export function OrderTotalView(props: {
+  label: string
+  formattedTotal: string
+}) {
+  return (
+    <p>
+      <span>{props.label}</span> <strong>{props.formattedTotal}</strong>
+    </p>
+  )
 }
 ```
 
@@ -328,15 +335,22 @@ type OrdersViewState =
   | { status: 'empty' }
   | { status: 'ready'; orders: Order[] }
 
-export function OrdersState({ state, onRetry }: {
+export function OrdersState({
+  state,
+  onRetry,
+}: {
   state: OrdersViewState
   onRetry: () => void
 }) {
   switch (state.status) {
-    case 'loading': return <Spinner />
-    case 'error': return <ErrorMessage error={state.error} onRetry={onRetry} />
-    case 'empty': return <EmptyOrders />
-    case 'ready': return <OrdersList orders={state.orders} />
+    case 'loading':
+      return <Spinner />
+    case 'error':
+      return <ErrorMessage error={state.error} onRetry={onRetry} />
+    case 'empty':
+      return <EmptyOrders />
+    case 'ready':
+      return <OrdersList orders={state.orders} />
   }
   const exhaustiveState: never = state
   return exhaustiveState
@@ -424,7 +438,7 @@ src/domains/sales/                              # main domain with entity sub-do
     │   ├── list/
     │   │   ├── apis/{queries,mutations}/       # TanStack Query hooks owned by the list
     │   │   ├── components/                     # list UI
-    │   │   ├── helpers/{formatters,mappers,…}/
+    │   │   ├── helpers/{transformers,formatters,presenters}/
     │   │   ├── pages/list/
     │   │   ├── services/{actions,forms}/
     │   │   ├── stores/
@@ -488,7 +502,7 @@ import { InvoiceCard } from '@/domains/sales/invoices/features/detail/components
 
 ```tsx
 // Promoted once to the main domain's shared folder, used by both sub-domains
-import { toOrderReference } from '@/domains/sales/shared/helpers/mappers/toOrderReference'
+import { toOrderReference } from '@/domains/sales/shared/helpers/transformers/toOrderReference'
 // Transverse domains from the explicit list are always allowed, through their public entry
 import { Alert } from '@/domains/appShell/features/alerts/components/Alert.view'
 import { useFlag } from '@/domains/featureFlags/features/registry/services/useFlag'
@@ -610,7 +624,7 @@ src/domains/sales/orders/
 │           ├── access-management/
 │           │   ├── apis/queries/useOrderAccessesQuery.ts
 │           │   ├── components/OrderAccessPanel.feature.tsx
-│           │   ├── helpers/mappers/toOrderAccessRows.ts
+│           │   ├── helpers/transformers/toOrderAccessRows.ts
 │           │   ├── services/useResendOrderAccess.ts
 │           │   └── types/orderAccess.type.ts
 │           └── history/                  # also consumes detailSection.type.ts
@@ -1050,15 +1064,15 @@ See also: `arch-helpers-vs-services`, `arch-isolate-effects-in-hooks`, `arch-thi
 
 A component reads hooks and renders. Each kind of logic has a fixed home outside the JSX file:
 
-| Logic | Home |
-| --- | --- |
-| User action (mutation + notification + redirect) | `pages/[page]/services/actions/use[Verb][Entity]Action.ts` |
-| Modal open/close state | `pages/[page]/services/actions/use[Name]Modal.ts` + atom in `pages/[page]/stores/` |
-| Reaction to a state change | a dedicated hook named after the reaction (`use[Action]On[Trigger]`) |
-| Business predicate (`isX`, `canX`) | `helpers/businessRules/` (see `helpers-business-rules-pure`) |
-| Compound numeric derivation or metric | `helpers/calculators/` |
-| Positioning, dimensions, chart geometry or other display-specific derivation | component- or page-scoped `helpers/presenters/` |
-| Side effect reused by several pages | domain `services/` |
+| Logic                                                                        | Home                                                                               |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| User action (mutation + notification + redirect)                             | `pages/[page]/services/actions/use[Verb][Entity]Action.ts`                         |
+| Modal open/close state                                                       | `pages/[page]/services/actions/use[Name]Modal.ts` + atom in `pages/[page]/stores/` |
+| Reaction to a state change                                                   | a dedicated hook named after the reaction (`use[Action]On[Trigger]`)               |
+| Business predicate (`isX`, `canX`)                                           | `helpers/transformers/` (see `helpers-business-rules-pure`)                        |
+| Compound numeric derivation or metric                                        | `helpers/transformers/`                                                            |
+| Positioning, dimensions, chart geometry or other display-specific derivation | component- or page-scoped `helpers/presenters/`                                    |
+| Side effect reused by several pages                                          | domain `services/`                                                                 |
 
 `useState` stays acceptable for pure UI state (hover, open accordion).
 
@@ -1095,7 +1109,11 @@ import { useDeleteContractAction } from '@/domains/contracts/features/detail/pag
 
 export const DetailHeader: FC<DetailHeaderProps> = ({ contractId }) => {
   const [deleteContract, isDeleting] = useDeleteContractAction(contractId)
-  return <Button onClick={deleteContract} loading={isDeleting}>{t('common.delete')}</Button>
+  return (
+    <Button onClick={deleteContract} loading={isDeleting}>
+      {t('common.delete')}
+    </Button>
+  )
 }
 ```
 
@@ -1103,7 +1121,7 @@ See also: `arch-decompose-hook-heavy-components`, `arch-isolate-effects-in-hooks
 
 ### Compound Derivations
 
-Extract dependent arithmetic and `Math` calls as one intent-named derivation, including intermediate aliases, JSX expressions and callbacks. Putting the expression in `useMemo` does not move its responsibility. UI coordinates, dimensions, chart radii and layout styles belong in component- or page-owned `helpers/presenters/`; quantitative business metrics belong in `helpers/calculators/`. Pass browser measurements as inputs. Pure helpers must not read browser globals, measure nodes or mutate the DOM.
+Extract dependent arithmetic and `Math` calls as one intent-named derivation, including intermediate aliases, JSX expressions and callbacks. Putting the expression in `useMemo` does not move its responsibility. UI coordinates, dimensions, chart radii and layout styles belong in component- or page-owned `helpers/presenters/`; quantitative business metrics belong in `helpers/transformers/`. Pass browser measurements as inputs. Pure helpers must not read browser globals, measure nodes or mutate the DOM.
 
 Small independent expressions such as `index + 1`, `row.depth * 20` or `(value / total) * 100` may remain local when they are not part of a larger derivation. Imported helper calls, hook calls, destructuring, direct reads, simple conditions and event adapters also remain in the component. Moving a helper to module scope in the same component file still violates `arch-component-module-boundaries`.
 
@@ -1120,7 +1138,10 @@ export function FloatingPanel({ anchorLeft, viewportWidth }: Props) {
 
 ```typescript
 // FloatingPanel/helpers/presenters/getFloatingPanelStyle.ts
-export function getFloatingPanelStyle(anchorLeft: number, viewportWidth: number) {
+export function getFloatingPanelStyle(
+  anchorLeft: number,
+  viewportWidth: number,
+) {
   const left = Math.max(8, Math.min(anchorLeft, viewportWidth - 320 - 8))
   return { left }
 }
@@ -1143,13 +1164,13 @@ Use the custom ESLint rule `local/no-complex-component-calculation` to report mo
 
 Independent small expressions outside those output groups remain independent. This bounded check does not trace reassigned variables, imported helper implementations or arbitrary interprocedural data flow. `local/no-component-data-pipeline` complements it by reporting inline reductions and compound collection predicates in application/domain components; module-boundary and JSX-condition checks address different patterns.
 
-Use the custom ESLint rule `local/no-browser-in-pure-helpers` for production `helpers/presenters/` and `helpers/calculators/`, including component-owned helpers. Resolve browser globals, DOM measurements, known DOM mutation methods and DOM property writes. Locally shadowed names, type-only references and reads of supplied `DOMRect` values remain valid. Exclude tests, declaration files and generated files. This check does not prove purity or follow arbitrary helper implementations and detached DOM methods.
+Use the custom ESLint rule `local/no-browser-in-pure-helpers` for all three production helper categories (`transformers`, `formatters`, `presenters`), including component-owned helpers. Resolve browser globals, DOM measurements, known DOM mutation methods and DOM property writes. Locally shadowed names, type-only references and reads of supplied `DOMRect` values remain valid. Exclude tests, declaration files and generated files. This check does not prove purity or follow arbitrary helper implementations and detached DOM methods.
 
 ### 1.14 Keep Visual Logic at the Component or Page Boundary
 
 **Impact: HIGH (feature hooks stay reusable across pages and contexts)**
 
-Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Feature-level `apis/`, `services/` and scoped shared helpers only fetch, mutate, transform and decide; they return UI-agnostic data or throw, and let the page decide what the user sees.
+Toasts, navigation, selection clearing, modal state and form state belong to page-level actions in `pages/[page]/services/actions/`. CSS classes, design-system tones, chart geometry and other display-ready values belong in component- or page-scoped `helpers/presenters/`. Feature-level `apis/`, reusable `services/` and scoped shared transformers fetch, mutate, transform and decide; they return UI-independent data or throw, and let the page decide what the user sees. Reusable formatters may own display text at their nearest shared owner; structured visual contracts remain in component/page presenters.
 
 **Incorrect (a feature service shows the toast itself):**
 
@@ -1177,7 +1198,10 @@ export function useResendDocument(contractId: string) {
 
 // pages/detail/services/actions/useResendDocumentAction.ts
 // `useNotify` is the page-level notification hook of your app (toast library wrapper)
-export function useResendDocumentAction(contractId: string, documentId: string) {
+export function useResendDocumentAction(
+  contractId: string,
+  documentId: string,
+) {
   const { t } = useTranslation()
   const notify = useNotify()
   const resendDocument = useResendDocument(contractId)
@@ -1212,7 +1236,7 @@ How the page action gives feedback:
 - Clear the selection, close the modal or `navigate(...)` only after the mutation succeeded, inside the same `try`.
 - Prefer the backend's readable error message when there is one, falling back to a translated default. Run independent saves of one action with `Promise.all`.
 
-Presenter helpers have no JSX, hooks or side effects. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
+Presenter helpers return UI configuration without JSX or side effects. They may be pure functions or read-only hooks composing formatters and pure transformers; they never acquire data or read business state. Keep them at the narrowest component or page scope; moving them to a domain helper would couple reusable business logic to a particular UI vocabulary.
 
 See also: `arch-component-module-boundaries`, `helpers-categories`, `api-vercel-parallel-work`
 
@@ -1232,7 +1256,7 @@ presenter to bypass the path check does not make its result UI-agnostic.
 
 Enable `local/no-service-presentation` at error level for reusable domain/feature services. Reject direct and indirect value imports, reexports and literal dynamic imports of translation APIs (`i18next`, `react-i18next`), conventional `i18n` modules and `helpers/formatters` modules. Keep type-only dependencies and component/page-owned presentation services valid.
 
-Apply the same dependency check to domain `helpers/calculators/` and `helpers/aggregators/`, including component- and page-owned helpers. Calculations and aggregations return quantitative values, grouped records and semantic identifiers; a formatter translates their labels at display time. Do not use translated labels as aggregation keys: a source can have the same name as a synthetic group. Keep source identity separate from display labels. Component ownership does not turn translation into a calculation or aggregation. Verify an aliased translation import, a rejected reexport or dynamic import, and neighboring valid numeric calculations and aggregations through the application's configuration.
+Apply the same dependency check to all `helpers/transformers/`, including shared, component- and page-owned helpers. Reject formatter/presenter and known UI-library runtime dependencies as well as translation. Transformers return presentation-independent values, grouped records and semantic identifiers; a formatter translates labels at display time. Do not use translated labels as aggregation keys: a source can have the same name as a synthetic group. Keep source identity separate from display labels. Verify aliased imports, reexports, dynamic imports, an indirect dependency and a valid pure calculation through the application configuration.
 
 Resolve project aliases and follow local runtime helper/service dependencies and reexport modules. A service importing a mapper that imports a formatter violates the same contract as a direct formatter import. Report the dependency path, ignore erased type-only edges and terminate on cycles. Preserve validation/API/store boundaries: schema validation diagnostics and API error normalization do not make every caller a display service. These boundaries are checked by their own contracts rather than treating every reachable translation as display formatting.
 
@@ -1401,10 +1425,10 @@ an inventory entry alone requires neither extraction nor suppression.
 
 Place a function by what it depends on, not by its name. Helpers always live in a categorized subfolder (see `helpers-categories`), never flat in `helpers/`, and each file is named after its one public helper export:
 
-| Needs | Folder | Examples |
-| --- | --- | --- |
-| Nothing, or read-only context (`useTranslation`, atom read) | `helpers/<category>/` at component, page or feature scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
-| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or feature scope | `useOrderDocumentTitle`, `useResendInvoice` |
+| Needs                                                                                 | Folder                                                    | Examples                                                     |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------ |
+| Explicit validated data; presentation context only in formatters/presenters           | `helpers/<category>/` at component, page or feature scope | `isContractClosed`, `useFormatOrderStatus`, `toOrderSummary` |
+| Side effects or orchestration (effect, mutation, dialog, navigation, several queries) | `services/` at component, page or feature scope           | `useOrderDocumentTitle`, `useResendInvoice`                  |
 
 **Incorrect (flat logic file and a pure rule needlessly wrapped in a service hook):**
 
@@ -1421,7 +1445,7 @@ src/domains/contracts/features/detail/
 
 ```text
 src/domains/contracts/features/detail/
-├── helpers/businessRules/isContractClosed.ts       # (status: ContractStatus) => boolean
+├── helpers/transformers/isContractClosed.ts       # (status: ContractStatus) => boolean
 ├── helpers/formatters/useFormatContractType.ts
 └── services/useCloseContract.ts                    # mutation + confirmation dialog
 
@@ -1431,10 +1455,10 @@ src/domains/contracts/features/detail/components/ContractPanel/
 
 src/domains/sales/orders/shared/
 ├── helpers/formatters/useFormatOrderStatus.ts      # hook only to read `t`
-└── helpers/mappers/toOrderSummary.ts               # Order -> OrderSummary
+└── helpers/transformers/toOrderSummary.ts               # Order -> OrderSummary
 ```
 
-A value-to-text formatter is a `useFormatXxx` hook returning a memoized function, including a pure label formatter. It reads translation context when needed and never receives `t` as a parameter. Read-only query subscriptions, atom reads and translation context do not by themselves turn a categorized helper into a service; effects and orchestration decide that boundary. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
+A value-to-text formatter is a `useFormatXxx` hook returning a memoized function, including a pure label formatter. It reads translation context when needed and never receives `t` as a parameter. Transformers receive business data explicitly; a hook may memoize their composition. API subscriptions, business-store reads, acquisition and orchestration stay in API hooks or services. Formatters and presenters may read presentation context, such as language or display preferences, without owning effects or writable state. Page-specific helpers follow the same subfolders under `pages/[page]/helpers/`. Component-specific helpers and services require a named component directory (see `arch-component-module-boundaries`).
 
 ### ESLint Enforcement
 
@@ -1448,7 +1472,7 @@ effectful argument evaluation or opaque callbacks.
 
 This deliberately bounded check identifies a memoized helper adapter, rather
 than proving arbitrary code pure. Review other service implementations, helper
-categories and read-only query subscriptions manually. There is no automatic
+categories and opaque acquisition dependencies manually. There is no automatic
 folder move: choose the category and nearest owner from the actual inputs,
 outputs and consumers. Verify rejected and neighboring valid cases through the
 consuming application's configuration.
@@ -1685,8 +1709,9 @@ Turn every failed request into one predictable shape in one place: an axios resp
 
 ```tsx
 // shared: one place that knows the error shapes
+import { isAxiosError } from 'axios'
 export const getErrorMessage = (error: unknown): string | undefined => {
-  if (axios.isAxiosError(error)) {
+  if (isAxiosError(error)) {
     if (!error.response) return error.code === 'ECONNABORTED' ? 'error.timeout' : 'error.network'
     if (error.response.status === 503) return 'error.maintenance'
     return error.response.data?.errors?.map((e: { message: string }) => e.message).join(', ')
@@ -1716,6 +1741,8 @@ const translateError = useTranslatedErrorMessage()
 ```
 
 Error handling and user feedback live in the action that triggers the mutation, not inside the API hook. Keep a single normalizer for the whole app instead of per-domain variants.
+
+Pure error classification may use dedicated named error exports such as Yup `ValidationError` or Axios `isAxiosError`, including aliases and reexports. These guards do not parse responses or perform requests. Keep schema construction, response coercion and HTTP client operations at the API boundary; do not suppress the helper dependency check for an entire validation or HTTP library. See `helpers-categories`.
 
 ### 2.6 Pair Every Suspense Query With an Error Boundary and Handle 404 Separately
 
@@ -3098,8 +3125,14 @@ API schemas do not depend on props or state, so declare them as module-level con
 
 ```tsx
 export function useGetOrdersQuery() {
-  const schema1 = useMemo(() => yup.object({ search: yup.string().optional() }), [])
-  const parse = useCallback((data: unknown) => yup.object({ items: yup.array() }).validateSync(data), [])
+  const schema1 = useMemo(
+    () => yup.object({ search: yup.string().optional() }),
+    [],
+  )
+  const parse = useCallback(
+    (data: unknown) => yup.object({ items: yup.array() }).validateSync(data),
+    [],
+  )
   // ...
 }
 ```
@@ -3130,7 +3163,7 @@ export function useGetProjectsQuery(params: ProjectListQueryParams) {
 }
 ```
 
-A schema shared across hooks of a sub-domain gets its own file in `helpers/schemas/`, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
+A schema shared across hooks of a sub-domain gets its own file in the owning `apis/schemas/` for API contracts, or scoped `schemas/` for generic validation, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
 
 ---
 
@@ -3632,7 +3665,7 @@ Adapted from Vercel's [dynamic imports](https://github.com/vercel-labs/agent-ski
 
 **Impact: HIGH (display decisions become readable and reviewable at the JSX boundary)**
 
-Give every compound condition that controls whether a JSX subtree appears an intention-revealing name. Keep a presentation-only decision as a boolean derived during render. Move it to `helpers/businessRules/` as a pure `shouldShowX`, `canX`, `hasX` or `isX` predicate when it expresses a business rule or deserves focused tests.
+Give every compound condition that controls whether a JSX subtree appears an intention-revealing name. Keep a presentation-only decision as a boolean derived during render. Move it to `helpers/transformers/` as a pure `shouldShowX`, `canX`, `hasX` or `isX` predicate when it expresses a business rule or deserves focused tests.
 
 Simple flags and single comparisons do not require extraction. Conditions used only to choose a class, attribute or text value are also outside this rule.
 
@@ -3641,9 +3674,11 @@ For JSX gating, use a real boolean or an explicit ternary with `null`. A numeric
 **Incorrect (the reader must decode the display decision inside JSX):**
 
 ```tsx
-{order.status === 'READY' && order.total != null && (
-  <OrderTotal value={order.total} />
-)}
+{
+  order.status === 'READY' && order.total != null && (
+    <OrderTotal value={order.total} />
+  )
+}
 ```
 
 **Correct (the JSX states why the subtree is rendered):**
@@ -4451,7 +4486,9 @@ export const OrderAccessRow: FC<Props> = ({ access, order }) => {
     <>
       <p>{`${access.contact.firstName} ${access.contact.lastName}`}</p>
       <span className="badge">
-        {order.globalStatus === 'CLOSED' ? t('sales.globalStatus.CLOSED') : t('sales.globalStatus.STARTED')}
+        {order.globalStatus === 'CLOSED'
+          ? t('sales.globalStatus.CLOSED')
+          : t('sales.globalStatus.STARTED')}
       </span>
       <p>{`${order.amount.toFixed(2)} ${order.currency}`}</p>
     </>
@@ -4495,6 +4532,8 @@ const formatMoney = useFormatMoney()
 <p>{formatMoney(order.amount, order.currency)}</p>
 ```
 
+A formatter produces display text only. Color/tone/icon mappings, CSS classes, geometry, JSX and visual configuration belong to presenters or UI components. Technical strings such as API payloads and UI-control values belong at their API or presentation boundary. A formatter may compose a pure domain classification; a grouping used only for display wording may remain local. Independent classifications used for filtering, eligibility or statistics belong in transformers. Read presentation context, never acquire data, subscribe to business state or own effects.
+
 Where to look first: the app-wide formatters in `src/shared/helpers/formatters/` (money, dates, addresses), then the domain's and its main domain's `shared/helpers/formatters/`. A formatter used by several sub-domains lives once in `[domain]/shared/helpers/formatters/`, one hook per file named after it. A formatter hook returns a `useCallback`-wrapped function taking the entity (see `arch-helpers-vs-services` for its shape). Lint the raw locale calls (`toLocaleDateString`, `toLocaleTimeString`) with `no-restricted-properties` so that dates also go through the shared formatters.
 
 ### Missing Values in Every Formatter
@@ -4530,7 +4569,10 @@ export function useFormatDate() {
   )
 
   return useCallback(
-    (value: Date | null | undefined, { fallback = '—' }: { fallback?: string } = {}): string => {
+    (
+      value: Date | null | undefined,
+      { fallback = '—' }: { fallback?: string } = {},
+    ): string => {
       if (value == null) return fallback
       return dateFormatter.format(value)
     },
@@ -4550,6 +4592,8 @@ Conditions that select structure, loading or error states, permissions or compar
 ### ESLint Enforcement
 
 Enable the typed `local/no-inline-number-display` rule for numeric text rendered as JSX children. Report number-valued expressions, native `String(number)` conversions (including immutable constructor aliases), numeric `.toString()` calls and raw numeric template expressions. Follow immutable local text aliases and conditional output branches; respect shadowed constructors. Keep scalar props, native input values and technical JSX attributes outside the text-display check. Nullable numbers still need the formatter's fallback contract. Verify rejected and neighboring valid cases through the consuming configuration. Do not autofix: the reviewer chooses the intended precision, grouping and missing-value behavior. This bounded check does not trace arbitrary renderer functions, object properties or mutable bindings; inspect display models and their consumers manually.
+
+Use `local/helper-module-contract` for the shared acquisition/effect boundary and to reject presenter/UI-library runtime dependencies in formatters, including indirect dependencies. Pure transformer composition and erased type imports remain valid.
 
 Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
 
@@ -4579,7 +4623,7 @@ At translation boundaries, enable the typed `local/i18n-consistency` check to re
 
 **Impact: MEDIUM-HIGH (decisions readable in JSX and testable without rendering)**
 
-Any non-trivial condition (status sets, bypass flags, counts) goes in `helpers/businessRules/` as a **pure function** `(entity/state) => boolean | string | union`: no React hook, no API call, no side effect. Name it after **why** it is true: `isX` / `hasX` / `areXProvided` (business state), `canX` (business authorization), `shouldShowX` (display decision composing the others), never `isVisible` / `showBlock`.
+Any non-trivial condition (status sets, bypass flags, counts) goes in `helpers/transformers/` as a **pure function** `(entity/state) => boolean | closed decision union`: no React hook, no API call, no side effect. Classifications and structured diagnostics also belong in transformers; they need not return boolean. Name a predicate after **why** it is true: `isX` / `hasX` / `areXProvided` (business state), `canX` (business authorization), `shouldShowX` (display decision composing the others), never `isVisible` / `showBlock`.
 
 **Incorrect (rule inlined in JSX, then wrapped in a hook with a meaningless name):**
 
@@ -4593,25 +4637,35 @@ export const useIsVisible = (payment: PaymentSection, count: number) =>
   useMemo(() => /* same condition */, [payment, count])
 ```
 
-**Correct (pure predicate in helpers/businessRules/, named by intent):**
+**Correct (pure predicate in helpers/transformers/, named by intent):**
 
 ```tsx
-// pages/detail/helpers/businessRules/arePaymentApproversProvided.ts
+// pages/detail/helpers/transformers/arePaymentApproversProvided.ts
 const PAYMENT_PROVIDED_STATUSES = new Set<PaymentSection['status']>([
   'PENDING_SIGNATURE',
   'AT_LEAST_ONE_APPROVER_FAILED',
   'SIGNED',
 ])
 
-export const arePaymentApproversProvided = (payment: PaymentSection, paymentApproversCount: number): boolean =>
-  PAYMENT_PROVIDED_STATUSES.has(payment.status) && !payment.isSignatureBypassed && paymentApproversCount > 0
+export const arePaymentApproversProvided = (
+  payment: PaymentSection,
+  paymentApproversCount: number,
+): boolean =>
+  PAYMENT_PROVIDED_STATUSES.has(payment.status) &&
+  !payment.isSignatureBypassed &&
+  paymentApproversCount > 0
 
 // ApproversBlock.tsx
-const showPaymentApprovers = arePaymentApproversProvided(data.payment, paymentApprovers.length)
-{showPaymentApprovers && <ApproversBlockSection section="payment" /* … */ />}
+const showPaymentApprovers = arePaymentApproversProvided(
+  data.payment,
+  paymentApprovers.length,
+)
+{
+  showPaymentApprovers && <ApproversBlockSection section="payment" /* … */ />
+}
 ```
 
-Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/businessRules/`; anything that really needs a hook is a formatter, a mapper or a service instead.
+Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/transformers/`; a memoization-only composition may be a transformer hook, presentation belongs to a formatter/presenter, and acquisition or effects belong to a service. Predicates and classifications remain operations within transformers, not separate helper categories.
 
 See also: `state-derived-atoms`
 
@@ -4619,12 +4673,12 @@ See also: `state-derived-atoms`
 
 **Impact: MEDIUM-HIGH (business-only signatures, no context threading through callers)**
 
-A helper signature takes business data only. When it needs a React context dependency (`t`, `navigate`, a Jotai atom, the `queryClient`), turn it into a helper **hook** (`use…`) that reads the dependency internally, or composes another helper hook, and returns a memoized value or function. Passing `t` around forces every caller to own `useTranslation` and leaks UI plumbing into business signatures.
+A helper signature takes explicit data and configuration, never context clients or injected formatter functions. When it needs a React context dependency (`t`, `navigate`, a Jotai atom, the `queryClient`), keep business data acquisition at its API/service owner and pass the resulting data explicitly. For presentation context such as translation, use a formatter or presenter **hook** (`use…`) that reads the dependency internally and returns a memoized value or function. Passing `t` around forces every caller to own `useTranslation` and leaks UI plumbing into business signatures.
 
 **Incorrect (context dependency threaded as a parameter):**
 
 ```ts
-// sales/orders/helpers/mappers/getOrderStatusOptions.ts
+// sales/orders/pages/detail/helpers/presenters/getOrderStatusOptions.ts
 export const getOrderStatusOptions = (t: TFunction) => [
   { value: 'DRAFT', label: t('order.orderStatus.DRAFT') },
   { value: 'CONFIRMED', label: t('order.orderStatus.CONFIRMED') },
@@ -4639,13 +4693,21 @@ const statusOptions = getOrderStatusOptions(t)
 **Correct (helper hook composing the existing formatter):**
 
 ```ts
-// sales/orders/helpers/mappers/useOrderStatusOptions.ts
-const ORDER_STATUSES = ['DRAFT', 'CONFIRMED', 'SHIPPED'] as const satisfies readonly OrderStatus[]
+// sales/orders/pages/detail/helpers/presenters/useOrderStatusOptions.ts
+const ORDER_STATUSES = [
+  'DRAFT',
+  'CONFIRMED',
+  'SHIPPED',
+] as const satisfies readonly OrderStatus[]
 
 export function useOrderStatusOptions() {
   const formatOrderStatus = useFormatOrderStatus() // helpers/formatters/
   return useMemo(
-    () => ORDER_STATUSES.map(status => ({ value: status, label: formatOrderStatus(status) })),
+    () =>
+      ORDER_STATUSES.map((status) => ({
+        value: status,
+        label: formatOrderStatus(status),
+      })),
     [formatOrderStatus],
   )
 }
@@ -4664,22 +4726,26 @@ Use the custom ESLint rule `local/no-helper-context-params` to prevent formatter
 
 **Impact: MEDIUM-HIGH (prevents helpers from mutating props, atoms or cached entities)**
 
-Selectors, mappers and calculators treat incoming collections as read-only. Sorting or changing a view of props, Jotai state or query data must produce a separate collection, leaving the original order and values intact.
+All helper categories treat incoming collections as read-only. Sorting or changing a view of props, Jotai state or query data must produce a separate collection, leaving the original order and values intact.
 
 **Incorrect (the selector reorders its caller's array):**
 
 ```typescript
 export function sortOrders(orders: Order[]): Order[] {
-  return orders.sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+  return orders.sort(
+    (left, right) => left.createdAt.getTime() - right.createdAt.getTime(),
+  )
 }
 ```
 
 **Correct (the selector returns a sorted copy):**
 
 ```typescript
-// helpers/selectors/sortOrders.ts
+// helpers/transformers/sortOrders.ts
 export function sortOrders(orders: readonly Order[]): Order[] {
-  return orders.toSorted((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+  return orders.toSorted(
+    (left, right) => left.createdAt.getTime() - right.createdAt.getTime(),
+  )
 }
 ```
 
@@ -4696,118 +4762,113 @@ Adapted from Vercel's [immutable sorting](https://github.com/vercel-labs/agent-s
 
 ### 9.5 Sort Every Helper Into One of a Fixed Set of Categories
 
-**Impact: MEDIUM-HIGH (predictable location, no grab-bag folders, no duplicated helpers)**
+**Impact: MEDIUM-HIGH (explicit contracts, predictable dependencies and no duplicated helpers)**
 
-`helpers/` is never flat and never holds a `utils.ts` or `*.logic.ts`. Each file lives in one category folder, is named after its single public helper export, and may keep private support functions. A helper is either a pure function or a hook that only **reads** context (`t`, an atom, a query client) to return a memoized value or function; anything with side effects or orchestration (effect, mutation, dialog, navigation, several queries) is a service, not a helper (see `arch-helpers-vs-services`). Pick the category by the **input and output** of the function:
+Every helper lives in exactly one of `helpers/transformers/`, `helpers/formatters/` or `helpers/presenters/`. The exposed result's responsibility determines its category. Filtering, grouping, calculating and testing describe operations, not separate categories. Keep one public helper per file, name the file after that export and keep support functions private. Never use a flat helpers folder, `utils.ts` or `*.logic.ts`.
 
-| Category | Input → output | Examples |
-| --- | --- | --- |
-| `businessRules/` | entity/state → `boolean` (or a closed union) | `isContractClosed`, `canCancelOrder`, `shouldShowApprovers` |
-| `formatters/` | entity/value → display text | `useFormatContact`, `useFormatOrderStatus` |
-| `selectors/` | collection → same items filtered, ordered, indexed or selected | `selectVisibleOrders`, `findLatestInvoice`, `sortContacts` |
-| `aggregators/` | many records → grouped or consolidated collection | `aggregateInvoicesByMonth`, `buildAccountHistory` |
-| `calculators/` | values/entities → quantitative metric or metric summary | `getInvoiceTotal`, `computeOrderPerformance` |
-| `mappers/` | one representation → another, without material selection or aggregation | `toContactOption`, `buildOrderViewModel` |
-| `presenters/` | display data → UI class, tone, geometry or library-specific shape | `getOrderStatusTone`, `getChartDomain`, `computePopoverPosition` |
-| `quality/` | data → coverage, reliability, missing-data or anomaly diagnostic | `computeInvoiceCoverage`, `assessContactCompleteness` |
-| `validators/` | entity/items → list of business errors (never throws, no toast) | `validateOrdersForCancellation` |
-| `payloads/` | domain values → API request body | `buildOrderPayload` |
-| `forms/` | entity → form initial values, and form values → domain input | `getOrderFormInitialValues` |
-| `filters/` | domain data → filter options and filter defaults | `useStatusFilterOptions` |
-| `schemas/` | Yup schemas reused by several hooks (see `yup-module-level-schemas`) | `ORDER_LIST_ITEM_SCHEMA` |
-| `links/` | ids → route or URL | `getContractDetailPath` |
+### Transformers: validated data to derived data
 
-Use these boundaries when neighboring categories look plausible:
+A transformer receives explicit, typed, already validated inputs and derives values independent of their presentation. This includes selection, sorting, indexing, grouping, calculations, classifications, predicates and business diagnostics. A result may be a boolean, number, identifier, closed union, collection or structured summary. Returning a string does not make it a formatter.
 
-- Same item shape with fewer, reordered or selected items → `selectors`.
-- Several records grouped by a key into consolidated records → `aggregators`.
-- Primarily numeric or statistical result, including a structured metric summary → `calculators`.
-- Representation change without material selection or aggregation → `mappers`.
-- CSS, design-system, charting or geometry vocabulary in the output → `presenters`.
-- Completeness, reliability, coverage or anomaly evidence in the output → `quality`.
-- A simple quality predicate still belongs in `businessRules/`; a quality label still belongs in `formatters/`.
+Transformers are pure functions; a helper hook may memoize their composition with `useMemo` or `useCallback`. Obtain business data and context in API hooks or services and pass them in. Do not acquire data, subscribe to stores or context, translate, format display text or depend on UI contracts here. Preserve input collections and keep diagnostic codes separate from user-facing messages.
 
-Parsing and coercion of raw API values are not helper categories. They belong in the API hook's Yup schema so the domain never receives unvalidated wire values (see `yup-last-coercion-barrier`).
+Raw API parsing, coercion and adaptation stay at the owning API boundary: textual dates/numbers, wire-field renames and external-code normalization belong in response schemas. Request validation, payload serialization and transport shapes stay in API schemas and modules. Reusable API schemas live in `apis/schemas/`; generic schemas live in their owning `schemas/`; translated form schemas remain with their form. A helper must not perform another validation/coercion pass downstream. Constructing a Date from a computed timestamp or rounding a domain calculation is not itself wire coercion.
 
-Decision path for the remaining categories: returns text → `formatters`; returns a boolean or a closed union → `businessRules`; returns a list of errors → `validators`; returns a request body → `payloads`; feeds a form → `forms`; defines filter options, defaults or filter-state transitions → `filters`; returns a route or URL → `links`.
+### Formatters: values to display text
 
-When no category fits, the function is probably misplaced. A hook with side effects belongs to `services/`; component-only logic belongs in the named component directory; page-shared logic belongs under that page; feature-shared logic belongs under that feature; and only business-agnostic helpers go to `src/shared/`. Presenter helpers stay at component or page scope. Create a new category only when at least two helpers share it, then add it to this table.
+A unit formatter is a `useFormatXxx` hook returning a memoized function whose value parameter accepts `null | undefined`, whose options expose a configurable fallback and whose result is always `string`. It owns labels, descriptions, dates, numbers, units and locale-dependent display conventions. See `helpers-formatter-hooks` for the complete fallback contract.
 
-**Incorrect (flat grab-bag, categories invented per file, text and rules mixed):**
+Presentation context such as language or display preferences may be read inside the hook. Data acquisition, business state, effects and writable local state are outside its contract. A formatter may compose a pure domain classification. A grouping used only to select display wording may stay inside it; a classification used independently in filtering, eligibility or statistics belongs in a transformer and can be reused by the formatter.
 
-```text
-src/domains/sales/orders/features/list/helpers/
-├── utils.ts                      # formatDate, isCancelable, buildBody, …
-├── orderHelpers.ts
-├── order.logic.ts                # selection, aggregation and display mixed together
-├── responsiveness/useIsMobile.ts # not domain logic
-└── lists/useOrderListData.ts     # page data orchestration, not a helper
+A formatter never returns a color, tone, icon, CSS class, geometry, JSX or UI configuration. A technical string such as an API payload, identifier or control value is not display text. Bundles only compose existing formatter functions; constants and private numeric utilities are not unit formatters. No filename or primitive return type can establish that a string is intended for people.
+
+### Presenters: explicit data to a visual contract
+
+A presenter adapts supplied data to semantic tones/variants, geometry, positioning or component/chart-library contracts. It may be a pure function or a read-only hook composing transformers and formatters. Independently useful business operations stay implemented in transformers. Return data or configuration, never JSX or React elements.
+
+Keep domain presenters at the owning component or page. Generic visual infrastructure follows shared UI ownership. A presenter returns a semantic tone or variant; concrete colors and appearance remain in the design system. It does not acquire data, read business state, mutate, navigate, notify, measure the DOM or read browser globals. Supply measurements as explicit inputs and apply results at the UI boundary.
+
+For `{ label, tone }`, a presenter composes a formatter for the label and visual mapping for the tone. Pass already formatted text to a pure presenter, or compose the formatter hook inside a presenter hook; never inject `t` or a formatter function.
+
+### Boundary examples
+
+| Exposed responsibility                                               | Owner                    |
+| -------------------------------------------------------------------- | ------------------------ |
+| Raw API date/code to a validated domain value                        | API response schema      |
+| Domain statuses to a stable group used for eligibility or statistics | Transformer              |
+| Total amount, chronological series, predicate or diagnostic codes    | Transformer              |
+| Localized amount, status label or diagnostic message                 | Formatter                |
+| Semantic tone, chart-library rows or geometry                        | Presenter                |
+| Date adapted to a UI control's technical value                       | Presenter                |
+| Domain input to an API request body                                  | Owning API schema/module |
+| Fetching, mutation, navigation, notification or other effect         | API hook or service      |
+
+**Incorrect (wire coercion and display configuration hidden in a transformer):**
+
+```typescript
+// helpers/transformers/buildOrder.ts
+export function buildOrder(raw: { amount: string; status: string }) {
+  return { amount: Number(raw.amount), label: raw.status, tone: 'positive' }
+}
 ```
 
-**Correct (one category per file, file named after its export):**
+**Correct (the public contract and ownership are explicit):**
 
 ```text
-src/domains/sales/orders/features/list/helpers/
-├── businessRules/isOrderCancelable.ts      # (order: Order) => boolean
-├── formatters/useFormatOrderStatus.ts      # hook reading `t`, returns a memoized function
-├── selectors/selectVisibleOrders.ts        # Order[] -> Order[]
-├── aggregators/aggregateOrdersByMonth.ts    # Order[] -> MonthlyOrders[]
-├── calculators/getOrderTotal.ts             # OrderLine[] -> number
-├── mappers/toOrderOption.ts                 # Order -> SelectOption
-├── quality/computeOrderCoverage.ts          # Order[] -> CoverageDiagnostic
-├── validators/validateOrdersForCancellation.ts
-├── payloads/buildOrderPayload.ts           # OrderFormValues -> OrderPayload
-├── forms/getOrderFormInitialValues.ts      # Order -> OrderFormValues
-└── filters/useOrderStatusFilterOptions.ts
-
-src/domains/sales/orders/features/list/pages/list/components/OrdersChart/
-├── OrdersChart.feature.tsx
-└── helpers/presenters/getOrdersChartDomain.ts
+features/detail/
+├── apis/queries/useGetOrderQuery.ts       # validates wire values into Order
+├── helpers/transformers/getOrderTotal.ts  # OrderLine[] -> number
+├── helpers/transformers/canCancelOrder.ts # Order -> boolean
+├── helpers/transformers/getOrderGroup.ts  # OrderStatus -> OrderGroup
+├── helpers/formatters/useFormatOrderStatus.ts
+└── components/OrderPanel/
+    ├── OrderPanel.feature.tsx
+    └── helpers/presenters/getOrderTone.ts
 ```
 
-Page-specific helpers follow the same categories under `pages/[page]/helpers/`; helpers shared by sibling features live once in their nearest common ancestor's `shared/helpers/`. Component-specific helpers use the same categories under the named component directory (see `arch-component-module-boundaries`).
+Choose the narrowest actual owner: component, page, feature or the nearest shared ancestor of consumers. Only business-agnostic helpers belong in application-wide shared code. All three categories preserve input collections and exclude effects, rendering and data acquisition. The former categories (`businessRules`, `selectors`, `aggregators`, `calculators`, `mappers`, `quality`, `validators`, `filters`, `payloads`, `forms`, `schemas`, `links`) are rejected; there are no aliases or compatibility mode. Classify their contents by contract rather than mechanically moving every file into transformers.
 
-See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `yup-last-coercion-barrier`, `state-derived-atoms`
+See also: `arch-component-module-boundaries`, `arch-helpers-vs-services`, `helpers-formatter-hooks`, `helpers-business-rules-pure`, `yup-last-coercion-barrier`
 
 ### ESLint Enforcement
 
-Enable `local/helper-module-contract` at error level for authored production
-helpers, including component-, page- and shared-owned modules. Reject flat or
-undocumented categories and `*.logic.*` names. Match the filename stem to the
-public callable export, including named default exports, local export aliases,
-overloads and immutable callable aliases. Type-only exports, constants, private
-support functions, tests, stories, fixtures and declaration files do not establish
-a public helper naming violation.
-Resolve business scopes before identifying the helper role; a domain or feature
-named `helpers` is not itself a helper folder.
+Enable `local/helper-module-contract` at error level. The shared helper-category registry is the source for naming, component roles, presenter placement, presentation dependencies, formatter provenance and browser boundaries. Resolve business ownership before role folders, including domains/features named `helpers`. Reject flat/retired categories and `*.logic.*`; match the filename to the callable public export, including aliases, overloads and immutable callable aliases. Type-only exports, constants and private support functions do not establish a naming violation. Tests, stories, mocks and declarations are excluded.
 
-The check does not infer a function's category from its implementation or prove
-that an opaque reexport or factory result is callable. Review those cases and
-actual ownership manually. Verify mismatched and matching neighbors through the
-consuming configuration. There is no autofix: a rename must update imports and
-callers together, and choosing a category requires responsibility review.
+For canonical helpers, the same check rejects runtime dependencies on Yup, API/schema/service roles, known HTTP/query libraries and domain stores. Dedicated named error exports (`ValidationError` from Yup and Axios error classes/guards) are allowed for pure error classification, including aliases and reexports; they do not construct schemas or issue requests. Mixed schema/client imports and namespace/default imports remain outside helpers. Transformers also reject store dependencies and Jotai/router subscriptions, and calls to React context/subscription APIs. Follow resolvable local dependencies, aliases, reexports and literal dynamic imports; ignore erased type edges and terminate on cycles. Generic presentation preferences may be read from presentation context, but they must not conceal business state.
+
+Formatters also reject presenter and known UI-library runtime dependencies; pure transformer composition remains valid.
+
+Reject resolved React effect/writable-state hooks, Jotai writers, navigation hooks, JSX and React element creation. Resolve aliases/namespaces and preserve shadowing. Use `local/no-service-presentation` to reject translation, formatter, presenter and known UI-library dependencies in transformers. Reusable domain services retain their separate presentation boundary. Use `local/no-browser-in-pure-helpers` for all canonical helper categories and `local/formatter-contract` for unit formatter signatures.
+
+These are bounded checks, not a proof of purity or an automatic semantic classifier. Injected callbacks, arbitrary external libraries, computed module paths, custom wrappers and values with indistinguishable primitive types require review. In particular, inspect display-only versus business grouping, technical versus human-readable strings, and UI-shaped data hidden in transformers. Do not infer category from a method named `transform`, function prefixes, or boolean/string return types alone. Do not autofix category or ownership; coordinate moves with callers and verify the affected checks.
 
 ### 9.6 Index Collections for Repeated Lookups
 
 **Impact: MEDIUM (avoids repeated linear scans in data transformations)**
 
-When a transformation repeatedly checks membership or resolves records by the same key, build a `Set` or `Map` once for that input snapshot. Keep the transformation in the owning selector, mapper or aggregator rather than adding a data pipeline to JSX.
+When a transformation repeatedly checks membership or resolves records by the same key, build a `Set` or `Map` once for that input snapshot. Keep the transformation in the owning transformer rather than adding a data pipeline to JSX.
 
 **Incorrect (each order scans the complete allowed-id list):**
 
 ```typescript
-export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
-  return orders.filter(order => allowedIds.includes(order.id))
+export function selectAllowedOrders(
+  orders: readonly Order[],
+  allowedIds: readonly string[],
+) {
+  return orders.filter((order) => allowedIds.includes(order.id))
 }
 ```
 
 **Correct (membership uses one index):**
 
 ```typescript
-// helpers/selectors/selectAllowedOrders.ts
-export function selectAllowedOrders(orders: readonly Order[], allowedIds: readonly string[]) {
+// helpers/transformers/selectAllowedOrders.ts
+export function selectAllowedOrders(
+  orders: readonly Order[],
+  allowedIds: readonly string[],
+) {
   const allowed = new Set(allowedIds)
-  return orders.filter(order => allowed.has(order.id))
+  return orders.filter((order) => allowed.has(order.id))
 }
 ```
 
@@ -6018,6 +6079,73 @@ export function useContactsSelection() {
 ```
 
 A well-named function with explicit types needs no JSDoc at all. Use inline `// WHY:` comments for local surprises, such as a nullable field kept on purpose or an `eslint-disable`.
+
+### Architecture decision comments
+
+When an audit settles a non-obvious ownership, boundary or composition choice,
+record the decision next to the code that implements it. This includes retaining
+an existing structure after comparing it with a credible alternative. Routine
+mechanical corrections and self-explanatory code need no decision comment. In a
+findings-only audit, propose the comment without editing the source.
+
+Use an ordinary block comment immediately before the smallest declaration or
+local block that owns the choice. For a module-wide decision, place it before
+the owning public declaration. Keep one authoritative comment per decision;
+architecture documents may summarize or link to it. Do not create an empty module
+or a separate decision file just to hold the comment.
+
+Use this format with every field present once, in this order:
+
+```ts
+/*
+ * @architecture-decision keep-selection-label-local
+ * @rules arch-component-complexity
+ * @choice Keep the static selection label inside OrdersWorkspace.
+ * @reason The label has one production consumer and no behavior independent of the workspace.
+ * @alternative Extract OrderSelectionLabel; it would only forward the same label without isolating a responsibility.
+ * @revisit The label gains independent interactions or another production consumer.
+ */
+```
+
+- `@architecture-decision`: a stable lowercase kebab-case identifier, unique
+  within the source module. Preserve it when moving or renaming the owning code.
+- `@rules`: the comma-separated catalog rule identifiers used to assess the
+  choice. The comment must satisfy every applicable rule, including those not
+  listed here.
+- `@choice`: the selected structure and the code it concerns.
+- `@reason`: concrete responsibilities, consumers or behavioral constraints
+  that establish why the choice complies. A previous audit's approval alone is
+  insufficient.
+- `@alternative`: a credible alternative considered under the same requirements
+  and the reason for retaining the selected choice. Prefer another conforming
+  solution; if none can be established, identify the alternative's concrete rule
+  conflict instead of inventing one.
+- `@revisit`: observable changes that would invalidate the rationale or require
+  a new decision, such as a new consumer or independently evolving behavior.
+  Avoid generic instructions such as "review later".
+
+Keep the comment in English. Values must be nonempty and may continue on following
+comment lines without repeating the tag. Use the marker to locate decisions,
+for example with `rg -n '@architecture-decision'` in the requested source scope.
+
+Update the comment in the same change when its owner, relevant consumers,
+dependencies, rationale or revisit conditions change. Move it with the owning
+code; remove it when the decision disappears. Keep the current decision rather
+than appending an audit history or refreshing dates on every review. A changed
+revisit condition requires reassessment before replacing the old condition.
+
+During an audit, preserve a documented conforming choice while its assumptions
+remain true. Reopen it only for a relevant implementation or rule-contract change,
+a met revisit condition, or concrete evidence contradicting its compliance.
+Identify that evidence before changing the structure and update or remove the
+comment with the resulting correction. Another conforming arrangement by itself
+does not invalidate the recorded choice.
+
+The marker records a design rationale; it grants no rule exception, suppresses no
+diagnostic and cannot establish compliance by its presence alone. Reconcile any
+contradictory diagnostic with the owning rule and code. ESLint suppressions still
+follow `quality-eslint-disable-scoped`. Existing checks do not validate this
+comment format or its rationale; both remain part of the scoped semantic review.
 
 ### 12.13 No Chained or Negated Ternaries
 

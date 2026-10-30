@@ -6,6 +6,7 @@ import {
   stableInitializer,
 } from './ast-bindings.js'
 import { createContextResolver } from './context-provenance.js'
+import { helperCategory } from './helper-categories.js'
 
 const FORMATTER_NAME = /^format[A-Z]\w*$/u
 const FORMATTER_HOOK = /^useFormat[A-Z]\w*$/u
@@ -75,7 +76,7 @@ export default {
       const target = source.startsWith('.')
         ? resolve(dirname(context.filename), source)
         : source
-      return /\/helpers\/formatters\//u.test(target)
+      return helperCategory(target) === 'formatters'
     }
 
     function propertyName(node) {

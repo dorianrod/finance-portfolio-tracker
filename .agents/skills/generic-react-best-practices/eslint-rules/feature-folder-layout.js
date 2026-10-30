@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 
 import { isProductionSource } from './ast-bindings.js'
 import { businessScopes, featureScopes } from './business-ownership.js'
+import { helperCategories } from './helper-categories.js'
 
 export default {
   meta: {
@@ -41,7 +42,7 @@ export default {
       const roles = source.slice(owner.length + 1).split('/')
       if (roles[0] === 'shared') roles.shift()
       if (
-        /(?:^|\/)helpers\/presenters\//u.test(roles.join('/')) &&
+        helperCategories(filename).includes('presenters') &&
         roles[0] !== 'components' &&
         roles[0] !== 'pages'
       )

@@ -42,7 +42,7 @@ describe('parent and leaf feature folder layout', () => {
     'src/domains/contracts/features/reminders/helpers/presenters/tone.ts',
     'src/domains/components/features/summary/helpers/presenters/tone.ts',
     'src/domains/contracts/features/components/helpers/presenters/tone.ts',
-    'src/domains/contracts/helpers/calculators/components/card/helpers/presenters/tone.ts',
+    'src/domains/contracts/helpers/transformers/components/card/helpers/presenters/tone.ts',
   ])('rejects presenters without UI ownership: %s', (file) => {
     expect(lint(file)).toMatchObject([
       { messageId: 'presenterScope', severity: 2 },
@@ -123,7 +123,7 @@ describe('parent and leaf feature folder layout', () => {
   it('does not require imports to detect a misplaced file', () => {
     expect(
       lint(
-        'src/domains/portfolio/features/analysis/helpers/calculators/calculate.ts',
+        'src/domains/portfolio/features/analysis/helpers/transformers/calculate.ts',
         ['analysis'],
       ),
     ).toHaveLength(1)

@@ -6,7 +6,7 @@ import helperModuleContract from './helper-module-contract.js'
 
 function lint(
   code,
-  filename = 'src/domains/orders/helpers/calculators/calculateTotal.ts',
+  filename = 'src/domains/orders/helpers/transformers/calculateTotal.ts',
 ) {
   return new Linter().verify(
     code,
@@ -58,14 +58,24 @@ describe('helper module contracts', () => {
     )
   })
 
+  it.each(['transformers', 'formatters', 'presenters'])(
+    'preserves the documented %s category',
+    (category) => {
+      expect(
+        lint(
+          'export function calculateTotal() {}',
+          `src/shared/helpers/${category}/nested/calculateTotal.ts`,
+        ),
+      ).toEqual([])
+    },
+  )
+
   it.each([
     'businessRules',
-    'formatters',
     'selectors',
     'aggregators',
     'calculators',
     'mappers',
-    'presenters',
     'quality',
     'validators',
     'payloads',
@@ -73,19 +83,19 @@ describe('helper module contracts', () => {
     'filters',
     'schemas',
     'links',
-  ])('preserves the documented %s category', (category) => {
+  ])('rejects the retired %s category without aliases', (category) => {
     expect(
       lint(
         'export function calculateTotal() {}',
         `src/shared/helpers/${category}/nested/calculateTotal.ts`,
       ),
-    ).toEqual([])
+    ).toMatchObject([{ messageId: 'category', severity: 2 }])
   })
 
   it.each([
-    'src/domains/orders/helpers/mappers/calculateTotal.test.ts',
-    'src/domains/orders/helpers/mappers/calculateTotal.spec.ts',
-    'src/domains/orders/helpers/mappers/calculateTotal.d.ts',
+    'src/domains/orders/helpers/transformers/calculateTotal.test.ts',
+    'src/domains/orders/helpers/transformers/calculateTotal.spec.ts',
+    'src/domains/orders/helpers/transformers/calculateTotal.d.ts',
     'src/shared/ui/storybook/helpers/calculateTotal.ts',
     'src/domains/orders/mocks/helpers/calculateTotal.ts',
     'src/domains/orders/services/calculateTotal.ts',
@@ -100,16 +110,16 @@ describe('helper module contracts', () => {
     expect(
       lint(
         'export function calculateTotal() {}',
-        'src/domains/orders/helpers/calculators/calculateTotal.logic.ts',
+        'src/domains/orders/helpers/transformers/calculateTotal.logic.ts',
       ),
     ).toMatchObject([{ messageId: 'logic', severity: 2 }])
   })
 
   it.each([
-    'src/domains/helpers/helpers/calculators/calculateTotal.ts',
-    'src/domains/orders/features/helpers/helpers/calculators/calculateTotal.ts',
-    'src/domains/orders/features/mocks/helpers/calculators/calculateTotal.ts',
-    'src/shared/helpers/calculators/calculateTotal.js',
+    'src/domains/helpers/helpers/transformers/calculateTotal.ts',
+    'src/domains/orders/features/helpers/helpers/transformers/calculateTotal.ts',
+    'src/domains/orders/features/mocks/helpers/transformers/calculateTotal.ts',
+    'src/shared/helpers/transformers/calculateTotal.js',
   ])(
     'checks helper roles independently of business names and language: %s',
     (filename) => {
@@ -118,4 +128,90 @@ describe('helper module contracts', () => {
       ])
     },
   )
+
+  it.each([
+    "import { object as schema } from 'yup'; export const calculateTotal = schema",
+    "export { fetchRows as calculateTotal } from '@/domains/orders/apis/queries/fetchRows'",
+    "export * from '@/domains/orders/schemas/orderSchema'",
+    "import('@/domains/orders/services/useOrders')",
+    "import { useQuery as read } from '@tanstack/react-query'; export const calculateTotal = read",
+    "import { get } from 'axios'; export const calculateTotal = get",
+    "import { atom } from '@/domains/orders/stores/orders.atoms'; export const calculateTotal = atom",
+  ])(
+    'rejects transport, acquisition and business-state dependencies: %s',
+    (code) => {
+      expect(lint(code)).toContainEqual(
+        expect.objectContaining({ messageId: 'dependency', severity: 2 }),
+      )
+    },
+  )
+
+  it.each([
+    "import { ValidationError as InvalidData } from 'yup'; export const calculateTotal = InvalidData",
+    "import { isAxiosError as isTransportError } from 'axios'; export const calculateTotal = isTransportError",
+    "export { ValidationError as calculateTotal } from 'yup'",
+    "import type { ObjectSchema } from 'yup'; export type Schema = ObjectSchema<{}>",
+    "export type { Order } from '@/domains/orders/apis/types/order'",
+    "import { value } from '@/domains/apis/types/value'; export const calculateTotal = value",
+    'export function calculateTotal(items: readonly number[]) { return items.reduce((sum, item) => sum + item, 0) }',
+    "import { useMemo as memo } from 'react'; export function calculateTotal(items: number[]) { return memo(() => items.length, [items]) }",
+    'export function calculateTotal(transform: (value: number) => number) { return transform(1) }',
+  ])(
+    'preserves type edges, explicit data and unrelated transform APIs: %s',
+    (code) => {
+      expect(lint(code)).toEqual([])
+    },
+  )
+
+  it.each([
+    "import { useEffect as effect } from 'react'; export function calculateTotal() { effect(() => {}, []) }",
+    "import * as React from 'react'; const { useLayoutEffect: effect } = React; export function calculateTotal() { effect(() => {}, []) }",
+    "import React from 'react'; const effect = React.useInsertionEffect; export function calculateTotal() { effect(() => {}, []) }",
+    "import { useState } from 'react'; export function calculateTotal() { return useState(0) }",
+    "import { useSetAtom as write } from 'jotai'; export function calculateTotal() { return write(atom) }",
+    "import { useNavigate } from 'react-router-dom'; export function calculateTotal() { return useNavigate() }",
+  ])('rejects known effects and writable hooks through aliases: %s', (code) => {
+    expect(lint(code)).toContainEqual(
+      expect.objectContaining({ messageId: 'effect', severity: 2 }),
+    )
+  })
+
+  it('preserves shadowed effect names', () => {
+    expect(
+      lint(
+        "import { useEffect } from 'react'; export function calculateTotal(useEffect: () => number) { return useEffect() }",
+      ),
+    ).toEqual([])
+  })
+
+  it('rejects context subscription inside a transformer', () => {
+    expect(
+      lint(
+        "import { useContext as read } from 'react'; export function calculateTotal() { return read(context) }",
+      ),
+    ).toMatchObject([{ messageId: 'context', severity: 2 }])
+  })
+
+  it.each(['formatters', 'presenters'])(
+    'preserves read-only presentation context in %s',
+    (category) => {
+      expect(
+        lint(
+          "import { useContext } from 'react'; export function calculateTotal() { return useContext(context) }",
+          `src/shared/helpers/${category}/calculateTotal.ts`,
+        ),
+      ).toEqual([])
+    },
+  )
+
+  it.each([
+    'export function calculateTotal() { return <span /> }',
+    'export function calculateTotal() { return <></> }',
+    "import { createElement as element } from 'react'; export function calculateTotal() { return element('span') }",
+    "import { jsx as element } from 'react/jsx-runtime'; export function calculateTotal() { return element('span', {}) }",
+  ])('rejects rendering inside helpers: %s', (code) => {
+    expect(
+      lint(code, 'src/shared/helpers/presenters/calculateTotal.tsx'),
+    ).toMatchObject([{ messageId: 'jsx', severity: 2 }])
+  })
 })

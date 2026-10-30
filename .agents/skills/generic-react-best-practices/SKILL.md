@@ -12,7 +12,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: "1.7.0"
+  version: '1.7.0'
 ---
 
 # Generic React Best Practices
@@ -46,20 +46,20 @@ Several rules describe the target standard, not the current state of every file.
 
 ## Rule Categories by Priority
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | Architecture & Boundaries | CRITICAL | `arch-` |
-| 2 | API Hooks & Server State | CRITICAL | `api-` |
-| 3 | Security | CRITICAL | `security-` |
-| 4 | Query Keys & Cache | HIGH | `cache-` |
-| 5 | Domain Types | HIGH | `types-` |
-| 6 | Yup Schemas | HIGH | `yup-` |
-| 7 | UI Composition & Accessibility | HIGH | `ui-` |
-| 8 | Jotai Client State | MEDIUM-HIGH | `state-` |
-| 9 | Helpers | MEDIUM-HIGH | `helpers-` |
-| 10 | Internationalization | MEDIUM | `i18n-` |
-| 11 | Testing | MEDIUM | `test-` |
-| 12 | Code Quality | HIGH | `quality-` |
+| Priority | Category                       | Impact      | Prefix      |
+| -------- | ------------------------------ | ----------- | ----------- |
+| 1        | Architecture & Boundaries      | CRITICAL    | `arch-`     |
+| 2        | API Hooks & Server State       | CRITICAL    | `api-`      |
+| 3        | Security                       | CRITICAL    | `security-` |
+| 4        | Query Keys & Cache             | HIGH        | `cache-`    |
+| 5        | Domain Types                   | HIGH        | `types-`    |
+| 6        | Yup Schemas                    | HIGH        | `yup-`      |
+| 7        | UI Composition & Accessibility | HIGH        | `ui-`       |
+| 8        | Jotai Client State             | MEDIUM-HIGH | `state-`    |
+| 9        | Helpers                        | MEDIUM-HIGH | `helpers-`  |
+| 10       | Internationalization           | MEDIUM      | `i18n-`     |
+| 11       | Testing                        | MEDIUM      | `test-`     |
+| 12       | Code Quality                   | HIGH        | `quality-`  |
 
 Start review and correction with the selected rules' own impact: **CRITICAL → HIGH → MEDIUM-HIGH → MEDIUM → LOW-MEDIUM → LOW**. The category impact is a ceiling; read each rule's frontmatter for its actual impact. At equal impact, follow the category priority above. The Quick Reference groups rules for navigation; it is not a global execution queue. A prerequisite correction may come first when needed to resolve a higher-impact violation. ESLint severity, output order, candidate counts and script exit codes do not set catalog priority.
 
@@ -69,18 +69,18 @@ Start review and correction with the selected rules' own impact: **CRITICAL → 
 2. Read those files for impact, applicability, exceptions, incorrect/correct examples and analysis aids. Do not load the entire compiled guide for a focused task.
 3. Order the applicable rules by impact, then category priority. Select their packaged ESLint checks and complementary scripts through the [rule-to-tool bindings](references/project-enforcement.md), using the consuming application's configured roots, catalog and commands. Use a script when it supports a selected rule; do not run every audit script as an independent checklist. A shared command may serve several selected rules in one run.
 4. Confirm findings against the owning rule and inspect requirements beyond automatic coverage. A tool's silence does not establish compliance, and a review candidate does not establish a violation.
-5. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application; keep its target structure in its own architecture documentation.
+5. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application. Record non-obvious architecture choices next to the owning code using [architecture decision comments](rules/quality-jsdoc-minimal.md#architecture-decision-comments); application architecture documents may summarize those choices and the overall target structure.
 
 ### File naming and folder normalization
 
 Apply the naming and placement conventions when creating or moving code. Read the owning rules for their contracts, exceptions and enforcement limits:
 
-| Concern | Owning rules |
-| --- | --- |
-| Component roles and `.view.tsx`, `.feature.tsx`, `.state.tsx` suffixes | [Component roles](rules/arch-component-roles.md), [component support modules](rules/arch-component-module-boundaries.md) |
-| Domains, features, parent/leaf folders and scoped `shared/` | [Domain layout](rules/arch-domain-first-layout.md), [feature slices](rules/arch-feature-slice-layout.md), [feature hierarchy](rules/arch-feature-hierarchy.md) |
-| `stores/<concern>.atoms.ts`, `<name>.store.ts` and exported `Atom`/`Atoms` names | [Store modules](rules/arch-stores-no-index.md), [atom identifiers](rules/state-atom-naming.md) |
-| Helper, entity and API-hook filenames and placement | [Helper categories](rules/helpers-categories.md), [entity files](rules/types-file-per-entity.md), [API naming](rules/api-naming.md) |
+| Concern                                                                          | Owning rules                                                                                                                                                   |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Component roles and `.view.tsx`, `.feature.tsx`, `.state.tsx` suffixes           | [Component roles](rules/arch-component-roles.md), [component support modules](rules/arch-component-module-boundaries.md)                                       |
+| Domains, features, parent/leaf folders and scoped `shared/`                      | [Domain layout](rules/arch-domain-first-layout.md), [feature slices](rules/arch-feature-slice-layout.md), [feature hierarchy](rules/arch-feature-hierarchy.md) |
+| `stores/<concern>.atoms.ts`, `<name>.store.ts` and exported `Atom`/`Atoms` names | [Store modules](rules/arch-stores-no-index.md), [atom identifiers](rules/state-atom-naming.md)                                                                 |
+| Helper, entity and API-hook filenames and placement                              | [Helper categories](rules/helpers-categories.md), [entity files](rules/types-file-per-entity.md), [API naming](rules/api-naming.md)                            |
 
 Mechanically observable conventions require deterministic checks in the consuming application. Verify the effective ESLint configuration with invalid and valid neighboring examples; a convention written in this skill does not install its detector. Keep business ownership and component-role decisions under semantic review. Follow [layout enforcement and coordinated renames](rules/arch-domain-first-layout.md#enforcement-and-coordinated-renames) when normalizing files.
 
@@ -98,6 +98,8 @@ Every audit covers these activities within its stated scope:
 4. **Deterministic prevention after the audit:** examine findings and manual coverage gaps for reusable ESLint, TypeScript or equivalent checks. Prefer existing enforcement; add or strengthen a check when its generic contract and valid/invalid cases can be established. Keep application-specific names, paths and one-off allowlists out of the check's logic.
 
 Follow the [audit method](references/audit-method.md). By default, correct confirmed violations in scope; honor an explicit findings-only request. A focused review uses the routing above and states its scope. For a full audit or a request to fix all problems, account for every rule in the Quick Reference and read each applicable rule's contract and exceptions. Existing ignores remain outside technical revalidation unless explicitly requested, including in a full audit. Passing lint, TypeScript or an existing test suite does not establish catalog-wide compliance.
+
+Use the same explicit rule contracts to assess proposed corrections and their alternatives. Preserve conforming architecture choices; resolve contradictory interpretations before a disputed correction. Keep settled non-obvious decisions in [structured comments beside the owning code](rules/quality-jsdoc-minimal.md#architecture-decision-comments), maintain them with that code and cite a concrete reopening trigger before superseding them. Follow the audit method's [verdict stability](references/audit-method.md#stabilize-verdicts-and-record-architecture-decisions-in-code) and [closure conditions](references/audit-method.md#finish-with-the-evidence-that-exists).
 
 Inventory the requested files and rules, and keep enough working notes to distinguish reviewed code from pending work. A full audit accounts for every catalog rule and every in-scope authored file under the requested ignore-review policy. Focused audits state their scope explicitly. No output template, per-rule count table, JSON state or generated report is required.
 
@@ -221,6 +223,8 @@ Examples isolate their rule rather than serve as complete application templates.
 - `helpers-vercel-immutable-collections` - Preserve Collection Inputs When Transforming
 - `helpers-categories` - Sort Every Helper Into One of a Fixed Set of Categories
 - `helpers-vercel-indexed-lookups` - Index Collections for Repeated Lookups
+
+Helper categories are exactly `transformers`, `formatters` and `presenters`, selected by their exposed contracts (see `helpers-categories`). Business rules, predicates, selection, aggregation, calculations and diagnostics are operations within transformers. API validation and transport adaptation remain at the API boundary.
 
 Every formatter, including dates and entity labels, accepts `null` and `undefined` and owns a configurable display fallback. Pass values directly to it instead of adding missing-value guards in consumers (see `helpers-formatter-hooks`).
 

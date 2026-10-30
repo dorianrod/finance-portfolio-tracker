@@ -7,6 +7,7 @@ import {
   stableInitializer,
   unwrap,
 } from './ast-bindings.js'
+import { helperCategory, helperRole } from './helper-categories.js'
 import { isFunctionNode } from './react-component-utils.js'
 
 const CONTEXT_HOOKS = new Map([
@@ -24,11 +25,11 @@ export function createContextResolver(sourceCode, filename) {
     const binding = importedBinding(sourceCode, node)
     if (binding) {
       if (
-        /\/helpers\/formatters\//u.test(
+        helperCategory(
           binding.source.startsWith('.')
             ? resolve(dirname(filename), binding.source)
             : binding.source,
-        ) &&
+        ) === 'formatters' &&
         /^use\w*Format\w*$/u.test(binding.name)
       )
         return binding.name
@@ -46,11 +47,11 @@ export function createContextResolver(sourceCode, filename) {
       const name = node.computed ? node.property.value : node.property.name
       if (
         namespace?.name === '*' &&
-        /\/helpers\/formatters\//u.test(
+        helperCategory(
           namespace.source.startsWith('.')
             ? resolve(dirname(filename), namespace.source)
             : namespace.source,
-        ) &&
+        ) === 'formatters' &&
         /^use\w*Format\w*$/u.test(name ?? '')
       )
         return name
@@ -129,7 +130,7 @@ export function createContextResolver(sourceCode, filename) {
     const target = binding.source.startsWith('.')
       ? resolve(dirname(filename), binding.source)
       : binding.source
-    return /(?:^|\/)helpers\//u.test(target)
+    return Boolean(helperRole(target))
   }
 
   function contextType(node) {

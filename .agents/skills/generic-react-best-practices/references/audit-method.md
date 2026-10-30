@@ -14,6 +14,11 @@ including proposed enforcement changes.
 
 Before inspecting findings, inventory the authored files and catalog rules in
 the requested scope. Include source, tests and relevant tooling/configuration.
+Identify the starting code state, including uncommitted changes, the selected rule
+contracts and the effective check configuration. Use the same requirements to
+assess all alternatives in this audit. Record any necessary contract clarification
+explicitly before applying it; adding a preference is a catalog change, not proof
+that the initial code violated the starting contract.
 Identify existing exclusions and their effect on coverage without revalidating
 their technical justification unless requested. Explain any new audit-scope
 exclusions; never introduce one to hide a violation. Do not replace a global
@@ -32,6 +37,42 @@ after corrections and rerun affected checks; this does not enable technical
 revalidation of existing ignores. If interrupted, keep a usable checkpoint and
 identify the remaining work. No particular file format, schema, count table or
 generated report is required.
+
+## Stabilize verdicts and record architecture decisions in code
+
+For every proposed correction, identify the owning rule's explicit requirement,
+the code that contradicts it and why its exceptions do not apply. A different
+conforming implementation is not a violation. Preserve the existing choice when
+it satisfies the applicable requirements.
+
+Before a structural correction or a disputed keep decision, examine a credible
+alternative and assess both arrangements against the same applicable rules and
+exceptions. Prefer the conforming option that preserves cohesive responsibilities
+with the least unnecessary change. If no credible alternative can be established,
+state the constraint rather than inventing one. Several conforming solutions do
+not by themselves make the rule ambiguous.
+
+If reasonable interpretations of a rule produce contradictory compliance
+verdicts, record the precise ambiguity and its concrete example. Clarify the
+owning contract and its distinguishing examples when authorized within scope;
+otherwise leave that verdict unresolved. Resolve the ambiguity before applying
+the disputed correction. Do not alternate between structures based on preference
+or silently turn an interpretation into a new requirement.
+
+Record settled non-obvious decisions in the owning code using the
+[architecture decision comment contract](../rules/quality-jsdoc-minimal.md#architecture-decision-comments).
+The comment carries the choice, rationale, considered alternative, applicable
+rule identifiers and observable revisit conditions. Working notes and separate
+architecture documents do not replace this code-local record. In findings-only
+mode, propose the comment alongside the finding.
+
+Include existing decision comments in the requested source inventory. Read the
+relevant implementation and callers to establish whether their assumptions still
+hold. Preserve a supported choice; reopen it only for a relevant implementation
+or rule-contract change, a met revisit condition, or concrete contradictory
+evidence. State that trigger before superseding the decision. Update, move or
+remove its comment in the same change as the affected code. These comments grant
+no exceptions and do not change the opt-in policy for existing ESLint ignores.
 
 ## Select rules, order the review and bind tools
 
@@ -242,6 +283,17 @@ was not requested do not block completion and are not counted as newly reviewed.
 For audit-and-fix work, remaining in-scope violations prevent completion. For
 findings-only work, complete coverage may coexist with documented open findings;
 make that distinction explicit.
+
+Close audit-and-fix work once every in-scope target and selected rule has an
+evidenced verdict, no candidate or compliance question remains unresolved, all
+confirmed violations are corrected, required checks pass and affected code and
+callers have been re-reviewed. Confirm that decision comments affected by the task
+match the final implementation. Existing ignores follow the announced review
+policy. In findings-only mode, documented violations and ambiguities may remain
+open after complete coverage; distinguish that outcome from a compliant result.
+Once these conditions hold, finish. A remaining conforming alternative does not
+reopen the audit; after a correction, revisit only the decisions and requirements
+that its actual effects can change.
 
 Use a concise, free-form final response covering the actual outcome, relevant
 checks and material remaining work. Include a high-level synthesis of the ESLint,

@@ -20,7 +20,9 @@ export const OrderAccessRow: FC<Props> = ({ access, order }) => {
     <>
       <p>{`${access.contact.firstName} ${access.contact.lastName}`}</p>
       <span className="badge">
-        {order.globalStatus === 'CLOSED' ? t('sales.globalStatus.CLOSED') : t('sales.globalStatus.STARTED')}
+        {order.globalStatus === 'CLOSED'
+          ? t('sales.globalStatus.CLOSED')
+          : t('sales.globalStatus.STARTED')}
       </span>
       <p>{`${order.amount.toFixed(2)} ${order.currency}`}</p>
     </>
@@ -64,6 +66,8 @@ const formatMoney = useFormatMoney()
 <p>{formatMoney(order.amount, order.currency)}</p>
 ```
 
+A formatter produces display text only. Color/tone/icon mappings, CSS classes, geometry, JSX and visual configuration belong to presenters or UI components. Technical strings such as API payloads and UI-control values belong at their API or presentation boundary. A formatter may compose a pure domain classification; a grouping used only for display wording may remain local. Independent classifications used for filtering, eligibility or statistics belong in transformers. Read presentation context, never acquire data, subscribe to business state or own effects.
+
 Where to look first: the app-wide formatters in `src/shared/helpers/formatters/` (money, dates, addresses), then the domain's and its main domain's `shared/helpers/formatters/`. A formatter used by several sub-domains lives once in `[domain]/shared/helpers/formatters/`, one hook per file named after it. A formatter hook returns a `useCallback`-wrapped function taking the entity (see `arch-helpers-vs-services` for its shape). Lint the raw locale calls (`toLocaleDateString`, `toLocaleTimeString`) with `no-restricted-properties` so that dates also go through the shared formatters.
 
 ### Missing Values in Every Formatter
@@ -99,7 +103,10 @@ export function useFormatDate() {
   )
 
   return useCallback(
-    (value: Date | null | undefined, { fallback = '—' }: { fallback?: string } = {}): string => {
+    (
+      value: Date | null | undefined,
+      { fallback = '—' }: { fallback?: string } = {},
+    ): string => {
       if (value == null) return fallback
       return dateFormatter.format(value)
     },
@@ -119,6 +126,8 @@ Conditions that select structure, loading or error states, permissions or compar
 ### ESLint Enforcement
 
 Enable the typed `local/no-inline-number-display` rule for numeric text rendered as JSX children. Report number-valued expressions, native `String(number)` conversions (including immutable constructor aliases), numeric `.toString()` calls and raw numeric template expressions. Follow immutable local text aliases and conditional output branches; respect shadowed constructors. Keep scalar props, native input values and technical JSX attributes outside the text-display check. Nullable numbers still need the formatter's fallback contract. Verify rejected and neighboring valid cases through the consuming configuration. Do not autofix: the reviewer chooses the intended precision, grouping and missing-value behavior. This bounded check does not trace arbitrary renderer functions, object properties or mutable bindings; inspect display models and their consumers manually.
+
+Use `local/helper-module-contract` for the shared acquisition/effect boundary and to reject presenter/UI-library runtime dependencies in formatters, including indirect dependencies. Pure transformer composition and erased type imports remain valid.
 
 Enable the typed `local/formatter-contract` rule at error level for exported formatter implementations. Inspect exported local bindings, including aliased and separately declared exports. A plain `formatXxx(value): string` export must not bypass the hook contract by omitting `useFormat` from its name. Require nullable input, configurable fallback options and a string result on the function returned by `useFormatXxx`; reject a hook that returns a non-callable value. Constants, type exports, bundles of existing formatter hooks and private numeric support utilities are not standalone value-to-text formatters. Arbitrary injected callbacks or opaque reexports still need review.
 

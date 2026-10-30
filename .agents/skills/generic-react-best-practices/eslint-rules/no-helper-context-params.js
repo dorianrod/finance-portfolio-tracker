@@ -1,6 +1,7 @@
 import { isProductionSource } from './ast-bindings.js'
 import { createContextResolver } from './context-provenance.js'
 import { getPublicExports } from './get-public-exports.js'
+import { helperRole } from './helper-categories.js'
 
 export default {
   meta: {
@@ -27,7 +28,7 @@ export default {
         }
       },
       'Program:exit'(node) {
-        if (!/(?:^|\/)helpers\//u.test(context.filename)) return
+        if (!helperRole(context.filename)) return
         for (const entry of getPublicExports(node, context.sourceCode)) {
           for (const declaration of entry.declarations) {
             const fn =

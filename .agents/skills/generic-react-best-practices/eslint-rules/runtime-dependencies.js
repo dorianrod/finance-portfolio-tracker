@@ -113,7 +113,7 @@ export function runtimeDependencies(context) {
     function walk(specifier, importer, chain) {
       const target = resolveSource(specifier, importer)
       const next = [...chain, specifier]
-      const match = predicate(specifier, target, chain.length)
+      const match = predicate(specifier, target, chain.length, importer)
       if (match) return { match, chain: next }
       if (!program || !target || visited.has(target) || stop(target))
         return null

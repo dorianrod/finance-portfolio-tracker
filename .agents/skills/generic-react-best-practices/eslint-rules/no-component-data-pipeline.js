@@ -15,7 +15,7 @@ export default {
     schema: [],
     messages: {
       pipeline:
-        'Extract this accumulation or compound collection predicate into an intent-named helper (selectors, businessRules, aggregators or calculators). Keep the rendering map in the component. [arch-thin-components]',
+        'Extract this accumulation or compound collection predicate into an intent-named helper in helpers/transformers. Keep the rendering map in the component. [arch-thin-components]',
     },
   },
   create(context) {

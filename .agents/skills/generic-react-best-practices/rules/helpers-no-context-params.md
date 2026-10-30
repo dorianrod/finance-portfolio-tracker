@@ -9,12 +9,12 @@ tags: helpers, i18n, context, hooks, signatures
 
 **Impact: MEDIUM-HIGH (business-only signatures, no context threading through callers)**
 
-A helper signature takes business data only. When it needs a React context dependency (`t`, `navigate`, a Jotai atom, the `queryClient`), turn it into a helper **hook** (`use…`) that reads the dependency internally, or composes another helper hook, and returns a memoized value or function. Passing `t` around forces every caller to own `useTranslation` and leaks UI plumbing into business signatures.
+A helper signature takes explicit data and configuration, never context clients or injected formatter functions. When it needs a React context dependency (`t`, `navigate`, a Jotai atom, the `queryClient`), keep business data acquisition at its API/service owner and pass the resulting data explicitly. For presentation context such as translation, use a formatter or presenter **hook** (`use…`) that reads the dependency internally and returns a memoized value or function. Passing `t` around forces every caller to own `useTranslation` and leaks UI plumbing into business signatures.
 
 **Incorrect (context dependency threaded as a parameter):**
 
 ```ts
-// sales/orders/helpers/mappers/getOrderStatusOptions.ts
+// sales/orders/pages/detail/helpers/presenters/getOrderStatusOptions.ts
 export const getOrderStatusOptions = (t: TFunction) => [
   { value: 'DRAFT', label: t('order.orderStatus.DRAFT') },
   { value: 'CONFIRMED', label: t('order.orderStatus.CONFIRMED') },
@@ -29,13 +29,21 @@ const statusOptions = getOrderStatusOptions(t)
 **Correct (helper hook composing the existing formatter):**
 
 ```ts
-// sales/orders/helpers/mappers/useOrderStatusOptions.ts
-const ORDER_STATUSES = ['DRAFT', 'CONFIRMED', 'SHIPPED'] as const satisfies readonly OrderStatus[]
+// sales/orders/pages/detail/helpers/presenters/useOrderStatusOptions.ts
+const ORDER_STATUSES = [
+  'DRAFT',
+  'CONFIRMED',
+  'SHIPPED',
+] as const satisfies readonly OrderStatus[]
 
 export function useOrderStatusOptions() {
   const formatOrderStatus = useFormatOrderStatus() // helpers/formatters/
   return useMemo(
-    () => ORDER_STATUSES.map(status => ({ value: status, label: formatOrderStatus(status) })),
+    () =>
+      ORDER_STATUSES.map((status) => ({
+        value: status,
+        label: formatOrderStatus(status),
+      })),
     [formatOrderStatus],
   )
 }

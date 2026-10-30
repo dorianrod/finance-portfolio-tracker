@@ -43,7 +43,7 @@ src/domains/sales/orders/
 │           ├── access-management/
 │           │   ├── apis/queries/useOrderAccessesQuery.ts
 │           │   ├── components/OrderAccessPanel.feature.tsx
-│           │   ├── helpers/mappers/toOrderAccessRows.ts
+│           │   ├── helpers/transformers/toOrderAccessRows.ts
 │           │   ├── services/useResendOrderAccess.ts
 │           │   └── types/orderAccess.type.ts
 │           └── history/                  # also consumes detailSection.type.ts

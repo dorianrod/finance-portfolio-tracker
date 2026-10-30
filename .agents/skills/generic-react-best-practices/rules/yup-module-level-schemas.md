@@ -15,8 +15,14 @@ API schemas do not depend on props or state, so declare them as module-level con
 
 ```tsx
 export function useGetOrdersQuery() {
-  const schema1 = useMemo(() => yup.object({ search: yup.string().optional() }), [])
-  const parse = useCallback((data: unknown) => yup.object({ items: yup.array() }).validateSync(data), [])
+  const schema1 = useMemo(
+    () => yup.object({ search: yup.string().optional() }),
+    [],
+  )
+  const parse = useCallback(
+    (data: unknown) => yup.object({ items: yup.array() }).validateSync(data),
+    [],
+  )
   // ...
 }
 ```
@@ -47,4 +53,4 @@ export function useGetProjectsQuery(params: ProjectListQueryParams) {
 }
 ```
 
-A schema shared across hooks of a sub-domain gets its own file in `helpers/schemas/`, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).
+A schema shared across hooks of a sub-domain gets its own file in the owning `apis/schemas/` for API contracts, or scoped `schemas/` for generic validation, named after its one public schema export (for example `orderPaymentSchema.ts` exporting `ORDER_PAYMENT_SCHEMA`); supporting sub-schemas stay private. Do not create plural schema grab bags. Form validation schemas that need `t()` are a different case: a `use[Form]Schema` hook with `useMemo(..., [t])` (see `yup-form-schema-hook`).

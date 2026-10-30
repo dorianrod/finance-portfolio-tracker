@@ -9,7 +9,7 @@ tags: helpers, business-rules, predicates, naming, pure-functions
 
 **Impact: MEDIUM-HIGH (decisions readable in JSX and testable without rendering)**
 
-Any non-trivial condition (status sets, bypass flags, counts) goes in `helpers/businessRules/` as a **pure function** `(entity/state) => boolean | string | union`: no React hook, no API call, no side effect. Name it after **why** it is true: `isX` / `hasX` / `areXProvided` (business state), `canX` (business authorization), `shouldShowX` (display decision composing the others), never `isVisible` / `showBlock`.
+Any non-trivial condition (status sets, bypass flags, counts) goes in `helpers/transformers/` as a **pure function** `(entity/state) => boolean | closed decision union`: no React hook, no API call, no side effect. Classifications and structured diagnostics also belong in transformers; they need not return boolean. Name a predicate after **why** it is true: `isX` / `hasX` / `areXProvided` (business state), `canX` (business authorization), `shouldShowX` (display decision composing the others), never `isVisible` / `showBlock`.
 
 **Incorrect (rule inlined in JSX, then wrapped in a hook with a meaningless name):**
 
@@ -23,24 +23,34 @@ export const useIsVisible = (payment: PaymentSection, count: number) =>
   useMemo(() => /* same condition */, [payment, count])
 ```
 
-**Correct (pure predicate in helpers/businessRules/, named by intent):**
+**Correct (pure predicate in helpers/transformers/, named by intent):**
 
 ```tsx
-// pages/detail/helpers/businessRules/arePaymentApproversProvided.ts
+// pages/detail/helpers/transformers/arePaymentApproversProvided.ts
 const PAYMENT_PROVIDED_STATUSES = new Set<PaymentSection['status']>([
   'PENDING_SIGNATURE',
   'AT_LEAST_ONE_APPROVER_FAILED',
   'SIGNED',
 ])
 
-export const arePaymentApproversProvided = (payment: PaymentSection, paymentApproversCount: number): boolean =>
-  PAYMENT_PROVIDED_STATUSES.has(payment.status) && !payment.isSignatureBypassed && paymentApproversCount > 0
+export const arePaymentApproversProvided = (
+  payment: PaymentSection,
+  paymentApproversCount: number,
+): boolean =>
+  PAYMENT_PROVIDED_STATUSES.has(payment.status) &&
+  !payment.isSignatureBypassed &&
+  paymentApproversCount > 0
 
 // ApproversBlock.tsx
-const showPaymentApprovers = arePaymentApproversProvided(data.payment, paymentApprovers.length)
-{showPaymentApprovers && <ApproversBlockSection section="payment" /* … */ />}
+const showPaymentApprovers = arePaymentApproversProvided(
+  data.payment,
+  paymentApprovers.length,
+)
+{
+  showPaymentApprovers && <ApproversBlockSection section="payment" /* … */ />
+}
 ```
 
-Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/businessRules/`; anything that really needs a hook is a formatter, a mapper or a service instead.
+Call predicates directly during render, with no `useState`/`useEffect` to store their result. A predicate living in a hook file belongs in `helpers/transformers/`; a memoization-only composition may be a transformer hook, presentation belongs to a formatter/presenter, and acquisition or effects belong to a service. Predicates and classifications remain operations within transformers, not separate helper categories.
 
 See also: `state-derived-atoms`
