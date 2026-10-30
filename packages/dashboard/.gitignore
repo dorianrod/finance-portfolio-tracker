@@ -35,5 +35,4 @@ __pycache__
 *.sln
 *.sw?
 
-artifacts
-audits
+audit
