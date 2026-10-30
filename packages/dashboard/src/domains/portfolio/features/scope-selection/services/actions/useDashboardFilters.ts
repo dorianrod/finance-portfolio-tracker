@@ -1,7 +1,7 @@
 import { useSetAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { resetFilters } from '@/domains/portfolio/features/scope-selection/helpers/filters/resetFilters'
+import { resetFilters } from '@/domains/portfolio/features/scope-selection/helpers/transformers/resetFilters'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 
 export function useDashboardFilters() {

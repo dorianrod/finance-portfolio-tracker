@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { LineChart, ResponsiveContainer } from 'recharts'
 
-import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
+import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
 import { ValueTooltip } from '@/domains/portfolio/features/overview/pages/overviewChartDetails/ValueTooltip.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'

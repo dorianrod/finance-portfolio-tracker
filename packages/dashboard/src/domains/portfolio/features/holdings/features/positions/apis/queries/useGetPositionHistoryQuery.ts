@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { buildPositionsHistory } from '@/domains/portfolio/features/holdings/features/positions/helpers/aggregators/buildPositionsHistory'
+import { buildPositionsHistory } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/buildPositionsHistory'
 import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioPositionsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 

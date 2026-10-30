@@ -1,9 +1,9 @@
 import { type ReactNode, useMemo } from 'react'
 
+import { groupMonthlyTooltipOperations } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
 
-import { groupMonthlyTooltipOperations } from './helpers/aggregators/groupMonthlyTooltipOperations'
 import { MonthlySavingsChartView } from './MonthlySavingsChart.view'
 
 export function MonthlySavingsChart({

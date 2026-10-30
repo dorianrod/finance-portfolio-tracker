@@ -1,8 +1,8 @@
 import type { Row } from '@tanstack/react-table'
 
-import { isTaxFreePassiveIncome } from '@/domains/portfolio/features/holdings/features/positions/helpers/businessRules/positionDisplayRules/isTaxFreePassiveIncome'
-import { calculatePassiveIncomeTax } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePassiveIncomeTax'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
+import { calculatePassiveIncomeTax } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePassiveIncomeTax'
+import { isTaxFreePassiveIncome } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/positionDisplayRules/isTaxFreePassiveIncome'
 import type {
   PositionRow,
   TableRow,

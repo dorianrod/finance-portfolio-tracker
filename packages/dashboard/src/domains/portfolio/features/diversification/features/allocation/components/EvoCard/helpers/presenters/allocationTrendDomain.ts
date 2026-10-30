@@ -1,4 +1,4 @@
-import { dateTimestamp } from '@/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/dateTimestamp'
+import { dateTimestamp } from '@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationChartCalculations/dateTimestamp'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 
 export function allocationTrendDomain(

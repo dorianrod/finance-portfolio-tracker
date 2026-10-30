@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import type {
   MonthlyOperation,
@@ -7,11 +7,11 @@ import type {
 } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioOperationsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'
+import { toCalendarMonth } from '@/shared/helpers/transformers/toCalendarMonth'
 
 export function useGetMonthlyOperationsQuery() {
   const queryClient = useQueryClient()
-  return useQuery<MonthlyOperationsByMonth>({
+  return useSuspenseQuery<MonthlyOperationsByMonth>({
     queryKey: portfolioQueryKeys.data('monthly-operations'),
     queryFn: async () => {
       const rows = await queryClient.query({

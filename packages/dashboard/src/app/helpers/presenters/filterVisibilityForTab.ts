@@ -1,4 +1,4 @@
-import type { FilterVisibility } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
+import type { FilterVisibility } from '@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type'
 import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 

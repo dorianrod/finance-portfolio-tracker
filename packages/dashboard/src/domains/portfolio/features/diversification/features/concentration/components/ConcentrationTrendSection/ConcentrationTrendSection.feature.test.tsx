@@ -2,8 +2,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { ConcentrationTrendSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature'
-import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/businessRules/shouldAnimateConcentration'
 import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
+import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/shouldAnimateConcentration'
 import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
 
 const points: HistoricalConcentrationPoint[] = [

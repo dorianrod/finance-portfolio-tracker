@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type {
   AccountScopeMode,
@@ -20,17 +21,30 @@ export function useFilterScopeBadges({
   filters: DashboardFilters
 }): ScopeBadge[] {
   const formatDate = useFormatDate()
+  const formatAccountLabel = useFormatAccountLabel()
   const endDate = effectiveDate ?? filters.dateTo
   return useMemo(
     () => [
-      accountBadge(account, filters, accountLabels),
+      accountBadge(
+        account,
+        filters,
+        formatAccountLabel([...filters.accounts][0], { labels: accountLabels }),
+      ),
       periodBadge(period, filters, {
         from: formatDate(filters.dateFrom, { fallback: '' }),
         to: formatDate(filters.dateTo, { fallback: '' }),
         end: formatDate(endDate, { fallback: '' }),
       }),
     ],
-    [account, accountLabels, endDate, filters, formatDate, period],
+    [
+      account,
+      accountLabels,
+      endDate,
+      filters,
+      formatAccountLabel,
+      formatDate,
+      period,
+    ],
   )
 }
 
@@ -45,7 +59,7 @@ type ScopeDates = { from: string; to: string; end: string }
 function accountBadge(
   mode: AccountScopeMode,
   filters: DashboardFilters,
-  labels: Record<string, string>,
+  selectedAccountLabel: string,
 ): ScopeBadge {
   if (mode === 'global') {
     return {
@@ -69,9 +83,8 @@ function accountBadge(
     }
   }
   if (filters.accounts.size === 1) {
-    const account = [...filters.accounts][0]
     return {
-      label: Object.hasOwn(labels, account) ? labels[account] : account,
+      label: selectedAccountLabel,
       detail: i18n.t(
         'ui.buildfilterscopebadgesTs.thisIndicatorUsesTheSelectedAccount',
       ),

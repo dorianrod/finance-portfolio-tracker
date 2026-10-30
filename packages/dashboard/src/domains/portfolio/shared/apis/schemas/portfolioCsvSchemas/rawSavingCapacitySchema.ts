@@ -1,7 +1,7 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
-import type { RawSavingCapacityRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacity.types'
+import type { RawSavingCapacityRow } from '@/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacity.types'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
 
 import { requiredNumber } from './requiredNumber'

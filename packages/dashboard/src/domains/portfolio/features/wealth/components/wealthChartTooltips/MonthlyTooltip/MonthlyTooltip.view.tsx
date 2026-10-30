@@ -1,7 +1,7 @@
 import type {
   MonthlyTooltipOperations,
   MonthlyTooltipOperationsByMonth,
-} from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations'
+} from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations'
 import type { MonthlyOperation } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'

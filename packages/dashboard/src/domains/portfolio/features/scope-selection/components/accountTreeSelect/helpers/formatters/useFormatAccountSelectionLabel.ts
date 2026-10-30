@@ -2,10 +2,10 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import type { AccountTreeProps } from '@/domains/portfolio/features/scope-selection/components/accountTreeSelect/accountTreeSelect.types'
-import { accountsForType } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountsForType'
-import { accountTypeSelectionState } from '@/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountTypeSelectionState'
+import { accountsForType } from '@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountsForType'
+import { accountTypeSelectionState } from '@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountTypeSelectionState'
 import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
-import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
+import { getOwnValue } from '@/shared/helpers/transformers/getOwnValue'
 
 export function useFormatAccountSelectionLabel() {
   const formatAccountLabel = useFormatAccountLabel()

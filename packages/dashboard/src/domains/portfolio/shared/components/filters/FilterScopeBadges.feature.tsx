@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 
-import { useAccountFilterLabels } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/useAccountFilterLabels'
+import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import i18n from '@/i18n/i18n'

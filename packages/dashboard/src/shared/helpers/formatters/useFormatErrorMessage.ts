@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { normalizeRequestError } from '@/shared/helpers/mappers/normalizeRequestError'
+import { normalizeRequestError } from '@/shared/helpers/transformers/normalizeRequestError'
 import type { RequestErrorCode } from '@/shared/types/requestError.type'
 
 export function useFormatErrorMessage() {

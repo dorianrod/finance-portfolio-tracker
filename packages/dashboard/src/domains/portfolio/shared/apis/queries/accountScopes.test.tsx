@@ -5,15 +5,17 @@ import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { useGetPassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery'
-import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/helpers/aggregators/useAccountTypeHistory'
+import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
+import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from './portfolioSourceQueries/portfolioPositionsQueryOptions'
 import { useGetSavingCapacityQuery } from './useGetSavingCapacityQuery'
 
-function queryWrapper() {
-  const client = new QueryClient({
+function queryWrapper(
+  client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
-  })
+  }),
+) {
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>
   }
@@ -136,10 +138,14 @@ describe('account-scoped queries', () => {
         ),
       ),
     )
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
+    await client.query(PORTFOLIO_POSITIONS_QUERY_OPTIONS)
     const { result } = renderHook(
       () => useAccountTypeHistory(new Set(['A,B'])),
       {
-        wrapper: queryWrapper(),
+        wrapper: queryWrapper(client),
       },
     )
     await waitFor(() =>

@@ -1,4 +1,4 @@
-import type { ExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
+import type { ExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel'
 import { VirtualRow } from '@/shared/ui/virtualRow/VirtualRow.view'
 
 import type { VirtualExposureItem } from './fundExposureRows.types'

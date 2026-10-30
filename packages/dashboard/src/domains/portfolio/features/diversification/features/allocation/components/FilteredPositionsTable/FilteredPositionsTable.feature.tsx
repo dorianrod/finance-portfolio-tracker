@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 
+import { sumFilteredPositionValues } from '@/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/helpers/transformers/sumFilteredPositionValues'
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
 import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
@@ -7,7 +8,6 @@ import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/f
 import type { MatchingIsinRow } from '@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type'
 
 import { FilteredPositionsTableView } from './FilteredPositionsTable.view'
-import { sumFilteredPositionValues } from './helpers/calculators/sumFilteredPositionValues'
 
 export function FilteredPositionsTable({ rows }: { rows: MatchingIsinRow[] }) {
   const filter = useAtomValue(dashboardDiversificationFilterAtom)

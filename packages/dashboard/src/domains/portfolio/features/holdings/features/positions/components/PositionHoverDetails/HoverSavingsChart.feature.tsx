@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useGetPositionHistoryQuery } from '@/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery'
-import { buildSavingsHistorySeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries'
+import { buildSavingsHistorySeries } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries'
 import type { SavingsChartTarget } from '@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type'
 import i18n from '@/i18n/i18n'
 

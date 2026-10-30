@@ -1,8 +1,8 @@
 import { useAtom } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
-import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/businessRules/shouldAnimateConcentration'
 import { buildConcentrationChartRows } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows'
+import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/shouldAnimateConcentration'
 import { concentrationTrendDateAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendDate.atoms'
 import { concentrationTrendHoveredIndexAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendHoveredIndex.atoms'
 import { concentrationTrendModeAtom } from '@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendMode.atoms'

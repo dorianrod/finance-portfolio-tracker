@@ -2,7 +2,7 @@ import { AreaChart, LineChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { BuySellDot } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/buySellDots/BuySellDot.view'
 import { BuySellDotUnit } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/buySellDots/BuySellDotUnit.view'
-import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartData.types'
+import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartData.types'
 import { TooltipPortfolio } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/TooltipPortfolio.view'
 import { TooltipUnit } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/TooltipUnit.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'

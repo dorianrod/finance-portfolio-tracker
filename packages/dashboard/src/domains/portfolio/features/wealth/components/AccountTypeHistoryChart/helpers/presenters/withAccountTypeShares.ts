@@ -1,7 +1,7 @@
 import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
 import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
-import { partitionPercentages } from '@/shared/helpers/calculators/partitionPercentages'
-import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
+import { getOwnValue } from '@/shared/helpers/transformers/getOwnValue'
+import { partitionPercentages } from '@/shared/helpers/transformers/partitionPercentages'
 
 export function withAccountTypeShares(
   data: AccountTypeHistoryPoint[],

@@ -1,7 +1,7 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; Cash-enriched history feeds wealth analysis, performance and overview comparisons through useDashboardHistory. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
-import type { RawCashRow } from '@/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash'
+import type { RawCashRow } from '@/domains/portfolio/shared/helpers/transformers/aggregateBrokerageCash'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
 
 import { ACCOUNT_CATEGORY_SCHEMA } from './accountCategorySchema'

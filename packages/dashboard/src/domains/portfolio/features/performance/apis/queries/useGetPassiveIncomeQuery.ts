@@ -5,11 +5,11 @@ import {
 } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { aggregatePassiveIncomeByYear } from '@/domains/portfolio/features/performance/helpers/aggregators/aggregatePassiveIncomeByYear'
+import { aggregatePassiveIncomeByYear } from '@/domains/portfolio/features/performance/helpers/transformers/aggregatePassiveIncomeByYear'
 import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import { PORTFOLIO_OPERATIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioOperationsQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet'
+import { rawAccountSet } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/rawAccountSet'
 
 export function useGetPassiveIncomeQuery(
   accounts?: Set<string>,

@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
 
+import { useFormatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue'
 import type {
   ComparedMetric,
   OverviewComparison,
   OverviewConcentrationComparison,
-} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
-import { useFormatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue'
+} from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
 import { getConcentrationTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone'
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'

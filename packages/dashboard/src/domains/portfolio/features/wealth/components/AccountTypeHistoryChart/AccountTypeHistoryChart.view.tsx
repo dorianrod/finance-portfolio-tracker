@@ -12,7 +12,6 @@ import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
@@ -160,11 +159,12 @@ function AccountTypeArea({
   return (
     <SeriesArea
       type="monotone"
-      dataKey={(point: AccountTypeChartPoint) =>
-        percentageMode
-          ? point.shares[index]
-          : getOwnValue(point.values, accountType)
-      }
+      dataKey={(point: AccountTypeChartPoint) => {
+        if (percentageMode) return point.shares[index]
+        if (Object.hasOwn(point.values, accountType))
+          return point.values[accountType]
+        return undefined
+      }}
       name={accountType}
       stackId="a"
       tone={getAccountTypeTone(accountType, index, typeCategories)}

@@ -1,4 +1,4 @@
-import { useHistoricalConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useHistoricalConcentration'
+import { useHistoricalConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useHistoricalConcentration'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 
 import { ConcentrationTrendSection } from './ConcentrationTrendSection/ConcentrationTrendSection.feature'

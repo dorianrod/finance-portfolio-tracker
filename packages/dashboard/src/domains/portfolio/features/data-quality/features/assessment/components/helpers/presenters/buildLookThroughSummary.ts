@@ -1,5 +1,5 @@
-import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap'
-import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages'
+import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/hasMaterialQualityGap'
+import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/computeFundExposurePercentages'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 
 export function buildLookThroughSummary(

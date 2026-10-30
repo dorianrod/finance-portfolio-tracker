@@ -7,7 +7,7 @@ import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.v
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
 import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
-import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection/helpers/filters/useFilterSummaries'
+import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/useFilterSummaries'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
@@ -20,6 +20,7 @@ import { DashboardFilters } from './DashboardFilters.feature'
 import { DashboardHeader } from './DashboardHeader.feature'
 import { DashboardPanelFallback } from './DashboardPanelFallback.view'
 import { DashboardSectionHeader } from './DashboardSectionHeader.feature'
+import { DashboardSources } from './DashboardSources.feature'
 
 export default function App() {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
@@ -36,6 +37,7 @@ export default function App() {
   )
   return (
     <ViewNavigation>
+      <DashboardSources />
       <div className="min-h-screen">
         <div className="p-4 sm:p-6">
           <div className="mx-auto max-w-screen-2xl">

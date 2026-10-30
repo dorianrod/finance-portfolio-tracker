@@ -2,8 +2,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
+import { Suspense } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { DashboardSourceBoundary } from '@/app/DashboardSourceBoundary.view'
+import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useGetFundDiagnosticsQuery } from './useGetFundDiagnosticsQuery'
@@ -11,12 +14,19 @@ import { useGetFundDiagnosticsQuery } from './useGetFundDiagnosticsQuery'
 const UNRESOLVED_CSV =
   'parent_id,parent_name,unresolved_id,unresolved_name,reason,path,weight,market_value,queued_for_research,detected_at\nFR0000000001,Fund,unknown,Unknown holding,missing_source,Fund > Unknown,0.2,20,False,2026-01-31\n'
 
-function queryWrapper() {
-  const client = new QueryClient({
+function queryWrapper(
+  client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
-  })
+  }),
+) {
   return function Wrapper({ children }: PropsWithChildren) {
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    return (
+      <QueryClientProvider client={client}>
+        <DashboardSourceBoundary>
+          <Suspense fallback={null}>{children}</Suspense>
+        </DashboardSourceBoundary>
+      </QueryClientProvider>
+    )
   }
 }
 
@@ -52,11 +62,14 @@ describe('fund diagnostics sources', () => {
         return new Response(null, { status: 404 })
       }),
     )
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
     const { result } = renderHook(useGetFundDiagnosticsQuery, {
-      wrapper: queryWrapper(),
+      wrapper: queryWrapper(client),
     })
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3))
-    expect(result.current.isPending).toBe(true)
+    expect(result.current).toBeNull()
     await act(async () => {
       releaseRequests()
     })
@@ -70,8 +83,11 @@ describe('fund diagnostics sources', () => {
 
   it('validates unresolved exposure numbers, flags and dates at the network boundary', async () => {
     serveUnresolved(UNRESOLVED_CSV)
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
     const { result } = renderHook(useGetFundDiagnosticsQuery, {
-      wrapper: queryWrapper(),
+      wrapper: queryWrapper(client),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual({
@@ -102,11 +118,19 @@ describe('fund diagnostics sources', () => {
     'rejects an invalid $name instead of exposing partial diagnostics',
     async ({ csv }) => {
       serveUnresolved(csv)
-      const { result } = renderHook(useGetFundDiagnosticsQuery, {
-        wrapper: queryWrapper(),
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false, gcTime: 0 } },
       })
-      await waitFor(() => expect(result.current.isError).toBe(true))
-      expect(result.current.data).toBeUndefined()
+      renderHook(useGetFundDiagnosticsQuery, { wrapper: queryWrapper(client) })
+      await waitFor(() =>
+        expect(
+          client.getQueryState(portfolioQueryKeys.data('fund-diagnostics'))
+            ?.status,
+        ).toBe('error'),
+      )
+      expect(
+        client.getQueryData(portfolioQueryKeys.data('fund-diagnostics')),
+      ).toBeUndefined()
     },
   )
 
@@ -129,10 +153,21 @@ describe('fund diagnostics sources', () => {
           }),
       ),
     )
-    const { result } = renderHook(useGetFundDiagnosticsQuery, {
-      wrapper: queryWrapper(),
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
     })
-    await waitFor(() => expect(result.current.isError).toBe(true))
-    expect(result.current.error?.message).toBe('HTTP 503')
+    renderHook(useGetFundDiagnosticsQuery, {
+      wrapper: queryWrapper(client),
+    })
+    await waitFor(() =>
+      expect(
+        client.getQueryState(portfolioQueryKeys.data('fund-diagnostics'))
+          ?.status,
+      ).toBe('error'),
+    )
+    expect(
+      client.getQueryState(portfolioQueryKeys.data('fund-diagnostics'))?.error
+        ?.message,
+    ).toBe('HTTP 503')
   })
 })

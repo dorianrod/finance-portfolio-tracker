@@ -1,10 +1,10 @@
 import { useAtomValue } from 'jotai'
 import type { ReactNode } from 'react'
 
-import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/helpers/filters/clearFilterGroup'
-import { filterSummariesForTab } from '@/domains/portfolio/features/scope-selection/helpers/filters/filterSummariesForTab'
-import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types'
+import { filterSummariesForTab } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/filterSummariesForTab'
+import { clearFilterGroup } from '@/domains/portfolio/features/scope-selection/helpers/transformers/clearFilterGroup'
 import { useDashboardFilters } from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
+import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import i18n from '@/i18n/i18n'
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'

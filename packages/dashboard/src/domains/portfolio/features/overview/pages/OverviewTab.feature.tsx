@@ -1,7 +1,7 @@
 import type {
   ComparedMetric,
   OverviewComparison,
-} from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'
+} from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
 import { OverviewConcentrationChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature'
 import { OverviewDriversChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature'
 import { OverviewValueChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature'

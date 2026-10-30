@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { toLatestAllocationByIsin } from '@/domains/portfolio/features/holdings/features/positions/helpers/aggregators/toLatestAllocationByIsin'
+import { toLatestAllocationByIsin } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/toLatestAllocationByIsin'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import { PORTFOLIO_ALLOCATION_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAllocationQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'

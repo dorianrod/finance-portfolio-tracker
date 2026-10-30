@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
 
-import { indexFundStatuses } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses'
+import { indexFundStatuses } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/indexFundStatuses'
 import { makeIsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/mocks/isinAllocation.mock'
 import { makePositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/mocks/positionPreviewSelection.mock'
 import { makeFundHoldingStatus } from '@/domains/portfolio/shared/mocks/fundHoldingStatus.mock'

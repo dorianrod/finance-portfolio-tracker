@@ -1,6 +1,6 @@
 import { DataQualityTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/DataQualityTab.feature'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
-import { ErrorsTab } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.feature'
+import { ErrorsTab } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view'
 import { ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/manualPriceOverridesTable/ManualPriceOverridesTable.view'
 
 export function DashboardDataQuality(props: DataQualityTabProps) {

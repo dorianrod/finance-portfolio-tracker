@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import { buildAnalysisReliabilityMetrics } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/mappers/buildAnalysisReliabilityMetrics'
+import { useBuildAnalysisReliabilityMetrics } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useBuildAnalysisReliabilityMetrics'
 import { useFormatPipelineStatus } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus'
-import type { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary'
+import type { buildDataQualitySummary } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildDataQualitySummary'
 import i18n from '@/i18n/i18n'
 
 export function useCombinedReliabilityPresentation({
@@ -12,6 +12,7 @@ export function useCombinedReliabilityPresentation({
   variant,
 }: CombinedReliabilityInput) {
   const formatPipelineStatus = useFormatPipelineStatus()
+  const buildAnalysisReliabilityMetrics = useBuildAnalysisReliabilityMetrics()
   return useMemo(() => {
     const { reliabilityMetrics, portfolioStatusMetric } =
       buildAnalysisReliabilityMetrics({
@@ -52,6 +53,7 @@ export function useCombinedReliabilityPresentation({
     }
   }, [
     allocationLoading,
+    buildAnalysisReliabilityMetrics,
     formatPipelineStatus,
     pipelineErrorsLoading,
     summary,

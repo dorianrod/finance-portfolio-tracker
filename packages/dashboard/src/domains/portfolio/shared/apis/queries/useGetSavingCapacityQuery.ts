@@ -9,9 +9,8 @@ import { useMemo } from 'react'
 import { PORTFOLIO_ACCOUNT_SAVINGS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAccountSavingsQueryOptions'
 import { PORTFOLIO_SAVING_CAPACITY_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioSavingCapacityQueryOptions'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { aggregateSavingCapacityByAccount } from '@/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacityByAccount'
-import { rawAccountSet } from '@/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet'
-import { mapSavingCapacity } from '@/domains/portfolio/shared/helpers/mappers/mapSavingCapacity'
+import { rawAccountSet } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/rawAccountSet'
+import { aggregateSavingCapacityByAccount } from '@/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacityByAccount'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 export function useGetSavingCapacityQuery(accounts?: Set<string>) {
@@ -26,12 +25,10 @@ export function useGetSavingCapacityQuery(accounts?: Set<string>) {
     placeholderData: keepPreviousData,
     queryFn: async () => {
       if (selectedAccounts.length === 0) {
-        return mapSavingCapacity(
-          await queryClient.query({
-            ...PORTFOLIO_SAVING_CAPACITY_QUERY_OPTIONS,
-            staleTime: 'static',
-          }),
-        )
+        return queryClient.query({
+          ...PORTFOLIO_SAVING_CAPACITY_QUERY_OPTIONS,
+          staleTime: 'static',
+        })
       }
 
       const accountSet = rawAccountSet(new Set(selectedAccounts)) ?? new Set()

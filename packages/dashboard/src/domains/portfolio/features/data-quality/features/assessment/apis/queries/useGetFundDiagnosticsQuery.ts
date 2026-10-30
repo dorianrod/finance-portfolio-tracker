@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { RAW_FUND_COVERAGE_REPORT_SCHEMA } from '@/domains/portfolio/features/data-quality/features/assessment/apis/schemas/rawFundCoverageReportSchema'
 import { RAW_FUND_SNAPSHOT_SCHEMA } from '@/domains/portfolio/features/data-quality/features/assessment/apis/schemas/rawFundSnapshotSchema'
@@ -11,7 +11,7 @@ import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { parseOptionalCsv } from '@/shared/csv/csvData/parseOptionalCsv'
 
 export function useGetFundDiagnosticsQuery() {
-  return useQuery<FundDiagnostics>({
+  return useSuspenseQuery<FundDiagnostics>({
     queryKey: portfolioQueryKeys.data('fund-diagnostics'),
     queryFn: async () => {
       const [reportRows, snapshotRows, unresolvedRows] = await Promise.all([

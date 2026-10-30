@@ -1,5 +1,5 @@
 import { FundPositionHoldingRow } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature'
-import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/helpers/selectors/useFundPositionHoldings'
+import { useFundPositionHoldings } from '@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/services/useFundPositionHoldings'
 import { useOpenCompleteHoldings } from '@/domains/portfolio/features/holdings/features/positions/services/actions/useOpenCompleteHoldings'
 import type { FundPositionPopoverTarget } from '@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type'
 

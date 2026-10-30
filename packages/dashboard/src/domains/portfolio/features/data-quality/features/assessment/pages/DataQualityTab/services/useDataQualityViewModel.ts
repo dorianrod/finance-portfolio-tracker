@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { useBuildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel'
+import { useBuildDataQualityViewModel } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel'
 import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dashboardQuality.atoms'
 

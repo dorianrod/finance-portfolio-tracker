@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import type { FundDiagnosticsFilter } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows'
+import type { FundDiagnosticsFilter } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows'
 import { useFormatFundQualityCategory } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualityCategory'
 
 export function useFormatFundDiagnosticsFilter() {

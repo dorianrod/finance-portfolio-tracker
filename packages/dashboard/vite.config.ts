@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { type Connect, defineConfig, type Plugin } from 'vite'
 
+import { themeHtmlPlugin } from './themeHtmlPlugin'
+
 // Mirrors the Python pipeline's data-dir resolution (FINANCE_DATA_DIR env
 // var, falling back to the monorepo's shared data/ folder) so `npm run dev`
 // keeps reading live CSVs without baking personal data into dist/.
@@ -53,6 +55,7 @@ export default defineConfig({
   // do not let `vite preview` shadow them with the developer's local data.
   plugins: [
     react(),
+    themeHtmlPlugin(),
     tailwindcss(),
     ...(process.env['VITE_STATIC_DEMO'] === 'true' ? [] : [serveFinanceData()]),
   ],

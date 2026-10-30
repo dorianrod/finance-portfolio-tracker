@@ -1,5 +1,5 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
@@ -8,7 +8,7 @@ import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/por
 import { parseCsv } from '@/shared/csv/csvData/parseCsv'
 
 export function useGetPortfolioHistoryQuery() {
-  return useQuery<PortfolioHistoryPoint[]>({
+  return useSuspenseQuery<PortfolioHistoryPoint[]>({
     queryKey: portfolioQueryKeys.data('portfolio-history'),
     queryFn: async () => {
       const rows = await parseCsv(

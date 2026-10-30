@@ -9,7 +9,7 @@ const feature = 'src/app/App.feature.tsx'
 const view =
   'src/domains/portfolio/features/holdings/features/positions/components/GainCell.view.tsx'
 const helper =
-  'src/domains/portfolio/shared/helpers/mappers/resolveAssetName.ts'
+  'src/domains/portfolio/shared/helpers/transformers/resolveAssetName.ts'
 const state = 'src/app/DashboardLoadState.state.tsx'
 
 const cases = [

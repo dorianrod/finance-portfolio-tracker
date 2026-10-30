@@ -1,4 +1,4 @@
-import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration'
+import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useCurrentConcentration'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'

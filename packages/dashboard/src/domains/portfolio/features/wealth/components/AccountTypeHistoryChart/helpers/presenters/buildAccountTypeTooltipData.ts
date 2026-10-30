@@ -1,5 +1,5 @@
 import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
-import { getOwnValue } from '@/shared/helpers/selectors/getOwnValue'
+import { getOwnValue } from '@/shared/helpers/transformers/getOwnValue'
 
 export function buildAccountTypeTooltipData(
   row: AccountTypeChartPoint | undefined,

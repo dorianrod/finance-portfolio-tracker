@@ -12,7 +12,7 @@ import { TotalNetPerformanceKpi } from '@/domains/portfolio/features/performance
 import { TrailingThreeYearIrrKpi } from '@/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature'
 import { TriChart } from '@/domains/portfolio/features/performance/components/TriChart/TriChart.view'
 import { UnrealizedPnlChart } from '@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature'
-import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions'
+import { computePerformanceContributions } from '@/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions'
 import type { IncomeSummary } from '@/domains/portfolio/features/performance/types/incomeSummary.type'
 import type { PassiveIncomePoint } from '@/domains/portfolio/features/performance/types/passiveIncomePoint.type'
 import type { PerformanceSummary } from '@/domains/portfolio/features/performance/types/performanceSummary.type'

@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { createStore, Provider } from 'jotai'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
@@ -17,6 +18,55 @@ afterEach(() => {
 })
 
 describe('dashboard loading controls', () => {
+  it('starts every independent source while all responses are still pending', async () => {
+    const pending = new Promise<Response>(() => {})
+    const fetchMock = vi.fn<typeof fetch>(() => pending)
+    vi.stubGlobal('fetch', fetchMock)
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
+    render(
+      <QueryClientProvider client={client}>
+        <Provider store={createStore()}>
+          <App />
+        </Provider>
+      </QueryClientProvider>,
+    )
+    const data = PORTFOLIO_ENDPOINTS.data
+    await waitFor(() =>
+      expect(
+        fetchMock.mock.calls.map(([input]) =>
+          input instanceof Request ? input.url : input.toString(),
+        ),
+      ).toEqual(
+        expect.arrayContaining([
+          data.accounts,
+          data.operations,
+          data.positions,
+          data.portfolioHistory,
+          data.cash,
+          data.errors,
+          data.manualPriceOverrides,
+          data.positionsGeoByIsin,
+          data.positionsSecteurByIsin,
+          data.positionsCurrencyByIsin,
+          data.positionsClasseByIsin,
+          data.fundHoldings,
+          data.fundHoldingsHistory,
+          data.fundHoldingsStatus,
+          data.fundHoldingsCoverage,
+          data.fundSnapshotManifest,
+          data.fundUnresolved,
+          data.annualIncomeSavings,
+        ]),
+      ),
+    )
+    expect(
+      screen.getByRole('navigation', { name: 'Portfolio analyses' }),
+    ).toBeTruthy()
+    client.clear()
+  })
+
   it('keeps navigation and an open filter panel usable when a source fails', async () => {
     const user = userEvent.setup()
     let completeRequest!: (response: Response) => void

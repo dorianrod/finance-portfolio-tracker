@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import {
   buildFundDiagnosticsRows,
   type FundDiagnosticsFilter,
-} from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows'
+} from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows'
 import { useDataQualityFundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useDataQualityFundDiagnostics'
 import { dataQualityFundDiagnosticsOpenAtom } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityFundDiagnosticsOpen.atoms'
 import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'

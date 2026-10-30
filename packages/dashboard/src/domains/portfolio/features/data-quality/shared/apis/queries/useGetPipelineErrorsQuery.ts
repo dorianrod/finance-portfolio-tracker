@@ -1,5 +1,5 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md.
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import * as yup from 'yup'
 
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
@@ -9,7 +9,7 @@ import { parseCsv } from '@/shared/csv/csvData/parseCsv'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 
 export function useGetPipelineErrorsQuery() {
-  return useQuery<PipelineError[]>({
+  return useSuspenseQuery<PipelineError[]>({
     queryKey: portfolioQueryKeys.data('pipeline-errors'),
     queryFn: () => parseCsv(PORTFOLIO_ENDPOINTS.data.errors, ERROR_ROW_SCHEMA),
   })

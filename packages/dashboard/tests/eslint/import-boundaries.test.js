@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest'
 
 const directory = resolve(import.meta.dirname, '../..')
 const eslint = new ESLint({ cwd: directory })
-const sharedFile = 'src/shared/helpers/mappers/toCalendarMonth.ts'
+const sharedFile = 'src/shared/helpers/transformers/toCalendarMonth.ts'
 const domainFile =
-  'src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts'
+  'src/domains/portfolio/shared/helpers/transformers/accountFilter/accountFilterId.ts'
 const serviceFile =
   'src/domains/portfolio/features/holdings/features/positions/services/actions/useDashboardPositionSort.ts'
 
@@ -23,11 +23,11 @@ async function lint(code, file) {
 
 describe('configured import boundaries', () => {
   it.each([
-    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'",
-    "export * from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison'",
-    "const comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison')",
-    "type Comparison = import('@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types').OverviewComparison",
-    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types'",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'",
+    "export * from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison'",
+    "const comparison = import('@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison')",
+    "type Comparison = import('@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types').OverviewComparison",
+    "import type { OverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'",
   ])(
     'rejects sibling feature dependencies: %s',
     async (code) => {
@@ -39,7 +39,7 @@ describe('configured import boundaries', () => {
   )
 
   it.each([
-    "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration'",
+    "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useCurrentConcentration'",
     "import type { HoldingConcentration } from '@/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type'",
   ])(
     'does not expose child implementation to parent shared contracts: %s',
@@ -66,8 +66,8 @@ describe('configured import boundaries', () => {
   it('rejects dependencies between nested sibling capabilities', async () => {
     expect(
       await lint(
-        "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration'",
-        'src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts',
+        "import { useCurrentConcentration } from '@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useCurrentConcentration'",
+        'src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts.ts',
       ),
     ).toMatchObject([{ messageId: 'siblingFeature', severity: 2 }])
   })
@@ -82,7 +82,7 @@ describe('configured import boundaries', () => {
     expect(
       await lint(
         "import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'",
-        'src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts',
+        'src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts.ts',
       ),
     ).toEqual([])
   })
@@ -185,12 +185,12 @@ describe('configured import boundaries', () => {
   })
 
   it.each([
-    'src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts',
+    'src/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionTradeOperations.ts',
     'src/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
     'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',
-    'src/app/helpers/mappers/useBuildDashboardLoadState.ts',
+    'src/app/helpers/presenters/useBuildDashboardLoadState.ts',
   ])('checks the non-UI layer %s', async (file) => {
     expect(
       await lint(
@@ -203,7 +203,7 @@ describe('configured import boundaries', () => {
   it('does not let a component helper become a feature-level dependency', async () => {
     expect(
       await lint(
-        "import { computeMonthlyBalances } from '../../components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances'",
+        "import { computeMonthlyBalances } from '../../components/PositionHoverDetails/helpers/transformers/buildHoverChartData/computeMonthlyBalances'",
         serviceFile,
       ),
     ).toMatchObject([{ messageId: 'componentLogic', severity: 2 }])
@@ -221,7 +221,7 @@ describe('configured import boundaries', () => {
     ],
     [
       domainFile,
-      "import { toCalendarMonth } from '@/shared/helpers/mappers/toCalendarMonth'",
+      "import { toCalendarMonth } from '@/shared/helpers/transformers/toCalendarMonth'",
     ],
     [
       'src/app/routing/dashboardTabLoaders/preloadDashboardTab.ts',
@@ -240,7 +240,7 @@ describe('configured import boundaries', () => {
       "import { Tooltip } from '@/shared/ui/Tooltip.view'",
     ],
     [
-      'src/shared/helpers/calculators/partitionPercentages.test.ts',
+      'src/shared/helpers/transformers/partitionPercentages.test.ts',
       "import { queryClient } from '@/app/queryClient'",
     ],
   ])(

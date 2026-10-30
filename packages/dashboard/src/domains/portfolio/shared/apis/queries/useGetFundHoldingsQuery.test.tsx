@@ -2,8 +2,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
+import { Suspense } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { DashboardSourceBoundary } from '@/app/DashboardSourceBoundary.view'
+import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useGetFundHoldingsQuery } from './useGetFundHoldingsQuery'
@@ -11,12 +14,19 @@ import { useGetFundHoldingsQuery } from './useGetFundHoldingsQuery'
 const HOLDING_CSV =
   'parent_isin,parent_ticker,parent_name,holding_id,holding_name,weight,holdings_date,depth\n FR0000000001 ,ETF, Example Fund ,US0000000001, Example Company ,0.5,2026-09-30,1\n'
 
-function queryWrapper() {
-  const client = new QueryClient({
+function queryWrapper(
+  client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
-  })
+  }),
+) {
   return function Wrapper({ children }: PropsWithChildren) {
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    return (
+      <QueryClientProvider client={client}>
+        <DashboardSourceBoundary>
+          <Suspense fallback={null}>{children}</Suspense>
+        </DashboardSourceBoundary>
+      </QueryClientProvider>
+    )
   }
 }
 
@@ -47,8 +57,11 @@ describe('useGetFundHoldingsQuery', () => {
         'weight,source_tier,holdings_date',
       ).replace('0.5,2026-09-30', '0.5,source-specific-tier,2026-09-30'),
     )
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
     const { result } = renderHook(useGetFundHoldingsQuery, {
-      wrapper: queryWrapper(),
+      wrapper: queryWrapper(client),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data?.holdings[0]?.sourceTier).toBe(
@@ -58,8 +71,11 @@ describe('useGetFundHoldingsQuery', () => {
 
   it('normalizes holdings at the schema boundary and defaults absent optional files', async () => {
     serveHoldings(HOLDING_CSV)
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
     const { result } = renderHook(useGetFundHoldingsQuery, {
-      wrapper: queryWrapper(),
+      wrapper: queryWrapper(client),
     })
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual({
@@ -99,11 +115,19 @@ describe('useGetFundHoldingsQuery', () => {
     'rejects invalid %s without exposing partial financial data',
     async (_field, csv) => {
       serveHoldings(csv)
-      const { result } = renderHook(useGetFundHoldingsQuery, {
-        wrapper: queryWrapper(),
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false, gcTime: 0 } },
       })
-      await waitFor(() => expect(result.current.isError).toBe(true))
-      expect(result.current.data).toBeUndefined()
+      renderHook(useGetFundHoldingsQuery, { wrapper: queryWrapper(client) })
+      await waitFor(() =>
+        expect(
+          client.getQueryState(portfolioQueryKeys.data('fund-holdings'))
+            ?.status,
+        ).toBe('error'),
+      )
+      expect(
+        client.getQueryData(portfolioQueryKeys.data('fund-holdings')),
+      ).toBeUndefined()
     },
   )
 })

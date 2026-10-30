@@ -40,4 +40,4 @@ export function FundHoldingsExplorer({
   )
 }
 
-export type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel'
+export type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/fundExposureSort.type'

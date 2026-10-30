@@ -4,8 +4,8 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { createStore, Provider } from 'jotai'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary'
-import { computeTrailing12mIncome } from '@/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome'
+import { computePerformanceSummary } from '@/domains/portfolio/features/performance/helpers/transformers/performanceCalculations/computePerformanceSummary'
+import { computeTrailing12mIncome } from '@/domains/portfolio/features/performance/helpers/transformers/performanceCalculations/computeTrailing12mIncome'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 
 import { PerformanceTab } from './PerformanceTab.feature'

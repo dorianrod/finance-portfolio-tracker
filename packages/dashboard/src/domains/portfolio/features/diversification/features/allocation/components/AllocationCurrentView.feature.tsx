@@ -1,4 +1,4 @@
-import type { useAllocationCharts } from '@/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts'
+import type { useAllocationCharts } from '@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts'
 import i18n from '@/i18n/i18n'
 import { Text } from '@/shared/ui/Text.view'
 

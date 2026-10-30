@@ -1,4 +1,6 @@
-import { resolve } from 'node:path'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
 
 import noConditionalTestAssertions from '@frontend-engineering/react-best-practices/rules/no-conditional-test-assertions.js'
 import noServicePresentation from '@frontend-engineering/react-best-practices/rules/no-service-presentation.js'
@@ -6,6 +8,7 @@ import noTestStyleAssertions from '@frontend-engineering/react-best-practices/ru
 import preferSemanticTestQueries from '@frontend-engineering/react-best-practices/rules/prefer-semantic-test-queries.js'
 import testFixtureContract from '@frontend-engineering/react-best-practices/rules/test-fixture-contract.js'
 import { ESLint, Linter } from 'eslint'
+import ts from 'typescript'
 import tseslint from 'typescript-eslint'
 import { beforeAll, describe, expect, it } from 'vitest'
 
@@ -292,14 +295,14 @@ describe('typed fixture casts and actual configuration', () => {
     await eslint.lintText('', {
       filePath: resolve(
         directory,
-        'src/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState.test.ts',
+        'src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.test.ts',
       ),
     })
   }, 20_000)
   async function configured(
     rule,
     code,
-    filename = 'src/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState.test.ts',
+    filename = 'src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.test.ts',
   ) {
     const [result] = await eslint.lintText(code, {
       filePath: resolve(directory, filename),
@@ -381,23 +384,75 @@ describe('typed fixture casts and actual configuration', () => {
       ),
     ).toEqual(['presentation'])
   })
-  it('rejects retired helper categories with the configured rule and severity', async () => {
-    const filePath = resolve(
-      directory,
-      'src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.ts',
-    )
-    const [result] = await eslint.lintText('', { filePath })
-    expect(
-      result.messages.filter(
-        (message) =>
-          message.fatal || message.ruleId === 'local/helper-module-contract',
-      ),
-    ).toMatchObject([
-      {
-        ruleId: 'local/helper-module-contract',
-        messageId: 'category',
-        severity: 2,
-      },
-    ])
-  })
+  it.each([
+    {
+      category: 'calculators',
+      expected: [
+        {
+          ruleId: 'local/helper-module-contract',
+          messageId: 'category',
+          severity: 2,
+        },
+      ],
+    },
+    { category: 'transformers', expected: [] },
+  ])(
+    'checks $category helpers with the configured rule and severity',
+    async ({ category, expected }) => {
+      const root = mkdtempSync(join(tmpdir(), 'helper-category-'))
+      try {
+        const folder = join(
+          root,
+          'src/domains/catalog/features/reporting/helpers',
+          category,
+        )
+        mkdirSync(folder, { recursive: true })
+        const filePath = join(folder, 'probe.ts')
+        writeFileSync(filePath, '')
+        const actual = {
+          ...(await eslint.calculateConfigForFile(
+            resolve(
+              directory,
+              'src/domains/portfolio/shared/helpers/transformers/resolveAssetName.ts',
+            ),
+          )),
+        }
+        delete actual.language
+        const configured = new ESLint({
+          cwd: root,
+          overrideConfigFile: true,
+          overrideConfig: [
+            {
+              ...actual,
+              files: ['**/*.ts'],
+              languageOptions: {
+                ...actual.languageOptions,
+                parserOptions: {
+                  ...actual.languageOptions.parserOptions,
+                  projectService: false,
+                  programs: [ts.createProgram([filePath], { strict: true })],
+                },
+              },
+            },
+          ],
+        })
+        const [result] = await configured.lintText('', { filePath })
+        expect(
+          result.messages
+            .filter(
+              (message) =>
+                message.fatal ||
+                message.ruleId === 'local/helper-module-contract',
+            )
+            .map(({ ruleId, messageId, severity }) => ({
+              ruleId,
+              messageId,
+              severity,
+            })),
+        ).toEqual(expected)
+      } finally {
+        rmSync(root, { recursive: true, force: true })
+      }
+    },
+  )
 })

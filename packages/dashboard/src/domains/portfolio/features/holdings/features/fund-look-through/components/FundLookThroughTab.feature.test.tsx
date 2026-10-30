@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createStore, Provider } from 'jotai'
+import { Suspense } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { makeIssuerPosition } from '@/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerPosition.mock'
@@ -32,14 +33,16 @@ function renderTab(positions: PositionRow[]) {
   render(
     <QueryClientProvider client={client}>
       <Provider store={createStore()}>
-        <FundLookThroughTab positions={positions} holdings={[]} />
+        <Suspense fallback={null}>
+          <FundLookThroughTab positions={positions} holdings={[]} />
+        </Suspense>
       </Provider>
     </QueryClientProvider>,
   )
 }
 
 describe('underlying exposure without fund compositions', () => {
-  it('shows identifiable direct holdings when no fund file is available', () => {
+  it('shows identifiable direct holdings when no fund file is available', async () => {
     renderTab([
       makeIssuerPosition({
         isin: 'US0000000001',
@@ -49,12 +52,14 @@ describe('underlying exposure without fund compositions', () => {
     ])
 
     expect(
-      screen.getByRole('searchbox', { name: 'Search underlying exposure' }),
+      await screen.findByRole('searchbox', {
+        name: 'Search underlying exposure',
+      }),
     ).toBeTruthy()
     expect(screen.getByText('1 issuer · 1 security')).toBeTruthy()
   })
 
-  it('keeps an unavailable notice for an unresolved fund', () => {
+  it('keeps an unavailable notice for an unresolved fund', async () => {
     renderTab([
       makeIssuerPosition({
         isin: 'FR0000000001',
@@ -64,7 +69,7 @@ describe('underlying exposure without fund compositions', () => {
     ])
 
     expect(
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         name: 'No identified underlying exposure yet',
       }),
     ).toBeTruthy()
@@ -82,12 +87,16 @@ describe('underlying exposure without fund compositions', () => {
     ])
 
     await user.type(
-      screen.getByRole('searchbox', { name: 'Search underlying exposure' }),
+      await screen.findByRole('searchbox', {
+        name: 'Search underlying exposure',
+      }),
       'Unknown issuer',
     )
 
     expect(
-      screen.getByRole('searchbox', { name: 'Search underlying exposure' }),
+      await screen.findByRole('searchbox', {
+        name: 'Search underlying exposure',
+      }),
     ).toBeTruthy()
     expect(screen.getByText('No exposure matches this search.')).toBeTruthy()
     expect(

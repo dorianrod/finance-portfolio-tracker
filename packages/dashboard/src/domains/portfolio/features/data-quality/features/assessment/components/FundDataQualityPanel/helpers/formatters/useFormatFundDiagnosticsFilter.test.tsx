@@ -4,7 +4,7 @@ import '@/i18n/i18n'
 import { cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import type { FundDiagnosticsFilter } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows'
+import type { FundDiagnosticsFilter } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows'
 
 import { useFormatFundDiagnosticsFilter } from './useFormatFundDiagnosticsFilter'
 

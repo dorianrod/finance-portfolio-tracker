@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildClassificationViewState'
+import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildClassificationViewState'
 
 import { ClassificationCoverageState } from './ClassificationCoverageState.state'
 

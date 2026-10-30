@@ -1,11 +1,11 @@
 import type { PositionPreviewModel } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/types/positionPreviewModel.type'
-import { getPositionSavingsOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionSavingsOperations'
-import { getPositionTradeOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations'
-import type { FundStatusIndex } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses'
-import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition'
+import { getPositionSavingsOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionSavingsOperations'
+import { getPositionTradeOperations } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionTradeOperations'
+import type { FundStatusIndex } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/indexFundStatuses'
+import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/statusForPosition'
 import type { IsinAllocation } from '@/domains/portfolio/features/holdings/features/positions/types/isinAllocation.type'
 import type { PositionPreviewSelection } from '@/domains/portfolio/features/holdings/features/positions/types/positionPreviewSelection.type'
-import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey'
+import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
 export function resolvePositionPreview(

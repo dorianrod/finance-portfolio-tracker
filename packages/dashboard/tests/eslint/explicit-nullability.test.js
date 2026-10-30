@@ -55,7 +55,7 @@ describe('explicit domain nullability through the application configuration', ()
     expect(
       await lint(
         'type Order = { delivery?: Date | null }',
-        'src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows.test.ts',
+        'src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildPositionRows.test.ts',
       ),
     ).toEqual([])
   })

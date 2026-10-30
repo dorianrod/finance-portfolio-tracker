@@ -1,5 +1,5 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies these source anomalies to both quality assessment summaries and pipeline error tables. See SHARED_OWNERSHIP_AUDIT.md.
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import * as yup from 'yup'
 
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
@@ -10,7 +10,7 @@ import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/opt
 import { FINITE_NUMBER_SCHEMA } from '@/shared/schemas/finiteNumber.schema'
 
 export function useGetManualPriceOverridesQuery() {
-  return useQuery<ManualPriceOverride[]>({
+  return useSuspenseQuery<ManualPriceOverride[]>({
     queryKey: portfolioQueryKeys.data('manual-price-overrides'),
     queryFn: () =>
       parseCsv(

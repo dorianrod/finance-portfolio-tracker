@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
-import { getFundQualityCategory } from '@/domains/portfolio/shared/helpers/businessRules/getFundQualityCategory'
 import { useFormatFundQualityCategory } from '@/domains/portfolio/shared/helpers/formatters/useFormatFundQualityCategory'
+import { getFundQualityCategory } from '@/domains/portfolio/shared/helpers/transformers/getFundQualityCategory'
 import type { FundQualityTier } from '@/domains/portfolio/shared/types/fundHolding.type'
 
 export function useFormatFundQualityLabel() {

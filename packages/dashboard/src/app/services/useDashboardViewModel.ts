@@ -1,33 +1,23 @@
 import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
-import { useBuildDashboardLoadState } from '@/app/helpers/mappers/useBuildDashboardLoadState'
-import { useBuildDashboardSourceData } from '@/app/helpers/mappers/useBuildDashboardSourceData'
-import { useGetFundDiagnosticsQuery } from '@/domains/portfolio/features/data-quality/features/assessment/apis/queries/useGetFundDiagnosticsQuery'
-import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality'
+import { useBuildDashboardLoadState } from '@/app/helpers/presenters/useBuildDashboardLoadState'
+import { useBuildDashboardSourceData } from '@/app/helpers/transformers/useBuildDashboardSourceData'
+import { useCachedDashboardSources } from '@/app/services/useCachedDashboardSources'
+import { useDashboardQuality } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality'
 import type { FundDiagnostics } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type'
-import { useGetManualPriceOverridesQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery'
-import { useGetPipelineErrorsQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
-import { useSortedPositions } from '@/domains/portfolio/features/holdings/features/positions/helpers/selectors/useSortedPositions'
+import { useSortedPositions } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/useSortedPositions'
 import { dashboardPositionSortDirectionAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortDirection.atoms'
 import { dashboardPositionSortKeyAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortKey.atoms'
-import { useOverviewComparison } from '@/domains/portfolio/features/overview/helpers/calculators/useOverviewComparison'
-import { useDashboardPerformance } from '@/domains/portfolio/features/performance/helpers/mappers/useDashboardPerformance'
-import { useGetAnnualIncomeSavingsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery'
-import { useGetMonthlyOperationsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery'
-import { useDashboardWealth } from '@/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth'
+import { useOverviewComparison } from '@/domains/portfolio/features/overview/helpers/transformers/useOverviewComparison'
+import { useDashboardPerformance } from '@/domains/portfolio/features/performance/services/useDashboardPerformance'
+import { useDashboardWealth } from '@/domains/portfolio/features/wealth/services/useDashboardWealth'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
-import { useGetAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery'
-import { useGetBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery'
-import { useGetDashboardDataQuery } from '@/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery'
-import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
-import { useGetPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery'
-import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
 import { useGetSavingCapacityQuery } from '@/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery'
-import { usePortfolioPositions } from '@/domains/portfolio/shared/helpers/mappers/usePortfolioPositions'
+import { usePortfolioPositions } from '@/domains/portfolio/shared/helpers/transformers/usePortfolioPositions'
 import { useDashboardHistory } from '@/domains/portfolio/shared/services/useDashboardHistory'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
@@ -42,6 +32,19 @@ import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savin
 
 // eslint-disable-next-line complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
 export function useDashboardViewModel() {
+  const [
+    dashboardQuery,
+    historyQuery,
+    cashHistoryQuery,
+    allPositionsQuery,
+    pipelineErrorsQuery,
+    manualPriceOverridesQuery,
+    monthlyOpsQuery,
+    rawAllocationQuery,
+    fundHoldingsQuery,
+    fundDiagnosticsQuery,
+    annualIncomeSavingsQuery,
+  ] = useCachedDashboardSources()
   const buildDashboardSourceData = useBuildDashboardSourceData()
   const buildDashboardLoadState = useBuildDashboardLoadState()
   const activeTab = useAtomValue(dashboardActiveTabAtom)
@@ -49,16 +52,6 @@ export function useDashboardViewModel() {
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
-  const dashboardQuery = useGetDashboardDataQuery()
-  const historyQuery = useGetPortfolioHistoryQuery()
-  const cashHistoryQuery = useGetBrokerageCashHistoryQuery()
-  const allPositionsQuery = useGetPositionsQuery()
-  const pipelineErrorsQuery = useGetPipelineErrorsQuery()
-  const manualPriceOverridesQuery = useGetManualPriceOverridesQuery()
-  const monthlyOpsQuery = useGetMonthlyOperationsQuery()
-  const rawAllocationQuery = useGetAllocationRowsQuery()
-  const fundHoldingsQuery = useGetFundHoldingsQuery()
-  const fundDiagnosticsQuery = useGetFundDiagnosticsQuery()
   const { data: fundHoldings = EMPTY_FUND_HOLDINGS } = fundHoldingsQuery
   const { data: fundDiagnostics = EMPTY_FUND_DIAGNOSTICS } =
     fundDiagnosticsQuery
@@ -73,7 +66,6 @@ export function useDashboardViewModel() {
   const { data: savingCapacity = EMPTY_SAVING_CAPACITY } = savingCapacityQuery
   const savingCapacityLoading = savingCapacityQuery.isPending
   const savingCapacityError = savingCapacityQuery.error
-  const annualIncomeSavingsQuery = useGetAnnualIncomeSavingsQuery()
   const { data: dashboardData = EMPTY_DASHBOARD_DATA } = dashboardQuery
   const { positions, rawPositions, rawOperations, accountLabels } =
     dashboardData

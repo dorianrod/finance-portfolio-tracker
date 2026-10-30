@@ -1,7 +1,7 @@
 import type { Row } from '@tanstack/react-table'
 
-import { shouldShowPositionQuantity } from '@/domains/portfolio/features/holdings/features/positions/helpers/businessRules/shouldShowPositionQuantity'
 import { usePositionTableFormatters } from '@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters'
+import { shouldShowPositionQuantity } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/shouldShowPositionQuantity'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { Inline } from '@/shared/ui/layout/Inline.view'

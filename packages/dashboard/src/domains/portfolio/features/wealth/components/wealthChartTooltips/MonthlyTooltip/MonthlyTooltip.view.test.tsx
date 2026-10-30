@@ -2,7 +2,7 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { groupMonthlyTooltipOperations } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations'
+import { groupMonthlyTooltipOperations } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations'
 import { makeMonthlyOperation } from '@/domains/portfolio/features/wealth/mocks/monthlyOperation.mock'
 
 import { MonthlyTooltip } from './MonthlyTooltip.view'

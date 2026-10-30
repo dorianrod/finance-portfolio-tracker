@@ -1,7 +1,7 @@
-import { summarizeAllocationCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage'
+import { summarizeAllocationCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/summarizeAllocationCoverage'
 import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
-import { useAccountFilterLabels } from '@/domains/portfolio/shared/helpers/filters/portfolioFilters/useAccountFilterLabels'
 import { useFormatAccountLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel'
+import { useAccountFilterLabels } from '@/domains/portfolio/shared/services/useAccountFilterLabels'
 
 import { AccountCoverageRowView } from './AccountCoverageRow.view'
 

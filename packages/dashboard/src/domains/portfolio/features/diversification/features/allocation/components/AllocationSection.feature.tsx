@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 
-import { useAllocationCharts } from '@/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts'
+import { useAllocationCharts } from '@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
 import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
 import type { DiversificationView } from '@/domains/portfolio/features/diversification/shared/types/diversificationView.type'

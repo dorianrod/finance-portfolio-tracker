@@ -1,16 +1,16 @@
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
-
-import { PieTooltip } from '@/domains/portfolio/shared/components/allocationChartTooltips/PieTooltip.view'
-import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData'
-import { useFormatPieEntryLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatPieEntryLabel'
+import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/transformers/buildAllocationPieData'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
-import { Inline } from '@/shared/ui/layout/Inline.view'
-import { Layout } from '@/shared/ui/layout/Layout.view'
-import { Text } from '@/shared/ui/Text.view'
 
-import { MiniDonutLegendItem } from './MiniDonutLegendItem.view'
-import { MiniDonutSector } from './MiniDonutSector.view'
+import { MiniDonutView } from './MiniDonut.view'
 
+/*
+ * @architecture-decision prepared-allocation-chart
+ * @rules arch-component-roles, arch-component-module-boundaries
+ * @choice Keep allocation grouping in this feature and render prepared entries in MiniDonutView.
+ * @reason The plot, tooltip and legend have a supplied-data contract independent of allocation grouping.
+ * @alternative Keeping the chart and allocation transformer together couples visual changes to business preparation.
+ * @revisit A new plot interaction needs its own business state or a new consumer needs different grouping.
+ */
 export function MiniDonut({
   title,
   point,
@@ -19,44 +19,5 @@ export function MiniDonut({
   point: AllocationPoint
 }) {
   const { total, data } = buildAllocationPieData(point)
-  const formatLabel = useFormatPieEntryLabel()
-  const chartData = data.map((entry) => ({
-    ...entry,
-    name: formatLabel(entry),
-  }))
-  const legendEntries = data.map((entry) => ({
-    entry,
-    key: JSON.stringify([Boolean(entry.subItems), entry.name]),
-  }))
-  return (
-    <div>
-      <Layout spaceAfter="compact">
-        <Text as="p" variant="microSectionLabel" tone="muted">
-          {title}
-        </Text>
-      </Layout>
-      <ResponsiveContainer width="100%" height={110}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            innerRadius="30%"
-            outerRadius="56%"
-            paddingAngle={1}
-            shape={MiniDonutSector}
-          />
-          <Tooltip content={<PieTooltip />} />
-        </PieChart>
-      </ResponsiveContainer>
-      <Inline as="div" flow="wrap" gap="compact" spaceBefore="compact">
-        {legendEntries.map((item) => (
-          <MiniDonutLegendItem
-            key={item.key}
-            entry={item.entry}
-            total={total}
-          />
-        ))}
-      </Inline>
-    </div>
-  )
+  return <MiniDonutView title={title} data={data} total={total} />
 }

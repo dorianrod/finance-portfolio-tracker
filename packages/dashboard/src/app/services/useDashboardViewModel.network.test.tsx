@@ -3,8 +3,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import { createStore, Provider } from 'jotai'
 import type { PropsWithChildren } from 'react'
+import { Suspense } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { DashboardSources } from '@/app/DashboardSources.feature'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useDashboardViewModel } from './useDashboardViewModel'
@@ -42,7 +44,12 @@ describe('dashboard data availability', () => {
       function Wrapper({ children }: PropsWithChildren) {
         return (
           <QueryClientProvider client={client}>
-            <Provider store={store}>{children}</Provider>
+            <Provider store={store}>
+              <Suspense fallback={null}>
+                <DashboardSources />
+              </Suspense>
+              {children}
+            </Provider>
           </QueryClientProvider>
         )
       }

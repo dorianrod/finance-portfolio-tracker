@@ -1,21 +1,18 @@
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { RAW_ANNUAL_INCOME_SAVINGS_SCHEMA } from '@/domains/portfolio/features/wealth/apis/schemas/rawAnnualIncomeSavingsSchema'
-import { mapAnnualIncomeSavings } from '@/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings'
+import { ANNUAL_INCOME_SAVINGS_SCHEMA } from '@/domains/portfolio/features/wealth/apis/schemas/annualIncomeSavingsSchema'
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import { parseCsv } from '@/shared/csv/csvData/parseCsv'
+import { loadCsv } from '@/shared/csv/csvData/loadCsv'
 
 export function useGetAnnualIncomeSavingsQuery() {
-  return useQuery<AnnualIncomeSavingsPoint[]>({
+  return useSuspenseQuery<AnnualIncomeSavingsPoint[]>({
     queryKey: portfolioQueryKeys.data('annual-income-savings'),
     queryFn: async () =>
-      mapAnnualIncomeSavings(
-        await parseCsv(
-          PORTFOLIO_ENDPOINTS.data.annualIncomeSavings,
-          RAW_ANNUAL_INCOME_SAVINGS_SCHEMA,
-        ),
+      ANNUAL_INCOME_SAVINGS_SCHEMA.validate(
+        await loadCsv(PORTFOLIO_ENDPOINTS.data.annualIncomeSavings),
+        { stripUnknown: true },
       ),
   })
 }

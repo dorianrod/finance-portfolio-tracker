@@ -1,4 +1,4 @@
-import type { RollingReturn } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartData.types'
+import type { RollingReturn } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartData.types'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'

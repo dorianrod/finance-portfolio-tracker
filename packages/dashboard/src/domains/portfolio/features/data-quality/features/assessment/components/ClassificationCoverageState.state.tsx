@@ -1,5 +1,5 @@
 import { AllocationCoverageCard } from '@/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.feature'
-import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildClassificationViewState'
+import type { ClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildClassificationViewState'
 import i18n from '@/i18n/i18n'
 
 import { EmptyClassificationState } from './EmptyClassificationState.view'

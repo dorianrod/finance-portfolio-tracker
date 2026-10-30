@@ -72,7 +72,7 @@ describe('domain boundary compiler contracts', () => {
     ],
     [
       'missing dictionary entries',
-      `import {getOwnValue} from '${join(directory, 'src/shared/helpers/selectors/getOwnValue')}'`,
+      `import {getOwnValue} from '${join(directory, 'src/shared/helpers/transformers/getOwnValue')}'`,
       "export const value: number = getOwnValue({present: 1}, 'missing')",
       "export const value: number = getOwnValue({present: 1}, 'missing') ?? 0",
     ],

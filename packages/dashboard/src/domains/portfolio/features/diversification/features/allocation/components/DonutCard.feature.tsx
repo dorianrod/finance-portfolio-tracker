@@ -7,7 +7,7 @@ import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features
 import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData'
+import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/transformers/buildAllocationPieData'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'

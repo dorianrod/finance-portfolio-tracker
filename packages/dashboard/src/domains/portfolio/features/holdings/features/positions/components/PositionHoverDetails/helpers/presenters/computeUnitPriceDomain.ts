@@ -1,4 +1,4 @@
-import type { HoverChartDataPoint } from '../calculators/buildHoverChartData/buildHoverChartData.types'
+import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartData.types'
 
 export function computeUnitPriceDomain(
   chartData: HoverChartDataPoint[],

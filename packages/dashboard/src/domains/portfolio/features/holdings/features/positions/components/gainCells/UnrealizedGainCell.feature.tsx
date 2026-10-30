@@ -1,5 +1,5 @@
 import { GainCell } from '@/domains/portfolio/features/holdings/features/positions/components/GainCell.view'
-import { calculateGainTaxDetails } from '@/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculateGainTaxDetails'
+import { calculateGainTaxDetails } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculateGainTaxDetails'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'

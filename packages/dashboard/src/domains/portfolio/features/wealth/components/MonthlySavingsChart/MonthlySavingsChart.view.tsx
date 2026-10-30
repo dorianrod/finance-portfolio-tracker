@@ -6,6 +6,7 @@ import {
   Tooltip,
 } from 'recharts'
 
+import type { MonthlyTooltipOperationsByMonth } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations'
 import { MonthlySavingsLegend } from '@/domains/portfolio/features/wealth/components/MonthlySavingsLegend.view'
 import { MonthlyTooltip } from '@/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view'
 import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
@@ -25,8 +26,6 @@ import { SeriesBar } from '@/shared/ui/SeriesBar.view'
 import { SeriesLine } from '@/shared/ui/SeriesLine.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
-
-import type { MonthlyTooltipOperationsByMonth } from './helpers/aggregators/groupMonthlyTooltipOperations'
 
 export function MonthlySavingsChartView({
   data,

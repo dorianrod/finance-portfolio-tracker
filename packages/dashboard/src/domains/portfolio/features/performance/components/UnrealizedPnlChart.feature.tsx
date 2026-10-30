@@ -1,4 +1,4 @@
-import { buildUnrealizedPnlHistory } from '@/domains/portfolio/features/performance/helpers/calculators/buildUnrealizedPnlHistory'
+import { buildUnrealizedPnlHistory } from '@/domains/portfolio/features/performance/helpers/transformers/buildUnrealizedPnlHistory'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'

@@ -4,7 +4,7 @@ import { Fragment, useCallback, useState } from 'react'
 import type {
   buildFundDiagnosticsRows,
   FundDiagnosticsFilter,
-} from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows'
+} from '@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows'
 import { FundQualityBadge } from '@/domains/portfolio/features/data-quality/features/assessment/components/FundQualityBadge/FundQualityBadge.view'
 import type { FundSnapshot } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type'
 import type { FundUnresolved } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type'
