@@ -1,314 +1,330 @@
 # Audit method
 
-Every audit is driven by catalog rules and their impact. ESLint and complementary
-scripts supply evidence for those rules; they do not define a separate audit
-agenda. Every audit includes lint investigation, semantic review and a final
-review of deterministic prevention. Technical revalidation of existing ignores
-is opt-in.
-A focused review applies these activities only to the stated scope and must not
-imply a full-catalog result. Correct confirmed violations by default; an explicit
-findings-only request limits the work to analysis and proposed corrections,
-including proposed enforcement changes.
+Requested audits use two phases: **audit and proposal**, then **take account of
+findings**. Catalog rules and their actual impact define the review; lint and
+complementary scripts supply evidence. Both focused and full audits use the
+[required output contract](audit-output.md). Ordinary implementation work and
+rule explanations do not require an audit dossier.
 
-## Establish scope and keep a checkpoint
+## Workflow and authorization
 
-Before inspecting findings, inventory the authored files and catalog rules in
-the requested scope. Include source, tests and relevant tooling/configuration.
-Identify the starting code state, including uncommitted changes, the selected rule
-contracts and the effective check configuration. Use the same requirements to
-assess all alternatives in this audit. Record any necessary contract clarification
-explicitly before applying it; adding a preference is a catalog change, not proof
-that the initial code violated the starting contract.
-Identify existing exclusions and their effect on coverage without revalidating
-their technical justification unless requested. Explain any new audit-scope
-exclusions; never introduce one to hide a violation. Do not replace a global
-request with a sample or a few failing files.
+A bare audit or findings-only request runs phase 1 and ends with a reviewable
+dossier. It does not authorize source corrections. An explicit audit-and-fix
+request authorizes both phases: complete the dossier first, then continue with
+the authorized actions without asking for the same permission again. A later
+request to apply the plan starts phase 2 from the existing dossier.
 
-For each selected rule, enumerate the eligible patterns rather than searching
-only for known errors. Inspect all candidate files and actual callers needed to
-decide ownership or behavior. Quiet lint output does not establish coverage.
-Keep existing ignored patterns separate from code whose compliance was reviewed;
-leaving an existing exception in place is not renewed technical approval.
+During phase 1, write only audit artifacts and transient output or isolated
+probes needed for analysis. Do not change application source, tests, catalog
+rules, detectors, configuration or warning ceilings, and do not run autofixes.
+Propose those changes in the plan. Existing check caches and generated test
+output are incidental tool output, not permission to change the audited inputs.
 
-Process the inventory in manageable batches and keep enough working notes to
-distinguish completed review, findings and pending work. Continue with the next
-batch until the requested scope is covered. Re-review affected code and callers
-after corrections and rerun affected checks; this does not enable technical
-revalidation of existing ignores. If interrupted, keep a usable checkpoint and
-identify the remaining work. No particular file format, schema, count table or
-generated report is required.
+A required user choice holds only its dependent actions. Complete all useful
+analysis and concrete options before asking, and continue independent authorized
+work. Existing user decisions, project decisions and explicit delegation of the
+choice remain valid across turns.
 
-## Stabilize verdicts and record architecture decisions in code
+## Phase 1: Audit and proposal
+
+### Establish scope and keep a checkpoint
+
+Create a new dossier under the consuming project's `audit/<date>-<scope>/`,
+following the output contract. Fix the requested root, authored-file inventory,
+selected rules, required commands and ignore-review policy before classifying
+findings. Include source, tests and relevant tooling/configuration. A full audit
+accounts for every Quick Reference rule and every in-scope authored file; a
+focused audit states its narrower scope.
+
+Record the starting revision and uncommitted content, rule contracts and effective
+check configuration. Use content fingerprints when a version or commit alone
+does not identify those inputs. Assess all alternatives against the same
+requirements. Propose any necessary clarification explicitly; a new preference
+is a catalog change rather than proof of an original violation.
+
+Identify existing exclusions and their effect on coverage without technically
+revalidating them unless requested. Explain any new audit-scope exclusion; never
+introduce one to hide a violation or replace a global request with a sample.
+Keep the dossier outside the inspected source set.
+
+For each selected rule, enumerate eligible patterns, including valid-looking
+candidates, rather than searching only for known errors. Read the implementations
+and callers needed to decide ownership or behavior. Track file review and rule
+coverage separately, linking findings and evidence. A category name or passing
+command is not coverage evidence. Process manageable batches and retain pending
+entries so an interruption can resume without silently narrowing the scope.
+
+### Stabilize verdicts and record architecture decisions in code
 
 For every proposed correction, identify the owning rule's explicit requirement,
-the code that contradicts it and why its exceptions do not apply. A different
-conforming implementation is not a violation. Preserve the existing choice when
-it satisfies the applicable requirements.
+the code that contradicts it and why its exceptions do not apply. Distinguish
+proven violations, contract ambiguities, prevention gaps and optional suggestions.
+An alternative conforming arrangement does not establish a violation.
 
-Before a structural correction or a disputed keep decision, examine a credible
-alternative and assess both arrangements against the same applicable rules and
-exceptions. Prefer the conforming option that preserves cohesive responsibilities
-with the least unnecessary change. If no credible alternative can be established,
-state the constraint rather than inventing one. Several conforming solutions do
-not by themselves make the rule ambiguous.
+Before proposing a structural correction or resolving a disputed keep decision,
+examine a credible alternative under the same applicable rules and exceptions.
+Explain how each option affects responsibilities, consumers, behavior and change
+cost. If no credible alternative can be established, state the concrete constraint.
+Several conforming implementations do not by themselves make a rule ambiguous.
 
-If reasonable interpretations of a rule produce contradictory compliance
-verdicts, record the precise ambiguity and its concrete example. Clarify the
-owning contract and its distinguishing examples when authorized within scope;
-otherwise leave that verdict unresolved. Resolve the ambiguity before applying
-the disputed correction. Do not alternate between structures based on preference
-or silently turn an interpretation into a new requirement.
+If reasonable interpretations produce contradictory compliance verdicts, record
+both interpretations, the exact contract gap and a distinguishing example.
+Propose the clarification before the disputed correction; do not silently turn a
+preference into a new requirement. An unproven violation remains an ambiguity or
+an unverified candidate, not a confirmed defect.
 
-Record settled non-obvious decisions in the owning code using the
-[architecture decision comment contract](../rules/quality-jsdoc-minimal.md#architecture-decision-comments).
-The comment carries the choice, rationale, considered alternative, applicable
-rule identifiers and observable revisit conditions. Working notes and separate
-architecture documents do not replace this code-local record. In findings-only
-mode, propose the comment alongside the finding.
+Inventory existing `@architecture-decision` comments in the requested source
+scope. Read relevant code and callers to establish whether their assumptions
+hold. Preserve a supported conforming choice. Reopen it only for a relevant
+implementation or rule-contract change, a met revisit condition, or concrete
+contradictory evidence; identify that trigger in the finding.
 
-Include existing decision comments in the requested source inventory. Read the
-relevant implementation and callers to establish whether their assumptions still
-hold. Preserve a supported choice; reopen it only for a relevant implementation
-or rule-contract change, a met revisit condition, or concrete contradictory
-evidence. State that trigger before superseding the decision. Update, move or
-remove its comment in the same change as the affected code. These comments grant
-no exceptions and do not change the opt-in policy for existing ESLint ignores.
+For settled non-obvious choices, include the proposed
+[architecture decision comment](../rules/quality-jsdoc-minimal.md#architecture-decision-comments)
+in the plan. Add or update it in code only during phase 2. Dossiers track review
+and implementation; the code-local comment remains authoritative for the current
+local choice. It grants no exception and does not alter the ignore-review policy.
 
-## Select rules, order the review and bind tools
+### Select rules, prioritize review and bind tools
 
-Select rules through focused routing or the full Quick Reference, then read their
-contracts, examples, exceptions and actual impact. Process CRITICAL rules first,
-then HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM and LOW. Use category priority to break
-ties. Category impact is a ceiling, not the impact of every rule it contains.
-Review rules without detectors at the same priority as equally impactful rules
-with detectors. Respect correction dependencies needed to resolve a higher-impact
-finding; a lint error is not automatically more urgent than a confirmed critical
-semantic violation found through inventory review.
+Read each selected rule's contract, examples, exceptions and actual impact.
+Process CRITICAL, HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM and LOW in that order;
+use category priority to break ties. Category impact is a ceiling. Rules without
+detectors receive semantic review at their own impact. Plan prerequisite
+corrections first when a higher-impact finding depends on them.
 
-Resolve associated checks through the application's documented
-[rule-to-tool bindings](project-enforcement.md). Use the script capabilities
-described by each owning rule when available and useful to the requested scope.
-Read their configured scope and limits before interpreting results. Do not run
-every script simply because it exists. Baseline lint and shared script output
-may be collected together, but assign each result to an owning rule before
-review and correction. Inspect relevant in-scope results from a project-wide
-command without silently expanding a focused audit to unrelated code.
+Resolve check bindings through [project enforcement](project-enforcement.md).
+Read their configured scope and limits. Use a complementary script when it
+supports a selected rule, not because it appears in a tooling inventory. Baseline
+commands may be batched; map their output to owning rules before prioritizing.
+For a focused audit, inspect in-scope results from a project-wide command without
+expanding the correction scope to unrelated code.
 
-Distinguish bounded deterministic failures from semantic review candidates.
-An architecture inventory's unresolved dependency or large JSX count requires
-inspection; it does not prescribe an extraction. An acyclic import graph does
-not prove lawful ownership, and a catalog usage check does not prove all visible
-copy is translated. Apply the rule's examples and exceptions to decide.
-The ESLint and beyond-ESLint sections below describe complementary activities
-for each prioritized rule, rather than separate correction phases.
+Distinguish bounded deterministic failures from semantic candidates. Large JSX,
+an unresolved dependency or an acyclic graph does not prove a responsibility
+violation or lawful ownership. A catalog usage check does not prove all visible
+copy is translated. Apply each rule's contract and exceptions.
 
-## Calibrate detection before the first correction batch
+### Calibrate detection and inspect comparable cases
 
-Build a candidate inventory by recurring failure family before opening correction batches: component roles/composition, mixed local presentation, helper/service effects, indirect presentation dependencies, formatter exports and contracts, and entity types outside canonical files. Include valid-looking candidates; searching only for known bad names reproduces the previous audit's blind spots. Read related callers together to establish each family's scope.
+Inventory recurring failure families, including component roles/composition,
+mixed presentation, helper/service effects, indirect dependencies, formatter
+contracts and entity placement. Include callers and neighboring valid cases.
 
-For deterministic families, first prove one representative incorrect case and one neighboring valid case through the actual project configuration. Include aliases, reexports/dynamic imports, indirection or wrappers when they caused the omission. A clean command without this negative proof is unverified coverage. Strengthen a sound detector early so that it enumerates comparable violations across the whole scope before correction begins.
+For a deterministic family, prove a representative incorrect case is rejected
+by the intended rule at the expected severity, and a neighboring valid case is
+accepted through the actual project configuration. Use isolated probes in phase
+1. Include aliases, reexports, dynamic imports, wrappers, indirection and
+shadowing where they affect recognition. An unrelated error is not detection.
 
-Keep semantic candidates distinct from proven errors. Record the observed responsibility and the unresolved question, rather than inferring the role from a suffix, hook count or JSX size. Use the architecture inventory associated with the selected component-role or entity-placement rules when supplied by the application; review signals do not need to become warning-budget entries.
+If coverage is missing, record the detector gap, inspect comparable in-scope code
+manually and propose a bounded prevention action. Do not modify the detector
+during phase 1. State actual responsibilities for semantic candidates; suffixes,
+hook counts and JSX size alone do not establish a role or a required extraction.
 
-Fix complete families with their callers, then run focused checks. Run full-project checks at meaningful milestones and after the final change; repeating the full suite after every small move does not increase semantic coverage. Update the inventory when a new failure mechanism appears and search its comparable cases before starting another batch. Keep execution logs compact and outside authored source; retain the durable prevention in rule contracts and regression tests rather than committing repeated full logs.
+### Investigate lint and catalog requirements
 
-## 1. Investigate ESLint diagnostics and correct violations
+Run the application's real lint command, retaining errors, warnings, exit status
+and the warning-budget result. Inspect each diagnostic against the owning rule
+and its exceptions. A passing exit code or accepted warning total does not prove
+catalog compliance. A false positive requires a detector correction proposal or
+an exception assessment, not an application rewrite solely to silence the tool.
 
-Identify the consuming application's lint command, effective configuration,
-authored file scope and warning budget. Run the configured checks and inspect
-both errors and warnings. Keep the initial findings available for comparison;
-do not treat a passing exit code or an accepted warning total as compliance.
-This collects detection evidence; process it alongside script findings and manual
-review in catalog impact order, rather than finishing every lint fix first.
+For each selected rule, record coverage with concrete evidence:
 
-For each diagnostic, inspect the affected code and the owning rule's contract,
-including exceptions. Correct confirmed violations and review autofixes. If the
-detector reports valid code, prefer correcting it with a regression case; when
-that is not feasible, assess any new or modified exception through section 3.
-Verify changed code through the application's actual configuration and relevant
-checks. Do not lower severity, add ignores or raise the warning ceiling merely
-to obtain a pass.
+- **Automatically checked:** identify the effective check, its invalid/valid
+  probes and analysis limits; review applicable code beyond those limits.
+- **Manually reviewed:** identify inspected code, callers and the responsibility
+  or behavior checked.
+- **Not applicable:** name the absent capability or pattern; library installation
+  alone does not establish applicability.
+- **Existing ignore not revalidated:** identify the affected pattern without
+  renewing its technical approval. Continue with other applicable patterns.
+- **Pending:** name the unexamined target, unavailable evidence or unverified
+  claim. Pending inspection prevents phase 1 from being complete.
 
-Compare lint results before and after corrections using the real command and
-configuration. Keep the command, exit status and relevant evidence available;
-do not hide warnings or omit material failures from the final summary. Existing
-suppression-tracking warnings remain part of the warning budget without requiring
-their underlying justification to be re-examined. Normal metadata and unused-disable
-checks remain enabled; their actual errors still need correction in fix mode.
+A rule can have both automatic and manual parts. Record any proven violations or
+contract ambiguities in findings even when inspection itself is complete.
+TypeScript establishes declared types, not business meanings such as ownership,
+dates, amounts or fixture completeness hidden behind assertions.
 
-## 2. Review the catalog beyond ESLint
+Inspect runtime sequences where relevant: cancel activation, open/close/reopen,
+outside dismissal, mode changes and keyboard entry/exit with unavailable controls.
+Use existing tests or isolated reproductions in phase 1; propose source regression
+tests for phase 2. Test the missing property directly: presence does not establish
+invocation, ordering or honored cancellation.
 
-For a full audit, enumerate the Quick Reference once; for a focused review,
-select the relevant rules through routing and the Quick Reference. Read each
-applicable rule, including its exceptions and enforcement limits. For every
-selected rule, keep one of these results with concrete evidence:
+### Review exceptions only when required
 
-- **Automatically checked:** identify the configured rule and prove a relevant
-  incorrect example is rejected at the expected severity and with the expected
-  diagnostic. Also exercise a valid neighboring example. Review analysis limits
-  and inspect any applicable code beyond those limits.
-- **Manually reviewed:** identify the inspected code and the responsibility or
-  behavior checked. A category name or a passing command is not review evidence.
-- **Not applicable:** identify the absent capability or pattern. Do not infer
-  applicability from library installation alone.
-- **Existing ignore not revalidated:** identify the affected pattern without a
-  new technical conclusion when its revalidation was not requested. This is
-  neither reviewed compliance nor unfinished work under the default policy;
-  continue reviewing the rule's other applicable patterns.
-- **Unresolved:** record a known violation, unexamined scope or unproven claim.
-  Resolve it within the authorized task or state it explicitly when work stops.
+Read [suppression policy](../rules/quality-eslint-disable-scoped.md) and
+[warning budgets](../rules/quality-eslint-warning-budget.md). Existing inline
+suppressions, configuration ignores, rule deactivations, severity reductions and
+baselines receive technical revalidation only on explicit request. A full audit,
+catalog update or nearby code change is not that request. Keep normal metadata
+and unused-suppression checks enabled and record their actual findings.
 
-A rule may have both automated and manual parts. An ESLint rule or script sharing
-a category or a similar name does not establish that it checks the catalog
-requirement.
-TypeScript checks declared types; it does not establish business meanings such as
-dates, amounts, ownership or complete fixture data hidden behind assertions.
+When existing-exception review is requested, inventory the affected bypasses.
+Generated or vendored exclusions are not automatically defects. Lift only the
+relevant exception in an isolated check, preserving effective configuration;
+verify the intended rule applies before declaring a suppression unused. Inspect
+implementation, callers and dependency evidence, then record:
 
-Inspect actual implementations and relevant callers for requirements without
-complete automatic coverage, even when lint reports nothing. Correct confirmed
-violations under the same rule contracts as lint findings. A missing or partial
-detector is a reason for manual review, not a reason to skip a rule.
+- **Obsolete:** propose removal when the applicable check no longer reports it.
+- **Unjustified:** prove the underlying violation and propose correction/removal.
+- **Justified:** establish a false positive, dependency constraint or exception
+  allowed by the owning rule; prefer a detector correction where feasible.
+- **Unresolved:** identify missing evidence without renewing approval.
 
-### Verify existing prevention against incorrect code
+Do not bulk-approve, bulk-date or modify suppressions during phase 1. New or
+modified exceptions introduced in phase 2 always require this assessment and
+warning-budget reconciliation, even without a request to review existing ones.
 
-Use the consuming application's actual configuration for integration checks.
-Assert the intended rule ID, diagnostic and severity; an unrelated lint error
-must not count as detection. Include import aliases, a representative wrapper or
-indirection, and a nearby valid case where those affect recognition. Respect
-shadowing and distinguish library APIs from similarly named application data.
+### Propose deterministic prevention
 
-Identify deterministic conventions whose detector is missing or incomplete for
-the final prevention review in section 4. Keep existing enforcement enabled,
-preserve the warning-budget policy, and fix confirmed violations revealed by
-checks within the requested scope. Do not add a suppression or configuration
-exclusion merely to make a check pass.
+Review findings and manual coverage gaps for reliable types, compiler settings,
+existing checks or bounded extensions to existing detectors. Do this even when
+there are no violations, without manufacturing a new rule to report an addition.
+A missing detector is not itself proof that application code violates a rule.
 
-For a discovered omission, examine its failure mode in comparable code. For
-example, a callback's presence does not prove invocation, invocation does not
-prove caller-first ordering, and ordering does not prove cancellation is honored.
-Test the missing property directly rather than adding another presence check.
+Each proposed enforcement change belongs in the plan with its owning contract,
+observable invariant, analysis limits, invalid/valid cases, affected scope and
+acceptance checks. Prefer existing enforcement and type/API constraints. Custom
+checks must be reusable across applications adopting the documented conventions;
+keep application entities, field names, fixture values, absolute paths and
+one-off allowlists out of their logic. Configurable roots and resolved library
+APIs are valid inputs. Verify portability with unrelated example vocabulary.
 
-### Verify runtime sequences
+Uncertain semantics, disproportionate analysis or broader hardening remain
+explicit proposals. A missing detector does not block phase-1 completion once
+its applicable code has been reviewed and its plan is recorded. Implementation
+is part of phase 2 only when included in the authorized plan.
 
-Static checks cover their stated patterns. Test stateful protocols through
-observable interactions: cancel activation, open and close, reopen after outside
-dismissal, change modes and use keyboard entry/exit with unavailable controls.
-Choose sequences relevant to the actual primitive or workflow. Where practical,
-confirm the regression fails against the original behavior before the correction.
+## Route findings and user decisions
 
-## 3. Review exceptions when required
+Set each finding's proposed action according to this table. A plan's `fix`
+classification establishes a recommendation, not user authorization by itself.
 
-Read [the exception policy](../rules/quality-eslint-disable-scoped.md) and
-[the warning-budget policy](../rules/quality-eslint-warning-budget.md).
-Do not technically revalidate existing inline suppressions, configuration ignores,
-rule deactivations, severity reductions or baselines by default. A request to
-audit or fix everything, a catalog update or changes to nearby code do not count
-as an explicit request to review existing ignores. Keep their rationale and review
-dates unchanged; a retained existing ignore must not be described as newly approved.
+| Evidence and existing decisions | Action |
+| --- | --- |
+| Proven violation with a correction selected by the contract or existing instructions/decisions | `fix`: propose the correction and acceptance checks; implement in authorized phase 2. |
+| Proven violation with materially different conforming corrections and no established selection | `ask-user`: present concrete options, consequences and a recommendation. |
+| Reasonable interpretations give contradictory compliance verdicts | `ask-user`: propose the exact contract clarification and distinguishing examples before correction. |
+| Existing code conforms, including a supported recorded architecture choice | `keep`: retain it; an optional alternative is a suggestion. |
+| Sound generic prevention opportunity beyond existing enforcement | `fix` when part of the authorized implementation plan; otherwise `defer` as a prevention proposal. |
+| Missing implementation evidence or incomplete inspection | Keep coverage pending; investigate rather than inventing a proven violation. |
 
-Perform the review below for exceptions introduced or modified by the task, and
-for existing exceptions only when the user explicitly requests their revalidation.
-For the latter, inventory the requested suppressions and configuration bypasses,
-including tests and tooling. Generated or vendored exclusions are not automatically
-defects; establish which authored code and catalog requirements each exclusion affects.
+When materially different conforming corrections remain and no existing
+instruction or decision selects one, ask the user to choose before implementing
+that action. A user's explicit delegation to choose resolves this requirement.
+Routine equivalent implementation details do not create a structural arbitration.
 
-For each suppressed rule or configuration exception, inspect the affected code
-and relevant callers. Reproduce the underlying diagnostic by lifting only that
-exception in an in-memory or isolated check while preserving the rest of the
-application configuration. Before calling an exception unused, verify that the
-rule is enabled, applies to the file and examines the relevant code. A clean run
-against an ignored file is not evidence that the code complies.
+Prepare the complete finding, proof or uncertainty, alternatives, proposed
+corrective plan and precise question before asking. Link the dossier and this
+section, quote the applicable decision instruction and explain the concrete
+choice it requires. Do not ask to reauthorize work or a choice already covered
+by the session. While a choice is pending, continue independent authorized work.
 
-Compare the result with the rule's contract and concrete implementation or
-dependency evidence. Resolve each exception as follows:
+Record each answer in the plan with the chosen option, rationale and scope.
+Translate it into durable guidance:
 
-- **Obsolete:** the applicable check no longer reports the issue; remove the
-  unused suppression or obsolete configuration exception.
-- **Unjustified:** the diagnostic identifies a real violation without an allowed
-  exception; correct the code and remove the bypass.
-- **Justified:** demonstrate a false positive, dependency constraint or exception
-  permitted by the owning rule. Prefer correcting a faulty detector when feasible;
-  retain only an allowed, narrowly scoped exception with the required technical
-  rationale and actual review date.
-- **Unresolved:** the diagnostic or rationale cannot be verified; report what
-  evidence is missing without treating the exception as approved.
+- A reusable requirement or ambiguity resolution belongs in the owning skill
+  rule with applicability, exceptions and distinguishing examples.
+- A reliably observable invariant should use existing enforcement or a bounded
+  generic detector, with rejected and valid cases through actual configuration.
+- A contextual application choice belongs in the code decision comment. If
+  several structures remain allowed, document that freedom rather than implying
+  the chosen one is universally mandatory.
 
-A date, a nonempty comment, previous acceptance or a passing lint run does not
-prove the rationale. Never bulk-approve or bulk-date exceptions. Reconcile the
-warning budget after removals and justified retentions using its owning policy.
+For every arbitration, state which of these applies and what will change; explain
+when no new static check is sound. User selection of one valid option alone does
+not prove the others violate the original contract. Keep an intentional new
+requirement distinct from clarification of an existing one.
 
-## 4. Review opportunities for generic deterministic prevention
+## Phase 2: Take account of findings
 
-After reviewing and correcting the requested scope, examine the findings and the
-requirements that needed manual judgment. Ask which observable violations could
-be prevented reliably by types, compiler options, existing ESLint rules or a small
-extension to an existing detector. Perform this review even when the audit found
-no violations; an empty findings list does not prove complete static coverage.
-Do not manufacture a new rule merely to report an addition.
+Read the dossier and the user's implementation request before editing. Check
+that code, rule and configuration fingerprints still match the reviewed inputs.
+When relevant inputs changed, revalidate affected findings and callers, recording
+the delta. Preserve unaffected review; do not blindly apply stale plans or
+restart the full audit for a local change.
 
-Prefer a type/API constraint or an existing configured check when it already
-expresses the invariant. Use a custom ESLint rule only for a reusable observable
-contract with bounded analysis. Extend the owning catalog rule when it already
-covers the decision, and keep its applicability, exceptions and detector limits
-together. Business meanings that require human judgment remain manual checks.
+Implement authorized `fix` actions in catalog impact order and dependency order.
+Handle unresolved `ask-user` actions through the routing above. Retain conforming
+choices and leave optional follow-ups outside the active correction scope.
+A bare phase-1 request does not become implementation authorization because the
+dossier contains a proposed fix.
 
-A proposed check must work in other applications adopting the same documented
-stack and conventions. Its logic must not depend on this application's business
-entities, identifiers, field names, absolute paths, fixture values or one-off
-allowlists. Documented generic conventions, resolved library APIs and configurable
-project roots are valid inputs. Verify portability with unrelated example names;
-renaming a project-specific heuristic does not make it generic.
+Resolve approved contract clarifications before disputed code changes. Record
+any intentional new requirement and its affected scope separately from the
+original proof. Implement planned prevention using existing types/checks first;
+add a custom detector only for a sound reusable contract. Verify intended rule
+IDs and severity, invalid and neighboring valid examples, relevant aliases,
+wrappers and shadowing. For type constraints, prove the expected type error and
+a valid compilation. Keep generic rule logic independent of application names.
 
-In audit-and-fix work, add or strengthen checks when the generic contract is sound
-and implementation is feasible within scope. Verify rejected and neighboring valid
-cases through the actual consuming configuration, including relevant aliases,
-wrappers and shadowing. For TypeScript constraints, confirm an invalid usage fails
-with the intended type error and a valid usage compiles. Run affected regression
-checks and correct violations exposed by the new enforcement. Do not weaken
-existing checks, widen ignores or raise the warning budget to obtain a pass.
+Fix complete in-scope failure families with callers. Include equivalent
+violations exposed by a planned detector change within the original scope,
+linking them to existing findings or adding explicit new findings and plan deltas.
+New materially different options use decision routing; unrelated hardening goes
+to a follow-up. Never lower severity, broaden ignores or raise warning ceilings
+to obtain a pass. Review actual autofixes and every new or modified exception.
 
-If an opportunity needs uncertain semantics, disproportionate analysis or work
-outside the authorized scope, leave it as a proposal with the reason; do not claim
-it was implemented. In findings-only mode, keep all such changes as proposals.
-After an enforcement change, recheck its affected scope before closing the audit.
+Add or update the code decision comment for each settled non-obvious choice,
+including an authorized keep decision. Move it with its owner and remove it
+when the choice disappears. Keep its rationale and revisit conditions current;
+the dossier records implementation progress rather than replacing the comment.
+
+Run focused checks after coherent batches and required full-project checks at
+meaningful milestones and after final changes. Re-review affected code and
+callers, compare final diagnostics to the baseline and update findings, plan and
+verification. Keep runtime regression tests tied to observable behavior and,
+where practical, demonstrate that they fail against the original implementation.
 
 ## Finish with the evidence that exists
 
-Run the required checks after corrections, including the full-project warning
-budget check and affected rule-associated scripts. Reconcile the inventory,
-findings and pending work, including exception reviews explicitly requested or
-required for new/modified exceptions.
-Complete the prevention review in section 4. Existing ignores whose revalidation
-was not requested do not block completion and are not counted as newly reviewed.
-For audit-and-fix work, remaining in-scope violations prevent completion. For
-findings-only work, complete coverage may coexist with documented open findings;
-make that distinction explicit.
+### Close phase 1
 
-Close audit-and-fix work once every in-scope target and selected rule has an
-evidenced verdict, no candidate or compliance question remains unresolved, all
-confirmed violations are corrected, required checks pass and affected code and
-callers have been re-reviewed. Confirm that decision comments affected by the task
-match the final implementation. Existing ignores follow the announced review
-policy. In findings-only mode, documented violations and ambiguities may remain
-open after complete coverage; distinguish that outcome from a compliant result.
-Once these conditions hold, finish. A remaining conforming alternative does not
-reopen the audit; after a correction, revisit only the decisions and requirements
-that its actual effects can change.
+Mark the audit complete when every in-scope authored file and selected rule is
+accounted for, no inspection candidate remains pending, every finding contains
+its evidence or precise contract ambiguity, and every proposed action has
+alternatives, acceptance criteria and dependencies in the dossier. Complete the
+prevention review and record check results and coverage limits.
 
-Use a concise, free-form final response covering the actual outcome, relevant
-checks and material remaining work. Include a high-level synthesis of the ESLint,
-TypeScript or equivalent protections actually added or strengthened and the
-rationale for each: what recurring problem it prevents and why it is reusable.
-Distinguish any proposals from implemented checks. If none were added, briefly
-say why. Avoid implementation detail, code/configuration dumps and exhaustive
-rule tables unless requested. No generated report or JSON artifact is required.
+Proven violations, failing application checks and documented user arbitrations
+may remain open: phase-1 completion means the diagnosis and plan are complete,
+not that the code complies. Missing evidence that prevents inspection keeps the
+audit incomplete. Link pending choices and required questions in the plan.
+For an audit-only request, finish here.
 
-Do not conclude merely because a batch is finished, lint passes, tests pass or
-the task is large. Continue until the requested scope and corrections are complete.
-An actual blocker or explicit user interruption may require an incomplete handoff:
-save the checkpoint and name the pending entries, evidence needed and next batch.
-Never mark them reviewed or narrow the inventory to claim completion.
+### Close phase 2
 
-Working notes do not prove substantive inspection or a sound conclusion. Review
-the evidence. Preserve stable guarantees in the rule contracts, configured checks
-and regression tests so they remain effective independently of audit notes.
+Mark implementation complete only when the authorized correction scope is
+fulfilled, all its required user decisions are resolved, confirmed violations
+are corrected, planned enforcement and comment updates are complete, required
+checks pass and affected code and callers have been re-reviewed. Every completed
+action links to verification evidence. Existing ignores follow the announced
+review policy and are not counted as newly approved.
+
+If the user requested only selected actions, identify that limited implementation
+scope explicitly and keep other findings open. A request to correct the entire
+scope cannot be silently narrowed or completed with deferred violations.
+An outstanding required decision or failed check keeps its dependent work open.
+
+Once the applicable closure conditions hold, finish. Another conforming solution
+does not reopen a settled choice. After a correction, revisit only decisions
+whose assumptions or compliance can change through its actual effects. Separate
+new preferences and broader prevention work from the completed scope.
+
+### Handoff
+
+Keep the final response concise: link the dossier, name the completed phase,
+summarize proven violations versus pending decisions and cite relevant checks.
+For phase 2, summarize actual ESLint, TypeScript or equivalent protections added
+or strengthened and their purpose; if none were added, say why. Distinguish
+proposals from implementation and report material open work.
+
+On interruption or an actual blocker, save pending targets, missing evidence and
+the next batch in the dossier; report the phase as incomplete. Passing tools,
+finishing one batch or reaching a warning budget is not a substitute for coverage.
+Working notes and well-formed artifacts do not prove substantive inspection:
+review the evidence before claiming completion.

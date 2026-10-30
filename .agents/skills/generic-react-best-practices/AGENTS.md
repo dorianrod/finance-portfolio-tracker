@@ -6082,11 +6082,14 @@ A well-named function with explicit types needs no JSDoc at all. Use inline `// 
 
 ### Architecture decision comments
 
-When an audit settles a non-obvious ownership, boundary or composition choice,
-record the decision next to the code that implements it. This includes retaining
-an existing structure after comparing it with a credible alternative. Routine
-mechanical corrections and self-explanatory code need no decision comment. In a
-findings-only audit, propose the comment without editing the source.
+When implementing an audit's settled non-obvious ownership, boundary or
+composition choice, record the decision next to the code that implements it.
+This includes retaining an existing structure after comparing it with a credible
+alternative. Routine mechanical corrections and self-explanatory code need no
+decision comment. During the audit-and-proposal phase, include the proposed
+comment in the audit plan without editing the source. Application audit dossiers
+track findings and implementation; the code comment remains the authoritative
+record of the current local choice.
 
 Use an ordinary block comment immediately before the smallest declaration or
 local block that owns the choice. For a module-wide decision, place it before
@@ -6146,6 +6149,12 @@ diagnostic and cannot establish compliance by its presence alone. Reconcile any
 contradictory diagnostic with the owning rule and code. ESLint suppressions still
 follow `quality-eslint-disable-scoped`. Existing checks do not validate this
 comment format or its rationale; both remain part of the scoped semantic review.
+
+Use the [two-phase audit method](references/audit-method.md) and its
+[output contract](references/audit-output.md) for proposals, user arbitrations
+and implementation tracking. A dossier's selected option must be reflected in
+this comment when the choice is implemented; the dossier alone does not preserve
+the decision next to evolving code.
 
 ### 12.13 No Chained or Negated Ternaries
 

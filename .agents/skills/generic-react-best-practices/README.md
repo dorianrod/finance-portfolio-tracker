@@ -20,7 +20,8 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
 - `vitest.config.mjs` - Generic tooling test suite, independent of a consuming application's source and setup files
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics
 - `references/project-enforcement.md` - Install the packaged tooling and select its ESLint/script bindings per rule; consumers configure project roots, catalogs and command aliases
-- `references/audit-method.md` - Review by rule impact using lint, associated scripts and semantic inspection; exhaustive scope review, opt-in revalidation of existing ignores, and generic static prevention; no required report format
+- `references/audit-method.md` - Two-phase audits: review and propose, then implement authorized actions; stable verdicts, user arbitrations, opt-in ignore reviews and deterministic prevention
+- `references/audit-output.md` - Required application `audit/` dossier: frozen scope, coverage, proven findings, alternatives, corrective plan, decisions and verification evidence
 - `agents/openai.yaml` - Discovery metadata and invocation prompt
 - `metadata.json` - Document metadata (version, title, abstract, skills this one may reference)
 - `SKILL.md` - Skill entry point (sections table and Quick Reference)
