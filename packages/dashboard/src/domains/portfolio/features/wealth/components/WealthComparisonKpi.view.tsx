@@ -30,7 +30,9 @@ export function WealthComparisonKpi({
     tone === 'blue' ? 'accent' : getPerformanceTone(metric.current)
   const changeColor =
     metric.changePct == null ? 'subtle' : getPerformanceTone(metric.changePct)
-  const currentLabel = formatMonthRange(currentMonths)
+  const currentLabel = formatMonthRange(currentMonths, {
+    fallback: i18n.t('ui.wealthtab.insufficientHistory'),
+  })
   const value = formatMoney(metric.current)
   let accent: 'contributions' | 'positive' | 'negative' = 'positive'
   if (tone === 'blue') accent = 'contributions'
@@ -55,9 +57,7 @@ export function WealthComparisonKpi({
             {formatPercentage(metric.changePct, { signed: true })}
           </Kpi.InlineNote>
         </Kpi.ValueRow>
-        <Kpi.Detail>
-          {currentLabel || i18n.t('ui.wealthtab.insufficientHistory')}
-        </Kpi.Detail>
+        <Kpi.Detail>{currentLabel}</Kpi.Detail>
         <Kpi.Footer>
           {i18n.t('ui.wealthtab.previous12m')}{' '}
           <Text variant="medium" tone="secondary">

@@ -67,12 +67,13 @@ function project() {
   return root
 }
 
-function run(script, root, args) {
+function run(script, root, args, cwd = process.cwd()) {
   const executable = join(root, 'tool.mjs')
   rmSync(executable, { force: true })
   symlinkSync(resolve(import.meta.dirname, script), executable)
   return spawnSync(process.execPath, [executable, '--root', root, ...args], {
     encoding: 'utf8',
+    cwd,
   })
 }
 
@@ -206,7 +207,33 @@ it('collects small composed fixture candidates through the packaged bin symlink'
     '--review',
     'reviews.json',
   ])
-  expect(owned.status, owned.stderr).toBe(0)
+  expect(owned.status, owned.stderr).toBe(1)
+  expect(JSON.parse(owned.stdout)).toMatchObject({
+    pending: [],
+    stale: [{ reason: 'Analysis inputs changed; review the inventory again.' }],
+  })
+  // Synthetic review metadata for the valid neighbor, after inspecting its
+  // changed input above. Real application ledgers require semantic review.
+  review.analysis = JSON.parse(
+    run('fixture-candidates.mjs', root, []).stdout,
+  ).analysis
+  writeFileSync(join(root, 'reviews.json'), JSON.stringify(review))
+  expect(
+    run('fixture-candidates.mjs', root, ['--review', 'reviews.json']).status,
+  ).toBe(0)
+
+  writeFileSync(
+    join(root, 'src/new.test.ts'),
+    'export const changedConsumer = true',
+  )
+  const changedTest = run('fixture-candidates.mjs', root, [
+    '--review',
+    'reviews.json',
+  ])
+  expect(changedTest.status, changedTest.stderr).toBe(1)
+  expect(JSON.parse(changedTest.stdout).stale).toMatchObject([
+    { reason: 'Analysis inputs changed; review the inventory again.' },
+  ])
 
   writeFileSync(join(root, 'reviews.json'), '{')
   expect(
@@ -236,3 +263,111 @@ it('collects small composed fixture candidates through the packaged bin symlink'
   )
   expect(unresolved.stdout).toBe('')
 }, 30000)
+
+it('rejects omitted canonical inputs and leaves wrapped business inputs pending through the CLI', () => {
+  const root = project()
+  mkdirSync(join(root, 'src/domains/delivery/types'), { recursive: true })
+  const contract = 'src/domains/delivery/types/consignment.type.ts'
+  writeFileSync(join(root, contract), 'export type Consignment = {mass:number}')
+  writeFileSync(
+    join(root, 'src/consignment.test.ts'),
+    'const sample = {mass:12}',
+  )
+  const config = { include: ['src'], exclude: ['**/*.type.ts'] }
+  writeFileSync(join(root, 'tsconfig.app.json'), JSON.stringify(config))
+  const omitted = run('fixture-candidates.mjs', root, [])
+  expect(omitted.status, omitted.stderr).toBe(2)
+  expect(omitted.stderr).toContain(
+    'Canonical contracts missing from the TypeScript project: ' + contract,
+  )
+  expect(omitted.stdout).toBe('')
+
+  delete config.exclude
+  writeFileSync(join(root, 'tsconfig.app.json'), JSON.stringify(config))
+  const complete = run('fixture-candidates.mjs', root, [])
+  expect(complete.status, complete.stderr).toBe(0)
+  const inventory = JSON.parse(complete.stdout)
+  expect(inventory.candidates).toHaveLength(1)
+
+  mkdirSync(join(root, 'node_modules/vitest'), { recursive: true })
+  writeFileSync(
+    join(root, 'node_modules/vitest/index.d.ts'),
+    'export declare const it:{each<T>(rows:T[]):(name:string,run:()=>void)=>void}',
+  )
+  const putTest = (value) =>
+    writeFileSync(
+      join(root, 'src/consignment.test.ts'),
+      'import {it} from "vitest"; declare function consume(value:{mass:number}):number; it.each([' +
+        value +
+        '])("case",()=>{})',
+    )
+  putTest('{mass:12}')
+  const direct = run('fixture-candidates.mjs', root, [])
+  expect(direct.status, direct.stderr).toBe(0)
+  const directInventory = JSON.parse(direct.stdout)
+  expect(directInventory.candidates).toEqual([])
+  expect(directInventory.excluded).toMatchObject([
+    { reason: 'parametrized scenario row' },
+  ])
+  writeFileSync(
+    join(root, 'reviews.json'),
+    JSON.stringify({
+      schemaVersion: 1,
+      source: directInventory.source,
+      project: directInventory.project,
+      analysis: directInventory.analysis,
+      reviews: [],
+    }),
+  )
+  expect(
+    run('fixture-candidates.mjs', root, ['--review', 'reviews.json']).status,
+  ).toBe(0)
+  putTest('consume({mass:12})')
+  const wrapped = run('fixture-candidates.mjs', root, [
+    '--review',
+    'reviews.json',
+  ])
+  expect(wrapped.status, wrapped.stderr).toBe(1)
+  expect(JSON.parse(wrapped.stdout).pending).toMatchObject([
+    { file: 'src/consignment.test.ts' },
+  ])
+}, 30000)
+
+it('resolves configured type libraries from the selected project with an unrelated invoking directory', () => {
+  const root = project()
+  const outside = project()
+  mkdirSync(join(root, 'node_modules/@types/scenario-environment'), {
+    recursive: true,
+  })
+  writeFileSync(
+    join(root, 'node_modules/@types/scenario-environment/index.d.ts'),
+    'declare const SCENARIO_READY:boolean',
+  )
+  mkdirSync(join(root, 'src/domains/delivery/types'), { recursive: true })
+  writeFileSync(
+    join(root, 'src/domains/delivery/types/readiness.type.ts'),
+    'export type Readiness = {ready:boolean}',
+  )
+  writeFileSync(
+    join(root, 'src/readiness.test.ts'),
+    'const sample = {ready:SCENARIO_READY}',
+  )
+  mkdirSync(join(root, 'config'))
+  writeFileSync(
+    join(root, 'config/browser.json'),
+    JSON.stringify({
+      compilerOptions: { types: ['scenario-environment'] },
+      include: ['../src'],
+    }),
+  )
+  const result = run(
+    'fixture-candidates.mjs',
+    root,
+    ['--project', 'config/browser.json'],
+    outside,
+  )
+  expect(result.status, result.stderr).toBe(0)
+  expect(JSON.parse(result.stdout).candidates).toMatchObject([
+    { file: 'src/readiness.test.ts', contracts: [{ name: 'Readiness' }] },
+  ])
+})

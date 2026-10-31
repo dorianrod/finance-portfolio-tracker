@@ -76,6 +76,13 @@ Every value-to-text formatter owns display fallbacks: dates, numbers, money, per
 
 Pass nullable values directly instead of guarding with `value == null ? '' : formatDate(value)`, checking truthiness, or defaulting a formatter input with `??` or `||`. Extend the existing formatter's options rather than creating a wrapper solely for a missing-value placeholder. Resolve absence inside the formatter before property access, lookups or date conversion; never turn a missing date into the Unix epoch or today's date.
 
+Configure that same option instead of replacing the formatted output with
+`formatDate(value) || t('missing')` or `formattedLabel ?? '—'`. An immutable alias
+of the formatted string still belongs to this contract. For example, pass
+`{ fallback: t('missing') }` to the existing formatter and render its result
+directly. Conditions selecting UI structure or business states retain the
+exceptions below.
+
 **Incorrect (the component owns a display fallback):**
 
 ```tsx
@@ -150,5 +157,12 @@ Use the custom ESLint rule `local/no-inline-format-fallback` for production TS a
 Resolve formatter identity from `helpers/formatters/` imports rather than local names alone: `useFormatXxx` hook results, imported `formatXxx` functions, namespaces, relative imports and immutable aliases. Support destructured aliases and member calls from `use…Formatters` bundles without a registry per formatter. Compare stable member accesses across dot/bracket notation and optional access.
 
 The check does not follow reassigned aliases, arbitrary providers, helper parameters, dynamic property keys, multi-child structural JSX branches or fallback expressions nested inside calculations. Exclude global shared formatter implementations and tests; keep domain shared wrappers checked. Do not autofix: preserve business conditions and the distinction between absence and zero.
+
+Also reject direct `||`/`??` text fallbacks on recognized formatter results,
+including immutable local result aliases and immutable aliases of literal or
+translated fallback text. Keep JSX structure choices and business conditions
+valid. Opaque fallback variables, mutable results and arbitrary return-value
+transformations remain manual review limits; do not infer a formatter from its
+local name alone.
 
 At translation boundaries, enable the typed `local/i18n-consistency` check to reject native `Date` values supplied directly as interpolation options. Formatting the date belongs to the existing formatter before interpolation; otherwise the translation may expose JavaScript's date string and the host time zone. Resolve translation bindings and native Date declarations, including aliases and nullable unions; preserve formatted strings and unrelated objects with the same names. Opaque option objects and nested interpolation values require manual review. Verify rejected and valid neighboring cases through the application's actual configuration.

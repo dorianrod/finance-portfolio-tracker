@@ -4,10 +4,10 @@
   "project": "tsconfig.fixtures.json",
   "analysis": {
     "typescript": "6.0.3",
-    "collectorSha256": "f0bda943b99464f9db307381871559895f154fa3748269da86f9694732f30601",
+    "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
     "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
-    "compilerOptionsSha256": "eb79ce999fb0848a6b5bcedd63f6162da148ea3fe78ed9d16c774a1876e0741e",
-    "sourceSha256": "48b91393e3e046567d2253e4ccd896fb0314c5f477016adb1daf342dd1f71302",
+    "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
+    "sourceSha256": "bb8272ee35a241375e968737a03c92489d050181592584ae4601d8c49b72bb16",
     "lockfileSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
   },
   "reviews": [

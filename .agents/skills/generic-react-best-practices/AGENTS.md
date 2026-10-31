@@ -4542,6 +4542,13 @@ Every value-to-text formatter owns display fallbacks: dates, numbers, money, per
 
 Pass nullable values directly instead of guarding with `value == null ? '' : formatDate(value)`, checking truthiness, or defaulting a formatter input with `??` or `||`. Extend the existing formatter's options rather than creating a wrapper solely for a missing-value placeholder. Resolve absence inside the formatter before property access, lookups or date conversion; never turn a missing date into the Unix epoch or today's date.
 
+Configure that same option instead of replacing the formatted output with
+`formatDate(value) || t('missing')` or `formattedLabel ?? '—'`. An immutable alias
+of the formatted string still belongs to this contract. For example, pass
+`{ fallback: t('missing') }` to the existing formatter and render its result
+directly. Conditions selecting UI structure or business states retain the
+exceptions below.
+
 **Incorrect (the component owns a display fallback):**
 
 ```tsx
@@ -4616,6 +4623,13 @@ Use the custom ESLint rule `local/no-inline-format-fallback` for production TS a
 Resolve formatter identity from `helpers/formatters/` imports rather than local names alone: `useFormatXxx` hook results, imported `formatXxx` functions, namespaces, relative imports and immutable aliases. Support destructured aliases and member calls from `use…Formatters` bundles without a registry per formatter. Compare stable member accesses across dot/bracket notation and optional access.
 
 The check does not follow reassigned aliases, arbitrary providers, helper parameters, dynamic property keys, multi-child structural JSX branches or fallback expressions nested inside calculations. Exclude global shared formatter implementations and tests; keep domain shared wrappers checked. Do not autofix: preserve business conditions and the distinction between absence and zero.
+
+Also reject direct `||`/`??` text fallbacks on recognized formatter results,
+including immutable local result aliases and immutable aliases of literal or
+translated fallback text. Keep JSX structure choices and business conditions
+valid. Opaque fallback variables, mutable results and arbitrary return-value
+transformations remain manual review limits; do not infer a formatter from its
+local name alone.
 
 At translation boundaries, enable the typed `local/i18n-consistency` check to reject native `Date` values supplied directly as interpolation options. Formatting the date belongs to the existing formatter before interpolation; otherwise the translation may expose JavaScript's date string and the host time zone. Resolve translation bindings and native Date declarations, including aliases and nullable unions; preserve formatted strings and unrelated objects with the same names. Opaque option objects and nested interpolation values require manual review. Verify rejected and valid neighboring cases through the application's actual configuration.
 
@@ -5265,11 +5279,21 @@ samples/state remain recorded for manual review. Arbitrary transport wrappers,
 action inputs and scalar case data can remain candidates: their meanings are not
 recoverable from assignability alone.
 
+Call-based exclusions stop at the nearest enclosing call. For example,
+`schema.validateSync({ weight: 2 })` can be raw validation input, while the object
+in `schema.validateSync(calculate({ weight: 2 }))` is an input to `calculate` and
+still requires review. The same boundary applies to case tables and mock
+consumers; a recognized outer API does not exempt a nearer business call.
+
 Inventory collection exits successfully even with candidates. Missing/invalid
-project or source inputs, compiler diagnostics and tests omitted from the selected
-TypeScript program fail rather than returning a clean empty result. Narrow the
-source explicitly or supply a project that includes its tests; the collector does
-not override tsconfig exclusions.
+project or source inputs, compiler diagnostics, and tests or canonical domain
+type files omitted from the selected TypeScript program fail rather than
+returning a clean empty result. Narrow the source explicitly or supply a project
+that includes both its tests and canonical contracts; the collector does not
+override project exclusions. A source with no canonical contracts is valid;
+silently losing existing contracts through configuration is unavailable analysis.
+Resolve ambient type libraries from the selected project configuration, including
+when the command is invoked from another directory with an explicit root.
 Computed fields, opaque builders, arbitrary dynamic aliases and noncanonical
 local support contracts remain manual obligations. A zero candidate count is not
 proof of correct ownership, unique IDs or complete determinism. Preserve the
@@ -5295,11 +5319,14 @@ reasons or refresh fingerprints merely to make CI pass.
 
 The gate rejects missing, duplicate, stale and orphan decisions. It binds reviews
 to test contents, the effective compiler settings, TypeScript version, the
-collector and validator, lockfile (when present), and all in-source non-test
-program inputs, including transitive type/consumer dependencies. Changing those
-shared inputs conservatively requires re-review of the candidate inventory, even
-when the candidate count stays the same. Paths in fingerprints are relative to
-the selected root so a different checkout location does not invalidate them.
+collector and validator, lockfile (when present), and all in-source program inputs,
+including tests and transitive type/consumer dependencies. Another test can
+export contracts or behavior consumed by a candidate's test. Adding, removing or
+changing any analyzed in-source file conservatively requires re-review of the
+candidate inventory, even when that file has no candidates and the candidate
+count stays the same. This deliberately includes unrelated test changes rather
+than claiming a precise dependency analysis. Paths in fingerprints are relative
+to the selected root so a different checkout location does not invalidate them.
 After examining the changed inputs and all affected decisions, copy the current
 inventory metadata and reviewed file hashes into the ledger; preserve the review
 rationales or revise them with concrete evidence.
@@ -5310,6 +5337,7 @@ collection-only success behavior. A mechanically fresh reason is not proof of
 its semantics. Existing exclusions, opaque builders, dynamic fields and local
 support contracts still require the manual review described above; this gate
 neither infers business ownership nor replaces the normal lint warning budget.
+Inputs outside the selected source are outside this source-fingerprint guarantee.
 
 ### 11.3 Colocate a Test Next to Every File, Covering Errors
 

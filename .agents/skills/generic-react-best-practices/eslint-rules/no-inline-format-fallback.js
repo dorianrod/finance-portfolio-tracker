@@ -57,6 +57,8 @@ export default {
         'Pass the value directly to the existing formatter and configure its fallback options instead of wrapping formatting in a value guard. [helpers-formatter-hooks]',
       inputFallback:
         'Pass the nullable value directly and configure the existing formatter fallback option instead of defaulting its input inline. [helpers-formatter-hooks]',
+      outputFallback:
+        'Configure the existing formatter fallback option instead of replacing its formatted result inline. [helpers-formatter-hooks]',
     },
   },
   create(context) {
@@ -161,6 +163,26 @@ export default {
       return (
         expression?.type === 'CallExpression' && isFormatter(expression.callee)
       )
+    }
+
+    function isFormattedResult(node, seen = new Set()) {
+      const value = unwrap(node)
+      if (!value || seen.has(value)) return false
+      seen.add(value)
+      if (value.type === 'CallExpression' && isFormatterCall(value)) return true
+      return (
+        value.type === 'Identifier' &&
+        isFormattedResult(stableInitializer(sourceCode, value), seen)
+      )
+    }
+
+    function isOutputTextFallback(node, seen = new Set()) {
+      const value = displayExpression(node)
+      if (!value || seen.has(value)) return false
+      seen.add(value)
+      if (value.type === 'Identifier')
+        return isOutputTextFallback(stableInitializer(sourceCode, value), seen)
+      return isTextFallback(value)
     }
 
     function sameValue(leftNode, rightNode) {
@@ -300,6 +322,14 @@ export default {
         )
       },
       LogicalExpression(node) {
+        if (
+          ['||', '??'].includes(node.operator) &&
+          isFormattedResult(node.left) &&
+          isOutputTextFallback(node.right)
+        ) {
+          context.report({ node, messageId: 'outputFallback' })
+          return
+        }
         if (
           ['&&', '||'].includes(node.operator) &&
           unwrap(node.right)?.type === 'CallExpression' &&

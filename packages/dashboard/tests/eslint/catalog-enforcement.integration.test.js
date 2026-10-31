@@ -134,6 +134,14 @@ const cases = [
       "import {useFormatMoney as useCurrency} from '@/shared/helpers/formatters/useFormatMoney'; export function Field({value}: {value: number | null}) {const format = useCurrency();return <span>{format(value, {fallback: 0})}</span>}",
   },
   {
+    rule: 'no-inline-format-fallback',
+    message: 'outputFallback',
+    invalid:
+      "import {useFormatMonthRange as usePeriod} from '@/domains/portfolio/features/wealth/helpers/formatters/useFormatMonthRange'; import text from '@/i18n/i18n'; export function Field({months}: {months:string[]}) {const format=usePeriod(); const label=format(months); return <span>{label || text.t('ui.wealthtab.insufficientHistory')}</span>}",
+    valid:
+      "import {useFormatMonthRange as usePeriod} from '@/domains/portfolio/features/wealth/helpers/formatters/useFormatMonthRange'; import text from '@/i18n/i18n'; export function Field({months}: {months:string[]}) {const format=usePeriod(); const label=format(months,{fallback:text.t('ui.wealthtab.insufficientHistory')}); return <span>{label}</span>}",
+  },
+  {
     rule: 'no-prop-drilling',
     message: 'derivedBusinessProp',
     invalid:

@@ -34,6 +34,44 @@ function lint(body, filename = 'Summary.view.tsx', prelude = imports) {
 
 describe('no-inline-format-fallback', () => {
   it.each([
+    `formatDate(value) || 'No period'`,
+    `formatDate(value) ?? 'No period'`,
+    `formatDate(value) || i18n.t('missing')`,
+    `formatDate(value) || <Text>No period</Text>`,
+  ])('rejects a text fallback on a formatter result: %s', (expression) => {
+    expect(
+      lint(
+        `const formatDate = useFormatDate(); const label = ${expression}`,
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['outputFallback'])
+  })
+
+  it.each([
+    `const period = formatDate(value); const alias = period; return alias || i18n.t('missing')`,
+    `const period = formatDate(value); const missing = 'No period'; return period ?? missing`,
+  ])('follows immutable formatted-result and text aliases: %s', (body) => {
+    expect(
+      lint(
+        `function Label() {const formatDate = useFormatDate(); ${body}}`,
+      ).map(({ messageId }) => messageId),
+    ).toEqual(['outputFallback'])
+  })
+
+  it.each([
+    `const formatDate = useFormatDate(); const label = formatDate(value, {fallback: 'No period'})`,
+    `const formatDate = useFormatDate(); const label = formatDate(value) || <Empty/>`,
+    `const formatDate = useFormatDate(); const empty = <Empty/>; const label = formatDate(value) || empty`,
+    `const formatDate = useFormatDate(); const element = <Text>{formatDate(value)}</Text>; const label = element || 'No period'`,
+    `const formatDate = useFormatDate(); const label = ready ? formatDate(value) : 'No period'`,
+    `const formatDate = useFormatDate(); let period = formatDate(value); period = another; const label = period || 'No period'`,
+    `const formatDate = useFormatDate(); function Label(period) {return period || 'No period'}`,
+    `function formatDate(value) {return value}; const label = formatDate(value) || 'No period'`,
+    `const formatDate = useFormatDate(); const first = second; const second = first; const label = first || 'No period'`,
+  ])('preserves valid or unresolved result conditions: %s', (code) => {
+    expect(lint(code)).toEqual([])
+  })
+
+  it.each([
     `value == null ? '' : formatDate(value)`,
     `value != null ? formatDate(value) : ''`,
     `null === value ? '' : formatDate(value)`,

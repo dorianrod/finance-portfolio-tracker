@@ -152,6 +152,55 @@ describe('complete fixture candidate inventory', () => {
     expect(result.limit).toContain('Candidates are not violations')
   })
 
+  it.each([
+    [
+      'case table',
+      'import {it} from "vitest"; it.each([consume({label:"North",value:20,rank:2})])("case",()=>{})',
+    ],
+    [
+      'validation',
+      'import {schema} from "yup"; schema.validateSync(consume({label:"North",value:20,rank:2}))',
+    ],
+    [
+      'mock factory',
+      'import {makeReading} from "./domains/rentals/mocks/reading.mock"; makeReading(consume({label:"North",value:20,rank:2}))',
+    ],
+  ])('keeps business inputs passed through a call inside %s', (_, code) => {
+    const result = findFixtureCandidates(
+      project(`declare function consume(value:Reading):Reading; ${code}`),
+    )
+    expect(result.candidates).toMatchObject([
+      { code: '{label:"North",value:20,rank:2}' },
+    ])
+    expect(result.excluded).toEqual([])
+  })
+
+  it.each([
+    [
+      'case table alias and record wrapper',
+      'import {it as scenario} from "vitest"; scenario.each([{input:{active:true}}])("case",()=>{})',
+      'parametrized scenario row',
+    ],
+    [
+      'validation array',
+      'import {schema} from "yup"; schema.validateSync([{active:true}])',
+      'raw validation input',
+    ],
+  ])('preserves direct %s exemptions', (_, code, reason) => {
+    const result = findFixtureCandidates(project(code))
+    expect(result.candidates).toEqual([])
+    expect(result.excluded).toMatchObject([{ reason }])
+  })
+
+  it.each([
+    'const runner={each(value:unknown){return value}}; runner.each([{active:true}])',
+    'const schema={validateSync(value:unknown){return value}}; schema.validateSync({active:true})',
+  ])('does not exempt an unrelated library-shaped call: %s', (code) => {
+    const result = findFixtureCandidates(project(code))
+    expect(result.candidates).toHaveLength(1)
+    expect(result.excluded).toEqual([])
+  })
+
   it('respects an unrelated shadowed assertion name', () => {
     const result = findFixtureCandidates(
       project(
@@ -288,6 +337,71 @@ describe('complete fixture candidate inventory', () => {
     const root = project('')
     put(root, 'src/omitted.spec.js', 'const sample = {active:true}')
     expect(() => findFixtureCandidates(root)).toThrow('src/omitted.spec.js')
+  })
+
+  it.each([
+    ['object', 'export type Hidden = {code:string}'],
+    ['scalar', 'export type Hidden = "enabled" | "disabled"'],
+  ])('rejects an omitted canonical %s contract', (_, code) => {
+    const root = project('const sample = {code:"item-1"}')
+    put(root, 'src/domains/rentals/types/hidden.type.ts', code)
+    put(root, 'base.json', JSON.stringify({ exclude: ['**/hidden.type.ts'] }))
+    put(
+      root,
+      'tsconfig.app.json',
+      JSON.stringify({ extends: './base.json', include: ['src'] }),
+    )
+    expect(() => findFixtureCandidates(root)).toThrow(
+      'Canonical contracts missing from the TypeScript project: src/domains/rentals/types/hidden.type.ts',
+    )
+  })
+
+  it('accepts a canonical file imported despite its glob exclusion', () => {
+    const root = project('const sample:Reading={label:"North",value:20,rank:2}')
+    put(
+      root,
+      'tsconfig.app.json',
+      JSON.stringify({ include: ['src'], exclude: ['**/*.type.ts'] }),
+    )
+    expect(findFixtureCandidates(root).candidates).toHaveLength(1)
+  })
+
+  it('accepts a source without any canonical contracts', () => {
+    const root = project('')
+    rmSync(join(root, 'src/domains'), { recursive: true })
+    put(root, 'src/sample.test.ts', 'export {}')
+    expect(findFixtureCandidates(root).contracts).toEqual([])
+  })
+
+  it('binds review inputs to another test that consumes the sample', () => {
+    const root = project(
+      'import {consume} from "./consumer.spec"; consume({label:"North",value:20,rank:2})',
+    )
+    put(
+      root,
+      'src/consumer.spec.ts',
+      'export function consume(value:unknown):unknown {return value}',
+    )
+    const before = findFixtureCandidates(root)
+    put(
+      root,
+      'src/consumer.spec.ts',
+      'export function consume(value:unknown):unknown {return {input:value}}',
+    )
+    const after = findFixtureCandidates(root)
+    expect(after.candidates).toEqual(before.candidates)
+    expect(after.analysis.sourceSha256).not.toBe(before.analysis.sourceSha256)
+  })
+
+  it('binds review inputs to added and removed tests without candidates', () => {
+    const root = project('const sample = {active:true}')
+    const before = findFixtureCandidates(root)
+    put(root, 'src/additional.spec.ts', 'export const scenario = true')
+    const added = findFixtureCandidates(root)
+    expect(added.candidates).toEqual(before.candidates)
+    expect(added.analysis.sourceSha256).not.toBe(before.analysis.sourceSha256)
+    rmSync(join(root, 'src/additional.spec.ts'))
+    expect(findFixtureCandidates(root).analysis).toEqual(before.analysis)
   })
 
   it('keeps review fingerprints independent of the checkout path', () => {

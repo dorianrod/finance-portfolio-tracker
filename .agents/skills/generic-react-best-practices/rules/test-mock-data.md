@@ -134,11 +134,21 @@ samples/state remain recorded for manual review. Arbitrary transport wrappers,
 action inputs and scalar case data can remain candidates: their meanings are not
 recoverable from assignability alone.
 
+Call-based exclusions stop at the nearest enclosing call. For example,
+`schema.validateSync({ weight: 2 })` can be raw validation input, while the object
+in `schema.validateSync(calculate({ weight: 2 }))` is an input to `calculate` and
+still requires review. The same boundary applies to case tables and mock
+consumers; a recognized outer API does not exempt a nearer business call.
+
 Inventory collection exits successfully even with candidates. Missing/invalid
-project or source inputs, compiler diagnostics and tests omitted from the selected
-TypeScript program fail rather than returning a clean empty result. Narrow the
-source explicitly or supply a project that includes its tests; the collector does
-not override tsconfig exclusions.
+project or source inputs, compiler diagnostics, and tests or canonical domain
+type files omitted from the selected TypeScript program fail rather than
+returning a clean empty result. Narrow the source explicitly or supply a project
+that includes both its tests and canonical contracts; the collector does not
+override project exclusions. A source with no canonical contracts is valid;
+silently losing existing contracts through configuration is unavailable analysis.
+Resolve ambient type libraries from the selected project configuration, including
+when the command is invoked from another directory with an explicit root.
 Computed fields, opaque builders, arbitrary dynamic aliases and noncanonical
 local support contracts remain manual obligations. A zero candidate count is not
 proof of correct ownership, unique IDs or complete determinism. Preserve the
@@ -164,11 +174,14 @@ reasons or refresh fingerprints merely to make CI pass.
 
 The gate rejects missing, duplicate, stale and orphan decisions. It binds reviews
 to test contents, the effective compiler settings, TypeScript version, the
-collector and validator, lockfile (when present), and all in-source non-test
-program inputs, including transitive type/consumer dependencies. Changing those
-shared inputs conservatively requires re-review of the candidate inventory, even
-when the candidate count stays the same. Paths in fingerprints are relative to
-the selected root so a different checkout location does not invalidate them.
+collector and validator, lockfile (when present), and all in-source program inputs,
+including tests and transitive type/consumer dependencies. Another test can
+export contracts or behavior consumed by a candidate's test. Adding, removing or
+changing any analyzed in-source file conservatively requires re-review of the
+candidate inventory, even when that file has no candidates and the candidate
+count stays the same. This deliberately includes unrelated test changes rather
+than claiming a precise dependency analysis. Paths in fingerprints are relative
+to the selected root so a different checkout location does not invalidate them.
 After examining the changed inputs and all affected decisions, copy the current
 inventory metadata and reviewed file hashes into the ledger; preserve the review
 rationales or revise them with concrete evidence.
@@ -179,3 +192,4 @@ collection-only success behavior. A mechanically fresh reason is not proof of
 its semantics. Existing exclusions, opaque builders, dynamic fields and local
 support contracts still require the manual review described above; this gate
 neither infers business ownership nor replaces the normal lint warning budget.
+Inputs outside the selected source are outside this source-fingerprint guarantee.

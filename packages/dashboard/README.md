@@ -197,7 +197,7 @@ score describes the reviewed scope with its recorded exceptions.
 For fixture ownership reviews, run `npm run --silent audit:fixtures` and save its
 JSON in the audit dossier. It enumerates complete local sample candidates,
 including composed domain types and small/generated records, through
-`tsconfig.app.json`. Review the candidates and recorded exclusions against their
+`tsconfig.fixtures.json`. Review the candidates and recorded exclusions against their
 actual consumers: typed overrides, raw schema/transport input, expected values
 and explicit scenario/action arguments have different responsibilities. A
 successful inventory does not establish fixture ownership compliance and does
@@ -284,7 +284,11 @@ Fixture ownership reviews run in CI with `npm run audit:fixtures:check`.
 approving them. The versioned `tests/fixtures/ownership-review.json` records the
 reviewed scenario, policy and raw transport cases that intentionally remain
 inline. New candidates or changed source, compiler, tooling or lockfile inputs
-require review. Inspect the inventory, changed definitions, consumers and owning
+require review. The source fingerprint includes all analyzed files in `src`, so
+adding, editing or removing a test without candidates also requires review.
+Canonical domain types omitted from the analysis project fail the inventory;
+an outer case, validation or mock call does not exempt a nearer business input.
+Inspect the inventory, changed definitions, consumers and owning
 mocks before updating its metadata and per-test hashes; correct actual fixture
 defaults in their owning mocks. Do not refresh the ledger simply to obtain a pass.
 The gate does not replace lint or semantic inspection of opaque builders.

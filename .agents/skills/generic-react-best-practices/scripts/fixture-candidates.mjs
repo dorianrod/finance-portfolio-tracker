@@ -28,6 +28,8 @@ export function findFixtureCandidates(root, options = {}) {
     config.config,
     ts.sys,
     resolve(project, '..'),
+    undefined,
+    project,
   )
   if (parsed.errors.length)
     throw new Error(parsed.errors.map(diagnostic).join('\n'))
@@ -39,19 +41,28 @@ export function findFixtureCandidates(root, options = {}) {
     .getSourceFiles()
     .filter((file) => inside(source, file.fileName))
   const tests = sources.filter((file) => TEST_PATH.test(file.fileName))
-  const included = new Set(tests.map((file) => resolve(file.fileName)))
-  const omitted = ts.sys
-    .readDirectory(
-      source,
-      ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'],
-      ['**/node_modules/**'],
-    )
+  const included = new Set(sources.map((file) => resolve(file.fileName)))
+  const sourceFiles = ts.sys.readDirectory(
+    source,
+    ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'],
+    ['**/node_modules/**'],
+  )
+  const omitted = sourceFiles
     .filter((file) => TEST_PATH.test(file) && !included.has(resolve(file)))
     .map(local)
     .sort()
   if (omitted.length)
     throw new Error(
       'Tests missing from the TypeScript project: ' + omitted.join(', '),
+    )
+  const omittedContracts = sourceFiles
+    .filter((file) => canonical(file) && !included.has(resolve(file)))
+    .map(local)
+    .sort()
+  if (omittedContracts.length)
+    throw new Error(
+      'Canonical contracts missing from the TypeScript project: ' +
+        omittedContracts.join(', '),
     )
   for (const file of tests) {
     if (file.parseDiagnostics.length)
@@ -78,11 +89,7 @@ export function findFixtureCandidates(root, options = {}) {
           .join('\n'),
     )
   for (const file of sources) {
-    if (
-      !inside(domainRoot, file.fileName) ||
-      !/[/\\]types[/\\][^/\\]+\.type\.ts$/u.test(file.fileName)
-    )
-      continue
+    if (!canonical(file.fileName)) continue
     for (const node of file.statements) {
       if (!ts.isTypeAliasDeclaration(node) && !ts.isInterfaceDeclaration(node))
         continue
@@ -238,6 +245,9 @@ export function findFixtureCandidates(root, options = {}) {
         )
       )
         return 'raw validation input'
+      // An outer scenario/validation/mock call consumes the result of this
+      // nearer call, not the original object. Leave its input under review.
+      return null
     }
     return null
   }
@@ -287,6 +297,12 @@ export function findFixtureCandidates(root, options = {}) {
   function local(file) {
     return relative(root, file).replaceAll('\\', '/')
   }
+  function canonical(file) {
+    return (
+      inside(domainRoot, file) &&
+      /[/\\]types[/\\][^/\\]+\.type\.ts$/u.test(file)
+    )
+  }
   return {
     schemaVersion: 1,
     source: local(source),
@@ -300,12 +316,11 @@ export function findFixtureCandidates(root, options = {}) {
       compilerOptionsSha256: hash(
         JSON.stringify(parsed.options).replaceAll(root, '<root>'),
       ),
-      // Bind reviews to transitive authored type/consumer inputs, not only the
-      // directly matched alias. Paths are relative so CI checkouts agree.
+      // Tests can also export consumed contracts and behavior. Bind the whole
+      // analyzed source set; paths remain relative so CI checkouts agree.
       sourceSha256: hash(
         JSON.stringify(
           sources
-            .filter((file) => !TEST_PATH.test(file.fileName))
             .map((file) => [local(file.fileName), hash(file.text)])
             .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
         ),
