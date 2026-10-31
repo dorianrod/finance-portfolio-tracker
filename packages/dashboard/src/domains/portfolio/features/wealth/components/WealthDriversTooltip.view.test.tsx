@@ -3,16 +3,11 @@ import '@/i18n/i18n'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { makeWealthDriverPoint } from '@/domains/portfolio/features/wealth/mocks/wealthDriverPoint.mock'
+
 import { DriversTooltip } from './WealthDriversTooltip.view'
 
-const point = {
-  date: new Date('2026-09-30T00:00:00Z'),
-  savings_delta: 100,
-  perf_delta: 20,
-  cumulative_savings: 100,
-  cumulative_performance: 20,
-  cumulative_change: 120,
-}
+const point = makeWealthDriverPoint()
 
 describe('DriversTooltip', () => {
   it.each([point.date, point.date.getTime(), '2026-09-30'])(

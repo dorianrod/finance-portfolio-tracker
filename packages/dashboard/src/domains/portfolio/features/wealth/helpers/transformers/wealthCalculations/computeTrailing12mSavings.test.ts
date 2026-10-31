@@ -6,9 +6,8 @@ import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savin
 
 describe('computeTrailing12mSavings', () => {
   it('sums the trailing 12-month window for each of the last 12 months', () => {
-    const points: SavingCapacityPoint[] = Array.from(
-      { length: 24 },
-      (_, i) => ({
+    const points: SavingCapacityPoint[] = Array.from({ length: 24 }, (_, i) =>
+      fixtureSavingCapacityPoint({
         date: new Date(Date.UTC(2024, i, 1)),
         savings_delta: 100,
         perf_delta: 10,

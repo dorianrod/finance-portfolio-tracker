@@ -5234,6 +5234,44 @@ does not prove a fixture. Inventory complete sample baselines and factories,
 including valid-looking typed ones, separately from cast/clock diagnostics.
 Do not mark placement reviewed merely because typing and determinism pass.
 
+### Complete sample inventory
+
+When auditing fixture ownership, run the following from the consuming root (or
+use its configured command alias):
+
+```sh
+react-best-practices-fixtures --project <config.json>
+```
+
+This inventory complements the existing ESLint check; it does not assign a violation
+from a structural type match. Inspect every candidate's definition, consumers and
+nearest owning mocks, retaining explicit case parameters and raw transport input
+when they are not separately maintained fixture defaults.
+
+The command enumerates test object literals against domain-owned canonical type
+contracts using the actual TypeScript project. It includes inferred or annotated
+values, generated rows, imported aliases, interfaces, mapped object contracts,
+intersection inputs and object variants of unions. It has no minimum field count
+and does not restrict types to the plain `Object` flag. A composed contextual
+input can satisfy two contracts despite fresh-literal excess-property checks
+against either constituent on its own.
+
+The JSON records test/contract content hashes, locations, source expressions,
+resolved contracts, contextual types, candidates and explicit exclusion reasons.
+Supported expected assertion values (including aliases and named expected data),
+typed `Partial` overrides, owning-mock consumers, parametrized case rows and
+recognized Yup validation inputs are distinguished. Spreads composing existing
+samples/state remain recorded for manual review. Arbitrary transport wrappers,
+action inputs and scalar case data can remain candidates: their meanings are not
+recoverable from assignability alone.
+
+Inventory collection exits successfully even with candidates. Missing/invalid
+project or source inputs fail rather than returning a clean empty result.
+Computed fields, opaque builders, arbitrary dynamic aliases and noncanonical
+local support contracts remain manual obligations. A zero candidate count is not
+proof of correct ownership, unique IDs or complete determinism. Preserve the
+normal full-project lint gate and inspect these remaining obligations separately.
+
 ### 11.3 Colocate a Test Next to Every File, Covering Errors
 
 **Impact: MEDIUM (untested files and happy-path-only tests hide regressions in business logic)**

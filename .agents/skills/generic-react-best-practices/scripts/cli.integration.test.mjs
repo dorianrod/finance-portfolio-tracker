@@ -124,3 +124,32 @@ it('checks the supplied catalog rather than a catalog relative to the installed 
   expect(result.status, result.stderr).toBe(1)
   expect(result.stderr.trim()).toBe('Unused i18n catalog keys:\nunused')
 })
+
+it('collects small composed fixture candidates through the packaged bin symlink', () => {
+  const root = project()
+  mkdirSync(join(root, 'src/domains/shipping/types'), { recursive: true })
+  writeFileSync(
+    join(root, 'src/domains/shipping/types/parcel.type.ts'),
+    'export type Parcel = {weight:number} & {tracking:string}',
+  )
+  writeFileSync(
+    join(root, 'src/parcel.test.ts'),
+    'const sample = {weight:20,tracking:"parcel-1"}',
+  )
+  writeFileSync(
+    join(root, 'tsconfig.app.json'),
+    JSON.stringify({ compilerOptions: { strict: true }, include: ['src'] }),
+  )
+  const result = run('fixture-candidates.mjs', root, [])
+  expect(result.status, result.stderr).toBe(0)
+  expect(JSON.parse(result.stdout).candidates).toMatchObject([
+    {
+      file: 'src/parcel.test.ts',
+      contracts: [{ name: 'Parcel' }],
+      verdict: 'requires-semantic-review',
+    },
+  ])
+  expect(
+    run('fixture-candidates.mjs', root, ['--project', 'missing.json']).status,
+  ).toBe(2)
+})

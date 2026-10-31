@@ -145,6 +145,25 @@ tests that require actual application paths or dependencies with that applicatio
 and run both suites in CI. Passing either suite, lint or scripts does not replace
 the catalog's required semantic review.
 
+## Fixture ownership inventory
+
+The [fixture rule](../rules/test-mock-data.md) binds ownership review to
+`react-best-practices-fixtures --project <config.json>`, alongside the existing
+`local/test-fixture-contract` check. The CLI accepts `--root`, `--source` and
+`--project`, using the consuming application's TypeScript aliases and canonical
+domain contracts under `<source>/domains/**/types/*.type.ts`.
+
+Save its JSON in the application dossier and disposition every candidate and
+relevant excluded/opaque pattern. Object/intersection/union contracts, small
+records, variables and generated rows are included without a field-count floor.
+Resolved assertion, mock-override, case-table and validation contexts have
+explicit exclusion reasons. Other raw transport or action/configuration values
+can remain review candidates. A successful command reports inventory availability,
+not compliance; candidates do not add lint warnings or declare ownership errors.
+Unavailable/invalid inputs exit 2. Analysis limits and remaining semantic
+obligations belong to the owning rule. Keep application aliases and actual
+results in the consuming project, not this reusable package.
+
 ## Audit colocation and metrics
 
 `test-colocated-tests` binds to `react-best-practices-test-colocation`. Capture

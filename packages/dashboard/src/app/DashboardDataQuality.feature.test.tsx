@@ -3,15 +3,14 @@ import { createStore, Provider } from 'jotai'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
+import { createDataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/mocks/dataQualityTabProps.mock'
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dashboardQuality.atoms'
-import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import { createManualPriceOverride as fixtureManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/mocks/manualPriceOverride.mock'
 import { pipelineError as fixturePipelineError } from '@/domains/portfolio/features/data-quality/shared/mocks/pipelineError.mock'
 
 import { DashboardDataQuality } from './DashboardDataQuality.feature'
 
-const INPUTS: DataQualityTabProps = {
-  positions: [],
+const INPUTS = createDataQualityTabProps({
   errors: [
     fixturePipelineError({
       source: 'prices',
@@ -30,13 +29,7 @@ const INPUTS: DataQualityTabProps = {
       source_file: 'prices.csv',
     }),
   ],
-  fundStatuses: [],
-  fundReport: null,
-  fundHoldings: [],
-  fundSnapshots: [],
-  fundUnresolved: [],
-  rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false },
-}
+})
 
 describe('quality feature composition', () => {
   it.each([

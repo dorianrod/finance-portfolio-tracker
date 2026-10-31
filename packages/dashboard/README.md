@@ -194,6 +194,15 @@ final findings. The skill's project-enforcement and audit-metrics references def
 the input contracts and limits. Presence does not establish test quality, and the
 score describes the reviewed scope with its recorded exceptions.
 
+For fixture ownership reviews, run `npm run --silent audit:fixtures` and save its
+JSON in the audit dossier. It enumerates complete local sample candidates,
+including composed domain types and small/generated records, through
+`tsconfig.app.json`. Review the candidates and recorded exclusions against their
+actual consumers: typed overrides, raw schema/transport input, expected values
+and explicit scenario/action arguments have different responsibilities. A
+successful inventory does not establish fixture ownership compliance and does
+not replace the ordinary lint gate.
+
 The skill packages the custom ESLint rules, shared configuration, analysis scripts
 and generic tests. Follow its [installation and per-rule tool bindings](../../.agents/skills/generic-react-best-practices/references/project-enforcement.md)
 and priority order before choosing audit commands. Run dashboard commands from

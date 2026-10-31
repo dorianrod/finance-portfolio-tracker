@@ -20,7 +20,8 @@
     "audit:cycles": "react-best-practices-cycles --project tsconfig.app.json",
     "audit:colocation": "react-best-practices-test-colocation",
     "audit:metrics": "react-best-practices-audit-metrics",
-    "test:skill": "vitest run --config node_modules/@frontend-engineering/react-best-practices/vitest.config.mjs"
+    "test:skill": "vitest run --config node_modules/@frontend-engineering/react-best-practices/vitest.config.mjs",
+    "audit:fixtures": "react-best-practices-fixtures"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.3.1",

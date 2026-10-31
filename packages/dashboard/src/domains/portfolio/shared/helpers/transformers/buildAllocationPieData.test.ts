@@ -30,7 +30,12 @@ describe('allocation pie presentation', () => {
 
   it('keeps an empty allocation empty', () => {
     expect(
-      buildAllocationPieData({ date: new Date('2026-01-31'), categories: [] }),
+      buildAllocationPieData(
+        fixtureAllocationPoint({
+          date: new Date('2026-01-31'),
+          categories: [],
+        }),
+      ),
     ).toEqual({ total: 0, data: [] })
   })
 })

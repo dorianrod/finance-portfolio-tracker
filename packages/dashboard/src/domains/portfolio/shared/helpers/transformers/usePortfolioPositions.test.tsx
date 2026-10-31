@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { baseFilters as fixtureDashboardFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
+import { makeFundHoldingsData } from '@/domains/portfolio/shared/mocks/fundHoldingsData.mock'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 
 import { usePortfolioPositions } from './usePortfolioPositions'
@@ -11,11 +12,7 @@ const FILTERS: DashboardFilters = fixtureDashboardFilters()
 function Probe() {
   const model = usePortfolioPositions({
     filters: FILTERS,
-    fundData: {
-      holdings: [],
-      history: [],
-      statuses: [],
-    },
+    fundData: makeFundHoldingsData(),
     positions: [],
     rawOperations: [],
     rawPositions: [],

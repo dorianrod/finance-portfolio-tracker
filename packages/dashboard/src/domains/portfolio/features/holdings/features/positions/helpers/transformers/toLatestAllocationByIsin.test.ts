@@ -59,12 +59,12 @@ describe('toLatestAllocationByIsin', () => {
   it('skips rows without an isin', () => {
     expect(
       toLatestAllocationByIsin([
-        {
+        fixtureRawIsinRow({
           snapshot_date: new Date('2024-01-01'),
           isin: '',
           name: 'x',
           values: {},
-        },
+        }),
       ]).size,
     ).toBe(0)
   })

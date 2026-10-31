@@ -1,18 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
-import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type'
+import { makeCumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/mocks/cumulativeConcentrationPoint.mock'
 
 import { CumulativeConcentrationTooltip } from './CumulativeConcentrationTooltip.view'
 
-const point: CumulativeConcentrationPoint = {
-  rank: 7,
-  label: 'Example asset',
-  name: 'Example asset',
-  value: 12_500,
-  weight: 4.25,
-  cumulativeWeight: 70.5,
-}
+const point = makeCumulativeConcentrationPoint()
 
 describe('CumulativeConcentrationTooltip', () => {
   it.each([

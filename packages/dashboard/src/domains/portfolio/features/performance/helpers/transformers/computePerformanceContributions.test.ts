@@ -2,14 +2,12 @@ import { describe, expect, it } from 'vitest'
 
 import { operation } from '@/domains/portfolio/features/performance/mocks/contributionOperation.mock'
 import { position } from '@/domains/portfolio/features/performance/mocks/contributionPosition.mock'
+import { makePerformanceContributionFilters } from '@/domains/portfolio/features/performance/mocks/performanceContributionFilters.mock'
 import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix'
 
 import { computePerformanceContributions } from './computePerformanceContributions'
 
-const noFilters = {
-  accounts: new Set<string>(),
-  accountTypes: new Set<string>(),
-}
+const noFilters = makePerformanceContributionFilters()
 
 describe('computePerformanceContributions', () => {
   it('combines unrealized change, realized gains and income, including closed positions', () => {

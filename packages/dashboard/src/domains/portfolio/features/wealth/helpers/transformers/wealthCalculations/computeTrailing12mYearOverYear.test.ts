@@ -8,11 +8,12 @@ describe('computeTrailing12mYearOverYear', () => {
   it('compares the trailing twelve months with the preceding twelve-month window', () => {
     const points: SavingCapacityPoint[] = Array.from(
       { length: 24 },
-      (_, index) => ({
-        date: new Date(Date.UTC(2024, 10 + index, 28)),
-        savings_delta: index < 12 ? 100 : 150,
-        perf_delta: index < 12 ? 50 : -25,
-      }),
+      (_, index) =>
+        fixtureSavingCapacityPoint({
+          date: new Date(Date.UTC(2024, 10 + index, 28)),
+          savings_delta: index < 12 ? 100 : 150,
+          perf_delta: index < 12 ? 50 : -25,
+        }),
     )
     const result = computeTrailing12mYearOverYear(points)
 
@@ -83,11 +84,12 @@ describe('computeTrailing12mYearOverYear', () => {
   it('anchors the trailing comparison at the selected end date', () => {
     const points: SavingCapacityPoint[] = Array.from(
       { length: 36 },
-      (_, index) => ({
-        date: new Date(Date.UTC(2023, index, 28)),
-        savings_delta: index < 24 ? 100 : 999,
-        perf_delta: index < 24 ? 10 : 999,
-      }),
+      (_, index) =>
+        fixtureSavingCapacityPoint({
+          date: new Date(Date.UTC(2023, index, 28)),
+          savings_delta: index < 24 ? 100 : 999,
+          perf_delta: index < 24 ? 10 : 999,
+        }),
     )
     const result = computeTrailing12mYearOverYear(
       points,

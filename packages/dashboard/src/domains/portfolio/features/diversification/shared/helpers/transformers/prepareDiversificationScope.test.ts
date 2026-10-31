@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import { makePosition } from '@/domains/portfolio/shared/mocks/position.mock'
+import { rawData as makeRawData } from '@/domains/portfolio/shared/mocks/rawIsinData.mock'
 import { isinRow as fixtureRawIsinRow } from '@/domains/portfolio/shared/mocks/rawIsinRow.mock'
-import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
 import { prepareDiversificationScope } from './prepareDiversificationScope'
@@ -23,13 +23,12 @@ const row: RawIsinRow = fixtureRawIsinRow({
   values: { Equity: 100 },
 })
 const rows = [row, { ...row, account: 'savings', account_type: 'Savings' }]
-const rawData: RawIsinData = {
+const rawData = makeRawData({
   geo: rows,
   secteur: rows,
   currency: rows,
   classe: rows,
-  loading: false,
-}
+})
 
 describe('common diversification scope', () => {
   it('gives both analyses applicable positions and excludes savings from every allocation dimension', () => {

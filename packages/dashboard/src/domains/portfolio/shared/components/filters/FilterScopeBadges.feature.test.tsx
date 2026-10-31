@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
 import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import { makeDashboardData } from '@/domains/portfolio/shared/mocks/dashboardData.mock'
 import { filters } from '@/domains/portfolio/shared/mocks/hiddenClosedFilters.mock'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
@@ -18,12 +19,10 @@ function render(
   const store = createStore()
   store.set(dashboardFiltersAtom, filters)
   const queryClient = new QueryClient()
-  queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {
-    accountLabels: { acc1: 'Main PEA' },
-    positions: [],
-    rawOperations: [],
-    rawPositions: [],
-  })
+  queryClient.setQueryData(
+    portfolioQueryKeys.data('dashboard'),
+    makeDashboardData({ accountLabels: { acc1: 'Main PEA' } }),
+  )
 
   return renderToStaticMarkup(
     <Provider store={store}>
