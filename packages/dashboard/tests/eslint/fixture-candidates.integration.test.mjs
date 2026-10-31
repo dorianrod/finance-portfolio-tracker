@@ -12,9 +12,11 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
     import.meta
       .resolve('@frontend-engineering/react-best-practices/scripts/fixture-candidates.mjs'),
   )
-  const result = spawnSync(process.execPath, [executable, '--root', root], {
-    encoding: 'utf8',
-  })
+  const result = spawnSync(
+    process.execPath,
+    [executable, '--root', root, '--project', 'tsconfig.fixtures.json'],
+    { encoding: 'utf8' },
+  )
   expect(result.status, result.stderr).toBe(0)
   const inventory = JSON.parse(result.stdout)
   const scopeTest =
@@ -22,7 +24,30 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
   const crosshairTest =
     'src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/helpers/presenters/cumulativeConcentrationCrosshair.test.ts'
   expect(inventory.source).toBe('src')
-  expect(inventory.project).toBe('tsconfig.app.json')
+  const reviewed = spawnSync(
+    process.execPath,
+    [
+      executable,
+      '--root',
+      root,
+      '--project',
+      'tsconfig.fixtures.json',
+      '--review',
+      'tests/fixtures/ownership-review.json',
+    ],
+    { encoding: 'utf8' },
+  )
+  expect(reviewed.status, reviewed.stderr || reviewed.stdout).toBe(0)
+  expect(JSON.parse(reviewed.stdout)).toMatchObject({
+    status: 'reviewed',
+    reviewed: 15,
+    pending: [],
+    stale: [],
+  })
+  expect(inventory.project).toBe('tsconfig.fixtures.json')
+  expect(inventory.testFiles.map((row) => row.file)).toContain(
+    'src/shared/ui/storybook/catalog.test.ts',
+  )
   expect(inventory.testFiles).toContainEqual({
     file: scopeTest,
     sha256: createHash('sha256')
@@ -54,4 +79,4 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
       reason: 'explicit Partial override',
     }),
   )
-}, 15000)
+}, 60000)

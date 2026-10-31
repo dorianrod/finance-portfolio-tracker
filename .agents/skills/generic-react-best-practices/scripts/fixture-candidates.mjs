@@ -2,10 +2,15 @@
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { isAbsolute, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parseArgs } from 'node:util'
 
 import ts from 'typescript'
 
-import { isMain, projectOptions } from './project-options.mjs'
+import { reviewFixtureCandidates } from './fixture-review.mjs'
+import { isMain } from './project-options.mjs'
+
+const TEST_PATH = /\.(?:test|spec)\.[cm]?[jt]sx?$|[/\\]__tests__[/\\]/u
 
 export function findFixtureCandidates(root, options = {}) {
   root = resolve(root)
@@ -33,9 +38,45 @@ export function findFixtureCandidates(root, options = {}) {
   const sources = program
     .getSourceFiles()
     .filter((file) => inside(source, file.fileName))
-  const tests = sources.filter((file) =>
-    /\.(?:test|spec)\.[cm]?[jt]sx?$|[/\\]__tests__[/\\]/u.test(file.fileName),
-  )
+  const tests = sources.filter((file) => TEST_PATH.test(file.fileName))
+  const included = new Set(tests.map((file) => resolve(file.fileName)))
+  const omitted = ts.sys
+    .readDirectory(
+      source,
+      ['.ts', '.tsx', '.mts', '.cts', '.js', '.jsx', '.mjs', '.cjs'],
+      ['**/node_modules/**'],
+    )
+    .filter((file) => TEST_PATH.test(file) && !included.has(resolve(file)))
+    .map(local)
+    .sort()
+  if (omitted.length)
+    throw new Error(
+      'Tests missing from the TypeScript project: ' + omitted.join(', '),
+    )
+  for (const file of tests) {
+    if (file.parseDiagnostics.length)
+      throw new Error(
+        'Cannot inspect invalid test source: ' + local(file.fileName),
+      )
+  }
+  const diagnostics = ts.getPreEmitDiagnostics(program)
+  if (diagnostics.length)
+    throw new Error(
+      'Cannot inspect invalid TypeScript project:\n' +
+        diagnostics
+          .map((value) => {
+            const location =
+              value.file && value.start !== undefined
+                ? local(value.file.fileName) +
+                  ':' +
+                  (value.file.getLineAndCharacterOfPosition(value.start).line +
+                    1) +
+                  ': '
+                : ''
+            return location + diagnostic(value)
+          })
+          .join('\n'),
+    )
   for (const file of sources) {
     if (
       !inside(domainRoot, file.fileName) ||
@@ -74,10 +115,6 @@ export function findFixtureCandidates(root, options = {}) {
   const candidates = [],
     excluded = []
   for (const file of tests) {
-    if (file.parseDiagnostics.length)
-      throw new Error(
-        'Cannot inspect invalid test source: ' + local(file.fileName),
-      )
     const references = new Map()
     function index(node) {
       if (ts.isIdentifier(node)) {
@@ -254,6 +291,29 @@ export function findFixtureCandidates(root, options = {}) {
     schemaVersion: 1,
     source: local(source),
     project: local(project),
+    analysis: {
+      typescript: ts.version,
+      collectorSha256: hash(readFileSync(fileURLToPath(import.meta.url))),
+      reviewerSha256: hash(
+        readFileSync(new URL('./fixture-review.mjs', import.meta.url)),
+      ),
+      compilerOptionsSha256: hash(
+        JSON.stringify(parsed.options).replaceAll(root, '<root>'),
+      ),
+      // Bind reviews to transitive authored type/consumer inputs, not only the
+      // directly matched alias. Paths are relative so CI checkouts agree.
+      sourceSha256: hash(
+        JSON.stringify(
+          sources
+            .filter((file) => !TEST_PATH.test(file.fileName))
+            .map((file) => [local(file.fileName), hash(file.text)])
+            .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+        ),
+      ),
+      lockfileSha256: existsSync(resolve(root, 'package-lock.json'))
+        ? hash(readFileSync(resolve(root, 'package-lock.json')))
+        : null,
+    },
     testFiles: tests
       .map((file) => ({ file: local(file.fileName), sha256: hash(file.text) }))
       .sort((a, b) => a.file.localeCompare(b.file)),
@@ -333,11 +393,23 @@ function member(node) {
 
 if (isMain(import.meta.url)) {
   try {
-    const options = projectOptions()
-    process.stdout.write(
-      JSON.stringify(findFixtureCandidates(options.root, options), null, 2) +
-        '\n',
-    )
+    const { values } = parseArgs({
+      options: {
+        root: { type: 'string', default: process.cwd() },
+        source: { type: 'string', default: 'src' },
+        project: { type: 'string', default: 'tsconfig.app.json' },
+        review: { type: 'string' },
+      },
+    })
+    const inventory = findFixtureCandidates(values.root, values)
+    const result = values.review
+      ? reviewFixtureCandidates(
+          inventory,
+          JSON.parse(readFileSync(resolve(values.root, values.review), 'utf8')),
+        )
+      : inventory
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n')
+    if (values.review && result.status !== 'reviewed') process.exitCode = 1
   } catch (error) {
     process.stderr.write(
       (error instanceof Error ? error.message : String(error)) + '\n',

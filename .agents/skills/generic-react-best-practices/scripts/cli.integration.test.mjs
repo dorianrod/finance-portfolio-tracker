@@ -132,6 +132,11 @@ it('collects small composed fixture candidates through the packaged bin symlink'
     join(root, 'src/domains/shipping/types/parcel.type.ts'),
     'export type Parcel = {weight:number} & {tracking:string}',
   )
+  mkdirSync(join(root, 'src/domains/shipping/mocks'), { recursive: true })
+  writeFileSync(
+    join(root, 'src/domains/shipping/mocks/parcel.mock.ts'),
+    'import type {Parcel} from "../types/parcel.type"; export function makeParcel(overrides:Partial<Parcel>={}):Parcel {return {weight:20,tracking:"parcel-1",...overrides}}',
+  )
   writeFileSync(
     join(root, 'src/parcel.test.ts'),
     'const sample = {weight:20,tracking:"parcel-1"}',
@@ -152,4 +157,82 @@ it('collects small composed fixture candidates through the packaged bin symlink'
   expect(
     run('fixture-candidates.mjs', root, ['--project', 'missing.json']).status,
   ).toBe(2)
-})
+
+  const inventory = JSON.parse(result.stdout)
+  const review = {
+    schemaVersion: 1,
+    source: inventory.source,
+    project: inventory.project,
+    analysis: inventory.analysis,
+    reviews: inventory.candidates.map(({ file, line, column }) => ({
+      file,
+      line,
+      column,
+      sha256: inventory.testFiles.find((row) => row.file === file).sha256,
+      decision: 'keep',
+      reason:
+        'Explicit isolated review supplied to test binding and freshness only.',
+    })),
+  }
+  writeFileSync(join(root, 'reviews.json'), JSON.stringify(review))
+  const accepted = run('fixture-candidates.mjs', root, [
+    '--review',
+    'reviews.json',
+  ])
+  expect(accepted.status, accepted.stderr).toBe(0)
+  expect(JSON.parse(accepted.stdout)).toMatchObject({
+    status: 'reviewed',
+    reviewed: 1,
+  })
+
+  writeFileSync(
+    join(root, 'src/new.test.ts'),
+    'const added = {weight:30,tracking:"parcel-2"}',
+  )
+  const added = run('fixture-candidates.mjs', root, [
+    '--review',
+    'reviews.json',
+  ])
+  expect(added.status, added.stderr).toBe(1)
+  expect(JSON.parse(added.stdout).pending).toMatchObject([
+    { file: 'src/new.test.ts' },
+  ])
+
+  writeFileSync(
+    join(root, 'src/new.test.ts'),
+    'import {makeParcel} from "./domains/shipping/mocks/parcel.mock"; makeParcel({weight:30})',
+  )
+  const owned = run('fixture-candidates.mjs', root, [
+    '--review',
+    'reviews.json',
+  ])
+  expect(owned.status, owned.stderr).toBe(0)
+
+  writeFileSync(join(root, 'reviews.json'), '{')
+  expect(
+    run('fixture-candidates.mjs', root, ['--review', 'reviews.json']).status,
+  ).toBe(2)
+
+  writeFileSync(
+    join(root, 'tsconfig.app.json'),
+    JSON.stringify({ include: ['src'], exclude: ['**/*.test.ts'] }),
+  )
+  const omitted = run('fixture-candidates.mjs', root, [])
+  expect(omitted.status).toBe(2)
+  expect(omitted.stderr).toContain('Tests missing from the TypeScript project')
+
+  writeFileSync(
+    join(root, 'tsconfig.app.json'),
+    JSON.stringify({ include: ['src'] }),
+  )
+  writeFileSync(
+    join(root, 'src/new.test.ts'),
+    'import {build} from "./missing"; build()',
+  )
+  const unresolved = run('fixture-candidates.mjs', root, [])
+  expect(unresolved.status).toBe(2)
+  expect(unresolved.stderr).toContain(
+    'Cannot inspect invalid TypeScript project',
+  )
+  expect(unresolved.stdout).toBe('')
+}, 30000)

@@ -21,7 +21,8 @@
     "audit:colocation": "react-best-practices-test-colocation",
     "audit:metrics": "react-best-practices-audit-metrics",
     "test:skill": "vitest run --config node_modules/@frontend-engineering/react-best-practices/vitest.config.mjs",
-    "audit:fixtures": "react-best-practices-fixtures"
+    "audit:fixtures": "react-best-practices-fixtures --project tsconfig.fixtures.json",
+    "audit:fixtures:check": "react-best-practices-fixtures --project tsconfig.fixtures.json --review tests/fixtures/ownership-review.json"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.3.1",

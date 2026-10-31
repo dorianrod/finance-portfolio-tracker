@@ -160,9 +160,19 @@ Resolved assertion, mock-override, case-table and validation contexts have
 explicit exclusion reasons. Other raw transport or action/configuration values
 can remain review candidates. A successful command reports inventory availability,
 not compliance; candidates do not add lint warnings or declare ownership errors.
-Unavailable/invalid inputs exit 2. Analysis limits and remaining semantic
+Unavailable/invalid inputs exit 2, including compiler diagnostics and tests
+under the selected source that are absent from its TypeScript program. Analysis limits and remaining semantic
 obligations belong to the owning rule. Keep application aliases and actual
 results in the consuming project, not this reusable package.
+
+For repeatable CI review, run the same command with `--review <reviews.json>`.
+Persist explicit per-candidate keep reasons outside ignored audit artifacts,
+using the ledger schema in the owning rule. Input and test fingerprints reject
+stale approvals; missing/orphan reviews fail instead of treating an unchanged
+candidate count as compliance. Review mode exits 1 for pending/stale review,
+2 for malformed/unavailable input, and 0 only for fresh complete decisions.
+There is no automatic approval or refresh command; semantic decisions and opaque
+patterns retain manual review. Keep this gate alongside the normal lint gate.
 
 ## Audit colocation and metrics
 

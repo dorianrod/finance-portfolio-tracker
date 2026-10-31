@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "source": "src",
+  "project": "tsconfig.fixtures.json",
+  "analysis": {
+    "typescript": "6.0.3",
+    "collectorSha256": "f0bda943b99464f9db307381871559895f154fa3748269da86f9694732f30601",
+    "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
+    "compilerOptionsSha256": "eb79ce999fb0848a6b5bcedd63f6162da148ea3fe78ed9d16c774a1876e0741e",
+    "sourceSha256": "48b91393e3e046567d2253e4ccd896fb0314c5f477016adb1daf342dd1f71302",
+    "lockfileSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
+  },
+  "reviews": [
+    {
+      "file": "src/app/services/useResetDashboardFilters.test.tsx",
+      "line": 30,
+      "column": 51,
+      "sha256": "2c35b336e03d69ec3d19ba95b35f0d58c77dbefc2846e20b2e0ff8b8da00da0a",
+      "decision": "keep",
+      "reason": "Explicit state command selects geo/France for the reset behavior; action input rather than a fixture base."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+      "line": 72,
+      "column": 16,
+      "sha256": "f7aac9c38d92f01c66af0c8caa164994d898b052d4a3a2e0432d5ed7bfaf01d0",
+      "decision": "keep",
+      "reason": "Component policy configuration selects filterable/range scope; no independent entity sample defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 7,
+      "column": 36,
+      "sha256": "45831f70517bb12270e7df3ffae513a120f03c28804e8af4a833213483e323ea",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 10,
+      "column": 36,
+      "sha256": "45831f70517bb12270e7df3ffae513a120f03c28804e8af4a833213483e323ea",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 13,
+      "column": 36,
+      "sha256": "45831f70517bb12270e7df3ffae513a120f03c28804e8af4a833213483e323ea",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+      "line": 29,
+      "column": 48,
+      "sha256": "fcac239f1b97e800ead29471276e78afb03ad49b3d5868fd611d8b9c687a38e8",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+      "line": 69,
+      "column": 51,
+      "sha256": "fcac239f1b97e800ead29471276e78afb03ad49b3d5868fd611d8b9c687a38e8",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/computeMatchingIsins.test.ts",
+      "line": 39,
+      "column": 34,
+      "sha256": "4b88cb16be434cd883f2723f6a7bc43aa6b030e204d16e5d971e59f8fa85f73c",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
+      "line": 10,
+      "column": 5,
+      "sha256": "8e04441ee1f7364ee36f974eec63567a3c821e4effb530bd7cf06f2071f5938c",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 247,
+      "column": 7,
+      "sha256": "dc290b7ff9fb9e771e78cdca61fc49aa9001e7c7be28efe380fceba776cec22d",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 257,
+      "column": 7,
+      "sha256": "dc290b7ff9fb9e771e78cdca61fc49aa9001e7c7be28efe380fceba776cec22d",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 16,
+      "column": 17,
+      "sha256": "82f80104b1bdf4c4d4357e13676c921dd95a9a2a61039a0d38632df06e483cce",
+      "decision": "keep",
+      "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 38,
+      "column": 17,
+      "sha256": "82f80104b1bdf4c4d4357e13676c921dd95a9a2a61039a0d38632df06e483cce",
+      "decision": "keep",
+      "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder."
+    },
+    {
+      "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+      "line": 6,
+      "column": 17,
+      "sha256": "35ee4926cd0d91bf479a0f3e5b0e3cf89ca3d1018336f599cd7278ce40bcf561",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+    },
+    {
+      "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+      "line": 9,
+      "column": 5,
+      "sha256": "35ee4926cd0d91bf479a0f3e5b0e3cf89ca3d1018336f599cd7278ce40bcf561",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+    }
+  ]
+}

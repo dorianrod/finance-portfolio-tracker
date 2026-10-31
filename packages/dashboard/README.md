@@ -278,3 +278,13 @@ useful absence guards. `require-await` adds noise to intentionally async network
 mocks; `consistent-type-definitions` conflicts with required dependency interface
 merging, which the local entity rule already handles. Do not solve these cases by
 adding suppressions or widening every optional property.
+
+Fixture ownership reviews run in CI with `npm run audit:fixtures:check`.
+`npm run --silent audit:fixtures` collects candidates and fingerprints without
+approving them. The versioned `tests/fixtures/ownership-review.json` records the
+reviewed scenario, policy and raw transport cases that intentionally remain
+inline. New candidates or changed source, compiler, tooling or lockfile inputs
+require review. Inspect the inventory, changed definitions, consumers and owning
+mocks before updating its metadata and per-test hashes; correct actual fixture
+defaults in their owning mocks. Do not refresh the ledger simply to obtain a pass.
+The gate does not replace lint or semantic inspection of opaque builders.

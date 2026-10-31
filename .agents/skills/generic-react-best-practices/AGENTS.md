@@ -5266,11 +5266,50 @@ action inputs and scalar case data can remain candidates: their meanings are not
 recoverable from assignability alone.
 
 Inventory collection exits successfully even with candidates. Missing/invalid
-project or source inputs fail rather than returning a clean empty result.
+project or source inputs, compiler diagnostics and tests omitted from the selected
+TypeScript program fail rather than returning a clean empty result. Narrow the
+source explicitly or supply a project that includes its tests; the collector does
+not override tsconfig exclusions.
 Computed fields, opaque builders, arbitrary dynamic aliases and noncanonical
 local support contracts remain manual obligations. A zero candidate count is not
 proof of correct ownership, unique IDs or complete determinism. Preserve the
 normal full-project lint gate and inspect these remaining obligations separately.
+
+
+### Repeatable review gate
+
+Collection alone must not be reported as reviewed ownership. Applications can
+require the opt-in review mode in CI:
+
+```sh
+react-best-practices-fixtures --project <config.json> --review <reviews.json>
+```
+
+The versioned ledger has `schemaVersion: 1`, the inventory's `source`, `project`
+and `analysis` values, and a `reviews` array. Each candidate decision records its
+`file`, `line`, `column`, the containing test file's `sha256`, `decision: "keep"`
+and a concrete semantic `reason`. Inspect definitions, consumers and existing
+mocks before retaining an explicit scenario/action/transport value. Correct
+proven inline defaults instead of approving a violation. Do not generate keep
+reasons or refresh fingerprints merely to make CI pass.
+
+The gate rejects missing, duplicate, stale and orphan decisions. It binds reviews
+to test contents, the effective compiler settings, TypeScript version, the
+collector and validator, lockfile (when present), and all in-source non-test
+program inputs, including transitive type/consumer dependencies. Changing those
+shared inputs conservatively requires re-review of the candidate inventory, even
+when the candidate count stays the same. Paths in fingerprints are relative to
+the selected root so a different checkout location does not invalidate them.
+After examining the changed inputs and all affected decisions, copy the current
+inventory metadata and reviewed file hashes into the ledger; preserve the review
+rationales or revise them with concrete evidence.
+
+Review mode exits 0 for fresh complete decisions, 1 for pending/stale review and
+2 for malformed ledgers or unavailable analysis. Inventory-only mode retains its
+collection-only success behavior. A mechanically fresh reason is not proof of
+its semantics. Existing exclusions, opaque builders, dynamic fields and local
+support contracts still require the manual review described above; this gate
+neither infers business ownership nor replaces the normal lint warning budget.
 
 ### 11.3 Colocate a Test Next to Every File, Covering Errors
 

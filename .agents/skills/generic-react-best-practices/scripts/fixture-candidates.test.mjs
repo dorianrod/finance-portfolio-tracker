@@ -209,9 +209,9 @@ describe('complete fixture candidate inventory', () => {
     put(
       root,
       'src/domains/rentals/mocks/example.mock.ts',
-      'const sample={active:true}',
+      'const sample={active:true}; export {}',
     )
-    put(root, 'src/helper.ts', 'const sample={active:true}')
+    put(root, 'src/helper.ts', 'const sample={active:true}; export {}')
     expect(findFixtureCandidates(root).candidates).toEqual([])
   })
 
@@ -242,6 +242,58 @@ describe('complete fixture candidate inventory', () => {
     put(root, 'src/sample.test.ts', 'const value = {')
     expect(() => findFixtureCandidates(root)).toThrow(
       'Cannot inspect invalid test source',
+    )
+  })
+
+  it.each([
+    [
+      'unresolved import',
+      'import {build} from "./missing"; const sample = build()',
+    ],
+    [
+      'invalid assignment',
+      'const sample: Reading = {label:"North",value:"bad",rank:2}',
+    ],
+  ])('rejects unavailable semantic evidence: %s', (_, code) => {
+    expect(() => findFixtureCandidates(project(code))).toThrow(
+      'Cannot inspect invalid TypeScript project',
+    )
+  })
+
+  it.each([
+    'export type Broken = {value: MissingType}',
+    'export type Broken = {',
+  ])('rejects invalid canonical contracts: %s', (code) => {
+    const root = project('const sample = {active:true}')
+    put(root, 'src/domains/rentals/types/broken.type.ts', code)
+    expect(() => findFixtureCandidates(root)).toThrow(
+      'Cannot inspect invalid TypeScript project',
+    )
+  })
+
+  it('rejects tests omitted by inherited project exclusions', () => {
+    const root = project('const sample = {active:true}')
+    put(root, 'base.json', JSON.stringify({ exclude: ['**/*.test.ts'] }))
+    put(
+      root,
+      'tsconfig.app.json',
+      JSON.stringify({ extends: './base.json', include: ['src'] }),
+    )
+    expect(() => findFixtureCandidates(root)).toThrow(
+      'Tests missing from the TypeScript project: src/sample.test.ts',
+    )
+  })
+
+  it('rejects JavaScript tests unavailable to a TypeScript-only project', () => {
+    const root = project('')
+    put(root, 'src/omitted.spec.js', 'const sample = {active:true}')
+    expect(() => findFixtureCandidates(root)).toThrow('src/omitted.spec.js')
+  })
+
+  it('keeps review fingerprints independent of the checkout path', () => {
+    const code = 'const sample = {active:true}'
+    expect(findFixtureCandidates(project(code)).analysis).toEqual(
+      findFixtureCandidates(project(code)).analysis,
     )
   })
 })
