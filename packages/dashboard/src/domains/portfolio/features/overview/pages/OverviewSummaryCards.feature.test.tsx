@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createStore, Provider } from 'jotai'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -25,13 +26,15 @@ describe('OverviewSummaryCards', () => {
       const model = comparison()
       const html = renderToStaticMarkup(
         <Provider store={createStore()}>
-          <OverviewSummaryCards
-            comparison={model}
-            heldConcentration={model.heldConcentration}
-            underlyingConcentration={model.lookThroughConcentration}
-            rollingThreeYearTri={metric(8.42, previous)}
-            irrStatus={status}
-          />
+          <QueryClientProvider client={new QueryClient()}>
+            <OverviewSummaryCards
+              comparison={model}
+              heldConcentration={model.heldConcentration}
+              underlyingConcentration={model.lookThroughConcentration}
+              rollingThreeYearTri={metric(8.42, previous)}
+              irrStatus={status}
+            />
+          </QueryClientProvider>
         </Provider>,
       )
       const irrDetail = html.slice(html.indexOf('IRR · trailing 3y'))
@@ -45,13 +48,15 @@ describe('OverviewSummaryCards', () => {
     const model = comparison()
     const html = renderToStaticMarkup(
       <Provider store={createStore()}>
-        <OverviewSummaryCards
-          comparison={model}
-          heldConcentration={model.heldConcentration}
-          underlyingConcentration={model.lookThroughConcentration}
-          rollingThreeYearTri={metric(8.42, 6.2)}
-          irrStatus="ready"
-        />
+        <QueryClientProvider client={new QueryClient()}>
+          <OverviewSummaryCards
+            comparison={model}
+            heldConcentration={model.heldConcentration}
+            underlyingConcentration={model.lookThroughConcentration}
+            rollingThreeYearTri={metric(8.42, 6.2)}
+            irrStatus="ready"
+          />
+        </QueryClientProvider>
       </Provider>,
     )
 
@@ -83,13 +88,15 @@ describe('OverviewSummaryCards', () => {
     model.lookThroughConcentration = model.heldConcentration
     const html = renderToStaticMarkup(
       <Provider store={createStore()}>
-        <OverviewSummaryCards
-          comparison={model}
-          heldConcentration={model.heldConcentration}
-          underlyingConcentration={model.lookThroughConcentration}
-          rollingThreeYearTri={metric(null, null)}
-          irrStatus="error"
-        />
+        <QueryClientProvider client={new QueryClient()}>
+          <OverviewSummaryCards
+            comparison={model}
+            heldConcentration={model.heldConcentration}
+            underlyingConcentration={model.lookThroughConcentration}
+            rollingThreeYearTri={metric(null, null)}
+            irrStatus="error"
+          />
+        </QueryClientProvider>
       </Provider>,
     )
 

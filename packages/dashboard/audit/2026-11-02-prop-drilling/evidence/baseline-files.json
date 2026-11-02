@@ -1,0 +1,50 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "sha256": "8a8eba8573fd9067e8d30118925a31714b9776d9e0c8d6b222bff4b5bca4d27d"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "sha256": "e53d232db235058bb8728b08d91e4d8331a0fe2874cfd73594e201153f1976d8"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "sha256": "7bee2c272d28926a73d2bb50f036d383adc34464ab6d5387cb0d05d34bcd2891"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "sha256": "6ad6db0d7c0d03eda1c4b4b2383fc78795e096608fdb8906326c0bc604c34383"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "sha256": "d26f229ad25505a6b8371330fdaeef64ca094fb4512925bf1e2357f1dc2cffe6"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "sha256": "f8e5b3699696f9374379a08db690ab7a443cdd96b84c1b4d37852ec50e55b168"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "sha256": "a80bbb3ed34419a4f8de3e74198304138a7ebfd111f801f8e4e98abd2004cda5"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "sha256": "6d279b087b6eebf6bb7495bcf9595aa617216cf4815d9a6e1e7ed188767d8e73"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "sha256": "88ae32ae8a76428f3c5c0e53633064d3bb0f914b8da07b91c2333393c57aff95"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "sha256": "73793f484b3d8ea67ca3f4bc584f755aff4fe634ec3632663663d8d7399d4bff"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "sha256": "603af63ca86cc9af6c549e8034685bf68575abbb02f88d9b10db3ab326d74b59"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "sha256": "df9be8abe4f2baa42415c252e9a8366b3c074cee6ee539cced743c89a6b5f47f"
+  }
+]

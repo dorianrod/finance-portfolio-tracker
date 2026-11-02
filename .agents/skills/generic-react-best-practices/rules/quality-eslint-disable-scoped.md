@@ -10,6 +10,8 @@ tags: eslint, exceptions, review
 
 A nonempty comment does not establish a valid exception. Accept only a demonstrated false positive, a dependency constraint or an exception permitted by the affected rule. Being inconvenient to fix, pre-existing or needed to pass lint is not a technical justification. This rule does not grant exceptions to rules that expressly prohibit suppression.
 
+Prefer removing the exception through a conforming correction. A retained suppression comment must explain **why the code cannot satisfy the rule without that exception**: identify the concrete constraint and why the relevant conforming alternatives fail to preserve the required behavior. Describing what the current code does, its existing ownership, or a preference to avoid refactoring is insufficient. For a verified false positive, explain the detector limitation and why a sound detector correction or conforming boundary cannot remove the suppression. Keep exceptions rare. If the user requires approval, list each proposed exception with that evidence and obtain approval before retaining or introducing it.
+
 ### Applies When
 
 - Authored code contains `eslint-disable`, `eslint-disable-line` or `eslint-disable-next-line`, including tests and tooling.
@@ -26,7 +28,7 @@ for (const entry of entries) {
 **Correct:**
 ```typescript
 for (const entry of entries) {
-  // eslint-disable-next-line no-await-in-loop -- reviewed: 2026-10-27; This writer requires each append to finish before the next write starts.
+  // eslint-disable-next-line no-await-in-loop -- reviewed: 2026-10-27; The append API uses a stateful cursor: parallel writes corrupt ordering, and it exposes no ordered batch operation.
   await writer.append(entry)
 }
 ```

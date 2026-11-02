@@ -1,19 +1,20 @@
 import { ScopeProvider } from 'jotai-scope'
 import { useState } from 'react'
 
+import { getTrailingThreeYearIrr } from '@/domains/portfolio/features/performance/helpers/transformers/getTrailingThreeYearIrr'
 import { useContributionHorizon } from '@/domains/portfolio/features/performance/services/useContributionHorizon'
 import { contributionHorizonAtom } from '@/domains/portfolio/features/performance/stores/contributionHorizon.atoms'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
 import type {
   ContributionHorizon,
-  PerformanceContribution,
   PerformanceContributionSummary,
 } from '@/domains/portfolio/features/performance/types/performanceContributionSummary.type'
-import type {
-  FilterScopeSpec,
-  PeriodScopeMode,
-} from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import type { PeriodScopeMode } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
+import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { Group } from '@/shared/ui/controls/Group.view'
@@ -28,7 +29,7 @@ import { Text } from '@/shared/ui/Text.view'
 import { AssetIrrView } from './AssetIrrView.feature'
 import { ContributionListView } from './ContributionList.view'
 import { ContributionSummaryMetricsView } from './ContributionSummaryMetrics.view'
-import { MetricLabel } from './MetricLabel.feature'
+import { MetricLabel } from './MetricLabel.view'
 
 export function PerformanceContributionCard(props: Props) {
   return (
@@ -46,9 +47,10 @@ function PerformanceContributionContent({
   sinceTracking,
   trailingThreeYears,
   sinceTrackingIrr,
-  trailingThreeYearIrr,
+  history,
   irrStatus,
 }: Props) {
+  const trailingThreeYearIrr = getTrailingThreeYearIrr(history)
   const [view, setView] = useState<PerformanceView>('contribution')
   const { activeHorizon, irr, summary, threeYearUnavailable, setHorizon } =
     useContributionHorizon({
@@ -146,42 +148,11 @@ type Props = {
   trailingThreeYears: PerformanceContributionSummary
   // Missing or insufficient cash flows may not define a since-tracking return.
   sinceTrackingIrr: number | null
-  // The available cash flows may not define a full three-year return.
-  trailingThreeYearIrr: number | null
+  history: PortfolioHistoryPoint[]
   irrStatus: IrrStatus
 }
 
 type PerformanceView = 'contribution' | 'irr'
-
-function ContributionList({
-  title,
-  items,
-  positive,
-  scope,
-}: {
-  title: string
-  items: PerformanceContribution[]
-  positive: boolean
-  scope: FilterScopeSpec
-}) {
-  return (
-    <ContributionListView title={title} items={items} positive={positive}>
-      <ScopedInfoTooltip
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
-        text={
-          positive
-            ? i18n.t(
-                'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
-              )
-            : i18n.t(
-                'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
-              )
-        }
-        scope={scope}
-      />
-    </ContributionListView>
-  )
-}
 
 function ContributionSummaryMetrics({
   summary,
@@ -199,6 +170,13 @@ function ContributionSummaryMetrics({
   threeYearUnavailable: boolean
   onHorizonChange: (horizon: ContributionHorizon) => void
 }) {
+  const scopeContext = useFilterScopeContext()
+
+  const scopeSpec: FilterScopeSpec = {
+    account: 'filterable',
+    period: activeHorizon,
+    effectiveDate: summary.endDate ?? undefined,
+  }
   return (
     <ContributionSummaryMetricsView
       summary={summary}
@@ -214,12 +192,8 @@ function ContributionSummaryMetrics({
           tooltip={i18n.t(
             'ui.performancecontributioncard.annualizedMoneyWeightedReturnOverThisHorizonItAccounts',
           )}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
-          scope={{
-            account: 'filterable',
-            period: activeHorizon,
-            effectiveDate: summary.endDate ?? undefined,
-          }}
+          scope={scopeSpec}
+          scopeContext={scopeContext}
         />
       </ContributionSummaryMetricsView.IrrLabel>
       <ContributionSummaryMetricsView.NetLabel>
@@ -230,12 +204,8 @@ function ContributionSummaryMetrics({
           tooltip={i18n.t(
             'ui.performancecontributioncard.sumOfTheAttributedEuroContributionsAcrossTheSelected',
           )}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.
-          scope={{
-            account: 'filterable',
-            period: activeHorizon,
-            effectiveDate: summary.endDate ?? undefined,
-          }}
+          scope={scopeSpec}
+          scopeContext={scopeContext}
         />
       </ContributionSummaryMetricsView.NetLabel>
     </ContributionSummaryMetricsView>
@@ -249,32 +219,53 @@ function ContributionRankings({
   summary: PerformanceContributionSummary
   scopePeriod: PeriodScopeMode
 }) {
+  const scopeContext = useFilterScopeContext()
+
+  const scopeSpec: FilterScopeSpec = {
+    account: 'filterable',
+    period: scopePeriod,
+    effectiveDate: summary.endDate ?? undefined,
+  }
   return (
     <Grid columns={2} spaceBefore="spacious" gap="spacious">
-      <ContributionList
+      <ContributionListView
         title={i18n.t('ui.performancecontributioncard.topContributors')}
 
         items={summary.contributors}
         positive
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.
-        scope={{
-          account: 'filterable',
-          period: scopePeriod,
-          effectiveDate: summary.endDate ?? undefined,
-        }}
-      />
-      <ContributionList
+      >
+        <InfoTooltip
+          text={i18n.t(
+            'ui.performancecontributioncard.assetsThatCreatedTheMostPortfolioValueOverThe',
+          )}
+        >
+          <InfoTooltip.Footer>
+            <FilterScopePresentation
+              scope={scopeSpec}
+              scopeContext={scopeContext}
+            />
+          </InfoTooltip.Footer>
+        </InfoTooltip>
+      </ContributionListView>
+      <ContributionListView
         title={i18n.t('ui.performancecontributioncard.mainDetractors')}
 
         items={summary.detractors}
         positive={false}
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.
-        scope={{
-          account: 'filterable',
-          period: scopePeriod,
-          effectiveDate: summary.endDate ?? undefined,
-        }}
-      />
+      >
+        <InfoTooltip
+          text={i18n.t(
+            'ui.performancecontributioncard.assetsThatReducedPortfolioValueTheMostOverThe',
+          )}
+        >
+          <InfoTooltip.Footer>
+            <FilterScopePresentation
+              scope={scopeSpec}
+              scopeContext={scopeContext}
+            />
+          </InfoTooltip.Footer>
+        </InfoTooltip>
+      </ContributionListView>
     </Grid>
   )
 }

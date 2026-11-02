@@ -1,12 +1,14 @@
 import { buildAssetIrrRankings } from '@/domains/portfolio/features/performance/helpers/transformers/buildAssetIrrRankings'
 import type { AssetIrrSummary } from '@/domains/portfolio/features/performance/types/assetIrr.type'
+import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
 import { AssetIrrResultsView } from './AssetIrrResults.view'
-import { MetricLabel } from './MetricLabel.feature'
+import { MetricLabel } from './MetricLabel.view'
 
 /*
  * @architecture-decision prepared-asset-irr-results
@@ -23,6 +25,13 @@ export function AssetIrrView({
   summary: AssetIrrSummary
   status: IrrStatus
 }) {
+  const scopeContext = useFilterScopeContext()
+
+  const scopeSpec: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'range',
+    effectiveDate: summary.end_date ?? undefined,
+  }
   if (status === 'loading') {
     return (
       <Layout spaceBefore="spacious">
@@ -60,12 +69,8 @@ export function AssetIrrView({
         tooltip={i18n.t(
           'ui.performancecontributioncard.numberOfAssetsWithEnoughPositiveAndNegativeCash',
         )}
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The asset-IRR result supplies its actual end date; MetricLabel only presents the label and adds live filter badges.
-        scope={{
-          account: 'filterable',
-          period: 'range',
-          effectiveDate: summary.end_date ?? undefined,
-        }}
+        scope={scopeSpec}
+        scopeContext={scopeContext}
       />
     </AssetIrrResultsView>
   )

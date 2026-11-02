@@ -1,0 +1,202 @@
+[
+  {
+    "file": "package.json",
+    "status": "modified",
+    "sha256": "c2347b58607a3dc941ab1abdc44a923dcf185c994da9de0b40dcff3b330bf5f4"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "status": "modified",
+    "sha256": "2e390305011b3d2c135a7a8bb69a090e5090208b1bbb965ff1ad669ddc6a84e6"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature.tsx",
+    "status": "modified",
+    "sha256": "6f30d4ac3a0d9440ffae6c29a9e9fc9cccde3b2e525e6b3367797da99d7683f1"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature.tsx",
+    "status": "deleted",
+    "sha256": null
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "status": "modified",
+    "sha256": "7834a6c10cf7e2f7241969a35e9cdb8a0bb540ebb4ea4ecbb0b5376d82a27efe"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature.test.tsx",
+    "status": "added",
+    "sha256": "53354df0c55150ddf6a887643ea70c4b0b05db7d781623bbbabec21689078faa"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature.tsx",
+    "status": "added",
+    "sha256": "6dc277788c105e8e691213b8f855cef6dae59aeaa0ecf388f9d0258999000bb5"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "status": "modified",
+    "sha256": "fda5105be0992dabbbab40a63b673991b66128df514a4e50001bb9164f3d6835"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "status": "modified",
+    "sha256": "8d800adf16a7025312aff1d43d85bab9b3f17a6fe89783b161ffffcab5b70218"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature.tsx",
+    "status": "deleted",
+    "sha256": null
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "status": "modified",
+    "sha256": "bf6cefe696e5645e5b8bdaf2e15a17cac1620fb68ccd7dcb35c4f516ea24113e"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewCardShell.view.test.tsx",
+    "status": "added",
+    "sha256": "4d4e273bb971d548088f75da1eb18b12afeb144cf4134ae73302e21365ac8892"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewCardShell.view.tsx",
+    "status": "added",
+    "sha256": "0ae2476cdc8719dd4f4cb77d492d60c84d816a607aa4904d2594972f4282f1bd"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.test.tsx",
+    "status": "modified",
+    "sha256": "9bbe433cef93b125c1f7b291e635c2adefe1dcd403184c4306b000bd49beef76"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "status": "modified",
+    "sha256": "dd4318f277379e6b2390d3e239c3e9f30aaed4a76fbfe2652edd092b52c3a3a5"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "status": "modified",
+    "sha256": "0b1599aac5f6d19860390aabd96883618ffd4c6476131451e2d25ec5cdfeabb0"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/PortfolioKpis.feature.test.tsx",
+    "status": "modified",
+    "sha256": "a8e9fa3666f8dcc090df8a7029414f3144d499d0626559ddd8493cd3cc342292"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.test.tsx",
+    "status": "modified",
+    "sha256": "d8ac38a39de2e5fbefe3ee85a7547ec0f750c71a3f8ff94a2cf3d4e7dac5044d"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "status": "modified",
+    "sha256": "f867900a7b1d2017f6146c79764ca7edc071346765dbd7f8b1de75d58c82f11a"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.feature.tsx",
+    "status": "deleted",
+    "sha256": null
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.view.test.tsx",
+    "status": "added",
+    "sha256": "1dce84ff5338c8ce3117794e06422a5a77ec649b9d24a798627cb0e43a3fd57a"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.view.tsx",
+    "status": "added",
+    "sha256": "68c7d560ee7c97f936f13c791fe7dd8e280f2007f3e7ea12b3d05c4ad0489e65"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.test.tsx",
+    "status": "modified",
+    "sha256": "69969ccc25544d64c65f935028fcc98f9445f8ab32f7494f0adc6e516017abf7"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "status": "modified",
+    "sha256": "c9ff247fd6a19e7e5205ac8739931c576056eddc447d945fce3b44bd4de9b951"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature.tsx",
+    "status": "modified",
+    "sha256": "92bb500ee257610ffce5d8c6c94f551e4607ba3ff434900d69e8ce9ad94b4bba"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/getTrailingThreeYearIrr.test.ts",
+    "status": "added",
+    "sha256": "d9136a8cf20e7501a7b558d6f513d6e3117e7320eae1a9facada38af159df241"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/getTrailingThreeYearIrr.ts",
+    "status": "added",
+    "sha256": "0f93fe6b36beec2d6940301c4af037ac22cd352569444d50402c5bce13419d2f"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "status": "modified",
+    "sha256": "17f8b7aa32a32c12001c1b95df84b8bebb5bf324ed4de65b495ebad338b1cd49"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountSelectionRows.view.test.tsx",
+    "status": "added",
+    "sha256": "c23f684dc33b2fe4ae76453fe66216377660987ea384ddb9ba973ff7284fa451"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountSelectionRows.view.tsx",
+    "status": "added",
+    "sha256": "deb5ca512e1c9c4ed9e69c820c28f71ec6f58038f488a04dcc4ea3fef24c76cf"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "status": "modified",
+    "sha256": "cfb8400112e26a1bab9b2293143bc541735ccd2d9eaae870ea33f8350ee5c18a"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "status": "modified",
+    "sha256": "6f4a847f49fb8dd0f11330dc2775dfe28888bad3397b88a8ab8b2cf6dcd13c19"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.tsx",
+    "status": "modified",
+    "sha256": "87200afc9795efefcc3f8928c1beaab20991ad1d3b96e7d381ac56bebe7717a7"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopePresentation.view.test.tsx",
+    "status": "added",
+    "sha256": "e2b9b83ee3ea3f0f4a94cfc0182039936350fbc8eaa13e1fad602dcac3a6bc84"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopePresentation.view.tsx",
+    "status": "added",
+    "sha256": "dcca3303760b6808f2885b66ab2d74c07e4bc3cd3a0dc0bf77e57050d40fe5e1"
+  },
+  {
+    "file": "src/domains/portfolio/shared/services/useFilterScopeContext.test.tsx",
+    "status": "added",
+    "sha256": "9346faf65ecf779083119b0ae5d238cc3773036159c19b8b78883610e5fe8c02"
+  },
+  {
+    "file": "src/domains/portfolio/shared/services/useFilterScopeContext.ts",
+    "status": "added",
+    "sha256": "9037f775e7bc0afc98bfa97cccd6f40de54926f7a5388396422ac0b542228a85"
+  },
+  {
+    "file": "src/domains/portfolio/shared/types/filterScopeContext.type.ts",
+    "status": "added",
+    "sha256": "54ab7b2e08ff0620a9a400097700b3d92e4e0b94245119061d5fdf70a034f32e"
+  },
+  {
+    "file": "tests/eslint/fixture-candidates.integration.test.mjs",
+    "status": "modified",
+    "sha256": "4fb311d2a33eb699829bbe3b6e6496ca4a95e8518f1519d04bd6c707cea01dd0"
+  },
+  {
+    "file": "tests/fixtures/ownership-review.json",
+    "status": "modified",
+    "sha256": "3bd70ce45ffd458e38c3abd4d7120dd4bd4ff0e0bd9718c816abbf00df7d40ac"
+  }
+]

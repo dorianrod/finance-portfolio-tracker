@@ -54,7 +54,6 @@ export function PerformanceTab({
   globalTri: number | null
   irrStatus: IrrStatus
 }) {
-  const rollingTri3y = history[history.length - 1]?.tri_rolling_3y ?? null
   const asOfDate = history.at(-1)?.date
   const contributionFilters = useMemo(
     () => ({
@@ -128,8 +127,7 @@ export function PerformanceTab({
               accountFilters={accountFilters}
             />
             <TrailingThreeYearIrrKpi
-              // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR from its scoped history; the KPI formats that scalar with the shared availability status.
-              value={rollingTri3y}
+              history={history}
               status={irrStatus}
               accountFilters={accountFilters}
             />
@@ -167,8 +165,7 @@ export function PerformanceTab({
         sinceTracking={sinceTrackingContributions}
         trailingThreeYears={trailingThreeYearContributions}
         sinceTrackingIrr={globalTri}
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR once for both the KPI and contribution card; the card consumes that same reporting value.
-        trailingThreeYearIrr={rollingTri3y}
+        history={history}
         irrStatus={irrStatus}
       />
     </div>

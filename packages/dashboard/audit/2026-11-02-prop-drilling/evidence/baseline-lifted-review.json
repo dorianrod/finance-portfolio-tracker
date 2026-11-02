@@ -1,0 +1,352 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"AnalysisReliabilityKpi\" calculates \"CompactDataQualityKpi.rows\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 40,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 49,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"AnalysisReliabilityKpi\" calculates \"CompactDataQualityKpi.ariaLabel\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 53,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 60,
+        "endColumn": 9
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PipelineReliabilityKpi\" calculates \"CompactDataQualityKpi.tone\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 31,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 31,
+        "endColumn": 18
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PipelineReliabilityKpi\" calculates \"CompactDataQualityKpi.rows\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 36,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 52,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PipelineReliabilityKpi\" calculates \"CompactDataQualityKpi.ariaLabel\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 56,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 63,
+        "endColumn": 9
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"DonutCard\" calculates \"ScopedInfoTooltip.text\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 59,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 64,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"DonutCard\" calculates \"ScopedInfoTooltip.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 66,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 70,
+        "endColumn": 13
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"EvoCard\" calculates \"ScopedInfoTooltip.text\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 56,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 58,
+        "endColumn": 14
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PositionBreakdownCell\" calculates \"UnderlyingStatusControl.status\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 78,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 78,
+        "endColumn": 30
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewValueCard\" calculates \"CardShell.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 118,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 122,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewPerformanceCard\" calculates \"ScopedInfoTooltip.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 278,
+        "column": 19,
+        "messageId": "derivedBusinessProp",
+        "endLine": 282,
+        "endColumn": 21
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewConcentrationCard\" calculates \"CardShell.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 344,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 348,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewConcentrationCard\" calculates \"CardShell.eyebrow\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 350,
+        "column": 7,
+        "messageId": "derivedBusinessProp",
+        "endLine": 350,
+        "endColumn": 29
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewConcentrationChart\" calculates \"ScopedInfoTooltip.text\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 45,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 45,
+        "endColumn": 27
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"OverviewConcentrationChart\" calculates \"ScopedInfoTooltip.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 47,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 51,
+        "endColumn": 11
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"AssetIrrView\" calculates \"MetricLabel.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 64,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 68,
+        "endColumn": 11
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"ContributionList\" calculates \"ScopedInfoTooltip.text\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 171,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 179,
+        "endColumn": 10
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"ContributionSummaryMetrics\" calculates \"MetricLabel.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 218,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 222,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"ContributionSummaryMetrics\" calculates \"MetricLabel.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 234,
+        "column": 11,
+        "messageId": "derivedBusinessProp",
+        "endLine": 238,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"ContributionRankings\" calculates \"ContributionList.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 260,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 264,
+        "endColumn": 11
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"ContributionRankings\" calculates \"ContributionList.scope\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 272,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 276,
+        "endColumn": 11
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PerformanceTab\" calculates \"TrailingThreeYearIrrKpi.value\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 132,
+        "column": 15,
+        "messageId": "derivedBusinessProp",
+        "endLine": 132,
+        "endColumn": 35
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Business ownership: \"PerformanceTab\" calculates \"PerformanceContributionCard.trailingThreeYearIrr\" from its props. Pass raw inputs and let the feature component own the calculation, or classify the child as a view.",
+        "line": 171,
+        "column": 9,
+        "messageId": "derivedBusinessProp",
+        "endLine": 171,
+        "endColumn": 44
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"TreeAccountType\" forwards its \"accountLabels\" prop to feature component \"TreeAccountRow.accountLabels\".",
+        "line": 145,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 145,
+        "endColumn": 40
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"TreeAccountType\" forwards its \"onChange\" prop to feature component \"TreeAccountRow.onChange\".",
+        "line": 147,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 147,
+        "endColumn": 30
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"TreeAccountType\" forwards its \"selected\" prop to feature component \"TreeAccountRow.selected\".",
+        "line": 149,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 149,
+        "endColumn": 30
+      }
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "diagnostics": [
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"SelectAccountType\" forwards its \"accountLabels\" prop to feature component \"SelectAccountRow.accountLabels\".",
+        "line": 186,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 186,
+        "endColumn": 40
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"SelectAccountType\" forwards its \"onChange\" prop to feature component \"SelectAccountRow.onChange\".",
+        "line": 188,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 188,
+        "endColumn": 30
+      },
+      {
+        "ruleId": "local/no-prop-drilling",
+        "severity": 2,
+        "message": "Prop drilling: \"SelectAccountType\" forwards its \"selected\" prop to feature component \"SelectAccountRow.selected\".",
+        "line": 190,
+        "column": 11,
+        "messageId": "propDrilling",
+        "endLine": 190,
+        "endColumn": 30
+      }
+    ]
+  }
+]

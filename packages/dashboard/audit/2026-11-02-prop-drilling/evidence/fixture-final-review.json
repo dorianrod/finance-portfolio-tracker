@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "status": "reviewed",
+  "reviewed": 24,
+  "pending": [],
+  "stale": [],
+  "limit": "Verifies fresh, complete explicit decisions for recognized candidates. Ownership reasons and opaque/dynamic builders still require semantic review."
+}

@@ -1,16 +1,19 @@
 import { useFormatIrrKpiValue } from '@/domains/portfolio/features/performance/helpers/formatters/useFormatIrrKpiValue'
+import { getTrailingThreeYearIrr } from '@/domains/portfolio/features/performance/helpers/transformers/getTrailingThreeYearIrr'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { getPerformanceTone } from '@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone'
 import { Kpi } from '@/domains/portfolio/shared/components/kpis/kpi/Kpi.view'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 
 import type { IrrKpiProps } from './portfolioKpis.types'
 
 export function TrailingThreeYearIrrKpi({
-  value,
+  history,
   status = 'ready',
   accountFilters,
-}: IrrKpiProps) {
+}: Omit<IrrKpiProps, 'value'> & { history: PortfolioHistoryPoint[] }) {
+  const value = getTrailingThreeYearIrr(history)
   const formatIrrKpiValue = useFormatIrrKpiValue()
   const formattedValue = formatIrrKpiValue(value, status)
   const hasAccountScope =

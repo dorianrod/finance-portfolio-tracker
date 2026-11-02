@@ -1,8 +1,11 @@
 import { useState } from 'react'
 
 import type { OverviewConcentrationComparison } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
+import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
 import type { ConcentrationMode } from '@/domains/portfolio/shared/types/concentrationMode.type'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import i18n from '@/i18n/i18n'
 
 import { buildOverviewConcentrationRows } from './helpers/presenters/buildOverviewConcentrationRows'
@@ -15,6 +18,8 @@ export function OverviewConcentrationChart({
   heldConcentration: OverviewConcentrationComparison
   underlyingConcentration: OverviewConcentrationComparison
 }) {
+  const scopeContext = useFilterScopeContext()
+
   const [mode, setMode] = useState<ConcentrationMode>('lookThrough')
   const lookThroughDisabled = underlyingConcentration.current == null
   const displayedMode =
@@ -32,6 +37,11 @@ export function OverviewConcentrationChart({
           'ui.overviewcharts.productsAndInstrumentsAsHeldIncludingPortfolioWrappers',
         )
 
+  const scopeSpec: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'as-of',
+    effectiveDate: concentration.current?.date,
+  }
   return (
     <OverviewConcentrationChartView
       presentation={presentation}
@@ -40,16 +50,14 @@ export function OverviewConcentrationChart({
       description={description}
       onModeChange={setMode}
     >
-      <ScopedInfoTooltip
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart chooses held versus underlying explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
-        text={description}
-        // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the concentration snapshot; ScopedInfoTooltip only adds live filter badges to the supplied reporting date.
-        scope={{
-          account: 'filterable',
-          period: 'as-of',
-          effectiveDate: concentration.current?.date,
-        }}
-      />
+      <InfoTooltip text={description}>
+        <InfoTooltip.Footer>
+          <FilterScopePresentation
+            scope={scopeSpec}
+            scopeContext={scopeContext}
+          />
+        </InfoTooltip.Footer>
+      </InfoTooltip>
     </OverviewConcentrationChartView>
   )
 }

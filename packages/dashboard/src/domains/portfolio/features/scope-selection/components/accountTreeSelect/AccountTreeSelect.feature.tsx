@@ -20,6 +20,8 @@ import { Popover } from '@/shared/ui/Popover.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
+import { AccountSelectionRows } from './AccountSelectionRows.view'
+
 export function AccountTreeSelect({
   allAccountTypes,
   accountToType,
@@ -117,33 +119,6 @@ export function AccountTreeSelect({
   )
 }
 
-function SelectAccountRow({
-  account,
-  accountLabels,
-  onChange,
-  selected,
-}: {
-  account: string
-  accountLabels: Record<string, string>
-  onChange: (next: Set<string>) => void
-  selected: Set<string>
-}) {
-  const formatAccountLabel = useFormatAccountLabel()
-  return (
-    <ChoiceRow>
-      <Inline as="span" align="center" gap="default" inset="default">
-        <Checkbox
-          checked={selected.has(account)}
-          onChange={() => onChange(toggle(selected, account))}
-        />
-        <Text variant="caption" tone="muted">
-          {formatAccountLabel(account, { labels: accountLabels })}
-        </Text>
-      </Inline>
-    </ChoiceRow>
-  )
-}
-
 function SelectAccountType({
   accountLabels,
   accounts,
@@ -157,6 +132,13 @@ function SelectAccountType({
   selected: Set<string>
   type: string
 }) {
+  const formatAccountLabel = useFormatAccountLabel()
+  const rows = accounts.map((account) => ({
+    account,
+    label: formatAccountLabel(account, { labels: accountLabels }),
+    checked: selected.has(account),
+  }))
+  const handleToggle = (account: string) => onChange(toggle(selected, account))
   if (accounts.length === 0) return null
   const { allSelected, partiallySelected } = accountTypeSelectionState(
     accounts,
@@ -178,18 +160,11 @@ function SelectAccountType({
           </Text>
         </Inline>
       </ChoiceRow>
-      {accounts.map((account) => (
-        <SelectAccountRow
-          key={account}
-          account={account}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries.
-          accountLabels={accountLabels}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.
-          onChange={onChange}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.
-          selected={selected}
-        />
-      ))}
+      <AccountSelectionRows
+        rows={rows}
+        onToggle={handleToggle}
+        variant="select"
+      />
     </div>
   )
 }

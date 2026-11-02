@@ -75,6 +75,10 @@ function OrdersPageResults() {
 }
 ```
 
+### Remove avoidable exceptions
+
+Before proposing a suppression, examine direct composition (`children` or slots), moving the calculation to its business owner, a genuine view boundary, and direct atom subscriptions for shared client state. Do not use prop spreads, opaque adapters, unnecessary hooks or role renames to hide an unchanged chain. Preserve legitimate direct parent-child APIs. Follow `quality-eslint-disable-scoped`: the comment must establish why the applicable conforming alternatives cannot meet the required behavior, rather than merely describe the current arrangement. A removable wrapper or an inconvenient refactor is not an exception.
+
 ### How to detect the problem
 
 Combine manual data-flow analysis with the project's lint output. Run the linter for the reviewed scope and inspect every warning emitted by a configured prop-drilling rule; the review is incomplete if either the code analysis or the associated warnings are skipped. Treat each warning as a lead rather than automatic proof: fix genuine forwarding chains, preserve legitimate direct parent-child APIs, and use a narrowly scoped suppression with a reason only for a verified false positive.

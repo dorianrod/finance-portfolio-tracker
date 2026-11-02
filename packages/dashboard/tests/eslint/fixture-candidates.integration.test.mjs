@@ -40,7 +40,7 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
   expect(reviewed.status, reviewed.stderr || reviewed.stdout).toBe(0)
   expect(JSON.parse(reviewed.stdout)).toMatchObject({
     status: 'reviewed',
-    reviewed: 16,
+    reviewed: inventory.candidates.length,
     pending: [],
     stale: [],
   })

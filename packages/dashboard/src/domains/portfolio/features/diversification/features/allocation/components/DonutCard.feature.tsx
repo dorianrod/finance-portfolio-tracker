@@ -1,19 +1,20 @@
 import { useAtomValue } from 'jotai'
 import { useCallback, useMemo } from 'react'
 
+import { AllocationPositionsToggle } from '@/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature'
 import { useDashboardDiversificationFilters } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters'
-import { useDashboardDiversificationPositions } from '@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
-import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms'
 import type { AllocationDimension } from '@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import { buildAllocationPieData } from '@/domains/portfolio/shared/helpers/transformers/buildAllocationPieData'
+import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import type { PieEntry } from '@/domains/portfolio/shared/types/pieEntry.type'
 import i18n from '@/i18n/i18n'
 
 import { DonutCardView } from './DonutCard.view'
-import { PositionsToggle } from './PositionsToggle.view'
 
 export function DonutCard({
   title,
@@ -24,10 +25,10 @@ export function DonutCard({
   point: AllocationPoint
   dimension: AllocationDimension
 }) {
+  const scopeContext = useFilterScopeContext()
+
   const activeFilter = useAtomValue(dashboardDiversificationFilterAtom)
-  const positionsOpen = useAtomValue(dashboardDiversificationPositionsOpenAtom)
   const { toggleFilter } = useDashboardDiversificationFilters()
-  const { togglePositions } = useDashboardDiversificationPositions()
   const { total, data } = useMemo(() => buildAllocationPieData(point), [point])
   const selectCategory = useCallback(
     (entry: PieEntry | undefined) => {
@@ -36,6 +37,11 @@ export function DonutCard({
     },
     [dimension, toggleFilter],
   )
+  const scopeSpec: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'as-of',
+    effectiveDate: point.date,
+  }
   return (
     <DonutCardView
       title={title}
@@ -49,26 +55,24 @@ export function DonutCard({
       onSelect={selectCategory}
     >
       <DonutCardView.PositionsControl>
-        {activeFilter?.type === dimension ? (
-          <PositionsToggle open={positionsOpen} onClick={togglePositions} />
-        ) : null}
+        <AllocationPositionsToggle dimension={dimension} />
       </DonutCardView.PositionsControl>
       <DonutCardView.Tooltip>
-        <ScopedInfoTooltip
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges.
+        <InfoTooltip
           text={i18n.t(
             'ui.donutcard.portfolioAllocationByValue0AtTheDisplayedSnapshot',
             {
               value0: title.toLowerCase(),
             },
           )}
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the allocation snapshot; ScopedInfoTooltip only adds live filter badges to its reporting date.
-          scope={{
-            account: 'filterable',
-            period: 'as-of',
-            effectiveDate: point.date,
-          }}
-        />
+        >
+          <InfoTooltip.Footer>
+            <FilterScopePresentation
+              scope={scopeSpec}
+              scopeContext={scopeContext}
+            />
+          </InfoTooltip.Footer>
+        </InfoTooltip>
       </DonutCardView.Tooltip>
     </DonutCardView>
   )

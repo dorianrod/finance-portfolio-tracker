@@ -1,0 +1,63 @@
+{
+  "formulaVersion": "weighted-rule-compliance/v1",
+  "scope": "2026-11-02-prop-drilling/29 reviewed suppressions",
+  "weights": {
+    "CRITICAL": 32,
+    "HIGH": 16,
+    "MEDIUM-HIGH": 8,
+    "MEDIUM": 4,
+    "LOW-MEDIUM": 2,
+    "LOW": 1
+  },
+  "formula": "100 * (1 - openViolatedRuleWeight / applicableRuleWeight)",
+  "score": 33.33,
+  "scoreStatus": "calculated",
+  "applicableRuleWeight": 48,
+  "openViolatedRuleWeight": 32,
+  "openViolatedRuleIds": ["arch-no-prop-drilling"],
+  "coverage": {
+    "selected": 2,
+    "applicable": 2,
+    "pending": []
+  },
+  "unreviewedExceptions": 113,
+  "assurance": "reviewed scope excluding unrevalidated exceptions",
+  "volumes": {
+    "CRITICAL": {
+      "baseline": 7,
+      "open": 7,
+      "resolved": 0
+    },
+    "HIGH": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "MEDIUM-HIGH": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW-MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    }
+  },
+  "otherOpenFindings": {
+    "ambiguity": 0,
+    "prevention-gap": 1,
+    "suggestion": 0
+  },
+  "openAffectedFiles": 12
+}

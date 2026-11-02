@@ -1,0 +1,21 @@
+{
+  "files": 1376,
+  "errors": 0,
+  "warnings": 114,
+  "tracking": 113,
+  "propDrillingSuppressions": 0,
+  "propDrillingDiagnostics": 0,
+  "active": [
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/useBuildPortfolioFilterOptions.ts",
+      "ruleId": "local/review-shared-feature-sharing",
+      "severity": 1,
+      "message": "This shared module has no proven use by multiple features (1 identified; 11 consumers outside the owning feature tree). Review its business owner; application wrappers and tests do not establish sharing. [arch-shared-no-domain-knowledge]",
+      "line": 1,
+      "column": 1,
+      "messageId": "unprovenSharing",
+      "endLine": 41,
+      "endColumn": 1
+    }
+  ]
+}

@@ -7,7 +7,7 @@
     "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
     "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
     "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
-    "sourceSha256": "d222317d2f511f5d58e9a94e852f64257e9fa50f162ee401380cba70bce4694e",
+    "sourceSha256": "957af70933d86b1d5bb3430ec7952aa08602411af8df7a0694fdb5e595157499",
     "lockfileSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
   },
   "reviews": [
@@ -52,6 +52,22 @@
       "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
     },
     {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature.test.tsx",
+      "line": 23,
+      "column": 51,
+      "sha256": "53354df0c55150ddf6a887643ea70c4b0b05db7d781623bbbabec21689078faa",
+      "decision": "keep",
+      "reason": "Explicit atom commands switch matching secteur/Technology to nonmatching geo/France to verify control visibility; these case inputs are not reusable sample defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationPositionsToggle.feature.test.tsx",
+      "line": 33,
+      "column": 51,
+      "sha256": "53354df0c55150ddf6a887643ea70c4b0b05db7d781623bbbabec21689078faa",
+      "decision": "keep",
+      "reason": "Explicit atom commands switch matching secteur/Technology to nonmatching geo/France to verify control visibility; these case inputs are not reusable sample defaults."
+    },
+    {
       "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.test.tsx",
       "line": 28,
       "column": 51,
@@ -84,12 +100,44 @@
       "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
     },
     {
+      "file": "src/domains/portfolio/features/overview/pages/OverviewCardShell.view.test.tsx",
+      "line": 20,
+      "column": 14,
+      "sha256": "4d4e273bb971d548088f75da1eb18b12afeb144cf4134ae73302e21365ac8892",
+      "decision": "keep",
+      "reason": "Explicit filterable/as-of presentation configuration selects the badge behavior under test; the snapshot date is the scenario input, not a sampled financial entity."
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/pages/OverviewCardShell.view.test.tsx",
+      "line": 21,
+      "column": 21,
+      "sha256": "4d4e273bb971d548088f75da1eb18b12afeb144cf4134ae73302e21365ac8892",
+      "decision": "keep",
+      "reason": "Direct composition of production resetFilters with scenario-specific account/date inputs and an empty label dictionary; no independently maintained fixture baseline or financial entity sample."
+    },
+    {
       "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
       "line": 10,
       "column": 5,
       "sha256": "8e04441ee1f7364ee36f974eec63567a3c821e4effb530bd7cf06f2071f5938c",
       "decision": "keep",
       "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.view.test.tsx",
+      "line": 17,
+      "column": 14,
+      "sha256": "1dce84ff5338c8ce3117794e06422a5a77ec649b9d24a798627cb0e43a3fd57a",
+      "decision": "keep",
+      "reason": "Explicit filterable/as-of presentation configuration selects the badge behavior under test; the snapshot date is the scenario input, not a sampled financial entity."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.view.test.tsx",
+      "line": 18,
+      "column": 21,
+      "sha256": "1dce84ff5338c8ce3117794e06422a5a77ec649b9d24a798627cb0e43a3fd57a",
+      "decision": "keep",
+      "reason": "Direct composition of production resetFilters with scenario-specific account/date inputs and an empty label dictionary; no independently maintained fixture baseline or financial entity sample."
     },
     {
       "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
@@ -138,6 +186,22 @@
       "sha256": "35ee4926cd0d91bf479a0f3e5b0e3cf89ca3d1018336f599cd7278ce40bcf561",
       "decision": "keep",
       "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+    },
+    {
+      "file": "src/domains/portfolio/shared/components/filters/FilterScopePresentation.view.test.tsx",
+      "line": 11,
+      "column": 14,
+      "sha256": "e2b9b83ee3ea3f0f4a94cfc0182039936350fbc8eaa13e1fad602dcac3a6bc84",
+      "decision": "keep",
+      "reason": "Explicit filterable/as-of presentation configuration selects the badge behavior under test; the snapshot date is the scenario input, not a sampled financial entity."
+    },
+    {
+      "file": "src/domains/portfolio/shared/components/filters/FilterScopePresentation.view.test.tsx",
+      "line": 16,
+      "column": 21,
+      "sha256": "e2b9b83ee3ea3f0f4a94cfc0182039936350fbc8eaa13e1fad602dcac3a6bc84",
+      "decision": "keep",
+      "reason": "Direct composition of production resetFilters with scenario-specific account/date inputs and an empty label dictionary; no independently maintained fixture baseline or financial entity sample."
     }
   ]
 }

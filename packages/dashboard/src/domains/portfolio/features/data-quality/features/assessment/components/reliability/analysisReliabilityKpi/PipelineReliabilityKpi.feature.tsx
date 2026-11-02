@@ -1,8 +1,12 @@
-import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
+import { useCallback } from 'react'
+
+import { CompactDataQualityKpiView } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.view'
 import { useFormatAnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone'
 import { useFormatPipelineStatus } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus'
 import { pipelineReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone'
+import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
+import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import i18n from '@/i18n/i18n'
 
 export function PipelineReliabilityKpi({
@@ -16,6 +20,11 @@ export function PipelineReliabilityKpi({
   loading?: boolean
   scope: FilterScopeSpec
 }) {
+  const { openDataQuality } = useQualityNavigation()
+  const handleOpenQuality = useCallback(
+    () => openDataQuality('pipeline'),
+    [openDataQuality],
+  )
   const formatReliabilityTone = useFormatAnalysisReliabilityTone()
   const formatPipelineStatus = useFormatPipelineStatus()
   const tone = pipelineReliabilityTone({ errorCount, warningCount, loading })
@@ -26,13 +35,11 @@ export function PipelineReliabilityKpi({
   })
 
   return (
-    <CompactDataQualityKpi
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter derives severity from pipeline counts and loading; CompactDataQualityKpi consumes that semantic tone for presentation and navigation.
+    <CompactDataQualityKpiView
       tone={tone}
       tooltip={i18n.t(
         'ui.analysisreliabilitykpi.importPositionAndMarketDataAnomaliesRelevantToThe',
       )}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats pipeline status and issue counts; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges.
       rows={[
         {
           label: i18n.t('ui.analysisreliabilitykpi.portfolioData'),
@@ -50,9 +57,7 @@ export function PipelineReliabilityKpi({
           tone,
         },
       ]}
-      qualityTheme="pipeline"
-      scope={scope}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.
+      onOpenQuality={handleOpenQuality}
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1ErrorsAndValue2WarningsIn',
         {
@@ -61,6 +66,8 @@ export function PipelineReliabilityKpi({
           value2: warningCount,
         },
       )}
-    />
+    >
+      <FilterScopeBadges {...scope} />
+    </CompactDataQualityKpiView>
   )
 }

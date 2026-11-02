@@ -93,6 +93,10 @@ Apply the naming and placement conventions when creating or moving code. Read th
 
 Mechanically observable conventions require deterministic checks in the consuming application. Verify the effective ESLint configuration with invalid and valid neighboring examples; a convention written in this skill does not install its detector. Keep business ownership and component-role decisions under semantic review. Follow [layout enforcement and coordinated renames](rules/arch-domain-first-layout.md#enforcement-and-coordinated-renames) when normalizing files.
 
+### Exception comments
+
+Prefer conforming corrections over ESLint suppressions. Under [the exception policy](rules/quality-eslint-disable-scoped.md), a retained comment explains why the rule cannot be satisfied without the exception, naming the blocking constraint and rejected conforming alternatives. Describing the current implementation is insufficient. Honor any user requirement to approve proposed exceptions before accepting them.
+
 ### Formatting and sorting
 
 Use the consuming application's committed Prettier policy for layout and the shared ESLint preset for import/export sorting. Read [formatting and sorting](rules/quality-formatting-and-sorting.md) when configuring these tools or changing ordering conventions: it defines the baseline options, default import groups, related type/public-API contracts and coverage limits. The [integration guide](references/project-enforcement.md#formatting-and-sorting) shows separate fix and check commands.

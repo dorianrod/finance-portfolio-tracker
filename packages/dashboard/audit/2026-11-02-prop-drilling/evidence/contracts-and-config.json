@@ -1,0 +1,32 @@
+[
+  {
+    "file": ".agents/skills/generic-react-best-practices/SKILL.md",
+    "baselineSha256": "66552f10259499186b01fcb6175642fde96d6d049329e051f270539032a04c65",
+    "finalSha256": "291fa065a5c7e0320acb3b9f087074ec2d736e821cdb25217405c6a0e0f2fda4"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-no-prop-drilling.md",
+    "baselineSha256": "c128423dc78db7f9d379e0f380a6e8570018765e8fbcf99bf7af2e38c19d7271",
+    "finalSha256": "7f30c77aff61638243c7e396f95ff5e3f69b01cba77e0a8e07f1a47d8475aa9d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md",
+    "baselineSha256": "9697acb1acf15da85c232ed6851e664fbd5a63f657affe61b9f05f814b01b252",
+    "finalSha256": "c61d734a780b47d4e495a572492ec8700cac61b341bfdb2ba9354157d7b0239d"
+  },
+  {
+    "file": "packages/dashboard/package.json",
+    "baselineSha256": "838d3e85fd77dba5504aa291d47572451ce8d5b5e5fed98eb2d0e70c550fa918",
+    "finalSha256": "c2347b58607a3dc941ab1abdc44a923dcf185c994da9de0b40dcff3b330bf5f4"
+  },
+  {
+    "file": "packages/dashboard/eslint.config.js",
+    "baselineSha256": "42b5d2121f78b9dbd5df22808c65e7c4ebfef45394d02d98ee24fe5a9c7d8ded",
+    "finalSha256": "42b5d2121f78b9dbd5df22808c65e7c4ebfef45394d02d98ee24fe5a9c7d8ded"
+  },
+  {
+    "file": "packages/dashboard/package-lock.json",
+    "baselineSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9",
+    "finalSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
+  }
+]

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // @vitest-environment jsdom
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -6,6 +7,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import { assetIrr } from '@/domains/portfolio/features/performance/mocks/assetIrrSummary.mock'
 import { summary } from '@/domains/portfolio/features/performance/mocks/rankedContributionSummary.mock'
+import { makePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
 
 import { PerformanceContributionCard } from './PerformanceContributionCard.feature'
 
@@ -16,18 +18,23 @@ describe('PerformanceContributionCard', () => {
     const user = userEvent.setup()
     render(
       <Provider>
-        <PerformanceContributionCard
-          assetIrr={assetIrr()}
-          assetIrrStatus="ready"
-          sinceTracking={summary()}
-          trailingThreeYears={summary({
-            horizon: 'trailing-3y',
-            startDate: new Date('2023-09-30'),
-          })}
-          sinceTrackingIrr={12.34}
-          trailingThreeYearIrr={8.5}
-          irrStatus="ready"
-        />
+        <QueryClientProvider client={new QueryClient()}>
+          <PerformanceContributionCard
+            assetIrr={assetIrr()}
+            assetIrrStatus="ready"
+            sinceTracking={summary()}
+            trailingThreeYears={summary({
+              horizon: 'trailing-3y',
+              startDate: new Date('2023-09-30'),
+            })}
+            sinceTrackingIrr={12.34}
+            history={[
+              makePortfolioHistoryPoint({ tri_rolling_3y: 99 }),
+              makePortfolioHistoryPoint({ tri_rolling_3y: 8.5 }),
+            ]}
+            irrStatus="ready"
+          />
+        </QueryClientProvider>
       </Provider>,
     )
     expect(
@@ -59,18 +66,20 @@ describe('PerformanceContributionCard', () => {
     const user = userEvent.setup()
     render(
       <Provider>
-        <PerformanceContributionCard
-          assetIrr={assetIrr()}
-          assetIrrStatus="ready"
-          sinceTracking={summary()}
-          trailingThreeYears={summary({
-            horizon: 'trailing-3y',
-            available: false,
-          })}
-          sinceTrackingIrr={12.34}
-          trailingThreeYearIrr={null}
-          irrStatus="ready"
-        />
+        <QueryClientProvider client={new QueryClient()}>
+          <PerformanceContributionCard
+            assetIrr={assetIrr()}
+            assetIrrStatus="ready"
+            sinceTracking={summary()}
+            trailingThreeYears={summary({
+              horizon: 'trailing-3y',
+              available: false,
+            })}
+            sinceTrackingIrr={12.34}
+            history={[]}
+            irrStatus="ready"
+          />
+        </QueryClientProvider>
       </Provider>,
     )
     const trailing = screen.getByRole('button', { name: 'Trailing 3 years' })
@@ -90,15 +99,20 @@ describe('PerformanceContributionCard', () => {
     ({ status, expected }) => {
       render(
         <Provider>
-          <PerformanceContributionCard
-            assetIrr={assetIrr()}
-            assetIrrStatus="ready"
-            sinceTracking={summary()}
-            trailingThreeYears={summary({ horizon: 'trailing-3y' })}
-            sinceTrackingIrr={null}
-            trailingThreeYearIrr={8.5}
-            irrStatus={status}
-          />
+          <QueryClientProvider client={new QueryClient()}>
+            <PerformanceContributionCard
+              assetIrr={assetIrr()}
+              assetIrrStatus="ready"
+              sinceTracking={summary()}
+              trailingThreeYears={summary({ horizon: 'trailing-3y' })}
+              sinceTrackingIrr={null}
+              history={[
+                makePortfolioHistoryPoint({ tri_rolling_3y: 99 }),
+                makePortfolioHistoryPoint({ tri_rolling_3y: 8.5 }),
+              ]}
+              irrStatus={status}
+            />
+          </QueryClientProvider>
         </Provider>,
       )
       expect(screen.getByText(expected)).toBeDefined()

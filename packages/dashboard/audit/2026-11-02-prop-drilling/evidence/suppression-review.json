@@ -1,0 +1,292 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "line": 39,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter normalizes and formats its coverage metric; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges.",
+    "id": "S-01",
+    "family": "F-006",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "KPI adapter calls the existing compact view directly, owns its quality navigation callback, and composes scope badges."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "line": 52,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.",
+    "id": "S-02",
+    "family": "F-006",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "KPI adapter calls the existing compact view directly, owns its quality navigation callback, and composes scope badges."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "line": 30,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter derives severity from pipeline counts and loading; CompactDataQualityKpi consumes that semantic tone for presentation and navigation.",
+    "id": "S-03",
+    "family": "F-006",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "KPI adapter calls the existing compact view directly, owns its quality navigation callback, and composes scope badges."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "line": 35,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter formats pipeline status and issue counts; CompactDataQualityKpi renders the rows and owns quality navigation and live filter badges.",
+    "id": "S-04",
+    "family": "F-006",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "KPI adapter calls the existing compact view directly, owns its quality navigation callback, and composes scope badges."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "line": 55,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.",
+    "id": "S-05",
+    "family": "F-006",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "KPI adapter calls the existing compact view directly, owns its quality navigation callback, and composes scope badges."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "line": 58,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges.",
+    "id": "S-06",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "line": 65,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the allocation snapshot; ScopedInfoTooltip only adds live filter badges to its reporting date.",
+    "id": "S-07",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "line": 55,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart supplies dimension-specific explanatory copy; ScopedInfoTooltip only renders it with live filter badges.",
+    "id": "S-08",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "line": 77,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The table checks action availability; the control receives the matching API entity and owns only popover selection.",
+    "id": "S-09",
+    "family": "F-007",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Existing preview-owning cell reads selection directly and renders the status button view."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "line": 117,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the period-end snapshot; CardShell adds navigation and live filter badges without reinterpreting that reporting date.",
+    "id": "S-10",
+    "family": "F-004",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Card shell is a pure view receiving presentation and callbacks; its caller owns navigation and raw filter subscriptions."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "line": 277,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the comparison end date; ScopedInfoTooltip only adds live filter badges to this trailing-period specification.",
+    "id": "S-11",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "line": 343,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.",
+    "id": "S-12",
+    "family": "F-004",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Card shell is a pure view receiving presentation and callbacks; its caller owns navigation and raw filter subscriptions."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "line": 349,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.",
+    "id": "S-13",
+    "family": "F-004",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Card shell is a pure view receiving presentation and callbacks; its caller owns navigation and raw filter subscriptions."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "line": 44,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart chooses held versus underlying explanatory copy; ScopedInfoTooltip only renders it with live filter badges.",
+    "id": "S-14",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "line": 46,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This chart selects the concentration snapshot; ScopedInfoTooltip only adds live filter badges to the supplied reporting date.",
+    "id": "S-15",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Metric composes InfoTooltip and the filter-scope view; scope subscriptions supply raw inputs without a forwarding feature."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "line": 63,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The asset-IRR result supplies its actual end date; MetricLabel only presents the label and adds live filter badges.",
+    "id": "S-16",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "MetricLabel is a real view, with scope formatting in the filter-scope presentation owner."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 170,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This contribution list selects positive versus negative explanatory copy; ScopedInfoTooltip only renders it with live filter badges.",
+    "id": "S-17",
+    "family": "F-003",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Rankings render ContributionListView directly and compose explanatory text and scope presentation."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 217,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.",
+    "id": "S-18",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "MetricLabel is a real view, with scope formatting in the filter-scope presentation owner."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 233,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The contribution card selects the horizon and summary end date; MetricLabel only presents that specification with live filter badges.",
+    "id": "S-19",
+    "family": "F-002",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "MetricLabel is a real view, with scope formatting in the filter-scope presentation owner."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 259,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.",
+    "id": "S-20",
+    "family": "F-003",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Rankings render ContributionListView directly and compose explanatory text and scope presentation."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 271,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This card supplies the contributor and detractor lists from one summary and reporting horizon; each list only composes its tooltip and rows.",
+    "id": "S-21",
+    "family": "F-003",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Rankings render ContributionListView directly and compose explanatory text and scope presentation."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "line": 131,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR from its scoped history; the KPI formats that scalar with the shared availability status.",
+    "id": "S-22",
+    "family": "F-005",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Each receiving feature accepts raw history and owns latest-return selection through a tested pure selector."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "line": 170,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The page selects the latest three-year IRR once for both the KPI and contribution card; the card consumes that same reporting value.",
+    "id": "S-23",
+    "family": "F-005",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Each receiving feature accepts raw history and owns latest-return selection through a tested pure selector."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "line": 144,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries.",
+    "id": "S-24",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "line": 146,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.",
+    "id": "S-25",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "line": 148,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.",
+    "id": "S-26",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "line": 185,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The controlled account picker accepts caller-defined labels; its local type group composes rows without coupling them to dashboard queries.",
+    "id": "S-27",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "line": 187,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.",
+    "id": "S-28",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "line": 189,
+    "original": "// eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The type group consumes selection and onChange for its bulk checkbox; its direct rows share that controlled API rather than forwarding unused state.",
+    "id": "S-29",
+    "family": "F-001",
+    "status": "corrected",
+    "exception": "none",
+    "outcome": "Group owns selection flags, translated labels and toggle callbacks; the shared rows view receives prepared data only."
+  }
+]

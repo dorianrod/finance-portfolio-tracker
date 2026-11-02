@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 // @vitest-environment jsdom
 import { cleanup, render, screen } from '@testing-library/react'
 import { Provider } from 'jotai'
@@ -13,7 +14,9 @@ describe('AssetIrrView', () => {
   it('shows positive and negative rankings, values and the measured period', () => {
     render(
       <Provider>
-        <AssetIrrView summary={assetIrr()} status="ready" />
+        <QueryClientProvider client={new QueryClient()}>
+          <AssetIrrView summary={assetIrr()} status="ready" />
+        </QueryClientProvider>
       </Provider>,
     )
     expect(screen.queryByText('IRR method')).toBeNull()
@@ -50,7 +53,9 @@ describe('AssetIrrView', () => {
     ({ status, available, expected }) => {
       render(
         <Provider>
-          <AssetIrrView summary={assetIrr({ available })} status={status} />
+          <QueryClientProvider client={new QueryClient()}>
+            <AssetIrrView summary={assetIrr({ available })} status={status} />
+          </QueryClientProvider>
         </Provider>,
       )
       expect(screen.getByText(expected, { exact: false })).toBeDefined()

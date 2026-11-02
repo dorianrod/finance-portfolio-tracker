@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react'
-
 import { useFormatOverviewIrrValue } from '@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue'
 import type {
   ComparedMetric,
@@ -10,9 +8,11 @@ import { getConcentrationTone } from '@/domains/portfolio/features/overview/page
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
 import { PreviousValue } from '@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view'
-import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
-import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
+import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
 import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
+import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
+import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -21,9 +21,10 @@ import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'
-import { MetricCard, type MetricCardAccent } from '@/shared/ui/MetricCard.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
+
+import { OverviewCardShell } from './OverviewCardShell.view'
 
 export function OverviewSummaryCards(props: SummaryCardsProps) {
   return (
@@ -44,8 +45,6 @@ export function OverviewSummaryCards(props: SummaryCardsProps) {
   )
 }
 
-export type OverviewDestination = 'wealth' | 'performance' | 'diversification'
-
 type SummaryCardsProps = {
   comparison: OverviewComparison
   heldConcentration: OverviewConcentrationComparison
@@ -54,74 +53,29 @@ type SummaryCardsProps = {
   irrStatus: IrrStatus
 }
 
-function CardShell({
-  title,
-  description,
-  scope,
-  eyebrow,
-  destination,
-  accent,
-  children,
-}: {
-  title: string
-  description: string
-  scope: FilterScopeSpec
-  eyebrow: string
-  destination: OverviewDestination
-  accent: MetricCardAccent
-  children: ReactNode
-}) {
-  const { navigateTo } = useDashboardNavigation()
-
-  return (
-    <MetricCard
-      accent={accent}
-      onOpen={() => navigateTo(destination)}
-      label={i18n.t('ui.overviewsummarycards.openValue0Details', {
-        value0: title,
-      })}
-    >
-      <MetricCard.Header>
-        <Text variant="prominentEyebrow" tone="subtle">
-          <Layout as="span" flow="block">
-            {eyebrow}
-          </Layout>
-        </Text>
-        <Layout as="span" flow="block" spaceBefore="compact">
-          <Text variant="bodyStrong" tone="secondary">
-            <Inline as="span" align="center">
-              {title}
-              <MetricCard.Action>
-                <ScopedInfoTooltip text={description} scope={scope} />
-              </MetricCard.Action>
-            </Inline>
-          </Text>
-        </Layout>
-      </MetricCard.Header>
-      <MetricCard.Body>{children}</MetricCard.Body>
-    </MetricCard>
-  )
-}
-
 function OverviewValueCard({
   comparison,
 }: Pick<SummaryCardsProps, 'comparison'>) {
+  const scopeContext = useFilterScopeContext()
+
   const formatMoney = useFormatMoney()
 
+  const { navigateTo } = useDashboardNavigation()
+  const metricScope: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'as-of',
+    effectiveDate: comparison.windows.current.end,
+  }
   return (
-    <CardShell
+    <OverviewCardShell
       title={i18n.t('ui.overviewsummarycards.portfolioValue')}
       description={i18n.t(
         'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTaxMeasuredAtThe',
       )}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the period-end snapshot; CardShell adds navigation and live filter badges without reinterpreting that reporting date.
-      scope={{
-        account: 'filterable',
-        period: 'as-of',
-        effectiveDate: comparison.windows.current.end,
-      }}
+      scope={metricScope}
+      scopeContext={scopeContext}
       eyebrow={i18n.t('ui.overviewsummarycards.atPeriodEnd')}
-      destination="wealth"
+      onOpen={() => navigateTo('wealth')}
       accent={'highlight'}
     >
       <Text variant="metric" tone="default" numeric>
@@ -148,24 +102,32 @@ function OverviewValueCard({
           </Layout>
         </Text>
       </Layout>
-    </CardShell>
+    </OverviewCardShell>
   )
 }
 
 function OverviewContributionsCard({
   comparison,
 }: Pick<SummaryCardsProps, 'comparison'>) {
+  const scopeContext = useFilterScopeContext()
+
   const formatMoney = useFormatMoney()
 
+  const { navigateTo } = useDashboardNavigation()
+  const metricScope: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'comparison-range',
+  }
   return (
-    <CardShell
+    <OverviewCardShell
       title={i18n.t('ui.overviewsummarycards.netContributions')}
       description={i18n.t(
         'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriodComparedWithThe',
       )}
-      scope={{ account: 'filterable', period: 'comparison-range' }}
+      scope={metricScope}
+      scopeContext={scopeContext}
       eyebrow={i18n.t('ui.overviewsummarycards.cashFlow')}
-      destination="wealth"
+      onOpen={() => navigateTo('wealth')}
       accent="accent"
     >
       <Text variant="metric" tone="accent" numeric>
@@ -192,7 +154,7 @@ function OverviewContributionsCard({
           </Layout>
         </Text>
       </Layout>
-    </CardShell>
+    </OverviewCardShell>
   )
 }
 
@@ -204,6 +166,8 @@ function OverviewPerformanceCard({
   SummaryCardsProps,
   'comparison' | 'rollingThreeYearTri' | 'irrStatus'
 >) {
+  const scopeContext = useFilterScopeContext()
+
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const formatOverviewIrrValue = useFormatOverviewIrrValue()
@@ -212,15 +176,26 @@ function OverviewPerformanceCard({
       ? rollingThreeYearTri.delta
       : null
 
+  const { navigateTo } = useDashboardNavigation()
+  const metricScope: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'comparison-range',
+  }
+  const trailingReturnScope: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'trailing-3y',
+    effectiveDate: comparison.windows.current.end,
+  }
   return (
-    <CardShell
+    <OverviewCardShell
       title={i18n.t('ui.overviewsummarycards.performanceIncome')}
       description={i18n.t(
         'ui.overviewsummarycards.marketPerformanceAndPassiveIncomeGeneratedDuringThePeriod',
       )}
-      scope={{ account: 'filterable', period: 'comparison-range' }}
+      scope={metricScope}
+      scopeContext={scopeContext}
       eyebrow={i18n.t('ui.overviewsummarycards.periodResult')}
-      destination="performance"
+      onOpen={() => navigateTo('performance')}
       accent="positive"
     >
       <Inline as="span" align="baseline" justify="between" gap="default">
@@ -270,17 +245,18 @@ function OverviewPerformanceCard({
             <Inline as="span" align="center">
               {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
               <Surface variant="interactiveOverlay" as="span">
-                <ScopedInfoTooltip
+                <InfoTooltip
                   text={i18n.t(
                     'ui.overviewsummarycards.annualizedMoneyWeightedReturnOverTheThreeYearsEnding',
                   )}
-                  // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview selects the comparison end date; ScopedInfoTooltip only adds live filter badges to this trailing-period specification.
-                  scope={{
-                    account: 'filterable',
-                    period: 'trailing-3y',
-                    effectiveDate: comparison.windows.current.end,
-                  }}
-                />
+                >
+                  <InfoTooltip.Footer>
+                    <FilterScopePresentation
+                      scope={trailingReturnScope}
+                      scopeContext={scopeContext}
+                    />
+                  </InfoTooltip.Footer>
+                </InfoTooltip>
               </Surface>
             </Inline>
             <Text
@@ -313,7 +289,7 @@ function OverviewPerformanceCard({
           </Inline>
         </Surface>
       </Layout>
-    </CardShell>
+    </OverviewCardShell>
   )
 }
 
@@ -325,6 +301,8 @@ function OverviewConcentrationCard({
   SummaryCardsProps,
   'comparison' | 'heldConcentration' | 'underlyingConcentration'
 >) {
+  const scopeContext = useFilterScopeContext()
+
   const formatPercentage = useFormatPercentage()
   const underlyingAvailable = underlyingConcentration.current != null
   const primaryConcentration = underlyingAvailable
@@ -334,21 +312,22 @@ function OverviewConcentrationCard({
     ? i18n.t('ui.overviewsummarycards.underlyingAssets')
     : i18n.t('ui.overviewsummarycards.heldPositionsLimitedView')
 
+  const { navigateTo } = useDashboardNavigation()
+  const metricScope: FilterScopeSpec = {
+    account: 'filterable',
+    period: 'as-of',
+    effectiveDate: comparison.windows.current.end,
+  }
   return (
-    <CardShell
+    <OverviewCardShell
       title={i18n.t('ui.overviewsummarycards.concentration')}
       description={i18n.t(
         'ui.overviewsummarycards.shareOfThePortfolioRepresentedByTheLargestAsset',
       )}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.
-      scope={{
-        account: 'filterable',
-        period: 'as-of',
-        effectiveDate: comparison.windows.current.end,
-      }}
-      // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The overview chooses held versus underlying concentration and its snapshot; CardShell only presents that selection and adds navigation.
+      scope={metricScope}
+      scopeContext={scopeContext}
       eyebrow={primaryLabel}
-      destination="diversification"
+      onOpen={() => navigateTo('diversification')}
       accent={'attention'}
     >
       <Layout as="span" flow="grid" arrangement="comparison" gap="relaxed">
@@ -435,6 +414,6 @@ function OverviewConcentrationCard({
           </Stack>
         </Surface>
       </Layout>
-    </CardShell>
+    </OverviewCardShell>
   )
 }

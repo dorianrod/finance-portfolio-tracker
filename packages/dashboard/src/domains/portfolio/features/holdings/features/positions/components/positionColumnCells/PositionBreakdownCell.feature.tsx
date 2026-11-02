@@ -1,8 +1,10 @@
 import type { CellContext } from '@tanstack/react-table'
+import { useAtomValue } from 'jotai'
 
 import { usePositionPreviewActions } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/actions/usePositionPreviewActions'
-import { UnderlyingStatusControl } from '@/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature'
+import { UnderlyingStatusButton } from '@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/UnderlyingStatusButton.view'
 import { statusForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/statusForPosition'
+import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms'
 import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
@@ -20,6 +22,7 @@ export function PositionBreakdownCell({
   table,
 }: CellContext<TableRow, unknown>) {
   const context = table.options.meta?.positionColumns
+  const selection = useAtomValue(positionPreviewAtom)
   const { showPreview } = usePositionPreviewActions()
   if (!context) return null
   const { allocationData, fundStatusIndex, cancelHide, scheduleHide } = context
@@ -73,11 +76,12 @@ export function PositionBreakdownCell({
         </Layout>
       )}
       {fundStatus && (
-        <UnderlyingStatusControl
-          // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; The table checks action availability; the control receives the matching API entity and owns only popover selection.
+        <UnderlyingStatusButton
           status={fundStatus}
           assetName={r.name}
-          positionId={r.id}
+          isOpen={
+            selection?.kind === 'underlying' && selection.positionId === r.id
+          }
           onShow={showUnderlying}
           onHide={scheduleHide}
         />
