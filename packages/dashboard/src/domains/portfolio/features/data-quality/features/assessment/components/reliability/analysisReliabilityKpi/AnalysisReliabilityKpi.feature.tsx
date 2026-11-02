@@ -1,6 +1,6 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
 import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
-import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { useFormatAnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone'
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
@@ -26,10 +26,10 @@ export function AnalysisReliabilityKpi({
   qualityTheme: QualityThemeId
   scope: FilterScopeSpec
 }) {
+  const formatReliabilityTone = useFormatAnalysisReliabilityTone()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   const safePercentage = normalizeCoveragePercentage(percentage)
-  const styles = RELIABILITY_TONES[tone]
   const percentageLabel = formatPercentage(safePercentage)
 
   return (
@@ -53,7 +53,7 @@ export function AnalysisReliabilityKpi({
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1Value2OpenDataQuality',
         {
-          value0: styles.label,
+          value0: formatReliabilityTone(tone),
           value1: percentageLabel,
           value2: metricLabel,
         },

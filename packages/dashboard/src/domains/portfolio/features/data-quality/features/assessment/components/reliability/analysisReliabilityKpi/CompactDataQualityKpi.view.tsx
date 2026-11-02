@@ -4,6 +4,7 @@ import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/fea
 import { InfoIcon } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/qualityTooltipDetails/InfoIcon.view'
 import { QualityTooltipMetricRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/qualityTooltipDetails/QualityTooltipMetricRow.view'
 import type { QualityTooltipRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type'
+import { useFormatAnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone'
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -29,6 +30,7 @@ export function CompactDataQualityKpiView({
   onOpenQuality: () => void
   children: ReactNode
 }) {
+  const formatReliabilityTone = useFormatAnalysisReliabilityTone()
   const styles = RELIABILITY_TONES[tone]
 
   return (
@@ -54,7 +56,7 @@ export function CompactDataQualityKpiView({
               <ToneSwatch tone={styles.dot} shape="dot" />
             </Layout>
             <Text variant="eyebrow" tone={styles.status}>
-              {styles.label}
+              {formatReliabilityTone(tone)}
             </Text>
           </Button>
           <Tooltip>

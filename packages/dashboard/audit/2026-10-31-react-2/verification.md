@@ -1,0 +1,47 @@
+# Audit verification
+
+## Baseline checks
+
+Inputs: clean b62627b; all 1,360 app/support files, 245 skill files and three companion references equal the previous final audit. No claim of rereading every unchanged file is made.
+
+| Evidence | Working directory / commands | Actual result |
+| --- | --- | --- |
+| B-001 | packages/dashboard: uncached npm run lint; typecheck; prettier --check .; audit:fixtures; audit:architecture; audit:cycles; audit:i18n; colocation --snapshot | All exit 0. Lint 0 errors/143 warnings. [Ledger](evidence/baseline-checks.json), baseline-*.txt. |
+| B-002 | packages/dashboard: npm test | Exit 0; 2,327 application/integration tests and 726 generic tests. [Ledger](evidence/tests-checks.json), [output](evidence/tests-tests.txt). |
+| B-003 | packages/dashboard: npm run build; npm run build-storybook | Both exit 0. [Ledger](evidence/builds-checks.json). |
+| B-004 | Fresh/prior fixture output comparison | 240 tests, 15 candidates, 135 exclusions; contracts, test contents, candidates, exclusions and original analysis metadata identical. [Comparison](evidence/fixture-comparison.json). |
+
+## Detector calibration and reproductions
+
+| Evidence | Intended property / actual configuration | Before/after result |
+| --- | --- | --- |
+| C-001 | Installed package; probe-boundaries.mjs from packages/dashboard: canonical availability, nearest-call exclusions, other-test freshness | [Baseline](evidence/baseline-boundaries.json): omitted contract succeeds, three business inputs hidden, changed consumer accepted. [After](evidence/phase2-boundaries.json): omitted contract throws, inputs become candidates, changed consumer pending. Harness exits 0; CLI tests establish actual exits 2/1/0. |
+| C-002 | Collector regression tests against old installed implementation | Exit 1, seven failing/44 passing tests. [Red output](evidence/red-regressions.txt). Corrected collector/reviewer/CLI focused suite: 77 passing ([output](evidence/phase2-focused.txt)). |
+| C-003 | Actual project ESLint config; aliased period formatter/result fallback; intended local/no-inline-format-fallback error | [Before](evidence/baseline-format-output.json): invalid and valid both silent. [After](evidence/final-format-output.json): invalid gets outputFallback at severity 2; valid accepted. No unrelated diagnostic is counted. |
+| C-004 | Formatter-result tests against old detector | Exit 1, six failing/135 passing cases. [Before](evidence/formatter-red-regressions.txt); corrected suite 142 passing ([after](evidence/formatter-focused.txt)). Covers aliases, shadowing, mutable results, structural JSX and cycles. |
+| C-005 | Relocated project invoked from repository cwd; portable project-local ambient library | [Actual failure](evidence/phase2-relocation-before-root-fix.json) exits 2 with missing type libraries; [isolated old probe](evidence/baseline-project-root.json) also fails. Selected configuration filename now anchors type roots. [Corrected probe](evidence/final-project-root.json) finds one candidate; dedicated unrelated-cwd CLI case passes ([output](evidence/root-focused.txt)). |
+
+C-001 corrected probes predate the final root adjustment; the current full generic suite covers the complete collector. The successful pre-root-fix full suite is preserved separately in before-root-fix-final-tests-*. It is not presented as the final package result.
+
+## Implementation checks
+
+| Evidence | Commands / owners | Actual verification references |
+| --- | --- | --- |
+| I-001 | packages/dashboard: uncached lint; Prettier; typecheck; audit:fixtures:check; colocation against original snapshot | [Current ledger](evidence/final-checks.json), final-lint/prettier/typecheck/review/colocation.txt. Preserve warning ceiling 143. |
+| I-002 | packages/dashboard: npm test after final installed-package refresh | [Final ledger](evidence/final-tests-checks.json), [full output](evidence/final-tests-tests.txt); current generic root regression and real installed dashboard gate. |
+| I-003 | Existing component/formatter tests and configured lint integration | Exit 0, 65 tests in three files. [Output](evidence/application-focused.txt). Existing nominal/empty-history assertions preserve display behavior; no implementation-mirroring component test added. |
+| I-004 | Production and Storybook builds | Both exit 0. [Ledger](evidence/final-builds-checks.json). Application inputs are unchanged since these builds; subsequent edits concern standalone collector root handling, tests/docs and ledger metadata. |
+| I-005 | Final architecture, cycles and direct catalog usage collection after successful full lint | All exit 0. [Ledger](evidence/final-inventories-checks.json). Reuses the completed normal lint gate rather than repeating quiet lint. |
+| I-006 | repository: catalog build.mjs --check; git diff --check | Catalog/compiled guide up to date, [result](evidence/final-catalog-check.json); no portability guard relaxed. |
+| I-007 | Copy current app/config/ledger; installed CLI with explicit root/project from repository cwd | [Actual relocated result](evidence/phase2-relocation.json); no global cwd change or automatic approval. |
+| I-008 | Final inventory and manually reviewed keep decisions | [Inventory](evidence/final-fixtures.json), [semantic decisions](evidence/phase2-semantic-review.json). Same 15 candidates/135 exclusions; concrete reasons/test hashes preserved. Source fingerprint includes every analyzed test. |
+
+All command ledgers retain actual exits, working directories and durations. Baseline, red and failed relocation evidence remain separate from current results.
+
+## Completion review
+
+Phase 1 completed before corrections. F-004 and the input-root failure were added as explicit in-scope plan deltas before their fixes. Initial diagnosis/metrics remain preserved; amended baseline counts one MEDIUM-HIGH application convention violation and three MEDIUM prevention-gap families.
+
+All final checks pass. The final suite has 2,329 application/integration and 756 generic tests; relocated review accepts all 15 decisions with zero pending/stale rows. P-001/P-002/P-003/P-004 are verified. No user decision is pending. One existing component changes; existing detector/collector and sibling/CLI/integration tests are extended. No runtime owner is introduced, extracted or moved. Source colocation reports zero missing/pending. The 142 existing suppressions retain their dates, severities and allowance without technical revalidation.
+
+Final source/contract manifests were hash-verified against the workspace after checks; 244 installed package files match their local source. [Final metrics](evidence/metrics-final.json) report 100/100 with the same 110-rule scope and 142 unrevalidated exceptions. Initial and amended baselines remain preserved. Audit and implementation are complete, with no outstanding authorized correction or choice.

@@ -24,9 +24,11 @@ audit/
 
 If that name already exists, add a numeric suffix. Resume an existing dossier
 only when continuing that audit or when the user identifies its plan. Keep prior
-dossiers; do not overwrite an independent audit's conclusions. Compare relevant
-earlier findings and code decision comments to identify a missed violation,
-regression, changed requirement or unsupported reinterpretation.
+dossiers; do not overwrite an independent audit's conclusions. Use the
+[lookup of the last three audits](audit-method.md#use-the-last-three-audits-as-a-working-base)
+and compare relevant earlier findings, file history and code decision comments
+to identify a missed violation, regression, changed requirement or unsupported
+reinterpretation. Revalidate earlier conclusions against the current inputs.
 
 Every dossier also includes the baseline impact-volume table and versioned score
 defined in [audit metrics](audit-metrics.md); implementations add a final snapshot
@@ -39,6 +41,23 @@ paths, symbols and line locations; identify renamed owners when implementation
 moves code. Store actual application results here, never inside the reusable
 skill. Keep the dossier outside the inspected source inventory. Respect existing
 version-control policy; the output contract alone does not change ignore rules.
+
+### Durable reports and local working evidence
+
+Keep the five reports, any useful `metrics.md`/`root-causes.md`, unique semantic
+reviews and decisions, frozen file/hash manifests, coverage dispositions and
+baseline/final metric inputs/results as durable audit records. Raw tool logs,
+exit-code sidecars, dependency graphs, source-pattern dumps, report-generation
+or migration scripts, scratch probes and duplicate report snapshots can remain
+local under the consuming project's ignore policy. Do not classify all JSON as
+disposable: reviewed decisions, frozen inputs and score inputs may be unique.
+
+Record each check's command, input state, exit status and essential result in
+`verification.md` even when its raw output is ignored. Essential claims and the
+closed inventory must remain supported by retained records; retain a narrowly
+selected reproduction or proof when a summary is insufficient. Mark links to
+ignored working files as local supplementary evidence. A versioned file is not
+automatically context to load: use the selective lookup in the audit method.
 
 ## scope.md
 
@@ -125,9 +144,22 @@ comments by source file and decision identifier, with the assumptions checked
 and any concrete reopening trigger. Existing ignores left outside requested
 revalidation remain explicitly unreviewed, without renewing their approval.
 
-Keep unexamined code or unavailable evidence pending. A fully investigated rule
-ambiguity can be linked as an open decision after inspection is complete; it
-does not become a proven violation or conforming code. Tool silence and a count
+Under `Existing decisions and ignores`, briefly identify the selected prior
+dossiers by reference date and relevance, marking unrelated ones as skipped.
+For consulted material, cite exact file sections or finding/action IDs and the
+conclusion reused; do not duplicate historical reports or create a separate
+history dump. Coverage, verification and raw evidence are consulted only for a
+specific unresolved question under the method's selective lookup. Include
+relevant Git commits/patches and uncommitted changes for the reviewed files.
+State when fewer than three dossiers
+exist, none are available or relevant, or history is unavailable. Keep this
+evidence in the existing dossier rather than creating a separate history log.
+
+Keep unexamined code or unavailable evidence needed to establish compliance
+pending; missing prior audits or history alone does not prevent completion.
+A fully investigated rule ambiguity can be linked as an open decision after
+inspection is complete; it does not become a proven violation or conforming code.
+Tool silence and a count
 of reviewed files do not replace substantive evidence.
 
 ## findings.md
@@ -229,6 +261,11 @@ link here instead of maintaining a second independent status list.
 | Implementation             | Concrete steps, proposed non-obvious code decision comment and any contract or detector change.                                           |
 | Acceptance                 | Observable criteria, required commands and intended invalid/valid regression cases.                                                       |
 | Outcome                    | Actual changed owners, verification references and material remaining work.                                                               |
+
+For an action that reverses an earlier choice, link its source in the finding
+and identify the choice being replaced, the factual trigger or explicit user
+request, and why the replacement satisfies the current requirements. A different
+conforming preference alone does not justify reopening the choice.
 
 Do not mark an action `ready` merely because the agent recommended it: phase-2
 authorization and any necessary option selection must exist. Mark a fix `verified`

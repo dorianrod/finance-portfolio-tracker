@@ -1,0 +1,624 @@
+{
+  "schemaVersion": 1,
+  "scope": "dashboard/full-react-2026-10-31",
+  "unreviewedExceptions": 143,
+  "rules": [
+    {
+      "id": "api-business-destructuring",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-central-url-constants",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-error-message-helper",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-mutation-three-types",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "api-naming",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-optimistic-update",
+      "impact": "MEDIUM",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "api-query-hook-choice",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-return-result-as-is",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-suspense-error-boundary",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-typed-entity-generic",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-use-transformation",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-vercel-parallel-work",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-void-mutation",
+      "impact": "MEDIUM",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "api-wrap-in-domain-hooks",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-business-capability-boundaries",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-component-complexity",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-component-module-boundaries",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-component-roles",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-decompose-hook-heavy-components",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-domain-first-layout",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-feature-flags",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "arch-feature-hierarchy",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-feature-slice-layout",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-helpers-vs-services",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-isolate-effects-in-hooks",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-no-prop-drilling",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-no-visual-logic-below-page",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-shared-no-domain-knowledge",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-stores-no-index",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-subdomain-decision",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-thin-components",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-transverse-only-imports",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "cache-invalidate-exactly",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "cache-one-key-convention",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-business-rules-pure",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-categories",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-formatter-hooks",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-no-context-params",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-vercel-immutable-collections",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-vercel-indexed-lookups",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "i18n-interpolation",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "i18n-no-default-value",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "i18n-no-hardcoded-strings",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "i18n-static-keys",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-english-only",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-eslint-disable-scoped",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-eslint-warning-budget",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-formatting-and-sorting",
+      "impact": "LOW",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-jsdoc-minimal",
+      "impact": "LOW",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-no-deprecated-apis",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-no-hook-factory",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-no-nested-ternary",
+      "impact": "LOW",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-no-noop-link",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-public-api-first",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-single-public-export",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-usecallback-for-functions",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-vercel-ref-as-prop",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "security-authorized-file-access",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "security-clear-cache-on-logout",
+      "impact": "CRITICAL",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "security-window-open-noopener",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-atom-naming",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-atom-with-storage",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-derived-atoms",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-domain-vs-page-location",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-explicit-types-defaults",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-hook-variants",
+      "impact": "LOW",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-module-level-atoms",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-prefer-factories",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-server-state-in-react-query",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-vercel-functional-updates",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-behavior-not-implementation",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-colocated-tests",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-jotai-provider-isolation",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-mock-data",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-mock-network-not-internals",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-renderhook",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-semantic-queries",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-amounts-as-number",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-closed-values-not-string",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-compose-transverse",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-consume-entity",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-dates-as-date",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-entity-vs-response",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-explicit-nullability",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-file-per-entity",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-literal-unions-no-enum",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-no-any-or-wide",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-no-dead-record-fallback",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-accessible-names",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-centralize-accessibility",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-compound-slots-direct-children",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-delegate-mapped-jsx",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-dialog-controlled",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-form-wraps-dialog",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "ui-name-compound-render-conditions",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-no-adhoc-styling",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-no-classname-on-shared-ui",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-no-nested-form",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "ui-required-children",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-semantic-colors",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-vercel-explicit-variants",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-vercel-lazy-loading",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-vercel-offscreen-content",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-vercel-responsive-rendering",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-form-schema-hook",
+      "impact": "MEDIUM",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "yup-last-coercion-barrier",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-module-level-schemas",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-no-cast-bypass",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-no-oneof-on-display-enums",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-tolerant-response-schema",
+      "impact": "HIGH",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": [
+        "arch-component-roles",
+        "helpers-categories"
+      ],
+      "files": [
+        "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx",
+        "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeTooltip.view.tsx",
+        "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/computeAccountTypeTooltipMetrics.ts",
+        "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view.tsx",
+        "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryTooltip.view.tsx",
+        "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/buildAccountTypeTooltipData.ts"
+      ]
+    },
+    {
+      "id": "F-002",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": [
+        "helpers-categories"
+      ],
+      "files": [
+        "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel.ts"
+      ]
+    },
+    {
+      "id": "F-003",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": [
+        "types-explicit-nullability"
+      ],
+      "files": [
+        "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.view.tsx",
+        "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+        "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+        "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useBuildAnalysisReliabilityMetrics.ts",
+        "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData.types.ts",
+        "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityHeader.view.tsx",
+        "src/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature.tsx",
+        "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.tsx",
+        "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.view.tsx",
+        "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts.ts",
+        "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+        "src/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ThresholdRow.view.tsx",
+        "src/domains/portfolio/features/holdings/features/positions/components/GainCell.view.tsx",
+        "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/PositionHistoryPreview.view.tsx",
+        "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx",
+        "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/buildPositionsHistory.ts",
+        "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+        "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx",
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/ContributionSummaryMetrics.view.tsx",
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+        "src/domains/portfolio/features/performance/components/portfolioKpis/portfolioKpis.types.ts",
+        "src/domains/portfolio/features/performance/helpers/transformers/buildPerformanceContributionViewModel/resolveContributionHorizon.ts",
+        "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+        "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryTooltip.view.tsx",
+        "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalFundSnapshots.types.ts",
+        "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.ts"
+      ]
+    }
+  ]
+}

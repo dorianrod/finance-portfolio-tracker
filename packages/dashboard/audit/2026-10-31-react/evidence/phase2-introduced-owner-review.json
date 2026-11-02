@@ -1,0 +1,20 @@
+[
+  {
+    "file": "../../.agents/skills/generic-react-best-practices/scripts/fixture-review.mjs",
+    "role": "tooling helper",
+    "obligations": "sibling nominal/error/edge tests; generic implementation independent of application entities; actual installed CLI integration",
+    "evidence": "fixture-review.test.mjs (20 cases); cli.integration.test.mjs; final-tests-tests.txt; phase2-relocation.json"
+  },
+  {
+    "file": "tsconfig.fixtures.json",
+    "role": "analysis configuration",
+    "obligations": "effective strict compilation and complete source test enumeration",
+    "evidence": "phase2-fixtures.json; final-review.txt; installed consumer integration"
+  },
+  {
+    "file": "tests/fixtures/ownership-review.json",
+    "role": "explicit semantic review data",
+    "obligations": "retain only supported decisions and bind current inputs; valid JSON/format",
+    "evidence": "15 unchanged previous decisions; phase2-inventory-delta.json; final-prettier.txt; final-review.txt"
+  }
+]

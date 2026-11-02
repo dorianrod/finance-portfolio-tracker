@@ -1,0 +1,386 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.view.tsx",
+    "line": 296,
+    "field": "expanded: string | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "No diagnostic row is expanded until the user selects one."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+    "line": 28,
+    "field": "report: FundCoverageReport | null",
+    "precedingLine": "type LookThroughCoverageSummaryProps = {",
+    "disposition": "documented",
+    "reason": "The optional fund coverage report may be unavailable."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "line": 20,
+    "field": "percentage: number | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "Loading or unavailable analysis has no measured reliability percentage."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useBuildAnalysisReliabilityMetrics.ts",
+    "line": 46,
+    "field": "classificationReliabilityPct: number | null",
+    "precedingLine": "allocationLoading: boolean",
+    "disposition": "documented",
+    "reason": "No classification percentage exists without applicable exposure."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useBuildAnalysisReliabilityMetrics.ts",
+    "line": 49,
+    "field": "underlyingReliabilityPct: number | null",
+    "precedingLine": "classificationMetricTone: AnalysisReliabilityTone",
+    "disposition": "documented",
+    "reason": "No underlying reliability percentage exists without a coverage report."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData.types.ts",
+    "line": 10,
+    "field": "report: FundCoverageReport | null",
+    "precedingLine": "statuses: FundHoldingStatus[]",
+    "disposition": "documented",
+    "reason": "The optional fund coverage report may be unavailable."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityHeader.view.tsx",
+    "line": 15,
+    "field": "action: DetailAction | null",
+    "precedingLine": "theme: QualityTheme",
+    "disposition": "documented",
+    "reason": "The selected quality theme may have no applicable detail inspection."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature.tsx",
+    "line": 10,
+    "field": "report: FundCoverageReport | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "The optional fund coverage report may be unavailable."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.tsx",
+    "line": 42,
+    "field": "activeCategory: string | null",
+    "precedingLine": "data: PieEntry[]",
+    "disposition": "documented",
+    "reason": "No category in this chart dimension is selected."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.tsx",
+    "line": 147,
+    "field": "activeCategory: string | null",
+    "precedingLine": "entry: PieEntry",
+    "disposition": "documented",
+    "reason": "No category in this chart dimension is selected."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.view.tsx",
+    "line": 192,
+    "field": "activeCategory: string | null",
+    "precedingLine": "}: Partial<ChartShapeProps<PieSectorShapeProps, PieEntry>> & {",
+    "disposition": "documented",
+    "reason": "No category in this chart dimension is selected."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.view.tsx",
+    "line": 38,
+    "field": "activeCategory: string | null",
+    "precedingLine": "dateDomain: [number, number]",
+    "disposition": "documented",
+    "reason": "No category in this chart dimension is selected."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.view.tsx",
+    "line": 143,
+    "field": "activeCategory: string | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "No category in this chart dimension is selected."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts.ts",
+    "line": 147,
+    "field": "activeFilter: AllocationFilter | null",
+    "precedingLine": "type UseAllocationChartsInput = {",
+    "disposition": "documented",
+    "reason": "No allocation filter is selected in the unfiltered view."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "line": 33,
+    "field": "positionsTo25Delta: number | null",
+    "precedingLine": "timestamp: number",
+    "disposition": "documented",
+    "reason": "A threshold delta needs reachable targets in both adjacent snapshots."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "line": 34,
+    "field": "positionsTo50Delta: number | null",
+    "precedingLine": "positionsTo25Delta: number | null",
+    "disposition": "documented",
+    "reason": "A threshold delta needs reachable targets in both adjacent snapshots."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "line": 35,
+    "field": "positionsTo75Delta: number | null",
+    "precedingLine": "positionsTo50Delta: number | null",
+    "disposition": "documented",
+    "reason": "A threshold delta needs reachable targets in both adjacent snapshots."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "line": 36,
+    "field": "positionsTo90Delta: number | null",
+    "precedingLine": "positionsTo75Delta: number | null",
+    "disposition": "documented",
+    "reason": "A threshold delta needs reachable targets in both adjacent snapshots."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ThresholdRow.view.tsx",
+    "line": 16,
+    "field": "value: number | null",
+    "precedingLine": "tone: ChartTone",
+    "disposition": "documented",
+    "reason": "The identified coverage may never reach this concentration threshold."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/concentrationTrendTooltips/ThresholdRow.view.tsx",
+    "line": 17,
+    "field": "delta: number | null",
+    "precedingLine": "value: number | null",
+    "disposition": "documented",
+    "reason": "A threshold change needs reachable targets in both compared snapshots."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/GainCell.view.tsx",
+    "line": 12,
+    "field": "value: number | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "A position without a current valuation may have no known gain."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/PositionHistoryPreview.view.tsx",
+    "line": 27,
+    "field": "error: Error | null",
+    "precedingLine": "pending: boolean",
+    "disposition": "documented",
+    "reason": "A successful or pending request has no failure to display."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx",
+    "line": 288,
+    "field": "preview: PositionPreviewModel | null",
+    "precedingLine": "}: {",
+    "disposition": "documented",
+    "reason": "No position preview is selected while the overlay is closed."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/buildPositionsHistory.ts",
+    "line": 39,
+    "field": "pct: number | null",
+    "precedingLine": "costBasis: number",
+    "disposition": "documented",
+    "reason": "A source snapshot may have no defined return percentage."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 15,
+    "field": "current: number | null",
+    "precedingLine": "export type ComparedMetric = {",
+    "disposition": "documented",
+    "reason": "The current comparison window may have no usable observation."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 16,
+    "field": "previous: number | null",
+    "precedingLine": "current: number | null",
+    "disposition": "documented",
+    "reason": "The preceding comparison window may have no usable observation."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 17,
+    "field": "delta: number | null",
+    "precedingLine": "previous: number | null",
+    "disposition": "documented",
+    "reason": "A change needs usable observations in both comparison windows."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 18,
+    "field": "deltaPct: number | null",
+    "precedingLine": "delta: number | null",
+    "disposition": "documented",
+    "reason": "A percentage change needs both observations and a nonzero previous value."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 36,
+    "field": "current: OverviewConcentrationPoint | null",
+    "precedingLine": "export type OverviewConcentrationComparison = {",
+    "disposition": "documented",
+    "reason": "The current comparison window may have no usable observation."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 37,
+    "field": "previous: OverviewConcentrationPoint | null",
+    "precedingLine": "current: OverviewConcentrationPoint | null",
+    "disposition": "documented",
+    "reason": "The preceding comparison window may have no usable observation."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+    "line": 63,
+    "field": "comparison: OverviewComparison | null",
+    "precedingLine": "type OverviewTabProps = {",
+    "disposition": "documented",
+    "reason": "No comparison can be built before usable portfolio history is available."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx",
+    "line": 24,
+    "field": "startDate: Date | null",
+    "precedingLine": "underperformers: AssetIrrItem[]",
+    "disposition": "documented",
+    "reason": "An unavailable source summary may omit its reporting interval."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx",
+    "line": 25,
+    "field": "endDate: Date | null",
+    "precedingLine": "startDate: Date | null",
+    "disposition": "documented",
+    "reason": "An unavailable source summary may omit its reporting interval."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/ContributionSummaryMetrics.view.tsx",
+    "line": 31,
+    "field": "irr: number | null",
+    "precedingLine": "summary: PerformanceContributionSummary",
+    "disposition": "documented",
+    "reason": "Missing or insufficient cash flows may not define a return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 147,
+    "field": "sinceTrackingIrr: number | null",
+    "precedingLine": "trailingThreeYears: PerformanceContributionSummary",
+    "disposition": "documented",
+    "reason": "Missing or insufficient cash flows may not define a since-tracking return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 148,
+    "field": "trailingThreeYearIrr: number | null",
+    "precedingLine": "sinceTrackingIrr: number | null",
+    "disposition": "documented",
+    "reason": "The available cash flows may not define a full three-year return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "line": 193,
+    "field": "irr: number | null",
+    "precedingLine": "summary: PerformanceContributionSummary",
+    "disposition": "documented",
+    "reason": "Missing or insufficient cash flows may not define a return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/portfolioKpis.types.ts",
+    "line": 4,
+    "field": "value: number | null",
+    "precedingLine": "export type IrrKpiProps = {",
+    "disposition": "documented",
+    "reason": "Missing or insufficient cash flows may not define a return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/buildPerformanceContributionViewModel/resolveContributionHorizon.ts",
+    "line": 15,
+    "field": "sinceTrackingIrr: number | null",
+    "precedingLine": "sinceTracking: PerformanceContributionSummary",
+    "disposition": "documented",
+    "reason": "Missing or insufficient cash flows may not define a since-tracking return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/buildPerformanceContributionViewModel/resolveContributionHorizon.ts",
+    "line": 17,
+    "field": "trailingThreeYearIrr: number | null",
+    "precedingLine": "trailingThreeYears: PerformanceContributionSummary",
+    "disposition": "documented",
+    "reason": "The available cash flows may not define a full three-year return."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "line": 53,
+    "field": "globalTri: number | null",
+    "precedingLine": "income: IncomeSummary",
+    "disposition": "documented",
+    "reason": "The selected cash-flow history may not define a return."
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryTooltip.view.tsx",
+    "line": 81,
+    "field": "share: number | null",
+    "precedingLine": "value: number",
+    "disposition": "documented",
+    "reason": "No percentage exists without a positive snapshot total."
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalFundSnapshots.types.ts",
+    "line": 5,
+    "field": "capturedAt: Date | null",
+    "precedingLine": "effectiveDate: Date",
+    "disposition": "documented",
+    "reason": "Historical imports may omit the original collection timestamp."
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.ts",
+    "line": 24,
+    "field": "history: PortfolioHistoryPoint[] | null",
+    "precedingLine": "key: string",
+    "disposition": "documented",
+    "reason": "The filtered request may not have produced a successful history yet."
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.ts",
+    "line": 25,
+    "field": "error: Error | null",
+    "precedingLine": "history: PortfolioHistoryPoint[] | null",
+    "disposition": "documented",
+    "reason": "A successful or pending request has no failure to display."
+  },
+  {
+    "file": "src/domains/portfolio/shared/types/historicalConcentrationPoint.type.ts",
+    "line": 13,
+    "field": "positionsTo50Pct: number | null",
+    "precedingLine": "positionsTo25Pct: number | null",
+    "disposition": "retained-existing-group-rationale",
+    "reason": "The preceding threshold-group comment already explains the identical unreachable-target absence for all four fields."
+  },
+  {
+    "file": "src/domains/portfolio/shared/types/historicalConcentrationPoint.type.ts",
+    "line": 14,
+    "field": "positionsTo75Pct: number | null",
+    "precedingLine": "positionsTo50Pct: number | null",
+    "disposition": "retained-existing-group-rationale",
+    "reason": "The preceding threshold-group comment already explains the identical unreachable-target absence for all four fields."
+  },
+  {
+    "file": "src/domains/portfolio/shared/types/historicalConcentrationPoint.type.ts",
+    "line": 15,
+    "field": "positionsTo90Pct: number | null",
+    "precedingLine": "positionsTo75Pct: number | null",
+    "disposition": "retained-existing-group-rationale",
+    "reason": "The preceding threshold-group comment already explains the identical unreachable-target absence for all four fields."
+  }
+]

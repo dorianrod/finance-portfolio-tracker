@@ -1,0 +1,128 @@
+[
+  {
+    "file": "src/app/DashboardDataQuality.feature.test.tsx",
+    "line": 38,
+    "entities": [
+      {
+        "name": "RawIsinRows",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": [
+      "geo",
+      "secteur",
+      "currency",
+      "classe",
+      "loading"
+    ],
+    "contextual": "RawIsinData",
+    "context": "rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false }",
+    "code": "{ geo: [], secteur: [], currency: [], classe: [], loading: false }",
+    "status": "manually reviewed",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Nested all-empty RawIsinData duplicates the canonical rawData base rather than overriding an owned sample."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.test.tsx",
+    "line": 15,
+    "entities": [
+      {
+        "name": "FundHoldingsData",
+        "file": "src/domains/portfolio/shared/types/fundHoldingsData.type.ts"
+      },
+      {
+        "name": "FundDiagnostics",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/fundDiagnostics.type.ts"
+      }
+    ],
+    "keys": [
+      "holdings",
+      "history",
+      "statuses",
+      "report",
+      "snapshots",
+      "unresolved"
+    ],
+    "contextual": "FundHoldingsData & FundDiagnostics",
+    "context": "fundData: {\n      holdings: [],\n      history: [],\n      statuses: [],\n      report: null,\n      snapshots: [],\n      unresolved: [],\n    }",
+    "code": "{\n      holdings: [],\n      history: [],\n      statuses: [],\n      report: null,\n      snapshots: [],\n      unresolved: [],\n    }",
+    "status": "manually reviewed",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Complete empty FundHoldingsData & FundDiagnostics baseline is supplied to the real quality hook; compose typed owning data factories."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.test.tsx",
+    "line": 28,
+    "entities": [
+      {
+        "name": "RawIsinRows",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": [
+      "geo",
+      "secteur",
+      "currency",
+      "classe",
+      "loading"
+    ],
+    "contextual": "RawIsinData",
+    "context": "rawAllocationData: {\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
+    "code": "{\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
+    "status": "manually reviewed",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Complete empty RawIsinData is supplied to the real quality hook; rawData() already owns its defaults."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationTooltip.view.test.tsx",
+    "line": 8,
+    "entities": [
+      {
+        "name": "HoldingConcentration",
+        "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
+      }
+    ],
+    "keys": [
+      "rank",
+      "label",
+      "name",
+      "value",
+      "weight",
+      "cumulativeWeight"
+    ],
+    "contextual": "CumulativeConcentrationPoint",
+    "context": "point: CumulativeConcentrationPoint = {\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
+    "code": "{\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
+    "status": "manually reviewed",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Complete named point baseline is reused and spread across tooltip cases; the same default point is duplicated in the crosshair test."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope.test.ts",
+    "line": 26,
+    "entities": [
+      {
+        "name": "RawIsinRows",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": [
+      "geo",
+      "secteur",
+      "currency",
+      "classe",
+      "loading"
+    ],
+    "contextual": "RawIsinData",
+    "context": "rawData: RawIsinData = {\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
+    "code": "{\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
+    "status": "manually reviewed",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Named complete RawIsinData baseline supplies both scope cases; use rawData with explicit dimension overrides and preserve row aliasing."
+  }
+]

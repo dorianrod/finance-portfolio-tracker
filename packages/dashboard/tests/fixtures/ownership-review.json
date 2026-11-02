@@ -7,7 +7,7 @@
     "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
     "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
     "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
-    "sourceSha256": "a278999b0b3dc3a71277092a0f13d5018c0ce8bf3009a836e42081f614ba7707",
+    "sourceSha256": "b6278d59ee1a17950cae67b39f4cd09642b3baa75d453046a2ab7ff9331e94e0",
     "lockfileSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
   },
   "reviews": [
@@ -21,9 +21,9 @@
     },
     {
       "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
-      "line": 72,
+      "line": 104,
       "column": 16,
-      "sha256": "f7aac9c38d92f01c66af0c8caa164994d898b052d4a3a2e0432d5ed7bfaf01d0",
+      "sha256": "97c434fe7f83adc2f0557e8a865e349593c75da101563e3f8574e19dabc78bcc",
       "decision": "keep",
       "reason": "Component policy configuration selects filterable/range scope; no independent entity sample defaults."
     },
@@ -50,6 +50,14 @@
       "sha256": "45831f70517bb12270e7df3ffae513a120f03c28804e8af4a833213483e323ea",
       "decision": "keep",
       "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.test.tsx",
+      "line": 28,
+      "column": 51,
+      "sha256": "abce77319d0dda208d9f9b30c715eb00d7ffc5c5f92c7cba8eccc8b847ee26aa",
+      "decision": "keep",
+      "reason": "Explicit geo/France atom seed selects the allocation chip whose provider label and clear action are under test; this one-scenario state command is not a reusable fixture baseline."
     },
     {
       "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",

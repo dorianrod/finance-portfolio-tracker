@@ -1,0 +1,982 @@
+[
+  {
+    "file": ".agents/skills/generic-react-best-practices/AGENTS.md",
+    "sha256": "9b32c154dba03db336ee2660abfd4899343391c1050b074278837931c31dba0e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/README.md",
+    "sha256": "66848a37a5a992275c700815e8ad30a1697ff8a31133cdb31fff28c7e60bd3c2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/SKILL.md",
+    "sha256": "127926a57df93c913263834325b346bc189063a5e0ccdc59280b383faf3ad410"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/agents/openai.yaml",
+    "sha256": "40ef67f677d1afc3afa8e59e8113122e7ac23e6711bc470765dcc2b125094234"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/api-business-destructuring.js",
+    "sha256": "501aa34c6848deda05641b354a986bd45d18139acb0587807361a37529ad7317"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/api-hook-contract.js",
+    "sha256": "fbaf19acef7542dfc97688bb906f135d32c71c3818a004cc1421db330bb25f13"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/architecture-boundaries.test.js",
+    "sha256": "3598546dbbf6066bbe653bb761dbf547079f2cf77fd10e673022a5c29b8d78a5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/ast-bindings.js",
+    "sha256": "dab8662b6e81c0b89552f7f656115154501ece5cafeac9d76bff102e4e4da36a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/atom-contract.js",
+    "sha256": "24fdab4c955b9b1d8125799d092bf6679aea8e73e7cebca6b7b76fa92cf91b54"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/business-ownership.js",
+    "sha256": "14eeb1dbd06e23321cf9e0960a9cd3085e4132cd612be9a7b0de1e0687bbd2b0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/component-contracts.js",
+    "sha256": "dbdec9265ecddc13c59891baa665119506f91edb688aafe2db92ad15bbad4fb2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/component-role-analysis.js",
+    "sha256": "5c091831e9fc310390e25a24d0756c08f690fa5a88eb17a65a228b077215eb78"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/component-role.js",
+    "sha256": "92365ff175e72fd7b234aaff9a060f26897a7edc7ac20ed2eb43e81e62e6e06b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/component-role.test.js",
+    "sha256": "e47f75cb5e0e316a69872686666ed68ef595f5967ebf0d924d15fff6452b10de"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/context-provenance.js",
+    "sha256": "5769cf9e653faebbbc3b0bbca57e0afbf3f54caaa766665e483d46f76df0e126"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/entity-type-files.js",
+    "sha256": "1626f0c86e3ff037b86e0050dbe86f4bedd4e718b65b2ea02400f21ae22e73fd"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/eslint-suppression-processor.js",
+    "sha256": "a5471bec3b9aadc24ca64b42d181c98f3f63832029a10b5821d0d5df33b7d8fc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/explicit-nullability.js",
+    "sha256": "fe4fa50196be3144b0ee63707c48640b5c91a829c67155f905beada9643d8b2e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/feature-folder-layout.js",
+    "sha256": "a7f3c9d52f8e398efd607122662dcf847f4e3bb8d75a96d354a31b08046519b7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/feature-folder-layout.test.js",
+    "sha256": "3571395cee2a5cbd0d216d4753a02bcd12fe3d0c88b372c3e5d178da0364d694"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/formatter-contract.js",
+    "sha256": "18ec088f97910b9391859c43ba44f3d6cf72527d7e0620d919f6ce4c45d44da8"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/get-public-exports.js",
+    "sha256": "b237d5c69a6d4fc8f9e400bcc040a78aa7761eb747a172de3ce6395d9145a4a2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/helper-categories.js",
+    "sha256": "d250796855c99292988f9b01d7aadb715c9123cdbdac9638520303503eb75acb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/helper-categories.test.js",
+    "sha256": "b199fd09eafc8308831a5e8ad98eee0954d5a375817db259222e876ea5af7c61"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/helper-module-contract.js",
+    "sha256": "5db7775ed600f3411c9dc3d9f09d99abfc718adbe6e89ae6c2dcd5e0b86bb4be"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/helper-module-contract.test.js",
+    "sha256": "d7df71d0fff93dcd120adb141dba4ea7f0064238a144456a3e84ff0088c6a3d3"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/hook-name.js",
+    "sha256": "be7d97dda4d5ad35ea60b24e7da4c6a3f4033c32213918842f0982c0474f6ffa"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/i18n-consistency.js",
+    "sha256": "73260a62d2a5678e0277622a09e69b7e5a3bcfa6a6fcce2c754cc8f8b2ca8bb2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/i18n-consistency.test.js",
+    "sha256": "365acdd6ff3a36dfdcc57db8bbb59ae550820b169cb084292f95e3d81fb28ff1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/import-boundaries.js",
+    "sha256": "92e06347f194677e9d1575299cd4a3d0a58570b3b7324cd4bf8d3c7bb7bfd669"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/import-boundary-policy.js",
+    "sha256": "754fc1d7bd5a3b6c19286204bd8ae1fdb182033a54fee85b7c9d9f0467390c96"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/index.js",
+    "sha256": "cfe8f82594f1027b3ac1dc526a4626b1479cadf0f9f1b85cf7c1d6913eedfda4"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/library-binding.js",
+    "sha256": "5ad43c02cce79327a1cbe113d7c5b40bfdd8d114d18483c709296009c5fc7cfb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/max-hooks-per-component.js",
+    "sha256": "be6178b0fb73abc2b7b3032861b89d26cbe06a0249bf53d6ea88c29678fa4b39"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/max-hooks-per-component.test.js",
+    "sha256": "a454f4f31b2bfd5c8d15e34c0dcf126e23bfb8d9e7aff996172eff2262690477"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-browser-in-pure-helpers.js",
+    "sha256": "99ef1f4dffb6cfb76bc8eb7051f0e373570741c1d5f1a5a9f3e89d741d539ab2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-browser-in-pure-helpers.test.js",
+    "sha256": "be0c9babcbd138b90b01427128d340d65f6b5488b38113992591c3173101f5b6"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-component-calculation.js",
+    "sha256": "efa5c1a6f5aa7aacc7f577fad75c17272755fe78be202e793950e816b1143f6b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-component-calculation.test.js",
+    "sha256": "edba8c4f9c1fdabc87dadccdaea44b261d43e44c31800da6102ad25b3aa91a26"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-jsx-condition.js",
+    "sha256": "923fa49bddcc68bb0d4e7eba614e1082b2516e781280b431ee2f517ca592bf10"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-jsx-condition.test.js",
+    "sha256": "600e46d77b73fcb0d5d34e38fd05f617573c186494bf422d2f24ebf0247e2951"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-jsx-map.js",
+    "sha256": "a3615fc0d08b020b1bb5b633b9d805ea33bcccd38b06d825a4845dae3ec85d77"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-complex-jsx-map.test.js",
+    "sha256": "bd0b144fc15642a3cb9d99e82275d47637268a03738f7c271eb486095f5218c7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-component-data-pipeline.js",
+    "sha256": "882c5912270e488b98bcbf3f95c5e790c151c9b2a3ee11d0546dbd32b2cc95ce"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-component-data-pipeline.test.js",
+    "sha256": "dc472f8ac707953572a3e40be5c4900fd21bc8c2945cbd66248a27ea9690c126"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-component-module-logic.js",
+    "sha256": "aae3fab0858ffa18b5ce34c690a785b29dc68324195f5637a52d90ef8747c64b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-component-module-logic.test.js",
+    "sha256": "ad0ed5e8213c9e9b743a5521c196e29098adb69bfa8539d0d84307f5282b6334"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-conditional-test-assertions.js",
+    "sha256": "0cb15afe9da1f12289258ed3c599555eae972bfc2f5fc7e29f61bde9b7a286ba"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-domain-accessibility.js",
+    "sha256": "217cef9d3f8173d5ad2d2b57c15474826da8caa6f7fb47cc979e0fbcb4a39065"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-domain-styling.js",
+    "sha256": "0e1526e0776b6a2789be90b6e06242a6e974cb7978a74bb3171b238c1c86f84a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-effects-in-components.js",
+    "sha256": "40d409ce5b4833c3914cffdce78d74805e2f8045df34d44dcabbfa54e75d6fe9"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-effects-in-components.test.js",
+    "sha256": "7ef9dd7d4b9b069dc8f06f1f8690e02d61962bb8b65c4ff40707d603a1c2ccbe"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-hardcoded-colors.js",
+    "sha256": "eb81d20d0140c9758acc60bc5c8e485d641f4f0967a5c3624ce907c9ef2ee4bd"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-hardcoded-colors.test.js",
+    "sha256": "4574814d388898853536970287fbd3caed90480a4de3f4c12889d2ef751fefb9"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-hardcoded-ui-strings.js",
+    "sha256": "133d280006e73a1f2f3604259e541194733579407c47356027cfe821d356aaa8"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-helper-context-params.js",
+    "sha256": "a0c226deb955673538a51eb8144349063d114f4247cbbe9d9f4b5c8a577823d2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-helper-context-params.test.js",
+    "sha256": "f3a05363883ec90451e0c389ad1d2b1b26e16a9886678fe3baceb4da0bc0f400"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-inline-format-fallback.js",
+    "sha256": "05ef8ec6506363369777a12aad732dad67513e3b45e9518048d0ddd9dd07cb9b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-inline-format-fallback.test.js",
+    "sha256": "2434b651ba352df45f6288dd1aa4e6f311917b2ccf28b5c56f26b588f5fc409d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-inline-number-display.js",
+    "sha256": "56c258d1925b5ab749faa008719799e3b034fde736225ca8a79a3c9e166f38db"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-lossy-boolean-transform.js",
+    "sha256": "14d02308c99b0451bde60f0b53979b7d69f3258204880e419b40c2176edd276f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-memo-only-service.js",
+    "sha256": "58680f78c7c438b1640afb7ce8d8db0eda6a7dea63887889ab56931c13e4ac69"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-number-string-roundtrip.js",
+    "sha256": "87bbf86d8c2beea29934fa682f18ef1657efa425a24a569a0ebbad2b7cae5c1c"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-overwritten-ui-props.js",
+    "sha256": "a9b95e416277e1a458cf502a61026a56f094aff06d15792c5f710e6a57c9e67f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-prop-drilling.js",
+    "sha256": "13f13041b5f0908a127b896900839c5e1183058ea8446e2b8ec3e627a8b65adc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-prop-drilling.test.js",
+    "sha256": "e08be30c60ee2622f9908e3919139a85b6f6a089132aeffafae7d3e250d12624"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-react-context.js",
+    "sha256": "f6c46d751bc6f1d8388ff950f031308aba8f6fb221694219c33d31bb1701d717"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-react-context.test.js",
+    "sha256": "0553fd92dc043d65bb7ec7d39f9d11049a4dac2c13b57a88f1f14e753a412b55"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-returned-local-state.js",
+    "sha256": "6e74dc9d9c4d5efe7dccb338b200f2ec6221ce23f231bd18a2a013ef18dcc667"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-service-presentation.js",
+    "sha256": "94decd0dae4ed0ff7dcec9ca454fe2505e103335d66224ca11938814b1037b16"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-shared-ui-classname.js",
+    "sha256": "c20cfd182f346b08c2705cd77ed966322fa34e29e09031e5dc2bcc7955eec29a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-shared-ui-internal-layout.js",
+    "sha256": "7c2cb4fd4a9f5de814c3d20081990ad19e805b496758b866d68a04b48e046468"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-sort-for-extremum.js",
+    "sha256": "b1092f02f69906315b102b35f54faff7f90cbec1ce7ad014f1b77db3b1c3f872"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-test-style-assertions.js",
+    "sha256": "548d8a874ef37ad898206e20afdad62b10d9807af23ed73f48e911abc9026925"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-ui-string-concat.js",
+    "sha256": "cd29c4f14952cf6cd815300e7f579f47c455cfec3f121430cff407ceb6b2052a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-ui-string-concat.test.js",
+    "sha256": "d3ea001339d361fc780bc6ab2c41ff0b9417ea26662cf4bdf6894f731a2331dc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/parse-eslint-suppression.js",
+    "sha256": "24b91a9c6adbb05883cb65b16173b8c1ed64ff8fca8a184898fe62afd0540121"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/prefer-functional-state-update.js",
+    "sha256": "908615df468552660b396b5055d94d67697c448f7d0326c3e98745069da65ba5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/prefer-semantic-test-queries.js",
+    "sha256": "4001ce16cc68a85bfb92801cb2b5eac83751f001655534f1d9b4a1f5a7ef8e86"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/prefer-usecallback.js",
+    "sha256": "97088882a23fbea056b33ca96fb221c895b92071b53b911a1e7293c116b4a74d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/public-api-first.js",
+    "sha256": "25999c98d4cd3a13a856e7f17a500aa9ee6fe449165f28460a57f26ce027bbe5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/public-api-first.test.js",
+    "sha256": "b0329d6cd3fe9d39cd72d847a6d2907083a4f643562064304bf6a99de5511cd9"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/react-component-utils.js",
+    "sha256": "691007ce2803983b3e9e090fc282c85e6e0c0790a14832acea273ee9255e8a37"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/require-children-composition.js",
+    "sha256": "aef7f5fbeb85917e094df84af0ad6643754cb0ed253be6945291ead4ce93dc66"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/require-reviewed-eslint-suppression.js",
+    "sha256": "e1df4b5468d58a5c5bd225745caada1a2a4b686c8c00700706358eba32d1cabd"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/review-shared-feature-sharing.js",
+    "sha256": "5ba44daa99e23c090d61924b83c7e06c2b36b401af10b36a4011e3c89fc095d5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/reviewed-eslint-suppression.js",
+    "sha256": "e58c9685c7ee33774666f5194412bf867b45e7086c54fb4c6207d66f4549023f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/runtime-dependencies.js",
+    "sha256": "5928302001f1519c1bf21b47e8792d43bdb43332136906c61b6cb66537079747"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/shared-feature-usage-analysis.js",
+    "sha256": "eb74c5824118ca6019dbf32a2c985d036d15e9457f13d34c7b960e1fc65e7f5b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/shared-feature-usage.js",
+    "sha256": "0e00af694f73212cf7b80f69e9d0036f57b81eefdcfc4df9952f15c3054f42f7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/shared-ui-internal-layout-analysis.js",
+    "sha256": "bd58a2c05b1036b2a46f468c8ba2be7adc5f0d722367ba1a9703c1c499caa731"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/single-public-export.js",
+    "sha256": "31d84928046db0cd2da09f39570948a25c2646df9400c9fe56490444cc9e5bf5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/state-component-contract.js",
+    "sha256": "930e1a33a1faab9361978a27eaf5ebfbf5d5781834139cb012d2575aebc66c21"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/state-component-contract.test.js",
+    "sha256": "cdc578e61abc724078a1d1886a1941ae839642b618741d62dffca694c6136fe1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/styling-layout.js",
+    "sha256": "c75966689510942b544c6616e9bbd5a5ba8a7b99efc123d2e93016f0b7260426"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/test-bindings.js",
+    "sha256": "ce13a9bee334f5a766ccfd69a50c09371a73119d3c223f9a057b84a025f2c95a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/test-fixture-contract.js",
+    "sha256": "585f86e3b079a5fa4738fb54a6269edc91f68c1321542b0ee7a61d3a83611f6e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/test-fixture-contract.test.js",
+    "sha256": "e337741f9678be2292d296140abc030171a6575005dfcd04f13ea27c955fd738"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/translation-bindings.js",
+    "sha256": "9da36122b57419d9e73602578ec0a85ecf084acfa4cc0af84780f6063bedc76b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/translation-key-literals.js",
+    "sha256": "db3a82d920ff6b9d855bfe5dc5f52f6127e5bbd67ef058e82fa86c602eb00e4e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/translation-key-literals.test.js",
+    "sha256": "09e74788214caf828e8c5b493447ad3ef4cbf9061460316e85175ce89f8900ab"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/ui-event-composition.js",
+    "sha256": "831cf03c34cf4e90e4eac34788c166ac8be1a7a05092975a8eb90442bacf6bdc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint.config.mjs",
+    "sha256": "1a37e588aef10e91a13a5eac5729328598f00eab5cc629509c8860f14f612bcd"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/metadata.json",
+    "sha256": "6f7d29c2cc8b8c5e0b7f96bbe1e6c9c9cd7f903a3b24db2b71485511af13f88e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/package.json",
+    "sha256": "94f2cb82daba9ddfbc0b4d5f800ef5dd2860ddf9f2a25bb060cfe0ea0a39b4e5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-method.md",
+    "sha256": "8c41bd2c20c92f43746ffd773d6ba606256a2638ad355f77ca1aaaa6d3fa43ae"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-metrics.md",
+    "sha256": "b3759c04560780eadf19f3663a521fd593696161daffa8d4b5800ce72bdf7bfc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-output.md",
+    "sha256": "5ce12e238cccc1d22288781bd21fa4fb767e444ffa114066530bb072b55fa521"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/project-enforcement.md",
+    "sha256": "0b9aade374cd959bcd02e7fdc5ba10cf30a2924422d0b9bc9de471d8cb42bcf1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/_routing.md",
+    "sha256": "176f242522d7ac4e09d27accdad592defc5a79560a87dab8e8df625ff69cccd2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/_sections.md",
+    "sha256": "6f33c02b4a6f32d04c392490e2617390dbbb4154ffa2ba7ab9e8f3e25879d90f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/_template.md",
+    "sha256": "ea321b06185e72e5b9b5cd9269ce0b34735ab3ae59c16a874469c5521a0d8fee"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-business-destructuring.md",
+    "sha256": "bf853e29584a072915ec339a88b698e2f76dfa7ac1ae2894326061b10b28deef"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-central-url-constants.md",
+    "sha256": "54fa319f2f1885202640962a2f8b2920378f4d6afa14cc5c7630d69a1c58c285"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-error-message-helper.md",
+    "sha256": "57ed30df7a091c06dad0c7dfce768f3431c1af3ebe981bf9d1d6a829a12e92d1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-mutation-three-types.md",
+    "sha256": "7b8b224fb541781a87d0d265b2241823be7e88cffc66fab252b979ee50beb614"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-naming.md",
+    "sha256": "9970cda0b207030f77617ce62733b539dd4e6f3ac594d12911fcf412b57a7acf"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-optimistic-update.md",
+    "sha256": "bd870c3fb85281a4c5dffbce9025fd487298fa48abf0d1b87223921c4e2cddd1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-query-hook-choice.md",
+    "sha256": "b7bf8ae5a8ef5a129cca6e94893421cc04ba46b0ce247e9472b1a31383cf1c8b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-return-result-as-is.md",
+    "sha256": "ee7e04c657a0b726d9ef6f238ba0be1f2d7d74155dd225a434f300b4538c7768"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-suspense-error-boundary.md",
+    "sha256": "360e028fa4e22dd318af22f4959f0b07abd355564eee87b2f2e964267e2df837"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-typed-entity-generic.md",
+    "sha256": "49d93e06ef08d2757acb1515a49f6b59ae5bd920d7c4f9c907fc51a52bf332da"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-use-transformation.md",
+    "sha256": "4933761a271ce789d94c6ec3ecd2a45287c7771586e14d71cda06ed47caa5850"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-vercel-parallel-work.md",
+    "sha256": "a9c66c5baf0bed0918f0feeecda5a50994f37b991c53bbb8ada763650ee7c892"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-void-mutation.md",
+    "sha256": "2fc85c1651830612a25cfba303f0d7618e15431caaf70059c080de0e0f143dd7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/api-wrap-in-domain-hooks.md",
+    "sha256": "716070c18a691a369c8d549839c154b9723432d7e8d051de251483a8fd07bc69"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-business-capability-boundaries.md",
+    "sha256": "a85e5ff2bc93bde87d4f77fbe88bbec97b532d41472eb55d3635b38b04c788fa"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-component-complexity.md",
+    "sha256": "9e424e422a31fa67526a8b8ad2d6897755b54e4ba05fee01324234b1d189672b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-component-module-boundaries.md",
+    "sha256": "86276eb8461211dd2c2de3c33fde8c583689a5c2ac23bd8b12c02dfad377d576"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-component-roles.md",
+    "sha256": "bdc50385acf80caa160253added42afef1252cb6e2f3ef6f41e35b986e000c7f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-decompose-hook-heavy-components.md",
+    "sha256": "226c7af2f32cc1224e8229660543f777f61935ef2bde98d2f14b81fba7debcb6"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-domain-first-layout.md",
+    "sha256": "747bf45570f84d69ea46593a83ce68fc1f906ceceab983266e4b282a2b984704"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-feature-flags.md",
+    "sha256": "2329008f336fb7f0fe9ce07b846af662587f5f2e72c67831ab963c104bc0cf52"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-feature-hierarchy.md",
+    "sha256": "a509c02a315cc9629a9f0d9e8c8165614c679b37920076e4deafb317d3945f8a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-feature-slice-layout.md",
+    "sha256": "501fae115e1611d6a03d1be93ae070cf0b6585608dd9daba27384c0062477032"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-helpers-vs-services.md",
+    "sha256": "05160a533b8f24a5660c1146c001194974b6794c97f4f3117f0af666f3c1c189"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-isolate-effects-in-hooks.md",
+    "sha256": "d84ac6d794ba090fdcc0b43168a81756a94015005dd98292f81f545deb5e0aba"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-no-prop-drilling.md",
+    "sha256": "c128423dc78db7f9d379e0f380a6e8570018765e8fbcf99bf7af2e38c19d7271"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-no-visual-logic-below-page.md",
+    "sha256": "70d32871fc9bbdfb80835b52efe4d49174da14e005e749964239de99fe6de65d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-shared-no-domain-knowledge.md",
+    "sha256": "370b039d686991ba2f7ebaf1408af4f4bbc5b1db14ec4844255158c848e811d3"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-stores-no-index.md",
+    "sha256": "cf567faa9a338aa6ff206826b23e4ba9f28d5ccbed3c7475f48150133c599f79"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-subdomain-decision.md",
+    "sha256": "ab6db481700a3b6451918cf8a9d0929f26e6068c3a2e072c51357080e83b5bb7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-thin-components.md",
+    "sha256": "65a3498fa6ca3f590ad6540842c07310de495d4c57040bca78277a3f10c17cfb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/arch-transverse-only-imports.md",
+    "sha256": "fe48cacbc9c48b067ea3d663692437d69077a80c77fe19e9e01e4fc69736a478"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/cache-invalidate-exactly.md",
+    "sha256": "a3e4211da8522815049585548be27eab7be7d9bb5eef4aef2d5d8e3673ddac26"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/cache-one-key-convention.md",
+    "sha256": "c4b1c877af3aae2f7900735da98a1a0c4114141784a1d6e7e4000d1d86719717"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-business-rules-pure.md",
+    "sha256": "e692e22e4750bcd472350f8d2eadd03a71851694fce6eb5c6ece46ab54973940"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-categories.md",
+    "sha256": "45eaa50ce7e674b9dd0628d929ca315a4ce4abd5a3fa0213c0b6c62b1ce67c2a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-formatter-hooks.md",
+    "sha256": "3f6c11bcf0122b96b3769fd6549513204aeca2f158974983bd2638d6c2a98e20"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-no-context-params.md",
+    "sha256": "79aed3659e73199f9a83b442341eab558d091fc4913d973108227e8e9047ed59"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-vercel-immutable-collections.md",
+    "sha256": "6efb4720e4ce0cbbec0c2f616b919895663dee63826880e5942931958e78804f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-vercel-indexed-lookups.md",
+    "sha256": "8b8cbc0ecfb3bfd0b705dfcdea8989823855be80f23edac4d563056a8588e039"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/i18n-interpolation.md",
+    "sha256": "f60003a3d1defcccc75d351f9cc5b440e9a5cc2756b9c3108817a8832b3a6521"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/i18n-no-default-value.md",
+    "sha256": "a9f2ab7297e5297c5e65c329f42138b49f3087a300cf54ca5fe2af3a13d877de"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/i18n-no-hardcoded-strings.md",
+    "sha256": "bc5b775039d7af018123f8dac495d3d6092d84d8f5be7069adce409fbf23f6a2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/i18n-static-keys.md",
+    "sha256": "adf69a9429168c39c18805e0585d52a075d5a83f773d1955d5f6009fc59e56bd"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-english-only.md",
+    "sha256": "3c0c2448c6848471d34f488aad03f8a062d7e62c28e92f77e03bb5a4cff0294a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md",
+    "sha256": "9697acb1acf15da85c232ed6851e664fbd5a63f657affe61b9f05f814b01b252"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-eslint-warning-budget.md",
+    "sha256": "0e1feba8513f665a531358f718455e68296a3367601c5101fe030ecf3d2ca0b2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-formatting-and-sorting.md",
+    "sha256": "826bbf22561ca0b8010f93aac69d4b11eaafd1db45bb5a1918d1a288839ebe39"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-jsdoc-minimal.md",
+    "sha256": "9f05af1f08fe6201e522016991d880314fb9e253ef0a30c127380187bb86900e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-no-deprecated-apis.md",
+    "sha256": "6c5e170262b94c8cbed5806ae64983f3ce5c748dc4009768b621a8cab4e5c3b0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-no-hook-factory.md",
+    "sha256": "d38d1be1d9a8c55e557a8cb847628a12cb296970f1d1a18f73b692403c2e16fb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-no-nested-ternary.md",
+    "sha256": "8317ee63b0f31a5a86caa2d1c3490555103aedcce8b4d78e5d94cd3a74db7b83"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-no-noop-link.md",
+    "sha256": "c0c9ea2ce11cf7425ad7b43e71dcb309fb325532722d26761ba88bec9f636130"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-public-api-first.md",
+    "sha256": "9583ff5a2b1d0a527a149840b36159d8a1fb38288cb4eb1595fb81686db78759"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-single-public-export.md",
+    "sha256": "765b2dcec4de0a713082d548b7d7fd30e989124127c29b38b40fdcb5072cec5b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-usecallback-for-functions.md",
+    "sha256": "e57aae483e9878d8a4c8a89ebe843a64846a0c24ff9a8f9ef9bc5b12be899601"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/quality-vercel-ref-as-prop.md",
+    "sha256": "5029ae5fa97eb61d3a6763f7915c2c103f7c046b051729bca04d8a962f9e4e9b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/security-authorized-file-access.md",
+    "sha256": "985e04807758fc53a99ce58b452d13430edcb65f91a1fa6d7716ecb15d01ca79"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/security-clear-cache-on-logout.md",
+    "sha256": "86f3ad8e5e34ed1aea57d342e80dcd383b9ddbd96d12bd18ee440be98eadeea6"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/security-window-open-noopener.md",
+    "sha256": "7675ca4ff16eb2eda48342234ecdef0c8014836448f996048cd75e2fe132f963"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-atom-naming.md",
+    "sha256": "261f88911b9ae8b4ade0a11fb0d975a78b75267c495a2fac8918a2ed5f36cd51"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-atom-with-storage.md",
+    "sha256": "a57a705db4a2fbfacd0b6ffb4a3a4cafb2cf751a10fcf1291602f3b9ebba8553"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-derived-atoms.md",
+    "sha256": "87c7375bfff72863ccf796544117709461f5fc6ae6d42f412edda3f346931f43"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-domain-vs-page-location.md",
+    "sha256": "2ce792750ac1ee7e874e471c5e8efa4ba5caad98b991614e942fc813d49caefc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-explicit-types-defaults.md",
+    "sha256": "cdd7592fb071db34cad18793a20128651d85385bcba517a3c680fa88e1e8c1cf"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-hook-variants.md",
+    "sha256": "f3ff21602493bbc2e1f4e204b968e906afed057c761784a3ad433043fa8f2ada"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-module-level-atoms.md",
+    "sha256": "799f5a99d276f4d87f5adb89e5d64ccd45c3487f8aeb640a764d1a3a761c8aba"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-prefer-factories.md",
+    "sha256": "46928e10ce8fc0c7b1258c44a7a03304c7905f590d91fa9b513116971ff1e330"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-server-state-in-react-query.md",
+    "sha256": "b3459aa84853b332b9c85c5bcf8c66ddc697ca2531f1caa396526b64dbb29819"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/state-vercel-functional-updates.md",
+    "sha256": "21eb704397cd70bec646b082c19ea0a9d968f2c2632224758bf07ff6f3247345"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-behavior-not-implementation.md",
+    "sha256": "0f7a0c3e30756e52792b7d3b53eec952b151b9f26502004ecbd35f7de9e8909b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-colocated-tests.md",
+    "sha256": "ed55ca6556b3da297317cc1cfca17eefcc6065940ceb874c5b73f52559dda634"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-jotai-provider-isolation.md",
+    "sha256": "72d34598f671260824fe377981f4db0f6c0f8accb760673d106a7b6f373ec8ca"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-mock-data.md",
+    "sha256": "ffa81d92e130846ee5aae0e128e51212f99c23976f5312064dbc1d08d9331ac3"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-mock-network-not-internals.md",
+    "sha256": "c4d0a5113b83e1589d854156898a6d6ce866888442dfd7fdee02b8b736450822"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-renderhook.md",
+    "sha256": "cfcbb4356f4f9bdaca5001069a806cd9e433d25670384a72fed7dfba7bc4dbd4"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-semantic-queries.md",
+    "sha256": "b31174cb9b2a41876d83c8d2db2e6a10fa55f2b8d87fb31ff868f480758f8e83"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-amounts-as-number.md",
+    "sha256": "9451911d95bad316fb97811924b4b0c0d7bd0c5371bf9c82d76495dd4d8153a5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-closed-values-not-string.md",
+    "sha256": "ee1477485f688c9bf36768d25ef57d98aff88303b3d67320b8d36ecfb24f0c81"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-compose-transverse.md",
+    "sha256": "6d88852b545ae4e18840ccb872049a4281a58f749b0e17bc9e078abd8ed366f1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-consume-entity.md",
+    "sha256": "e9592707bd28c9032844b434566619c70a7837b3e4f01f01048532e5989d0681"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-dates-as-date.md",
+    "sha256": "0488b6a612646b58e23de240ec0cdf93e8eec9a04ab568832697a457bab672a0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-entity-vs-response.md",
+    "sha256": "a5b475b96120622469de9cccf64af376e598aff947b3c78477885ba568534db1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-explicit-nullability.md",
+    "sha256": "2110ec9972dacd34a1526527d734b26b595661f6cc91b0b86c02399ac1dd378d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-file-per-entity.md",
+    "sha256": "0098185a71439ea7af4eb40d0f74eb41dd676e140710831454e62d29e2c5ef37"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-literal-unions-no-enum.md",
+    "sha256": "6297c2a9face5fd3558dab977b2c68af6c66b81f18a22ec1dbfb9190b20506f9"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-no-any-or-wide.md",
+    "sha256": "5ff7203a4d3777f886278d8f532edc48468c5501384926c3aaa7441dcd29c961"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/types-no-dead-record-fallback.md",
+    "sha256": "09a1ca48ecb86d6e4fe50488bb4a6fc7417d4ccc882f80a528e494f8f7bc86a2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-accessible-names.md",
+    "sha256": "b0d5e4624c9f5dac867062700936c77883b8df5b8de238f4a708eebe3af43941"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-centralize-accessibility.md",
+    "sha256": "0d57fe79f1a41096ab4c1b1b602be60419082f695603b821f749ab3271e5060e"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-compound-slots-direct-children.md",
+    "sha256": "07938e25fe4d5c342f1e848853e0b7af31dab69e41e4c0ba85af7c11d483364c"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-delegate-mapped-jsx.md",
+    "sha256": "d4ac3248e6235f4115416465c6cca65d66ac0cb684a9289b9550f9692bd40adb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-dialog-controlled.md",
+    "sha256": "40d6e7cf3635d1c85e5854dbba9244ffa80d92b31a868117e42e2c1b80a61821"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-form-wraps-dialog.md",
+    "sha256": "b95180dea4d50af3d4e95810032db9e76b28f1c50d70b42447c4a01b61028d46"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-name-compound-render-conditions.md",
+    "sha256": "6440860262e207752aaa6ee4cec326162b81e43dad513d8693bfb7fd564262fb"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-no-adhoc-styling.md",
+    "sha256": "b5cf9af6aaf2044cf0cebb20d4c501f5c0f20e68e5406c48c935fe01c5ea542f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-no-classname-on-shared-ui.md",
+    "sha256": "63e0e94367b92e0ef820104570ee7072b14377fc556cd15e4c58306de9ee7a06"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-no-nested-form.md",
+    "sha256": "95b464e6af69fc5c877ef0146d3bdf66939a2bd74404939d432d957a38c968d4"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-required-children.md",
+    "sha256": "d19c268b11aaed03e87f183a1b71198e83477694fb8a899d45977bda9a2779af"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-semantic-colors.md",
+    "sha256": "5b7e576976f0990d8323de40ef5b44318b95457246fdb31ed6a25540165c9ad1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-explicit-variants.md",
+    "sha256": "5e7de340ac67eea70cc4ab264e4c7c21a67c41dcb021c4dfe4910ad015a6ce91"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-lazy-loading.md",
+    "sha256": "eea0278788a44bbd2dd8c3ee4426b54cf6c48ee64404d5dec8a7c79dbf4770f6"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-offscreen-content.md",
+    "sha256": "d2e4c7f93ae2a7478eb610a0f9a8dec48af62017fca7c9772b2e1ccec4103d44"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-responsive-rendering.md",
+    "sha256": "e4bebf32cbc03462800456140d36ab22e889082ca3c72aad133434632d4ee023"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-form-schema-hook.md",
+    "sha256": "ab96df7cf7551c243e88bdc87bc11cc39c567393291e6c93ec769dbddd787b29"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-last-coercion-barrier.md",
+    "sha256": "512ffe1646afb7b74506a1c1bf570f0a645b9ebb146dc8a881382d84fa1d4970"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-module-level-schemas.md",
+    "sha256": "839d9c6a7267d6e036a4bdf8fb1f1642a4d101dd18530c9b1c1e4a3d38dd88e0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-no-cast-bypass.md",
+    "sha256": "5ce0eca9675b5dfc3c619760bf07ee20ab0d788aaa7a169c2beb7e8c25c604e3"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-no-oneof-on-display-enums.md",
+    "sha256": "ea433a8c0894f9dd3a4f3943a82d8e95121426ff61691b4e5c79fb23a3bcfbb4"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/yup-tolerant-response-schema.md",
+    "sha256": "cf393e938a78dca813c709538917acd2f5aad461a5ae6369a1850366d9b3663a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/audit-architecture.mjs",
+    "sha256": "0d3e4c3863dc2b86c6debb23dccb95b63be5002361d6fcf2c0394eaac7abb30f"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/audit-architecture.test.mjs",
+    "sha256": "9a24a23ba18bbd26101db32b6b43bbbb762d102cebbb2b82f05eba5697677665"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/audit-metrics.mjs",
+    "sha256": "3dc7bd68c902d7133898fc1dd078881e034e88aec804bd23c0250f2110de6e53"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/audit-metrics.test.mjs",
+    "sha256": "8ccc8ccd3ca09f59e7dbf6435b41b90327bfa1bd36243638c8ea51619eff8ed8"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/build.mjs",
+    "sha256": "829ee391ab15cc80b5e9723ffd61f0e4013aee3796dad5589d9c93f9a37741bc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/check-i18n-catalog.mjs",
+    "sha256": "c4630322e83fbe81d32390e5f8f2351450e8ea47d68720cb2d4bcf4b6cab7761"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/check-test-colocation.mjs",
+    "sha256": "e73c8f781c5c706fda80e6dc64fabc4fbc10d2befa28c61424db3b67069539ed"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/check-test-colocation.test.mjs",
+    "sha256": "c43a1b626d1fae398d4813affdb1a257588ad3cd0287fe1232677a555308ef82"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/cli.integration.test.mjs",
+    "sha256": "6760014a2fcd5787ab02d7dbe8b552ade75a52a677e0dd38d1de53264afa1f11"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/collect-translation-keys.mjs",
+    "sha256": "15c0422d59fc63e6dc628ea2767dd166183379724ff68406772e6c20ce9eabb2"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/collect-translation-keys.test.mjs",
+    "sha256": "c2712c392c6b916fd84f01831aeaa988be07119004e00d59c9e4abff4d3f08aa"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/eslint-project-fingerprint.mjs",
+    "sha256": "953c3e51f60ee9c2c22009bb87221a4d7bf3cb485c53a55f07f691b6df70f344"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/eslint-project-fingerprint.test.mjs",
+    "sha256": "8d9298ad4e1157bc1541361380daf6e6a8cdf0bbc444f9b76a6c220f7b01b9d7"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs",
+    "sha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.test.mjs",
+    "sha256": "8502c0fd6bf39f24d53b49e781bed53e7f1f3e3c81c751de46bad14292117e3d"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-review.mjs",
+    "sha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-review.test.mjs",
+    "sha256": "08eb27e463f42f63e366f1e23afffd0028a2b51d61bc69c819d82c4447c0b3e5"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/import-cycles.mjs",
+    "sha256": "4c3511e3e892148f60238ce391a38df7873bc11eb72e26149e6c042164bbb204"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/import-cycles.test.mjs",
+    "sha256": "a047a9ef8272e1206fe03e90d20312b81976e1125f740c0e4d12442820689b7b"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/lint.mjs",
+    "sha256": "0cd8e1c48376948c0f999a07153c22f25cdfcb2a32e86ab88055fd5b61c46a4a"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/profile-eslint.mjs",
+    "sha256": "7945d57c67d0e25af43f99bf43a3e6d0e494858bccb794d5bff1d28b7c63e5c0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/project-options.mjs",
+    "sha256": "e8f11fde3a18310716246a9eb9cfbba1c9fb3c05eb23cec11c68d99aa68fe1a0"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/vitest.config.mjs",
+    "sha256": "36f623073a9b70290d38a58894a5ae1e120fbe4c6e5b3b995ff7efba92447365"
+  }
+]

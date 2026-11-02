@@ -13,7 +13,7 @@ description: >
 license: Internal
 metadata:
   author: frontend-engineering
-  version: '1.7.0'
+  version: "1.7.0"
 ---
 
 # Generic React Best Practices
@@ -71,6 +71,14 @@ Start review and correction with the selected rules' own impact: **CRITICAL → 
 3. Order the applicable rules by impact, then category priority. Select their packaged ESLint checks and complementary scripts through the [rule-to-tool bindings](references/project-enforcement.md), using the consuming application's configured roots, catalog and commands. Use a script when it supports a selected rule; do not run every audit script as an independent checklist. A shared command may serve several selected rules in one run.
 4. Confirm findings against the owning rule and inspect requirements beyond automatic coverage. A tool's silence does not establish compliance, and a review candidate does not establish a violation.
 5. For architecture reviews, identify user outcomes, business scope, hierarchy and ownership before proposing folders. Derive vocabulary from the application. When implementing a settled choice, record it next to the owning code using [architecture decision comments](rules/quality-jsdoc-minimal.md#architecture-decision-comments); during the audit phase, propose the comment in the plan. Application architecture documents may summarize those choices and the overall target structure.
+
+### Check change history before corrections
+
+Before modifying a file or recommending an audit correction, inspect its staged and unstaged changes, relevant Git patches (for example, `git log --follow -p -- <file>`) and existing decision comments. For renamed, moved or extracted code, inspect the original owner's history as well. From at most the three latest prior audits, read only the relevant scope metadata and matching sections of `findings.md` and `plan.md`; open coverage or evidence only to resolve a specific question. Follow the [selective history lookup](references/audit-method.md#use-the-last-three-audits-as-a-working-base), then revalidate relevant conclusions against current code and rules. Do not load whole dossiers. The three-audit limit does not limit Git history or invalidate code-local decisions.
+
+Check whether the proposed change reverses an earlier correction or reintroduces a rejected arrangement. Preserve an existing conforming choice unless concrete contradictory evidence, a relevant requirement or implementation change, a met revisit condition, or an explicit user request justifies replacing it. Identify the earlier choice and the factual trigger before proposing or applying its replacement; a different conforming preference alone is insufficient. Do not request approval again for an already authorized choice.
+
+Record consulted history and any reversal in the existing audit evidence when auditing; ordinary changes need no new audit dossier or per-file changelog. If history or prior audits are unavailable, state that limit without inventing earlier decisions or treating the absence alone as a blocker.
 
 ### File naming and folder normalization
 

@@ -1,3 +1,4 @@
+import { useFormatDataQualityDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatDataQualityDimension'
 import type { DimensionCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -21,9 +22,10 @@ export function AllocationDimensionRowView({
   materialGap: boolean
   onOpenDetails: () => void
 }) {
+  const formatDimension = useFormatDataQualityDimension()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const label = LABELS[item.dimension]
+  const label = formatDimension(item.dimension, { style: 'title' })
   return (
     <div>
       <Inline
@@ -76,19 +78,4 @@ export function AllocationDimensionRowView({
       </Layout>
     </div>
   )
-}
-
-const LABELS: Record<DimensionCoverage['dimension'], string> = {
-  get geo() {
-    return i18n.t('ui.allocationdimensionquality.geography')
-  },
-  get secteur() {
-    return i18n.t('ui.allocationdimensionquality.sector')
-  },
-  get currency() {
-    return i18n.t('ui.allocationdimensionquality.currency')
-  },
-  get classe() {
-    return i18n.t('ui.allocationdimensionquality.assetClass')
-  },
 }

@@ -1,7 +1,7 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
 import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
-import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
 import type { QualityTooltipRow } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type'
+import { useFormatAnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
@@ -14,11 +14,11 @@ import {
 export function CombinedAnalysisReliabilityKpi(
   props: CombinedReliabilityInput,
 ) {
+  const formatReliabilityTone = useFormatAnalysisReliabilityTone()
   const { metrics, statusMetric, tone, tooltip, qualityTheme, scope } =
     useCombinedReliabilityPresentation(props)
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const styles = RELIABILITY_TONES[tone]
   const rows: QualityTooltipRow[] = [
     ...(statusMetric
       ? [
@@ -59,7 +59,7 @@ export function CombinedAnalysisReliabilityKpi(
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1OpenDataQuality',
         {
-          value0: styles.label,
+          value0: formatReliabilityTone(tone),
           value1: metricSummary,
         },
       )}

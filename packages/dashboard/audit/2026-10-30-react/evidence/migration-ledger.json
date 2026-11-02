@@ -1,0 +1,1933 @@
+[
+  {
+    "file": "src/app/helpers/mappers/useBuildDashboardLoadState.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/useBuildDashboardLoadState.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/app/helpers/mappers/useBuildDashboardLoadState.test.tsx:5 (value)",
+      "src/app/services/useDashboardViewModel.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/app/helpers/mappers/useBuildDashboardSourceData.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/useBuildDashboardSourceData.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.view.tsx:4 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/formatters/useFormatFundDiagnosticsFilter.test.tsx:7 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/formatters/useFormatFundDiagnosticsFilter.ts:4 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.test.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/mappers/buildAnalysisReliabilityMetrics.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/buildAnalysisReliabilityMetrics.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useCombinedReliabilityPresentation.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/hasMaterialQualityGap.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.feature.tsx:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionQuality.feature.tsx:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.ts:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap.test.ts:3 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/percentageReliabilityTone.ts:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildClassificationViewState.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildClassificationViewState.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state.test.tsx:5 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state.tsx:2 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildClassificationViewState.test.ts:6 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildDataQualitySummary.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useCombinedReliabilityPresentation.ts:5 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/aggregateReliabilityTone.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/aggregateReliabilityTone.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/aggregateReliabilityTone.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/percentageReliabilityTone.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/percentageReliabilityTone.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:3 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/percentageReliabilityTone.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineReliabilityTone.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/analysisReliability/pipelineReliabilityTone.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByAccount.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage.test.ts:3 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByDimension.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage.test.ts:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/getUnclassifiedAllocationPercentage.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/getUnclassifiedAllocationPercentage.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionQuality.feature.tsx:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/getUnclassifiedAllocationPercentage.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/summarizeAllocationCoverage.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.feature.tsx:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.view.tsx:1 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.feature.tsx:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.view.tsx:5 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/qualityThresholds/qualityGapTolerancePct.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/qualityThresholds/qualityGapTolerancePct.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/businessRules/hasMaterialQualityGap.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/computeFundExposurePercentages.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:5 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData.test.ts:3 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData.test.ts:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts:5 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:6 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages.ts:3 (type)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.ts:10 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:7 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.test.tsx:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopeManualPriceOverrides.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeManualPriceOverrides.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts:6 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopeManualPriceOverrides.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopePipelineErrors.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopePipelineErrors.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/useDashboardQuality.ts:7 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopePipelineErrors.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/useBuildDataQualityViewModel.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.test.tsx:9 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/data-quality/features/errors/helpers/transformers/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.feature.tsx:3 (type)",
+      "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.view.tsx:3 (type)",
+      "src/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel.ts:7 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/helpers/mappers/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/useBuildPipelineErrorsViewModel.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTab.view.tsx:4 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/helpers/calculators/sumFilteredPositionValues.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/helpers/transformers/sumFilteredPositionValues.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/FilteredPositionsTable.feature.tsx:10 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/aggregateAllocationPoints.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/aggregateAllocationPoints.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/scopeRawAllocationData.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/aggregateFilteredPoints.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/aggregateFilteredPoints.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/aggregateAllocationPoints.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/aggregateFilteredPoints.test.ts:5 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/computeTableRows.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/computeTableRows.test.ts:5 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/calculators/allocationChartCalculations/dateTimestamp.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationChartCalculations/dateTimestamp.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain.ts:1 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.ts:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/components/AllocationCurrentView.feature.tsx:1 (type)",
+      "src/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature.tsx:3 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/components/AllocationTrendView.feature.tsx:1 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/selectors/computeMatchingIsins.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/computeMatchingIsins.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts:6 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/selectors/computeMatchingIsins.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/businessRules/shouldAnimateConcentration.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component helpers/presenters/shouldAnimateConcentration.ts",
+    "responsibility": "Presenter: selects rendered chips/charts or an animation mode; this is visual selection rather than a domain classifier.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature.test.tsx:5 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/services/useConcentrationTrendController.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/businessRules/isValuedAnalysisPosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/isValuedAnalysisPosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts:1 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration.test.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/computeConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/buildCumulativeConcentration.test.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.test.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/computeHeldAssetConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.test.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration.test.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useCurrentConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useCurrentConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/CurrentConcentration.feature.tsx:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useHistoricalConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useHistoricalConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/components/HistoricalConcentration.feature.tsx:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/shared/helpers/mappers/prepareDiversificationScope.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/DashboardDiversification.feature.tsx:7 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/mappers/prepareDiversificationScope.test.ts:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/excludeNonApplicableAllocationData.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/shared/helpers/transformers/scopeDiversificationData/excludeNonApplicableAllocationData.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/shared/helpers/mappers/prepareDiversificationScope.ts:2 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/excludeNonApplicableAllocationData.test.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/scopeRawAllocationData.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/diversification/shared/helpers/transformers/scopeDiversificationData/scopeRawAllocationData.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/shared/helpers/mappers/prepareDiversificationScope.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/scopeRawAllocationData.test.ts:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures.test.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/mappers/buildFundExposureViewModel.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/buildFundExposureViewModel.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/VirtualExposureRow.view.tsx:1 (type)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature.tsx:43 (type)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.ts:4 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList.ts:4 (type)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/stores/dashboardUnderlyingHoldings/dashboardUnderlyingSort.atoms.ts:3 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/selectExposurePositions.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature.tsx:2 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions.test.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/helpers/selectors/useFundPositionHoldings.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/services/useFundPositionHoldings.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/FundPositionPopover.feature.tsx:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/helpers/selectors/selectRenderableAllocationCharts.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component helpers/presenters/selectRenderableAllocationCharts.ts",
+    "responsibility": "Presenter: selects rendered chips/charts or an animation mode; this is visual selection rather than a domain classifier.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature.tsx:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/businessRules/hasUnitPriceHistory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/hasUnitPriceHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.tsx:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartData.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartData.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/PositionHistoryCharts.view.tsx:5 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/RollingUnitPricePerf.view.tsx:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/buySellDots/buySellDots.types.ts:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData.test.ts:3 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries.ts:5 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.ts:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/formatters/useFormatRollingReturnPeriod.ts:4 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain.ts:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/OpSummary.view.tsx:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/TooltipPortfolio.view.tsx:1 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/hoverCharts.tooltips/TooltipUnit.view.tsx:1 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartSeries.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.tsx:5 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/computeMonthlyBalances.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData.test.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/computeRollingReturns.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries.ts:6 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeRollingReturns.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/mappers/usePositionTableData.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableData.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx:16 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/aggregators/buildPositionsHistory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/buildPositionsHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/aggregators/buildPositionsHistory.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/aggregators/toLatestAllocationByIsin.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/toLatestAllocationByIsin.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/apis/queries/useGetAllocationsByIsinQuery.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/aggregators/toLatestAllocationByIsin.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/businessRules/positionDisplayRules/isClosedPosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/positionDisplayRules/isClosedPosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx:24 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/businessRules/positionDisplayRules/isTaxFreePassiveIncome.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/positionDisplayRules/isTaxFreePassiveIncome.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature.tsx:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/businessRules/shouldShowPositionQuantity.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/shouldShowPositionQuantity.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature.tsx:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculateGainTaxDetails.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculateGainTaxDetails.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature.tsx:2 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/gainCells/UnrealizedGainCell.feature.tsx:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePassiveIncomeTax.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePassiveIncomeTax.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculateGainTaxDetails.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePositionGroupTotals.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePositionGroupTotals.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/mappers/usePositionTableData.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePositionTableValues.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePositionTableValues.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionGroupSeparator.view.tsx:2 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx:25 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/calculators/calculatePositionTableValues/calculatePositionGroupTotals.ts:3 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionSavingsOperations.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionSavingsOperations.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/mappers/getPositionChartOperations/getPositionTradeOperations.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionTradeOperations.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/holdingsForPosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/holdingsForPosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/helpers/selectors/useFundPositionHoldings.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/indexFundStatuses.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/indexFundStatuses.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/mappers/usePositionTableData.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.test.ts:4 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts:4 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableOverlays.test.tsx:7 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableOverlays.ts:6 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition.test.ts:7 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition.ts:4 (type)",
+      "src/domains/portfolio/features/holdings/features/positions/types/positionColumnContext.type.ts:3 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/getSortValue.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/sortPositionsForTable/getSortValue.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/getSortValue.test.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/sortPositionsForTable.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/sortPositionsForTable.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/sortPositionsForTable/sortPositionsForTable.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/sortPositionsForTable/sortPositionsForTable.test.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/useSortedPositions.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/statusForPosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx:5 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/statusForPosition.test.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/helpers/selectors/useSortedPositions.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/useSortedPositions.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:13 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/businessRules/matchesPositionScope.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/matchesPositionScope.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildGrossValueHistory.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/addDays.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/addDays.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildGrossValueHistory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildGrossValueHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison.test.ts:3 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:11 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison.test.ts:4 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/useOverviewComparison.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:12 (type)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr.ts:4 (type)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compared.ts:1 (type)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts:2 (type)",
+      "src/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewPeriodRange.ts:4 (type)",
+      "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter.feature.tsx:1 (type)",
+      "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.test.tsx:5 (type)",
+      "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx:3 (type)",
+      "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx:1 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx:3 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx:1 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature.tsx:1 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.view.tsx:4 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewConcentrationRows.ts:1 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewDriverPresentation.ts:1 (type)",
+      "src/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view.tsx:1 (type)",
+      "src/domains/portfolio/features/overview/types/overviewChart.type.ts:1 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/compareRollingThreeYearIrr.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison.test.ts:5 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/useOverviewComparison.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compared.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/compared.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:19 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/dayMs.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/dayMs.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/addDays.ts:1 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/minDate.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/minDate.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/resolveOverviewWindows.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison.test.ts:6 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:20 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/shiftYear.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/shiftYear.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/resolveOverviewWindows.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/calculators/useOverviewComparison.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/useOverviewComparison.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:16 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/selectors/latestAtOrBefore.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/latestAtOrBefore.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:1 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/compareRollingThreeYearIrr.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/aggregators/aggregatePassiveIncomeByYear.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/aggregatePassiveIncomeByYear.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery.ts:8 (value)",
+      "src/domains/portfolio/features/performance/helpers/aggregators/aggregatePassiveIncomeByYear.test.ts:3 (type)",
+      "src/domains/portfolio/features/performance/helpers/aggregators/aggregatePassiveIncomeByYear.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/calculators/buildUnrealizedPnlHistory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/buildUnrealizedPnlHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature.tsx:1 (value)",
+      "src/domains/portfolio/features/performance/helpers/calculators/buildUnrealizedPnlHistory.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.test.ts:7 (value)",
+      "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx:15 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/performanceCalculations/computePerformanceSummary.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computePerformanceSummary.test.ts:3 (value)",
+      "src/domains/portfolio/features/performance/helpers/mappers/useDashboardPerformance.ts:4 (value)",
+      "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.test.tsx:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/performanceCalculations/computeTopPerformers.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/performanceCalculations/computeTrailing12mIncome.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTrailing12mIncome.test.ts:3 (value)",
+      "src/domains/portfolio/features/performance/helpers/mappers/useDashboardPerformance.ts:5 (value)",
+      "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.test.tsx:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/mappers/buildPerformanceContributionViewModel/resolveContributionHorizon.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/buildPerformanceContributionViewModel/resolveContributionHorizon.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/services/useContributionHorizon.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/mappers/useDashboardPerformance.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/services/useDashboardPerformance.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:17 (value)",
+      "src/domains/portfolio/features/performance/helpers/mappers/useDashboardPerformance.test.tsx:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/selectors/buildAssetIrrRankings.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/performance/helpers/transformers/buildAssetIrrRankings.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountTypeSelectionState.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountTypeSelectionState.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx:3 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx:6 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/helpers/formatters/useFormatAccountSelectionLabel.ts:6 (value)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/toggleAccountTypeSelection.ts:1 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountsForType.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountsForType.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx:2 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx:5 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/helpers/formatters/useFormatAccountSelectionLabel.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/toggleAccountTypeSelection.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/toggleAccountTypeSelection.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx:4 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/clearFilterGroup.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/clearFilterGroup.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature.tsx:4 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/filterSummariesForTab.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component helpers/presenters/filterSummariesForTab.ts",
+    "responsibility": "Presenter: selects rendered chips/charts or an animation mode; this is visual selection rather than a domain classifier.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature.tsx:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/portfolioFilters.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/portfolioFilters.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/DashboardFilters.feature.tsx:11 (type)",
+      "src/app/helpers/presenters/filterVisibilityForTab.ts:1 (type)",
+      "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature.tsx:6 (type)",
+      "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature.tsx:6 (type)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/clearFilterGroup.ts:1 (type)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/filterSummariesForTab.ts:1 (type)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/useFilterSummaries.ts:9 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/presetDateFrom.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/presetDateFrom.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature.tsx:7 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/resetFilters.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/resetFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/helpers/filters/resetFilters.test.ts:5 (value)",
+      "src/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters.test.ts:5 (value)",
+      "src/domains/portfolio/shared/services/useDashboardHistory.test.tsx:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/toggle.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/helpers/transformers/toggle.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx:5 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx:8 (value)",
+      "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature.tsx:8 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters.test.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/useFilterSummaries.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/useFilterSummaries.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/app/App.feature.tsx:10 (value)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/useFilterSummaries.test.tsx:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/helpers/filters/usePortfolioFilterOptions.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/scope-selection/services/usePortfolioFilterOptions.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature.tsx:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature.tsx:6 (value)",
+      "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.view.tsx:29 (type)",
+      "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/aggregators/groupMonthlyTooltipOperations.test.ts:6 (value)",
+      "src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.test.tsx:5 (value)",
+      "src/domains/portfolio/features/wealth/components/wealthChartTooltips/MonthlyTooltip/MonthlyTooltip.view.tsx:1 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeBreakdown.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/buildAccountTypeBreakdown.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeBreakdown.test.ts:3 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/buildAccountTypeHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.test.ts:6 (value)",
+      "src/domains/portfolio/features/wealth/helpers/aggregators/useAccountTypeHistory.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/aggregators/useAccountTypeHistory.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/services/useAccountTypeHistory.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/aggregators/useAccountTypeHistory.test.tsx:5 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:4 (value)",
+      "src/domains/portfolio/shared/apis/queries/accountScopes.test.tsx:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/calculators/analyseIncomePlacement.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/analyseIncomePlacement.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/services/useIncomePlacementChart.ts:4 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/buildCumulativeWealthDrivers.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/buildCumulativeWealthDrivers.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/buildCumulativeWealthDrivers.test.ts:3 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computePeriodDrivers.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computePeriodDrivers.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computePeriodDrivers.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mSavings.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings.test.ts:3 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.test.ts:3 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.ts",
+    "line": 1,
+    "findings": "F-004, F-005",
+    "proposed_destination": "Owning apis/schemas/ response transformation; retain business aggregation separately.",
+    "responsibility": "API boundary: wire field names are adapted to the exported entity.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery.ts:4 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/services/useDashboardWealth.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:20 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.test.tsx:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/selectors/filterAnnualIncomeSavingsByPeriod.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/filterAnnualIncomeSavingsByPeriod.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/mappers/mapAnnualIncomeSavings/mapAnnualIncomeSavings.test.ts:5 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/selectors/filterMonthlyOpsByAccounts.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/features/wealth/helpers/transformers/filterMonthlyOpsByAccounts.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:9 (value)",
+      "src/domains/portfolio/features/wealth/helpers/selectors/filterMonthlyOpsByAccounts.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/aggregateBrokerageCash.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery.ts:7 (value)",
+      "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawCashRowSchema.ts:4 (type)",
+      "src/domains/portfolio/shared/helpers/aggregators/aggregateBrokerageCash.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacity.types.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacity.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacityByAccountSchema.ts:4 (type)",
+      "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacitySchema.ts:4 (type)",
+      "src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacityByAccount.ts:4 (type)",
+      "src/domains/portfolio/shared/helpers/mappers/mapSavingCapacity.ts:2 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity/aggregateSavingCapacityByAccount.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacityByAccount.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery.ts:12 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/applyAccountFilterToHistory.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/applyAccountFilterToHistory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/aggregators/applyAccountFilterToHistory.test.ts:7 (value)",
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildAllocationPieData.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx:10 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx:4 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/historicalFundSnapshots/historicalFundSnapshots.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalFundSnapshots.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/aggregators/historicalFundSnapshots/historicalSnapshotsByParent.ts:3 (type)",
+      "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/latestSnapshotAt.ts:1 (type)",
+      "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts:2 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/aggregators/historicalFundSnapshots/historicalSnapshotsByParent.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalSnapshotsByParent.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/businessRules/getFundQualityCategory.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/getFundQualityCategory.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/getFundQualityCategory.test.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/formatters/useFormatFundQualityLabel.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/isAssetAnalysisApplicablePosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount.ts:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts:5 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/businessRules/isValuedAnalysisPosition.ts:1 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/mappers/prepareDiversificationScope.ts:5 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/excludeNonApplicableAllocationData.ts:2 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/selectors/selectExposurePositions.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/isAssetAnalysisApplicablePosition.test.ts:6 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/matchesFilters.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/businessRules/isDemoPresetActive.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/isDemoPresetActive.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:7 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/businessRules/isFundPosition.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/isFundPosition.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/scopeFundQualityData.ts:5 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures.ts:6 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/isFundPosition.test.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/businessRules/matchesFilters.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/matchesFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useHistoricalConcentration.ts:4 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:2 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useHistoricalConcentration.ts:5 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/concentrationPoint.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/concentrationPoint.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalConcentration.ts:5 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/positionsNeededForShare.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/positionsNeededForShare.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/concentrationPoint.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilter.types.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/accountFilter/accountFilter.types.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts:3 (type)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/accountFilter/accountFilterId.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/excludeNonApplicableAllocationData.ts:3 (value)",
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/scopeRawAllocationData.ts:2 (value)",
+      "src/domains/portfolio/features/overview/helpers/businessRules/matchesPositionScope.ts:1 (value)",
+      "src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.ts:5 (value)",
+      "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.ts:6 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/applyAccountFilterToHistory.ts:2 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/matchesFilters.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildAccountFilterLabels.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildPortfolioFilterOptions.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/applyPositionFilters.ts:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/accountFilter/cashAccountFilterSuffix.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/shared/helpers/selectors/scopeDiversificationData/scopeRawAllocationData.test.ts:5 (value)",
+      "src/domains/portfolio/features/overview/helpers/calculators/buildOverviewComparison/buildOverviewComparison.ts:4 (value)",
+      "src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.test.ts:3 (value)",
+      "src/domains/portfolio/features/wealth/helpers/aggregators/buildAccountTypeHistory.test.ts:4 (value)",
+      "src/domains/portfolio/features/wealth/helpers/selectors/filterMonthlyOpsByAccounts.test.ts:5 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/applyAccountFilterToHistory.test.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend.test.ts:5 (value)",
+      "src/domains/portfolio/shared/helpers/filters/accountFilter/accountFilterId.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountId.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildAccountFilterLabels.test.tsx:5 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/applyPositionFilters.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountId.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/accountFilter/rawAccountId.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/buildDemoPresetSelection.ts:2 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection.ts:2 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/accountFilter/rawAccountSet.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/accountFilter/rawAccountSet.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery.ts:12 (value)",
+      "src/domains/portfolio/features/wealth/helpers/selectors/filterMonthlyOpsByAccounts.ts:5 (value)",
+      "src/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery.ts:13 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/buildDemoPresetSelection.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/buildDemoPresetSelection.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationAndPeriodFilters.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationAndPeriodFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilterScopes/withoutOperationFilters.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilters/defaultDashboardFilters.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/defaultDashboardFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/helpers/filters/resetFilters.test.ts:3 (value)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/resetFilters.ts:1 (value)",
+      "src/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters.test.tsx:7 (value)",
+      "src/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useAccountFilterLabels.ts",
+    "line": 1,
+    "findings": "F-002, F-005",
+    "proposed_destination": "src/domains/portfolio/shared/services/portfolioFilters/useAccountFilterLabels.ts",
+    "responsibility": "Service: reads a query/atom, or transitively acquires source data; keep pure derivations in transformers.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.feature.tsx:3 (value)",
+      "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.tsx:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildAccountFilterLabels.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Split data-only transformers from consumer-owned presenters/formatter composition.",
+    "responsibility": "Mixed contract: common account IDs/types feed business filtering; generated labels are display text.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useAccountFilterLabels.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildAccountFilterLabels.test.tsx:8 (value)",
+      "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildPortfolioFilterOptions.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/filters/portfolioFilters/useBuildPortfolioFilterOptions.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Split data-only transformers from consumer-owned presenters/formatter composition.",
+    "responsibility": "Mixed contract: common account IDs/types feed business filtering; generated labels are display text.",
+    "callers": [
+      "src/app/helpers/mappers/useBuildDashboardSourceData.ts:3 (value)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/usePortfolioFilterOptions.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildAccountLabels.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildAccountLabels.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery.ts:9 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildAccountLabels.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildPositionRows.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery.ts:10 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows.test.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByAccount.ts:3 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts:6 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts:8 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx:6 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/getPositionAllocationKey.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/mapFundHolding.ts",
+    "line": 2,
+    "findings": "F-004, F-005",
+    "proposed_destination": "Owning apis/schemas/ response transformation; retain business aggregation separately.",
+    "responsibility": "API boundary: wire field names are adapted to the exported entity.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery.ts:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/mapFundHoldingStatus.ts",
+    "line": 2,
+    "findings": "F-004, F-005",
+    "proposed_destination": "Owning apis/schemas/ response transformation; retain business aggregation separately.",
+    "responsibility": "API boundary: wire field names are adapted to the exported entity.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery.ts:10 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/mapSavingCapacity.ts",
+    "line": 2,
+    "findings": "F-004, F-005",
+    "proposed_destination": "Owning apis/schemas/ response transformation; retain business aggregation separately.",
+    "responsibility": "API boundary: wire field names are adapted to the exported entity.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery.ts:14 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/aggregateSavingCapacity.test.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/resolveAssetName.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/resolveAssetName.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeHeldAssetConcentration.ts:3 (value)",
+      "src/domains/portfolio/features/performance/helpers/calculators/computePerformanceContributions.ts:6 (value)",
+      "src/domains/portfolio/features/performance/helpers/calculators/performanceCalculations/computeTopPerformers.ts:2 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/buildPositionHierarchy/buildPositionRows.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/resolveAssetName.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/mappers/resolveFilteredHistoryState.test.ts:3 (value)",
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/app/services/useDashboardViewModel.ts:30 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.test.tsx:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/applyPositionFilters.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/applyPositionFilters.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts:7 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/applyPositionFilters.test.ts:9 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/filterPointsByPeriod.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/filterPointsByPeriod.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/mappers/useAllocationCharts.ts:8 (value)",
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/useHistoricalConcentration.ts:6 (value)",
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mSavings.ts:2 (value)",
+      "src/domains/portfolio/features/wealth/helpers/mappers/useDashboardWealth.ts:12 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/filterPointsByPeriod.test.ts:3 (value)",
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:10 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/groupAllocationTail.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/groupAllocationTail.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.ts:3 (value)",
+      "src/domains/portfolio/shared/helpers/aggregators/buildAllocationPieData.ts:1 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/groupAllocationTail.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/latestSnapshotAt.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/historicalFundHoldings/latestSnapshotAt.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/helpers/calculators/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts:4 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/helpers/selectors/useFundPositionHoldings.ts:6 (value)",
+      "src/domains/portfolio/shared/helpers/mappers/usePortfolioPositions.ts:8 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/indexFundHoldingsByParent.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/diversification/features/concentration/helpers/calculators/concentrationCalculations/computeConcentration.ts:5 (value)",
+      "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/aggregators/issuerExposures/buildIssuerExposures.ts:7 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/indexFundHoldingsByParent.test.ts:5 (value)"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection.ts",
+    "line": 2,
+    "findings": "F-005",
+    "proposed_destination": "src/domains/portfolio/shared/helpers/transformers/normalizeAccountSelection.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/requestFilteredPortfolioHistory.ts:3 (value)",
+      "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetDemoFilteredHistoryAccountsQuery.ts:6 (value)",
+      "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetFilteredPortfolioHistoryQuery.ts:6 (value)",
+      "src/domains/portfolio/shared/helpers/businessRules/isDemoPresetActive.ts:2 (value)",
+      "src/domains/portfolio/shared/helpers/selectors/normalizeAccountSelection.test.ts:3 (value)",
+      "src/domains/portfolio/shared/services/useDashboardHistory.ts:11 (value)"
+    ]
+  },
+  {
+    "file": "src/shared/helpers/calculators/partitionPercentages.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/shared/helpers/transformers/partitionPercentages.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/mappers/buildDataQualitySummary.ts:12 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/summarizeAllocationCoverage.ts:2 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/scopeFundQualityData/computeFundExposurePercentages.ts:1 (value)",
+      "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/mappers/useBuildDataQualityViewModel.ts:16 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.ts:5 (value)",
+      "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/withAccountTypeShares.ts:3 (value)",
+      "src/shared/helpers/calculators/partitionPercentages.test.ts:3 (value)"
+    ]
+  },
+  {
+    "file": "src/shared/helpers/mappers/normalizeRequestError.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/shared/helpers/transformers/normalizeRequestError.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/shared/helpers/formatters/useFormatErrorMessage.ts:4 (value)"
+    ]
+  },
+  {
+    "file": "src/shared/helpers/mappers/toCalendarMonth.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/shared/helpers/transformers/toCalendarMonth.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/selectors/scopePipelineErrors.ts:4 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildHoverChartSeries.ts:3 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/buildSavingsHistorySeries.ts:2 (value)",
+      "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/calculators/buildHoverChartData/computeMonthlyBalances.ts:1 (value)",
+      "src/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery.ts:10 (value)",
+      "src/domains/portfolio/features/wealth/helpers/calculators/wealthCalculations/computeTrailing12mYearOverYear.ts:6 (value)"
+    ]
+  },
+  {
+    "file": "src/shared/helpers/mappers/toDateInputValue.ts",
+    "line": 1,
+    "findings": "F-003, F-005",
+    "proposed_destination": "Owning component/page helpers/presenters/toDateInputValue.ts",
+    "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
+    "callers": [
+      "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel.feature.tsx:17 (value)"
+    ]
+  },
+  {
+    "file": "src/shared/helpers/selectors/getOwnValue.ts",
+    "line": 1,
+    "findings": "F-005",
+    "proposed_destination": "src/shared/helpers/transformers/getOwnValue.ts",
+    "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
+    "callers": [
+      "src/domains/portfolio/features/data-quality/features/assessment/helpers/quality/computeAllocationCoverage/computeAllocationCoverageByDimension.ts:9 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/aggregators/allocationPoints/computeTableRows.ts:4 (value)",
+      "src/domains/portfolio/features/diversification/features/allocation/helpers/selectors/computeMatchingIsins.ts:3 (value)",
+      "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/helpers/formatters/useFormatAccountSelectionLabel.ts:8 (value)",
+      "src/domains/portfolio/features/scope-selection/helpers/filters/accountTreeSelection/accountsForType.ts:1 (value)",
+      "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view.tsx:15 (value)",
+      "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/buildAccountTypeTooltipData.ts:2 (value)",
+      "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/withAccountTypeShares.ts:4 (value)",
+      "src/shared/helpers/selectors/getOwnValue.test.ts:3 (value)"
+    ]
+  }
+]

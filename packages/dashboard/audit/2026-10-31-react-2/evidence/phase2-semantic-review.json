@@ -1,0 +1,362 @@
+{
+  "sourceDelta": "WealthComparisonKpi moves existing translated missing-period text into formatMonthRange options; displayed nominal/empty output preserved by existing tests.",
+  "collectorDelta": "P-001 reconciles canonical inputs; P-002 bounds exemptions; P-003 fingerprints all analyzed in-source inputs.",
+  "analysis": {
+    "typescript": "6.0.3",
+    "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
+    "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
+    "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
+    "sourceSha256": "bb8272ee35a241375e968737a03c92489d050181592584ae4601d8c49b72bb16",
+    "lockfileSha256": "331ca0fada397369a51a0ac5368bc1f41d21fb463b78ecb3dd318e9510fe41e9"
+  },
+  "candidateEquality": true,
+  "exclusionEquality": true,
+  "decisionsUnchanged": true,
+  "reviews": [
+    {
+      "file": "src/app/services/useResetDashboardFilters.test.tsx",
+      "line": 30,
+      "column": 51,
+      "contracts": [
+        {
+          "name": "AllocationFilter",
+          "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+        }
+      ],
+      "keys": [
+        "type",
+        "value"
+      ],
+      "contextualType": "SetStateAction<AllocationFilter | null>",
+      "context": "CallExpression",
+      "code": "{\n      type: 'geo',\n      value: 'France',\n    }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit state command selects geo/France for the reset behavior; action input rather than a fixture base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+      "line": 72,
+      "column": 16,
+      "contracts": [
+        {
+          "name": "FilterScopeSpec",
+          "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
+        }
+      ],
+      "keys": [
+        "account",
+        "period"
+      ],
+      "contextualType": "FilterScopeSpec",
+      "context": "JsxExpression",
+      "code": "{ account: 'filterable', period: 'range' }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Component policy configuration selects filterable/range scope; no independent entity sample defaults.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 7,
+      "column": 36,
+      "contracts": [
+        {
+          "name": "PipelineIssueStatus",
+          "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+        }
+      ],
+      "keys": [
+        "errorCount",
+        "warningCount"
+      ],
+      "contextualType": "PipelineIssueStatus",
+      "context": "CallExpression",
+      "code": "{ errorCount: 0, warningCount: 0 }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 10,
+      "column": 36,
+      "contracts": [
+        {
+          "name": "PipelineIssueStatus",
+          "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+        }
+      ],
+      "keys": [
+        "errorCount",
+        "warningCount"
+      ],
+      "contextualType": "PipelineIssueStatus",
+      "context": "CallExpression",
+      "code": "{ errorCount: 0, warningCount: 2 }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+      "line": 13,
+      "column": 36,
+      "contracts": [
+        {
+          "name": "PipelineIssueStatus",
+          "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+        }
+      ],
+      "keys": [
+        "errorCount",
+        "warningCount"
+      ],
+      "contextualType": "PipelineIssueStatus",
+      "context": "CallExpression",
+      "code": "{ errorCount: 1, warningCount: 0 }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+      "line": 29,
+      "column": 48,
+      "contracts": [
+        {
+          "name": "AllocationFilter",
+          "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+        }
+      ],
+      "keys": [
+        "type",
+        "value"
+      ],
+      "contextualType": "AllocationFilter",
+      "context": "CallExpression",
+      "code": "{\n          type: 'geo',\n          value: category,\n        }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+      "line": 69,
+      "column": 51,
+      "contracts": [
+        {
+          "name": "AllocationFilter",
+          "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+        }
+      ],
+      "keys": [
+        "type",
+        "value"
+      ],
+      "contextualType": "AllocationFilter",
+      "context": "CallExpression",
+      "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/computeMatchingIsins.test.ts",
+      "line": 39,
+      "column": 34,
+      "contracts": [
+        {
+          "name": "AllocationFilter",
+          "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+        }
+      ],
+      "keys": [
+        "type",
+        "value"
+      ],
+      "contextualType": "AllocationFilter | null",
+      "context": "CallExpression",
+      "code": "{ type: 'geo', value: 'france' }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
+      "line": 10,
+      "column": 5,
+      "contracts": [
+        {
+          "name": "AssetIrrItem",
+          "file": "src/domains/portfolio/features/performance/types/assetIrr.type.ts"
+        }
+      ],
+      "keys": [
+        "key",
+        "label",
+        "name",
+        "irr",
+        "value",
+        "accounts",
+        "account_types"
+      ],
+      "contextualType": null,
+      "context": "ArrayLiteralExpression",
+      "code": "{\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 247,
+      "column": 7,
+      "contracts": [
+        {
+          "name": "PerformanceContributionFilters",
+          "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+        }
+      ],
+      "keys": [
+        "accounts",
+        "accountTypes"
+      ],
+      "contextualType": "PerformanceContributionFilters",
+      "context": "CallExpression",
+      "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 257,
+      "column": 7,
+      "contracts": [
+        {
+          "name": "PerformanceContributionFilters",
+          "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+        }
+      ],
+      "keys": [
+        "accounts",
+        "accountTypes"
+      ],
+      "contextualType": "PerformanceContributionFilters",
+      "context": "CallExpression",
+      "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 16,
+      "column": 17,
+      "contracts": [
+        {
+          "name": "YearOverYearMetric",
+          "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+        }
+      ],
+      "keys": [
+        "current",
+        "previous",
+        "changePct"
+      ],
+      "contextualType": "YearOverYearMetric",
+      "context": "JsxExpression",
+      "code": "{ current: 100, previous: 80, changePct: 25 }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 38,
+      "column": 17,
+      "contracts": [
+        {
+          "name": "YearOverYearMetric",
+          "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+        }
+      ],
+      "keys": [
+        "current",
+        "previous",
+        "changePct"
+      ],
+      "contextualType": "YearOverYearMetric",
+      "context": "JsxExpression",
+      "code": "{ current: null, previous: null, changePct: null }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+      "line": 6,
+      "column": 17,
+      "contracts": [
+        {
+          "name": "PortfolioHistoryResponse",
+          "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
+        }
+      ],
+      "keys": [
+        "accounts",
+        "history"
+      ],
+      "contextualType": null,
+      "context": "VariableDeclaration",
+      "code": "{\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    },
+    {
+      "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+      "line": 9,
+      "column": 5,
+      "contracts": [
+        {
+          "name": "RawPortfolioHistory",
+          "file": "src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts"
+        }
+      ],
+      "keys": [
+        "snapshot_date",
+        "total_value",
+        "total_cost_basis",
+        "unrealized_gain",
+        "net_cash_injected",
+        "cash_delta",
+        "tri",
+        "tri_rolling_1y",
+        "tri_rolling_3y"
+      ],
+      "contextualType": null,
+      "context": "ArrayLiteralExpression",
+      "code": "{\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    }",
+      "verdict": "requires-semantic-review",
+      "decision": "keep",
+      "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base.",
+      "evidence": "Current definition and consumers inspected in this audit; exact baseline candidate/exclusion and source test content retained. Action/policy/scalar/raw-transport cases are distinct from maintained domain defaults."
+    }
+  ],
+  "projectRootDelta": "The selected configuration filename now anchors ambient type resolution. All 240 test contents, canonical contracts, candidates and exclusions are identical; actual compiler configuration gains only the selected configFilePath. Existing decisions revalidated against this exact inventory."
+}

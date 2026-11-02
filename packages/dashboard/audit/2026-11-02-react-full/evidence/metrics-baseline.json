@@ -1,0 +1,63 @@
+{
+  "formulaVersion": "weighted-rule-compliance/v1",
+  "scope": "dashboard/full; 1360 authored code/test/config/doc files + static assets",
+  "weights": {
+    "CRITICAL": 32,
+    "HIGH": 16,
+    "MEDIUM-HIGH": 8,
+    "MEDIUM": 4,
+    "LOW-MEDIUM": 2,
+    "LOW": 1
+  },
+  "formula": "100 * (1 - openViolatedRuleWeight / applicableRuleWeight)",
+  "score": 98.58,
+  "scoreStatus": "calculated",
+  "applicableRuleWeight": 1128,
+  "openViolatedRuleWeight": 16,
+  "openViolatedRuleIds": ["helpers-categories", "helpers-formatter-hooks"],
+  "coverage": {
+    "selected": 110,
+    "applicable": 99,
+    "pending": []
+  },
+  "unreviewedExceptions": 154,
+  "assurance": "reviewed scope excluding unrevalidated exceptions",
+  "volumes": {
+    "CRITICAL": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "HIGH": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "MEDIUM-HIGH": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW-MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    }
+  },
+  "otherOpenFindings": {
+    "ambiguity": 0,
+    "prevention-gap": 0,
+    "suggestion": 0
+  },
+  "openAffectedFiles": 7
+}

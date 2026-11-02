@@ -1,0 +1,30 @@
+[
+  {
+    "file": ".agents/skills/generic-react-best-practices/SKILL.md",
+    "sha256": "127926a57df93c913263834325b346bc189063a5e0ccdc59280b383faf3ad410"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint.config.mjs",
+    "sha256": "1a37e588aef10e91a13a5eac5729328598f00eab5cc629509c8860f14f612bcd"
+  },
+  {
+    "file": ".agents/skills/tailwind-design-system/SKILL.md",
+    "sha256": "b6577edb7b7f71a6954f68b80c7eea1748ccdf31862759f864bce558fb2bcf83"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-method.md",
+    "sha256": "8c41bd2c20c92f43746ffd773d6ba606256a2638ad355f77ca1aaaa6d3fa43ae"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-metrics.md",
+    "sha256": "b3759c04560780eadf19f3663a521fd593696161daffa8d4b5800ce72bdf7bfc"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/audit-output.md",
+    "sha256": "5ce12e238cccc1d22288781bd21fa4fb767e444ffa114066530bb072b55fa521"
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/project-enforcement.md",
+    "sha256": "0b9aade374cd959bcd02e7fdc5ba10cf30a2924422d0b9bc9de471d8cb42bcf1"
+  }
+]

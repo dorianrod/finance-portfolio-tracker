@@ -8,9 +8,21 @@ export function useFormatDataQualityDimension() {
   return useCallback(
     (
       dimension: DataQualityDimension | null | undefined,
-      { fallback = '—' }: { fallback?: string } = {},
+      {
+        fallback = '—',
+        style = 'lowercase',
+      }: { fallback?: string; style?: 'lowercase' | 'title' } = {},
     ): string => {
       if (dimension == null) return fallback
+      if (style === 'title') {
+        const labels: Record<DataQualityDimension, string> = {
+          geo: t('ui.allocationdimensionquality.geography'),
+          secteur: t('ui.allocationdimensionquality.sector'),
+          currency: t('ui.allocationdimensionquality.currency'),
+          classe: t('ui.allocationdimensionquality.assetClass'),
+        }
+        return labels[dimension]
+      }
       const labels: Record<DataQualityDimension, string> = {
         geo: t('ui.builddataqualityviewmodel.geography'),
         secteur: t('ui.builddataqualityviewmodel.sector'),

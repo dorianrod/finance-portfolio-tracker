@@ -57,6 +57,53 @@ Keep an unexamined obligation pending even when another part of its rule passes.
 For example, typed deterministic fixtures do not establish their owning location. Process manageable batches and retain pending
 entries so an interruption can resume without silently narrowing the scope.
 
+### Use the last three audits as a working base
+
+Select up to the three most recent prior dossiers in the consuming project's
+`audit/` root, or the audit root selected for this work. Order them newest first
+by their recorded reference dates, using the dated directory name when no date
+is recorded inside. Exclude the dossier currently being produced or continued.
+There is no age cutoff. If fewer than three exist, select those available;
+do not expand the lookup to older dossiers merely because the selected three
+have unrelated scopes.
+
+This is a search window, not a requirement to read three complete dossiers.
+Start with directory names, then extract only the request, scope and phase status
+from `scope.md` when needed to establish relevance. Skip unrelated dossiers.
+Search relevant dossiers by source path, symbol, rule ID or decision ID before
+reading matching sections and their necessary surrounding context:
+
+| Document                      | When to read it                                                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `findings.md`                 | Matching findings: requirement, earlier conclusion, rationale and affected owners.                                                               |
+| `plan.md`                     | Linked actions, actual user decisions and implementation outcomes for those findings or owners.                                                  |
+| `coverage.md`                 | Only the relevant file/rule rows or `Existing decisions and ignores` entry when findings/plan do not answer a coverage or prior-choice question. |
+| `verification.md`             | Only a linked check or completion entry when the actual result or implementation status matters.                                                 |
+| `root-causes.md` (if present) | A matching explanation of a regression or repeated reversal, when needed to understand the earlier correction.                                   |
+| `metrics.md` and metric JSON  | Only for a requested score, volume or comparable-baseline analysis.                                                                              |
+| `evidence/`                   | Only the specifically referenced review, reproduction or record needed to resolve a remaining question.                                          |
+
+Do not concatenate dossiers, preload coverage tables, raw logs, JSON inventories,
+graphs or report-generation scripts. Stop expanding history once the relevant
+prior choice, its reason and action status are known, or the targeted search
+finds nothing relevant. Carry forward only that conclusion and its source
+reference; do not copy the retrieved material into the new dossier.
+
+Use supported choices, known corrections and unfinished work as starting context.
+Revalidate relevant claims against current code, callers, rule contracts and
+configuration before reusing them; an earlier verdict or passing check does not
+establish current compliance, and an incomplete dossier is not a completed review.
+
+Combine this context with the history check required by the skill entry
+point before recommending corrections. Reference the consulted file sections,
+finding/action IDs and Git evidence in the existing coverage/findings, including
+the earlier choice and factual trigger for any reversal. State when no prior dossiers are available,
+none of the selected dossiers is relevant, or history cannot be accessed; do not
+invent earlier decisions or block work solely for that absence. Ordinary changes
+use the same lookup without creating an audit dossier or a separate changelog.
+This background lookup does not change authorization to continue an explicitly
+identified audit or invalidate decisions recorded beside the code.
+
 ### Stabilize verdicts and record architecture decisions in code
 
 For every proposed correction, identify the owning rule's explicit requirement,
@@ -249,8 +296,10 @@ requirement distinct from clarification of an existing one.
 Read the dossier and the user's implementation request before editing. Check
 that code, rule and configuration fingerprints still match the reviewed inputs.
 When relevant inputs changed, revalidate affected findings and callers, recording
-the delta. Preserve unaffected review; do not blindly apply stale plans or
-restart the full audit for a local change.
+the delta and refreshing the relevant file history and prior audit review.
+Apply the entry point's history check to any newly affected file before editing.
+Preserve unaffected review; do not blindly apply stale plans or restart the full
+audit for a local change.
 
 Implement authorized `fix` actions in catalog impact order and dependency order.
 Handle unresolved `ask-user` actions through the routing above. Retain conforming

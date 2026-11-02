@@ -1,5 +1,5 @@
 import { CompactDataQualityKpi } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature'
-import { RELIABILITY_TONES } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation'
+import { useFormatAnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone'
 import { useFormatPipelineStatus } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus'
 import { pipelineReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
@@ -16,9 +16,9 @@ export function PipelineReliabilityKpi({
   loading?: boolean
   scope: FilterScopeSpec
 }) {
+  const formatReliabilityTone = useFormatAnalysisReliabilityTone()
   const formatPipelineStatus = useFormatPipelineStatus()
   const tone = pipelineReliabilityTone({ errorCount, warningCount, loading })
-  const styles = RELIABILITY_TONES[tone]
   const statusLabel = formatPipelineStatus({
     errorCount,
     warningCount,
@@ -55,7 +55,11 @@ export function PipelineReliabilityKpi({
       // eslint-disable-next-line local/no-prop-drilling -- reviewed: 2026-10-27; This adapter translates the summary of its own metric values; CompactDataQualityKpi passes that display-ready label to the shared button.
       ariaLabel={i18n.t(
         'ui.analysisreliabilitykpi.dataQualityValue0Value1ErrorsAndValue2WarningsIn',
-        { value0: styles.label, value1: errorCount, value2: warningCount },
+        {
+          value0: formatReliabilityTone(tone),
+          value1: errorCount,
+          value2: warningCount,
+        },
       )}
     />
   )

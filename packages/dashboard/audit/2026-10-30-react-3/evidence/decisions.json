@@ -1,0 +1,58 @@
+[
+  {
+    "file": "src/app/DashboardSources.feature.tsx",
+    "line": 18,
+    "id": "persistent-dashboard-query-boundary",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
+    "line": 7,
+    "id": "prepared-allocation-chart",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature.tsx",
+    "line": 7,
+    "id": "comparison-period-control",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "line": 12,
+    "id": "prepared-asset-irr-results",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/services/useAccountTypeHistory.ts",
+    "line": 10,
+    "id": "feature-source-acquisition",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/schemas/historicalFundHoldingSchema.ts",
+    "line": 12,
+    "id": "shared-historical-fund-response",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/useBuildAccountFilterLabels.ts",
+    "line": 7,
+    "id": "account-scope-data-and-labels",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  },
+  {
+    "file": "themeHtmlPlugin.ts",
+    "line": 6,
+    "id": "prepaint-theme-token-source",
+    "status": "manually reviewed; retained",
+    "rationale": "Source/callers and rule contracts are unchanged. Existing responsibility/revisit assumptions retained after exact comparison; current targeted source traces and full behavior checks show no reopening trigger. Fixture ownership findings do not invalidate production structure."
+  }
+]

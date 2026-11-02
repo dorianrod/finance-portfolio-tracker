@@ -1,0 +1,662 @@
+[
+  {
+    "id": "api-business-destructuring",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "bf853e29584a072915ec339a88b698e2f76dfa7ac1ae2894326061b10b28deef"
+  },
+  {
+    "id": "api-central-url-constants",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "54fa319f2f1885202640962a2f8b2920378f4d6afa14cc5c7630d69a1c58c285"
+  },
+  {
+    "id": "api-error-message-helper",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "57ed30df7a091c06dad0c7dfce768f3431c1af3ebe981bf9d1d6a829a12e92d1"
+  },
+  {
+    "id": "api-mutation-three-types",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "7b8b224fb541781a87d0d265b2241823be7e88cffc66fab252b979ee50beb614"
+  },
+  {
+    "id": "api-naming",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "9970cda0b207030f77617ce62733b539dd4e6f3ac594d12911fcf412b57a7acf"
+  },
+  {
+    "id": "api-optimistic-update",
+    "impact": "MEDIUM",
+    "coverage": "not-applicable",
+    "sha256": "bd870c3fb85281a4c5dffbce9025fd487298fa48abf0d1b87223921c4e2cddd1"
+  },
+  {
+    "id": "api-query-hook-choice",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "b7bf8ae5a8ef5a129cca6e94893421cc04ba46b0ce247e9472b1a31383cf1c8b"
+  },
+  {
+    "id": "api-return-result-as-is",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "ee7e04c657a0b726d9ef6f238ba0be1f2d7d74155dd225a434f300b4538c7768"
+  },
+  {
+    "id": "api-suspense-error-boundary",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "360e028fa4e22dd318af22f4959f0b07abd355564eee87b2f2e964267e2df837"
+  },
+  {
+    "id": "api-typed-entity-generic",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "49d93e06ef08d2757acb1515a49f6b59ae5bd920d7c4f9c907fc51a52bf332da"
+  },
+  {
+    "id": "api-use-transformation",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "4933761a271ce789d94c6ec3ecd2a45287c7771586e14d71cda06ed47caa5850"
+  },
+  {
+    "id": "api-vercel-parallel-work",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "a9c66c5baf0bed0918f0feeecda5a50994f37b991c53bbb8ada763650ee7c892"
+  },
+  {
+    "id": "api-void-mutation",
+    "impact": "MEDIUM",
+    "coverage": "not-applicable",
+    "sha256": "2fc85c1651830612a25cfba303f0d7618e15431caaf70059c080de0e0f143dd7"
+  },
+  {
+    "id": "api-wrap-in-domain-hooks",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "716070c18a691a369c8d549839c154b9723432d7e8d051de251483a8fd07bc69"
+  },
+  {
+    "id": "arch-business-capability-boundaries",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "a85e5ff2bc93bde87d4f77fbe88bbec97b532d41472eb55d3635b38b04c788fa"
+  },
+  {
+    "id": "arch-component-complexity",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "9e424e422a31fa67526a8b8ad2d6897755b54e4ba05fee01324234b1d189672b"
+  },
+  {
+    "id": "arch-component-module-boundaries",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "86276eb8461211dd2c2de3c33fde8c583689a5c2ac23bd8b12c02dfad377d576"
+  },
+  {
+    "id": "arch-component-roles",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "bdc50385acf80caa160253added42afef1252cb6e2f3ef6f41e35b986e000c7f"
+  },
+  {
+    "id": "arch-decompose-hook-heavy-components",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "226c7af2f32cc1224e8229660543f777f61935ef2bde98d2f14b81fba7debcb6"
+  },
+  {
+    "id": "arch-domain-first-layout",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "747bf45570f84d69ea46593a83ce68fc1f906ceceab983266e4b282a2b984704"
+  },
+  {
+    "id": "arch-feature-flags",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "2329008f336fb7f0fe9ce07b846af662587f5f2e72c67831ab963c104bc0cf52"
+  },
+  {
+    "id": "arch-feature-hierarchy",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "a509c02a315cc9629a9f0d9e8c8165614c679b37920076e4deafb317d3945f8a"
+  },
+  {
+    "id": "arch-feature-slice-layout",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "501fae115e1611d6a03d1be93ae070cf0b6585608dd9daba27384c0062477032"
+  },
+  {
+    "id": "arch-helpers-vs-services",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "05160a533b8f24a5660c1146c001194974b6794c97f4f3117f0af666f3c1c189"
+  },
+  {
+    "id": "arch-isolate-effects-in-hooks",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "d84ac6d794ba090fdcc0b43168a81756a94015005dd98292f81f545deb5e0aba"
+  },
+  {
+    "id": "arch-no-prop-drilling",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "c128423dc78db7f9d379e0f380a6e8570018765e8fbcf99bf7af2e38c19d7271"
+  },
+  {
+    "id": "arch-no-visual-logic-below-page",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "70d32871fc9bbdfb80835b52efe4d49174da14e005e749964239de99fe6de65d"
+  },
+  {
+    "id": "arch-shared-no-domain-knowledge",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "370b039d686991ba2f7ebaf1408af4f4bbc5b1db14ec4844255158c848e811d3"
+  },
+  {
+    "id": "arch-stores-no-index",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "cf567faa9a338aa6ff206826b23e4ba9f28d5ccbed3c7475f48150133c599f79"
+  },
+  {
+    "id": "arch-subdomain-decision",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "ab6db481700a3b6451918cf8a9d0929f26e6068c3a2e072c51357080e83b5bb7"
+  },
+  {
+    "id": "arch-thin-components",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "65a3498fa6ca3f590ad6540842c07310de495d4c57040bca78277a3f10c17cfb"
+  },
+  {
+    "id": "arch-transverse-only-imports",
+    "impact": "CRITICAL",
+    "coverage": "complete",
+    "sha256": "fe48cacbc9c48b067ea3d663692437d69077a80c77fe19e9e01e4fc69736a478"
+  },
+  {
+    "id": "cache-invalidate-exactly",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "a3e4211da8522815049585548be27eab7be7d9bb5eef4aef2d5d8e3673ddac26"
+  },
+  {
+    "id": "cache-one-key-convention",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "c4b1c877af3aae2f7900735da98a1a0c4114141784a1d6e7e4000d1d86719717"
+  },
+  {
+    "id": "helpers-business-rules-pure",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "e692e22e4750bcd472350f8d2eadd03a71851694fce6eb5c6ece46ab54973940"
+  },
+  {
+    "id": "helpers-categories",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "45eaa50ce7e674b9dd0628d929ca315a4ce4abd5a3fa0213c0b6c62b1ce67c2a"
+  },
+  {
+    "id": "helpers-formatter-hooks",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "3f6c11bcf0122b96b3769fd6549513204aeca2f158974983bd2638d6c2a98e20"
+  },
+  {
+    "id": "helpers-no-context-params",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "79aed3659e73199f9a83b442341eab558d091fc4913d973108227e8e9047ed59"
+  },
+  {
+    "id": "helpers-vercel-immutable-collections",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "6efb4720e4ce0cbbec0c2f616b919895663dee63826880e5942931958e78804f"
+  },
+  {
+    "id": "helpers-vercel-indexed-lookups",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "8b8cbc0ecfb3bfd0b705dfcdea8989823855be80f23edac4d563056a8588e039"
+  },
+  {
+    "id": "i18n-interpolation",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "f60003a3d1defcccc75d351f9cc5b440e9a5cc2756b9c3108817a8832b3a6521"
+  },
+  {
+    "id": "i18n-no-default-value",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "a9f2ab7297e5297c5e65c329f42138b49f3087a300cf54ca5fe2af3a13d877de"
+  },
+  {
+    "id": "i18n-no-hardcoded-strings",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "bc5b775039d7af018123f8dac495d3d6092d84d8f5be7069adce409fbf23f6a2"
+  },
+  {
+    "id": "i18n-static-keys",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "adf69a9429168c39c18805e0585d52a075d5a83f773d1955d5f6009fc59e56bd"
+  },
+  {
+    "id": "quality-english-only",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "3c0c2448c6848471d34f488aad03f8a062d7e62c28e92f77e03bb5a4cff0294a"
+  },
+  {
+    "id": "quality-eslint-disable-scoped",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "9697acb1acf15da85c232ed6851e664fbd5a63f657affe61b9f05f814b01b252"
+  },
+  {
+    "id": "quality-eslint-warning-budget",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "0e1feba8513f665a531358f718455e68296a3367601c5101fe030ecf3d2ca0b2"
+  },
+  {
+    "id": "quality-formatting-and-sorting",
+    "impact": "LOW",
+    "coverage": "complete",
+    "sha256": "826bbf22561ca0b8010f93aac69d4b11eaafd1db45bb5a1918d1a288839ebe39"
+  },
+  {
+    "id": "quality-jsdoc-minimal",
+    "impact": "LOW",
+    "coverage": "complete",
+    "sha256": "9f05af1f08fe6201e522016991d880314fb9e253ef0a30c127380187bb86900e"
+  },
+  {
+    "id": "quality-no-deprecated-apis",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "6c5e170262b94c8cbed5806ae64983f3ce5c748dc4009768b621a8cab4e5c3b0"
+  },
+  {
+    "id": "quality-no-hook-factory",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "d38d1be1d9a8c55e557a8cb847628a12cb296970f1d1a18f73b692403c2e16fb"
+  },
+  {
+    "id": "quality-no-nested-ternary",
+    "impact": "LOW",
+    "coverage": "complete",
+    "sha256": "8317ee63b0f31a5a86caa2d1c3490555103aedcce8b4d78e5d94cd3a74db7b83"
+  },
+  {
+    "id": "quality-no-noop-link",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "c0c9ea2ce11cf7425ad7b43e71dcb309fb325532722d26761ba88bec9f636130"
+  },
+  {
+    "id": "quality-public-api-first",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "9583ff5a2b1d0a527a149840b36159d8a1fb38288cb4eb1595fb81686db78759"
+  },
+  {
+    "id": "quality-single-public-export",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "765b2dcec4de0a713082d548b7d7fd30e989124127c29b38b40fdcb5072cec5b"
+  },
+  {
+    "id": "quality-usecallback-for-functions",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "e57aae483e9878d8a4c8a89ebe843a64846a0c24ff9a8f9ef9bc5b12be899601"
+  },
+  {
+    "id": "quality-vercel-ref-as-prop",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "5029ae5fa97eb61d3a6763f7915c2c103f7c046b051729bca04d8a962f9e4e9b"
+  },
+  {
+    "id": "security-authorized-file-access",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "985e04807758fc53a99ce58b452d13430edcb65f91a1fa6d7716ecb15d01ca79"
+  },
+  {
+    "id": "security-clear-cache-on-logout",
+    "impact": "CRITICAL",
+    "coverage": "not-applicable",
+    "sha256": "86f3ad8e5e34ed1aea57d342e80dcd383b9ddbd96d12bd18ee440be98eadeea6"
+  },
+  {
+    "id": "security-window-open-noopener",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "7675ca4ff16eb2eda48342234ecdef0c8014836448f996048cd75e2fe132f963"
+  },
+  {
+    "id": "state-atom-naming",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "261f88911b9ae8b4ade0a11fb0d975a78b75267c495a2fac8918a2ed5f36cd51"
+  },
+  {
+    "id": "state-atom-with-storage",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "a57a705db4a2fbfacd0b6ffb4a3a4cafb2cf751a10fcf1291602f3b9ebba8553"
+  },
+  {
+    "id": "state-derived-atoms",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "87c7375bfff72863ccf796544117709461f5fc6ae6d42f412edda3f346931f43"
+  },
+  {
+    "id": "state-domain-vs-page-location",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "2ce792750ac1ee7e874e471c5e8efa4ba5caad98b991614e942fc813d49caefc"
+  },
+  {
+    "id": "state-explicit-types-defaults",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "cdd7592fb071db34cad18793a20128651d85385bcba517a3c680fa88e1e8c1cf"
+  },
+  {
+    "id": "state-hook-variants",
+    "impact": "LOW",
+    "coverage": "complete",
+    "sha256": "f3ff21602493bbc2e1f4e204b968e906afed057c761784a3ad433043fa8f2ada"
+  },
+  {
+    "id": "state-module-level-atoms",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "799f5a99d276f4d87f5adb89e5d64ccd45c3487f8aeb640a764d1a3a761c8aba"
+  },
+  {
+    "id": "state-prefer-factories",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "46928e10ce8fc0c7b1258c44a7a03304c7905f590d91fa9b513116971ff1e330"
+  },
+  {
+    "id": "state-server-state-in-react-query",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "b3459aa84853b332b9c85c5bcf8c66ddc697ca2531f1caa396526b64dbb29819"
+  },
+  {
+    "id": "state-vercel-functional-updates",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "21eb704397cd70bec646b082c19ea0a9d968f2c2632224758bf07ff6f3247345"
+  },
+  {
+    "id": "test-behavior-not-implementation",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "0f7a0c3e30756e52792b7d3b53eec952b151b9f26502004ecbd35f7de9e8909b"
+  },
+  {
+    "id": "test-colocated-tests",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "ed55ca6556b3da297317cc1cfca17eefcc6065940ceb874c5b73f52559dda634"
+  },
+  {
+    "id": "test-jotai-provider-isolation",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "72d34598f671260824fe377981f4db0f6c0f8accb760673d106a7b6f373ec8ca"
+  },
+  {
+    "id": "test-mock-data",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "ffa81d92e130846ee5aae0e128e51212f99c23976f5312064dbc1d08d9331ac3"
+  },
+  {
+    "id": "test-mock-network-not-internals",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "c4d0a5113b83e1589d854156898a6d6ce866888442dfd7fdee02b8b736450822"
+  },
+  {
+    "id": "test-renderhook",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "cfcbb4356f4f9bdaca5001069a806cd9e433d25670384a72fed7dfba7bc4dbd4"
+  },
+  {
+    "id": "test-semantic-queries",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "b31174cb9b2a41876d83c8d2db2e6a10fa55f2b8d87fb31ff868f480758f8e83"
+  },
+  {
+    "id": "types-amounts-as-number",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "9451911d95bad316fb97811924b4b0c0d7bd0c5371bf9c82d76495dd4d8153a5"
+  },
+  {
+    "id": "types-closed-values-not-string",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "ee1477485f688c9bf36768d25ef57d98aff88303b3d67320b8d36ecfb24f0c81"
+  },
+  {
+    "id": "types-compose-transverse",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "6d88852b545ae4e18840ccb872049a4281a58f749b0e17bc9e078abd8ed366f1"
+  },
+  {
+    "id": "types-consume-entity",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "e9592707bd28c9032844b434566619c70a7837b3e4f01f01048532e5989d0681"
+  },
+  {
+    "id": "types-dates-as-date",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "0488b6a612646b58e23de240ec0cdf93e8eec9a04ab568832697a457bab672a0"
+  },
+  {
+    "id": "types-entity-vs-response",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "a5b475b96120622469de9cccf64af376e598aff947b3c78477885ba568534db1"
+  },
+  {
+    "id": "types-explicit-nullability",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "2110ec9972dacd34a1526527d734b26b595661f6cc91b0b86c02399ac1dd378d"
+  },
+  {
+    "id": "types-file-per-entity",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "0098185a71439ea7af4eb40d0f74eb41dd676e140710831454e62d29e2c5ef37"
+  },
+  {
+    "id": "types-literal-unions-no-enum",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "6297c2a9face5fd3558dab977b2c68af6c66b81f18a22ec1dbfb9190b20506f9"
+  },
+  {
+    "id": "types-no-any-or-wide",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "5ff7203a4d3777f886278d8f532edc48468c5501384926c3aaa7441dcd29c961"
+  },
+  {
+    "id": "types-no-dead-record-fallback",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "09a1ca48ecb86d6e4fe50488bb4a6fc7417d4ccc882f80a528e494f8f7bc86a2"
+  },
+  {
+    "id": "ui-accessible-names",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "b0d5e4624c9f5dac867062700936c77883b8df5b8de238f4a708eebe3af43941"
+  },
+  {
+    "id": "ui-centralize-accessibility",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "0d57fe79f1a41096ab4c1b1b602be60419082f695603b821f749ab3271e5060e"
+  },
+  {
+    "id": "ui-compound-slots-direct-children",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "07938e25fe4d5c342f1e848853e0b7af31dab69e41e4c0ba85af7c11d483364c"
+  },
+  {
+    "id": "ui-delegate-mapped-jsx",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "d4ac3248e6235f4115416465c6cca65d66ac0cb684a9289b9550f9692bd40adb"
+  },
+  {
+    "id": "ui-dialog-controlled",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "40d6e7cf3635d1c85e5854dbba9244ffa80d92b31a868117e42e2c1b80a61821"
+  },
+  {
+    "id": "ui-form-wraps-dialog",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "b95180dea4d50af3d4e95810032db9e76b28f1c50d70b42447c4a01b61028d46"
+  },
+  {
+    "id": "ui-name-compound-render-conditions",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "6440860262e207752aaa6ee4cec326162b81e43dad513d8693bfb7fd564262fb"
+  },
+  {
+    "id": "ui-no-adhoc-styling",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "complete",
+    "sha256": "b5cf9af6aaf2044cf0cebb20d4c501f5c0f20e68e5406c48c935fe01c5ea542f"
+  },
+  {
+    "id": "ui-no-classname-on-shared-ui",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "63e0e94367b92e0ef820104570ee7072b14377fc556cd15e4c58306de9ee7a06"
+  },
+  {
+    "id": "ui-no-nested-form",
+    "impact": "HIGH",
+    "coverage": "not-applicable",
+    "sha256": "95b464e6af69fc5c877ef0146d3bdf66939a2bd74404939d432d957a38c968d4"
+  },
+  {
+    "id": "ui-required-children",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "d19c268b11aaed03e87f183a1b71198e83477694fb8a899d45977bda9a2779af"
+  },
+  {
+    "id": "ui-semantic-colors",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "5b7e576976f0990d8323de40ef5b44318b95457246fdb31ed6a25540165c9ad1"
+  },
+  {
+    "id": "ui-vercel-explicit-variants",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "5e7de340ac67eea70cc4ab264e4c7c21a67c41dcb021c4dfe4910ad015a6ce91"
+  },
+  {
+    "id": "ui-vercel-lazy-loading",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "eea0278788a44bbd2dd8c3ee4426b54cf6c48ee64404d5dec8a7c79dbf4770f6"
+  },
+  {
+    "id": "ui-vercel-offscreen-content",
+    "impact": "MEDIUM-HIGH",
+    "coverage": "not-applicable",
+    "sha256": "d2e4c7f93ae2a7478eb610a0f9a8dec48af62017fca7c9772b2e1ccec4103d44"
+  },
+  {
+    "id": "ui-vercel-responsive-rendering",
+    "impact": "MEDIUM",
+    "coverage": "complete",
+    "sha256": "e4bebf32cbc03462800456140d36ab22e889082ca3c72aad133434632d4ee023"
+  },
+  {
+    "id": "yup-form-schema-hook",
+    "impact": "MEDIUM",
+    "coverage": "not-applicable",
+    "sha256": "ab96df7cf7551c243e88bdc87bc11cc39c567393291e6c93ec769dbddd787b29"
+  },
+  {
+    "id": "yup-last-coercion-barrier",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "512ffe1646afb7b74506a1c1bf570f0a645b9ebb146dc8a881382d84fa1d4970"
+  },
+  {
+    "id": "yup-module-level-schemas",
+    "impact": "LOW-MEDIUM",
+    "coverage": "complete",
+    "sha256": "839d9c6a7267d6e036a4bdf8fb1f1642a4d101dd18530c9b1c1e4a3d38dd88e0"
+  },
+  {
+    "id": "yup-no-cast-bypass",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "5ce0eca9675b5dfc3c619760bf07ee20ab0d788aaa7a169c2beb7e8c25c604e3"
+  },
+  {
+    "id": "yup-no-oneof-on-display-enums",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "ea433a8c0894f9dd3a4f3943a82d8e95121426ff61691b4e5c79fb23a3bcfbb4"
+  },
+  {
+    "id": "yup-tolerant-response-schema",
+    "impact": "HIGH",
+    "coverage": "complete",
+    "sha256": "cf393e938a78dca813c709538917acd2f5aad461a5ae6369a1850366d9b3663a"
+  }
+]
