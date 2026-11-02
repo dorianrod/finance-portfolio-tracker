@@ -78,6 +78,7 @@ function AccountTypeTooltipRow({
   index: number
   percentageMode: boolean
   value: number
+  // No percentage exists without a positive snapshot total.
   share: number | null
   typeCategories: AccountTypeHistory['typeCategories']
 }) {

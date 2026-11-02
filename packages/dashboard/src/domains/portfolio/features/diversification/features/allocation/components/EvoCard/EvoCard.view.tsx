@@ -35,6 +35,7 @@ export function EvoCardView({
   title: string
   trend: AllocationTrend
   dateDomain: [number, number]
+  // No category in this chart dimension is selected.
   activeCategory: string | null
   isFiltered: boolean
   onSelect: (category: string) => void

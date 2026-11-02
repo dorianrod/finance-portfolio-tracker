@@ -12,9 +12,13 @@ export type OverviewWindows = {
 }
 
 export type ComparedMetric = {
+  // The current comparison window may have no usable observation.
   current: number | null
+  // The preceding comparison window may have no usable observation.
   previous: number | null
+  // A change needs usable observations in both comparison windows.
   delta: number | null
+  // A percentage change needs both observations and a nonzero previous value.
   deltaPct: number | null
 }
 
@@ -33,7 +37,9 @@ export type OverviewConcentrationPoint = {
 }
 
 export type OverviewConcentrationComparison = {
+  // The current comparison window may have no usable observation.
   current: OverviewConcentrationPoint | null
+  // The preceding comparison window may have no usable observation.
   previous: OverviewConcentrationPoint | null
   topHolding: ComparedMetric
   topFive: ComparedMetric

@@ -9,6 +9,7 @@ export function GainCell({
   pct,
   zeroAsFallback = false,
 }: {
+  // A position without a current valuation may have no known gain.
   value: number | null
   pct?: number
   zeroAsFallback?: boolean

@@ -24,6 +24,7 @@ export function PositionHistoryPreview({
   description: string
   descriptionVariant: 'caption' | 'captionCode'
   pending: boolean
+  // No request failure has been reported.
   error: Error | null
   empty: boolean
   onMouseEnter: () => void

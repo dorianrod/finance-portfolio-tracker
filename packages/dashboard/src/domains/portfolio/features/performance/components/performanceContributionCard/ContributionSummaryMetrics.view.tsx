@@ -28,6 +28,7 @@ export function ContributionSummaryMetricsView({
   children,
 }: {
   summary: PerformanceContributionSummary
+  // Missing or insufficient cash flows may not define a return.
   irr: number | null
   irrStatus: IrrStatus
   activeHorizon: ContributionHorizon

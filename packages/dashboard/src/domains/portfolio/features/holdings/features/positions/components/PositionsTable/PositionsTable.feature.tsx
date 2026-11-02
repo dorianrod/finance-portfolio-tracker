@@ -285,6 +285,7 @@ function PositionTablePreviews({
   cancelHide,
   scheduleHide,
 }: {
+  // No position preview is selected while the overlay is closed.
   preview: PositionPreviewModel | null
   cancelHide: () => void
   scheduleHide: () => void

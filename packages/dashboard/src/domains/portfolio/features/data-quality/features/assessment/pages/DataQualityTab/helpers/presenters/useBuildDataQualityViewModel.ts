@@ -1,12 +1,7 @@
 import { useCallback } from 'react'
 
-import { buildClassificationViewState } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildClassificationViewState'
-import { computeAllocationCoverageByAccount } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByAccount'
-import { computeAllocationCoverageByDimension } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/computeAllocationCoverageByDimension'
 import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/hasMaterialQualityGap'
-import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/computeFundExposurePercentages'
-import { scopeFundQualityData } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/scopeFundQualityData'
-import type { AffectedAsset } from '@/domains/portfolio/features/data-quality/features/assessment/types/affectedAsset.type'
+import { buildDataQualityAssessment } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/transformers/buildDataQualityAssessment'
 import type { QualityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
@@ -15,8 +10,15 @@ import type { PipelineError } from '@/domains/portfolio/features/data-quality/sh
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { partitionPercentages } from '@/shared/helpers/transformers/partitionPercentages'
 
+/*
+ * @architecture-decision data-quality-assessment-before-presentation
+ * @rules helpers-categories
+ * @choice Build domain diagnostics in the pure page-owned assessment before mapping its themes.
+ * @reason Affected assets and exposure availability also drive inspection actions without translated display data.
+ * @alternative Moving the whole adapter to transformers would bring translation and visual theme policy into business calculations.
+ * @revisit Another capability consumes this page's assessment or the diagnostic policy changes ownership.
+ */
 export function useBuildDataQualityViewModel() {
   const formatNumber = useFormatNumber()
   const formatPercentage = useFormatPercentage()
@@ -32,75 +34,26 @@ export function useBuildDataQualityViewModel() {
       fundUnresolved,
       rawData,
     }: DataQualityTabProps) => {
-      const coverage = rawData.loading
-        ? []
-        : computeAllocationCoverageByAccount(positions, rawData)
-      const dimensionCoverage = rawData.loading
-        ? []
-        : computeAllocationCoverageByDimension(positions, rawData)
-      const scopedFundData = scopeFundQualityData(
+      const {
+        affectedAssets,
+        classificationApplicableValue,
+        classificationGap,
+        classificationIsNotApplicable,
+        classificationViewState,
+        fundErrorCount,
+        fundIssueCount,
+        hasLookThroughScope,
+        scopedFundData,
+        unresolvedPct,
+      } = buildDataQualityAssessment({
         positions,
-        fundHoldings,
         fundStatuses,
+        fundReport,
+        fundHoldings,
         fundSnapshots,
         fundUnresolved,
-        fundReport,
-      )
-
-      const classificationMappedValue = coverage.reduce(
-        (sum, item) => sum + item.allocated,
-        0,
-      )
-      const classificationUnmappedValue = coverage.reduce(
-        (sum, item) => sum + item.unallocated,
-        0,
-      )
-      const classificationApplicableValue =
-        classificationMappedValue + classificationUnmappedValue
-      const classificationNotApplicableValue = coverage.reduce(
-        (sum, item) => sum + item.notApplicable,
-        0,
-      )
-      const [, classificationGap] = partitionPercentages([
-        classificationMappedValue,
-        classificationUnmappedValue,
-        classificationNotApplicableValue,
-      ])
-      const classificationIsNotApplicable =
-        !rawData.loading &&
-        classificationApplicableValue <= 0 &&
-        classificationNotApplicableValue > 0
-      const classificationViewState = buildClassificationViewState({
-        loading: rawData.loading,
-        classificationIsNotApplicable,
-        coverage,
-        dimensionCoverage,
+        rawData,
       })
-      const affectedAssets = buildAffectedAssets(dimensionCoverage)
-
-      const unresolvedValue = scopedFundData.report
-        ? scopedFundData.report.undisclosedFundValue +
-          scopedFundData.report.opaqueValue
-        : 0
-      const identifiedValue = scopedFundData.report
-        ? scopedFundData.report.directIdentifiedValue +
-          scopedFundData.report.decomposedValue
-        : 0
-      const unresolvedPct = computeFundExposurePercentages(
-        identifiedValue,
-        unresolvedValue,
-        scopedFundData.notApplicableValue,
-      ).unresolved
-      const fundErrorCount = scopedFundData.statuses.filter(
-        (status) => status.validationStatus === 'error',
-      ).length
-      const fundIssueCount = scopedFundData.statuses.filter(
-        (status) =>
-          status.validationStatus !== 'ok' ||
-          hasMaterialQualityGap(status.residualPct),
-      ).length
-      const hasLookThroughScope =
-        !!scopedFundData.report && scopedFundData.report.portfolioValue > 0
 
       const themes = [
         buildPipelineTheme(errors, formatNumber(errors.length)),
@@ -141,41 +94,6 @@ export function useBuildDataQualityViewModel() {
       }
     },
     [formatNumber, formatPercentage],
-  )
-}
-
-function buildAffectedAssets(
-  dimensionCoverage: ReturnType<typeof computeAllocationCoverageByDimension>,
-): AffectedAsset[] {
-  const byAsset = new Map<string, AffectedAsset>()
-
-  for (const dimension of dimensionCoverage) {
-    for (const issue of dimension.issues) {
-      const gapPct =
-        issue.value > 0 ? (issue.unallocated / issue.value) * 100 : 0
-      const current = byAsset.get(issue.id) ?? {
-        id: issue.id,
-        name: issue.name,
-        value: issue.value,
-        dimensions: [],
-        largestGapValue: 0,
-        largestGapPct: 0,
-      }
-
-      current.value = Math.max(current.value, issue.value)
-      if (!current.dimensions.includes(dimension.dimension)) {
-        current.dimensions.push(dimension.dimension)
-      }
-      if (issue.unallocated > current.largestGapValue) {
-        current.largestGapValue = issue.unallocated
-        current.largestGapPct = gapPct
-      }
-      byAsset.set(issue.id, current)
-    }
-  }
-
-  return [...byAsset.values()].toSorted(
-    (left, right) => right.largestGapValue - left.largestGapValue,
   )
 }
 

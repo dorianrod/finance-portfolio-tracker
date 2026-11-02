@@ -25,6 +25,7 @@ export function LookThroughCoverageSummary({
 }
 
 type LookThroughCoverageSummaryProps = {
+  // The optional fund coverage report may be unavailable.
   report: FundCoverageReport | null
   notApplicableValue?: number
   variant?: 'compact' | 'detailed'

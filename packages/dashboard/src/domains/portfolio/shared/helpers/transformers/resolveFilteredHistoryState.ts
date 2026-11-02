@@ -21,6 +21,8 @@ export function resolveFilteredHistoryState(
 
 type FilteredResponseState = {
   key: string
+  // The filtered request may not have produced a successful history yet.
   history: PortfolioHistoryPoint[] | null
+  // No request failure has been reported.
   error: Error | null
 }

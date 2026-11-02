@@ -30,9 +30,13 @@ export function buildConcentrationChartRows(
 
 export type ConcentrationChartRow = HistoricalConcentrationPoint & {
   timestamp: number
+  // A threshold delta needs reachable targets in both adjacent snapshots.
   positionsTo25Delta: number | null
+  // A threshold delta needs reachable targets in both adjacent snapshots.
   positionsTo50Delta: number | null
+  // A threshold delta needs reachable targets in both adjacent snapshots.
   positionsTo75Delta: number | null
+  // A threshold delta needs reachable targets in both adjacent snapshots.
   positionsTo90Delta: number | null
 }
 

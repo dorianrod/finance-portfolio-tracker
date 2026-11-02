@@ -36,6 +36,7 @@ export function buildPositionsHistory(
       {
         value: number
         costBasis: number
+        // A source snapshot may have no defined return percentage.
         pct: number | null
         last_price: number
       }

@@ -12,8 +12,10 @@ export function resolveContributionHorizon({
 }: {
   horizon: ContributionHorizon
   sinceTracking: PerformanceContributionSummary
+  // Missing or insufficient cash flows may not define a since-tracking return.
   sinceTrackingIrr: number | null
   trailingThreeYears: PerformanceContributionSummary
+  // The available cash flows may not define a full three-year return.
   trailingThreeYearIrr: number | null
 }) {
   const threeYearUnavailable =

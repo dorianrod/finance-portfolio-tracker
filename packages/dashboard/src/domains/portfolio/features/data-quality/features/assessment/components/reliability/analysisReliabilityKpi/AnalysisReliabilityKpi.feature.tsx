@@ -17,6 +17,7 @@ export function AnalysisReliabilityKpi({
   qualityTheme,
   scope,
 }: {
+  // Loading or unavailable analysis has no measured reliability percentage.
   percentage: number | null
   amount: number
   metricLabel: string

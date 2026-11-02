@@ -30,6 +30,7 @@ function diagnostics(code) {
 }
 
 describe('domain boundary compiler contracts', () => {
+  // Chart props resolve the full Recharts type graph alongside other typed suites.
   it.each([
     [
       'account categories',
@@ -76,11 +77,26 @@ describe('domain boundary compiler contracts', () => {
       "export const value: number = getOwnValue({present: 1}, 'missing')",
       "export const value: number = getOwnValue({present: 1}, 'missing') ?? 0",
     ],
+    [
+      'prepared account breakdown denominators',
+      `import {AccountTypeBreakdownChartView} from '${join(directory, 'src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view')}'`,
+      'export const props: Parameters<typeof AccountTypeBreakdownChartView>[0] = {data: [], children: null}',
+      'export const props: Parameters<typeof AccountTypeBreakdownChartView>[0] = {data: [], portfolioTotal: 0, children: null}',
+      2741,
+    ],
+    [
+      'prepared account history totals',
+      `import {AccountTypeHistoryChartView} from '${join(directory, 'src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view')}'`,
+      'export const props: Parameters<typeof AccountTypeHistoryChartView>[0] = {data: [{date: new Date("2026-01-31"), values: {Savings: 100}, shares: [100]}], accountTypes: ["Savings"], typeCategories: {}, children: null}',
+      'export const props: Parameters<typeof AccountTypeHistoryChartView>[0] = {data: [{date: new Date("2026-01-31"), values: {Savings: 100}, total: 100, shares: [100]}], accountTypes: ["Savings"], typeCategories: {}, children: null}',
+      2322,
+    ],
   ])(
     'checks %s with the application compiler',
     (_name, imports, invalid, valid, expectedCode = 2322) => {
       expect(diagnostics(`${imports}; ${invalid}`)).toContain(expectedCode)
       expect(diagnostics(`${imports}; ${valid}`)).toEqual([])
     },
+    30_000,
   )
 })

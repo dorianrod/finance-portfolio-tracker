@@ -144,7 +144,9 @@ type Props = {
   assetIrrStatus: IrrStatus
   sinceTracking: PerformanceContributionSummary
   trailingThreeYears: PerformanceContributionSummary
+  // Missing or insufficient cash flows may not define a since-tracking return.
   sinceTrackingIrr: number | null
+  // The available cash flows may not define a full three-year return.
   trailingThreeYearIrr: number | null
   irrStatus: IrrStatus
 }
@@ -190,6 +192,7 @@ function ContributionSummaryMetrics({
   onHorizonChange,
 }: {
   summary: PerformanceContributionSummary
+  // Missing or insufficient cash flows may not define a return.
   irr: number | null
   irrStatus: IrrStatus
   activeHorizon: ContributionHorizon

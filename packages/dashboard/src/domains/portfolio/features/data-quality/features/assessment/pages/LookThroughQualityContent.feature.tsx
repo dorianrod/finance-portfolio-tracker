@@ -7,6 +7,7 @@ export function LookThroughQualityContent({
   report,
   notApplicableValue,
 }: {
+  // The optional fund coverage report may be unavailable.
   report: FundCoverageReport | null
   notApplicableValue: number
 }) {

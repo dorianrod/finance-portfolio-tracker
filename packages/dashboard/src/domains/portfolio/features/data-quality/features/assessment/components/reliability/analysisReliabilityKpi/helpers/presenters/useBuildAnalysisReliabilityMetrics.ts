@@ -43,9 +43,11 @@ export function useBuildAnalysisReliabilityMetrics() {
 }
 type ReliabilityMetricInput = {
   allocationLoading: boolean
+  // No classification percentage exists without applicable exposure.
   classificationReliabilityPct: number | null
   classificationMappedValue: number
   classificationMetricTone: AnalysisReliabilityTone
+  // No underlying reliability percentage exists without a coverage report.
   underlyingReliabilityPct: number | null
   identifiedFundValue: number
   underlyingMetricTone: AnalysisReliabilityTone

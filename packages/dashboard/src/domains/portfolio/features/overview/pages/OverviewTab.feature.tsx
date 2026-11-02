@@ -60,6 +60,7 @@ export function OverviewTab({
 }
 
 type OverviewTabProps = {
+  // No comparison can be built before usable portfolio history is available.
   comparison: OverviewComparison | null
   rollingThreeYearTri: ComparedMetric
   irrStatus: IrrStatus

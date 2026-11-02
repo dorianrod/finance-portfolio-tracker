@@ -7,7 +7,10 @@ import { withAccountTypeShares } from './withAccountTypeShares'
 describe('withAccountTypeShares', () => {
   it('partitions account values into exactly 100% without changing the source', () => {
     const source = makeAccountTypeHistoryPoint()
-    const [point] = withAccountTypeShares([source], ['Brokerage', 'Savings'])
+    const [point] = withAccountTypeShares(
+      [{ ...source, total: 3 }],
+      ['Brokerage', 'Savings'],
+    )
     expect(point.shares).toEqual([33.3, 66.7])
     expect(source.values).toEqual({ Brokerage: 1, Savings: 2 })
     expect(source).not.toHaveProperty('shares')
@@ -18,7 +21,7 @@ describe('withAccountTypeShares', () => {
       values: { date: 1, 'Account.with.dot': 3 },
     })
     const [point] = withAccountTypeShares(
-      [source],
+      [{ ...source, total: 4 }],
       ['date', 'Account.with.dot'],
     )
     expect(point.date).toEqual(new Date('2026-01-31'))
@@ -28,7 +31,7 @@ describe('withAccountTypeShares', () => {
 
   it('keeps an absent account at zero instead of inventing a share', () => {
     const [point] = withAccountTypeShares(
-      [makeAccountTypeHistoryPoint()],
+      [{ ...makeAccountTypeHistoryPoint(), total: 0 }],
       ['Missing'],
     )
     expect(point.shares).toEqual([0])

@@ -50,6 +50,7 @@ export function PerformanceTab({
   dateFrom?: Date
   performance: PerformanceSummary
   income: IncomeSummary
+  // The selected cash-flow history may not define a return.
   globalTri: number | null
   irrStatus: IrrStatus
 }) {

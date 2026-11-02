@@ -21,7 +21,9 @@ export function AssetIrrResultsView({
   measuredCount: number
   topReturns: AssetIrrItem[]
   underperformers: AssetIrrItem[]
+  // An unavailable source summary may omit its reporting interval.
   startDate: Date | null
+  // An unavailable source summary may omit its reporting interval.
   endDate: Date | null
   children: ReactNode
 }) {

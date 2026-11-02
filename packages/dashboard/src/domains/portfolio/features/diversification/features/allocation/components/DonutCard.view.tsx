@@ -39,6 +39,7 @@ export function DonutCardView({
   date: Date
   total: number
   data: PieEntry[]
+  // No category in this chart dimension is selected.
   activeCategory: string | null
   isFiltered: boolean
   onSelect: (entry: PieEntry | undefined) => void

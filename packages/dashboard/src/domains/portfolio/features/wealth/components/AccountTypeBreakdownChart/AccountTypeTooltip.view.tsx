@@ -2,7 +2,6 @@ import {
   type AccountTypeTooltipPayloadItem,
   computeAccountTypeTooltipMetrics,
 } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/computeAccountTypeTooltipMetrics'
-import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -15,12 +14,12 @@ export function AccountTypeTooltip({
   active,
   payload,
   label,
-  portfolio,
+  portfolioTotal,
 }: {
   active?: boolean
   payload?: AccountTypeTooltipPayloadItem[]
   label?: string
-  portfolio?: AccountTypePoint[]
+  portfolioTotal?: number
 }) {
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
@@ -28,7 +27,7 @@ export function AccountTypeTooltip({
   if (!active || payload.length === 0) return null
   const point = payload[0].payload
   const { cost, gain, total, portfolioShare, gainPct } =
-    computeAccountTypeTooltipMetrics(payload, portfolio)
+    computeAccountTypeTooltipMetrics(payload, portfolioTotal)
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -43,7 +42,7 @@ export function AccountTypeTooltip({
           })}
         </ChartText>
       </Layout>
-      {portfolio != null && (
+      {portfolioTotal != null && (
         <Layout as="div" spaceAfter="compact">
           <ChartText as="div" tone={'tooltipDim'}>
             {i18n.t('ui.portfoliochartsTooltips.portfolioShareWithValues', {

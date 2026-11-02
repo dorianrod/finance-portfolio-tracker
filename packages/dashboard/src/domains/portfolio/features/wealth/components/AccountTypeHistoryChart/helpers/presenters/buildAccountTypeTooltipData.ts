@@ -9,7 +9,7 @@ export function buildAccountTypeTooltipData(
     const value = getOwnValue(row?.values, accountType) ?? 0
     return { accountType, index, value }
   })
-  const total = values.reduce((sum, item) => sum + item.value, 0)
+  const total = row?.total ?? 0
   return {
     total,
     rows: values.map((item) => ({

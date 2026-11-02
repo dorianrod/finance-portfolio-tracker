@@ -13,7 +13,9 @@ export function ThresholdRow({
 }: {
   label: string
   tone: ChartTone
+  // The identified coverage may never reach this concentration threshold.
   value: number | null
+  // A threshold change needs reachable targets in both compared snapshots.
   delta: number | null
 }) {
   const formatConcentrationDelta = useFormatConcentrationDelta()

@@ -7,6 +7,7 @@ import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHol
 export type ScopedFundQualityData = {
   holdings: FundHolding[]
   statuses: FundHoldingStatus[]
+  // The optional fund coverage report may be unavailable.
   report: FundCoverageReport | null
   snapshots: FundSnapshot[]
   unresolved: FundUnresolved[]

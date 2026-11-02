@@ -11,7 +11,7 @@ describe('account tooltip metrics', () => {
   it('uses the snapshot over series fallbacks and measures its share of the raw portfolio', () => {
     const result = computeAccountTypeTooltipMetrics(
       [{ dataKey: 'total_cost_basis', value: 999, payload: point }],
-      [point, { ...point, account_type: 'Savings', total_value: 210 }],
+      300,
     )
     expect(result).toEqual({
       cost: 100,

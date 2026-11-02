@@ -12,6 +12,7 @@ export function DataQualityHeader({
   action,
 }: {
   theme: QualityTheme
+  // The selected quality theme may have no applicable detail inspection.
   action: DetailAction | null
 }) {
   return (

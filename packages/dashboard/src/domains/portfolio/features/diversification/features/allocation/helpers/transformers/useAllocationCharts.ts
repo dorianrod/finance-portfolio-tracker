@@ -144,6 +144,7 @@ export function useAllocationCharts({
 }
 
 type UseAllocationChartsInput = {
+  // No allocation filter is selected in the unfiltered view.
   activeFilter: AllocationFilter | null
   rawData: RawIsinData
   dateFrom?: Date

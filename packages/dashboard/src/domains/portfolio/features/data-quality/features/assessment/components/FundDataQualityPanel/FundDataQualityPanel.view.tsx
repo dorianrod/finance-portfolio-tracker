@@ -293,6 +293,7 @@ function FundDiagnosticsRow({
   onToggle,
   row,
 }: {
+  // No diagnostic row is expanded until the user selects one.
   expanded: string | null
   onToggle: (id: string) => void
   row: DiagnosticsRow

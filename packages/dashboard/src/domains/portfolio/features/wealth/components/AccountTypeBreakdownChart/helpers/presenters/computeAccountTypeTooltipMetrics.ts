@@ -2,12 +2,8 @@ import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types
 
 export function computeAccountTypeTooltipMetrics(
   payload: AccountTypeTooltipPayloadItem[],
-  portfolio?: AccountTypePoint[],
+  portfolioTotal?: number,
 ) {
-  const portfolioTotal = portfolio?.reduce(
-    (sum, item) => sum + item.total_value,
-    0,
-  )
   const point = payload[0]?.payload
   const cost = resolveMetric(payload, 'total_cost_basis')
   const gain = resolveMetric(payload, 'unrealized_gain')

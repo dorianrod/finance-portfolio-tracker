@@ -1,13 +1,11 @@
 import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { AccountTypeHistoryTooltip } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryTooltip.view'
 import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone'
-import { withAccountTypeShares } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/withAccountTypeShares'
 import type { AccountTypeChartPoint } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/types/accountTypeChartPoint.type'
 import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -26,14 +24,14 @@ import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-export function AccountTypeHistoryChart({
+export function AccountTypeHistoryChartView({
   data,
   children,
   accountTypes,
   typeCategories,
 }: {
   children: ReactNode
-  data: AccountTypeHistoryPoint[]
+  data: AccountTypeChartPoint[]
   accountTypes: string[]
   typeCategories: AccountTypeHistory['typeCategories']
 }) {
@@ -42,10 +40,6 @@ export function AccountTypeHistoryChart({
   const formatPercentage = useFormatPercentage()
   const [scale, setScale] = useState<ChartScaleMode>('value')
   const percentageMode = scale === 'percentage'
-  const chartData = useMemo(
-    () => withAccountTypeShares(data, accountTypes),
-    [data, accountTypes],
-  )
 
   return (
     <div className="flex-1">
@@ -68,7 +62,7 @@ export function AccountTypeHistoryChart({
         <ResponsiveContainer width="100%" height={220}>
           <AreaChart
             key={scale}
-            data={chartData}
+            data={data}
             margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
           >
             <defs>

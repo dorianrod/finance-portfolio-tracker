@@ -22,11 +22,13 @@ import { buildAccountTypePieData } from './helpers/presenters/buildAccountTypePi
 import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
 import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
 
-export function AccountTypeBreakdownChart({
+export function AccountTypeBreakdownChartView({
   data,
+  portfolioTotal,
   children,
 }: {
   data: AccountTypePoint[]
+  portfolioTotal: number
   children: ReactNode
 }) {
   const pieData = buildAccountTypePieData(data)
@@ -63,7 +65,9 @@ export function AccountTypeBreakdownChart({
               label={<AccountTypeLabel data={data} />}
               labelLine={false}
             />
-            <Tooltip content={<AccountTypeTooltip portfolio={data} />} />
+            <Tooltip
+              content={<AccountTypeTooltip portfolioTotal={portfolioTotal} />}
+            />
           </PieChart>
         </ResponsiveContainer>
       </Surface>
