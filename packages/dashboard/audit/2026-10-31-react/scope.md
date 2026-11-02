@@ -27,11 +27,9 @@ From packages/dashboard: uncached normal lint at ceiling 143; strict TypeScript;
 
 Phase 1 completed before implementation. No new confirmed application violation; two proven prevention gaps are recorded. The 15 fixture candidates and 135 exclusions exactly match the preceding closed review. All are dispositioned; none is silently classified from assignability. No inspection or user choice is pending. P-001/P-002 and their acceptance checks are now verified; baseline diagnosis and plan remain preserved above.
 
-
 ## Phase-2 input and plan delta
 
 P-001 exposed one real analysis-scope omission: `src/shared/ui/storybook/catalog.test.ts` belongs to tsconfig.storybook.json, outside tsconfig.app.json. The prior source-wide candidate inventory did not mention this missing test. The file itself remains byte-identical and its existing semantic review is retained; its AST/catalog checks contain no domain fixture defaults. A dedicated `tsconfig.fixtures.json` extends the existing Storybook compiler settings and includes all src tests without changing application/build projects. Both fixture commands and the installed integration test now select this analysis project explicitly. Current inventory: 240 source tests, 15 unchanged candidates and 135 unchanged exclusions. Historical 239-test baseline remains intact.
-
 
 ## Final checkpoint
 

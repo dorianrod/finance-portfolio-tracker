@@ -3,14 +3,13 @@
 ## Impact volumes and score
 
 | Actual impact | Baseline families | Open now | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 0 | 0 | 0 |
-| HIGH | 0 | 0 | 0 |
-| MEDIUM-HIGH | 0 | 0 | 0 |
-| MEDIUM | 2 | 0 | 2 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
-
+| ------------- | ----------------: | -------: | -------: |
+| CRITICAL      |                 0 |        0 |        0 |
+| HIGH          |                 0 |        0 |        0 |
+| MEDIUM-HIGH   |                 0 |        0 |        0 |
+| MEDIUM        |                 2 |        0 |        2 |
+| LOW-MEDIUM    |                 0 |        0 |        0 |
+| LOW           |                 0 |        0 |        0 |
 
 **Score: 99.31/100 → 100.00/100**, formula `weighted-rule-compliance/v1`.
 

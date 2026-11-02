@@ -1,0 +1,24 @@
+{
+  "sourceEntries": 1386,
+  "authoredSourceEntries": 1385,
+  "sourceDrift": [],
+  "catalogAndWorkflowDrift": [],
+  "formatTargets": 79,
+  "formatDrift": [],
+  "allFormatTargetsEquivalent": true,
+  "unexpectedTrackedChanges": [],
+  "missingActiveDossierLinks": [],
+  "runtimeIntroductions": 6,
+  "reviewedMoves": 8,
+  "newTests": 9,
+  "baselineTests": 3124,
+  "finalTests": 3154,
+  "lint": {
+    "errors": 0,
+    "warnings": 143,
+    "ceiling": 143
+  },
+  "score": 100,
+  "baselinePreserved": true,
+  "implementation": "complete"
+}

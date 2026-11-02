@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 
-import type { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary'
+import type { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/presenters/buildLookThroughSummary'
 import { QualityIndicatorCard } from '@/domains/portfolio/features/data-quality/features/assessment/components/QualityIndicatorCard.view'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'

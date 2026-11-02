@@ -1,0 +1,69 @@
+{
+  "moves": [
+    {
+      "from": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition.ts",
+      "to": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/transformers/computePortfolioComposition.ts",
+      "previousSha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+      "sha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+      "sameContract": true,
+      "reason": "Unchanged pure calculation implementation; category corrected and meaningful sibling test added."
+    },
+    {
+      "from": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.tsx",
+      "to": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature.tsx",
+      "previousSha256": "75ef58e9dad1cf62f7677c6a6bcc33d9092558f83084e9aedfdd9cc1bee61866",
+      "sha256": "c064d3f56d5001abef5d90ba99359dfc914b65fb500c547c8b936ad441b45bdc",
+      "sameContract": true,
+      "reason": "Same errors-to-table UI contract; source severity preparation made explicit in feature; local filters/sort retained."
+    },
+    {
+      "from": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.test.tsx",
+      "to": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature.test.tsx",
+      "previousSha256": "d17cd8cea36b0c6be4d02af859ba62a3116bab72dd2c3d44111ac2d8bc15d637",
+      "sha256": "fe1944ad263f528b79149017d4df13fe43e5a32ec866232ea30b186aa8089f27",
+      "sameContract": true,
+      "reason": "Existing controller cases move with owner; global-count assertions strengthen filtering/sort behavior."
+    },
+    {
+      "from": "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+      "to": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummary.feature.tsx",
+      "previousSha256": "3b54d4ce045346c2df643f32f10478184af284430b36cfa4fbe4ca1f5946cfa7",
+      "sha256": "745c4e406356ac3c2d560949eea297837aa87781908599fb0a22737f9a9eae53",
+      "sameContract": true,
+      "reason": "Same feature API and view composition; colocated with private calculation/presentation support."
+    },
+    {
+      "from": "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts",
+      "to": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/presenters/buildLookThroughSummary.ts",
+      "previousSha256": "5ace3a316d37f85ea81ac24555df59e5fa5ac921fbbea32d7c298ba9be3d4726",
+      "sha256": "a666d156853779eff3943f0fdc603a978de169b33844eb65376c9e47e59cca2c",
+      "sameContract": true,
+      "reason": "Same numeric/tone output; domain metrics extracted and private support colocated with its component."
+    },
+    {
+      "from": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx",
+      "to": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.feature.tsx",
+      "previousSha256": "803d9ba83a66be52b1bcbf0a55606d3dfdf57c3dafb9e7471c170e5dd1f2c43e",
+      "sha256": "68ca80cb34a5659ef724e23433f7071183e1cccab254376668a951d1542cb709",
+      "sameContract": true,
+      "reason": "Same comparison/children contract and empty/ready UI; private support ownership normalized."
+    },
+    {
+      "from": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.view.tsx",
+      "to": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.view.tsx",
+      "previousSha256": "7b8a14b8c16230e73d5619e34952ed3f2632467cc6f4bad400a4c61f8d683e29",
+      "sha256": "7b8a14b8c16230e73d5619e34952ed3f2632467cc6f4bad400a4c61f8d683e29",
+      "sameContract": true,
+      "reason": "Unchanged view implementation, local helper type import now resolves inside the owner."
+    },
+    {
+      "from": "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewDriverPresentation.ts",
+      "to": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/helpers/presenters/buildOverviewDriverPresentation.ts",
+      "previousSha256": "788a36a2065dbe2d3aac6105f93ac5a57d2a187ede1b982c33bfc78be754d4c5",
+      "sha256": "7e03a92f7842377c2dc517db1f25010cf084cb9e1e08d169b4ea6d68088a12de",
+      "sameContract": true,
+      "reason": "Same UI rows/availability/gross-change result; numeric calculation extracted, component-private support colocated."
+    }
+  ],
+  "roles": []
+}

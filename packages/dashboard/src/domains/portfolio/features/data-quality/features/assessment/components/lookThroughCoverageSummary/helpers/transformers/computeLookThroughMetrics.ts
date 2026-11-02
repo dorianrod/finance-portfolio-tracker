@@ -2,7 +2,7 @@ import { hasMaterialQualityGap } from '@/domains/portfolio/features/data-quality
 import { computeFundExposurePercentages } from '@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeFundQualityData/computeFundExposurePercentages'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 
-export function buildLookThroughSummary(
+export function computeLookThroughMetrics(
   report: FundCoverageReport,
   notApplicableValue: number,
 ) {
@@ -17,13 +17,12 @@ export function buildLookThroughSummary(
   )
   const percentage = (value: number) =>
     selectedPortfolioValue > 0 ? (value / selectedPortfolioValue) * 100 : 0
+  // Confidence cannot explain more than the identified amount in this reporting scope.
   const reliableValue = Math.min(
     identifiedValue,
     report.directIdentifiedValue + report.highConfidenceExplainedValue,
   )
   const otherSourceValue = Math.max(0, identifiedValue - reliableValue)
-  const undisclosedPercentage = percentage(report.undisclosedFundValue)
-  const opaquePercentage = percentage(report.opaqueValue)
   return {
     identifiedValue,
     unresolvedValue,
@@ -40,13 +39,7 @@ export function buildLookThroughSummary(
     otherSourcePercentage: percentage(otherSourceValue),
     directPercentage: percentage(report.directIdentifiedValue),
     decomposedPercentage: percentage(report.decomposedValue),
-    undisclosedPercentage,
-    opaquePercentage,
-    undisclosedTone: hasMaterialQualityGap(undisclosedPercentage)
-      ? ('warning' as const)
-      : ('coverage' as const),
-    opaqueTone: hasMaterialQualityGap(opaquePercentage)
-      ? ('error' as const)
-      : ('coverage' as const),
+    undisclosedPercentage: percentage(report.undisclosedFundValue),
+    opaquePercentage: percentage(report.opaqueValue),
   }
 }

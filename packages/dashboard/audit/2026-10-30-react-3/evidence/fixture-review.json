@@ -36,13 +36,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false }",
     "code": "{ geo: [], secteur: [], currency: [], classe: [], loading: false }",
@@ -60,10 +54,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextual": "SetStateAction<AllocationFilter | null>",
     "context": "store.set(dashboardDiversificationFilterAtom, {\n      type: 'geo',\n      value: 'France',\n    })",
     "code": "{\n      type: 'geo',\n      value: 'France',\n    }",
@@ -81,10 +72,7 @@
         "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
       }
     ],
-    "keys": [
-      "account",
-      "period"
-    ],
+    "keys": ["account", "period"],
     "contextual": "FilterScopeSpec",
     "context": "{{ account: 'filterable', period: 'range' }}",
     "code": "{ account: 'filterable', period: 'range' }",
@@ -102,10 +90,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
     "context": "status: { errorCount: 0, warningCount: 0 }",
     "code": "{ errorCount: 0, warningCount: 0 }",
@@ -123,10 +108,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
     "context": "status: { errorCount: 0, warningCount: 2 }",
     "code": "{ errorCount: 0, warningCount: 2 }",
@@ -144,10 +126,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
     "context": "status: { errorCount: 1, warningCount: 0 }",
     "code": "{ errorCount: 1, warningCount: 0 }",
@@ -165,10 +144,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
     "context": "status: { errorCount: 2, warningCount: 3 }",
     "code": "{ errorCount: 2, warningCount: 3 }",
@@ -186,11 +162,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount",
-      "loading"
-    ],
+    "keys": ["errorCount", "warningCount", "loading"],
     "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
     "context": "status: { errorCount: 2, warningCount: 3, loading: true }",
     "code": "{ errorCount: 2, warningCount: 3, loading: true }",
@@ -208,13 +180,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawAllocationData: {\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
     "code": "{\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
@@ -232,10 +198,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": null,
     "context": "[\n    { date: new Date('2026-01-31'), categories: [] },\n    { date: new Date('2026-10-13'), categories: [] },\n  ]",
     "code": "{ date: new Date('2026-01-31'), categories: [] }",
@@ -253,10 +216,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": null,
     "context": "[\n    { date: new Date('2026-01-31'), categories: [] },\n    { date: new Date('2026-10-13'), categories: [] },\n  ]",
     "code": "{ date: new Date('2026-10-13'), categories: [] }",
@@ -274,10 +234,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": "Partial<AllocationPoint> | undefined",
     "context": "fixtureAllocationPoint({\n        date: new Date('2024-01-31'),\n        categories: [\n          { name: 'historic only', value: 20 },\n          { name: 'shared', value: 80 },\n        ],\n      })",
     "code": "{\n        date: new Date('2024-01-31'),\n        categories: [\n          { name: 'historic only', value: 20 },\n          { name: 'shared', value: 80 },\n        ],\n      }",
@@ -295,10 +252,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": "Partial<AllocationPoint> | undefined",
     "context": "fixtureAllocationPoint({\n        date: new Date('2024-02-29'),\n        categories: [\n          { name: 'shared', value: 50 },\n          { name: 'current only', value: 50 },\n        ],\n      })",
     "code": "{\n        date: new Date('2024-02-29'),\n        categories: [\n          { name: 'shared', value: 50 },\n          { name: 'current only', value: 50 },\n        ],\n      }",
@@ -316,10 +270,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": "Partial<AllocationPoint> | undefined",
     "context": "fixtureAllocationPoint({\n        date: new Date('2024-01-31'),\n        categories: [{ name: 'equity', value: 100 }],\n      })",
     "code": "{\n        date: new Date('2024-01-31'),\n        categories: [{ name: 'equity', value: 100 }],\n      }",
@@ -337,10 +288,7 @@
         "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "categories"
-    ],
+    "keys": ["date", "categories"],
     "contextual": "Partial<AllocationPoint> | undefined",
     "context": "fixtureAllocationPoint({ date: new Date('2024-02-29'), categories: [] })",
     "code": "{ date: new Date('2024-02-29'), categories: [] }",
@@ -358,10 +306,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextual": "AllocationFilter",
     "context": "computeTableRows(data, matching, {\n      type: 'geo',\n      value: 'france',\n    })",
     "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
@@ -379,14 +324,7 @@
         "file": "src/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type.ts"
       }
     ],
-    "keys": [
-      "rank",
-      "label",
-      "name",
-      "value",
-      "weight",
-      "cumulativeWeight"
-    ],
+    "keys": ["rank", "label", "name", "value", "weight", "cumulativeWeight"],
     "contextual": "CumulativeConcentrationPoint",
     "context": "point: CumulativeConcentrationPoint = {\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
     "code": "{\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
@@ -404,14 +342,7 @@
         "file": "src/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type.ts"
       }
     ],
-    "keys": [
-      "rank",
-      "label",
-      "name",
-      "value",
-      "weight",
-      "cumulativeWeight"
-    ],
+    "keys": ["rank", "label", "name", "value", "weight", "cumulativeWeight"],
     "contextual": null,
     "context": "point = {\n      rank: 7,\n      label: 'Example asset',\n      name: 'Example asset',\n      value: 12_500,\n      weight: 4.25,\n      cumulativeWeight: 70.5,\n    }",
     "code": "{\n      rank: 7,\n      label: 'Example asset',\n      name: 'Example asset',\n      value: 12_500,\n      weight: 4.25,\n      cumulativeWeight: 70.5,\n    }",
@@ -429,12 +360,7 @@
         "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
       }
     ],
-    "keys": [
-      "label",
-      "name",
-      "value",
-      "weight"
-    ],
+    "keys": ["label", "name", "value", "weight"],
     "contextual": "Partial<HoldingConcentration> | undefined",
     "context": "fixtureHoldingConcentration({\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      })",
     "code": "{\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      }",
@@ -452,12 +378,7 @@
         "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
       }
     ],
-    "keys": [
-      "label",
-      "name",
-      "value",
-      "weight"
-    ],
+    "keys": ["label", "name", "value", "weight"],
     "contextual": "Partial<HoldingConcentration> | undefined",
     "context": "fixtureHoldingConcentration({\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      })",
     "code": "{\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      }",
@@ -475,13 +396,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawData: RawIsinData = {\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
     "code": "{\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
@@ -499,10 +414,7 @@
         "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
       }
     ],
-    "keys": [
-      "fund",
-      "value"
-    ],
+    "keys": ["fund", "value"],
     "contextual": "Partial<ExposureSource> | undefined",
     "context": "exposureSource({ fund: 'First fund', value: 60 })",
     "code": "{ fund: 'First fund', value: 60 }",
@@ -520,10 +432,7 @@
         "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
       }
     ],
-    "keys": [
-      "fund",
-      "value"
-    ],
+    "keys": ["fund", "value"],
     "contextual": "Partial<ExposureSource> | undefined",
     "context": "exposureSource({ fund: 'Second fund', value: 40 })",
     "code": "{ fund: 'Second fund', value: 40 }",
@@ -541,10 +450,7 @@
         "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
       }
     ],
-    "keys": [
-      "fund",
-      "value"
-    ],
+    "keys": ["fund", "value"],
     "contextual": "Partial<ExposureSource> | undefined",
     "context": "exposureSource({ fund: 'Direct', value: 60 })",
     "code": "{ fund: 'Direct', value: 60 }",
@@ -562,10 +468,7 @@
         "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
       }
     ],
-    "keys": [
-      "fund",
-      "value"
-    ],
+    "keys": ["fund", "value"],
     "contextual": "Partial<ExposureSource> | undefined",
     "context": "exposureSource({ fund: null, value: 40 })",
     "code": "{ fund: null, value: 40 }",
@@ -583,12 +486,7 @@
         "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
       }
     ],
-    "keys": [
-      "isin",
-      "name",
-      "operations",
-      "buttonRect"
-    ],
+    "keys": ["isin", "name", "operations", "buttonRect"],
     "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
     "context": "target: {\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
     "code": "{\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
@@ -606,12 +504,7 @@
         "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
       }
     ],
-    "keys": [
-      "isin",
-      "name",
-      "operations",
-      "buttonRect"
-    ],
+    "keys": ["isin", "name", "operations", "buttonRect"],
     "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
     "context": "target: {\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
     "code": "{\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
@@ -629,12 +522,7 @@
         "file": "src/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "operation_type",
-      "total_amount",
-      "realized_gain"
-    ],
+    "keys": ["date", "operation_type", "total_amount", "realized_gain"],
     "contextual": "Partial<PositionChartOperation> | undefined",
     "context": "fixturePositionChartOperation({\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      })",
     "code": "{\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      }",
@@ -652,13 +540,7 @@
         "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "value",
-      "costBasis",
-      "pct",
-      "last_price"
-    ],
+    "keys": ["date", "value", "costBasis", "pct", "last_price"],
     "contextual": "Partial<HistoryPoint> | undefined",
     "context": "fixtureHistoryPoint({\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      })",
     "code": "{\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      }",
@@ -676,13 +558,7 @@
         "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "value",
-      "costBasis",
-      "pct",
-      "last_price"
-    ],
+    "keys": ["date", "value", "costBasis", "pct", "last_price"],
     "contextual": "Partial<HistoryPoint> | undefined",
     "context": "fixtureHistoryPoint({\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      })",
     "code": "{\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      }",
@@ -700,11 +576,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n          date: new Date('2025-02-28'),\n          savings_delta: 150,\n          perf_delta: -10,\n        })",
     "code": "{\n          date: new Date('2025-02-28'),\n          savings_delta: 150,\n          perf_delta: -10,\n        }",
@@ -748,10 +620,7 @@
         "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "accountTypes"
-    ],
+    "keys": ["accounts", "accountTypes"],
     "contextual": null,
     "context": "noFilters = {\n  accounts: new Set<string>(),\n  accountTypes: new Set<string>(),\n}",
     "code": "{\n  accounts: new Set<string>(),\n  accountTypes: new Set<string>(),\n}",
@@ -769,10 +638,7 @@
         "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "accountTypes"
-    ],
+    "keys": ["accounts", "accountTypes"],
     "contextual": "PerformanceContributionFilters",
     "context": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      {\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      },\n    )",
     "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
@@ -790,10 +656,7 @@
         "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "accountTypes"
-    ],
+    "keys": ["accounts", "accountTypes"],
     "contextual": "PerformanceContributionFilters",
     "context": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      { accounts: new Set(), accountTypes: new Set(['PEE']) },\n    )",
     "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
@@ -811,11 +674,7 @@
         "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
       }
     ],
-    "keys": [
-      "current",
-      "previous",
-      "changePct"
-    ],
+    "keys": ["current", "previous", "changePct"],
     "contextual": "YearOverYearMetric",
     "context": "{{ current: 100, previous: 80, changePct: 25 }}",
     "code": "{ current: 100, previous: 80, changePct: 25 }",
@@ -833,11 +692,7 @@
         "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
       }
     ],
-    "keys": [
-      "current",
-      "previous",
-      "changePct"
-    ],
+    "keys": ["current", "previous", "changePct"],
     "contextual": "YearOverYearMetric",
     "context": "{{ current: null, previous: null, changePct: null }}",
     "code": "{ current: null, previous: null, changePct: null }",
@@ -880,11 +735,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
     "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
@@ -902,11 +753,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
     "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
@@ -924,11 +771,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
     "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
@@ -946,11 +789,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
     "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
@@ -968,11 +807,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
     "context": "({\n        date: new Date(Date.UTC(2024, i, 1)),\n        savings_delta: 100,\n        perf_delta: 10,\n      })",
     "code": "{\n        date: new Date(Date.UTC(2024, i, 1)),\n        savings_delta: 100,\n        perf_delta: 10,\n      }",
@@ -990,11 +825,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n        date: new Date('2024-02'),\n        savings_delta: 200,\n        perf_delta: 5,\n      })",
     "code": "{\n        date: new Date('2024-02'),\n        savings_delta: 200,\n        perf_delta: 5,\n      }",
@@ -1012,11 +843,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
     "context": "({\n        date: new Date(Date.UTC(2024, 10 + index, 28)),\n        savings_delta: index < 12 ? 100 : 150,\n        perf_delta: index < 12 ? 50 : -25,\n      })",
     "code": "{\n        date: new Date(Date.UTC(2024, 10 + index, 28)),\n        savings_delta: index < 12 ? 100 : 150,\n        perf_delta: index < 12 ? 50 : -25,\n      }",
@@ -1034,11 +861,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n        date: new Date('2025-10-31'),\n        savings_delta: 1000,\n        perf_delta: 100,\n      })",
     "code": "{\n        date: new Date('2025-10-31'),\n        savings_delta: 1000,\n        perf_delta: 100,\n      }",
@@ -1056,11 +879,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n        date: new Date('2026-10-11'),\n        savings_delta: 2000,\n        perf_delta: 200,\n      })",
     "code": "{\n        date: new Date('2026-10-11'),\n        savings_delta: 2000,\n        perf_delta: 200,\n      }",
@@ -1078,11 +897,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
     "context": "({\n        date: new Date(Date.UTC(2023, index, 28)),\n        savings_delta: index < 24 ? 100 : 999,\n        perf_delta: index < 24 ? 10 : 999,\n      })",
     "code": "{\n        date: new Date(Date.UTC(2023, index, 28)),\n        savings_delta: index < 24 ? 100 : 999,\n        perf_delta: index < 24 ? 10 : 999,\n      }",
@@ -1100,10 +915,7 @@
         "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "history"
-    ],
+    "keys": ["accounts", "history"],
     "contextual": null,
     "context": "payload = {\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
     "code": "{\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
@@ -1149,12 +961,7 @@
         "file": "src/domains/portfolio/shared/types/dashboardData.type.ts"
       }
     ],
-    "keys": [
-      "accountLabels",
-      "positions",
-      "rawOperations",
-      "rawPositions"
-    ],
+    "keys": ["accountLabels", "positions", "rawOperations", "rawPositions"],
     "contextual": "unknown",
     "context": "queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  })",
     "code": "{\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  }",
@@ -1172,11 +979,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
     "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
@@ -1194,11 +997,7 @@
         "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
       }
     ],
-    "keys": [
-      "date",
-      "savings_delta",
-      "perf_delta"
-    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
     "contextual": "Partial<SavingCapacityPoint> | undefined",
     "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
     "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
@@ -1240,11 +1039,7 @@
         "file": "src/domains/portfolio/shared/types/fundHoldingsData.type.ts"
       }
     ],
-    "keys": [
-      "holdings",
-      "history",
-      "statuses"
-    ],
+    "keys": ["holdings", "history", "statuses"],
     "contextual": "FundHoldingsData",
     "context": "fundData: {\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
     "code": "{\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
@@ -1262,10 +1057,7 @@
         "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "history"
-    ],
+    "keys": ["accounts", "history"],
     "contextual": "Partial<PortfolioHistoryResponse> | undefined",
     "context": "makePortfolioHistoryResponse({\n        accounts: ['second'],\n        history: first.history.map((point) => ({ ...point, tri: 24 })),\n      })",
     "code": "{\n        accounts: ['second'],\n        history: first.history.map((point) => ({ ...point, tri: 24 })),\n      }",

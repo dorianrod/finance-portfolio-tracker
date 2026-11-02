@@ -1,6 +1,5 @@
-import { computePortfolioComposition } from '@/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition'
+import type { PortfolioCompositionPoint } from '@/domains/portfolio/features/wealth/components/EvolutionChart/types/portfolioCompositionPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -24,7 +23,7 @@ export function EvolutionTooltip({
   if (!active || payload.length === 0) return null
   const row = payload[0]?.payload
   const { cost, gain, total, costShare, gainShare } =
-    computePortfolioComposition(row)
+    row?.composition ?? EMPTY_COMPOSITION
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -71,8 +70,16 @@ export function EvolutionTooltip({
 }
 
 type EvolutionTooltipProps = NumericTooltipProps<
-  PortfolioHistoryPoint,
+  PortfolioCompositionPoint,
   Date | string | number
 > & {
   percentageMode?: boolean
+}
+
+const EMPTY_COMPOSITION: PortfolioCompositionPoint['composition'] = {
+  cost: 0,
+  gain: 0,
+  total: 0,
+  costShare: null,
+  gainShare: null,
 }

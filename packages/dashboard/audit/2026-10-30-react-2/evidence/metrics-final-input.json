@@ -559,9 +559,7 @@
       "id": "F-001",
       "kind": "violation",
       "status": "resolved",
-      "ruleIds": [
-        "test-colocated-tests"
-      ],
+      "ruleIds": ["test-colocated-tests"],
       "files": [
         "src/app/DashboardSourceBoundary.view.tsx",
         "src/app/DashboardSources.feature.tsx",
@@ -576,9 +574,7 @@
       "id": "F-002",
       "kind": "violation",
       "status": "resolved",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         "src/app/DashboardDataQuality.feature.test.tsx",
         "src/app/services/useResetDashboardFilters.test.tsx",

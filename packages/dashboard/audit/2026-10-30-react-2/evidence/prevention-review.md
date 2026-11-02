@@ -54,15 +54,15 @@ The closest feature/shared mocks owner still requires semantic review. This boun
 
 ### Regression cases and rollout
 
-| Case | Required result |
-| --- | --- |
-| Complete typed domain defaults factory inside a test | Intended ownership diagnostic at severity 2 |
-| Same factory in an owning mocks module | No ownership diagnostic |
-| Test invoking an imported factory with Partial overrides | No ownership diagnostic |
-| Imported/aliased entity and supported union variant | Same intended verdict; no name-based workaround |
-| Raw JSON/schema error case, expected value or state update | No ownership diagnostic |
-| Missing type information or opaque/inferred return | Documented analysis limit; no speculative violation |
-| Existing incomplete cast / nondeterministic mock | Existing diagnostics retained |
+| Case                                                       | Required result                                     |
+| ---------------------------------------------------------- | --------------------------------------------------- |
+| Complete typed domain defaults factory inside a test       | Intended ownership diagnostic at severity 2         |
+| Same factory in an owning mocks module                     | No ownership diagnostic                             |
+| Test invoking an imported factory with Partial overrides   | No ownership diagnostic                             |
+| Imported/aliased entity and supported union variant        | Same intended verdict; no name-based workaround     |
+| Raw JSON/schema error case, expected value or state update | No ownership diagnostic                             |
+| Missing type information or opaque/inferred return         | Documented analysis limit; no speculative violation |
+| Existing incomplete cast / nondeterministic mock           | Existing diagnostics retained                       |
 
 Develop generic tests in isolated projects with unrelated vocabulary and run consumer cases through calculated real configuration. Enable the strengthened detector with P-002's corresponding cleanup so the full lint gate stays honest. Do not add suppressions, raise the warning ceiling or weaken existing positive cases to deploy it.
 
@@ -88,16 +88,16 @@ Use a separate project/audit command rather than embedding Git/provenance state 
 
 ### Regression cases and limits
 
-| Case | Required result |
-| --- | --- |
-| New/extracted runtime owner without a sibling | Failing presence result |
-| Same owner with a same-base sibling | Presence check passes |
-| Newly written, untracked source module | Included in the comparison |
-| Source and sibling moved together | Relationship retained |
-| Unchanged legacy owner moved without an existing sibling | Classified move; no invented new-file violation |
-| Type-only module, story or fixture module | Explained non-applicability |
-| Missing baseline, unresolved role or unproven move | Unavailable/pending result; never silently clean |
-| Empty sibling or nominal-only test | Presence may pass; behavior/edge coverage remains manual |
+| Case                                                     | Required result                                          |
+| -------------------------------------------------------- | -------------------------------------------------------- |
+| New/extracted runtime owner without a sibling            | Failing presence result                                  |
+| Same owner with a same-base sibling                      | Presence check passes                                    |
+| Newly written, untracked source module                   | Included in the comparison                               |
+| Source and sibling moved together                        | Relationship retained                                    |
+| Unchanged legacy owner moved without an existing sibling | Classified move; no invented new-file violation          |
+| Type-only module, story or fixture module                | Explained non-applicability                              |
+| Missing baseline, unresolved role or unproven move       | Unavailable/pending result; never silently clean         |
+| Empty sibling or nominal-only test                       | Presence may pass; behavior/edge coverage remains manual |
 
 The permanent suite must create its own temporary baseline/current trees; it must not depend on this application's ignored audit artifacts. Test meaningful file/provenance behavior, not CLI wording snapshots. Where a detector change exposes equivalent in-scope violations, record the actual family and fix it with the corresponding plan action.
 

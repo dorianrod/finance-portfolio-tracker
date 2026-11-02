@@ -559,9 +559,7 @@
       "id": "F-001",
       "kind": "prevention-gap",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs"
       ]
@@ -570,9 +568,7 @@
       "id": "F-002",
       "kind": "prevention-gap",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs"
       ]
@@ -581,9 +577,7 @@
       "id": "F-003",
       "kind": "prevention-gap",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs"
       ]
@@ -592,9 +586,7 @@
       "id": "F-004",
       "kind": "violation",
       "status": "open",
-      "ruleIds": [
-        "helpers-formatter-hooks"
-      ],
+      "ruleIds": ["helpers-formatter-hooks"],
       "files": [
         "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.tsx"
       ]

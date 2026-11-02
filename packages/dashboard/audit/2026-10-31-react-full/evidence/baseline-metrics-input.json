@@ -559,10 +559,7 @@
       "id": "F-001",
       "kind": "violation",
       "status": "open",
-      "ruleIds": [
-        "arch-component-roles",
-        "helpers-categories"
-      ],
+      "ruleIds": ["arch-component-roles", "helpers-categories"],
       "files": [
         "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx",
         "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeTooltip.view.tsx",
@@ -576,9 +573,7 @@
       "id": "F-002",
       "kind": "violation",
       "status": "open",
-      "ruleIds": [
-        "helpers-categories"
-      ],
+      "ruleIds": ["helpers-categories"],
       "files": [
         "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel.ts"
       ]
@@ -587,9 +582,7 @@
       "id": "F-003",
       "kind": "violation",
       "status": "open",
-      "ruleIds": [
-        "types-explicit-nullability"
-      ],
+      "ruleIds": ["types-explicit-nullability"],
       "files": [
         "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.view.tsx",
         "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",

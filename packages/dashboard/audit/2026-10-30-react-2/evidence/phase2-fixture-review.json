@@ -37,10 +37,7 @@
           "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
         }
       ],
-      "keys": [
-        "account",
-        "period"
-      ],
+      "keys": ["account", "period"],
       "contextual": "FilterScopeSpec",
       "parent": "{{ account: 'filterable', period: 'range' }}",
       "code": "{ account: 'filterable', period: 'range' }",
@@ -57,11 +54,7 @@
           "file": "src/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type.ts"
         }
       ],
-      "keys": [
-        "name",
-        "ticker",
-        "isin"
-      ],
+      "keys": ["name", "ticker", "isin"],
       "contextual": "ManualPriceOverride",
       "parent": "[override, { ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }]",
       "code": "{ ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }",
@@ -78,10 +71,7 @@
           "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
         }
       ],
-      "keys": [
-        "type",
-        "value"
-      ],
+      "keys": ["type", "value"],
       "contextual": "AllocationFilter",
       "parent": "computeTableRows(data, matching, {\n      type: 'geo',\n      value: 'france',\n    })",
       "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
@@ -98,12 +88,7 @@
           "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
         }
       ],
-      "keys": [
-        "label",
-        "name",
-        "value",
-        "weight"
-      ],
+      "keys": ["label", "name", "value", "weight"],
       "contextual": "Partial<HoldingConcentration> | undefined",
       "parent": "fixtureHoldingConcentration({\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      })",
       "code": "{\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      }",
@@ -120,12 +105,7 @@
           "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
         }
       ],
-      "keys": [
-        "label",
-        "name",
-        "value",
-        "weight"
-      ],
+      "keys": ["label", "name", "value", "weight"],
       "contextual": "Partial<HoldingConcentration> | undefined",
       "parent": "fixtureHoldingConcentration({\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      })",
       "code": "{\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      }",
@@ -142,12 +122,7 @@
           "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
         }
       ],
-      "keys": [
-        "isin",
-        "name",
-        "operations",
-        "buttonRect"
-      ],
+      "keys": ["isin", "name", "operations", "buttonRect"],
       "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
       "parent": "target: {\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
       "code": "{\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
@@ -164,12 +139,7 @@
           "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
         }
       ],
-      "keys": [
-        "isin",
-        "name",
-        "operations",
-        "buttonRect"
-      ],
+      "keys": ["isin", "name", "operations", "buttonRect"],
       "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
       "parent": "target: {\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
       "code": "{\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
@@ -186,12 +156,7 @@
           "file": "src/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type.ts"
         }
       ],
-      "keys": [
-        "date",
-        "operation_type",
-        "total_amount",
-        "realized_gain"
-      ],
+      "keys": ["date", "operation_type", "total_amount", "realized_gain"],
       "contextual": "Partial<PositionChartOperation> | undefined",
       "parent": "fixturePositionChartOperation({\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      })",
       "code": "{\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      }",
@@ -208,13 +173,7 @@
           "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
         }
       ],
-      "keys": [
-        "date",
-        "value",
-        "costBasis",
-        "pct",
-        "last_price"
-      ],
+      "keys": ["date", "value", "costBasis", "pct", "last_price"],
       "contextual": "Partial<HistoryPoint> | undefined",
       "parent": "fixtureHistoryPoint({\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      })",
       "code": "{\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      }",
@@ -231,13 +190,7 @@
           "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
         }
       ],
-      "keys": [
-        "date",
-        "value",
-        "costBasis",
-        "pct",
-        "last_price"
-      ],
+      "keys": ["date", "value", "costBasis", "pct", "last_price"],
       "contextual": "Partial<HistoryPoint> | undefined",
       "parent": "fixtureHistoryPoint({\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      })",
       "code": "{\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      }",
@@ -254,9 +207,7 @@
           "file": "src/domains/portfolio/shared/types/fundHoldingStatus.type.ts"
         }
       ],
-      "keys": [
-        "sourceName"
-      ],
+      "keys": ["sourceName"],
       "contextual": "FundHoldingStatus",
       "parent": "[{ ...status, sourceName: 'Updated source' }]",
       "code": "{ ...status, sourceName: 'Updated source' }",
@@ -273,9 +224,7 @@
           "file": "src/domains/portfolio/shared/types/fundHoldingStatus.type.ts"
         }
       ],
-      "keys": [
-        "sourceName"
-      ],
+      "keys": ["sourceName"],
       "contextual": "FundHoldingStatus",
       "parent": "[{ ...original, sourceName: 'Updated source' }]",
       "code": "{ ...original, sourceName: 'Updated source' }",
@@ -317,10 +266,7 @@
           "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
         }
       ],
-      "keys": [
-        "accounts",
-        "accountTypes"
-      ],
+      "keys": ["accounts", "accountTypes"],
       "contextual": "PerformanceContributionFilters",
       "parent": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      {\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      },\n    )",
       "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
@@ -337,10 +283,7 @@
           "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
         }
       ],
-      "keys": [
-        "accounts",
-        "accountTypes"
-      ],
+      "keys": ["accounts", "accountTypes"],
       "contextual": "PerformanceContributionFilters",
       "parent": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      { accounts: new Set(), accountTypes: new Set(['PEE']) },\n    )",
       "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
@@ -357,9 +300,7 @@
           "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
         }
       ],
-      "keys": [
-        "accounts"
-      ],
+      "keys": ["accounts"],
       "contextual": "DashboardFilters",
       "parent": "({\n        ...current,\n        accounts: new Set(['broker']),\n      })",
       "code": "{\n        ...current,\n        accounts: new Set(['broker']),\n      }",
@@ -376,9 +317,7 @@
           "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
         }
       ],
-      "keys": [
-        "hideClosedPositions"
-      ],
+      "keys": ["hideClosedPositions"],
       "contextual": "DashboardFilters",
       "parent": "({\n        ...current,\n        hideClosedPositions: false,\n      })",
       "code": "{\n        ...current,\n        hideClosedPositions: false,\n      }",
@@ -395,11 +334,7 @@
           "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
         }
       ],
-      "keys": [
-        "current",
-        "previous",
-        "changePct"
-      ],
+      "keys": ["current", "previous", "changePct"],
       "contextual": "YearOverYearMetric",
       "parent": "{{ current: 100, previous: 80, changePct: 25 }}",
       "code": "{ current: 100, previous: 80, changePct: 25 }",
@@ -416,11 +351,7 @@
           "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
         }
       ],
-      "keys": [
-        "current",
-        "previous",
-        "changePct"
-      ],
+      "keys": ["current", "previous", "changePct"],
       "contextual": "YearOverYearMetric",
       "parent": "{{ current: null, previous: null, changePct: null }}",
       "code": "{ current: null, previous: null, changePct: null }",
@@ -437,10 +368,7 @@
           "file": "src/domains/portfolio/features/wealth/types/accountTypePoint.type.ts"
         }
       ],
-      "keys": [
-        "account_type",
-        "total_value"
-      ],
+      "keys": ["account_type", "total_value"],
       "contextual": "AccountTypePoint",
       "parent": "[point, { ...point, account_type: 'Savings', total_value: 210 }]",
       "code": "{ ...point, account_type: 'Savings', total_value: 210 }",
@@ -457,11 +385,7 @@
           "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
         }
       ],
-      "keys": [
-        "total_value",
-        "total_cost_basis",
-        "unrealized_gain"
-      ],
+      "keys": ["total_value", "total_cost_basis", "unrealized_gain"],
       "contextual": "PortfolioHistoryPoint",
       "parent": "[\n      {\n        ...historyPoint,\n        total_value: 100,\n        total_cost_basis: 125,\n        unrealized_gain: -25,\n      },\n    ]",
       "code": "{\n        ...historyPoint,\n        total_value: 100,\n        total_cost_basis: 125,\n        unrealized_gain: -25,\n      }",
@@ -478,10 +402,7 @@
           "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
         }
       ],
-      "keys": [
-        "total_cost_basis",
-        "unrealized_gain"
-      ],
+      "keys": ["total_cost_basis", "unrealized_gain"],
       "contextual": "PortfolioHistoryPoint",
       "parent": "[\n      { ...historyPoint, total_cost_basis: 100, unrealized_gain: -100 },\n    ]",
       "code": "{ ...historyPoint, total_cost_basis: 100, unrealized_gain: -100 }",
@@ -498,12 +419,7 @@
           "file": "src/domains/portfolio/shared/types/dashboardData.type.ts"
         }
       ],
-      "keys": [
-        "accountLabels",
-        "positions",
-        "rawOperations",
-        "rawPositions"
-      ],
+      "keys": ["accountLabels", "positions", "rawOperations", "rawPositions"],
       "contextual": "unknown",
       "parent": "queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  })",
       "code": "{\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  }",
@@ -543,9 +459,7 @@
           "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
         }
       ],
-      "keys": [
-        "tri"
-      ],
+      "keys": ["tri"],
       "contextual": "PortfolioHistoryPoint",
       "parent": "[{ ...fallback[0], tri: 99 }]",
       "code": "{ ...fallback[0], tri: 99 }",
@@ -562,9 +476,7 @@
           "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
         }
       ],
-      "keys": [
-        "tri"
-      ],
+      "keys": ["tri"],
       "contextual": "PortfolioHistoryPoint",
       "parent": "[{ ...fallback[0], tri: 99 }]",
       "code": "{ ...fallback[0], tri: 99 }",
@@ -581,11 +493,7 @@
           "file": "src/domains/portfolio/shared/types/fundHoldingsData.type.ts"
         }
       ],
-      "keys": [
-        "holdings",
-        "history",
-        "statuses"
-      ],
+      "keys": ["holdings", "history", "statuses"],
       "contextual": "FundHoldingsData",
       "parent": "fundData: {\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
       "code": "{\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",

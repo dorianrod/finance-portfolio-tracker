@@ -14,9 +14,7 @@
   "scoreStatus": "calculated",
   "applicableRuleWeight": 1152,
   "openViolatedRuleWeight": 8,
-  "openViolatedRuleIds": [
-    "helpers-formatter-hooks"
-  ],
+  "openViolatedRuleIds": ["helpers-formatter-hooks"],
   "coverage": {
     "selected": 110,
     "applicable": 101,

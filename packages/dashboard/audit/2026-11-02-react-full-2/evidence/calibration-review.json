@@ -1,0 +1,31 @@
+[
+  {
+    "id": "role-bad",
+    "rule": "local/component-role",
+    "diagnostics": [
+      {
+        "ruleId": "local/component-role",
+        "severity": 2,
+        "message": "A view cannot import runtime business state or logic from \"@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/transformers/withAccountTypeHistoryTotals\".",
+        "line": 1,
+        "column": 46,
+        "messageId": "viewImportsBusiness",
+        "endLine": 1,
+        "endColumn": 168
+      }
+    ],
+    "otherDiagnostics": []
+  },
+  {
+    "id": "role-valid",
+    "rule": "local/component-role",
+    "diagnostics": [],
+    "otherDiagnostics": []
+  },
+  {
+    "id": "presenter-semantic-limit",
+    "rule": "local/component-role",
+    "diagnostics": [],
+    "otherDiagnostics": []
+  }
+]

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 import type { PipelineErrorSortColumn } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/helpers/presenters/buildPipelineErrorsViewModel/buildPipelineErrorsViewModel.types'
 import { useBuildPipelineErrorsViewModel } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/helpers/presenters/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel'
+import { countPipelineIssues } from '@/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 
 import { ErrorsTabView } from './ErrorsTab.view'
@@ -27,6 +28,7 @@ export function ErrorsTab({ errors }: Props) {
     () =>
       buildPipelineErrorsViewModel({
         errors,
+        issueCounts: countPipelineIssues(errors),
         filterLevel,
         filterType,
         sortColumn: sortCol,

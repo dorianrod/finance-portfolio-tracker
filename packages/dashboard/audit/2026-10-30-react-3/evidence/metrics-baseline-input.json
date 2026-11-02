@@ -559,9 +559,7 @@
       "id": "F-001",
       "kind": "violation",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         "src/app/DashboardDataQuality.feature.test.tsx",
         "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.test.tsx",

@@ -3,10 +3,7 @@
     "id": "arch-component-roles",
     "impact": "CRITICAL",
     "targets": "components",
-    "detectors": [
-      "local/component-role",
-      "local/state-component-contract"
-    ],
+    "detectors": ["local/component-role", "local/state-component-contract"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -42,9 +39,7 @@
     "id": "arch-transverse-only-imports",
     "impact": "CRITICAL",
     "targets": "production",
-    "detectors": [
-      "local/import-boundaries"
-    ],
+    "detectors": ["local/import-boundaries"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -85,9 +80,7 @@
     "id": "arch-feature-slice-layout",
     "impact": "CRITICAL",
     "targets": "production",
-    "detectors": [
-      "local/feature-folder-layout"
-    ],
+    "detectors": ["local/feature-folder-layout"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -123,9 +116,7 @@
     "id": "arch-decompose-hook-heavy-components",
     "impact": "HIGH",
     "targets": "components",
-    "detectors": [
-      "local/max-hooks-per-component"
-    ],
+    "detectors": ["local/max-hooks-per-component"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -201,9 +192,7 @@
     "id": "arch-feature-hierarchy",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/feature-folder-layout"
-    ],
+    "detectors": ["local/feature-folder-layout"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -282,9 +271,7 @@
     "id": "arch-stores-no-index",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -320,9 +307,7 @@
     "id": "arch-helpers-vs-services",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/no-memo-only-service"
-    ],
+    "detectors": ["local/no-memo-only-service"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -574,9 +559,7 @@
     "id": "api-business-destructuring",
     "impact": "LOW-MEDIUM",
     "targets": "api",
-    "detectors": [
-      "local/api-business-destructuring"
-    ],
+    "detectors": ["local/api-business-destructuring"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "apis",
@@ -720,9 +703,7 @@
     "id": "types-explicit-nullability",
     "impact": "HIGH",
     "targets": "types",
-    "detectors": [
-      "local/explicit-nullability"
-    ],
+    "detectors": ["local/explicit-nullability"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -830,9 +811,7 @@
     "id": "types-file-per-entity",
     "impact": "MEDIUM",
     "targets": "types",
-    "detectors": [
-      "local/entity-type-files"
-    ],
+    "detectors": ["local/entity-type-files"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -868,9 +847,7 @@
     "id": "types-no-any-or-wide",
     "impact": "LOW-MEDIUM",
     "targets": "types",
-    "detectors": [
-      "@typescript-eslint/no-unsafe-assignment"
-    ],
+    "detectors": ["@typescript-eslint/no-unsafe-assignment"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1035,9 +1012,7 @@
     "id": "ui-delegate-mapped-jsx",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-complex-jsx-map"
-    ],
+    "detectors": ["local/no-complex-jsx-map"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -1076,9 +1051,7 @@
     "id": "ui-semantic-colors",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-hardcoded-colors"
-    ],
+    "detectors": ["local/no-hardcoded-colors"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -1186,9 +1159,7 @@
     "id": "ui-required-children",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/require-children-composition"
-    ],
+    "detectors": ["local/require-children-composition"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -1242,9 +1213,7 @@
     "id": "ui-no-adhoc-styling",
     "impact": "MEDIUM-HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-domain-styling"
-    ],
+    "detectors": ["local/no-domain-styling"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "components",
@@ -1316,9 +1285,7 @@
     "id": "state-module-level-atoms",
     "impact": "MEDIUM-HIGH",
     "targets": "stores",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "stores",
@@ -1426,9 +1393,7 @@
     "id": "state-explicit-types-defaults",
     "impact": "MEDIUM",
     "targets": "stores",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "stores",
@@ -1446,9 +1411,7 @@
     "id": "state-vercel-functional-updates",
     "impact": "MEDIUM",
     "targets": "stores",
-    "detectors": [
-      "react-hooks/exhaustive-deps"
-    ],
+    "detectors": ["react-hooks/exhaustive-deps"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "stores",
@@ -1510,9 +1473,7 @@
       "local/no-inline-number-display"
     ],
     "status": "automatically checked; manually reviewed",
-    "findings": [
-      "F-004"
-    ],
+    "findings": ["F-004"],
     "eligible_group": "helpers",
     "coverage_method": "Exact source/contract/configuration fingerprint comparison against previous final state, explicit retained semantic review, fresh full-project checks and targeted source/caller traces. Not a fresh line-by-line review of every unchanged file.",
     "limits": "Configured checks are partial; semantic prior evidence is reused explicitly, not claimed as a fresh line-by-line review. Existing ignored portions are not technically revalidated.",
@@ -1546,9 +1507,7 @@
     "id": "helpers-no-context-params",
     "impact": "MEDIUM-HIGH",
     "targets": "helpers",
-    "detectors": [
-      "local/no-helper-context-params"
-    ],
+    "detectors": ["local/no-helper-context-params"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "helpers",
@@ -1625,10 +1584,7 @@
     "id": "i18n-interpolation",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency",
-      "local/no-ui-string-concat"
-    ],
+    "detectors": ["local/i18n-consistency", "local/no-ui-string-concat"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1646,9 +1602,7 @@
     "id": "i18n-no-default-value",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency"
-    ],
+    "detectors": ["local/i18n-consistency"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1666,9 +1620,7 @@
     "id": "i18n-no-hardcoded-strings",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/no-hardcoded-ui-strings"
-    ],
+    "detectors": ["local/no-hardcoded-ui-strings"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1686,9 +1638,7 @@
     "id": "i18n-static-keys",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency"
-    ],
+    "detectors": ["local/i18n-consistency"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1727,15 +1677,9 @@
     "id": "test-mock-data",
     "impact": "MEDIUM",
     "targets": "tests",
-    "detectors": [
-      "local/test-fixture-contract"
-    ],
+    "detectors": ["local/test-fixture-contract"],
     "status": "automatically checked; manually reviewed",
-    "findings": [
-      "F-001",
-      "F-002",
-      "F-003"
-    ],
+    "findings": ["F-001", "F-002", "F-003"],
     "eligible_group": "tests",
     "coverage_method": "Exact source/contract/configuration fingerprint comparison against previous final state, explicit retained semantic review, fresh full-project checks and targeted source/caller traces. Not a fresh line-by-line review of every unchanged file.",
     "limits": "Configured checks are partial; semantic prior evidence is reused explicitly, not claimed as a fresh line-by-line review. Existing ignored portions are not technically revalidated.",
@@ -1816,9 +1760,7 @@
     "id": "test-semantic-queries",
     "impact": "MEDIUM",
     "targets": "tests",
-    "detectors": [
-      "local/prefer-semantic-test-queries"
-    ],
+    "detectors": ["local/prefer-semantic-test-queries"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "tests",
@@ -1854,9 +1796,7 @@
     "id": "quality-no-deprecated-apis",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "@typescript-eslint/no-deprecated"
-    ],
+    "detectors": ["@typescript-eslint/no-deprecated"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -1913,9 +1853,7 @@
     "id": "quality-single-public-export",
     "impact": "MEDIUM",
     "targets": "production",
-    "detectors": [
-      "local/single-public-export"
-    ],
+    "detectors": ["local/single-public-export"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",
@@ -2005,9 +1943,7 @@
     "id": "quality-usecallback-for-functions",
     "impact": "MEDIUM",
     "targets": "production",
-    "detectors": [
-      "local/prefer-usecallback"
-    ],
+    "detectors": ["local/prefer-usecallback"],
     "status": "automatically checked; manually reviewed",
     "findings": [],
     "eligible_group": "production",

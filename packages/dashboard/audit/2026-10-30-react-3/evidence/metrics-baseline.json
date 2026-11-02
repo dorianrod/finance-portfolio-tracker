@@ -14,9 +14,7 @@
   "scoreStatus": "calculated",
   "applicableRuleWeight": 1152,
   "openViolatedRuleWeight": 4,
-  "openViolatedRuleIds": [
-    "test-mock-data"
-  ],
+  "openViolatedRuleIds": ["test-mock-data"],
   "coverage": {
     "selected": 110,
     "applicable": 101,

@@ -1,4 +1,4 @@
-import { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary'
+import { buildLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/presenters/buildLookThroughSummary'
 import { LookThroughCoverageSummaryView } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummaryView.view'
 import { UnavailableLookThroughSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/UnavailableLookThroughSummary.view'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'

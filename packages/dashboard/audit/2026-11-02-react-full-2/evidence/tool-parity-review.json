@@ -1,0 +1,490 @@
+[
+  {
+    "file": "vitest.config.mjs",
+    "same": true
+  },
+  {
+    "file": "eslint.config.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/build.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/check-test-colocation.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/audit-metrics.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/check-test-colocation.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/cli.integration.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/check-i18n-catalog.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/import-cycles.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/fixture-review.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/collect-translation-keys.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/fixture-review.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/fixture-candidates.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/profile-eslint.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/audit-architecture.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/lint.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/eslint-project-fingerprint.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/project-options.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/import-cycles.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/audit-architecture.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/fixture-candidates.test.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/collect-translation-keys.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/eslint-project-fingerprint.mjs",
+    "same": true
+  },
+  {
+    "file": "scripts/audit-metrics.mjs",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/helper-module-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/public-api-first.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/single-public-export.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-component-data-pipeline.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-effects-in-components.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-returned-local-state.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-prop-drilling.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-shared-ui-classname.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-inline-number-display.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-lossy-boolean-transform.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/public-api-first.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/library-binding.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-component-module-logic.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/test-bindings.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/review-shared-feature-sharing.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-conditional-test-assertions.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-react-context.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/explicit-nullability.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-browser-in-pure-helpers.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-effects-in-components.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-inline-format-fallback.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-component-calculation.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/shared-feature-usage-analysis.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-number-string-roundtrip.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/import-boundaries.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-hardcoded-colors.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-overwritten-ui-props.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/context-provenance.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/api-business-destructuring.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-component-calculation.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/architecture-boundaries.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/i18n-consistency.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/max-hooks-per-component.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-prop-drilling.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-jsx-map.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/helper-categories.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/hook-name.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-memo-only-service.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/shared-ui-internal-layout-analysis.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/parse-eslint-suppression.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/ast-bindings.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-service-presentation.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/shared-feature-usage.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/reviewed-eslint-suppression.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/component-role.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/react-component-utils.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/atom-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-ui-string-concat.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/api-hook-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/translation-key-literals.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/component-role-analysis.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/require-reviewed-eslint-suppression.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/translation-bindings.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-browser-in-pure-helpers.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/max-hooks-per-component.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/state-component-contract.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/feature-folder-layout.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/helper-module-contract.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-domain-accessibility.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-hardcoded-ui-strings.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-react-context.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/get-public-exports.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/ui-event-composition.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-inline-format-fallback.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-jsx-condition.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-domain-styling.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-component-module-logic.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/state-component-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/prefer-semantic-test-queries.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-hardcoded-colors.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-jsx-condition.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/entity-type-files.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/helper-categories.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-test-style-assertions.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/eslint-suppression-processor.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-shared-ui-internal-layout.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/prefer-usecallback.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/test-fixture-contract.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-sort-for-extremum.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/feature-folder-layout.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-complex-jsx-map.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-helper-context-params.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/require-children-composition.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/component-contracts.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/runtime-dependencies.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/test-fixture-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-ui-string-concat.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/translation-key-literals.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-component-data-pipeline.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/i18n-consistency.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/no-helper-context-params.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/index.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/business-ownership.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/import-boundary-policy.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/styling-layout.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/formatter-contract.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/component-role.test.js",
+    "same": true
+  },
+  {
+    "file": "eslint-rules/prefer-functional-state-update.js",
+    "same": true
+  }
+]

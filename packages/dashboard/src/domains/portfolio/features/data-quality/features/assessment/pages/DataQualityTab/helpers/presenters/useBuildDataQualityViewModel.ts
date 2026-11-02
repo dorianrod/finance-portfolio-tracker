@@ -5,6 +5,7 @@ import { buildDataQualityAssessment } from '@/domains/portfolio/features/data-qu
 import type { QualityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
 import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
 import type { QualityTheme } from '@/domains/portfolio/features/data-quality/features/assessment/types/qualityTheme.type'
+import { countPipelineIssues } from '@/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import i18n from '@/i18n/i18n'
@@ -101,8 +102,7 @@ function buildPipelineTheme(
   errors: PipelineError[],
   formattedCount: string,
 ): QualityTheme {
-  const errorCount = errors.filter((item) => item.level === 'error').length
-  const warningCount = errors.length - errorCount
+  const { errorCount, warningCount } = countPipelineIssues(errors)
   let pipelineTone: QualityTone = 'healthy'
   let pipelinePriority = 0
   if (errorCount > 0) {

@@ -16,9 +16,7 @@
     "findings": "F-003, F-005",
     "proposed_destination": "Owning component/page helpers/presenters/useBuildDashboardSourceData.ts",
     "responsibility": "Presenter: structured display state, translated labels, rendered row tree or technical input value.",
-    "callers": [
-      "src/app/services/useDashboardViewModel.ts:5 (value)"
-    ]
+    "callers": ["src/app/services/useDashboardViewModel.ts:5 (value)"]
   },
   {
     "file": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/mappers/buildFundDiagnosticsRows.ts",
@@ -793,9 +791,7 @@
     "findings": "F-005",
     "proposed_destination": "src/domains/portfolio/features/holdings/features/positions/helpers/transformers/useSortedPositions.ts",
     "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
-    "callers": [
-      "src/app/services/useDashboardViewModel.ts:13 (value)"
-    ]
+    "callers": ["src/app/services/useDashboardViewModel.ts:13 (value)"]
   },
   {
     "file": "src/domains/portfolio/features/overview/helpers/businessRules/matchesPositionScope.ts",
@@ -935,9 +931,7 @@
     "findings": "F-005",
     "proposed_destination": "src/domains/portfolio/features/overview/helpers/transformers/useOverviewComparison.ts",
     "responsibility": "Transformer/support contract: explicit validated inputs to domain data, selection, aggregation or diagnostics; no new business boundary.",
-    "callers": [
-      "src/app/services/useDashboardViewModel.ts:16 (value)"
-    ]
+    "callers": ["src/app/services/useDashboardViewModel.ts:16 (value)"]
   },
   {
     "file": "src/domains/portfolio/features/overview/helpers/selectors/latestAtOrBefore.ts",

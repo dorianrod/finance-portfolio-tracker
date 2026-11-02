@@ -559,9 +559,7 @@
       "id": "F-001",
       "kind": "prevention-gap",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
+      "ruleIds": ["test-mock-data"],
       "files": [
         "../../.agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs"
       ]
@@ -570,13 +568,8 @@
       "id": "F-002",
       "kind": "prevention-gap",
       "status": "open",
-      "ruleIds": [
-        "test-mock-data"
-      ],
-      "files": [
-        "package.json",
-        "../../.github/workflows/ci.yml"
-      ]
+      "ruleIds": ["test-mock-data"],
+      "files": ["package.json", "../../.github/workflows/ci.yml"]
     }
   ]
 }

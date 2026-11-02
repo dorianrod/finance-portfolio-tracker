@@ -101,13 +101,13 @@ Comments match current null-producing branches; typecheck and formatting pass. N
 Formula: `weighted-rule-compliance/v1`. Score: **95.07**. Scope: full dashboard React; 110 rules reviewed, 100 applicable, 0 pending; 143 existing exceptions not technically revalidated. Open affected files: 33.
 
 | Actual impact | Baseline families | Open | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 1 | 1 | 0 |
-| HIGH | 1 | 1 | 0 |
-| MEDIUM-HIGH | 1 | 1 | 0 |
-| MEDIUM | 0 | 0 | 0 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
+| ------------- | ----------------: | ---: | -------: |
+| CRITICAL      |                 1 |    1 |        0 |
+| HIGH          |                 1 |    1 |        0 |
+| MEDIUM-HIGH   |                 1 |    1 |        0 |
+| MEDIUM        |                 0 |    0 |        0 |
+| LOW-MEDIUM    |                 0 |    0 |        0 |
+| LOW           |                 0 |    0 |        0 |
 
 The score counts each violated rule once, not every field or diagnostic. The nullable candidate inventory includes three already documented threshold fields retained after review; they do not count as open defects. See the preserved machine inputs/results in evidence.
 
@@ -116,12 +116,12 @@ The score counts each violated rule once, not every field or diagnostic. The nul
 All three original families are resolved by the verified actions in plan.md; no ambiguity or user choice remains pending. Formula: `weighted-rule-compliance/v1`. Baseline **95.07**, final **100**; 110 selected/reviewed rules, 100 applicable, zero pending; 143 exceptions not technically revalidated. Open affected files: **0** (baseline 33). Preserve the original family grouping; location/comment counts are not separate defects.
 
 | Actual impact | Baseline families | Open | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 1 | 0 | 1 |
-| HIGH | 1 | 0 | 1 |
-| MEDIUM-HIGH | 1 | 0 | 1 |
-| MEDIUM | 0 | 0 | 0 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
+| ------------- | ----------------: | ---: | -------: |
+| CRITICAL      |                 1 |    0 |        1 |
+| HIGH          |                 1 |    0 |        1 |
+| MEDIUM-HIGH   |                 1 |    0 |        1 |
+| MEDIUM        |                 0 |    0 |        0 |
+| LOW-MEDIUM    |                 0 |    0 |        0 |
+| LOW           |                 0 |    0 |        0 |
 
 Machine inputs/results: [baseline](evidence/baseline-metrics-input.json), [baseline result](evidence/baseline-metrics.json), [final](evidence/final-metrics-input.json), [final result](evidence/final-metrics.json). A score of 100 excludes unrevalidated exceptions and expresses no remaining proven violation in the reviewed scope.

@@ -135,13 +135,8 @@
         "source": "./types/dashboardViewModel.type"
       }
     ],
-    "jsx": [
-      "CombinedAnalysisReliabilityKpi",
-      "Layout"
-    ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "jsx": ["CombinedAnalysisReliabilityKpi", "Layout"],
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/app/DashboardContent.feature.tsx",
@@ -184,9 +179,7 @@
       "PerformanceTab",
       "WealthTab"
     ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/app/DashboardDataQuality.feature.tsx",
@@ -259,15 +252,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "AllocationSection",
-      "ConcentrationSection",
-      "Text"
-    ],
-    "calls": [
-      "useAtomValue",
-      "useMemo"
-    ]
+    "jsx": ["AllocationSection", "ConcentrationSection", "Text"],
+    "calls": ["useAtomValue", "useMemo"]
   },
   {
     "file": "src/app/DashboardFilters.feature.tsx",
@@ -374,15 +360,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Text",
-      "ToggleButton"
-    ],
-    "calls": [
-      "useAtomValue",
-      "useDashboardTheme",
-      "useDashboardThemeSync"
-    ]
+    "jsx": ["Text", "ToggleButton"],
+    "calls": ["useAtomValue", "useDashboardTheme", "useDashboardThemeSync"]
   },
   {
     "file": "src/app/DashboardHoldings.feature.tsx",
@@ -413,14 +392,8 @@
         "source": "./types/dashboardViewModel.type"
       }
     ],
-    "jsx": [
-      "FundLookThroughTab",
-      "PositionsTable",
-      "ViewNavigation.Panel"
-    ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "jsx": ["FundLookThroughTab", "PositionsTable", "ViewNavigation.Panel"],
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/app/DashboardReliability.feature.tsx",
@@ -469,9 +442,7 @@
       "Layout",
       "PipelineReliabilityKpi"
     ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/app/DashboardSectionHeader.feature.tsx",
@@ -544,9 +515,7 @@
       "Surface",
       "Text"
     ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/app/DashboardSources.feature.tsx",
@@ -663,10 +632,7 @@
         "source": "@/shared/ui/segmentedControl/SegmentedControlItem.view"
       }
     ],
-    "jsx": [
-      "SegmentedControl",
-      "SegmentedControlItem"
-    ],
+    "jsx": ["SegmentedControl", "SegmentedControlItem"],
     "calls": [
       "setDiversificationView",
       "useAtomValue",
@@ -706,14 +672,8 @@
         "source": "./HoldingsViewTab.view"
       }
     ],
-    "jsx": [
-      "HoldingsViewTab",
-      "SegmentedControl"
-    ],
-    "calls": [
-      "useAtomValue",
-      "useDashboardNavigation"
-    ]
+    "jsx": ["HoldingsViewTab", "SegmentedControl"],
+    "calls": ["useAtomValue", "useDashboardNavigation"]
   },
   {
     "file": "src/app/dashboardNavigation/DashboardNavigation.feature.tsx",
@@ -808,10 +768,7 @@
         "source": "./dashboardNavigation.types"
       }
     ],
-    "jsx": [
-      "Layout",
-      "NavigationButton"
-    ],
+    "jsx": ["Layout", "NavigationButton"],
     "calls": []
   },
   {
@@ -839,9 +796,7 @@
         "source": "./AccountCoverageRow.view"
       }
     ],
-    "jsx": [
-      "AccountCoverageRowView"
-    ],
+    "jsx": ["AccountCoverageRowView"],
     "calls": [
       "formatAccountLabel",
       "useAccountFilterLabels",
@@ -894,9 +849,7 @@
       "AllocationDimensionQuality",
       "FilterScopeBadges"
     ],
-    "calls": [
-      "hasMaterialQualityGap"
-    ]
+    "calls": ["hasMaterialQualityGap"]
   },
   {
     "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionQuality.feature.tsx",
@@ -927,11 +880,7 @@
         "source": "./AllocationDimensionRow.view"
       }
     ],
-    "jsx": [
-      "AllocationDimensionRow",
-      "AllocationDimensionRowView",
-      "Stack"
-    ],
+    "jsx": ["AllocationDimensionRow", "AllocationDimensionRowView", "Stack"],
     "calls": [
       "getUnclassifiedAllocationPercentage",
       "hasMaterialQualityGap",
@@ -983,10 +932,7 @@
         "source": "./FundDataQualityPanel.view"
       }
     ],
-    "jsx": [
-      "FundDataQualityPanelView",
-      "FundDiagnosticsFilter"
-    ],
+    "jsx": ["FundDataQualityPanelView", "FundDiagnosticsFilter"],
     "calls": [
       "buildFundDiagnosticsRows",
       "useAtomValue",
@@ -1025,9 +971,7 @@
       "LookThroughCoverageSummaryView.TooltipFooter",
       "UnavailableLookThroughSummary"
     ],
-    "calls": [
-      "buildLookThroughSummary"
-    ]
+    "calls": ["buildLookThroughSummary"]
   },
   {
     "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
@@ -1070,9 +1014,7 @@
         "source": "@/shared/helpers/formatters/useFormatPercentage"
       }
     ],
-    "jsx": [
-      "CompactDataQualityKpi"
-    ],
+    "jsx": ["CompactDataQualityKpi"],
     "calls": [
       "formatMoney",
       "formatPercentage",
@@ -1117,9 +1059,7 @@
         "source": "./helpers/presenters/useCombinedReliabilityPresentation"
       }
     ],
-    "jsx": [
-      "CompactDataQualityKpi"
-    ],
+    "jsx": ["CompactDataQualityKpi"],
     "calls": [
       "formatMoney",
       "formatPercentage",
@@ -1161,14 +1101,8 @@
         "source": "./CompactDataQualityKpi.view"
       }
     ],
-    "jsx": [
-      "CompactDataQualityKpiView",
-      "FilterScopeBadges"
-    ],
-    "calls": [
-      "useCallback",
-      "useQualityNavigation"
-    ]
+    "jsx": ["CompactDataQualityKpiView", "FilterScopeBadges"],
+    "calls": ["useCallback", "useQualityNavigation"]
   },
   {
     "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
@@ -1199,13 +1133,8 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "CompactDataQualityKpi"
-    ],
-    "calls": [
-      "formatPipelineStatus",
-      "useFormatPipelineStatus"
-    ]
+    "jsx": ["CompactDataQualityKpi"],
+    "calls": ["formatPipelineStatus", "useFormatPipelineStatus"]
   },
   {
     "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature.tsx",
@@ -1379,10 +1308,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "EmptyQualityState",
-      "LookThroughCoverageSummary"
-    ],
+    "jsx": ["EmptyQualityState", "LookThroughCoverageSummary"],
     "calls": []
   },
   {
@@ -1406,10 +1332,7 @@
         "source": "./DonutCard.feature"
       }
     ],
-    "jsx": [
-      "DonutCard",
-      "Text"
-    ],
+    "jsx": ["DonutCard", "Text"],
     "calls": []
   },
   {
@@ -1455,10 +1378,7 @@
       "DiversificationInputs",
       "FilteredPositionsTable"
     ],
-    "calls": [
-      "useAllocationCharts",
-      "useAtomValue"
-    ]
+    "calls": ["useAllocationCharts", "useAtomValue"]
   },
   {
     "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationTrendView.feature.tsx",
@@ -1485,11 +1405,7 @@
         "source": "./EvoCard/EvoCard.feature"
       }
     ],
-    "jsx": [
-      "EvoCard",
-      "Surface",
-      "Text"
-    ],
+    "jsx": ["EvoCard", "Surface", "Text"],
     "calls": []
   },
   {
@@ -1689,17 +1605,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "AllocationDimension",
-      "Button",
-      "Decorative",
-      "Layout",
-      "Text"
-    ],
-    "calls": [
-      "useAtomValue",
-      "useDashboardDiversificationFilters"
-    ]
+    "jsx": ["AllocationDimension", "Button", "Decorative", "Layout", "Text"],
+    "calls": ["useAtomValue", "useDashboardDiversificationFilters"]
   },
   {
     "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/FilteredPositionsTable.feature.tsx",
@@ -1738,9 +1645,7 @@
         "source": "./FilteredPositionsTable.view"
       }
     ],
-    "jsx": [
-      "FilteredPositionsTableView"
-    ],
+    "jsx": ["FilteredPositionsTableView"],
     "calls": [
       "useAtomValue",
       "useDashboardDiversificationFilters",
@@ -1837,9 +1742,7 @@
       "ScopeProvider",
       "ScopedInfoTooltip"
     ],
-    "calls": [
-      "useConcentrationTrendController"
-    ]
+    "calls": ["useConcentrationTrendController"]
   },
   {
     "file": "src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/CurrentConcentration.feature.tsx",
@@ -1875,10 +1778,7 @@
       "DiversificationInputs",
       "FilterScopeBadges"
     ],
-    "calls": [
-      "useConcentrationDescriptions",
-      "useCurrentConcentration"
-    ]
+    "calls": ["useConcentrationDescriptions", "useCurrentConcentration"]
   },
   {
     "file": "src/domains/portfolio/features/diversification/features/concentration/components/HistoricalConcentration.feature.tsx",
@@ -1897,12 +1797,8 @@
         "source": "./ConcentrationTrendSection/ConcentrationTrendSection.feature"
       }
     ],
-    "jsx": [
-      "ConcentrationTrendSection"
-    ],
-    "calls": [
-      "useHistoricalConcentration"
-    ]
+    "jsx": ["ConcentrationTrendSection"],
+    "calls": ["useHistoricalConcentration"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature.tsx",
@@ -1946,10 +1842,7 @@
       "FundHoldingsExplorerView",
       "ScopedInfoTooltip"
     ],
-    "calls": [
-      "useFundExposureViewModel",
-      "useVirtualExposureList"
-    ]
+    "calls": ["useFundExposureViewModel", "useVirtualExposureList"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature.tsx",
@@ -1984,14 +1877,8 @@
         "source": "./FundExposureNotice.view"
       }
     ],
-    "jsx": [
-      "FundExposureNotice",
-      "FundHoldingsExplorer",
-      "ScopedInfoTooltip"
-    ],
-    "calls": [
-      "selectExposurePositions"
-    ]
+    "jsx": ["FundExposureNotice", "FundHoldingsExplorer", "ScopedInfoTooltip"],
+    "calls": ["selectExposurePositions"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.tsx",
@@ -2026,11 +1913,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Grid",
-      "Surface",
-      "Text"
-    ],
+    "jsx": ["Grid", "Surface", "Text"],
     "calls": [
       "formatMoney",
       "formatPercentage",
@@ -2063,14 +1946,8 @@
         "source": "./FundPositionPopover.view"
       }
     ],
-    "jsx": [
-      "FundPositionHoldingRow",
-      "FundPositionPopoverView"
-    ],
-    "calls": [
-      "useFundPositionHoldings",
-      "useOpenCompleteHoldings"
-    ]
+    "jsx": ["FundPositionHoldingRow", "FundPositionPopoverView"],
+    "calls": ["useFundPositionHoldings", "useOpenCompleteHoldings"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature.tsx",
@@ -2109,16 +1986,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Grid",
-      "Layout",
-      "MiniDonut",
-      "Preview.Content",
-      "Text"
-    ],
-    "calls": [
-      "selectRenderableAllocationCharts"
-    ]
+    "jsx": ["Grid", "Layout", "MiniDonut", "Preview.Content", "Text"],
+    "calls": ["selectRenderableAllocationCharts"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
@@ -2137,12 +2006,8 @@
         "source": "./MiniDonut.view"
       }
     ],
-    "jsx": [
-      "MiniDonutView"
-    ],
-    "calls": [
-      "buildAllocationPieData"
-    ]
+    "jsx": ["MiniDonutView"],
+    "calls": ["buildAllocationPieData"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature.tsx",
@@ -2273,10 +2138,7 @@
         "source": "./PositionHistoryPreview.view"
       }
     ],
-    "jsx": [
-      "PositionHistoryCharts",
-      "PositionHistoryPreview"
-    ],
+    "jsx": ["PositionHistoryCharts", "PositionHistoryPreview"],
     "calls": [
       "buildHoverChartSeries",
       "computeUnitPriceDomain",
@@ -2318,10 +2180,7 @@
         "source": "./SavingsHistoryChart.view"
       }
     ],
-    "jsx": [
-      "PositionHistoryPreview",
-      "SavingsHistoryChart"
-    ],
+    "jsx": ["PositionHistoryPreview", "SavingsHistoryChart"],
     "calls": [
       "buildSavingsHistorySeries",
       "useGetPositionHistoryQuery",
@@ -2357,13 +2216,8 @@
         "source": "./SortHeader.view"
       }
     ],
-    "jsx": [
-      "SortHeader"
-    ],
-    "calls": [
-      "useAtomValue",
-      "useDashboardPositionSort"
-    ]
+    "jsx": ["SortHeader"],
+    "calls": ["useAtomValue", "useDashboardPositionSort"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx",
@@ -2567,12 +2421,8 @@
         "source": "@/domains/portfolio/shared/types/fundHoldingStatus.type"
       }
     ],
-    "jsx": [
-      "UnderlyingStatusButton"
-    ],
-    "calls": [
-      "useAtomValue"
-    ]
+    "jsx": ["UnderlyingStatusButton"],
+    "calls": ["useAtomValue"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature.tsx",
@@ -2615,12 +2465,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "GainCell",
-      "Layout",
-      "Stack",
-      "Text"
-    ],
+    "jsx": ["GainCell", "Layout", "Stack", "Text"],
     "calls": [
       "calculateGainTaxDetails",
       "formatMoney",
@@ -2670,12 +2515,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "GainCell",
-      "Layout",
-      "Stack",
-      "Text"
-    ],
+    "jsx": ["GainCell", "Layout", "Stack", "Text"],
     "calls": [
       "calculateGainTaxDetails",
       "formatMoney",
@@ -2803,13 +2643,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Layout",
-      "PositionPassiveIncome",
-      "Stack",
-      "TableRow",
-      "Text"
-    ],
+    "jsx": ["Layout", "PositionPassiveIncome", "Stack", "TableRow", "Text"],
     "calls": [
       "calculatePassiveIncomeTax",
       "formatMoney",
@@ -2855,17 +2689,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "GainCell",
-      "Layout",
-      "RealizedGainCell",
-      "TableRow",
-      "Text"
-    ],
-    "calls": [
-      "formatMoney",
-      "usePositionTableFormatters"
-    ]
+    "jsx": ["GainCell", "Layout", "RealizedGainCell", "TableRow", "Text"],
+    "calls": ["formatMoney", "usePositionTableFormatters"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionUnrealizedCell.feature.tsx",
@@ -2892,16 +2717,8 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "TableRow",
-      "Text",
-      "UnrealizedGainCell"
-    ],
-    "calls": [
-      "formatMoney",
-      "formatNumber",
-      "usePositionTableFormatters"
-    ]
+    "jsx": ["TableRow", "Text", "UnrealizedGainCell"],
+    "calls": ["formatMoney", "formatNumber", "usePositionTableFormatters"]
   },
   {
     "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature.tsx",
@@ -2944,13 +2761,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Inline",
-      "Layout",
-      "Stack",
-      "TableRow",
-      "Text"
-    ],
+    "jsx": ["Inline", "Layout", "Stack", "TableRow", "Text"],
     "calls": [
       "formatMoney",
       "formatNumber",
@@ -2971,9 +2782,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -2989,9 +2798,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3007,9 +2814,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3025,9 +2830,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3043,9 +2846,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3061,9 +2862,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3079,9 +2878,7 @@
         "source": "@/i18n/i18n"
       }
     ],
-    "jsx": [
-      "PositionSortHeader"
-    ],
+    "jsx": ["PositionSortHeader"],
     "calls": []
   },
   {
@@ -3101,12 +2898,8 @@
         "source": "./OverviewPeriodFilter.view"
       }
     ],
-    "jsx": [
-      "OverviewPeriodFilterView"
-    ],
-    "calls": [
-      "useDashboardFilterPanel"
-    ]
+    "jsx": ["OverviewPeriodFilterView"],
+    "calls": ["useDashboardFilterPanel"]
   },
   {
     "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
@@ -3315,13 +3108,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Inline",
-      "Layout",
-      "ScopedInfoTooltip",
-      "Surface",
-      "Text"
-    ],
+    "jsx": ["Inline", "Layout", "ScopedInfoTooltip", "Surface", "Text"],
     "calls": []
   },
   {
@@ -3362,9 +3149,7 @@
       "OverviewConcentrationChartView",
       "ScopedInfoTooltip"
     ],
-    "calls": [
-      "buildOverviewConcentrationRows"
-    ]
+    "calls": ["buildOverviewConcentrationRows"]
   },
   {
     "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx",
@@ -3395,14 +3180,8 @@
         "source": "./OverviewDriversChart.view"
       }
     ],
-    "jsx": [
-      "EmptyChart",
-      "OverviewDriversChartView",
-      "ScopedInfoTooltip"
-    ],
-    "calls": [
-      "buildOverviewDriverPresentation"
-    ]
+    "jsx": ["EmptyChart", "OverviewDriversChartView", "ScopedInfoTooltip"],
+    "calls": ["buildOverviewDriverPresentation"]
   },
   {
     "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature.tsx",
@@ -3429,11 +3208,7 @@
         "source": "./OverviewValueChart.view"
       }
     ],
-    "jsx": [
-      "EmptyChart",
-      "OverviewValueChartView",
-      "ScopedInfoTooltip"
-    ],
+    "jsx": ["EmptyChart", "OverviewValueChartView", "ScopedInfoTooltip"],
     "calls": []
   },
   {
@@ -3461,13 +3236,8 @@
         "source": "./UnrealizedPnlChart.view"
       }
     ],
-    "jsx": [
-      "ScopedInfoTooltip",
-      "UnrealizedPnlChartView"
-    ],
-    "calls": [
-      "buildUnrealizedPnlHistory"
-    ]
+    "jsx": ["ScopedInfoTooltip", "UnrealizedPnlChartView"],
+    "calls": ["buildUnrealizedPnlHistory"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
@@ -3506,15 +3276,8 @@
         "source": "./MetricLabel.feature"
       }
     ],
-    "jsx": [
-      "AssetIrrResultsView",
-      "Layout",
-      "MetricLabel",
-      "Surface"
-    ],
-    "calls": [
-      "buildAssetIrrRankings"
-    ]
+    "jsx": ["AssetIrrResultsView", "Layout", "MetricLabel", "Surface"],
+    "calls": ["buildAssetIrrRankings"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.feature.tsx",
@@ -3537,11 +3300,7 @@
         "source": "@/shared/ui/Text.view"
       }
     ],
-    "jsx": [
-      "Inline",
-      "ScopedInfoTooltip",
-      "Text"
-    ],
+    "jsx": ["Inline", "ScopedInfoTooltip", "Text"],
     "calls": []
   },
   {
@@ -3660,10 +3419,7 @@
       "Text",
       "ToggleButton"
     ],
-    "calls": [
-      "setView",
-      "useContributionHorizon"
-    ]
+    "calls": ["setView", "useContributionHorizon"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature.tsx",
@@ -3703,11 +3459,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatIrrKpiValue",
-      "getPerformanceTone",
-      "useFormatIrrKpiValue"
-    ]
+    "calls": ["formatIrrKpiValue", "getPerformanceTone", "useFormatIrrKpiValue"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetContributionsKpi.feature.tsx",
@@ -3739,10 +3491,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatMoney",
-      "useFormatMoney"
-    ]
+    "calls": ["formatMoney", "useFormatMoney"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetPortfolioValueKpi.feature.tsx",
@@ -3778,10 +3527,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatMoney",
-      "useFormatMoney"
-    ]
+    "calls": ["formatMoney", "useFormatMoney"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature.tsx",
@@ -3821,11 +3567,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatMoney",
-      "getPerformanceTone",
-      "useFormatMoney"
-    ]
+    "calls": ["formatMoney", "getPerformanceTone", "useFormatMoney"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetUnrealizedKpi.feature.tsx",
@@ -3865,11 +3607,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatMoney",
-      "getPerformanceTone",
-      "useFormatMoney"
-    ]
+    "calls": ["formatMoney", "getPerformanceTone", "useFormatMoney"]
   },
   {
     "file": "src/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature.tsx",
@@ -4010,11 +3748,7 @@
       "Kpi.Value",
       "Kpi.ValueRow"
     ],
-    "calls": [
-      "formatIrrKpiValue",
-      "getPerformanceTone",
-      "useFormatIrrKpiValue"
-    ]
+    "calls": ["formatIrrKpiValue", "getPerformanceTone", "useFormatIrrKpiValue"]
   },
   {
     "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
@@ -4482,12 +4216,7 @@
         "source": "@/shared/ui/layout/Layout.view"
       }
     ],
-    "jsx": [
-      "DialogButton",
-      "FilterIcon",
-      "Layout",
-      "SelectionCount"
-    ],
+    "jsx": ["DialogButton", "FilterIcon", "Layout", "SelectionCount"],
     "calls": [
       "formatNumber",
       "useAtomValue",
@@ -4668,13 +4397,8 @@
         "source": "./IncomePlacementRelationshipChart.view"
       }
     ],
-    "jsx": [
-      "IncomePlacementRelationshipChartView",
-      "ScopedInfoTooltip"
-    ],
-    "calls": [
-      "useIncomePlacementChart"
-    ]
+    "jsx": ["IncomePlacementRelationshipChartView", "ScopedInfoTooltip"],
+    "calls": ["useIncomePlacementChart"]
   },
   {
     "file": "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature.tsx",
@@ -4701,13 +4425,8 @@
         "source": "./MonthlySavingsChart.view"
       }
     ],
-    "jsx": [
-      "MonthlySavingsChartView"
-    ],
-    "calls": [
-      "groupMonthlyTooltipOperations",
-      "useMemo"
-    ]
+    "jsx": ["MonthlySavingsChartView"],
+    "calls": ["groupMonthlyTooltipOperations", "useMemo"]
   },
   {
     "file": "src/domains/portfolio/features/wealth/pages/WealthTab.feature.tsx",
@@ -4863,17 +4582,8 @@
         "source": "./helpers/presenters/useFilterScopeBadges"
       }
     ],
-    "jsx": [
-      "FilterScopeBadge",
-      "Inline",
-      "InlineGroup",
-      "Layout"
-    ],
-    "calls": [
-      "useAccountFilterLabels",
-      "useAtomValue",
-      "useFilterScopeBadges"
-    ]
+    "jsx": ["FilterScopeBadge", "Inline", "InlineGroup", "Layout"],
+    "calls": ["useAccountFilterLabels", "useAtomValue", "useFilterScopeBadges"]
   },
   {
     "file": "src/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature.tsx",
@@ -4888,11 +4598,7 @@
         "source": "./InfoTooltip.view"
       }
     ],
-    "jsx": [
-      "FilterScopeBadges",
-      "InfoTooltip",
-      "InfoTooltip.Footer"
-    ],
+    "jsx": ["FilterScopeBadges", "InfoTooltip", "InfoTooltip.Footer"],
     "calls": []
   }
 ]

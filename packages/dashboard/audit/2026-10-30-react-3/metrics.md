@@ -7,13 +7,13 @@ Scope: full dashboard catalog; unchanged prior semantic evidence retained explic
 `100 × (1 − 4 / 1152) = 99.65` after rounding. Each violated rule contributes once; F-001 has MEDIUM weight 4. Repeated locations, nested references and multiple files do not create independent score penalties.
 
 | Actual impact | Baseline confirmed families | Open | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 0 | 0 | 0 |
-| HIGH | 0 | 0 | 0 |
-| MEDIUM-HIGH | 0 | 0 | 0 |
-| MEDIUM | 1 | 1 | 0 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
+| ------------- | --------------------------: | ---: | -------: |
+| CRITICAL      |                           0 |    0 |        0 |
+| HIGH          |                           0 |    0 |        0 |
+| MEDIUM-HIGH   |                           0 |    0 |        0 |
+| MEDIUM        |                           1 |    1 |        0 |
+| LOW-MEDIUM    |                           0 |    0 |        0 |
+| LOW           |                           0 |    0 |        0 |
 
 Affected files: **12**, all tests. Confirmed family: **1**, `test-mock-data`. Open ambiguities: 0. User decisions pending: 0. Optional prevention work is P-002, not a second defect or a condition for completing this diagnosis.
 
@@ -26,12 +26,12 @@ The preceding audit reported 100 after its correction; its source inputs are unc
 **99.65 → 100.00** under the unchanged `weighted-rule-compliance/v1` formula. The original 12-file baseline is preserved. [Expanded baseline](evidence/metrics-expanded-baseline.json) adds two equivalent assertion-contained input fixtures: still one MEDIUM family and score 99.65, now 14 affected test files. [Final input](evidence/metrics-final-input.json) and [packaged calculator result](evidence/metrics-final.json) mark that family resolved after actual acceptance evidence.
 
 | Actual impact | Baseline families (expanded) | Final open | Verified resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 0 | 0 | 0 |
-| HIGH | 0 | 0 | 0 |
-| MEDIUM-HIGH | 0 | 0 | 0 |
-| MEDIUM | 1 | 0 | 1 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
+| ------------- | ---------------------------: | ---------: | ----------------: |
+| CRITICAL      |                            0 |          0 |                 0 |
+| HIGH          |                            0 |          0 |                 0 |
+| MEDIUM-HIGH   |                            0 |          0 |                 0 |
+| MEDIUM        |                            1 |          0 |                 1 |
+| LOW-MEDIUM    |                            0 |          0 |                 0 |
+| LOW           |                            0 |          0 |                 0 |
 
 Affected correction files: 14 tests; final open affected files: zero. Source scope: 1358 final app/support inputs, plus fingerprinted reusable tooling/contract inputs; 110 selected / 101 applicable / zero pending rules. No user arbitration remains. All 142 existing directives remain outside technical revalidation. Score 100 describes these reviewed obligations and exceptions, not universal correctness or complete automatic detection.

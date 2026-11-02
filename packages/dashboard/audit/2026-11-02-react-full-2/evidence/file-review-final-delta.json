@@ -1,0 +1,770 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummary.feature.tsx",
+    "change": "added",
+    "previousSha256": "3b54d4ce045346c2df643f32f10478184af284430b36cfa4fbe4ca1f5946cfa7",
+    "sha256": "745c4e406356ac3c2d560949eea297837aa87781908599fb0a22737f9a9eae53",
+    "movedFrom": "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/presenters/buildLookThroughSummary.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "6f4a63ad651eaa1d063d115534aae56a8277da9dfc93578b3b74c3fd650ac8d1",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/presenters/buildLookThroughSummary.ts",
+    "change": "added",
+    "previousSha256": "5ace3a316d37f85ea81ac24555df59e5fa5ac921fbbea32d7c298ba9be3d4726",
+    "sha256": "a666d156853779eff3943f0fdc603a978de169b33844eb65376c9e47e59cca2c",
+    "movedFrom": "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/transformers/computeLookThroughMetrics.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "350808e3550fe4e4b1681a3cb2b36fcd516a0fa6e269b9f575fda35d64e229cd",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/helpers/transformers/computeLookThroughMetrics.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "57aa6f62341c6a738adedf4de54c22f2e1c5325bb8d3ef76fb5ccc3823526d36",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature.test.tsx",
+    "change": "added",
+    "previousSha256": "d17cd8cea36b0c6be4d02af859ba62a3116bab72dd2c3d44111ac2d8bc15d637",
+    "sha256": "fe1944ad263f528b79149017d4df13fe43e5a32ec866232ea30b186aa8089f27",
+    "movedFrom": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.test.tsx",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature.tsx",
+    "change": "added",
+    "previousSha256": "75ef58e9dad1cf62f7677c6a6bcc33d9092558f83084e9aedfdd9cc1bee61866",
+    "sha256": "c064d3f56d5001abef5d90ba99359dfc914b65fb500c547c8b936ad441b45bdc",
+    "movedFrom": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.tsx",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "5e154db232d0a8c47969d5613dbf2a9afdf4161073336c5c89278dba79d694ff",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "f65d73a6845f17c28b2afc0d3924243fc7b4cb6fb3a0d0ec5a4c5edba5bc42eb",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/transformers/withConcentrationChanges.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "9165288db78b4757fada400d09f841ea44dc2fa8a7c5fa351ffe5af58ef03d0f",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/transformers/withConcentrationChanges.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "5df2d7a12afa8f8118bb2e6c7588461bb46af91553ec4196832da828e3ce889a",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.feature.tsx",
+    "change": "added",
+    "previousSha256": "803d9ba83a66be52b1bcbf0a55606d3dfdf57c3dafb9e7471c170e5dd1f2c43e",
+    "sha256": "68ca80cb34a5659ef724e23433f7071183e1cccab254376668a951d1542cb709",
+    "movedFrom": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.view.tsx",
+    "change": "added",
+    "previousSha256": "7b8a14b8c16230e73d5619e34952ed3f2632467cc6f4bad400a4c61f8d683e29",
+    "sha256": "7b8a14b8c16230e73d5619e34952ed3f2632467cc6f4bad400a4c61f8d683e29",
+    "movedFrom": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.view.tsx",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/helpers/presenters/buildOverviewDriverPresentation.ts",
+    "change": "added",
+    "previousSha256": "788a36a2065dbe2d3aac6105f93ac5a57d2a187ede1b982c33bfc78be754d4c5",
+    "sha256": "7e03a92f7842377c2dc517db1f25010cf084cb9e1e08d169b4ea6d68088a12de",
+    "movedFrom": "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewDriverPresentation.ts",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/helpers/transformers/computeOverviewGrossChanges.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "168e28c02bea2d614eea914857626fdefea5b39abc5056e0f034354abc9cf058",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/helpers/transformers/computeOverviewGrossChanges.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "45ca904cb29a7667485a2677af01c4c00f0cabb84fa900db3bd20f9162ed5a53",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.feature.test.tsx",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "25c6a3f1d61dbb6b47d6eeff4a84ea1e0b6e069622219ca16e1a9f19f3a2bd30",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.feature.tsx",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "f88b67523df3c30001476986211a7947cd0dacae953a4d0b8ff6d4f9096f04ca",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionTooltip.view.test.tsx",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "694491339d7d0fd2203f592bfd8736a584f843c209627eb83739d370eb009621",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/transformers/buildPortfolioCompositionHistory.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "ec1308fc2e184b6e8448a202278521971becf109b1f77ffb88a30aaa129a3cb8",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/transformers/buildPortfolioCompositionHistory.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "38188586e7bd9ec955e4d3640f21f78cea363357824843cd08e7481a9c9c0764",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/transformers/computePortfolioComposition.test.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "20531346249423db8badde42a7580bd4d29143947eaae68de49b55f368b12f01",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/transformers/computePortfolioComposition.ts",
+    "change": "added",
+    "previousSha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+    "sha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+    "movedFrom": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition.ts",
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/mocks/portfolioCompositionPoint.mock.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "e25990ca347dae4b29d245bb6c356211633c4829f6e434360fc3ffb6d289ac26",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/types/portfolioCompositionPoint.type.ts",
+    "change": "added",
+    "previousSha256": null,
+    "sha256": "b5723b8bc159c9f802473e5e9b8c079bb9cd99b1d3bc0e6bf7dd38825fe81e2d",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/app/DashboardDataQuality.feature.tsx",
+    "change": "modified",
+    "previousSha256": "f36fed498c18e77ca716454b2d854beb450e3d1484ae6fa4a53b67321b45f28e",
+    "sha256": "d5161e540c8d2ef074db5a23b8a7b248b0980d779435fab42c7fde6addf041e1",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummaryView.view.tsx",
+    "change": "modified",
+    "previousSha256": "feb88a3147f07ca30b5dd225ec764dcce003270d49f6dc11c36ced050d63f4a9",
+    "sha256": "2cd335e88e7c417376d23313a476f03e0d802b8df23c6abdc27290ec69a995fd",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/buildDataQualitySummary.ts",
+    "change": "modified",
+    "previousSha256": "949fbc14e6963760fbe98dcef34ce6c3c016f0afa8a0b0dac182c8bbd3e3a5ea",
+    "sha256": "8d656d0a75634b6c5aa44371c3c8a67ebbe13e820cb09a4c3daa3a95f0e9c3bd",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel.ts",
+    "change": "modified",
+    "previousSha256": "a39528ced8ce310f3cbf3b1ce1988ab6352e0f31d4ccefceecf0872e279bd9d1",
+    "sha256": "c5c2e80a30d8e313dc059f3643449ab64c3a9a4e118cd87aaf45a98140d7adbb",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature.tsx",
+    "change": "modified",
+    "previousSha256": "78f44d67526541f1c5dbf425499bc5185c4c5cbbe4a2334f8e2046b4b89b82fd",
+    "sha256": "cd268195c5b2c6b0d72b7562f4d2667eeee0656800f800186d90234e0426dde1",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/helpers/presenters/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel.ts",
+    "change": "modified",
+    "previousSha256": "ec549135cde687048a850170984428997d82c7ba8b8f4d66d2137eb95b0773a5",
+    "sha256": "52e2f9032ce03ed129f0b0f803aa23bf221afe53e2f187da80bf61cc38aeddbf",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "change": "modified",
+    "previousSha256": "c0c8f04961533ff1b74c1a33d00087203a7458231fb5017b9398b253a95066df",
+    "sha256": "d6765596c8d8a968f1687c0e7c7cef6e3fca5fc5af3c6ea40feb68cd119e0259",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+    "change": "modified",
+    "previousSha256": "0da21d9cdaba85bee2b46ff6e2f4a71736729c0fddaf58d96c7902d27f0c99c0",
+    "sha256": "e47126ffe677e68a257f91e14922d541703cfdba2e6a86c7910d5fbb1206fab0",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view.tsx",
+    "change": "modified",
+    "previousSha256": "ce5db06744ac313c38be059306ed8c77266f5ccf15db83fb3568e17381130342",
+    "sha256": "48dd732bd8f3c2d7114a0a674a886368e72f90fb2bd7182748045fd76ca71142",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionTooltip.view.tsx",
+    "change": "modified",
+    "previousSha256": "fc9efa9b7d38b7ab6587d90087e299090bdbef8694f07cfa2528bf7f33980a2e",
+    "sha256": "178f5483af3c2fe685095700a6328aac4d22603ad65a82ba839c2ae3626cc492",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition.test.ts",
+    "change": "modified",
+    "previousSha256": "5e21cd569f83d06d16899f42466a951270e4dd7101e07e46e0eaddfdfd850f55",
+    "sha256": "42ca224256c2df0075edc793df4926895ace15a60b242f5e52b6863e066f8e0b",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition.ts",
+    "change": "modified",
+    "previousSha256": "881499f94e975e7b9361f163249045b78136465fbe3bd534918016d6e1aebdcd",
+    "sha256": "57991f4c89838ae00c914abffc3e217daf0d43db9d4a0ac5ecc9226e419f3652",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/pages/WealthTab.feature.tsx",
+    "change": "modified",
+    "previousSha256": "2aadd8106ed88484390578fadfcf05c088891e33cb6ea59d085a3be123df852e",
+    "sha256": "08df65c232d2c3aecfe44a09f21ef04e6fd5c8243c864d4993d383f88b31557e",
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "tests/eslint/domain-contracts.integration.test.js",
+    "change": "modified",
+    "previousSha256": "201a8aef2ca7b46a2aa142d3c651b8ace1992fd85e3e7848612b04152594b49b",
+    "sha256": "64157ca09445032d028417db07d9bfec260b1aeb5d0e200f7b2dd9d6159e53f2",
+    "movedFrom": null,
+    "findings": ["F-001", "closure"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "tests/fixtures/ownership-review.json",
+    "change": "modified",
+    "previousSha256": "f3feeb9f3ad63b60b8cd745a1746cde17d92d9b0c168a2343033d3ad8ad43ca7",
+    "sha256": "5e93ab4d1160bec5a8458156be6fa314feef37c82e7294f4dc3182c2decce81a",
+    "movedFrom": null,
+    "findings": ["F-001", "closure"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+    "change": "removed",
+    "previousSha256": "3b54d4ce045346c2df643f32f10478184af284430b36cfa4fbe4ca1f5946cfa7",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts",
+    "change": "removed",
+    "previousSha256": "5ace3a316d37f85ea81ac24555df59e5fa5ac921fbbea32d7c298ba9be3d4726",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.test.tsx",
+    "change": "removed",
+    "previousSha256": "d17cd8cea36b0c6be4d02af859ba62a3116bab72dd2c3d44111ac2d8bc15d637",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view.tsx",
+    "change": "removed",
+    "previousSha256": "75ef58e9dad1cf62f7677c6a6bcc33d9092558f83084e9aedfdd9cc1bee61866",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx",
+    "change": "removed",
+    "previousSha256": "803d9ba83a66be52b1bcbf0a55606d3dfdf57c3dafb9e7471c170e5dd1f2c43e",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.view.tsx",
+    "change": "removed",
+    "previousSha256": "7b8a14b8c16230e73d5619e34952ed3f2632467cc6f4bad400a4c61f8d683e29",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewDriverPresentation.ts",
+    "change": "removed",
+    "previousSha256": "788a36a2065dbe2d3aac6105f93ac5a57d2a187ede1b982c33bfc78be754d4c5",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition.ts",
+    "change": "removed",
+    "previousSha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+    "sha256": null,
+    "movedFrom": null,
+    "findings": ["F-001"],
+    "status": "manually reviewed; current automated gates in verification.md",
+    "obligations": "Introduced/moved owner review, canonical derived types/fixtures, pure calculations, roles/private imports, call sites, tests and current compiler/lint gates. See introduced-owner-review.md.",
+    "evidence": [
+      "introduced-owner-review.md",
+      "phase2-provenance-review.json",
+      "phase2-colocation.json",
+      "fixture-review-delta.md"
+    ]
+  }
+]

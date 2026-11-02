@@ -1,0 +1,72 @@
+[
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature.tsx",
+    "id": "comparison-period-control",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
+    "id": "prepared-allocation-chart",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "id": "prepared-asset-irr-results",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/services/useAccountTypeHistory.ts",
+    "id": "feature-source-acquisition",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.feature.tsx",
+    "id": "prepared-account-type-breakdown",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.feature.tsx",
+    "id": "prepared-account-type-history",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel.ts",
+    "id": "data-quality-assessment-before-presentation",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/schemas/historicalFundHoldingSchema.ts",
+    "id": "shared-historical-fund-response",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/useBuildAccountFilterLabels.ts",
+    "id": "account-scope-data-and-labels",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  },
+  {
+    "file": "src/app/DashboardSources.feature.tsx",
+    "id": "persistent-dashboard-query-boundary",
+    "status": "retained",
+    "assumptions": "Current owner, callers and original source/rule hashes support the recorded choice; no revisit trigger. See semantic-review.md and coverage.md.",
+    "finding": null
+  }
+]

@@ -1,4 +1,4 @@
-import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature'
+import { LookThroughCoverageSummary } from '@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummary.feature'
 import { EmptyQualityState } from '@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/EmptyQualityState.view'
 import type { FundCoverageReport } from '@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type'
 import i18n from '@/i18n/i18n'

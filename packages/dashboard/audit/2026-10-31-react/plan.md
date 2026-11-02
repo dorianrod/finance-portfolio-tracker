@@ -6,10 +6,10 @@ The explicit 2026-10-31 audit-and-fix request authorizes both phases and improve
 
 ## Prioritized actions
 
-| Action | Findings / priority | Option and affected owners | Status | Dependencies | Acceptance / outcome |
-| --- | --- | --- | --- | --- | --- |
-| P-001 | F-001 / MEDIUM | fix; reject unavailable semantic/scope analysis in generic collector, with portable bad/good regressions | verified | none | Invalid-input CLI exit 2; valid actual dashboard inventory unchanged; final generic/integration suite |
-| P-002 | F-002 / MEDIUM | fix; fingerprinted candidate-review validator, versioned dashboard ledger, explicit CI command and rule/tool documentation | verified | P-001 stabilizes collector inputs | 15 reviewed candidates accepted; unknown/stale/duplicate/orphan decisions rejected; installed CLI and full checks |
+| Action | Findings / priority | Option and affected owners                                                                                                 | Status   | Dependencies                      | Acceptance / outcome                                                                                              |
+| ------ | ------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| P-001  | F-001 / MEDIUM      | fix; reject unavailable semantic/scope analysis in generic collector, with portable bad/good regressions                   | verified | none                              | Invalid-input CLI exit 2; valid actual dashboard inventory unchanged; final generic/integration suite             |
+| P-002  | F-002 / MEDIUM      | fix; fingerprinted candidate-review validator, versioned dashboard ledger, explicit CI command and rule/tool documentation | verified | P-001 stabilizes collector inputs | 15 reviewed candidates accepted; unknown/stale/duplicate/orphan decisions rejected; installed CLI and full checks |
 
 P-001 implementation: compiler diagnostics plus filesystem/program test reconciliation; retain genuine empty-source behavior and project aliases. P-002 implementation: opt-in --review mode; no automatic semantic decisions or universal type-match errors. Add sibling generic tests; project integration stays in tests/eslint. No new production runtime owner is introduced. Add no architecture comment for routine tooling/fixture review mechanics.
 
@@ -25,9 +25,7 @@ Preserve bounded collection mode and full lint warning gate. Enforce input avail
 
 Prior misses are analyzed in root-causes.md. Opaque builders, computed dynamic keys and noncanonical support contracts remain manual. Broader static business-ownership inference is deferred because no sound bounded implementation is established. Required fixes above are not deferred.
 
-
 P-001/P-002 implementation delta: the new scope check rejected the real Storybook catalog test omitted by the default app project. Add the dedicated analysis-only `tsconfig.fixtures.json`, select it in both package commands and include its full source in fingerprint validation. This closes the input-availability finding without widening production tsconfig or suppressing the new check. Preserve the added generic tests' nominal modules with explicit module markers: stricter diagnostics correctly exposed their formerly hidden duplicate global declarations. No application test data changes were needed.
-
 
 ## Verified outcomes
 

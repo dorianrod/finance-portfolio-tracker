@@ -3,6 +3,7 @@
 Seven proven catalog violation families and one prevention gap are listed below. None claims an observed production crash or security breach. Impact is the owning catalog impact, not an invented defect-severity score. These sections preserve the phase-1 proof and original locations. Phase 2 implemented all eight authorized actions; the [plan outcomes](plan.md#prioritized-actions) are the source of truth for verified status. Final owners are listed in the [165-entry migration resolution](evidence/phase2-migration-resolution.json) and [file reconciliation](evidence/phase2-file-review.md). Exactly one modified merged-schema exception was technically re-reviewed; the other existing ignores were not.
 
 ## F-006 — Three features mix orchestration with independent visual surfaces
+
 - Kind: violation
 - Rule IDs and actual impact: [arch-component-roles](../../../../.agents/skills/generic-react-best-practices/rules/arch-component-roles.md) — CRITICAL; [arch-component-module-boundaries](../../../../.agents/skills/generic-react-best-practices/rules/arch-component-module-boundaries.md) — HIGH (correction constraint).
 - Affected files, symbols and callers: see locations below and [complete component decisions](evidence/component-boundaries.md).
@@ -40,6 +41,7 @@ No product choice is required: preserve the existing visible behavior and busine
 Views render prepared chart entries/rankings/periods with no API/atom/action dependencies. Preserve chart labels, legend percentages, available/unavailable IRR states and the period button's accessible action. Focused meaningful rendering/interaction tests plus full lint/typecheck/build/tests pass. Existing component-role and composition checks enforce imports; independent-contract judgment remains manual. Add the proposed code-local decisions; no generic JSX-size ban.
 
 ## F-001 — Eleven required fixed-source reads use the wrong query access pattern
+
 - Kind: violation
 - Rule IDs and actual impact: [api-query-hook-choice](../../../../.agents/skills/generic-react-best-practices/rules/api-query-hook-choice.md) — HIGH; [api-vercel-parallel-work](../../../../.agents/skills/generic-react-best-practices/rules/api-vercel-parallel-work.md), [api-suspense-error-boundary](../../../../.agents/skills/generic-react-best-practices/rules/api-suspense-error-boundary.md) — HIGH correction constraints.
 - Affected files, symbols and callers: eleven hooks below, useDashboardViewModel, App and DashboardLoadState.
@@ -83,6 +85,7 @@ The catalog selects the Suspense access pattern; preserve current error visibili
 Existing App test continues to show a usable navigation/filter panel while a source is pending or fails, and typed period input/focus survives. Concurrent-start assertions demonstrate all independent required fetches start before any resolves. Error and optional-404 cases remain explicit. No global ban on useQuery is sound: required/conditional ownership needs semantic review. Keep existing typed API checks and the access-pattern ledger; add behavior regressions for the changed boundary.
 
 ## F-002 — Seven helper hooks acquire business/server state
+
 - Kind: violation
 - Rule IDs and actual impact: [arch-helpers-vs-services](../../../../.agents/skills/generic-react-best-practices/rules/arch-helpers-vs-services.md) — HIGH; [helpers-categories](../../../../.agents/skills/generic-react-best-practices/rules/helpers-categories.md) — MEDIUM-HIGH.
 - Affected files, symbols and callers: below and [migration ledger](evidence/migration-ledger.md).
@@ -122,6 +125,7 @@ None: source subscriptions select services under the existing contract. Keep exi
 No canonical helper acquires queries/business atoms directly or transitively. Services retain real acquisition and do not import formatters/presenters. Relevant network/renderHook/state tests exercise the real hooks. C-02/C-03 and existing direct/alias/reexport/dynamic integration cases validate the generic detector; no new application-specific lint allowlist.
 
 ## F-003 — Display-dependent helpers need component/page ownership
+
 - Kind: violation
 - Rule IDs and actual impact: [arch-no-visual-logic-below-page](../../../../.agents/skills/generic-react-best-practices/rules/arch-no-visual-logic-below-page.md) — HIGH; [helpers-categories](../../../../.agents/skills/generic-react-best-practices/rules/helpers-categories.md), [helpers-formatter-hooks](../../../../.agents/skills/generic-react-best-practices/rules/helpers-formatter-hooks.md) — MEDIUM-HIGH.
 - Affected files, symbols and callers: thirteen rows in the migration ledger, listed below.
@@ -167,6 +171,7 @@ None about behavior or business ownership. Preserve current grouping identities,
 Transformers consume explicit data and contain no formatter/translation/presenter imports; reusable services contain no presentation imports. Rendered labels, cash-account names, chip counts, sorting and exposure expansion remain identical. A nondefault translation-provider regression is appropriate for newly created label presenters. Existing helper, formatter and transitive presentation-dependency checks are reused. C-04/C-05 establish intended rejection/valid cases; no uncertain string-meaning detector is added.
 
 ## F-004 — Four helpers adapt API wire field names
+
 - Kind: violation
 - Rule IDs and actual impact: [helpers-categories](../../../../.agents/skills/generic-react-best-practices/rules/helpers-categories.md) — MEDIUM-HIGH; [yup-last-coercion-barrier](../../../../.agents/skills/generic-react-best-practices/rules/yup-last-coercion-barrier.md) — HIGH boundary constraint (no downstream primitive re-coercion is alleged).
 - Affected files, symbols and callers: below.
@@ -203,6 +208,7 @@ None: API wire adaptation has an explicit owner. Schema composition details may 
 Final API outputs compile against FundHolding/FundHoldingStatus/SavingCapacityPoint/AnnualIncomeSavingsPoint without assertions. Existing CSV/network/mapper edge tests remain meaningful and are moved/adapted to the owning API boundary. Invalid/nullable/unknown-field payloads verify both validation and mapping. Type-only schema inference alone does not prove business purity; no broad rule banning all inferred schema types is proposed.
 
 ## F-005 — 165 production files use retired helper categories
+
 - Kind: violation
 - Rule IDs and actual impact: [helpers-categories](../../../../.agents/skills/generic-react-best-practices/rules/helpers-categories.md) — MEDIUM-HIGH.
 - Affected files, symbols and callers: every current location and all resolved direct consumers are in the [165-file migration ledger](evidence/migration-ledger.md) and [machine-readable ledger](evidence/migration-ledger.json).
@@ -233,8 +239,8 @@ None: the category registry and owning-responsibility rules select the permitted
 
 No retired production helper folder remains; all resolved callers compile; expected errors are zero, warning ceiling remains at or below the existing 143 with explicit reconciliation if an exception disappears. Full lint/typecheck/tests/build/Storybook/catalog/format checks pass. Existing generic helper registry and invalid/valid integration tests already provide deterministic prevention; no new preference or bespoke category allowlist is warranted.
 
-
 ## F-007 — CI omits the committed Prettier gate
+
 - Kind: prevention-gap
 - Rule IDs and actual impact: [quality-formatting-and-sorting](../../../../.agents/skills/generic-react-best-practices/rules/quality-formatting-and-sorting.md) — LOW.
 - Affected files, symbols and callers: repository `.github/workflows/ci.yml:57`, dashboard job; `packages/dashboard/package.json:format:check` and committed Prettier/editor policy.
@@ -266,6 +272,7 @@ None; the application already owns the combined gate. Implementation is not auth
 The workflow calls the existing combined script. A temporary malformed/valid formatting pair is rejected/accepted by the pinned formatter, while the normal lint budget remains visible. This strengthens CI wiring, not the rule catalog. Full gates after the source correction plan must pass.
 
 ## F-008 — HTML bootstrap duplicates theme colors outside the token owner
+
 - Kind: violation
 - Rule IDs and actual impact: [ui-semantic-colors](../../../../.agents/skills/generic-react-best-practices/rules/ui-semantic-colors.md) — HIGH.
 - Affected files, symbols and callers: `index.html:8` initial theme-color meta; `index.html:27` bootstrap setAttribute; canonical `src/shared/theme/pageThemeColors.ts:1`; `src/app/services/theme/useDashboardThemeSync.ts:15` already consumes the canonical map.
@@ -302,13 +309,13 @@ No authored HTML/bootstrap copy of concrete theme-color values remains outside t
 
 The original finding IDs and proofs above remain historical evidence; their corrections and prevention are verified in plan.md, with no pending decision. [Affected-code/caller review](evidence/phase2-semantic-review.md) explains the final ownership and behavior.
 
-| Finding | Plan outcome / actual owner | Acceptance evidence |
-| --- | --- | --- |
-| F-006 | P-006; MiniDonut.view, AssetIrrResults.view, OverviewPeriodFilter.view | I-001/I-002/I-003/I-004; three code decisions |
-| F-001 | P-003; DashboardSources + DashboardSourceBoundary; typed cache observers in domain API/app service | I-003 concurrent starts, preserved shell controls and source-error/404 cases; I-004/I-009 lazy chunks |
-| F-002 | P-002; seven source wrappers in owning services | I-001/I-002/I-003; feature-source-acquisition |
-| F-003 | P-001; display-owner presenters, common account-data transformers, provider-aware translation hooks | I-001/I-002/I-003; account-scope-data-and-labels |
-| F-004 | P-004; typed API response schemas, private historical wire validation | I-002/I-003/I-008; shared-historical-fund-response |
-| F-005 | P-005; all 165 ledger entries normalized with callers | I-001–I-006/I-009; 141 unchanged pure/support bodies |
-| F-007 | P-007; CI format:check step | I-001/I-007; valid/invalid pinned formatter evidence |
-| F-008 | P-008; themeHtmlPlugin.ts + Vite HTML integration | I-002/I-003/I-004; ten bootstrap cases, prepaint-theme-token-source |
+| Finding | Plan outcome / actual owner                                                                         | Acceptance evidence                                                                                   |
+| ------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| F-006   | P-006; MiniDonut.view, AssetIrrResults.view, OverviewPeriodFilter.view                              | I-001/I-002/I-003/I-004; three code decisions                                                         |
+| F-001   | P-003; DashboardSources + DashboardSourceBoundary; typed cache observers in domain API/app service  | I-003 concurrent starts, preserved shell controls and source-error/404 cases; I-004/I-009 lazy chunks |
+| F-002   | P-002; seven source wrappers in owning services                                                     | I-001/I-002/I-003; feature-source-acquisition                                                         |
+| F-003   | P-001; display-owner presenters, common account-data transformers, provider-aware translation hooks | I-001/I-002/I-003; account-scope-data-and-labels                                                      |
+| F-004   | P-004; typed API response schemas, private historical wire validation                               | I-002/I-003/I-008; shared-historical-fund-response                                                    |
+| F-005   | P-005; all 165 ledger entries normalized with callers                                               | I-001–I-006/I-009; 141 unchanged pure/support bodies                                                  |
+| F-007   | P-007; CI format:check step                                                                         | I-001/I-007; valid/invalid pinned formatter evidence                                                  |
+| F-008   | P-008; themeHtmlPlugin.ts + Vite HTML integration                                                   | I-002/I-003/I-004; ten bootstrap cases, prepaint-theme-token-source                                   |

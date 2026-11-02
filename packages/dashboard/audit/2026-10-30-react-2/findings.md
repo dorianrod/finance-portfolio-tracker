@@ -5,14 +5,13 @@ Two proven MEDIUM families were diagnosed at baseline and are now resolved. The 
 ## Impact volumes and score
 
 | Actual impact | Baseline families | Open now | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 0 | 0 | 0 |
-| HIGH | 0 | 0 | 0 |
-| MEDIUM-HIGH | 0 | 0 | 0 |
-| MEDIUM | 2 | 0 | 2 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
-
+| ------------- | ----------------: | -------: | -------: |
+| CRITICAL      |                 0 |        0 |        0 |
+| HIGH          |                 0 |        0 |        0 |
+| MEDIUM-HIGH   |                 0 |        0 |        0 |
+| MEDIUM        |                 2 |        0 |        2 |
+| LOW-MEDIUM    |                 0 |        0 |        0 |
+| LOW           |                 0 |        0 |        0 |
 
 **Score: 99.31/100 → 100.00/100**, formula `weighted-rule-compliance/v1`.
 
@@ -46,15 +45,15 @@ rule selection, coverage, exception policy and formula version.
 
 The owning rule requires a sibling test with the same base name for every new hook, helper, service, store or component, covering nominal and error/edge behavior. These seven modules were added by commit `34d269e` (verified with `git show --diff-filter=A`), are explicitly identified as new rather than renamed in the previous implementation manifest, and have no `.test` or `.spec` sibling:
 
-| Owner | Declaration line | Existing evidence and limit |
-| --- | --- | --- |
-| `src/app/DashboardSourceBoundary.view.tsx` | 4 | App.feature.test.tsx; useDashboardViewModel.network.test.tsx |
-| `src/app/DashboardSources.feature.tsx` | 25 | App.feature.test.tsx; useDashboardViewModel.network.test.tsx |
-| `src/app/services/useCachedDashboardSources.ts` | 14 | App.feature.test.tsx; useDashboardViewModel.network.test.tsx |
-| `src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.view.tsx` | 13 | No direct MiniDonut import found in authored tests; surrounding chart/grouping cases are not a colocated view contract |
-| `src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.view.tsx` | 13 | OverviewPeriodFilter.feature.test.tsx (nominal SSR only) |
-| `src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx` | 13 | AssetIrrView.feature.test.tsx (ready + unavailable states) |
-| `src/domains/portfolio/shared/apis/queries/useCachedPortfolioSourceQuery.ts` | 5 | App.feature.test.tsx; useDashboardViewModel.network.test.tsx |
+| Owner                                                                                                        | Declaration line | Existing evidence and limit                                                                                            |
+| ------------------------------------------------------------------------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `src/app/DashboardSourceBoundary.view.tsx`                                                                   | 4                | App.feature.test.tsx; useDashboardViewModel.network.test.tsx                                                           |
+| `src/app/DashboardSources.feature.tsx`                                                                       | 25               | App.feature.test.tsx; useDashboardViewModel.network.test.tsx                                                           |
+| `src/app/services/useCachedDashboardSources.ts`                                                              | 14               | App.feature.test.tsx; useDashboardViewModel.network.test.tsx                                                           |
+| `src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.view.tsx`         | 13               | No direct MiniDonut import found in authored tests; surrounding chart/grouping cases are not a colocated view contract |
+| `src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.view.tsx`           | 13               | OverviewPeriodFilter.feature.test.tsx (nominal SSR only)                                                               |
+| `src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx` | 13               | AssetIrrView.feature.test.tsx (ready + unavailable states)                                                             |
+| `src/domains/portfolio/shared/apis/queries/useCachedPortfolioSourceQuery.ts`                                 | 5                | App.feature.test.tsx; useDashboardViewModel.network.test.tsx                                                           |
 
 App.feature.test.tsx:21 verifies eighteen independent requests start while all are pending; its second case at line 70 verifies navigation, typed filter input and focus survive a source failure. useDashboardViewModel.network.test.tsx:21 exercises seven failing source cases. AssetIrrView.feature.test.tsx checks ready/loading/error/unavailable results; OverviewPeriodFilter.feature.test.tsx has one nominal SSR case. Those are valuable integration checks, but are not sibling files for these new owners. No direct MiniDonut import was found in authored tests. This finding does not claim the seven modules have zero indirect coverage or require retrofitting a test beside every historical trivial file.
 
@@ -76,7 +75,7 @@ None. The existing rule selects sibling tests; preserve runtime behavior and all
 
 ### Acceptance and prevention
 
-Each of the seven owners has a same-base sibling with a meaningful nominal and edge/error case. Source concurrency, shell persistence and existing visual results remain exercised. Focused tests, full npm test, typecheck and the unchanged 143-warning lint gate pass. Existing test-fixture/assertion/isolation rules apply to additions. Sibling presence for *new* files needs Git/provenance information; do not add a blanket ESLint failure for every historical module. The user’s later prevention investigation is recorded as P-005: a provenance-aware presence command for the existing requirement, with behavior quality still reviewed manually.
+Each of the seven owners has a same-base sibling with a meaningful nominal and edge/error case. Source concurrency, shell persistence and existing visual results remain exercised. Focused tests, full npm test, typecheck and the unchanged 143-warning lint gate pass. Existing test-fixture/assertion/isolation rules apply to additions. Sibling presence for _new_ files needs Git/provenance information; do not add a blanket ESLint failure for every historical module. The user’s later prevention investigation is recorded as P-005: a provenance-aware presence command for the existing requirement, with behavior quality still reviewed manually.
 
 ## F-002 — Domain fixture defaults and factories were maintained in test modules
 

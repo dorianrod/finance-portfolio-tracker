@@ -3,7 +3,7 @@ import type {
   OverviewComparison,
 } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
 import { OverviewConcentrationChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature'
-import { OverviewDriversChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature'
+import { OverviewDriversChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.feature'
 import { OverviewValueChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'

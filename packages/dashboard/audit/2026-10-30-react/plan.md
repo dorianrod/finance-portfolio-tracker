@@ -9,6 +9,7 @@ Phase 2 authorized on 2026-10-30 by the user's explicit “implémente le plan�
 Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 → P-008 → P-004 → P-005 → P-007**. Stable action IDs are not the priority rank.
 
 ### P-006 — Separate three independent visual contracts
+
 - Findings and priority: F-006; CRITICAL `arch-component-roles`, before HIGH/MEDIUM-HIGH work.
 - Action and proposed option: fix; extract supplied-data MiniDonut, ready asset-IRR results and two-period comparison views at their current owners.
 - Status: verified.
@@ -19,6 +20,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: MiniDonut.view.tsx, AssetIrrResults.view.tsx and OverviewPeriodFilter/OverviewPeriodFilter.view.tsx now own the supplied-data surfaces; features retain business orchestration. Three structured decisions are implemented. Relevant existing behavior cases and I-001/I-002/I-003/I-004 pass; final owner/caller review is in evidence/phase2-semantic-review.md. No remaining acceptance work.
 
 ### P-001 — Split shared account protocols from display preparation
+
 - Findings and priority: F-003 HIGH; prerequisite to P-002 despite their same-impact architecture ordering.
 - Action and proposed option: fix; keep account IDs/types/history scope as transformers and move labels/row-tree/chart-chip selection to component/page presenters.
 - Status: verified.
@@ -29,6 +31,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: Presenters now live at DataQualityTab, ErrorsTab, FundHoldingsExplorer, ActiveFilterSummary, FilterPanel and reliability KPI owners; common account data is pure and display labels are prepared by existing formatter consumers. Feature-level shared support types replace private component dependencies. Provider-specific metric and account-label cases pass with I-001/I-002/I-003. Final owners and the pure app source-data delta are reconciled in evidence/phase2-migration-resolution.json and phase2-semantic-review.md. No remaining acceptance work.
 
 ### P-002 — Move seven acquisition wrappers into services
+
 - Findings and priority: F-002 HIGH `arch-helpers-vs-services`.
 - Action and proposed option: fix; move subscription/orchestration wrappers at the same business/component owner, retain pure work in transformers.
 - Status: verified.
@@ -39,6 +42,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: All seven ledger wrappers now live in services at their original business/component owners, including wealth and performance. useAccountTypeHistory observes the coordinated positions source cache; pure transformation remains separate. Source selection/network/error tests and I-001/I-002/I-003 pass. feature-source-acquisition is implemented; no presenter/formatter service dependency remains. No remaining acceptance work.
 
 ### P-003 — Align required fixed-source reads with concurrent Suspense
+
 - Findings and priority: F-001 HIGH, API category after architecture actions at equal impact.
 - Action and proposed option: fix; use concurrent required-source consumers below the persistent navigation/filter shell.
 - Status: verified.
@@ -49,6 +53,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: Eleven hooks now use useSuspenseQuery through DashboardSources sibling consumers; DashboardSourceBoundary catches errors while useCachedDashboardSources observes the same caches without acquiring them. Existing shell status/optional-404/reload retry behavior and scoped keepPreviousData are retained. I-003 proves concurrent transport starts, preserved open-filter focus/navigation and source error cases; I-004/I-009 preserve seven optional chunk boundaries. persistent-dashboard-query-boundary is implemented. No remaining acceptance work.
 
 ### P-004 — Keep wire adaptation inside typed response boundaries
+
 - Findings and priority: F-004 MEDIUM-HIGH helper-placement violation; response coercion/type correctness are HIGH constraints, not a claim of currently unvalidated primitives.
 - Action and proposed option: fix; move four transport-name adapters into owning API response schema composition and leave reusable business aggregation separate.
 - Status: verified.
@@ -59,6 +64,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: Four wire adapters now execute inside typed fund holding/status/history, saving-capacity and annual-income response schemas; queryFns expose final domain data without narrowing casts. Historical raw validation is private to the merged final schema owner. I-002/I-003 validate actual boundary/fallback/filter/order behavior. Only the merged-owner historical sharing exception was technically re-reviewed (I-008); its decision is documented beside the schema. No remaining acceptance work.
 
 ### P-005 — Normalize the complete helper family and verify callers
+
 - Findings and priority: F-005 MEDIUM-HIGH; all 165 affected paths and consumers are frozen in migration-ledger.json.
 - Action and proposed option: fix; apply responsibility-specific destinations and coordinated pure/support moves.
 - Status: verified.
@@ -68,8 +74,8 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Acceptance: zero lint errors, exact warning-budget reconciliation (never raise above 143), typecheck, meaningful affected tests, full npm test, build, build-storybook, direct catalog usage and format:check; production cycle check remains clean. No retired production helper categories remain. Run generic and application integration regressions for the reused checks.
 - Outcome: All 165 retired-category findings and callers resolve to final owners in evidence/phase2-migration-resolution.json; 249 original paths moved or folded, with no compatibility barrels. The 141 pure/support helper bodies are unchanged outside imports/comments (I-006). I-001 reports 0 errors / 143 warnings, unchanged ceiling; I-002/I-003/I-004/I-005 and final candidate/file reconciliation I-009 pass. No retired production categories or unresolved cycle remain. No remaining acceptance work.
 
-
 ### P-008 — Feed prepaint browser metadata from canonical theme tokens
+
 - Findings and priority: F-008 HIGH UI category; after HIGH architecture/API prerequisites and before MEDIUM-HIGH category normalization in execution order.
 - Action and proposed option: fix; retain synchronous prepaint choice, generate initial metadata/bootstrap colors from PAGE_THEME_COLORS.
 - Status: verified.
@@ -80,6 +86,7 @@ Execution order by impact/dependencies: **P-006 → P-001 → P-002 → P-003 �
 - Outcome: themeHtmlPlugin.ts generates initial/browser-bootstrap colors from PAGE_THEME_COLORS, is wired into Vite and the strict tooling TS project, and records prepaint-theme-token-source. All ten storage/system/token behavior cases and I-002/I-003/I-004 pass. The synchronous bootstrap remains before React; no concrete color copy remains in HTML. No remaining acceptance work.
 
 ### P-007 — Use the existing format gate in CI
+
 - Findings and priority: F-007 LOW prevention gap, after required source corrections.
 - Action and proposed option: fix; dashboard CI lint step calls npm run format:check, which already includes normal lint.
 - Status: verified.
@@ -101,9 +108,7 @@ Existing helper-category, transitive helper/service/formatter, component-role, c
 
 No unrelated dependency upgrade, compiler migration, feature redesign, performance tuning or existing-ignore technical reaudit is included. Browser/screen-reader certification and timing profiles are outside the source audit's available evidence. Existing noUncheckedIndexedAccess/exactOptionalPropertyTypes migration candidates remain documented follow-ups. If input hashes change, record the exact delta and revalidate affected findings/callers; preserve unaffected conclusions and this original baseline.
 
-
 Phase-2 authorization (2026-10-30): user requested “implémente le plan”. All eight actions are authorized. Original authored-source hashes match; the former .gitignore change is now committed and no authored source has changed since phase 1.
-
 
 ### Phase-2 implementation deltas (2026-10-30)
 

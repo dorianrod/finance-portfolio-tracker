@@ -1,13 +1,14 @@
 import { PORTFOLIO_COST_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioCostShareKey'
 import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioGainShareKey'
-import { computePortfolioComposition } from '@/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { PortfolioCompositionPoint } from '@/domains/portfolio/features/wealth/components/EvolutionChart/types/portfolioCompositionPoint.type'
 
-export function withPortfolioComposition(history: PortfolioHistoryPoint[]) {
+export function withPortfolioComposition(history: PortfolioCompositionPoint[]) {
   return history.map((point) => {
-    const { costShare, gainShare } = computePortfolioComposition(point)
+    const { cost, gain, costShare, gainShare } = point.composition
     return {
       ...point,
+      total_cost_basis: cost,
+      unrealized_gain: gain,
       [PORTFOLIO_COST_SHARE_KEY]: costShare,
       [PORTFOLIO_GAIN_SHARE_KEY]: gainShare,
     }

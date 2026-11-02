@@ -64,7 +64,6 @@ None. Existing reviewed keep decisions are retained; the user expressly requests
 
 The actual project gate passes with exactly 15 explicit reasons. Introducing an inferred fixture elsewhere makes it fail; a valid owning-factory consumer passes. Changed test/contract/check/config fingerprints require a fresh semantic review; malformed ledgers fail with exit 2, pending/stale reviews with exit 1. Application and generic suites, unchanged-ceiling lint, typecheck, formatting and builds pass. No approved warnings or suppression scope are widened.
 
-
 ### Phase-2 evidence delta for F-001
 
 The filesystem/program comparison additionally rejected `src/shared/ui/storybook/catalog.test.ts` on the real dashboard app project. The test was compiled separately by the existing Storybook project and executed by npm test, but absent from fixture enumeration. The dedicated analysis configuration includes it; all original candidate/exclusion decisions remain identical. This is concrete application evidence of the scope-availability gap, beyond the isolated probes.

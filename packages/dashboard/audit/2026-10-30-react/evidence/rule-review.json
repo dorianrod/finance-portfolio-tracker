@@ -3,10 +3,7 @@
     "id": "arch-component-roles",
     "impact": "CRITICAL",
     "targets": "components",
-    "detectors": [
-      "local/component-role",
-      "local/state-component-contract"
-    ],
+    "detectors": ["local/component-role", "local/state-component-contract"],
     "status": "automatically checked; manually reviewed",
     "evidence": "F-006; all 94 feature declarations have explicit split/keep decisions in component-boundaries. Views received resolved runtime-boundary checks; both state renderers map prebuilt unions exhaustively.",
     "findings": "F-006"
@@ -24,9 +21,7 @@
     "id": "arch-transverse-only-imports",
     "impact": "CRITICAL",
     "targets": "production",
-    "detectors": [
-      "local/import-boundaries"
-    ],
+    "detectors": ["local/import-boundaries"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Resolved source graph: 4,115 local static/type/reexport/dynamic edges inventoried. No synchronous production cycles or unsuppressed forbidden domain/feature imports. No transverse-domain allowlist expansion proposed.",
     "findings": ""
@@ -49,9 +44,7 @@
     "id": "arch-feature-slice-layout",
     "impact": "CRITICAL",
     "targets": "production",
-    "detectors": [
-      "local/feature-folder-layout"
-    ],
+    "detectors": ["local/feature-folder-layout"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Capability map follows README: selection, overview, wealth, performance, diversification, holdings and quality. Parent/leaf shapes and resolved direction checked. No child-specific workflow is promoted to shared merely to bypass imports.",
     "findings": ""
@@ -69,9 +62,7 @@
     "id": "arch-decompose-hook-heavy-components",
     "impact": "HIGH",
     "targets": "components",
-    "detectors": [
-      "local/max-hooks-per-component"
-    ],
+    "detectors": ["local/max-hooks-per-component"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Hook-count detector and explicit feature ledger reviewed; instance-scoped table/trend workflows have focused owner hooks. No umbrella-hook extraction proposed solely to reduce a metric.",
     "findings": ""
@@ -111,9 +102,7 @@
     "id": "arch-feature-hierarchy",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/feature-folder-layout"
-    ],
+    "detectors": ["local/feature-folder-layout"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Two feature levels maximum. Asset class/geography/sector/currency, current/history and concentration modes remain parameters/components, not extra business features.",
     "findings": ""
@@ -156,9 +145,7 @@
     "id": "arch-stores-no-index",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "evidence": "No stores/index barrels; atom modules have concern suffixes and direct imports. Production synchronous graph is acyclic. Shared UI per-instance scopes are initialized through createScope rather than creating render-time atom identities.",
     "findings": ""
@@ -176,9 +163,7 @@
     "id": "arch-helpers-vs-services",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "local/no-memo-only-service"
-    ],
+    "detectors": ["local/no-memo-only-service"],
     "status": "automatically checked; manually reviewed",
     "evidence": "F-002: seven helper hooks acquire server/business state directly or transitively. F-003 is a prerequisite where moving a hook to services would retain forbidden formatting dependencies.",
     "findings": "F-002"
@@ -304,9 +289,7 @@
     "id": "api-business-destructuring",
     "impact": "LOW-MEDIUM",
     "targets": "api",
-    "detectors": [
-      "local/api-business-destructuring"
-    ],
+    "detectors": ["local/api-business-destructuring"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured typed check passes; query consumers destructure data using resource names, retaining the result only for state/refetch or forwarding.",
     "findings": ""
@@ -378,9 +361,7 @@
     "id": "types-explicit-nullability",
     "impact": "HIGH",
     "targets": "types",
-    "detectors": [
-      "local/explicit-nullability"
-    ],
+    "detectors": ["local/explicit-nullability"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Typed checks reject optional+null. Nullable entities explain absence; one threshold-family comment covers all four unreachable concentration thresholds. Missing metadata and unavailable IRR remain explicitly nullable.",
     "findings": ""
@@ -434,9 +415,7 @@
     "id": "types-file-per-entity",
     "impact": "MEDIUM",
     "targets": "types",
-    "detectors": [
-      "local/entity-type-files"
-    ],
+    "detectors": ["local/entity-type-files"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Canonical entities and all architecture support-contract candidates inspected through inventory/callers. Local helper input/output, chart support and props types remain with their owner; source naming alone does not establish a misplaced entity.",
     "findings": ""
@@ -454,9 +433,7 @@
     "id": "types-no-any-or-wide",
     "impact": "LOW-MEDIUM",
     "targets": "types",
-    "detectors": [
-      "@typescript-eslint/no-unsafe-assignment"
-    ],
+    "detectors": ["@typescript-eslint/no-unsafe-assignment"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Strict TS, unsafe-assertion/non-null/promise/type-import checks cover source/tests/tooling. Unknown is retained only at untrusted CSV/JSON/errors. noUncheckedIndexedAccess/exactOptionalPropertyTypes are documented migration candidates, not silently enabled.",
     "findings": ""
@@ -540,9 +517,7 @@
     "id": "ui-delegate-mapped-jsx",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-complex-jsx-map"
-    ],
+    "detectors": ["local/no-complex-jsx-map"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured map/inline-renderer checks pass. Mapped items delegate to module-level components; data-only map calculations remain separate.",
     "findings": ""
@@ -563,9 +538,7 @@
     "id": "ui-semantic-colors",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-hardcoded-colors"
-    ],
+    "detectors": ["local/no-hardcoded-colors"],
     "status": "automatically checked; manually reviewed",
     "evidence": "F-008: index.html duplicates browser theme-color literals outside the theme owner. Matched TS meta assignments are rejected (C-06) and canonical tokens accepted (C-07); HTML has no matching ESLint configuration. Dedicated static SVG asset colors remain an allowed exception.",
     "findings": "F-008"
@@ -619,9 +592,7 @@
     "id": "ui-required-children",
     "impact": "HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/require-children-composition"
-    ],
+    "detectors": ["local/require-children-composition"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Typed composition checks and integration tests cover local/external renderer APIs. Content travels in nested slots; required dependency callbacks use named stable renderer components. Scalar label/formatter props are not UI slots.",
     "findings": ""
@@ -648,9 +619,7 @@
     "id": "ui-no-adhoc-styling",
     "impact": "MEDIUM-HIGH",
     "targets": "shared-ui",
-    "detectors": [
-      "local/no-domain-styling"
-    ],
+    "detectors": ["local/no-domain-styling"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Domain/app class/style declarations are layout; appearance lives in shared UI/tokens. Chart geometry is supplied through UI adapters and component-owned presenters. No unsuppressed styling or stylesheet violations.",
     "findings": ""
@@ -686,9 +655,7 @@
     "id": "state-module-level-atoms",
     "impact": "MEDIUM-HIGH",
     "targets": "stores",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Raw atom identities are module-scoped. Scoped UI uses createScope with stable atom keys; reusable primitive instance state is not recreated as fresh atom identities during render.",
     "findings": ""
@@ -742,9 +709,7 @@
     "id": "state-explicit-types-defaults",
     "impact": "MEDIUM",
     "targets": "stores",
-    "detectors": [
-      "local/atom-contract"
-    ],
+    "detectors": ["local/atom-contract"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Raw atoms declare generics; nontrivial Set/object defaults are named, typed and shared with reset behavior. Null/boolean primitive defaults do not justify artificial exported objects.",
     "findings": ""
@@ -753,9 +718,7 @@
     "id": "state-vercel-functional-updates",
     "impact": "MEDIUM",
     "targets": "stores",
-    "detectors": [
-      "react-hooks/exhaustive-deps"
-    ],
+    "detectors": ["react-hooks/exhaustive-deps"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Selection/filters/expanded rows derive next values through functional setters and copied Sets. Direct assignments are from arguments/constants; no requests occur inside updater functions.",
     "findings": ""
@@ -806,9 +769,7 @@
     "id": "helpers-no-context-params",
     "impact": "MEDIUM-HIGH",
     "targets": "helpers",
-    "detectors": [
-      "local/no-helper-context-params"
-    ],
+    "detectors": ["local/no-helper-context-params"],
     "status": "automatically checked; manually reviewed",
     "evidence": "No helper receives t/navigate/queryClient/atom/formatter as an injected client. Display context belongs inside formatter/presenter hooks; F-003 splits mixed data/display responsibilities.",
     "findings": ""
@@ -849,10 +810,7 @@
     "id": "i18n-interpolation",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency",
-      "local/no-ui-string-concat"
-    ],
+    "detectors": ["local/i18n-consistency", "local/no-ui-string-concat"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured translation checks validate interpolations and reject sentence concatenation. Technical keys/CSS and already formatted scalar values are kept distinct from display sentence assembly.",
     "findings": ""
@@ -861,9 +819,7 @@
     "id": "i18n-no-default-value",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency"
-    ],
+    "detectors": ["local/i18n-consistency"],
     "status": "automatically checked; manually reviewed",
     "evidence": "No unhandled defaultValue/string fallback diagnostics; reference catalog holds production feature keys. Opaque values considered at display helper boundaries.",
     "findings": ""
@@ -872,9 +828,7 @@
     "id": "i18n-no-hardcoded-strings",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/no-hardcoded-ui-strings"
-    ],
+    "detectors": ["local/no-hardcoded-ui-strings"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Visible labels/empty/error/tooltip text use the reference catalog; source entity names/messages and synthetic test/story values are not product copy. Formatter versus technical helper strings reviewed.",
     "findings": ""
@@ -883,9 +837,7 @@
     "id": "i18n-static-keys",
     "impact": "MEDIUM",
     "targets": "i18n",
-    "detectors": [
-      "local/i18n-consistency"
-    ],
+    "detectors": ["local/i18n-consistency"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Direct catalog usage check returns zero unused entries; normal typed lint has no missing/static-key errors. audit:i18n wrapper fails earlier on the 165 category errors, which is recorded separately.",
     "findings": ""
@@ -906,9 +858,7 @@
     "id": "test-mock-data",
     "impact": "MEDIUM",
     "targets": "tests",
-    "detectors": [
-      "local/test-fixture-contract"
-    ],
+    "detectors": ["local/test-fixture-contract"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Typed fixtures use fixed dates and explicit varied entity states. No live clock/random or incomplete-cast diagnostics; controlled time in behavior tests is distinct from nondeterministic mocks.",
     "findings": ""
@@ -944,9 +894,7 @@
     "id": "test-semantic-queries",
     "impact": "MEDIUM",
     "targets": "tests",
-    "detectors": [
-      "local/prefer-semantic-test-queries"
-    ],
+    "detectors": ["local/prefer-semantic-test-queries"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured typed checks pass; tests use role/label/text queries and userEvent. DOM metadata in compiler/tooling tests is not confused with DOM element selectors.",
     "findings": ""
@@ -964,9 +912,7 @@
     "id": "quality-no-deprecated-apis",
     "impact": "HIGH",
     "targets": "production",
-    "detectors": [
-      "@typescript-eslint/no-deprecated"
-    ],
+    "detectors": ["@typescript-eslint/no-deprecated"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Typed no-deprecated applies to source/tests/config and reports no deprecations. Resolved React 19 ref/EffectEvent and query APIs inspected from installed declarations; no claim of checking every unannotated third-party API against external documentation.",
     "findings": ""
@@ -996,9 +942,7 @@
     "id": "quality-single-public-export",
     "impact": "MEDIUM",
     "targets": "production",
-    "detectors": [
-      "local/single-public-export"
-    ],
+    "detectors": ["local/single-public-export"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured production export check passes; types/tests/stories/config exclusions retain their stated scope. Direct defining-file imports and stable external renderer modules preserved.",
     "findings": ""
@@ -1043,9 +987,7 @@
     "id": "quality-usecallback-for-functions",
     "impact": "MEDIUM",
     "targets": "production",
-    "detectors": [
-      "local/prefer-usecallback"
-    ],
+    "detectors": ["local/prefer-usecallback"],
     "status": "automatically checked; manually reviewed",
     "evidence": "Configured callable-useMemo check passes. Format/action callbacks are memoized; data models use input-specific memos. Independent expensive calculations are not merged with request status solely to reduce memo count.",
     "findings": ""

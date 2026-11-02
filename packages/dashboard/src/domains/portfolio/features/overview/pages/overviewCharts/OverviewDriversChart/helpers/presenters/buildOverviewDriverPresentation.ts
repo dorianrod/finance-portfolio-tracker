@@ -3,6 +3,8 @@ import type { DriverRow } from '@/domains/portfolio/features/overview/types/over
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
 import i18n from '@/i18n/i18n'
 
+import { computeOverviewGrossChanges } from '../transformers/computeOverviewGrossChanges'
+
 export function buildOverviewDriverPresentation(
   comparison: OverviewComparison,
 ) {
@@ -27,17 +29,5 @@ export function buildOverviewDriverPresentation(
   const unavailable =
     comparison.contributions.current == null &&
     comparison.marketPerformance.current == null
-  const currentChange =
-    comparison.contributions.current == null ||
-    comparison.marketPerformance.current == null
-      ? null
-      : comparison.contributions.current + comparison.marketPerformance.current
-  const previousChange =
-    comparison.contributions.previous == null ||
-    comparison.marketPerformance.previous == null
-      ? null
-      : comparison.contributions.previous +
-        comparison.marketPerformance.previous
-
-  return { rows, unavailable, currentChange, previousChange }
+  return { rows, unavailable, ...computeOverviewGrossChanges(comparison) }
 }

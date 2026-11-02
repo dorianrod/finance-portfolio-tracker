@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import { useFormatPipelineErrorType } from '@/domains/portfolio/features/data-quality/features/errors/helpers/formatters/useFormatPipelineErrorType'
+import type { countPipelineIssues } from '@/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { useFormatAssetLabel } from '@/domains/portfolio/shared/helpers/formatters/useFormatAssetLabel'
 
@@ -12,12 +13,14 @@ export function useBuildPipelineErrorsViewModel() {
   return useCallback(
     ({
       errors,
+      issueCounts,
       filterLevel,
       filterType,
       sortColumn,
       sortDirection,
     }: {
       errors: PipelineError[]
+      issueCounts: ReturnType<typeof countPipelineIssues>
       filterLevel: 'all' | 'error' | 'warning'
       filterType: string
       sortColumn: PipelineErrorSortColumn
@@ -61,11 +64,9 @@ export function useBuildPipelineErrorsViewModel() {
       })
 
       return {
-        errorCount: errors.filter((error) => error.level === 'error').length,
+        ...issueCounts,
         rows,
         types,
-        warningCount: errors.filter((error) => error.level === 'warning')
-          .length,
       }
     },
     [formatAssetLabel, formatType],

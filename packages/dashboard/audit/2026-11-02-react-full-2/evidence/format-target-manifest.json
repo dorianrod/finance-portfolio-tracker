@@ -1,0 +1,476 @@
+[
+  {
+    "file": "audit/2026-10-30-react-2/coverage.md",
+    "sha256": "f79f4ff85446a0855b9c05993b00998825f3fc88a0198423b3473bfb037a1f23",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/asset-review.json",
+    "sha256": "d6ffb3ef8b13240db8a5667fac9f6bed8fb0922f76be4cb3643a15e843827255",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/fixture-review.json",
+    "sha256": "de78a93d24a6732c1a18f60467e3e9bee6d3eed66bc1df271c741dbd105b76b7",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-baseline-input.json",
+    "sha256": "0cbfa2d97658b3226a23ab3362468d527e82df620bed1eb41721b63d750d541b",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-baseline.json",
+    "sha256": "76778531603aed146fb43fb2284471bf9ed32303f26dc495c9a0aad7ce27c49e",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-final-input.json",
+    "sha256": "f675a75eeccc51ea3d1a377428cde5b895b0290fcff1a04118b1c492f1895d4b",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/phase2-fixture-review.json",
+    "sha256": "7fe6b26f0ca647d1eb9a6c1ad471029e283a476bb4f80330c67a60a2a3374291",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/phase2-rule-review.json",
+    "sha256": "bad011e8f21eaa4f27dcf61691af94ac7ef36a18bd1a4e4dff80f9682734e139",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/prevention-review.md",
+    "sha256": "7720f529419b4a3143a379e51bf177d3e43751b4c5218a6f95e70a50e7af403e",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/rule-review.json",
+    "sha256": "679eb49a8eb708e28c74fededde09a20141ebf08edbe53d562c810fc308edcf6",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/semantic-review.md",
+    "sha256": "7a89c217b6723c53a6c7538cbc6b07f1c3415dc55d402eb01172c6093a1b9ffc",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/findings.md",
+    "sha256": "154c287e4a40e39950577237651eaf3e2d7215504154f3c73bdadf63da9a052c",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/metrics.md",
+    "sha256": "dfe2aef435471b57a8f60d27ccdae09a6852e7c6bd6930be65cffb828980d6f0",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/plan.md",
+    "sha256": "4de6be1c7c2531e529c3e1a25533c2ff841d2448d3d5d6254952d7c95b05b6c8",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/verification.md",
+    "sha256": "612aafe4ac6980bc4dd2b47ec42e388ffe08090e65788760fa64779a3ae82969",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/coverage.md",
+    "sha256": "8da52b57bb14e9e5d1a92f8e38fe226e043d8cc71e16480bb953feb15fe9a185",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/asset-review.json",
+    "sha256": "d6ffb3ef8b13240db8a5667fac9f6bed8fb0922f76be4cb3643a15e843827255",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/effective-Preview.view.tsx.json",
+    "sha256": "83cfbcc65b211cb5538bcab0eb9b493e49c6142df01f661f434aead1912b9160",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/file-review.json",
+    "sha256": "b8c8ac5e6a9fc4a2ec6a4f0361fd25989feb2ee04f0c4288fc23d74fc03c25dc",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/fixture-review.json",
+    "sha256": "bb353aa0ccc1e4416295b16a5672dbca88bc937ed24b6d0c122fd40444355e71",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/intersection-input-review.json",
+    "sha256": "1e6939ca96f74c85d4b076b203d5f1a0b48a2cb3d1b6d4e83473bf00d22650bd",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-baseline-input.json",
+    "sha256": "2e932162dd77c3f726aed20c27eb8ff904e875e76e9b43700dc88eb4c1f8acc9",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-baseline.json",
+    "sha256": "dfd6817914242b323fda314abf6e07afef6fe789026b47734320fa54231130c5",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-expanded-baseline-input.json",
+    "sha256": "fc201939bee8da29620782e9b859886bda147137705b091521782f80e84189c4",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-expanded-baseline.json",
+    "sha256": "a74ea10fdef3c30f4ac5ffdb0f6865a8d0333b72d150a78a0c1e2ea7eee83c84",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-final-input.json",
+    "sha256": "e58ed55dcadd4d7118ef8977420e8221338e69297da0f96ba1c4258c57e9b66b",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/phase2-fixture-review.json",
+    "sha256": "4d9dc31cfeb49e158e027eaebe4684d1488b25c0209764940481391cc8797b06",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/phase2-rule-review.json",
+    "sha256": "8ae4fd9dd708dbfa2e528564bbc06a8ee8974f4054b5659c6d6cc58c29ac5848",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/rule-review.json",
+    "sha256": "809084208624080b92aa658b5674f0baa2726b00ba2766bc0377055ac7b3793b",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/semantic-review.md",
+    "sha256": "9aadca96a466aef936d13dc48d55bd62219445ded47199cd81009b5ba86fb460",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/findings.md",
+    "sha256": "aca1d25b541a6ff9193013cfa42e44183a1ad418ee3ef8d8be5718c8ecc6cbe0",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/metrics.md",
+    "sha256": "e0231b274049ce4e6f0cd83efc080d845a1fdcaa88e33f2596de5ae634430871",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/verification.md",
+    "sha256": "14859a6265621d21c89706e992ed54f3667b06535cdc1b08f831b1c7ebc08709",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/coverage.md",
+    "sha256": "05822165dabf6a1a7f77573764c21a9efbd7b1bd861de4fd3980e8a969877888",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/component-boundaries.md",
+    "sha256": "42f57574a8568c6312498f6fb308d6ff6c95d6e800d5e6f9a0a362b3f7e72081",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/migration-ledger.json",
+    "sha256": "f544b313ab0602e8d1db08c3cf4cb5429bdc410430f39a382f9b931193b94916",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/phase2-semantic-review.md",
+    "sha256": "70b11f0193e57c09b6daf2c90988551cef8d3339aa03b4e5a547933c910e6062",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/rule-review.json",
+    "sha256": "8052d587d716dc70c41a1c4a0357b542edfdb16b2c86cb8a4d7412387c4a9e26",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/findings.md",
+    "sha256": "4b95c80fffdf1e13089fabb4936e616b7e68607207d2983102e10049ef164666",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/plan.md",
+    "sha256": "c0c8c86a80187a86bce7974887454e311cabcea8f38a9066a6b2d93114270c37",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/scope.md",
+    "sha256": "bd8faafae98f324561655e59a1f46cc40637423e9a8f2fdaea6430c8c122ca2f",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-30-react/verification.md",
+    "sha256": "0574bd8978dad52e4115c32053354570404026ff8dc70cc272bb93cc02cdd4ba",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/file-review.json",
+    "sha256": "3cc0b23b3e874997f89161ec3556876173c910cd2ebb090d560e7b33806a6829",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-amended-baseline-input.json",
+    "sha256": "ea18fd9527cd3300c097e909e98f3bcf4606242857d0087a2e065ca7d92b3eb0",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-amended-baseline.json",
+    "sha256": "0392d45ff31b68040f8b2758059f250eb0d3a9f66cc8cd40234dcc2854ac0fe6",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-baseline-input.json",
+    "sha256": "faddb18591ea36fae90c71a43e17fc90d0453f9afb37c5afc4007bc865c74cfc",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-final-input.json",
+    "sha256": "333fbd03aa118155b1de0751485621c791ab85aa5c4efb5e3a96a742eba22b47",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-file-review.json",
+    "sha256": "bdc47c573ed1a96b0dc977dd2a7160e5d43b085b33c04a8cf8aa8e657fa7a8b7",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-rule-review.json",
+    "sha256": "3d668a7e237149e9b87f13c6723eb2a13461defa7bd8cc776f89bfba0babfd11",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-semantic-review.json",
+    "sha256": "cd80fe0fae0a2eef2ca4c43cefb472d3fd69ca36e5374ff261e7ef1264bf3734",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-tooling-review.json",
+    "sha256": "28ad4617774463b534a78422f0e0f39c800423046ccb2d59c4c46427fb3f86fb",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/retained-phase2-file-review.json",
+    "sha256": "c44291f1046a9323e7cecfa5bee63df5bfded534eb67ee4933ed589d1525cb6c",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/retained-phase2-rule-review.json",
+    "sha256": "2a9c5524d6f505070e2e61f313333e02599dd7a23f47b63cf8a6b8c4a1e5ffc4",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/rule-review.json",
+    "sha256": "f12fea63ae3af5429076162018d72e1d10e4794e11dbe35ee7d4a3c8954ec99c",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/metrics.md",
+    "sha256": "180ab4b9b66893e34a5982758fdba828169f82b90cec14f3e11302027c895f33",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/plan.md",
+    "sha256": "370ef734fd77ef7a923add22498ed635916ef74f00df2165f02d69b82a011f3d",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/verification.md",
+    "sha256": "42097d8f7d1903702181494ad17675ae1670afa4d4d4df0436b17f56296758fb",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/coverage.md",
+    "sha256": "a1fb8d9e2871a9c0bb64341db6b62e8e3785c2c2f3b6383dc723c6ff12a79c02",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/baseline-metrics-input.json",
+    "sha256": "0926323592f464ff31ed9eb98a313da1e11856e2edbee865ffbbbc0215128182",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/feature-decisions.md",
+    "sha256": "ab1ab22f09675679a8c0e4284afdfa345ae4c15161743f4cc51b31ad9d5757c2",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/feature-review-input.json",
+    "sha256": "58097f4f703b27e6f52a916ebc8ba3d167949f4d041429a0f9a823fe09bb6497",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/final-metrics-input.json",
+    "sha256": "4233bdf9088963427e186c78c3e438c6fdded7b91ed78164ee0959d65e07e256",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/introduced-owner-review.md",
+    "sha256": "38d20256035c6634c64cdbf7c79f5a1681e08da2c00e1df6200ef1a73cd745f5",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/findings.md",
+    "sha256": "9f642dd3b26b08387f323389671341fddb4bd9ec81d7df52e6b0397483826317",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/verification.md",
+    "sha256": "7f21b43bbb8a1d0e22bca42f64105be43757d0d82f9fe408ee900482a90b7aec",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/coverage.md",
+    "sha256": "01b3f5cfc989bf9e9ce4e560e547217d00380bc01859ad77a386dc8bb6b89298",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/file-review.json",
+    "sha256": "2209d5666e0ea0f9e9da09a8d5d2ccefe6da54b5b2ac63414a3ad7cdfa239b1a",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/fixture-review.json",
+    "sha256": "4d9dc31cfeb49e158e027eaebe4684d1488b25c0209764940481391cc8797b06",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/metrics-baseline-input.json",
+    "sha256": "30088866e577c0604cb41bd79e5d8a168979bd7127e81dcff21d2da9bd1b125d",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/metrics-final-input.json",
+    "sha256": "586c399428f985ce140b1e196bd1e80c8cc3fa278e75b538b8d6b6290633fb3c",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/phase2-file-review.json",
+    "sha256": "c44291f1046a9323e7cecfa5bee63df5bfded534eb67ee4933ed589d1525cb6c",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/phase2-rule-review.json",
+    "sha256": "2a9c5524d6f505070e2e61f313333e02599dd7a23f47b63cf8a6b8c4a1e5ffc4",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/rule-review.json",
+    "sha256": "b04ac9a03a10aa807bc27bed8a73ac468567e8e006df64aca91748126ca23c73",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/findings.md",
+    "sha256": "0b350c8e74e898776cf92e1bd032c4022348047e7fd8ff6197633269354005fe",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/metrics.md",
+    "sha256": "33abbd67a53c599854f2b09975939731bb6bf479224dbcfc23126768ea5d5fbc",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/plan.md",
+    "sha256": "1cc79d3f6d75651f7dbc3c57e5be1d10db0c39bb27c7e3fe90b27bec67487745",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/root-causes.md",
+    "sha256": "f735c3828ce310fd986d86e654f352d20f44739aef6f204ddb37f775af37bd67",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/scope.md",
+    "sha256": "9e84a86f05d25b576a84c4031ce619af633031cfcc14dbb5e37a4d46d6666fc1",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  },
+  {
+    "file": "audit/2026-10-31-react/verification.md",
+    "sha256": "0de6993ef77894038d11fb61dfcc7f5e875227007b7e81d42fe3611b70605592",
+    "scope": "formatting-only",
+    "finding": "F-002"
+  }
+]

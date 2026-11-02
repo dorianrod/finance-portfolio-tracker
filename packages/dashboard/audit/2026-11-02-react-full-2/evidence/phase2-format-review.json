@@ -1,0 +1,634 @@
+[
+  {
+    "file": "audit/2026-10-30-react-2/coverage.md",
+    "previousSha256": "f79f4ff85446a0855b9c05993b00998825f3fc88a0198423b3473bfb037a1f23",
+    "sha256": "a0acdafe5e0ac6e4118e732136ec24e846f177d7e7578b6302e55183bdfa1d07",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/asset-review.json",
+    "previousSha256": "d6ffb3ef8b13240db8a5667fac9f6bed8fb0922f76be4cb3643a15e843827255",
+    "sha256": "7a0ccc2db04f4eccbb84098933d79ad8e7d5cbf85218fa17acf2b0b5ed7917a4",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/fixture-review.json",
+    "previousSha256": "de78a93d24a6732c1a18f60467e3e9bee6d3eed66bc1df271c741dbd105b76b7",
+    "sha256": "361f1a270062b02125fc562ea62ca624b68085e2920193f42178e1d573d0382f",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-baseline-input.json",
+    "previousSha256": "0cbfa2d97658b3226a23ab3362468d527e82df620bed1eb41721b63d750d541b",
+    "sha256": "328e40f58c3777055ae99577e95037b17ce6c0c5f14e84456e17d33fcffe42a4",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-baseline.json",
+    "previousSha256": "76778531603aed146fb43fb2284471bf9ed32303f26dc495c9a0aad7ce27c49e",
+    "sha256": "db6e33b924b62f52e8a08c2c4f56331bf36d72bd24eab76103dac693310e3eab",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/metrics-final-input.json",
+    "previousSha256": "f675a75eeccc51ea3d1a377428cde5b895b0290fcff1a04118b1c492f1895d4b",
+    "sha256": "42e869dc7af143bddc34bc8b4b542836134bff913f8866cca5b8d1df83e2d162",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/phase2-fixture-review.json",
+    "previousSha256": "7fe6b26f0ca647d1eb9a6c1ad471029e283a476bb4f80330c67a60a2a3374291",
+    "sha256": "7b9ffc36f33fcfd228a9f27632c455df05d7f84cc5187752c59cc272ba73af86",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/phase2-rule-review.json",
+    "previousSha256": "bad011e8f21eaa4f27dcf61691af94ac7ef36a18bd1a4e4dff80f9682734e139",
+    "sha256": "e7f3890f820653758261f331f0877f7fdb16c99a2348d69613b68502a790fd37",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/prevention-review.md",
+    "previousSha256": "7720f529419b4a3143a379e51bf177d3e43751b4c5218a6f95e70a50e7af403e",
+    "sha256": "8d0fbab1a50796bff8387297cfd89af282f530cd181c049575c105288c5a635b",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/rule-review.json",
+    "previousSha256": "679eb49a8eb708e28c74fededde09a20141ebf08edbe53d562c810fc308edcf6",
+    "sha256": "91a694de8c8935ede68fe875557bb5e57ccfad0ee2adba33066c2b78ee861c81",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/evidence/semantic-review.md",
+    "previousSha256": "7a89c217b6723c53a6c7538cbc6b07f1c3415dc55d402eb01172c6093a1b9ffc",
+    "sha256": "9007e7d9aeab0e79ce8c1b9d3e7f71872748e55405eeaf6a00d5a6f8edfd657b",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/findings.md",
+    "previousSha256": "154c287e4a40e39950577237651eaf3e2d7215504154f3c73bdadf63da9a052c",
+    "sha256": "1300428d3cad589a1fa6be77f7a39358422ecaa18b274893a81f85c13706d1d4",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/metrics.md",
+    "previousSha256": "dfe2aef435471b57a8f60d27ccdae09a6852e7c6bd6930be65cffb828980d6f0",
+    "sha256": "c4e400a5d9d16034c2b13686f8675acc2ae3ea19bc731b76fbca7991d4a43f24",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/plan.md",
+    "previousSha256": "4de6be1c7c2531e529c3e1a25533c2ff841d2448d3d5d6254952d7c95b05b6c8",
+    "sha256": "9c83de2af2f6a909cd803afcf969be662bb831438ad47b7e76f5adc1820438db",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-2/verification.md",
+    "previousSha256": "612aafe4ac6980bc4dd2b47ec42e388ffe08090e65788760fa64779a3ae82969",
+    "sha256": "c7d5e17466ff5c650984b5c27bf331604f6c3960796e94af7a7218f45f908ac7",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/coverage.md",
+    "previousSha256": "8da52b57bb14e9e5d1a92f8e38fe226e043d8cc71e16480bb953feb15fe9a185",
+    "sha256": "986eebf985e988d6bf2697203af117d79925b29f541e69a4076e7f6ed5edd1a4",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/asset-review.json",
+    "previousSha256": "d6ffb3ef8b13240db8a5667fac9f6bed8fb0922f76be4cb3643a15e843827255",
+    "sha256": "7a0ccc2db04f4eccbb84098933d79ad8e7d5cbf85218fa17acf2b0b5ed7917a4",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/effective-Preview.view.tsx.json",
+    "previousSha256": "83cfbcc65b211cb5538bcab0eb9b493e49c6142df01f661f434aead1912b9160",
+    "sha256": "fba7dd43bd0020caa19d1520645a2c958c1c6407ec62628d3b0c2259bbc7f881",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/file-review.json",
+    "previousSha256": "b8c8ac5e6a9fc4a2ec6a4f0361fd25989feb2ee04f0c4288fc23d74fc03c25dc",
+    "sha256": "625ab7d2d36c8cf8762c26508673289745e0d63e62afe986a7e4d3576891ad84",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/fixture-review.json",
+    "previousSha256": "bb353aa0ccc1e4416295b16a5672dbca88bc937ed24b6d0c122fd40444355e71",
+    "sha256": "6911ec285d14f9b0e192511c074caa3aae3b1c8d661e44e07c83036581b5d20c",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/intersection-input-review.json",
+    "previousSha256": "1e6939ca96f74c85d4b076b203d5f1a0b48a2cb3d1b6d4e83473bf00d22650bd",
+    "sha256": "da3e4c340e5c53bad2783d581d12871915e072d2d785f8dad153c7656bc676de",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-baseline-input.json",
+    "previousSha256": "2e932162dd77c3f726aed20c27eb8ff904e875e76e9b43700dc88eb4c1f8acc9",
+    "sha256": "0dca19be6b3ef17981a1979778be6865b0147afcadd4164736c63bf64e50547c",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-baseline.json",
+    "previousSha256": "dfd6817914242b323fda314abf6e07afef6fe789026b47734320fa54231130c5",
+    "sha256": "562f975e710abb8f6bdd953ef80e3e7193c8afe00528407b1069c168c11f1f7a",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-expanded-baseline-input.json",
+    "previousSha256": "fc201939bee8da29620782e9b859886bda147137705b091521782f80e84189c4",
+    "sha256": "48f59048f6334aadf368cd94e651f71196ffc44cb7682c79355ec555d4d1833c",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-expanded-baseline.json",
+    "previousSha256": "a74ea10fdef3c30f4ac5ffdb0f6865a8d0333b72d150a78a0c1e2ea7eee83c84",
+    "sha256": "a0fbbf9bf614ba44f7f6f25492ac44180dcefa04b1ec74b7b42953ef908cf045",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/metrics-final-input.json",
+    "previousSha256": "e58ed55dcadd4d7118ef8977420e8221338e69297da0f96ba1c4258c57e9b66b",
+    "sha256": "b81d352ec6f5afd5f4ee92d44ce7884a34d9bae93cac49265ae4769e0c24098f",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/phase2-fixture-review.json",
+    "previousSha256": "4d9dc31cfeb49e158e027eaebe4684d1488b25c0209764940481391cc8797b06",
+    "sha256": "a4c67f938434a3186898295864a8cb62a67ca97a05f6071e46ce53df622259db",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/phase2-rule-review.json",
+    "previousSha256": "8ae4fd9dd708dbfa2e528564bbc06a8ee8974f4054b5659c6d6cc58c29ac5848",
+    "sha256": "520fad226e52e989190684ee110cee88e74766cd3877d1f4085cb0b09f062ffc",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/rule-review.json",
+    "previousSha256": "809084208624080b92aa658b5674f0baa2726b00ba2766bc0377055ac7b3793b",
+    "sha256": "1da030682d71a91578d96c64482fa3b2dc194f56adbea201c1d159509c2b7bc0",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/evidence/semantic-review.md",
+    "previousSha256": "9aadca96a466aef936d13dc48d55bd62219445ded47199cd81009b5ba86fb460",
+    "sha256": "14f1043816723ab08fd0c92ec6c79e4b02ff81e0893405e2b3e481a67b9ad1cf",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/findings.md",
+    "previousSha256": "aca1d25b541a6ff9193013cfa42e44183a1ad418ee3ef8d8be5718c8ecc6cbe0",
+    "sha256": "faf9407197bc300c7e72e94c8df90fd62b3527f8c36a842767b899fefc215198",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/metrics.md",
+    "previousSha256": "e0231b274049ce4e6f0cd83efc080d845a1fdcaa88e33f2596de5ae634430871",
+    "sha256": "13aefd79f6232c9c34610589f92677299466e4b44b30f71f8afd3d78cfda5a92",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react-3/verification.md",
+    "previousSha256": "14859a6265621d21c89706e992ed54f3667b06535cdc1b08f831b1c7ebc08709",
+    "sha256": "b1db0408ba5c2db422dd862fd7c70c36d5409cbea02bf9b664396777c8196124",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/coverage.md",
+    "previousSha256": "05822165dabf6a1a7f77573764c21a9efbd7b1bd861de4fd3980e8a969877888",
+    "sha256": "6a4b3ee932bf85a4ab44f9cfb8913cc1bd8989d4d9ec580d986b672998aed67b",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/component-boundaries.md",
+    "previousSha256": "42f57574a8568c6312498f6fb308d6ff6c95d6e800d5e6f9a0a362b3f7e72081",
+    "sha256": "01d13380756de6c6bf0a35fff02b19b7d9155947a90b5e2b5313c01ae33c5391",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/migration-ledger.json",
+    "previousSha256": "f544b313ab0602e8d1db08c3cf4cb5429bdc410430f39a382f9b931193b94916",
+    "sha256": "5f9491d6b7e3f560778ef28057890cace2117ff53586c109a2f73ce13d553caf",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/phase2-semantic-review.md",
+    "previousSha256": "70b11f0193e57c09b6daf2c90988551cef8d3339aa03b4e5a547933c910e6062",
+    "sha256": "bffb6edf55b5987d8f61123ea5a9f867905a0347778cfda906802db00a923a36",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/evidence/rule-review.json",
+    "previousSha256": "8052d587d716dc70c41a1c4a0357b542edfdb16b2c86cb8a4d7412387c4a9e26",
+    "sha256": "0c269f14ac0d8d7000d87f6e55f8f15d74964af1ccdb4066e3ce8966bc0c0ff3",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/findings.md",
+    "previousSha256": "4b95c80fffdf1e13089fabb4936e616b7e68607207d2983102e10049ef164666",
+    "sha256": "7ae9d23dab7520ee6a564c46837b820e3546d2b4c6bebad4b3750cee703e7f83",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/plan.md",
+    "previousSha256": "c0c8c86a80187a86bce7974887454e311cabcea8f38a9066a6b2d93114270c37",
+    "sha256": "956603f94f6134f9082a82d228229d6c793f977137ef629400a7d063de3ef72e",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/scope.md",
+    "previousSha256": "bd8faafae98f324561655e59a1f46cc40637423e9a8f2fdaea6430c8c122ca2f",
+    "sha256": "90e5c282047f9867e231b82460474cde070374fb7ffb8db1989fb09482b50b9a",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-30-react/verification.md",
+    "previousSha256": "0574bd8978dad52e4115c32053354570404026ff8dc70cc272bb93cc02cdd4ba",
+    "sha256": "0168293b75e97c52c3a720c6446891b7dac91e7d252c2621d8807c2483c97121",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/file-review.json",
+    "previousSha256": "3cc0b23b3e874997f89161ec3556876173c910cd2ebb090d560e7b33806a6829",
+    "sha256": "d67e6108af0245d76090dc2d6d12aa71e5eb50a05217e27c7a7f6cd4d8ae515d",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-amended-baseline-input.json",
+    "previousSha256": "ea18fd9527cd3300c097e909e98f3bcf4606242857d0087a2e065ca7d92b3eb0",
+    "sha256": "01b044ab5863dcb227ba2821bdc5fef8e80a701bf28f503d51571d4b11ab027b",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-amended-baseline.json",
+    "previousSha256": "0392d45ff31b68040f8b2758059f250eb0d3a9f66cc8cd40234dcc2854ac0fe6",
+    "sha256": "76a3e2a76cea8ccccb505c3fa230c65d7f0a12e258989b6dd49a0996a67e99d9",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-baseline-input.json",
+    "previousSha256": "faddb18591ea36fae90c71a43e17fc90d0453f9afb37c5afc4007bc865c74cfc",
+    "sha256": "99ff41ea86f586c2420d5f9f8691b53307addf5bf3d2c843e29dbe40848d9654",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/metrics-final-input.json",
+    "previousSha256": "333fbd03aa118155b1de0751485621c791ab85aa5c4efb5e3a96a742eba22b47",
+    "sha256": "d1920119c0373fdaa1040019a044d533cc8ea9cdc57d9d48697865bbe776aa0a",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-file-review.json",
+    "previousSha256": "bdc47c573ed1a96b0dc977dd2a7160e5d43b085b33c04a8cf8aa8e657fa7a8b7",
+    "sha256": "8805bc10743a0d90a4e09540540d71c817efdd801085dec7f3eae32fcfcd308d",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-rule-review.json",
+    "previousSha256": "3d668a7e237149e9b87f13c6723eb2a13461defa7bd8cc776f89bfba0babfd11",
+    "sha256": "c9a3efec5d19f6e84b86754d41736ff6edc9e4e276722656c960efede716ff70",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-semantic-review.json",
+    "previousSha256": "cd80fe0fae0a2eef2ca4c43cefb472d3fd69ca36e5374ff261e7ef1264bf3734",
+    "sha256": "78451f877d9d2ec21bbfc54a775bd1121b9bdb438779b4b0787d9463b6765314",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/phase2-tooling-review.json",
+    "previousSha256": "28ad4617774463b534a78422f0e0f39c800423046ccb2d59c4c46427fb3f86fb",
+    "sha256": "999df123e1d2ba4a707a2aa134771f382bdf023e28a3f3e670b8d03bd8d6c24d",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/retained-phase2-file-review.json",
+    "previousSha256": "c44291f1046a9323e7cecfa5bee63df5bfded534eb67ee4933ed589d1525cb6c",
+    "sha256": "9ce53afd0a30e8672801d3ed6bf9434a5732d4c991c6a9fa453f8a1fc5dd17df",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/retained-phase2-rule-review.json",
+    "previousSha256": "2a9c5524d6f505070e2e61f313333e02599dd7a23f47b63cf8a6b8c4a1e5ffc4",
+    "sha256": "e4deaf02ef82984c809c80bb62edcfdb832edc7dd13ff3e119f2de8164b34ad2",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/evidence/rule-review.json",
+    "previousSha256": "f12fea63ae3af5429076162018d72e1d10e4794e11dbe35ee7d4a3c8954ec99c",
+    "sha256": "6bb551f657d97d8b3a0190e54c06d1dd0889f22f32908af5b63062e6090cae8a",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/metrics.md",
+    "previousSha256": "180ab4b9b66893e34a5982758fdba828169f82b90cec14f3e11302027c895f33",
+    "sha256": "81419a12420e3f687c3669977e21f0ed748b5443c69c952a5758bfd4f3e090b6",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/plan.md",
+    "previousSha256": "370ef734fd77ef7a923add22498ed635916ef74f00df2165f02d69b82a011f3d",
+    "sha256": "bd7be6fb70838d9d8f8c10c44933ac031c3db6d4c3b534b04e03af3821319d35",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-2/verification.md",
+    "previousSha256": "42097d8f7d1903702181494ad17675ae1670afa4d4d4df0436b17f56296758fb",
+    "sha256": "71f3d20115b24a237694383ce850f8065875c6d71e34f5f7491217a4c5197e16",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/coverage.md",
+    "previousSha256": "a1fb8d9e2871a9c0bb64341db6b62e8e3785c2c2f3b6383dc723c6ff12a79c02",
+    "sha256": "fd875718cfa5a153316a40e6e2bcd51444ff669af0bb5b718e64b3c51a58ef2c",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/baseline-metrics-input.json",
+    "previousSha256": "0926323592f464ff31ed9eb98a313da1e11856e2edbee865ffbbbc0215128182",
+    "sha256": "117bbe46e86791f79814bc9a93f26d8bdd8f40260dcfe6f79ce52c037903801c",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/feature-decisions.md",
+    "previousSha256": "ab1ab22f09675679a8c0e4284afdfa345ae4c15161743f4cc51b31ad9d5757c2",
+    "sha256": "45683a2551130a14727290fc84d52c8c28aaed9f47996c7af2a4f92b87bbca2a",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/feature-review-input.json",
+    "previousSha256": "58097f4f703b27e6f52a916ebc8ba3d167949f4d041429a0f9a823fe09bb6497",
+    "sha256": "090c8d652b8d332c7565761fbdf2459ce490762f90b3faa757151403588b8915",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/final-metrics-input.json",
+    "previousSha256": "4233bdf9088963427e186c78c3e438c6fdded7b91ed78164ee0959d65e07e256",
+    "sha256": "d81ae529de29db9e2f264408c2dbd6e5ea8c8be6f035cae02d6720df517a1ce7",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/evidence/introduced-owner-review.md",
+    "previousSha256": "38d20256035c6634c64cdbf7c79f5a1681e08da2c00e1df6200ef1a73cd745f5",
+    "sha256": "69d2a9b159fe9ab3df0c1d2fa090e2a2528c7c1e6f71dd85dfe9f56ed0d2dff2",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/findings.md",
+    "previousSha256": "9f642dd3b26b08387f323389671341fddb4bd9ec81d7df52e6b0397483826317",
+    "sha256": "01202edc69ba8ec037f114cc7e616e2666d32e99d6879ae8380bef61d0e67cfc",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react-full/verification.md",
+    "previousSha256": "7f21b43bbb8a1d0e22bca42f64105be43757d0d82f9fe408ee900482a90b7aec",
+    "sha256": "bb768d5d3edea51400f1ace3133079d5122b92cd3c7216f22d8650b4080bdeb7",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/coverage.md",
+    "previousSha256": "01b3f5cfc989bf9e9ce4e560e547217d00380bc01859ad77a386dc8bb6b89298",
+    "sha256": "700c5d07cd029c6dadb5f2248400c41b24b6aba995593a8eeadd68318b9359a4",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/file-review.json",
+    "previousSha256": "2209d5666e0ea0f9e9da09a8d5d2ccefe6da54b5b2ac63414a3ad7cdfa239b1a",
+    "sha256": "2c869669409b53c9c2b74533020c9c265262eb9d354f711d01c17eca70f015ea",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/fixture-review.json",
+    "previousSha256": "4d9dc31cfeb49e158e027eaebe4684d1488b25c0209764940481391cc8797b06",
+    "sha256": "a4c67f938434a3186898295864a8cb62a67ca97a05f6071e46ce53df622259db",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/metrics-baseline-input.json",
+    "previousSha256": "30088866e577c0604cb41bd79e5d8a168979bd7127e81dcff21d2da9bd1b125d",
+    "sha256": "5f48554c751c71c6b12726deb40f89cb9ddb11b4146975fdbe1c5ce828cc05d2",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/metrics-final-input.json",
+    "previousSha256": "586c399428f985ce140b1e196bd1e80c8cc3fa278e75b538b8d6b6290633fb3c",
+    "sha256": "017a6018f1900f61b66d5a2ea16d094b4dae08ebcd310313e41fe27341c699a7",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/phase2-file-review.json",
+    "previousSha256": "c44291f1046a9323e7cecfa5bee63df5bfded534eb67ee4933ed589d1525cb6c",
+    "sha256": "9ce53afd0a30e8672801d3ed6bf9434a5732d4c991c6a9fa453f8a1fc5dd17df",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/phase2-rule-review.json",
+    "previousSha256": "2a9c5524d6f505070e2e61f313333e02599dd7a23f47b63cf8a6b8c4a1e5ffc4",
+    "sha256": "e4deaf02ef82984c809c80bb62edcfdb832edc7dd13ff3e119f2de8164b34ad2",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/evidence/rule-review.json",
+    "previousSha256": "b04ac9a03a10aa807bc27bed8a73ac468567e8e006df64aca91748126ca23c73",
+    "sha256": "815e8ee3cb7c844bb9956f87660f07693d4296a2c40ee3518c099ef518bc8dcf",
+    "equivalence": true,
+    "method": "parsed JSON deep equality",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/findings.md",
+    "previousSha256": "0b350c8e74e898776cf92e1bd032c4022348047e7fd8ff6197633269354005fe",
+    "sha256": "6d1850b2e2bc1b19490a381b58baa5a92b2a624f579027b87de5061e192a4b2e",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/metrics.md",
+    "previousSha256": "33abbd67a53c599854f2b09975939731bb6bf479224dbcfc23126768ea5d5fbc",
+    "sha256": "bffdf8bbfffbfddd9f5a3d5529704704b83da2e76bb841bd79cc46926fc942af",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/plan.md",
+    "previousSha256": "1cc79d3f6d75651f7dbc3c57e5be1d10db0c39bb27c7e3fe90b27bec67487745",
+    "sha256": "aa8ed324eed75b4392009939d627132953f5a3914c27cb8f5e0492ed868b17c2",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/root-causes.md",
+    "previousSha256": "f735c3828ce310fd986d86e654f352d20f44739aef6f204ddb37f775af37bd67",
+    "sha256": "42c6b172eb5f16a23d3bbeb454b8ac92e48521b8503e89a47a5d445a9ff46804",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/scope.md",
+    "previousSha256": "9e84a86f05d25b576a84c4031ce619af633031cfcc14dbb5e37a4d46d6666fc1",
+    "sha256": "dccd412ab5a0059f3f1f3afd3b2c4066842c05156d9cf5d072e981ae7fc8141a",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  },
+  {
+    "file": "audit/2026-10-31-react/verification.md",
+    "previousSha256": "0de6993ef77894038d11fb61dfcc7f5e875227007b7e81d42fe3611b70605592",
+    "sha256": "b7d0f4ec27f7670c2eee06033b5f42accd9368b218115dee6007bd713ef5e8e0",
+    "equivalence": true,
+    "method": "Markdown AST equality ignoring positions and prose line wrapping",
+    "lastCommit": "444f8b4"
+  }
+]

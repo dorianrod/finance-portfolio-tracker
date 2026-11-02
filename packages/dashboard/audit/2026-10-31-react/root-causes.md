@@ -11,5 +11,4 @@ Implemented/proposed controls must keep three outcomes distinct: invalid/unavail
 
 Remaining proposals: keep a reviewed historical replay corpus in regression tests when adding an observed failure shape; preserve obligation-specific coverage rather than aggregate green commands; inspect opaque builders and local support contracts manually when their responsibilities change. Business ownership cannot be inferred universally from structural assignability, so these are explicit limits rather than a promise of exhaustive automated compliance.
 
-
 The new completeness assertion found an actual previously silent omission: the Storybook catalog test is excluded from tsconfig.app.json and compiled separately. Previous inventory equality and candidate replay compared only the program's included tests; neither reconciled that list with filesystem tests. A dedicated analysis project now includes all 240 source tests, and installed integration explicitly asserts the formerly omitted file is present. Its unchanged code has no domain defaults; this does not invent a fixture defect there.

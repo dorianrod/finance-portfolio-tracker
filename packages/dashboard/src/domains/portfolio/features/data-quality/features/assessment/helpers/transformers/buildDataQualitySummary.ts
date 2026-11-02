@@ -7,6 +7,7 @@ import type { ScopedFundQualityData } from '@/domains/portfolio/features/data-qu
 import type { AccountCoverage } from '@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type'
 import type { AnalysisReliabilityTone } from '@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type'
 import type { QualityThemeId } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type'
+import { countPipelineIssues } from '@/domains/portfolio/features/data-quality/shared/helpers/transformers/countPipelineIssues'
 import type { ManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type'
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { partitionPercentages } from '@/shared/helpers/transformers/partitionPercentages'
@@ -89,11 +90,10 @@ export function buildDataQualitySummary({
     { theme: 'lookthrough', tone: underlyingMetricTone },
   ])
 
-  const scopedPipelineErrorCount = scopedPipelineErrors.filter(
-    (item) => item.level === 'error',
-  ).length
-  const scopedPipelineWarningCount =
-    scopedPipelineErrors.length - scopedPipelineErrorCount
+  const {
+    errorCount: scopedPipelineErrorCount,
+    warningCount: scopedPipelineWarningCount,
+  } = countPipelineIssues(scopedPipelineErrors)
   const portfolioDataTone = pipelineReliabilityTone({
     errorCount: scopedPipelineErrorCount,
     warningCount: scopedPipelineWarningCount,

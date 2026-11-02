@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import { makePipelineError } from '@/domains/portfolio/features/data-quality/features/errors/mocks/pipelineError.mock'
 
-import { ErrorsTab } from './ErrorsTabController.view'
+import { ErrorsTab } from './ErrorsTabController.feature'
 
 afterEach(cleanup)
 
@@ -33,6 +33,8 @@ describe('ErrorsTab', () => {
     )
     expect(screen.queryByRole('row', { name: /Alpha/ })).toBeNull()
     expect(screen.getByRole('row', { name: /Beta/ })).toBeTruthy()
+    expect(screen.getByText('1 error')).toBeTruthy()
+    expect(screen.getByText('1 warning')).toBeTruthy()
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(screen.getByRole('row', { name: /Alpha/ })).toBeTruthy()
     expect(screen.getByRole('row', { name: /Beta/ })).toBeTruthy()
@@ -63,6 +65,7 @@ describe('ErrorsTab', () => {
         .slice(1)
         .map((row) => within(row).getAllByRole('cell')[4].textContent),
     ).toEqual(['Beta', 'Alpha'])
+    expect(screen.getByText('2 errors')).toBeTruthy()
   })
 
   it('renders the empty state without unavailable filter controls', () => {

@@ -8,13 +8,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false }",
     "code": "{ geo: [], secteur: [], currency: [], classe: [], loading: false }",
@@ -61,13 +55,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawAllocationData: {\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
     "code": "{\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
@@ -85,14 +73,7 @@
         "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
       }
     ],
-    "keys": [
-      "rank",
-      "label",
-      "name",
-      "value",
-      "weight",
-      "cumulativeWeight"
-    ],
+    "keys": ["rank", "label", "name", "value", "weight", "cumulativeWeight"],
     "contextual": "CumulativeConcentrationPoint",
     "context": "point: CumulativeConcentrationPoint = {\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
     "code": "{\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
@@ -110,13 +91,7 @@
         "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
       }
     ],
-    "keys": [
-      "geo",
-      "secteur",
-      "currency",
-      "classe",
-      "loading"
-    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
     "contextual": "RawIsinData",
     "context": "rawData: RawIsinData = {\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
     "code": "{\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",

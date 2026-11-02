@@ -18,7 +18,6 @@ All code and rule/config fingerprints used by the preceding architecture decisio
 
 None in phase 1. Semantic interpretation of future new candidates remains a review task; P-002 makes missing or stale reviews fail automatically within the inventory's declared limits. Opaque builders, arbitrary computed keys and noncanonical local support types remain manual limits and are not certified by this gate.
 
-
 ## Phase-2 coverage delta
 
 [Final per-file review](evidence/phase2-file-review.json), [target groups](evidence/phase2-target-groups.json), [110-rule review](evidence/phase2-rule-review.json) and [input deltas](evidence/phase2-input-deltas.json) preserve the original scope and add tsconfig.fixtures.json plus tests/fixtures/ownership-review.json. These are analysis configuration and review data, outside runtime sibling-test obligations. New generic runtime owner fixture-review.mjs has fixture-review.test.mjs; generic collector has its existing strengthened sibling plus installed CLI coverage. Actual source colocation comparison has zero introduced/missing/pending rows.

@@ -7,7 +7,6 @@ import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/co
 import { EvolutionTooltip } from '@/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionTooltip.view'
 import { withPortfolioComposition } from '@/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
@@ -26,13 +25,15 @@ import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-export function EvolutionChart({
+import type { PortfolioCompositionPoint } from './types/portfolioCompositionPoint.type'
+
+export function EvolutionChartView({
   history,
   children,
   title = i18n.t('ui.evolutionchart.portfolioValueOverTime'),
   height = 220,
 }: {
-  history: PortfolioHistoryPoint[]
+  history: PortfolioCompositionPoint[]
   children: ReactNode
   title?: string
   height?: number

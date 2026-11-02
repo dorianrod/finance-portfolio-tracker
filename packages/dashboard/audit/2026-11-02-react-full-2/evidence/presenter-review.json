@@ -1,0 +1,452 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary.ts",
+    "sha256": "5ace3a316d37f85ea81ac24555df59e5fa5ac921fbbea32d7c298ba9be3d4726",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Identified/unresolved/reliable/other-source amounts and confidence limits are independent exposure calculations. Keep tones in presenter. P-003.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useBuildAnalysisReliabilityMetrics.ts",
+    "sha256": "bf9d5c6fc062ef0f9bfa70748de44b8aa34b50947172c8223ed5d00467c0d725",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/helpers/presenters/useCombinedReliabilityPresentation.ts",
+    "sha256": "2590089f3886fdda1b8c712800835f0d8d7d65094470920ac51459bd3bac1af1",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage.ts",
+    "sha256": "505f80a02637da6138fd3acf93176d5de1f836227aa2eea5e00197d4c1ca740c",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation.ts",
+    "sha256": "1309282078f3fecf8ba958b42cfd4c8c6f0af09f2a10af0a053fc9226a5c7ff1",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/helpers/presenters/useBuildDataQualityViewModel.ts",
+    "sha256": "a39528ced8ce310f3cbf3b1ce1988ab6352e0f31d4ccefceecf0872e279bd9d1",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "buildPipelineTheme counts canonical severities also used by the independent quality summary. Keep priority/theme mapping. P-002.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/helpers/presenters/dataQualityToneStyles.ts",
+    "sha256": "b7d2b7c5e5a35c2081fce28422f8e4a25d456e2366f2d6d1823fb15672fb8a52",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/helpers/presenters/buildPipelineErrorsViewModel/useBuildPipelineErrorsViewModel.ts",
+    "sha256": "ec549135cde687048a850170984428997d82c7ba8b8f4d66d2137eb95b0773a5",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Source severity statistics are independent of local UI row filtering/sorting; share the transformer. P-002.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain.ts",
+    "sha256": "aaeee1c7b47f481c5c0f75964722c311eef97e2aeaa636e3e21528e8f0658f41",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.ts",
+    "sha256": "1b891477ac855d18394781b980f87d082c6d649565179b57f9a6fab381f292d5",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Chooses/group tails for chart series and maps prepared allocation snapshots to aligned percentage stacks. Totals select visible series; no independent reporting total is exposed.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionRow/helpers/presenters/getFilteredPositionShare.ts",
+    "sha256": "153b94e22c8ed2ad6c4064f17af6e81099746c5d2b89b9ed65a452fef7b64b5a",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Maps supplied filtered/total values to displayed proportion and clamped bar width; no domain aggregation or source acquisition.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/PieLabel/helpers/presenters/getPieLabelPosition.ts",
+    "sha256": "6279fb2fd651c18a693a928ca60b2e280717ada956208c83908e92f5add32bf3",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/buildConcentrationChartRows.ts",
+    "sha256": "c0c8f04961533ff1b74c1a33d00087203a7458231fb5017b9398b253a95066df",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Adjacent-snapshot threshold deltas are domain statistics. Keep timestamp/chart row adaptation; preserve nullable semantics. P-003.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/concentrationPlayback/nextPlaybackIndex.ts",
+    "sha256": "532615b4b782e070e0b2753fa6bf07081144e40f901aa3f248c37baa60c4daff",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/interpolateRankedBars.ts",
+    "sha256": "eb3e2d58cfa09ffb999b7852db2982fa6974068280ba0fe39324f4a798996fc7",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/shouldAnimateConcentration.ts",
+    "sha256": "51019bef6bd125e0c13de66b911abedcaad97270f609eb8816c1e2b03fb5abd5",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/helpers/presenters/cumulativeConcentrationCrosshair.ts",
+    "sha256": "66a83c69be44fe10ac783fc71983cabb361e9028593fb2efa066f6ca03bdd912",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/helpers/presenters/useConcentrationDescriptions.ts",
+    "sha256": "960faa1bfca6cea7e18e6196c175d3806b63019fe83159e6b387e257c0f868ec",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/holdingLabelTick/helpers/presenters/getHoldingLabelGeometry.ts",
+    "sha256": "2f01a4f39bef1308567d81ef4c270ebda5e6420758609f6d33f8e0138f0e209c",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/helpers/presenters/buildExposureSourceRows.ts",
+    "sha256": "a80bd24804e5da03fe34bd5a68b6a0a15269f5be4154c8e8a536864a2486f7c7",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel.ts",
+    "sha256": "1f54121d9c13c3008f165dff502920a4d28b838886a2ebe8d1548456480bdad3",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Composes buildIssuerExposures; screen query/sort/expansion yields UI rows, displayed cardinalities and source rows. Preserve table-specific selection and expansion, not a new business aggregation owner.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/helpers/presenters/selectRenderableAllocationCharts.ts",
+    "sha256": "d85711ba2c159dca79838a882ed531b514c11fc2d4c6e7436018153c5ccc8cee",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain.ts",
+    "sha256": "2353158a27c42e688f8edfc9195bdf14d52d73054c0e562d5f551a293ad73f3e",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone.ts",
+    "sha256": "55a4aadd9a6ecff72535c97681e80ed058dfd12e8e0d468e9c87f68add333312",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/resolvePositionPreview.ts",
+    "sha256": "6753ad0f85378e87a96bed147165b2be5a13828a57276c35aef2146552f4a535",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Maps selection to preview UI union with anchor geometry; domain identity/operations/status are delegated to transformers.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone.ts",
+    "sha256": "2eff8dc5124f852aea557aa7da6427f1b3920e78bbb372b865c471b92f8c4e96",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone.ts",
+    "sha256": "70d56b14266d1fb2edd3544eb64670e286d8d218bcfdcbf150bf301b9d7771a5",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewConcentrationRows.ts",
+    "sha256": "28bfde2e2eabe5d283661e925fc8ade971d31bd49bf31bf07218859b6549e233",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Selects visible top rows, pairs prior supplied weights and chooses a shared bar scale; comparison calculations are already supplied.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/helpers/presenters/buildOverviewDriverPresentation.ts",
+    "sha256": "788a36a2065dbe2d3aac6105f93ac5a57d2a187ede1b982c33bfc78be754d4c5",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Current/previous gross monetary changes are independent financial calculations. Keep rows/tone/copy in presenter. P-003.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/PerformanceRankingLists/helpers/presenters/getIrrBarShare.ts",
+    "sha256": "66ea11384243ac2c7fc9decf99845f1b56903d2b8550364ab80dfc7c13111ef4",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/PerformanceRankingLists/performanceRankingLists/helpers/presenters/getIrrListScale.ts",
+    "sha256": "2785e5188b1fae64de8c50c236c07b7b25b99572510848c263d0ecdf885d1abd",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/TriChart/helpers/presenters/buildTriChartData.ts",
+    "sha256": "cad93f40ab844545e14d4c45a7033729b3d28a9ce8e479bec37cee8bdf572926",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Creates backfill/continuity fields for unavailable leading chart series; does not recompute financial returns.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/filterSummariesForTab.ts",
+    "sha256": "0d11fb8ae5902346c4b37d224e3c4ae5722d37d51f28434421d5c8bf3a81f167",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/useFilterSummaries.ts",
+    "sha256": "997c40a0a8647c78785d20414268e76624c01a8aa73668ebb91eb975c233bf67",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Composes account/date/operation formatters into filter summary UI items; display visibility remains presentation.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/helpers/presenters/toDateInputValue.ts",
+    "sha256": "cdf14be2f62409542069248c2377fffa51baaa83ae187349a289d8c0546004bd",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/buildAccountTypePieData.ts",
+    "sha256": "b8c84389dd293d4698bfc4d10f77f867d27cd5c46d3efb2ef6d4ff24fd84a99a",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/computeAccountTypeTooltipMetrics.ts",
+    "sha256": "50b6178b30576246f6aac331047361a4b1d74d4a31421eb47e3a54990072f211",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Extracts supplied payload metrics and precomputed portfolio denominator; local display ratios/fallback extraction preserve the settled prepared-account-chart contract.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/getAccountTypeLeaderLine.ts",
+    "sha256": "5a311ba7d398a78d588790a4021ac191a8a70f97398687871bcd01046a3c4e09",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/getAccountTypeSplitRadius.ts",
+    "sha256": "51939576e67cec19411a9f747910480eb12dc56d35c32eb2d7a8f19a3a4970d3",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/resolveAccountTypeLabelPositions.ts",
+    "sha256": "e2fc19abe7972ecb92c376a28acb96a9c9f2a07ddd9c98cee89752f5a9a0de0e",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Computes angular/coordinate placement and overlap avoidance; the visible-data sum is a geometry denominator rather than a reporting total.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/buildAccountTypeTooltipData.ts",
+    "sha256": "4bd230c01aa12901f87992665637c47fda99a5410570420d8d62d2a15252aa86",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Extracts prepared snapshot total and library-visible account rows; ratios adapt supplied values for tooltip display, without aggregating the reporting denominator.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone.ts",
+    "sha256": "8824ec62fe7bdeb86b5e6f3dc9d48dec00c453985e79a1d94a0daa9e5d0e5d9b",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/withAccountTypeShares.ts",
+    "sha256": "e136b1792e857a1f746e7494dd540960f97a139fa6272175c2e06fa45102da10",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Normalizes supplied chart values into stack geometry after withAccountTypeHistoryTotals has prepared the reporting data.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/computePortfolioComposition.ts",
+    "sha256": "c995f396a696f20951f9e948ece7dee476948edfafe2b1228fc1fe12aadc3718",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Monetary total cost + gain and attribution are derived domain data; chart/tooltip views invoke them. P-001.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition.ts",
+    "sha256": "881499f94e975e7b9361f163249045b78136465fbe3bd534918016d6e1aebdcd",
+    "status": "manually reviewed",
+    "action": "fix",
+    "finding": "F-001",
+    "responsibility": "Chart key adaptation is visual, but calls F-001 domain calculator; move execution before view rendering. P-001.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/calculateYearLabelLayout.ts",
+    "sha256": "39dd4eec51f68b0ea03a4914f9dc512ec9ac3bf8086abb0d4d5b7a43db57f0f3",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Computes label coordinates/collision layout from explicit chart dimensions and observations.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/helpers/presenters/getYearLabelPosition.ts",
+    "sha256": "feeaf66387f2ad4825a95b4d133b8ece87491240ee2b50706aac993426227b2c",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/AllocationCategory/helpers/presenters/getAllocationTone.ts",
+    "sha256": "d1658d626c17f0a664906b888df3f3773c0502b324f8c8ec275d6fed2fd7c1ff",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/helpers/presenters/useFilterScopeBadges.ts",
+    "sha256": "f8b4f950a6f021427cfeb4c7a7a687f217a57ae58c908cb67b6d3c0482869a85",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Composes existing date/account formatters into screen scope narratives and tones; no independent financial statistic or reusable domain-label formatter replaces those owners.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone.ts",
+    "sha256": "be074a60018210d4e8d9beddf6c2e4350e58865ec251c1021cb3b816dc64c3ec",
+    "status": "manually reviewed",
+    "action": "keep",
+    "finding": null,
+    "responsibility": "Pure visual geometry, scale, semantic tone, animation/control state, library payload adaptation or composition of supplied display values; no acquisition, independent business metric or reusable text conversion introduced.",
+    "evidence": "semantic-review.md#presenters-and-financial-calculations"
+  }
+]

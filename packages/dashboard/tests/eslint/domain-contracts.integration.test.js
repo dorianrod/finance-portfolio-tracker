@@ -91,6 +91,13 @@ describe('domain boundary compiler contracts', () => {
       'export const props: Parameters<typeof AccountTypeHistoryChartView>[0] = {data: [{date: new Date("2026-01-31"), values: {Savings: 100}, total: 100, shares: [100]}], accountTypes: ["Savings"], typeCategories: {}, children: null}',
       2322,
     ],
+    [
+      'prepared evolution metrics',
+      `import {EvolutionChartView} from '${join(directory, 'src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view')}'; import {makePortfolioHistoryPoint} from '${join(directory, 'src/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock')}'`,
+      'export const props: Parameters<typeof EvolutionChartView>[0] = {history: [makePortfolioHistoryPoint()], children: null}',
+      'export const props: Parameters<typeof EvolutionChartView>[0] = {history: [{date: makePortfolioHistoryPoint().date, composition: {cost: 80, gain: 20, total: 100, costShare: 80, gainShare: 20}}], children: null}',
+      2322,
+    ],
   ])(
     'checks %s with the application compiler',
     (_name, imports, invalid, valid, expectedCode = 2322) => {

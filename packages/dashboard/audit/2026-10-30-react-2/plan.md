@@ -88,7 +88,6 @@ The user's prevention follow-up promotes the former optional sibling-presence in
 
 The final scope adds two read-only ignore-policy inputs (.gitignore and packages/dashboard/.gitignore) to the original 1,316-file inventory; evidence/files-initial.json preserves the original list. No original target was removed. F-002 was added after completing the fixture candidate investigation; no unresolved candidate is hidden as a follow-up.
 
-
 ## Verification and current outcome
 
 All P-001–P-006 obligations meet I-001–I-009. [Verification](verification.md#implementation-checks) preserves baseline, intermediate failures and final gates. Runtime application code, eight architecture decisions and 142 existing exception directives are unchanged. No new ignore, lowered severity, warning headroom, commit or remote write was introduced.

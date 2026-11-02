@@ -10,13 +10,13 @@ baseline source. Preserve that initial snapshot and report the amended baseline
 as **99.31/100**, rather than pretending the earlier diagnosis was complete. Final score after verified resolution: **100/100**.
 
 | Actual impact | Amended baseline violation families | Final open | Resolved |
-| --- | ---: | ---: | ---: |
-| CRITICAL | 0 | 0 | 0 |
-| HIGH | 0 | 0 | 0 |
-| MEDIUM-HIGH | 1 | 0 | 1 |
-| MEDIUM | 0 | 0 | 0 |
-| LOW-MEDIUM | 0 | 0 | 0 |
-| LOW | 0 | 0 | 0 |
+| ------------- | ----------------------------------: | ---------: | -------: |
+| CRITICAL      |                                   0 |          0 |        0 |
+| HIGH          |                                   0 |          0 |        0 |
+| MEDIUM-HIGH   |                                   1 |          0 |        1 |
+| MEDIUM        |                                   0 |          0 |        0 |
+| LOW-MEDIUM    |                                   0 |          0 |        0 |
+| LOW           |                                   0 |          0 |        0 |
 
 Confirmed affected application files at the amended baseline: one. Prevention-gap
 families: three, reported separately from scored violations. F-001 includes the

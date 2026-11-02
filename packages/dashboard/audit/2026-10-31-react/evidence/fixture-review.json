@@ -9,10 +9,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextualType": "SetStateAction<AllocationFilter | null>",
     "context": "CallExpression",
     "code": "{\n      type: 'geo',\n      value: 'France',\n    }",
@@ -30,10 +27,7 @@
         "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
       }
     ],
-    "keys": [
-      "account",
-      "period"
-    ],
+    "keys": ["account", "period"],
     "contextualType": "FilterScopeSpec",
     "context": "JsxExpression",
     "code": "{ account: 'filterable', period: 'range' }",
@@ -51,10 +45,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextualType": "PipelineIssueStatus",
     "context": "CallExpression",
     "code": "{ errorCount: 0, warningCount: 0 }",
@@ -72,10 +63,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextualType": "PipelineIssueStatus",
     "context": "CallExpression",
     "code": "{ errorCount: 0, warningCount: 2 }",
@@ -93,10 +81,7 @@
         "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
       }
     ],
-    "keys": [
-      "errorCount",
-      "warningCount"
-    ],
+    "keys": ["errorCount", "warningCount"],
     "contextualType": "PipelineIssueStatus",
     "context": "CallExpression",
     "code": "{ errorCount: 1, warningCount: 0 }",
@@ -114,10 +99,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextualType": "AllocationFilter",
     "context": "CallExpression",
     "code": "{\n          type: 'geo',\n          value: category,\n        }",
@@ -135,10 +117,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextualType": "AllocationFilter",
     "context": "CallExpression",
     "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
@@ -156,10 +135,7 @@
         "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
       }
     ],
-    "keys": [
-      "type",
-      "value"
-    ],
+    "keys": ["type", "value"],
     "contextualType": "AllocationFilter | null",
     "context": "CallExpression",
     "code": "{ type: 'geo', value: 'france' }",
@@ -203,10 +179,7 @@
         "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "accountTypes"
-    ],
+    "keys": ["accounts", "accountTypes"],
     "contextualType": "PerformanceContributionFilters",
     "context": "CallExpression",
     "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
@@ -224,10 +197,7 @@
         "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "accountTypes"
-    ],
+    "keys": ["accounts", "accountTypes"],
     "contextualType": "PerformanceContributionFilters",
     "context": "CallExpression",
     "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
@@ -245,11 +215,7 @@
         "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
       }
     ],
-    "keys": [
-      "current",
-      "previous",
-      "changePct"
-    ],
+    "keys": ["current", "previous", "changePct"],
     "contextualType": "YearOverYearMetric",
     "context": "JsxExpression",
     "code": "{ current: 100, previous: 80, changePct: 25 }",
@@ -267,11 +233,7 @@
         "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
       }
     ],
-    "keys": [
-      "current",
-      "previous",
-      "changePct"
-    ],
+    "keys": ["current", "previous", "changePct"],
     "contextualType": "YearOverYearMetric",
     "context": "JsxExpression",
     "code": "{ current: null, previous: null, changePct: null }",
@@ -289,10 +251,7 @@
         "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
       }
     ],
-    "keys": [
-      "accounts",
-      "history"
-    ],
+    "keys": ["accounts", "history"],
     "contextualType": null,
     "context": "VariableDeclaration",
     "code": "{\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",

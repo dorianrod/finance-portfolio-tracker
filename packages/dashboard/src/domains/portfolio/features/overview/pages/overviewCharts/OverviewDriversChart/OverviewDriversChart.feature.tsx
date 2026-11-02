@@ -2,7 +2,7 @@ import type { OverviewComparison } from '@/domains/portfolio/features/overview/h
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
 import i18n from '@/i18n/i18n'
 
-import { EmptyChart } from './EmptyChart.feature'
+import { EmptyChart } from '../EmptyChart.feature'
 import { buildOverviewDriverPresentation } from './helpers/presenters/buildOverviewDriverPresentation'
 import { OverviewDriversChartView } from './OverviewDriversChart.view'
 
