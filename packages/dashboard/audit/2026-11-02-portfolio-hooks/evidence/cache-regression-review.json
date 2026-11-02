@@ -1,0 +1,26 @@
+[
+  {
+    "name": "allocation-empty",
+    "file": "src/domains/portfolio/shared/services/usePortfolioAllocationData.ts",
+    "change": "{ ...allocations, loading: isPending } -> { ...EMPTY_ALLOCATIONS, loading: isPending }",
+    "command": "npx vitest run src/domains/portfolio/shared/services/usePortfolioAllocationData.test.tsx",
+    "exit": 1,
+    "summary": [
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 4 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      " Test Files  1 failed (1)",
+      "      Tests  4 failed | 2 passed (6)"
+    ]
+  },
+  {
+    "name": "options-frozen",
+    "file": "src/domains/portfolio/shared/services/usePortfolioFilterOptions.ts",
+    "change": "[\n      buildPortfolioFilterOptions,\n      dashboard?.accountLabels,\n      dashboard?.positions,\n    ] -> []",
+    "command": "npx vitest run src/domains/portfolio/shared/services/usePortfolioFilterOptions.test.tsx",
+    "exit": 1,
+    "summary": [
+      "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af",
+      " Test Files  1 failed (1)",
+      "      Tests  3 failed (3)"
+    ]
+  }
+]
