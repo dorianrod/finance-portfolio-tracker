@@ -11,6 +11,7 @@
     "format": "prettier --write . && npm run lint -- --fix && prettier --write .",
     "format:check": "prettier --check . && npm run lint",
     "lint": "react-best-practices-lint --max-warnings 114",
+    "lint:counts": "react-best-practices-lint-counts",
     "lint:profile": "react-best-practices-profile",
     "audit:i18n": "eslint src --quiet && react-best-practices-i18n --catalog src/i18n/locales/en.json",
     "typecheck": "tsc -b --pretty false",

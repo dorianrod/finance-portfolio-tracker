@@ -11,6 +11,7 @@
   },
   "bin": {
     "react-best-practices-lint": "scripts/lint.mjs",
+    "react-best-practices-lint-counts": "scripts/lint-counts.mjs",
     "react-best-practices-profile": "scripts/profile-eslint.mjs",
     "react-best-practices-architecture": "scripts/audit-architecture.mjs",
     "react-best-practices-cycles": "scripts/import-cycles.mjs",

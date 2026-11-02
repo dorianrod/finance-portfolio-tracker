@@ -134,6 +134,29 @@ or files. Its timings and error-based exit do not enforce the warning ceiling.
 Runners, profiling and regression suites support the mapped checks; they do not
 create additional catalog rules or independent audit priorities.
 
+Use `react-best-practices-lint-counts [--root <application>] [--json] [paths...]`
+to count diagnostics by ESLint rule. Expose it through a consuming-package script
+such as `"lint:counts": "react-best-practices-lint-counts"`. Without paths it
+analyzes the whole application with its effective configuration, ignores and
+inline suppressions, without caching or fixing files. Paths resolve from the
+selected root, which defaults to the calling directory.
+
+The table separates active errors, active warnings and suppressed diagnostics;
+its file column counts distinct affected files per rule. JSON additionally
+separates suppressed errors from suppressed warnings. Suppressed quantities count
+original diagnostics, not ignore directives: one directive can suppress several
+diagnostics or rules. Tracking warnings remain active warnings, and suppressed
+diagnostics never add to the active totals or warning budget. Diagnostics without
+a rule ID, including parsing and unused-disable errors, retain a null rule ID in
+JSON and appear as `(no rule)` in the table. Rows sort by active errors, active
+warnings, suppressed diagnostics, then rule name.
+
+The report exits 1 for active errors, 2 for invalid options or unavailable lint
+inputs, and 0 otherwise. Warnings alone do not fail this measurement command;
+the normal full-project lint command still enforces the reviewed warning ceiling
+and checks the packaged tooling. A diagnostic count is not a semantic audit or
+renewed approval of existing exceptions.
+
 Run the generic suite through the consuming application's Vitest installation:
 
 ```sh

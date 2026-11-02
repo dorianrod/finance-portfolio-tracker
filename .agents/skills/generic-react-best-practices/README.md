@@ -16,6 +16,7 @@ Rules with a `<category>-vercel-` id adapt selected Vercel guidance to this cata
 - `eslint-rules/` - Packaged custom ESLint plugin, supporting analyses and generic unit tests; `index.js` exports the plugin
 - `eslint.config.mjs` - `createReactConfig` consuming-project preset and the default lint configuration for the tooling itself
 - `scripts/` - Packaged lint runner, profiler, architecture inventory, cycle checker, translation catalog checker and their generic regression tests
+- `scripts/lint-counts.mjs` - Per-rule diagnostic counts with separate active/suppressed totals and optional JSON; see [tool usage](references/project-enforcement.md#runners-cache-and-regression-checks)
 - `package.json` - Local npm package, exports, command entry points and peer dependency contract
 - `vitest.config.mjs` - Generic tooling test suite, independent of a consuming application's source and setup files
 - `rules/_routing.md` - Focused observable signals for business architecture and UI boundaries; the Quick Reference covers all other topics

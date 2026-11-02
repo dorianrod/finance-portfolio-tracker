@@ -30,6 +30,8 @@ Generic means reusable across applications adopting this stack and its conventio
 
 **Bundled analysis tools:** This skill packages the catalog, custom ESLint plugin, reusable configuration, analysis scripts and their generic regression tests. ESLint and scripts provide partial detection or review candidates for the rules. Rule identifiers prefixed with `local/` name the packaged plugin's checks under the configured `local` namespace. Use the [installation and rule-to-tool bindings](references/project-enforcement.md) to enable them in a consuming application. Application roots, reference catalogs, warning ceilings and project integration tests remain with that application.
 
+For diagnostic quantities by rule, use the [packaged lint-counts command](references/project-enforcement.md#runners-cache-and-regression-checks). It separates active errors/warnings from suppressed diagnostics and supports JSON output; the normal lint command remains the warning-budget gate.
+
 This catalog is the single source for our React conventions, including business capability boundaries, strict shared UI composition, semantic colors, centralized accessibility and public API maintenance.
 
 Examples use a generic business vocabulary: main domain `sales` (`orders`, `invoices`, `opportunities`, `shared`), single-level domains `contracts` and `projects`, main domain `directory` (`contacts`, `accounts`, `teams`). Map them to your own domains.
