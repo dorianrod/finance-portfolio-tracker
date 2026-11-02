@@ -13,7 +13,10 @@ const csvResponse = (text = 'id\nposition-1\n') =>
 
 describe('parseCsv', () => {
   beforeEach(clearCsvCache)
-  afterEach(() => vi.unstubAllGlobals())
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
+  })
 
   it('shares one network request for concurrent consumers of the same URL', async () => {
     const fetchMock = vi.fn(async () => csvResponse())
@@ -81,6 +84,38 @@ describe('parseCsv', () => {
     ).resolves.toEqual([{ id: 'position-1' }])
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
+
+  it('skips checks but preserves row conversion when CSV validation is disabled', async () => {
+    vi.stubEnv('DEBUG', 'false')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        csvResponse('id,amount,extra\nposition-1,-2.5,ignored\n'),
+      ),
+    )
+    const schema = yup.object({
+      id: yup.string().required(),
+      amount: yup.number().positive().required(),
+    })
+
+    await expect(parseCsv('/data/positions.csv', schema)).resolves.toEqual([
+      { id: 'position-1', amount: -2.5 },
+    ])
+  })
+
+  it.each(['true', 'false'])(
+    'keeps transport errors visible with DEBUG=%s',
+    async (setting) => {
+      vi.stubEnv('DEBUG', setting)
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => new Response(null, { status: 503 })),
+      )
+      await expect(
+        parseCsv('/data/positions.csv', CSV_ROW_SCHEMA),
+      ).rejects.toThrow('HTTP 503')
+    },
+  )
 
   it('accepts an absent optional file without hiding other failures', async () => {
     vi.stubGlobal(

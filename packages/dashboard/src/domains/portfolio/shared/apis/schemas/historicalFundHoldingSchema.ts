@@ -1,11 +1,11 @@
-import { mixed, type Schema } from 'yup'
+import { mixed, object, type Schema } from 'yup'
 
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import { readCsvValue } from '@/shared/csv/csvData/readCsvValue'
 import { CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/calendarDateSchema'
 import { OPTIONAL_CALENDAR_DATE_SCHEMA } from '@/shared/schemas/calendarDate/optionalCalendarDateSchema'
 
 import { FUND_HOLDING_SCHEMA } from './fundHoldingSchema'
-import { RAW_FUND_HOLDING_SCHEMA } from './fundHoldingsCsvSchemas/rawFundHoldingSchema'
 import { requiredText } from './fundHoldingsCsvSchemas/requiredText'
 /*
  * @architecture-decision shared-historical-fund-response
@@ -18,11 +18,9 @@ import { requiredText } from './fundHoldingsCsvSchemas/requiredText'
 export const HISTORICAL_FUND_HOLDING_SCHEMA: Schema<HistoricalFundHolding> =
   mixed<HistoricalFundHolding>()
     .transform((_value: unknown, original: unknown): HistoricalFundHolding => {
-      const row = RAW_FUND_HOLDING_HISTORY_SCHEMA.validateSync(original, {
-        stripUnknown: true,
-      })
+      const row = readCsvValue(RAW_FUND_HOLDING_HISTORY_SCHEMA, original)
       return {
-        ...FUND_HOLDING_SCHEMA.validateSync(row),
+        ...readCsvValue(FUND_HOLDING_SCHEMA, original),
         effectiveDate: row.effective_date,
         historySnapshotId: row.history_snapshot_id,
         capturedAt: row.captured_at,
@@ -30,7 +28,8 @@ export const HISTORICAL_FUND_HOLDING_SCHEMA: Schema<HistoricalFundHolding> =
     })
     .defined()
 
-const RAW_FUND_HOLDING_HISTORY_SCHEMA = RAW_FUND_HOLDING_SCHEMA.shape({
+// Validate the history metadata separately so base holding fields are validated only once.
+const RAW_FUND_HOLDING_HISTORY_SCHEMA = object({
   effective_date: CALENDAR_DATE_SCHEMA.required(),
   history_snapshot_id: requiredText().required(),
   captured_at: OPTIONAL_CALENDAR_DATE_SCHEMA,

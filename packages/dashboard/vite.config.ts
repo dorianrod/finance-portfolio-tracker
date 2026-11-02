@@ -59,6 +59,7 @@ export default defineConfig({
     tailwindcss(),
     ...(process.env['VITE_STATIC_DEMO'] === 'true' ? [] : [serveFinanceData()]),
   ],
+  worker: { format: 'es' },
   server: {
     proxy: {
       '/api': 'http://127.0.0.1:8788',

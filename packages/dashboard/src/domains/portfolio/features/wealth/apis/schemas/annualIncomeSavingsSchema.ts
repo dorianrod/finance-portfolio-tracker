@@ -1,15 +1,17 @@
 import { array, mixed, type Schema } from 'yup'
 
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
+import { readCsvValue } from '@/shared/csv/csvData/readCsvValue'
 
 import { RAW_ANNUAL_INCOME_SAVINGS_SCHEMA } from './rawAnnualIncomeSavingsSchema'
 export const ANNUAL_INCOME_SAVINGS_SCHEMA: Schema<AnnualIncomeSavingsPoint[]> =
   mixed<AnnualIncomeSavingsPoint[]>()
     .transform(
       (_value: unknown, original: unknown): AnnualIncomeSavingsPoint[] => {
-        const rows = array(RAW_ANNUAL_INCOME_SAVINGS_SCHEMA)
-          .defined()
-          .validateSync(original, { stripUnknown: true })
+        const rows = readCsvValue(
+          array(RAW_ANNUAL_INCOME_SAVINGS_SCHEMA).defined(),
+          original,
+        )
         return rows
           .map((row) => ({
             year: row.year,

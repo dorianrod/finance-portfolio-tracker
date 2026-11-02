@@ -2,12 +2,11 @@ import { mixed, type Schema } from 'yup'
 
 import { RAW_FUND_HOLDING_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingSchema'
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
+import { readCsvValue } from '@/shared/csv/csvData/readCsvValue'
 
 export const FUND_HOLDING_SCHEMA: Schema<FundHolding> = mixed<FundHolding>()
   .transform((_value: unknown, original: unknown): FundHolding => {
-    const row = RAW_FUND_HOLDING_SCHEMA.validateSync(original, {
-      stripUnknown: true,
-    })
+    const row = readCsvValue(RAW_FUND_HOLDING_SCHEMA, original)
     return {
       parentIsin: row.parent_isin,
       parentTicker: row.parent_ticker,

@@ -79,6 +79,25 @@ Python API used to recalculate portfolio IRR for the selected accounts. The
 API delegates to finance-pipeline's TRI domain code; the browser does not
 implement XIRR itself.
 
+### CSV validation
+
+CSV validation is enabled by default. To skip Yup validation tests while retaining
+CSV parsing, field mapping, date/number/boolean conversion and unknown-field removal,
+set `DEBUG=false`:
+
+```bash
+DEBUG=false npm run dev
+DEBUG=false npm run build
+```
+
+You can also put `DEBUG=false` in `packages/dashboard/.env.local`.
+`.env.example` is a template; Vite does not load it.
+Only the exact value `false` disables validation. Restart Vite after changing the
+setting; production bundles require a rebuild. The same setting applies to fund
+sources processed in the worker. HTTP errors, malformed CSV and values that Yup
+cannot cast still fail; the flag skips schema tests rather than data conversion.
+JSON API response validation is unaffected.
+
 ### Checks
 
 ```bash
