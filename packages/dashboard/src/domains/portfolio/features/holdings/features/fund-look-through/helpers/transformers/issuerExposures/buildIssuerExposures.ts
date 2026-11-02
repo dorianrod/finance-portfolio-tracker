@@ -9,7 +9,6 @@ import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Canonical issuers and source funds share one accumulation pass; splitting would distribute the same mutable ledger.
 export function buildIssuerExposures(
   positions: PositionRow[],
   holdings: FundHolding[],
@@ -46,10 +45,7 @@ export function buildIssuerExposures(
       .filter(Boolean),
   )
   const total = applicablePositions.reduce(
-    (sum, position) =>
-      position.status === 'active'
-        ? sum + Math.max(0, position.total_value ?? 0)
-        : sum,
+    (sum, position) => sum + activePositionValue(position),
     0,
   )
 
@@ -85,31 +81,7 @@ export function buildIssuerExposures(
   }
 
   for (const position of applicablePositions) {
-    const positionValue =
-      position.status === 'active' ? Math.max(0, position.total_value ?? 0) : 0
-    if (positionValue <= 0) continue
-    const fundRows =
-      byParent.get(position.isin) ?? byParent.get(position.ticker)
-    if (fundRows != null && fundRows.length > 0) {
-      const totalWeight = fundRows.reduce((sum, row) => sum + row.weight, 0)
-      const scale = totalWeight > 1 ? 1 / totalWeight : 1
-      for (const holding of fundRows) {
-        const issuer = canonicalIssuer(holding.issuerId || holding.holdingId)
-        add(
-          issuer.id,
-          issuer.name || holding.issuerName || holding.holdingName,
-          holding.holdingId,
-          holding.holdingName,
-          positionValue * holding.weight * scale,
-          position.name,
-        )
-      }
-      continue
-    }
-    const directId = position.isin || position.ticker
-    if (directId && !compositeIds.has(directId) && !isFundPosition(position)) {
-      add(directId, position.name, directId, position.name, positionValue, null)
-    }
+    addPositionExposures(position, byParent, compositeIds, canonicalIssuer, add)
   }
 
   return [...issuers.values()]
@@ -180,4 +152,76 @@ function buildSources(funds: Map<string | null, number>): ExposureSource[] {
   return [...funds]
     .map(([fund, value]) => ({ fund, value }))
     .toSorted((a, b) => b.value - a.value)
+}
+
+type AddExposure = (
+  issuerId: string,
+  issuerName: string,
+  securityId: string,
+  securityName: string,
+  value: number,
+  fundName: string | null,
+) => void
+type IssuerResolver = ReturnType<typeof createCanonicalIssuerResolver>
+
+function activePositionValue(position: PositionRow) {
+  return position.status === 'active'
+    ? Math.max(0, position.total_value ?? 0)
+    : 0
+}
+
+function isDirectSecurity(
+  id: string,
+  position: PositionRow,
+  compositeIds: Set<string>,
+) {
+  return Boolean(id) && !compositeIds.has(id) && !isFundPosition(position)
+}
+
+function addPositionExposures(
+  position: PositionRow,
+  byParent: Map<string, FundHolding[]>,
+  compositeIds: Set<string>,
+  canonicalIssuer: IssuerResolver,
+  add: AddExposure,
+) {
+  const positionValue = activePositionValue(position)
+  if (positionValue <= 0) return
+  const fundRows = byParent.get(position.isin) ?? byParent.get(position.ticker)
+  if (fundRows != null && fundRows.length > 0) {
+    addFundIssuerExposures(
+      fundRows,
+      positionValue,
+      position.name,
+      canonicalIssuer,
+      add,
+    )
+    return
+  }
+  const directId = position.isin || position.ticker
+  if (isDirectSecurity(directId, position, compositeIds)) {
+    add(directId, position.name, directId, position.name, positionValue, null)
+  }
+}
+
+function addFundIssuerExposures(
+  fundRows: FundHolding[],
+  positionValue: number,
+  fundName: string,
+  canonicalIssuer: IssuerResolver,
+  add: AddExposure,
+) {
+  const totalWeight = fundRows.reduce((sum, row) => sum + row.weight, 0)
+  const scale = totalWeight > 1 ? 1 / totalWeight : 1
+  for (const holding of fundRows) {
+    const issuer = canonicalIssuer(holding.issuerId || holding.holdingId)
+    add(
+      issuer.id,
+      issuer.name || holding.issuerName || holding.holdingName,
+      holding.holdingId,
+      holding.holdingName,
+      positionValue * holding.weight * scale,
+      fundName,
+    )
+  }
 }

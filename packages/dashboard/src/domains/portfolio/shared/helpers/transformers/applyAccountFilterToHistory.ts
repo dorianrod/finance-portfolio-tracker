@@ -6,7 +6,6 @@ import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPositio
 // When an account filter is active, the portfolio-wide history series is
 // replaced with one rebuilt from raw per-account position snapshots
 // restricted to the selected accounts.
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Selected-account values and cost basis reconstruct one fallback history series with explicitly unavailable IRR.
 export function applyAccountFilterToHistory(
   allPositionRows: RawPositionRow[],
   enrichedHistory: PortfolioHistoryPoint[],
@@ -17,9 +16,7 @@ export function applyAccountFilterToHistory(
   const byDate = new Map<number, { tv: number; cb: number; ug: number }>()
   for (const p of allPositionRows) {
     if (!accounts.has(accountFilterId(p))) continue
-    const tv = p.total_value ?? 0
-    const cb = (p.quantity ?? 0) * (p.avg_buy_price ?? 0)
-    const ug = p.unrealized_gain ?? 0
+    const { tv, cb, ug } = positionHistoryValues(p)
     const cur = byDate.get(p.snapshot_date.getTime()) ?? { tv: 0, cb: 0, ug: 0 }
     byDate.set(p.snapshot_date.getTime(), {
       tv: cur.tv + tv,
@@ -42,4 +39,12 @@ export function applyAccountFilterToHistory(
       tri_rolling_3y: null,
       total_broker_cash: 0,
     }))
+}
+
+function positionHistoryValues(position: RawPositionRow) {
+  return {
+    tv: position.total_value ?? 0,
+    cb: (position.quantity ?? 0) * (position.avg_buy_price ?? 0),
+    ug: position.unrealized_gain ?? 0,
+  }
 }

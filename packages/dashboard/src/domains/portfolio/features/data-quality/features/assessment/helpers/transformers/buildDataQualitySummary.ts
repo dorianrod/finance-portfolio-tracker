@@ -12,7 +12,6 @@ import type { ManualPriceOverride } from '@/domains/portfolio/features/data-qual
 import type { PipelineError } from '@/domains/portfolio/features/data-quality/shared/types/pipelineError.type'
 import { partitionPercentages } from '@/shared/helpers/transformers/partitionPercentages'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; This joins classification, look-through and pipeline reliability; tone policies and display metrics are delegated to their existing helpers.
 export function buildDataQualitySummary({
   allocationLoading,
   coverage,
@@ -21,66 +20,19 @@ export function buildDataQualitySummary({
   scopedManualPriceOverrides,
   scopedPipelineErrors,
 }: BuildDataQualitySummaryInput) {
-  const classificationMappedValue = coverage.reduce(
-    (sum, item) => sum + item.allocated,
-    0,
-  )
-  const classificationUnmappedValue = coverage.reduce(
-    (sum, item) => sum + item.unallocated,
-    0,
-  )
-  const classificationNotApplicableValue = coverage.reduce(
-    (sum, item) => sum + item.notApplicable,
-    0,
-  )
-  const classificationApplicableValue =
-    classificationMappedValue + classificationUnmappedValue
-  const classificationReliabilityPct =
-    classificationApplicableValue > 0
-      ? (classificationMappedValue / classificationApplicableValue) * 100
-      : null
-  const unallocatedPct = allocationLoading
-    ? null
-    : partitionPercentages([
-        classificationMappedValue,
-        classificationUnmappedValue,
-        classificationNotApplicableValue,
-      ])[1]
-
-  const hasFundValidationError = scopedFundQuality.statuses.some(
-    (status) => status.validationStatus === 'error',
-  )
-  const unresolvedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.undisclosedFundValue +
-      scopedFundQuality.report.opaqueValue
-    : 0
-  const identifiedFundValue = scopedFundQuality.report
-    ? scopedFundQuality.report.directIdentifiedValue +
-      scopedFundQuality.report.decomposedValue
-    : 0
-  const fundExposurePercentages = computeFundExposurePercentages(
+  const {
+    classificationMappedValue,
+    classificationMetricTone,
+    classificationReliabilityPct,
+    unallocatedPct,
+  } = classificationSummary(coverage, allocationLoading)
+  const {
+    hasFundValidationError,
     identifiedFundValue,
-    unresolvedFundValue,
-    scopedFundQuality.notApplicableValue,
-  )
-  const underlyingReliabilityPct = scopedFundQuality.report
-    ? fundExposurePercentages.identified
-    : null
-  const underlyingCritical =
-    hasFundValidationError ||
-    scopedFundQuality.report?.feasibilityStatus === 'limited'
-  const classificationMetricTone = percentageReliabilityTone(
-    allocationLoading ? null : classificationReliabilityPct,
-  )
-  let underlyingMetricTone: AnalysisReliabilityTone = percentageReliabilityTone(
-    scopedFundQuality.report ? underlyingReliabilityPct : null,
-  )
-  if (underlyingCritical) underlyingMetricTone = 'critical'
-  else if (
-    scopedFundQuality.report?.feasibilityStatus === 'pending_repeatability'
-  ) {
-    underlyingMetricTone = 'warning'
-  }
+    fundExposurePercentages,
+    underlyingMetricTone,
+    underlyingReliabilityPct,
+  } = underlyingSummary(scopedFundQuality)
   const diversificationReliabilityTone = aggregateReliabilityTone([
     classificationMetricTone,
     underlyingMetricTone,
@@ -163,4 +115,90 @@ function weakestQualityTheme(
       ? candidate
       : mostRelevant,
   ).theme
+}
+
+function classificationSummary(
+  coverage: AccountCoverage[],
+  allocationLoading: boolean,
+) {
+  const classificationMappedValue = coverage.reduce(
+    (sum, item) => sum + item.allocated,
+    0,
+  )
+  const classificationUnmappedValue = coverage.reduce(
+    (sum, item) => sum + item.unallocated,
+    0,
+  )
+  const classificationNotApplicableValue = coverage.reduce(
+    (sum, item) => sum + item.notApplicable,
+    0,
+  )
+  const classificationApplicableValue =
+    classificationMappedValue + classificationUnmappedValue
+  const classificationReliabilityPct =
+    classificationApplicableValue > 0
+      ? (classificationMappedValue / classificationApplicableValue) * 100
+      : null
+  const unallocatedPct = allocationLoading
+    ? null
+    : partitionPercentages([
+        classificationMappedValue,
+        classificationUnmappedValue,
+        classificationNotApplicableValue,
+      ])[1]
+
+  const classificationMetricTone = percentageReliabilityTone(
+    allocationLoading ? null : classificationReliabilityPct,
+  )
+  return {
+    classificationMappedValue,
+    classificationMetricTone,
+    classificationReliabilityPct,
+    unallocatedPct,
+  }
+}
+
+function underlyingSummary(scopedFundQuality: ScopedFundQualityData) {
+  const hasFundValidationError = scopedFundQuality.statuses.some(
+    (status) => status.validationStatus === 'error',
+  )
+  const unresolvedFundValue = scopedFundQuality.report
+    ? scopedFundQuality.report.undisclosedFundValue +
+      scopedFundQuality.report.opaqueValue
+    : 0
+  const identifiedFundValue = scopedFundQuality.report
+    ? scopedFundQuality.report.directIdentifiedValue +
+      scopedFundQuality.report.decomposedValue
+    : 0
+  const fundExposurePercentages = computeFundExposurePercentages(
+    identifiedFundValue,
+    unresolvedFundValue,
+    scopedFundQuality.notApplicableValue,
+  )
+  const underlyingReliabilityPct = scopedFundQuality.report
+    ? fundExposurePercentages.identified
+    : null
+  const underlyingMetricTone = underlyingReliabilityTone(
+    scopedFundQuality,
+    underlyingReliabilityPct,
+    hasFundValidationError,
+  )
+  return {
+    hasFundValidationError,
+    identifiedFundValue,
+    fundExposurePercentages,
+    underlyingMetricTone,
+    underlyingReliabilityPct,
+  }
+}
+
+function underlyingReliabilityTone(
+  scopedFundQuality: ScopedFundQualityData,
+  percentage: number | null,
+  hasValidationError: boolean,
+): AnalysisReliabilityTone {
+  const status = scopedFundQuality.report?.feasibilityStatus
+  if (hasValidationError || status === 'limited') return 'critical'
+  if (status === 'pending_repeatability') return 'warning'
+  return percentageReliabilityTone(percentage)
 }

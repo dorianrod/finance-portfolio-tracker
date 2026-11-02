@@ -3,29 +3,10 @@ import type { ConcentrationSummary } from '@/domains/portfolio/features/diversif
 import { resolveAssetName } from '@/domains/portfolio/shared/helpers/transformers/resolveAssetName'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; One held-asset aggregation normalizes identity, weights and the top-ten summary against the same total.
 export function computeHeldAssetConcentration(
   positions: PositionRow[],
 ): ConcentrationSummary {
-  const byAsset = new Map<
-    string,
-    { label: string; name: string; value: number }
-  >()
-
-  for (const position of positions) {
-    if (!isValuedAnalysisPosition(position)) continue
-    // This is deliberately the allocation-file grain: the instrument or
-    // product actually held, aggregated across accounts when its market
-    // identifier is shared. Account-valued products fall back to their name.
-    const key = position.isin || position.ticker || position.name
-    const current = byAsset.get(key) ?? {
-      label: resolveAssetName(position, key),
-      name: position.name,
-      value: 0,
-    }
-    current.value += position.total_value ?? 0
-    byAsset.set(key, current)
-  }
+  const byAsset = collectHeldAssets(positions)
 
   const total = [...byAsset.values()].reduce(
     (sum, holding) => sum + holding.value,
@@ -56,4 +37,28 @@ export function computeHeldAssetConcentration(
     allHoldings,
     holdings,
   }
+}
+
+function collectHeldAssets(positions: PositionRow[]) {
+  const byAsset = new Map<
+    string,
+    { label: string; name: string; value: number }
+  >()
+
+  for (const position of positions) {
+    if (!isValuedAnalysisPosition(position)) continue
+    // This is deliberately the allocation-file grain: the instrument or
+    // product actually held, aggregated across accounts when its market
+    // identifier is shared. Account-valued products fall back to their name.
+    const key = position.isin || position.ticker || position.name
+    const current = byAsset.get(key) ?? {
+      label: resolveAssetName(position, key),
+      name: position.name,
+      value: 0,
+    }
+    current.value += position.total_value ?? 0
+    byAsset.set(key, current)
+  }
+
+  return byAsset
 }

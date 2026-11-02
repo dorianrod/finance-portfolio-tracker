@@ -9,7 +9,6 @@ import type { NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Monetary and percentage display are variants of the same value-evolution tooltip.
 export function EvolutionTooltip({
   active,
   payload,
@@ -17,13 +16,9 @@ export function EvolutionTooltip({
   percentageMode = false,
 }: EvolutionTooltipProps) {
   const formatDate = useFormatDate()
-  const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
   const row = payload[0]?.payload
-  const { cost, gain, total, costShare, gainShare } =
-    row?.composition ?? EMPTY_COMPOSITION
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -31,6 +26,41 @@ export function EvolutionTooltip({
           {formatDate(label, { style: 'longMonthYear', fallback: '' })}
         </ChartText>
       </Layout>
+      <EvolutionAmounts
+        composition={row?.composition ?? EMPTY_COMPOSITION}
+        percentageMode={percentageMode}
+      />
+    </TooltipBox>
+  )
+}
+
+type EvolutionTooltipProps = NumericTooltipProps<
+  PortfolioCompositionPoint,
+  Date | string | number
+> & {
+  percentageMode?: boolean
+}
+
+const EMPTY_COMPOSITION: PortfolioCompositionPoint['composition'] = {
+  cost: 0,
+  gain: 0,
+  total: 0,
+  costShare: null,
+  gainShare: null,
+}
+
+function EvolutionAmounts({
+  composition,
+  percentageMode,
+}: {
+  composition: PortfolioCompositionPoint['composition']
+  percentageMode: boolean
+}) {
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const { cost, gain, total, costShare, gainShare } = composition
+  return (
+    <>
       <Layout as="div" spaceAfter="compact">
         <ChartText as="div" tone={'tooltipLabel'} variant="strong">
           {i18n.t('ui.portfoliochartsTooltips.totalWithValues', {
@@ -65,21 +95,6 @@ export function EvolutionTooltip({
             : '',
         })}
       </ChartText>
-    </TooltipBox>
+    </>
   )
-}
-
-type EvolutionTooltipProps = NumericTooltipProps<
-  PortfolioCompositionPoint,
-  Date | string | number
-> & {
-  percentageMode?: boolean
-}
-
-const EMPTY_COMPOSITION: PortfolioCompositionPoint['composition'] = {
-  cost: 0,
-  gain: 0,
-  total: 0,
-  costShare: null,
-  gainShare: null,
 }

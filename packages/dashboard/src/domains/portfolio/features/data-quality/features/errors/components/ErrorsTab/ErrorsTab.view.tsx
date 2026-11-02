@@ -17,7 +17,6 @@ import { StatusTableRow } from '@/shared/ui/statusBadge/StatusTableRow.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Filtering, sorting and availability belong to one anomaly table; row mapping and cells are already separate.
 export function ErrorsTabView({
   model,
   totalCount,
@@ -123,15 +122,7 @@ export function ErrorsTabView({
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr>
-                  <Inset colSpan={7} as="td" inset="spacious">
-                    <Text as="div" tone="subtle" align="center">
-                      {totalCount === 0
-                        ? i18n.t('ui.errorstab.noPipelineAnomaliesDetected')
-                        : i18n.t('ui.errorstab.noAnomaliesForThisFilter')}
-                    </Text>
-                  </Inset>
-                </tr>
+                <EmptyErrorsRow totalCount={totalCount} />
               ) : (
                 filtered.map((error) => (
                   <PipelineErrorTableRow key={error.id} error={error} />
@@ -304,5 +295,19 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
         </Text>
       </Inset>
     </StatusTableRow>
+  )
+}
+
+function EmptyErrorsRow({ totalCount }: { totalCount: number }) {
+  return (
+    <tr>
+      <Inset colSpan={7} as="td" inset="spacious">
+        <Text as="div" tone="subtle" align="center">
+          {totalCount === 0
+            ? i18n.t('ui.errorstab.noPipelineAnomaliesDetected')
+            : i18n.t('ui.errorstab.noAnomaliesForThisFilter')}
+        </Text>
+      </Inset>
+    </tr>
   )
 }

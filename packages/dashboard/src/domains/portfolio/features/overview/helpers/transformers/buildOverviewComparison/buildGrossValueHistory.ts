@@ -1,7 +1,6 @@
 import { matchesPositionScope } from '@/domains/portfolio/features/overview/helpers/transformers/matchesPositionScope'
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account scope and finite snapshot guards produce one gross-value history series.
 export function buildGrossValueHistory(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),
@@ -9,13 +8,10 @@ export function buildGrossValueHistory(
 ): Array<{ date: Date; value: number }> {
   const byDate = new Map<number, number>()
   for (const row of rows) {
-    if (
-      row.snapshot_date == null ||
-      !matchesPositionScope(row, accountFilters, accountTypeFilters)
-    )
+    if (!isScopedGrossValueSnapshot(row, accountFilters, accountTypeFilters))
       continue
     const grossValue = row.total_value
-    if (grossValue == null || !Number.isFinite(grossValue)) continue
+    if (grossValue == null) continue
     byDate.set(
       row.snapshot_date.getTime(),
       (byDate.get(row.snapshot_date.getTime()) ?? 0) + grossValue,
@@ -27,4 +23,17 @@ export function buildGrossValueHistory(
       date: new Date(date),
       value: Math.round(value),
     }))
+}
+
+function isScopedGrossValueSnapshot(
+  row: RawPosition,
+  accounts: Set<string>,
+  accountTypes: Set<string>,
+) {
+  return (
+    row.snapshot_date != null &&
+    matchesPositionScope(row, accounts, accountTypes) &&
+    row.total_value != null &&
+    Number.isFinite(row.total_value)
+  )
 }

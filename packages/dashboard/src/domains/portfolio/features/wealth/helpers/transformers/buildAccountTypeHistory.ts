@@ -7,7 +7,6 @@ import { accountFilterId } from '@/domains/portfolio/shared/helpers/transformers
 import type { AccountCategory } from '@/domains/portfolio/shared/types/accountCategory.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account/category validation feeds one date-by-account-type accumulator and its stable category order.
 export function buildAccountTypeHistory(
   rows: RawPositionRow[],
   accountSet: Set<string> | null,
@@ -17,8 +16,7 @@ export function buildAccountTypeHistory(
   const typeCategories = new Map<string, AccountCategory>()
 
   for (const row of rows) {
-    if (!row.account_type || (row.total_value ?? 0) === 0) continue
-    if (accountSet && !accountSet.has(accountFilterId(row))) continue
+    if (!isIncludedAccountTypeRow(row, accountSet)) continue
     const tv = row.total_value ?? 0
     typeSet.add(row.account_type)
     if (row.account_category)
@@ -29,10 +27,9 @@ export function buildAccountTypeHistory(
     byDate.set(row.snapshot_date.getTime(), dateMap)
   }
 
-  // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Known-category priority and alphabetical fallback form one total ordering comparator.
   const accountTypes = [...typeSet].toSorted((a, b) => {
-    const ia = CATEGORY_ORDER.get(typeCategories.get(a) ?? '') ?? -1
-    const ib = CATEGORY_ORDER.get(typeCategories.get(b) ?? '') ?? -1
+    const ia = categoryRank(typeCategories.get(a))
+    const ib = categoryRank(typeCategories.get(b))
     if (ia !== -1 && ib !== -1) return ia - ib
     if (ia !== -1) return -1
     if (ib !== -1) return 1
@@ -58,4 +55,16 @@ export function buildAccountTypeHistory(
     accountTypes,
     typeCategories: Object.fromEntries(typeCategories),
   }
+}
+
+function isIncludedAccountTypeRow(
+  row: RawPositionRow,
+  accounts: Set<string> | null,
+) {
+  if (!row.account_type || (row.total_value ?? 0) === 0) return false
+  return accounts === null || accounts.has(accountFilterId(row))
+}
+
+function categoryRank(category: AccountCategory | undefined) {
+  return CATEGORY_ORDER.get(category ?? '') ?? -1
 }

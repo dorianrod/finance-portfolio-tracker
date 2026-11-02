@@ -2,14 +2,16 @@ import type { HoverChartDataPoint } from '@/domains/portfolio/features/holdings/
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartText } from '@/shared/ui/ChartText.view'
-import type { NumericTooltipProps } from '@/shared/ui/chartTooltip'
+import type {
+  NumericTooltipPayload,
+  NumericTooltipProps,
+} from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
 import { OpSummary } from './OpSummary.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Value, cost basis and unrealized availability describe one hover point and its operation summary.
 export function TooltipPortfolio({
   active,
   payload,
@@ -21,7 +23,6 @@ export function TooltipPortfolio({
   const valueEntry = payload.find((item) => item.dataKey === 'Value')
   const costEntry = payload.find((item) => item.dataKey === 'Cost basis')
   const data = payload[0]?.payload
-  const unrealized = valueEntry && costEntry && data ? data.unrealized : null
   return (
     <TooltipBox variant="raised">
       <Layout spaceAfter="default">
@@ -45,6 +46,29 @@ export function TooltipPortfolio({
           })}
         </ChartText>
       )}
+      <PortfolioUnrealized
+        valueEntry={valueEntry}
+        costEntry={costEntry}
+        data={data}
+      />
+      <OpSummary data={data} />
+    </TooltipBox>
+  )
+}
+
+function PortfolioUnrealized({
+  valueEntry,
+  costEntry,
+  data,
+}: {
+  valueEntry: NumericTooltipPayload<HoverChartDataPoint> | undefined
+  costEntry: NumericTooltipPayload<HoverChartDataPoint> | undefined
+  data: HoverChartDataPoint | undefined
+}) {
+  const formatMoney = useFormatMoney()
+  const unrealized = valueEntry && costEntry && data ? data.unrealized : null
+  return (
+    <>
       {unrealized != null && (
         <Layout spaceBefore="compact">
           <Text
@@ -58,7 +82,6 @@ export function TooltipPortfolio({
           </Text>
         </Layout>
       )}
-      <OpSummary data={data} />
-    </TooltipBox>
+    </>
   )
 }

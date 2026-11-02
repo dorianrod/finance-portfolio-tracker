@@ -10,7 +10,6 @@ import {
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional Recharts metadata and signed balance changes form one savings tooltip.
 export function SavingsTooltip({
   active,
   payload,
@@ -20,8 +19,8 @@ export function SavingsTooltip({
   if (payload == null) return null
   if (!active || payload.length === 0) return null
   const balance = tooltipValue(payload, 'balance')
-  const delta: number = payload[0]?.payload?.delta ?? 0
-  const monthStr: string = payload[0]?.payload?.month ?? ''
+  const point = payload[0]?.payload
+  const monthStr = point?.month ?? ''
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -36,6 +35,22 @@ export function SavingsTooltip({
           })}
         </ChartText>
       </Layout>
+      <SavingsChange point={point} />
+    </TooltipBox>
+  )
+}
+
+type SavingsPoint = {
+  balance: number
+  delta: number
+  month: string
+}
+
+function SavingsChange({ point }: { point: SavingsPoint | undefined }) {
+  const delta = point?.delta ?? 0
+  const formatMoney = useFormatMoney()
+  return (
+    <>
       {delta !== 0 && (
         <ChartText
           as="div"
@@ -48,12 +63,6 @@ export function SavingsTooltip({
           {delta >= 0 ? '▲' : '▼'} {formatMoney(Math.abs(delta))}
         </ChartText>
       )}
-    </TooltipBox>
+    </>
   )
-}
-
-type SavingsPoint = {
-  balance: number
-  delta: number
-  month: string
 }

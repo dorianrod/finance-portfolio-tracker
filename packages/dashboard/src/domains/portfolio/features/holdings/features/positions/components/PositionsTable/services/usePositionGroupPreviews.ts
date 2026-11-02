@@ -12,42 +12,26 @@ export function usePositionGroupPreviews({
   scheduleHide,
 }: Input) {
   const { showPreview } = usePositionPreviewActions()
-  // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Trade and savings group handlers share the same preview exclusivity, anchor and dismissal protocol.
   return useMemo(() => {
-    const item = row.original
-    const parent = row.getParentRow()?.original
-    const isTradeGroup = item.kind === 'group' && item.groupType === 'trades'
-    let chartHandlers: CellHandlers = null
-    if (isTradeGroup && parent?.kind === 'position') {
-      const positionKey = parent.isin || parent.ticker || parent.name
-      if (positionKey)
-        chartHandlers = {
-          onPreview: (anchor) => {
-            cancelHide()
-            showPreview({
-              kind: 'chart',
-              positionId: parent.id,
-              buttonRect: anchor.getBoundingClientRect(),
-            })
-          },
-          onDismiss: scheduleHide,
-        }
-    }
-    const isSavingsGroup = item.kind === 'group' && item.groupType === 'cash'
-    let savingsHandlers: CellHandlers = null
-    if (isSavingsGroup && parent?.kind === 'position')
-      savingsHandlers = {
+    const target = groupPreviewTarget(row)
+    let handlers: CellHandlers = null
+    if (target) {
+      handlers = {
         onPreview: (anchor) => {
           cancelHide()
           showPreview({
-            kind: 'savings',
-            positionId: parent.id,
+            kind: target.kind,
+            positionId: target.positionId,
             buttonRect: anchor.getBoundingClientRect(),
           })
         },
         onDismiss: scheduleHide,
       }
-    return { chartHandlers, savingsHandlers }
+    }
+    return {
+      chartHandlers: target?.kind === 'chart' ? handlers : null,
+      savingsHandlers: target?.kind === 'savings' ? handlers : null,
+    }
   }, [row, cancelHide, scheduleHide, showPreview])
 }
 
@@ -55,3 +39,21 @@ type Input = { row: Row<TableRow> } & Pick<
   ReturnType<typeof usePositionTableOverlays>,
   'cancelHide' | 'scheduleHide'
 >
+
+function groupPreviewTarget(
+  row: Row<TableRow>,
+): { kind: 'chart' | 'savings'; positionId: string } | null {
+  const item = row.original
+  const parent = row.getParentRow()?.original
+  if (item.kind !== 'group' || parent?.kind !== 'position') return null
+  if (item.groupType === 'cash')
+    return { kind: 'savings', positionId: parent.id }
+  const positionKey = groupPositionKey(parent)
+  if (item.groupType === 'trades' && positionKey)
+    return { kind: 'chart', positionId: parent.id }
+  return null
+}
+
+function groupPositionKey(position: Extract<TableRow, { kind: 'position' }>) {
+  return position.isin || position.ticker || position.name
+}

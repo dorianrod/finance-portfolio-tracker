@@ -9,7 +9,6 @@ import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.t
 import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Exact fund selection, free-text search and expansion build one exposure-explorer result from the same issuer set.
 export function buildFundExposureViewModel({
   expanded,
   holdings,
@@ -19,13 +18,7 @@ export function buildFundExposureViewModel({
   statuses,
 }: BuildFundExposureViewModelInput) {
   const needle = query.trim().toLocaleLowerCase()
-  const selectedFundName = needle
-    ? (positions.find(
-        (position) =>
-          position.name.toLocaleLowerCase() === needle &&
-          matchesFundStatus(position, statuses),
-      )?.name ?? '')
-    : ''
+  const selectedFundName = selectedFund(positions, statuses, needle)
   const scopedPositions = selectedFundName
     ? positions.filter((position) => position.name === selectedFundName)
     : positions
@@ -123,4 +116,19 @@ function matchesFundStatus(
       (!!position.isin && status.parentIsin === position.isin) ||
       (!!position.ticker && status.parentTicker === position.ticker),
   )
+}
+
+function selectedFund(
+  positions: PositionRow[],
+  statuses: FundHoldingStatus[],
+  needle: string,
+) {
+  const selectedFundName = needle
+    ? (positions.find(
+        (position) =>
+          position.name.toLocaleLowerCase() === needle &&
+          matchesFundStatus(position, statuses),
+      )?.name ?? '')
+    : ''
+  return selectedFundName
 }

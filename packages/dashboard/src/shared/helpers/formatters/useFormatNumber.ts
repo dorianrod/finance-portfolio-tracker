@@ -43,19 +43,34 @@ const SIGNED_TWO_DECIMAL_NUMBER_FORMATTER = new Intl.NumberFormat('en-GB', {
   signDisplay: 'always',
 })
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Known formatting profiles choose cached formatters before the single arbitrary-options fallback.
 function formatterFor(options: NumberFormatOptions): Intl.NumberFormat {
-  if (Object.keys(options).length === 0) return DEFAULT_NUMBER_FORMATTER
-  if (options.maximumFractionDigits === 0 && Object.keys(options).length === 1)
-    return INTEGER_NUMBER_FORMATTER
-  if (options.maximumFractionDigits === 2 && Object.keys(options).length === 1)
-    return TWO_DECIMAL_NUMBER_FORMATTER
-  if (
-    options.maximumFractionDigits === 2 &&
-    options.minimumFractionDigits === 2 &&
-    options.signDisplay === 'always' &&
-    Object.keys(options).length === 3
+  const entries = Object.entries(options)
+  const cached = NUMBER_FORMAT_PROFILES.find(
+    (profile) =>
+      entries.length === Object.keys(profile.options).length &&
+      entries.every(
+        ([key, value]) => Reflect.get(profile.options, key) === value,
+      ),
   )
-    return SIGNED_TWO_DECIMAL_NUMBER_FORMATTER
-  return new Intl.NumberFormat('en-GB', options)
+  return cached?.formatter ?? new Intl.NumberFormat('en-GB', options)
 }
+
+const NUMBER_FORMAT_PROFILES = [
+  { options: {}, formatter: DEFAULT_NUMBER_FORMATTER },
+  {
+    options: { maximumFractionDigits: 0 },
+    formatter: INTEGER_NUMBER_FORMATTER,
+  },
+  {
+    options: { maximumFractionDigits: 2 },
+    formatter: TWO_DECIMAL_NUMBER_FORMATTER,
+  },
+  {
+    options: {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+      signDisplay: 'always',
+    },
+    formatter: SIGNED_TWO_DECIMAL_NUMBER_FORMATTER,
+  },
+]

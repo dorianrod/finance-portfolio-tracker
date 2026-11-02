@@ -1,7 +1,6 @@
 import type { AllocationPoint } from '@/domains/portfolio/shared/types/allocationPoint.type'
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Latest-date selection and same-date allocation coalescing implement one canonical per-identifier breakdown.
 export function toLatestAllocationByIsin(
   rows: RawIsinRow[],
 ): Map<string, { name: string; point: AllocationPoint }> {
@@ -18,10 +17,18 @@ export function toLatestAllocationByIsin(
       latest = { timestamp, name: row.name, values: new Map() }
       latestByIsin.set(row.isin, latest)
     }
-    for (const [name, value] of Object.entries(row.values)) {
-      latest.values.set(name, (latest.values.get(name) ?? 0) + value)
-    }
+    mergeAllocationValues(latest.values, row.values)
   }
+  return buildAllocationPoints(latestByIsin)
+}
+
+type LatestAllocation = {
+  timestamp: number
+  name: string
+  values: Map<string, number>
+}
+
+function buildAllocationPoints(latestByIsin: Map<string, LatestAllocation>) {
   const result = new Map<string, { name: string; point: AllocationPoint }>()
   for (const [isin, latest] of latestByIsin) {
     const categories = [...latest.values]
@@ -38,4 +45,12 @@ export function toLatestAllocationByIsin(
     })
   }
   return result
+}
+
+function mergeAllocationValues(
+  target: Map<string, number>,
+  values: RawIsinRow['values'],
+) {
+  for (const [name, value] of Object.entries(values))
+    target.set(name, (target.get(name) ?? 0) + value)
 }

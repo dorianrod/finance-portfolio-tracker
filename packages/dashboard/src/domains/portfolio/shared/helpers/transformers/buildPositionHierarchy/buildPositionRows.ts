@@ -282,7 +282,6 @@ function buildAssetPositionRow(
   }
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Latest-snapshot and operation fallbacks must resolve one consistent asset identity and active/closed status.
 function resolvePositionIdentity(
   key: string,
   assetOps: RawOperation[],
@@ -298,6 +297,7 @@ function resolvePositionIdentity(
   | 'status'
 > {
   const first = assetOps[0]
+  const identifiers = positionIdentifiers(lp, first)
   // Derive account: from latest position snapshot, or from most recent operation
   const account = lp?.account || assetOps[assetOps.length - 1].account
   const rawType = lp?.account_type || undefined
@@ -307,13 +307,12 @@ function resolvePositionIdentity(
   return {
     name: resolveAssetName(
       {
-        name: lp?.name || first.name,
-        ticker: lp?.ticker || first.ticker,
+        ...identifiers,
       },
       key,
     ),
-    ticker: lp?.ticker || first.ticker || '',
-    isin: lp?.isin || first.isin || '',
+    ticker: identifiers.ticker,
+    isin: identifiers.isin,
     account,
     account_type,
     account_category,
@@ -341,4 +340,16 @@ function realizedPositionReturns(
         .reduce((sum, o) => sum + o.realized_gain, 0)
 
   return { totalDividends, totalInterest, realizedPnl }
+}
+
+function positionIdentifiers(
+  position: RawPosition | undefined,
+  operation: RawOperation,
+) {
+  const source = position ?? operation
+  return {
+    name: source.name || operation.name,
+    ticker: source.ticker || operation.ticker || '',
+    isin: source.isin || operation.isin || '',
+  }
 }

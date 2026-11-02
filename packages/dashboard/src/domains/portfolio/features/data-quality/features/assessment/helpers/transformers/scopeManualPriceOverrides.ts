@@ -19,20 +19,8 @@ export function scopeManualPriceOverrides(
   const hasAccountScope =
     filters.accounts.size > 0 || filters.accountTypes.size > 0
 
-  // eslint-disable-next-line complexity -- reviewed: 2026-10-27; Date overlap and alternative asset identifiers define one manual-price visibility predicate.
   return overrides.filter((override) => {
-    if (
-      filters.dateFrom &&
-      override.date_to &&
-      override.date_to < filters.dateFrom
-    )
-      return false
-    if (
-      filters.dateTo &&
-      override.date_from &&
-      override.date_from > filters.dateTo
-    )
-      return false
+    if (!overlapsFilterDates(override, filters)) return false
     if (!hasAccountScope) return true
     return (
       (!!override.isin && selectedIsins.has(override.isin)) ||
@@ -40,4 +28,23 @@ export function scopeManualPriceOverrides(
       (!!override.name && selectedNames.has(override.name))
     )
   })
+}
+
+function overlapsFilterDates(
+  override: ManualPriceOverride,
+  filters: DashboardFilters,
+) {
+  if (
+    filters.dateFrom &&
+    override.date_to &&
+    override.date_to < filters.dateFrom
+  )
+    return false
+  if (
+    filters.dateTo &&
+    override.date_from &&
+    override.date_from > filters.dateTo
+  )
+    return false
+  return true
 }

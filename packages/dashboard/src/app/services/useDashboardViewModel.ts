@@ -30,7 +30,7 @@ import type { RawIsinRows } from '@/domains/portfolio/shared/types/rawIsinData.t
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
-// eslint-disable-next-line complexity, max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
+// eslint-disable-next-line max-lines-per-function -- reviewed: 2026-10-27; This shell facade composes feature-owned models and query fallbacks; its length is the memoized output contract and dependency list.
 export function useDashboardViewModel() {
   const [
     dashboardQuery,
@@ -52,9 +52,19 @@ export function useDashboardViewModel() {
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const sortDir = useAtomValue(dashboardPositionSortDirectionAtom)
   const sortKey = useAtomValue(dashboardPositionSortKeyAtom)
-  const { data: fundHoldings = EMPTY_FUND_HOLDINGS } = fundHoldingsQuery
-  const { data: fundDiagnostics = EMPTY_FUND_DIAGNOSTICS } =
-    fundDiagnosticsQuery
+  const {
+    fundHoldings,
+    fundDiagnostics,
+    pipelineErrors,
+    manualPriceOverrides,
+    allocationRows,
+  } = resolveAnalysisSources({
+    fundHoldingsQuery,
+    fundDiagnosticsQuery,
+    pipelineErrorsQuery,
+    manualPriceOverridesQuery,
+    rawAllocationQuery,
+  })
   const fundData = useMemo(
     () => ({
       ...fundHoldings,
@@ -66,18 +76,24 @@ export function useDashboardViewModel() {
   const { data: savingCapacity = EMPTY_SAVING_CAPACITY } = savingCapacityQuery
   const savingCapacityLoading = savingCapacityQuery.isPending
   const savingCapacityError = savingCapacityQuery.error
-  const { data: dashboardData = EMPTY_DASHBOARD_DATA } = dashboardQuery
+  const {
+    dashboardData,
+    history,
+    cashHistory,
+    allPositionRows,
+    allMonthlyOps,
+    annualIncomeSavings,
+  } = resolvePositionSources({
+    dashboardQuery,
+    historyQuery,
+    cashHistoryQuery,
+    allPositionsQuery,
+    monthlyOpsQuery,
+    annualIncomeSavingsQuery,
+  })
   const { positions, rawPositions, rawOperations, accountLabels } =
     dashboardData
-  const { data: history = EMPTY_PORTFOLIO_HISTORY } = historyQuery
-  const { data: cashHistory = EMPTY_CASH_HISTORY } = cashHistoryQuery
-  const { data: allPositionRows = EMPTY_RAW_POSITIONS } = allPositionsQuery
-  const { data: pipelineErrors = EMPTY_ERRORS } = pipelineErrorsQuery
   const pipelineErrorsLoading = pipelineErrorsQuery.isPending
-  const { data: manualPriceOverrides = EMPTY_MANUAL_PRICE_OVERRIDES } =
-    manualPriceOverridesQuery
-  const { data: allMonthlyOps = EMPTY_MONTHLY_OPS } = monthlyOpsQuery
-  const { data: allocationRows = EMPTY_RAW_ISIN_DATA } = rawAllocationQuery
   const rawAllocationData = useMemo(
     () => ({
       ...allocationRows,
@@ -85,8 +101,6 @@ export function useDashboardViewModel() {
     }),
     [allocationRows, rawAllocationQuery.isPending],
   )
-  const { data: annualIncomeSavings = EMPTY_ANNUAL_INCOME_SAVINGS } =
-    annualIncomeSavingsQuery
 
   const {
     accountFilterLabels,
@@ -398,3 +412,66 @@ const EMPTY_MANUAL_PRICE_OVERRIDES: ManualPriceOverride[] = []
 const EMPTY_MONTHLY_OPS: MonthlyOperationsByMonth = new Map()
 const EMPTY_PORTFOLIO_HISTORY: PortfolioHistoryPoint[] = []
 const EMPTY_RAW_POSITIONS: RawPositionRow[] = []
+
+type SourceQueries = ReturnType<typeof useCachedDashboardSources>
+
+function resolveAnalysisSources({
+  fundHoldingsQuery,
+  fundDiagnosticsQuery,
+  pipelineErrorsQuery,
+  manualPriceOverridesQuery,
+  rawAllocationQuery,
+}: {
+  fundHoldingsQuery: SourceQueries[8]
+  fundDiagnosticsQuery: SourceQueries[9]
+  pipelineErrorsQuery: SourceQueries[4]
+  manualPriceOverridesQuery: SourceQueries[5]
+  rawAllocationQuery: SourceQueries[7]
+}) {
+  const { data: fundHoldings = EMPTY_FUND_HOLDINGS } = fundHoldingsQuery
+  const { data: fundDiagnostics = EMPTY_FUND_DIAGNOSTICS } =
+    fundDiagnosticsQuery
+  const { data: pipelineErrors = EMPTY_ERRORS } = pipelineErrorsQuery
+  const { data: manualPriceOverrides = EMPTY_MANUAL_PRICE_OVERRIDES } =
+    manualPriceOverridesQuery
+  const { data: allocationRows = EMPTY_RAW_ISIN_DATA } = rawAllocationQuery
+  return {
+    fundHoldings,
+    fundDiagnostics,
+    pipelineErrors,
+    manualPriceOverrides,
+    allocationRows,
+  }
+}
+
+function resolvePositionSources({
+  dashboardQuery,
+  historyQuery,
+  cashHistoryQuery,
+  allPositionsQuery,
+  monthlyOpsQuery,
+  annualIncomeSavingsQuery,
+}: {
+  dashboardQuery: SourceQueries[0]
+  historyQuery: SourceQueries[1]
+  cashHistoryQuery: SourceQueries[2]
+  allPositionsQuery: SourceQueries[3]
+  monthlyOpsQuery: SourceQueries[6]
+  annualIncomeSavingsQuery: SourceQueries[10]
+}) {
+  const { data: dashboardData = EMPTY_DASHBOARD_DATA } = dashboardQuery
+  const { data: history = EMPTY_PORTFOLIO_HISTORY } = historyQuery
+  const { data: cashHistory = EMPTY_CASH_HISTORY } = cashHistoryQuery
+  const { data: allPositionRows = EMPTY_RAW_POSITIONS } = allPositionsQuery
+  const { data: allMonthlyOps = EMPTY_MONTHLY_OPS } = monthlyOpsQuery
+  const { data: annualIncomeSavings = EMPTY_ANNUAL_INCOME_SAVINGS } =
+    annualIncomeSavingsQuery
+  return {
+    dashboardData,
+    history,
+    cashHistory,
+    allPositionRows,
+    allMonthlyOps,
+    annualIncomeSavings,
+  }
+}

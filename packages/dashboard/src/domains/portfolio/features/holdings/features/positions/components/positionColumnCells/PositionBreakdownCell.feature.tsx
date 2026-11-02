@@ -8,15 +8,12 @@ import { positionPreviewAtom } from '@/domains/portfolio/features/holdings/featu
 import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey'
 import type { TableRow } from '@/domains/portfolio/shared/types/positionRow.type'
 import i18n from '@/i18n/i18n'
-import { Decorative } from '@/shared/ui/controls/Decorative.view'
 import { PieChartIcon } from '@/shared/ui/icons/PieChartIcon.view'
-import { Grid } from '@/shared/ui/layout/Grid.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Preview } from '@/shared/ui/Preview.view'
-import { Surface } from '@/shared/ui/Surface.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Allocation and underlying previews share the same exclusive overlay protocol and table metadata.
+import { PositionBreakdownView } from './PositionBreakdown.view'
+
 export function PositionBreakdownCell({
   row,
   table,
@@ -31,7 +28,6 @@ export function PositionBreakdownCell({
   const allocKey = getPositionAllocationKey(r)
   const allocation = allocationData.get(allocKey)
   const fundStatus = statusForPosition(r, fundStatusIndex)
-  const hasNoBreakdown = !allocation && !fundStatus
   const showAllocation = (button: HTMLButtonElement) => {
     if (!allocation) return
     cancelHide()
@@ -51,57 +47,41 @@ export function PositionBreakdownCell({
     })
   }
   return (
-    <Grid as="span" columns={2} placement="inset" gap="compact">
-      {allocation && (
-        <Layout as="span" flow="control" sizing="fixed">
-          <Preview.Trigger
-            type="button"
-            label={i18n.t('ui.positionstable.viewAllocationsForValue0', {
-              value0: r.name,
-            })}
-            title={i18n.t('ui.positionstable.viewAssetAllocations')}
-            variant="subtlePreview"
-            onPreview={showAllocation}
-            onDismiss={scheduleHide}
-          >
-            <PieChartIcon />
-          </Preview.Trigger>
-        </Layout>
-      )}
-      {!allocation && (
-        <Layout as="span" flow="inline" width="icon" height="icon">
-          <Decorative>
-            <Layout as="span" flow="block"></Layout>
-          </Decorative>
-        </Layout>
-      )}
-      {fundStatus && (
-        <UnderlyingStatusButton
-          status={fundStatus}
-          assetName={r.name}
-          isOpen={
-            selection?.kind === 'underlying' && selection.positionId === r.id
-          }
-          onShow={showUnderlying}
-          onHide={scheduleHide}
-        />
-      )}
-      {!fundStatus && (
-        <Layout as="span" flow="inline" width="icon" height="icon">
-          <Decorative>
-            <Layout as="span" flow="block"></Layout>
-          </Decorative>
-        </Layout>
-      )}
-      {hasNoBreakdown && (
-        <Layout as="span" flow="block" placement="overlay">
-          <Surface variant="overlay" as="span" tone="subtle">
-            <Inline as="span" align="center" justify="center">
-              —
-            </Inline>
-          </Surface>
-        </Layout>
-      )}
-    </Grid>
+    <PositionBreakdownView
+      hasAllocation={Boolean(allocation)}
+      hasUnderlying={Boolean(fundStatus)}
+    >
+      <PositionBreakdownView.Slot available={Boolean(allocation)}>
+        {allocation && (
+          <Layout as="span" flow="control" sizing="fixed">
+            <Preview.Trigger
+              type="button"
+              label={i18n.t('ui.positionstable.viewAllocationsForValue0', {
+                value0: r.name,
+              })}
+              title={i18n.t('ui.positionstable.viewAssetAllocations')}
+              variant="subtlePreview"
+              onPreview={showAllocation}
+              onDismiss={scheduleHide}
+            >
+              <PieChartIcon />
+            </Preview.Trigger>
+          </Layout>
+        )}
+      </PositionBreakdownView.Slot>
+      <PositionBreakdownView.Slot available={Boolean(fundStatus)}>
+        {fundStatus && (
+          <UnderlyingStatusButton
+            status={fundStatus}
+            assetName={r.name}
+            isOpen={
+              selection?.kind === 'underlying' && selection.positionId === r.id
+            }
+            onShow={showUnderlying}
+            onHide={scheduleHide}
+          />
+        )}
+      </PositionBreakdownView.Slot>
+    </PositionBreakdownView>
   )
 }

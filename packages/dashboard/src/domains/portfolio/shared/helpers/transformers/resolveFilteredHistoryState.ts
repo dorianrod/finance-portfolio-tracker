@@ -1,7 +1,6 @@
 // eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Account-key matching, fallback history, loading and error are one atomic stale-response resolution policy.
 export function resolveFilteredHistoryState(
   fallbackHistory: PortfolioHistoryPoint[],
   isFiltered: boolean,
@@ -10,12 +9,14 @@ export function resolveFilteredHistoryState(
 ) {
   const matchingResponse =
     responseState?.key === accountKey ? responseState : null
+  if (matchingResponse === null)
+    return { history: fallbackHistory, loading: isFiltered, error: null }
   return {
     history: isFiltered
-      ? (matchingResponse?.history ?? fallbackHistory)
+      ? (matchingResponse.history ?? fallbackHistory)
       : fallbackHistory,
-    loading: isFiltered && matchingResponse === null,
-    error: matchingResponse?.error ?? null,
+    loading: false,
+    error: matchingResponse.error,
   }
 }
 

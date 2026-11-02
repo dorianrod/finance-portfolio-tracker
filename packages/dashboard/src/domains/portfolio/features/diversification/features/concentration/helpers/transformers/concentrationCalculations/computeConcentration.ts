@@ -6,7 +6,6 @@ import { resolveAssetName } from '@/domains/portfolio/shared/helpers/transformer
 import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Direct, decomposed, undisclosed and opaque positions share one conservation accumulator and ranking.
 export function computeConcentration(
   positions: PositionRow[],
   fundHoldings: FundHolding[] = [],
@@ -33,35 +32,15 @@ export function computeConcentration(
     const positionValue = position.total_value ?? 0
     selectedValue += positionValue
 
-    const lookThrough =
-      holdingsByParent.get(position.isin) ??
-      holdingsByParent.get(position.ticker)
-    if (lookThrough != null && lookThrough.length > 0) {
-      const exposure = addFundConcentration(
-        lookThrough,
-        positionValue,
-        addAsset,
-      )
-      identifiedValue += exposure.identified
-      undisclosedValue += exposure.undisclosed
-      continue
-    }
-
-    // Rows without a market identifier are account-level valuations (PEE,
-    // PER, bank accounts, private-equity envelopes), not underlying assets.
-    // Keep them out of the ranking instead of presenting the account as a
-    // holding. Identified non-fund securities remain valid direct exposure.
-    const key = position.isin || position.ticker
-    if (!key) {
-      opaqueValue += positionValue
-      continue
-    }
-    if (isFundPosition(position)) {
-      undisclosedValue += positionValue
-      continue
-    }
-    addAsset(key, resolveAssetName(position, key), position.name, positionValue)
-    identifiedValue += positionValue
+    const exposure = classifyPositionExposure(
+      position,
+      positionValue,
+      holdingsByParent,
+      addAsset,
+    )
+    identifiedValue += exposure.identified
+    undisclosedValue += exposure.undisclosed
+    opaqueValue += exposure.opaque
   }
 
   const allHoldings = [...byAsset.values()]
@@ -115,4 +94,32 @@ function addFundConcentration(
     identified: positionValue * explainedWeight,
     undisclosed: positionValue * (1 - explainedWeight),
   }
+}
+
+function classifyPositionExposure(
+  position: PositionRow,
+  positionValue: number,
+  holdingsByParent: Map<string, FundHolding[]>,
+  addAsset: (key: string, label: string, name: string, value: number) => void,
+) {
+  const lookThrough =
+    holdingsByParent.get(position.isin) ?? holdingsByParent.get(position.ticker)
+  if (lookThrough != null && lookThrough.length > 0) {
+    const exposure = addFundConcentration(lookThrough, positionValue, addAsset)
+    return { ...exposure, opaque: 0 }
+  }
+
+  // Rows without a market identifier are account-level valuations (PEE,
+  // PER, bank accounts, private-equity envelopes), not underlying assets.
+  // Keep them out of the ranking instead of presenting the account as a
+  // holding. Identified non-fund securities remain valid direct exposure.
+  const key = position.isin || position.ticker
+  if (!key) {
+    return { identified: 0, undisclosed: 0, opaque: positionValue }
+  }
+  if (isFundPosition(position)) {
+    return { identified: 0, undisclosed: positionValue, opaque: 0 }
+  }
+  addAsset(key, resolveAssetName(position, key), position.name, positionValue)
+  return { identified: positionValue, undisclosed: 0, opaque: 0 }
 }

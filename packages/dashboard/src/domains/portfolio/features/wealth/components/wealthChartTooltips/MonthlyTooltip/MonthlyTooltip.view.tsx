@@ -16,7 +16,6 @@ import {
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Monthly operations and trailing totals are the context of one savings-history hover point.
 export function MonthlyTooltip({
   active,
   payload,
@@ -36,8 +35,6 @@ export function MonthlyTooltip({
     style: 'isoDate',
     fallback: '',
   }).slice(0, 7)
-  const { deposits, withdrawals } =
-    operationGroups.get(month) ?? EMPTY_OPERATIONS
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">
@@ -52,66 +49,14 @@ export function MonthlyTooltip({
           })}
         </ChartText>
       </Layout>
-      {deposits.length > 0 && (
-        <div>
-          {deposits.map(({ id, operation }) => (
-            <MonthlyOperationRow
-              key={id}
-              operation={operation}
-              withdrawal={false}
-            />
-          ))}
-        </div>
-      )}
-      {withdrawals.length > 0 && (
-        <div>
-          {withdrawals.map(({ id, operation }) => (
-            <MonthlyOperationRow key={id} operation={operation} withdrawal />
-          ))}
-        </div>
-      )}
-      <Layout as="div" spaceBefore="compact" inset="compact">
-        <ChartText
-          as="div"
-          tone={
-            perfDelta >= 0
-              ? PORTFOLIO_CHART_TONES.performancePositiveText
-              : PORTFOLIO_CHART_TONES.performanceNegativeText
-          }
-          separator
-        >
-          {i18n.t('ui.portfoliochartsTooltips.marketPerformanceWithValues', {
-            amount: formatMoney(perfDelta, { style: 'full' }),
-          })}
-        </ChartText>
-      </Layout>
-      <Layout as="div" spaceBefore="compact" inset="compact">
-        <ChartText
-          as="div"
-          tone={PORTFOLIO_CHART_TONES.netContributionsText}
-          separator
-        >
-          {i18n.t(
-            'ui.portfoliochartsTooltips.trailing12MonthNetContributionsWithValues',
-            { amount: formatMoney(rolling12m, { style: 'full' }) },
-          )}
-        </ChartText>
-      </Layout>
-      <Layout as="div" spaceBefore="compact">
-        <ChartText
-          as="div"
-          tone={
-            rollingPerf12m >= 0
-              ? PORTFOLIO_CHART_TONES.performancePositiveText
-              : PORTFOLIO_CHART_TONES.performanceNegativeText
-          }
-        >
-          {i18n.t(
-            'ui.portfoliochartsTooltips.trailing12MonthPerformanceWithValues',
-            { amount: formatMoney(rollingPerf12m, { style: 'full' }) },
-          )}
-        </ChartText>
-      </Layout>
+      <MonthlyOperations
+        operations={operationGroups.get(month) ?? EMPTY_OPERATIONS}
+      />
+      <MonthlyRollingSummary
+        perfDelta={perfDelta}
+        rolling12m={rolling12m}
+        rollingPerf12m={rollingPerf12m}
+      />
     </TooltipBox>
   )
 }
@@ -156,4 +101,92 @@ function MonthlyOperationRow({
 const EMPTY_OPERATIONS: MonthlyTooltipOperations = {
   deposits: [],
   withdrawals: [],
+}
+
+function MonthlyOperations({
+  operations,
+}: {
+  operations: MonthlyTooltipOperations
+}) {
+  const { deposits, withdrawals } = operations
+  return (
+    <>
+      {deposits.length > 0 && (
+        <div>
+          {deposits.map(({ id, operation }) => (
+            <MonthlyOperationRow
+              key={id}
+              operation={operation}
+              withdrawal={false}
+            />
+          ))}
+        </div>
+      )}
+      {withdrawals.length > 0 && (
+        <div>
+          {withdrawals.map(({ id, operation }) => (
+            <MonthlyOperationRow key={id} operation={operation} withdrawal />
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
+function MonthlyRollingSummary({
+  perfDelta,
+  rolling12m,
+  rollingPerf12m,
+}: {
+  perfDelta: number
+  rolling12m: number
+  rollingPerf12m: number
+}) {
+  const formatMoney = useFormatMoney()
+  return (
+    <>
+      <Layout as="div" spaceBefore="compact" inset="compact">
+        <ChartText
+          as="div"
+          tone={
+            perfDelta >= 0
+              ? PORTFOLIO_CHART_TONES.performancePositiveText
+              : PORTFOLIO_CHART_TONES.performanceNegativeText
+          }
+          separator
+        >
+          {i18n.t('ui.portfoliochartsTooltips.marketPerformanceWithValues', {
+            amount: formatMoney(perfDelta, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact" inset="compact">
+        <ChartText
+          as="div"
+          tone={PORTFOLIO_CHART_TONES.netContributionsText}
+          separator
+        >
+          {i18n.t(
+            'ui.portfoliochartsTooltips.trailing12MonthNetContributionsWithValues',
+            { amount: formatMoney(rolling12m, { style: 'full' }) },
+          )}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText
+          as="div"
+          tone={
+            rollingPerf12m >= 0
+              ? PORTFOLIO_CHART_TONES.performancePositiveText
+              : PORTFOLIO_CHART_TONES.performanceNegativeText
+          }
+        >
+          {i18n.t(
+            'ui.portfoliochartsTooltips.trailing12MonthPerformanceWithValues',
+            { amount: formatMoney(rollingPerf12m, { style: 'full' }) },
+          )}
+        </ChartText>
+      </Layout>
+    </>
+  )
 }

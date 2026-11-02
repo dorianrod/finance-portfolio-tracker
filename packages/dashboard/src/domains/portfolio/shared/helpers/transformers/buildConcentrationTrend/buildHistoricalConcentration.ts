@@ -3,8 +3,8 @@ import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/ty
 import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.type'
 
 import { concentrationPoint } from './concentrationPoint'
+import { isPositiveHistoricalSnapshot } from './isPositiveHistoricalSnapshot'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Scoped valid snapshots feed one date-by-asset accumulator and its concentration denominator.
 export function buildHistoricalConcentration(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),
@@ -15,25 +15,19 @@ export function buildHistoricalConcentration(
     Map<string, { label: string; name: string; value: number }>
   >()
 
-  for (const row of rows) {
-    if (
-      row.snapshot_date == null ||
-      !matchesFilters(row, accountFilters, accountTypeFilters)
-    )
-      continue
-
+  const scopedRows = rows.filter(
+    (row) =>
+      isPositiveHistoricalSnapshot(row) &&
+      matchesFilters(row, accountFilters, accountTypeFilters),
+  )
+  for (const row of scopedRows) {
     const value = row.total_value
     const key = assetKey(row)
-    if (!key || value == null || !Number.isFinite(value) || value <= 0) continue
-
+    if (!key || value == null) continue
     const assets =
       byDate.get(row.snapshot_date.getTime()) ??
       new Map<string, { label: string; name: string; value: number }>()
-    const current = assets.get(key) ?? {
-      label: row.ticker.trim() || row.name.trim() || row.isin.trim(),
-      name: row.name.trim() || row.ticker.trim() || row.isin.trim(),
-      value: 0,
-    }
+    const current = assets.get(key) ?? historicalAssetIdentity(row)
     current.value += value
     assets.set(key, current)
     byDate.set(row.snapshot_date.getTime(), assets)
@@ -52,4 +46,12 @@ export function buildHistoricalConcentration(
 
 function assetKey(row: RawPosition): string {
   return row.isin.trim() || row.ticker.trim() || row.name.trim()
+}
+
+function historicalAssetIdentity(row: RawPosition) {
+  return {
+    label: row.ticker.trim() || row.name.trim() || row.isin.trim(),
+    name: row.name.trim() || row.ticker.trim() || row.isin.trim(),
+    value: 0,
+  }
 }

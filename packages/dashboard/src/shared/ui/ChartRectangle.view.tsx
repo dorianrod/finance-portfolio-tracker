@@ -6,7 +6,8 @@ import { BAR_CORNERS } from '@/shared/ui/chartAppearance/barCorners'
 import { BAR_PROMINENCE } from '@/shared/ui/chartAppearance/barProminence'
 import { barAppearanceAtom } from '@/shared/ui/stores/barAppearance.atoms'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; All four coordinates and inherited appearance must be validated together for one Recharts rectangle.
+import { hasRectangleGeometry } from './chartAppearance/hasRectangleGeometry'
+
 export function ChartRectangle({
   geometry,
   tone,
@@ -19,8 +20,8 @@ export function ChartRectangle({
   const appearance = useAtomValue(barAppearanceAtom)
   if (!appearance)
     throw new Error('ChartRectangle requires a SeriesBar parent.')
+  if (!hasRectangleGeometry(geometry)) return null
   const { x, y, width, height } = geometry
-  if (x == null || y == null || width == null || height == null) return null
   const color = tone ?? appearance.tone
   const emphasis = prominence ?? appearance.prominence
   return (

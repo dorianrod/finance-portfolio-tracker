@@ -4,7 +4,6 @@ import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { DataCell } from '@/shared/ui/dataTable/DataCell.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional monetary totals and tones form one account separator row with the table column contract.
 export function PositionGroupSeparator({
   separatorType,
   totals,
@@ -23,33 +22,9 @@ export function PositionGroupSeparator({
         {totals && totals.value > 0 ? formatMoney(totals.value) : ''}
       </DataCell>
       <DataCell variant="group" />
-      <DataCell
-        variant="group"
-        tone={totals ? getGainTone(totals.unrealized) : undefined}
-      >
-        {formatMoney(totals?.unrealized, {
-          fallback: '',
-          zeroAsFallback: true,
-        })}
-      </DataCell>
-      <DataCell
-        variant="group"
-        tone={totals ? getGainTone(totals.realized) : undefined}
-      >
-        {formatMoney(totals?.realized, {
-          fallback: '',
-          zeroAsFallback: true,
-        })}
-      </DataCell>
-      <DataCell
-        variant="group"
-        tone={totals ? getGainTone(totals.totalRealized) : undefined}
-      >
-        {formatMoney(totals?.totalRealized, {
-          fallback: '',
-          zeroAsFallback: true,
-        })}
-      </DataCell>
+      <GroupGainCell amount={totals?.unrealized} />
+      <GroupGainCell amount={totals?.realized} />
+      <GroupGainCell amount={totals?.totalRealized} />
       <DataCell variant="group" tone={'decorative'}>
         {formatMoney(totals?.dividends, {
           fallback: '',
@@ -59,5 +34,17 @@ export function PositionGroupSeparator({
       <DataCell variant="group" />
       <DataCell variant="group" />
     </tr>
+  )
+}
+
+function GroupGainCell({ amount }: { amount: number | undefined }) {
+  const formatMoney = useFormatMoney()
+  return (
+    <DataCell
+      variant="group"
+      tone={amount === undefined ? undefined : getGainTone(amount)}
+    >
+      {formatMoney(amount, { fallback: '', zeroAsFallback: true })}
+    </DataCell>
   )
 }

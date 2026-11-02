@@ -27,7 +27,8 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; This feature composes performance entry components and their shared availability; financial calculations are delegated.
+import { resolveAssetIrrStatus } from './helpers/presenters/resolveAssetIrrStatus'
+
 export function PerformanceTab({
   history,
   passiveIncome,
@@ -90,11 +91,8 @@ export function PerformanceTab({
     dateFrom,
     asOfDate,
   )
-  let assetIrrStatus: IrrStatus = 'ready'
   const { data: assetIrr = UNAVAILABLE_ASSET_IRR_SUMMARY } = assetIrrQuery
-  if (assetIrrQuery.isLoading || assetIrrQuery.isPlaceholderData)
-    assetIrrStatus = 'loading'
-  else if (assetIrrQuery.isError) assetIrrStatus = 'error'
+  const assetIrrStatus = resolveAssetIrrStatus(assetIrrQuery)
   const hasChartData = history.length > 0 || passiveIncome.length > 0
 
   return (

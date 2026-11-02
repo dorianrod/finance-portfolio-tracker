@@ -7,60 +7,21 @@ import type {
   PositionRow,
   TableRow,
 } from '@/domains/portfolio/shared/types/positionRow.type'
-import i18n from '@/i18n/i18n'
-import { Layout } from '@/shared/ui/layout/Layout.view'
-import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Text } from '@/shared/ui/Text.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Position, payment-group and operation variants implement the same income column contract.
+import { PositionGroupIncome } from './PositionGroupIncome.view'
+import { PositionPassiveIncomeView } from './PositionPassiveIncome.view'
+
 export function PositionIncomeCell({ row }: { row: Row<TableRow> }) {
   const { formatMoney } = usePositionTableFormatters()
 
   const r = row.original
   if (r.kind === 'position') return <PositionPassiveIncome position={r} />
-  if (r.kind === 'group' && r.groupType === 'dividends') {
-    return (
-      <Text variant="caption">
-        <Layout as="span" flow="inline">
-          <Text tone={'decorative'}>
-            {formatMoney(r.total_dividends, { fallback: 0 })}
-          </Text>
-          <Text tone="muted">
-            {i18n.t('ui.positionstable.dividendPayments', {
-              count: r.dividend_count ?? 0,
-              annualAmount: formatMoney(r.annualized_dividends, {
-                fallback: 0,
-              }),
-            })}
-          </Text>
-        </Layout>
-      </Text>
-    )
-  }
-  if (r.kind === 'group' && r.groupType === 'interest') {
-    return (
-      <Text variant="caption">
-        <Layout as="span" flow="inline">
-          <Text tone={'decorative'}>
-            {formatMoney(r.total_interest, { fallback: 0 })}
-          </Text>
-          <Text tone="muted">
-            {i18n.t('ui.positionstable.interestPayments', {
-              count: r.interest_count ?? 0,
-            })}
-          </Text>
-        </Layout>
-      </Text>
-    )
-  }
-  if (r.kind === 'operation' && r.operation_type === 'DIVIDEND') {
-    return (
-      <Text variant="body" tone={'decorative'}>
-        {formatMoney(r.total_amount, { style: 'decimal' })}
-      </Text>
-    )
-  }
-  if (r.kind === 'operation' && r.operation_type === 'INTEREST') {
+  if (r.kind === 'group') return <PositionGroupIncome group={r} />
+  if (
+    r.kind === 'operation' &&
+    ['DIVIDEND', 'INTEREST'].includes(r.operation_type)
+  ) {
     return (
       <Text variant="body" tone={'decorative'}>
         {formatMoney(r.total_amount, { style: 'decimal' })}
@@ -70,10 +31,7 @@ export function PositionIncomeCell({ row }: { row: Row<TableRow> }) {
   return null
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Dividend and interest visibility share one passive-income cell; tax calculations already have dedicated helpers.
 function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
-  const { formatMoney, formatPercentage } = usePositionTableFormatters()
-
   const taxRatePercentage = r.tax_rate == null ? null : r.tax_rate * 100
   const hasDivs = r.total_dividends > 0
   const hasInt = r.total_interest > 0
@@ -88,55 +46,14 @@ function PositionPassiveIncome({ position: r }: { position: PositionRow }) {
     r.total_interest_net,
     r.tax_rate,
   )
-  const displayedDividendTax = divTax != null && divTax > 0 ? divTax : null
-  const displayedInterestTax = intTax != null && intTax > 0 ? intTax : null
   return (
-    <Text variant="compactCaption">
-      <Stack as="span">
-        <Layout as="span">
-          {hasDivs && (
-            <Text tone={'decorative'}>{formatMoney(r.total_dividends)}</Text>
-          )}
-          {hasInt && (
-            <Text tone={'decorative'}>
-              {i18n.t('ui.positionstable.intWithValues', {
-                amount: formatMoney(r.total_interest),
-              })}
-            </Text>
-          )}
-        </Layout>
-        {displayedDividendTax != null && (
-          <Layout as="span" flow="inline" spaceBefore="compact">
-            <Text variant="tiny" tone="subtle">
-              {i18n.t('ui.positionstable.taxOnDivWithValues', {
-                amount: formatMoney(-displayedDividendTax),
-                percentage: formatPercentage(taxRatePercentage, {
-                  decimals: 0,
-                }),
-              })}
-            </Text>
-          </Layout>
-        )}
-        {displayedInterestTax != null && (
-          <Layout as="span" flow="inline" spaceBefore="compact">
-            <Text variant="tiny" tone="subtle">
-              {i18n.t('ui.positionstable.taxOnIntWithValues', {
-                amount: formatMoney(-displayedInterestTax),
-                percentage: formatPercentage(taxRatePercentage, {
-                  decimals: 0,
-                }),
-              })}
-            </Text>
-          </Layout>
-        )}
-        {isTaxFreePassiveIncome(r) && (
-          <Layout as="span" flow="inline" spaceBefore="compact">
-            <Text variant="tiny" tone="subtle">
-              {i18n.t('ui.positionstable.net0Tax')}
-            </Text>
-          </Layout>
-        )}
-      </Stack>
-    </Text>
+    <PositionPassiveIncomeView
+      dividends={r.total_dividends}
+      interest={r.total_interest}
+      dividendTax={divTax}
+      interestTax={intTax}
+      taxRatePercentage={taxRatePercentage}
+      taxFree={isTaxFreePassiveIncome(r)}
+    />
   )
 }

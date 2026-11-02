@@ -243,7 +243,6 @@ function buildContributionScope(positionsThroughEnd: RawPosition[]) {
   return { metaByAccountAsset, accountTypes }
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Since-tracking and three-year bounds are the two modes of the same contribution-period policy.
 function resolveContributionPeriod(
   positions: RawPosition[],
   snapshotDates: number[],
@@ -253,15 +252,7 @@ function resolveContributionPeriod(
   const startsByFilterId = new Map<string, number>()
   let startDate: number | null
   if (horizon === 'since-tracking') {
-    startDate = null
-    for (const row of positions) {
-      const filterId = accountFilterId(row)
-      const rowDate = datePart(row.snapshot_date)
-      const current = startsByFilterId.get(filterId)
-      if (current == null || rowDate < current)
-        startsByFilterId.set(filterId, rowDate)
-      startDate = startDate == null ? rowDate : Math.min(startDate, rowDate)
-    }
+    startDate = collectTrackingStarts(positions, startsByFilterId)
   } else {
     const firstSnapshot = snapshotDates[0]
     const cutoff = subtractDays(endDate, THREE_YEAR_DAYS)
@@ -285,29 +276,23 @@ type TouchContribution = (
 type ContributionPeriod = NonNullable<
   ReturnType<typeof resolveContributionPeriod>
 >
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Opening and closing unrealized values feed one per-position contribution update.
 function addPositionContributions(
   positions: RawPosition[],
   period: ContributionPeriod,
   touch: TouchContribution,
 ) {
-  const { horizon, endDate, startDate, startsByFilterId } = period
+  const { endDate } = period
   for (const row of positions) {
     const key = assetKey(row)
     if (!key) continue
     const rowDate = datePart(row.snapshot_date)
     const endValue = rowDate === endDate ? (row.unrealized_gain ?? 0) : 0
-    const isOpeningRow =
-      horizon === 'since-tracking'
-        ? rowDate === startsByFilterId.get(accountFilterId(row))
-        : rowDate === startDate
-    const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
+    const openingValue = openingUnrealizedValue(row, period)
     if (endValue === 0 && openingValue === 0) continue
     touch(key, clean(row.name), clean(row.ticker), row.account).amount +=
       endValue - openingValue
   }
 }
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Realized sales and income operations feed the same scoped contribution ledger with identical identity fallback.
 function addOperationContributions(
   rawOperations: RawOperation[],
   period: ContributionPeriod,
@@ -329,23 +314,19 @@ function addOperationContributions(
         ? operation.realized_gain
         : operation.total_amount
     if (amount === 0) continue
-    touch(
-      key,
-      meta?.name || clean(operation.name),
-      meta?.ticker || clean(operation.ticker),
-      operation.account,
-    ).amount += amount
+    const identity = operationContributionIdentity(operation, meta)
+    touch(key, identity.name, identity.ticker, operation.account).amount +=
+      amount
   }
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Operation kind, date, asset and account bounds form one contribution eligibility decision.
 function selectContributionOperation(
   operation: RawOperation,
   period: ContributionPeriod,
   scope: ReturnType<typeof buildContributionScope>,
   filters: PerformanceContributionFilters,
 ): { key: string; meta: AssetMeta | undefined } | null {
-  const { horizon, endDate, startDate, startsByFilterId } = period
+  const { endDate } = period
   const { metaByAccountAsset, accountTypes } = scope
   if (!['SELL', 'DIVIDEND', 'INTEREST'].includes(operation.operation_type))
     return null
@@ -356,11 +337,59 @@ function selectContributionOperation(
   const meta = metaByAccountAsset.get(accountAssetKey(operation.account, key))
   if (!operationIsInScope(operation, meta, filters, accountTypes)) return null
 
+  if (!isOperationInContributionPeriod(operation, meta, period)) return null
+
+  return { key, meta }
+}
+
+function collectTrackingStarts(
+  positions: RawPosition[],
+  startsByFilterId: Map<string, number>,
+) {
+  let startDate: number | null = null
+  for (const row of positions) {
+    const filterId = accountFilterId(row)
+    const rowDate = datePart(row.snapshot_date)
+    const current = startsByFilterId.get(filterId)
+    if (current == null || rowDate < current)
+      startsByFilterId.set(filterId, rowDate)
+    startDate = startDate == null ? rowDate : Math.min(startDate, rowDate)
+  }
+  return startDate
+}
+
+function openingUnrealizedValue(row: RawPosition, period: ContributionPeriod) {
+  const { horizon, startDate, startsByFilterId } = period
+  const rowDate = datePart(row.snapshot_date)
+  const isOpeningRow =
+    horizon === 'since-tracking'
+      ? rowDate === startsByFilterId.get(accountFilterId(row))
+      : rowDate === startDate
+  const openingValue = isOpeningRow ? (row.unrealized_gain ?? 0) : 0
+  return openingValue
+}
+
+function operationContributionIdentity(
+  operation: RawOperation,
+  meta: AssetMeta | undefined,
+) {
+  return {
+    name: meta?.name || clean(operation.name),
+    ticker: meta?.ticker || clean(operation.ticker),
+  }
+}
+
+function isOperationInContributionPeriod(
+  operation: RawOperation,
+  meta: AssetMeta | undefined,
+  period: ContributionPeriod,
+) {
+  const { horizon, startDate, startsByFilterId } = period
+  const operationDate = datePart(operation.date)
   let lowerBound: number | undefined = startDate
   if (horizon === 'since-tracking') {
     lowerBound = startsByFilterId.get(meta?.filterId ?? operation.account)
   }
-  if (lowerBound == null || operationDate <= lowerBound) return null
-
-  return { key, meta }
+  if (lowerBound == null || operationDate <= lowerBound) return false
+  return true
 }

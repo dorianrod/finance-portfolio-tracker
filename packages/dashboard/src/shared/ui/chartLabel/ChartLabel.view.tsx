@@ -1,10 +1,11 @@
 import type { ReactNode, SVGProps } from 'react'
 
 import { CHART_THEME } from '@/shared/theme/chartTheme'
-import { type ChartAge, chartAgeOpacity } from '@/shared/ui/chartAgeAppearance'
+import type { ChartAge } from '@/shared/ui/chartAgeAppearance'
 import { CHART_TEXT_TONES } from '@/shared/ui/chartAppearance/chartTextTones'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; SVG typography, baseline and historical-age appearance belong to the same label primitive.
+import { getChartLabelAgeAppearance } from './helpers/presenters/getChartLabelAgeAppearance'
+
 export function ChartLabel({
   as: Tag = 'text',
   tone = 'label',
@@ -22,16 +23,12 @@ export function ChartLabel({
     <Tag
       {...props}
       fill={fill}
-      fontSize={variant === 'compact' || variant === 'pie' ? 10 : 11}
+      fontSize={LABEL_TYPOGRAPHY[variant].fontSize}
       textAnchor={align}
       dominantBaseline={
-        !age && (variant === 'pie' || variant === 'standard')
-          ? 'central'
-          : undefined
+        !age && LABEL_TYPOGRAPHY[variant].centered ? 'central' : undefined
       }
-      fillOpacity={age && chartAgeOpacity(age)}
-      fontWeight={age && (age.recent ? 600 : 400)}
-      pointerEvents={age ? 'none' : undefined}
+      {...getChartLabelAgeAppearance(age)}
     />
   )
 }
@@ -47,3 +44,9 @@ type Props = Pick<
   align?: 'start' | 'middle' | 'end'
   age?: ChartAge
 }
+
+const LABEL_TYPOGRAPHY = {
+  standard: { fontSize: 11, centered: true },
+  compact: { fontSize: 10, centered: false },
+  pie: { fontSize: 10, centered: true },
+} as const

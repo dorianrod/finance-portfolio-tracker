@@ -17,17 +17,8 @@ export function computeAllocationCoverageByDimension(
   rawData: RawIsinData,
 ): DimensionCoverage[] {
   return (['geo', 'secteur', 'currency', 'classe'] as const).map(
-    // eslint-disable-next-line complexity -- reviewed: 2026-10-27; One dimension accumulator combines the latest breakdown, missing ratio and corresponding issue totals.
     (dimension) => {
-      const latestByKey = new Map<
-        string,
-        (typeof rawData)[typeof dimension][number]
-      >()
-      for (const row of rawData[dimension]) {
-        const current = latestByKey.get(row.isin)
-        if (!current || row.snapshot_date > current.snapshot_date)
-          latestByKey.set(row.isin, row)
-      }
+      const latestByKey = latestDimensionRows(rawData[dimension])
       let allocated = 0
       let unallocated = 0
       const issues = new Map<string, AllocationCoverageIssue>()
@@ -40,23 +31,7 @@ export function computeAllocationCoverageByDimension(
         if (!isAssetAnalysisApplicablePosition(position)) continue
         const key = getPositionAllocationKey(position)
         const allocation = latestByKey.get(key)
-        const allocationTotal = allocation
-          ? Object.values(allocation.values).reduce(
-              (sum, amount) => sum + amount,
-              0,
-            )
-          : 0
-        const ncRatio =
-          allocationTotal > 0
-            ? Math.min(
-                1,
-                Math.max(
-                  0,
-                  (getOwnValue(allocation?.values, 'nc') ?? 0) /
-                    allocationTotal,
-                ),
-              )
-            : 1
+        const ncRatio = missingAllocationRatio(allocation)
         const missing = value * ncRatio
         allocated += value - missing
         unallocated += missing
@@ -82,4 +57,33 @@ export function computeAllocationCoverageByDimension(
       }
     },
   )
+}
+
+type DimensionRow = RawIsinData['geo'][number]
+
+function latestDimensionRows(rows: DimensionRow[]) {
+  const latestByKey = new Map<string, DimensionRow>()
+  for (const row of rows) {
+    const current = latestByKey.get(row.isin)
+    if (!current || row.snapshot_date > current.snapshot_date)
+      latestByKey.set(row.isin, row)
+  }
+  return latestByKey
+}
+
+function missingAllocationRatio(allocation: DimensionRow | undefined) {
+  const allocationTotal = allocation
+    ? Object.values(allocation.values).reduce((sum, amount) => sum + amount, 0)
+    : 0
+  const ncRatio =
+    allocationTotal > 0
+      ? Math.min(
+          1,
+          Math.max(
+            0,
+            (getOwnValue(allocation?.values, 'nc') ?? 0) / allocationTotal,
+          ),
+        )
+      : 1
+  return ncRatio
 }

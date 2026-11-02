@@ -8,7 +8,8 @@ import type { NumericTooltipProps } from '@/shared/ui/chartTooltip'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { TooltipBox } from '@/shared/ui/TooltipBox.view'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Observed and backfilled one-year and three-year series share one tooltip availability contract.
+import { selectTriTooltipSeries } from './helpers/presenters/selectTriTooltipSeries'
+
 export function TriTooltip({
   active,
   payload,
@@ -18,18 +19,7 @@ export function TriTooltip({
   const formatPercentage = useFormatPercentage()
   if (payload == null) return null
   if (!active || payload.length === 0) return null
-  const tri1y =
-    payload.find((point) => point.dataKey === 'tri_rolling_1y')?.value ?? null
-  const tri1yBackfill =
-    payload.find((point) => point.dataKey === 'tri_rolling_1y_backfill')
-      ?.value ?? null
-  const tri3y =
-    payload.find((point) => point.dataKey === 'tri_rolling_3y')?.value ?? null
-  const tri3yBackfill =
-    payload.find((point) => point.dataKey === 'tri_rolling_3y_backfill')
-      ?.value ?? null
-  const showTri1y = tri1y !== null || tri1yBackfill !== null
-  const showTri3y = tri3y !== null || tri3yBackfill !== null
+  const { tri1y, tri3y, showTri1y, showTri3y } = selectTriTooltipSeries(payload)
   return (
     <TooltipBox>
       <Layout as="div" spaceAfter="compact">

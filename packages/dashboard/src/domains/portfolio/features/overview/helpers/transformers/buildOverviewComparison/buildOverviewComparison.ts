@@ -176,7 +176,6 @@ function toOverviewConcentration(
   }
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Nullable current and previous metrics are projections of the same concentration comparison window.
 function concentrationComparison(
   points: HistoricalConcentrationPoint[],
   windows: OverviewWindows,
@@ -190,13 +189,15 @@ function concentrationComparison(
   return {
     current,
     previous,
-    topHolding: compared(
-      current?.topHoldingPct ?? null,
-      previous?.topHoldingPct ?? null,
-    ),
-    topFive: compared(
-      current?.topFivePct ?? null,
-      previous?.topFivePct ?? null,
-    ),
+    topHolding: comparedConcentrationMetric(current, previous, 'topHoldingPct'),
+    topFive: comparedConcentrationMetric(current, previous, 'topFivePct'),
   }
+}
+
+function comparedConcentrationMetric(
+  current: OverviewConcentrationPoint | null,
+  previous: OverviewConcentrationPoint | null,
+  key: 'topHoldingPct' | 'topFivePct',
+) {
+  return compared(current?.[key] ?? null, previous?.[key] ?? null)
 }

@@ -1,5 +1,6 @@
 import { createElement } from 'react'
 
+import { getLayoutTokenClass } from '@/shared/ui/layoutAppearance/getLayoutTokenClass'
 import { LAYOUT_AFTER } from '@/shared/ui/layoutAppearance/layoutAfter'
 import { LAYOUT_ALIGNMENTS } from '@/shared/ui/layoutAppearance/layoutAlignments'
 import { LAYOUT_BEFORE } from '@/shared/ui/layoutAppearance/layoutBefore'
@@ -19,7 +20,6 @@ import { LAYOUT_WIDTHS } from '@/shared/ui/layoutAppearance/layoutWidths'
 
 import type { LayoutProps, LayoutTag } from './layout.types'
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Closed layout tokens map directly to classes in one primitive; splitting each option would add indirection.
 export function Layout<T extends LayoutTag = 'div'>({
   as,
   flow,
@@ -48,21 +48,21 @@ export function Layout<T extends LayoutTag = 'div'>({
           (flow === 'row' && as === 'span'
             ? 'inline-flex'
             : LAYOUT_FLOWS[flow]),
-        gap && LAYOUT_GAPS[gap],
-        inset && LAYOUT_INSETS[inset],
-        spaceBefore && LAYOUT_BEFORE[spaceBefore],
-        spaceAfter && LAYOUT_AFTER[spaceAfter],
-        align && LAYOUT_ALIGNMENTS[align],
-        justify && LAYOUT_JUSTIFICATION[justify],
-        sizing && LAYOUT_SIZING[sizing],
-        width && LAYOUT_WIDTHS[width],
-        height && LAYOUT_HEIGHTS[height],
-        columns != null && LAYOUT_COLUMNS[columns],
-        arrangement && LAYOUT_PRESETS[arrangement],
-        overflow && LAYOUT_OVERFLOW[overflow],
-        placement && LAYOUT_PLACEMENTS[placement],
-        hiddenUntil && LAYOUT_RESPONSIVENESS[hiddenUntil],
-        hideFrom && LAYOUT_HIDDEN_FROM[hideFrom],
+        getLayoutTokenClass(LAYOUT_GAPS, gap),
+        getLayoutTokenClass(LAYOUT_INSETS, inset),
+        getLayoutTokenClass(LAYOUT_BEFORE, spaceBefore),
+        getLayoutTokenClass(LAYOUT_AFTER, spaceAfter),
+        getLayoutTokenClass(LAYOUT_ALIGNMENTS, align),
+        getLayoutTokenClass(LAYOUT_JUSTIFICATION, justify),
+        getLayoutTokenClass(LAYOUT_SIZING, sizing),
+        getLayoutTokenClass(LAYOUT_WIDTHS, width),
+        getLayoutTokenClass(LAYOUT_HEIGHTS, height),
+        getLayoutTokenClass(LAYOUT_COLUMNS, columns),
+        getLayoutTokenClass(LAYOUT_PRESETS, arrangement),
+        getLayoutTokenClass(LAYOUT_OVERFLOW, overflow),
+        getLayoutTokenClass(LAYOUT_PLACEMENTS, placement),
+        getLayoutTokenClass(LAYOUT_RESPONSIVENESS, hiddenUntil),
+        getLayoutTokenClass(LAYOUT_HIDDEN_FROM, hideFrom),
         height === 'icon' && !width && 'w-4',
       ]
         .filter(Boolean)

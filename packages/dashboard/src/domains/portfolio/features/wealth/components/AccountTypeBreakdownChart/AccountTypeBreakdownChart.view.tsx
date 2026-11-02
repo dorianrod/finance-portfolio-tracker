@@ -3,7 +3,6 @@ import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeTooltip.view'
-import { resolveAccountTypeLabelPositions } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/resolveAccountTypeLabelPositions'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
 import { AllocationCategory } from '@/domains/portfolio/shared/components/AllocationCategory/AllocationCategory.view'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
@@ -19,8 +18,8 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { buildAccountTypePieData } from './helpers/presenters/buildAccountTypePieData'
-import { getAccountTypeLeaderLine } from './helpers/presenters/getAccountTypeLeaderLine'
 import { getAccountTypeSplitRadius } from './helpers/presenters/getAccountTypeSplitRadius'
+import { resolveAccountTypeLabel } from './helpers/presenters/resolveAccountTypeLabel'
 
 export function AccountTypeBreakdownChartView({
   data,
@@ -75,7 +74,6 @@ export function AccountTypeBreakdownChartView({
   )
 }
 
-// eslint-disable-next-line complexity -- reviewed: 2026-10-27; Optional Recharts coordinates and row index guard one account label; collision geometry is already delegated.
 function AccountTypeLabel({
   data,
   ...props
@@ -83,29 +81,10 @@ function AccountTypeLabel({
   data: AccountTypePoint[]
 }) {
   const formatPercentage = useFormatPercentage()
-  const { cx, cy, midAngle, outerRadius, payload, percent, index } = props
-  if (
-    typeof cx !== 'number' ||
-    typeof cy !== 'number' ||
-    typeof midAngle !== 'number' ||
-    typeof outerRadius !== 'number' ||
-    typeof index !== 'number' ||
-    !payload
-  )
-    return null
-  const point = payload
-  const position = resolveAccountTypeLabelPositions(data, cx, cy, outerRadius)[
-    index
-  ]
-  if (position == null) return null
-
-  const leaderLine = getAccountTypeLeaderLine(
-    cx,
-    cy,
-    midAngle,
-    outerRadius,
-    position,
-  )
+  const label = resolveAccountTypeLabel(data, props)
+  if (!label) return null
+  const { point, position, leaderLine } = label
+  const { percent } = props
 
   return (
     <g>
