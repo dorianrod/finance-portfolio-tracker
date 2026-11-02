@@ -1,4 +1,3 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this savings source to wealth analysis and overview comparisons. See SHARED_OWNERSHIP_AUDIT.md.
 import {
   keepPreviousData,
   useQuery,

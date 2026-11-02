@@ -1,4 +1,3 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this allocation source to diversification charts and quality assessment coverage. See SHARED_OWNERSHIP_AUDIT.md.
 import * as yup from 'yup'
 
 import type { RawIsinRow } from '@/domains/portfolio/shared/types/rawIsinRow.type'

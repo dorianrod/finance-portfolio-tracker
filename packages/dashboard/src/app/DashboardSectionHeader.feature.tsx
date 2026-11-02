@@ -13,13 +13,12 @@ import { Surface } from '@/shared/ui/Surface.view'
 import { Text } from '@/shared/ui/Text.view'
 
 import { DashboardReliability } from './DashboardReliability.feature'
-import type { DashboardViewModel } from './types/dashboardViewModel.type'
 
 export function DashboardSectionHeader({
-  dashboard,
+  ready,
   activeFilterCount,
 }: {
-  dashboard: DashboardViewModel
+  ready: boolean
   activeFilterCount: number
 }) {
   const activeTab = useAtomValue(dashboardActiveTabAtom)
@@ -40,9 +39,7 @@ export function DashboardSectionHeader({
             <Text as="h2" variant="statistic" tone="default">
               {copy.title}
             </Text>
-            {dashboard.loadState.status === 'ready' && (
-              <DashboardReliability dashboard={dashboard} />
-            )}
+            {ready && <DashboardReliability />}
             <Layout spaceBefore="default">
               <Text as="p" variant="body" tone="subtle">
                 {copy.description}

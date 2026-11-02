@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { useMemo } from 'react'
 
 import { holdingsForPosition } from '@/domains/portfolio/features/holdings/features/positions/helpers/transformers/holdingsForPosition'
-import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
+import { useGetFundHoldingsQuery } from '@/domains/portfolio/features/holdings/shared/apis/queries/useGetFundHoldingsQuery'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/transformers/historicalFundHoldings/selectHistoricalFundHoldingsAtDate'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import type {

@@ -1,0 +1,35 @@
+import { excludeNonApplicableAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/scopeAllocationData/excludeNonApplicableAllocationData'
+import { scopeRawAllocationData } from '@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/scopeAllocationData/scopeRawAllocationData'
+import type { DiversificationInputs } from '@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/transformers/isAssetAnalysisApplicablePosition'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+
+export function prepareAllocationScope(
+  inputs: Pick<
+    DiversificationInputs,
+    'positions' | 'rawData' | 'accountFilters'
+  >,
+) {
+  const applicablePositions = inputs.positions.filter(
+    isAssetAnalysisApplicablePosition,
+  )
+  const scopedRawData = excludeNonApplicableAllocationData(
+    scopeRawAllocationData(inputs.rawData, inputs.accountFilters),
+    inputs.positions,
+  )
+  return {
+    scopedRawData,
+    hasCurrentData: [
+      scopedRawData.geo,
+      scopedRawData.secteur,
+      scopedRawData.currency,
+      scopedRawData.classe,
+    ].some((rows) => rows.length > 0),
+    hasSelectedValue: inputs.positions.some(hasActiveValue),
+    hasApplicableValue: applicablePositions.some(hasActiveValue),
+  }
+}
+
+function hasActiveValue(position: PositionRow): boolean {
+  return position.status === 'active' && (position.total_value ?? 0) > 0
+}

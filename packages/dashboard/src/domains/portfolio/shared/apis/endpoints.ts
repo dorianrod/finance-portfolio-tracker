@@ -10,7 +10,7 @@ export const PORTFOLIO_ENDPOINTS = {
   data: {
     accounts: dataUrl('accounts.csv'),
     annualIncomeSavings: dataUrl('annual_income_savings.csv'),
-    cash: dataUrl('cash.csv'),
+
     demoFilteredHistory: dataUrl('demo_filtered_history.json'),
     errors: dataUrl('errors.csv'),
     fundHoldings: dataUrl('fund_holdings.csv'),

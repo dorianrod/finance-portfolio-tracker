@@ -1,7 +1,10 @@
+import { useAtomValue } from 'jotai'
+import { useSetAtom } from 'jotai'
+
 import { preloadDashboardTab } from '@/app/routing/dashboardTabLoaders/preloadDashboardTab'
 import { useQualityNavigation } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation'
-import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
-import type { AnalysisTab } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types'
+import { useQualityAssessmentModel } from '@/domains/portfolio/features/data-quality/features/assessment/services/useQualityAssessmentModel'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import i18n from '@/i18n/i18n'
 import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { CountBadge } from '@/shared/ui/badge/CountBadge.view'
@@ -13,18 +16,12 @@ import { Layout } from '@/shared/ui/layout/Layout.view'
 import { PrimaryTabButton } from './PrimaryTabButton.feature'
 import { PRIMARY_TABS } from './primaryTabs'
 
-export function DashboardNavigation({
-  activeTab,
-  hasFundValidationError,
-  hasPipelineError,
-  qualityCount,
-}: {
-  activeTab: AnalysisTab
-  hasFundValidationError: boolean
-  hasPipelineError: boolean
-  qualityCount: number
-}) {
-  const { navigateTo } = useDashboardNavigation()
+export function DashboardNavigation() {
+  const activeTab = useAtomValue(dashboardActiveTabAtom)
+  const {
+    qualitySummary: { hasFundValidationError, hasPipelineError, qualityCount },
+  } = useQualityAssessmentModel()
+  const navigateTo = useSetAtom(dashboardActiveTabAtom)
   const { openQualityOverview } = useQualityNavigation()
   const formatNumber = useFormatNumber()
 

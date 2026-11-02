@@ -1,11 +1,8 @@
-import type {
-  ComparedMetric,
-  OverviewComparison,
-} from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
 import { OverviewConcentrationChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature'
 import { OverviewDriversChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart/OverviewDriversChart.feature'
 import { OverviewValueChart } from '@/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature'
-import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
+import { useOverviewModel } from '@/domains/portfolio/features/overview/services/useOverviewModel'
+import { useGetPortfolioSourcesQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioSourcesQuery'
 import i18n from '@/i18n/i18n'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -13,11 +10,13 @@ import { Text } from '@/shared/ui/Text.view'
 
 import { OverviewSummaryCards } from './OverviewSummaryCards.feature'
 
-export function OverviewTab({
-  comparison,
-  rollingThreeYearTri,
-  irrStatus,
-}: OverviewTabProps) {
+export function OverviewTab() {
+  useGetPortfolioSourcesQuery()
+  const {
+    overviewComparison: comparison,
+    rollingThreeYearTriComparison: rollingThreeYearTri,
+    irrStatus,
+  } = useOverviewModel()
   if (!comparison) {
     return (
       <div className="mb-6">
@@ -57,11 +56,4 @@ export function OverviewTab({
       </div>
     </div>
   )
-}
-
-type OverviewTabProps = {
-  // No comparison can be built before usable portfolio history is available.
-  comparison: OverviewComparison | null
-  rollingThreeYearTri: ComparedMetric
-  irrStatus: IrrStatus
 }

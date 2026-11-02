@@ -8,6 +8,7 @@ import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilit
 import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
 import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/useFilterSummaries'
+import { usePortfolioFilterOptions } from '@/domains/portfolio/shared/services/usePortfolioFilterOptions'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
@@ -27,9 +28,8 @@ export default function App() {
   const filters = useAtomValue(dashboardFiltersAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const dashboard = useDashboardViewModel()
-  const { loadState, accountFilterLabels, qualitySummary } = dashboard
-  const { hasFundValidationError, hasPipelineError, qualityCount } =
-    qualitySummary
+  const { loadState } = dashboard
+  const { accountFilterLabels } = usePortfolioFilterOptions()
   const activeFilterSummaries = useFilterSummaries(
     filters,
     accountFilterLabels,
@@ -43,23 +43,15 @@ export default function App() {
           <div className="mx-auto max-w-screen-2xl">
             <DashboardHeader />
 
-            <DashboardNavigation
-              activeTab={activeTab}
-              hasFundValidationError={hasFundValidationError}
-              hasPipelineError={hasPipelineError}
-              qualityCount={qualityCount}
-            />
+            <DashboardNavigation />
 
             {activeTab === 'holdings' && <HoldingsViewTabs />}
 
             <DashboardSectionHeader
-              dashboard={dashboard}
+              ready={loadState.status === 'ready'}
               activeFilterCount={activeFilterSummaries.length}
             />
-            <DashboardFilters
-              dashboard={dashboard}
-              activeFilterSummaries={activeFilterSummaries}
-            />
+            <DashboardFilters activeFilterSummaries={activeFilterSummaries} />
 
             <DashboardLoadState
               state={loadState}
@@ -76,7 +68,7 @@ export default function App() {
                 onRetry={() => window.location.reload()}
               >
                 <Suspense fallback={<DashboardPanelFallback />}>
-                  <DashboardContent dashboard={dashboard} />
+                  <DashboardContent />
                 </Suspense>
               </DashboardPanelErrorBoundary>
             </DashboardLoadState>

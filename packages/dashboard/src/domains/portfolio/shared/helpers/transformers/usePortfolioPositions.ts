@@ -1,11 +1,9 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 import { useMemo } from 'react'
 
 import { applyPositionFilters } from '@/domains/portfolio/shared/helpers/transformers/applyPositionFilters'
 import { buildPositionRows } from '@/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildPositionRows'
 import { selectHistoricalFundHoldingsAtDate } from '@/domains/portfolio/shared/helpers/transformers/historicalFundHoldings/selectHistoricalFundHoldingsAtDate'
 import { withoutOperationAndPeriodFilters } from '@/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationAndPeriodFilters'
-import { withoutOperationFilters } from '@/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationFilters'
 import type { DashboardFilters } from '@/domains/portfolio/shared/types/dashboardFilters.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
@@ -46,28 +44,19 @@ export function usePortfolioPositions({
     () => applyPositionFilters(positionsAtPeriodEnd, filters),
     [filters, positionsAtPeriodEnd],
   )
-  const periodPositions = useMemo(
-    () =>
-      applyPositionFilters(
-        positionsAtPeriodEnd,
-        withoutOperationFilters(filters),
-      ),
-    [filters, positionsAtPeriodEnd],
-  )
-
   return useMemo(
     () => ({
       currentPositions,
       latestAccountPositions,
       periodEndFundHoldings,
-      periodPositions,
+      positionsAtPeriodEnd,
       tableFiltered,
     }),
     [
       currentPositions,
       latestAccountPositions,
       periodEndFundHoldings,
-      periodPositions,
+      positionsAtPeriodEnd,
       tableFiltered,
     ],
   )

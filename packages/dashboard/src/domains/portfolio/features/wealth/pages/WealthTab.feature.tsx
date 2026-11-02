@@ -6,33 +6,27 @@ import { IncomePlacementRelationshipChart } from '@/domains/portfolio/features/w
 import { MonthlySavingsChart } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature'
 import { WealthComparisonKpi } from '@/domains/portfolio/features/wealth/components/WealthComparisonKpi.view'
 import { WealthDriversChart } from '@/domains/portfolio/features/wealth/components/WealthDriversChart.view'
-import type { AccountTypeHistory } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
-import type { AccountTypeHistoryPoint } from '@/domains/portfolio/features/wealth/types/accountTypeHistory.type'
-import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
-import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
-import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/wealth/types/monthlyOperation.type'
-import type { TrailingSavingCapacityPoint } from '@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type'
-import type { TrailingYearOverYear } from '@/domains/portfolio/features/wealth/types/trailingYearOverYear.type'
-import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
+import { useWealthModel } from '@/domains/portfolio/features/wealth/services/useWealthModel'
+import { useGetPortfolioSourcesQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioSourcesQuery'
 import { FilterScopeBadges } from '@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature'
 import { ScopedInfoTooltip } from '@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature'
-import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import i18n from '@/i18n/i18n'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Surface } from '@/shared/ui/Surface.view'
 
-export function WealthTab({
-  history,
-  accountTypeData,
-  accountTypeHistory,
-  accountTypes,
-  typeCategories,
-  savings,
-  monthlyOps,
-  drivers,
-  trailingYearComparison,
-  annualIncomeSavings,
-}: WealthTabProps) {
+export function WealthTab() {
+  useGetPortfolioSourcesQuery()
+  const {
+    displayedHistory: history,
+    accountTypeData,
+    displayedTypeHistory: accountTypeHistory,
+    typeHistory: { accountTypes, typeCategories },
+    trailingSavings: savings,
+    monthlyOps,
+    wealthDrivers: drivers,
+    trailingYearComparison,
+    displayedAnnualIncomeSavings: annualIncomeSavings,
+  } = useWealthModel()
   return (
     <div className="mb-6 space-y-4">
       <Surface variant="sectionEnd">
@@ -135,17 +129,4 @@ export function WealthTab({
       )}
     </div>
   )
-}
-
-type WealthTabProps = {
-  history: PortfolioHistoryPoint[]
-  accountTypeData: AccountTypePoint[]
-  accountTypeHistory: AccountTypeHistoryPoint[]
-  accountTypes: string[]
-  typeCategories: AccountTypeHistory['typeCategories']
-  savings: TrailingSavingCapacityPoint[]
-  monthlyOps: MonthlyOperationsByMonth
-  drivers: WealthDriverPoint[]
-  trailingYearComparison: TrailingYearOverYear
-  annualIncomeSavings: AnnualIncomeSavingsPoint[]
 }

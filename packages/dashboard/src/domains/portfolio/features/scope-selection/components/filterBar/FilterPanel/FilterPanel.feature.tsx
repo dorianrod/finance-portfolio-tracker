@@ -8,9 +8,10 @@ import { useFormatOperationType } from '@/domains/portfolio/features/scope-selec
 import { presetDateFrom } from '@/domains/portfolio/features/scope-selection/helpers/transformers/presetDateFrom'
 import { toggle } from '@/domains/portfolio/features/scope-selection/helpers/transformers/toggle'
 import { useDashboardFilters } from '@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters'
-import { usePortfolioFilterOptions } from '@/domains/portfolio/features/scope-selection/services/usePortfolioFilterOptions'
+import { useDemoPresetScope } from '@/domains/portfolio/features/scope-selection/services/useDemoPresetScope'
 import type { FilterVisibility } from '@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type'
 import { useDashboardFilterPanel } from '@/domains/portfolio/shared/services/actions/useDashboardFilterPanel'
+import { usePortfolioFilterOptions } from '@/domains/portfolio/shared/services/usePortfolioFilterOptions'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 import { dashboardFiltersOpenAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms'
 import type { OperationType } from '@/domains/portfolio/shared/types/operationType.type'
@@ -30,8 +31,6 @@ import { Text } from '@/shared/ui/Text.view'
 export function FilterPanel({
   onReset,
   visibility,
-  demoPresetSelection,
-  demoPresetActive = false,
 }: FilterPanelProps & { onReset: () => void }) {
   const open = useAtomValue(dashboardFiltersOpenAtom)
   const { closeFilters } = useDashboardFilterPanel()
@@ -55,10 +54,7 @@ export function FilterPanel({
       </SidePanel.HeaderActions>
       {visibility.showPeriod && <PeriodFilterSection />}
 
-      <AccountFilterSection
-        demoPresetSelection={demoPresetSelection}
-        demoPresetActive={demoPresetActive}
-      />
+      <AccountFilterSection />
 
       {visibility.showPositionFilters && <PositionFilterSection />}
     </SidePanel>
@@ -67,9 +63,6 @@ export function FilterPanel({
 
 type FilterPanelProps = {
   visibility: FilterVisibility
-  // The static demo endpoint may not provide a precomputed account preset.
-  demoPresetSelection: Set<string> | null
-  demoPresetActive?: boolean
 }
 
 const DATE_PRESETS = [
@@ -210,10 +203,8 @@ function PeriodFilterSection() {
   )
 }
 
-function AccountFilterSection({
-  demoPresetSelection,
-  demoPresetActive,
-}: Pick<FilterPanelProps, 'demoPresetSelection' | 'demoPresetActive'>) {
+function AccountFilterSection() {
+  const { demoPresetSelection, demoPresetActive } = useDemoPresetScope()
   const filters = useAtomValue(dashboardFiltersAtom)
   const { setFilters } = useDashboardFilters()
   const { accountFilterLabels, accountToType, allAccounts, allAccountTypes } =

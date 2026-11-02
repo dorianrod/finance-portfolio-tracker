@@ -7,6 +7,7 @@ import { createDataQualityTabProps } from '@/domains/portfolio/features/data-qua
 import { dashboardSelectedQualityThemeAtom } from '@/domains/portfolio/features/data-quality/features/assessment/stores/dashboardQuality.atoms'
 import { createManualPriceOverride as fixtureManualPriceOverride } from '@/domains/portfolio/features/data-quality/shared/mocks/manualPriceOverride.mock'
 import { pipelineError as fixturePipelineError } from '@/domains/portfolio/features/data-quality/shared/mocks/pipelineError.mock'
+import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
 
 import { DashboardDataQuality } from './DashboardDataQuality.feature'
 
@@ -51,10 +52,18 @@ describe('quality feature composition', () => {
       const client = new QueryClient({
         defaultOptions: { queries: { retry: false } },
       })
+      client.setQueryData(
+        portfolioQueryKeys.data('pipeline-errors'),
+        INPUTS.errors,
+      )
+      client.setQueryData(
+        portfolioQueryKeys.data('manual-price-overrides'),
+        INPUTS.manualPriceOverrides,
+      )
       const html = renderToStaticMarkup(
         <QueryClientProvider client={client}>
           <Provider store={store}>
-            <DashboardDataQuality {...INPUTS} />
+            <DashboardDataQuality />
           </Provider>
         </QueryClientProvider>,
       )

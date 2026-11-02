@@ -44,7 +44,6 @@ describe('dashboard loading controls', () => {
           data.operations,
           data.positions,
           data.portfolioHistory,
-          data.cash,
           data.errors,
           data.manualPriceOverrides,
           data.positionsGeoByIsin,

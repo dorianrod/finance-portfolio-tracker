@@ -20,7 +20,7 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
   expect(result.status, result.stderr).toBe(0)
   const inventory = JSON.parse(result.stdout)
   const scopeTest =
-    'src/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope.test.ts'
+    'src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/prepareAllocationScope.test.ts'
   const crosshairTest =
     'src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/helpers/presenters/cumulativeConcentrationCrosshair.test.ts'
   expect(inventory.source).toBe('src')

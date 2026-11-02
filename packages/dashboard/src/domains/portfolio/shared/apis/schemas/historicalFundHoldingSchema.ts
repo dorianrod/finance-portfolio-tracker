@@ -1,4 +1,3 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-30; Historical compositions feed holdings previews, overview comparisons and concentration history through the shell; the sharing detector cannot follow those props.
 import { mixed, type Schema } from 'yup'
 
 import type { HistoricalFundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'

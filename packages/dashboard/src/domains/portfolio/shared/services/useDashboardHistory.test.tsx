@@ -49,7 +49,6 @@ describe('filtered dashboard history', () => {
       const { result, rerender } = renderHook(
         ({ accounts }) =>
           useDashboardHistory({
-            allAccounts: ['first', 'second'],
             allPositionRows: [],
             enrichedHistory: [],
             filters: { ...resetFilters(), accounts },

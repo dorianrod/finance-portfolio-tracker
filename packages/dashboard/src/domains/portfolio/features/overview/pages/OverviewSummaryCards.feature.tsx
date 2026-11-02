@@ -8,9 +8,9 @@ import { getConcentrationTone } from '@/domains/portfolio/features/overview/page
 import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
 import { PreviousValue } from '@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view'
+import { useOverviewNavigation } from '@/domains/portfolio/features/overview/services/actions/useOverviewNavigation'
 import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
-import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import { useFilterScopeContext } from '@/domains/portfolio/shared/services/useFilterScopeContext'
 import type { FilterScopeSpec } from '@/domains/portfolio/shared/types/filterScope.type'
 import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
@@ -60,7 +60,7 @@ function OverviewValueCard({
 
   const formatMoney = useFormatMoney()
 
-  const { navigateTo } = useDashboardNavigation()
+  const { navigateTo } = useOverviewNavigation()
   const metricScope: FilterScopeSpec = {
     account: 'filterable',
     period: 'as-of',
@@ -113,7 +113,7 @@ function OverviewContributionsCard({
 
   const formatMoney = useFormatMoney()
 
-  const { navigateTo } = useDashboardNavigation()
+  const { navigateTo } = useOverviewNavigation()
   const metricScope: FilterScopeSpec = {
     account: 'filterable',
     period: 'comparison-range',
@@ -176,7 +176,7 @@ function OverviewPerformanceCard({
       ? rollingThreeYearTri.delta
       : null
 
-  const { navigateTo } = useDashboardNavigation()
+  const { navigateTo } = useOverviewNavigation()
   const metricScope: FilterScopeSpec = {
     account: 'filterable',
     period: 'comparison-range',
@@ -312,7 +312,7 @@ function OverviewConcentrationCard({
     ? i18n.t('ui.overviewsummarycards.underlyingAssets')
     : i18n.t('ui.overviewsummarycards.heldPositionsLimitedView')
 
-  const { navigateTo } = useDashboardNavigation()
+  const { navigateTo } = useOverviewNavigation()
   const metricScope: FilterScopeSpec = {
     account: 'filterable',
     period: 'as-of',

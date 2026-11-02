@@ -1,4 +1,3 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -42,6 +41,5 @@ function toHistory(
     tri: point.tri,
     tri_rolling_1y: point.tri_rolling_1y,
     tri_rolling_3y: point.tri_rolling_3y,
-    total_broker_cash: 0,
   }))
 }

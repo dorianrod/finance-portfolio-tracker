@@ -2,7 +2,6 @@
 // "category" column / src/ports/account_groups.py on the pipeline side).
 // Display order used for sorting and as a fallback when assigning colors
 // to literal account "type" values that don't have a dedicated color.
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this common position snapshot and account scope to holdings, wealth, performance and quality. See SHARED_OWNERSHIP_AUDIT.md.
 export const CATEGORY_ORDER: ReadonlyMap<string, number> = new Map([
   ['brokerage', 0],
   ['private_equity', 1],

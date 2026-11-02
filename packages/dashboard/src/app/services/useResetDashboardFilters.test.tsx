@@ -4,9 +4,9 @@ import { createStore, Provider } from 'jotai'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
 import { dashboardDiversificationPositionsOpenAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms'
+import { dashboardDiversificationViewAtom } from '@/domains/portfolio/features/diversification/shared/stores/dashboardDiversification.atoms'
 import { baseFilters as fixtureDashboardFilters } from '@/domains/portfolio/shared/mocks/dashboardFilters.mock'
 import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
 

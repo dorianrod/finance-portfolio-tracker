@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "scope": "2026-11-02-shared-feature-sharing",
+  "unreviewedExceptions": 1,
+  "rules": [
+    {
+      "id": "arch-shared-no-domain-knowledge",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-no-prop-drilling",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-eslint-disable-scoped",
+      "impact": "HIGH",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "violation",
+      "status": "resolved",
+      "ruleIds": ["arch-no-prop-drilling", "quality-eslint-disable-scoped"],
+      "files": [
+        "src/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery.ts",
+        "src/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAccountSavingsQueryOptions.ts",
+        "src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAllocationQueryOptions.ts",
+        "src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioSavingCapacityQueryOptions.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/apiHistoryPointSchema.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/demoScopeUnavailableError.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/filteredHistoryRequestSchema.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/filteredHistoryResponseSchema.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/readResponse.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/requestFilteredPortfolioHistory.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/sameAccounts.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/staticDemo.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetDemoFilteredHistoryAccountsQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery/useGetFilteredPortfolioHistoryQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts",
+        "src/domains/portfolio/shared/apis/queries/useGetSavingCapacityQuery.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingStatusSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/optionalNumber.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/optionalText.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/fundHoldingsCsvSchemas/rawFundHoldingStatusSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/historicalFundHoldingSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/accountRowSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/allocationByIsinRowSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawCashRowSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawPortfolioHistorySchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacityByAccountSchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacitySchema.ts",
+        "src/domains/portfolio/shared/apis/schemas/savingCapacitySchema.ts",
+        "src/domains/portfolio/shared/constants/accountCategories/categoryOrder.ts",
+        "src/domains/portfolio/shared/helpers/transformers/aggregateBrokerageCash.ts",
+        "src/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacity.types.ts",
+        "src/domains/portfolio/shared/helpers/transformers/aggregateSavingCapacity/aggregateSavingCapacityByAccount.ts",
+        "src/domains/portfolio/shared/helpers/transformers/applyAccountFilterToHistory.ts",
+        "src/domains/portfolio/shared/helpers/transformers/applyPositionFilters.ts",
+        "src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildAccountLabels.ts",
+        "src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildPositionRows.ts",
+        "src/domains/portfolio/shared/helpers/transformers/historicalFundHoldings/selectHistoricalFundHoldingsAtDate.ts",
+        "src/domains/portfolio/shared/helpers/transformers/isDemoPresetActive.ts",
+        "src/domains/portfolio/shared/helpers/transformers/normalizeAccountSelection.ts",
+        "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/buildDemoPresetSelection.ts",
+        "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationAndPeriodFilters.ts",
+        "src/domains/portfolio/shared/helpers/transformers/portfolioFilterScopes/withoutOperationFilters.ts",
+        "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/useBuildPortfolioFilterOptions.ts",
+        "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.ts",
+        "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.ts",
+        "src/domains/portfolio/shared/services/useDashboardHistory.ts",
+        "src/domains/portfolio/shared/types/cashHistoryPoint.type.ts",
+        "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts",
+        "src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts"
+      ]
+    },
+    {
+      "id": "F-002",
+      "kind": "violation",
+      "status": "resolved",
+      "ruleIds": [
+        "arch-shared-no-domain-knowledge",
+        "arch-no-prop-drilling",
+        "quality-eslint-disable-scoped"
+      ],
+      "files": [
+        "src/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope.ts",
+        "src/domains/portfolio/features/diversification/shared/helpers/transformers/scopeDiversificationData/excludeNonApplicableAllocationData.ts",
+        "src/domains/portfolio/features/diversification/shared/helpers/transformers/scopeDiversificationData/scopeRawAllocationData.ts"
+      ]
+    },
+    {
+      "id": "F-003",
+      "kind": "violation",
+      "status": "resolved",
+      "ruleIds": ["quality-eslint-disable-scoped"],
+      "files": [
+        "src/domains/portfolio/shared/services/actions/useDashboardNavigation.ts"
+      ]
+    }
+  ]
+}

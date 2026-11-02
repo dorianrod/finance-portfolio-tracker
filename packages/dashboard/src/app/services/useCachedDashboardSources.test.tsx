@@ -34,7 +34,6 @@ describe('useCachedDashboardSources', () => {
       portfolioQueryKeys.data('portfolio-history'),
       data.history,
     )
-    client.setQueryData(portfolioQueryKeys.data('cash-history'), data.cash)
     client.setQueryData(
       portfolioQueryKeys.data('all-positions'),
       data.positions,
@@ -65,7 +64,6 @@ describe('useCachedDashboardSources', () => {
     expect(result.current.map((source) => source.data)).toEqual([
       data.dashboard,
       data.history,
-      data.cash,
       data.positions,
       data.errors,
       data.overrides,
@@ -81,6 +79,6 @@ describe('useCachedDashboardSources', () => {
     const { result } = renderHook(useCachedDashboardSources, { wrapper })
     expect(
       result.current.map((source) => [source.isPending, source.fetchStatus]),
-    ).toEqual(Array.from({ length: 11 }, () => [true, 'idle']))
+    ).toEqual(Array.from({ length: 10 }, () => [true, 'idle']))
   })
 })

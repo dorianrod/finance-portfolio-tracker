@@ -188,7 +188,7 @@ describe('configured import boundaries', () => {
     'src/domains/portfolio/features/holdings/features/positions/helpers/transformers/getPositionChartOperations/getPositionTradeOperations.ts',
     'src/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms.ts',
     'src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts',
-    'src/domains/portfolio/shared/apis/queries/useGetPositionsQuery.ts',
+    'src/domains/portfolio/shared/apis/queries/useGetPortfolioSourcesQuery.ts',
     'src/shared/schemas/finiteNumber.schema.ts',
     'src/app/helpers/presenters/useBuildDashboardLoadState.ts',
   ])('checks the non-UI layer %s', async (file) => {

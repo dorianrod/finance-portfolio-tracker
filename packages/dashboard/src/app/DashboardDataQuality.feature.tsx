@@ -1,19 +1,17 @@
 import { DataQualityTab } from '@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/DataQualityTab.feature'
-import type { DataQualityTabProps } from '@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type'
-import { ErrorsTab } from '@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.feature'
-import { ManualPriceOverridesTable } from '@/domains/portfolio/features/data-quality/features/errors/components/manualPriceOverridesTable/ManualPriceOverridesTable.view'
+import { QualityAssessmentPage } from '@/domains/portfolio/features/data-quality/features/assessment/pages/QualityAssessmentPage.feature'
+import { ManualPriceOverrides } from '@/domains/portfolio/features/data-quality/features/errors/pages/ManualPriceOverrides.feature'
+import { PipelineErrors } from '@/domains/portfolio/features/data-quality/features/errors/pages/PipelineErrors.feature'
 
-export function DashboardDataQuality(props: DataQualityTabProps) {
+export function DashboardDataQuality() {
   return (
-    <DataQualityTab {...props}>
+    <QualityAssessmentPage>
       <DataQualityTab.Pipeline>
-        <ErrorsTab errors={props.errors} />
+        <PipelineErrors />
       </DataQualityTab.Pipeline>
       <DataQualityTab.Prices>
-        <ManualPriceOverridesTable
-          manualPriceOverrides={props.manualPriceOverrides}
-        />
+        <ManualPriceOverrides />
       </DataQualityTab.Prices>
-    </DataQualityTab>
+    </QualityAssessmentPage>
   )
 }

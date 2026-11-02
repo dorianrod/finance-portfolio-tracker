@@ -11,8 +11,7 @@ function DashboardViewModelProbe() {
   return (
     <output
       data-loading={viewModel.loading}
-      data-accounts={viewModel.allAccounts.length}
-      data-positions={viewModel.currentPositions.length}
+      data-status={viewModel.loadState.status}
     />
   )
 }
@@ -32,7 +31,6 @@ describe('useDashboardViewModel', () => {
     )
 
     expect(html).toContain('data-loading="true"')
-    expect(html).toContain('data-accounts="0"')
-    expect(html).toContain('data-positions="0"')
+    expect(html).toContain('data-status="loading"')
   })
 })

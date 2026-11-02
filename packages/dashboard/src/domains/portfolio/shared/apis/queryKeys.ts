@@ -6,7 +6,6 @@ type PortfolioSourceResource =
   | 'account-savings-source'
   | 'positions-history'
   | 'portfolio-history'
-  | 'cash-history'
   | 'annual-income-savings'
   | 'demo-filtered-history-accounts'
   | 'fund-holdings'

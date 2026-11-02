@@ -16,7 +16,6 @@ describe('applyAccountFilterToHistory', () => {
       unrealized_gain: 999,
       net_cash_injected: 0,
       tri: 1.5,
-      total_broker_cash: 50,
     }),
   ]
 
@@ -59,7 +58,6 @@ describe('applyAccountFilterToHistory', () => {
         tri: null,
         tri_rolling_1y: null,
         tri_rolling_3y: null,
-        total_broker_cash: 0,
       },
     ])
   })

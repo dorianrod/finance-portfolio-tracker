@@ -1,16 +1,10 @@
 import { Suspense } from 'react'
 
 import { useGetFundDiagnosticsQuery } from '@/domains/portfolio/features/data-quality/features/assessment/apis/queries/useGetFundDiagnosticsQuery'
-import { useGetManualPriceOverridesQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery'
-import { useGetPipelineErrorsQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery'
+import { useGetQualitySourcesQuery } from '@/domains/portfolio/features/data-quality/shared/apis/queries/useGetQualitySourcesQuery'
 import { useGetAnnualIncomeSavingsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery'
 import { useGetMonthlyOperationsQuery } from '@/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery'
-import { useGetAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery'
-import { useGetBrokerageCashHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery'
-import { useGetDashboardDataQuery } from '@/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery'
-import { useGetFundHoldingsQuery } from '@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery'
-import { useGetPortfolioHistoryQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery'
-import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
+import { useGetPortfolioSourcesQuery } from '@/domains/portfolio/shared/apis/queries/useGetPortfolioSourcesQuery'
 
 import { DashboardSourceBoundary } from './DashboardSourceBoundary.view'
 
@@ -26,13 +20,13 @@ export function DashboardSources() {
   return (
     <DashboardSourceBoundary>
       <Suspense fallback={null}>
+        <PortfolioSources />
+      </Suspense>
+      <Suspense fallback={null}>
+        <QualitySources />
+      </Suspense>
+      <Suspense fallback={null}>
         <FundDiagnosticsSource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ManualPriceOverridesSource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <PipelineErrorsSource />
       </Suspense>
       <Suspense fallback={null}>
         <AnnualIncomeSavingsSource />
@@ -40,37 +34,11 @@ export function DashboardSources() {
       <Suspense fallback={null}>
         <MonthlyOperationsSource />
       </Suspense>
-      <Suspense fallback={null}>
-        <AllocationRowsSource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <BrokerageCashHistorySource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <DashboardDataSource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <FundHoldingsSource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <PortfolioHistorySource />
-      </Suspense>
-      <Suspense fallback={null}>
-        <PositionsSource />
-      </Suspense>
     </DashboardSourceBoundary>
   )
 }
 function FundDiagnosticsSource() {
   useGetFundDiagnosticsQuery()
-  return null
-}
-function ManualPriceOverridesSource() {
-  useGetManualPriceOverridesQuery()
-  return null
-}
-function PipelineErrorsSource() {
-  useGetPipelineErrorsQuery()
   return null
 }
 function AnnualIncomeSavingsSource() {
@@ -81,27 +49,12 @@ function MonthlyOperationsSource() {
   useGetMonthlyOperationsQuery()
   return null
 }
-function AllocationRowsSource() {
-  useGetAllocationRowsQuery()
+
+function PortfolioSources() {
+  useGetPortfolioSourcesQuery()
   return null
 }
-function BrokerageCashHistorySource() {
-  useGetBrokerageCashHistoryQuery()
-  return null
-}
-function DashboardDataSource() {
-  useGetDashboardDataQuery()
-  return null
-}
-function FundHoldingsSource() {
-  useGetFundHoldingsQuery()
-  return null
-}
-function PortfolioHistorySource() {
-  useGetPortfolioHistoryQuery()
-  return null
-}
-function PositionsSource() {
-  useGetPositionsQuery()
+function QualitySources() {
+  useGetQualitySourcesQuery()
   return null
 }

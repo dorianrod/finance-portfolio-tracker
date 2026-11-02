@@ -5,6 +5,7 @@ import { useResetDashboardFilters } from '@/app/services/useResetDashboardFilter
 import { FilterChipBar } from '@/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature'
 import { dashboardDiversificationFilterAtom } from '@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms'
 import { OverviewPeriodFilter } from '@/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature'
+import { useOverviewModel } from '@/domains/portfolio/features/overview/services/useOverviewModel'
 import { ActiveFilterSummary } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature'
 import { FilterPanel } from '@/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/FilterPanel.feature'
 import { ResetFiltersButton } from '@/domains/portfolio/features/scope-selection/components/filterBar/ResetFiltersButton.view'
@@ -12,21 +13,16 @@ import type { FilterSummaryItem } from '@/domains/portfolio/features/scope-selec
 import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
 
-import type { DashboardViewModel } from './types/dashboardViewModel.type'
-
 export function DashboardFilters({
-  dashboard,
   activeFilterSummaries,
 }: {
-  dashboard: DashboardViewModel
   activeFilterSummaries: FilterSummaryItem[]
 }) {
   const resetDashboardFilters = useResetDashboardFilters()
   const activeTab = useAtomValue(dashboardActiveTabAtom)
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
   const allocationFilter = useAtomValue(dashboardDiversificationFilterAtom)
-  const { demoPresetSelection, demoPresetActive, overviewComparison } =
-    dashboard
+  const { overviewComparison } = useOverviewModel()
   const filterVisibility = filterVisibilityForTab(activeTab, holdingsView)
   const showResetFilters =
     activeFilterSummaries.length > 0 ||
@@ -54,8 +50,6 @@ export function DashboardFilters({
       <FilterPanel
         onReset={resetDashboardFilters}
         visibility={filterVisibility}
-        demoPresetSelection={demoPresetSelection}
-        demoPresetActive={demoPresetActive}
       />
     </>
   )

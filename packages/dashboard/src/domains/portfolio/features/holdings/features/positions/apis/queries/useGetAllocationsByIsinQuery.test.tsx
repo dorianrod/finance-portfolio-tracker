@@ -4,7 +4,7 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { useGetAllocationRowsQuery } from '@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery'
+import { PORTFOLIO_ALLOCATION_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioAllocationQueryOptions'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useGetAllocationsByIsinQuery } from './useGetAllocationsByIsinQuery'
@@ -15,12 +15,13 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-function wrapper() {
-  const client = new QueryClient({
+function wrapper(
+  client = new QueryClient({
     defaultOptions: {
       queries: { retry: false, staleTime: Infinity, gcTime: 0 },
     },
-  })
+  }),
+) {
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>
   }
@@ -60,11 +61,13 @@ describe('useGetAllocationsByIsinQuery', () => {
         ),
     )
     vi.stubGlobal('fetch', fetchMock)
-    const sharedWrapper = wrapper()
-    const rows = renderHook(useGetAllocationRowsQuery, {
-      wrapper: sharedWrapper,
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false, staleTime: Infinity, gcTime: 0 },
+      },
     })
-    await waitFor(() => expect(rows.result.current.isSuccess).toBe(true))
+    const sharedWrapper = wrapper(client)
+    await client.query(PORTFOLIO_ALLOCATION_QUERY_OPTIONS)
     const { result } = renderHook(useGetAllocationsByIsinQuery, {
       wrapper: sharedWrapper,
     })

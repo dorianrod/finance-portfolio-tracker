@@ -4,15 +4,16 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { useGetPositionsQuery } from '@/domains/portfolio/shared/apis/queries/useGetPositionsQuery'
+import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioPositionsQueryOptions'
 import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
 
 import { useGetPositionHistoryQuery } from './useGetPositionHistoryQuery'
 
-function queryWrapper() {
-  const client = new QueryClient({
+function queryWrapper(
+  client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
-  })
+  }),
+) {
   return function Wrapper({ children }: PropsWithChildren) {
     return <QueryClientProvider client={client}>{children}</QueryClientProvider>
   }
@@ -34,9 +35,11 @@ describe('useGetPositionHistoryQuery', () => {
         ),
     )
     vi.stubGlobal('fetch', fetchMock)
-    const wrapper = queryWrapper()
-    const positions = renderHook(useGetPositionsQuery, { wrapper })
-    await waitFor(() => expect(positions.result.current.isSuccess).toBe(true))
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: Infinity } },
+    })
+    const wrapper = queryWrapper(client)
+    await client.query(PORTFOLIO_POSITIONS_QUERY_OPTIONS)
     const { result, rerender } = renderHook(
       ({ isin }) => useGetPositionHistoryQuery(isin),
       {

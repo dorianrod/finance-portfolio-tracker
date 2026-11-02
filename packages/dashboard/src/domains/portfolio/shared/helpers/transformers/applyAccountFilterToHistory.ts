@@ -1,4 +1,3 @@
-// eslint-disable-next-line local/review-shared-feature-sharing -- reviewed: 2026-10-27; The shell supplies this validated, scoped history to overview comparisons, wealth analysis and performance. See SHARED_OWNERSHIP_AUDIT.md.
 import { accountFilterId } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/accountFilterId'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
 import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
@@ -37,7 +36,6 @@ export function applyAccountFilterToHistory(
       tri: null,
       tri_rolling_1y: null,
       tri_rolling_3y: null,
-      total_broker_cash: 0,
     }))
 }
 

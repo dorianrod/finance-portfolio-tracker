@@ -16,16 +16,23 @@ Portfolio analysis lives in `src/domains/portfolio/`. The application shell in
 | Holdings        | Inspect held positions and underlying fund exposures     | Peer `positions` and `fund-look-through` children of `features/holdings`     |
 | Data quality    | Assess reliability and inspect source anomalies          | Peer `assessment` and `errors` children of `features/data-quality`           |
 
-Filter-option construction also belongs to portfolio `shared/`: scope selection
-uses its choices, while `useBuildDashboardSourceData` supplies its account IDs to
-`useDashboardHistory` and its account types to position sorting/grouping. The
-sharing detector cannot follow these shell data flows, so its review warning is
-retained with this ownership evidence rather than moving common data into a leaf.
+Common query options, schemas and portfolio contracts live in portfolio `shared/`.
+The shell starts independent required-source batches in sibling Suspense boundaries
+and observes their loading/error states. Capability entrypoints require the same
+cached source batch, then read scoped inputs and calculate their own models.
+Server data stays in React Query; filters and navigation stay in Jotai.
 
-Common source queries, schemas and portfolio contracts live in portfolio `shared/`
-and feed several capabilities through the shell. Fund holdings, composition history
-and statuses are common sources; coverage reports, snapshot manifests and unresolved
-source diagnostics belong to `features/data-quality/features/assessment`.
+Scope selection and position grouping read common filter options directly. Demo
+preset choices belong to scope selection; period-only filtering belongs to
+performance. Allocation scoping belongs to `diversification/features/allocation`;
+concentration selects its applicable positions independently. Quality issue scoping
+is shared by assessment and error inspection. Fund holdings and composition history
+are common source data; their dedicated Suspense hook belongs to holdings, where
+both position previews and fund exploration use it. Coverage reports, snapshot
+manifests and unresolved source diagnostics belong to quality assessment.
+
+The sharing graph follows these real consumers without a
+`local/review-shared-feature-sharing` suppression.
 
 ## Frontend conventions
 

@@ -1,0 +1,63 @@
+{
+  "formulaVersion": "weighted-rule-compliance/v1",
+  "scope": "2026-11-02-shared-feature-sharing",
+  "weights": {
+    "CRITICAL": 32,
+    "HIGH": 16,
+    "MEDIUM-HIGH": 8,
+    "MEDIUM": 4,
+    "LOW-MEDIUM": 2,
+    "LOW": 1
+  },
+  "formula": "100 * (1 - openViolatedRuleWeight / applicableRuleWeight)",
+  "score": 100,
+  "scoreStatus": "calculated",
+  "applicableRuleWeight": 80,
+  "openViolatedRuleWeight": 0,
+  "openViolatedRuleIds": [],
+  "coverage": {
+    "selected": 3,
+    "applicable": 3,
+    "pending": []
+  },
+  "unreviewedExceptions": 1,
+  "assurance": "reviewed scope excluding unrevalidated exceptions",
+  "volumes": {
+    "CRITICAL": {
+      "baseline": 2,
+      "open": 0,
+      "resolved": 2
+    },
+    "HIGH": {
+      "baseline": 1,
+      "open": 0,
+      "resolved": 1
+    },
+    "MEDIUM-HIGH": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW-MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    }
+  },
+  "otherOpenFindings": {
+    "ambiguity": 0,
+    "prevention-gap": 0,
+    "suggestion": 0
+  },
+  "openAffectedFiles": 0
+}

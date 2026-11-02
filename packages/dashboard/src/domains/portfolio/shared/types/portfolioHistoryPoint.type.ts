@@ -12,5 +12,4 @@ export type PortfolioHistoryPoint = {
   tri_rolling_1y: number | null
   // The rolling cash flows may not define a return.
   tri_rolling_3y: number | null
-  total_broker_cash?: number
 }

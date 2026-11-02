@@ -4,39 +4,17 @@ import { lazy } from 'react'
 import { DASHBOARD_TAB_LOADERS } from '@/app/routing/dashboardTabLoaders/dashboardTabLoaders'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
 import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
-
-import type { DashboardViewModel } from './types/dashboardViewModel.type'
-
-export function DashboardHoldings({
-  dashboard,
-}: {
-  dashboard: DashboardViewModel
-}) {
+export function DashboardHoldings() {
   const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
-  const {
-    currentPositions,
-    fundData,
-    periodEndFundHoldings,
-    tableData,
-    useGroupedPositionsTable,
-  } = dashboard
   return (
     <ViewNavigation.Panel value={holdingsView}>
       {holdingsView === 'positions' ? (
-        <PositionsTable
-          data={tableData}
-          fundStatuses={fundData.statuses}
-          groupByAccountType={useGroupedPositionsTable}
-        />
+        <PositionsPage />
       ) : (
-        <FundLookThroughTab
-          positions={currentPositions}
-          holdings={periodEndFundHoldings}
-        />
+        <FundLookThroughPage />
       )}
     </ViewNavigation.Panel>
   )
 }
-
-const PositionsTable = lazy(DASHBOARD_TAB_LOADERS.holdings)
-const FundLookThroughTab = lazy(DASHBOARD_TAB_LOADERS.fundLookThrough)
+const PositionsPage = lazy(DASHBOARD_TAB_LOADERS.holdings)
+const FundLookThroughPage = lazy(DASHBOARD_TAB_LOADERS.fundLookThrough)

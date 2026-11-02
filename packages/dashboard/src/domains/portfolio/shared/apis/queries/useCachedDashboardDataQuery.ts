@@ -1,10 +1,13 @@
-import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
-import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { useCachedPortfolioSourceQuery } from './useCachedPortfolioSourceQuery'
+import { getPortfolioDashboardQueryOptions } from '@/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioDashboardQueryOptions'
 
+/* Passive subscriptions preserve the editable shell while sibling Suspense consumers load these sources. */
 export function useCachedDashboardDataQuery() {
-  return useCachedPortfolioSourceQuery<DashboardData>(
-    portfolioQueryKeys.data('dashboard'),
-  )
+  const queryClient = useQueryClient()
+  return useQuery({
+    ...getPortfolioDashboardQueryOptions(queryClient),
+    queryFn: skipToken,
+    placeholderData: undefined,
+  })
 }

@@ -9,7 +9,6 @@ import type { MonthlyOperationsByMonth } from '@/domains/portfolio/features/weal
 import { makeFundHolding } from '@/domains/portfolio/shared/mocks/fundHolding.mock'
 import { makePortfolioHistoryPoint } from '@/domains/portfolio/shared/mocks/portfolioHistoryPoint.mock'
 import { rawRow } from '@/domains/portfolio/shared/mocks/rawPositionRow.mock'
-import type { CashHistoryPoint } from '@/domains/portfolio/shared/types/cashHistoryPoint.type'
 import type { DashboardData } from '@/domains/portfolio/shared/types/dashboardData.type'
 import type { FundHoldingsData } from '@/domains/portfolio/shared/types/fundHoldingsData.type'
 import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
@@ -25,7 +24,6 @@ export function createDashboardSourceFixtures(): SourceFixtures {
       accountLabels: { acc1: 'Account' },
     },
     history: [makePortfolioHistoryPoint()],
-    cash: [{ date: new Date('2026-01-31'), total_broker_cash: 500 }],
     positions: [rawRow({})],
     errors: [pipelineError({})],
     overrides: [createManualPriceOverride()],
@@ -39,7 +37,6 @@ export function createDashboardSourceFixtures(): SourceFixtures {
 type SourceFixtures = {
   dashboard: DashboardData
   history: PortfolioHistoryPoint[]
-  cash: CashHistoryPoint[]
   positions: RawPositionRow[]
   errors: PipelineError[]
   overrides: ManualPriceOverride[]

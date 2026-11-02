@@ -1,6 +1,5 @@
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 
-import { useDashboardNavigation } from '@/domains/portfolio/shared/services/actions/useDashboardNavigation'
 import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
 import type { HoldingsView } from '@/domains/portfolio/shared/types/dashboardView.type'
 import i18n from '@/i18n/i18n'
@@ -9,8 +8,7 @@ import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.
 import { HoldingsViewTab } from './HoldingsViewTab.view'
 
 export function HoldingsViewTabs() {
-  const value = useAtomValue(dashboardHoldingsViewAtom)
-  const { setHoldingsView } = useDashboardNavigation()
+  const [value, setHoldingsView] = useAtom(dashboardHoldingsViewAtom)
 
   return (
     <div className="mb-5 w-full overflow-x-auto sm:w-fit">

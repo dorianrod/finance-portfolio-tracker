@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 
 import { useDashboardDiversificationView } from '@/app/services/useDashboardDiversificationView'
-import { dashboardDiversificationViewAtom } from '@/app/stores/dashboardDiversification.atoms'
+import { dashboardDiversificationViewAtom } from '@/domains/portfolio/features/diversification/shared/stores/dashboardDiversification.atoms'
 import i18n from '@/i18n/i18n'
 import { SegmentedControl } from '@/shared/ui/segmentedControl/SegmentedControl.view'
 import { SegmentedControlItem } from '@/shared/ui/segmentedControl/SegmentedControlItem.view'
