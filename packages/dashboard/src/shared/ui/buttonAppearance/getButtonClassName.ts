@@ -9,13 +9,19 @@ export function getButtonClassName(
     : undefined
   return (
     [
-      'inline-flex items-center justify-center',
+      BUTTON_LAYOUTS[variant] ?? 'inline-flex items-center justify-center',
       BUTTON_VARIANTS[variant],
       selection,
     ]
       .filter(Boolean)
       .join(' ') || undefined
   )
+}
+
+const BUTTON_LAYOUTS: Partial<Record<keyof typeof BUTTON_VARIANTS, string>> = {
+  sectionChoice: 'flex w-full items-center justify-between',
+  period: 'inline-flex items-center justify-start',
+  plainLeft: 'inline-flex min-w-0 items-center justify-start',
 }
 
 const BUTTON_SELECTION_STATES = {

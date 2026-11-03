@@ -35,7 +35,7 @@ function PositionMarketValue({
   const showQuantity = shouldShowPositionQuantity(r)
   return (
     <Text variant="compact">
-      <Stack as="span">
+      <Stack as="span" gap="none">
         <Inline as="span" align="center" gap="compact">
           <Text
             variant={r.total_value == null ? undefined : 'medium'}

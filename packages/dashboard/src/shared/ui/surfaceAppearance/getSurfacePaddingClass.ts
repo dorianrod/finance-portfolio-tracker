@@ -14,9 +14,10 @@ export function getSurfacePaddingClass(variant: keyof typeof SURFACE_VARIANTS) {
       'insetContent',
       'canvasOutline',
       'raisedInset',
-      'selectionPanel',
     ].includes(variant) && 'p-4',
     ['empty', 'compactEmpty', 'emptyCaption'].includes(variant) && 'p-6',
+    variant === 'formSection' && 'px-4 py-5',
+    variant === 'responsiveInset' && 'px-3 py-1.5',
     [
       'microFooter',
       'captionFooter',

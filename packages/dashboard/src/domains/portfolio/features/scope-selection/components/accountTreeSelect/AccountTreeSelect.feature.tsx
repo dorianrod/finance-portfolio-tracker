@@ -81,25 +81,23 @@ export function AccountTreeSelect({
           <Layout spaceAfter="compact">
             <Surface variant="strongSectionEnd">
               <ChoiceRow>
-                <Inline as="span" align="center" gap="default" inset="compact">
-                  <Checkbox
-                    checked={
-                      selected.size === allAccounts.length &&
-                      allAccounts.length > 0
-                    }
-                    indeterminate={
-                      selected.size > 0 && selected.size < allAccounts.length
-                    }
-                    onChange={() => {
-                      if (selected.size === allAccounts.length)
-                        onChange(new Set())
-                      else onChange(new Set(allAccounts))
-                    }}
-                  />
-                  <Text variant="captionStrong" tone="secondary">
-                    {i18n.t('ui.accounttreeselect.selectAll')}
-                  </Text>
-                </Inline>
+                <Checkbox
+                  checked={
+                    selected.size === allAccounts.length &&
+                    allAccounts.length > 0
+                  }
+                  indeterminate={
+                    selected.size > 0 && selected.size < allAccounts.length
+                  }
+                  onChange={() => {
+                    if (selected.size === allAccounts.length)
+                      onChange(new Set())
+                    else onChange(new Set(allAccounts))
+                  }}
+                />
+                <Text variant="captionStrong" tone="secondary">
+                  {i18n.t('ui.accounttreeselect.selectAll')}
+                </Text>
               </ChoiceRow>
             </Surface>
           </Layout>
@@ -147,18 +145,16 @@ function SelectAccountType({
   return (
     <div>
       <ChoiceRow>
-        <Inline as="span" align="center" gap="default" inset="compact">
-          <Checkbox
-            checked={allSelected}
-            indeterminate={partiallySelected}
-            onChange={() =>
-              onChange(toggleAccountTypeSelection(accounts, selected))
-            }
-          />
-          <Text variant="captionStrong" tone="secondary">
-            {type}
-          </Text>
-        </Inline>
+        <Checkbox
+          checked={allSelected}
+          indeterminate={partiallySelected}
+          onChange={() =>
+            onChange(toggleAccountTypeSelection(accounts, selected))
+          }
+        />
+        <Text variant="captionStrong" tone="secondary">
+          {type}
+        </Text>
       </ChoiceRow>
       <AccountSelectionRows
         rows={rows}

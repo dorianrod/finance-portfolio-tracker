@@ -8,7 +8,11 @@ export function getSurfaceLayoutClass(
     if (variant === 'overlay') return 'block h-full w-full'
     if (variant === 'statusFrame' || variant === 'statusCanvasFrame')
       return 'grid size-full place-items-center'
-    return 'inline-flex h-full'
+    if (
+      ['microFooter', 'captionFooter', 'strongSectionStart'].includes(variant)
+    )
+      return 'block'
+    return 'inline-flex'
   }
   switch (as) {
     case 'table':
@@ -21,6 +25,6 @@ export function getSurfaceLayoutClass(
       return ''
     case undefined:
     default:
-      return 'block h-full'
+      return 'block'
   }
 }

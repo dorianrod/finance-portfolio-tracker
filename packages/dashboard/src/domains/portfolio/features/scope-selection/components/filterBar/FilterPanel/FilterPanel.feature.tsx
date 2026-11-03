@@ -39,6 +39,7 @@ export function FilterPanel({
     <SidePanel
       open={open}
       onClose={closeFilters}
+      scroll="vertical"
       closeLabel={i18n.t('ui.filterbar.closeFilters')}
     >
       <SidePanel.Title>{i18n.t('ui.filterbar.filters')}</SidePanel.Title>
@@ -305,42 +306,32 @@ function PositionFilterSection() {
       </Inline>
       <Layout spaceBefore="spacious">
         <ChoiceRow variant="card">
-          <Inline
-            as="span"
-            align="center"
-            justify="between"
-            gap="default"
-            inset="default"
-          >
-            <span>
-              <Text variant="captionLabel" tone="secondary">
+          <span>
+            <Text variant="captionLabel" tone="secondary">
+              <Layout as="span" flow="block">
+                {i18n.t('ui.filterbar.hideClosedPositions')}
+              </Layout>
+            </Text>
+            <Layout as="span" flow="block" spaceBefore="compact">
+              <Text variant="micro" tone="subtle">
                 <Layout as="span" flow="block">
-                  {i18n.t('ui.filterbar.hideClosedPositions')}
+                  {i18n.t('ui.filterbar.keepTheTableFocusedOnCurrentHoldings')}
                 </Layout>
               </Text>
-              <Layout as="span" flow="block" spaceBefore="compact">
-                <Text variant="micro" tone="subtle">
-                  <Layout as="span" flow="block">
-                    {i18n.t(
-                      'ui.filterbar.keepTheTableFocusedOnCurrentHoldings',
-                    )}
-                  </Layout>
-                </Text>
-              </Layout>
-            </span>
-            <Layout as="span" flow="inline" sizing="fixed">
-              <Checkbox
-                size="standard"
-                checked={filters.hideClosedPositions}
-                onChange={(event) =>
-                  setFilters((current) => ({
-                    ...current,
-                    hideClosedPositions: event.target.checked,
-                  }))
-                }
-              />
             </Layout>
-          </Inline>
+          </span>
+          <Layout as="span" flow="inline" sizing="fixed">
+            <Checkbox
+              size="standard"
+              checked={filters.hideClosedPositions}
+              onChange={(event) =>
+                setFilters((current) => ({
+                  ...current,
+                  hideClosedPositions: event.target.checked,
+                }))
+              }
+            />
+          </Layout>
         </ChoiceRow>
       </Layout>
     </FilterSection>

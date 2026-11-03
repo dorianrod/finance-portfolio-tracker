@@ -25,7 +25,7 @@ export function Checkbox({
       type="checkbox"
       checked={checked}
       onChange={onChange}
-      className={['accent-accent cursor-pointer', CHECKBOX_SIZES[size]]
+      className={['shrink-0 accent-accent cursor-pointer', CHECKBOX_SIZES[size]]
         .filter(Boolean)
         .join(' ')}
     />

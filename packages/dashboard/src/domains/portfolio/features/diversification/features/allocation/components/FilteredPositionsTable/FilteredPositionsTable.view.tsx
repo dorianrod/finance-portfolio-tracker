@@ -54,17 +54,17 @@ export function FilteredPositionsTableView({
       <Surface variant="bodyTable" as="table">
         <Surface as="thead" variant="plain">
           <Surface as="tr" variant="sectionEnd">
-            <Inset as="th" inset="default">
+            <Inset as="th" inset="tableValue">
               <Text as="div" variant="sectionLabel" tone="subtle" align="left">
                 {i18n.t('ui.filteredpositionstable.name')}
               </Text>
             </Inset>
-            <Inset as="th" inset="default">
+            <Inset as="th" inset="tableValue">
               <Text as="div" variant="sectionLabel" tone="subtle" align="right">
                 {i18n.t('ui.filteredpositionstable.total')}
               </Text>
             </Inset>
-            <Inset as="th" inset="default">
+            <Inset as="th" inset="tableValue">
               <AllocationCategory
                 as="div"
                 variant="sectionLabel"

@@ -16,7 +16,7 @@ export function InfoTooltip({
   children?: ReactNode
 }) {
   return (
-    <Inline as="span" placement="inset" align="center">
+    <Inline as="span" placement="inset" align="center" sizing="fixed">
       <Tooltip>
         <Tooltip.Trigger
           label={i18n.t('ui.infotooltip.moreInformation')}

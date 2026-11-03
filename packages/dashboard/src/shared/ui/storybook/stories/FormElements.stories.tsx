@@ -6,9 +6,7 @@ import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
 import { FieldSeparator } from '@/shared/ui/formElements/FieldSeparator.view'
 import { FilterIcon } from '@/shared/ui/formElements/FilterIcon.view'
 import { SelectionFrame } from '@/shared/ui/formElements/SelectionFrame.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Inset } from '@/shared/ui/layout/Inset.view'
-import { Layout } from '@/shared/ui/layout/Layout.view'
 
 import { Checkbox } from '../../Checkbox.view'
 
@@ -28,15 +26,13 @@ export const Selection: Story = {
       <SelectionFrame {...args} selected={selected}>
         <Inset inset="default">
           <ChoiceRow>
-            <Inline as="span" align="center" gap="default" inset="compact">
-              <Checkbox
-                checked={selected}
-                onChange={(event) =>
-                  updateArgs({ selected: event.target.checked })
-                }
-              />
-              Select this example
-            </Inline>
+            <Checkbox
+              checked={selected}
+              onChange={(event) =>
+                updateArgs({ selected: event.target.checked })
+              }
+            />
+            Select this example
           </ChoiceRow>
         </Inset>
       </SelectionFrame>
@@ -49,19 +45,13 @@ export const ChoiceRows: Story = {
     return (
       <div className="grid gap-2">
         <ChoiceRow variant="default">
-          <Layout as="span" flow="block" inset="default">
-            <input type="radio" name="choice" defaultChecked /> Default choice
-          </Layout>
+          <input type="radio" name="choice" defaultChecked /> Default choice
         </ChoiceRow>
         <ChoiceRow variant="nested">
-          <Layout as="span" flow="block" inset="default">
-            <input type="radio" name="choice" /> Nested choice
-          </Layout>
+          <input type="radio" name="choice" /> Nested choice
         </ChoiceRow>
         <ChoiceRow variant="card">
-          <Layout as="span" flow="block" inset="default">
-            <input type="radio" name="choice" /> Card choice
-          </Layout>
+          <input type="radio" name="choice" /> Card choice
         </ChoiceRow>
       </div>
     )

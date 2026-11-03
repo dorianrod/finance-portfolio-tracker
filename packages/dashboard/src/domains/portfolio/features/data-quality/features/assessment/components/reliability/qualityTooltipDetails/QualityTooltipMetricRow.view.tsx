@@ -9,14 +9,20 @@ export function QualityTooltipMetricRow({ row }: { row: QualityTooltipRow }) {
   const rowStyles = RELIABILITY_TONES[row.tone]
   return (
     <Inline
-      as="span"
+      as="div"
       align="center"
       justify="between"
       gap="relaxed"
-      inset="compact"
+      inset="tooltipRow"
     >
-      <Inline as="span" align="center" gap="default">
-        <Layout as="span" flow="inline" height="track" sizing="fixed">
+      <Inline as="span" align="center" gap="default" sizing="flexible">
+        <Layout
+          as="span"
+          flow="inline"
+          height="track"
+          width="track"
+          sizing="fixed"
+        >
           <ToneSwatch tone={rowStyles.dot} shape="dot" />
         </Layout>
         <Text variant="micro" tone="secondary">

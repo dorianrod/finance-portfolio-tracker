@@ -1,6 +1,6 @@
 export const TEXT_VARIANTS = {
   infoSymbol:
-    'rounded-full border border-border-strong text-[10px] font-bold leading-none',
+    'inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-border-strong text-[10px] font-bold normal-case leading-none tracking-normal',
   swatchFrame: 'rounded-sm',
   selectableHeader: 'font-medium select-none',
 

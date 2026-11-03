@@ -41,6 +41,7 @@ export function CompactDataQualityKpiView({
             type="button"
             onClick={onOpenQuality}
             variant="splitAction"
+            size="flushStart"
             label={ariaLabel}
           >
             <Text variant="prominentEyebrow" tone="subtle">
@@ -66,14 +67,14 @@ export function CompactDataQualityKpiView({
             >
               <InfoIcon />
             </Tooltip.Trigger>
-            <Tooltip.Content align="start" variant="left">
+            <Tooltip.Content align="start" variant="details">
               <Text variant="note" tone="muted">
                 <Layout as="span" flow="block">
                   {tooltip}
                 </Layout>
               </Text>
-              <Layout as="span" flow="block" spaceBefore="default">
-                <Surface as="span" variant="sectionStart">
+              <Layout spaceBefore="default">
+                <Surface variant="sectionStart">
                   <Text variant="eyebrow" tone="subtle">
                     <Layout as="span" flow="block">
                       {i18n.t('ui.analysisreliabilitykpi.filterScope')}
@@ -82,8 +83,8 @@ export function CompactDataQualityKpiView({
                   {children}
                 </Surface>
               </Layout>
-              <Layout as="span" flow="block" spaceBefore="default">
-                <Surface as="span" variant="sectionStart">
+              <Layout spaceBefore="default">
+                <Surface variant="sectionStart">
                   {rows.map((row) => (
                     <QualityTooltipMetricRow key={row.label} row={row} />
                   ))}

@@ -26,7 +26,7 @@ export function FilteredPositionRow({
   const { percentage, barShare } = getFilteredPositionShare(row)
   return (
     <StripedRow shaded={index % 2 !== 0}>
-      <Inset as="td" inset="default">
+      <Inset as="td" inset="tableValue">
         <Layout>
           <Text
             as="div"
@@ -41,12 +41,12 @@ export function FilteredPositionRow({
           {row.isin}
         </Text>
       </Inset>
-      <Inset as="td" inset="default">
+      <Inset as="td" inset="tableValue">
         <Text as="div" variant="caption" tone="muted" align="right" numeric>
           {formatMoney(row.totalValue, { style: 'full' })}
         </Text>
       </Inset>
-      <Inset as="td" inset="default">
+      <Inset as="td" inset="tableValue">
         <Text as="div" align="right">
           <Text as="div" variant="captionLabel" tone="secondary" numeric>
             {formatMoney(row.filteredValue, { style: 'full' })}

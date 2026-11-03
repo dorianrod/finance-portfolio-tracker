@@ -41,6 +41,7 @@ export function SortHeader({
             value1: sortState,
           })}
           variant="wrappedSort"
+          size="minimal"
         >
           {label}
           <Layout as="span" flow="inline">

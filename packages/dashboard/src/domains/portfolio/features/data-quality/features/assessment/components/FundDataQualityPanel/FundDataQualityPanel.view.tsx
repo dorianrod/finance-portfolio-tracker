@@ -98,32 +98,32 @@ export function FundDataQualityPanelView({
           </colgroup>
           <Surface as="thead" variant="sectionHeading" tone="subtle">
             <tr>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 {i18n.t('ui.funddataqualitypanel.fund')}
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 {i18n.t('ui.funddataqualitypanel.quality')}
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 {i18n.t('ui.funddataqualitypanel.sourceProxy')}
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 {i18n.t('ui.funddataqualitypanel.holdingsDate')}
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 <Text as="div" align="right">
                   {i18n.t('ui.funddataqualitypanel.explained')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 <Text as="div" align="right">
                   {i18n.t('ui.funddataqualitypanel.residual')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableHeader">
                 {i18n.t('ui.funddataqualitypanel.diagnostic')}
               </Inset>
-              <Inset as="th" inset="compact" />
+              <Inset as="th" inset="tableHeader" />
             </tr>
           </Surface>
           <tbody>
@@ -308,7 +308,7 @@ function FundDiagnosticsRow({
   return (
     <Fragment>
       <Surface as="tr" variant="topAlignedSection">
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Text as="div" wrap="words">
             <Text as="div" variant="medium" tone="secondary">
               {status.parentName}
@@ -320,7 +320,7 @@ function FundDiagnosticsRow({
             </Layout>
           </Text>
         </Inset>
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <FundQualityBadge status={status} />
           {status.manualAttention && (
             <Layout spaceBefore="default" width="content">
@@ -333,7 +333,7 @@ function FundDiagnosticsRow({
           )}
         </Inset>
         <FundDiagnosticSource status={status} />
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Text as="div" tone="muted">
             {formatDate(status.holdingsDate, {
               style: 'isoDate',
@@ -354,7 +354,7 @@ function FundDiagnosticsRow({
             </Layout>
           </Text>
         </Inset>
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Text as="div" tone="secondary" align="right" numeric>
             {formatPercentage(status.explainedPct)}
             <Layout spaceBefore="compact">
@@ -364,7 +364,7 @@ function FundDiagnosticsRow({
             </Layout>
           </Text>
         </Inset>
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Text as="div" tone="secondary" align="right" numeric>
             {formatPercentage(status.residualPct)}
             <Layout spaceBefore="compact">
@@ -374,7 +374,7 @@ function FundDiagnosticsRow({
             </Layout>
           </Text>
         </Inset>
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Text
             as="div"
             wrap="words"
@@ -383,7 +383,7 @@ function FundDiagnosticsRow({
             {status.issues || i18n.t('ui.funddataqualitypanel.noDetectedIssue')}
           </Text>
         </Inset>
-        <Inset as="td" inset="default">
+        <Inset as="td" inset="tableDetail">
           <Button
             type="button"
             onClick={() => onToggle(status.parentId)}
@@ -407,7 +407,7 @@ function FundDiagnosticSource({
 }) {
   const formatSourceLabel = useFormatFundQualitySourceLabel()
   return (
-    <Inset as="td" inset="default">
+    <Inset as="td" inset="tableDetail">
       <Text as="div" wrap="words">
         <ExternalLink href={status.sourceUrl} variant="source">
           {status.sourceName || i18n.t('ui.funddataqualitypanel.unavailable')}

@@ -32,7 +32,12 @@ export function OverviewPeriodFilterView({
               )}
               variant="period"
             >
-              <Layout as="span" flow="inline" sizing="fixed">
+              <Layout
+                as="span"
+                flow="control"
+                sizing="fixed"
+                width="controlLabel"
+              >
                 <Text variant="compactEyebrow" tone="accent">
                   {i18n.t('ui.overviewperiodfilter.current')}
                 </Text>
@@ -45,8 +50,13 @@ export function OverviewPeriodFilterView({
           </Layout>
           <Layout>
             <Surface variant="responsiveInset">
-              <Inline as="div" align="center" gap="default" inset="compact">
-                <Layout as="span" flow="inline" sizing="fixed">
+              <Inline as="div" align="center" gap="default">
+                <Layout
+                  as="span"
+                  flow="control"
+                  sizing="fixed"
+                  width="controlLabel"
+                >
                   <Text variant="compactEyebrow" tone="subtle">
                     {i18n.t('ui.overviewperiodfilter.previous')}
                   </Text>

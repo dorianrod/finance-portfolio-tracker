@@ -23,7 +23,7 @@ export function MetricCard({
       />
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-x-0 top-0 h-0.5 rounded-t-2xl ${METRIC_CARD_ACCENTS[accent]}`}
+        className={`pointer-events-none absolute -inset-px rounded-[inherit] border-t-2 ${METRIC_CARD_ACCENTS[accent]}`}
       />
       {children}
     </article>

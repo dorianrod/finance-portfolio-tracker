@@ -228,7 +228,7 @@ function ErrorColumnHeader({
 }) {
   const { id, label } = column
   return (
-    <Inset as="th" inset="compact">
+    <Inset as="th" inset="tableCell">
       <Text as="div" variant="selectableHeader" tone="muted" align="left">
         <Button onClick={() => onSort(id)} variant="sort">
           {label}
@@ -250,7 +250,7 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
   const formatAssetLabel = useFormatAssetLabel()
   return (
     <StatusTableRow level={error.level}>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <LevelBadge level={error.level}>
           <Layout as="span" flow="inline" align="center" gap="compact">
             {error.level === 'error'
@@ -259,22 +259,22 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
           </Layout>
         </LevelBadge>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" tone="secondary">
           {formatType(error.type)}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="subtle">
           {formatSource(error.source)}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="muted">
           {formatDate(error.date, { style: 'isoDate' })}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text
           as="div"
           tone="secondary"
@@ -284,12 +284,12 @@ function PipelineErrorTableRow({ error }: { error: PipelineErrorRow }) {
           {formatAssetLabel(error, { fallback: '—' })}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="subtle">
           {error.isin || '—'}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="relaxed" tone="muted">
           {error.message}
         </Text>

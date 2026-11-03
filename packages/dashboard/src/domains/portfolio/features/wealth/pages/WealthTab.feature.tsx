@@ -30,13 +30,7 @@ export function WealthTab() {
   return (
     <div className="mb-6 space-y-4">
       <Surface variant="sectionEnd">
-        <Inline
-          as="div"
-          flow="wrap"
-          align="start"
-          gap="relaxed"
-          inset="default"
-        >
+        <Inline as="div" flow="wrap" align="stretch" gap="relaxed">
           <WealthComparisonKpi
             label={i18n.t('ui.wealthtab.netContributionsTrailing12m')}
             metric={trailingYearComparison.savings}

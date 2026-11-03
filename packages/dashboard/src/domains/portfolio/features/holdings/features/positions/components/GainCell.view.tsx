@@ -1,6 +1,7 @@
 import { getGainTone } from '@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/helpers/presenters/getGainTone'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -20,14 +21,16 @@ export function GainCell({
   const showPercentage = !missing && pct != null
   return (
     <Text tone={missing ? 'subtle' : getGainTone(value)}>
-      {formatMoney(value, { zeroAsFallback })}
-      {showPercentage && (
-        <Layout as="span" flow="inline">
-          <Text variant="secondaryCaption">
-            {formatPercentage(pct, { decimals: 2, signed: true })}
-          </Text>
-        </Layout>
-      )}
+      <Inline as="span" flow="wrap" align="baseline" gap="compact">
+        <span>{formatMoney(value, { zeroAsFallback })}</span>
+        {showPercentage && (
+          <Layout as="span" flow="inline">
+            <Text variant="secondaryCaption">
+              {formatPercentage(pct, { decimals: 2, signed: true })}
+            </Text>
+          </Layout>
+        )}
+      </Inline>
     </Text>
   )
 }

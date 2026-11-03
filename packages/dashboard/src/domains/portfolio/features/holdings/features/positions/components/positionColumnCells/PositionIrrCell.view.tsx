@@ -18,7 +18,7 @@ export function PositionIrrCell({ row }: { row: Row<TableRow> }) {
     return null
   return (
     <Text variant="compact">
-      <Stack as="span">
+      <Stack as="span" gap="none">
         {r.xirr != null && (
           <Text tone={getGainTone(r.xirr)}>
             {formatPercentage(r.xirr, { decimals: 2, signed: true })}

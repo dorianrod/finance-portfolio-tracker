@@ -53,7 +53,7 @@ export function FundHoldingsExplorerView({
           </TablePanel.Description>
         </div>
         <TablePanel.Actions>
-          <Layout as="span" flow="control" sizing="flexible">
+          <Layout as="span" flow="control" sizing="flexible" width="wide">
             <Input
               type="search"
               value={query}
@@ -65,28 +65,34 @@ export function FundHoldingsExplorerView({
               variant="canvasSearch"
             />
           </Layout>
-          <Select
-            value={sort}
-            onChange={(event) => {
-              const value = event.target.value
-              if (value === 'value' || value === 'name') setSort(value)
-            }}
-            label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
-            variant="canvasSelect"
-          >
-            <option value="value">
-              {i18n.t('ui.fundholdingsexplorer.largestFirst')}
-            </option>
-            <option value="name">
-              {i18n.t('ui.fundholdingsexplorer.name')}
-            </option>
-          </Select>
+          <Layout as="span" flow="control" sizing="fixed">
+            <Select
+              value={sort}
+              onChange={(event) => {
+                const value = event.target.value
+                if (value === 'value' || value === 'name') setSort(value)
+              }}
+              label={i18n.t('ui.fundholdingsexplorer.sortUnderlyingExposure')}
+              variant="canvasSelect"
+            >
+              <option value="value">
+                {i18n.t('ui.fundholdingsexplorer.largestFirst')}
+              </option>
+              <option value="name">
+                {i18n.t('ui.fundholdingsexplorer.name')}
+              </option>
+            </Select>
+          </Layout>
         </TablePanel.Actions>
       </TablePanel.Toolbar>
-      <div>
-        <div>
+      <Layout overflow="auto">
+        <Layout width="dataTable">
           <TablePanel.Header as="div">
-            <Grid arrangement="labelThreeValues" inset="compact">
+            <Grid
+              arrangement="labelThreeValues"
+              align="center"
+              inset="tableHeader"
+            >
               <span>{i18n.t('ui.fundholdingsexplorer.issuer')}</span>
               <Text align="right">
                 {i18n.t('ui.fundholdingsexplorer.exposure')}
@@ -108,7 +114,7 @@ export function FundHoldingsExplorerView({
               />
             ))}
           </VirtualCanvas>
-        </div>
+        </Layout>
         {displayed.length === 0 && (
           <Text as="p" variant="body" tone="subtle" align="center">
             <Layout as="span" flow="block" inset="spacious">
@@ -116,7 +122,7 @@ export function FundHoldingsExplorerView({
             </Layout>
           </Text>
         )}
-      </div>
+      </Layout>
       <Layout>
         <Surface variant="floatingFooter" tone="muted">
           {i18n.t('ui.fundholdingsexplorer.issuerCount', {

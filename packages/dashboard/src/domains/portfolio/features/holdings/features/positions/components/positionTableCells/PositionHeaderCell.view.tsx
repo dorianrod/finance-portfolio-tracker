@@ -9,7 +9,7 @@ export function PositionHeaderCell({
   header: Header<TableRow, unknown>
 }) {
   return (
-    <Inset as="th" inset="compact">
+    <Inset as="th" inset="tableCell">
       {flexRender(header.column.columnDef.header, header.getContext())}
     </Inset>
   )

@@ -18,7 +18,7 @@ export function PositionBodyCell({
     cell.column.id === 'value' ? (chartHandlers ?? savingsHandlers) : null
   const content = flexRender(cell.column.columnDef.cell, cell.getContext())
   return (
-    <Layout as="td" overflow="clip" inset="compact">
+    <Layout as="td" overflow="clip" inset="tableCell">
       {handlers ? (
         <Preview.Trigger {...handlers} variant="preview">
           {content}

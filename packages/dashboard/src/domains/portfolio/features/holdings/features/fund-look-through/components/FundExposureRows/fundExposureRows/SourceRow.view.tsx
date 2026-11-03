@@ -17,7 +17,12 @@ export const SourceRow = memo(function SourceRow({
   const label = formatSourceLabel(source)
   return (
     <Surface variant="detailRow">
-      <Grid arrangement="labelThreeValues">
+      <Grid
+        arrangement="labelThreeValues"
+        height="full"
+        align="center"
+        inset="tableRow"
+      >
         <span />
         <Text tone="subtle" align="right" numeric>
           {formatMoney(source.value, { style: 'full' })}

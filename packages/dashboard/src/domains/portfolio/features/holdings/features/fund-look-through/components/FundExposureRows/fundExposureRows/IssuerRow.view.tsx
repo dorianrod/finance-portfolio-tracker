@@ -26,13 +26,19 @@ export const IssuerRow = memo(function IssuerRow({
   const formatPercentage = useFormatPercentage()
   return (
     <Surface variant="hoverRow">
-      <Grid arrangement="labelThreeValues">
+      <Grid
+        arrangement="labelThreeValues"
+        height="full"
+        align="center"
+        inset="tableRow"
+      >
         <Layout as="span" flow="control">
           <DisclosureButton
             type="button"
             onClick={() => onToggle(issuer.id)}
             expanded={open}
             variant="plainLeft"
+            size="content"
           >
             <Chevron open={open} />
             <Text variant="medium" tone="default" truncate>

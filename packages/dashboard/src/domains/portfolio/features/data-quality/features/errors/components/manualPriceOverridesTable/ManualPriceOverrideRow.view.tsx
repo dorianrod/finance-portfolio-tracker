@@ -13,39 +13,39 @@ export function ManualPriceOverrideRow({ row }: { row: ManualPriceOverride }) {
   const openEnded = !row.date_to
   return (
     <Surface as="tr" variant="interactiveRow">
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <LevelBadge level={openEnded ? 'warning' : 'muted'}>
           {openEnded
             ? i18n.t('ui.errorstab.openEnded')
             : i18n.t('ui.errorstab.bounded')}
         </LevelBadge>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" tone="secondary">
           {row.name || '—'}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="subtle">
           {row.isin || row.ticker || '—'}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="medium" tone="secondary">
           {formatManualPrice(row)}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="muted">
           {formatDate(row.date_from, { style: 'isoDate' })}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="muted">
           {formatDate(row.date_to, { style: 'isoDate' })}
         </Text>
       </Inset>
-      <Inset as="td" inset="compact">
+      <Inset as="td" inset="tableCell">
         <Text as="div" variant="code" tone="subtle">
           {row.source_file}
         </Text>

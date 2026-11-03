@@ -1,6 +1,5 @@
 import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Text } from '@/shared/ui/Text.view'
 
@@ -39,24 +38,19 @@ function AccountRow({
   variant: 'tree' | 'select'
 }) {
   return (
-    <ChoiceRow variant={variant === 'tree' ? 'nested' : undefined}>
-      <Inline as="span" align="center" gap="default" inset="default">
-        <Checkbox
-          checked={row.checked}
-          onChange={() => onToggle(row.account)}
-        />
-        {variant === 'tree' ? (
-          <Layout as="span" flow="inline">
-            <Text variant="caption" tone="secondary" truncate>
-              {row.label}
-            </Text>
-          </Layout>
-        ) : (
-          <Text variant="caption" tone="muted">
+    <ChoiceRow variant={variant === 'tree' ? 'treeItem' : 'selectItem'}>
+      <Checkbox checked={row.checked} onChange={() => onToggle(row.account)} />
+      {variant === 'tree' ? (
+        <Layout as="span" flow="inline" sizing="flexible">
+          <Text variant="caption" tone="secondary" truncate>
             {row.label}
           </Text>
-        )}
-      </Inline>
+        </Layout>
+      ) : (
+        <Text variant="caption" tone="muted">
+          {row.label}
+        </Text>
+      )}
     </ChoiceRow>
   )
 }

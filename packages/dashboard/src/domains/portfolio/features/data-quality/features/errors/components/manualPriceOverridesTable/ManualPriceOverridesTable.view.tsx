@@ -16,37 +16,37 @@ export function ManualPriceOverridesTable({
         <Surface variant="compactTable" as="table">
           <thead>
             <Surface as="tr" variant="tableHeader" tone="muted" align="left">
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.status')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.asset')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.isinTicker')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.forcedPrice')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.from')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.until')}
                 </Text>
               </Inset>
-              <Inset as="th" inset="compact">
+              <Inset as="th" inset="tableCell">
                 <Text as="div" variant="medium">
                   {i18n.t('ui.errorstab.source')}
                 </Text>

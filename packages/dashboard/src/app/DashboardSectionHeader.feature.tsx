@@ -27,15 +27,15 @@ export function DashboardSectionHeader({
     activeTab === 'holdings' ? HOLDINGS_COPY[holdingsView] : TAB_COPY[activeTab]
   return (
     <div className="mb-6">
-      <Surface variant="sectionEnd">
+      <Surface variant="sectionHeader">
         <Inline
           as="div"
+          flow="responsiveRow"
           align="start"
           justify="between"
           gap="relaxed"
-          inset="spacious"
         >
-          <Layout>
+          <Layout sizing="flexible">
             <Text as="h2" variant="statistic" tone="default">
               {copy.title}
             </Text>

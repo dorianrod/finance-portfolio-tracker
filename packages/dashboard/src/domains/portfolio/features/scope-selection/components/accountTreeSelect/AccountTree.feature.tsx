@@ -9,7 +9,6 @@ import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
 import { Checkbox } from '@/shared/ui/Checkbox.view'
 import { Button } from '@/shared/ui/controls/Button.view'
 import { ChoiceRow } from '@/shared/ui/formElements/ChoiceRow.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Inset } from '@/shared/ui/layout/Inset.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -50,7 +49,7 @@ export function AccountTree({
           </Button>
         </Layout>
 
-        <Surface variant="sectionStart">
+        <Surface variant="selectionBody">
           {accountGroups.map((group) => (
             <TreeAccountType
               key={group.type}
@@ -92,30 +91,28 @@ function TreeAccountType({
   const { allSelected, partiallySelected, selectedCount } =
     accountTypeSelectionState(accounts, selected)
   return (
-    <Inset inset="compact">
+    <Inset inset="none">
       <ChoiceRow variant="nested">
-        <Inline as="span" align="center" gap="default" inset="compact">
-          <Checkbox
-            checked={allSelected}
-            indeterminate={partiallySelected}
-            onChange={() =>
-              onChange(toggleAccountTypeSelection(accounts, selected))
-            }
-          />
-          <Text variant="captionSectionLabel" tone="muted">
-            {type}
-          </Text>
-          {selectedCount > 0 && (
-            <Layout as="span" flow="inline" placement="trailing">
-              <Text variant="micro" tone="subtle" numeric>
-                {i18n.t('ui.accounttreeselect.selectedCount', {
-                  selected: formatNumber(selectedCount),
-                  total: formatNumber(accounts.length),
-                })}
-              </Text>
-            </Layout>
-          )}
-        </Inline>
+        <Checkbox
+          checked={allSelected}
+          indeterminate={partiallySelected}
+          onChange={() =>
+            onChange(toggleAccountTypeSelection(accounts, selected))
+          }
+        />
+        <Text variant="captionSectionLabel" tone="muted">
+          {type}
+        </Text>
+        {selectedCount > 0 && (
+          <Layout as="span" flow="inline" placement="trailing">
+            <Text variant="micro" tone="subtle" numeric>
+              {i18n.t('ui.accounttreeselect.selectedCount', {
+                selected: formatNumber(selectedCount),
+                total: formatNumber(accounts.length),
+              })}
+            </Text>
+          </Layout>
+        )}
       </ChoiceRow>
       <AccountSelectionRows
         rows={rows}

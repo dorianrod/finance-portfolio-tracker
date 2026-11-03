@@ -1,14 +1,16 @@
 export const SURFACE_VARIANTS = {
-  hoverRow: 'border-b border-border text-sm hover:bg-surface-raised/60',
-  detailRow: 'border-b border-border bg-canvas/50 text-xs',
-  warningConnector: 'bg-gradient-to-b from-border-strong to-warning/40',
+  hoverRow: 'h-full border-b border-border text-sm hover:bg-surface-raised/60',
+  detailRow: 'h-full border-b border-border bg-canvas/50 text-xs',
+  warningConnector: 'h-full bg-gradient-to-b from-border-strong to-warning/40',
 
   statusFrame: 'rounded-full bg-surface ring-1 ring-border',
   statusCanvasFrame: 'rounded-full bg-canvas ring-1 ring-border',
   emptyCaption: 'border border-border border-dashed rounded-lg text-xs',
-  centeredConnector: '-translate-x-1/2 bg-surface-hover',
-  positiveConnector: 'bg-gradient-to-b from-border-strong to-positive/40',
-  neutralConnector: 'bg-gradient-to-b from-border-strong to-border-strong/40',
+  centeredConnector: 'h-full -translate-x-1/2 bg-surface-hover',
+  positiveConnector:
+    'h-full bg-gradient-to-b from-border-strong to-positive/40',
+  neutralConnector:
+    'h-full bg-gradient-to-b from-border-strong to-border-strong/40',
   warningLabel:
     'bg-warning-muted/40 border border-warning/70 font-semibold rounded text-[10px]',
   quietCount:
@@ -22,7 +24,7 @@ export const SURFACE_VARIANTS = {
   interactiveOverlay: 'pointer-events-auto',
   tableBottom: 'rounded-b-xl',
   subduedInset: 'bg-canvas/45 rounded-lg',
-  responsiveInset: 'border-border border-t sm:border-l sm:border-t-0',
+  responsiveInset: 'border-border border-t text-xs sm:border-l sm:border-t-0',
   splitAction:
     'ui-split-action hover:bg-surface/60 rounded-md transition-colors',
   indicatorCard:
@@ -37,7 +39,7 @@ export const SURFACE_VARIANTS = {
 
   canvas: 'bg-canvas',
   plain: 'bg-surface',
-  highlighted: 'bg-surface-hover',
+  highlighted: 'h-full bg-surface-hover',
   raised: 'bg-surface-raised',
   chart: 'bg-surface rounded-xl',
   card: 'bg-surface border border-border rounded-xl',
@@ -52,11 +54,13 @@ export const SURFACE_VARIANTS = {
   compactEmpty: 'border border-border border-dashed rounded-lg text-xs',
   tooltip:
     'bg-surface border border-border-strong rounded-lg shadow-xl text-xs',
-  track: 'bg-surface-raised rounded-full overflow-hidden',
-  annotatedTrack: 'bg-surface-raised rounded-full',
+  track: 'h-full bg-surface-raised rounded-full overflow-hidden',
+  annotatedTrack: 'h-full bg-surface-raised rounded-full',
+  selectionBody: 'border-t border-border py-1.5',
   sectionStart: 'border-t border-border',
   strongSectionStart: 'border-t border-border-strong',
   sectionEnd: 'border-b border-border',
+  sectionHeader: 'border-b border-border pb-5',
   sectionInset: 'border-l border-border',
   captionFooter: 'border-t border-border text-xs',
   microFooter: 'border-t border-border text-[11px]',
@@ -75,6 +79,7 @@ export const SURFACE_VARIANTS = {
   accentFill: 'bg-accent-muted/60 rounded-full',
   formSection: 'border-b border-border last:border-b-0',
   raisedInset: 'rounded-lg bg-surface-raised/60',
-  selectionPanel: 'rounded-xl border border-border-strong bg-canvas/35',
+  selectionPanel:
+    'overflow-hidden rounded-xl border border-border-strong bg-canvas/35',
   strongSectionEnd: 'border-b border-border-strong',
 } as const

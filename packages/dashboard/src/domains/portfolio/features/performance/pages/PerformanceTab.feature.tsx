@@ -104,7 +104,7 @@ export function PerformanceTab({
               {i18n.t('ui.performancetab.performance')}
             </Text>
           </Layout>
-          <Inline as="div" flow="wrap" align="start" gap="relaxed">
+          <Inline as="div" flow="wrap" align="stretch" gap="relaxed">
             <TotalNetPerformanceKpi performance={performance} />
             <NetUnrealizedKpi performance={performance} />
             <NetRealizedKpi performance={performance} />
@@ -117,7 +117,7 @@ export function PerformanceTab({
               {i18n.t('ui.performancetab.returnsAndPassiveIncome')}
             </Text>
           </Layout>
-          <Inline as="div" flow="wrap" align="start" gap="relaxed">
+          <Inline as="div" flow="wrap" align="stretch" gap="relaxed">
             <PassiveIncomeKpi income={income} />
             <IrrSinceTrackingKpi
               value={globalTri}

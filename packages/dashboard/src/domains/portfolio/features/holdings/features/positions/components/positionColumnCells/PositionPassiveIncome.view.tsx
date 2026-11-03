@@ -28,7 +28,7 @@ export function PositionPassiveIncomeView({
     interestTax != null && interestTax > 0 ? interestTax : null
   return (
     <Text variant="compactCaption">
-      <Stack as="span">
+      <Stack as="span" gap="none">
         <Layout as="span">
           {hasDivs && <Text tone={'decorative'}>{formatMoney(dividends)}</Text>}
           {hasInt && (

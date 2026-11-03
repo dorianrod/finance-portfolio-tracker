@@ -19,7 +19,7 @@ export function RealizedGainCell({ position }: { position: PositionRow }) {
   const isTaxFreeGain = taxRate === 0 && gross > 0
   return (
     <Text variant="compact">
-      <Stack as="span">
+      <Stack as="span" gap="none">
         <GainCell value={gross} />
         {taxDetails && (
           <Layout as="span" flow="inline" spaceBefore="compact">

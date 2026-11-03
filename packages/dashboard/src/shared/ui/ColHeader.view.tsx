@@ -17,7 +17,7 @@ export function ColHeader({ label, columnName = label, content }: Props) {
           <Decorative>ⓘ</Decorative>
         </Tooltip.Trigger>
         <Tooltip.Content variant="info">
-          <div className="w-72">{content}</div>
+          {content}
         </Tooltip.Content>
       </Tooltip>
     </span>

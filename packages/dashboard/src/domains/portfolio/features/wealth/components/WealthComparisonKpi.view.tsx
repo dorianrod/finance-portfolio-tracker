@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 
-import { KpiCard } from '@/domains/portfolio/features/wealth/components/KpiCard.view'
 import { useFormatMonthRange } from '@/domains/portfolio/features/wealth/helpers/formatters/useFormatMonthRange'
 import type { YearOverYearMetric } from '@/domains/portfolio/features/wealth/types/trailingYearOverYear.type'
 import { getPerformanceTone } from '@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone'
@@ -39,32 +38,30 @@ export function WealthComparisonKpi({
   else if (metric.current != null && metric.current < 0) accent = 'negative'
 
   return (
-    <KpiCard>
-      <Kpi.Root accent={accent}>
-        <Kpi.Label
-          tooltip={i18n.t(
-            'ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared',
-          )}
-        >
-          <Kpi.TooltipFooter>{children}</Kpi.TooltipFooter>
-          {label}
-        </Kpi.Label>
-        <Kpi.ValueRow>
-          <Kpi.Value tone={valueColor} title={value}>
-            {value}
-          </Kpi.Value>
-          <Kpi.InlineNote tone={changeColor}>
-            {formatPercentage(metric.changePct, { signed: true })}
-          </Kpi.InlineNote>
-        </Kpi.ValueRow>
-        <Kpi.Detail>{currentLabel}</Kpi.Detail>
-        <Kpi.Footer>
-          {i18n.t('ui.wealthtab.previous12m')}{' '}
-          <Text variant="medium" tone="secondary">
-            {formatMoney(metric.previous)}
-          </Text>
-        </Kpi.Footer>
-      </Kpi.Root>
-    </KpiCard>
+    <Kpi.Root accent={accent}>
+      <Kpi.Label
+        tooltip={i18n.t(
+          'ui.wealthtab.rollingTotalOverTheLatestTwelveCalendarMonthsCompared',
+        )}
+      >
+        <Kpi.TooltipFooter>{children}</Kpi.TooltipFooter>
+        {label}
+      </Kpi.Label>
+      <Kpi.ValueRow>
+        <Kpi.Value tone={valueColor} title={value}>
+          {value}
+        </Kpi.Value>
+        <Kpi.InlineNote tone={changeColor}>
+          {formatPercentage(metric.changePct, { signed: true })}
+        </Kpi.InlineNote>
+      </Kpi.ValueRow>
+      <Kpi.Detail>{currentLabel}</Kpi.Detail>
+      <Kpi.Footer>
+        {i18n.t('ui.wealthtab.previous12m')}{' '}
+        <Text variant="medium" tone="secondary">
+          {formatMoney(metric.previous)}
+        </Text>
+      </Kpi.Footer>
+    </Kpi.Root>
   )
 }

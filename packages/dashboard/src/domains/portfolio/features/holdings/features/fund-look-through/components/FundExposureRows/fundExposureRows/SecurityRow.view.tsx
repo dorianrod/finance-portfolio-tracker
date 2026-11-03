@@ -23,17 +23,18 @@ export const SecurityRow = memo(function SecurityRow({
   })
   return (
     <Surface variant="detailRow">
-      <Grid arrangement="labelThreeValues">
-        <Layout as="span" flow="inline">
+      <Grid
+        arrangement="labelThreeValues"
+        height="full"
+        align="center"
+        inset="tableRow"
+      >
+        <Layout as="span" sizing="flexible" inset="treeCell">
           <Text truncate>
-            <Layout as="span" flow="inline" inset="spacious">
-              <Text tone="secondary">{security.name}</Text>
-              <Layout as="span" flow="inline">
-                <Text variant="tinyCode" tone="subtle">
-                  {security.id}
-                </Text>
-              </Layout>
-            </Layout>
+            <Text tone="secondary">{security.name}</Text>{' '}
+            <Text variant="tinyCode" tone="subtle">
+              {security.id}
+            </Text>
           </Text>
         </Layout>
         <Text tone="muted" align="right" numeric>
