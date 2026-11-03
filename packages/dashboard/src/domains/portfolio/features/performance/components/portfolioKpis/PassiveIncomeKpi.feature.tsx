@@ -23,9 +23,7 @@ export function PassiveIncomeKpi({ income }: { income: IncomeSummary }) {
         {i18n.t('ui.portfoliokpis.passiveIncomeTrailing12m')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value tone={'decorative'} title={value}>
-          {value}
-        </Kpi.Value>
+        <Kpi.Value title={value}>{value}</Kpi.Value>
         <Kpi.InlineNote
           tone={
             income.changePct == null

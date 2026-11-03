@@ -228,6 +228,32 @@ describe('buildOverviewComparison', () => {
     expect(comparison?.lookThroughConcentration.current).toBeNull()
   })
 
+  it('uses tax data at the selected period end and does not use a future valuation', () => {
+    const result = buildOverviewComparison({
+      rawPositions: [
+        position({
+          snapshot_date: new Date('2025-01-31'),
+          total_value: 100,
+          unrealized_gain: 20,
+          unrealized_gain_net: 14,
+        }),
+        position({
+          snapshot_date: new Date('2025-02-28'),
+          total_value: 200,
+          unrealized_gain: 50,
+          unrealized_gain_net: 35,
+        }),
+      ],
+      rawOperations: [],
+      savingCapacity: [],
+      fundHoldingsHistory: [],
+      dateFrom: new Date('2025-02-01'),
+      dateTo: new Date('2025-02-15'),
+    })
+    expect(result?.value.current).toBe(100)
+    expect(result?.netValue).toBe(94)
+  })
+
   it('does not invent a relative percentage when the previous value is zero', () => {
     const comparison = buildOverviewComparison({
       rawPositions: [

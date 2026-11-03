@@ -37,7 +37,7 @@ export function AssetIrrResultsView({
             <div>
               {children}
               <Layout spaceBefore="compact">
-                <Text as="div" variant="statistic" tone="secondary" numeric>
+                <Text as="div" variant="statistic" tone="default" numeric>
                   {formatNumber(measuredCount)}
                 </Text>
               </Layout>

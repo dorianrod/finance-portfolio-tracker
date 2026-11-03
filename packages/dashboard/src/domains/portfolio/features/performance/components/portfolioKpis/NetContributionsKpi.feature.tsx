@@ -25,9 +25,7 @@ export function NetContributionsKpi({
         {i18n.t('ui.portfoliokpis.netContributions')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value tone={'accent'} title={formattedValue}>
-          {formattedValue}
-        </Kpi.Value>
+        <Kpi.Value title={formattedValue}>{formattedValue}</Kpi.Value>
       </Kpi.ValueRow>
       <Kpi.Detail>{periodLabel}</Kpi.Detail>
     </Kpi.Root>

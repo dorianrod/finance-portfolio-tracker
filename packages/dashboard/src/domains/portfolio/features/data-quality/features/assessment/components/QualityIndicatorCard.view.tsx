@@ -36,7 +36,7 @@ export function QualityIndicatorCard({
   const formatPercentage = useFormatPercentage()
   const safePercentage = normalizeCoveragePercentage(percentage) ?? 0
   const percentageLabel = formatPercentage(safePercentage)
-  const colors = TONES[tone]
+  const barTone = BAR_TONES[tone]
 
   return (
     <Surface variant="indicatorCard">
@@ -53,7 +53,7 @@ export function QualityIndicatorCard({
         justify="between"
         gap="default"
       >
-        <Text variant="metricSecondary" tone={colors.text} numeric>
+        <Text variant="metricSecondary" tone="default" numeric>
           {percentageLabel}
         </Text>
         <Text variant="caption" tone="subtle" numeric>
@@ -63,7 +63,7 @@ export function QualityIndicatorCard({
       <Layout spaceBefore="default" height="track" overflow="clip">
         <Progress variant="track" label={label} value={safePercentage}>
           <Proportion value={safePercentage}>
-            <SeriesSwatch as="div" shape="dot" tone={colors.bar} />
+            <SeriesSwatch as="div" shape="dot" tone={barTone} />
           </Proportion>
         </Progress>
       </Layout>
@@ -81,12 +81,12 @@ export function QualityIndicatorCard({
 
 type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
 
-const TONES = {
-  neutral: { text: 'accent', bar: PORTFOLIO_CHART_TONES.netContributions },
-  coverage: { text: 'positive', bar: PORTFOLIO_CHART_TONES.coverage },
-  warning: { text: 'warning', bar: PORTFOLIO_CHART_TONES.coverageGap },
-  error: { text: 'negative', bar: PORTFOLIO_CHART_TONES.performanceNegative },
-  muted: { text: 'muted', bar: PORTFOLIO_CHART_TONES.mutedIndicator },
+const BAR_TONES = {
+  neutral: PORTFOLIO_CHART_TONES.netContributions,
+  coverage: PORTFOLIO_CHART_TONES.coverage,
+  warning: PORTFOLIO_CHART_TONES.coverageGap,
+  error: PORTFOLIO_CHART_TONES.performanceNegative,
+  muted: PORTFOLIO_CHART_TONES.mutedIndicator,
 } as const
 
 QualityIndicatorCard.TooltipFooter = InfoTooltip.Footer

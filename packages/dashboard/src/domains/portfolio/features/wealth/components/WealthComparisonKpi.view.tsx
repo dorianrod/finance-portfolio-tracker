@@ -25,8 +25,6 @@ export function WealthComparisonKpi({
   const formatMonthRange = useFormatMonthRange()
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
-  const valueColor =
-    tone === 'blue' ? 'accent' : getPerformanceTone(metric.current)
   const changeColor =
     metric.changePct == null ? 'subtle' : getPerformanceTone(metric.changePct)
   const currentLabel = formatMonthRange(currentMonths, {
@@ -48,9 +46,7 @@ export function WealthComparisonKpi({
         {label}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value tone={valueColor} title={value}>
-          {value}
-        </Kpi.Value>
+        <Kpi.Value title={value}>{value}</Kpi.Value>
         <Kpi.InlineNote tone={changeColor}>
           {formatPercentage(metric.changePct, { signed: true })}
         </Kpi.InlineNote>

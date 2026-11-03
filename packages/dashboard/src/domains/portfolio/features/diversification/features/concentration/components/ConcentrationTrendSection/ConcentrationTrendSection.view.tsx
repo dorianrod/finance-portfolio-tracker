@@ -306,7 +306,7 @@ function HistoricalHoldingsSummary({
           </Layout>
         </div>
         <Text variant="responsiveEnd" as="div" align="left">
-          <Text as="div" variant="statistic" tone="secondary" numeric>
+          <Text as="div" variant="statistic" tone="default" numeric>
             {formatDate(displayedPoint.date, {
               style: 'shortMonthShortYear',
             })}

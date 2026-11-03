@@ -59,6 +59,20 @@ function KpiValueRow({ children }: { children: ReactNode }) {
   )
 }
 
+function KpiValue({
+  children,
+  title,
+}: {
+  children: ReactNode
+  title?: string
+}) {
+  return (
+    <Metric.Value tone="default" title={title}>
+      {children}
+    </Metric.Value>
+  )
+}
+
 function KpiDetail({
   children,
   title,
@@ -91,7 +105,7 @@ Kpi.TooltipFooter = InfoTooltip.Footer
 
 Kpi.ValueRow = KpiValueRow
 
-Kpi.Value = Metric.Value
+Kpi.Value = KpiValue
 
 Kpi.InlineNote = Metric.InlineNote
 

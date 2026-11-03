@@ -9,6 +9,7 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 import type { SavingCapacityPoint } from '@/domains/portfolio/shared/types/savingCapacityPoint.type'
 
 import { buildGrossValueHistory } from './buildGrossValueHistory'
+import { buildNetValueHistory } from './buildNetValueHistory'
 import type {
   OverviewComparison,
   OverviewConcentrationComparison,
@@ -40,10 +41,11 @@ export function buildOverviewComparison(
   )
   if (!windows) return null
 
-  const currentValue =
-    latestAtOrBefore(valuePoints, windows.current.end)?.value ?? null
-  const previousValue =
-    latestAtOrBefore(valuePoints, windows.previous.end)?.value ?? null
+  const netValuePoints = buildNetValueHistory(
+    input.rawPositions,
+    accountFilters,
+    accountTypeFilters,
+  )
   const currentContributions = sumWindow(
     input.savingCapacity,
     windows.current,
@@ -79,7 +81,9 @@ export function buildOverviewComparison(
 
   return {
     windows,
-    value: compared(currentValue, previousValue),
+    value: compareValueAtPeriodEnds(valuePoints, windows),
+    netValue:
+      latestAtOrBefore(netValuePoints, windows.current.end)?.value ?? null,
     contributions: compared(currentContributions, previousContributions),
     marketPerformance: compared(currentPerformance, previousPerformance),
     passiveIncome: compared(
@@ -113,6 +117,16 @@ type OverviewComparisonInput = {
   accountTypeFilters?: Set<string>
   dateFrom?: Date
   dateTo?: Date
+}
+
+function compareValueAtPeriodEnds(
+  points: Array<{ date: Date; value: number | null }>,
+  windows: OverviewWindows,
+) {
+  return compared(
+    latestAtOrBefore(points, windows.current.end)?.value ?? null,
+    latestAtOrBefore(points, windows.previous.end)?.value ?? null,
+  )
 }
 
 function sumWindow<T extends { date: Date }>(

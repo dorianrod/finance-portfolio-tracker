@@ -4,10 +4,8 @@ import type {
   OverviewComparison,
   OverviewConcentrationComparison,
 } from '@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types'
-import { getConcentrationTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone'
-import { getOverviewPerformanceTone } from '@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone'
 import { DeltaBadge } from '@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view'
-import { PreviousValue } from '@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view'
+import { OverviewMetric } from '@/domains/portfolio/features/overview/pages/overviewMetrics/OverviewMetric.view'
 import { useOverviewNavigation } from '@/domains/portfolio/features/overview/services/actions/useOverviewNavigation'
 import { FilterScopePresentation } from '@/domains/portfolio/shared/components/filters/FilterScopePresentation.view'
 import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
@@ -17,8 +15,6 @@ import type { IrrStatus } from '@/domains/portfolio/shared/types/statuses.type'
 import i18n from '@/i18n/i18n'
 import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
-import { MetricDelta } from '@/shared/ui/badge/MetricDelta.view'
-import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Stack } from '@/shared/ui/layout/Stack.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -78,29 +74,23 @@ function OverviewValueCard({
       onOpen={() => navigateTo('wealth')}
       accent={'highlight'}
     >
-      <Text variant="metric" tone="default" numeric>
-        <Layout as="span" flow="block">
-          {formatMoney(comparison.value.current)}
-        </Layout>
-      </Text>
-      <Inline
-        as="span"
-        flow="wrap"
-        align="center"
-        gap="default"
-        spaceBefore="default"
+      <OverviewMetric
+        previousValue={formatMoney(comparison.value.previous, {
+          fallback: i18n.t('ui.overviewsummarycards.unavailable'),
+        })}
+        value={formatMoney(comparison.value.current)}
       >
         <DeltaBadge metric={comparison.value} />
-        <PreviousValue value={comparison.value.previous} />
-      </Inline>
-      <Layout as="span" flow="block" spaceBefore="default">
-        <Text variant="micro" tone="subtle">
-          <Layout as="span" flow="block">
-            {i18n.t(
-              'ui.overviewsummarycards.grossMarketValueBeforeEstimatedTax',
-            )}
-          </Layout>
-        </Text>
+      </OverviewMetric>
+      <Layout as="span" flow="block" spaceBefore="compact">
+        <Surface as="span" variant="microFooter">
+          <Stack as="span" gap="compact" spaceBefore="compact">
+            <OverviewMetric.Secondary
+              label={i18n.t('ui.overviewsummarycards.afterEstimatedTax')}
+              value={formatMoney(comparison.netValue)}
+            />
+          </Stack>
+        </Surface>
       </Layout>
     </OverviewCardShell>
   )
@@ -130,30 +120,14 @@ function OverviewContributionsCard({
       onOpen={() => navigateTo('wealth')}
       accent="accent"
     >
-      <Text variant="metric" tone="accent" numeric>
-        <Layout as="span" flow="block">
-          {formatMoney(comparison.contributions.current)}
-        </Layout>
-      </Text>
-      <Inline
-        as="span"
-        flow="wrap"
-        align="center"
-        gap="default"
-        spaceBefore="default"
+      <OverviewMetric
+        previousValue={formatMoney(comparison.contributions.previous, {
+          fallback: i18n.t('ui.overviewsummarycards.unavailable'),
+        })}
+        value={formatMoney(comparison.contributions.current)}
       >
-        <DeltaBadge metric={comparison.contributions} tone="contributions" />
-        <PreviousValue value={comparison.contributions.previous} />
-      </Inline>
-      <Layout as="span" flow="block" spaceBefore="default">
-        <Text variant="micro" tone="subtle">
-          <Layout as="span" flow="block">
-            {i18n.t(
-              'ui.overviewsummarycards.depositsMinusWithdrawalsDuringThePeriod',
-            )}
-          </Layout>
-        </Text>
-      </Layout>
+        <DeltaBadge metric={comparison.contributions} />
+      </OverviewMetric>
     </OverviewCardShell>
   )
 }
@@ -169,13 +143,7 @@ function OverviewPerformanceCard({
   const scopeContext = useFilterScopeContext()
 
   const formatMoney = useFormatMoney()
-  const formatPercentage = useFormatPercentage()
   const formatOverviewIrrValue = useFormatOverviewIrrValue()
-  const rollingThreeYearDelta =
-    irrStatus === 'ready' && rollingThreeYearTri.delta != null
-      ? rollingThreeYearTri.delta
-      : null
-
   const { navigateTo } = useOverviewNavigation()
   const metricScope: FilterScopeSpec = {
     account: 'filterable',
@@ -198,52 +166,28 @@ function OverviewPerformanceCard({
       onOpen={() => navigateTo('performance')}
       accent="positive"
     >
-      <Inline as="span" align="baseline" justify="between" gap="default">
-        <Text
-          variant="metric"
-          numeric
-          tone={getOverviewPerformanceTone(
-            comparison.marketPerformance.current,
-          )}
-        >
-          {formatMoney(comparison.marketPerformance.current)}
-        </Text>
+      <OverviewMetric
+        previousValue={formatMoney(comparison.marketPerformance.previous, {
+          fallback: i18n.t('ui.overviewsummarycards.unavailable'),
+        })}
+        value={formatMoney(comparison.marketPerformance.current)}
+      >
         <DeltaBadge metric={comparison.marketPerformance} />
-      </Inline>
-      <Layout as="span" flow="block" spaceBefore="default">
-        <Text variant="caption">
-          <Inline as="span" align="center" justify="between" gap="default">
-            <Text tone="subtle">
-              {i18n.t('ui.overviewsummarycards.passiveIncome')}
-            </Text>
-            <Text variant="strong" tone={'decorative'} numeric>
-              {formatMoney(comparison.passiveIncome.current)}
-              {comparison.passiveIncome.delta != null && (
-                <Layout as="span" flow="inline">
-                  <Text variant="tiny" tone="subtle">
-                    (
-                    {formatMoney(comparison.passiveIncome.delta, {
-                      signed: true,
-                    })}
-                    )
-                  </Text>
-                </Layout>
+      </OverviewMetric>
+      <Layout as="span" flow="block" spaceBefore="compact">
+        <Surface as="span" variant="microFooter">
+          <Stack as="span" gap="compact" spaceBefore="compact">
+            <OverviewMetric.Secondary
+              label={i18n.t('ui.overviewsummarycards.passiveIncome')}
+              value={formatMoney(comparison.passiveIncome.current)}
+            />
+            <OverviewMetric.Secondary
+              label={i18n.t('ui.overviewsummarycards.irrTrailing3y')}
+              value={formatOverviewIrrValue(
+                rollingThreeYearTri.current,
+                irrStatus,
               )}
-            </Text>
-          </Inline>
-        </Text>
-      </Layout>
-      <Layout as="span" flow="block" spaceBefore="default">
-        <Surface as="span" variant="microFooter" tone="subtle">
-          <Inline
-            as="span"
-            flow="wrap"
-            align="center"
-            gap="compact"
-            inset="compact"
-          >
-            <Inline as="span" align="center">
-              {i18n.t('ui.overviewsummarycards.irrTrailing3y')}
+            >
               <Surface variant="interactiveOverlay" as="span">
                 <InfoTooltip
                   text={i18n.t(
@@ -258,35 +202,8 @@ function OverviewPerformanceCard({
                   </InfoTooltip.Footer>
                 </InfoTooltip>
               </Surface>
-            </Inline>
-            <Text
-              variant="strong"
-              numeric
-              tone={getOverviewPerformanceTone(rollingThreeYearTri.current)}
-            >
-              {formatOverviewIrrValue(rollingThreeYearTri.current, irrStatus)}
-            </Text>
-            {rollingThreeYearDelta != null && (
-              <MetricDelta
-                variant="inline"
-                tone={getOverviewPerformanceTone(rollingThreeYearDelta)}
-              >
-                {formatPercentage(rollingThreeYearDelta, {
-                  signed: true,
-                  unit: ' pp',
-                })}
-              </MetricDelta>
-            )}
-            <Text tone="subtle">
-              {i18n.t('ui.overviewsummarycards.previous')}{' '}
-              <Text variant="medium" tone="muted" numeric>
-                {formatPercentage(
-                  irrStatus === 'ready' ? rollingThreeYearTri.previous : null,
-                  { decimals: 2, signed: true },
-                )}
-              </Text>
-            </Text>
-          </Inline>
+            </OverviewMetric.Secondary>
+          </Stack>
         </Surface>
       </Layout>
     </OverviewCardShell>
@@ -330,67 +247,35 @@ function OverviewConcentrationCard({
       onOpen={() => navigateTo('diversification')}
       accent={'attention'}
     >
-      <Layout as="span" flow="grid" arrangement="comparison" gap="relaxed">
-        <span>
-          <Text variant="micro" tone="subtle">
-            <Layout as="span" flow="block">
-              {i18n.t('ui.overviewsummarycards.largestAsset')}
-            </Layout>
-          </Text>
-          <Layout as="span" flow="block" spaceBefore="compact">
-            <Text variant="metricSecondary" tone={'attention'} numeric>
-              <Layout as="span" flow="block">
-                {formatPercentage(primaryConcentration.current?.topHoldingPct)}
-              </Layout>
-            </Text>
-          </Layout>
-          <Layout as="span" flow="block" spaceBefore="compact">
-            <Text
-              variant="tinyLabel"
-              numeric
-              tone={getConcentrationTone(primaryConcentration.topHolding.delta)}
-            >
-              <Layout as="span" flow="block">
-                {formatPercentage(primaryConcentration.topHolding.delta, {
-                  signed: true,
-                  unit: ' pp',
-                })}
-              </Layout>
-            </Text>
-          </Layout>
-        </span>
-        <span>
-          <Text variant="micro" tone="subtle">
-            <Layout as="span" flow="block">
-              {i18n.t('ui.overviewsummarycards.topFive')}
-            </Layout>
-          </Text>
-          <Layout as="span" flow="block" spaceBefore="compact">
-            <Text variant="metricSecondary" tone={'attention'} numeric>
-              <Layout as="span" flow="block">
-                {formatPercentage(primaryConcentration.current?.topFivePct)}
-              </Layout>
-            </Text>
-          </Layout>
-          <Layout as="span" flow="block" spaceBefore="compact">
-            <Text
-              variant="tinyLabel"
-              numeric
-              tone={getConcentrationTone(primaryConcentration.topFive.delta)}
-            >
-              <Layout as="span" flow="block">
-                {formatPercentage(primaryConcentration.topFive.delta, {
-                  signed: true,
-                  unit: ' pp',
-                })}
-              </Layout>
-            </Text>
-          </Layout>
-        </span>
+      <Layout as="span" flow="grid" arrangement="comparison" gap="default">
+        <OverviewMetric
+          label={i18n.t('ui.overviewsummarycards.largestAsset')}
+          previousValue={formatPercentage(
+            primaryConcentration.topHolding.previous,
+          )}
+          value={formatPercentage(primaryConcentration.topHolding.current)}
+        >
+          <DeltaBadge
+            metric={primaryConcentration.topHolding}
+            tone="concentration"
+          />
+        </OverviewMetric>
+        <OverviewMetric
+          label={i18n.t('ui.overviewsummarycards.topFive')}
+          previousValue={formatPercentage(
+            primaryConcentration.topFive.previous,
+          )}
+          value={formatPercentage(primaryConcentration.topFive.current)}
+        >
+          <DeltaBadge
+            metric={primaryConcentration.topFive}
+            tone="concentration"
+          />
+        </OverviewMetric>
       </Layout>
-      <Layout as="span" flow="block" spaceBefore="default">
+      <Layout as="span" flow="block" spaceBefore="compact">
         <Surface as="span" variant="microFooter" tone="subtle">
-          <Stack as="span" gap="compact" inset="compact">
+          <Stack as="span" gap="compact" spaceBefore="compact">
             {underlyingAvailable ? (
               <Text tone="subtle">
                 <Layout as="span" flow="block">

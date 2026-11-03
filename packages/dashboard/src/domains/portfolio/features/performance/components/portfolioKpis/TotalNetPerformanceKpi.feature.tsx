@@ -29,12 +29,7 @@ export function TotalNetPerformanceKpi({
         {i18n.t('ui.portfoliokpis.totalNetPerformance')}
       </Kpi.Label>
       <Kpi.ValueRow>
-        <Kpi.Value
-          tone={getPerformanceTone(performance.totalPerformanceNet)}
-          title={value}
-        >
-          {value}
-        </Kpi.Value>
+        <Kpi.Value title={value}>{value}</Kpi.Value>
         <Kpi.InlineNote
           tone={getPerformanceTone(performance.totalPerformanceNet)}
         >

@@ -31,6 +31,7 @@ export function comparison(): OverviewComparison {
       defaultedToTrailingYear: true,
     },
     value: metric(120_000, 100_000),
+    netValue: 117_000,
     contributions: metric(15_000, 12_000),
     marketPerformance: metric(5_000, 3_000),
     passiveIncome: metric(800, 650),

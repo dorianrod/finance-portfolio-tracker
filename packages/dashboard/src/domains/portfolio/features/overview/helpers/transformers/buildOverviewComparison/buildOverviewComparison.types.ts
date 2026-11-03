@@ -48,6 +48,8 @@ export type OverviewConcentrationComparison = {
 export type OverviewComparison = {
   windows: OverviewWindows
   value: ComparedMetric
+  // Tax data may be missing from the period-end snapshot.
+  netValue: number | null
   contributions: ComparedMetric
   marketPerformance: ComparedMetric
   passiveIncome: ComparedMetric

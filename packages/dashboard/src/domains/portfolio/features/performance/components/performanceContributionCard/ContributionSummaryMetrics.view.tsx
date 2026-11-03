@@ -41,7 +41,6 @@ export function ContributionSummaryMetricsView({
   const formatPerformanceIrrLabel = useFormatPerformanceIrrLabel()
   const formatPerformanceDateRange = useFormatPerformanceDateRange()
   const formatMoney = useFormatMoney()
-  const netTone = summary.netContribution >= 0 ? 'positive' : 'negative'
   return (
     <Layout spaceBefore="spacious">
       <Surface variant="inset">
@@ -49,7 +48,7 @@ export function ContributionSummaryMetricsView({
           <div>
             {irrLabel}
             <Layout spaceBefore="compact">
-              <Text as="div" variant="statistic" tone={'contrast'} numeric>
+              <Text as="div" variant="statistic" tone="default" numeric>
                 {formatPerformanceIrrLabel(irr, irrStatus)}
               </Text>
             </Layout>
@@ -57,7 +56,7 @@ export function ContributionSummaryMetricsView({
           <div>
             {netLabel}
             <Layout spaceBefore="compact">
-              <Text as="div" variant="statistic" tone={netTone} numeric>
+              <Text as="div" variant="statistic" tone="default" numeric>
                 {formatMoney(summary.netContribution, {
                   style: 'full',
                 })}
