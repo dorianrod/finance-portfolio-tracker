@@ -5,6 +5,10 @@ export const LAYOUT_PRESETS = {
   comparison: 'grid-cols-2',
   pairSmall: 'grid-cols-1 sm:grid-cols-2',
   pairLarge: 'grid-cols-1 lg:grid-cols-2',
+  pairExtraLarge: 'grid-cols-1 xl:grid-cols-2',
+  weightedPairExtraLarge:
+    'grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]',
+  charts: 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3',
   thirdsSmall: 'grid-cols-1 sm:grid-cols-3',
   thirdsMedium: 'grid-cols-1 md:grid-cols-3',
   quartersMedium: 'grid-cols-1 md:grid-cols-4',

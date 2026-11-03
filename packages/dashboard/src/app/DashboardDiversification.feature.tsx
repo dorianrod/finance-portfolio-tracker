@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 
+import { DashboardPanelFallback } from '@/app/DashboardPanelFallback.feature'
 import { AllocationPage } from '@/domains/portfolio/features/diversification/features/allocation/pages/AllocationPage.feature'
 import { useAllocationScope } from '@/domains/portfolio/features/diversification/features/allocation/services/useAllocationScope'
 import { ConcentrationPage } from '@/domains/portfolio/features/diversification/features/concentration/pages/ConcentrationPage.feature'
@@ -11,12 +12,7 @@ export function DiversificationCharts() {
   const view = useAtomValue(dashboardDiversificationViewAtom)
   const { hasCurrentData, hasSelectedValue, hasApplicableValue, loading } =
     useAllocationScope()
-  if (loading)
-    return (
-      <Text as="p" variant="body" tone="muted">
-        {i18n.t('ui.diversificationcharts.loadingBreakdowns')}
-      </Text>
-    )
+  if (loading) return <DashboardPanelFallback />
   if (hasSelectedValue && !hasApplicableValue)
     return (
       <Text as="p" variant="body" tone="subtle">

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { DashboardPanelFallback } from '@/app/DashboardPanelFallback.feature'
 import type { DashboardLoadState as DashboardLoadStateModel } from '@/app/types/dashboardLoadState.type'
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -19,9 +20,7 @@ export function DashboardLoadState({
 }) {
   switch (state.status) {
     case 'loading':
-      return (
-        <StatusMessage tone="muted">{i18n.t('ui.app.loading')}</StatusMessage>
-      )
+      return <DashboardPanelFallback />
     case 'error':
       return (
         <StatusMessage as="div" urgent variant="errorPanel">

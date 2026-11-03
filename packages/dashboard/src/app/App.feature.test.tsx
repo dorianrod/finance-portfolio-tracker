@@ -63,8 +63,47 @@ describe('dashboard loading controls', () => {
     expect(
       screen.getByRole('navigation', { name: 'Portfolio analyses' }),
     ).toBeTruthy()
+    expect(
+      screen.getByRole('status', { name: 'Loading analysis…' }),
+    ).toBeTruthy()
     client.clear()
   })
+
+  it.each([
+    'Wealth & cash flow',
+    'Performance & passive income',
+    'Diversification',
+    'Holdings',
+    'Data quality',
+    'Overview',
+  ])(
+    'keeps a skeleton visible when navigating to %s while sources are pending',
+    async (name) => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn<typeof fetch>(() => new Promise<Response>(() => {})),
+      )
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false, gcTime: 0 } },
+      })
+      const user = userEvent.setup()
+      render(
+        <QueryClientProvider client={client}>
+          <Provider store={createStore()}>
+            <App />
+          </Provider>
+        </QueryClientProvider>,
+      )
+      await user.click(screen.getByRole('button', { name }))
+      expect(
+        screen.getByRole('status', { name: 'Loading analysis…' }),
+      ).toBeTruthy()
+      expect(
+        screen.getByRole('navigation', { name: 'Portfolio analyses' }),
+      ).toBeTruthy()
+      client.clear()
+    },
+  )
 
   it('keeps navigation and an open filter panel usable when a source fails', async () => {
     const user = userEvent.setup()

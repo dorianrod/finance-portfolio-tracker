@@ -19,7 +19,7 @@ import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 import { DashboardContent } from './DashboardContent.feature'
 import { DashboardFilters } from './DashboardFilters.feature'
 import { DashboardHeader } from './DashboardHeader.feature'
-import { DashboardPanelFallback } from './DashboardPanelFallback.view'
+import { DashboardPanelFallback } from './DashboardPanelFallback.feature'
 import { DashboardSectionHeader } from './DashboardSectionHeader.feature'
 import { DashboardSources } from './DashboardSources.feature'
 
