@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 import { expect, it } from 'vitest'
 
+// Both CLI calls build the full TypeScript program; allow for shared CI CPUs.
 it('inventories the actual dashboard while keeping owned samples out of candidates', () => {
   const root = resolve(import.meta.dirname, '../..')
   const executable = fileURLToPath(
@@ -79,4 +80,4 @@ it('inventories the actual dashboard while keeping owned samples out of candidat
       reason: 'explicit Partial override',
     }),
   )
-}, 60000)
+}, 120_000)
