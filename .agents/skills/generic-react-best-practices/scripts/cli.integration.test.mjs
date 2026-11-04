@@ -128,6 +128,8 @@ it('checks the supplied catalog rather than a catalog relative to the installed 
 
 it('collects small composed fixture candidates through the packaged bin symlink', () => {
   const root = project()
+  // Scalar-only samples do not need DOM libraries in each CLI subprocess.
+  const compilerOptions = { lib: ['es2020'], types: [] }
   mkdirSync(join(root, 'src/domains/shipping/types'), { recursive: true })
   writeFileSync(
     join(root, 'src/domains/shipping/types/parcel.type.ts'),
@@ -144,7 +146,10 @@ it('collects small composed fixture candidates through the packaged bin symlink'
   )
   writeFileSync(
     join(root, 'tsconfig.app.json'),
-    JSON.stringify({ compilerOptions: { strict: true }, include: ['src'] }),
+    JSON.stringify({
+      compilerOptions: { ...compilerOptions, strict: true },
+      include: ['src'],
+    }),
   )
   const result = run('fixture-candidates.mjs', root, [])
   expect(result.status, result.stderr).toBe(0)
@@ -242,7 +247,11 @@ it('collects small composed fixture candidates through the packaged bin symlink'
 
   writeFileSync(
     join(root, 'tsconfig.app.json'),
-    JSON.stringify({ include: ['src'], exclude: ['**/*.test.ts'] }),
+    JSON.stringify({
+      compilerOptions,
+      include: ['src'],
+      exclude: ['**/*.test.ts'],
+    }),
   )
   const omitted = run('fixture-candidates.mjs', root, [])
   expect(omitted.status).toBe(2)
@@ -250,7 +259,7 @@ it('collects small composed fixture candidates through the packaged bin symlink'
 
   writeFileSync(
     join(root, 'tsconfig.app.json'),
-    JSON.stringify({ include: ['src'] }),
+    JSON.stringify({ compilerOptions, include: ['src'] }),
   )
   writeFileSync(
     join(root, 'src/new.test.ts'),
