@@ -1,0 +1,508 @@
+{
+  "typed_local_factories": 0,
+  "remaining_candidates": [
+    {
+      "file": "src/app/DashboardDataQuality.feature.test.tsx",
+      "line": 13,
+      "entities": [
+        {
+          "name": "DataQualityTabProps",
+          "file": "src/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type.ts"
+        }
+      ],
+      "keys": [
+        "positions",
+        "errors",
+        "manualPriceOverrides",
+        "fundStatuses",
+        "fundReport",
+        "fundHoldings",
+        "fundSnapshots",
+        "fundUnresolved",
+        "rawData"
+      ],
+      "contextual": "DataQualityTabProps",
+      "parent": "INPUTS: DataQualityTabProps = {\n  positions: [],\n  errors: [\n    fixturePipelineError({\n      source: 'prices',\n      level: 'error',\n      account: 'broker',\n      isin: 'ERROR_ASSET',\n      name: 'Missing price asset',\n      message: 'Price unavailable for regression asset',\n    }),\n  ],\n  manualPriceOverrides: [\n    fixtureManualPriceOverride({\n      name: 'Manual override asset',\n      ticker: 'MANUAL',\n      price: 42,\n      source_file: 'pr",
+      "code": "{\n  positions: [],\n  errors: [\n    fixturePipelineError({\n      source: 'prices',\n      level: 'error',\n      account: 'broker',\n      isin: 'ERROR_ASSET',\n      name: 'Missing price asset',\n      message: 'Price unavailable for regression asset',\n    }),\n  ],\n  manualPriceOverrides: [\n    fixtureManualPriceOverride({\n      name: 'Manual override asset',\n      ticker: 'MANUAL',\n      price: 42,\n      source_file: 'prices.csv',\n    }),\n  ],\n  fundStatuses: [],\n  fundReport: null,\n  fundHoldings: [],\n  fundSnapshots: [],\n  fundUnresolved: [],\n  rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false },\n}",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+      "line": 72,
+      "entities": [
+        {
+          "name": "FilterScopeSpec",
+          "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
+        }
+      ],
+      "keys": ["account", "period"],
+      "contextual": "FilterScopeSpec",
+      "parent": "{{ account: 'filterable', period: 'range' }}",
+      "code": "{ account: 'filterable', period: 'range' }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/scopeManualPriceOverrides.test.ts",
+      "line": 20,
+      "entities": [
+        {
+          "name": "ManualPriceOverride",
+          "file": "src/domains/portfolio/features/data-quality/shared/types/manualPriceOverride.type.ts"
+        }
+      ],
+      "keys": ["name", "ticker", "isin"],
+      "contextual": "ManualPriceOverride",
+      "parent": "[override, { ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }]",
+      "code": "{ ...override, name: 'Other', ticker: 'BBB', isin: 'FR2' }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+      "line": 69,
+      "entities": [
+        {
+          "name": "AllocationFilter",
+          "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+        }
+      ],
+      "keys": ["type", "value"],
+      "contextual": "AllocationFilter",
+      "parent": "computeTableRows(data, matching, {\n      type: 'geo',\n      value: 'france',\n    })",
+      "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration.test.ts",
+      "line": 13,
+      "entities": [
+        {
+          "name": "HoldingConcentration",
+          "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
+        }
+      ],
+      "keys": ["label", "name", "value", "weight"],
+      "contextual": "Partial<HoldingConcentration> | undefined",
+      "parent": "fixtureHoldingConcentration({\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      })",
+      "code": "{\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration.test.ts",
+      "line": 19,
+      "entities": [
+        {
+          "name": "HoldingConcentration",
+          "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
+        }
+      ],
+      "keys": ["label", "name", "value", "weight"],
+      "contextual": "Partial<HoldingConcentration> | undefined",
+      "parent": "fixtureHoldingConcentration({\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      })",
+      "code": "{\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.test.tsx",
+      "line": 22,
+      "entities": [
+        {
+          "name": "ChartTarget",
+          "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
+        }
+      ],
+      "keys": ["isin", "name", "operations", "buttonRect"],
+      "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
+      "parent": "target: {\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+      "code": "{\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.test.tsx",
+      "line": 32,
+      "entities": [
+        {
+          "name": "ChartTarget",
+          "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
+        }
+      ],
+      "keys": ["isin", "name", "operations", "buttonRect"],
+      "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
+      "parent": "target: {\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+      "code": "{\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData.test.ts",
+      "line": 51,
+      "entities": [
+        {
+          "name": "PositionChartOperation",
+          "file": "src/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type.ts"
+        }
+      ],
+      "keys": ["date", "operation_type", "total_amount", "realized_gain"],
+      "contextual": "Partial<PositionChartOperation> | undefined",
+      "parent": "fixturePositionChartOperation({\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      })",
+      "code": "{\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries.test.ts",
+      "line": 26,
+      "entities": [
+        {
+          "name": "HistoryPoint",
+          "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
+        }
+      ],
+      "keys": ["date", "value", "costBasis", "pct", "last_price"],
+      "contextual": "Partial<HistoryPoint> | undefined",
+      "parent": "fixtureHistoryPoint({\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      })",
+      "code": "{\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries.test.ts",
+      "line": 33,
+      "entities": [
+        {
+          "name": "HistoryPoint",
+          "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
+        }
+      ],
+      "keys": ["date", "value", "costBasis", "pct", "last_price"],
+      "contextual": "Partial<HistoryPoint> | undefined",
+      "parent": "fixtureHistoryPoint({\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      })",
+      "code": "{\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.test.tsx",
+      "line": 58,
+      "entities": [
+        {
+          "name": "FundHoldingStatus",
+          "file": "src/domains/portfolio/shared/types/fundHoldingStatus.type.ts"
+        }
+      ],
+      "keys": ["sourceName"],
+      "contextual": "FundHoldingStatus",
+      "parent": "[{ ...status, sourceName: 'Updated source' }]",
+      "code": "{ ...status, sourceName: 'Updated source' }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableOverlays.test.tsx",
+      "line": 109,
+      "entities": [
+        {
+          "name": "FundHoldingStatus",
+          "file": "src/domains/portfolio/shared/types/fundHoldingStatus.type.ts"
+        }
+      ],
+      "keys": ["sourceName"],
+      "contextual": "FundHoldingStatus",
+      "parent": "[{ ...original, sourceName: 'Updated source' }]",
+      "code": "{ ...original, sourceName: 'Updated source' }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
+      "line": 10,
+      "entities": [
+        {
+          "name": "AssetIrrItem",
+          "file": "src/domains/portfolio/features/performance/types/assetIrr.type.ts"
+        }
+      ],
+      "keys": [
+        "key",
+        "label",
+        "name",
+        "irr",
+        "value",
+        "accounts",
+        "account_types"
+      ],
+      "contextual": null,
+      "parent": "[\n    {\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    },\n  ]",
+      "code": "{\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 249,
+      "entities": [
+        {
+          "name": "PerformanceContributionFilters",
+          "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+        }
+      ],
+      "keys": ["accounts", "accountTypes"],
+      "contextual": "PerformanceContributionFilters",
+      "parent": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      {\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      },\n    )",
+      "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+      "line": 259,
+      "entities": [
+        {
+          "name": "PerformanceContributionFilters",
+          "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+        }
+      ],
+      "keys": ["accounts", "accountTypes"],
+      "contextual": "PerformanceContributionFilters",
+      "parent": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      { accounts: new Set(), accountTypes: new Set(['PEE']) },\n    )",
+      "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters.test.tsx",
+      "line": 25,
+      "entities": [
+        {
+          "name": "DashboardFilters",
+          "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
+        }
+      ],
+      "keys": ["accounts"],
+      "contextual": "DashboardFilters",
+      "parent": "({\n        ...current,\n        accounts: new Set(['broker']),\n      })",
+      "code": "{\n        ...current,\n        accounts: new Set(['broker']),\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters.test.tsx",
+      "line": 29,
+      "entities": [
+        {
+          "name": "DashboardFilters",
+          "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
+        }
+      ],
+      "keys": ["hideClosedPositions"],
+      "contextual": "DashboardFilters",
+      "parent": "({\n        ...current,\n        hideClosedPositions: false,\n      })",
+      "code": "{\n        ...current,\n        hideClosedPositions: false,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 16,
+      "entities": [
+        {
+          "name": "YearOverYearMetric",
+          "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+        }
+      ],
+      "keys": ["current", "previous", "changePct"],
+      "contextual": "YearOverYearMetric",
+      "parent": "{{ current: 100, previous: 80, changePct: 25 }}",
+      "code": "{ current: 100, previous: 80, changePct: 25 }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+      "line": 38,
+      "entities": [
+        {
+          "name": "YearOverYearMetric",
+          "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+        }
+      ],
+      "keys": ["current", "previous", "changePct"],
+      "contextual": "YearOverYearMetric",
+      "parent": "{{ current: null, previous: null, changePct: null }}",
+      "code": "{ current: null, previous: null, changePct: null }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/helpers/presenters/computeAccountTypeTooltipMetrics.test.ts",
+      "line": 14,
+      "entities": [
+        {
+          "name": "AccountTypePoint",
+          "file": "src/domains/portfolio/features/wealth/types/accountTypePoint.type.ts"
+        }
+      ],
+      "keys": ["account_type", "total_value"],
+      "contextual": "AccountTypePoint",
+      "parent": "[point, { ...point, account_type: 'Savings', total_value: 210 }]",
+      "code": "{ ...point, account_type: 'Savings', total_value: 210 }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition.test.ts",
+      "line": 20,
+      "entities": [
+        {
+          "name": "PortfolioHistoryPoint",
+          "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
+        }
+      ],
+      "keys": ["total_value", "total_cost_basis", "unrealized_gain"],
+      "contextual": "PortfolioHistoryPoint",
+      "parent": "[\n      {\n        ...historyPoint,\n        total_value: 100,\n        total_cost_basis: 125,\n        unrealized_gain: -25,\n      },\n    ]",
+      "code": "{\n        ...historyPoint,\n        total_value: 100,\n        total_cost_basis: 125,\n        unrealized_gain: -25,\n      }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/components/EvolutionChart/helpers/presenters/withPortfolioComposition.test.ts",
+      "line": 34,
+      "entities": [
+        {
+          "name": "PortfolioHistoryPoint",
+          "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
+        }
+      ],
+      "keys": ["total_cost_basis", "unrealized_gain"],
+      "contextual": "PortfolioHistoryPoint",
+      "parent": "[\n      { ...historyPoint, total_cost_basis: 100, unrealized_gain: -100 },\n    ]",
+      "code": "{ ...historyPoint, total_cost_basis: 100, unrealized_gain: -100 }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.test.tsx",
+      "line": 21,
+      "entities": [
+        {
+          "name": "DashboardData",
+          "file": "src/domains/portfolio/shared/types/dashboardData.type.ts"
+        }
+      ],
+      "keys": ["accountLabels", "positions", "rawOperations", "rawPositions"],
+      "contextual": "unknown",
+      "parent": "queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  })",
+      "code": "{\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters.test.ts",
+      "line": 38,
+      "entities": [
+        {
+          "name": "DashboardFilters",
+          "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
+        }
+      ],
+      "keys": [
+        "accountTypes",
+        "accounts",
+        "operationTypes",
+        "hideClosedPositions",
+        "dateFrom"
+      ],
+      "contextual": "Partial<DashboardFilters> | undefined",
+      "parent": "filters({\n    accountTypes: new Set(['PEA']),\n    accounts: new Set(['pea']),\n    operationTypes: new Set(['BUY']),\n    hideClosedPositions: false,\n    dateFrom: new Date('2026-01-01'),\n  })",
+      "code": "{\n    accountTypes: new Set(['PEA']),\n    accounts: new Set(['pea']),\n    operationTypes: new Set(['BUY']),\n    hideClosedPositions: false,\n    dateFrom: new Date('2026-01-01'),\n  }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.test.ts",
+      "line": 20,
+      "entities": [
+        {
+          "name": "PortfolioHistoryPoint",
+          "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
+        }
+      ],
+      "keys": ["tri"],
+      "contextual": "PortfolioHistoryPoint",
+      "parent": "[{ ...fallback[0], tri: 99 }]",
+      "code": "{ ...fallback[0], tri: 99 }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/resolveFilteredHistoryState.test.ts",
+      "line": 32,
+      "entities": [
+        {
+          "name": "PortfolioHistoryPoint",
+          "file": "src/domains/portfolio/shared/types/portfolioHistoryPoint.type.ts"
+        }
+      ],
+      "keys": ["tri"],
+      "contextual": "PortfolioHistoryPoint",
+      "parent": "[{ ...fallback[0], tri: 99 }]",
+      "code": "{ ...fallback[0], tri: 99 }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.test.tsx",
+      "line": 14,
+      "entities": [
+        {
+          "name": "FundHoldingsData",
+          "file": "src/domains/portfolio/shared/types/fundHoldingsData.type.ts"
+        }
+      ],
+      "keys": ["holdings", "history", "statuses"],
+      "contextual": "FundHoldingsData",
+      "parent": "fundData: {\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
+      "code": "{\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
+      "verdict": "keep",
+      "review_status": "manually reviewed",
+      "reason": "Scenario-specific Partial override of an owning typed fixture, update/spread of an existing sample/store, UI/action parameter, provider/cache scaffold, or intentionally raw transport input; no independently maintained fixture default."
+    }
+  ],
+  "confirmed_remaining_fixture_violations": 0,
+  "baseline_migrations": "phase2-fixture-migrations.json",
+  "profile_equivalence": "phase2-fixture-profile-equivalence.json"
+}

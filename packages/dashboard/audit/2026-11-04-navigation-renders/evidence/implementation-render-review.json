@@ -1,0 +1,287 @@
+{
+  "environment": "Development Chromium, StrictMode enabled; 1800ms after direct click; warm modules/data, unchanged filters/sources",
+  "sourceReloadGuard": "Final probe aborts on main-frame navigation or Vite HMR updates during the measured matrix.",
+  "observations": [
+    {
+      "interaction": "overview -> wealth",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 2,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "wealth -> performance",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 2,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "performance -> diversification",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 2,
+        "AllocationPage": 2,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 4
+      }
+    },
+    {
+      "interaction": "diversification -> holdings/positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "positions -> underlying",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 2
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 16,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "underlying -> positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 16,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "holdings -> overview",
+      "pages": {
+        "OverviewTab": 2,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 4
+      }
+    },
+    {
+      "interaction": "overview -> wealth",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 2,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "wealth -> performance",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 2,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "performance -> diversification",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 2,
+        "AllocationPage": 2,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 4
+      }
+    },
+    {
+      "interaction": "diversification -> holdings/positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "positions -> underlying",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 2
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 16,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "underlying -> positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 16,
+        "buildPositionRows": 0
+      }
+    },
+    {
+      "interaction": "holdings -> overview",
+      "pages": {
+        "OverviewTab": 2,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "DashboardHeader": 0,
+      "DashboardPanel_all_instances": 4,
+      "buildPositionRows": 0,
+      "baseline": {
+        "DashboardHeader": 2,
+        "DashboardPanel_all_instances": 12,
+        "buildPositionRows": 4
+      }
+    }
+  ],
+  "errors": []
+}

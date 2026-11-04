@@ -1,0 +1,87 @@
+import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import i18n from '@/i18n/i18n'
+import { useFormatDate } from '@/shared/helpers/formatters/useFormatDate'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { TooltipBox } from '@/shared/ui/TooltipBox.view'
+
+export function IncomeSavingsTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean
+  payload?: Array<{ payload?: AnnualIncomeSavingsPoint }>
+}) {
+  const formatDate = useFormatDate()
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
+  const point = payload?.[0]?.payload
+  if (!active || !point) return null
+  const heading =
+    point.incomeStatus === 'forecast'
+      ? i18n.t('ui.annualincomesavingschart.forecastYear', {
+          year: formatNumber(point.year, { useGrouping: false }),
+        })
+      : formatNumber(point.year, { useGrouping: false })
+  const savingsSuffix =
+    point.savingsStatus === 'partial'
+      ? i18n.t('ui.annualincomesavingschart.ytdThrough', {
+          date: formatDate(point.savingsThrough),
+        })
+      : ''
+  return (
+    <TooltipBox>
+      <Layout as="div" spaceAfter="compact">
+        <ChartText as="div" tone={'tooltipText'} variant="strong">
+          {heading}
+        </ChartText>
+      </Layout>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.costBasisText}>
+        {i18n.t('ui.annualincomesavingschart.netSalaryWithValues', {
+          amount: formatMoney(point.netSalary, { style: 'full' }),
+        })}
+      </ChartText>
+      <ChartText as="div" tone={PORTFOLIO_CHART_TONES.passiveIncomeSecondary}>
+        {i18n.t('ui.annualincomesavingschart.otherIncomeWithValues', {
+          amount: formatMoney(point.otherIncome, { style: 'full' }),
+        })}
+      </ChartText>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          {i18n.t('ui.annualincomesavingschart.totalNetIncomeWithValues', {
+            amount: formatMoney(point.totalIncome, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.netContributionsText}>
+          {i18n.t('ui.annualincomesavingschart.netContributionsWithValues', {
+            value: formatMoney(point.placedSavings, { style: 'full' }),
+            savingsSuffix,
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact">
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.returnRate}>
+          {i18n.t('ui.annualincomesavingschart.placementRateWithValues', {
+            value: formatPercentage(point.placementRate, {
+              fallback: i18n.t('ui.annualincomesavingschart.notComparable'),
+            }),
+          })}
+        </ChartText>
+      </Layout>
+      <Layout as="div" spaceBefore="compact" inset="compact">
+        <ChartText as="div" tone={'tooltipDim'} separator>
+          {i18n.t('ui.annualincomesavingschart.unplacedIncomeProxyWithValues', {
+            value: formatMoney(point.unplacedIncomeProxy, { style: 'full' }),
+          })}
+        </ChartText>
+      </Layout>
+    </TooltipBox>
+  )
+}

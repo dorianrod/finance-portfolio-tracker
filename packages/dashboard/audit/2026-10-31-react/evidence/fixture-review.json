@@ -1,0 +1,290 @@
+[
+  {
+    "file": "src/app/services/useResetDashboardFilters.test.tsx",
+    "line": 30,
+    "column": 51,
+    "contracts": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextualType": "SetStateAction<AllocationFilter | null>",
+    "context": "CallExpression",
+    "code": "{\n      type: 'geo',\n      value: 'France',\n    }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit state command selects geo/France for the reset behavior; action input rather than a fixture base."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+    "line": 72,
+    "column": 16,
+    "contracts": [
+      {
+        "name": "FilterScopeSpec",
+        "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
+      }
+    ],
+    "keys": ["account", "period"],
+    "contextualType": "FilterScopeSpec",
+    "context": "JsxExpression",
+    "code": "{ account: 'filterable', period: 'range' }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Component policy configuration selects filterable/range scope; no independent entity sample defaults."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+    "line": 7,
+    "column": 36,
+    "contracts": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextualType": "PipelineIssueStatus",
+    "context": "CallExpression",
+    "code": "{ errorCount: 0, warningCount: 0 }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+    "line": 10,
+    "column": 36,
+    "contracts": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextualType": "PipelineIssueStatus",
+    "context": "CallExpression",
+    "code": "{ errorCount: 0, warningCount: 2 }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone.test.ts",
+    "line": 13,
+    "column": 36,
+    "contracts": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextualType": "PipelineIssueStatus",
+    "context": "CallExpression",
+    "code": "{ errorCount: 1, warningCount: 0 }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit error/warning-count arguments select the three status outcomes; no reused defaults or sample builder. Fixture structural compatibility alone does not make this scalar decision input an owned sample baseline."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+    "line": 29,
+    "column": 48,
+    "contracts": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextualType": "AllocationFilter",
+    "context": "CallExpression",
+    "code": "{\n          type: 'geo',\n          value: category,\n        }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+    "line": 69,
+    "column": 51,
+    "contracts": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextualType": "AllocationFilter",
+    "context": "CallExpression",
+    "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/computeMatchingIsins.test.ts",
+    "line": 39,
+    "column": 34,
+    "contracts": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextualType": "AllocationFilter | null",
+    "context": "CallExpression",
+    "code": "{ type: 'geo', value: 'france' }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
+    "line": 10,
+    "column": 5,
+    "contracts": [
+      {
+        "name": "AssetIrrItem",
+        "file": "src/domains/portfolio/features/performance/types/assetIrr.type.ts"
+      }
+    ],
+    "keys": [
+      "key",
+      "label",
+      "name",
+      "irr",
+      "value",
+      "accounts",
+      "account_types"
+    ],
+    "contextualType": null,
+    "context": "ArrayLiteralExpression",
+    "code": "{\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+    "line": 247,
+    "column": 7,
+    "contracts": [
+      {
+        "name": "PerformanceContributionFilters",
+        "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+      }
+    ],
+    "keys": ["accounts", "accountTypes"],
+    "contextualType": "PerformanceContributionFilters",
+    "context": "CallExpression",
+    "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+    "line": 257,
+    "column": 7,
+    "contracts": [
+      {
+        "name": "PerformanceContributionFilters",
+        "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+      }
+    ],
+    "keys": ["accounts", "accountTypes"],
+    "contextualType": "PerformanceContributionFilters",
+    "context": "CallExpression",
+    "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Explicit one-call category/account/type selection controls this behavior case; unlike the removed module-level noFilters defaults, this is a case argument without an independent sample base."
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+    "line": 16,
+    "column": 17,
+    "contracts": [
+      {
+        "name": "YearOverYearMetric",
+        "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+      }
+    ],
+    "keys": ["current", "previous", "changePct"],
+    "contextualType": "YearOverYearMetric",
+    "context": "JsxExpression",
+    "code": "{ current: 100, previous: 80, changePct: 25 }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder."
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+    "line": 38,
+    "column": 17,
+    "contracts": [
+      {
+        "name": "YearOverYearMetric",
+        "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+      }
+    ],
+    "keys": ["current", "previous", "changePct"],
+    "contextualType": "YearOverYearMetric",
+    "context": "JsxExpression",
+    "code": "{ current: null, previous: null, changePct: null }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Direct compared-value or unavailable-value scenario parameters (100/80/25 versus null/null/null); no independent defaults or reused sample builder."
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+    "line": 6,
+    "column": 17,
+    "contracts": [
+      {
+        "name": "PortfolioHistoryResponse",
+        "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
+      }
+    ],
+    "keys": ["accounts", "history"],
+    "contextualType": null,
+    "context": "VariableDeclaration",
+    "code": "{\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+    "line": 9,
+    "column": 5,
+    "contracts": [
+      {
+        "name": "RawPortfolioHistory",
+        "file": "src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts"
+      }
+    ],
+    "keys": [
+      "snapshot_date",
+      "total_value",
+      "total_cost_basis",
+      "unrealized_gain",
+      "net_cash_injected",
+      "cash_delta",
+      "tri",
+      "tri_rolling_1y",
+      "tri_rolling_3y"
+    ],
+    "contextualType": null,
+    "context": "ArrayLiteralExpression",
+    "code": "{\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    }",
+    "verdict": "keep",
+    "status": "manually reviewed",
+    "reason": "Raw transport response data is serialized by the network stub and validated by the real request/schema path; malformed/missing-field variants are intentional. It is not a separately maintained parsed-domain fixture base."
+  }
+]

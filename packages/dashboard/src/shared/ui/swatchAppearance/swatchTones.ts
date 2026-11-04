@@ -1,0 +1,15 @@
+export const SWATCH_TONES = {
+  default: 'bg-content',
+  secondary: 'bg-content-secondary',
+  muted: 'bg-content-muted',
+  subtle: 'bg-content-subtle',
+  accent: 'bg-accent',
+  positive: 'bg-positive',
+  negative: 'bg-danger',
+  warning: 'bg-warning',
+  decorative: 'bg-decorative',
+  attention: 'bg-attention',
+  highlight: 'bg-highlight',
+  contrast: 'bg-contrast',
+  secondarySeries: 'bg-secondary-series',
+} as const

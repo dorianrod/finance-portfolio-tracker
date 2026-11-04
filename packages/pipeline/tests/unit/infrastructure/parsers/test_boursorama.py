@@ -2,11 +2,14 @@ from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import Operation, OperationType
 from src.infrastructure.parsers.boursorama import (
     BoursoramaLoader,
     compute_positions,
+    merge_operations,
     parse_operations,
 )
 
@@ -241,3 +244,57 @@ def test_boursorama_loader_merges_multiple_files_before_replaying(
     jan31 = next(p for p in positions if p.snapshot_date == date(2024, 1, 31))
     # replay combines both files -> 10 bought, 4 sold = 6 remaining
     assert jan31.quantity == 6.0
+
+
+def test_overlapping_exports_block_cash_trades_and_dividends(
+    tmp_path: Path,
+):
+    rows = [
+        "01/01/2024,01/01/2024,,VIR,,,,1000",
+        "10/01/2024,10/01/2024,Stock,ACHAT,FR1,10,50,-500",
+        "20/01/2024,20/01/2024,Stock,COUPONS,FR1,10,,20",
+        "25/01/2024,25/01/2024,,VIR,,,,-200",
+    ]
+    first = _write_consolidated(tmp_path, *rows)
+    overlap = tmp_path / "overlap.csv"
+    overlap.write_text(first.read_text(), encoding="utf-8")
+    loader = BoursoramaLoader(
+        [first, overlap], account="broker", as_of=date(2024, 1, 31)
+    )
+
+    with pytest.raises(DuplicateBrokerOperationsError) as error:
+        loader.load({}, pd.DataFrame())
+    assert "operations.csv" in str(error.value)
+    assert "overlap.csv" in str(error.value)
+    assert "-200 EUR" in str(error.value)
+    assert "4 repeated operation(s)" in str(error.value)
+
+
+def test_merge_preserves_identical_trades_within_a_single_export(
+    tmp_path: Path,
+):
+    row = "10/01/2024,10/01/2024,Stock,ACHAT,FR1,10,50,-500"
+    first = _write_consolidated(tmp_path, row)
+    overlap = tmp_path / "overlap.csv"
+    overlap.write_text(_CONSOLIDATED_HEADER + f"{row}\n{row}\n")
+
+    operations = merge_operations([overlap], account="broker")
+    assert len(operations) == 2
+    assert sum(op.quantity or 0 for op in operations) == 20
+    for paths in ([first, overlap], [overlap, first]):
+        with pytest.raises(DuplicateBrokerOperationsError):
+            merge_operations(paths, account="broker")
+
+
+def test_merge_matches_raw_and_consolidated_missing_quantities(
+    tmp_path: Path,
+):
+    consolidated = _write_consolidated(
+        tmp_path, "01/01/2024,01/01/2024,,VIR,,,,1000"
+    )
+    raw = _write_raw(
+        tmp_path, '01/01/2024;01/01/2024;VIR;;;1000;0;"0,0000 €"'
+    )
+
+    with pytest.raises(DuplicateBrokerOperationsError):
+        merge_operations([consolidated, raw], "broker")

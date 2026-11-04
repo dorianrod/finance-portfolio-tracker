@@ -1,0 +1,21 @@
+# Architecture semantic review
+
+## Business scope and ownership
+
+The README capability map matches actual source ownership: scope selection chooses account/period/transaction inputs; overview compares the portfolio; wealth explains balances/contributions/savings; performance computes returns and attribution; diversification contains peer allocation and concentration responsibilities; holdings contains positions and fund look-through; data quality contains assessment and errors. These are user outcomes inside one portfolio domain, not independent sub-domains. Current/historical display, allocation dimensions and contribution horizons remain variants. Application modules compose peers. Data-source options and contracts in portfolio shared feed multiple capabilities through the shell. No structural moves are justified.
+
+## Component decisions
+
+[source-patterns.json](source-patterns.json) enumerates imports, calls and JSX for every authored TS/TSX module, including all 96 feature modules, 242 views and two state renderers. Role review includes private components. Features either own source/atom/action/calculation behavior or compose named business features. Pure results already have views for prepared account charts, IRR rankings, period controls, position overlays, concentration and diagnostics.
+
+App/DashboardSources coordinate persistent query subscriptions and page-level composition. Their JSX is shell/boundary composition; extracting matching visual shells would mirror the coordinator contract. PerformanceTab/WealthTab and allocation current/trend components compose named capability entries and their metric scope; static section headings do not form independent presentation APIs. AccountTreeSelect groups/toggles account membership and owns its cohesive picker; its local row components apply selection operations. PositionValueCell decides quantity visibility; its simple Math.abs display conversion is allowed. PositionBreakdownCell coordinates mutually exclusive preview actions and reads DOMRect only in its event adapter. FundPositionHoldingRow derives exposure amounts from holding weight, so remains a feature. PrimaryTabButton owns navigation and speculative preload, so remains a feature. No extraction is justified solely by JSX counts. Existing complexity exceptions are not technically revalidated.
+
+Both state renderers receive externally resolved unions and use exhaustive never checks; DashboardLoadState has no hooks and only translates ready/error/loading reasons. Views' dependency graph contains no runtime business acquisition; nontrivial view calls prepare visual geometry or format supplied values. Library tooltip selection and omitting empty chart panels remain presentation. Domain collection aggregation stays in feature transformers.
+
+## Architecture inventory dispositions
+
+All 43 entries in baseline-aids.log were inspected by responsibility. The substantial-JSX/opaque feature cases are retained for the reasons above; local support contracts are covered separately in types-helpers-review.md. Import-cycle command reports no synchronous production cycles; type-only and deferred edges are outside its cycle contract. No transverse domain registry is needed for the single portfolio domain.
+
+## Existing code-local decisions
+
+All ten `@architecture-decision` comments in source-patterns.json retain valid assumptions: persistent-dashboard-query-boundary (sibling acquisition and shell cache observers); account-scope-data-and-labels (source labels/IDs feed several capabilities, formatting stays downstream); comparison-period-control (openFilters action separated from visual range); prepared-allocation-chart (MiniDonut aggregates before view); shared-historical-fund-response (one validated common source, no wire helper leak); data-quality-assessment-before-presentation (diagnostics also drive actions); feature-source-acquisition (wealth observes the coordinated positions cache); prepared-account-type-breakdown (raw reporting total differs from nonnegative slice geometry); prepared-asset-irr-results (ranking separate from view); prepared-account-type-history (precomputed snapshot totals/shares). Callers and owning helper/API/view modules still match the recorded contracts. No relevant change, met revisit condition or contradictory evidence warrants reopening them.

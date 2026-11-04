@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "scope": "dashboard/interaction-performance (focused; performance suggestions only)",
+  "unreviewedExceptions": 0,
+  "rules": [
+    {
+      "id": "ui-vercel-lazy-loading",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "ui-vercel-offscreen-content",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "ui-vercel-responsive-rendering",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-vercel-indexed-lookups",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "suggestion",
+      "status": "open",
+      "ruleIds": ["ui-vercel-responsive-rendering"],
+      "files": [
+        "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.ts"
+      ]
+    },
+    {
+      "id": "F-002",
+      "kind": "suggestion",
+      "status": "open",
+      "ruleIds": ["helpers-vercel-indexed-lookups"],
+      "files": [
+        "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.ts"
+      ]
+    },
+    {
+      "id": "F-003",
+      "kind": "suggestion",
+      "status": "open",
+      "ruleIds": ["ui-vercel-responsive-rendering"],
+      "files": [
+        "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.ts"
+      ]
+    }
+  ]
+}

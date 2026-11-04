@@ -1,0 +1,18 @@
+[
+  {
+    "name": "invalid",
+    "code": "import { expect, it } from 'vitest'\nit('example', () => { if (Math.random() > 0) expect(1).toBe(1) })\n",
+    "messages": [
+      {
+        "ruleId": "local/no-conditional-test-assertions",
+        "severity": 2,
+        "message": "Use test.each or assert the complete result outside branches and iteration. [test-behavior-not-implementation]"
+      }
+    ]
+  },
+  {
+    "name": "valid",
+    "code": "import { expect, it } from 'vitest'\nit.each([1, 2])('example %s', value => { expect(value).toBeGreaterThan(0) })\n",
+    "messages": []
+  }
+]

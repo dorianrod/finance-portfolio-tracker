@@ -58,6 +58,7 @@ class FetchPricesUseCase:
     output_writer: PortfolioOutputWriter
     confirm_current_month_refetch: Callable[[date], bool]
     resolve_price_discrepancy: Callable[[PriceDiscrepancy], float]
+    as_of: date | None = None
 
     def execute(self) -> None:
         collector = ErrorCollector()
@@ -257,8 +258,8 @@ class FetchPricesUseCase:
     def _determine_missing_months(
         self, operations
     ) -> tuple[list[date], list[date]]:
-        today = date.today()
-        snap_dates = month_end_dates(operations)
+        today = self.as_of or date.today()
+        snap_dates = month_end_dates(operations, as_of=self.as_of)
         existing = self.asset_price_repo.existing_months()
         missing: list[date] = []
         for d in snap_dates:

@@ -1,0 +1,310 @@
+import { describe, expect, it } from 'vitest'
+
+import { operation } from '@/domains/portfolio/features/performance/mocks/contributionOperation.mock'
+import { position } from '@/domains/portfolio/features/performance/mocks/contributionPosition.mock'
+import { makePerformanceContributionFilters } from '@/domains/portfolio/features/performance/mocks/performanceContributionFilters.mock'
+import { CASH_ACCOUNT_FILTER_SUFFIX } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/cashAccountFilterSuffix'
+
+import { computePerformanceContributions } from './computePerformanceContributions'
+
+const noFilters = makePerformanceContributionFilters()
+
+describe('computePerformanceContributions', () => {
+  it('combines unrealized change, realized gains and income, including closed positions', () => {
+    const positions = [
+      position({ snapshot_date: new Date('2021-01-31'), unrealized_gain: 10 }),
+      position({ snapshot_date: new Date('2024-01-31'), unrealized_gain: 100 }),
+      position({
+        snapshot_date: new Date('2021-01-31'),
+        isin: 'FR0000000002',
+        ticker: 'BBB',
+        name: 'Asset B',
+        unrealized_gain: 0,
+      }),
+      position({
+        snapshot_date: new Date('2024-01-31'),
+        isin: 'FR0000000002',
+        ticker: 'BBB',
+        name: 'Asset B',
+        unrealized_gain: -40,
+      }),
+      position({
+        snapshot_date: new Date('2022-01-31'),
+        isin: 'FR0000000003',
+        ticker: 'CCC',
+        name: 'Closed asset',
+        unrealized_gain: 0,
+      }),
+    ]
+    const operations = [
+      operation({ operation_type: 'SELL', realized_gain: 20 }),
+      operation({
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
+      operation({
+        isin: 'FR0000000002',
+        ticker: 'BBB',
+        name: 'Asset B',
+        operation_type: 'SELL',
+        realized_gain: -10,
+      }),
+      operation({
+        isin: 'FR0000000003',
+        ticker: 'CCC',
+        name: 'Closed asset',
+        operation_type: 'SELL',
+        realized_gain: 30,
+      }),
+    ]
+
+    const result = computePerformanceContributions(
+      positions,
+      operations,
+      'since-tracking',
+      new Date('2024-01-31'),
+      noFilters,
+    )
+
+    expect(result.available).toBe(true)
+    expect(result.netContribution).toBe(95)
+    expect(
+      result.contributors.map(({ label, amount }) => ({ label, amount })),
+    ).toEqual([
+      { label: 'Asset A', amount: 115 },
+      { label: 'Closed asset', amount: 30 },
+    ])
+    expect(result.contributors[0].share).toBeCloseTo(79.31, 2)
+    expect(result.contributors[1].share).toBeCloseTo(20.69, 2)
+    expect(result.detractors).toMatchObject([
+      { label: 'Asset B', amount: -50, share: 100 },
+    ])
+  })
+
+  it('groups the same asset across accounts', () => {
+    const positions = [
+      position({
+        account: 'acc1',
+        snapshot_date: new Date('2021-01-31'),
+        unrealized_gain: 0,
+      }),
+      position({
+        account: 'acc1',
+        snapshot_date: new Date('2024-01-31'),
+        unrealized_gain: 40,
+      }),
+      position({
+        account: 'acc2',
+        snapshot_date: new Date('2021-01-31'),
+        unrealized_gain: 10,
+      }),
+      position({
+        account: 'acc2',
+        snapshot_date: new Date('2024-01-31'),
+        unrealized_gain: 70,
+      }),
+    ]
+
+    const result = computePerformanceContributions(
+      positions,
+      [],
+      'since-tracking',
+      new Date('2024-01-31'),
+      noFilters,
+    )
+
+    expect(result.contributors).toHaveLength(1)
+    expect(result.contributors[0]).toMatchObject({
+      label: 'Asset A',
+      amount: 100,
+      accounts: ['acc1', 'acc2'],
+    })
+  })
+
+  it('uses the same preceding snapshot boundary as trailing three-year IRR', () => {
+    const positions = [
+      position({ snapshot_date: new Date('2021-01-31'), unrealized_gain: 0 }),
+      position({ snapshot_date: new Date('2023-09-30'), unrealized_gain: 10 }),
+      position({ snapshot_date: new Date('2023-10-31'), unrealized_gain: 20 }),
+      position({ snapshot_date: new Date('2026-10-12'), unrealized_gain: 70 }),
+    ]
+    const operations = [
+      operation({
+        date: new Date('2023-09-30'),
+        operation_type: 'DIVIDEND',
+        total_amount: 99,
+        realized_gain: 0,
+      }),
+      operation({
+        date: new Date('2023-10-01'),
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
+    ]
+
+    const result = computePerformanceContributions(
+      positions,
+      operations,
+      'trailing-3y',
+      new Date('2026-10-12'),
+      noFilters,
+    )
+
+    expect(result.startDate).toEqual(new Date('2023-09-30'))
+    expect(result.endDate).toEqual(new Date('2026-10-12'))
+    expect(result.netContribution).toBe(65)
+  })
+
+  it('stops positions and operations at the selected end date', () => {
+    const positions = [
+      position({ snapshot_date: new Date('2021-01-31'), unrealized_gain: 0 }),
+      position({ snapshot_date: new Date('2024-01-31'), unrealized_gain: 40 }),
+      position({ snapshot_date: new Date('2025-01-31'), unrealized_gain: 400 }),
+    ]
+    const operations = [
+      operation({
+        date: new Date('2023-01-01'),
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
+      operation({
+        date: new Date('2024-06-01'),
+        operation_type: 'DIVIDEND',
+        total_amount: 50,
+        realized_gain: 0,
+      }),
+    ]
+
+    const result = computePerformanceContributions(
+      positions,
+      operations,
+      'since-tracking',
+      new Date('2024-03-01'),
+      noFilters,
+    )
+
+    expect(result.endDate).toEqual(new Date('2024-01-31'))
+    expect(result.netContribution).toBe(45)
+  })
+
+  it('applies account, account-type and synthetic-cash filters to positions and operations', () => {
+    const positions = [
+      position({ snapshot_date: new Date('2021-01-31'), unrealized_gain: 0 }),
+      position({ snapshot_date: new Date('2024-01-31'), unrealized_gain: 100 }),
+      position({
+        snapshot_date: new Date('2021-01-31'),
+        isin: '',
+        ticker: '',
+        name: 'Cash PEA',
+        account_type: 'Bourse – Cash',
+        unrealized_gain: 0,
+      }),
+      position({
+        snapshot_date: new Date('2024-01-31'),
+        isin: '',
+        ticker: '',
+        name: 'Cash PEA',
+        account_type: 'Bourse – Cash',
+        unrealized_gain: 0,
+      }),
+      position({
+        snapshot_date: new Date('2021-01-31'),
+        account: 'acc2',
+        account_type: 'PEE',
+        unrealized_gain: 0,
+      }),
+      position({
+        snapshot_date: new Date('2024-01-31'),
+        account: 'acc2',
+        account_type: 'PEE',
+        unrealized_gain: 200,
+      }),
+    ]
+    const operations = [
+      operation({
+        operation_type: 'DIVIDEND',
+        total_amount: 5,
+        realized_gain: 0,
+      }),
+      operation({
+        isin: '',
+        ticker: '',
+        name: 'Cash PEA',
+        operation_type: 'INTEREST',
+        total_amount: 3,
+        realized_gain: 0,
+      }),
+    ]
+
+    const cashOnly = computePerformanceContributions(
+      positions,
+      operations,
+      'since-tracking',
+      new Date('2024-01-31'),
+      {
+        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),
+        accountTypes: new Set(),
+      },
+    )
+    const peeOnly = computePerformanceContributions(
+      positions,
+      operations,
+      'since-tracking',
+      new Date('2024-01-31'),
+      { accounts: new Set(), accountTypes: new Set(['PEE']) },
+    )
+
+    expect(cashOnly.contributors).toMatchObject([
+      { label: 'Cash PEA', amount: 3 },
+    ])
+    expect(peeOnly.contributors).toMatchObject([
+      { label: 'Asset A', amount: 200, accounts: ['acc2'] },
+    ])
+  })
+
+  it('keeps only the five largest contributors and reports an unavailable short three-year history', () => {
+    const positions = Array.from({ length: 7 }, (_, index) => [
+      position({
+        snapshot_date: new Date('2024-01-31'),
+        isin: `FR${index}`,
+        ticker: `A${index}`,
+        name: `Asset ${index}`,
+        unrealized_gain: 0,
+      }),
+      position({
+        snapshot_date: new Date('2025-01-31'),
+        isin: `FR${index}`,
+        ticker: `A${index}`,
+        name: `Asset ${index}`,
+        unrealized_gain: index + 1,
+      }),
+    ]).flat()
+
+    const sinceTracking = computePerformanceContributions(
+      positions,
+      [],
+      'since-tracking',
+      new Date('2025-01-31'),
+      noFilters,
+    )
+    const trailing = computePerformanceContributions(
+      positions,
+      [],
+      'trailing-3y',
+      new Date('2025-01-31'),
+      noFilters,
+    )
+
+    expect(sinceTracking.contributors.map((item) => item.label)).toEqual([
+      'Asset 6',
+      'Asset 5',
+      'Asset 4',
+      'Asset 3',
+      'Asset 2',
+    ])
+    expect(trailing.available).toBe(false)
+  })
+})

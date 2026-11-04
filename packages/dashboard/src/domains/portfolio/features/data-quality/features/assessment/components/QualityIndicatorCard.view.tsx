@@ -1,0 +1,92 @@
+import type { ReactNode } from 'react'
+
+import { normalizeCoveragePercentage } from '@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage'
+import { InfoTooltip } from '@/domains/portfolio/shared/components/kpis/InfoTooltip.view'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+import { Progress } from '@/shared/ui/controls/Progress.view'
+import { Inline } from '@/shared/ui/layout/Inline.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { Proportion } from '@/shared/ui/proportion/Proportion.view'
+import { Surface } from '@/shared/ui/Surface.view'
+import { SeriesSwatch } from '@/shared/ui/swatch/SeriesSwatch.view'
+import { Text } from '@/shared/ui/Text.view'
+
+export function QualityIndicatorCard({
+  label,
+  tooltip,
+  amount,
+  percentage,
+  detail,
+  tone = 'neutral',
+  children,
+}: {
+  label: string
+  tooltip: string
+  amount: number
+  percentage: number
+  detail?: string
+  tone?: QualityTone
+  children?: ReactNode
+}) {
+  const { slot: footer, content } = partitionSlot(children, InfoTooltip.Footer)
+  const formatMoney = useFormatMoney()
+  const formatPercentage = useFormatPercentage()
+  const safePercentage = normalizeCoveragePercentage(percentage) ?? 0
+  const percentageLabel = formatPercentage(safePercentage)
+  const barTone = BAR_TONES[tone]
+
+  return (
+    <Surface variant="indicatorCard">
+      <Text as="div" variant="captionLabel" tone="muted">
+        <Inline as="div" align="center">
+          <span>{label}</span>
+          <InfoTooltip text={tooltip}>{footer}</InfoTooltip>
+        </Inline>
+      </Text>
+      <Inline
+        as="div"
+        spaceBefore="default"
+        align="baseline"
+        justify="between"
+        gap="default"
+      >
+        <Text variant="metricSecondary" tone="default" numeric>
+          {percentageLabel}
+        </Text>
+        <Text variant="caption" tone="subtle" numeric>
+          {formatMoney(amount, { style: 'full' })}
+        </Text>
+      </Inline>
+      <Layout spaceBefore="default" height="track" overflow="clip">
+        <Progress variant="track" label={label} value={safePercentage}>
+          <Proportion value={safePercentage}>
+            <SeriesSwatch as="div" shape="dot" tone={barTone} />
+          </Proportion>
+        </Progress>
+      </Layout>
+      {detail && (
+        <Layout spaceBefore="default">
+          <Text as="div" variant="caption" tone="subtle">
+            {detail}
+          </Text>
+        </Layout>
+      )}
+      {content}
+    </Surface>
+  )
+}
+
+type QualityTone = 'neutral' | 'coverage' | 'warning' | 'error' | 'muted'
+
+const BAR_TONES = {
+  neutral: PORTFOLIO_CHART_TONES.netContributions,
+  coverage: PORTFOLIO_CHART_TONES.coverage,
+  warning: PORTFOLIO_CHART_TONES.coverageGap,
+  error: PORTFOLIO_CHART_TONES.performanceNegative,
+  muted: PORTFOLIO_CHART_TONES.mutedIndicator,
+} as const
+
+QualityIndicatorCard.TooltipFooter = InfoTooltip.Footer

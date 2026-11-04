@@ -1,0 +1,41 @@
+{
+  "additionalRules": [
+    {
+      "id": "arch-component-module-boundaries",
+      "impact": "HIGH",
+      "sha256": "86276eb8461211dd2c2de3c33fde8c583689a5c2ac23bd8b12c02dfad377d576"
+    },
+    {
+      "id": "helpers-categories",
+      "impact": "MEDIUM-HIGH",
+      "sha256": "45eaa50ce7e674b9dd0628d929ca315a4ce4abd5a3fa0213c0b6c62b1ce67c2a"
+    },
+    {
+      "id": "quality-single-public-export",
+      "impact": "MEDIUM",
+      "sha256": "765b2dcec4de0a713082d548b7d7fd30e989124127c29b38b40fdcb5072cec5b"
+    },
+    {
+      "id": "test-colocated-tests",
+      "impact": "MEDIUM",
+      "sha256": "ed55ca6556b3da297317cc1cfca17eefcc6065940ceb874c5b73f52559dda634"
+    },
+    {
+      "id": "test-mock-data",
+      "impact": "MEDIUM",
+      "sha256": "ffa81d92e130846ee5aae0e128e51212f99c23976f5312064dbc1d08d9331ac3"
+    },
+    {
+      "id": "test-mock-network-not-internals",
+      "impact": "MEDIUM",
+      "sha256": "c4d0a5113b83e1589d854156898a6d6ce866888442dfd7fdee02b8b736450822"
+    },
+    {
+      "id": "quality-jsdoc-minimal",
+      "impact": "LOW",
+      "sha256": "9f05af1f08fe6201e522016991d880314fb9e253ef0a30c127380187bb86900e"
+    }
+  ],
+  "configurationChanges": false,
+  "sourceManifest": "implementation-source-manifest.json"
+}

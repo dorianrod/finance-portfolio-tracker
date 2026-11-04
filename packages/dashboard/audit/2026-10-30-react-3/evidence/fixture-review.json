@@ -1,0 +1,1069 @@
+[
+  {
+    "file": "src/app/DashboardDataQuality.feature.test.tsx",
+    "line": 13,
+    "entities": [
+      {
+        "name": "DataQualityTabProps",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type.ts"
+      }
+    ],
+    "keys": [
+      "positions",
+      "errors",
+      "manualPriceOverrides",
+      "fundStatuses",
+      "fundReport",
+      "fundHoldings",
+      "fundSnapshots",
+      "fundUnresolved",
+      "rawData"
+    ],
+    "contextual": "DataQualityTabProps",
+    "context": "INPUTS: DataQualityTabProps = {\n  positions: [],\n  errors: [\n    fixturePipelineError({\n      source: 'prices',\n      level: 'error',\n      account: 'broker',\n      isin: 'ERROR_ASSET',\n      name: 'Missing price asset',\n      message: 'Price unavailable for regression asset',\n    }),\n  ],\n  manualPriceOverrides: [\n    fixtureManualPriceOverride({\n      name: 'Manual override asset',\n      ticker: 'MANUAL',\n      price: 42,\n      source_file: 'prices.csv',\n    }),\n  ],\n  fundStatuses: [],\n  fundReport: null,\n  fundHoldings: [],\n  fundSnapshots: [],\n  fundUnresolved: [],\n  rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false },\n}",
+    "code": "{\n  positions: [],\n  errors: [\n    fixturePipelineError({\n      source: 'prices',\n      level: 'error',\n      account: 'broker',\n      isin: 'ERROR_ASSET',\n      name: 'Missing price asset',\n      message: 'Price unavailable for regression asset',\n    }),\n  ],\n  manualPriceOverrides: [\n    fixtureManualPriceOverride({\n      name: 'Manual override asset',\n      ticker: 'MANUAL',\n      price: 42,\n      source_file: 'prices.csv',\n    }),\n  ],\n  fundStatuses: [],\n  fundReport: null,\n  fundHoldings: [],\n  fundSnapshots: [],\n  fundUnresolved: [],\n  rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false },\n}",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Shared INPUTS supplies the complete DataQualityTabProps base in two composition cases; createDataQualityTabProps already owns the same defaults.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/app/DashboardDataQuality.feature.test.tsx",
+    "line": 38,
+    "entities": [
+      {
+        "name": "RawIsinData",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
+    "contextual": "RawIsinData",
+    "context": "rawData: { geo: [], secteur: [], currency: [], classe: [], loading: false }",
+    "code": "{ geo: [], secteur: [], currency: [], classe: [], loading: false }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Nested all-empty RawIsinData duplicates the canonical rawData base rather than overriding an owned sample.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/app/services/useResetDashboardFilters.test.tsx",
+    "line": 30,
+    "entities": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextual": "SetStateAction<AllocationFilter | null>",
+    "context": "store.set(dashboardDiversificationFilterAtom, {\n      type: 'geo',\n      value: 'France',\n    })",
+    "code": "{\n      type: 'geo',\n      value: 'France',\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit store command sets the selected geo filter so reset behavior can be observed; this is action input, not a standalone data fixture.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+    "line": 72,
+    "entities": [
+      {
+        "name": "FilterScopeSpec",
+        "file": "src/domains/portfolio/shared/types/filterScope.type.ts"
+      }
+    ],
+    "keys": ["account", "period"],
+    "contextual": "FilterScopeSpec",
+    "context": "{{ account: 'filterable', period: 'range' }}",
+    "code": "{ account: 'filterable', period: 'range' }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Inline filter applicability policy configures the component invocation (filterable/range), rather than defining an entity sample baseline.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts",
+    "line": 13,
+    "entities": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
+    "context": "status: { errorCount: 0, warningCount: 0 }",
+    "code": "{ errorCount: 0, warningCount: 0 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Parametrized scalar case rows explicitly test the error/warning-count combinations and expected text; loading/null/undefined cases are also present. No separately maintained fixture base or defaults factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts",
+    "line": 14,
+    "entities": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
+    "context": "status: { errorCount: 0, warningCount: 2 }",
+    "code": "{ errorCount: 0, warningCount: 2 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Parametrized scalar case rows explicitly test the error/warning-count combinations and expected text; loading/null/undefined cases are also present. No separately maintained fixture base or defaults factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts",
+    "line": 15,
+    "entities": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
+    "context": "status: { errorCount: 1, warningCount: 0 }",
+    "code": "{ errorCount: 1, warningCount: 0 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Parametrized scalar case rows explicitly test the error/warning-count combinations and expected text; loading/null/undefined cases are also present. No separately maintained fixture base or defaults factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts",
+    "line": 16,
+    "entities": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount"],
+    "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
+    "context": "status: { errorCount: 2, warningCount: 3 }",
+    "code": "{ errorCount: 2, warningCount: 3 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Parametrized scalar case rows explicitly test the error/warning-count combinations and expected text; loading/null/undefined cases are also present. No separately maintained fixture base or defaults factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus.test.ts",
+    "line": 18,
+    "entities": [
+      {
+        "name": "PipelineIssueStatus",
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/types/pipelineIssueStatus.type.ts"
+      }
+    ],
+    "keys": ["errorCount", "warningCount", "loading"],
+    "contextual": "{ errorCount: number; warningCount: number; loading?: undefined; } | { errorCount: number; warningCount: number; loading: boolean; } | null | undefined",
+    "context": "status: { errorCount: 2, warningCount: 3, loading: true }",
+    "code": "{ errorCount: 2, warningCount: 3, loading: true }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Parametrized scalar case rows explicitly test the error/warning-count combinations and expected text; loading/null/undefined cases are also present. No separately maintained fixture base or defaults factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.test.tsx",
+    "line": 28,
+    "entities": [
+      {
+        "name": "RawIsinData",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
+    "contextual": "RawIsinData",
+    "context": "rawAllocationData: {\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
+    "code": "{\n      geo: [],\n      secteur: [],\n      currency: [],\n      classe: [],\n      loading: false,\n    }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Complete empty RawIsinData is supplied to the real quality hook; rawData() already owns its defaults.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain.test.ts",
+    "line": 7,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": null,
+    "context": "[\n    { date: new Date('2026-01-31'), categories: [] },\n    { date: new Date('2026-10-13'), categories: [] },\n  ]",
+    "code": "{ date: new Date('2026-01-31'), categories: [] }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "History dataset embeds an AllocationPoint with an empty categories default; the canonical makeAllocationPoint exists in portfolio/shared/mocks.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain.test.ts",
+    "line": 8,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": null,
+    "context": "[\n    { date: new Date('2026-01-31'), categories: [] },\n    { date: new Date('2026-10-13'), categories: [] },\n  ]",
+    "code": "{ date: new Date('2026-10-13'), categories: [] }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Second history row repeats the complete AllocationPoint base; preserve its explicitly selected date.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.test.ts",
+    "line": 66,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": "Partial<AllocationPoint> | undefined",
+    "context": "fixtureAllocationPoint({\n        date: new Date('2024-01-31'),\n        categories: [\n          { name: 'historic only', value: 20 },\n          { name: 'shared', value: 80 },\n        ],\n      })",
+    "code": "{\n        date: new Date('2024-01-31'),\n        categories: [\n          { name: 'historic only', value: 20 },\n          { name: 'shared', value: 80 },\n        ],\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.test.ts",
+    "line": 73,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": "Partial<AllocationPoint> | undefined",
+    "context": "fixtureAllocationPoint({\n        date: new Date('2024-02-29'),\n        categories: [\n          { name: 'shared', value: 50 },\n          { name: 'current only', value: 50 },\n        ],\n      })",
+    "code": "{\n        date: new Date('2024-02-29'),\n        categories: [\n          { name: 'shared', value: 50 },\n          { name: 'current only', value: 50 },\n        ],\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.test.ts",
+    "line": 98,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": "Partial<AllocationPoint> | undefined",
+    "context": "fixtureAllocationPoint({\n        date: new Date('2024-01-31'),\n        categories: [{ name: 'equity', value: 100 }],\n      })",
+    "code": "{\n        date: new Date('2024-01-31'),\n        categories: [{ name: 'equity', value: 100 }],\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend.test.ts",
+    "line": 102,
+    "entities": [
+      {
+        "name": "AllocationPoint",
+        "file": "src/domains/portfolio/shared/types/allocationPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "categories"],
+    "contextual": "Partial<AllocationPoint> | undefined",
+    "context": "fixtureAllocationPoint({ date: new Date('2024-02-29'), categories: [] })",
+    "code": "{ date: new Date('2024-02-29'), categories: [] }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/transformers/allocationPoints/computeTableRows.test.ts",
+    "line": 69,
+    "entities": [
+      {
+        "name": "AllocationFilter",
+        "file": "src/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type.ts"
+      }
+    ],
+    "keys": ["type", "value"],
+    "contextual": "AllocationFilter",
+    "context": "computeTableRows(data, matching, {\n      type: 'geo',\n      value: 'france',\n    })",
+    "code": "{\n      type: 'geo',\n      value: 'france',\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit selection arguments choose the category/account scenario exercised by this call; distinct from the separately reused noFilters defaults identified in F-001.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationTooltip.view.test.tsx",
+    "line": 8,
+    "entities": [
+      {
+        "name": "CumulativeConcentrationPoint",
+        "file": "src/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type.ts"
+      }
+    ],
+    "keys": ["rank", "label", "name", "value", "weight", "cumulativeWeight"],
+    "contextual": "CumulativeConcentrationPoint",
+    "context": "point: CumulativeConcentrationPoint = {\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
+    "code": "{\n  rank: 7,\n  label: 'Example asset',\n  name: 'Example asset',\n  value: 12_500,\n  weight: 4.25,\n  cumulativeWeight: 70.5,\n}",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Complete named point baseline is reused and spread across tooltip cases; the same default point is duplicated in the crosshair test.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CumulativeConcentrationChart/helpers/presenters/cumulativeConcentrationCrosshair.test.ts",
+    "line": 7,
+    "entities": [
+      {
+        "name": "CumulativeConcentrationPoint",
+        "file": "src/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type.ts"
+      }
+    ],
+    "keys": ["rank", "label", "name", "value", "weight", "cumulativeWeight"],
+    "contextual": null,
+    "context": "point = {\n      rank: 7,\n      label: 'Example asset',\n      name: 'Example asset',\n      value: 12_500,\n      weight: 4.25,\n      cumulativeWeight: 70.5,\n    }",
+    "code": "{\n      rank: 7,\n      label: 'Example asset',\n      name: 'Example asset',\n      value: 12_500,\n      weight: 4.25,\n      cumulativeWeight: 70.5,\n    }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Inferred complete cumulative point repeats the tooltip baseline, including fields unrelated to the rank/share assertion.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration.test.ts",
+    "line": 13,
+    "entities": [
+      {
+        "name": "HoldingConcentration",
+        "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
+      }
+    ],
+    "keys": ["label", "name", "value", "weight"],
+    "contextual": "Partial<HoldingConcentration> | undefined",
+    "context": "fixtureHoldingConcentration({\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      })",
+    "code": "{\n        label: 'Large',\n        name: 'Large',\n        value: 50,\n        weight: 50,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/concentrationCalculations/buildCumulativeConcentration.test.ts",
+    "line": 19,
+    "entities": [
+      {
+        "name": "HoldingConcentration",
+        "file": "src/domains/portfolio/features/diversification/features/concentration/types/concentrationSummary.type.ts"
+      }
+    ],
+    "keys": ["label", "name", "value", "weight"],
+    "contextual": "Partial<HoldingConcentration> | undefined",
+    "context": "fixtureHoldingConcentration({\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      })",
+    "code": "{\n        label: 'Medium',\n        name: 'Medium',\n        value: 30,\n        weight: 30,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope.test.ts",
+    "line": 26,
+    "entities": [
+      {
+        "name": "RawIsinData",
+        "file": "src/domains/portfolio/shared/types/rawIsinData.type.ts"
+      }
+    ],
+    "keys": ["geo", "secteur", "currency", "classe", "loading"],
+    "contextual": "RawIsinData",
+    "context": "rawData: RawIsinData = {\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
+    "code": "{\n  geo: rows,\n  secteur: rows,\n  currency: rows,\n  classe: rows,\n  loading: false,\n}",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Named complete RawIsinData baseline supplies both scope cases; use rawData with explicit dimension overrides and preserve row aliasing.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/FundExposureRows.view.test.tsx",
+    "line": 12,
+    "entities": [
+      {
+        "name": "ExposureSource",
+        "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
+      }
+    ],
+    "keys": ["fund", "value"],
+    "contextual": "Partial<ExposureSource> | undefined",
+    "context": "exposureSource({ fund: 'First fund', value: 60 })",
+    "code": "{ fund: 'First fund', value: 60 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/FundExposureRows.view.test.tsx",
+    "line": 13,
+    "entities": [
+      {
+        "name": "ExposureSource",
+        "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
+      }
+    ],
+    "keys": ["fund", "value"],
+    "contextual": "Partial<ExposureSource> | undefined",
+    "context": "exposureSource({ fund: 'Second fund', value: 40 })",
+    "code": "{ fund: 'Second fund', value: 40 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/FundExposureRows.view.test.tsx",
+    "line": 65,
+    "entities": [
+      {
+        "name": "ExposureSource",
+        "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
+      }
+    ],
+    "keys": ["fund", "value"],
+    "contextual": "Partial<ExposureSource> | undefined",
+    "context": "exposureSource({ fund: 'Direct', value: 60 })",
+    "code": "{ fund: 'Direct', value: 60 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/FundExposureRows.view.test.tsx",
+    "line": 66,
+    "entities": [
+      {
+        "name": "ExposureSource",
+        "file": "src/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type.ts"
+      }
+    ],
+    "keys": ["fund", "value"],
+    "contextual": "Partial<ExposureSource> | undefined",
+    "context": "exposureSource({ fund: null, value: 40 })",
+    "code": "{ fund: null, value: 40 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.test.tsx",
+    "line": 22,
+    "entities": [
+      {
+        "name": "ChartTarget",
+        "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
+      }
+    ],
+    "keys": ["isin", "name", "operations", "buttonRect"],
+    "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
+    "context": "target: {\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+    "code": "{\n      isin: 'FR1',\n      name: 'Fund',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit preview-action/anchor invocation arguments, including a newly constructed DOMRect, select the two interaction scenarios. No reusable sample default is defined; geometric event/configuration data is not an independent domain fixture baseline.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.test.tsx",
+    "line": 32,
+    "entities": [
+      {
+        "name": "ChartTarget",
+        "file": "src/domains/portfolio/features/holdings/features/positions/types/chartTarget.type.ts"
+      }
+    ],
+    "keys": ["isin", "name", "operations", "buttonRect"],
+    "contextual": "{ isin: string; name: string; operations: never[]; buttonRect: DOMRect; }",
+    "context": "target: {\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+    "code": "{\n      isin: 'FR1',\n      name: 'Savings',\n      operations: [],\n      buttonRect: new DOMRect(),\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit preview-action/anchor invocation arguments, including a newly constructed DOMRect, select the two interaction scenarios. No reusable sample default is defined; geometric event/configuration data is not an independent domain fixture baseline.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData.test.ts",
+    "line": 51,
+    "entities": [
+      {
+        "name": "PositionChartOperation",
+        "file": "src/domains/portfolio/features/holdings/features/positions/types/positionChartOperation.type.ts"
+      }
+    ],
+    "keys": ["date", "operation_type", "total_amount", "realized_gain"],
+    "contextual": "Partial<PositionChartOperation> | undefined",
+    "context": "fixturePositionChartOperation({\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      })",
+    "code": "{\n        date: new Date('2024-02-20'),\n        operation_type: 'SELL',\n        total_amount: 500,\n        realized_gain: 50,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries.test.ts",
+    "line": 26,
+    "entities": [
+      {
+        "name": "HistoryPoint",
+        "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "value", "costBasis", "pct", "last_price"],
+    "contextual": "Partial<HistoryPoint> | undefined",
+    "context": "fixtureHistoryPoint({\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      })",
+    "code": "{\n        date: new Date('2026-01-31'),\n        value: 100.4,\n        costBasis: 100,\n        pct: null,\n        last_price: 0,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries.test.ts",
+    "line": 33,
+    "entities": [
+      {
+        "name": "HistoryPoint",
+        "file": "src/domains/portfolio/features/holdings/features/positions/types/historyPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "value", "costBasis", "pct", "last_price"],
+    "contextual": "Partial<HistoryPoint> | undefined",
+    "context": "fixtureHistoryPoint({\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      })",
+    "code": "{\n        date: new Date('2026-02-28'),\n        value: 74.6,\n        costBasis: 75,\n        pct: null,\n        last_price: 0,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison.test.ts",
+    "line": 186,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n          date: new Date('2025-02-28'),\n          savings_delta: 150,\n          perf_delta: -10,\n        })",
+    "code": "{\n          date: new Date('2025-02-28'),\n          savings_delta: 150,\n          perf_delta: -10,\n        }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery.test.ts",
+    "line": 10,
+    "entities": [
+      {
+        "name": "AssetIrrItem",
+        "file": "src/domains/portfolio/features/performance/types/assetIrr.type.ts"
+      }
+    ],
+    "keys": [
+      "key",
+      "label",
+      "name",
+      "irr",
+      "value",
+      "accounts",
+      "account_types"
+    ],
+    "contextual": null,
+    "context": "[\n    {\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    },\n  ]",
+    "code": "{\n      key: 'name:example employee savings',\n      label: 'Example Employee Savings',\n      name: 'Example Employee Savings',\n      irr: 6.5604,\n      value: 112433,\n      accounts: ['Example Employee Savings'],\n      account_types: ['PEE'],\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Intentionally raw network response input serialized with JSON.stringify and parsed by the real API boundary; it is also varied to prove invalid/missing wire-field rejection. Domain fixture ownership does not require replacing this raw validation input.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+    "line": 9,
+    "entities": [
+      {
+        "name": "PerformanceContributionFilters",
+        "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+      }
+    ],
+    "keys": ["accounts", "accountTypes"],
+    "contextual": null,
+    "context": "noFilters = {\n  accounts: new Set<string>(),\n  accountTypes: new Set<string>(),\n}",
+    "code": "{\n  accounts: new Set<string>(),\n  accountTypes: new Set<string>(),\n}",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Module-level noFilters is a complete reusable default PerformanceContributionFilters sample used by multiple behavior cases, rather than an inline selection override.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+    "line": 249,
+    "entities": [
+      {
+        "name": "PerformanceContributionFilters",
+        "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+      }
+    ],
+    "keys": ["accounts", "accountTypes"],
+    "contextual": "PerformanceContributionFilters",
+    "context": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      {\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      },\n    )",
+    "code": "{\n        accounts: new Set([`acc1${CASH_ACCOUNT_FILTER_SUFFIX}`]),\n        accountTypes: new Set(),\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit selection arguments choose the category/account scenario exercised by this call; distinct from the separately reused noFilters defaults identified in F-001.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.test.ts",
+    "line": 259,
+    "entities": [
+      {
+        "name": "PerformanceContributionFilters",
+        "file": "src/domains/portfolio/features/performance/types/performanceContributionFilters.type.ts"
+      }
+    ],
+    "keys": ["accounts", "accountTypes"],
+    "contextual": "PerformanceContributionFilters",
+    "context": "computePerformanceContributions(\n      positions,\n      operations,\n      'since-tracking',\n      new Date('2024-01-31'),\n      { accounts: new Set(), accountTypes: new Set(['PEE']) },\n    )",
+    "code": "{ accounts: new Set(), accountTypes: new Set(['PEE']) }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Explicit selection arguments choose the category/account scenario exercised by this call; distinct from the separately reused noFilters defaults identified in F-001.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+    "line": 16,
+    "entities": [
+      {
+        "name": "YearOverYearMetric",
+        "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+      }
+    ],
+    "keys": ["current", "previous", "changePct"],
+    "contextual": "YearOverYearMetric",
+    "context": "{{ current: 100, previous: 80, changePct: 25 }}",
+    "code": "{ current: 100, previous: 80, changePct: 25 }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Inline complete display-case arguments specify exactly the compared scalar result (100/80/25) or the missing-value case (null/null/null); no reusable defaults or sample builder. Reviewed as explicit scenario parameters, not classified from structural assignability alone.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/WealthComparisonKpi.view.test.tsx",
+    "line": 38,
+    "entities": [
+      {
+        "name": "YearOverYearMetric",
+        "file": "src/domains/portfolio/features/wealth/types/trailingYearOverYear.type.ts"
+      }
+    ],
+    "keys": ["current", "previous", "changePct"],
+    "contextual": "YearOverYearMetric",
+    "context": "{{ current: null, previous: null, changePct: null }}",
+    "code": "{ current: null, previous: null, changePct: null }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Inline complete display-case arguments specify exactly the compared scalar result (100/80/25) or the missing-value case (null/null/null); no reusable defaults or sample builder. Reviewed as explicit scenario parameters, not classified from structural assignability alone.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/WealthDriversTooltip.view.test.tsx",
+    "line": 8,
+    "entities": [
+      {
+        "name": "WealthDriverPoint",
+        "file": "src/domains/portfolio/features/wealth/types/wealthDriverPoint.type.ts"
+      }
+    ],
+    "keys": [
+      "date",
+      "savings_delta",
+      "perf_delta",
+      "cumulative_savings",
+      "cumulative_performance",
+      "cumulative_change"
+    ],
+    "contextual": null,
+    "context": "point = {\n  date: new Date('2026-09-30T00:00:00Z'),\n  savings_delta: 100,\n  perf_delta: 20,\n  cumulative_savings: 100,\n  cumulative_performance: 20,\n  cumulative_change: 120,\n}",
+    "code": "{\n  date: new Date('2026-09-30T00:00:00Z'),\n  savings_delta: 100,\n  perf_delta: 20,\n  cumulative_savings: 100,\n  cumulative_performance: 20,\n  cumulative_change: 120,\n}",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Named complete WealthDriverPoint baseline is reused by three label-formatting cases; its numeric fields are defaults beyond the tested date label.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/buildCumulativeWealthDrivers.test.ts",
+    "line": 13,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
+    "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/buildCumulativeWealthDrivers.test.ts",
+    "line": 18,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
+    "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computePeriodDrivers.test.ts",
+    "line": 13,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
+    "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computePeriodDrivers.test.ts",
+    "line": 18,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
+    "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mSavings.test.ts",
+    "line": 11,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
+    "context": "({\n        date: new Date(Date.UTC(2024, i, 1)),\n        savings_delta: 100,\n        perf_delta: 10,\n      })",
+    "code": "{\n        date: new Date(Date.UTC(2024, i, 1)),\n        savings_delta: 100,\n        perf_delta: 10,\n      }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Array.from builds complete SavingCapacityPoint rows in the test; the existing makeSavingCapacityPoint factory is already imported and used for the other scenario.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mSavings.test.ts",
+    "line": 27,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n        date: new Date('2024-02'),\n        savings_delta: 200,\n        perf_delta: 5,\n      })",
+    "code": "{\n        date: new Date('2024-02'),\n        savings_delta: 200,\n        perf_delta: 5,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear.test.ts",
+    "line": 11,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
+    "context": "({\n        date: new Date(Date.UTC(2024, 10 + index, 28)),\n        savings_delta: index < 12 ? 100 : 150,\n        perf_delta: index < 12 ? 50 : -25,\n      })",
+    "code": "{\n        date: new Date(Date.UTC(2024, 10 + index, 28)),\n        savings_delta: index < 12 ? 100 : 150,\n        perf_delta: index < 12 ? 50 : -25,\n      }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Generated monthly history repeats a complete SavingCapacityPoint base rather than creating rows through the existing imported factory.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear.test.ts",
+    "line": 57,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n        date: new Date('2025-10-31'),\n        savings_delta: 1000,\n        perf_delta: 100,\n      })",
+    "code": "{\n        date: new Date('2025-10-31'),\n        savings_delta: 1000,\n        perf_delta: 100,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear.test.ts",
+    "line": 62,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n        date: new Date('2026-10-11'),\n        savings_delta: 2000,\n        perf_delta: 200,\n      })",
+    "code": "{\n        date: new Date('2026-10-11'),\n        savings_delta: 2000,\n        perf_delta: 200,\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/helpers/transformers/wealthCalculations/computeTrailing12mYearOverYear.test.ts",
+    "line": 86,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "{ date: Date; savings_delta: number; perf_delta: number; }",
+    "context": "({\n        date: new Date(Date.UTC(2023, index, 28)),\n        savings_delta: index < 24 ? 100 : 999,\n        perf_delta: index < 24 ? 10 : 999,\n      })",
+    "code": "{\n        date: new Date(Date.UTC(2023, index, 28)),\n        savings_delta: index < 24 ? 100 : 999,\n        perf_delta: index < 24 ? 10 : 999,\n      }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Second generated 36-month history also repeats the complete SavingCapacityPoint row baseline; retain each computed date/value override.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+    "line": 6,
+    "entities": [
+      {
+        "name": "PortfolioHistoryResponse",
+        "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
+      }
+    ],
+    "keys": ["accounts", "history"],
+    "contextual": null,
+    "context": "payload = {\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
+    "code": "{\n  accounts: ['a', 'b'],\n  history: [\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ],\n}",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Intentionally raw network response input serialized with JSON.stringify and parsed by the real API boundary; it is also varied to prove invalid/missing wire-field rejection. Domain fixture ownership does not require replacing this raw validation input.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/queries/useGetFilteredPortfolioHistoryQuery.test.ts",
+    "line": 9,
+    "entities": [
+      {
+        "name": "RawPortfolioHistory",
+        "file": "src/domains/portfolio/shared/types/rawPortfolioHistory.type.ts"
+      }
+    ],
+    "keys": [
+      "snapshot_date",
+      "total_value",
+      "total_cost_basis",
+      "unrealized_gain",
+      "net_cash_injected",
+      "cash_delta",
+      "tri",
+      "tri_rolling_1y",
+      "tri_rolling_3y"
+    ],
+    "contextual": null,
+    "context": "[\n    {\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    },\n  ]",
+    "code": "{\n      snapshot_date: new Date('2026-10-12'),\n      total_value: 100,\n      total_cost_basis: 90,\n      unrealized_gain: 10,\n      net_cash_injected: 80,\n      cash_delta: 0,\n      tri: 12,\n      tri_rolling_1y: 15,\n      tri_rolling_3y: 9,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Intentionally raw network response input serialized with JSON.stringify and parsed by the real API boundary; it is also varied to prove invalid/missing wire-field rejection. Domain fixture ownership does not require replacing this raw validation input.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.test.tsx",
+    "line": 21,
+    "entities": [
+      {
+        "name": "DashboardData",
+        "file": "src/domains/portfolio/shared/types/dashboardData.type.ts"
+      }
+    ],
+    "keys": ["accountLabels", "positions", "rawOperations", "rawPositions"],
+    "contextual": "unknown",
+    "context": "queryClient.setQueryData(portfolioQueryKeys.data('dashboard'), {\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  })",
+    "code": "{\n    accountLabels: { acc1: 'Main PEA' },\n    positions: [],\n    rawOperations: [],\n    rawPositions: [],\n  }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Repeated render setup seeds a complete DashboardData cache baseline via an untyped setQueryData argument; typed fixture ownership also ties the sample to its domain contract.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/filterPointsByPeriod.test.ts",
+    "line": 13,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    })",
+    "code": "{\n      date: new Date('2024-02-29'),\n      savings_delta: 50,\n      perf_delta: -20,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/filterPointsByPeriod.test.ts",
+    "line": 18,
+    "entities": [
+      {
+        "name": "SavingCapacityPoint",
+        "file": "src/domains/portfolio/shared/types/savingCapacityPoint.type.ts"
+      }
+    ],
+    "keys": ["date", "savings_delta", "perf_delta"],
+    "contextual": "Partial<SavingCapacityPoint> | undefined",
+    "context": "fixtureSavingCapacityPoint({\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    })",
+    "code": "{\n      date: new Date('2024-03-31'),\n      savings_delta: -25,\n      perf_delta: 30,\n    }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters.test.ts",
+    "line": 38,
+    "entities": [
+      {
+        "name": "DashboardFilters",
+        "file": "src/domains/portfolio/shared/types/dashboardFilters.type.ts"
+      }
+    ],
+    "keys": [
+      "accountTypes",
+      "accounts",
+      "operationTypes",
+      "hideClosedPositions",
+      "dateFrom"
+    ],
+    "contextual": "Partial<DashboardFilters> | undefined",
+    "context": "filters({\n    accountTypes: new Set(['PEA']),\n    accounts: new Set(['pea']),\n    operationTypes: new Set(['BUY']),\n    hideClosedPositions: false,\n    dateFrom: new Date('2026-01-01'),\n  })",
+    "code": "{\n    accountTypes: new Set(['PEA']),\n    accounts: new Set(['pea']),\n    operationTypes: new Set(['BUY']),\n    hideClosedPositions: false,\n    dateFrom: new Date('2026-01-01'),\n  }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.test.tsx",
+    "line": 14,
+    "entities": [
+      {
+        "name": "FundHoldingsData",
+        "file": "src/domains/portfolio/shared/types/fundHoldingsData.type.ts"
+      }
+    ],
+    "keys": ["holdings", "history", "statuses"],
+    "contextual": "FundHoldingsData",
+    "context": "fundData: {\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
+    "code": "{\n      holdings: [],\n      history: [],\n      statuses: [],\n    }",
+    "verdict": "violation",
+    "finding": "F-001",
+    "reason": "Real hook input embeds a complete empty FundHoldingsData baseline; share the typed base with the quality-hook fixture.",
+    "status": "manually reviewed"
+  },
+  {
+    "file": "src/domains/portfolio/shared/services/useDashboardHistory.test.tsx",
+    "line": 38,
+    "entities": [
+      {
+        "name": "PortfolioHistoryResponse",
+        "file": "src/domains/portfolio/shared/types/portfolioHistoryResponse.type.ts"
+      }
+    ],
+    "keys": ["accounts", "history"],
+    "contextual": "Partial<PortfolioHistoryResponse> | undefined",
+    "context": "makePortfolioHistoryResponse({\n        accounts: ['second'],\n        history: first.history.map((point) => ({ ...point, tri: 24 })),\n      })",
+    "code": "{\n        accounts: ['second'],\n        history: first.history.map((point) => ({ ...point, tri: 24 })),\n      }",
+    "verdict": "keep",
+    "finding": null,
+    "reason": "Consumer calls the owning typed mock factory with explicit case-specific overrides; completeness of these override fields does not create a second fixture base. Owning mock import and caller inspected.",
+    "status": "manually reviewed"
+  }
+]

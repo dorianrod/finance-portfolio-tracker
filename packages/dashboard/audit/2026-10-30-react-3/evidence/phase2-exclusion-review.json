@@ -1,0 +1,15 @@
+{
+  "counts": {
+    "expected assertion value": 70,
+    "parametrized scenario row": 7,
+    "explicit Partial override": 58
+  },
+  "scope": "135 supported occurrences in phase2-fixtures-current.json",
+  "status": "manually reviewed",
+  "reasons": {
+    "expected assertion value": "70 direct expected outputs and expected matchers remain distinct from call inputs; helper-call and shorthand regressions protect the distinguishing cases.",
+    "explicit Partial override": "58 complete-looking override objects are passed to owning typed factories; completeness is not a new base definition.",
+    "parametrized scenario row": "7 scalar formatter table cases define explicit input/expected combinations; there is no reusable sample default."
+  },
+  "otherPatterns": "No complete spread-based sample/state composition or opaque raw-validation exclusion remains among the current matched occurrences. Opaque/noncanonical/dynamic patterns retain the rule limits, not a claimed universal proof."
+}

@@ -3,8 +3,69 @@ from pathlib import Path
 
 import pandas as pd
 
+from src import init_data_dir
 from src.fund_holdings_snapshots import load_all_valid_fund_snapshots
 from src.init_data_dir import main
+
+
+def test_skill_installation_resyncs_bundled_files(
+    tmp_path: Path, monkeypatch
+) -> None:
+    bundled = tmp_path / "bundled"
+    source = bundled / "monthly-update"
+    source.mkdir(parents=True)
+    (source / "SKILL.md").write_text("Initial instructions")
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    monkeypatch.chdir(workspace)
+    monkeypatch.setattr(init_data_dir, "_BUNDLED_SKILLS_DIR", bundled)
+
+    destinations = init_data_dir._install_skills()
+    destination = workspace / ".claude/skills/monthly-update"
+    assert destinations == [destination]
+    assert (destination / "SKILL.md").read_text() == "Initial instructions"
+
+    (source / "SKILL.md").write_text("Updated instructions")
+    (destination / "obsolete.md").write_text("Old resource")
+    init_data_dir._install_skills()
+
+    assert (destination / "SKILL.md").read_text() == "Updated instructions"
+    assert not (destination / "obsolete.md").exists()
+
+
+def test_skill_installation_preserves_links_to_bundled_sources(
+    tmp_path: Path, monkeypatch
+) -> None:
+    bundled = tmp_path / "packages/pipeline/src/skills"
+    source = bundled / "monthly-update"
+    source.mkdir(parents=True)
+    instructions = source / "SKILL.md"
+    instructions.write_text("Shared instructions")
+    agents = tmp_path / ".agents/skills"
+    agents.mkdir(parents=True)
+    entry = agents / "monthly-update"
+    entry.symlink_to(
+        "../../packages/pipeline/src/skills/monthly-update",
+        target_is_directory=True,
+    )
+    custom = agents / "custom-skill"
+    custom.mkdir()
+    (custom / "SKILL.md").write_text("Repository-only skill")
+    claude = tmp_path / ".claude"
+    claude.mkdir()
+    (claude / "skills").symlink_to(
+        "../.agents/skills", target_is_directory=True
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(init_data_dir, "_BUNDLED_SKILLS_DIR", bundled)
+
+    for _ in range(2):
+        destinations = init_data_dir._install_skills()
+        assert destinations == [claude / "skills/monthly-update"]
+        assert (claude / "skills").is_symlink()
+        assert entry.is_symlink()
+        assert instructions.read_text() == "Shared instructions"
+        assert (custom / "SKILL.md").read_text() == "Repository-only skill"
 
 
 def test_init_creates_a_fully_synthetic_feature_complete_demo(

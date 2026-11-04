@@ -20,14 +20,14 @@ from src.application.portfolio_snapshot_builder import (
     PortfolioSnapshotBuilder,
     PortfolioSnapshotResult,
 )
+from src.application.positions_allocation_report import (
+    build_positions_allocation,
+    build_positions_allocation_by_isin,
+)
 from src.domain.errors import ErrorCollector
 from src.domain.models import Operation, Position
 from src.domain.reporting.annual_income_savings import annual_income_savings
 from src.domain.reporting.portfolio_history import portfolio_history_snapshot
-from src.domain.reporting.positions_allocation import (
-    build_positions_allocation,
-    build_positions_allocation_by_isin,
-)
 from src.domain.reporting.saving_capacity import (
     saving_capacity_per_account,
     saving_capacity_snapshot,
@@ -355,9 +355,10 @@ class IngestPortfolioUseCase:
     error_detector: PortfolioErrorDetector
     output_writer: PortfolioOutputWriter
     salaries_repo: SalariesRepository
+    as_of: date | None = None
 
     def execute(self) -> None:
-        today = date.today()
+        today = self.as_of or date.today()
         asset_prices = self.asset_price_repo.load_all()
 
         operations, positions, parse_failures = (

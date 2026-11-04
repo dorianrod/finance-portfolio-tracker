@@ -1,0 +1,70 @@
+[
+  {
+    "file": "packages/dashboard/public/favicon.svg",
+    "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+    "references": ["packages/dashboard/index.html"],
+    "tags": [
+      "defs",
+      "ellipse",
+      "feBlend",
+      "feFlood",
+      "feGaussianBlur",
+      "filter",
+      "g",
+      "mask",
+      "path",
+      "svg"
+    ],
+    "event_attributes": [],
+    "external_references": [],
+    "role": "dedicated static asset; semantic-color rule asset exception retained"
+  },
+  {
+    "file": "packages/dashboard/public/icons.svg",
+    "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+    "references": [],
+    "tags": ["clipPath", "defs", "g", "path", "svg", "symbol"],
+    "event_attributes": [],
+    "external_references": [],
+    "role": "dedicated static asset; semantic-color rule asset exception retained"
+  },
+  {
+    "file": "packages/dashboard/src/assets/hero.png",
+    "sha256": "881ffbcaafc212e49addad08846a5b82761355fa20624253af3477ba33262c5c",
+    "references": [],
+    "png_signature_valid": true,
+    "dimensions": [343, 361],
+    "role": "binary artwork; reference/format/hash review, no React code or pixel-design assessment"
+  },
+  {
+    "file": "packages/dashboard/src/assets/react.svg",
+    "sha256": "35ef61ed53b323ae94a16a8ec659b3d0af3880698791133f23b084085ab1c2e5",
+    "references": [],
+    "tags": ["path", "svg"],
+    "event_attributes": [],
+    "external_references": [],
+    "role": "dedicated static asset; semantic-color rule asset exception retained"
+  },
+  {
+    "file": "packages/dashboard/src/assets/vite.svg",
+    "sha256": "5be21acd42eb7b896e517f4e0f0f11eb5c5d9e54fbbcebe9453f033008fcca6f",
+    "references": [],
+    "tags": [
+      "defs",
+      "ellipse",
+      "feBlend",
+      "feFlood",
+      "feGaussianBlur",
+      "filter",
+      "g",
+      "mask",
+      "path",
+      "style",
+      "svg",
+      "title"
+    ],
+    "event_attributes": [],
+    "external_references": [],
+    "role": "dedicated static asset; semantic-color rule asset exception retained"
+  }
+]

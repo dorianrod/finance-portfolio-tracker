@@ -1,0 +1,70 @@
+import { useAtomValue } from 'jotai'
+
+import { DashboardLoadState } from '@/app/DashboardLoadState.state'
+import { DashboardNavigation } from '@/app/dashboardNavigation/DashboardNavigation.feature'
+import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
+import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
+import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
+import { useFilterSummaries } from '@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/useFilterSummaries'
+import { usePortfolioFilterOptions } from '@/domains/portfolio/shared/services/usePortfolioFilterOptions'
+import { dashboardFiltersAtom } from '@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms'
+import { dashboardActiveTabAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms'
+import { dashboardHoldingsViewAtom } from '@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms'
+import i18n from '@/i18n/i18n'
+import { StatusMessage } from '@/shared/ui/controls/StatusMessage.view'
+import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
+
+import { DashboardContent } from './DashboardContent.feature'
+import { DashboardFilters } from './DashboardFilters.feature'
+import { DashboardHeader } from './DashboardHeader.feature'
+import { DashboardSectionHeader } from './DashboardSectionHeader.feature'
+import { DashboardSources } from './DashboardSources.feature'
+
+export default function App() {
+  const activeTab = useAtomValue(dashboardActiveTabAtom)
+  const filters = useAtomValue(dashboardFiltersAtom)
+  const holdingsView = useAtomValue(dashboardHoldingsViewAtom)
+  const dashboard = useDashboardViewModel()
+  const { loadState } = dashboard
+  const { accountFilterLabels } = usePortfolioFilterOptions()
+  const activeFilterSummaries = useFilterSummaries(
+    filters,
+    accountFilterLabels,
+    filterVisibilityForTab(activeTab, holdingsView),
+  )
+  return (
+    <ViewNavigation>
+      <DashboardSources />
+      <div className="min-h-screen">
+        <div className="p-4 sm:p-6">
+          <div className="mx-auto max-w-screen-2xl">
+            <DashboardHeader />
+
+            <DashboardNavigation />
+
+            {activeTab === 'holdings' && <HoldingsViewTabs />}
+
+            <DashboardSectionHeader
+              ready={loadState.status === 'ready'}
+              activeFilterCount={activeFilterSummaries.length}
+            />
+            <DashboardFilters activeFilterSummaries={activeFilterSummaries} />
+
+            <DashboardLoadState
+              state={loadState}
+              onRetry={() => window.location.reload()}
+            >
+              {dashboard.updating && (
+                <StatusMessage tone="muted">
+                  {i18n.t('ui.app.updatingSelection')}
+                </StatusMessage>
+              )}
+
+              <DashboardContent />
+            </DashboardLoadState>
+          </div>
+        </div>
+      </div>
+    </ViewNavigation>
+  )
+}

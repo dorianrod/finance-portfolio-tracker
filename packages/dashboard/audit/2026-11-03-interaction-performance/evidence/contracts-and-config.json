@@ -1,0 +1,62 @@
+{
+  "referenceDate": "2026-11-03",
+  "warningCeiling": 1,
+  "installedVersions": {
+    "react": "19.2.7",
+    "jotai": "2.20.3",
+    "@tanstack/react-query": "5.104.5",
+    "vite": "8.3.5",
+    "vitest": "4.1.12",
+    "typescript": "6.0.3"
+  },
+  "files": [
+    {
+      "file": "packages/dashboard/package.json",
+      "sha256": "3575984dd7367d594be3c71b4fdecbd3c0d10dfd771a54f62fb3687601e2983a"
+    },
+    {
+      "file": "packages/dashboard/package-lock.json",
+      "sha256": "23ddff6b429153de7c6e2a8917256700b88a29b25b86cc6f0915ec2698de175a"
+    },
+    {
+      "file": "packages/dashboard/eslint.config.js",
+      "sha256": "42b5d2121f78b9dbd5df22808c65e7c4ebfef45394d02d98ee24fe5a9c7d8ded"
+    },
+    {
+      "file": "packages/dashboard/vite.config.ts",
+      "sha256": "20ef27d68427efaa8cd8235450649fcbba6fbf2977ff146a477c114550ee3233"
+    },
+    {
+      "file": "packages/dashboard/vitest.config.ts",
+      "sha256": "0c6d250deb6305f95a7165cfb597b9718708b8645457c3a79da784440675d540"
+    },
+    {
+      "file": "packages/dashboard/tsconfig.app.json",
+      "sha256": "3c2ace62ee50c371946a9f5ac90c70826a517521fc748ec5142317b0c9eaba2c"
+    },
+    {
+      "file": "packages/dashboard/.prettierrc.json",
+      "sha256": "adccc691e1669a4bd425c3fd68b52bd5b6c6139ec8df6d072c647281546fe199"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/SKILL.md",
+      "sha256": "dbdb0b1732fa46efa9cce2a35b2932b630d1f679df4ba9f0ce6e763a1e38bd54"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-lazy-loading.md",
+      "sha256": "eea0278788a44bbd2dd8c3ee4426b54cf6c48ee64404d5dec8a7c79dbf4770f6"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-offscreen-content.md",
+      "sha256": "d2e4c7f93ae2a7478eb610a0f9a8dec48af62017fca7c9772b2e1ccec4103d44"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-responsive-rendering.md",
+      "sha256": "e4bebf32cbc03462800456140d36ab22e889082ca3c72aad133434632d4ee023"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/helpers-vercel-indexed-lookups.md",
+      "sha256": "8b8cbc0ecfb3bfd0b705dfcdea8989823855be80f23edac4d563056a8588e039"
+    }
+  ]
+}

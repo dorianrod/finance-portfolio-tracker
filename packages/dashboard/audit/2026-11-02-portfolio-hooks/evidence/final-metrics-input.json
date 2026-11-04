@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "scope": "dashboard/focused-portfolio-hooks/5-files",
+  "unreviewedExceptions": 0,
+  "rules": [
+    {
+      "id": "arch-component-roles",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-shared-no-domain-knowledge",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-no-prop-drilling",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-helpers-vs-services",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-no-visual-logic-below-page",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "arch-thin-components",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-use-transformation",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-return-result-as-is",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "api-business-destructuring",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "cache-one-key-convention",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-consume-entity",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-no-any-or-wide",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "types-dates-as-date",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-tolerant-response-schema",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-last-coercion-barrier",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-no-cast-bypass",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "yup-module-level-schemas",
+      "impact": "LOW-MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-server-state-in-react-query",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "state-hook-variants",
+      "impact": "LOW",
+      "coverage": "complete"
+    },
+    {
+      "id": "helpers-vercel-immutable-collections",
+      "impact": "MEDIUM-HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-colocated-tests",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-behavior-not-implementation",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-renderhook",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-mock-network-not-internals",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-mock-data",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "test-jotai-provider-isolation",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-single-public-export",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-public-api-first",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-eslint-disable-scoped",
+      "impact": "HIGH",
+      "coverage": "not-applicable"
+    },
+    {
+      "id": "quality-eslint-warning-budget",
+      "impact": "HIGH",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-formatting-and-sorting",
+      "impact": "LOW",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "prevention-gap",
+      "status": "resolved",
+      "ruleIds": ["test-colocated-tests"],
+      "files": [
+        "src/domains/portfolio/shared/services/usePortfolioAllocationData.ts",
+        "src/domains/portfolio/shared/services/usePortfolioFilterOptions.ts",
+        "src/domains/portfolio/shared/services/usePortfolioAllocationData.test.tsx"
+      ]
+    }
+  ]
+}

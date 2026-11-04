@@ -1,0 +1,58 @@
+[
+  {
+    "file": "packages/dashboard/src/domains/portfolio/features/data-quality/features/assessment/mocks/fundDiagnostics.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/src/domains/portfolio/features/diversification/features/concentration/mocks/cumulativeConcentrationPoint.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/src/domains/portfolio/features/performance/mocks/performanceContributionFilters.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/src/domains/portfolio/features/wealth/mocks/wealthDriverPoint.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/src/domains/portfolio/shared/mocks/dashboardData.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/src/domains/portfolio/shared/mocks/fundHoldingsData.mock.ts",
+    "role": "fixture",
+    "status": "manually reviewed",
+    "obligations": "Domain-return annotation and Partial overrides; deterministic fixed data; fresh arrays/Sets; nearest feature/shared owner; single public callable first and correct naming/import boundary. No identifiers requiring cross-domain consistency; fixture support is outside new-runtime sibling contract.",
+    "evidence": "Full typed lint/typecheck/tests; phase2-colocation.txt; 16 input-equivalence cases."
+  },
+  {
+    "file": "packages/dashboard/tests/eslint/fixture-candidates.integration.test.mjs",
+    "role": "tooling integration test",
+    "status": "manually reviewed",
+    "obligations": "Real installed CLI and actual project configuration; typed contract/test fingerprints, corrected samples, retained raw transport candidate, valid Partial consumers. No ignored-dossier dependency or internal hook mocks.",
+    "evidence": "phase2-tests.txt: new installed-package integration case passes."
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs",
+    "role": "generic analysis tool / CLI",
+    "status": "manually reviewed",
+    "obligations": "Portable root/source/project parameters, aliases/composed/union/small records; expected-vs-input distinction; explicit availability errors and candid limits. Matching sibling fixture-candidates.test.mjs plus CLI integration and actual consumer test.",
+    "evidence": "30 new generic behavior/error cases; packaged symlink test; actual dashboard integration; frozen revision replay reproduces all 18 known references."
+  }
+]

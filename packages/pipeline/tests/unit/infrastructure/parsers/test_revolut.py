@@ -2,7 +2,9 @@ from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import Operation, OperationType
 from src.infrastructure.parsers.revolut import (
     RevolutLoader,
@@ -17,6 +19,20 @@ def _write(tmp_path: Path, *rows: str) -> Path:
     path = tmp_path / "trading-account-statement_2024.csv"
     path.write_text(_HEADER + "\n".join(rows) + "\n", encoding="utf-8")
     return path
+
+
+def test_revolut_loader_blocks_overlapping_exports(tmp_path: Path):
+    path = _write(
+        tmp_path,
+        "2024-01-05T00:00:00Z,TST1,CASH TOP-UP,,EUR 0,EUR,EUR 100",
+    )
+    overlap = tmp_path / "overlap.csv"
+    overlap.write_text(path.read_text())
+
+    with pytest.raises(DuplicateBrokerOperationsError) as error:
+        RevolutLoader([path, overlap]).load({}, pd.DataFrame())
+    assert path.name in str(error.value)
+    assert overlap.name in str(error.value)
 
 
 # ---------------------------------------------------------------------------

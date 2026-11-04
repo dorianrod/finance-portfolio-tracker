@@ -1,0 +1,117 @@
+{
+  "revision": "ea6cd3f74c23903b43a36942bd100b1d8a0a072b",
+  "sourceFiles": [
+    {
+      "file": "src/app/App.feature.tsx",
+      "sha256": "91c78da15c910709bea45bf1cf9cc550516ff5507124a0d13e7a5599512c9a24"
+    },
+    {
+      "file": "src/app/DashboardContent.feature.tsx",
+      "sha256": "746ff0f35444cc9888fdbce444728899acc0d0461d9a72e21557aecf57a681cf"
+    },
+    {
+      "file": "src/app/DashboardPanel.feature.tsx",
+      "sha256": "f324c6cf13f41beea7e4d2d5e48b20fd3fb0341a17ba0df7212de25ddbc01127"
+    },
+    {
+      "file": "src/app/DashboardPanelErrorBoundary.view.tsx",
+      "sha256": "6974b1acf0102604b295ee47e8b07ff2a4eca06ec5427c25efe4d440ae33ab34"
+    },
+    {
+      "file": "src/app/DashboardHoldings.feature.tsx",
+      "sha256": "bb7f33a8e20381c731f7b1e2832db7cf9c53befdb535efd7327f4d36c291907f"
+    },
+    {
+      "file": "src/app/DashboardPanel.feature.test.tsx",
+      "sha256": "8d29efd1d8a855a52169691b8aadc58512e224200993f44da547cafc3a14c6c7"
+    },
+    {
+      "file": "src/app/DashboardFilters.feature.tsx",
+      "sha256": "edeebb746d108839ca848c4cd9136e806389dc35af8b0b7e7f00fe90e439c985"
+    },
+    {
+      "file": "src/app/DashboardSectionHeader.feature.tsx",
+      "sha256": "c8bb7d118e8be53467bbd6abb323669c64ba7b2bb78d3661a1471b4a537757b9"
+    },
+    {
+      "file": "src/app/dashboardNavigation/DashboardNavigation.feature.tsx",
+      "sha256": "94340cd80bf578dac12d392993fe0be66ba062174ec6bf84c40d926cffdc7a39"
+    },
+    {
+      "file": "src/app/DashboardReliability.feature.tsx",
+      "sha256": "9e70d8a1669f0e81650b4365c92df912739a7326ae42138cffa3e838e1886361"
+    },
+    {
+      "file": "src/app/DashboardCombinedReliability.feature.tsx",
+      "sha256": "4b2199b8c4aa797b8b9a5b1e209bfdbb3f504fec828f385b02d30d8c7d41ae2e"
+    },
+    {
+      "file": "src/app/services/useDashboardViewModel.ts",
+      "sha256": "a7efca5f852e95f76dd757685d6bb6665fb000f556cd6d6e4729b31d19611899"
+    },
+    {
+      "file": "src/shared/ui/ViewNavigation.view.tsx",
+      "sha256": "572bb65b947360cbc73590e8527df9b386428ca1553d94b1cc79d33d0517db37"
+    },
+    {
+      "file": "src/shared/ui/services/useScopedInput.ts",
+      "sha256": "43d64561a13b6116ed8c2e924fdb2208df5e80ce2ef4a2a5f55255248a25d4f7"
+    },
+    {
+      "file": "src/domains/portfolio/features/wealth/services/useWealthModel.ts",
+      "sha256": "b35825077902c48e081d6397dd3fb747592d483fd1a1a48756ffd2e8f589cbde"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+      "sha256": "9b643a66c54c13174d65c68222efbebf63c39682ef90a4b38247184853f2ce2f"
+    },
+    {
+      "file": "src/main.tsx",
+      "sha256": "b1cbaed9faf62cf1a655f83d9e041204a341236b68353444d9778c463a2c14bd"
+    }
+  ],
+  "configuration": [
+    {
+      "file": "vite.config.ts",
+      "sha256": "20ef27d68427efaa8cd8235450649fcbba6fbf2977ff146a477c114550ee3233"
+    },
+    {
+      "file": "vitest.config.ts",
+      "sha256": "0c6d250deb6305f95a7165cfb597b9718708b8645457c3a79da784440675d540"
+    },
+    {
+      "file": "eslint.config.js",
+      "sha256": "42b5d2121f78b9dbd5df22808c65e7c4ebfef45394d02d98ee24fe5a9c7d8ded"
+    },
+    {
+      "file": "package.json",
+      "sha256": "3575984dd7367d594be3c71b4fdecbd3c0d10dfd771a54f62fb3687601e2983a"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "23ddff6b429153de7c6e2a8917256700b88a29b25b86cc6f0915ec2698de175a"
+    }
+  ],
+  "rule": {
+    "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-responsive-rendering.md",
+    "sha256": "e4bebf32cbc03462800456140d36ab22e889082ca3c72aad133434632d4ee023"
+  },
+  "workingTree": " M packages/dashboard/src/app/App.feature.tsx\n M packages/dashboard/src/app/DashboardContent.feature.tsx\n M packages/dashboard/src/app/DashboardHoldings.feature.tsx\n M packages/dashboard/src/app/DashboardPanelErrorBoundary.view.test.tsx\n M packages/dashboard/src/app/DashboardPanelErrorBoundary.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/AnnualIncomeSavingsChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.view.tsx\n M packages/dashboard/src/domains/portfolio/features/wealth/components/WealthDriversChart.view.tsx\n M packages/dashboard/tests/fixtures/ownership-review.json\n?? packages/dashboard/src/app/DashboardPanel.feature.test.tsx\n?? packages/dashboard/src/app/DashboardPanel.feature.tsx\n?? packages/dashboard/src/shared/ui/ChartViewport.view.test.tsx\n?? packages/dashboard/src/shared/ui/ChartViewport.view.tsx\n?? packages/dashboard/src/shared/ui/services/useChartViewport.test.tsx\n?? packages/dashboard/src/shared/ui/services/useChartViewport.ts\n?? packages/dashboard/src/shared/ui/storybook/stories/ChartViewport.stories.tsx\n",
+  "scopeDelta": {
+    "reason": "Runtime counters found position rebuilding on return to Overview/Diversification; trace its existing reliability consumer and memo owner without changing source.",
+    "supportingFiles": [
+      {
+        "file": "src/domains/portfolio/features/data-quality/features/assessment/services/useQualityAssessmentModel.ts",
+        "sha256": "4d71882abbada879ea1349ec362b4f593bcc1d058d1a72912fe200e6df35778d"
+      },
+      {
+        "file": "src/domains/portfolio/shared/services/usePortfolioPositionScope.ts",
+        "sha256": "819d74badd0e6dc010dbb2a2a1cd2a508e5d89e532662665e83cc6fe2a1f349e"
+      },
+      {
+        "file": "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.ts",
+        "sha256": "c0f1e5e84173891fe64e6801d678bf6950005cf7160ab9a259dca5f7ff5c411c"
+      }
+    ]
+  }
+}

@@ -1,0 +1,4604 @@
+[
+  {
+    "file": "src/app/App.feature.tsx",
+    "lines": 88,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ Suspense }",
+        "source": "react"
+      },
+      {
+        "binding": "{ DashboardLoadState }",
+        "source": "@/app/DashboardLoadState.state"
+      },
+      {
+        "binding": "{ DashboardNavigation }",
+        "source": "@/app/dashboardNavigation/DashboardNavigation.feature"
+      },
+      {
+        "binding": "{ DashboardPanelErrorBoundary }",
+        "source": "@/app/DashboardPanelErrorBoundary.view"
+      },
+      {
+        "binding": "{ filterVisibilityForTab }",
+        "source": "@/app/helpers/presenters/filterVisibilityForTab"
+      },
+      {
+        "binding": "{ HoldingsViewTabs }",
+        "source": "@/app/HoldingsViewTabs.feature"
+      },
+      {
+        "binding": "{ useDashboardViewModel }",
+        "source": "@/app/services/useDashboardViewModel"
+      },
+      {
+        "binding": "{ useFilterSummaries }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/useFilterSummaries"
+      },
+      {
+        "binding": "{ dashboardFiltersAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ StatusMessage }",
+        "source": "@/shared/ui/controls/StatusMessage.view"
+      },
+      {
+        "binding": "{ ViewNavigation }",
+        "source": "@/shared/ui/ViewNavigation.view"
+      },
+      {
+        "binding": "{ DashboardContent }",
+        "source": "./DashboardContent.feature"
+      },
+      {
+        "binding": "{ DashboardFilters }",
+        "source": "./DashboardFilters.feature"
+      },
+      {
+        "binding": "{ DashboardHeader }",
+        "source": "./DashboardHeader.feature"
+      },
+      {
+        "binding": "{ DashboardPanelFallback }",
+        "source": "./DashboardPanelFallback.view"
+      },
+      {
+        "binding": "{ DashboardSectionHeader }",
+        "source": "./DashboardSectionHeader.feature"
+      },
+      {
+        "binding": "{ DashboardSources }",
+        "source": "./DashboardSources.feature"
+      }
+    ],
+    "jsx": [
+      "DashboardContent",
+      "DashboardFilters",
+      "DashboardHeader",
+      "DashboardLoadState",
+      "DashboardNavigation",
+      "DashboardPanelErrorBoundary",
+      "DashboardPanelFallback",
+      "DashboardSectionHeader",
+      "DashboardSources",
+      "HoldingsViewTabs",
+      "StatusMessage",
+      "Suspense",
+      "ViewNavigation"
+    ],
+    "calls": [
+      "filterVisibilityForTab",
+      "useAtomValue",
+      "useDashboardViewModel",
+      "useFilterSummaries"
+    ]
+  },
+  {
+    "file": "src/app/DashboardCombinedReliability.feature.tsx",
+    "lines": 26,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ CombinedAnalysisReliabilityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": ["CombinedAnalysisReliabilityKpi", "Layout"],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/app/DashboardContent.feature.tsx",
+    "lines": 118,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ lazy }",
+        "source": "react"
+      },
+      {
+        "binding": "{ DASHBOARD_TAB_LOADERS }",
+        "source": "@/app/routing/dashboardTabLoaders/dashboardTabLoaders"
+      },
+      {
+        "binding": "{ dashboardFiltersAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ DashboardHoldings }",
+        "source": "./DashboardHoldings.feature"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": [
+      "DashboardHoldings",
+      "DataQualityTab",
+      "DiversificationCharts",
+      "OverviewTab",
+      "PerformanceTab",
+      "WealthTab"
+    ],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/app/DashboardDataQuality.feature.tsx",
+    "lines": 19,
+    "imports": [
+      {
+        "binding": "{ DataQualityTab }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/DataQualityTab.feature"
+      },
+      {
+        "binding": "type { DataQualityTabProps }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type"
+      },
+      {
+        "binding": "{ ErrorsTab }",
+        "source": "@/domains/portfolio/features/data-quality/features/errors/components/ErrorsTab/ErrorsTabController.view"
+      },
+      {
+        "binding": "{ ManualPriceOverridesTable }",
+        "source": "@/domains/portfolio/features/data-quality/features/errors/components/manualPriceOverridesTable/ManualPriceOverridesTable.view"
+      }
+    ],
+    "jsx": [
+      "DataQualityTab",
+      "DataQualityTab.Pipeline",
+      "DataQualityTab.Prices",
+      "ErrorsTab",
+      "ManualPriceOverridesTable"
+    ],
+    "calls": []
+  },
+  {
+    "file": "src/app/DashboardDiversification.feature.tsx",
+    "lines": 68,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ dashboardDiversificationViewAtom }",
+        "source": "@/app/stores/dashboardDiversification.atoms"
+      },
+      {
+        "binding": "{ AllocationSection }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature"
+      },
+      {
+        "binding": "{ ConcentrationSection }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature"
+      },
+      {
+        "binding": "{ prepareDiversificationScope }",
+        "source": "@/domains/portfolio/features/diversification/shared/helpers/transformers/prepareDiversificationScope"
+      },
+      {
+        "binding": "type { DiversificationInputs }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["AllocationSection", "ConcentrationSection", "Text"],
+    "calls": ["useAtomValue", "useMemo"]
+  },
+  {
+    "file": "src/app/DashboardFilters.feature.tsx",
+    "lines": 62,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ filterVisibilityForTab }",
+        "source": "@/app/helpers/presenters/filterVisibilityForTab"
+      },
+      {
+        "binding": "{ useResetDashboardFilters }",
+        "source": "@/app/services/useResetDashboardFilters"
+      },
+      {
+        "binding": "{ FilterChipBar }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "{ OverviewPeriodFilter }",
+        "source": "@/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature"
+      },
+      {
+        "binding": "{ ActiveFilterSummary }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature"
+      },
+      {
+        "binding": "{ FilterPanel }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/FilterPanel.feature"
+      },
+      {
+        "binding": "{ ResetFiltersButton }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/ResetFiltersButton.view"
+      },
+      {
+        "binding": "type { FilterSummaryItem }",
+        "source": "@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": [
+      "ActiveFilterSummary",
+      "ActiveFilterSummary.Actions",
+      "ActiveFilterSummary.Leading",
+      "FilterChipBar",
+      "FilterPanel",
+      "OverviewPeriodFilter",
+      "ResetFiltersButton"
+    ],
+    "calls": [
+      "filterVisibilityForTab",
+      "useAtomValue",
+      "useResetDashboardFilters"
+    ]
+  },
+  {
+    "file": "src/app/DashboardHeader.feature.tsx",
+    "lines": 41,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardTheme }",
+        "source": "@/app/services/theme/useDashboardTheme"
+      },
+      {
+        "binding": "{ useDashboardThemeSync }",
+        "source": "@/app/services/theme/useDashboardThemeSync"
+      },
+      {
+        "binding": "{ dashboardThemeAtom }",
+        "source": "@/app/stores/theme/dashboardTheme.store"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ ToggleButton }",
+        "source": "@/shared/ui/controls/ToggleButton.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Text", "ToggleButton"],
+    "calls": ["useAtomValue", "useDashboardTheme", "useDashboardThemeSync"]
+  },
+  {
+    "file": "src/app/DashboardHoldings.feature.tsx",
+    "lines": 42,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ lazy }",
+        "source": "react"
+      },
+      {
+        "binding": "{ DASHBOARD_TAB_LOADERS }",
+        "source": "@/app/routing/dashboardTabLoaders/dashboardTabLoaders"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "{ ViewNavigation }",
+        "source": "@/shared/ui/ViewNavigation.view"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": ["FundLookThroughTab", "PositionsTable", "ViewNavigation.Panel"],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/app/DashboardReliability.feature.tsx",
+    "lines": 57,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ AnalysisReliabilityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature"
+      },
+      {
+        "binding": "{ PipelineReliabilityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ DashboardCombinedReliability }",
+        "source": "./DashboardCombinedReliability.feature"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": [
+      "AnalysisReliabilityKpi",
+      "DashboardCombinedReliability",
+      "Layout",
+      "PipelineReliabilityKpi"
+    ],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/app/DashboardSectionHeader.feature.tsx",
+    "lines": 147,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ DiversificationViewToggle }",
+        "source": "@/app/DiversificationViewToggle.feature"
+      },
+      {
+        "binding": "type { HoldingsView }",
+        "source": "@/app/HoldingsViewTabs.feature"
+      },
+      {
+        "binding": "{ FilterButton }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/FilterButton.feature"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "type { AnalysisTab }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ DashboardReliability }",
+        "source": "./DashboardReliability.feature"
+      },
+      {
+        "binding": "type { DashboardViewModel }",
+        "source": "./types/dashboardViewModel.type"
+      }
+    ],
+    "jsx": [
+      "AnalysisTab",
+      "DashboardReliability",
+      "DiversificationViewToggle",
+      "FilterButton",
+      "Inline",
+      "Layout",
+      "Surface",
+      "Text"
+    ],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/app/DashboardSources.feature.tsx",
+    "lines": 107,
+    "imports": [
+      {
+        "binding": "{ Suspense }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useGetFundDiagnosticsQuery }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/apis/queries/useGetFundDiagnosticsQuery"
+      },
+      {
+        "binding": "{ useGetManualPriceOverridesQuery }",
+        "source": "@/domains/portfolio/features/data-quality/shared/apis/queries/useGetManualPriceOverridesQuery"
+      },
+      {
+        "binding": "{ useGetPipelineErrorsQuery }",
+        "source": "@/domains/portfolio/features/data-quality/shared/apis/queries/useGetPipelineErrorsQuery"
+      },
+      {
+        "binding": "{ useGetAnnualIncomeSavingsQuery }",
+        "source": "@/domains/portfolio/features/wealth/apis/queries/useGetAnnualIncomeSavingsQuery"
+      },
+      {
+        "binding": "{ useGetMonthlyOperationsQuery }",
+        "source": "@/domains/portfolio/features/wealth/apis/queries/useGetMonthlyOperationsQuery"
+      },
+      {
+        "binding": "{ useGetAllocationRowsQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetAllocationRowsQuery"
+      },
+      {
+        "binding": "{ useGetBrokerageCashHistoryQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetBrokerageCashHistoryQuery"
+      },
+      {
+        "binding": "{ useGetDashboardDataQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetDashboardDataQuery"
+      },
+      {
+        "binding": "{ useGetFundHoldingsQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetFundHoldingsQuery"
+      },
+      {
+        "binding": "{ useGetPortfolioHistoryQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetPortfolioHistoryQuery"
+      },
+      {
+        "binding": "{ useGetPositionsQuery }",
+        "source": "@/domains/portfolio/shared/apis/queries/useGetPositionsQuery"
+      },
+      {
+        "binding": "{ DashboardSourceBoundary }",
+        "source": "./DashboardSourceBoundary.view"
+      }
+    ],
+    "jsx": [
+      "AllocationRowsSource",
+      "AnnualIncomeSavingsSource",
+      "BrokerageCashHistorySource",
+      "DashboardDataSource",
+      "DashboardSourceBoundary",
+      "FundDiagnosticsSource",
+      "FundHoldingsSource",
+      "ManualPriceOverridesSource",
+      "MonthlyOperationsSource",
+      "PipelineErrorsSource",
+      "PortfolioHistorySource",
+      "PositionsSource",
+      "Suspense"
+    ],
+    "calls": [
+      "useGetAllocationRowsQuery",
+      "useGetAnnualIncomeSavingsQuery",
+      "useGetBrokerageCashHistoryQuery",
+      "useGetDashboardDataQuery",
+      "useGetFundDiagnosticsQuery",
+      "useGetFundHoldingsQuery",
+      "useGetManualPriceOverridesQuery",
+      "useGetMonthlyOperationsQuery",
+      "useGetPipelineErrorsQuery",
+      "useGetPortfolioHistoryQuery",
+      "useGetPositionsQuery"
+    ]
+  },
+  {
+    "file": "src/app/DiversificationViewToggle.feature.tsx",
+    "lines": 33,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardDiversificationView }",
+        "source": "@/app/services/useDashboardDiversificationView"
+      },
+      {
+        "binding": "{ dashboardDiversificationViewAtom }",
+        "source": "@/app/stores/dashboardDiversification.atoms"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ SegmentedControl }",
+        "source": "@/shared/ui/segmentedControl/SegmentedControl.view"
+      },
+      {
+        "binding": "{ SegmentedControlItem }",
+        "source": "@/shared/ui/segmentedControl/SegmentedControlItem.view"
+      }
+    ],
+    "jsx": ["SegmentedControl", "SegmentedControlItem"],
+    "calls": [
+      "setDiversificationView",
+      "useAtomValue",
+      "useDashboardDiversificationView"
+    ]
+  },
+  {
+    "file": "src/app/HoldingsViewTabs.feature.tsx",
+    "lines": 46,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardNavigation }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardNavigation"
+      },
+      {
+        "binding": "{ dashboardHoldingsViewAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardHoldingsView.atoms"
+      },
+      {
+        "binding": "type { HoldingsView }",
+        "source": "@/domains/portfolio/shared/types/dashboardView.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ SegmentedControl }",
+        "source": "@/shared/ui/segmentedControl/SegmentedControl.view"
+      },
+      {
+        "binding": "{ HoldingsViewTab }",
+        "source": "./HoldingsViewTab.view"
+      }
+    ],
+    "jsx": ["HoldingsViewTab", "SegmentedControl"],
+    "calls": ["useAtomValue", "useDashboardNavigation"]
+  },
+  {
+    "file": "src/app/dashboardNavigation/DashboardNavigation.feature.tsx",
+    "lines": 71,
+    "imports": [
+      {
+        "binding": "{ preloadDashboardTab }",
+        "source": "@/app/routing/dashboardTabLoaders/preloadDashboardTab"
+      },
+      {
+        "binding": "{ useQualityNavigation }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation"
+      },
+      {
+        "binding": "{ useDashboardNavigation }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardNavigation"
+      },
+      {
+        "binding": "type { AnalysisTab }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardNavigation.types"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatNumber }",
+        "source": "@/shared/helpers/formatters/useFormatNumber"
+      },
+      {
+        "binding": "{ CountBadge }",
+        "source": "@/shared/ui/badge/CountBadge.view"
+      },
+      {
+        "binding": "{ Navigation }",
+        "source": "@/shared/ui/controls/Navigation.view"
+      },
+      {
+        "binding": "{ NavigationButton }",
+        "source": "@/shared/ui/controls/NavigationButton.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ PrimaryTabButton }",
+        "source": "./PrimaryTabButton.feature"
+      },
+      {
+        "binding": "{ PRIMARY_TABS }",
+        "source": "./primaryTabs"
+      }
+    ],
+    "jsx": [
+      "CountBadge",
+      "Inline",
+      "Layout",
+      "Navigation",
+      "NavigationButton",
+      "PrimaryTabButton"
+    ],
+    "calls": [
+      "formatNumber",
+      "useDashboardNavigation",
+      "useFormatNumber",
+      "useQualityNavigation"
+    ]
+  },
+  {
+    "file": "src/app/dashboardNavigation/PrimaryTabButton.feature.tsx",
+    "lines": 25,
+    "imports": [
+      {
+        "binding": "{ preloadDashboardTab }",
+        "source": "@/app/routing/dashboardTabLoaders/preloadDashboardTab"
+      },
+      {
+        "binding": "{ NavigationButton }",
+        "source": "@/shared/ui/controls/NavigationButton.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "type { PrimaryTabButtonProps }",
+        "source": "./dashboardNavigation.types"
+      }
+    ],
+    "jsx": ["Layout", "NavigationButton"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AccountCoverageRow.feature.tsx",
+    "lines": 24,
+    "imports": [
+      {
+        "binding": "{ summarizeAllocationCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/summarizeAllocationCoverage"
+      },
+      {
+        "binding": "type { AccountCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type"
+      },
+      {
+        "binding": "{ useFormatAccountLabel }",
+        "source": "@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel"
+      },
+      {
+        "binding": "{ useAccountFilterLabels }",
+        "source": "@/domains/portfolio/shared/services/useAccountFilterLabels"
+      },
+      {
+        "binding": "{ AccountCoverageRowView }",
+        "source": "./AccountCoverageRow.view"
+      }
+    ],
+    "jsx": ["AccountCoverageRowView"],
+    "calls": [
+      "formatAccountLabel",
+      "useAccountFilterLabels",
+      "useFormatAccountLabel"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationCoverageCard.feature.tsx",
+    "lines": 38,
+    "imports": [
+      {
+        "binding": "{ summarizeAllocationCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/summarizeAllocationCoverage"
+      },
+      {
+        "binding": "{ hasMaterialQualityGap }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/hasMaterialQualityGap"
+      },
+      {
+        "binding": "type { AccountCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/accountCoverage.type"
+      },
+      {
+        "binding": "type { DimensionCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ AccountCoverageRow }",
+        "source": "./AccountCoverageRow.feature"
+      },
+      {
+        "binding": "{ AllocationCoverageCardView }",
+        "source": "./AllocationCoverageCard.view"
+      },
+      {
+        "binding": "{ AllocationDimensionQuality }",
+        "source": "./AllocationDimensionQuality.feature"
+      }
+    ],
+    "jsx": [
+      "AccountCoverageRow",
+      "AllocationCoverageCardView",
+      "AllocationCoverageCardView.Accounts",
+      "AllocationCoverageCardView.Dimensions",
+      "AllocationCoverageCardView.Scope",
+      "AllocationDimensionQuality",
+      "FilterScopeBadges"
+    ],
+    "calls": ["hasMaterialQualityGap"]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionQuality.feature.tsx",
+    "lines": 34,
+    "imports": [
+      {
+        "binding": "{ getUnclassifiedAllocationPercentage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/computeAllocationCoverage/getUnclassifiedAllocationPercentage"
+      },
+      {
+        "binding": "{ hasMaterialQualityGap }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/hasMaterialQualityGap"
+      },
+      {
+        "binding": "{ useDataQualityClassificationDetails }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useDataQualityClassificationDetails"
+      },
+      {
+        "binding": "type { DimensionCoverage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ AllocationDimensionRowView }",
+        "source": "./AllocationDimensionRow.view"
+      }
+    ],
+    "jsx": ["AllocationDimensionRow", "AllocationDimensionRowView", "Stack"],
+    "calls": [
+      "getUnclassifiedAllocationPercentage",
+      "hasMaterialQualityGap",
+      "useDataQualityClassificationDetails"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature.tsx",
+    "lines": 53,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useMemo, useState }",
+        "source": "react"
+      },
+      {
+        "binding": "{ buildFundDiagnosticsRows, type FundDiagnosticsFilter, }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/helpers/transformers/buildFundDiagnosticsRows"
+      },
+      {
+        "binding": "{ useDataQualityFundDiagnostics }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useDataQualityFundDiagnostics"
+      },
+      {
+        "binding": "{ dataQualityFundDiagnosticsOpenAtom }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityFundDiagnosticsOpen.atoms"
+      },
+      {
+        "binding": "type { FundSnapshot }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/fundSnapshot.type"
+      },
+      {
+        "binding": "type { FundUnresolved }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/fundUnresolved.type"
+      },
+      {
+        "binding": "type { FundHolding }",
+        "source": "@/domains/portfolio/shared/types/fundHolding.type"
+      },
+      {
+        "binding": "type { FundHoldingStatus }",
+        "source": "@/domains/portfolio/shared/types/fundHoldingStatus.type"
+      },
+      {
+        "binding": "{ FundDataQualityPanelView }",
+        "source": "./FundDataQualityPanel.view"
+      }
+    ],
+    "jsx": ["FundDataQualityPanelView", "FundDiagnosticsFilter"],
+    "calls": [
+      "buildFundDiagnosticsRows",
+      "useAtomValue",
+      "useDataQualityFundDiagnostics",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature.tsx",
+    "lines": 31,
+    "imports": [
+      {
+        "binding": "{ buildLookThroughSummary }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/helpers/presenters/buildLookThroughSummary"
+      },
+      {
+        "binding": "{ LookThroughCoverageSummaryView }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/LookThroughCoverageSummaryView.view"
+      },
+      {
+        "binding": "{ UnavailableLookThroughSummary }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/lookThroughCoverageSummary/UnavailableLookThroughSummary.view"
+      },
+      {
+        "binding": "type { FundCoverageReport }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "LookThroughCoverageSummaryView",
+      "LookThroughCoverageSummaryView.TooltipFooter",
+      "UnavailableLookThroughSummary"
+    ],
+    "calls": ["buildLookThroughSummary"]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "lines": 62,
+    "imports": [
+      {
+        "binding": "{ CompactDataQualityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature"
+      },
+      {
+        "binding": "{ normalizeCoveragePercentage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage"
+      },
+      {
+        "binding": "{ RELIABILITY_TONES }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation"
+      },
+      {
+        "binding": "type { AnalysisReliabilityTone }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type"
+      },
+      {
+        "binding": "type { QualityThemeId }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type"
+      },
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      }
+    ],
+    "jsx": ["CompactDataQualityKpi"],
+    "calls": [
+      "formatMoney",
+      "formatPercentage",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature.tsx",
+    "lines": 68,
+    "imports": [
+      {
+        "binding": "{ CompactDataQualityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature"
+      },
+      {
+        "binding": "{ normalizeCoveragePercentage }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/normalizeCoveragePercentage"
+      },
+      {
+        "binding": "{ RELIABILITY_TONES }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation"
+      },
+      {
+        "binding": "type { QualityTooltipRow }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      },
+      {
+        "binding": "{ type CombinedReliabilityInput, useCombinedReliabilityPresentation, }",
+        "source": "./helpers/presenters/useCombinedReliabilityPresentation"
+      }
+    ],
+    "jsx": ["CompactDataQualityKpi"],
+    "calls": [
+      "formatMoney",
+      "formatPercentage",
+      "useCombinedReliabilityPresentation",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature.tsx",
+    "lines": 45,
+    "imports": [
+      {
+        "binding": "{ useCallback }",
+        "source": "react"
+      },
+      {
+        "binding": "type { QualityTooltipRow }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/types/qualityTooltipRow.type"
+      },
+      {
+        "binding": "{ useQualityNavigation }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useQualityNavigation"
+      },
+      {
+        "binding": "type { AnalysisReliabilityTone }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/analysisReliabilityTone.type"
+      },
+      {
+        "binding": "type { QualityThemeId }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dataQuality.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges, type FilterScopeSpec, }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ CompactDataQualityKpiView }",
+        "source": "./CompactDataQualityKpi.view"
+      }
+    ],
+    "jsx": ["CompactDataQualityKpiView", "FilterScopeBadges"],
+    "calls": ["useCallback", "useQualityNavigation"]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "lines": 62,
+    "imports": [
+      {
+        "binding": "{ CompactDataQualityKpi }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.feature"
+      },
+      {
+        "binding": "{ RELIABILITY_TONES }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation"
+      },
+      {
+        "binding": "{ useFormatPipelineStatus }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatPipelineStatus"
+      },
+      {
+        "binding": "{ pipelineReliabilityTone }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/analysisReliability/pipelineReliabilityTone"
+      },
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["CompactDataQualityKpi"],
+    "calls": ["formatPipelineStatus", "useFormatPipelineStatus"]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature.tsx",
+    "lines": 53,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useFormatDataQualityDimension }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatDataQualityDimension"
+      },
+      {
+        "binding": "{ AffectedAssetsTable }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/AffectedAssetsTable.view"
+      },
+      {
+        "binding": "{ useDataQualityClassificationDetails }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/actions/useDataQualityClassificationDetails"
+      },
+      {
+        "binding": "{ dataQualityClassificationDetailsOpenAtom }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityClassificationDetailsOpen.atoms"
+      },
+      {
+        "binding": "{ dataQualityClassificationDimensionAtom }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/stores/dataQualityPanels/dataQualityClassificationDimension.atoms"
+      },
+      {
+        "binding": "type { AffectedAsset }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/affectedAsset.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ SidePanel }",
+        "source": "@/shared/ui/SidePanel.view"
+      }
+    ],
+    "jsx": [
+      "AffectedAssetsTable",
+      "SidePanel",
+      "SidePanel.Description",
+      "SidePanel.Title"
+    ],
+    "calls": [
+      "formatDimension",
+      "useAtomValue",
+      "useDataQualityClassificationDetails",
+      "useFormatDataQualityDimension",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/DataQualityTab.feature.tsx",
+    "lines": 131,
+    "imports": [
+      {
+        "binding": "type { ReactNode }",
+        "source": "react"
+      },
+      {
+        "binding": "{ ClassificationCoverageState }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/ClassificationCoverageState.state"
+      },
+      {
+        "binding": "{ FundDataQualityPanel }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/FundDataQualityPanel/FundDataQualityPanel.feature"
+      },
+      {
+        "binding": "{ AffectedAssetsPanel }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/AffectedAssetsPanel.feature"
+      },
+      {
+        "binding": "{ DataQualityHeader }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityHeader.view"
+      },
+      {
+        "binding": "{ useDataQualityInspection }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityInspection"
+      },
+      {
+        "binding": "{ useDataQualityViewModel }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/DataQualityTab/services/useDataQualityViewModel"
+      },
+      {
+        "binding": "{ LookThroughQualityContent }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature"
+      },
+      {
+        "binding": "{ QualityThemeNavigation }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/QualityThemeNavigation.view"
+      },
+      {
+        "binding": "type { DataQualityTabProps }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/dataQualityTabProps.type"
+      },
+      {
+        "binding": "{ partitionSlot }",
+        "source": "@/shared/helpers/presenters/partitionSlot"
+      },
+      {
+        "binding": "{ Grid }",
+        "source": "@/shared/ui/layout/Grid.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Tabs }",
+        "source": "@/shared/ui/Tabs.view"
+      },
+      {
+        "binding": "{ PipelinePanel }",
+        "source": "./PipelinePanel.view"
+      },
+      {
+        "binding": "{ PricesPanel }",
+        "source": "./PricesPanel.view"
+      }
+    ],
+    "jsx": [
+      "AffectedAssetsPanel",
+      "ClassificationCoverageState",
+      "DataQualityHeader",
+      "FundDataQualityPanel",
+      "Grid",
+      "Layout",
+      "LookThroughQualityContent",
+      "QualityThemeNavigation",
+      "Surface",
+      "Tabs",
+      "Tabs.Content"
+    ],
+    "calls": [
+      "setSelectedQualityTheme",
+      "useDataQualityInspection",
+      "useDataQualityViewModel"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/pages/LookThroughQualityContent.feature.tsx",
+    "lines": 33,
+    "imports": [
+      {
+        "binding": "{ LookThroughCoverageSummary }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/components/LookThroughCoverageSummary.feature"
+      },
+      {
+        "binding": "{ EmptyQualityState }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/pages/dataQualityDetails/EmptyQualityState.view"
+      },
+      {
+        "binding": "type { FundCoverageReport }",
+        "source": "@/domains/portfolio/features/data-quality/features/assessment/types/fundCoverageReport.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["EmptyQualityState", "LookThroughCoverageSummary"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationCurrentView.feature.tsx",
+    "lines": 63,
+    "imports": [
+      {
+        "binding": "type { useAllocationCharts }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ DonutCard }",
+        "source": "./DonutCard.feature"
+      }
+    ],
+    "jsx": ["DonutCard", "Text"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationSection.feature.tsx",
+    "lines": 37,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useAllocationCharts }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "type { DiversificationInputs }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type"
+      },
+      {
+        "binding": "type { DiversificationView }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationView.type"
+      },
+      {
+        "binding": "{ AllocationCurrentView }",
+        "source": "./AllocationCurrentView.feature"
+      },
+      {
+        "binding": "{ AllocationTrendView }",
+        "source": "./AllocationTrendView.feature"
+      },
+      {
+        "binding": "{ FilteredPositionsTable }",
+        "source": "./FilteredPositionsTable/FilteredPositionsTable.feature"
+      }
+    ],
+    "jsx": [
+      "AllocationCurrentView",
+      "AllocationTrendView",
+      "DiversificationInputs",
+      "FilteredPositionsTable"
+    ],
+    "calls": ["useAllocationCharts", "useAtomValue"]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/AllocationTrendView.feature.tsx",
+    "lines": 71,
+    "imports": [
+      {
+        "binding": "type { useAllocationCharts }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/helpers/transformers/useAllocationCharts"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ EvoCard }",
+        "source": "./EvoCard/EvoCard.feature"
+      }
+    ],
+    "jsx": ["EvoCard", "Surface", "Text"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+    "lines": 75,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useCallback, useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useDashboardDiversificationFilters }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters"
+      },
+      {
+        "binding": "{ useDashboardDiversificationPositions }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "{ dashboardDiversificationPositionsOpenAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms"
+      },
+      {
+        "binding": "type { AllocationDimension }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "{ buildAllocationPieData }",
+        "source": "@/domains/portfolio/shared/helpers/transformers/buildAllocationPieData"
+      },
+      {
+        "binding": "type { AllocationPoint }",
+        "source": "@/domains/portfolio/shared/types/allocationPoint.type"
+      },
+      {
+        "binding": "type { PieEntry }",
+        "source": "@/domains/portfolio/shared/types/pieEntry.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ DonutCardView }",
+        "source": "./DonutCard.view"
+      },
+      {
+        "binding": "{ PositionsToggle }",
+        "source": "./PositionsToggle.view"
+      }
+    ],
+    "jsx": [
+      "DonutCardView",
+      "DonutCardView.PositionsControl",
+      "DonutCardView.Tooltip",
+      "PositionsToggle",
+      "ScopedInfoTooltip"
+    ],
+    "calls": [
+      "buildAllocationPieData",
+      "toggleFilter",
+      "useAtomValue",
+      "useCallback",
+      "useDashboardDiversificationFilters",
+      "useDashboardDiversificationPositions",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+    "lines": 69,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useCallback, useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ allocationTrendDomain }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/allocationTrendDomain"
+      },
+      {
+        "binding": "{ buildAllocationTrend }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/EvoCard/helpers/presenters/buildAllocationTrend"
+      },
+      {
+        "binding": "{ PositionsToggle }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/PositionsToggle.view"
+      },
+      {
+        "binding": "{ useDashboardDiversificationFilters }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters"
+      },
+      {
+        "binding": "{ useDashboardDiversificationPositions }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "{ dashboardDiversificationPositionsOpenAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms"
+      },
+      {
+        "binding": "type { AllocationDimension }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { AllocationPoint }",
+        "source": "@/domains/portfolio/shared/types/allocationPoint.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ EvoCardView }",
+        "source": "./EvoCard.view"
+      }
+    ],
+    "jsx": [
+      "EvoCardView",
+      "EvoCardView.PositionsControl",
+      "EvoCardView.Tooltip",
+      "PositionsToggle",
+      "ScopedInfoTooltip"
+    ],
+    "calls": [
+      "buildAllocationTrend",
+      "toggleFilter",
+      "useAtomValue",
+      "useCallback",
+      "useDashboardDiversificationFilters",
+      "useDashboardDiversificationPositions",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.tsx",
+    "lines": 56,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardDiversificationFilters }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "type { AllocationDimension }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/types/allocationChart.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ Decorative }",
+        "source": "@/shared/ui/controls/Decorative.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["AllocationDimension", "Button", "Decorative", "Layout", "Text"],
+    "calls": ["useAtomValue", "useDashboardDiversificationFilters"]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/FilteredPositionsTable.feature.tsx",
+    "lines": 29,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ sumFilteredPositionValues }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/components/FilteredPositionsTable/helpers/transformers/sumFilteredPositionValues"
+      },
+      {
+        "binding": "{ useDashboardDiversificationFilters }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationFilters"
+      },
+      {
+        "binding": "{ useDashboardDiversificationPositions }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/services/actions/useDashboardDiversificationPositions"
+      },
+      {
+        "binding": "{ dashboardDiversificationFilterAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationFilter.atoms"
+      },
+      {
+        "binding": "{ dashboardDiversificationPositionsOpenAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/stores/dashboardAllocation/dashboardDiversificationPositionsOpen.atoms"
+      },
+      {
+        "binding": "type { MatchingIsinRow }",
+        "source": "@/domains/portfolio/features/diversification/features/allocation/types/matchingIsinRow.type"
+      },
+      {
+        "binding": "{ FilteredPositionsTableView }",
+        "source": "./FilteredPositionsTable.view"
+      }
+    ],
+    "jsx": ["FilteredPositionsTableView"],
+    "calls": [
+      "useAtomValue",
+      "useDashboardDiversificationFilters",
+      "useDashboardDiversificationPositions"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationSection.feature.tsx",
+    "lines": 33,
+    "imports": [
+      {
+        "binding": "{ useState }",
+        "source": "react"
+      },
+      {
+        "binding": "type { DiversificationInputs }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type"
+      },
+      {
+        "binding": "type { DiversificationView }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationView.type"
+      },
+      {
+        "binding": "type { ConcentrationMode }",
+        "source": "@/domains/portfolio/shared/types/concentrationMode.type"
+      },
+      {
+        "binding": "{ CurrentConcentration }",
+        "source": "./CurrentConcentration/CurrentConcentration.feature"
+      },
+      {
+        "binding": "{ HistoricalConcentration }",
+        "source": "./HistoricalConcentration.feature"
+      }
+    ],
+    "jsx": [
+      "ConcentrationMode",
+      "CurrentConcentration",
+      "DiversificationInputs",
+      "HistoricalConcentration"
+    ],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature.tsx",
+    "lines": 68,
+    "imports": [
+      {
+        "binding": "{ ScopeProvider }",
+        "source": "jotai-scope"
+      },
+      {
+        "binding": "{ useConcentrationTrendController }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/services/useConcentrationTrendController"
+      },
+      {
+        "binding": "{ concentrationTrendDateAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendDate.atoms"
+      },
+      {
+        "binding": "{ concentrationTrendHoveredIndexAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendHoveredIndex.atoms"
+      },
+      {
+        "binding": "{ concentrationTrendModeAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendMode.atoms"
+      },
+      {
+        "binding": "{ concentrationTrendPlayingAtom }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/stores/concentrationTrend/concentrationTrendPlaying.atoms"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { HistoricalConcentrationPoint }",
+        "source": "@/domains/portfolio/shared/types/historicalConcentrationPoint.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ ConcentrationTrendSectionView }",
+        "source": "./ConcentrationTrendSection.view"
+      }
+    ],
+    "jsx": [
+      "ConcentrationTrendContent",
+      "ConcentrationTrendSectionView",
+      "ConcentrationTrendSectionView.HoldingsTooltip",
+      "ConcentrationTrendSectionView.ThresholdTooltip",
+      "ScopeProvider",
+      "ScopedInfoTooltip"
+    ],
+    "calls": ["useConcentrationTrendController"]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/CurrentConcentration/CurrentConcentration.feature.tsx",
+    "lines": 47,
+    "imports": [
+      {
+        "binding": "{ useCurrentConcentration }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useCurrentConcentration"
+      },
+      {
+        "binding": "type { DiversificationInputs }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "type { ConcentrationMode }",
+        "source": "@/domains/portfolio/shared/types/concentrationMode.type"
+      },
+      {
+        "binding": "{ CurrentConcentrationView }",
+        "source": "./CurrentConcentration.view"
+      },
+      {
+        "binding": "{ useConcentrationDescriptions }",
+        "source": "./helpers/presenters/useConcentrationDescriptions"
+      }
+    ],
+    "jsx": [
+      "CurrentConcentrationView",
+      "DiversificationInputs",
+      "FilterScopeBadges"
+    ],
+    "calls": ["useConcentrationDescriptions", "useCurrentConcentration"]
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/concentration/components/HistoricalConcentration.feature.tsx",
+    "lines": 26,
+    "imports": [
+      {
+        "binding": "{ useHistoricalConcentration }",
+        "source": "@/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useHistoricalConcentration"
+      },
+      {
+        "binding": "type { DiversificationInputs }",
+        "source": "@/domains/portfolio/features/diversification/shared/types/diversificationInputs.type"
+      },
+      {
+        "binding": "{ ConcentrationTrendSection }",
+        "source": "./ConcentrationTrendSection/ConcentrationTrendSection.feature"
+      }
+    ],
+    "jsx": ["ConcentrationTrendSection"],
+    "calls": ["useHistoricalConcentration"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature.tsx",
+    "lines": 43,
+    "imports": [
+      {
+        "binding": "{ FundExposureNotice }",
+        "source": "@/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureNotice.view"
+      },
+      {
+        "binding": "{ useFundExposureViewModel }",
+        "source": "@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel"
+      },
+      {
+        "binding": "{ useVirtualExposureList }",
+        "source": "@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { FundHolding }",
+        "source": "@/domains/portfolio/shared/types/fundHolding.type"
+      },
+      {
+        "binding": "type { PositionRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ FundHoldingsExplorerView }",
+        "source": "./FundHoldingsExplorer.view"
+      }
+    ],
+    "jsx": [
+      "FundExposureNotice",
+      "FundHoldingsExplorerView",
+      "ScopedInfoTooltip"
+    ],
+    "calls": ["useFundExposureViewModel", "useVirtualExposureList"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature.tsx",
+    "lines": 36,
+    "imports": [
+      {
+        "binding": "{ FundHoldingsExplorer }",
+        "source": "@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature"
+      },
+      {
+        "binding": "{ selectExposurePositions }",
+        "source": "@/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/selectExposurePositions"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { FundHolding }",
+        "source": "@/domains/portfolio/shared/types/fundHolding.type"
+      },
+      {
+        "binding": "type { PositionRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ FundExposureNotice }",
+        "source": "./FundExposureNotice.view"
+      }
+    ],
+    "jsx": ["FundExposureNotice", "FundHoldingsExplorer", "ScopedInfoTooltip"],
+    "calls": ["selectExposurePositions"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature.tsx",
+    "lines": 34,
+    "imports": [
+      {
+        "binding": "type { FundHolding }",
+        "source": "@/domains/portfolio/shared/types/fundHolding.type"
+      },
+      {
+        "binding": "type { PositionRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      },
+      {
+        "binding": "{ Grid }",
+        "source": "@/shared/ui/layout/Grid.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Grid", "Surface", "Text"],
+    "calls": [
+      "formatMoney",
+      "formatPercentage",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/FundPositionPopover.feature.tsx",
+    "lines": 36,
+    "imports": [
+      {
+        "binding": "{ FundPositionHoldingRow }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/FundPositionHoldingRow.feature"
+      },
+      {
+        "binding": "{ useFundPositionHoldings }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/services/useFundPositionHoldings"
+      },
+      {
+        "binding": "{ useOpenCompleteHoldings }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/services/actions/useOpenCompleteHoldings"
+      },
+      {
+        "binding": "type { FundPositionPopoverTarget }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/types/fundPositionPopoverTarget.type"
+      },
+      {
+        "binding": "{ FundPositionPopoverView }",
+        "source": "./FundPositionPopover.view"
+      }
+    ],
+    "jsx": ["FundPositionHoldingRow", "FundPositionPopoverView"],
+    "calls": ["useFundPositionHoldings", "useOpenCompleteHoldings"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature.tsx",
+    "lines": 67,
+    "imports": [
+      {
+        "binding": "{ selectRenderableAllocationCharts }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/helpers/presenters/selectRenderableAllocationCharts"
+      },
+      {
+        "binding": "{ MiniDonut }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature"
+      },
+      {
+        "binding": "type { AllocationHoverTarget }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/types/allocationHoverTarget.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Grid }",
+        "source": "@/shared/ui/layout/Grid.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Preview }",
+        "source": "@/shared/ui/Preview.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Grid", "Layout", "MiniDonut", "Preview.Content", "Text"],
+    "calls": ["selectRenderableAllocationCharts"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
+    "lines": 23,
+    "imports": [
+      {
+        "binding": "{ buildAllocationPieData }",
+        "source": "@/domains/portfolio/shared/helpers/transformers/buildAllocationPieData"
+      },
+      {
+        "binding": "type { AllocationPoint }",
+        "source": "@/domains/portfolio/shared/types/allocationPoint.type"
+      },
+      {
+        "binding": "{ MiniDonutView }",
+        "source": "./MiniDonut.view"
+      }
+    ],
+    "jsx": ["MiniDonutView"],
+    "calls": ["buildAllocationPieData"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature.tsx",
+    "lines": 77,
+    "imports": [
+      {
+        "binding": "{ createColumnHelper }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ PositionBreakdownCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature"
+      },
+      {
+        "binding": "{ PositionExpanderCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionExpanderCell.view"
+      },
+      {
+        "binding": "{ PositionIncomeCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature"
+      },
+      {
+        "binding": "{ PositionIrrCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIrrCell.view"
+      },
+      {
+        "binding": "{ PositionNameCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionNameCell.view"
+      },
+      {
+        "binding": "{ PositionRealizedCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionRealizedCell.feature"
+      },
+      {
+        "binding": "{ PositionReturnCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionReturnCell.view"
+      },
+      {
+        "binding": "{ PositionTotalRealizedCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionTotalRealizedCell.view"
+      },
+      {
+        "binding": "{ PositionUnrealizedCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionUnrealizedCell.feature"
+      },
+      {
+        "binding": "{ PositionValueCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature"
+      },
+      {
+        "binding": "type { TableRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ PositionBreakdownHeader }",
+        "source": "./positionColumnHeaders/PositionBreakdownHeader.view"
+      },
+      {
+        "binding": "{ PositionDividendsHeader }",
+        "source": "./positionColumnHeaders/PositionDividendsHeader.feature"
+      },
+      {
+        "binding": "{ PositionRealizedHeader }",
+        "source": "./positionColumnHeaders/PositionRealizedHeader.feature"
+      },
+      {
+        "binding": "{ PositionTotalRealizedHeader }",
+        "source": "./positionColumnHeaders/PositionTotalRealizedHeader.feature"
+      },
+      {
+        "binding": "{ PositionTotalReturnPctHeader }",
+        "source": "./positionColumnHeaders/PositionTotalReturnPctHeader.feature"
+      },
+      {
+        "binding": "{ PositionUnrealizedHeader }",
+        "source": "./positionColumnHeaders/PositionUnrealizedHeader.feature"
+      },
+      {
+        "binding": "{ PositionValueHeader }",
+        "source": "./positionColumnHeaders/PositionValueHeader.feature"
+      },
+      {
+        "binding": "{ PositionXirrHeader }",
+        "source": "./positionColumnHeaders/PositionXirrHeader.feature"
+      }
+    ],
+    "jsx": [],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature.tsx",
+    "lines": 59,
+    "imports": [
+      {
+        "binding": "{ useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useGetPositionHistoryQuery }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery"
+      },
+      {
+        "binding": "{ computeUnitPriceDomain }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/presenters/computeUnitPriceDomain"
+      },
+      {
+        "binding": "{ buildHoverChartSeries }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildHoverChartSeries"
+      },
+      {
+        "binding": "{ hasUnitPriceHistory }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/hasUnitPriceHistory"
+      },
+      {
+        "binding": "type { ChartTarget }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/types/chartTarget.type"
+      },
+      {
+        "binding": "{ PositionHistoryCharts }",
+        "source": "./PositionHistoryCharts.view"
+      },
+      {
+        "binding": "{ PositionHistoryPreview }",
+        "source": "./PositionHistoryPreview.view"
+      }
+    ],
+    "jsx": ["PositionHistoryCharts", "PositionHistoryPreview"],
+    "calls": [
+      "buildHoverChartSeries",
+      "computeUnitPriceDomain",
+      "hasUnitPriceHistory",
+      "useGetPositionHistoryQuery",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature.tsx",
+    "lines": 50,
+    "imports": [
+      {
+        "binding": "{ useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useGetPositionHistoryQuery }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/apis/queries/useGetPositionHistoryQuery"
+      },
+      {
+        "binding": "{ buildSavingsHistorySeries }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/helpers/transformers/buildHoverChartData/buildSavingsHistorySeries"
+      },
+      {
+        "binding": "type { SavingsChartTarget }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/types/savingsChartTarget.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ PositionHistoryPreview }",
+        "source": "./PositionHistoryPreview.view"
+      },
+      {
+        "binding": "{ SavingsHistoryChart }",
+        "source": "./SavingsHistoryChart.view"
+      }
+    ],
+    "jsx": ["PositionHistoryPreview", "SavingsHistoryChart"],
+    "calls": [
+      "buildSavingsHistorySeries",
+      "useGetPositionHistoryQuery",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature.tsx",
+    "lines": 32,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardPositionSort }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/services/actions/useDashboardPositionSort"
+      },
+      {
+        "binding": "{ dashboardPositionSortDirectionAtom }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortDirection.atoms"
+      },
+      {
+        "binding": "{ dashboardPositionSortKeyAtom }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/stores/dashboardPositionsTable/dashboardPositionSortKey.atoms"
+      },
+      {
+        "binding": "type { PositionSortKey }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/types/positionSort.type"
+      },
+      {
+        "binding": "{ SortHeader }",
+        "source": "./SortHeader.view"
+      }
+    ],
+    "jsx": ["SortHeader"],
+    "calls": ["useAtomValue", "useDashboardPositionSort"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/PositionsTable/PositionsTable.feature.tsx",
+    "lines": 327,
+    "imports": [
+      {
+        "binding": "{ getCoreRowModel, getExpandedRowModel, type Row, type Table, useReactTable, }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ ScopeProvider }",
+        "source": "jotai-scope"
+      },
+      {
+        "binding": "{ Fragment }",
+        "source": "react"
+      },
+      {
+        "binding": "{ FundPositionPopover }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/FundPositionPopover/FundPositionPopover.feature"
+      },
+      {
+        "binding": "{ HoverAllocationPopover }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/HoverAllocationPopover/HoverAllocationPopover.feature"
+      },
+      {
+        "binding": "{ POSITION_COLUMNS }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionColumnDefinitions.feature"
+      },
+      {
+        "binding": "{ HoverChart }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverChart.feature"
+      },
+      {
+        "binding": "{ HoverSavingsChart }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionHoverDetails/HoverSavingsChart.feature"
+      },
+      {
+        "binding": "{ usePositionGroupPreviews }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionGroupPreviews"
+      },
+      {
+        "binding": "{ usePositionTableData }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableData"
+      },
+      {
+        "binding": "{ usePositionTableOverlays }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableOverlays"
+      },
+      {
+        "binding": "{ usePositionTableState }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/usePositionTableState"
+      },
+      {
+        "binding": "type { PositionPreviewModel }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/types/positionPreviewModel.type"
+      },
+      {
+        "binding": "{ PositionRowSurface }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionTableAppearance/PositionRowSurface.view"
+      },
+      {
+        "binding": "{ PositionBodyCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/PositionBodyCell.view"
+      },
+      {
+        "binding": "{ PositionHeaderRow }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/PositionHeaderRow.view"
+      },
+      {
+        "binding": "type { PositionGroupTotal }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePositionTableValues.types"
+      },
+      {
+        "binding": "{ isClosedPosition }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/positionDisplayRules/isClosedPosition"
+      },
+      {
+        "binding": "{ positionPreviewAtom }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { FundHoldingStatus }",
+        "source": "@/domains/portfolio/shared/types/fundHoldingStatus.type"
+      },
+      {
+        "binding": "type { PositionRow, TableRow, }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ TableColumn }",
+        "source": "@/shared/ui/dataTable/TableColumn.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Preview }",
+        "source": "@/shared/ui/Preview.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ TablePanel }",
+        "source": "@/shared/ui/TablePanel.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ PositionGroupSeparator }",
+        "source": "./PositionGroupSeparator.view"
+      }
+    ],
+    "jsx": [
+      "Button",
+      "Fragment",
+      "FundPositionPopover",
+      "HoverAllocationPopover",
+      "HoverChart",
+      "HoverSavingsChart",
+      "Inline",
+      "Layout",
+      "PositionBodyCell",
+      "PositionBodyRow",
+      "PositionGroupSeparator",
+      "PositionHeaderRow",
+      "PositionRowSurface",
+      "PositionTablePreviews",
+      "PositionTableToolbar",
+      "PositionsTableContent",
+      "Preview",
+      "ScopeProvider",
+      "ScopedInfoTooltip",
+      "Surface",
+      "TableColumn",
+      "TablePanel",
+      "TablePanel.Actions",
+      "TablePanel.Description",
+      "TablePanel.Header",
+      "TablePanel.Title",
+      "TablePanel.Toolbar",
+      "TableRow",
+      "Text"
+    ],
+    "calls": [
+      "getCanExpand",
+      "getCoreRowModel",
+      "getExpandedRowModel",
+      "getHeaderGroups",
+      "getParentRow",
+      "getRowModel",
+      "getToggleExpandedHandler",
+      "getVisibleCells",
+      "isClosedPosition",
+      "toggleAllRowsExpanded",
+      "usePositionGroupPreviews",
+      "usePositionTableData",
+      "usePositionTableOverlays",
+      "usePositionTableState"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature.tsx",
+    "lines": 26,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ UnderlyingStatusButton }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/positionTableCells/UnderlyingStatusButton.view"
+      },
+      {
+        "binding": "{ positionPreviewAtom }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/stores/positionPreviews/positionPreview.atoms"
+      },
+      {
+        "binding": "type { FundHoldingStatus }",
+        "source": "@/domains/portfolio/shared/types/fundHoldingStatus.type"
+      }
+    ],
+    "jsx": ["UnderlyingStatusButton"],
+    "calls": ["useAtomValue"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature.tsx",
+    "lines": 46,
+    "imports": [
+      {
+        "binding": "{ GainCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/GainCell.view"
+      },
+      {
+        "binding": "{ calculateGainTaxDetails }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculateGainTaxDetails"
+      },
+      {
+        "binding": "type { PositionRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["GainCell", "Layout", "Stack", "Text"],
+    "calls": [
+      "calculateGainTaxDetails",
+      "formatMoney",
+      "formatPercentage",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/gainCells/UnrealizedGainCell.feature.tsx",
+    "lines": 49,
+    "imports": [
+      {
+        "binding": "{ GainCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/GainCell.view"
+      },
+      {
+        "binding": "{ calculateGainTaxDetails }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculateGainTaxDetails"
+      },
+      {
+        "binding": "type { PositionRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["GainCell", "Layout", "Stack", "Text"],
+    "calls": [
+      "calculateGainTaxDetails",
+      "formatMoney",
+      "formatPercentage",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx",
+    "lines": 103,
+    "imports": [
+      {
+        "binding": "type { CellContext }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ usePositionPreviewActions }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionsTable/services/actions/usePositionPreviewActions"
+      },
+      {
+        "binding": "{ UnderlyingStatusControl }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/UnderlyingStatusControl.feature"
+      },
+      {
+        "binding": "{ statusForPosition }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/statusForPosition"
+      },
+      {
+        "binding": "{ getPositionAllocationKey }",
+        "source": "@/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey"
+      },
+      {
+        "binding": "type { TableRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Decorative }",
+        "source": "@/shared/ui/controls/Decorative.view"
+      },
+      {
+        "binding": "{ PieChartIcon }",
+        "source": "@/shared/ui/icons/PieChartIcon.view"
+      },
+      {
+        "binding": "{ Grid }",
+        "source": "@/shared/ui/layout/Grid.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Preview }",
+        "source": "@/shared/ui/Preview.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      }
+    ],
+    "jsx": [
+      "Decorative",
+      "Grid",
+      "Inline",
+      "Layout",
+      "PieChartIcon",
+      "Preview.Trigger",
+      "Surface",
+      "TableRow",
+      "UnderlyingStatusControl"
+    ],
+    "calls": [
+      "getBoundingClientRect",
+      "getPositionAllocationKey",
+      "usePositionPreviewActions"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionIncomeCell.feature.tsx",
+    "lines": 142,
+    "imports": [
+      {
+        "binding": "type { Row }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ usePositionTableFormatters }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters"
+      },
+      {
+        "binding": "{ calculatePassiveIncomeTax }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/calculatePositionTableValues/calculatePassiveIncomeTax"
+      },
+      {
+        "binding": "{ isTaxFreePassiveIncome }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/positionDisplayRules/isTaxFreePassiveIncome"
+      },
+      {
+        "binding": "type { PositionRow, TableRow, }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Layout", "PositionPassiveIncome", "Stack", "TableRow", "Text"],
+    "calls": [
+      "calculatePassiveIncomeTax",
+      "formatMoney",
+      "formatPercentage",
+      "isTaxFreePassiveIncome",
+      "usePositionTableFormatters"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionRealizedCell.feature.tsx",
+    "lines": 36,
+    "imports": [
+      {
+        "binding": "type { Row }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ GainCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/GainCell.view"
+      },
+      {
+        "binding": "{ RealizedGainCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/gainCells/RealizedGainCell.feature"
+      },
+      {
+        "binding": "{ usePositionTableFormatters }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters"
+      },
+      {
+        "binding": "type { TableRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["GainCell", "Layout", "RealizedGainCell", "TableRow", "Text"],
+    "calls": ["formatMoney", "usePositionTableFormatters"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionUnrealizedCell.feature.tsx",
+    "lines": 25,
+    "imports": [
+      {
+        "binding": "type { Row }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ UnrealizedGainCell }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/gainCells/UnrealizedGainCell.feature"
+      },
+      {
+        "binding": "{ usePositionTableFormatters }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters"
+      },
+      {
+        "binding": "type { TableRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["TableRow", "Text", "UnrealizedGainCell"],
+    "calls": ["formatMoney", "formatNumber", "usePositionTableFormatters"]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionValueCell.feature.tsx",
+    "lines": 101,
+    "imports": [
+      {
+        "binding": "type { Row }",
+        "source": "@tanstack/react-table"
+      },
+      {
+        "binding": "{ usePositionTableFormatters }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/formatters/usePositionTableFormatters"
+      },
+      {
+        "binding": "{ shouldShowPositionQuantity }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/helpers/transformers/shouldShowPositionQuantity"
+      },
+      {
+        "binding": "type { TableRow }",
+        "source": "@/domains/portfolio/shared/types/positionRow.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Inline", "Layout", "Stack", "TableRow", "Text"],
+    "calls": [
+      "formatMoney",
+      "formatNumber",
+      "shouldShowPositionQuantity",
+      "usePositionTableFormatters"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionDividendsHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionRealizedHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionTotalRealizedHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionTotalReturnPctHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionUnrealizedHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionValueHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/positionColumnHeaders/PositionXirrHeader.feature.tsx",
+    "lines": 14,
+    "imports": [
+      {
+        "binding": "{ PositionSortHeader }",
+        "source": "@/domains/portfolio/features/holdings/features/positions/components/PositionSortHeader.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      }
+    ],
+    "jsx": ["PositionSortHeader"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature.tsx",
+    "lines": 21,
+    "imports": [
+      {
+        "binding": "type { OverviewWindows }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ useDashboardFilterPanel }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardFilterPanel"
+      },
+      {
+        "binding": "{ OverviewPeriodFilterView }",
+        "source": "./OverviewPeriodFilter.view"
+      }
+    ],
+    "jsx": ["OverviewPeriodFilterView"],
+    "calls": ["useDashboardFilterPanel"]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+    "lines": 440,
+    "imports": [
+      {
+        "binding": "type { ReactNode }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useFormatOverviewIrrValue }",
+        "source": "@/domains/portfolio/features/overview/helpers/formatters/useFormatOverviewIrrValue"
+      },
+      {
+        "binding": "type { ComparedMetric, OverviewComparison, OverviewConcentrationComparison, }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ getConcentrationTone }",
+        "source": "@/domains/portfolio/features/overview/pages/helpers/presenters/getConcentrationTone"
+      },
+      {
+        "binding": "{ getOverviewPerformanceTone }",
+        "source": "@/domains/portfolio/features/overview/pages/helpers/presenters/getOverviewPerformanceTone"
+      },
+      {
+        "binding": "{ DeltaBadge }",
+        "source": "@/domains/portfolio/features/overview/pages/overviewMetrics/DeltaBadge.view"
+      },
+      {
+        "binding": "{ PreviousValue }",
+        "source": "@/domains/portfolio/features/overview/pages/overviewMetrics/PreviousValue.view"
+      },
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "{ useDashboardNavigation }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardNavigation"
+      },
+      {
+        "binding": "type { IrrStatus }",
+        "source": "@/domains/portfolio/shared/types/statuses.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      },
+      {
+        "binding": "{ MetricDelta }",
+        "source": "@/shared/ui/badge/MetricDelta.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ MetricCard, type MetricCardAccent }",
+        "source": "@/shared/ui/MetricCard.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": [
+      "CardShell",
+      "DeltaBadge",
+      "Inline",
+      "Layout",
+      "MetricCard",
+      "MetricCard.Action",
+      "MetricCard.Body",
+      "MetricCard.Header",
+      "MetricDelta",
+      "OverviewConcentrationCard",
+      "OverviewContributionsCard",
+      "OverviewPerformanceCard",
+      "OverviewValueCard",
+      "PreviousValue",
+      "ScopedInfoTooltip",
+      "Stack",
+      "SummaryCardsProps",
+      "Surface",
+      "Text"
+    ],
+    "calls": [
+      "formatMoney",
+      "formatOverviewIrrValue",
+      "formatPercentage",
+      "getConcentrationTone",
+      "getOverviewPerformanceTone",
+      "useDashboardNavigation",
+      "useFormatMoney",
+      "useFormatOverviewIrrValue",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+    "lines": 66,
+    "imports": [
+      {
+        "binding": "type { ComparedMetric, OverviewComparison, }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ OverviewConcentrationChart }",
+        "source": "@/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature"
+      },
+      {
+        "binding": "{ OverviewDriversChart }",
+        "source": "@/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature"
+      },
+      {
+        "binding": "{ OverviewValueChart }",
+        "source": "@/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature"
+      },
+      {
+        "binding": "type { IrrStatus }",
+        "source": "@/domains/portfolio/shared/types/statuses.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ OverviewSummaryCards }",
+        "source": "./OverviewSummaryCards.feature"
+      }
+    ],
+    "jsx": [
+      "Layout",
+      "OverviewConcentrationChart",
+      "OverviewDriversChart",
+      "OverviewSummaryCards",
+      "OverviewValueChart",
+      "Surface",
+      "Text"
+    ],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/EmptyChart.feature.tsx",
+    "lines": 34,
+    "imports": [
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Inline", "Layout", "ScopedInfoTooltip", "Surface", "Text"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+    "lines": 55,
+    "imports": [
+      {
+        "binding": "{ useState }",
+        "source": "react"
+      },
+      {
+        "binding": "type { OverviewConcentrationComparison }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { ConcentrationMode }",
+        "source": "@/domains/portfolio/shared/types/concentrationMode.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ buildOverviewConcentrationRows }",
+        "source": "./helpers/presenters/buildOverviewConcentrationRows"
+      },
+      {
+        "binding": "{ OverviewConcentrationChartView }",
+        "source": "./OverviewConcentrationChart.view"
+      }
+    ],
+    "jsx": [
+      "ConcentrationMode",
+      "OverviewConcentrationChartView",
+      "ScopedInfoTooltip"
+    ],
+    "calls": ["buildOverviewConcentrationRows"]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewDriversChart.feature.tsx",
+    "lines": 35,
+    "imports": [
+      {
+        "binding": "type { OverviewComparison }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ EmptyChart }",
+        "source": "./EmptyChart.feature"
+      },
+      {
+        "binding": "{ buildOverviewDriverPresentation }",
+        "source": "./helpers/presenters/buildOverviewDriverPresentation"
+      },
+      {
+        "binding": "{ OverviewDriversChartView }",
+        "source": "./OverviewDriversChart.view"
+      }
+    ],
+    "jsx": ["EmptyChart", "OverviewDriversChartView", "ScopedInfoTooltip"],
+    "calls": ["buildOverviewDriverPresentation"]
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewValueChart.feature.tsx",
+    "lines": 37,
+    "imports": [
+      {
+        "binding": "type { OverviewComparison }",
+        "source": "@/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.types"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ EmptyChart }",
+        "source": "./EmptyChart.feature"
+      },
+      {
+        "binding": "{ OverviewValueChartView }",
+        "source": "./OverviewValueChart.view"
+      }
+    ],
+    "jsx": ["EmptyChart", "OverviewValueChartView", "ScopedInfoTooltip"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature.tsx",
+    "lines": 25,
+    "imports": [
+      {
+        "binding": "{ buildUnrealizedPnlHistory }",
+        "source": "@/domains/portfolio/features/performance/helpers/transformers/buildUnrealizedPnlHistory"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { PortfolioHistoryPoint }",
+        "source": "@/domains/portfolio/shared/types/portfolioHistoryPoint.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ UnrealizedPnlChartView }",
+        "source": "./UnrealizedPnlChart.view"
+      }
+    ],
+    "jsx": ["ScopedInfoTooltip", "UnrealizedPnlChartView"],
+    "calls": ["buildUnrealizedPnlHistory"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "lines": 72,
+    "imports": [
+      {
+        "binding": "{ buildAssetIrrRankings }",
+        "source": "@/domains/portfolio/features/performance/helpers/transformers/buildAssetIrrRankings"
+      },
+      {
+        "binding": "type { AssetIrrSummary }",
+        "source": "@/domains/portfolio/features/performance/types/assetIrr.type"
+      },
+      {
+        "binding": "type { IrrStatus }",
+        "source": "@/domains/portfolio/shared/types/statuses.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ AssetIrrResultsView }",
+        "source": "./AssetIrrResults.view"
+      },
+      {
+        "binding": "{ MetricLabel }",
+        "source": "./MetricLabel.feature"
+      }
+    ],
+    "jsx": ["AssetIrrResultsView", "Layout", "MetricLabel", "Surface"],
+    "calls": ["buildAssetIrrRankings"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/MetricLabel.feature.tsx",
+    "lines": 23,
+    "imports": [
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": ["Inline", "ScopedInfoTooltip", "Text"],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx",
+    "lines": 277,
+    "imports": [
+      {
+        "binding": "{ ScopeProvider }",
+        "source": "jotai-scope"
+      },
+      {
+        "binding": "{ useState }",
+        "source": "react"
+      },
+      {
+        "binding": "{ useContributionHorizon }",
+        "source": "@/domains/portfolio/features/performance/services/useContributionHorizon"
+      },
+      {
+        "binding": "{ contributionHorizonAtom }",
+        "source": "@/domains/portfolio/features/performance/stores/contributionHorizon.atoms"
+      },
+      {
+        "binding": "type { AssetIrrSummary }",
+        "source": "@/domains/portfolio/features/performance/types/assetIrr.type"
+      },
+      {
+        "binding": "type { ContributionHorizon, PerformanceContribution, PerformanceContributionSummary, }",
+        "source": "@/domains/portfolio/features/performance/types/performanceContributionSummary.type"
+      },
+      {
+        "binding": "type { FilterScopeSpec, PeriodScopeMode, }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { IrrStatus }",
+        "source": "@/domains/portfolio/shared/types/statuses.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Group }",
+        "source": "@/shared/ui/controls/Group.view"
+      },
+      {
+        "binding": "{ ToggleButton }",
+        "source": "@/shared/ui/controls/ToggleButton.view"
+      },
+      {
+        "binding": "{ Grid }",
+        "source": "@/shared/ui/layout/Grid.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Stack }",
+        "source": "@/shared/ui/layout/Stack.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ AssetIrrView }",
+        "source": "./AssetIrrView.feature"
+      },
+      {
+        "binding": "{ ContributionListView }",
+        "source": "./ContributionList.view"
+      },
+      {
+        "binding": "{ ContributionSummaryMetricsView }",
+        "source": "./ContributionSummaryMetrics.view"
+      },
+      {
+        "binding": "{ MetricLabel }",
+        "source": "./MetricLabel.feature"
+      }
+    ],
+    "jsx": [
+      "AssetIrrView",
+      "ContributionList",
+      "ContributionListView",
+      "ContributionRankings",
+      "ContributionSummaryMetrics",
+      "ContributionSummaryMetricsView",
+      "ContributionSummaryMetricsView.IrrLabel",
+      "ContributionSummaryMetricsView.NetLabel",
+      "Grid",
+      "Group",
+      "Inline",
+      "Layout",
+      "MetricLabel",
+      "PerformanceContributionContent",
+      "PerformanceView",
+      "ScopeProvider",
+      "ScopedInfoTooltip",
+      "Stack",
+      "Surface",
+      "Text",
+      "ToggleButton"
+    ],
+    "calls": ["setView", "useContributionHorizon"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature.tsx",
+    "lines": 44,
+    "imports": [
+      {
+        "binding": "{ useFormatIrrKpiValue }",
+        "source": "@/domains/portfolio/features/performance/helpers/formatters/useFormatIrrKpiValue"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "type { IrrKpiProps }",
+        "source": "./portfolioKpis.types"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatIrrKpiValue", "getPerformanceTone", "useFormatIrrKpiValue"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetContributionsKpi.feature.tsx",
+    "lines": 35,
+    "imports": [
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatMoney", "useFormatMoney"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetPortfolioValueKpi.feature.tsx",
+    "lines": 36,
+    "imports": [
+      {
+        "binding": "type { PerformanceSummary }",
+        "source": "@/domains/portfolio/features/performance/types/performanceSummary.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatMoney", "useFormatMoney"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature.tsx",
+    "lines": 42,
+    "imports": [
+      {
+        "binding": "type { PerformanceSummary }",
+        "source": "@/domains/portfolio/features/performance/types/performanceSummary.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatMoney", "getPerformanceTone", "useFormatMoney"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/NetUnrealizedKpi.feature.tsx",
+    "lines": 42,
+    "imports": [
+      {
+        "binding": "type { PerformanceSummary }",
+        "source": "@/domains/portfolio/features/performance/types/performanceSummary.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatMoney", "getPerformanceTone", "useFormatMoney"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature.tsx",
+    "lines": 41,
+    "imports": [
+      {
+        "binding": "type { IncomeSummary }",
+        "source": "@/domains/portfolio/features/performance/types/incomeSummary.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.InlineNote",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": [
+      "formatMoney",
+      "formatPercentage",
+      "getPerformanceTone",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/TotalNetPerformanceKpi.feature.tsx",
+    "lines": 51,
+    "imports": [
+      {
+        "binding": "type { PerformanceSummary }",
+        "source": "@/domains/portfolio/features/performance/types/performanceSummary.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatMoney }",
+        "source": "@/shared/helpers/formatters/useFormatMoney"
+      },
+      {
+        "binding": "{ useFormatPercentage }",
+        "source": "@/shared/helpers/formatters/useFormatPercentage"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.InlineNote",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": [
+      "formatMoney",
+      "formatPercentage",
+      "getPerformanceTone",
+      "useFormatMoney",
+      "useFormatPercentage"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature.tsx",
+    "lines": 44,
+    "imports": [
+      {
+        "binding": "{ useFormatIrrKpiValue }",
+        "source": "@/domains/portfolio/features/performance/helpers/formatters/useFormatIrrKpiValue"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ getPerformanceTone }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/helpers/presenters/getPerformanceTone"
+      },
+      {
+        "binding": "{ Kpi }",
+        "source": "@/domains/portfolio/shared/components/kpis/kpi/Kpi.view"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "type { IrrKpiProps }",
+        "source": "./portfolioKpis.types"
+      }
+    ],
+    "jsx": [
+      "FilterScopeBadges",
+      "Kpi.Detail",
+      "Kpi.Label",
+      "Kpi.Root",
+      "Kpi.TooltipFooter",
+      "Kpi.Value",
+      "Kpi.ValueRow"
+    ],
+    "calls": ["formatIrrKpiValue", "getPerformanceTone", "useFormatIrrKpiValue"]
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx",
+    "lines": 175,
+    "imports": [
+      {
+        "binding": "{ useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ UNAVAILABLE_ASSET_IRR_SUMMARY }",
+        "source": "@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/unavailableAssetIrrSummary"
+      },
+      {
+        "binding": "{ useGetAssetIrrQuery }",
+        "source": "@/domains/portfolio/features/performance/apis/queries/useGetAssetIrrQuery/useGetAssetIrrQuery"
+      },
+      {
+        "binding": "{ PassiveIncomeChart }",
+        "source": "@/domains/portfolio/features/performance/components/PassiveIncomeChart.view"
+      },
+      {
+        "binding": "{ PerformanceContributionCard }",
+        "source": "@/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature"
+      },
+      {
+        "binding": "{ IrrSinceTrackingKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/IrrSinceTrackingKpi.feature"
+      },
+      {
+        "binding": "{ NetRealizedKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/NetRealizedKpi.feature"
+      },
+      {
+        "binding": "{ NetUnrealizedKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/NetUnrealizedKpi.feature"
+      },
+      {
+        "binding": "{ PassiveIncomeKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/PassiveIncomeKpi.feature"
+      },
+      {
+        "binding": "{ TotalNetPerformanceKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/TotalNetPerformanceKpi.feature"
+      },
+      {
+        "binding": "{ TrailingThreeYearIrrKpi }",
+        "source": "@/domains/portfolio/features/performance/components/portfolioKpis/TrailingThreeYearIrrKpi.feature"
+      },
+      {
+        "binding": "{ TriChart }",
+        "source": "@/domains/portfolio/features/performance/components/TriChart/TriChart.view"
+      },
+      {
+        "binding": "{ UnrealizedPnlChart }",
+        "source": "@/domains/portfolio/features/performance/components/UnrealizedPnlChart.feature"
+      },
+      {
+        "binding": "{ computePerformanceContributions }",
+        "source": "@/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions"
+      },
+      {
+        "binding": "type { IncomeSummary }",
+        "source": "@/domains/portfolio/features/performance/types/incomeSummary.type"
+      },
+      {
+        "binding": "type { PassiveIncomePoint }",
+        "source": "@/domains/portfolio/features/performance/types/passiveIncomePoint.type"
+      },
+      {
+        "binding": "type { PerformanceSummary }",
+        "source": "@/domains/portfolio/features/performance/types/performanceSummary.type"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { PortfolioHistoryPoint }",
+        "source": "@/domains/portfolio/shared/types/portfolioHistoryPoint.type"
+      },
+      {
+        "binding": "type { RawOperation }",
+        "source": "@/domains/portfolio/shared/types/rawOperation.type"
+      },
+      {
+        "binding": "type { RawPosition }",
+        "source": "@/domains/portfolio/shared/types/rawPosition.type"
+      },
+      {
+        "binding": "type { IrrStatus }",
+        "source": "@/domains/portfolio/shared/types/statuses.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": [
+      "Inline",
+      "IrrSinceTrackingKpi",
+      "Layout",
+      "NetRealizedKpi",
+      "NetUnrealizedKpi",
+      "PassiveIncomeChart",
+      "PassiveIncomeKpi",
+      "PerformanceContributionCard",
+      "ScopedInfoTooltip",
+      "Surface",
+      "Text",
+      "TotalNetPerformanceKpi",
+      "TrailingThreeYearIrrKpi",
+      "TriChart",
+      "UnrealizedPnlChart"
+    ],
+    "calls": [
+      "computePerformanceContributions",
+      "useGetAssetIrrQuery",
+      "useMemo"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+    "lines": 154,
+    "imports": [
+      {
+        "binding": "type { AccountTreeProps }",
+        "source": "@/domains/portfolio/features/scope-selection/components/accountTreeSelect/accountTreeSelect.types"
+      },
+      {
+        "binding": "{ accountsForType }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountsForType"
+      },
+      {
+        "binding": "{ accountTypeSelectionState }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountTypeSelectionState"
+      },
+      {
+        "binding": "{ toggleAccountTypeSelection }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/toggleAccountTypeSelection"
+      },
+      {
+        "binding": "{ toggle }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/toggle"
+      },
+      {
+        "binding": "{ useFormatAccountLabel }",
+        "source": "@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatNumber }",
+        "source": "@/shared/helpers/formatters/useFormatNumber"
+      },
+      {
+        "binding": "{ Checkbox }",
+        "source": "@/shared/ui/Checkbox.view"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ ChoiceRow }",
+        "source": "@/shared/ui/formElements/ChoiceRow.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Inset }",
+        "source": "@/shared/ui/layout/Inset.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": [
+      "Button",
+      "Checkbox",
+      "ChoiceRow",
+      "Inline",
+      "Inset",
+      "Layout",
+      "Surface",
+      "Text",
+      "TreeAccountRow",
+      "TreeAccountType"
+    ],
+    "calls": [
+      "formatAccountLabel",
+      "formatNumber",
+      "toggleAccountTypeSelection",
+      "useFormatAccountLabel",
+      "useFormatNumber"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx",
+    "lines": 195,
+    "imports": [
+      {
+        "binding": "{ useState }",
+        "source": "react"
+      },
+      {
+        "binding": "type { AccountTreeProps }",
+        "source": "@/domains/portfolio/features/scope-selection/components/accountTreeSelect/accountTreeSelect.types"
+      },
+      {
+        "binding": "{ useFormatAccountSelectionLabel }",
+        "source": "@/domains/portfolio/features/scope-selection/components/accountTreeSelect/helpers/formatters/useFormatAccountSelectionLabel"
+      },
+      {
+        "binding": "{ accountsForType }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountsForType"
+      },
+      {
+        "binding": "{ accountTypeSelectionState }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/accountTypeSelectionState"
+      },
+      {
+        "binding": "{ toggleAccountTypeSelection }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/accountTreeSelection/toggleAccountTypeSelection"
+      },
+      {
+        "binding": "{ toggle }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/toggle"
+      },
+      {
+        "binding": "{ useFormatAccountLabel }",
+        "source": "@/domains/portfolio/shared/helpers/formatters/useFormatAccountLabel"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Checkbox }",
+        "source": "@/shared/ui/Checkbox.view"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ Decorative }",
+        "source": "@/shared/ui/controls/Decorative.view"
+      },
+      {
+        "binding": "{ ChoiceRow }",
+        "source": "@/shared/ui/formElements/ChoiceRow.view"
+      },
+      {
+        "binding": "{ SelectionFrame }",
+        "source": "@/shared/ui/formElements/SelectionFrame.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Inset }",
+        "source": "@/shared/ui/layout/Inset.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Popover }",
+        "source": "@/shared/ui/Popover.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": [
+      "Button",
+      "Checkbox",
+      "ChoiceRow",
+      "Decorative",
+      "Inline",
+      "Inset",
+      "Layout",
+      "Popover",
+      "Popover.Content",
+      "Popover.Trigger",
+      "SelectAccountRow",
+      "SelectAccountType",
+      "SelectionFrame",
+      "Surface",
+      "Text"
+    ],
+    "calls": [
+      "formatAccountLabel",
+      "formatSelection",
+      "toggleAccountTypeSelection",
+      "useFormatAccountLabel",
+      "useFormatAccountSelectionLabel",
+      "useState"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/ActiveFilterSummary.feature.tsx",
+    "lines": 83,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "type { ReactNode }",
+        "source": "react"
+      },
+      {
+        "binding": "{ filterSummariesForTab }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/ActiveFilterSummary/helpers/presenters/filterSummariesForTab"
+      },
+      {
+        "binding": "{ clearFilterGroup }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/clearFilterGroup"
+      },
+      {
+        "binding": "{ useDashboardFilters }",
+        "source": "@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters"
+      },
+      {
+        "binding": "type { FilterSummaryItem }",
+        "source": "@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type"
+      },
+      {
+        "binding": "{ dashboardActiveTabAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardNavigation/dashboardActiveTab.atoms"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ partitionSlot }",
+        "source": "@/shared/helpers/presenters/partitionSlot"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ Decorative }",
+        "source": "@/shared/ui/controls/Decorative.view"
+      },
+      {
+        "binding": "{ Group }",
+        "source": "@/shared/ui/controls/Group.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      },
+      {
+        "binding": "{ ActiveFilterActions }",
+        "source": "./ActiveFilterActions.view"
+      },
+      {
+        "binding": "{ ActiveFilterLeading }",
+        "source": "./ActiveFilterLeading.view"
+      }
+    ],
+    "jsx": [
+      "ActiveFilterChip",
+      "Button",
+      "Decorative",
+      "Group",
+      "Inline",
+      "Layout",
+      "Text"
+    ],
+    "calls": [
+      "filterSummariesForTab",
+      "setFilters",
+      "useAtomValue",
+      "useDashboardFilters"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/FilterButton.feature.tsx",
+    "lines": 40,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useDashboardFilterPanel }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardFilterPanel"
+      },
+      {
+        "binding": "{ dashboardFiltersOpenAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ useFormatNumber }",
+        "source": "@/shared/helpers/formatters/useFormatNumber"
+      },
+      {
+        "binding": "{ SelectionCount }",
+        "source": "@/shared/ui/badge/SelectionCount.view"
+      },
+      {
+        "binding": "{ DialogButton }",
+        "source": "@/shared/ui/controls/DialogButton.view"
+      },
+      {
+        "binding": "{ FilterIcon }",
+        "source": "@/shared/ui/formElements/FilterIcon.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      }
+    ],
+    "jsx": ["DialogButton", "FilterIcon", "Layout", "SelectionCount"],
+    "calls": [
+      "formatNumber",
+      "useAtomValue",
+      "useDashboardFilterPanel",
+      "useFormatNumber"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/FilterPanel.feature.tsx",
+    "lines": 357,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ AccountTree }",
+        "source": "@/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature"
+      },
+      {
+        "binding": "{ Chip }",
+        "source": "@/domains/portfolio/features/scope-selection/components/Chip.view"
+      },
+      {
+        "binding": "{ toDateInputValue }",
+        "source": "@/domains/portfolio/features/scope-selection/components/filterBar/FilterPanel/helpers/presenters/toDateInputValue"
+      },
+      {
+        "binding": "{ FilterSection }",
+        "source": "@/domains/portfolio/features/scope-selection/components/FilterSection.view"
+      },
+      {
+        "binding": "{ useFormatOperationType }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/formatters/useFormatOperationType"
+      },
+      {
+        "binding": "{ presetDateFrom }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/presetDateFrom"
+      },
+      {
+        "binding": "{ toggle }",
+        "source": "@/domains/portfolio/features/scope-selection/helpers/transformers/toggle"
+      },
+      {
+        "binding": "{ useDashboardFilters }",
+        "source": "@/domains/portfolio/features/scope-selection/services/actions/useDashboardFilters"
+      },
+      {
+        "binding": "{ usePortfolioFilterOptions }",
+        "source": "@/domains/portfolio/features/scope-selection/services/usePortfolioFilterOptions"
+      },
+      {
+        "binding": "type { FilterVisibility }",
+        "source": "@/domains/portfolio/features/scope-selection/types/portfolioFilterPresentation.type"
+      },
+      {
+        "binding": "{ useDashboardFilterPanel }",
+        "source": "@/domains/portfolio/shared/services/actions/useDashboardFilterPanel"
+      },
+      {
+        "binding": "{ dashboardFiltersAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms"
+      },
+      {
+        "binding": "{ dashboardFiltersOpenAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFiltersOpen.atoms"
+      },
+      {
+        "binding": "type { OperationType }",
+        "source": "@/domains/portfolio/shared/types/operationType.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ DATE_FILTER_SCHEMA }",
+        "source": "@/shared/schemas/calendarDate/dateFilterSchema"
+      },
+      {
+        "binding": "{ Checkbox }",
+        "source": "@/shared/ui/Checkbox.view"
+      },
+      {
+        "binding": "{ Button }",
+        "source": "@/shared/ui/controls/Button.view"
+      },
+      {
+        "binding": "{ Input }",
+        "source": "@/shared/ui/controls/Input.view"
+      },
+      {
+        "binding": "{ ChoiceRow }",
+        "source": "@/shared/ui/formElements/ChoiceRow.view"
+      },
+      {
+        "binding": "{ FieldSeparator }",
+        "source": "@/shared/ui/formElements/FieldSeparator.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ SidePanel }",
+        "source": "@/shared/ui/SidePanel.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      },
+      {
+        "binding": "{ Text }",
+        "source": "@/shared/ui/Text.view"
+      }
+    ],
+    "jsx": [
+      "AccountFilterSection",
+      "AccountTree",
+      "Button",
+      "Checkbox",
+      "Chip",
+      "ChoiceRow",
+      "DatePresetChip",
+      "FieldSeparator",
+      "FilterPanelProps",
+      "FilterSection",
+      "Inline",
+      "Input",
+      "Layout",
+      "OperationTypeChip",
+      "PeriodFilterSection",
+      "PositionFilterSection",
+      "SidePanel",
+      "SidePanel.Description",
+      "SidePanel.HeaderActions",
+      "SidePanel.Title",
+      "Surface",
+      "Text"
+    ],
+    "calls": [
+      "formatOperationType",
+      "getTime",
+      "setFilters",
+      "useAtomValue",
+      "useDashboardFilterPanel",
+      "useDashboardFilters",
+      "useFormatOperationType",
+      "usePortfolioFilterOptions"
+    ]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.feature.tsx",
+    "lines": 24,
+    "imports": [
+      {
+        "binding": "{ useIncomePlacementChart }",
+        "source": "@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/services/useIncomePlacementChart"
+      },
+      {
+        "binding": "type { AnnualIncomeSavingsPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ IncomePlacementRelationshipChartView }",
+        "source": "./IncomePlacementRelationshipChart.view"
+      }
+    ],
+    "jsx": ["IncomePlacementRelationshipChartView", "ScopedInfoTooltip"],
+    "calls": ["useIncomePlacementChart"]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature.tsx",
+    "lines": 27,
+    "imports": [
+      {
+        "binding": "{ type ReactNode, useMemo }",
+        "source": "react"
+      },
+      {
+        "binding": "{ groupMonthlyTooltipOperations }",
+        "source": "@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations"
+      },
+      {
+        "binding": "type { MonthlyOperationsByMonth }",
+        "source": "@/domains/portfolio/features/wealth/types/monthlyOperation.type"
+      },
+      {
+        "binding": "type { TrailingSavingCapacityPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type"
+      },
+      {
+        "binding": "{ MonthlySavingsChartView }",
+        "source": "./MonthlySavingsChart.view"
+      }
+    ],
+    "jsx": ["MonthlySavingsChartView"],
+    "calls": ["groupMonthlyTooltipOperations", "useMemo"]
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/pages/WealthTab.feature.tsx",
+    "lines": 151,
+    "imports": [
+      {
+        "binding": "{ AccountTypeBreakdownChart }",
+        "source": "@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view"
+      },
+      {
+        "binding": "{ AccountTypeHistoryChart }",
+        "source": "@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryChart.view"
+      },
+      {
+        "binding": "{ AnnualIncomeSavingsChart }",
+        "source": "@/domains/portfolio/features/wealth/components/AnnualIncomeSavingsChart.view"
+      },
+      {
+        "binding": "{ EvolutionChart }",
+        "source": "@/domains/portfolio/features/wealth/components/EvolutionChart/EvolutionChart.view"
+      },
+      {
+        "binding": "{ IncomePlacementRelationshipChart }",
+        "source": "@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/IncomePlacementRelationshipChart.feature"
+      },
+      {
+        "binding": "{ MonthlySavingsChart }",
+        "source": "@/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.feature"
+      },
+      {
+        "binding": "{ WealthComparisonKpi }",
+        "source": "@/domains/portfolio/features/wealth/components/WealthComparisonKpi.view"
+      },
+      {
+        "binding": "{ WealthDriversChart }",
+        "source": "@/domains/portfolio/features/wealth/components/WealthDriversChart.view"
+      },
+      {
+        "binding": "type { AccountTypeHistory }",
+        "source": "@/domains/portfolio/features/wealth/types/accountTypeHistory.type"
+      },
+      {
+        "binding": "type { AccountTypeHistoryPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/accountTypeHistory.type"
+      },
+      {
+        "binding": "type { AccountTypePoint }",
+        "source": "@/domains/portfolio/features/wealth/types/accountTypePoint.type"
+      },
+      {
+        "binding": "type { AnnualIncomeSavingsPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type"
+      },
+      {
+        "binding": "type { MonthlyOperationsByMonth }",
+        "source": "@/domains/portfolio/features/wealth/types/monthlyOperation.type"
+      },
+      {
+        "binding": "type { TrailingSavingCapacityPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/trailingSavingCapacityPoint.type"
+      },
+      {
+        "binding": "type { TrailingYearOverYear }",
+        "source": "@/domains/portfolio/features/wealth/types/trailingYearOverYear.type"
+      },
+      {
+        "binding": "type { WealthDriverPoint }",
+        "source": "@/domains/portfolio/features/wealth/types/wealthDriverPoint.type"
+      },
+      {
+        "binding": "{ FilterScopeBadges }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ ScopedInfoTooltip }",
+        "source": "@/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature"
+      },
+      {
+        "binding": "type { PortfolioHistoryPoint }",
+        "source": "@/domains/portfolio/shared/types/portfolioHistoryPoint.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Surface }",
+        "source": "@/shared/ui/Surface.view"
+      }
+    ],
+    "jsx": [
+      "AccountTypeBreakdownChart",
+      "AccountTypeHistoryChart",
+      "AnnualIncomeSavingsChart",
+      "EvolutionChart",
+      "FilterScopeBadges",
+      "IncomePlacementRelationshipChart",
+      "Inline",
+      "MonthlySavingsChart",
+      "ScopedInfoTooltip",
+      "Surface",
+      "WealthComparisonKpi",
+      "WealthDriversChart"
+    ],
+    "calls": []
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/filters/FilterScopeBadges.feature.tsx",
+    "lines": 45,
+    "imports": [
+      {
+        "binding": "{ useAtomValue }",
+        "source": "jotai"
+      },
+      {
+        "binding": "{ useAccountFilterLabels }",
+        "source": "@/domains/portfolio/shared/services/useAccountFilterLabels"
+      },
+      {
+        "binding": "{ dashboardFiltersAtom }",
+        "source": "@/domains/portfolio/shared/stores/dashboardFilters/dashboardFilters.atoms"
+      },
+      {
+        "binding": "type { FilterScopeSpec }",
+        "source": "@/domains/portfolio/shared/types/filterScope.type"
+      },
+      {
+        "binding": "i18n",
+        "source": "@/i18n/i18n"
+      },
+      {
+        "binding": "{ InlineGroup }",
+        "source": "@/shared/ui/controls/InlineGroup.view"
+      },
+      {
+        "binding": "{ Inline }",
+        "source": "@/shared/ui/layout/Inline.view"
+      },
+      {
+        "binding": "{ Layout }",
+        "source": "@/shared/ui/layout/Layout.view"
+      },
+      {
+        "binding": "{ FilterScopeBadge }",
+        "source": "./FilterScopeBadges.view"
+      },
+      {
+        "binding": "{ useFilterScopeBadges }",
+        "source": "./helpers/presenters/useFilterScopeBadges"
+      }
+    ],
+    "jsx": ["FilterScopeBadge", "Inline", "InlineGroup", "Layout"],
+    "calls": ["useAccountFilterLabels", "useAtomValue", "useFilterScopeBadges"]
+  },
+  {
+    "file": "src/domains/portfolio/shared/components/kpis/ScopedInfoTooltip.feature.tsx",
+    "lines": 24,
+    "imports": [
+      {
+        "binding": "{ FilterScopeBadges, type FilterScopeSpec, }",
+        "source": "@/domains/portfolio/shared/components/filters/FilterScopeBadges.feature"
+      },
+      {
+        "binding": "{ InfoTooltip }",
+        "source": "./InfoTooltip.view"
+      }
+    ],
+    "jsx": ["FilterScopeBadges", "InfoTooltip", "InfoTooltip.Footer"],
+    "calls": []
+  }
+]

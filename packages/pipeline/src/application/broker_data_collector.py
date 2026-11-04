@@ -1,20 +1,13 @@
 """BrokerDataCollector: gathers ops/positions from every broker export."""
 
 from dataclasses import dataclass
-from pathlib import Path
 
 import pandas as pd
 
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import Operation, Position
-from src.infrastructure.broker_file_discovery import (
-    discover_prefixed_broker_groups,
-)
-from src.infrastructure.parsers.boursorama import BoursoramaLoader
-from src.infrastructure.parsers.direct import DirectLoader
-from src.infrastructure.parsers.revolut import RevolutLoader
-from src.infrastructure.parsers.valuations import ValuationsLoader
 from src.ports.allocation_repository import AllocationRepository
-from src.ports.parsers import BrokerLoader
+from src.ports.parsers import BrokerLoaderSource
 
 
 @dataclass
@@ -25,7 +18,7 @@ class ParseFailure:
 
 @dataclass
 class BrokerDataCollector:
-    """Runs every BrokerLoader found under input_dir and merges their output.
+    """Runs every discovered BrokerLoader and merges their output.
 
     A loader failing to parse its file (ValueError) doesn't stop the
     others — it's recorded as a ParseFailure for the caller to report
@@ -34,7 +27,7 @@ class BrokerDataCollector:
     would be ambiguous, so collection stops with an explicit error.
     """
 
-    input_dir: Path
+    loader_source: BrokerLoaderSource
     allocation_repo: AllocationRepository
 
     def collect(
@@ -48,9 +41,11 @@ class BrokerDataCollector:
         failures: list[ParseFailure] = []
         account_sources: dict[str, str] = {}
 
-        for loader in self._build_loaders():
+        for loader in self.loader_source.discover():
             try:
                 operations, positions = loader.load(ticker_map, asset_prices)
+            except DuplicateBrokerOperationsError:
+                raise
             except ValueError as exc:
                 print(f"[{loader.label}] ERROR: {exc}")
                 failures.append(
@@ -80,35 +75,3 @@ class BrokerDataCollector:
             )
 
         return all_operations, all_positions, failures
-
-    def _build_loaders(self) -> list[BrokerLoader]:
-        loaders: list[BrokerLoader] = []
-        brokers_dir = self.input_dir / "brokers"
-
-        for group in discover_prefixed_broker_groups(
-            brokers_dir, "boursorama"
-        ):
-            loaders.append(
-                BoursoramaLoader(group.files, account=group.account)
-            )
-
-        for group in discover_prefixed_broker_groups(brokers_dir, "revolut"):
-            loaders.append(
-                RevolutLoader(
-                    group.files,
-                    account=group.account,
-                    label=group.label,
-                )
-            )
-
-        for direct_file in sorted(
-            (self.input_dir / "brokers/direct").rglob("*.csv")
-        ):
-            loaders.append(DirectLoader(direct_file))
-
-        for val_file in sorted(
-            (self.input_dir / "brokers/valuations").rglob("*.csv")
-        ):
-            loaders.append(ValuationsLoader(val_file))
-
-        return loaders

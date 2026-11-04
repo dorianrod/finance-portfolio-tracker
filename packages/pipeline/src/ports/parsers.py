@@ -31,3 +31,15 @@ class BrokerLoader(Protocol):
         ticker_map: dict[str, dict],
         asset_prices: pd.DataFrame,
     ) -> tuple[list[Operation], list[Position]]: ...
+
+
+class BrokerLoaderSource(Protocol):
+    """Discovers the broker loaders available for one pipeline run.
+
+    File-system conventions and concrete parser selection belong to an
+    infrastructure implementation.  The application layer only needs the
+    resulting loaders.
+    """
+
+    @abstractmethod
+    def discover(self) -> list[BrokerLoader]: ...

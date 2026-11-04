@@ -1,0 +1,48 @@
+import { accountFilterId } from '@/domains/portfolio/shared/helpers/transformers/accountFilter/accountFilterId'
+import type { PortfolioHistoryPoint } from '@/domains/portfolio/shared/types/portfolioHistoryPoint.type'
+import type { RawPositionRow } from '@/domains/portfolio/shared/types/rawPosition.type'
+
+// When an account filter is active, the portfolio-wide history series is
+// replaced with one rebuilt from raw per-account position snapshots
+// restricted to the selected accounts.
+export function applyAccountFilterToHistory(
+  allPositionRows: RawPositionRow[],
+  enrichedHistory: PortfolioHistoryPoint[],
+  accounts: Set<string>,
+): PortfolioHistoryPoint[] {
+  if (accounts.size === 0) return enrichedHistory
+
+  const byDate = new Map<number, { tv: number; cb: number; ug: number }>()
+  for (const p of allPositionRows) {
+    if (!accounts.has(accountFilterId(p))) continue
+    const { tv, cb, ug } = positionHistoryValues(p)
+    const cur = byDate.get(p.snapshot_date.getTime()) ?? { tv: 0, cb: 0, ug: 0 }
+    byDate.set(p.snapshot_date.getTime(), {
+      tv: cur.tv + tv,
+      cb: cur.cb + cb,
+      ug: cur.ug + ug,
+    })
+  }
+
+  return [...byDate.entries()]
+    .toSorted(([a], [b]) => a - b)
+    .map(([date, { tv, cb, ug }]) => ({
+      date: new Date(date),
+      total_value: tv,
+      total_cost_basis: Math.round(cb),
+      unrealized_gain: Math.round(ug),
+      net_cash_injected: 0,
+      cash_delta: null,
+      tri: null,
+      tri_rolling_1y: null,
+      tri_rolling_3y: null,
+    }))
+}
+
+function positionHistoryValues(position: RawPositionRow) {
+  return {
+    tv: position.total_value ?? 0,
+    cb: (position.quantity ?? 0) * (position.avg_buy_price ?? 0),
+    ug: position.unrealized_gain ?? 0,
+  }
+}

@@ -1,0 +1,17 @@
+import { queryOptions } from '@tanstack/react-query'
+
+import { PORTFOLIO_ENDPOINTS } from '@/domains/portfolio/shared/apis/endpoints'
+import { portfolioQueryKeys } from '@/domains/portfolio/shared/apis/queryKeys'
+import { RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA } from '@/domains/portfolio/shared/apis/schemas/portfolioCsvSchemas/rawSavingCapacityByAccountSchema'
+import { parseCsv } from '@/shared/csv/csvData/parseCsv'
+
+export const PORTFOLIO_ACCOUNT_SAVINGS_QUERY_OPTIONS = queryOptions({
+  queryKey: portfolioQueryKeys.data('account-savings-source'),
+  queryFn: () =>
+    parseCsv(
+      PORTFOLIO_ENDPOINTS.data.savingCapacityByAccount,
+      RAW_SAVING_CAPACITY_BY_ACCOUNT_SCHEMA,
+    ),
+  staleTime: Infinity,
+  gcTime: Infinity,
+})

@@ -10,12 +10,16 @@ anything pushed to origin.
 
 Reads the text to scan from stdin (a commit message, or `git log -p`
 output for a push range) and exits non-zero if any blocklisted token
-is found, printing the offending tokens.
+is found, printing the offending tokens. Also checks the local home
+directory, including when portfolio data is unavailable. JSON escapes in
+retained audit reports are decoded before matching.
 """
 
 import csv
+import json
 import re
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 
@@ -127,34 +131,87 @@ def load_blocklist(data_dir: Path) -> set[str]:
     return clean_identifiers | distinctive_names
 
 
+def decoded_text(text: str) -> str:
+    """Expose JSON escapes in reports, including embedded source excerpts."""
+    return re.sub(
+        r'(?:\\u[0-9a-fA-F]{4}|\\["\\/bfnrt])+',
+        lambda match: json.loads('"' + match.group(0) + '"'),
+        text,
+    )
+
+
+def _token_pattern(token: str) -> str:
+    escaped = re.escape(token)
+    return f"(?i:{escaped})" if any(c.isspace() for c in token) else escaped
+
+
+@lru_cache(maxsize=4)
+def _blocklist_pattern(tokens: frozenset[str]) -> re.Pattern[str]:
+    alternatives = "|".join(_token_pattern(tok) for tok in sorted(tokens))
+    return re.compile(
+        r"(?<![A-Za-z0-9])(?:" + alternatives + r")(?![A-Za-z0-9])"
+    )
+
+
 def find_matches(text: str, tokens: set[str]) -> set[str]:
+    if not tokens:
+        return set()
+    text = text + "\n" + decoded_text(text)
+    prefilter = _blocklist_pattern(frozenset(tokens))
+    patterns = {
+        tok: re.compile(
+            r"(?<![A-Za-z0-9])" + _token_pattern(tok) + r"(?![A-Za-z0-9])"
+        )
+        for tok in tokens
+    }
+    # A match in one old report must not trigger a full-history search for
+    # every token. Keep detailed searches local to matching blocks. Padding
+    # preserves tokens and their word boundaries across block edges.
+    block_size = 64 * 1024
+    padding = max(map(len, tokens)) + 1
     found: set[str] = set()
-    for tok in tokens:
-        pattern = r"(?<![A-Za-z0-9])" + re.escape(tok) + r"(?![A-Za-z0-9])"
-        flags = re.IGNORECASE if any(char.isspace() for char in tok) else 0
-        if re.search(pattern, text, flags=flags):
-            found.add(tok)
+    for start in range(0, len(text), block_size):
+        end = min(start + block_size, len(text))
+        offset = max(0, start - 1)
+        block = text[offset:end + padding]
+        if not prefilter.search(block):
+            continue
+        for tok in tokens - found:
+            match = patterns[tok].search(block, start - offset)
+            if match is not None and match.start() < end - offset:
+                found.add(tok)
+        if found == tokens:
+            break
     return found
+
+
+def find_personal_paths(text: str) -> bool:
+    """Keep the local user's home directory out of retained evidence."""
+    home = str(Path.home())
+    if home == Path(home).anchor:
+        return False
+    pattern = re.escape(home) + r"(?![A-Za-z0-9_.-])"
+    return any(re.search(pattern, value) for value in (text, decoded_text(text)))
 
 
 def main() -> int:
     text = sys.stdin.read()
     tokens = load_blocklist(repo_root() / "data")
-    if not tokens:
-        # No local data (fresh clone, CI, ...) — nothing to check against.
-        return 0
-
     found = find_matches(text, tokens)
-    if found:
+    personal_paths = find_personal_paths(text)
+    if found or personal_paths:
         sys.stderr.write(
             "\nBLOCKED: personal portfolio data found in content"
             " being committed/pushed:\n"
         )
         for tok in sorted(found):
             sys.stderr.write(f"  - {tok}\n")
+        if personal_paths:
+            sys.stderr.write("  - local home directory (use a relative path)\n")
         sys.stderr.write(
-            "Remove these from the commit message, code, comments or test"
-            " fixtures (use generic placeholders instead), then retry.\n"
+            "Remove these from the commit message, code, comments, audit"
+            " reports or test fixtures (use generic placeholders instead),"
+            " then retry.\n"
             "Bypass (only if this is a false positive): git commit"
             " --no-verify / git push --no-verify\n"
         )

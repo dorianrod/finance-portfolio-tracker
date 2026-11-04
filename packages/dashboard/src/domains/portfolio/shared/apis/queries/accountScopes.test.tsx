@@ -1,0 +1,157 @@
+// @vitest-environment jsdom
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react'
+import type { PropsWithChildren } from 'react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+import { useGetPassiveIncomeQuery } from '@/domains/portfolio/features/performance/apis/queries/useGetPassiveIncomeQuery'
+import { useAccountTypeHistory } from '@/domains/portfolio/features/wealth/services/useAccountTypeHistory'
+import { clearCsvCache } from '@/shared/csv/csvData/clearCsvCache'
+
+import { PORTFOLIO_POSITIONS_QUERY_OPTIONS } from './portfolioSourceQueries/portfolioPositionsQueryOptions'
+import { useGetSavingCapacityQuery } from './useGetSavingCapacityQuery'
+
+function queryWrapper(
+  client = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  }),
+) {
+  return function Wrapper({ children }: PropsWithChildren) {
+    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  }
+}
+
+afterEach(() => {
+  cleanup()
+  clearCsvCache()
+  vi.unstubAllGlobals()
+})
+
+function csv(text: string) {
+  return new Response(text, { headers: { 'Content-Type': 'text/csv' } })
+}
+
+describe('account-scoped queries', () => {
+  it('keeps savings available and marks the previous scope while the next request is pending', async () => {
+    let completeRequest!: (response: Response) => void
+    const pendingResponse = new Promise<Response>((resolve) => {
+      completeRequest = resolve
+    })
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>(async (input) =>
+        (input instanceof Request ? input.url : input.toString()).endsWith(
+          'saving_capacity_by_account.csv',
+        )
+          ? pendingResponse
+          : csv('snapshot_date,savings_delta,perf_delta\n2026-01-31,100,10\n'),
+      ),
+    )
+    const { result, rerender } = renderHook(
+      ({ accounts }) => useGetSavingCapacityQuery(accounts),
+      {
+        initialProps: { accounts: new Set<string>() },
+        wrapper: queryWrapper(),
+      },
+    )
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    rerender({ accounts: new Set(['A']) })
+    expect(result.current.isPending).toBe(false)
+    expect(result.current.isPlaceholderData).toBe(true)
+    expect(result.current.data?.[0].savings_delta).toBe(100)
+
+    await act(async () => {
+      completeRequest(
+        csv(
+          'snapshot_date,account,savings_delta,perf_delta\n2026-01-31,A,42,2\n',
+        ),
+      )
+    })
+    await waitFor(() => expect(result.current.isPlaceholderData).toBe(false))
+    expect(result.current.data?.[0].savings_delta).toBe(42)
+  })
+
+  it('preserves commas in passive-income account names and distinguishes cache scopes', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        csv(
+          'date,account,isin,ticker,name,operation_type,quantity,price_per_unit,total_amount,currency,realized_gain\n2026-01-01,"A,B",,,Fund,DIVIDEND,0,0,42,EUR,0\n2026-01-01,A,,,Fund,DIVIDEND,0,0,10,EUR,0\n',
+        ),
+      ),
+    )
+    const { result, rerender } = renderHook(
+      ({ accounts }) => useGetPassiveIncomeQuery(accounts),
+      {
+        initialProps: { accounts: new Set(['A,B']) },
+        wrapper: queryWrapper(),
+      },
+    )
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toEqual([
+      { year: 2026, dividends: 42, interest: 0 },
+    ])
+    rerender({ accounts: new Set(['A', 'B']) })
+    await waitFor(() =>
+      expect(result.current.data).toEqual([
+        { year: 2026, dividends: 10, interest: 0 },
+      ]),
+    )
+    expect(fetch).toHaveBeenCalledOnce()
+  })
+
+  it('preserves commas in savings account names', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        csv(
+          'snapshot_date,account,savings_delta,perf_delta\n2026-01-31,"A,B",42,2\n2026-01-31,A,10,1\n',
+        ),
+      ),
+    )
+    const { result, rerender } = renderHook(
+      ({ accounts }) => useGetSavingCapacityQuery(accounts),
+      {
+        wrapper: queryWrapper(),
+        initialProps: { accounts: new Set(['A,B']) },
+      },
+    )
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toEqual([
+      { date: new Date('2026-01-31'), savings_delta: 42, perf_delta: 2 },
+    ])
+    rerender({ accounts: new Set(['A']) })
+    await waitFor(() =>
+      expect(result.current.data).toEqual([
+        { date: new Date('2026-01-31'), savings_delta: 10, perf_delta: 1 },
+      ]),
+    )
+    expect(fetch).toHaveBeenCalledOnce()
+  })
+
+  it('preserves commas when aggregating account types', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        csv(
+          'snapshot_date,account,account_type,account_category,isin,ticker,name,total_value\n2026-01-31,"A,B",PEA,brokerage,,,Fund,42\n2026-01-31,A,PEA,brokerage,,,Fund,10\n',
+        ),
+      ),
+    )
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    })
+    await client.query(PORTFOLIO_POSITIONS_QUERY_OPTIONS)
+    const { result } = renderHook(
+      () => useAccountTypeHistory(new Set(['A,B'])),
+      {
+        wrapper: queryWrapper(client),
+      },
+    )
+    await waitFor(() =>
+      expect(result.current.data).toEqual([
+        { date: new Date('2026-01-31'), values: { PEA: 42 } },
+      ]),
+    )
+  })
+})

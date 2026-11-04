@@ -1,0 +1,44 @@
+[
+  {
+    "source": "src/app/DashboardSourceBoundary.view.tsx",
+    "test": "src/app/DashboardSourceBoundary.view.test.tsx",
+    "sha256": "c3ba4361a2b8335491213ff296c3b055af747b34bef838dd71c8ff6ee474f5d3",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/app/DashboardSources.feature.tsx",
+    "test": "src/app/DashboardSources.feature.test.tsx",
+    "sha256": "0f0f76611f6ee5df7397f6eddcb7bc9ca1c71f14762e146307638e01e0343b08",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/app/services/useCachedDashboardSources.ts",
+    "test": "src/app/services/useCachedDashboardSources.test.tsx",
+    "sha256": "ab658d9a0690a386c2f13d0896c0813641a1f978bed4630e3a1ec485b09f9352",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.view.tsx",
+    "test": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.view.test.tsx",
+    "sha256": "d128a871e0036e8f47ef5a333b0ec1ece307ff7cff7d01c86e0b39dba38de9a7",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.view.tsx",
+    "test": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.view.test.tsx",
+    "sha256": "a6fb5a07edb4977fe64c1aab536db01345c127ae3130514af64e28fcbec8d05a",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.tsx",
+    "test": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrResults.view.test.tsx",
+    "sha256": "de69dbe63b705c7ee555b5f8ad01cb072149fb4520fd973ee9fff8b96e0183f7",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  },
+  {
+    "source": "src/domains/portfolio/shared/apis/queries/useCachedPortfolioSourceQuery.ts",
+    "test": "src/domains/portfolio/shared/apis/queries/useCachedPortfolioSourceQuery.test.tsx",
+    "sha256": "2fc2477a815ac36a830aaa2532f6f6bccea1549a046c5ab68cdfb48882f17858",
+    "evidence": "phase2-tests-complete.txt; nominal plus edge/error cases; fixture/profile state isolated where applicable"
+  }
+]

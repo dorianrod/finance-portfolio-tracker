@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.domain.models import Operation, OperationType, Position
+from src.domain.parsing.broker_exports import combine_operation_exports
 from src.domain.parsing.numeric import parse_fr_number
 from src.domain.parsing.price_lookup import PriceLookup
 from src.domain.parsing.replay import annotate_realized_gains, replay_holdings
@@ -26,6 +27,7 @@ class BoursoramaLoader(BrokerLoader):
 
     filepaths: list[Path]
     account: str
+    as_of: date | None = None
 
     @property
     def label(self) -> str:
@@ -34,14 +36,16 @@ class BoursoramaLoader(BrokerLoader):
     def load(
         self, ticker_map: dict[str, dict], asset_prices: pd.DataFrame
     ) -> tuple[list[Operation], list[Position]]:
-        operations: list[Operation] = []
-        for filepath in self.filepaths:
-            operations.extend(parse_operations(filepath, account=self.account))
+        operations = merge_operations(self.filepaths, self.account)
+        if self.as_of is not None:
+            operations = [
+                op for op in operations if op.date.date() <= self.as_of
+            ]
         positions = compute_positions(
             operations,
             account=self.account,
             asset_prices=asset_prices,
-            snapshot_dates=month_end_dates(operations),
+            snapshot_dates=month_end_dates(operations, as_of=self.as_of),
         )
         return operations, positions
 
@@ -73,6 +77,15 @@ def _map_operation(raw: str) -> OperationType:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
+
+def merge_operations(
+    filepaths: list[Path], account: str
+) -> list[Operation]:
+    """Validate exports before replaying holdings or cash flows."""
+    return combine_operation_exports(
+        (str(path), parse_operations(path, account)) for path in filepaths
+    )
 
 
 def parse_operations(filepath: str | Path, account: str) -> list[Operation]:

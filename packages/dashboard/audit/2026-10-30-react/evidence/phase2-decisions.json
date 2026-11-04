@@ -1,0 +1,50 @@
+[
+  {
+    "file": "src/domains/portfolio/shared/helpers/transformers/portfolioFilters/useBuildAccountFilterLabels.ts",
+    "line": 7,
+    "decision": "account-scope-data-and-labels",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/domains/portfolio/features/overview/pages/OverviewPeriodFilter/OverviewPeriodFilter.feature.tsx",
+    "line": 7,
+    "decision": "comparison-period-control",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/domains/portfolio/features/wealth/services/useAccountTypeHistory.ts",
+    "line": 10,
+    "decision": "feature-source-acquisition",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/app/DashboardSources.feature.tsx",
+    "line": 18,
+    "decision": "persistent-dashboard-query-boundary",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "themeHtmlPlugin.ts",
+    "line": 6,
+    "decision": "prepaint-theme-token-source",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/domains/portfolio/features/holdings/features/positions/components/MiniDonut/MiniDonut.feature.tsx",
+    "line": 7,
+    "decision": "prepared-allocation-chart",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+    "line": 12,
+    "decision": "prepared-asset-irr-results",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  },
+  {
+    "file": "src/domains/portfolio/shared/apis/schemas/historicalFundHoldingSchema.ts",
+    "line": 12,
+    "decision": "shared-historical-fund-response",
+    "status": "implemented; assumptions re-reviewed under authorized correction"
+  }
+]

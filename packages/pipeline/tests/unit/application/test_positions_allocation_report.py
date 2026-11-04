@@ -1,0 +1,377 @@
+"""Tests for the allocation time-series report builders.
+
+The AllocationRepository port (src.ports.allocation_repository) is the
+boundary to fake: _FakeAllocationRepository below satisfies it structurally
+with an in-memory allocation table, exercising the real matching cascade
+(ISIN -> exact normalized name -> "clean" normalized name with ticker
+codes/parens stripped) and allocation-date selection exactly as production
+does.
+"""
+
+from datetime import date
+from pathlib import Path
+
+import pandas as pd
+import pytest
+
+from src.application.positions_allocation_report import (
+    build_positions_allocation,
+    build_positions_allocation_by_isin,
+)
+
+_VALUE_COLS = ["france", "usa"]
+_DUMMY_PATH = Path("dummy.xlsx")  # never opened, only the date is used
+
+
+class _FakeAllocationRepository:
+    def __init__(self, file_date: date, tables: dict) -> None:
+        self._file_date = file_date
+        self._tables = tables
+
+    def file_dates(self) -> list[tuple[date, Path]]:
+        return [(self._file_date, _DUMMY_PATH)]
+
+    def load_allocation_tables(self, as_of: date):
+        if as_of < self._file_date:
+            return None
+        return self._tables
+
+    def load_ticker_data(self):
+        raise AssertionError("not used by positions_allocation")
+
+
+def _allocation_table() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "nom_placement": [
+                "TestStock A",
+                "Global EM UCITS ETF (Acc)",
+                "Cash EUR",
+            ],
+            "id": ["FR1", None, ""],
+            "france": [100.0, 0.0, 100.0],
+            "usa": [0.0, 100.0, 0.0],
+        }
+    )
+
+
+def _repo(file_date: date = date(2024, 1, 1)) -> _FakeAllocationRepository:
+    return _FakeAllocationRepository(
+        file_date, {"geo": (_allocation_table(), _VALUE_COLS)}
+    )
+
+
+def _positions_df() -> pd.DataFrame:
+    snap = date(2024, 2, 29)
+    return pd.DataFrame(
+        [
+            # exact ISIN match
+            {
+                "snapshot_date": snap,
+                "isin": "FR1",
+                "name": "TestStock A",
+                "total_value": 1000.0,
+            },
+            # no isin -> exact normalized-name match (case/whitespace only)
+            {
+                "snapshot_date": snap,
+                "isin": "",
+                "name": "Global EM UCITS ETF (Acc)",
+                "total_value": 500.0,
+            },
+            # no isin, exact match fails (extra ticker suffix) -> falls
+            # back to "clean" name match (parens unwrapped, ticker
+            # stripped)
+            {
+                "snapshot_date": snap,
+                "isin": "",
+                "name": "GLOBAL EM UCITS ETF (ACC) TST1",
+                "total_value": 300.0,
+            },
+            # no isin -> exact normalized-name match, different case
+            {
+                "snapshot_date": snap,
+                "isin": "",
+                "name": "cash eur",
+                "total_value": 200.0,
+            },
+            # zero value -> skipped even though it would otherwise match
+            {
+                "snapshot_date": snap,
+                "isin": "FR1",
+                "name": "TestStock A",
+                "total_value": 0.0,
+            },
+            # no match at all -> skipped
+            {
+                "snapshot_date": snap,
+                "isin": "XX0000000000",
+                "name": "Totally Unknown Fund",
+                "total_value": 100.0,
+            },
+        ]
+    )
+
+
+class _NoFilesRepository(_FakeAllocationRepository):
+    def file_dates(self):
+        return []
+
+
+def test_build_positions_allocation_empty_when_no_allocation_files():
+    repo = _NoFilesRepository(date(2024, 1, 1), {})
+
+    assert build_positions_allocation(_positions_df(), repo) == {}
+    assert build_positions_allocation_by_isin(_positions_df(), repo) == {}
+
+
+def test_build_positions_allocation_backfills_dates_before_first_allocation():
+    positions_df = pd.DataFrame(
+        [
+            {
+                "snapshot_date": date(2020, 1, 31),
+                "isin": "FR1",
+                "name": "TestStock A",
+                "total_value": 1000.0,
+            }
+        ]
+    )
+
+    aggregate = build_positions_allocation(positions_df, _repo())["geo"]
+    by_isin = build_positions_allocation_by_isin(positions_df, _repo())["geo"]
+
+    assert aggregate["snapshot_date"].tolist() == ["2020-01-31"]
+    assert aggregate["france"].tolist() == [1000.0]
+    assert by_isin["snapshot_date"].tolist() == ["2020-01-31"]
+    assert by_isin["france"].tolist() == [1000.0]
+
+
+def test_build_positions_allocation_aggregates_via_matching_cascade():
+    result = build_positions_allocation(_positions_df(), _repo())
+
+    geo_df = result["geo"]
+    assert geo_df["snapshot_date"].tolist() == ["2024-02-29"]
+    assert geo_df["france"].iloc[0] == 1200.0  # 1000 (TestStock) + 200 (Cash)
+    assert geo_df["usa"].iloc[0] == 800.0  # 500 + 300 (Global EM, both forms)
+    assert geo_df["Not concerned"].iloc[0] == 0.0
+
+
+@pytest.mark.parametrize("account_category", ["checking", "savings"])
+def test_build_positions_allocation_separates_not_concerned_accounts(
+    account_category: str,
+):
+    positions = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame(
+                [
+                    {
+                        "snapshot_date": date(2024, 2, 29),
+                        "isin": "",
+                        # This deliberately matches an allocation-table row;
+                        # account scope must still win over that allocation.
+                        "name": "Cash EUR",
+                        "account_category": account_category,
+                        "total_value": 2500.0,
+                    }
+                ]
+            ),
+        ],
+        ignore_index=True,
+    )
+
+    geo_df = build_positions_allocation(positions, _repo())["geo"]
+
+    assert geo_df["Not concerned"].iloc[0] == 2500.0
+    assert geo_df["france"].iloc[0] == 1200.0
+    assert geo_df["usa"].iloc[0] == 800.0
+
+
+def test_build_positions_allocation_by_isin_marks_not_concerned_accounts():
+    positions = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame(
+                [
+                    {
+                        "snapshot_date": date(2024, 2, 29),
+                        "isin": "",
+                        "name": "Current account",
+                        "account_category": "checking",
+                        "total_value": 625.0,
+                    }
+                ]
+            ),
+        ],
+        ignore_index=True,
+    )
+
+    geo_df = build_positions_allocation_by_isin(positions, _repo())["geo"]
+    row = geo_df[geo_df["name"] == "Current account"].iloc[0]
+
+    assert row["isin"] == "NC-Current account"
+    assert row["Not concerned"] == 625.0
+    assert row["france"] == 0.0
+    assert row["usa"] == 0.0
+
+
+def test_build_positions_allocation_by_isin_includes_name_matched_positions():
+    """Name-matched rows without an isin (e.g. a fonds euros or a PEE/PER
+    held under a plain label in the allocations xlsx) must still appear
+    here under their stable synthetic "NC-<name>" key -- mirroring
+    build_positions_allocation, which already includes them in its
+    aggregate totals. Dashboard features (Allocation coverage by account,
+    per-position hover) key off this file, so silently excluding them
+    here made those features disagree with the totals shown elsewhere.
+    """
+    positions = _positions_df()
+    result = build_positions_allocation_by_isin(positions, _repo())
+
+    geo_df = result["geo"]
+    by_isin = {row["isin"]: row for _, row in geo_df.iterrows()}
+
+    assert len(geo_df) == 4
+    assert by_isin["FR1"]["name"] == "TestStock A"
+    assert by_isin["FR1"]["france"] == 1000.0
+    assert by_isin["FR1"]["usa"] == 0.0
+
+    # exact normalized-name match, no isin -> synthetic key from its name
+    assert by_isin["NC-Global EM UCITS ETF (Acc)"]["france"] == 0.0
+    assert by_isin["NC-Global EM UCITS ETF (Acc)"]["usa"] == 500.0
+
+    # "clean" name match (ticker suffix stripped), no isin -> its own
+    # synthetic key, distinct from the row above despite matching the
+    # same allocation row
+    clean_match_name = positions.iloc[2]["name"]
+    assert by_isin[f"NC-{clean_match_name}"]["usa"] == 300.0
+
+    assert by_isin["NC-cash eur"]["name"] == "cash eur"
+    assert by_isin["NC-cash eur"]["france"] == 200.0
+
+
+def test_build_positions_allocation_by_isin_keeps_account_scope_metadata():
+    positions = pd.DataFrame(
+        [
+            {
+                "snapshot_date": date(2024, 2, 29),
+                "account": "PEA",
+                "account_type": "Brokerage",
+                "isin": "FR1",
+                "name": "TestStock A",
+                "total_value": 1000.0,
+            }
+        ]
+    )
+
+    row = build_positions_allocation_by_isin(positions, _repo())["geo"].iloc[0]
+
+    assert row["account"] == "PEA"
+    assert row["account_type"] == "Brokerage"
+
+
+def _cash_position(snap: date, label: str, total_value: float) -> dict:
+    """A synthetic broker-cash row as PortfolioSnapshotBuilder produces it:
+    no isin, name "Cash <label>", account_category "brokerage" -- and no
+    matching row in the allocations xlsx (nothing to research, it's cash).
+    """
+    return {
+        "snapshot_date": snap,
+        "isin": None,
+        "name": f"Cash {label}",
+        "account_category": "brokerage",
+        "total_value": total_value,
+    }
+
+
+def test_build_positions_allocation_classifies_synthetic_broker_cash():
+    """Uninvested brokerage cash has no entry in the allocations xlsx, so
+    it must be classified in code as Not concerned instead of being mixed
+    into an axis-specific known or unknown bucket.
+    """
+    positions_df = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
+        ignore_index=True,
+    )
+
+    result = build_positions_allocation(positions_df, _repo())
+
+    geo_df = result["geo"]
+    assert geo_df["france"].iloc[0] == 1200.0
+    assert geo_df["usa"].iloc[0] == 800.0
+    assert geo_df["Not concerned"].iloc[0] == pytest.approx(1377.22)
+
+
+def test_build_positions_allocation_by_isin_includes_synthetic_broker_cash():
+    positions_df = pd.concat(
+        [
+            _positions_df(),
+            pd.DataFrame([_cash_position(date(2024, 2, 29), "CTO", 1377.22)]),
+        ],
+        ignore_index=True,
+    )
+
+    result = build_positions_allocation_by_isin(positions_df, _repo())
+
+    geo_df = result["geo"]
+    cash_rows = geo_df[geo_df["name"] == "Cash CTO"]
+    assert len(cash_rows) == 1
+    row = cash_rows.iloc[0]
+    # no real isin -> falls back to a stable synthetic key instead of a
+    # blank/NaN one that would collide with other no-isin positions
+    assert row["isin"] == "NC-Cash CTO"
+    assert row["france"] == 0.0
+    assert row["usa"] == 0.0
+    assert row["Not concerned"] == 1377.22
+
+
+def test_sector_cash_share_is_not_concerned_instead_of_unknown():
+    sector = pd.DataFrame(
+        {
+            "nom_placement": ["Mixed Fund"],
+            "id": ["FUND1"],
+            "tech": [25.0],
+            "nc": [75.0],
+        }
+    )
+    asset_class = pd.DataFrame(
+        {
+            "nom_placement": ["Mixed Fund"],
+            "id": ["FUND1"],
+            "cash / monétaire": [40.0],
+            "actions": [60.0],
+            "nc": [0.0],
+        }
+    )
+    repo = _FakeAllocationRepository(
+        date(2024, 1, 1),
+        {
+            "secteur": (sector, ["tech", "nc"]),
+            "classe": (
+                asset_class,
+                ["cash / monétaire", "actions", "nc"],
+            ),
+        },
+    )
+    positions = pd.DataFrame(
+        [
+            {
+                "snapshot_date": date(2024, 2, 29),
+                "isin": "FUND1",
+                "name": "Mixed Fund",
+                "total_value": 1000.0,
+            }
+        ]
+    )
+
+    aggregate = build_positions_allocation(positions, repo)["secteur"].iloc[0]
+    by_isin = build_positions_allocation_by_isin(positions, repo)[
+        "secteur"
+    ].iloc[0]
+
+    for row in (aggregate, by_isin):
+        assert row["tech"] == 250.0
+        assert row["nc"] == 350.0
+        assert row["Not concerned"] == 400.0

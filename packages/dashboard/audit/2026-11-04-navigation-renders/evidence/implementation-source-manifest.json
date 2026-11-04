@@ -1,0 +1,43 @@
+{
+  "phase": "implementation complete",
+  "scopeDelta": "Two existing memo boundaries; one removed duplicate consumer; two new colocated behavior tests. Existing staged work preserved.",
+  "authoredFiles": [
+    {
+      "file": "src/app/DashboardPanel.feature.tsx",
+      "sha256": "511a2cef04a50a915c531d159c57f4c24ac9d996fdcf8e8d08aa6ee6ac7a8aaa"
+    },
+    {
+      "file": "src/app/DashboardHeader.feature.tsx",
+      "sha256": "7da4cba644eade884844e877fa51da269617c59ad33433b2b7c4308612249e80"
+    },
+    {
+      "file": "src/app/DashboardReliability.feature.tsx",
+      "sha256": "2f4ec5792951f7b7a7c66522019ff2564a6031872fbe62e8e62697947acee36e"
+    },
+    {
+      "file": "src/app/DashboardHeader.feature.test.tsx",
+      "sha256": "bd2000b53e7b77a3f5022cd12a0e7cab003747b3ae5779a7068c33da8c201a05"
+    },
+    {
+      "file": "src/app/DashboardReliability.feature.test.tsx",
+      "sha256": "8b43bf9907b3a3b61749578ff81e6470737fae81b35baa27daa639a53a6d7bee"
+    },
+    {
+      "file": "tests/fixtures/ownership-review.json",
+      "sha256": "77b8627da2f8e8b007cd7ab1a98e63cad1b1e629e85f5c79aad295bb7abc539d"
+    }
+  ],
+  "deleted": ["src/app/DashboardCombinedReliability.feature.tsx"],
+  "fixtureReview": {
+    "reviewedCandidates": 25,
+    "candidateLocationsAndTestHashes": "unchanged",
+    "analysisFingerprint": {
+      "typescript": "6.0.3",
+      "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
+      "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
+      "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
+      "sourceSha256": "e93ff9818ffb6be2aaf61c212cc9218fb28e46adcbf91e74f01a92f8028d0712",
+      "lockfileSha256": "23ddff6b429153de7c6e2a8917256700b88a29b25b86cc6f0915ec2698de175a"
+    }
+  }
+}

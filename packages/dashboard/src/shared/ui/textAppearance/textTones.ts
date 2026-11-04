@@ -1,0 +1,16 @@
+export const TEXT_TONES = {
+  default: 'text-content',
+  secondary: 'text-content-secondary',
+  muted: 'text-content-muted',
+  subtle: 'text-content-subtle',
+  accent: 'text-accent',
+  positive: 'text-positive',
+  negative: 'text-danger',
+  warning: 'text-warning',
+  decorative: 'text-decorative',
+  attention: 'text-attention',
+  highlight: 'text-highlight',
+  contrast: 'text-contrast',
+  secondarySeries: 'text-secondary-series',
+  onAccent: 'text-on-accent',
+} as const

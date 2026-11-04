@@ -83,6 +83,7 @@ class ValuationsLoader(BrokerLoader):
     """
 
     filepath: Path
+    as_of: date | None = None
 
     @property
     def label(self) -> str:
@@ -91,7 +92,7 @@ class ValuationsLoader(BrokerLoader):
     def load(
         self, ticker_map: dict[str, dict], asset_prices: pd.DataFrame
     ) -> tuple[list[Operation], list[Position]]:
-        return parse(self.filepath)
+        return parse(self.filepath, as_of=self.as_of)
 
 
 # ---------------------------------------------------------------------------
@@ -135,6 +136,8 @@ def _last_on_or_before(lookup: dict[date, float], snap: date) -> float | None:
 
 def parse(
     filepath: str | Path,
+    *,
+    as_of: date | None = None,
 ) -> tuple[list[Operation], list[Position]]:
     """Load and validate a valuations CSV; return (operations, positions)."""
     path = Path(filepath)
@@ -202,10 +205,12 @@ def parse(
 
     groups: dict[tuple, list[dict]] = {}
     for r in rows:
+        if as_of is not None and r["date"] > as_of:
+            continue
         k = asset_key(r)
         groups.setdefault(k, []).append(r)
 
-    today = date.today()
+    today = as_of or date.today()
     operations: list[Operation] = []
     positions: list[Position] = []
 

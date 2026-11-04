@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pytest
+
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import OperationType
 from src.infrastructure.csv_broker_operations_reader import (
     CsvBrokerOperationsReader,
@@ -82,6 +85,21 @@ def _write_valuations(input_dir: Path) -> None:
 def test_read_all_returns_empty_when_no_files_present(tmp_path: Path):
     reader = CsvBrokerOperationsReader(input_dir=tmp_path)
     assert reader.read_all() == []
+
+
+@pytest.mark.parametrize("write_export", [
+    _write_boursorama_pea, _write_boursorama_cto, _write_revolut,
+    _write_direct, _write_valuations,
+])
+def test_read_all_blocks_overlapping_exports(tmp_path: Path, write_export):
+    write_export(tmp_path)
+    first = next(tmp_path.rglob("*.csv"))
+    first.with_name("overlap.csv").write_text(first.read_text())
+
+    with pytest.raises(DuplicateBrokerOperationsError) as error:
+        CsvBrokerOperationsReader(input_dir=tmp_path).read_all()
+    assert first.name in str(error.value)
+    assert "overlap.csv" in str(error.value)
 
 
 def test_read_all_parses_boursorama_pea_and_cto(tmp_path: Path):

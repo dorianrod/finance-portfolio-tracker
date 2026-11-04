@@ -52,7 +52,7 @@ class PortfolioSnapshotBuilder:
         account_category_map = self.account_groups_repo.load_category_map()
 
         cash_df, synthetic_positions = self._compute_cash_positions(
-            operations, account_category_map, account_label_map
+            operations, account_category_map, account_label_map, as_of=today
         )
         all_positions = positions + synthetic_positions
 
@@ -86,12 +86,14 @@ class PortfolioSnapshotBuilder:
         operations: list[Operation],
         account_category_map: dict[str, str],
         account_label_map: dict[str, str],
+        *,
+        as_of: date | None = None,
     ) -> tuple[pd.DataFrame, list[Position]]:
         """Broker uninvested cash -> synthetic positions.
 
         Must run before the snapshot so totals include cash.
         """
-        cash_df = cash_snapshot(operations)
+        cash_df = cash_snapshot(operations, as_of=as_of)
         if cash_df.empty:
             return cash_df, []
         brokerage_accounts = {

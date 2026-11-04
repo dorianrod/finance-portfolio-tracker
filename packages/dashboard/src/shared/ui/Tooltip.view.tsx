@@ -1,0 +1,93 @@
+import * as Primitive from '@radix-ui/react-tooltip'
+import { useAtomValue } from 'jotai'
+import { ScopeProvider } from 'jotai-scope'
+import { type ComponentProps, useMemo, useState } from 'react'
+
+import { useOverlayPortal } from '@/shared/ui/services/useOverlayPortal'
+import { useScopedInput } from '@/shared/ui/services/useScopedInput'
+import { tooltipInputAtom } from '@/shared/ui/stores/tooltipInput.atoms'
+
+import type { ControlProps } from './controlProps'
+
+export function Tooltip({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false)
+  const portalContainer = useOverlayPortal(open, () => setOpen(false))
+  const input = useMemo(
+    () => ({ portalContainer, setOpen }),
+    [portalContainer, setOpen],
+  )
+  const scope = useScopedInput(tooltipInputAtom, input)
+  return (
+    <Primitive.Provider delayDuration={0}>
+      <ScopeProvider scope={scope}>
+        <Primitive.Root open={open} onOpenChange={setOpen}>
+          {children}
+        </Primitive.Root>
+      </ScopeProvider>
+    </Primitive.Provider>
+  )
+}
+
+function TooltipTrigger({
+  label,
+  variant,
+  ...props
+}: ControlProps<ComponentProps<typeof Primitive.Trigger>> & {
+  label?: string
+  variant?: 'info' | 'help' | 'source' | 'columnHelp'
+}) {
+  const context = useAtomValue(tooltipInputAtom)
+  return (
+    <Primitive.Trigger
+      {...props}
+      type="button"
+      className={[
+        variant === 'columnHelp' &&
+          'grid size-5 shrink-0 cursor-help place-items-center rounded-full text-[10px] leading-none text-content-subtle transition-colors hover:bg-surface-raised hover:text-content-secondary',
+        variant === 'help' &&
+          'inline-flex size-6 shrink-0 items-center justify-center ui-help-trigger rounded-r-md text-content-subtle transition-colors hover:text-content-muted focus-visible:text-content-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+        variant === 'source' &&
+          'cursor-help truncate text-left underline decoration-dotted decoration-border-strong underline-offset-4',
+        variant === 'info' &&
+          'flex size-5 shrink-0 items-center justify-center rounded-full border border-border-strong bg-surface-raised text-[10px] font-bold normal-case leading-none tracking-normal text-content-muted transition-colors hover:bg-surface-hover hover:text-content-secondary',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      aria-label={label}
+      onClick={(event) => {
+        props.onClick?.(event)
+        if (event.defaultPrevented) return
+        event.preventDefault()
+        context?.setOpen(true)
+      }}
+      onMouseLeave={(event) => {
+        props.onMouseLeave?.(event)
+        if (document.activeElement === event.currentTarget)
+          event.preventDefault()
+      }}
+    />
+  )
+}
+
+function TooltipContent({
+  variant,
+  ...props
+}: ControlProps<ComponentProps<typeof Primitive.Content>> & {
+  variant?: 'info' | 'left' | 'details'
+}) {
+  const context = useAtomValue(tooltipInputAtom)
+  return (
+    <Primitive.Portal container={context?.portalContainer}>
+      <Primitive.Content
+        {...props}
+        sideOffset={6}
+        collisionPadding={8}
+        className={`z-[10000] max-w-[calc(100vw-1rem)] rounded-control border border-border-strong bg-surface-raised p-3 text-xs text-content-secondary shadow-xl ${variant === 'left' ? 'text-left' : ''} ${variant === 'info' ? 'w-72 text-left font-normal normal-case leading-relaxed tracking-normal' : ''} ${variant === 'details' ? 'w-[min(22rem,calc(100vw-2rem))] text-left' : ''}`}
+        onEscapeKeyDown={(event) => event.stopPropagation()}
+      />
+    </Primitive.Portal>
+  )
+}
+
+Tooltip.Trigger = TooltipTrigger
+Tooltip.Content = TooltipContent

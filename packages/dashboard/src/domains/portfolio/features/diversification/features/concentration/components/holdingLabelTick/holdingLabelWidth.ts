@@ -1,0 +1,1 @@
+export const HOLDING_LABEL_WIDTH = 260

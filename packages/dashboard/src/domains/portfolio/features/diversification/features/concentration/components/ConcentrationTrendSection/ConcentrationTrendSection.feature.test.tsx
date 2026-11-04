@@ -1,0 +1,72 @@
+import { renderToStaticMarkup } from 'react-dom/server'
+import { describe, expect, it } from 'vitest'
+
+import { ConcentrationTrendSection } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/ConcentrationTrendSection.feature'
+import { nextPlaybackIndex } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/concentrationPlayback/nextPlaybackIndex'
+import { shouldAnimateConcentration } from '@/domains/portfolio/features/diversification/features/concentration/components/ConcentrationTrendSection/helpers/presenters/shouldAnimateConcentration'
+import { createConcentrationHistoryPoint as fixtureHistoricalConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/mocks/concentrationHistoryPoint.mock'
+import type { HistoricalConcentrationPoint } from '@/domains/portfolio/shared/types/historicalConcentrationPoint.type'
+
+const points: HistoricalConcentrationPoint[] = [
+  fixtureHistoricalConcentrationPoint({
+    date: new Date('2024-12-31'),
+    effectiveCount: 1.92,
+  }),
+  fixtureHistoricalConcentrationPoint({ date: new Date('2025-01-31') }),
+]
+
+describe('ConcentrationTrendSection helpers', () => {
+  it('advances playback and reports completion at the last frame', () => {
+    expect(nextPlaybackIndex(0, 3)).toEqual({ index: 1, complete: false })
+    expect(nextPlaybackIndex(1, 3)).toEqual({ index: 2, complete: true })
+    expect(nextPlaybackIndex(2, 3)).toEqual({ index: 2, complete: true })
+  })
+
+  it('disables chart transitions when reduced motion is preferred', () => {
+    expect(shouldAnimateConcentration(false)).toBe(true)
+    expect(shouldAnimateConcentration(true)).toBe(false)
+  })
+})
+
+describe('ConcentrationTrendSection', () => {
+  it('renders trend charts and accessible playback controls', () => {
+    const html = renderToStaticMarkup(
+      <ConcentrationTrendSection
+        heldPoints={points}
+        lookThroughPoints={points}
+        lookThroughAvailable
+      />,
+    )
+
+    expect(html).toContain('Held-position concentration')
+    expect(html).toContain('Minimum positions to reach portfolio share')
+    expect(html).toContain('Unavailable thresholds appear as gaps')
+    expect(html).toContain('Largest holdings over time')
+    expect(html).toContain('Held positions')
+    expect(html).toContain('Underlying assets')
+    expect(html).toContain('aria-label="Play concentration history"')
+    expect(html).toContain('aria-label="Concentration month"')
+    expect(
+      html.indexOf('aria-label="Play concentration history"'),
+    ).toBeLessThan(html.indexOf('aria-label="Previous concentration month"'))
+    expect(
+      html.indexOf('aria-label="Previous concentration month"'),
+    ).toBeLessThan(html.indexOf('aria-label="Next concentration month"'))
+  })
+
+  it('renders a focused empty state with fewer than two snapshots', () => {
+    const html = renderToStaticMarkup(
+      <ConcentrationTrendSection
+        heldPoints={points.slice(0, 1)}
+        lookThroughPoints={[]}
+        lookThroughAvailable={false}
+      />,
+    )
+    expect(html).toContain(
+      'Not enough concentration history for the current selection.',
+    )
+    expect(html).toContain('fund_holdings_history.csv')
+    expect(html).toContain('disabled=""')
+    expect(html).not.toContain('Play concentration history')
+  })
+})

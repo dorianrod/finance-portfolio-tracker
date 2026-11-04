@@ -690,6 +690,11 @@ def _install_skills() -> list[Path]:
         if not source.is_dir():
             continue
         dest = skills_root / source.name
+        # In a source checkout, .claude/skills and its finance entries
+        # link back to the bundled sources. Leave those shared files intact.
+        if dest.resolve() == source.resolve():
+            installed.append(dest)
+            continue
         shutil.rmtree(dest, ignore_errors=True)
         shutil.copytree(source, dest)
         installed.append(dest)

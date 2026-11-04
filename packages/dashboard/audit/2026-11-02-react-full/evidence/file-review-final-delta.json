@@ -1,0 +1,529 @@
+[
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/AllocationDimensionRow.view.tsx",
+    "baselineSha256": "e171ad141d55fd998de20393413d2fd1b499397c98545dc8bf128e1aeee6b2b3",
+    "sha256": "91de5ba44962a013d5e5cb966023d9d83b3645cb382e3baa0d32a5de0af167d0",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/AnalysisReliabilityKpi.feature.test.tsx",
+    "baselineSha256": "f7aac9c38d92f01c66af0c8caa164994d898b052d4a3a2e0432d5ed7bfaf01d0",
+    "sha256": "97c434fe7f83adc2f0557e8a865e349593c75da101563e3f8574e19dabc78bcc",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+    "baselineSha256": "c70a4b510dbc6280f7fd2c5cab57a81e1a6e0202ea1719d048525a1fce8b5027",
+    "sha256": "8a8eba8573fd9067e8d30118925a31714b9776d9e0c8d6b222bff4b5bca4d27d",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CombinedAnalysisReliabilityKpi.feature.tsx",
+    "baselineSha256": "c6a4a739e293eb53997e212af24654a11fbda4955d3fcb2523f13b866dc0338e",
+    "sha256": "d61c9519d07c5bda5a5a8447eeff1ee9bcab12fe1d43a9710b1eae5b480be231",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/CompactDataQualityKpi.view.tsx",
+    "baselineSha256": "36574b4bc11eebe5acd7fea0a839ffe571c27818b168a74514c6cc59f2fe9895",
+    "sha256": "6e07ad3f69cd3784abbae2ec40c68915fa674bdaa32aa2398f8a0e7d37190388",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx",
+    "baselineSha256": "6d641f7fa0bb99299ebbc0547ca9e92fd90c69704302a465c5e4ec3650ae1d18",
+    "sha256": "e53d232db235058bb8728b08d91e4d8331a0fe2874cfd73594e201153f1976d8",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/helpers/presenters/qualityReliabilityPresentation.ts",
+    "baselineSha256": "38bf54439a257a72072cbbf30a5bf6544420de62e4d1a0810b7f91e06686ef5c",
+    "sha256": "1309282078f3fecf8ba958b42cfd4c8c6f0af09f2a10af0a053fc9226a5c7ff1",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone.test.tsx",
+    "baselineSha256": null,
+    "sha256": "babb081a95c3073cdbb115b9d24dfe7da86ce2da196ec50ac354726ecd1f5fe6",
+    "change": "introduced",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatAnalysisReliabilityTone.ts",
+    "baselineSha256": null,
+    "sha256": "dae8f78e7c29a0a27678b1ed06c0ec9eaa09e5f76070c408e2dd9ee905145f3d",
+    "change": "introduced",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatDataQualityDimension.test.tsx",
+    "baselineSha256": "43ddf62f10ddee115a9fa34e64431b23281c6ccb163ab136336cb73939f0b8c9",
+    "sha256": "1527c6ccd2417ea3f4dfadf52bd50608b6d16d376a41983a6454bcaf2c8c831f",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/formatters/useFormatDataQualityDimension.ts",
+    "baselineSha256": "c8d8f0c607fca3489fb00d07def8da23cf0056d454d3baf6a8c959719f0d9552",
+    "sha256": "b9fed25454cb514e09eec82ef7989c562324fa14c429589a4ce768421160cdcd",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.test.tsx",
+    "baselineSha256": null,
+    "sha256": "abce77319d0dda208d9f9b30c715eb00d7ffc5c5f92c7cba8eccc8b847ee26aa",
+    "change": "introduced",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/components/FilterChipBar.feature.tsx",
+    "baselineSha256": "8cea53762c67e52bfd92440ce19b2e315d7ea1d79305bf40b7076e6ceae0c5e0",
+    "sha256": "ffdcd7bde19c37ec40adfeb7f01aa742695daf4baef846040aa4bb0c1dd6fe85",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/formatters/useFormatAllocationDimension.test.tsx",
+    "baselineSha256": null,
+    "sha256": "bcf08524f39f153c7ce64e15d38433fee780f3337bb851c849bfd032e91904be",
+    "change": "introduced",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "src/domains/portfolio/features/diversification/features/allocation/helpers/formatters/useFormatAllocationDimension.ts",
+    "baselineSha256": null,
+    "sha256": "d6c5b9b39e84894345c34c3f1cfbbf474daeb7932602c72eac1cc463be80e732",
+    "change": "introduced",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "tests/eslint/fixture-candidates.integration.test.mjs",
+    "baselineSha256": "0ab8318ae0ed9bec2cf33b0f395ce1a77aac88fbf4ebb8046c61f4bce2e2a661",
+    "sha256": "7df0cb9bb0ed5dd2a803abb92062c4964027cef6c282e179fecf495af01437ae",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  },
+  {
+    "file": "tests/fixtures/ownership-review.json",
+    "baselineSha256": "8a9ce59c6ef24b8a6f65bb70aade0f36ed0d1255c81e11f00a95cd25b43f8281",
+    "sha256": "f3feeb9f3ad63b60b8cd745a1746cde17d92d9b0c168a2343033d3ad8ad43ca7",
+    "change": "modified",
+    "review": "formatter text ownership/provider behavior; scalar option contracts; tests and fixture scenario ledger; no business data/schema/query/state mutation ownership added.",
+    "applicableRuleGroups": [
+      "helpers-categories",
+      "helpers-formatter-hooks",
+      "arch-helpers-vs-services",
+      "types-closed-values-not-string",
+      "quality-usecallback-for-functions",
+      "quality-single-public-export",
+      "quality-public-api-first",
+      "i18n-static-keys",
+      "test-colocated-tests",
+      "test-mock-data",
+      "test-behavior-not-implementation"
+    ],
+    "evidence": [
+      "final-lint.log",
+      "final-source-gates.log",
+      "colocation-final.json",
+      "final-tests-standard-retry.log",
+      "formatter-style-types.json",
+      "fixture-review-delta.md"
+    ],
+    "status": "automatically checked + manually reviewed",
+    "finding": "F-001",
+    "outcome": "verified; no new/modified exceptions or unresolved contract choices"
+  }
+]

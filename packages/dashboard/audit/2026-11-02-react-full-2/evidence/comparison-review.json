@@ -1,0 +1,16 @@
+{
+  "prior": "2026-11-02-react-full",
+  "sameFiles": 1364,
+  "delta": {
+    "added": [
+      ".gitignore",
+      ".ruff_cache/.gitignore",
+      "src/assets/hero.png",
+      "src/assets/react.svg",
+      "src/assets/vite.svg"
+    ],
+    "removed": [".pytest_cache/README.md"],
+    "changed": []
+  },
+  "ruleChanges": []
+}

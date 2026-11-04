@@ -1,16 +1,20 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { resolve, sep } from 'node:path'
-import { defineConfig, type Connect, type Plugin } from 'vite'
-import react from '@vitejs/plugin-react'
+
 import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
+import { type Connect, defineConfig, type Plugin } from 'vite'
+
+import { csvValidationDefines } from './csvValidationDefines.ts'
+import { themeHtmlPlugin } from './themeHtmlPlugin'
 
 // Mirrors the Python pipeline's data-dir resolution (FINANCE_DATA_DIR env
 // var, falling back to the monorepo's shared data/ folder) so `npm run dev`
 // keeps reading live CSVs without baking personal data into dist/.
 function resolveOutputDir(): string {
-  const base = process.env.FINANCE_DATA_DIR
-    ? resolve(process.env.FINANCE_DATA_DIR)
-    : resolve(__dirname, '../../data')
+  const base = process.env['FINANCE_DATA_DIR']
+    ? resolve(process.env['FINANCE_DATA_DIR'])
+    : resolve(import.meta.dirname, '../../data')
   return resolve(base, 'output')
 }
 
@@ -19,7 +23,7 @@ function serveFinanceData(): Plugin {
 
   const middleware: Connect.NextHandleFunction = (req, res, next) => {
     const requestPath = decodeURIComponent((req.url ?? '').split('?')[0])
-    const filePath = resolve(outputDir, '.' + requestPath)
+    const filePath = resolve(outputDir, `.${requestPath}`)
     if (
       (filePath !== outputDir && !filePath.startsWith(outputDir + sep)) ||
       !existsSync(filePath) ||
@@ -44,25 +48,33 @@ function serveFinanceData(): Plugin {
   }
 }
 
-export default defineConfig({
-  // The demo builder uses an isolated public directory so generated fixtures
-  // never overwrite (or accidentally include) files from a developer's tree.
-  publicDir: process.env.FINANCE_DEMO_PUBLIC_DIR || 'public',
-  // Static demo builds already contain their synthetic CSVs. In particular,
-  // do not let `vite preview` shadow them with the developer's local data.
-  plugins: [
-    react(),
-    tailwindcss(),
-    ...(process.env.VITE_STATIC_DEMO === 'true' ? [] : [serveFinanceData()]),
-  ],
-  server: {
-    proxy: {
-      '/api': 'http://127.0.0.1:8788',
+export default defineConfig(({ mode }) => {
+  return {
+    // Expose only the DEBUG validation switch to client and worker bundles.
+    define: csvValidationDefines(mode, import.meta.dirname),
+    // The demo builder uses an isolated public directory so generated fixtures
+    // never overwrite (or accidentally include) files from a developer's tree.
+    publicDir: process.env['FINANCE_DEMO_PUBLIC_DIR'] || 'public',
+    // Static demo builds already contain their synthetic CSVs. In particular,
+    // do not let `vite preview` shadow them with the developer's local data.
+    plugins: [
+      react(),
+      themeHtmlPlugin(),
+      tailwindcss(),
+      ...(process.env['VITE_STATIC_DEMO'] === 'true'
+        ? []
+        : [serveFinanceData()]),
+    ],
+    worker: { format: 'es' },
+    server: {
+      proxy: {
+        '/api': 'http://127.0.0.1:8788',
+      },
     },
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
+    resolve: {
+      alias: {
+        '@': resolve(import.meta.dirname, 'src'),
+      },
     },
-  },
+  }
 })

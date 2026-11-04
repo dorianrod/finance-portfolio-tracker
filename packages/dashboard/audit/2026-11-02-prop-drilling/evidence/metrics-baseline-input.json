@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "scope": "2026-11-02-prop-drilling/29 reviewed suppressions",
+  "unreviewedExceptions": 113,
+  "rules": [
+    {
+      "id": "arch-no-prop-drilling",
+      "impact": "CRITICAL",
+      "coverage": "complete"
+    },
+    {
+      "id": "quality-eslint-disable-scoped",
+      "impact": "HIGH",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTree.feature.tsx",
+        "src/domains/portfolio/features/scope-selection/components/accountTreeSelect/AccountTreeSelect.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-002",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/diversification/features/allocation/components/DonutCard.feature.tsx",
+        "src/domains/portfolio/features/diversification/features/allocation/components/EvoCard/EvoCard.feature.tsx",
+        "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx",
+        "src/domains/portfolio/features/overview/pages/overviewCharts/OverviewConcentrationChart.feature.tsx",
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/AssetIrrView.feature.tsx",
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-003",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/performance/components/performanceContributionCard/PerformanceContributionCard.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-004",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/overview/pages/OverviewSummaryCards.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-005",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/performance/pages/PerformanceTab.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-006",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/AnalysisReliabilityKpi.feature.tsx",
+        "src/domains/portfolio/features/data-quality/features/assessment/components/reliability/analysisReliabilityKpi/PipelineReliabilityKpi.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-007",
+      "kind": "violation",
+      "status": "open",
+      "ruleIds": ["arch-no-prop-drilling"],
+      "files": [
+        "src/domains/portfolio/features/holdings/features/positions/components/positionColumnCells/PositionBreakdownCell.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-008",
+      "kind": "prevention-gap",
+      "status": "open",
+      "ruleIds": ["quality-eslint-disable-scoped"],
+      "files": [
+        "../../.agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md"
+      ]
+    }
+  ]
+}

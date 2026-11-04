@@ -1,0 +1,83 @@
+[
+  {
+    "file": ".agents/skills/generic-react-best-practices/AGENTS.md",
+    "previousSha256": "f4ab2e0bf39720d4b5db459fcec1448d88e7b4d50f2c192d12923efe592a8f0a",
+    "sha256": "9b32c154dba03db336ee2660abfd4899343391c1050b074278837931c31dba0e",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-inline-format-fallback.js",
+    "previousSha256": "7d1aad92c62dfef45b3d205a552002864e88c28f43a7faba9c08590e301da90b",
+    "sha256": "05ef8ec6506363369777a12aad732dad67513e3b45e9518048d0ddd9dd07cb9b",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["helpers-formatter-hooks"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-004"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/eslint-rules/no-inline-format-fallback.test.js",
+    "previousSha256": "3a552ba0e9e3aa68e9f602e34059c9c50d6659d9b548e0f5e0dd31e39ac5c39c",
+    "sha256": "2434b651ba352df45f6288dd1aa4e6f311917b2ccf28b5c56f26b588f5fc409d",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["helpers-formatter-hooks"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-004"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/references/project-enforcement.md",
+    "previousSha256": "913f689de8008eb5e186310292ab7a56ca3e859ba4996c8839b307ee49ce9130",
+    "sha256": "0b9aade374cd959bcd02e7fdc5ba10cf30a2924422d0b9bc9de471d8cb42bcf1",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/helpers-formatter-hooks.md",
+    "previousSha256": "8e58cc1ff778334bd08f55522e703700e7b6749625de5005a2ca330810d5a1ae",
+    "sha256": "3f6c11bcf0122b96b3769fd6549513204aeca2f158974983bd2638d6c2a98e20",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["helpers-formatter-hooks"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-004"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/rules/test-mock-data.md",
+    "previousSha256": "129473f1db264b88db7b782c674fcb5f5f0a45e9475aaa266b3eaec53c9bfdc0",
+    "sha256": "ffa81d92e130846ee5aae0e128e51212f99c23976f5312064dbc1d08d9331ac3",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/cli.integration.test.mjs",
+    "previousSha256": "215e96163f8a9d0dfc28488427b34c706556337c350f5074a6bd4971a98c8ff7",
+    "sha256": "6760014a2fcd5787ab02d7dbe8b552ade75a52a677e0dd38d1de53264afa1f11",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.mjs",
+    "previousSha256": "f0bda943b99464f9db307381871559895f154fa3748269da86f9694732f30601",
+    "sha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  },
+  {
+    "file": ".agents/skills/generic-react-best-practices/scripts/fixture-candidates.test.mjs",
+    "previousSha256": "b44df7e119b911affa8282a11ecd8982bf92854bae6e86f72f40ef456f7e0619",
+    "sha256": "8502c0fd6bf39f24d53b49e781bed53e7f1f3e3c81c751de46bad14292117e3d",
+    "status": "automatically checked; manually reviewed",
+    "ruleIds": ["test-mock-data"],
+    "evidence": "Owning contract/example changes, compiler/setup/exclusion/hash implementation and callers inspected; portable sibling/CLI tests and final-installed-package.json; catalog compiled from current sources.",
+    "findings": ["F-001", "F-002", "F-003"]
+  }
+]

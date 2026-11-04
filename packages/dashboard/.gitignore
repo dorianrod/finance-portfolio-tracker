@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+storybook-static/
 *.local
 
 # Generated CSVs copied in for a static build (e.g. the GitHub Pages demo
@@ -34,4 +35,30 @@ __pycache__
 *.sln
 *.sw?
 
+# Version audit reports and durable evidence; keep raw runs and scratch work local.
+# Add a file-specific exception below if a finding needs a unique reproduction.
+/audit/*/evidence/*
+!/audit/*/evidence/*.md
+!/audit/*/evidence/*review*.json
+!/audit/*/evidence/*decisions.json
+!/audit/*/evidence/*dispositions.json
+!/audit/*/evidence/*ledger.json
+!/audit/*/evidence/*manifest*.json
+!/audit/*/evidence/*files*.json
+!/audit/*/evidence/*contracts-and-config.json
+!/audit/*/evidence/catalog-config-inputs.json
+!/audit/*/evidence/*versions.json
+!/audit/*/evidence/metrics-*.json
+!/audit/*/evidence/*-metrics*.json
 
+# Duplicate report snapshots and generated Markdown copies of retained JSON.
+/audit/*/evidence/scope.md
+/audit/*/evidence/coverage.md
+/audit/*/evidence/findings.md
+/audit/*/evidence/plan.md
+/audit/*/evidence/verification.md
+/audit/*/evidence/metrics.md
+/audit/*/evidence/phase1-*.md
+/audit/*/evidence/phase2-before-closure-*.md
+/audit/*/evidence/*file-review.md
+/audit/*/evidence/migration-ledger.md

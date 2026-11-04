@@ -1,0 +1,67 @@
+{
+  "formulaVersion": "weighted-rule-compliance/v1",
+  "scope": "dashboard/full-react-2026-10-31",
+  "weights": {
+    "CRITICAL": 32,
+    "HIGH": 16,
+    "MEDIUM-HIGH": 8,
+    "MEDIUM": 4,
+    "LOW-MEDIUM": 2,
+    "LOW": 1
+  },
+  "formula": "100 * (1 - openViolatedRuleWeight / applicableRuleWeight)",
+  "score": 95.07,
+  "scoreStatus": "calculated",
+  "applicableRuleWeight": 1136,
+  "openViolatedRuleWeight": 56,
+  "openViolatedRuleIds": [
+    "arch-component-roles",
+    "helpers-categories",
+    "types-explicit-nullability"
+  ],
+  "coverage": {
+    "selected": 110,
+    "applicable": 100,
+    "pending": []
+  },
+  "unreviewedExceptions": 143,
+  "assurance": "reviewed scope excluding unrevalidated exceptions",
+  "volumes": {
+    "CRITICAL": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "HIGH": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "MEDIUM-HIGH": {
+      "baseline": 1,
+      "open": 1,
+      "resolved": 0
+    },
+    "MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW-MEDIUM": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    },
+    "LOW": {
+      "baseline": 0,
+      "open": 0,
+      "resolved": 0
+    }
+  },
+  "otherOpenFindings": {
+    "ambiguity": 0,
+    "prevention-gap": 0,
+    "suggestion": 0
+  },
+  "openAffectedFiles": 33
+}

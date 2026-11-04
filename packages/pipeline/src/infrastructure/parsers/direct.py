@@ -51,6 +51,7 @@ class DirectLoader(BrokerLoader):
     """
 
     filepath: Path
+    as_of: date | None = None
 
     @property
     def label(self) -> str:
@@ -60,10 +61,14 @@ class DirectLoader(BrokerLoader):
         self, ticker_map: dict[str, dict], asset_prices: pd.DataFrame
     ) -> tuple[list[Operation], list[Position]]:
         operations = parse_operations(self.filepath)
+        if self.as_of is not None:
+            operations = [
+                op for op in operations if op.date.date() <= self.as_of
+            ]
         positions = compute_positions(
             operations,
             asset_prices=asset_prices,
-            snapshot_dates=month_end_dates(operations),
+            snapshot_dates=month_end_dates(operations, as_of=self.as_of),
         )
         return operations, positions
 

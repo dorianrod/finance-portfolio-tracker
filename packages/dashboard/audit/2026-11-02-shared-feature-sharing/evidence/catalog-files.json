@@ -1,0 +1,9 @@
+{
+  ".agents/skills/generic-react-best-practices/SKILL.md": "dbdb0b1732fa46efa9cce2a35b2932b630d1f679df4ba9f0ce6e763a1e38bd54",
+  ".agents/skills/generic-react-best-practices/eslint.config.mjs": "1a37e588aef10e91a13a5eac5729328598f00eab5cc629509c8860f14f612bcd",
+  ".agents/skills/generic-react-best-practices/rules/arch-no-prop-drilling.md": "7f30c77aff61638243c7e396f95ff5e3f69b01cba77e0a8e07f1a47d8475aa9d",
+  ".agents/skills/generic-react-best-practices/rules/arch-shared-no-domain-knowledge.md": "370b039d686991ba2f7ebaf1408af4f4bbc5b1db14ec4844255158c848e811d3",
+  ".agents/skills/generic-react-best-practices/rules/quality-eslint-disable-scoped.md": "c61d734a780b47d4e495a572492ec8700cac61b341bfdb2ba9354157d7b0239d",
+  ".agents/skills/generic-react-best-practices/rules/api-wrap-in-domain-hooks.md": "716070c18a691a369c8d549839c154b9723432d7e8d051de251483a8fd07bc69",
+  ".agents/skills/generic-react-best-practices/rules/test-colocated-tests.md": "ed55ca6556b3da297317cc1cfca17eefcc6065940ceb874c5b73f52559dda634"
+}

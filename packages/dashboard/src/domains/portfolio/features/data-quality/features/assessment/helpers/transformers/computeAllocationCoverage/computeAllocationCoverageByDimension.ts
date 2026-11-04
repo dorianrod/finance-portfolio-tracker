@@ -1,0 +1,89 @@
+import type {
+  AllocationCoverageIssue,
+  DimensionCoverage,
+} from '@/domains/portfolio/features/data-quality/features/assessment/types/dimensionCoverage.type'
+import { getPositionAllocationKey } from '@/domains/portfolio/shared/helpers/transformers/getPositionAllocationKey'
+import { isAssetAnalysisApplicablePosition } from '@/domains/portfolio/shared/helpers/transformers/isAssetAnalysisApplicablePosition'
+import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { RawIsinData } from '@/domains/portfolio/shared/types/rawIsinData.type'
+import { getOwnValue } from '@/shared/helpers/transformers/getOwnValue'
+
+/** Monetary allocation coverage per dimension. Explicit `nc` weights and
+ * completely missing rows are both counted as unallocated and remain
+ * traceable to the responsible current position.
+ */
+export function computeAllocationCoverageByDimension(
+  positions: PositionRow[],
+  rawData: RawIsinData,
+): DimensionCoverage[] {
+  return (['geo', 'secteur', 'currency', 'classe'] as const).map(
+    (dimension) => {
+      const latestByKey = latestDimensionRows(rawData[dimension])
+      let allocated = 0
+      let unallocated = 0
+      const issues = new Map<string, AllocationCoverageIssue>()
+      for (const position of positions) {
+        const value =
+          position.status === 'active'
+            ? Math.max(0, position.total_value ?? 0)
+            : 0
+        if (value <= 0) continue
+        if (!isAssetAnalysisApplicablePosition(position)) continue
+        const key = getPositionAllocationKey(position)
+        const allocation = latestByKey.get(key)
+        const ncRatio = missingAllocationRatio(allocation)
+        const missing = value * ncRatio
+        allocated += value - missing
+        unallocated += missing
+        if (missing > 0.01) {
+          const current = issues.get(key) ?? {
+            id: key,
+            name: position.name,
+            value: 0,
+            unallocated: 0,
+          }
+          current.value += value
+          current.unallocated += missing
+          issues.set(key, current)
+        }
+      }
+      return {
+        dimension,
+        allocated,
+        unallocated,
+        issues: [...issues.values()].toSorted(
+          (a, b) => b.unallocated - a.unallocated,
+        ),
+      }
+    },
+  )
+}
+
+type DimensionRow = RawIsinData['geo'][number]
+
+function latestDimensionRows(rows: DimensionRow[]) {
+  const latestByKey = new Map<string, DimensionRow>()
+  for (const row of rows) {
+    const current = latestByKey.get(row.isin)
+    if (!current || row.snapshot_date > current.snapshot_date)
+      latestByKey.set(row.isin, row)
+  }
+  return latestByKey
+}
+
+function missingAllocationRatio(allocation: DimensionRow | undefined) {
+  const allocationTotal = allocation
+    ? Object.values(allocation.values).reduce((sum, amount) => sum + amount, 0)
+    : 0
+  const ncRatio =
+    allocationTotal > 0
+      ? Math.min(
+          1,
+          Math.max(
+            0,
+            (getOwnValue(allocation?.values, 'nc') ?? 0) / allocationTotal,
+          ),
+        )
+      : 1
+  return ncRatio
+}

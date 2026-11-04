@@ -1,0 +1,31 @@
+{
+  "local_reference": {
+    "ready_ms": [9917, 9031, 8918],
+    "median_ready_ms": 9031,
+    "completed_worker_ms": [7054, 7096, 7209]
+  },
+  "local_fixed_debug_false": {
+    "ready_ms": [6340, 5166, 5397],
+    "median_ready_ms": 5397,
+    "completed_worker_ms": [2940, 3258, 3544]
+  },
+  "authored_files": [
+    {
+      "file": "csvValidationDefines.ts",
+      "sha256": "4682b6ca3d18e29a1864c71353b27aefedb0bc58265d757f083ed9ff82c0777f"
+    },
+    {
+      "file": "vite.config.ts",
+      "sha256": "26639f024945c52adbbc1b98677a7bbb20dc5548fde1789cb6c722274b4a3546"
+    },
+    {
+      "file": "tsconfig.node.json",
+      "sha256": "3a2a4430084f7a2fb34a11a2ae6d37bc008f897c04a60ce95a5cf5631ac95f03"
+    },
+    {
+      "file": "tests/viteDebugEnv.test.js",
+      "sha256": "04c6d4570b0b2372c48ceb8d14126ba69651e7e95e77f3d0b0af6419137320ce"
+    }
+  ],
+  "scope": "Final implementation preserves DEBUG as the only validation switch. Current source/input hashes verified after three local startup observations. Other concurrent holdings/overlay edits remain untouched."
+}

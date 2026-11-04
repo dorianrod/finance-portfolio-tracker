@@ -64,8 +64,8 @@ When `FINANCE_TOOL=make`, pass helper arguments through `ARGS`, for example:
 ```bash
 make allocation-read ARGS="--list-all"
 make allocation-build ARGS="--date YYYY-MM-DD"
-make pipeline
-make pipeline-auto
+make pipeline ARGS="--as-of {TARGET_DATE}"
+make pipeline-auto ARGS="--as-of {TARGET_DATE}"
 ```
 
 ---
@@ -74,19 +74,28 @@ make pipeline-auto
 
 Read today's date (available in the system context). Compute:
 - **`PREV_MONTH_END`**: last day of the previous calendar month
+- **`CURRENT_MONTH_END`**: last day of the current calendar month
 - **`TODAY`**: today's date
 
 If today is day 1–10 of the month, the user most likely wants to record
 values as of the end of the previous month — propose that as the default.
 
-Use **AskUserQuestion**:
-- question: "Reference date for this update?"
+Ask the user with the available question tool:
+- question: "Quelle date d’arrêté utiliser pour cette mise à jour et passer au pipeline avec --as-of ?"
 - option 1 (when day ≤ 10): `{PREV_MONTH_END}  — end of previous month (recommended)`
+- option 1 (otherwise): `{CURRENT_MONTH_END}  — close the current month`
 - option 2: `{TODAY}  — today`
 - option 3: `Other date`
 
 Store the confirmed date as **`TARGET_DATE`** (YYYY-MM-DD). If the user picks
 "Other date", ask them to type it before continuing.
+
+Require an explicit answer unless the user has already confirmed the date
+for this update. Explain that `--as-of` controls the reporting cutoff,
+independently of the export/download or execution date. For an early monthly
+close, ask the user to confirm the intended month-end date even if it is
+after today; do not silently use today or round their chosen date.
+Use `TARGET_DATE` for valuation rows and every pipeline run, including reruns.
 
 Also compute **`ALLOC_DATE`** = last day of the calendar month containing
 `TARGET_DATE`:
@@ -359,28 +368,32 @@ Show the user what was done.
 Run the portfolio pipeline after all input files and the allocation workbook
 are updated.
 
+Always pass `--as-of {TARGET_DATE}`, using the date explicitly confirmed in
+Step 1. Non-interactive execution does not replace that confirmation.
+
 Prefer the standalone release executable:
 
 ```bash
-{FINANCE_TOOL} pipeline
+{FINANCE_TOOL} pipeline --as-of {TARGET_DATE}
 ```
 
 If `FINANCE_TOOL=make`, use:
 
 ```bash
-make pipeline
+make pipeline ARGS="--as-of {TARGET_DATE}"
 ```
 
 For non-interactive refreshes with the standalone executable, use:
 
 ```bash
-{FINANCE_TOOL} pipeline --update-current-month yes --price-jump-policy fetched
+{FINANCE_TOOL} pipeline --as-of {TARGET_DATE} \
+  --update-current-month yes --price-jump-policy fetched
 ```
 
 If `FINANCE_TOOL=make`, use:
 
 ```bash
-make pipeline-auto
+make pipeline-auto ARGS="--as-of {TARGET_DATE}"
 ```
 
 If the pipeline asks whether to refetch the current month:
@@ -392,6 +405,10 @@ If the pipeline asks whether to refetch the current month:
 Capture and report whether the pipeline completed successfully. If it fails,
 stop and propose a debugging plan based on the traceback; do not continue to
 the final summary as if the update succeeded.
+
+After a successful run, verify that `portfolio_snapshot.csv` and the latest
+`snapshot_date` in `portfolio_history.csv` equal `TARGET_DATE`. A mismatched
+cutoff must be corrected before reporting the update as complete.
 
 ---
 
@@ -454,6 +471,69 @@ After any fixes, rerun Step 7, then repeat Step 8 until either:
 
 ---
 
+## Step 8b — Fund look-through sources
+
+The pipeline refreshes ETF/fund constituents using the per-portfolio registry
+`<data-dir>/input/fund_sources.csv` (columns: `parent_isin, provider, adapter,
+url, quality_tier, index_name, replication_method, proxy_name, proxy_isin`).
+It is user data: never copy its rows into code, tests, docs or commits.
+
+Find funds without an A/B source (tier C = fallback or dated snapshots,
+D = unavailable):
+
+```bash
+python3 -c "
+import pandas as pd
+s = pd.read_csv('<data-dir>/output/fund_holdings_status.csv').fillna('')
+print(s[s.quality_tier.isin(['C','D'])][
+  ['parent_isin','parent_name','quality_tier','market_value','issues']
+].sort_values('market_value', ascending=False).to_string(index=False))
+"
+```
+
+Also flag registry rows whose fund is no longer held (informational; leave
+them unless the user asks to prune).
+
+For each tier C/D fund, largest `market_value` first, research an official
+source and propose a row:
+
+1. Issuer site, by ISIN. Supported adapters:
+   - `ishares_csv`: iShares product page "Download holdings" CSV URL
+     (`.../products/<id>/fund/<ajax-id>.ajax?fileType=csv&fileName=<T>_holdings&dataType=fund`);
+     copy the pattern from an existing iShares row.
+   - `globalx_csv` / `globalx_hk_html`: Global X holdings CSV / HK page.
+2. Physical fund with complete official holdings: `quality_tier=A`,
+   `replication_method=physical`, `proxy_*` empty.
+3. Synthetic/swap fund: only if a physical fund tracks **exactly the same
+   index** — `quality_tier=B`, `replication_method=synthetic`, fill
+   `index_name`, `proxy_name`, `proxy_isin`, and point `url` to the proxy's
+   holdings. Never map to the swap collateral basket.
+4. No supported provider or no exact proxy: leave the fund on Yahoo and say
+   so; do not add a row. A new provider needs a new adapter (code change in
+   `fund_holdings_sources.py`, generic and with no portfolio data).
+
+For unresolved composite positions or a dated manual/agent holdings snapshot,
+follow the sibling `fund-source-research` skill's workflow and validation
+rules. A validated snapshot remains tier C.
+
+Present the proposed rows (fund, source URL, tier, rationale) and ask for
+confirmation when the source choice is ambiguous or a proxy is used. Append
+confirmed rows to the CSV with the **Edit** tool, then refresh fund holdings.
+In a source checkout:
+
+```bash
+make fund-holdings DATA_DIR=<data-dir>
+```
+
+With the standalone executable, rerun the pipeline as described in Step 7,
+keeping `--as-of {TARGET_DATE}`.
+
+(`--force` is implied for new rows since uncached funds are always fetched.)
+Check that each new fund reaches tier A/B with `validation_status` ok and
+weights ≈ 100%; otherwise fix or revert the row.
+
+---
+
 ## Step 9 — Summary
 
 Display a concise recap once all steps are complete:
@@ -477,7 +557,11 @@ Allocation file:
   {ALLOC_DATE}.xlsx — {created from scratch / copied from previous / updated with N assets}
   Assets researched: {list or "none"}
 
+Fund look-through sources:
+  {N funds already covered / N rows added to fund_sources.csv / funds left on Yahoo: list}
+
 Pipeline:
+  as_of: {TARGET_DATE} — output dates verified
   {completed / failed}
   errors.csv: {clear / N warnings / N errors}
   Error plan: {not needed / completed / waiting for user confirmation}

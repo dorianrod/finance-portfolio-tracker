@@ -1,0 +1,7 @@
+dist
+storybook-static
+node_modules
+public/data
+.pytest_cache
+.ruff_cache
+coverage

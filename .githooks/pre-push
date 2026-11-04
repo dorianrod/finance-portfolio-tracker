@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Runs the fast lint/type checks and blocks commits that mention a personal
-# asset name, ticker or ISIN (see scan_personal_data.py) before anything
+# Runs formatting, fixture review and lint/type checks, and blocks personal
+# asset names, tickers or ISINs (see scan_personal_data.py) before anything
 # reaches the public remote. Bypass only a confirmed false positive with
 # `git push --no-verify`.
 set -euo pipefail
@@ -62,19 +62,23 @@ for ref_line in "${push_refs[@]}"; do
         # New remote branch: scan only commits not already reachable from
         # any known remote-tracking branch, so pushing a first branch off
         # an up-to-date main doesn't rescan all of history.
-        commits="$(git rev-list "$local_sha" --not --remotes 2>/dev/null || true)"
+        commits="$(git rev-list "$local_sha" --not --remotes)"
     else
         commits="$(git rev-list "$remote_sha..$local_sha")"
     fi
     [ -z "$commits" ] && continue
 
+    echo "pre-push: scanning new commits for personal data..."
     scan_content="$({
         # Commit messages are scanned in full. For patches, only additions
         # can leak new data; removed lines may legitimately contain an old
         # public demo identifier and must not create a false positive.
         while IFS= read -r commit_sha; do
             git show -s --format=%B "$commit_sha"
-            git diff-tree --no-commit-id --unified=0 -r "$commit_sha" \
+            # Include initial commits and merge resolutions. Force text so
+            # attributes or a NUL byte cannot hide an audit report's content.
+            git diff-tree --no-commit-id --root -m --text --no-ext-diff \
+                --no-textconv --unified=0 -r "$commit_sha" \
                 | sed -n '/^+++ /d; /^+/s/^+//p'
         done <<< "$commits"
     })"
@@ -92,10 +96,11 @@ echo "pre-push: running Python lint and type checks..."
     "$python" -m pyright
 )
 
-echo "pre-push: running dashboard lint and type checks..."
+echo "pre-push: running dashboard formatting, lint, fixture review and type checks..."
 (
     cd "$repo_root/packages/dashboard"
-    npm run lint
+    npm run format:check
+    npm run audit:fixtures:check
     npm run typecheck
 )
 

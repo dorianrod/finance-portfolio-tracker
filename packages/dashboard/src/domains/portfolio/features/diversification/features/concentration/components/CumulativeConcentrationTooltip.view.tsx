@@ -1,0 +1,53 @@
+import type { CumulativeConcentrationPoint } from '@/domains/portfolio/features/diversification/features/concentration/types/cumulativeConcentrationPoint.type'
+import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
+import i18n from '@/i18n/i18n'
+import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
+import { useFormatNumber } from '@/shared/helpers/formatters/useFormatNumber'
+import { useFormatPercentage } from '@/shared/helpers/formatters/useFormatPercentage'
+import { ChartText } from '@/shared/ui/ChartText.view'
+import { Layout } from '@/shared/ui/layout/Layout.view'
+import { TooltipBox } from '@/shared/ui/TooltipBox.view'
+
+export function CumulativeConcentrationTooltip({
+  active,
+  payload,
+}: CumulativeConcentrationTooltipProps) {
+  const formatMoney = useFormatMoney()
+  const formatNumber = useFormatNumber()
+  const formatPercentage = useFormatPercentage()
+  if (payload == null) return null
+  if (!active || payload.length === 0) return null
+  const point = payload[0].payload
+
+  return (
+    <TooltipBox>
+      <ChartText as="div" tone={'tooltipText'} variant="strong">
+        {i18n.t('ui.cumulativeconcentrationtooltip.topAssets', {
+          count: point.rank,
+          percentage: formatPercentage(point.cumulativeWeight),
+        })}
+      </ChartText>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={'tooltipLabel'}>
+          {i18n.t('ui.cumulativeconcentrationtooltip.rankedAsset', {
+            rank: formatNumber(point.rank),
+            name: point.name,
+          })}
+        </ChartText>
+      </Layout>
+      <Layout spaceBefore="compact">
+        <ChartText as="div" tone={PORTFOLIO_CHART_TONES.riskSecondary}>
+          {i18n.t('ui.cumulativeconcentrationtooltip.holdingValue', {
+            amount: formatMoney(point.value, { style: 'full' }),
+            percentage: formatPercentage(point.weight),
+          })}
+        </ChartText>
+      </Layout>
+    </TooltipBox>
+  )
+}
+
+type CumulativeConcentrationTooltipProps = {
+  active?: boolean
+  payload?: Array<{ payload: CumulativeConcentrationPoint }>
+}

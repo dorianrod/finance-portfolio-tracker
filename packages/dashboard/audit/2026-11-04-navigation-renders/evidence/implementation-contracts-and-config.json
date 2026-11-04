@@ -1,0 +1,40 @@
+{
+  "rules": [
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/ui-vercel-responsive-rendering.md",
+      "sha256": "e4bebf32cbc03462800456140d36ab22e889082ca3c72aad133434632d4ee023"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/arch-component-roles.md",
+      "sha256": "bdc50385acf80caa160253added42afef1252cb6e2f3ef6f41e35b986e000c7f"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/quality-jsdoc-minimal.md",
+      "sha256": "9f05af1f08fe6201e522016991d880314fb9e253ef0a30c127380187bb86900e"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/test-colocated-tests.md",
+      "sha256": "ed55ca6556b3da297317cc1cfca17eefcc6065940ceb874c5b73f52559dda634"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/test-jotai-provider-isolation.md",
+      "sha256": "72d34598f671260824fe377981f4db0f6c0f8accb760673d106a7b6f373ec8ca"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/test-mock-data.md",
+      "sha256": "ffa81d92e130846ee5aae0e128e51212f99c23976f5312064dbc1d08d9331ac3"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/test-semantic-queries.md",
+      "sha256": "b31174cb9b2a41876d83c8d2db2e6a10fa55f2b8d87fb31ff868f480758f8e83"
+    },
+    {
+      "file": ".agents/skills/generic-react-best-practices/rules/i18n-no-hardcoded-strings.md",
+      "sha256": "bc5b775039d7af018123f8dac495d3d6092d84d8f5be7069adce409fbf23f6a2"
+    }
+  ],
+  "configurationChanges": [],
+  "compiler": "React Compiler not enabled; default React.memo shallow comparison",
+  "lintWarningBudget": 1,
+  "newSuppressions": []
+}

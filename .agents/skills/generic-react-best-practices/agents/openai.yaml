@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generic React Best Practices"
+  short_description: "Apply our React architecture and UI conventions"
+  default_prompt: "Use $generic-react-best-practices to review or write this React code with the catalog's applicable rules."
