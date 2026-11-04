@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.domain.models import Operation, OperationType, Position
+from src.domain.parsing.broker_exports import combine_operation_exports
 from src.domain.parsing.numeric import parse_currency_prefixed_amount
 from src.domain.parsing.price_lookup import PriceLookup
 from src.domain.parsing.replay import annotate_realized_gains, replay_holdings
@@ -28,14 +29,19 @@ class RevolutLoader(BrokerLoader):
     filepaths: list[Path]
     account: str = "revolut"
     label: str = "revolut"
+    as_of: date | None = None
 
     def load(
         self, ticker_map: dict[str, dict], asset_prices: pd.DataFrame
     ) -> tuple[list[Operation], list[Position]]:
-        operations: list[Operation] = []
-        for filepath in self.filepaths:
-            operations.extend(parse_operations(filepath, account=self.account))
-        operations = _deduplicate(operations)
+        operations = combine_operation_exports(
+            (str(path), parse_operations(path, account=self.account))
+            for path in self.filepaths
+        )
+        if self.as_of is not None:
+            operations = [
+                op for op in operations if op.date.date() <= self.as_of
+            ]
         _enrich_with_ticker_map(operations, ticker_map)
 
         if asset_prices.empty:
@@ -49,7 +55,7 @@ class RevolutLoader(BrokerLoader):
             operations,
             asset_prices,
             account=self.account,
-            snapshot_dates=month_end_dates(operations),
+            snapshot_dates=month_end_dates(operations, as_of=self.as_of),
         )
         return operations, positions
 
@@ -57,23 +63,6 @@ class RevolutLoader(BrokerLoader):
 # ---------------------------------------------------------------------------
 # Helpers
 
-
-def _deduplicate(operations: list[Operation]) -> list[Operation]:
-    """Remove exact duplicates that arise when Revolut export files overlap.
-
-    The historic file often includes the first few rows of the next monthly
-    export. Deduplication key: (date, type, ticker, amount) — the tuple that
-    uniquely identifies a transaction in Revolut's ledger.
-    """
-    seen: set[tuple] = set()
-    unique: list[Operation] = []
-    for op in operations:
-        key = (op.date, op.operation_type, op.ticker, op.total_amount)
-        if key not in seen:
-            seen.add(key)
-            unique.append(op)
-    return unique
-# ---------------------------------------------------------------------------
 
 _OPERATION_MAP: dict[str, OperationType] = {
     "CASH TOP-UP": OperationType.DEPOSIT,

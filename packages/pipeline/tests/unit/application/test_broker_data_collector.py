@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from src.application.broker_data_collector import BrokerDataCollector
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import Operation, OperationType
 from src.ports.parsers import BrokerLoader
 
@@ -45,6 +46,22 @@ def test_collect_keeps_running_when_one_loader_fails():
     assert operations == ["op"]
     assert positions == ["position"]
     assert [(f.label, f.message) for f in failures] == [("bad", "bad csv")]
+
+
+def test_collect_stops_instead_of_skipping_an_account_with_duplicates():
+    class OverlappingLoader:
+        label = "overlapping"
+
+        def load(self, ticker_map, asset_prices):
+            raise DuplicateBrokerOperationsError("a.csv overlaps b.csv")
+
+    collector = BrokerDataCollector(
+        loader_source=_LoaderSource([OverlappingLoader()]),
+        allocation_repo=_FakeAllocationRepository(),  # pyright: ignore[reportArgumentType]
+    )
+
+    with pytest.raises(DuplicateBrokerOperationsError, match="a.csv.*b.csv"):
+        collector.collect(pd.DataFrame())
 
 
 def test_collect_rejects_account_emitted_by_multiple_sources():

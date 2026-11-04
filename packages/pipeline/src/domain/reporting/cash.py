@@ -6,13 +6,17 @@ sell_proceeds, dividends, interest, cumulative_cash. Reading the input
 files and writing the CSV are the caller's responsibility.
 """
 
+from datetime import date
+
 import pandas as pd
 
 from src.domain.models import Operation, OperationType
 from src.domain.utils import month_end_dates
 
 
-def cash_snapshot(operations: list[Operation]) -> pd.DataFrame:
+def cash_snapshot(
+    operations: list[Operation], *, as_of: date | None = None
+) -> pd.DataFrame:
     """Return a DataFrame with monthly cash positions per account."""
     if not operations:
         return pd.DataFrame()
@@ -23,7 +27,7 @@ def cash_snapshot(operations: list[Operation]) -> pd.DataFrame:
     for account in accounts:
         acc_ops = [op for op in operations if op.account == account]
 
-        for snap_date in month_end_dates(acc_ops):
+        for snap_date in month_end_dates(acc_ops, as_of=as_of):
             period_ops = [op for op in acc_ops if op.date.date() <= snap_date]
 
             deposits = sum(

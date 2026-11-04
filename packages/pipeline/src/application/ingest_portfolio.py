@@ -355,9 +355,10 @@ class IngestPortfolioUseCase:
     error_detector: PortfolioErrorDetector
     output_writer: PortfolioOutputWriter
     salaries_repo: SalariesRepository
+    as_of: date | None = None
 
     def execute(self) -> None:
-        today = date.today()
+        today = self.as_of or date.today()
         asset_prices = self.asset_price_repo.load_all()
 
         operations, positions, parse_failures = (

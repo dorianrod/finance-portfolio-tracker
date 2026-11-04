@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from src.domain.errors import DuplicateBrokerOperationsError
 from src.domain.models import Operation, Position
 from src.ports.allocation_repository import AllocationRepository
 from src.ports.parsers import BrokerLoaderSource
@@ -43,6 +44,8 @@ class BrokerDataCollector:
         for loader in self.loader_source.discover():
             try:
                 operations, positions = loader.load(ticker_map, asset_prices)
+            except DuplicateBrokerOperationsError:
+                raise
             except ValueError as exc:
                 print(f"[{loader.label}] ERROR: {exc}")
                 failures.append(

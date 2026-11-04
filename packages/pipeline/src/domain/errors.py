@@ -21,6 +21,10 @@ _COLUMNS = [
 ]
 
 
+class DuplicateBrokerOperationsError(ValueError):
+    """Conflicting exports must stop the run before any output is written."""
+
+
 class ErrorCollector:
     def __init__(self) -> None:
         self._errors: list[dict] = []

@@ -2,6 +2,7 @@
 
 Usage:
     finance-pipeline [--data-dir DATA_DIR]
+                     [--as-of YYYY-MM-DD]
                      [--update-current-month ask|yes|no]
                      [--price-jump-policy ask|fetched|last]
 
@@ -43,6 +44,7 @@ from src.application.portfolio_snapshot_builder import (
     PortfolioSnapshotBuilder,  # noqa: E402
 )
 from src.data_dir import resolve_data_dir  # noqa: E402
+from src.domain.errors import DuplicateBrokerOperationsError  # noqa: E402
 from src.fetch_fund_holdings import refresh_fund_holdings  # noqa: E402
 from src.infrastructure.csv_account_groups_repository import (
     CsvAccountGroupsRepository,  # noqa: E402
@@ -78,6 +80,14 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help=(
             "Folder containing input/ and output/ (default: $FINANCE_DATA_DIR"
             " or ./data)"
+        ),
+    )
+    parser.add_argument(
+        "--as-of",
+        type=date.fromisoformat,
+        help=(
+            "Reporting date (default: today). Use a month-end date to "
+            "close a month, including when exports were loaded earlier."
         ),
     )
     parser.add_argument(
@@ -155,7 +165,7 @@ def _resolve_price_discrepancy(
             print(f"  Not a valid choice: '{answer}'. Try again.")
 
 
-def main(argv: list[str] | None = None) -> None:
+def _run(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     data_dir = resolve_data_dir(args.data_dir)
     input_dir = data_dir / "input"
@@ -177,7 +187,9 @@ def main(argv: list[str] | None = None) -> None:
     output_writer = CsvOutputWriter(output_dir)
 
     FetchPricesUseCase(
-        broker_operations=CsvBrokerOperationsReader(input_dir),
+        broker_operations=CsvBrokerOperationsReader(
+            input_dir, as_of=args.as_of
+        ),
         asset_price_repo=asset_price_repo,
         market_data=YahooMarketDataClient(),
         allocation_repo=allocation_repo,
@@ -190,6 +202,7 @@ def main(argv: list[str] | None = None) -> None:
                 discrepancy, args.price_jump_policy
             )
         ),
+        as_of=args.as_of,
     ).execute()
 
     use_case = IngestPortfolioUseCase(
@@ -197,24 +210,34 @@ def main(argv: list[str] | None = None) -> None:
         allocation_repo=allocation_repo,
         account_groups_repo=account_groups_repo,
         broker_data_collector=BrokerDataCollector(
-            loader_source=FileBrokerLoaderSource(input_dir),
+            loader_source=FileBrokerLoaderSource(
+                input_dir, as_of=args.as_of
+            ),
             allocation_repo=allocation_repo,
         ),
         snapshot_builder=PortfolioSnapshotBuilder(account_groups_repo),
         error_detector=PortfolioErrorDetector(asset_price_repo),
         output_writer=output_writer,
         salaries_repo=CsvSalariesRepository(input_dir / "salaries.csv"),
+        as_of=args.as_of,
     )
     use_case.execute()
 
     try:
-        refresh_fund_holdings(data_dir)
+        refresh_fund_holdings(data_dir, today=args.as_of)
     except Exception as exc:
         # Look-through enrichment is optional and must not make the core
         # portfolio ingestion fail. A previous successful file is preserved.
         print(f"[fund-holdings] refresh skipped: {exc}")
 
     print(f"  Output    : {output_dir}/")
+
+
+def main(argv: list[str] | None = None) -> None:
+    try:
+        _run(argv)
+    except DuplicateBrokerOperationsError as exc:
+        raise SystemExit(f"Import blocked: {exc}") from None
 
 
 if __name__ == "__main__":

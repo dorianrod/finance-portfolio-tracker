@@ -18,10 +18,10 @@ setup-hooks: ## Enable git hooks for personal-data scanning and pre-push checks.
 	git config core.hooksPath .githooks
 
 pipeline: ## Run the portfolio pipeline interactively. Prompts before refetching current-month prices and resolving large price jumps.
-	$(PIPELINE_PYTHON) $(PIPELINE_ENTRY) --data-dir $(DATA_DIR)
+	$(PIPELINE_PYTHON) $(PIPELINE_ENTRY) --data-dir $(DATA_DIR) $(ARGS)
 
 pipeline-auto: ## Run the portfolio pipeline non-interactively. Refetches current-month prices and accepts fetched prices for large price jumps.
-	$(PIPELINE_PYTHON) $(PIPELINE_ENTRY) --data-dir $(DATA_DIR) --update-current-month yes --price-jump-policy fetched
+	$(PIPELINE_PYTHON) $(PIPELINE_ENTRY) --data-dir $(DATA_DIR) --update-current-month yes --price-jump-policy fetched $(ARGS)
 
 pipeline-reinstall: ## Reinstall finance-pipeline from the latest main branch with pipx.
 	pipx install --python $(PIPELINE_PIPX_PYTHON) --force "$(PIPELINE_PIPX_SPEC)"

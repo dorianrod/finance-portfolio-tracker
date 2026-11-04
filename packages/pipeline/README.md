@@ -31,6 +31,21 @@ finance-pipeline --data-dir /path/to/data
 FINANCE_DATA_DIR=/path/to/data finance-pipeline
 ```
 
+To close a month using exports loaded before its last day, set the reporting
+date explicitly. This includes valuations dated on that last day and keeps
+the dashboard snapshot at month-end, independently of the run date:
+
+```bash
+finance-pipeline --as-of YYYY-MM-DD --update-current-month no
+```
+
+Transactions retain their actual dates; transactions and valuations after
+the reporting date are excluded. Repeated operations across broker exports
+(Boursorama, Revolut, direct entries or valuations) block the import before
+outputs are written. The error identifies the files and operations involved:
+remove a superseded export, or correct the overlapping rows, then retry.
+Multiple identical trades within a single export are preserved.
+
 Expected layout:
 
 ```
