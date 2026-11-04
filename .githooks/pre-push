@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs the fast lint/type checks and blocks commits that mention a personal
+# Runs formatting, lint/type checks and blocks commits that mention a personal
 # asset name, ticker or ISIN (see scan_personal_data.py) before anything
 # reaches the public remote. Bypass only a confirmed false positive with
 # `git push --no-verify`.
@@ -96,10 +96,10 @@ echo "pre-push: running Python lint and type checks..."
     "$python" -m pyright
 )
 
-echo "pre-push: running dashboard lint and type checks..."
+echo "pre-push: running dashboard formatting, lint and type checks..."
 (
     cd "$repo_root/packages/dashboard"
-    npm run lint
+    npm run format:check
     npm run typecheck
 )
 

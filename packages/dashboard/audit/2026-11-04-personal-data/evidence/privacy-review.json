@@ -5,10 +5,7 @@
   "method": "Full file contents, raw and JSON-decoded strings, compared with the local portfolio blocklist and local account names. Additional email, home-path, IBAN and private-key pattern checks. Matches retain counts only; private source values are omitted.",
   "portfolio_token_count": 178,
   "account_token_count": 23,
-  "reviewed_generic_accounts": [
-    "CTO",
-    "PEA"
-  ],
+  "reviewed_generic_accounts": ["CTO", "PEA"],
   "fixture_review": "The only ISIN-like literals occur in 2026-10-30-react-2/evidence/fixture-review.json. FR0000000000, FR0000000001 and the Apple holding identifier originate in tracked source test fixtures; no local portfolio token matches. PEA/CTO are generic synthetic account labels.",
   "limits": "Local-data-derived matching is not a general DLP guarantee. Standalone financial amounts, unknown personal identifiers, images and other encodings are not exhaustively detected. Ignored raw audit evidence is excluded; force-adding it still triggers the hooks. Home-path protection uses the current local home directory. The two affected local branches were rewritten; a private recovery archive is retained outside the repository. Historical entries identify sanitized objects.",
   "current_files": [
@@ -145,10 +142,7 @@
       "bytes": 194771,
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "CTO",
-        "PEA"
-      ],
+      "generic_account_token_matches": ["CTO", "PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -276,9 +270,7 @@
       "bytes": 29637,
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -605,9 +597,7 @@
       "bytes": 57795,
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -4528,9 +4518,7 @@
     {
       "blob": "07a837ec86a132e7430fe7cb0c560805c5c7cd2d",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/metrics-amended-baseline.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -4656,9 +4644,7 @@
     {
       "blob": "09d33a2a517c35fa8d8540b6fbe6cb929e8ceac5",
       "file": "packages/dashboard/audit/2026-10-31-react/metrics.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -4696,9 +4682,7 @@
     {
       "blob": "0b435eab4d09a9c29c1b79f36758559811f5ac7f",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/phase2-rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -4713,9 +4697,7 @@
     {
       "blob": "0b4787e6f72b91f7a497c0c492c85080f82b9b26",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/intersection-input-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -4863,9 +4845,7 @@
     {
       "blob": "11b46f481832eb863e04af933a9d9052da93349a",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/metrics-baseline.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -4922,9 +4902,7 @@
     {
       "blob": "15dcce3c41dd2058233d4c9af133ec099b760a87",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/metrics-amended-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5006,9 +4984,7 @@
     {
       "blob": "17aa5050957f1630477b3ab2af7b5d47f046f3fd",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/phase2-file-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5067,9 +5043,7 @@
     {
       "blob": "18455e216b134ffeeac9ec63efeff10a68a56ef0",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/metrics-baseline.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5107,9 +5081,7 @@
     {
       "blob": "1975b58e91f5c37f00aef6eb449a8acc78cec76b",
       "file": "packages/dashboard/audit/2026-10-31-react-2/metrics.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5205,9 +5177,7 @@
     {
       "blob": "1cbcb035dc1414b7de91bcad8b7227060d9f6c21",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/metrics-result.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5348,14 +5318,10 @@
     {
       "blob": "2883ec8e236f78e60c57353dabd4080ee71cd96a",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/fixture-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -5411,9 +5377,7 @@
     {
       "blob": "2a5ceeaf1965c0e2eeedad938a695a158d455dd1",
       "file": "packages/dashboard/audit/2026-10-31-react-full/findings.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5450,9 +5414,7 @@
     {
       "blob": "2b3b6a22603b68c90b1089e6bfa0c8f5676fdf94",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/file-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5599,9 +5561,7 @@
     {
       "blob": "31136678cb3b58837a675431e6bdf32951efc4b4",
       "file": "packages/dashboard/audit/2026-10-31-react-full/evidence/baseline-metrics-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5639,9 +5599,7 @@
     {
       "blob": "34a92413587d5afbad0182410b8519bc6a7baec3",
       "file": "packages/dashboard/audit/2026-10-30-react/plan.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5688,9 +5646,7 @@
       ],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -5746,9 +5702,7 @@
     {
       "blob": "381329a5b21b004061f3f50ae968cd3224f2de64",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/implementation-review.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5808,9 +5762,7 @@
     {
       "blob": "3cb30ce64fba37790238007bd2fe1c46d8995b55",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/implementation-source-manifest.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5892,9 +5844,7 @@
     {
       "blob": "41ede38df40383799c58744ff19a09bc95420d09",
       "file": "packages/dashboard/audit/2026-10-31-react/coverage.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -5909,9 +5859,7 @@
     {
       "blob": "427440d46830a66e8b9b20ca710a870ee0490b03",
       "file": "packages/dashboard/audit/2026-10-30-react-2/metrics.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6052,9 +6000,7 @@
     {
       "blob": "44656a627880c2007abfee48111b0fc22195acb4",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/metrics-input.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6155,9 +6101,7 @@
     {
       "blob": "48d7552c6ad38e893a174a880620d9f37b23471b",
       "file": "packages/dashboard/audit/2026-10-31-react/plan.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6194,15 +6138,10 @@
     {
       "blob": "494e05fb1aa025adfd9de2dbabf17ab2bbbb8c91",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/fixture-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "CTO",
-        "PEA"
-      ],
+      "generic_account_token_matches": ["CTO", "PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -6260,9 +6199,7 @@
     {
       "blob": "509192f7e2de8256b744800173c88b21f1afc594",
       "file": "packages/dashboard/audit/2026-10-30-react/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6287,9 +6224,7 @@
       ],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -6347,9 +6282,7 @@
     {
       "blob": "530c72b84621ac9541b533241f2dc40b3e7dc908",
       "file": "packages/dashboard/audit/2026-10-30-react/coverage.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6474,9 +6407,7 @@
     {
       "blob": "55de1007b6acf27a38af134395e369ad6f42af41",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/metrics-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6671,9 +6602,7 @@
     {
       "blob": "5a58f6e81a44d8e9026aa7f22941582cf59d7739",
       "file": "packages/dashboard/audit/2026-10-31-react/evidence/rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6728,9 +6657,7 @@
     {
       "blob": "5d0e99ae6a21f48cdb549fa2b963a2dbeecbf8a6",
       "file": "packages/dashboard/audit/2026-10-31-react-full/evidence/final-metrics-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6896,9 +6823,7 @@
     {
       "blob": "631a6117ca43430ba433fb28e8b603dc6a8433e3",
       "file": "packages/dashboard/audit/2026-10-31-react-2/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -6956,9 +6881,7 @@
     {
       "blob": "64d97027e8e4f179033a8936446700457473b93b",
       "file": "packages/dashboard/audit/2026-10-31-react-full/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7101,9 +7024,7 @@
     {
       "blob": "6af2e266f92e6015b9cbdea86581f800d05ca0f9",
       "file": "packages/dashboard/audit/2026-10-30-react-2/findings.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7140,9 +7061,7 @@
     {
       "blob": "6b3d71ecc89d2f09cef28d980074c725c159e10a",
       "file": "packages/dashboard/audit/2026-10-30-react-3/findings.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7247,9 +7166,7 @@
     {
       "blob": "6d59d7bbad04f9448250f5c7dad6e7971fccf5d1",
       "file": "packages/dashboard/audit/2026-10-31-react-full/coverage.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7331,9 +7248,7 @@
     {
       "blob": "6f8d60966506140bb5f8a9fa9c4722ce5dd28cf6",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/metrics-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7371,9 +7286,7 @@
     {
       "blob": "70a1f6f7da9a4a072d86a06c8d4ed6444af27650",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/phase2-rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7455,9 +7368,7 @@
     {
       "blob": "7197bdea54a1a50fe9045ec8503bd72c9c16e7bd",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/metrics-final-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7472,9 +7383,7 @@
     {
       "blob": "71c192a5fe3d9ef2864fae9e9bae8181657f5c14",
       "file": "packages/dashboard/audit/2026-10-30-react-3/coverage.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7554,9 +7463,7 @@
     {
       "blob": "7412be00ae802b55740c56d8ccd1730c92316647",
       "file": "packages/dashboard/audit/2026-10-31-react-2/plan.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7590,9 +7497,7 @@
     {
       "blob": "74fc2e21f78ad68c2245c74c94bbc1f26ccc82b4",
       "file": "packages/dashboard/audit/2026-10-30-react-2/coverage.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7652,9 +7557,7 @@
     {
       "blob": "786b60a6c189a4af8bdd5592fb019436da07115d",
       "file": "packages/dashboard/audit/2026-10-31-react-full/evidence/feature-review-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7669,9 +7572,7 @@
     {
       "blob": "787c20ae39cee9422e771aad8fae5dcd4c6f3647",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/phase2-rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7686,9 +7587,7 @@
     {
       "blob": "78988f6c27b2341dd1b7e50aa3592f44b1e58ba3",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/scope.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7748,9 +7647,7 @@
     {
       "blob": "7e133d0736bbe99eb9991bc460383c2367bca217",
       "file": "packages/dashboard/audit/2026-10-31-react/scope.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7851,9 +7748,7 @@
     {
       "blob": "81ca3079afe54c57c5620cf5c80a6b5192849424",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/phase2-semantic-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7959,9 +7854,7 @@
     {
       "blob": "3b3dd21d2d0ed0a4ae3f79a3eb5f7d918b965b3b",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/effective-Preview.view.tsx.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -7999,9 +7892,7 @@
     {
       "blob": "85982ee9aa6213574c87067d9f00be2c2cfe0520",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/render-review.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8085,9 +7976,7 @@
     {
       "blob": "87f2cdeba878641f10b627a6c7a1fd853eddcd9c",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/plan.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8112,10 +8001,7 @@
       ],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "CTO",
-        "PEA"
-      ],
+      "generic_account_token_matches": ["CTO", "PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -8127,9 +8013,7 @@
     {
       "blob": "88f49ab29dc7f6ae176e6a9888f827068a5f978b",
       "file": "packages/dashboard/audit/2026-10-30-react/evidence/rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8206,9 +8090,7 @@
     {
       "blob": "8b01b4caf9fb3674288185ee0c47f1c56c549efd",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/metrics-final-input.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8245,9 +8127,7 @@
     {
       "blob": "8d75cfdf14ff4fbecfa79d79bf8c3f4f58b2c93d",
       "file": "packages/dashboard/audit/2026-10-31-react/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8262,9 +8142,7 @@
     {
       "blob": "8eb4fe7cc0d8fb87529175224cd77582bf2d6518",
       "file": "packages/dashboard/audit/2026-10-30-react/evidence/component-boundaries.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8279,9 +8157,7 @@
     {
       "blob": "8f25b8c54826e89c249444244599644ed9968945",
       "file": "packages/dashboard/audit/2026-10-31-react/evidence/metrics-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8324,9 +8200,7 @@
     {
       "blob": "8fcc1ef039726b4f88807ca7c060429bb69d1b31",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/metrics-final-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8630,9 +8504,7 @@
     {
       "blob": "982d6fc083da83203234e3f7b3bfe284e4058159",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/file-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8784,9 +8656,7 @@
     {
       "blob": "9fef23faea80e063f62f0da1dd08f06e5bba3720",
       "file": "packages/dashboard/audit/2026-10-31-react-full/evidence/introduced-owner-review.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8943,9 +8813,7 @@
     {
       "blob": "a42d213468a4d30785bf236eddb3e595e8c47309",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/coverage.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -8960,9 +8828,7 @@
     {
       "blob": "a459bf2afbe5f67f72928e58e633a975ff2a2e78",
       "file": "packages/dashboard/audit/2026-10-31-react/evidence/file-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9062,9 +8928,7 @@
     {
       "blob": "a6fa48759cf1fd690e9566cfe58a852163dcffd7",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9254,9 +9118,7 @@
     {
       "blob": "acb7d79f59126760f85778156c38ce0c7c6ab4ac",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9271,9 +9133,7 @@
     {
       "blob": "ad68c01289b7521f652ce56be2998e4ff68d5816",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/metrics-expanded-baseline.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9506,9 +9366,7 @@
     {
       "blob": "b6c0149842c57dfab6428e544cc275c26a592da1",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/source-manifest.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9589,9 +9447,7 @@
     {
       "blob": "b9de05aaf72046bc36f7f39b2aff83af6451497a",
       "file": "packages/dashboard/audit/2026-10-30-react/findings.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9606,9 +9462,7 @@
     {
       "blob": "ba4236532c1182e5b4b69e2c8bf6ca01a18b03b2",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/semantic-review.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9775,9 +9629,7 @@
     {
       "blob": "bd68c6375e92ebe6e2c974983d7753eac866f695",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/semantic-review.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9792,9 +9644,7 @@
     {
       "blob": "bd8240e46ed6de21d1313c1786128c46668def57",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/prevention-review.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9809,9 +9659,7 @@
     {
       "blob": "bea7c590ef1ec589c077f7350a2dc005efcbbe4c",
       "file": "packages/dashboard/audit/2026-10-30-react-3/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -9826,9 +9674,7 @@
     {
       "blob": "c105dbf417d11269d0badec23c791312f4f88d86",
       "file": "packages/dashboard/audit/2026-10-31-react/root-causes.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10073,9 +9919,7 @@
     {
       "blob": "cc975fcd1d5105c2dc4edd0ca7b13cb180aafa95",
       "file": "packages/dashboard/audit/2026-10-30-react/scope.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10131,9 +9975,7 @@
     {
       "blob": "cdc6385c69d1a1556625ed56a4a4900a71ed3890",
       "file": "packages/dashboard/audit/2026-10-30-react/evidence/migration-ledger.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10304,9 +10146,7 @@
     {
       "blob": "d20e87de78bcaf32700025850596ce1a034735c0",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/phase2-tooling-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10384,9 +10224,7 @@
     {
       "blob": "d383e5032efea9f359060edf9d74ccc839e4d7c0",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/rule-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10401,9 +10239,7 @@
     {
       "blob": "d3c81b6fd0aaa878d9eef046a80182d8f1b74d28",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/metrics-final-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10477,9 +10313,7 @@
     {
       "blob": "d6295c2dc85f8716c2b6272f74d76dd73df937b6",
       "file": "packages/dashboard/audit/2026-10-31-react-full/evidence/feature-decisions.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10494,9 +10328,7 @@
     {
       "blob": "d6d0a9487e31de0c46b60297e3a6f95b8925eb90",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/implementation-contracts-and-config.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10552,9 +10384,7 @@
     {
       "blob": "d971c2cd0b4ba1915c8aedf19fe251ff38861207",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/implementation-render-review.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10569,9 +10399,7 @@
     {
       "blob": "da4c46d5172612d432586023dc61c4773a7b4d42",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/verification.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10676,9 +10504,7 @@
     {
       "blob": "dc9acad3fdd1548d42767ff84441b91373308dda",
       "file": "packages/dashboard/audit/2026-10-30-react/evidence/phase2-semantic-review.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10757,9 +10583,7 @@
     {
       "blob": "de744e684069f998ba638343511cacbaad4e6504",
       "file": "packages/dashboard/audit/2026-10-30-react-2/plan.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10796,9 +10620,7 @@
     {
       "blob": "e06614fb858809859a4203fc6149de3268e417d6",
       "file": "packages/dashboard/audit/2026-10-31-react/findings.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10835,9 +10657,7 @@
     {
       "blob": "e18ac3f2603bd82ae9e9c80b6ac258aa48463095",
       "file": "packages/dashboard/audit/2026-10-30-react-2/verification.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10892,9 +10712,7 @@
     {
       "blob": "e3f8292031d0c3f64da4ee8d512cb4d840be5a55",
       "file": "packages/dashboard/audit/2026-10-31-react-2/evidence/metrics-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10909,9 +10727,7 @@
     {
       "blob": "e4211f6bdd7e197379b9bc73e0eb1a1fc409a2bc",
       "file": "packages/dashboard/audit/2026-10-30-react-3/evidence/metrics-expanded-baseline-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -10993,9 +10809,7 @@
     {
       "blob": "ea3d6ee0f3e791b27f6441d7dcd8d18cf976588e",
       "file": "packages/dashboard/audit/2026-10-30-react-3/metrics.md",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -11081,9 +10895,7 @@
     {
       "blob": "ecc523968847f93a62411b2fdb3a5834e2aa0ab1",
       "file": "packages/dashboard/audit/2026-10-31-react/evidence/metrics-final-input.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -11249,14 +11061,10 @@
     {
       "blob": "f103dba6d1242e14d5879f968799a8228fe3dfbb",
       "file": "packages/dashboard/audit/2026-10-30-react-2/evidence/phase2-fixture-review.json",
-      "revisions": [
-        "8d9f6b8023668147a1bcfe6b05e6d8e864c99192"
-      ],
+      "revisions": ["8d9f6b8023668147a1bcfe6b05e6d8e864c99192"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
-      "generic_account_token_matches": [
-        "PEA"
-      ],
+      "generic_account_token_matches": ["PEA"],
       "personal_home_path": false,
       "pattern_matches": {
         "email": 0,
@@ -11268,9 +11076,7 @@
     {
       "blob": "f2111f27e73d8058e3e7d53dbafed6ceb0097e69",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/findings.md",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
@@ -11326,9 +11132,7 @@
     {
       "blob": "f89c289c1252e55c8d639f531d9a6231417d7d78",
       "file": "packages/dashboard/audit/2026-11-04-navigation-renders/evidence/metrics-final-result.json",
-      "revisions": [
-        "880f6086aff711e5a7be49ebcb40bfadce9e1352"
-      ],
+      "revisions": ["880f6086aff711e5a7be49ebcb40bfadce9e1352"],
       "portfolio_token_matches": 0,
       "non_generic_account_token_matches": 0,
       "generic_account_token_matches": [],
