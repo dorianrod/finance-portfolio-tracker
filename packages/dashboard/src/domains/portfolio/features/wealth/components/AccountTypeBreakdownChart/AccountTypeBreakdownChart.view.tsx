@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { PieLabelRenderProps, PieSectorShapeProps } from 'recharts'
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { Pie, PieChart, Tooltip } from 'recharts'
 
 import { AccountTypeTooltip } from '@/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeTooltip.view'
 import type { AccountTypePoint } from '@/domains/portfolio/features/wealth/types/accountTypePoint.type'
@@ -12,6 +12,7 @@ import { ChartLabel } from '@/shared/ui/chartLabel/ChartLabel.view'
 import { ChartLeaderLine } from '@/shared/ui/chartLabel/ChartLeaderLine.view'
 import { ChartSector } from '@/shared/ui/ChartSector.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { Surface } from '@/shared/ui/Surface.view'
@@ -49,7 +50,10 @@ export function AccountTypeBreakdownChartView({
           </Text>
         </Layout>
 
-        <ResponsiveContainer width="100%" height={280}>
+        <ChartViewport
+          label={i18n.t('ui.accounttypebreakdownchart.breakdownByAccountType')}
+          height={280}
+        >
           <PieChart>
             <Pie
               data={pieData}
@@ -68,7 +72,7 @@ export function AccountTypeBreakdownChartView({
               content={<AccountTypeTooltip portfolioTotal={portfolioTotal} />}
             />
           </PieChart>
-        </ResponsiveContainer>
+        </ChartViewport>
       </Surface>
     </div>
   )

@@ -1,10 +1,5 @@
 import type { ReactNode } from 'react'
-import {
-  LabelList,
-  ResponsiveContainer,
-  ScatterChart,
-  type ScatterShapeProps,
-} from 'recharts'
+import { LabelList, ScatterChart, type ScatterShapeProps } from 'recharts'
 
 import { RelationshipTooltip } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/RelationshipTooltip.view'
 import { YearLabel } from '@/domains/portfolio/features/wealth/components/IncomePlacementRelationshipChart/incomePlacementTooltip/YearLabel.view'
@@ -21,6 +16,7 @@ import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
 import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
 import { ChartTooltip } from '@/shared/ui/ChartTooltip.view'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { ChartSymbol } from '@/shared/ui/seriesScatter/ChartSymbol.view'
@@ -95,8 +91,10 @@ export function IncomePlacementRelationshipChartView({
           </Inline>
         </Text>
       </Layout>
-      <ResponsiveContainer
-        width="100%"
+      <ChartViewport
+        label={i18n.t(
+          'ui.incomeplacementrelationshipchart.incomeLevelVsPlacementRate',
+        )}
         height={285}
         onResize={(width) => setChartWidth(width)}
       >
@@ -162,7 +160,7 @@ export function IncomePlacementRelationshipChartView({
             />
           </SeriesScatter>
         </ScatterChart>
-      </ResponsiveContainer>
+      </ChartViewport>
       <Layout spaceBefore="default">
         <Text variant="noteFooter" as="p" tone="subtle">
           <Layout as="span" flow="block" inset="default">

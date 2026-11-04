@@ -1,4 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Activity, Component, type ErrorInfo, type ReactNode } from 'react'
 
 import i18n from '@/i18n/i18n'
 import { Button } from '@/shared/ui/controls/Button.view'
@@ -11,11 +11,22 @@ export class DashboardPanelErrorBoundary extends Component<
   DashboardPanelErrorBoundaryProps,
   DashboardPanelErrorBoundaryState
 > {
-  override state: DashboardPanelErrorBoundaryState = { error: null }
+  override state: DashboardPanelErrorBoundaryState = {
+    error: null,
+    active: this.props.active ?? true,
+  }
+
+  static getDerivedStateFromProps(
+    props: DashboardPanelErrorBoundaryProps,
+    state: DashboardPanelErrorBoundaryState,
+  ): Partial<DashboardPanelErrorBoundaryState> | null {
+    const active = props.active ?? true
+    return active === state.active ? null : { active, error: null }
+  }
 
   static getDerivedStateFromError(
     error: Error,
-  ): DashboardPanelErrorBoundaryState {
+  ): Partial<DashboardPanelErrorBoundaryState> {
     return { error }
   }
 
@@ -24,8 +35,14 @@ export class DashboardPanelErrorBoundary extends Component<
   }
 
   override render(): ReactNode {
-    if (!this.state.error) return this.props.children
+    return (
+      <Activity mode={this.props.active === false ? 'hidden' : 'visible'}>
+        {this.state.error ? this.renderFailure() : this.props.children}
+      </Activity>
+    )
+  }
 
+  private renderFailure(): ReactNode {
     return (
       <div className="mb-6">
         <StatusMessage as="div" urgent variant="errorPanel" align="center">
@@ -59,10 +76,12 @@ export class DashboardPanelErrorBoundary extends Component<
 }
 
 type DashboardPanelErrorBoundaryProps = {
+  active?: boolean
   children: ReactNode
   onRetry: () => void
 }
 
 type DashboardPanelErrorBoundaryState = {
   error: Error | null
+  active: boolean
 }

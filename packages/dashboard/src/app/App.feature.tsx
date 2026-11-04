@@ -1,9 +1,7 @@
 import { useAtomValue } from 'jotai'
-import { Suspense } from 'react'
 
 import { DashboardLoadState } from '@/app/DashboardLoadState.state'
 import { DashboardNavigation } from '@/app/dashboardNavigation/DashboardNavigation.feature'
-import { DashboardPanelErrorBoundary } from '@/app/DashboardPanelErrorBoundary.view'
 import { filterVisibilityForTab } from '@/app/helpers/presenters/filterVisibilityForTab'
 import { HoldingsViewTabs } from '@/app/HoldingsViewTabs.feature'
 import { useDashboardViewModel } from '@/app/services/useDashboardViewModel'
@@ -19,7 +17,6 @@ import { ViewNavigation } from '@/shared/ui/ViewNavigation.view'
 import { DashboardContent } from './DashboardContent.feature'
 import { DashboardFilters } from './DashboardFilters.feature'
 import { DashboardHeader } from './DashboardHeader.feature'
-import { DashboardPanelFallback } from './DashboardPanelFallback.feature'
 import { DashboardSectionHeader } from './DashboardSectionHeader.feature'
 import { DashboardSources } from './DashboardSources.feature'
 
@@ -63,14 +60,7 @@ export default function App() {
                 </StatusMessage>
               )}
 
-              <DashboardPanelErrorBoundary
-                key={activeTab}
-                onRetry={() => window.location.reload()}
-              >
-                <Suspense fallback={<DashboardPanelFallback />}>
-                  <DashboardContent />
-                </Suspense>
-              </DashboardPanelErrorBoundary>
+              <DashboardContent />
             </DashboardLoadState>
           </div>
         </div>

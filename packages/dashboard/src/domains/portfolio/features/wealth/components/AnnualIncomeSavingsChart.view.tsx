@@ -1,10 +1,5 @@
 import type { ReactNode } from 'react'
-import {
-  type BarShapeProps,
-  ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
+import { type BarShapeProps, ComposedChart, Tooltip } from 'recharts'
 
 import type { AnnualIncomeSavingsPoint } from '@/domains/portfolio/features/wealth/types/annualIncomeSavingsPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
@@ -16,6 +11,7 @@ import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
@@ -52,7 +48,10 @@ export function AnnualIncomeSavingsChart({
           </Layout>
         </div>
       </Inline>
-      <ResponsiveContainer width="100%" height={285}>
+      <ChartViewport
+        label={i18n.t('ui.annualincomesavingschart.incomeVsNetContributions')}
+        height={285}
+      >
         <ComposedChart
           data={data}
           margin={{ top: 8, right: 48, left: 0, bottom: 0 }}
@@ -117,7 +116,7 @@ export function AnnualIncomeSavingsChart({
             hover="large"
           />
         </ComposedChart>
-      </ResponsiveContainer>
+      </ChartViewport>
       <Layout spaceBefore="default">
         <Surface variant="captionFooter" tone="subtle">
           <Inline as="div" flow="wrap" gap="default" inset="default">

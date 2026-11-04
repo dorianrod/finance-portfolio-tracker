@@ -1,0 +1,389 @@
+{
+  "environment": "Development Chromium, StrictMode enabled; 1800ms after direct click; warm modules/data, unchanged filters/sources",
+  "observations": [
+    {
+      "interaction": "overview -> wealth",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 2,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 103
+    },
+    {
+      "interaction": "wealth -> performance",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 2,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 107
+    },
+    {
+      "interaction": "performance -> diversification",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 2,
+        "AllocationPage": 2,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 4,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 121
+    },
+    {
+      "interaction": "diversification -> holdings/positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 111
+    },
+    {
+      "interaction": "positions -> underlying",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 2
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 16,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 100
+    },
+    {
+      "interaction": "underlying -> positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 16,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 108
+    },
+    {
+      "interaction": "holdings -> overview",
+      "pages": {
+        "OverviewTab": 2,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 4,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 113
+    },
+    {
+      "interaction": "overview -> wealth",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 2,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 103
+    },
+    {
+      "interaction": "wealth -> performance",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 2,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 107
+    },
+    {
+      "interaction": "performance -> diversification",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 2,
+        "AllocationPage": 2,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 4,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 121
+    },
+    {
+      "interaction": "diversification -> holdings/positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 111
+    },
+    {
+      "interaction": "positions -> underlying",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 2
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 16,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 100
+    },
+    {
+      "interaction": "underlying -> positions",
+      "pages": {
+        "OverviewTab": 0,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 2,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 16,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 0,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 108
+    },
+    {
+      "interaction": "holdings -> overview",
+      "pages": {
+        "OverviewTab": 2,
+        "WealthTab": 0,
+        "PerformancePage": 0,
+        "ConcentrationPage": 0,
+        "AllocationPage": 0,
+        "PositionsPage": 0,
+        "FundLookThroughPage": 0
+      },
+      "App": 2,
+      "DashboardHeader": 2,
+      "DashboardPanel_all_instances": 12,
+      "builders": {
+        "buildOverviewComparison": 0,
+        "buildFundIssuerExposures": 0,
+        "buildIssuerExposures": 0,
+        "buildPositionRows": 4,
+        "historicalSnapshotsByParent": 0,
+        "buildAccountTypeHistory": 0,
+        "computePerformanceContributions": 0
+      },
+      "distinct_instrumented_functions_called": 113
+    }
+  ],
+  "instrumented_function_count": 550,
+  "instrumentation_coverage": {
+    "OverviewTab": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx#OverviewTab",
+    "WealthTab": "src/domains/portfolio/features/wealth/pages/WealthTab.feature.tsx#WealthTab",
+    "PerformancePage": "src/domains/portfolio/features/performance/pages/PerformancePage.feature.tsx#PerformancePage",
+    "ConcentrationPage": "src/domains/portfolio/features/diversification/features/concentration/pages/ConcentrationPage.feature.tsx#ConcentrationPage",
+    "AllocationPage": "src/domains/portfolio/features/diversification/features/allocation/pages/AllocationPage.feature.tsx#AllocationPage",
+    "PositionsPage": "src/domains/portfolio/features/holdings/features/positions/pages/PositionsPage.feature.tsx#PositionsPage",
+    "FundLookThroughPage": "src/domains/portfolio/features/holdings/features/fund-look-through/pages/FundLookThroughPage.feature.tsx#FundLookThroughPage",
+    "buildOverviewComparison": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.ts#buildOverviewComparison",
+    "buildFundIssuerExposures": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildFundIssuerExposures.ts#buildFundIssuerExposures",
+    "buildIssuerExposures": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.ts#buildIssuerExposures",
+    "buildPositionRows": "src/domains/portfolio/shared/helpers/transformers/buildPositionHierarchy/buildPositionRows.ts#buildPositionRows",
+    "historicalSnapshotsByParent": "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalSnapshotsByParent.ts#historicalSnapshotsByParent",
+    "buildAccountTypeHistory": "src/domains/portfolio/features/wealth/helpers/transformers/buildAccountTypeHistory.ts#buildAccountTypeHistory",
+    "computePerformanceContributions": "src/domains/portfolio/features/performance/helpers/transformers/computePerformanceContributions.ts#computePerformanceContributions"
+  },
+  "errors": [],
+  "wealth_renderer_observations": [
+    {
+      "interaction": "overview -> wealth",
+      "counts": {
+        "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.view.tsx#MonthlyPerformanceBar": 408,
+        "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx#AccountTypeSector": 994
+      }
+    },
+    {
+      "interaction": "overview -> wealth",
+      "counts": {
+        "src/domains/portfolio/features/wealth/components/MonthlySavingsChart/MonthlySavingsChart.view.tsx#MonthlyPerformanceBar": 480,
+        "src/domains/portfolio/features/wealth/components/AccountTypeBreakdownChart/AccountTypeBreakdownChart.view.tsx#AccountTypeSector": 1036
+      }
+    }
+  ]
+}

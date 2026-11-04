@@ -1,10 +1,5 @@
 import type { ReactNode } from 'react'
-import {
-  type BarShapeProps,
-  ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts'
+import { type BarShapeProps, ComposedChart, Tooltip } from 'recharts'
 
 import type { MonthlyTooltipOperationsByMonth } from '@/domains/portfolio/features/wealth/components/MonthlySavingsChart/helpers/transformers/groupMonthlyTooltipOperations'
 import { MonthlySavingsLegend } from '@/domains/portfolio/features/wealth/components/MonthlySavingsLegend.view'
@@ -20,6 +15,7 @@ import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
 import { ChartRectangle } from '@/shared/ui/ChartRectangle.view'
 import { ChartReference } from '@/shared/ui/chartReference/ChartReference.view'
 import type { ChartShapeProps } from '@/shared/ui/chartShape'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesBar } from '@/shared/ui/SeriesBar.view'
@@ -49,7 +45,10 @@ export function MonthlySavingsChartView({
             </Inline>
           </Text>
         </Layout>
-        <ResponsiveContainer width="100%" height={220}>
+        <ChartViewport
+          label={i18n.t('ui.monthlysavingschart.monthlyWealthDrivers')}
+          height={220}
+        >
           <ComposedChart
             data={data}
             margin={{ top: 4, right: 52, left: 0, bottom: 0 }}
@@ -116,7 +115,7 @@ export function MonthlySavingsChartView({
               hover="series"
             />
           </ComposedChart>
-        </ResponsiveContainer>
+        </ChartViewport>
         <MonthlySavingsLegend />
       </Surface>
     </div>

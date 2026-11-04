@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
+import { AreaChart, Legend, Tooltip } from 'recharts'
 
 import { PORTFOLIO_COST_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioCostShareKey'
 import { PORTFOLIO_GAIN_SHARE_KEY } from '@/domains/portfolio/features/wealth/components/EvolutionChart/constants/portfolioGainShareKey'
@@ -19,6 +19,7 @@ import {
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
@@ -62,7 +63,7 @@ export function EvolutionChartView({
         </Text>
         <ChartScaleToggle valueLabel="€" value={scale} onChange={setScale} />
       </Inline>
-      <ResponsiveContainer width="100%" height={height}>
+      <ChartViewport label={title} height={height}>
         <AreaChart
           key={scale}
           data={chartData}
@@ -125,7 +126,7 @@ export function EvolutionChartView({
             weight="fine"
           />
         </AreaChart>
-      </ResponsiveContainer>
+      </ChartViewport>
     </Surface>
   )
 }

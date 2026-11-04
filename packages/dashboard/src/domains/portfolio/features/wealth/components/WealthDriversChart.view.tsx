@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ComposedChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { ComposedChart, Tooltip } from 'recharts'
 
 import type { WealthDriverPoint } from '@/domains/portfolio/features/wealth/types/wealthDriverPoint.type'
 import { PORTFOLIO_CHART_TONES } from '@/domains/portfolio/shared/constants/portfolioChartTones'
@@ -9,6 +9,7 @@ import { useFormatMoney } from '@/shared/helpers/formatters/useFormatMoney'
 import { ChartGrid } from '@/shared/ui/chartAxes/ChartGrid.view'
 import { ChartXAxis } from '@/shared/ui/chartAxes/ChartXAxis.view'
 import { ChartYAxis } from '@/shared/ui/chartAxes/ChartYAxis.view'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { Layout } from '@/shared/ui/layout/Layout.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
@@ -46,7 +47,10 @@ export function WealthDriversChart({
           </Text>
         </Layout>
       </Layout>
-      <ResponsiveContainer width="100%" height={240}>
+      <ChartViewport
+        label={i18n.t('ui.wealthdriverschart.cumulativeWealthDrivers')}
+        height={240}
+      >
         <ComposedChart
           data={data}
           margin={{ top: 4, right: 8, left: 0, bottom: 0 }}
@@ -98,7 +102,7 @@ export function WealthDriversChart({
             markers="hidden"
           />
         </ComposedChart>
-      </ResponsiveContainer>
+      </ChartViewport>
       <Layout spaceBefore="default">
         <Text as="div" variant="caption" tone="subtle">
           <Inline as="div" flow="wrap" gap="compact">

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import { AreaChart, Legend, ResponsiveContainer, Tooltip } from 'recharts'
+import { AreaChart, Legend, Tooltip } from 'recharts'
 
 import { AccountTypeHistoryTooltip } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/AccountTypeHistoryTooltip.view'
 import { getAccountTypeTone } from '@/domains/portfolio/features/wealth/components/AccountTypeHistoryChart/helpers/presenters/getAccountTypeTone'
@@ -18,6 +18,7 @@ import {
   ChartScaleToggle,
 } from '@/shared/ui/ChartScaleToggle.view'
 import { ChartText } from '@/shared/ui/ChartText.view'
+import { ChartViewport } from '@/shared/ui/ChartViewport.view'
 import { Inline } from '@/shared/ui/layout/Inline.view'
 import { SeriesArea } from '@/shared/ui/SeriesArea.view'
 import { SeriesGradient } from '@/shared/ui/SeriesGradient.view'
@@ -59,7 +60,10 @@ export function AccountTypeHistoryChartView({
           </Text>
           <ChartScaleToggle valueLabel="€" value={scale} onChange={setScale} />
         </Inline>
-        <ResponsiveContainer width="100%" height={220}>
+        <ChartViewport
+          label={i18n.t('ui.accounttypehistorychart.accountTypeOverTime')}
+          height={220}
+        >
           <AreaChart
             key={scale}
             data={data}
@@ -115,7 +119,7 @@ export function AccountTypeHistoryChartView({
               />
             ))}
           </AreaChart>
-        </ResponsiveContainer>
+        </ChartViewport>
       </Surface>
     </div>
   )

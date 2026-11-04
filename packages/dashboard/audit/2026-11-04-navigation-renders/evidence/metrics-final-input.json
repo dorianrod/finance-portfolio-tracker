@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "scope": "dashboard/navigation-renders (focused; no proven violations)",
+  "unreviewedExceptions": 0,
+  "rules": [
+    {
+      "id": "ui-vercel-responsive-rendering",
+      "impact": "MEDIUM",
+      "coverage": "complete"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "kind": "suggestion",
+      "status": "resolved",
+      "ruleIds": ["ui-vercel-responsive-rendering"],
+      "files": [
+        "src/app/App.feature.tsx",
+        "src/app/DashboardContent.feature.tsx",
+        "src/app/DashboardPanel.feature.tsx"
+      ]
+    },
+    {
+      "id": "F-002",
+      "kind": "suggestion",
+      "status": "resolved",
+      "ruleIds": ["ui-vercel-responsive-rendering"],
+      "files": [
+        "src/app/DashboardReliability.feature.tsx",
+        "src/app/DashboardCombinedReliability.feature.tsx"
+      ]
+    }
+  ]
+}

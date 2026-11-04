@@ -9,7 +9,7 @@ describe('DashboardPanelErrorBoundary', () => {
       children: <p>Panel content</p>,
       onRetry: vi.fn(),
     })
-    boundary.state = { error: new Error('Chunk failed to load') }
+    boundary.state = { error: new Error('Chunk failed to load'), active: true }
 
     const html = renderToStaticMarkup(boundary.render())
 

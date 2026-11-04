@@ -1,13 +1,23 @@
 import { useAtomValue } from 'jotai'
+import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useDashboardTheme } from '@/app/services/theme/useDashboardTheme'
 import { useDashboardThemeSync } from '@/app/services/theme/useDashboardThemeSync'
 import { dashboardThemeAtom } from '@/app/stores/theme/dashboardTheme.store'
-import i18n from '@/i18n/i18n'
 import { ToggleButton } from '@/shared/ui/controls/ToggleButton.view'
 import { Text } from '@/shared/ui/Text.view'
 
-export function DashboardHeader() {
+/*
+ * @architecture-decision header-independent-of-navigation
+ * @rules ui-vercel-responsive-rendering
+ * @choice Memoize the header while subscribing directly to its theme and translations.
+ * @reason Navigation re-executes this unchanged header even though its content depends only on theme and language.
+ * @alternative Comparing theme or translated props in the shell would move these inputs away from their existing owner.
+ * @revisit The header displays navigation-dependent content.
+ */
+export const DashboardHeader = memo(function DashboardHeader() {
+  const { t } = useTranslation()
   const theme = useAtomValue(dashboardThemeAtom)
   const { toggleTheme } = useDashboardTheme()
   useDashboardThemeSync()
@@ -16,7 +26,7 @@ export function DashboardHeader() {
     <header className="mb-5 flex items-start gap-4">
       <div>
         <Text as="h1" variant="title" tone="default">
-          {i18n.t('ui.app.portfolio')}
+          {t('ui.app.portfolio')}
         </Text>
       </div>
       <span className="inline-grid ml-auto">
@@ -26,16 +36,14 @@ export function DashboardHeader() {
           active={theme === 'dark'}
           label={
             theme === 'dark'
-              ? i18n.t('ui.app.switchToLightMode')
-              : i18n.t('ui.app.switchToDarkMode')
+              ? t('ui.app.switchToLightMode')
+              : t('ui.app.switchToDarkMode')
           }
           variant="secondary"
         >
-          {theme === 'dark'
-            ? i18n.t('ui.app.lightMode')
-            : i18n.t('ui.app.darkMode')}
+          {theme === 'dark' ? t('ui.app.lightMode') : t('ui.app.darkMode')}
         </ToggleButton>
       </span>
     </header>
   )
-}
+})
