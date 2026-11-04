@@ -157,16 +157,31 @@ def find_matches(text: str, tokens: set[str]) -> set[str]:
     if not tokens:
         return set()
     text = text + "\n" + decoded_text(text)
-    # Most audit files are clean. One cached search avoids scanning each
-    # multi-megabyte manifest separately for every private token.
-    if not _blocklist_pattern(frozenset(tokens)).search(text):
-        return set()
+    prefilter = _blocklist_pattern(frozenset(tokens))
+    patterns = {
+        tok: re.compile(
+            r"(?<![A-Za-z0-9])" + _token_pattern(tok) + r"(?![A-Za-z0-9])"
+        )
+        for tok in tokens
+    }
+    # A match in one old report must not trigger a full-history search for
+    # every token. Keep detailed searches local to matching blocks. Padding
+    # preserves tokens and their word boundaries across block edges.
+    block_size = 64 * 1024
+    padding = max(map(len, tokens)) + 1
     found: set[str] = set()
-    for tok in tokens:
-        pattern = r"(?<![A-Za-z0-9])" + re.escape(tok) + r"(?![A-Za-z0-9])"
-        flags = re.IGNORECASE if any(char.isspace() for char in tok) else 0
-        if re.search(pattern, text, flags=flags):
-            found.add(tok)
+    for start in range(0, len(text), block_size):
+        end = min(start + block_size, len(text))
+        offset = max(0, start - 1)
+        block = text[offset:end + padding]
+        if not prefilter.search(block):
+            continue
+        for tok in tokens - found:
+            match = patterns[tok].search(block, start - offset)
+            if match is not None and match.start() < end - offset:
+                found.add(tok)
+        if found == tokens:
+            break
     return found
 
 

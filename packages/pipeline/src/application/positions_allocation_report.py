@@ -38,9 +38,9 @@ def _norm_clean(s: str) -> str:
 
     Examples:
       "Example Emerging Markets Fund (Acc)"
-        -> "Example Emerging Markets Fund Acc"
+        -> "example emerging markets fund acc"
       "Example Equal Weight Fund (acc) TST1"
-        -> "ishares s&p 500 equal weight acc"
+        -> "example equal weight fund acc"
     """
     stripped = re.sub(r"\(([^)]*)\)", r" \1 ", str(s))
     stripped = re.sub(r"\b[A-Z0-9]{4}\b", " ", stripped)

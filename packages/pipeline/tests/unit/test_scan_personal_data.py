@@ -108,6 +108,24 @@ def test_prefilter_preserves_overlapping_and_case_sensitive_tokens() -> None:
     assert scanner.find_matches("safe manifest contents", tokens) == set()
 
 
+@pytest.mark.parametrize("offset", [-1, 0, 1])
+def test_find_matches_preserves_tokens_at_block_edges(offset: int) -> None:
+    tokens = {"Example Equity Fund", "Equity Fund", "TST1", "tst1"}
+    text = " " * (64 * 1024 + offset) + "example equity fund TST1"
+
+    assert scanner.find_matches(text, tokens) == {
+        "Example Equity Fund", "Equity Fund", "TST1"
+    }
+
+
+def test_find_matches_preserves_word_boundaries_at_block_edges() -> None:
+    text = " " * (64 * 1024 - 1) + "xTST1 "
+    text += " " * (64 * 1024 - len(text) % (64 * 1024) - 4)
+    text += "TST1x"
+
+    assert scanner.find_matches(text, {"TST1"}) == set()
+
+
 def test_personal_home_path_is_checked_even_without_portfolio_data(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:

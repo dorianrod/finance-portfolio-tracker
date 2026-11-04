@@ -68,6 +68,7 @@ for ref_line in "${push_refs[@]}"; do
     fi
     [ -z "$commits" ] && continue
 
+    echo "pre-push: scanning new commits for personal data..."
     scan_content="$({
         # Commit messages are scanned in full. For patches, only additions
         # can leak new data; removed lines may legitimately contain an old
