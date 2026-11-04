@@ -39,7 +39,7 @@ export function UnrealizedPnlChartView({
   const formatMoney = useFormatMoney()
   const formatPercentage = useFormatPercentage()
   return (
-    <Surface variant="chart">
+    <Surface variant="chart" layout="subgrid">
       <Layout spaceAfter="default">
         <Text as="h2" variant="label" tone="secondary">
           <Inline as="span" align="center">
@@ -111,11 +111,12 @@ export function UnrealizedPnlChartView({
       </ResponsiveContainer>
       <Layout spaceBefore="default">
         <Text as="div" variant="caption" tone="subtle">
-          <Inline as="div" flow="wrap" gap="compact">
-            <span>
+          <Inline as="div" flow="wrap" gap="relaxed">
+            <Inline as="span" gap="compact">
               <Layout
                 as="span"
                 flow="inline"
+                sizing="fixed"
                 height="indicator"
                 width="indicator"
               >
@@ -126,11 +127,12 @@ export function UnrealizedPnlChartView({
                 />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedGain')}
-            </span>
-            <span>
+            </Inline>
+            <Inline as="span" gap="compact">
               <Layout
                 as="span"
                 flow="inline"
+                sizing="fixed"
                 height="indicator"
                 width="indicator"
               >
@@ -141,9 +143,15 @@ export function UnrealizedPnlChartView({
                 />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.grossUnrealizedLoss')}
-            </span>
-            <span>
-              <Layout as="span" flow="inline" height="divider" width="icon">
+            </Inline>
+            <Inline as="span" gap="compact">
+              <Layout
+                as="span"
+                flow="inline"
+                sizing="fixed"
+                height="divider"
+                width="icon"
+              >
                 <SeriesSwatch
                   tone={PORTFOLIO_CHART_TONES.returnRate}
                   as="i"
@@ -151,7 +159,7 @@ export function UnrealizedPnlChartView({
                 />
               </Layout>
               {i18n.t('ui.unrealizedpnlchart.pandlCapitalPlaced')}
-            </span>
+            </Inline>
           </Inline>
         </Text>
       </Layout>

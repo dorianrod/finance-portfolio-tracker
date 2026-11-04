@@ -41,7 +41,7 @@ export const SURFACE_VARIANTS = {
   plain: 'bg-surface',
   highlighted: 'h-full bg-surface-hover',
   raised: 'bg-surface-raised',
-  chart: 'bg-surface rounded-xl',
+  chart: 'bg-surface border border-border rounded-xl',
   card: 'bg-surface border border-border rounded-xl',
   panel: 'bg-surface border border-border rounded-2xl',
   smallCard: 'bg-surface border border-border rounded-lg text-xs',

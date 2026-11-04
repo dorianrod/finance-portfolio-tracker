@@ -35,7 +35,7 @@ export function TriChart({
   if (chartData.length === 0) return null
 
   return (
-    <Surface variant="chart">
+    <Surface variant="chart" layout="subgrid">
       <Layout spaceAfter="default">
         <Text as="h2" variant="label" tone="muted">
           <Inline as="span" align="center">
@@ -111,9 +111,15 @@ export function TriChart({
       </ResponsiveContainer>
       <Layout spaceBefore="default">
         <Text as="div" variant="caption" tone="subtle">
-          <Inline as="div" flow="wrap" gap="compact">
-            <span>
-              <Layout as="span" flow="inline" height="divider" width="icon">
+          <Inline as="div" flow="wrap" gap="relaxed">
+            <Inline as="span" gap="compact">
+              <Layout
+                as="span"
+                flow="inline"
+                sizing="fixed"
+                height="divider"
+                width="icon"
+              >
                 <SeriesSwatch
                   tone={PORTFOLIO_CHART_TONES.totalChange}
                   as="i"
@@ -121,9 +127,15 @@ export function TriChart({
                 />
               </Layout>
               {i18n.t('ui.trichart.trailing1YearIrr')}
-            </span>
-            <span>
-              <Layout as="span" flow="inline" height="divider" width="icon">
+            </Inline>
+            <Inline as="span" gap="compact">
+              <Layout
+                as="span"
+                flow="inline"
+                sizing="fixed"
+                height="divider"
+                width="icon"
+              >
                 <SeriesSwatch
                   tone={PORTFOLIO_CHART_TONES.returnRate}
                   as="i"
@@ -131,7 +143,7 @@ export function TriChart({
                 />
               </Layout>
               {i18n.t('ui.trichart.trailing3YearIrr')}
-            </span>
+            </Inline>
           </Inline>
         </Text>
       </Layout>

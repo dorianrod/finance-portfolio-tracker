@@ -12,6 +12,7 @@ import { getSurfacePaddingClass } from './surfaceAppearance/getSurfacePaddingCla
 export function Surface<T extends SurfaceTag = 'div'>({
   as,
   variant,
+  layout = 'block',
   tone,
   align,
   ...props
@@ -19,7 +20,9 @@ export function Surface<T extends SurfaceTag = 'div'>({
   return createElement(as ?? 'div', {
     ...props,
     className: [
-      getSurfaceLayoutClass(as, variant),
+      layout === 'subgrid'
+        ? 'grid row-span-3 grid-rows-subgrid'
+        : getSurfaceLayoutClass(as, variant),
       SURFACE_VARIANTS[variant],
       getSurfacePaddingClass(variant),
       tone && TEXT_TONES[tone],
@@ -52,6 +55,7 @@ type SurfaceProps<T extends SurfaceTag> = ControlProps<
 > & {
   as?: T
   variant: keyof typeof SURFACE_VARIANTS
+  layout?: 'block' | 'subgrid'
   tone?: TextTone
   align?: keyof typeof TEXT_ALIGNMENTS
 }
