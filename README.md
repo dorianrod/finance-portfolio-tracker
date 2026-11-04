@@ -110,6 +110,6 @@ After reinstalling the dashboard, fully close any browser tab that was already s
   ```
 
 - `finance-tool init` also (re-)installs the bundled Claude Code skills into `.claude/skills/` in the current directory every time it runs, including `allocation-update` and `monthly-update`.
-- In this repository, skills are maintained in `.agents/skills/`; `.claude/skills` is a relative symlink to that directory, so Claude Code and Codex share the same files. The `allocation-update` entry links to its bundled source in `packages/pipeline/src/skills/`.
+- In this repository, `.claude/skills` is a relative symlink to `.agents/skills/`, so Claude Code and Codex share the same files. The finance skills (`allocation-update`, `monthly-update`, and `fund-source-research`) have a single source in `packages/pipeline/src/skills/`, bundled with the package and executable; their `.agents/skills/` entries are relative symlinks to those sources. Other repository skills live directly in `.agents/skills/`.
 - From a source checkout, the same helper commands are available through `make`: `make allocation-read ARGS='--list-all'`, `make allocation-build ARGS='--date YYYY-MM-DD'`, `make pipeline`, and `make pipeline-auto`.
 - Building from source (contributing to the codebase rather than just using it) is covered in [packages/pipeline/README.md](packages/pipeline/README.md) and [packages/dashboard/README.md](packages/dashboard/README.md).

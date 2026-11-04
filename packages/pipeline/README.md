@@ -158,3 +158,9 @@ guides a full periodic refresh; and `fund-source-research` resolves the
 largest unexplained fund exposures using deterministic sources or validated
 dated snapshots.
 See `.claude/skills/*/SKILL.md` once they're installed.
+
+In this source repository, the bundled finance skills live only in
+`src/skills/`. Their root `.agents/skills/` entries are relative symlinks,
+and `.claude/skills` links to `.agents/skills/`. Edit either path to update
+the same source; `finance-init` preserves these links. Outside this repository,
+initialization copies the skills bundled with the installed version.
