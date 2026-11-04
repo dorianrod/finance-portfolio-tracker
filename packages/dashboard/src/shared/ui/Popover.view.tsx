@@ -62,7 +62,7 @@ function PopoverContent({
 }) {
   const context = useAtomValue(popoverInputAtom)
   return (
-    <Primitive.Portal>
+    <Primitive.Portal container={context?.portalContainer}>
       <Primitive.Content
         {...props}
         aria-label={label}

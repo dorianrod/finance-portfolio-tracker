@@ -18,7 +18,12 @@ export function FundPositionHoldingRow({
   const positionValue = position.total_value ?? 0
   return (
     <Surface variant="mutedRowSeparator">
-      <Grid columns={1} align="baseline" gap="default" inset="compact">
+      <Grid
+        arrangement="labelTwoValues"
+        align="baseline"
+        gap="default"
+        inset="tooltipRow"
+      >
         <Text tone="secondary" truncate title={holding.holdingName}>
           {holding.holdingName}
         </Text>

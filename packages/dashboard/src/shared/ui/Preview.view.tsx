@@ -109,7 +109,7 @@ function PreviewContent({
   return (
     <>
       <Primitive.Anchor virtualRef={virtualRef} />
-      <Primitive.Portal>
+      <Primitive.Portal container={context.portalContainer}>
         <Primitive.Content
           {...props}
           ref={contentRef}

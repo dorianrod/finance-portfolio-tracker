@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactNode, useRef } from 'react'
 
 import { partitionSlot } from '@/shared/helpers/presenters/partitionSlot'
+import { useOverlayPortal } from '@/shared/ui/services/useOverlayPortal'
 
 export function SidePanel({
   open,
@@ -11,6 +12,7 @@ export function SidePanel({
   size = 'default',
   scroll = 'both',
 }: SidePanelProps) {
+  const container = useOverlayPortal(open, onClose)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
   const { slot: title, content: afterTitle } = partitionSlot(
@@ -32,7 +34,7 @@ export function SidePanel({
         if (!nextOpen) onClose()
       }}
     >
-      <Dialog.Portal>
+      <Dialog.Portal container={container}>
         <Dialog.Overlay className="fixed inset-0 z-[9990] bg-overlay/45 backdrop-blur-xs" />
         <Dialog.Content
           {...(description.length === 0

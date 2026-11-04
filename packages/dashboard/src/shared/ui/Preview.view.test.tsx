@@ -35,6 +35,39 @@ function PreviewExample({ children }: { children: ReactNode }) {
 }
 
 describe('preview activation and focus', () => {
+  it('keeps the next preview open when its content component is replaced', async () => {
+    const store = createStore()
+    const onOpenChange = vi.fn()
+    const anchor = new DOMRect()
+    const { rerender } = render(
+      <Provider store={store}>
+        <Preview open onOpenChange={onOpenChange}>
+          <div>
+            <Preview.Content key="first" label="First asset" anchor={anchor}>
+              First details
+            </Preview.Content>
+          </div>
+        </Preview>
+      </Provider>,
+    )
+    expect(screen.getByRole('dialog', { name: 'First asset' })).toBeTruthy()
+    rerender(
+      <Provider store={store}>
+        <Preview open onOpenChange={onOpenChange}>
+          <div>
+            <Preview.Content key="next" label="Next asset" anchor={anchor}>
+              Next details
+            </Preview.Content>
+          </div>
+        </Preview>
+      </Provider>,
+    )
+    await waitFor(() =>
+      expect(screen.getByRole('dialog', { name: 'Next asset' })).toBeTruthy(),
+    )
+    expect(onOpenChange).not.toHaveBeenCalled()
+  })
+
   it.each([false, true])(
     'exits the preview with Tab, shift=%s',
     async (shift) => {

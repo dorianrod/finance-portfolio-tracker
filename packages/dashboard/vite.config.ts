@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { type Connect, defineConfig, type Plugin } from 'vite'
 
+import { csvValidationDefines } from './csvValidationDefines.ts'
 import { themeHtmlPlugin } from './themeHtmlPlugin'
 
 // Mirrors the Python pipeline's data-dir resolution (FINANCE_DATA_DIR env
@@ -47,27 +48,33 @@ function serveFinanceData(): Plugin {
   }
 }
 
-export default defineConfig({
-  // The demo builder uses an isolated public directory so generated fixtures
-  // never overwrite (or accidentally include) files from a developer's tree.
-  publicDir: process.env['FINANCE_DEMO_PUBLIC_DIR'] || 'public',
-  // Static demo builds already contain their synthetic CSVs. In particular,
-  // do not let `vite preview` shadow them with the developer's local data.
-  plugins: [
-    react(),
-    themeHtmlPlugin(),
-    tailwindcss(),
-    ...(process.env['VITE_STATIC_DEMO'] === 'true' ? [] : [serveFinanceData()]),
-  ],
-  worker: { format: 'es' },
-  server: {
-    proxy: {
-      '/api': 'http://127.0.0.1:8788',
+export default defineConfig(({ mode }) => {
+  return {
+    // Expose only the DEBUG validation switch to client and worker bundles.
+    define: csvValidationDefines(mode, import.meta.dirname),
+    // The demo builder uses an isolated public directory so generated fixtures
+    // never overwrite (or accidentally include) files from a developer's tree.
+    publicDir: process.env['FINANCE_DEMO_PUBLIC_DIR'] || 'public',
+    // Static demo builds already contain their synthetic CSVs. In particular,
+    // do not let `vite preview` shadow them with the developer's local data.
+    plugins: [
+      react(),
+      themeHtmlPlugin(),
+      tailwindcss(),
+      ...(process.env['VITE_STATIC_DEMO'] === 'true'
+        ? []
+        : [serveFinanceData()]),
+    ],
+    worker: { format: 'es' },
+    server: {
+      proxy: {
+        '/api': 'http://127.0.0.1:8788',
+      },
     },
-  },
-  resolve: {
-    alias: {
-      '@': resolve(import.meta.dirname, 'src'),
+    resolve: {
+      alias: {
+        '@': resolve(import.meta.dirname, 'src'),
+      },
     },
-  },
+  }
 })

@@ -7,6 +7,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Activity, useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { SidePanel } from './SidePanel.view'
@@ -14,6 +15,33 @@ import { SidePanel } from './SidePanel.view'
 afterEach(cleanup)
 
 describe('SidePanel', () => {
+  it('releases its portal and scroll lock when its retained panel hides', async () => {
+    function Content() {
+      const [open, setOpen] = useState(true)
+      return (
+        <div>
+          <SidePanel
+            open={open}
+            closeLabel="Close details"
+            onClose={() => setOpen(false)}
+          >
+            <SidePanel.Title>Details</SidePanel.Title>
+            <p>Position details</p>
+          </SidePanel>
+        </div>
+      )
+    }
+    const content = <Content />
+    const { rerender } = render(<Activity mode="visible">{content}</Activity>)
+    expect(screen.getByRole('dialog', { name: 'Details' })).toBeTruthy()
+    expect(getComputedStyle(document.body).overflow).toBe('hidden')
+    rerender(<Activity mode="hidden">{content}</Activity>)
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(getComputedStyle(document.body).overflow).not.toBe('hidden')
+    rerender(<Activity mode="visible">{content}</Activity>)
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
   it('renders a rich accessible title, description, header actions and body once', async () => {
     const user = userEvent.setup()
     const onReset = vi.fn()

@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { ScopeProvider } from 'jotai-scope'
 import { type ComponentProps, useMemo, useState } from 'react'
 
+import { useOverlayPortal } from '@/shared/ui/services/useOverlayPortal'
 import { useScopedInput } from '@/shared/ui/services/useScopedInput'
 import { tooltipInputAtom } from '@/shared/ui/stores/tooltipInput.atoms'
 
@@ -10,7 +11,11 @@ import type { ControlProps } from './controlProps'
 
 export function Tooltip({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const input = useMemo(() => ({ setOpen }), [setOpen])
+  const portalContainer = useOverlayPortal(open, () => setOpen(false))
+  const input = useMemo(
+    () => ({ portalContainer, setOpen }),
+    [portalContainer, setOpen],
+  )
   const scope = useScopedInput(tooltipInputAtom, input)
   return (
     <Primitive.Provider delayDuration={0}>
@@ -70,8 +75,9 @@ function TooltipContent({
 }: ControlProps<ComponentProps<typeof Primitive.Content>> & {
   variant?: 'info' | 'left' | 'details'
 }) {
+  const context = useAtomValue(tooltipInputAtom)
   return (
-    <Primitive.Portal>
+    <Primitive.Portal container={context?.portalContainer}>
       <Primitive.Content
         {...props}
         sideOffset={6}

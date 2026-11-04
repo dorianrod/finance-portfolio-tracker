@@ -4,4 +4,7 @@ const DEFAULT_TOOLTIP_INPUT = null
 
 export const tooltipInputAtom = atom<TooltipInput | null>(DEFAULT_TOOLTIP_INPUT)
 
-type TooltipInput = { setOpen: (open: boolean) => void }
+type TooltipInput = {
+  portalContainer: HTMLDivElement | null
+  setOpen: (open: boolean) => void
+}

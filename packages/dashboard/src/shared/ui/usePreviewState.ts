@@ -1,6 +1,7 @@
 import { useCallback, useId, useMemo, useRef, useState } from 'react'
 
 import { getTabbableElements } from './focusNavigation/getTabbableElements'
+import { useOverlayPortal } from './services/useOverlayPortal'
 
 export function usePreviewState(
   open: boolean,
@@ -43,6 +44,7 @@ export function usePreviewState(
     }
   }, [])
   const close = useCallback(() => onOpenChange(false), [onOpenChange])
+  const portalContainer = useOverlayPortal(open, close)
   const exitWithTab = useCallback(
     (content: HTMLElement, backwards: boolean) => {
       const currentTrigger = activation.current.trigger
@@ -65,6 +67,7 @@ export function usePreviewState(
     () => ({
       id,
       open,
+      portalContainer,
       interactive,
       trigger,
       activate,
@@ -78,6 +81,7 @@ export function usePreviewState(
     [
       id,
       open,
+      portalContainer,
       interactive,
       trigger,
       activate,

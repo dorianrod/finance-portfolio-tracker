@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 import { getTabbableElements } from './focusNavigation/getTabbableElements'
+import { useOverlayPortal } from './services/useOverlayPortal'
 
 export function usePopoverState(
   open: boolean | undefined,
@@ -17,6 +18,9 @@ export function usePopoverState(
       onOpenChange?.(next)
     },
     [onOpenChange],
+  )
+  const portalContainer = useOverlayPortal(open ?? internalOpen, () =>
+    setOpen(false),
   )
   const registerTrigger = useCallback((element: HTMLButtonElement | null) => {
     trigger.current = element
@@ -44,6 +48,7 @@ export function usePopoverState(
   return useMemo(
     () => ({
       open: open ?? internalOpen,
+      portalContainer,
       modal,
       setOpen,
       registerTrigger,
@@ -53,6 +58,7 @@ export function usePopoverState(
     [
       open,
       internalOpen,
+      portalContainer,
       modal,
       setOpen,
       registerTrigger,

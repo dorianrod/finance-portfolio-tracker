@@ -2,6 +2,7 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createStore, Provider } from 'jotai'
+import { Activity, StrictMode } from 'react'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { Popover } from './Popover.view'
@@ -9,6 +10,69 @@ import { Popover } from './Popover.view'
 afterEach(cleanup)
 
 describe('popover keyboard boundaries', () => {
+  it('keeps a default-open popover open through StrictMode effect replay', async () => {
+    render(
+      <StrictMode>
+        <Provider store={createStore()}>
+          <Popover defaultOpen>
+            <Popover.Trigger>Accounts</Popover.Trigger>
+            <Popover.Content label="Choose accounts">
+              <button>Only option</button>
+            </Popover.Content>
+          </Popover>
+        </Provider>
+      </StrictMode>,
+    )
+    await waitFor(() =>
+      expect(
+        screen.getByRole('dialog', { name: 'Choose accounts' }),
+      ).toBeTruthy(),
+    )
+  })
+
+  it.each([false, true])(
+    'dismisses a nested portal when its retained panel hides, modal=%s',
+    async (modal) => {
+      const user = userEvent.setup()
+      const content = (
+        <div>
+          <Popover modal={modal}>
+            <Popover.Trigger>Accounts</Popover.Trigger>
+            <Popover.Content label="Choose accounts">
+              <button>Only option</button>
+            </Popover.Content>
+          </Popover>
+        </div>
+      )
+      const store = createStore()
+      const { rerender } = render(
+        <Provider store={store}>
+          <Activity mode="visible">{content}</Activity>
+        </Provider>,
+      )
+      await user.click(screen.getByRole('button', { name: 'Accounts' }))
+      expect(
+        screen.getByRole('dialog', { name: 'Choose accounts' }),
+      ).toBeTruthy()
+      rerender(
+        <Provider store={store}>
+          <Activity mode="hidden">{content}</Activity>
+        </Provider>,
+      )
+      await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+      rerender(
+        <Provider store={store}>
+          <Activity mode="visible">{content}</Activity>
+        </Provider>,
+      )
+      expect(screen.queryByRole('dialog')).toBeNull()
+      await user.click(screen.getByRole('button', { name: 'Accounts' }))
+      expect(
+        screen.getByRole('dialog', { name: 'Choose accounts' }),
+      ).toBeTruthy()
+    },
+  )
+
   it.each([{ shift: false }, { shift: true }])(
     'keeps a modal popover open when tabbing with shift=$shift',
     async ({ shift }) => {
