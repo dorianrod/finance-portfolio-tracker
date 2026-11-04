@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Runs formatting, lint/type checks and blocks commits that mention a personal
-# asset name, ticker or ISIN (see scan_personal_data.py) before anything
+# Runs formatting, fixture review and lint/type checks, and blocks personal
+# asset names, tickers or ISINs (see scan_personal_data.py) before anything
 # reaches the public remote. Bypass only a confirmed false positive with
 # `git push --no-verify`.
 set -euo pipefail
@@ -96,10 +96,11 @@ echo "pre-push: running Python lint and type checks..."
     "$python" -m pyright
 )
 
-echo "pre-push: running dashboard formatting, lint and type checks..."
+echo "pre-push: running dashboard formatting, lint, fixture review and type checks..."
 (
     cd "$repo_root/packages/dashboard"
     npm run format:check
+    npm run audit:fixtures:check
     npm run typecheck
 )
 
