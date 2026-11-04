@@ -1,45 +1,17 @@
-import { buildIssuerExposures } from '@/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures'
 import type { FundExposureSort } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/fundExposureSort.type'
-import type {
-  ExposureSource,
-  IssuerExposure,
-  SecurityExposure,
-} from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
-import type { FundHolding } from '@/domains/portfolio/shared/types/fundHolding.type'
-import type { FundHoldingStatus } from '@/domains/portfolio/shared/types/fundHoldingStatus.type'
-import type { PositionRow } from '@/domains/portfolio/shared/types/positionRow.type'
+import type { IssuerExposure } from '@/domains/portfolio/features/holdings/features/fund-look-through/types/issuerExposure.type'
 
 export function buildFundExposureViewModel({
-  expanded,
-  holdings,
-  positions,
-  query,
+  exposures,
+  needle,
+  selectedFundName,
   sort,
-  statuses,
-}: BuildFundExposureViewModelInput) {
-  const needle = query.trim().toLocaleLowerCase()
-  const selectedFundName = selectedFund(positions, statuses, needle)
-  const scopedPositions = selectedFundName
-    ? positions.filter((position) => position.name === selectedFundName)
-    : positions
-  const parentIds = new Set(
-    scopedPositions
-      .flatMap((position) => [position.isin, position.ticker])
-      .filter(Boolean),
-  )
-  const scopedHoldings = selectedFundName
-    ? holdings.filter(
-        (holding) =>
-          holding.parentName === selectedFundName ||
-          parentIds.has(holding.parentIsin) ||
-          parentIds.has(holding.parentTicker),
-      )
-    : holdings
-  const exposures = buildIssuerExposures(
-    scopedPositions,
-    scopedHoldings,
-    statuses,
-  )
+}: {
+  exposures: IssuerExposure[]
+  needle: string
+  selectedFundName: string
+  sort: FundExposureSort
+}) {
   const filtered =
     needle && !selectedFundName
       ? exposures.filter(
@@ -54,81 +26,18 @@ export function buildFundExposureViewModel({
             ),
         )
       : exposures
-  const displayed = [...filtered].toSorted(
+  const displayed = filtered.toSorted(
     sort === 'value'
       ? (left, right) => right.value - left.value
       : (left, right) => left.name.localeCompare(right.name),
   )
-  const rows: ExposureRow[] = displayed.flatMap((issuer) => [
-    { kind: 'issuer' as const, issuer, open: expanded.has(issuer.id) },
-    ...(expanded.has(issuer.id)
-      ? issuer.securities.flatMap((security): ExposureRow[] => [
-          { kind: 'security', issuer, security },
-          ...(security.sources.length > 1
-            ? security.sources.map((source) => ({
-                kind: 'source' as const,
-                issuer,
-                security,
-                source,
-              }))
-            : []),
-        ])
-      : []),
-  ])
 
   return {
     displayed,
-    rows,
     securityCount: displayed.reduce(
       (sum, issuer) => sum + issuer.securities.length,
       0,
     ),
     totalIssuerCount: exposures.length,
   }
-}
-
-export type ExposureRow =
-  | { kind: 'issuer'; issuer: IssuerExposure; open: boolean }
-  | { kind: 'security'; issuer: IssuerExposure; security: SecurityExposure }
-  | {
-      kind: 'source'
-      issuer: IssuerExposure
-      security: SecurityExposure
-      source: ExposureSource
-    }
-
-type BuildFundExposureViewModelInput = {
-  expanded: Set<string>
-  holdings: FundHolding[]
-  positions: PositionRow[]
-  query: string
-  sort: FundExposureSort
-  statuses: FundHoldingStatus[]
-}
-
-function matchesFundStatus(
-  position: PositionRow,
-  statuses: FundHoldingStatus[],
-): boolean {
-  return statuses.some(
-    (status) =>
-      status.parentId === (position.isin || position.ticker) ||
-      (!!position.isin && status.parentIsin === position.isin) ||
-      (!!position.ticker && status.parentTicker === position.ticker),
-  )
-}
-
-function selectedFund(
-  positions: PositionRow[],
-  statuses: FundHoldingStatus[],
-  needle: string,
-) {
-  const selectedFundName = needle
-    ? (positions.find(
-        (position) =>
-          position.name.toLocaleLowerCase() === needle &&
-          matchesFundStatus(position, statuses),
-      )?.name ?? '')
-    : ''
-  return selectedFundName
 }

@@ -1,0 +1,162 @@
+{
+  "revision": "cb107d088dda865c4c5dddaba46112789d0ca8ab",
+  "initialWorktree": "clean",
+  "files": [
+    {
+      "file": "src/app/App.feature.tsx",
+      "sha256": "33d1b034cab7fae358f363b117587a1273516fd711a40f21c610b36438466c3b"
+    },
+    {
+      "file": "src/app/DashboardContent.feature.tsx",
+      "sha256": "4662b607ee45f2906aa83ece5c7ed157a6e1aac56975ae580ab0ff3186ac5f24"
+    },
+    {
+      "file": "src/app/DashboardHoldings.feature.tsx",
+      "sha256": "f8bddecc10954110a735a3116a7ea755f16680e6ac18340942549b47152e41c8"
+    },
+    {
+      "file": "src/app/HoldingsViewTabs.feature.tsx",
+      "sha256": "6737dc4f111595e24cfd757c6285025f1d4cef2b335ad6f42d57debd7bc0dc8a"
+    },
+    {
+      "file": "src/app/HoldingsViewTab.view.tsx",
+      "sha256": "271b331162094f283adac60bcbbf534c8ed9ece2299cd039e1930c832fde7806"
+    },
+    {
+      "file": "src/app/dashboardNavigation/DashboardNavigation.feature.tsx",
+      "sha256": "94340cd80bf578dac12d392993fe0be66ba062174ec6bf84c40d926cffdc7a39"
+    },
+    {
+      "file": "src/app/dashboardNavigation/PrimaryTabButton.feature.tsx",
+      "sha256": "fd6bcc87262a0033627fffebf6ccaeaba1c19e3d17dba2655b12ecc05915d710"
+    },
+    {
+      "file": "src/app/routing/dashboardTabLoaders/dashboardTabLoaders.ts",
+      "sha256": "8d80be3dd92380d0c555fb49bfe40c47eb51432d59a9c31d67ad794555bfb465"
+    },
+    {
+      "file": "src/app/routing/dashboardTabLoaders/preloadDashboardTab.ts",
+      "sha256": "ae05c4514c61d1668322fbf62d13b509f5ad5d17a099cf0fdb5773aaf701127b"
+    },
+    {
+      "file": "src/app/DashboardSources.feature.tsx",
+      "sha256": "7c477111f45b8d8ed7633306fd0b9e4ab9919c4132b06d7f21dba38c6b808c21"
+    },
+    {
+      "file": "src/app/queryClient.ts",
+      "sha256": "d3334329725d6c8d4914ef3168a7d5f4ce49f85bc3c8350fecaa79dec80071b6"
+    },
+    {
+      "file": "src/app/DashboardReliability.feature.tsx",
+      "sha256": "9e70d8a1669f0e81650b4365c92df912739a7326ae42138cffa3e838e1886361"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.feature.tsx",
+      "sha256": "0d667bb22a7be8c488afdc5b0419e1e08bacae95e3159655b6d61de4cbdc5d20"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/FundHoldingsExplorer.view.tsx",
+      "sha256": "5e01ef1dc30cd2aed7e608e338fa0776cfea191bb448444108cf06f72829cde2"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.ts",
+      "sha256": "a9e32d154bb421fa39bd383b0c168e16560a32f27964e4c08f7dfec435ec0798"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList.ts",
+      "sha256": "7778958dcd3867999d0c9252e0785724604d4f575d03988cf6eeba30cde66d10"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel.ts",
+      "sha256": "359abb4fdb224b4dfeb9734e608317fa8e191cfa246feecdbe5037a8787684a3"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/IssuerRow.view.tsx",
+      "sha256": "1f2e0e72f6eb5ca4ba3d9394dcd10ebc47f621b5a40c360f6692a4de150e48c9"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/VirtualExposureRow.view.tsx",
+      "sha256": "eaea7f50936d80a63cab1ae2c77cfa0a663e1e05661e40bbcf0bc1e2ebab9fc8"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.ts",
+      "sha256": "54ae00303773a5050e669440b108451187d275d6ac09df51033e5b046cfba797"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/services/actions/useDashboardUnderlyingHoldings.ts",
+      "sha256": "aa2485263d8e4a6ee480ee4787b46d1079b516a03ef78ee5fc96e6f52fb191b6"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/pages/FundLookThroughPage.feature.tsx",
+      "sha256": "a3090da8b76e745f80c7c0398a5c487d8b6dc47605b0d67b3df7a4fc26b50ebb"
+    },
+    {
+      "file": "src/domains/portfolio/shared/services/usePortfolioPositionScope.ts",
+      "sha256": "819d74badd0e6dc010dbb2a2a1cd2a508e5d89e532662665e83cc6fe2a1f349e"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/usePortfolioPositions.ts",
+      "sha256": "c0f1e5e84173891fe64e6801d678bf6950005cf7160ab9a259dca5f7ff5c411c"
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/services/useQualityAssessmentModel.ts",
+      "sha256": "4d71882abbada879ea1349ec362b4f593bcc1d058d1a72912fe200e6df35778d"
+    },
+    {
+      "file": "src/domains/portfolio/features/data-quality/features/assessment/helpers/transformers/useDashboardQuality.ts",
+      "sha256": "5af0833dd87ab5dc1c48882df070c89342738e2ba9c6dd2788dee2af63306a87"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/pages/OverviewTab.feature.tsx",
+      "sha256": "9b643a66c54c13174d65c68222efbebf63c39682ef90a4b38247184853f2ce2f"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/helpers/transformers/useOverviewComparison.ts",
+      "sha256": "c50dbcb89e19e3cdba3331e383e2b23ee09d06b606080fb715c80ada64c95596"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.ts",
+      "sha256": "1e07168ce9bf705be50b8b75a8e53ab4ca76ce5057c4dec15e2fbb8c72b5cef1"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts",
+      "sha256": "464d8271f003892cf066fcab22ca0861edc7a1c91d232e9e58bd6ceafc72ad9b"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/concentrationPoint.ts",
+      "sha256": "69200b2c99a1991cb1d147701af1a66a56517e4488862272359180f28abd0ab4"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/historicalFundSnapshots/historicalSnapshotsByParent.ts",
+      "sha256": "1263f86fe9266027de25c6ac85fa26191d64f1d576d11040ff1e2a4d6bb9da4e"
+    },
+    {
+      "file": "src/domains/portfolio/shared/apis/queries/portfolioSourceQueries/portfolioFundHoldingsQueryOptions.ts",
+      "sha256": "3945f65c8b5920d4a8b4ea02e27cc96f3f825b32f4dce535beeca4118c7ec2c5"
+    },
+    {
+      "file": "src/domains/portfolio/features/diversification/features/concentration/helpers/transformers/useHistoricalConcentration.ts",
+      "sha256": "b7862c00eaf3ceae08809ba9683788e70be1abe6160f8f91b382e1cc41dc1f17"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.test.ts",
+      "sha256": "c45d7d5a7e5b407bc4e706bca1467ccc83cef930a0834e74b432d3179a93f874"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundLookThroughTab.feature.test.tsx",
+      "sha256": "48520a898c56023e4e045f912680c0119bae8b0d5dd5c70cd1ff5eba588358e0"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend.test.ts",
+      "sha256": "3a0eeb51cea35d1809096327761368ff0996923dbe29e6f4b94e7b9f44d076e0"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison.test.ts",
+      "sha256": "13e924dfa14bc7b1a6d6b24eb5a01cb7825579f21c6477e5fff28b9080046206"
+    },
+    {
+      "file": "src/app/HoldingsViewTabs.feature.test.tsx",
+      "sha256": "f04e47cce6c6000229f7d09aa02bb37b360666b013f78de4f7f5b3c357ae6240"
+    }
+  ]
+}

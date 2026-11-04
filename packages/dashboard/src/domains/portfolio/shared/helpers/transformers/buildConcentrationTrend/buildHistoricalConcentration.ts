@@ -4,11 +4,13 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 
 import { concentrationPoint } from './concentrationPoint'
 import { isPositiveHistoricalSnapshot } from './isPositiveHistoricalSnapshot'
+import { selectConcentrationSnapshots } from './selectConcentrationSnapshots'
 
 export function buildHistoricalConcentration(
   rows: RawPosition[],
   accountFilters: Set<string> = new Set(),
   accountTypeFilters: Set<string> = new Set(),
+  atDates?: Date[],
 ): HistoricalConcentrationPoint[] {
   const byDate = new Map<
     number,
@@ -33,15 +35,15 @@ export function buildHistoricalConcentration(
     byDate.set(row.snapshot_date.getTime(), assets)
   }
 
-  return [...byDate.entries()]
-    .toSorted(([left], [right]) => left - right)
-    .map(([date, assets]) => {
+  return selectConcentrationSnapshots([...byDate.entries()], atDates).map(
+    ([date, assets]) => {
       const total = [...assets.values()].reduce(
         (sum, holding) => sum + holding.value,
         0,
       )
       return concentrationPoint(new Date(date), assets, total, total, 0, 0)
-    })
+    },
+  )
 }
 
 function assetKey(row: RawPosition): string {

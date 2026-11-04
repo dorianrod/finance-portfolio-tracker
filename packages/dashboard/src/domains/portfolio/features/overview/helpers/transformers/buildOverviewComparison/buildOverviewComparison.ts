@@ -67,16 +67,27 @@ export function buildOverviewComparison(
     (point) => point.perf_delta,
   )
 
+  /*
+   * @architecture-decision overview-concentration-at-comparison-dates
+   * @rules ui-vercel-responsive-rendering, helpers-categories
+   * @choice Build only the latest eligible concentration points at the two comparison endpoints.
+   * @reason Overview consumes two snapshots; the shared builders retain full-series output for diversification and preserve earlier eligible composition fallbacks.
+   * @alternative Rebuilding every dated holding ranking repeats work that is discarded by concentrationComparison.
+   * @revisit Overview starts displaying the intermediate concentration series.
+   */
+  const comparisonDates = [windows.previous.end, windows.current.end]
   const heldPoints = buildHistoricalConcentration(
     input.rawPositions,
     accountFilters,
     accountTypeFilters,
+    comparisonDates,
   )
   const lookThroughPoints = buildHistoricalLookThroughConcentration(
     input.rawPositions,
     input.fundHoldingsHistory,
     accountFilters,
     accountTypeFilters,
+    comparisonDates,
   )
 
   return {

@@ -7,6 +7,32 @@ import { historicalHolding } from '@/domains/portfolio/shared/mocks/historicalFu
 import { row } from '@/domains/portfolio/shared/mocks/historicalPosition.mock'
 
 describe('buildHistoricalConcentration', () => {
+  it('ranks only endpoint snapshots and falls back past dates without eligible holdings', () => {
+    const rows = [
+      row({ snapshot_date: new Date('2025-01-31'), total_value: 100 }),
+      row({ snapshot_date: new Date('2025-02-28'), total_value: 50 }),
+      row({ snapshot_date: new Date('2025-03-31'), total_value: 0 }),
+    ]
+    const full = buildHistoricalConcentration(rows)
+    expect(
+      buildHistoricalConcentration(rows, new Set(), new Set(), [
+        new Date('2025-02-01'),
+        new Date('2025-03-31'),
+      ]),
+    ).toEqual(full)
+    expect(
+      buildHistoricalConcentration(rows, new Set(), new Set(), [
+        new Date('2025-03-31'),
+        new Date('2025-03-31'),
+      ]),
+    ).toEqual([full[1]])
+    expect(
+      buildHistoricalConcentration(rows, new Set(), new Set(), [
+        new Date('2024-12-31'),
+      ]),
+    ).toEqual([])
+  })
+
   it('aggregates the same ISIN across accounts and ranks holdings', () => {
     const result = buildHistoricalConcentration([
       row({ account: 'PEA', total_value: 60 }),
@@ -109,6 +135,82 @@ describe('buildHistoricalConcentration', () => {
 })
 
 describe('buildHistoricalLookThroughConcentration', () => {
+  it.each([
+    { accounts: new Set<string>(), types: new Set<string>() },
+    { accounts: new Set(['PEA']), types: new Set(['Brokerage']) },
+    { accounts: new Set(['absent']), types: new Set<string>() },
+  ])(
+    'preserves endpoint results and earlier eligible history under filters: %j',
+    ({ accounts, types }) => {
+      const rows = [
+        row({
+          snapshot_date: new Date('2025-01-31'),
+          isin: 'ISIN-FUND',
+          total_value: 100,
+        }),
+        row({
+          snapshot_date: new Date('2025-02-28'),
+          isin: 'ISIN-FUND',
+          total_value: 200,
+        }),
+        row({
+          snapshot_date: new Date('2025-02-28'),
+          account: 'CTO',
+          isin: 'DIRECT',
+          total_value: 10,
+        }),
+        row({
+          snapshot_date: new Date('2025-03-31'),
+          isin: 'DIRECT',
+          total_value: 500,
+        }),
+        row({
+          snapshot_date: new Date('2025-04-30'),
+          isin: 'ISIN-FUND',
+          total_value: 300,
+        }),
+      ]
+      const history = [historicalHolding()]
+      const full = buildHistoricalLookThroughConcentration(
+        rows,
+        history,
+        accounts,
+        types,
+      )
+      expect(
+        buildHistoricalLookThroughConcentration(
+          rows,
+          history,
+          accounts,
+          types,
+          [new Date('2025-01-31'), new Date('2025-03-31')],
+        ),
+      ).toEqual(full.filter(({ date }) => date <= new Date('2025-03-31')))
+      expect(
+        buildHistoricalLookThroughConcentration(
+          rows,
+          history,
+          accounts,
+          types,
+          [new Date('2025-03-31')],
+        ),
+      ).toEqual(
+        full.filter(
+          ({ date }) => date.getTime() === new Date('2025-02-28').getTime(),
+        ),
+      )
+      expect(
+        buildHistoricalLookThroughConcentration(
+          rows,
+          history,
+          accounts,
+          types,
+          [new Date('2024-12-31')],
+        ),
+      ).toEqual([])
+    },
+  )
+
   it('uses the latest non-future fund snapshot and aggregates direct and indirect issuer exposure', () => {
     const result = buildHistoricalLookThroughConcentration(
       [

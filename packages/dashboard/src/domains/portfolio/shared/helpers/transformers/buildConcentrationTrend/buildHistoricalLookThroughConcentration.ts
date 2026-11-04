@@ -8,15 +8,44 @@ import type { RawPosition } from '@/domains/portfolio/shared/types/rawPosition.t
 
 import { concentrationPoint } from './concentrationPoint'
 import { isPositiveHistoricalSnapshot } from './isPositiveHistoricalSnapshot'
+import { selectConcentrationSnapshots } from './selectConcentrationSnapshots'
 
 export function buildHistoricalLookThroughConcentration(
   rows: RawPosition[],
   history: HistoricalFundHolding[],
   accountFilters: Set<string> = new Set(),
   accountTypeFilters: Set<string> = new Set(),
+  atDates?: Date[],
 ): HistoricalConcentrationPoint[] {
   if (history.length === 0) return []
   const snapshotsByParent = historicalSnapshotsByParent(history)
+  const byDate = groupPositionsByDate(rows, accountFilters, accountTypeFilters)
+
+  const snapshots = atDates
+    ? [...byDate.entries()].filter(([date, positions]) =>
+        positions.some((position) =>
+          latestSnapshotAt(
+            snapshotsByParent.get(historicalPositionKey(position)),
+            new Date(date),
+          ),
+        ),
+      )
+    : [...byDate.entries()]
+  return selectConcentrationSnapshots(snapshots, atDates)
+    .map(([date, positions]) =>
+      buildDatedLookThroughPoint(date, positions, snapshotsByParent),
+    )
+    .filter(
+      ({ hasApplicableHistoricalSnapshot }) => hasApplicableHistoricalSnapshot,
+    )
+    .map(({ point }) => point)
+}
+
+function groupPositionsByDate(
+  rows: RawPosition[],
+  accountFilters: Set<string>,
+  accountTypeFilters: Set<string>,
+) {
   const byDate = new Map<number, RawPosition[]>()
   for (const row of rows) {
     if (!isPositiveHistoricalSnapshot(row)) continue
@@ -26,15 +55,7 @@ export function buildHistoricalLookThroughConcentration(
     byDate.set(row.snapshot_date.getTime(), current)
   }
 
-  return [...byDate.entries()]
-    .toSorted(([left], [right]) => left - right)
-    .map(([date, positions]) =>
-      buildDatedLookThroughPoint(date, positions, snapshotsByParent),
-    )
-    .filter(
-      ({ hasApplicableHistoricalSnapshot }) => hasApplicableHistoricalSnapshot,
-    )
-    .map(({ point }) => point)
+  return byDate
 }
 
 type HistoricalSnapshots = ReturnType<typeof historicalSnapshotsByParent>

@@ -1,7 +1,7 @@
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 
-import type { ExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel'
+import type { ExposureRow } from '@/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildExposureRows'
 
 export function useVirtualExposureList(rows: ExposureRow[]) {
   const listRef = useRef<HTMLDivElement>(null)

@@ -1,0 +1,98 @@
+{
+  "revision": "cb107d088dda865c4c5dddaba46112789d0ca8ab",
+  "phase": "implementation",
+  "files": [
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundExposureRows/fundExposureRows/VirtualExposureRow.view.tsx",
+      "sha256": "c411aefacbcf54f57793238f0965a6dc324957701a7e939624180f37da930632"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildExposureRows.test.ts",
+      "sha256": "e491487890875d63889b2cbb2e73e98174d58c4d22d849812f3f267f624d0cff"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildExposureRows.ts",
+      "sha256": "8b0e62f1a24b015cbaf5c2389a4b285e5d8b8454a20f0d20b590e12f1c0c5f99"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel.test.ts",
+      "sha256": "f7cfca4534f75b6a4f0d775b514c101e68006417f532a4ab5f93b9826dba8935"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildFundExposureViewModel.ts",
+      "sha256": "596d46dc06a6b8d8f119dc6e46a54b96b21d5d5c43ccd9debeedec1acbb38278"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.test.tsx",
+      "sha256": "6b49fae139caba0e8523d0843759a4f0ce3602d0e06bc3159721612f08a22496"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useFundExposureViewModel.ts",
+      "sha256": "c1a3ec12578573fe91b3a34f0f468368dd4d25b2b3518fc14ad2e46db74a2bca"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/services/useVirtualExposureList.ts",
+      "sha256": "0b8abeb723832d80e5644f109bc44e72830780291c40dbe4765e62830ec57173"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildFundIssuerExposures.test.ts",
+      "sha256": "36a9251ca35f9d9223eb0479df5d4dab3e4d3d401ea6bc24b5e1fbafce17bb2b"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildFundIssuerExposures.ts",
+      "sha256": "376a03e4cc190ab644cda4160c9b1b7291a643d2ccea234d59c6478500197284"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/buildIssuerExposures.ts",
+      "sha256": "0f934801d7200750ce4e43df81ab384bf693239718a513413989e4f2bbe3ac29"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/createCanonicalIssuerResolver.test.ts",
+      "sha256": "9a02e2f475dcccdfd1353b55e62bb4b0a5f8bfa2a73a33c3c083d7533c3a91f3"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/issuerExposures/createCanonicalIssuerResolver.ts",
+      "sha256": "1092a3aafdf17c23e57f57c54d5990924d8c4957d1697e64197be297cbebbaab"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/selectExposureFund.test.ts",
+      "sha256": "11988174930500fb623e2707dd8662d8e3bff298c92f07468d027380a7c4652d"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/helpers/transformers/selectExposureFund.ts",
+      "sha256": "9ed323f80f26be2ed06a78638e3dfc792c8fb837b962b670e696164ebada5c3f"
+    },
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/mocks/issuerExposure.mock.ts",
+      "sha256": "6ae69c21fc8b9cc066a578fcb2f716135801e9d6cb55c4758fa4e745b45e20a5"
+    },
+    {
+      "file": "src/domains/portfolio/features/overview/helpers/transformers/buildOverviewComparison/buildOverviewComparison.ts",
+      "sha256": "f6b17332f89f0c1943132a296a3589c34f512e37f0e031af31bde38da0de6284"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend.test.ts",
+      "sha256": "d4385ee08ca7d00630b25ebdedc3a1f446d8be565d46114efd14d9659527a61d"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalConcentration.ts",
+      "sha256": "c010a262906cba8ab295250913f0c35648eeacc7107c182639f91e3dbff66649"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/buildHistoricalLookThroughConcentration.ts",
+      "sha256": "5007e534fccbe4ec5577ed186d6c6192d7233b852bb317b870bc71e262965a9a"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/selectConcentrationSnapshots.test.ts",
+      "sha256": "111a9d9640f781403de7f279a9571ed37d87aecd9f4e24bc2390de0f29f3772b"
+    },
+    {
+      "file": "src/domains/portfolio/shared/helpers/transformers/buildConcentrationTrend/selectConcentrationSnapshots.ts",
+      "sha256": "e4bf648891856577eef555a19956e29bb0e332f2a929f2af3af9003c7252fdcd"
+    },
+    {
+      "file": "tests/fixtures/ownership-review.json",
+      "sha256": "946fb1cdb4cb31399449c17717c38d82cc6a88f31d6b5d4cc495d6e31740e776"
+    }
+  ]
+}

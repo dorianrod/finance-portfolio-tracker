@@ -1,0 +1,23 @@
+{
+  "retainedReviews": 24,
+  "retainedTestHashesUnchanged": true,
+  "addedReview": [
+    {
+      "file": "src/domains/portfolio/features/holdings/features/fund-look-through/components/FundHoldingsExplorer/helpers/presenters/buildExposureRows.test.ts",
+      "line": 10,
+      "column": 39,
+      "sha256": "e491487890875d63889b2cbb2e73e98174d58c4d22d849812f3f267f624d0cff",
+      "decision": "keep",
+      "reason": "Explicit direct-source delta adds 20 to the existing owning issuer fixture to exercise multi-source disclosure rows; no separately maintained source defaults or reusable fixture builder."
+    }
+  ],
+  "analysis": {
+    "typescript": "6.0.3",
+    "collectorSha256": "82bdb2997f0161974dd95160c1def27d609386057355df2af50fb61f5c78ef67",
+    "reviewerSha256": "708478c3395c82069cb12f968f4c9075cf6daf822f1ec9e1fb8c77089c2967d1",
+    "compilerOptionsSha256": "18a48d4a23412e56aefc73121dc52b141dff65536210ca27f230b0d6c016b318",
+    "sourceSha256": "f7e0267dad5724bfb57fb7def918dcfe7a1672d80c2385e2b7d211cd6c04ac03",
+    "lockfileSha256": "23ddff6b429153de7c6e2a8917256700b88a29b25b86cc6f0915ec2698de175a"
+  },
+  "reason": "All 24 previous candidate locations and test contents are unchanged, with unchanged entity contracts and contextual uses. New sample bases use owning typed mocks. One new explicit additive source case was inspected in its fixture and row-builder consumers."
+}
